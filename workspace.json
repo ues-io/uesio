@@ -1,6 +1,35 @@
 {
   "version": 1,
-  "projects": {},
+  "projects": {
+    "platform": {
+      "projectType": "application",
+      "root": "apps/platform",
+      "sourceRoot": "apps/platform/src",
+      "architect": {
+        "build": {
+          "builder": "@nx-go/nx-go:build",
+          "options": {
+            "outputPath": "dist/apps/platform",
+            "main": "apps/platform/src/main.go"
+          }
+        },
+        "serve": {
+          "builder": "@nx-go/nx-go:serve",
+          "options": {
+            "main": "apps/platform/src/main.go"
+          }
+        },
+        "test": {
+          "builder": "@nx-go/nx-go:test",
+          "options": {
+            "main": "apps/platform/src/main_test.go"
+          }
+        },
+        "lint": {
+          "builder": "@nx-go/nx-go:lint"
+        }
+      }
+    }},
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   }

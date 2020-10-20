@@ -123,6 +123,11 @@
     yargs "15.4.1"
     yargs-parser "20.0.0"
 
+"@nx-go/nx-go@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@nx-go/nx-go/-/nx-go-1.2.3.tgz#f887e99c59b7b76a0c06b0c3cdb24cfba97d3cb2"
+  integrity sha512-+BlF7bD/LWd5172XBFo2s02ibmrRkfHWQkK96R4x0im8MXipUZroEPXeG+rFAXs7h7NSsCe1SMQmIlRIBW1DiA==
+
 "@types/node@~8.9.4":
   version "8.9.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.9.5.tgz#162b864bc70be077e6db212b322754917929e976"
