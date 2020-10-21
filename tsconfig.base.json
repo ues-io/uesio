@@ -1,6 +1,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "jsx": "react",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "allowJs": false,
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -8,19 +14,16 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es6",
     "module": "esnext",
     "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@uesio/ui": ["libs/ui/src/index.ts"],
       "@uesio/buildtime": ["libs/buildtime/src/index.ts"],
-      "@uesio/apps/uesio": ["libs/apps/uesio/src/index.ts"],
-      "@uesio/apps/sample": ["libs/apps/sample/src/index.ts"],
-      "@uesio/apps/crm": ["libs/apps/crm/src/index.ts"],
       "@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"]
     }
   },

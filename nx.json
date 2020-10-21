@@ -43,6 +43,9 @@
     },
     "lazymonaco": {
       "tags": []
+    },
+    "yaml": {
+      "tags": []
     }
   }
 }
