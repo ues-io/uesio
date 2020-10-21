@@ -18,17 +18,30 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
   "projects": {
     "platform": {
+      "tags": []
+    },
+    "ui": {
+      "tags": []
+    },
+    "buildtime": {
+      "tags": []
+    },
+    "apps-uesio": {
+      "tags": []
+    },
+    "apps-sample": {
+      "tags": []
+    },
+    "apps-crm": {
+      "tags": []
+    },
+    "lazymonaco": {
       "tags": []
     }
   }

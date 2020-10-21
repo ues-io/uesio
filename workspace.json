@@ -29,7 +29,134 @@
           "builder": "@nx-go/nx-go:lint"
         }
       }
-    }},
+    },
+    "ui": {
+      "root": "libs/ui",
+      "sourceRoot": "libs/ui/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/ui/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/ui/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "buildtime": {
+      "root": "libs/buildtime",
+      "sourceRoot": "libs/buildtime/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/buildtime/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/buildtime/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "apps-uesio": {
+      "root": "libs/apps/uesio",
+      "sourceRoot": "libs/apps/uesio/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/apps/uesio/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/apps/uesio/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "apps-sample": {
+      "root": "libs/apps/sample",
+      "sourceRoot": "libs/apps/sample/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/apps/sample/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/apps/sample/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "apps-crm": {
+      "root": "libs/apps/crm",
+      "sourceRoot": "libs/apps/crm/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/apps/crm/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/apps/crm/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "lazymonaco": {
+      "root": "libs/lazymonaco",
+      "sourceRoot": "libs/lazymonaco/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/lazymonaco/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/lazymonaco/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   }
