@@ -6,5 +6,6 @@ module.exports = {
     '<rootDir>/libs/apps/sample',
     '<rootDir>/libs/apps/crm',
     '<rootDir>/libs/lazymonaco',
+    '<rootDir>/libs/yaml',
   ],
 };

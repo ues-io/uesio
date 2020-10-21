@@ -11,18 +11,6 @@
 		}
 	],
 	"compilerOptions": {
-		"outDir": "../../dist/ui",
-		"types": [],
-		"jsx": "react",
-		"lib": ["es2019", "dom"],
-		"target": "es6",
-		"module": "esnext",
-		"noImplicitAny": true,
-		"noImplicitThis": true,
-		"strictNullChecks": true,
-		"esModuleInterop": true,
-		"allowJs": false,
-		"moduleResolution": "node",
 		"sourceMap": true
 	}
 }
