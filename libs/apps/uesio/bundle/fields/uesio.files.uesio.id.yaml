@@ -1,0 +1,6 @@
+name: id
+collection: uesio.files
+type: TEXT
+label: File ID
+propertyName: id
+readOnly: true

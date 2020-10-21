@@ -1,0 +1,5 @@
+name: options
+collection: uesio.selectlists
+type: ARRAY
+label: Options
+propertyName: options

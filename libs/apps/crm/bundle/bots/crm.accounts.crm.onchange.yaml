@@ -1,0 +1,4 @@
+name: onchange
+collection: crm.accounts
+type: "JAVASCRIPT"
+fileName: onchange.js

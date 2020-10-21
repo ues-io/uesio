@@ -1,0 +1,5 @@
+name: firstname
+collection: crm.contacts
+type: "TEXT"
+label: "First Name"
+propertyName: "first_name"

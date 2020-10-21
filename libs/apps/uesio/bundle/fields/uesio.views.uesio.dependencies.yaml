@@ -1,0 +1,5 @@
+name: dependencies
+collection: uesio.views
+type: LONGTEXT
+label: Dependencies
+propertyName: dependencies

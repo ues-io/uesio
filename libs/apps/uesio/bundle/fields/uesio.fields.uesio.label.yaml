@@ -1,0 +1,5 @@
+name: label
+collection: uesio.fields
+type: TEXT
+label: Label
+propertyName: label

@@ -1,0 +1,5 @@
+name: database
+collection: uesio.datasources
+type: TEXT
+label: Database
+propertyName: database

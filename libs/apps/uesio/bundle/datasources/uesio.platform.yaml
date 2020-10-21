@@ -1,0 +1,5 @@
+name: platform
+type: uesio.firestore
+database: ${uesio.googleProjectId}
+password: uesio.googleGCPAPIKey
+

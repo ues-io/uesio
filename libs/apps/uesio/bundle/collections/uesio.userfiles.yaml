@@ -1,0 +1,6 @@
+name: userfiles
+dataSource: uesio.platform
+idField: uesio.id
+idFormat: "${uesio.collectionid}_${uesio.fieldid}_${uesio.recordid}_${uesio.siteid}_${uesio.workspaceid}"
+nameField: uesio.name
+collectionName: userfiles

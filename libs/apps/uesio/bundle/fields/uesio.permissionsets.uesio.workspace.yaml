@@ -1,0 +1,6 @@
+name: workspace
+collection: uesio.permissionsets
+type: REFERENCE
+label: Workspace
+referencedCollection: uesio.workspaces
+foreignKeyField: uesio.workspaceid

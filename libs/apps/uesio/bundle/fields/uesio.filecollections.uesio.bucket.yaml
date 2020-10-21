@@ -1,0 +1,5 @@
+name: bucket
+collection: uesio.filecollections
+type: TEXT
+label: Bucket Name
+propertyName: bucket

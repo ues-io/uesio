@@ -1,0 +1,222 @@
+name: datasource
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    datasources:
+      collection: uesio.datasources
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspaceid:
+        uesio.workspace:
+        uesio.type:
+        uesio.region:
+        uesio.url:
+        uesio.username:
+        uesio.password:
+        uesio.database:
+        uesio.port:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: datasourcename
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: datasourcesDeck
+              wire: datasources
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: home
+                            namespace: uesio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: app/$Param{appname}
+                            namespace: uesio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: uesio
+                      - text: datasources
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/datasources
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/datasources
+                            namespace: uesio
+                      - text: $Param{datasourcename}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color: "green"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: "Datasource"
+                                                  variant: h5
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: "TOGGLE_MODE"
+                                                            scope: "material.deck"
+                                                            band: "component"
+                                                            target: "datasourcesDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "datasources"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: "CANCEL"
+                                                            band: "wire"
+                                                            target: "datasources"
+                                                          - signal: "CANCEL"
+                                                            band: "wire"
+                                                            target: "fields"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: "MARK_FOR_DELETE"
+                                                            band: "wire"
+                                                            target: "datasources"
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "datasources"
+                                                          - signal: "NAVIGATE"
+                                                            band: "platform"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                                            namespace: "uesio"
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.type
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: uesio.dynamodb
+                                      components:
+                                        - material.field:
+                                            label: AWS Region
+                                            fieldId: uesio.region
+                                        - uesio.metadatafield:
+                                            label: AWS Access Key ID
+                                            metadataType: "SECRET"
+                                            fieldId: uesio.username
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.password
+                                            metadataType: "SECRET"
+                                            label: AWS Secret Access Key
+
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: uesio.postgresql
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.url
+                                        - material.field:
+                                            fieldId: uesio.port
+                                        - material.field:
+                                            fieldId: uesio.username
+                                        - material.field:
+                                            fieldId: uesio.password
+                                        - material.field:
+                                            fieldId: uesio.database
+
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: uesio.firestore
+                                      components:
+                                        - material.field:
+                                            label: Google Cloud Project ID
+                                            fieldId: uesio.username
+                                        - material.field:
+                                            label: Google Cloud API Key
+                                            fieldId: uesio.password
+dependencies:
+  componentpacks:
+    material.main:
+    uesio.app:

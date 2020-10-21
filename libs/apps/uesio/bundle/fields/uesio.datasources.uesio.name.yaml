@@ -1,0 +1,5 @@
+name: name
+collection: uesio.datasources
+type: TEXT
+label: Name
+propertyName: name

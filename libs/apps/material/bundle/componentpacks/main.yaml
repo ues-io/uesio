@@ -1,0 +1,24 @@
+name: main
+components:
+  alert:
+  avatar:
+  breadcrumbs:
+  buttonset:
+  button:
+  card:
+  column:
+  container:
+  deck:
+  field:
+  grid:
+  griditem:
+  image:
+  icon:
+  table:
+  typography:
+  selectfield:
+  checkboxfield:
+  textfield:
+  autocompletefield:
+  imageupload:
+  fileupload:

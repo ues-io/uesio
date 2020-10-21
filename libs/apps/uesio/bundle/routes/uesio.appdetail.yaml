@@ -1,0 +1,3 @@
+name: appdetail
+path: app/{appname}
+view: uesio.app

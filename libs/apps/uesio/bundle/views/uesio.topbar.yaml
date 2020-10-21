@@ -1,0 +1,53 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - material.grid:
+        height: 60px
+        background:
+          color: white
+        justify: space-between
+        alignitems: center
+        items:
+          # Uesio Logo
+          - material.griditem:
+              components:
+                - material.image:
+                    file: uesio.logoword
+                    height: 20px
+                    align: left
+                    margin:
+                      - 0
+                      - 2
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "home"
+                        namespace: "uesio"
+          # Avatar
+          - material.griditem:
+              components:
+                - material.grid:
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                text: Log Out
+                                variant: text
+                                signals:
+                                  - signal: "LOGOUT"
+                                    band: "platform"
+                      - material.griditem:
+                          components:
+                            - material.avatar:
+                                margin:
+                                  - 0
+                                  - 2
+                                  - 0
+                                  - 1
+dependencies:
+  componentpacks:
+    material.main:

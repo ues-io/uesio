@@ -1,0 +1,6 @@
+name: type
+collection: uesio.fields
+type: SELECT
+selectList: uesio.fieldtypes
+label: Type
+propertyName: type

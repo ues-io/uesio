@@ -1,0 +1,5 @@
+name: filecontents
+collection: uesio.bots
+type: TEXT
+label: File Contents
+propertyName: filecontents

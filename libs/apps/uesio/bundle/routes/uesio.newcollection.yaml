@@ -1,0 +1,3 @@
+name: newcollection
+path: app/{appname}/workspace/{workspacename}/newcollection
+view: uesio.newcollection

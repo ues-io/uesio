@@ -1,0 +1,14 @@
+name: public
+named:
+views:
+  uesio.login: true
+  uesio.notfound: true
+routes:
+  uesio.login: true
+files:
+  uesio.logo: true
+  uesio.logosmall: true
+  uesio.amazonsmall: true
+  uesio.facebooksmall: true
+  uesio.logoword: true
+  uesio.splash: true

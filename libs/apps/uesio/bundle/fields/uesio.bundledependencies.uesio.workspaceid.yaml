@@ -1,0 +1,6 @@
+name: workspaceid
+collection: uesio.bundledependencies
+type: "TEXT"
+label: "Workspace ID"
+propertyName: workspaceid
+readOnly: true

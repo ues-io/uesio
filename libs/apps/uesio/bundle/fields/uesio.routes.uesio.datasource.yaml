@@ -1,0 +1,5 @@
+name: datasource
+collection: uesio.routes
+type: TEXT
+label: Data Source
+propertyName: datasource

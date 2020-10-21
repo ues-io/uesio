@@ -1,0 +1,6 @@
+name: bundleid
+collection: uesio.bundledependencies
+type: "TEXT"
+label: "Bundle ID"
+propertyName: bundleid
+readOnly: true

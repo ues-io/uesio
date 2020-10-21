@@ -1,0 +1,5 @@
+name: idformat
+collection: uesio.collections
+type: TEXT
+label: ID Format
+propertyName: idformat

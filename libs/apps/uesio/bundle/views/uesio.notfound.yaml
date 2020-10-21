@@ -1,0 +1,38 @@
+name: notfound
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - material.grid:
+        background:
+          color: white
+        justify: center
+        alignitems: center
+        items:
+          - material.griditem:
+              height: 100vh
+              align: center
+              components:
+                # Just makes the vertical centering nicer
+                - material.container:
+                    padding: 8
+                - material.typography:
+                    text: "😞"
+                    variant: h1
+                - material.typography:
+                    text: "Nothing to see here."
+                - material.typography:
+                    text: "You may need to log in again"
+                    variant: "body2"
+                - material.button:
+                    text: "Go To Login Page"
+                    variant: outlined
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "login"
+                        namespace: "uesio"
+dependencies:
+  componentpacks:
+    material.main:

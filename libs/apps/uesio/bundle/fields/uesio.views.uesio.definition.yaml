@@ -1,0 +1,5 @@
+name: definition
+collection: uesio.views
+type: LONGTEXT
+label: Definition
+propertyName: definition

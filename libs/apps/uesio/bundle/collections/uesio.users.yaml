@@ -1,0 +1,5 @@
+name: users
+dataSource: uesio.platform
+idField: uesio.id
+nameField: uesio.lastname
+collectionName: users

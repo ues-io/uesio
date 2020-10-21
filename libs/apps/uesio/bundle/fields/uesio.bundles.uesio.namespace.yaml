@@ -1,0 +1,6 @@
+name: namespace
+collection: uesio.bundles
+type: "TEXT"
+label: "Bundle Namespace"
+propertyName: "namespace"
+readOnly: true

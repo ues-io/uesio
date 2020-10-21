@@ -1,0 +1,5 @@
+name: collectionname
+collection: uesio.collections
+type: TEXT
+label: Collection Name
+propertyName: collectionname

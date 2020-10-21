@@ -1,0 +1,10 @@
+import { component } from "uesio";
+import hellobuilder from "../components/hello/hellobuilder";
+import errorbuilder from "../components/error/errorbuilder";
+import progressgaugebuilder from "../components/progressgauge/progressgaugebuilder";
+import hellodefinition from "../components/hello/hellodefinition";
+import errordefinition from "../components/error/errordefinition";
+import progressgaugedefinition from "../components/progressgauge/progressgaugedefinition";
+component.registry.registerBuilder("sample", "hello", hellobuilder, hellodefinition);
+component.registry.registerBuilder("sample", "error", errorbuilder, errordefinition);
+component.registry.registerBuilder("sample", "progressgauge", progressgaugebuilder, progressgaugedefinition);
