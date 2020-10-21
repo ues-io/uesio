@@ -15,7 +15,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@uesio/ui": ["libs/ui/src/index.ts"],
+      "@uesio/buildtime": ["libs/buildtime/src/index.ts"],
+      "@uesio/apps/uesio": ["libs/apps/uesio/src/index.ts"],
+      "@uesio/apps/sample": ["libs/apps/sample/src/index.ts"],
+      "@uesio/apps/crm": ["libs/apps/crm/src/index.ts"],
+      "@uesio/lazymonaco": ["libs/lazymonaco/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
