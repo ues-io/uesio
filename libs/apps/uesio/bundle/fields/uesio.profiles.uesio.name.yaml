@@ -1,0 +1,5 @@
+name: name
+collection: uesio.profiles
+type: TEXT
+label: Name
+propertyName: name

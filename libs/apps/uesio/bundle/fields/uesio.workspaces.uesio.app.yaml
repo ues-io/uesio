@@ -1,0 +1,6 @@
+name: app
+collection: uesio.workspaces
+type: REFERENCE
+label: App
+referencedCollection: uesio.apps
+foreignKeyField: uesio.appid

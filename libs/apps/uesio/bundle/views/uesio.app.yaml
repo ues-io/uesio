@@ -1,0 +1,186 @@
+name: app
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: appsDeck
+              wire: apps
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: /home
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: home
+                            namespace: uesio
+                      - text: ${uesio.name}
+                - material.card:
+                    media:
+                      background:
+                        color: "${uesio.color}"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          justify: space-between
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                components:
+                                  - material.typography:
+                                      text: ${uesio.name}
+                                      variant: h5
+                                      textTransform: "uppercase"
+                            - material.griditem:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Edit"
+                                            signals:
+                                              - signal: "TOGGLE_MODE"
+                                                scope: "material.deck"
+                                                band: "component"
+                                                target: "appsDeck"
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Save"
+                                            signals:
+                                              - signal: "SAVE"
+                                                band: "wire"
+                                                targets:
+                                                  - "apps"
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Cancel"
+                                            signals:
+                                              - signal: "CANCEL"
+                                                band: "wire"
+                                                target: "apps"
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Delete"
+                                            signals:
+                                              - signal: "MARK_FOR_DELETE"
+                                                band: "wire"
+                                                target: "apps"
+                                              - signal: "SAVE"
+                                                band: "wire"
+                                                targets:
+                                                  - "apps"
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "home"
+                                                namespace: "uesio"
+                      - material.field:
+                          fieldId: uesio.name
+                      - material.field:
+                          fieldId: uesio.description
+                      - uesio.colorpicker:
+                          fieldId: uesio.color
+                - material.grid:
+                    justify: space-between
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Workspaces
+                                variant: h5
+                            - material.typography:
+                                text: Create a workspace to start building.
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Create a Workspace"
+                                      signals:
+                                        - signal: "NAVIGATE"
+                                          band: "platform"
+                                          path: "app/${uesio.name}/newworkspace"
+                                          namespace: "uesio"
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    wire: workspaces
+                    id: workspacesDeck
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color: "#581845"
+                            height: 10px
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "$Record{uesio.name}"
+                                textTransform: "capitalize"
+                          signals:
+                            - signal: "NAVIGATE"
+                              band: "platform"
+                              path: "app/$Param{appname}/workspace/${uesio.name}"
+                              namespace: "uesio"
+                - material.typography:
+                    text: Bundles
+                    variant: h5
+                - material.typography:
+                    text: Create a version of your app with a bundle.
+                    variant: body2
+                - material.typography:
+                    text: Sites
+                    variant: h5
+                - material.typography:
+                    text: Deploy your app to users with a site.
+                    variant: body2
+dependencies:
+  componentpacks:
+    material.main:
+    uesio.app:

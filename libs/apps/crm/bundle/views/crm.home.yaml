@@ -1,0 +1,13 @@
+name: home
+definition:
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: crm
+    - material.typography:
+        text: CRM Home
+        variant: h5
+  wires:
+dependencies:
+  componentpacks:
+    material.main:

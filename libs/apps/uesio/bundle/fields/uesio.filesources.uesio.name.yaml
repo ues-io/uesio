@@ -1,0 +1,5 @@
+name: name
+collection: uesio.filesources
+type: TEXT
+label: Name
+propertyName: name

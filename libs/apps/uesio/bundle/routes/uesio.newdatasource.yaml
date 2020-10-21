@@ -1,0 +1,3 @@
+name: newdatasource
+path: app/{appname}/workspace/{workspacename}/newdatasource
+view: uesio.newdatasource

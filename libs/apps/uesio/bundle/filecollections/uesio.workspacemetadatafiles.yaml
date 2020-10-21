@@ -1,0 +1,4 @@
+name: workspacemetadatafiles
+bucket: uesio.genericFileBucket
+pathFormat: "workspacefiles/${workspaceid}/${name}"
+filesource: uesio.local

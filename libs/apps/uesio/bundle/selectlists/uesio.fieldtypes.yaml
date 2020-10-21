@@ -1,0 +1,19 @@
+name: fieldtypes
+options:
+  - label: "Text"
+    value: "TEXT"
+  - label: "Number"
+    value: "NUMBER"
+  - label: "Long Text"
+    value: "LONGTEXT"
+  - label: "Check Box"
+    value: "CHECKBOX"
+  - label: "Select List"
+    value: "SELECT"
+  - label: "Reference"
+    value: "REFERENCE"
+  - label: "File"
+    value: "FILE"
+  - label: "Image"
+    value: "IMAGE"
+

@@ -46,6 +46,9 @@
     },
     "yaml": {
       "tags": []
+    },
+    "apps-material": {
+      "tags": []
     }
   }
 }

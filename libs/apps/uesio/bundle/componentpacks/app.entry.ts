@@ -1,0 +1,15 @@
+import { component } from "uesio";
+import colorpicker from "../components/colorpicker/colorpicker";
+import loginmock from "../components/loginmock/loginmock";
+import loginfacebook from "../components/loginfacebook/loginfacebook";
+import logingoogle from "../components/logingoogle/logingoogle";
+import logincognito from "../components/logincognito/logincognito";
+import metadatafield from "../components/metadatafield/metadatafield";
+import yamlfield from "../components/yamlfield/yamlfield";
+component.registry.register("uesio", "colorpicker", colorpicker);
+component.registry.register("uesio", "loginmock", loginmock);
+component.registry.register("uesio", "loginfacebook", loginfacebook);
+component.registry.register("uesio", "logingoogle", logingoogle);
+component.registry.register("uesio", "logincognito", logincognito);
+component.registry.register("uesio", "metadatafield", metadatafield);
+component.registry.register("uesio", "yamlfield", yamlfield);

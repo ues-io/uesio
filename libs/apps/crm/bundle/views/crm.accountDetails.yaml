@@ -1,0 +1,89 @@
+name: accountDetails
+definition:
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: crm
+    - material.deck:
+        xs: 12
+        margin: 0
+        id: oneaccountDeck
+        wire: accounts
+        mode: READ
+        components:
+          - material.card:
+              media:
+                background:
+                color: "#FF5733"
+                height: 10px
+              margin: 1
+              components:
+                - material.grid:
+                    justify: space-between
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.imageupload:
+                                id: "imageUploadId"
+                                preview: true
+                                fileCollection: uesio.platform
+                                fieldId: crm.profilepic
+                                width: 150
+                                height: 150
+                                margin:
+                                  - 0
+                                  - 2
+                            - material.typography:
+                                text: ${crm.name}
+                                variant: h5
+                                textTransform: "uppercase"
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Edit"
+                                      signals:
+                                        - signal: "TOGGLE_MODE"
+                                          scope: "material.deck"
+                                          band: "component"
+                                          target: "oneaccountDeck"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Save"
+                                      signals:
+                                        - signal: "SAVE"
+                                          band: "wire"
+                                          targets:
+                                            - "accounts"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "CANCEL"
+                                          band: "wire"
+                                          target: "accounts"
+                - material.field:
+                    fieldId: crm.id
+                - material.field:
+                    fieldId: crm.name
+  wires:
+    accounts:
+      collection: crm.accounts
+      conditions:
+        - field: crm.id
+          valueSource: PARAM
+          param: accountid
+      fields:
+        crm.id: null
+        crm.name: null
+        crm.profilepic: null
+
+dependencies:
+  componentpacks:
+    material.main:

@@ -1,0 +1,6 @@
+name: patch
+collection: uesio.bundles
+type: "TEXT"
+label: "Patch version"
+propertyName: "patch"
+readOnly: true

@@ -1,0 +1,5 @@
+name: profilepic
+collection: crm.accounts
+label: "Profile picture"
+type: "FILE"
+propertyName: "profilepic"

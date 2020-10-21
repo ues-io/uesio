@@ -1,0 +1,6 @@
+name: referencedCollection
+collection: uesio.fields
+type: TEXT
+label: Referenced Collection
+propertyName: referencedCollection
+readOnly: false

@@ -1,0 +1,5 @@
+name: spec
+collection: uesio.bulkjobs
+type: "MAP"
+label: "Spec"
+propertyName: "spec"

@@ -1,0 +1,5 @@
+name: bundledependencies
+dataSource: uesio.platform
+idField: uesio.id
+nameField: uesio.id
+collectionName: bundledependencies

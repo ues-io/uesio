@@ -1,0 +1,80 @@
+name: accounts
+definition:
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: crm
+    - material.typography:
+        text: Accounts
+        variant: h6
+    - material.buttonset:
+        buttons:
+          - material.button:
+              color: primary
+              variant: contained
+              text: Create Row
+              signals:
+                - signal: CREATE_RECORD
+                  band: wire
+                  target: accounts
+          - material.button:
+              color: primary
+              variant: contained
+              text: Save
+              signals:
+                - signal: SAVE
+                  band: wire
+                  targets:
+                    - accounts
+          - material.button:
+              color: primary
+              variant: contained
+              text: Cancel
+              signals:
+                - signal: CANCEL
+                  band: wire
+                  target: accounts
+          - material.button:
+              color: primary
+              signals:
+                - band: component
+                  scope: material.table
+                  signal: TOGGLE_MODE
+                  target: accountsTable
+              text: Mode
+              variant: contained
+    - material.table:
+        id: accountsTable
+        wire: accounts
+        mode: EDIT
+        columns:
+          - material.column:
+              field: crm.name
+          - material.column:
+              components:
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Edit
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "account/${crm.id}"
+                        namespace: "crm"
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Delete
+                    signals:
+                      - signal: TOGGLE_DELETE_STATUS
+                        target: accounts
+                        band: wire
+  wires:
+    accounts:
+      collection: crm.accounts
+      fields:
+        crm.name: null
+        crm.id: null
+dependencies:
+  componentpacks:
+    material.main:

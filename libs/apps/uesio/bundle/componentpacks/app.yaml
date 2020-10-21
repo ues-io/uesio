@@ -1,0 +1,9 @@
+name: app
+components:
+  colorpicker:
+  loginmock:
+  loginfacebook:
+  logingoogle:
+  logincognito:
+  metadatafield:
+  yamlfield:

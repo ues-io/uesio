@@ -1,0 +1,6 @@
+node_modules/
+*.bundle.js
+*.js.map
+.idea
+.DS_Store
+package-lock.json

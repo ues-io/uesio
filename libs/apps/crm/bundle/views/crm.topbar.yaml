@@ -1,0 +1,78 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - material.grid:
+        height: 60px
+        background:
+          color: "#222"
+        justify: space-between
+        alignitems: center
+        items:
+          # Uesio Logo
+          - material.griditem:
+              components:
+                - material.image:
+                    file: crm.logo
+                    height: 30px
+                    align: left
+                    margin:
+                      - 0
+                      - 2
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "home"
+                        namespace: "crm"
+          - material.griditem:
+              components:
+                - material.grid:
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                text: Accounts
+                                variant: text
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "accounts"
+                                    namespace: "crm"
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                text: Contacts
+                                variant: text
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "contacts"
+                                    namespace: "crm"
+          # Avatar
+          - material.griditem:
+              components:
+                - material.grid:
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                text: Log Out
+                                variant: text
+                                signals:
+                                  - signal: "LOGOUT"
+                                    band: "platform"
+                      - material.griditem:
+                          components:
+                            - material.avatar:
+                                margin:
+                                  - 0
+                                  - 2
+                                  - 0
+                                  - 1
+dependencies:
+  componentpacks:
+    material.main:

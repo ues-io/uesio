@@ -1,0 +1,5 @@
+name: name
+collection: uesio.sites
+type: "TEXT"
+label: "Site Name"
+propertyName: "name"

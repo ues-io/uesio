@@ -1,0 +1,6 @@
+name: minor
+collection: uesio.bundles
+type: "TEXT"
+label: "Minor version"
+propertyName: "minor"
+readOnly: true

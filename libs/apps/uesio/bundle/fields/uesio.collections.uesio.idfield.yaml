@@ -1,0 +1,5 @@
+name: idfield
+collection: uesio.collections
+type: TEXT
+label: ID Field
+propertyName: idfield

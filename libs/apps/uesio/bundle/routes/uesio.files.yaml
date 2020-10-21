@@ -1,0 +1,3 @@
+name: files
+path: app/{appname}/workspace/{workspacename}/files
+view: uesio.files

@@ -1,0 +1,6 @@
+name: type
+collection: uesio.datasources
+type: SELECT
+selectList: uesio.datasourcetypes
+label: Type
+propertyName: type

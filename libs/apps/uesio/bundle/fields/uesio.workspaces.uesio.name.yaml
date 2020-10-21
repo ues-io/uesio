@@ -1,0 +1,5 @@
+name: name
+collection: uesio.workspaces
+type: TEXT
+label: Name
+propertyName: name

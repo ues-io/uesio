@@ -1,0 +1,225 @@
+name: workspace
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: workspaceDeck
+              wire: workspaces
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: home
+                            namespace: uesio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: app/$Param{appname}
+                            namespace: uesio
+                      - text: ${uesio.name}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.card:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Collections
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Components
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Data Sources
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Files
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Permissions
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Routes
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Secrets and Config
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Views
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
+                                                namespace: "uesio"
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color: "green"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${uesio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: "TOGGLE_MODE"
+                                                            scope: "material.deck"
+                                                            band: "component"
+                                                            target: "workspaceDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "workspaces"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: "CANCEL"
+                                                            band: "wire"
+                                                            target: "workspaces"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: "MARK_FOR_DELETE"
+                                                            band: "wire"
+                                                            target: "workspaces"
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "workspaces"
+                                                          - signal: "NAVIGATE"
+                                                            band: "platform"
+                                                            path: "app/$Param{appname}"
+                                                            namespace: "uesio"
+                                  - material.field:
+                                      fieldId: uesio.name
+dependencies:
+  componentpacks:
+    material.main:
+    uesio.app:
