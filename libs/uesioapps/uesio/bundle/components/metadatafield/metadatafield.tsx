@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect } from "react"
-import { definition, material, component, hooks } from "uesio"
+import { definition, material, component, hooks } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string

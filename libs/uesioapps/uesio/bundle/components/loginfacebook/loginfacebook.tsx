@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { definition, hooks, material } from "uesio"
+import { definition, hooks, material } from "@uesio/ui"
 import FacebookLogin, {
 	ReactFacebookLoginInfo,
 	ReactFacebookLoginProps,

@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 
-import { hooks, material, component, styles } from "uesio"
+import { hooks, material, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"
 
 import CardAction from "../cardaction/cardaction"

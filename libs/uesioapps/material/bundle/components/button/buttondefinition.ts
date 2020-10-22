@@ -1,4 +1,4 @@
-import { definition, builder, signal } from "uesio"
+import { definition, builder, signal } from "@uesio/ui"
 
 type ButtonDefinition = {
 	text?: string

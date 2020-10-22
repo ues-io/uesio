@@ -6,7 +6,7 @@
 import * as React from "react"
 import clsx from "clsx"
 
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 import Icon from "../icon/icon"
 
 export const styles = (theme: material.Theme): material.StyleRules => {

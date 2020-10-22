@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import { ContainerProps } from "./containerdefinition"
-import { component, material, styles } from "uesio"
+import { component, material, styles } from "@uesio/ui"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({

@@ -4,7 +4,7 @@ import {
 	GoogleLoginProps,
 } from "react-google-login"
 import React, { ReactElement } from "react"
-import { definition, hooks, material } from "uesio"
+import { definition, hooks, material } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonWidth } from "../loginhelpers/button"
 

@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { hooks, material } from "uesio"
+import { hooks, material } from "@uesio/ui"
 import { ColumnProps, ColumnDefinition } from "./columndefinition"
 
 const useStyles = material.makeStyles((theme) =>

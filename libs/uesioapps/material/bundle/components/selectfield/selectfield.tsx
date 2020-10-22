@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { material, definition, context, collection } from "uesio"
+import { material, definition, context, collection } from "@uesio/ui"
 import TextField from "../textfield/textfield"
 
 const useStyles = material.makeStyles((theme) => ({

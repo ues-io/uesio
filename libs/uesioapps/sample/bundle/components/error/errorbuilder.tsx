@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import Error from "./error"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 import { ErrorProps, ErrorDefinition } from "./errordefinition"
 
 function ErrorBuilder(props: ErrorProps): ReactElement {

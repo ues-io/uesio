@@ -1,4 +1,4 @@
-import { component } from "uesio";
+import { component } from "@uesio/ui";
 import hello from "../components/hello/hello";
 import error from "../components/error/error";
 import progressgauge from "../components/progressgauge/progressgauge";

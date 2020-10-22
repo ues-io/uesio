@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 import { GridProps, GridDefinition } from "./griddefinition"
 import Grid from "./grid"
 

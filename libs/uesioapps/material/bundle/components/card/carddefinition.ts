@@ -1,4 +1,4 @@
-import { definition, builder, signal, styles } from "uesio"
+import { definition, builder, signal, styles } from "@uesio/ui"
 
 import { CardActionDefinition } from "../cardaction/cardactiondefinition"
 

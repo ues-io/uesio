@@ -1,4 +1,4 @@
-import { component } from "uesio";
+import { component } from "@uesio/ui";
 import colorpicker from "../components/colorpicker/colorpicker";
 import loginmock from "../components/loginmock/loginmock";
 import loginfacebook from "../components/loginfacebook/loginfacebook";

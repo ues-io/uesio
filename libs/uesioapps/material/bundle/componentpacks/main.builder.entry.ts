@@ -1,4 +1,4 @@
-import { component } from "uesio";
+import { component } from "@uesio/ui";
 import buttonsetbuilder from "../components/buttonset/buttonsetbuilder";
 import buttonbuilder from "../components/button/buttonbuilder";
 import cardbuilder from "../components/card/cardbuilder";

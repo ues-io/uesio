@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 import { TypographyProps } from "./typographydefinition"
 
 const useStyles = material.makeStyles((theme) =>

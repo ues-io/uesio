@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import { HelloProps } from "./hellodefinition"
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 
 const useStyles = material.makeStyles(() =>
 	material.createStyles({

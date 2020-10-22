@@ -37,7 +37,9 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 
 	if file.Workspace == "" {
 		// The file we're looking for is in a bundle so we can get it by url.
-		filePath := filepath.Join(filepath.Join("bundles", namespace, "v0.0.1", "files", file.FileName))
+		// This should use a bundle store just like everything else.
+		basePath := filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
+		filePath := filepath.Join(basePath, "files", file.FileName)
 		http.ServeFile(w, r, filePath)
 		return
 	}

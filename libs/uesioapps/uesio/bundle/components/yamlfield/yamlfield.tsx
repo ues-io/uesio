@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
-import { definition, material } from "uesio"
-import LazyMonaco from "lazy-monaco"
+import { definition, material } from "@uesio/ui"
+import LazyMonaco from "@uesio/lazymonaco"
 
 type YamlFieldDefinition = {
 	fieldId: string

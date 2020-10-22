@@ -1,4 +1,4 @@
-import { definition, builder, styles, signal } from "uesio"
+import { definition, builder, styles, signal } from "@uesio/ui"
 
 type ImageUploadDefinition = {
 	id: string

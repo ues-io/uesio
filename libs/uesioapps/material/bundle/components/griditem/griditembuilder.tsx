@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 import { GridItemProps, GridItemDefinition } from "./griditemdefinition"
 import GridItem from "./griditem"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 
 function GridItemBuilder(props: GridItemProps): ReactElement {
 	const uesio = hooks.useUesio(props)

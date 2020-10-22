@@ -2,7 +2,7 @@ import React, { ReactElement, memo } from "react"
 import { ButtonProps, ButtonDefinition } from "./buttondefinition"
 import Button from "./button"
 import ComponentMask from "./componentmask"
-import { hooks, material } from "uesio"
+import { hooks, material } from "@uesio/ui"
 
 const useStyles = material.makeStyles(() =>
 	material.createStyles({

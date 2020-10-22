@@ -1,4 +1,4 @@
-import { definition, builder, styles, material } from "uesio"
+import { definition, builder, styles, material } from "@uesio/ui"
 import GridItemPropertyDefinition from "../griditem/griditemdefinition"
 
 type GridDefinition = {

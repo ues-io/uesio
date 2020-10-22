@@ -1,4 +1,4 @@
-import { definition, builder, material } from "uesio"
+import { definition, builder, material } from "@uesio/ui"
 
 type TypographyDefinition = {
 	text: string

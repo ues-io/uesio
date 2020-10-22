@@ -8,7 +8,7 @@ import {
 	material,
 	builder,
 	context,
-} from "uesio"
+} from "@uesio/ui"
 
 import { TableDefinition, TableState } from "./tabledefinition"
 import TableHeader from "./tableheader"

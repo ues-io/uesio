@@ -7,7 +7,7 @@ import {
 	context,
 	component,
 	definition,
-} from "uesio"
+} from "@uesio/ui"
 import { ColumnDefinition, TableState } from "./tabledefinition"
 
 interface Props {

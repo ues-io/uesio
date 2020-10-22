@@ -1,4 +1,4 @@
-import { definition, builder } from "uesio"
+import { definition, builder } from "@uesio/ui"
 import ButtonPropertyDefinition from "../button/buttondefinition"
 
 type ButtonSetDefinition = {

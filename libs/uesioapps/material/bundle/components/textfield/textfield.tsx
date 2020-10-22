@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { material, definition, context } from "uesio"
+import { material, definition, context } from "@uesio/ui"
 
 const useStyles = material.makeStyles((theme) => ({
 	root: {

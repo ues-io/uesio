@@ -1,7 +1,6 @@
 import * as React from "react"
-import { material, wire, hooks } from "uesio"
+import { material, wire, hooks, collection } from "@uesio/ui"
 import { RendererProps } from "./fielddefinition"
-import { PlainCollection } from "uesio/src/collection/collection"
 import AutoCompleteField, {
 	SelectedItem,
 } from "../autocompletefield/autocompletefield"
@@ -14,7 +13,7 @@ const useStyles = material.makeStyles((theme) => ({
 // TODO:: Modify this to accept an arbitary display template
 const generateReferenceFieldDisplayValue = (
 	fieldId: string,
-	referencedCollection: PlainCollection,
+	referencedCollection: collection.PlainCollection,
 	record: wire.WireRecord
 ): string => {
 	const nameFieldOfReferencedCollection = referencedCollection.nameField

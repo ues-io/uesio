@@ -1,6 +1,6 @@
 import React, { ReactElement, SyntheticEvent } from "react"
 
-import { hooks, material } from "uesio"
+import { hooks, material } from "@uesio/ui"
 import { BreadcrumbsProps } from "./breadcrumbsdefinition"
 
 const useStyles = material.makeStyles((theme) => {

@@ -1,1 +1,1 @@
-import { component } from "uesio";
+import { component } from "@uesio/ui";

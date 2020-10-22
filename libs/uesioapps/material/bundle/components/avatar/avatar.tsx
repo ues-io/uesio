@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 
-import { material, styles } from "uesio"
+import { material, styles } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"
 
 const useStyles = material.makeStyles((theme) =>
