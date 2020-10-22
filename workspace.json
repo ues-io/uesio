@@ -45,7 +45,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/ui/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/ui/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -73,7 +75,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/buildtime/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/buildtime/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -92,48 +96,6 @@
         }
       }
     },
-    "apps-uesio": {
-      "root": "libs/apps/uesio",
-      "sourceRoot": "libs/apps/uesio/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/apps/uesio/**/*.ts"]
-          }
-        }
-      }
-    },
-    "apps-sample": {
-      "root": "libs/apps/sample",
-      "sourceRoot": "libs/apps/sample/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/apps/sample/**/*.ts"]
-          }
-        }
-      }
-    },
-    "apps-crm": {
-      "root": "libs/apps/crm",
-      "sourceRoot": "libs/apps/crm/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/apps/crm/**/*.ts"]
-          }
-        }
-      }
-    },
     "lazymonaco": {
       "root": "libs/lazymonaco",
       "sourceRoot": "libs/lazymonaco/src",
@@ -143,7 +105,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/lazymonaco/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/lazymonaco/**/*.ts"
+            ]
           }
         },
         "test": {
@@ -177,22 +141,72 @@
         }
       }
     },
-    "apps-material": {
-      "root": "libs/apps/material",
-      "sourceRoot": "libs/apps/material/src",
+    "uesioapps-sample": {
+      "root": "libs/uesioapps/sample",
+      "sourceRoot": "libs/uesioapps/sample/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/apps/material/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/uesioapps/sample/**/*.ts"
+            ]
+          }
+        }
+      }
+    },
+    "uesioapps-uesio": {
+      "root": "libs/uesioapps/uesio",
+      "sourceRoot": "libs/uesioapps/uesio/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/uesioapps/uesio/**/*.ts"
+            ]
+          }
+        }
+      }
+    },
+    "uesioapps-crm": {
+      "root": "libs/uesioapps/crm",
+      "sourceRoot": "libs/uesioapps/crm/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/uesioapps/crm/**/*.ts"
+            ]
+          }
+        }
+      }
+    },
+    "uesioapps-material": {
+      "root": "libs/uesioapps/material",
+      "sourceRoot": "libs/uesioapps/material/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/uesioapps/material/**/*.ts"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/apps/material/jest.config.js",
+            "jestConfig": "libs/uesioapps/material/jest.config.js",
             "passWithNoTests": true
           }
         }
