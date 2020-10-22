@@ -37,3 +37,23 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+*.in
+*.out
+*.env
+.google-creds.json
+pgdata
+/bundles/
+/static/
+/temp/
+/ssl/certificate.crt
+/ssl/private.key
+sessions/*
+userfiles/*
+vendor
+ui-debug.log
+firestore-debug.log
+firebase.json
+firebase-debug.log
+.firebaserc
+__debug_bin
