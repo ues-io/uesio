@@ -16,8 +16,13 @@ import (
 type LocalBundleStore struct {
 }
 
+func getBasePath(namespace, version string) string {
+	// We're ignoring the version here because we always get the latest
+	return filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
+}
+
 func (b *LocalBundleStore) GetItem(namespace string, version string, objectname string, name string) (*bufio.Reader, io.Closer, error) {
-	filePath := filepath.Join("bundles", namespace, version, objectname, name)
+	filePath := filepath.Join(getBasePath(namespace, version), objectname, name)
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
@@ -27,7 +32,7 @@ func (b *LocalBundleStore) GetItem(namespace string, version string, objectname 
 }
 
 func (b *LocalBundleStore) ListItems(namespace string, version string, objectname string) ([]string, error) {
-	dirPath := filepath.Join("bundles", namespace, version, objectname)
+	dirPath := filepath.Join(getBasePath(namespace, version), objectname)
 	files, err := ioutil.ReadDir(dirPath)
 	if err != nil {
 		return []string{}, nil
@@ -54,7 +59,7 @@ func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStre
 }
 
 func storeItem(namespace string, version string, itemStream reqs.ItemStream) error {
-	fullFilePath := filepath.Join("bundles", namespace, version, itemStream.Path)
+	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Path)
 	directory := filepath.Dir(fullFilePath)
 
 	err := os.MkdirAll(directory, 0744)

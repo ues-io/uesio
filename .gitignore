@@ -49,8 +49,6 @@ pgdata
 /ssl/certificate.crt
 /ssl/private.key
 sessions/*
-userfiles/*
-vendor
 ui-debug.log
 firestore-debug.log
 firebase.json

@@ -3,7 +3,6 @@ package cmd
 import (
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -48,24 +47,9 @@ func serve(cmd *cobra.Command, args []string) {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/fonts/{filename}", controllers.Fonts).Methods("GET")
-
-	r.HandleFunc("/static/uesio.js", controllers.ServeStatic(
-		filepath.Join("static", "uesio-ui", "uesio.js"),
-	)).Methods("GET")
-	r.HandleFunc("/static/uesio.js.map", controllers.ServeStatic(
-		filepath.Join("static", "uesio-ui", "uesio.js.map"),
-	)).Methods("GET")
-	r.HandleFunc("/static/uesiobuildtime.js", controllers.ServeStatic(
-		filepath.Join("static", "uesio-buildtime", "uesiobuildtime.js"),
-	)).Methods("GET")
-	r.HandleFunc("/static/uesiobuildtime.js.map", controllers.ServeStatic(
-		filepath.Join("static", "uesio-buildtime", "uesiobuildtime.js.map"),
-	)).Methods("GET")
-	r.HandleFunc("/static/vendor/{filename:.*}", controllers.Vendor).Methods("GET")
 	r.HandleFunc("/static/loader", controllers.Loader).Methods("GET")
-
+	r.HandleFunc("/static/{filename:.*}", controllers.Vendor).Methods("GET")
 	r.HandleFunc("/favicon.ico", controllers.Favicon).Methods("GET")
-
 	r.HandleFunc("/health", controllers.Health).Methods("GET")
 
 	// The workspace router

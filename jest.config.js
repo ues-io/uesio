@@ -8,5 +8,6 @@ module.exports = {
     '<rootDir>/libs/lazymonaco',
     '<rootDir>/libs/yaml',
     '<rootDir>/libs/apps/material',
+    '<rootDir>/libs/vendor',
   ],
 };
