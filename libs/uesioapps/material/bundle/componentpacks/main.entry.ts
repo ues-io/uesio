@@ -1,4 +1,4 @@
-import { component } from "uesio";
+import { component } from "@uesio/ui";
 import alert from "../components/alert/alert";
 import avatar from "../components/avatar/avatar";
 import breadcrumbs from "../components/breadcrumbs/breadcrumbs";

@@ -9,5 +9,6 @@ module.exports = {
     '<rootDir>/libs/yaml',
     '<rootDir>/libs/apps/material',
     '<rootDir>/libs/vendor',
+    '<rootDir>/apps/cli',
   ],
 };

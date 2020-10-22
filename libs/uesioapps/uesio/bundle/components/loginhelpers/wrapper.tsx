@@ -1,4 +1,4 @@
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 import React, { ReactElement, ReactNode } from "react"
 
 interface WrapperProps {

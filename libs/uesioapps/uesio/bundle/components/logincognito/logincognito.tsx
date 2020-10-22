@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from "react"
-import { definition, material, hooks, component } from "uesio"
+import { definition, material, hooks, component } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import LoginText from "../loginhelpers/text"

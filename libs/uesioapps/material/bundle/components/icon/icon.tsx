@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 
 import { IconProps } from "./icondefinition"
-import { material, styles } from "uesio"
+import { material, styles } from "@uesio/ui"
 import getIcon from "./iconmap"
 
 const useStyles = material.makeStyles((theme) =>

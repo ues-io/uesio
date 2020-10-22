@@ -1,4 +1,4 @@
-import { styles } from "uesio"
+import { styles } from "@uesio/ui"
 
 function getButtonWidth(): string {
 	return "210px"

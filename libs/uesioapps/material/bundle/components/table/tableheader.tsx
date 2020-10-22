@@ -1,6 +1,6 @@
 import React, { FC } from "react"
 
-import { material, collection, definition } from "uesio"
+import { material, collection, definition } from "@uesio/ui"
 import { ColumnDefinition } from "./tabledefinition"
 
 type Props = {

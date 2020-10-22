@@ -1,4 +1,4 @@
-import { definition, builder, material, styles } from "uesio"
+import { definition, builder, material, styles } from "@uesio/ui"
 
 type GridItemDefinition = {
 	xs: material.GridSize

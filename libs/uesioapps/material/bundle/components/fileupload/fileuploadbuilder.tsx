@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 import { FileUploadProps, FileUploadDefinition } from "./fileuploaddefinition"
 import FileUpload from "./fileupload"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 
 const FileUploadBuilder = (props: FileUploadProps): ReactElement => {
 	const uesio = hooks.useUesio(props)

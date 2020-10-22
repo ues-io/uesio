@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { component } from "uesio"
+import { component } from "@uesio/ui"
 import { ButtonSetProps } from "./buttonsetdefinition"
 
 function ButtonSet(props: ButtonSetProps): ReactElement {

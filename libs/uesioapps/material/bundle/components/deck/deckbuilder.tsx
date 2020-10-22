@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { hooks, component } from "uesio"
+import { hooks, component } from "@uesio/ui"
 import { DeckProps, DeckDefinition } from "./deckdefinition"
 import Deck from "./deck"
 

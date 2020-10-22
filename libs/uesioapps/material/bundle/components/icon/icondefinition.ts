@@ -1,4 +1,4 @@
-import { definition, builder, styles } from "uesio"
+import { definition, builder, styles } from "@uesio/ui"
 
 type IconDefinition = {
 	type: string

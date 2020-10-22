@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import ProgressGauge from "./progressgauge"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 import {
 	ProgressGaugeProps,
 	ProgressGaugeDefinition,

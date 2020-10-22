@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { hooks, material, component, styles } from "uesio"
+import { hooks, material, component, styles } from "@uesio/ui"
 import { CardActionProps } from "./cardactiondefinition"
 import Icon from "../icon/icon"
 

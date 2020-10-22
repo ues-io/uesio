@@ -8,7 +8,7 @@ import {
 	action,
 	signal,
 	context,
-} from "uesio"
+} from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
 
 const useStyles = material.makeStyles((theme) =>

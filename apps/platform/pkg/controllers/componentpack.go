@@ -18,7 +18,9 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 		if buildMode {
 			fileName = name + ".builder.bundle.js"
 		}
-		filePath := filepath.Join(filepath.Join("bundles", namespace, "v0.0.1", "componentpacks", fileName))
+		// This should use a bundle store just like everything else.
+		basePath := filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
+		filePath := filepath.Join(basePath, "componentpacks", fileName)
 		http.ServeFile(w, r, filePath)
 	}
 }

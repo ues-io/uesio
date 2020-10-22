@@ -1,4 +1,4 @@
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 import React, { ReactElement, useState, ChangeEvent } from "react"
 import { useLoginStyles } from "./logincognito"
 

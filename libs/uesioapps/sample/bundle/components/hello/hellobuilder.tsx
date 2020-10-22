@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import Hello from "./hello"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 import { HelloProps, HelloDefinition } from "./hellodefinition"
 
 function HelloBuilder(props: HelloProps): ReactElement {

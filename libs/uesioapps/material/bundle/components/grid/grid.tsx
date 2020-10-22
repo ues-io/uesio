@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { component, material, styles } from "uesio"
+import { component, material, styles } from "@uesio/ui"
 import { GridProps } from "./griddefinition"
 
 const useStyles = material.makeStyles(() => {

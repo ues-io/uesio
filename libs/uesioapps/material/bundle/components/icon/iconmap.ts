@@ -7,7 +7,7 @@ import Launch from "@material-ui/icons/Launch"
 import Visibility from "@material-ui/icons/Visibility"
 import Delete from "@material-ui/icons/Delete"
 
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 
 type IconMap = {
 	[key: string]: React.ComponentType<material.SvgIconProps>

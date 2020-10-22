@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useCombobox } from "downshift"
-import { material, definition } from "uesio"
+import { material, definition } from "@uesio/ui"
 import debounce from "lodash.debounce"
 
 //TODO:: Come up with a better way to do this.

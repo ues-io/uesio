@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 
-import { hooks, material, styles } from "uesio"
+import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
 const useStyles = material.makeStyles((theme) =>

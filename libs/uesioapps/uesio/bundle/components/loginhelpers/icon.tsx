@@ -1,4 +1,4 @@
-import { context, styles, material } from "uesio"
+import { context, styles, material } from "@uesio/ui"
 import React, { ReactElement } from "react"
 
 interface IconProps {

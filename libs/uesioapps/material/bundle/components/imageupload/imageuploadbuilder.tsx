@@ -4,7 +4,7 @@ import {
 	ImageUploadDefinition,
 } from "./imageuploaddefinition"
 import ImageUpload from "./imageupload"
-import { hooks } from "uesio"
+import { hooks } from "@uesio/ui"
 
 const ImageUploadBuilder = (props: ImageUploadProps): ReactElement => {
 	const uesio = hooks.useUesio(props)

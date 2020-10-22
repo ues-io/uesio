@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react"
 import { ErrorProps } from "./errordefinition"
-import { material } from "uesio"
+import { material } from "@uesio/ui"
 
 const useStyles = material.makeStyles(() =>
 	material.createStyles({
@@ -32,7 +32,7 @@ function Error(props: ErrorProps): ReactElement {
 			<p className={classes.p_prop}> {props.definition.sub_message}</p>
 			{/* <a className={classes.a_prop} href="{props.definition.url}"> {props.definition.url} </a> */}
 			<material.Button color="primary" variant="contained"href="{props.definition.url}" > {props.definition.url} </material.Button>
-			 
+
 		</div>
 	)
 }

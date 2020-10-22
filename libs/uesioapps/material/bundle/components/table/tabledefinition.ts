@@ -1,4 +1,4 @@
-import { definition, builder, hooks } from "uesio"
+import { definition, builder, hooks } from "@uesio/ui"
 
 type TableMode = "READ" | "EDIT"
 

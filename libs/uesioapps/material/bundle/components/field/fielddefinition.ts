@@ -1,4 +1,4 @@
-import { definition, collection, context, wire } from "uesio"
+import { definition, collection, context, wire } from "@uesio/ui"
 
 type FieldDefinition = {
 	fieldId: string

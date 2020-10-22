@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { definition, material } from "uesio"
+import { definition, material } from "@uesio/ui"
 
 type ColorPickerDefinition = {
 	fieldId: string
