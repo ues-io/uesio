@@ -18,7 +18,12 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ]
       }
     }
   },
@@ -32,22 +37,22 @@
     "buildtime": {
       "tags": []
     },
-    "apps-uesio": {
-      "tags": []
-    },
-    "apps-sample": {
-      "tags": []
-    },
-    "apps-crm": {
-      "tags": []
-    },
     "lazymonaco": {
       "tags": []
     },
     "yaml": {
       "tags": []
     },
-    "apps-material": {
+    "uesioapps-sample": {
+      "tags": []
+    },
+    "uesioapps-uesio": {
+      "tags": []
+    },
+    "uesioapps-crm": {
+      "tags": []
+    },
+    "uesioapps-material": {
       "tags": []
     }
   }
