@@ -1,0 +1,33 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+*.in
+*.out
+*.env
+.google-creds.json
+/uesio
+pgdata
+/bundles/
+/static/
+/temp/
+/ssl/certificate.crt
+/ssl/private.key
+sessions/*
+userfiles/*
+.DS_Store
+.idea
+.vscode/launch.json
+vendor
+ui-debug.log
+firestore-debug.log
+firebase.json
+firebase-debug.log
+.firebaserc
+__debug_bin
