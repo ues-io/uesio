@@ -12,6 +12,6 @@ func Vendor(w http.ResponseWriter, r *http.Request) {
 	filename := mux.Vars(r)["filename"]
 
 	ServeStatic(
-		filepath.Join("static", "vendor", filename),
+		filepath.Join("..", "..", "dist", filename),
 	)(w, r)
 }
