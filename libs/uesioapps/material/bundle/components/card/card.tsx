@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { hooks, material, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"
@@ -24,7 +24,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Card(props: CardProps): ReactElement {
+const Card: FunctionComponent<CardProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const definition = props.definition
