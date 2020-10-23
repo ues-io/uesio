@@ -123,7 +123,7 @@
   "uesio": "/apps/cli/bin/run"
  },
  "oclif": {
-  "commands": "/apps/cli/src/commands",
+  "commands": "/dist/cli/lib/commands",
   "bin": "uesio",
   "plugins": [
    "@oclif/plugin-help"
