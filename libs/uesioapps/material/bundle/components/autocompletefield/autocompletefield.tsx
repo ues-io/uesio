@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState, useRef } from "react"
 import { useCombobox } from "downshift"
 import { material, definition } from "@uesio/ui"
 import debounce from "lodash.debounce"
@@ -25,9 +25,9 @@ type SelectedItem = {
 }
 
 const AutoCompleteField = (props: DropDownProps): React.ReactElement | null => {
-	const [loading, setLoading] = React.useState(false)
-	const startingOptions: { value: string }[] = []
-	const [inputItems, setInputItems] = React.useState(startingOptions)
+	const [loading, setLoading] = useState(false)
+	const [inputItems, setInputItems] = useState<{ value: string }[]>([])
+	const lastInputChange = useRef<number>(0)
 	const options = loading ? [{ value: "loading..." }] : inputItems
 
 	const debouncedRequest = debounce(props.getItems, 200)
