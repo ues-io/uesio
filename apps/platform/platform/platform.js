@@ -14,7 +14,7 @@ const postJSON = (url, body) => {
   });
 };
 
-window.monacoPublicPath = "/static/vendor/monaco/";
+window.monacoPublicPath = "/static/lazymonaco/";
 
 // This is a really dumb thing that I had to do to get the aws-amplify sdk to work :(
 if (global === undefined) {
@@ -119,7 +119,7 @@ const loader = (mergeData) => {
       return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`;
     },
     getBuilderCoreURL: () => {
-      return "/static/uesiobuildtime.js";
+      return "/static/buildtime/uesiobuildtime.js";
     },
     getMetadataList: async (context, metadataType, namespace, grouping) => {
       const prefix = getPrefix(context.getWorkspace());
