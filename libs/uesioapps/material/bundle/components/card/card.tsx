@@ -28,9 +28,6 @@ const Card: FunctionComponent<CardProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const definition = props.definition
-	const cardProps = {
-		className: classes.root,
-	}
 
 	const slotProps = {
 		definition,
@@ -75,7 +72,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 	//Actions + Signals
 	if (props.definition?.actions && props.definition?.signals) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				<material.CardActionArea {...cardActionAreaProps}>
 					{cardMedia}
 					{cardContent}
@@ -89,7 +86,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 	//Just Actions
 	if (props.definition?.actions) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				{cardMedia}
 				{cardContent}
 				<material.CardActions className={classes.actions}>
@@ -101,7 +98,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 	//Just Signals
 	if (props.definition?.signals) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				<material.CardActionArea {...cardActionAreaProps}>
 					{cardMedia}
 					{cardContent}
@@ -112,7 +109,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 
 	//Non
 	return (
-		<material.Card {...cardProps}>
+		<material.Card className={classes.root}>
 			{cardMedia}
 			{cardContent}
 		</material.Card>
