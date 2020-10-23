@@ -261,7 +261,8 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo hi"
+            "command": "npx tsc",
+            "cwd": "apps/cli"
           }
         },
         "lint": {
