@@ -64,7 +64,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 			}
 
 			return <CardAction {...cardActionProps} key={index}></CardAction>
-		}) || []
+		}) || null
 
 	//Actions + Signals
 	if (props.definition?.actions && props.definition?.signals) {
