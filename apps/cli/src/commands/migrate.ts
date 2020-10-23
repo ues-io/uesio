@@ -11,6 +11,7 @@ export default class Migrate extends Command {
 	static args = []
 
 	async run(): Promise<void> {
+		// eslint-disable-next-line no-empty-pattern
 		const {
 			/*args , flags */
 		} = this.parse(Migrate)

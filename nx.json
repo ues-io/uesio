@@ -24,7 +24,8 @@
   },
   "projects": {
     "platform": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["ui", "buildtime", "lazymonaco", "yaml", "vendor"]
     },
     "ui": {
       "tags": []
