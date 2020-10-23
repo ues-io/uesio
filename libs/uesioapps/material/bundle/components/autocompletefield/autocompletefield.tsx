@@ -67,6 +67,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 				setLoading(false)
 				setInputItems([])
 				setValue(null)
+
 				return
 			}
 			setLoading(true)
