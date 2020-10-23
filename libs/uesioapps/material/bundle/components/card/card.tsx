@@ -49,10 +49,8 @@ const Card: FunctionComponent<CardProps> = (props) => {
 			<component.Slot {...slotProps}></component.Slot>
 		</material.CardContent>
 	)
-
-	var cardActionList = new Array()
-	if (props.definition?.actions) {
-		for (let cardaction of props.definition?.actions) {
+	const cardActionList =
+		props.definition?.actions?.map?.((cardaction, index) => {
 			const cardActionProps: CardActionProps = {
 				definition: {
 					icon: cardaction.icon,
@@ -65,9 +63,8 @@ const Card: FunctionComponent<CardProps> = (props) => {
 				context: props.context,
 			}
 
-			cardActionList.push(<CardAction {...cardActionProps}></CardAction>)
-		}
-	}
+			return <CardAction {...cardActionProps} key={index}></CardAction>
+		}) || []
 
 	//Actions + Signals
 	if (props.definition?.actions && props.definition?.signals) {
