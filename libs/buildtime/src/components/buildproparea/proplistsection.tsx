@@ -17,7 +17,7 @@ function PropListSection(props: SectionRendererProps): ReactElement | null {
 						properties: section.properties,
 						context: props.context,
 					}}
-				></PropList>
+				/>
 			)}
 		</ExpandPanel>
 	)

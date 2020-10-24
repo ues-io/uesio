@@ -117,7 +117,7 @@ function ConditionsSection(props: SectionRendererProps): ReactElement | null {
 										},
 									],
 								}}
-							></PropertiesPanel>
+							/>
 						</PropNodeTag>
 					)
 				}

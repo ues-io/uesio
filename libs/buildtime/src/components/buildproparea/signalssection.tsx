@@ -59,7 +59,7 @@ function SignalsSection(props: SectionRendererProps): ReactElement | null {
 									signal
 								),
 							}}
-						></PropertiesPanel>
+						/>
 					</PropNodeTag>
 				)
 			})}

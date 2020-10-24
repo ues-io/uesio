@@ -35,7 +35,7 @@ function BuildSection(props: Props): ReactElement | null {
 				definition: props.definition,
 				context: props.context,
 			}}
-		></SectionHandler>
+		/>
 	)
 }
 

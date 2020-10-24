@@ -56,7 +56,7 @@ function BuildPropItem(props: Props): ReactElement {
 
 	const PropHandler = getPropHandler(descriptor.type)
 
-	return <PropHandler {...rendererProps}></PropHandler>
+	return <PropHandler {...rendererProps} />
 }
 
 export default BuildPropItem

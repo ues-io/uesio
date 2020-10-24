@@ -22,7 +22,7 @@ function WireProp(props: PropRendererProps): ReactElement | null {
 		},
 	}
 
-	return <SelectProp {...rendererProps}></SelectProp>
+	return <SelectProp {...rendererProps} />
 }
 
 export default WireProp
