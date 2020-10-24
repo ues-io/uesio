@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { hooks, material, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"
@@ -24,13 +24,10 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Card(props: CardProps): ReactElement {
+const Card: FunctionComponent<CardProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const definition = props.definition
-	const cardProps = {
-		className: classes.root,
-	}
 
 	const slotProps = {
 		definition,
@@ -52,10 +49,8 @@ function Card(props: CardProps): ReactElement {
 			<component.Slot {...slotProps}></component.Slot>
 		</material.CardContent>
 	)
-
-	var cardActionList = new Array()
-	if (props.definition?.actions) {
-		for (let cardaction of props.definition?.actions) {
+	const cardActionList =
+		props.definition?.actions?.map?.((cardaction, index) => {
 			const cardActionProps: CardActionProps = {
 				definition: {
 					icon: cardaction.icon,
@@ -68,14 +63,13 @@ function Card(props: CardProps): ReactElement {
 				context: props.context,
 			}
 
-			cardActionList.push(<CardAction {...cardActionProps}></CardAction>)
-		}
-	}
+			return <CardAction {...cardActionProps} key={index}></CardAction>
+		}) || null
 
 	//Actions + Signals
 	if (props.definition?.actions && props.definition?.signals) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				<material.CardActionArea {...cardActionAreaProps}>
 					{cardMedia}
 					{cardContent}
@@ -89,7 +83,7 @@ function Card(props: CardProps): ReactElement {
 	//Just Actions
 	if (props.definition?.actions) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				{cardMedia}
 				{cardContent}
 				<material.CardActions className={classes.actions}>
@@ -101,7 +95,7 @@ function Card(props: CardProps): ReactElement {
 	//Just Signals
 	if (props.definition?.signals) {
 		return (
-			<material.Card {...cardProps}>
+			<material.Card className={classes.root}>
 				<material.CardActionArea {...cardActionAreaProps}>
 					{cardMedia}
 					{cardContent}
@@ -112,7 +106,7 @@ function Card(props: CardProps): ReactElement {
 
 	//Non
 	return (
-		<material.Card {...cardProps}>
+		<material.Card className={classes.root}>
 			{cardMedia}
 			{cardContent}
 		</material.Card>
