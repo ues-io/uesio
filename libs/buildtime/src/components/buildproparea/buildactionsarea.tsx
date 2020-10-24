@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { definition, builder } from "@uesio/ui"
 
@@ -39,7 +39,7 @@ function getActionHandler(type?: string) {
 	}
 }
 
-function BuildActionsArea(props: Props): ReactElement {
+const BuildActionsArea: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const actions = props.actions
 	//const propsDef = props.buildPropsDef
@@ -52,17 +52,17 @@ function BuildActionsArea(props: Props): ReactElement {
 		<div className={classes.wrapper}>
 			<DeleteAction {...actionProps}></DeleteAction>
 			<MoveActions {...actionProps}></MoveActions>
-			{actions &&
-				actions.map((action) => {
-					const ActionHandler = getActionHandler(action.type)
-					if (ActionHandler) {
-						return (
-							<ActionHandler
-								{...{ ...actionProps, ...{ action } }}
-							></ActionHandler>
-						)
-					}
-				})}
+			{actions?.map?.((action, index) => {
+				const ActionHandler = getActionHandler(action.type)
+				if (ActionHandler) {
+					return (
+						<ActionHandler
+							key={index}
+							{...{ ...actionProps, ...{ action } }}
+						></ActionHandler>
+					)
+				}
+			})}
 		</div>
 	)
 }
