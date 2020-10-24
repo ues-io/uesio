@@ -31,7 +31,7 @@ const WiresToolbar: FC<Props> = (props: Props) => {
 						"newwire" + (Math.floor(Math.random() * 60) + 1)
 					)
 				}}
-			></ToolbarTitle>
+			/>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{definition &&
 					Object.keys(definition).map(
@@ -46,7 +46,7 @@ const WiresToolbar: FC<Props> = (props: Props) => {
 									icon={Power}
 									key={index}
 									selected={wirePath === selectedNode}
-								></PropNodeTag>
+								/>
 							)
 						}
 					)}
