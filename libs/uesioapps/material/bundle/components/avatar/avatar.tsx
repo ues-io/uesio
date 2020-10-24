@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { material, styles } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"
@@ -17,13 +17,9 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Avatar(props: AvatarProps): ReactElement {
+const Avatar: FunctionComponent<AvatarProps> = (props) => {
 	const classes = useStyles(props)
-	const avatarProps = {
-		className: classes.root,
-	}
-
-	return <material.Avatar {...avatarProps}>BH</material.Avatar>
+	return <material.Avatar className={classes.root}>BH</material.Avatar>
 }
 
 export default Avatar
