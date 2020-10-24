@@ -1,14 +1,7 @@
-import * as React from "react"
+import React, { useState, useRef, FunctionComponent } from "react"
 import { useCombobox } from "downshift"
 import { material, definition } from "@uesio/ui"
 import debounce from "lodash.debounce"
-
-//TODO:: Come up with a better way to do this.
-//Could not rely on state hooks because the value would
-//be function scoped to that particular rendering of the component
-//We need some way to know that the request options we are processing were
-//from the very latest of the requests sent.
-let HACKY_lastInputChange = 0
 
 type DropDownProps = {
 	value: string
@@ -24,13 +17,17 @@ type SelectedItem = {
 	value: string
 }
 
-const AutoCompleteField = (props: DropDownProps): React.ReactElement | null => {
-	const [loading, setLoading] = React.useState(false)
-	const startingOptions: { value: string }[] = []
-	const [inputItems, setInputItems] = React.useState(startingOptions)
-	const options = loading ? [{ value: "loading..." }] : inputItems
+const AutoCompleteField: FunctionComponent<DropDownProps> = ({
+	getItems,
+	value,
+	setValue,
+}) => {
+	const [loading, setLoading] = useState(false)
+	const [inputItems, setInputItems] = useState<{ value: string }[]>([])
+	const lastInputChange = useRef<number>(0)
 
-	const debouncedRequest = debounce(props.getItems, 200)
+	const options = loading ? [{ value: "loading..." }] : inputItems
+	const debouncedRequest = debounce(getItems, 200)
 
 	const {
 		isOpen,
@@ -47,19 +44,17 @@ const AutoCompleteField = (props: DropDownProps): React.ReactElement | null => {
 			}
 			return ""
 		},
-		initialSelectedItem: {
-			value: props.value,
-		},
+		initialSelectedItem: { value },
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem as SelectedItem
 			if (!selectedItem) {
 				return
 			}
-			props.setValue(selectedItem.id)
+			setValue(selectedItem.id)
 		},
 		onInputValueChange: ({ inputValue, type }) => {
-			HACKY_lastInputChange = Date.now()
-			const inputChangeTimestamp = HACKY_lastInputChange
+			lastInputChange.current = Date.now()
+			const inputChangeTimestamp = lastInputChange.current
 
 			if (type !== useCombobox.stateChangeTypes.InputChange) {
 				//The user likely just selected an item.
@@ -71,7 +66,7 @@ const AutoCompleteField = (props: DropDownProps): React.ReactElement | null => {
 			if (!inputValue) {
 				setLoading(false)
 				setInputItems([])
-				props.setValue(null)
+				setValue(null)
 
 				return
 			}
@@ -81,8 +76,8 @@ const AutoCompleteField = (props: DropDownProps): React.ReactElement | null => {
 				//but while previous the request was still in flight -
 				//so we should do nothing
 
-				if (inputChangeTimestamp < HACKY_lastInputChange) return
-				HACKY_lastInputChange = 0
+				if (inputChangeTimestamp < lastInputChange.current) return
+				lastInputChange.current = 0
 				setLoading(false)
 				setInputItems(result)
 			})
