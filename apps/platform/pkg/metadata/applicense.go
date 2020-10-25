@@ -8,19 +8,10 @@ type AppLicense struct {
 }
 
 // Seed config values (these are necessary to make things work)
-var defaultAppLicenses = AppLicenseCollection{
+var DefaultAppLicenses = AppLicenseCollection{
 	{
 		AppRef:         "crm",
 		LicensedAppRef: "uesio",
 	},
 }
 
-// GetAppLicense key
-func GetAppLicense(app, appToCheck string) (*AppLicense, error) {
-	for _, av := range defaultAppLicenses {
-		if av.AppRef == app && av.LicensedAppRef == appToCheck {
-			return &av, nil
-		}
-	}
-	return nil, nil
-}

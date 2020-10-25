@@ -41,7 +41,7 @@ func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
 	}
 
 	// Check to see if we have a license to use this namespace
-	license, err := metadata.GetAppLicense(site.AppRef, namespace)
+	license, err := GetAppLicense(site.AppRef, namespace)
 	if err != nil {
 		return "", err
 	}
