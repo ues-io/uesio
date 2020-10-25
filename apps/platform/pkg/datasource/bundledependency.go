@@ -10,9 +10,12 @@ import (
 
 func AddDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) error {
 	//Just verify the bundle exists
-	_, err := getBundleMetadataById(bundleID, site, sess)
+	bm, err := getBundleMetadataById(bundleID, site, sess)
 	if err != nil {
 		return err
+	}
+	if bm.Namespace == site.GetWorkspaceApp() {
+		return errors.New("cannot depend on self")
 	}
 	bundleDeps := metadata.BundleDependencyCollection{
 		metadata.BundleDependency{
@@ -20,6 +23,7 @@ func AddDependency(workspaceID string, bundleID string, site *metadata.Site, ses
 			BundleID:    bundleID,
 		},
 	}
+
 
 	_, err = PlatformSave([]PlatformSaveRequest{
 		{
@@ -32,7 +36,7 @@ func AddDependency(workspaceID string, bundleID string, site *metadata.Site, ses
 	return nil
 }
 
-func getBundleDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) (*metadata.BundleDependency, error) {
+func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, site *metadata.Site, sess *session.Session) (metadata.BundleDependencyCollection, error) {
 	bdc := metadata.BundleDependencyCollection{}
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -43,23 +47,49 @@ func getBundleDependency(workspaceID string, bundleID string, site *metadata.Sit
 				"itemWire",
 				bdc.GetName(),
 				bdc.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field:    "uesio.workspaceid",
-						Value:    workspaceID,
-						Operator: "=",
-					},
-					{
-						Field:    "uesio.bundleID",
-						Value:    bundleID,
-						Operator: "=",
-					},
-				},
+				conditions,
 			),
 		},
 		site,
 		sess,
 	)
+	return bdc, err
+}
+
+func GetBundleDependenciesForWorkspace(workspaceID string, site *metadata.Site, sess *session.Session) (*metadata.BundleDependencyCollection, error) {
+	bdc, err := bundleDependencyLoad(
+		[]reqs.LoadRequestCondition{
+			{
+				Field:    "uesio.workspaceid",
+				Value:    workspaceID,
+				Operator: "=",
+			},
+		},
+
+		site,
+		sess)
+	if err != nil {
+		return nil, err
+	}
+	return &bdc, nil
+}
+func getBundleDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) (*metadata.BundleDependency, error) {
+	bdc, err := bundleDependencyLoad(
+		[]reqs.LoadRequestCondition{
+			{
+				Field:    "uesio.workspaceid",
+				Value:    workspaceID,
+				Operator: "=",
+			},
+			{
+				Field:    "uesio.bundleID",
+				Value:    bundleID,
+				Operator: "=",
+			},
+		},
+
+		site,
+		sess)
 	if err != nil {
 		return nil, err
 	}

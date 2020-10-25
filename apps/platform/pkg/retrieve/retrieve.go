@@ -2,6 +2,8 @@ package retrieve
 
 import (
 	"archive/zip"
+	"bufio"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"io"
 	"path/filepath"
 	"reflect"
@@ -48,9 +50,73 @@ func Retrieve(site *metadata.Site, sess *session.Session) ([]reqs.ItemStream, er
 		}
 
 	}
+	bundleYaml, err := generateBundleYaml(site, sess)
+	if err != nil {
+		return nil, err
+	}
+	itemStreams = append(itemStreams, *bundleYaml)
 
 	return itemStreams, nil
 
+}
+
+//Maybe pull this from somewhere else
+func decodeYAML(v interface{}, reader *bufio.Reader) error {
+	decoder := yaml.NewDecoder(reader)
+	err := decoder.Decode(v)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func generateBundleYaml(site *metadata.Site, sess *session.Session) (*reqs.ItemStream, error) {
+	itemStream := reqs.ItemStream{
+		Path: "bundle.yaml",
+	}
+	var by metadata.BundleYaml
+	by.Name = site.GetWorkspaceApp()
+	bdc, err := datasource.GetBundleDependenciesForWorkspace(site.GetWorkspaceID(), site, sess)
+
+	if err != nil {
+		return nil, err
+	}
+	if len(*bdc) != 0 {
+		by.Dependencies = map[string]metadata.BundleYamlDep{}
+	}
+	for _, bd := range *bdc {
+		name, version, err := bd.GetNameAndVersion()
+		if err != nil {
+			return nil, err
+		}
+		bundleStore := bundlestore.GetBundleStoreByNamespace(name)
+		dep, err := getBundleYamlForDep(bundleStore, name, version)
+		if err != nil {
+			return nil, err
+		}
+		by.Dependencies[name] = *dep
+	}
+	err = yaml.NewEncoder(&itemStream.Buffer).Encode(by)
+	if err != nil {
+		return nil, err
+	}
+	return &itemStream, nil
+}
+
+func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, version string) (*metadata.BundleYamlDep, error) {
+	dep := metadata.BundleYamlDep{Version: version}
+
+	reader, closer, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
+	if err != nil {
+		return nil, err
+	}
+	defer closer.Close()
+
+	err = decodeYAML(&dep, reader)
+	if err != nil {
+		return nil, err
+	}
+	return &dep, nil
 }
 
 // Zip function
