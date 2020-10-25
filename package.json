@@ -21,7 +21,7 @@
   "help": "nx help",
   "lint": "nx workspace-lint && nx lint",
   "nx": "nx",
-  "start": "nx serve",
+  "start": "nx serve platform",
   "test": "nx test",
   "update": "nx migrate latest",
   "workspace-schematic": "nx workspace-schematic",
