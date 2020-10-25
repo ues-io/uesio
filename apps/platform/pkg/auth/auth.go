@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	site2 "github.com/thecloudmasters/uesio/pkg/site"
 	"strings"
 
 	"github.com/icza/session"
@@ -53,7 +54,7 @@ func GetSiteFromHost(host string) (*metadata.Site, error) {
 		hostParts := strings.Split(host, ":")
 		domain = hostParts[0] // Strip off the port
 	}
-	site, err := metadata.GetSiteFromDomain(domainType, domain)
+	site, err := site2.GetSiteFromDomain(domainType, domain)
 	if err != nil {
 		return nil, err
 	}

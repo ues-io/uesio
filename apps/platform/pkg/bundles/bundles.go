@@ -3,6 +3,7 @@ package bundles
 import (
 	"bufio"
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/dependencyresolver"
 	"strings"
 
 	"github.com/icza/session"
@@ -82,7 +83,7 @@ func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.Permiss
 
 // LoadAll function
 func LoadAll(group metadata.BundleableGroup, namespace string, site *metadata.Site, sess *session.Session) error {
-	version, err := metadata.GetVersionFromSite(namespace, site)
+	version, err := dependencyresolver.GetVersionFromSite(namespace, site)
 	if err != nil {
 		return errors.New("Failed to Load Metadata Item: " + namespace + " - " + err.Error())
 	}
@@ -105,7 +106,7 @@ func Load(item metadata.BundleableItem, site *metadata.Site, sess *session.Sessi
 	namespace := item.GetNamespace()
 	key := item.GetKey()
 
-	version, err := metadata.GetVersionFromSite(namespace, site)
+	version, err := dependencyresolver.GetVersionFromSite(namespace, site)
 	if err != nil {
 		return errors.New("Failed to Load Metadata Item: " + key + " - " + err.Error())
 	}

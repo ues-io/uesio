@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
+	site2 "github.com/thecloudmasters/uesio/pkg/site"
 	"os"
 	"path/filepath"
 	"time"
@@ -74,7 +75,7 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	site, err := metadata.GetSite("studio")
+	site, err := site2.GetSite("studio")
 	if err != nil {
 		logger.LogError(err)
 		return

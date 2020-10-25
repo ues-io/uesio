@@ -27,7 +27,7 @@ func (s *Site) GetWorkspaceApp() string {
 }
 
 // Seed config values (these are necessary to make things work)
-var defaultSites = SiteCollection{
+var DefaultSites = SiteCollection{
 	{
 		Name:       "studio",
 		AppRef:     "uesio",
@@ -35,32 +35,3 @@ var defaultSites = SiteCollection{
 	},
 }
 
-// GetSite key
-func GetSite(name string) (*Site, error) {
-	for _, s := range defaultSites {
-		if s.Name == name {
-			version, err := GetAppVersion(s.AppRef, s.VersionRef)
-			if err != nil {
-				return nil, err
-			}
-			s.AppVersion = version
-			return &s, nil
-		}
-	}
-	return nil, nil
-}
-
-// GetSiteFromDomain function
-func GetSiteFromDomain(domainType, domain string) (*Site, error) {
-	siteDomain, err := GetDomain(domainType, domain)
-	if err != nil {
-		return nil, err
-	}
-
-	if siteDomain == nil {
-		// Just default to the studio site
-		return GetSite("studio")
-	}
-
-	return GetSite(siteDomain.Site)
-}
