@@ -109,10 +109,10 @@ function MetadataProp(props: PropRendererProps): ReactElement | null {
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>
-				<SelectProp {...namespaceProps}></SelectProp>
+				<SelectProp {...namespaceProps} />
 			</material.Grid>
 			<material.Grid item xs={6}>
-				<SelectProp {...collectionProps}></SelectProp>
+				<SelectProp {...collectionProps} />
 			</material.Grid>
 		</material.Grid>
 	)

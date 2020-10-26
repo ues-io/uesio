@@ -38,7 +38,7 @@ const LeftToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 						path: "",
 						context: props.context,
 					}}
-				></LeftBuildbar>
+				/>
 			)}
 		</Fragment>
 	)

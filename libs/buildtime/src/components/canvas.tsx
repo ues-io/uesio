@@ -66,7 +66,7 @@ const Canvas: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 						params: route.params,
 					},
 				}}
-			></component.View>
+			/>
 		</div>
 	)
 }

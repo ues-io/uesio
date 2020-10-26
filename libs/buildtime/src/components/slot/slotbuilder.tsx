@@ -154,31 +154,27 @@ function SlotBuilder(props: SlotProps): ReactElement | null {
 			onDrop={onDrop}
 			className={classNames.join(" ")}
 		>
-			{items
-				? items.map((itemDef, index) => {
-						return (
-							<SlotItem
-								key={index}
-								{...{
-									path,
-									index,
-									definition: itemDef,
-									isExpanded,
-									direction,
-									size,
-									componentType: "",
-									context: context,
-									accepts,
-									dragNode,
-									dropNode,
-								}}
-							></SlotItem>
-						)
-				  })
-				: []}
-			{addPlaceholder && (
-				<div className={placeHolderClasses.join(" ")}></div>
-			)}
+			{items?.map((itemDef, index) => {
+				return (
+					<SlotItem
+						key={index}
+						{...{
+							path,
+							index,
+							definition: itemDef,
+							isExpanded,
+							direction,
+							size,
+							componentType: "",
+							context: context,
+							accepts,
+							dragNode,
+							dropNode,
+						}}
+					/>
+				)
+			})}
+			{addPlaceholder && <div className={placeHolderClasses.join(" ")} />}
 		</div>
 	)
 }

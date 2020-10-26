@@ -33,9 +33,9 @@ const Buildtime: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 				display: "flex",
 			}}
 		>
-			<LeftToolbar {...toolbarProps}></LeftToolbar>
-			<Canvas {...toolbarProps}></Canvas>
-			<RightToolbar {...toolbarProps}></RightToolbar>
+			<LeftToolbar {...toolbarProps} />
+			<Canvas {...toolbarProps} />
+			<RightToolbar {...toolbarProps} />
 		</div>
 	)
 }

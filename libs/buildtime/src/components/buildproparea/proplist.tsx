@@ -13,21 +13,19 @@ function PropList(props: Props): ReactElement | null {
 	return (
 		<Fragment>
 			{properties.map(
-				(descriptor: builder.PropDescriptor, index: number) => {
-					return (
-						<BuildPropItem
-							key={index}
-							{...{
-								path: props.path,
-								definition: props.definition,
-								descriptor: descriptor,
-								index,
-								componentType: "",
-								context: props.context,
-							}}
-						></BuildPropItem>
-					)
-				}
+				(descriptor: builder.PropDescriptor, index: number) => (
+					<BuildPropItem
+						key={index}
+						{...{
+							path: props.path,
+							definition: props.definition,
+							descriptor: descriptor,
+							index,
+							componentType: "",
+							context: props.context,
+						}}
+					/>
+				)
 			)}
 		</Fragment>
 	)

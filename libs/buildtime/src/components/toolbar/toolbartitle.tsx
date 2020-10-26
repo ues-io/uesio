@@ -56,7 +56,7 @@ const ToolbarTitle: FC<Props> = (props: Props) => {
 						icon={props.icon}
 						color={props.iconColor}
 						onClick={props.iconOnClick}
-					></SmallIconButton>
+					/>
 				)}
 			</div>
 		</div>

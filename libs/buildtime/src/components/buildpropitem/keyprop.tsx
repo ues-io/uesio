@@ -39,7 +39,7 @@ function KeyProp(props: PropRendererProps): ReactElement {
 					setValue(event.target.value)
 				},
 			}}
-		></TextField>
+		/>
 	)
 }
 

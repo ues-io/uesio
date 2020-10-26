@@ -44,7 +44,7 @@ const RightBuildbar: FC<Props> = (props: Props) => {
 							path: "",
 							context: props.context,
 						}}
-					></current.component>
+					/>
 				</material.Paper>
 			)}
 		</MiniToolbar>

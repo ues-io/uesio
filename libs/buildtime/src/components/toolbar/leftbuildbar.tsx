@@ -61,16 +61,14 @@ const LeftBuildbar: FC<Props> = (props: Props) => {
 					margin: "8px 0",
 				}}
 			>
-				{
-					<PropertiesPanel
-						path={trimmedPath}
-						index={0}
-						componentType={""}
-						context={props.context}
-						definition={definition}
-						propDef={propDef}
-					></PropertiesPanel>
-				}
+				<PropertiesPanel
+					path={trimmedPath}
+					index={0}
+					componentType=""
+					context={props.context}
+					definition={definition}
+					propDef={propDef}
+				/>
 			</material.Paper>
 			<material.Paper
 				style={{
