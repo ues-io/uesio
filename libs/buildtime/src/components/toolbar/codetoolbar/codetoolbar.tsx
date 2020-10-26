@@ -1,17 +1,14 @@
-import React, { FC, Fragment } from "react"
+import React, { FC, Fragment, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 
-let currentAST: yaml.Document | undefined
-
 const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
-
-	currentAST = yamlDoc
+	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 
 	return (
 		<Fragment>
@@ -32,8 +29,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 						}
 						event.changes.forEach((change) => {
 							if (
-								currentAST &&
-								currentAST.contents &&
+								currentAST.current?.contents &&
 								newAST &&
 								newAST.contents
 							) {
@@ -47,7 +43,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 										startPath,
 									] = util.yaml.getNodeAtOffset(
 										change.rangeOffset,
-										currentAST.contents,
+										currentAST.current.contents,
 										""
 									)
 									const [
@@ -55,7 +51,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 										endPath,
 									] = util.yaml.getNodeAtOffset(
 										change.rangeOffset + change.rangeLength,
-										currentAST.contents,
+										currentAST.current.contents,
 										""
 									)
 
@@ -65,7 +61,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 									)
 									const commonNode = util.yaml.getNodeAtPath(
 										commonPath,
-										currentAST.contents
+										currentAST.current.contents
 									)
 
 									if (commonNode && commonPath) {
@@ -88,7 +84,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 							}
 						})
 
-						currentAST = newAST
+						currentAST.current = newAST
 					},
 					editorWillMount(/*monaco*/): void {
 						/*
@@ -138,7 +134,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 					editorDidMount: (editor /*, monaco*/): void => {
 						// Set currentAST again because sometimes monaco reformats the text
 						// (like removing trailing spaces and such)
-						currentAST = util.yaml.parse(editor.getValue())
+						currentAST.current = util.yaml.parse(editor.getValue())
 						editor.onDidChangeCursorPosition((e) => {
 							const model = editor.getModel()
 							const position = e.position
@@ -146,7 +142,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 								model &&
 								position &&
 								currentAST &&
-								currentAST.contents
+								currentAST?.current?.contents
 							) {
 								const offset = model.getOffsetAt(position)
 								const [
@@ -154,7 +150,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 									nodePath,
 								] = util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.contents,
+									currentAST?.current.contents,
 									"",
 									true
 								)
@@ -171,7 +167,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 								model &&
 								position &&
 								currentAST &&
-								currentAST.contents
+								currentAST?.current?.contents
 							) {
 								const offset = model.getOffsetAt(position)
 								const [
@@ -179,7 +175,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 									nodePath,
 								] = util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.contents,
+									currentAST.current.contents,
 									"",
 									true
 								)
