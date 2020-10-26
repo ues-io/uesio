@@ -141,7 +141,6 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 							if (
 								model &&
 								position &&
-								currentAST &&
 								currentAST.current?.contents
 							) {
 								const offset = model.getOffsetAt(position)
@@ -166,7 +165,6 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 							if (
 								model &&
 								position &&
-								currentAST &&
 								currentAST.current?.contents
 							) {
 								const offset = model.getOffsetAt(position)
