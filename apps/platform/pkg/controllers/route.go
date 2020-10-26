@@ -80,8 +80,9 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	path := vars["route"]
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	prefix := "/site/routes/" + namespace + "/"
 
@@ -134,8 +135,9 @@ func ServeRoute() http.HandlerFunc {
 		namespace := vars["namespace"]
 		path := vars["route"]
 
-		site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-		sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+		s := middlewares.GetSession(r)
+		sess := s.GetBrowserSession()
+		site := s.GetSite()
 
 		prefix := "/app/" + namespace + "/"
 
@@ -160,8 +162,9 @@ func ServeLocalRoute() http.HandlerFunc {
 		vars := mux.Vars(r)
 		path := vars["route"]
 
-		site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-		sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+		s := middlewares.GetSession(r)
+		sess := s.GetBrowserSession()
+		site := s.GetSite()
 
 		route, err := getRoute(r, site.AppRef, path, "/", site, sess)
 		if err != nil {

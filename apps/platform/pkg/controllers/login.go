@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // LoginRequest struct
@@ -41,15 +40,22 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 3. Get siteName from context
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
+	s := middlewares.GetSession(r)
+	site := s.GetSite()
 
-	sess, err := auth.Login(loginRequest.Type, loginRequest.Token, site)
+	user, err := auth.Login(loginRequest.Type, loginRequest.Token, site)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	session.Add(*sess, w)
+
+	session, err := sess.Login(w, user, site)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
@@ -69,7 +75,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginResponse := &LoginResponse{
-		User: GetUserMergeData(sess),
+		User: GetUserMergeData(session.GetBrowserSession()),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,

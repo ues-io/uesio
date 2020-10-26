@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func init() {
@@ -49,27 +50,17 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), SiteKey, site)
-
-		sess := session.Get(r)
-		if sess == nil {
-			newSession, err := auth.CreatePublicSession(site)
-			if err != nil {
-				http.Error(w, "Failed to create session", http.StatusInternalServerError)
-				return
-			}
-			sess = *newSession
-			// Don't add the session cookie for the login route
-			if r.URL.Path != "/site/auth/login" {
-				session.Add(sess, w)
-			}
+		s, err := sess.GetSessionFromRequest(w, r, site)
+		if err != nil {
+			http.Error(w, "Failed to create session", http.StatusInternalServerError)
+			return
 		}
 
 		// TODO: Possibly verify that the siteName on the session
 		// matches the siteName we got from our host
 
 		// We have a session, use it
-		ctx = context.WithValue(ctx, SessionKey, &sess)
+		ctx := context.WithValue(r.Context(), sessionKey, s)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -81,8 +72,9 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 
-		site := r.Context().Value(SiteKey).(*metadata.Site)
-		sess := r.Context().Value(SessionKey).(*session.Session)
+		s := GetSession(r)
+		site := s.GetSite()
+		sess := s.GetBrowserSession()
 
 		// Get the Workspace from the DB
 		var apps metadata.AppCollection

@@ -2,10 +2,11 @@ package auth
 
 import (
 	"errors"
-	site2 "github.com/thecloudmasters/uesio/pkg/site"
 	"strings"
 
-	"github.com/icza/session"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+	site2 "github.com/thecloudmasters/uesio/pkg/site"
+
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -69,7 +70,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
-	sess, err := CreatePublicSession(site)
+	s, err := sess.CreatePublicBrowserSession(site)
 	if err != nil {
 		return err
 	}
@@ -90,7 +91,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 				},
 			},
 		},
-	}, site, sess)
+	}, site, s)
 	return err
 }
 
@@ -152,34 +153,12 @@ func ProvisionUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata
 	return user, nil
 }
 
-// CreateSession function
-func CreateSession(user *metadata.User, site *metadata.Site) (*session.Session, error) {
-	sess := session.NewSessionOptions(&session.SessOptions{
-		CAttrs: map[string]interface{}{
-			"Profile":   user.Profile,
-			"Site":      site.Name,
-			"FirstName": user.FirstName,
-			"LastName":  user.LastName,
-		},
-	})
-	return &sess, nil
-}
-
-// CreatePublicSession function
-func CreatePublicSession(site *metadata.Site) (*session.Session, error) {
-	return CreateSession(&metadata.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		Profile:   "uesio.public",
-	}, site)
-}
-
 // GetUser function
 func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User, error) {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
-	sess, err := CreatePublicSession(site)
+	s, err := sess.CreatePublicBrowserSession(site)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +169,7 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 		},
 		users.AuthClaimsRequest(claims.AuthType, claims.Subject, site.Name),
 		site,
-		sess,
+		s,
 	)
 	if err != nil {
 		return nil, err

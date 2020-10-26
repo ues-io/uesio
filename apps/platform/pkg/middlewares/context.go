@@ -1,10 +1,16 @@
 package middlewares
 
+import (
+	"net/http"
+
+	"github.com/thecloudmasters/uesio/pkg/sess"
+)
+
 type sessionContextKey string
-type siteContextKey string
 
-// SessionKey context key
-const SessionKey sessionContextKey = "session"
+const sessionKey sessionContextKey = "session"
 
-// SiteKey context key
-const SiteKey siteContextKey = "site"
+// GetSession function
+func GetSession(r *http.Request) *sess.Session {
+	return r.Context().Value(sessionKey).(*sess.Session)
+}

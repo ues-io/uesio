@@ -2,12 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
 	"net/http"
 	"reflect"
 
+	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
+
 	"github.com/gorilla/mux"
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -17,8 +17,9 @@ import (
 
 // MetadataList is good
 func MetadataList(w http.ResponseWriter, r *http.Request) {
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	vars := mux.Vars(r)
 	metadatatype := vars["type"]
@@ -82,8 +83,9 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 // NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	namespaces, err := workspacedependencies.GetValidNamespaces(site, sess)
 	if err != nil {
