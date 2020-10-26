@@ -150,7 +150,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 									nodePath,
 								] = util.yaml.getNodeAtOffset(
 									offset,
-									currentAST?.current.contents,
+									currentAST.current.contents,
 									"",
 									true
 								)
