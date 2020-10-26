@@ -35,9 +35,8 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 					label={descriptor.label}
 				/>
 			)
-			break
 		case "select":
-			let optionslist: builder.PropertySelectOption[] = [
+			const optionslist: builder.PropertySelectOption[] = [
 				{
 					value: "true",
 					label: "True",
@@ -72,22 +71,16 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 						},
 					}}
 				>
-					{optionslist &&
-						optionslist.map(
-							(option: builder.PropertySelectOption) => {
-								return (
-									<option
-										key={option.value}
-										value={option.value}
-									>
-										{option.label}
-									</option>
-								)
-							}
-						)}
+					{optionslist?.map(
+						(option: builder.PropertySelectOption) => (
+							<option key={option.value} value={option.value}>
+								{option.label}
+							</option>
+						)
+					)}
 				</TextField>
 			)
-			break
+
 		default:
 			//Checkbox as default
 			return (
