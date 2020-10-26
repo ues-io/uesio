@@ -142,7 +142,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 								model &&
 								position &&
 								currentAST &&
-								currentAST?.current?.contents
+								currentAST.current?.contents
 							) {
 								const offset = model.getOffsetAt(position)
 								const [
