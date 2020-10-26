@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
 	"net/http"
 	"reflect"
 
@@ -84,7 +85,7 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
 	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
 
-	namespaces, err := metadata.GetValidNamespaces(site, sess)
+	namespaces, err := workspacedependencies.GetValidNamespaces(site, sess)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
