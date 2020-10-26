@@ -22,7 +22,13 @@ func getBasePath(namespace, version string) string {
 }
 
 func (b *LocalBundleStore) GetItem(namespace string, version string, objectname string, name string) (*bufio.Reader, io.Closer, error) {
-	filePath := filepath.Join(getBasePath(namespace, version), objectname, name)
+	var filePath string
+	if objectname == "" {
+		filePath = filepath.Join(getBasePath(namespace, version), name)
+		//Bundle.yaml probably
+	} else {
+		filePath = filepath.Join(getBasePath(namespace, version), objectname, name)
+	}
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
