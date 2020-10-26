@@ -100,7 +100,7 @@ function ExpandPanel(props: PropsWithChildren<Props>): ReactElement {
 						style={{
 							fontSize: "1.25rem",
 						}}
-					></ExpandMoreIcon>
+					/>
 				}
 				IconButtonProps={{
 					size: "small",
@@ -126,7 +126,7 @@ function ExpandPanel(props: PropsWithChildren<Props>): ReactElement {
 							}}
 							icon={props.action}
 							color={props.actionColor}
-						></SmallIconButton>
+						/>
 					)}
 				</div>
 			</AccordionSummary>

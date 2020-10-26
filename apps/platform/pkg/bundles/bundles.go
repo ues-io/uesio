@@ -102,17 +102,6 @@ func LoadAll(group metadata.BundleableGroup, namespace string, site *metadata.Si
 	return nil
 }
 
-// GetAppLicense key
-//TODO:: JAS Add licensing as a thing
-func GetAppLicense(app, appToCheck string) (*metadata.AppLicense, error) {
-	for _, av := range metadata.DefaultAppLicenses {
-		if av.AppRef == app && av.LicensedAppRef == appToCheck {
-			return &av, nil
-		}
-	}
-	return nil, nil
-}
-
 func GetBundleYaml(name string, version string) (*metadata.BundleYaml, error) {
 	var by metadata.BundleYaml
 	bundleStore := bundlestore.GetBundleStoreByNamespace(name)

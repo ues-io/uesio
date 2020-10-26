@@ -17,7 +17,7 @@ const RightToolbar: FC<definition.BaseProps> = (
 						...props,
 						selectedPanel,
 					}}
-				></RightBuildbar>
+				/>
 			)}
 			<RightNavbar
 				{...{
@@ -28,7 +28,7 @@ const RightToolbar: FC<definition.BaseProps> = (
 						)
 					},
 				}}
-			></RightNavbar>
+			/>
 		</Fragment>
 	)
 }

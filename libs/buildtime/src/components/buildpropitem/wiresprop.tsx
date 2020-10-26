@@ -13,16 +13,14 @@ function WiresProp(props: PropRendererProps): ReactElement | null {
 		...props,
 		descriptor: {
 			...props.descriptor,
-			options: Object.keys(wires).map((wireId) => {
-				return {
-					value: wireId,
-					label: wireId,
-				}
-			}),
+			options: Object.keys(wires).map((wireId) => ({
+				value: wireId,
+				label: wireId,
+			})),
 		},
 	}
 
-	return <MultiSelectProp {...rendererProps}></MultiSelectProp>
+	return <MultiSelectProp {...rendererProps} />
 }
 
 export default WiresProp

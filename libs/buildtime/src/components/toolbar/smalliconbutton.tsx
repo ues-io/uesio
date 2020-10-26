@@ -26,7 +26,7 @@ function SmallIconButton(props: Props): ReactElement {
 					color,
 				}}
 				fontSize="small"
-			></props.icon>
+			/>
 		</IconButton>
 	)
 	if (props.title && !props.disabled) {

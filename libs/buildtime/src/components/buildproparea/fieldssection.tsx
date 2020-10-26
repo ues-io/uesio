@@ -91,7 +91,7 @@ function FieldsSection(props: SectionRendererProps): ReactElement | null {
 									}
 								}}
 								selected={selected}
-							></PropNodeTag>
+							/>
 						)
 					})}
 			</div>

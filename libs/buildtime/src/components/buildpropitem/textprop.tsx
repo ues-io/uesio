@@ -26,7 +26,7 @@ function TextProp(props: PropRendererProps): ReactElement {
 					props.setValue(event.target.value)
 				},
 			}}
-		></TextField>
+		/>
 	)
 }
 

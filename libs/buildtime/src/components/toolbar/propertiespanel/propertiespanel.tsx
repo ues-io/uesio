@@ -68,7 +68,8 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 	return (
 		<div className={classes.notFound}>
 			<div className={classes.notFoundInner}>
-				No Properties Definition Found for this Component<br></br>
+				No Properties Definition Found for this Component
+				<br />
 				{path}
 			</div>
 		</div>

@@ -30,7 +30,7 @@ const RightNavbar: FC<Props> = (props: Props) => {
 				onClick={(): void => {
 					uesio.builder.save()
 				}}
-			></MiniToolbarButton>
+			/>
 			<MiniToolbarButton
 				id="cancel"
 				icon={CancelIcon}
@@ -41,12 +41,12 @@ const RightNavbar: FC<Props> = (props: Props) => {
 				onClick={(): void => {
 					uesio.builder.cancel()
 				}}
-			></MiniToolbarButton>
+			/>
 			<Divider
 				style={{
 					margin: "8px 8px 0 8px",
 				}}
-			></Divider>
+			/>
 			<MiniToolbarButton
 				id="views"
 				icon={ViewDetailIcon}
@@ -68,14 +68,14 @@ const RightNavbar: FC<Props> = (props: Props) => {
 						props.context
 					)
 				}}
-			></MiniToolbarButton>
+			/>
 			<MiniToolbarButton
 				id="code"
 				icon={CodeIcon}
 				title="Code"
 				tooltipPlacement="left"
 				onClick={props.onChange}
-			></MiniToolbarButton>
+			/>
 		</MiniToolbar>
 	)
 }

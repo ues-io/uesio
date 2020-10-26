@@ -59,7 +59,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 						<ActionHandler
 							key={index}
 							{...{ ...actionProps, ...{ action } }}
-						></ActionHandler>
+						/>
 					)
 				}
 			})}

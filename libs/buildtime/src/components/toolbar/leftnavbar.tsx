@@ -30,7 +30,7 @@ const LeftNavbar: FC<Props> = (props: Props) => {
 					title: "Wires",
 					tooltipPlacement: "right",
 				}}
-			></MiniToolbarButton>
+			/>
 			<MiniToolbarButton
 				{...{
 					id: "components",
@@ -39,12 +39,12 @@ const LeftNavbar: FC<Props> = (props: Props) => {
 					title: "Components",
 					tooltipPlacement: "right",
 				}}
-			></MiniToolbarButton>
+			/>
 			<Divider
 				style={{
 					margin: "8px 8px 0 8px",
 				}}
-			></Divider>
+			/>
 			{props.viewMode === "expandedview" && (
 				<MiniToolbarButton
 					{...{
@@ -54,7 +54,7 @@ const LeftNavbar: FC<Props> = (props: Props) => {
 						title: "Switch To Compact View",
 						tooltipPlacement: "right",
 					}}
-				></MiniToolbarButton>
+				/>
 			)}
 			{props.viewMode !== "expandedview" && (
 				<MiniToolbarButton
@@ -65,7 +65,7 @@ const LeftNavbar: FC<Props> = (props: Props) => {
 						title: "Switch To Expanded View",
 						tooltipPlacement: "right",
 					}}
-				></MiniToolbarButton>
+				/>
 			)}
 		</MiniToolbar>
 	)

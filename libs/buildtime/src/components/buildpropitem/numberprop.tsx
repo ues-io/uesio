@@ -27,7 +27,7 @@ function NumberProp(props: PropRendererProps): ReactElement {
 					props.setValue(parseInt(event.target.value))
 				},
 			}}
-		></TextField>
+		/>
 	)
 }
 

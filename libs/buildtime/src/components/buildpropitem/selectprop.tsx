@@ -32,16 +32,11 @@ function SelectProp(props: PropRendererProps): ReactElement {
 			}}
 		>
 			<option value=""></option>
-			{descriptor.options &&
-				descriptor.options.map(
-					(option: builder.PropertySelectOption) => {
-						return (
-							<option key={option.value} value={option.value}>
-								{option.label}
-							</option>
-						)
-					}
-				)}
+			{descriptor.options?.map((option: builder.PropertySelectOption) => (
+				<option key={option.value} value={option.value}>
+					{option.label}
+				</option>
+			))}
 		</TextField>
 	)
 }

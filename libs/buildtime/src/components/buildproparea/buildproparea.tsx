@@ -37,25 +37,23 @@ function BuildPropArea(props: Props): ReactElement {
 							properties: propsDef.properties,
 							context: props.context,
 						}}
-					></PropList>
+					/>
 				</div>
 			)}
 			{propsDef.sections.map(
-				(section: builder.PropertySection, index: number) => {
-					return (
-						<BuildSection
-							key={index}
-							{...{
-								path: props.path,
-								definition: props.definition,
-								section,
-								index,
-								componentType: "",
-								context: props.context,
-							}}
-						></BuildSection>
-					)
-				}
+				(section: builder.PropertySection, index: number) => (
+					<BuildSection
+						key={index}
+						{...{
+							path: props.path,
+							definition: props.definition,
+							section,
+							index,
+							componentType: "",
+							context: props.context,
+						}}
+					/>
+				)
 			)}
 		</div>
 	)
