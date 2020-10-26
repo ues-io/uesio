@@ -3,12 +3,11 @@ package auth
 import (
 	"errors"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
 // Login func
-func Login(loginType, token string, site *metadata.Site) (*session.Session, error) {
+func Login(loginType, token string, site *metadata.Site) (*metadata.User, error) {
 	// 2. Get the authentication type
 	authType, err := GetAuthType(loginType)
 	if err != nil {
@@ -41,10 +40,5 @@ func Login(loginType, token string, site *metadata.Site) (*session.Session, erro
 		}
 	}
 
-	sess, err := CreateSession(user, site)
-	if err != nil {
-		return nil, errors.New("Failed Creating session" + err.Error())
-	}
-
-	return sess, nil
+	return user, nil
 }

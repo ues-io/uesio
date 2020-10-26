@@ -5,10 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
@@ -16,8 +14,9 @@ import (
 // UploadUserFile function
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 	details, err := reqs.ConvertQueryToFileDetails(r.URL.Query())
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -44,8 +43,9 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 // DownloadUserFile function
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
 		w.Write([]byte("No userfileid in the request URL query"))
@@ -68,8 +68,9 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 // DeleteUserFile function
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
 		w.Write([]byte("No userfileid in the request URL query"))

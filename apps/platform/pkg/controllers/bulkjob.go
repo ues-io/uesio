@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/bulk"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -29,8 +28,9 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	jobID, err := bulk.NewJob(&spec, site, sess)
 	if err != nil {

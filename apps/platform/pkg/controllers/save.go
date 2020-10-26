@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 )
 
@@ -26,8 +24,9 @@ func Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	response, err := datasource.Save(saveRequestBatch, site, sess)
 	if err != nil {

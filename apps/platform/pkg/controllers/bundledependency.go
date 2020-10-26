@@ -4,15 +4,16 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 )
 
+// AddDependency func
 func AddDependency(w http.ResponseWriter, r *http.Request) {
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
+
 	vars := mux.Vars(r)
 	bundleID := vars["bundleid"]
 	workspace := site.Workspace.ID
@@ -33,9 +34,12 @@ func AddDependency(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// RemoveDependency func
 func RemoveDependency(w http.ResponseWriter, r *http.Request) {
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
+
 	vars := mux.Vars(r)
 	bundleID := vars["bundleid"]
 	workspace := site.Workspace.ID

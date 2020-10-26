@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -35,8 +34,9 @@ type DependencyResponse map[string]interface{}
 // SaveViews is way good - so good
 func SaveViews(w http.ResponseWriter, r *http.Request) {
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	decoder := json.NewDecoder(r.Body)
 	var saveViewRequest SaveViewRequest
@@ -118,8 +118,9 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		viewNamespace := vars["namespace"]
 		viewName := vars["name"]
 
-		site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-		sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+		s := middlewares.GetSession(r)
+		sess := s.GetBrowserSession()
+		site := s.GetSite()
 
 		view := metadata.View{
 			Name:      viewName,
@@ -150,8 +151,9 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	viewNamespace := vars["namespace"]
 	viewName := vars["name"]
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	view := metadata.View{
 		Name:      viewName,
@@ -184,8 +186,9 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 	viewNamespace := vars["namespace"]
 	viewName := vars["name"]
 
-	site := r.Context().Value(middlewares.SiteKey).(*metadata.Site)
-	sess := r.Context().Value(middlewares.SessionKey).(*session.Session)
+	s := middlewares.GetSession(r)
+	sess := s.GetBrowserSession()
+	site := s.GetSite()
 
 	view := metadata.View{
 		Name:      viewName,

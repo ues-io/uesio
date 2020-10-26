@@ -3,15 +3,16 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
-	site2 "github.com/thecloudmasters/uesio/pkg/site"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/thecloudmasters/uesio/pkg/sess"
+	site2 "github.com/thecloudmasters/uesio/pkg/site"
+
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/spf13/cobra"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -81,7 +82,7 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	sess, err := auth.CreateSession(&metadata.User{
+	s, err := sess.CreateBrowserSession(&metadata.User{
 		Profile:   "uesio.standard",
 		FirstName: "seed",
 		LastName:  "seed",
@@ -98,7 +99,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &reqs.UpsertOptions{},
 			},
 		},
-	}, site, sess)
+	}, site, s)
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -111,7 +112,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &reqs.UpsertOptions{},
 			},
 		},
-	}, site, sess)
+	}, site, s)
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -129,7 +130,7 @@ func seed(cmd *cobra.Command, args []string) {
 				},
 			},
 		},
-	}, site, sess)
+	}, site, s)
 	if err != nil {
 		logger.LogError(err)
 		return
