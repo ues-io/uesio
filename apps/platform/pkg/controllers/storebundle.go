@@ -13,13 +13,12 @@ import (
 
 // StoreBundle function
 func StoreBundle(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	workspace := site.Workspace.ID
+	workspaceID := session.GetWorkspaceID()
+	workspaceApp := session.GetWorkspaceApp()
 
-	if workspace == "" {
+	if workspaceID == "" {
 		http.Error(w, "No Workspace provided for bundle storing", http.StatusBadRequest)
 		return
 	}
@@ -32,19 +31,19 @@ func StoreBundle(w http.ResponseWriter, r *http.Request) {
 	if description == "" {
 		http.Error(w, "Must provide a description in the request query", http.StatusBadRequest)
 	}
-	items, err := retrieve.Retrieve(site, sess)
+	items, err := retrieve.Retrieve(session)
 	if err != nil {
 		http.Error(w, "Failed to read workspace contents", http.StatusInternalServerError)
 		return
 	}
-	err = datasource.SaveBundleMetadata(site.Workspace.AppRef, version, description, site, sess)
+	err = datasource.SaveBundleMetadata(workspaceApp, version, description, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = bundlestore.StoreWorkspaceAsBundle(site.Workspace.AppRef, version, items)
+	err = bundlestore.StoreWorkspaceAsBundle(workspaceApp, version, items)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -10,11 +10,9 @@ import (
 
 // Migrate is good
 func Migrate(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	err := migrate.Migrate(site, sess)
+	err := migrate.Migrate(session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

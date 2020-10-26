@@ -24,11 +24,9 @@ func Save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	response, err := datasource.Save(saveRequestBatch, site, sess)
+	response, err := datasource.Save(saveRequestBatch, session)
 	if err != nil {
 		msg := "Save Failed: " + err.Error()
 		logger.Log(msg, logger.ERROR)

@@ -3,20 +3,20 @@ package filesource
 import (
 	"io"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Download function
-func Download(userFileID string, site *metadata.Site, sess *session.Session) (io.ReadCloser, string, error) {
-	userFile, err := datasource.GetUserFile(userFileID, site, sess)
+func Download(userFileID string, session *sess.Session) (io.ReadCloser, string, error) {
+	site := session.GetSite()
+	userFile, err := datasource.GetUserFile(userFileID, session)
 	if err != nil {
 		return nil, "", err
 	}
 
-	ufc, fs, err := datasource.GetFileSourceAndCollection(userFile.FileCollectionID, site, sess)
+	ufc, fs, err := datasource.GetFileSourceAndCollection(userFile.FileCollectionID, session)
 
 	if err != nil {
 		return nil, "", err
@@ -26,7 +26,7 @@ func Download(userFileID string, site *metadata.Site, sess *session.Session) (io
 	if err != nil {
 		return nil, "", err
 	}
-	path, err := ufc.GetPath(userFile, site)
+	path, err := ufc.GetPath(userFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return nil, "", err
 	}

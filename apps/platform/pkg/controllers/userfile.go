@@ -14,9 +14,7 @@ import (
 // UploadUserFile function
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 	details, err := reqs.ConvertQueryToFileDetails(r.URL.Query())
 	if err != nil {
 		w.Write([]byte(err.Error()))
@@ -31,7 +29,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	details.ContentLength = contentLen
 
-	newID, err := filesource.Upload(r.Body, *details, site, sess)
+	newID, err := filesource.Upload(r.Body, *details, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,15 +41,13 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 // DownloadUserFile function
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
 		w.Write([]byte("No userfileid in the request URL query"))
 		return
 	}
-	fileStream, mimeType, err := filesource.Download(userFileID, site, sess)
+	fileStream, mimeType, err := filesource.Download(userFileID, session)
 	if err != nil {
 		w.Write([]byte("Unable to load file"))
 		return
@@ -68,16 +64,14 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 // DeleteUserFile function
 func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
 		w.Write([]byte("No userfileid in the request URL query"))
 		return
 	}
 
-	err := filesource.Delete(userFileID, site, sess)
+	err := filesource.Delete(userFileID, session)
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return

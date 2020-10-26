@@ -3,9 +3,8 @@ package datasource
 import (
 	"strings"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // ParseSelectListKey function
@@ -69,30 +68,30 @@ func (mr *MetadataRequest) GetSelectListKey(collectionName, fieldName, selectLis
 }
 
 // Load function
-func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collatedMetadata map[string]*adapters.MetadataCache, site *metadata.Site, sess *session.Session) error {
+func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collatedMetadata map[string]*adapters.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
-		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, site, sess)
+		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session)
 		if err != nil {
 			return err
 		}
 
 		// Automagially add the id field and the name field whether they were requested or not.
-		_, err = LoadFieldMetadata(metadata.IDField, collectionKey, metadata, site, sess)
+		_, err = LoadFieldMetadata(metadata.IDField, collectionKey, metadata, session)
 		if err != nil {
 			return err
 		}
 
-		_, err = LoadFieldMetadata(metadata.NameField, collectionKey, metadata, site, sess)
+		_, err = LoadFieldMetadata(metadata.NameField, collectionKey, metadata, session)
 		if err != nil {
 			return err
 		}
 
 		for fieldKey, subFields := range collection {
 			// TODO: Bulkify this request so we don't do a network call per field
-			fieldMetadata, err := LoadFieldMetadata(fieldKey, collectionKey, metadata, site, sess)
+			fieldMetadata, err := LoadFieldMetadata(fieldKey, collectionKey, metadata, session)
 			if err != nil {
 				return err
 			}
@@ -104,7 +103,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 					additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
 				}
 
-				_, err = LoadFieldMetadata(fieldMetadata.ForeignKeyField, collectionKey, metadata, site, sess)
+				_, err = LoadFieldMetadata(fieldMetadata.ForeignKeyField, collectionKey, metadata, session)
 				if err != nil {
 					return err
 				}
@@ -120,7 +119,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 	}
 
 	for selectListKey := range mr.SelectLists {
-		err := LoadSelectListMetadata(selectListKey, metadataResponse, site, sess)
+		err := LoadSelectListMetadata(selectListKey, metadataResponse, session)
 		if err != nil {
 			return err
 		}
@@ -128,7 +127,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(metadataResponse, collatedMetadata, site, sess)
+		return additionalRequests.Load(metadataResponse, collatedMetadata, session)
 	}
 	return nil
 }

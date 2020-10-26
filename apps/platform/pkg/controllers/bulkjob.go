@@ -28,11 +28,9 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	jobID, err := bulk.NewJob(&spec, site, sess)
+	jobID, err := bulk.NewJob(&spec, session)
 	if err != nil {
 		msg := "Failed Creating New Job: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

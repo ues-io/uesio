@@ -14,8 +14,8 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -23,14 +23,14 @@ import (
 )
 
 // Deploy func
-func Deploy(body []byte, site *metadata.Site, sess *session.Session) error {
+func Deploy(body []byte, session *sess.Session) error {
 
 	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
 	if err != nil {
 		return err
 	}
 
-	workspace := site.Workspace.ID
+	workspace := session.GetWorkspaceID()
 
 	if workspace == "" {
 		return errors.New("No Workspace provided for deployment")
@@ -157,7 +157,7 @@ func Deploy(body []byte, site *metadata.Site, sess *session.Session) error {
 						Upsert: &reqs.UpsertOptions{},
 					},
 				},
-			}, site, sess)
+			}, session)
 			if err != nil {
 				return err
 			}
@@ -176,12 +176,12 @@ func Deploy(body []byte, site *metadata.Site, sess *session.Session) error {
 		fileDetails := reqs.FileDetails{
 			Name:             fileName,
 			CollectionID:     "uesio.files",
-			RecordID:         site.Workspace.ID + "_" + name,
+			RecordID:         session.GetWorkspaceID() + "_" + name,
 			FieldID:          "uesio.content",
 			FileCollectionID: "uesio.workspacemetadatafiles",
 		}
 
-		_, err := filesource.Upload(fileStream, fileDetails, site, sess)
+		_, err := filesource.Upload(fileStream, fileDetails, session)
 		if err != nil {
 			return err
 		}

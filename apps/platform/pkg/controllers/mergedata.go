@@ -9,8 +9,8 @@ import (
 	// because we trust both the template and the merge data
 	"text/template"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // RouteMergeData stuff to merge
@@ -77,30 +77,33 @@ func (md MergeData) String() string {
 }
 
 // GetUserMergeData function
-func GetUserMergeData(sessPtr *session.Session) *UserMergeData {
-	sess := *sessPtr
+func GetUserMergeData(session *sess.Session) *UserMergeData {
+	userInfo := session.GetUserInfo()
 	return &UserMergeData{
-		Site:      sess.CAttr("Site").(string),
-		FirstName: sess.CAttr("FirstName").(string),
-		LastName:  sess.CAttr("LastName").(string),
-		Profile:   sess.CAttr("Profile").(string),
+		Site:      userInfo.Site,
+		FirstName: userInfo.FirstName,
+		LastName:  userInfo.LastName,
+		Profile:   userInfo.Profile,
 	}
 }
 
 // GetWorkspaceMergeData function
-func GetWorkspaceMergeData(site *metadata.Site) *WorkspaceMergeData {
-	if site.Workspace == nil {
+func GetWorkspaceMergeData(workspace *metadata.Workspace) *WorkspaceMergeData {
+	if workspace == nil {
 		return nil
 	}
 	return &WorkspaceMergeData{
-		Name: site.Workspace.Name,
-		App:  site.Workspace.AppRef,
+		Name: workspace.Name,
+		App:  workspace.AppRef,
 	}
 }
 
 // ExecuteIndexTemplate function
-func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMode bool, site *metadata.Site, sess *session.Session) {
+func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
+
+	site := session.GetSite()
+	workspace := session.GetWorkspace()
 
 	viewNamespace, viewName, err := metadata.ParseKey(route.ViewRef)
 	if err != nil {
@@ -115,9 +118,9 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 			Params:        route.Params,
 			Namespace:     route.Namespace,
 			Path:          route.Path,
-			Workspace:     GetWorkspaceMergeData(site),
+			Workspace:     GetWorkspaceMergeData(workspace),
 		},
-		User: GetUserMergeData(sess),
+		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
 			Name:    site.Name,
 			Version: site.VersionRef,

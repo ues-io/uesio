@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getPartsFromVersion(version string) ([]int, error) {
@@ -31,7 +31,8 @@ func getPartsFromVersion(version string) ([]int, error) {
 	return partsAsNums, nil
 }
 
-func SaveBundleMetadata(namespace string, version string, description string, site *metadata.Site, sess *session.Session) error {
+// SaveBundleMetadata function
+func SaveBundleMetadata(namespace string, version string, description string, session *sess.Session) error {
 	versionParts, err := getPartsFromVersion(version)
 	if err != nil {
 		return err
@@ -50,7 +51,7 @@ func SaveBundleMetadata(namespace string, version string, description string, si
 		{
 			Collection: &bundles,
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		return err
 	}
@@ -62,7 +63,7 @@ func SaveBundleMetadata(namespace string, version string, description string, si
 //
 //}
 
-func getBundleMetadataById(id string, site *metadata.Site, sess *session.Session) (*metadata.Bundle, error) {
+func getBundleMetadataByID(id string, session *sess.Session) (*metadata.Bundle, error) {
 	bc := metadata.BundleCollection{}
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -82,8 +83,7 @@ func getBundleMetadataById(id string, site *metadata.Site, sess *session.Session
 				},
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return nil, err

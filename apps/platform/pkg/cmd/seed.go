@@ -82,15 +82,11 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	s, err := sess.CreateBrowserSession(&metadata.User{
+	session := sess.New(&metadata.User{
 		Profile:   "uesio.standard",
 		FirstName: "seed",
 		LastName:  "seed",
 	}, site)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
 
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
@@ -99,7 +95,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &reqs.UpsertOptions{},
 			},
 		},
-	}, site, s)
+	}, session)
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -112,7 +108,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &reqs.UpsertOptions{},
 			},
 		},
-	}, site, s)
+	}, session)
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -130,7 +126,7 @@ func seed(cmd *cobra.Command, args []string) {
 				},
 			},
 		},
-	}, site, s)
+	}, session)
 	if err != nil {
 		logger.LogError(err)
 		return

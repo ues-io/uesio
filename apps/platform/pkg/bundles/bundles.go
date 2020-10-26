@@ -3,11 +3,12 @@ package bundles
 import (
 	"bufio"
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"os"
 	"strings"
 
-	"github.com/icza/session"
+	"github.com/thecloudmasters/uesio/pkg/localcache"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+
 	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -83,13 +84,14 @@ func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.Permiss
 }
 
 // LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, site *metadata.Site, sess *session.Session) error {
+func LoadAll(group metadata.BundleableGroup, namespace string, session *sess.Session) error {
+	site := session.GetSite()
 	version, err := GetVersionFromSite(namespace, site)
 	if err != nil {
 		return errors.New("Failed to Load Metadata Item: " + namespace + " - " + err.Error())
 	}
 
-	permSet, err := getProfilePermSet(site, sess)
+	permSet, err := getProfilePermSet(session)
 	if err != nil {
 		return err
 	}
@@ -172,9 +174,11 @@ func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
 }
 
 // Load function
-func Load(item metadata.BundleableItem, site *metadata.Site, sess *session.Session) error {
+func Load(item metadata.BundleableItem, session *sess.Session) error {
 	namespace := item.GetNamespace()
 	key := item.GetKey()
+
+	site := session.GetSite()
 
 	version, err := GetVersionFromSite(namespace, site)
 	if err != nil {
@@ -183,8 +187,7 @@ func Load(item metadata.BundleableItem, site *metadata.Site, sess *session.Sessi
 
 	// Now Check to make sure we can actually view this item
 	hasPermission := SessionHasPermission(
-		site,
-		sess,
+		session,
 		item.GetPermChecker(),
 	)
 
@@ -196,14 +199,14 @@ func Load(item metadata.BundleableItem, site *metadata.Site, sess *session.Sessi
 }
 
 // LoadAndHydrateProfile function
-func LoadAndHydrateProfile(profileKey string, site *metadata.Site, sess *session.Session) (*metadata.Profile, error) {
+func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.Profile, error) {
 	// TODO: This should happen in the authentication middleware and only be done once per request
 	// Right now it's happening a lot. On pretty much every metadata request
 	profile, err := metadata.NewProfile(profileKey)
 	if err != nil {
 		return nil, err
 	}
-	err = Load(profile, site, sess)
+	err = Load(profile, session)
 	if err != nil {
 		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
 		return nil, err
@@ -216,7 +219,7 @@ func LoadAndHydrateProfile(profileKey string, site *metadata.Site, sess *session
 			return nil, err
 		}
 
-		err = Load(permissionSet, site, sess)
+		err = Load(permissionSet, session)
 		if err != nil {
 			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
 			return nil, err
@@ -227,20 +230,20 @@ func LoadAndHydrateProfile(profileKey string, site *metadata.Site, sess *session
 }
 
 // ProfileHasPermission returns whether a profile has permission
-func ProfileHasPermission(profileKey string, site *metadata.Site, sess *session.Session, check *metadata.PermissionSet) bool {
-	profile, err := LoadAndHydrateProfile(profileKey, site, sess)
+func ProfileHasPermission(profileKey string, session *sess.Session, check *metadata.PermissionSet) bool {
+	profile, err := LoadAndHydrateProfile(profileKey, session)
 	if err != nil {
 		return false
 	}
 	return profile.HasPermission(check)
 }
 
-func getProfilePermSet(site *metadata.Site, sess *session.Session) (*metadata.PermissionSet, error) {
-	profileKey, err := getProfileKey(sess)
+func getProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
+	profileKey, err := getProfileKey(session)
 	if err != nil {
 		return nil, err
 	}
-	profile, err := LoadAndHydrateProfile(profileKey, site, sess)
+	profile, err := LoadAndHydrateProfile(profileKey, session)
 	if err != nil {
 		return nil, err
 	}
@@ -249,8 +252,8 @@ func getProfilePermSet(site *metadata.Site, sess *session.Session) (*metadata.Pe
 }
 
 // getProfileKey function
-func getProfileKey(sess *session.Session) (string, error) {
-	profile := (*sess).CAttr("Profile").(string)
+func getProfileKey(session *sess.Session) (string, error) {
+	profile := session.GetProfile()
 	if profile == "" {
 		return "", errors.New("No profile found in session")
 	}
@@ -258,15 +261,15 @@ func getProfileKey(sess *session.Session) (string, error) {
 }
 
 // SessionHasPermission returns whether a session has permission
-func SessionHasPermission(site *metadata.Site, sess *session.Session, check *metadata.PermissionSet) bool {
+func SessionHasPermission(session *sess.Session, check *metadata.PermissionSet) bool {
 	if check == nil {
 		return true
 	}
-	profileKey, err := getProfileKey(sess)
+	profileKey, err := getProfileKey(session)
 	if err != nil {
 		return false
 	}
-	return ProfileHasPermission(profileKey, site, sess, check)
+	return ProfileHasPermission(profileKey, session, check)
 }
 
 func getFileListFromCache(namespace string, version string, objectName string) ([]string, bool) {

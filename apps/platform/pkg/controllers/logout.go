@@ -16,22 +16,16 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
 	site := session.GetSite()
 
-	session, err := sess.Logout(w, session, site)
-	if err != nil {
-		msg := "Failed Creating Public session" + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
+	session = sess.Logout(w, session, site)
 
 	logoutResponse := &LoginResponse{
-		User: GetUserMergeData(session.GetBrowserSession()),
+		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: "uesio",
 		RedirectRouteName:      "login",
 	}
 
-	err = json.NewEncoder(w).Encode(logoutResponse)
+	err := json.NewEncoder(w).Encode(logoutResponse)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

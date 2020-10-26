@@ -1,15 +1,17 @@
 package datasource
 
 import (
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bots"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Save function
-func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session) (*SaveResponseBatch, error) {
+func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch, error) {
+
+	site := session.GetSite()
 
 	collated := map[string]SaveRequestBatch{}
 	collatedMetadata := map[string]*adapters.MetadataCache{}
@@ -43,7 +45,7 @@ func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session)
 			}
 		}
 
-		err := collections.Load(&metadataResponse, collatedMetadata, site, sess)
+		err := collections.Load(&metadataResponse, collatedMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -60,12 +62,12 @@ func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session)
 		if err != nil {
 			return nil, err
 		}
-		err = LoadMetadataCollection(&robots, collectionNamespace, nil, site, sess)
+		err = LoadMetadataCollection(&robots, collectionNamespace, nil, session)
 		if err != nil {
 			return nil, err
 		}
 
-		err = bots.RunBots(robots, &request, collectionMetadata, site, sess)
+		err = bots.RunBots(robots, &request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -80,7 +82,7 @@ func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session)
 			return nil, err
 		}
 
-		err = LoadMetadataItem(datasource, site, sess)
+		err = LoadMetadataItem(datasource, session)
 		if err != nil {
 			return nil, err
 		}
@@ -103,7 +105,7 @@ func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session)
 			return nil, err
 		}
 
-		err = cleanUpFiles(batch.Wires, site, sess)
+		err = cleanUpFiles(batch.Wires, session)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +119,7 @@ func Save(requests SaveRequestBatch, site *metadata.Site, sess *session.Session)
 	return &response, nil
 }
 
-func cleanUpFiles(wires []reqs.SaveRequest, site *metadata.Site, sess *session.Session) error {
+func cleanUpFiles(wires []reqs.SaveRequest, session *sess.Session) error {
 	// Get mapping of Collection id -> record id -> true
 	idsToDeleteFilesFor := map[string]map[string]bool{}
 	for _, saveReq := range wires {
@@ -133,5 +135,5 @@ func cleanUpFiles(wires []reqs.SaveRequest, site *metadata.Site, sess *session.S
 			}
 		}
 	}
-	return DeleteUserFiles(idsToDeleteFilesFor, site, sess)
+	return DeleteUserFiles(idsToDeleteFilesFor, session)
 }

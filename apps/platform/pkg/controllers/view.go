@@ -34,9 +34,7 @@ type DependencyResponse map[string]interface{}
 // SaveViews is way good - so good
 func SaveViews(w http.ResponseWriter, r *http.Request) {
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
 	decoder := json.NewDecoder(r.Body)
 	var saveViewRequest SaveViewRequest
@@ -71,7 +69,7 @@ func SaveViews(w http.ResponseWriter, r *http.Request) {
 			Namespace: viewNamespace,
 		}
 		// Get the View ID
-		err = datasource.LoadWorkspaceMetadataItem(&existingView, site, sess)
+		err = datasource.LoadWorkspaceMetadataItem(&existingView, session)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -92,7 +90,7 @@ func SaveViews(w http.ResponseWriter, r *http.Request) {
 		{
 			Collection: &views,
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -118,9 +116,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		viewNamespace := vars["namespace"]
 		viewName := vars["name"]
 
-		s := middlewares.GetSession(r)
-		sess := s.GetBrowserSession()
-		site := s.GetSite()
+		session := middlewares.GetSession(r)
 
 		view := metadata.View{
 			Name:      viewName,
@@ -128,7 +124,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		}
 
 		// Make sure this is a legit view that we have access to
-		err := datasource.LoadMetadataItem(&view, site, sess)
+		err := datasource.LoadMetadataItem(&view, session)
 		if err != nil {
 			// TODO: This is special. NOTHING SPECIAL!
 			logger.LogErrorWithTrace(r, err)
@@ -141,7 +137,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			Params:  map[string]string{},
 		}
 
-		ExecuteIndexTemplate(w, route, buildMode, site, sess)
+		ExecuteIndexTemplate(w, route, buildMode, session)
 	}
 }
 
@@ -151,9 +147,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	viewNamespace := vars["namespace"]
 	viewName := vars["name"]
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
 	view := metadata.View{
 		Name:      viewName,
@@ -161,7 +155,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Make sure this is a legit view that we have access to
-	err := datasource.LoadMetadataItem(&view, site, sess)
+	err := datasource.LoadMetadataItem(&view, session)
 	if err != nil {
 		// TODO: This is special. NOTHING SPECIAL!
 		logger.LogErrorWithTrace(r, err)
@@ -174,7 +168,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 		Params:  map[string]string{},
 	}
 
-	ExecuteIndexTemplate(w, route, true, site, sess)
+	ExecuteIndexTemplate(w, route, true, session)
 }
 
 // ViewAPI is good
@@ -186,16 +180,15 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 	viewNamespace := vars["namespace"]
 	viewName := vars["name"]
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
+	site := session.GetSite()
 
 	view := metadata.View{
 		Name:      viewName,
 		Namespace: viewNamespace,
 	}
 
-	err := datasource.LoadMetadataItem(&view, site, sess)
+	err := datasource.LoadMetadataItem(&view, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.NotFound(w, r)

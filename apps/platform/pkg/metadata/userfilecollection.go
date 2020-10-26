@@ -41,20 +41,20 @@ func (ufc *UserFileCollection) GetBucket(site *Site) (string, error) {
 }
 
 // GetPath function
-func (ufc *UserFileCollection) GetPath(userFile *UserFileMetadata, site *Site) (string, error) {
+func (ufc *UserFileCollection) GetPath(userFile *UserFileMetadata, siteID, workspaceID string) (string, error) {
 	template, err := templating.New(ufc.PathFormat)
 	if err != nil {
 		return "", err
 	}
 
 	mergeObj := map[string]interface{}{
-		"workspaceid":      site.GetWorkspaceID(),
+		"workspaceid":      workspaceID,
 		"name":             userFile.Name,
 		"recordid":         userFile.RecordID,
 		"fieldid":          userFile.FieldID,
 		"collectionid":     userFile.CollectionID,
 		"filecollectionid": userFile.FileCollectionID,
-		"siteid":           site.Name,
+		"siteid":           siteID,
 	}
 	return templating.Execute(template, mergeObj)
 }

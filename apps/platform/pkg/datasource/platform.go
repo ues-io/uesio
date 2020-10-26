@@ -6,8 +6,8 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/icza/session"
 	"github.com/jinzhu/copier"
 	"github.com/mitchellh/mapstructure"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -38,7 +38,7 @@ func decode(in interface{}, out interface{}) error {
 }
 
 // PlatformLoad function
-func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.LoadRequest, site *metadata.Site, sess *session.Session) error {
+func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.LoadRequest, session *sess.Session) error {
 
 	if len(collections) != len(requests) {
 		return errors.New("Bad thing happened - we need the same number of collections as requests")
@@ -49,8 +49,7 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return errors.New("Platform Load Failed:" + err.Error())
@@ -71,7 +70,7 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 }
 
 // PlatformDelete function
-func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, site *metadata.Site, sess *session.Session) error {
+func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, session *sess.Session) error {
 	requests := []reqs.SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: "uesio." + collectionID,
@@ -82,15 +81,14 @@ func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, 
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		site,
-		sess,
+		session,
 	)
 
 	return err
 }
 
 // PlatformSave function
-func PlatformSave(psrs []PlatformSaveRequest, site *metadata.Site, sess *session.Session) ([]reqs.SaveResponse, error) {
+func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.SaveResponse, error) {
 
 	requests := []reqs.SaveRequest{}
 
@@ -123,8 +121,7 @@ func PlatformSave(psrs []PlatformSaveRequest, site *metadata.Site, sess *session
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return nil, err
@@ -134,16 +131,18 @@ func PlatformSave(psrs []PlatformSaveRequest, site *metadata.Site, sess *session
 }
 
 // LoadMetadataItem function
-func LoadMetadataItem(item metadata.BundleableItem, site *metadata.Site, sess *session.Session) error {
+func LoadMetadataItem(item metadata.BundleableItem, session *sess.Session) error {
 	namespace := item.GetNamespace()
+	site := session.GetSite()
+	workspace := session.GetWorkspace()
 	// If we're in a workspace mode AND the namespace equals that workspace's app name
-	if site.Workspace != nil && site.Workspace.AppRef == namespace {
+	if workspace != nil && workspace.AppRef == namespace {
 		// 1. Make sure we're in a site that can read/modify workspaces
 		if site.Name != "studio" {
 			return errors.New("this site does not allow working with workspaces")
 		}
 		// 2. we should have a profile that allows modifying workspaces
-		if !bundles.SessionHasPermission(site, sess, &metadata.PermissionSet{
+		if !bundles.SessionHasPermission(session, &metadata.PermissionSet{
 			NamedRefs: map[string]bool{
 				"workspace_admin": true,
 			},
@@ -153,21 +152,23 @@ func LoadMetadataItem(item metadata.BundleableItem, site *metadata.Site, sess *s
 		// 3. TODO Check against the workspace profile (different than site profile)
 		// to determine if the user has access to this workspace metadata item.
 
-		return LoadWorkspaceMetadataItem(item, site, sess)
+		return LoadWorkspaceMetadataItem(item, session)
 	}
-	return bundles.Load(item, site, sess)
+	return bundles.Load(item, session)
 }
 
 // LoadMetadataCollection function
-func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, conditions []reqs.LoadRequestCondition, site *metadata.Site, sess *session.Session) error {
+func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+	site := session.GetSite()
+	workspace := session.GetWorkspace()
 	// Find all of the accessible namespaces
-	if site.Workspace != nil && site.Workspace.AppRef == namespace {
+	if workspace != nil && workspace.AppRef == namespace {
 		// 1. Make sure we're in a site that can read/modify workspaces
 		if site.Name != "studio" {
 			return errors.New("this site does not allow working with workspaces")
 		}
 		// 2. we should have a profile that allows modifying workspaces
-		if !bundles.SessionHasPermission(site, sess, &metadata.PermissionSet{
+		if !bundles.SessionHasPermission(session, &metadata.PermissionSet{
 			NamedRefs: map[string]bool{
 				"workspace_admin": true,
 			},
@@ -177,12 +178,12 @@ func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, co
 		// 3. TODO Check against the workspace profile (different than site profile)
 		// to determine if the user has access to this workspace metadata item.
 		// Get All of the metadata from the workspace
-		return LoadWorkspaceMetadataCollection(group, conditions, site, sess)
+		return LoadWorkspaceMetadataCollection(group, conditions, session)
 
 		// TODO: Get All the metadata from the dependencies (right now workspaces don't have dependencies)
 	}
 	// Get All the metadata from the site and its dependencies
-	err := bundles.LoadAll(group, namespace, site, sess)
+	err := bundles.LoadAll(group, namespace, session)
 	if err != nil {
 		return err
 	}
@@ -191,7 +192,8 @@ func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, co
 }
 
 // LoadWorkspaceMetadataItem function
-func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, site *metadata.Site, sess *session.Session) error {
+func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, session *sess.Session) error {
+
 	group := item.GetCollection()
 	conditions, err := item.GetConditions()
 	if err != nil {
@@ -200,7 +202,7 @@ func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, site *metadata.
 	// Add the workspace id as a condition
 	conditions = append(conditions, reqs.LoadRequestCondition{
 		Field: "uesio.workspaceid",
-		Value: site.Workspace.ID,
+		Value: session.GetWorkspaceID(),
 	})
 	err = PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -214,8 +216,7 @@ func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, site *metadata.
 				conditions,
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return err
@@ -235,20 +236,21 @@ func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, site *metadata.
 		return err
 	}
 
-	item.SetNamespace(site.Workspace.AppRef)
+	item.SetNamespace(session.GetWorkspaceApp())
 
 	return nil
 }
 
 // LoadWorkspaceMetadataCollection function
-func LoadWorkspaceMetadataCollection(group metadata.CollectionableGroup, conditions []reqs.LoadRequestCondition, site *metadata.Site, sess *session.Session) error {
+func LoadWorkspaceMetadataCollection(group metadata.CollectionableGroup, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+
 	// Add the workspace id as a condition
 	if conditions == nil {
 		conditions = []reqs.LoadRequestCondition{}
 	}
 	conditions = append(conditions, reqs.LoadRequestCondition{
 		Field: "uesio.workspaceid",
-		Value: site.Workspace.ID,
+		Value: session.GetWorkspaceID(),
 	})
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -262,8 +264,7 @@ func LoadWorkspaceMetadataCollection(group metadata.CollectionableGroup, conditi
 				conditions,
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return err
@@ -272,7 +273,7 @@ func LoadWorkspaceMetadataCollection(group metadata.CollectionableGroup, conditi
 
 	for i := 0; i < length; i++ {
 		item := group.GetItem(i)
-		item.SetNamespace(site.Workspace.AppRef)
+		item.SetNamespace(session.GetWorkspaceApp())
 	}
 	return nil
 }

@@ -12,11 +12,10 @@ import (
 func AuthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text/json")
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
+	session := middlewares.GetSession(r)
 
 	loginResponse := &LoginResponse{
-		User: GetUserMergeData(sess),
+		User: GetUserMergeData(session),
 	}
 
 	err := json.NewEncoder(w).Encode(loginResponse)

@@ -8,13 +8,13 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
-func getCollectionMetadata(collectionName string, fieldID string, site *metadata.Site, sess *session.Session) (*adapters.CollectionMetadata, error) {
+func getCollectionMetadata(collectionName string, fieldID string, session *sess.Session) (*adapters.CollectionMetadata, error) {
 	collatedMetadata := map[string]*adapters.MetadataCache{}
 	metadataResponse := adapters.MetadataCache{}
 	// Keep a running tally of all requested collections
@@ -22,7 +22,7 @@ func getCollectionMetadata(collectionName string, fieldID string, site *metadata
 	collections.AddCollection(collectionName)
 	collections.AddField(collectionName, fieldID, nil)
 
-	err := collections.Load(&metadataResponse, collatedMetadata, site, sess)
+	err := collections.Load(&metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +34,11 @@ func getCollectionMetadata(collectionName string, fieldID string, site *metadata
 }
 
 //UpdateRecordFieldWithFileID function
-func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, site *metadata.Site, sess *session.Session) error {
+func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *sess.Session) error {
+
 	changes := map[string]reqs.ChangeRequest{}
 	changeRequest := map[string]interface{}{}
-	meta, err := getCollectionMetadata(details.CollectionID, details.FieldID, site, sess)
+	meta, err := getCollectionMetadata(details.CollectionID, details.FieldID, session)
 	if err != nil {
 		return err
 	}
@@ -54,7 +55,7 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, site *meta
 			},
 		},
 	}
-	_, err = Save(*saveRequestBatch, site, sess)
+	_, err = Save(*saveRequestBatch, session)
 	if err != nil {
 		return errors.New("Failed to update field for the given file")
 	}
@@ -62,7 +63,7 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, site *meta
 }
 
 // GetUserFile function
-func GetUserFile(userFileID string, site *metadata.Site, sess *session.Session) (*metadata.UserFileMetadata, error) {
+func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMetadata, error) {
 	var userfiles metadata.UserFileMetadataCollection
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -81,8 +82,7 @@ func GetUserFile(userFileID string, site *metadata.Site, sess *session.Session) 
 				},
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return nil, err
@@ -108,11 +108,10 @@ func getFieldIDPart(details reqs.FileDetails) string {
 }
 
 // CreateUserFileMetadataEntry func
-func CreateUserFileMetadataEntry(details reqs.FileDetails, site *metadata.Site, sess *session.Session) (string, error) {
-	var workspaceID string
-	if site.Workspace != nil {
-		workspaceID = site.Workspace.ID
-	}
+func CreateUserFileMetadataEntry(details reqs.FileDetails, session *sess.Session) (string, error) {
+	site := session.GetSite()
+
+	workspaceID := session.GetWorkspaceID()
 
 	fieldID := getFieldIDPart(details)
 
@@ -137,7 +136,7 @@ func CreateUserFileMetadataEntry(details reqs.FileDetails, site *metadata.Site, 
 				Upsert: &reqs.UpsertOptions{},
 			},
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		return "", err
 	}
@@ -154,7 +153,7 @@ func CreateUserFileMetadataEntry(details reqs.FileDetails, site *metadata.Site, 
 
 	return newID.(string), nil
 }
-func getUserfiles(collectionID string, recordIds []string, site *metadata.Site, sess *session.Session) (*metadata.UserFileMetadataCollection, error) {
+func getUserfiles(collectionID string, recordIds []string, session *sess.Session) (*metadata.UserFileMetadataCollection, error) {
 	ufmc := metadata.UserFileMetadataCollection{}
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -179,8 +178,7 @@ func getUserfiles(collectionID string, recordIds []string, site *metadata.Site, 
 				},
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return &ufmc, err
@@ -189,24 +187,26 @@ func getUserfiles(collectionID string, recordIds []string, site *metadata.Site, 
 }
 
 // DeleteUserFileRecord function
-func DeleteUserFileRecord(userFile *metadata.UserFileMetadata, site *metadata.Site, sess *session.Session) error {
+func DeleteUserFileRecord(userFile *metadata.UserFileMetadata, session *sess.Session) error {
 	deleteReq := map[string]reqs.DeleteRequest{}
 	deletePrimary := reqs.DeleteRequest{}
 	deletePrimary["uesio.id"] = userFile.ID
 	deleteReq[userFile.ID] = deletePrimary
-	return PlatformDelete("userfiles", deleteReq, site, sess)
+	return PlatformDelete("userfiles", deleteReq, session)
 }
 
 // DeleteUserFiles function
 // idsToDeleteFilesFor is a mapping of collection ids -> record ids
-func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, site *metadata.Site, sess *session.Session) error {
+func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, session *sess.Session) error {
+	site := session.GetSite()
+
 	for collectionID, recordIds := range idsToDeleteFilesFor {
 		//Flatten recordIDs
 		flatIds := make([]string, 0, len(recordIds))
 		for k := range recordIds {
 			flatIds = append(flatIds, k)
 		}
-		userFiles, err := getUserfiles(collectionID, flatIds, site, sess)
+		userFiles, err := getUserfiles(collectionID, flatIds, session)
 		if err != nil {
 			return err
 		}
@@ -218,7 +218,7 @@ func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, site *metad
 			ufc, ufcOk := ufcCacheMap[userFile.FileCollectionID]
 
 			if !ufcOk {
-				ufc, fs, err = GetFileSourceAndCollection(userFile.FileCollectionID, site, sess)
+				ufc, fs, err = GetFileSourceAndCollection(userFile.FileCollectionID, session)
 				if err != nil {
 					return err
 				}
@@ -250,7 +250,7 @@ func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, site *metad
 				fmt.Print(err)
 				continue
 			}
-			err = DeleteUserFileRecord(&userFile, site, sess)
+			err = DeleteUserFileRecord(&userFile, session)
 
 			if err != nil {
 				//Since the records have been deleted at this point

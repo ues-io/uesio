@@ -3,21 +3,22 @@ package retrieve
 import (
 	"archive/zip"
 	"bufio"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"io"
 	"path/filepath"
 	"reflect"
 
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"gopkg.in/yaml.v3"
 )
 
 // Retrieve func
-func Retrieve(site *metadata.Site, sess *session.Session) ([]reqs.ItemStream, error) {
+func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 
 	itemStreams := []reqs.ItemStream{}
 
@@ -26,7 +27,7 @@ func Retrieve(site *metadata.Site, sess *session.Session) ([]reqs.ItemStream, er
 		if err != nil {
 			return nil, err
 		}
-		err = datasource.LoadMetadataCollection(group, site.GetWorkspaceApp(), nil, site, sess)
+		err = datasource.LoadMetadataCollection(group, session.GetWorkspaceApp(), nil, session)
 		if err != nil {
 			return nil, err
 		}
@@ -50,7 +51,7 @@ func Retrieve(site *metadata.Site, sess *session.Session) ([]reqs.ItemStream, er
 		}
 
 	}
-	bundleYaml, err := generateBundleYaml(site, sess)
+	bundleYaml, err := generateBundleYaml(session)
 	if err != nil {
 		return nil, err
 	}
@@ -70,13 +71,13 @@ func decodeYAML(v interface{}, reader *bufio.Reader) error {
 
 	return nil
 }
-func generateBundleYaml(site *metadata.Site, sess *session.Session) (*reqs.ItemStream, error) {
+func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	itemStream := reqs.ItemStream{
 		Path: "bundle.yaml",
 	}
 	var by metadata.BundleYaml
-	by.Name = site.GetWorkspaceApp()
-	bdc, err := datasource.GetBundleDependenciesForWorkspace(site.GetWorkspaceID(), site, sess)
+	by.Name = session.GetWorkspaceApp()
+	bdc, err := datasource.GetBundleDependenciesForWorkspace(session.GetWorkspaceID(), session)
 
 	if err != nil {
 		return nil, err
@@ -120,12 +121,12 @@ func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, versi
 }
 
 // Zip function
-func Zip(writer io.Writer, site *metadata.Site, sess *session.Session) error {
+func Zip(writer io.Writer, session *sess.Session) error {
 
 	// Create a new zip archive.
 	zipWriter := zip.NewWriter(writer)
 
-	itemStreams, err := Retrieve(site, sess)
+	itemStreams, err := Retrieve(session)
 	if err != nil {
 		return err
 	}

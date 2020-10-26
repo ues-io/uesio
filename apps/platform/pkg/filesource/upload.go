@@ -4,17 +4,16 @@ import (
 	"errors"
 	"io"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Upload function
-func Upload(fileBody io.Reader, details reqs.FileDetails, site *metadata.Site, sess *session.Session) (string, error) {
-
-	ufc, fs, err := datasource.GetFileSourceAndCollection(details.FileCollectionID, site, sess)
+func Upload(fileBody io.Reader, details reqs.FileDetails, session *sess.Session) (string, error) {
+	site := session.GetSite()
+	ufc, fs, err := datasource.GetFileSourceAndCollection(details.FileCollectionID, session)
 	if err != nil {
 		return "", err
 	}
@@ -23,15 +22,15 @@ func Upload(fileBody io.Reader, details reqs.FileDetails, site *metadata.Site, s
 		return "", err
 	}
 
-	id, err := datasource.CreateUserFileMetadataEntry(details, site, sess)
+	id, err := datasource.CreateUserFileMetadataEntry(details, session)
 	if err != nil {
 		return "", errors.New("Error creating metadata entry for file")
 	}
-	newUserFile, err := datasource.GetUserFile(id, site, sess)
+	newUserFile, err := datasource.GetUserFile(id, session)
 	if err != nil {
 		return "", errors.New("error Fetching newly created userfile")
 	}
-	path, err := ufc.GetPath(newUserFile, site)
+	path, err := ufc.GetPath(newUserFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return "", errors.New("error generating path for userfile: " + err.Error())
 	}
@@ -48,7 +47,7 @@ func Upload(fileBody io.Reader, details reqs.FileDetails, site *metadata.Site, s
 		return "", err
 	}
 	if details.FieldID != "" {
-		err = datasource.UpdateRecordFieldWithFileID(id, details, site, sess)
+		err = datasource.UpdateRecordFieldWithFileID(id, details, session)
 		if err != nil {
 			return "", err
 		}

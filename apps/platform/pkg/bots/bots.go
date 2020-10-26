@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/dop251/goja"
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Logger function
@@ -17,7 +17,7 @@ func Logger(message string) {
 }
 
 // RunBot function
-func RunBot(bot *metadata.Bot, request *reqs.SaveRequest, botAPI *BotAPI, vm *goja.Runtime, site *metadata.Site, sess *session.Session) error {
+func RunBot(bot *metadata.Bot, request *reqs.SaveRequest, botAPI *BotAPI, vm *goja.Runtime, session *sess.Session) error {
 
 	runner, err := vm.RunString("(" + bot.FileContents + ")")
 	if err != nil {
@@ -43,7 +43,7 @@ func RunBot(bot *metadata.Bot, request *reqs.SaveRequest, botAPI *BotAPI, vm *go
 }
 
 // RunBots function
-func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, site *metadata.Site, sess *session.Session) error {
+func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 
 	botAPI := &BotAPI{
 		Changes: &ChangesAPI{
@@ -60,7 +60,7 @@ func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionM
 		if bot.CollectionRef != request.Collection {
 			continue
 		}
-		err := RunBot(&bot, request, botAPI, vm, site, sess)
+		err := RunBot(&bot, request, botAPI, vm, session)
 		if err != nil {
 			return err
 		}

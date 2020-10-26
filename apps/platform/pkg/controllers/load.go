@@ -24,11 +24,9 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	response, err := datasource.Load(loadRequestBatch, site, sess)
+	response, err := datasource.Load(loadRequestBatch, session)
 	if err != nil {
 		msg := "Load Failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

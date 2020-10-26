@@ -21,11 +21,9 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	jobID := vars["job"]
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	batchID, err := bulk.NewBatch(r.Body, jobID, site, sess)
+	batchID, err := bulk.NewBatch(r.Body, jobID, session)
 	if err != nil {
 		msg := "Failed Creating New Batch: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
