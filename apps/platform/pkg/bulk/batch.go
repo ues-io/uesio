@@ -5,14 +5,14 @@ import (
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
 // NewBatch func
-func NewBatch(body io.ReadCloser, jobID string, site *metadata.Site, sess *session.Session) (string, error) {
+func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
 
 	var jobs metadata.BulkJobCollection
 
@@ -34,8 +34,7 @@ func NewBatch(body io.ReadCloser, jobID string, site *metadata.Site, sess *sessi
 				},
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	if err != nil {
 		return "", err
@@ -47,7 +46,7 @@ func NewBatch(body io.ReadCloser, jobID string, site *metadata.Site, sess *sessi
 	var saveRequestBatch *datasource.SaveRequestBatch
 
 	if fileFormat == "csv" {
-		saveRequestBatch, err = processCSV(body, &spec, site, sess)
+		saveRequestBatch, err = processCSV(body, &spec, session)
 		if err != nil {
 			return "", err
 		}
@@ -57,7 +56,7 @@ func NewBatch(body io.ReadCloser, jobID string, site *metadata.Site, sess *sessi
 		return "", errors.New("Cannot process that file type: " + fileFormat)
 	}
 
-	_, err = datasource.Save(*saveRequestBatch, site, sess)
+	_, err = datasource.Save(*saveRequestBatch, session)
 	if err != nil {
 		return "", err
 	}
@@ -72,7 +71,7 @@ func NewBatch(body io.ReadCloser, jobID string, site *metadata.Site, sess *sessi
 		{
 			Collection: &batches,
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		return "", err
 	}

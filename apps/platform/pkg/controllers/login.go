@@ -50,12 +50,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, err := sess.Login(w, user, site)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	session := sess.Login(w, user, site)
 
 	// Check for redirect parameter on the referrer
 	referer, err := url.Parse(r.Referer())
@@ -75,7 +70,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	loginResponse := &LoginResponse{
-		User: GetUserMergeData(session.GetBrowserSession()),
+		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,

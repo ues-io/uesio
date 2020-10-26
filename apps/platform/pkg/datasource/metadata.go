@@ -3,9 +3,9 @@ package datasource
 import (
 	"errors"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GetCollectionMetadata function
@@ -66,7 +66,7 @@ func GetSelectListOptionsMetadata(options []metadata.SelectListOption) []adapter
 }
 
 // LoadCollectionMetadata function
-func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, site *metadata.Site, sess *session.Session) (*adapters.CollectionMetadata, error) {
+func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, session *sess.Session) (*adapters.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, ok := metadataCache.Collections[key]
 	if !ok {
@@ -75,7 +75,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 			return nil, err
 		}
 
-		err = LoadMetadataItem(collection, site, sess)
+		err = LoadMetadataItem(collection, session)
 		if err != nil {
 			return nil, err
 		}
@@ -87,7 +87,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 }
 
 // LoadFieldMetadata function
-func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, site *metadata.Site, sess *session.Session) (*adapters.FieldMetadata, error) {
+func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) (*adapters.FieldMetadata, error) {
 	// Check to see if the field is already in our metadata cache
 	fieldMetadata, ok := collectionMetadata.Fields[key]
 	if !ok {
@@ -95,7 +95,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 		if err != nil {
 			return nil, err
 		}
-		err = LoadMetadataItem(field, site, sess)
+		err = LoadMetadataItem(field, session)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 }
 
 // LoadSelectListMetadata function
-func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, site *metadata.Site, sess *session.Session) error {
+func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, session *sess.Session) error {
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
 
@@ -121,7 +121,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, s
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = LoadMetadataItem(&selectList, site, sess)
+		err = LoadMetadataItem(&selectList, session)
 		if err != nil {
 			return err
 		}

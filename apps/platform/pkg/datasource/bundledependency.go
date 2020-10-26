@@ -3,18 +3,19 @@ package datasource
 import (
 	"errors"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) error {
+// AddDependency func
+func AddDependency(workspaceID string, bundleID string, session *sess.Session) error {
 	//Just verify the bundle exists
-	bm, err := getBundleMetadataById(bundleID, site, sess)
+	bm, err := getBundleMetadataByID(bundleID, session)
 	if err != nil {
 		return err
 	}
-	if bm.Namespace == site.GetWorkspaceApp() {
+	if bm.Namespace == session.GetWorkspaceApp() {
 		return errors.New("cannot depend on self")
 	}
 	bundleDeps := metadata.BundleDependencyCollection{
@@ -24,19 +25,18 @@ func AddDependency(workspaceID string, bundleID string, site *metadata.Site, ses
 		},
 	}
 
-
 	_, err = PlatformSave([]PlatformSaveRequest{
 		{
 			Collection: &bundleDeps,
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, site *metadata.Site, sess *session.Session) (metadata.BundleDependencyCollection, error) {
+func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
 	bdc := metadata.BundleDependencyCollection{}
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -50,13 +50,13 @@ func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, site *metadata
 				conditions,
 			),
 		},
-		site,
-		sess,
+		session,
 	)
 	return bdc, err
 }
 
-func GetBundleDependenciesForWorkspace(workspaceID string, site *metadata.Site, sess *session.Session) (*metadata.BundleDependencyCollection, error) {
+// GetBundleDependenciesForWorkspace func
+func GetBundleDependenciesForWorkspace(workspaceID string, session *sess.Session) (*metadata.BundleDependencyCollection, error) {
 	bdc, err := bundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
 			{
@@ -66,14 +66,13 @@ func GetBundleDependenciesForWorkspace(workspaceID string, site *metadata.Site, 
 			},
 		},
 
-		site,
-		sess)
+		session)
 	if err != nil {
 		return nil, err
 	}
 	return &bdc, nil
 }
-func getBundleDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) (*metadata.BundleDependency, error) {
+func getBundleDependency(workspaceID string, bundleID string, session *sess.Session) (*metadata.BundleDependency, error) {
 	bdc, err := bundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
 			{
@@ -88,8 +87,7 @@ func getBundleDependency(workspaceID string, bundleID string, site *metadata.Sit
 			},
 		},
 
-		site,
-		sess)
+		session)
 	if err != nil {
 		return nil, err
 	}
@@ -99,16 +97,17 @@ func getBundleDependency(workspaceID string, bundleID string, site *metadata.Sit
 	return &bdc[0], nil
 }
 
-func RemoveDependency(workspaceID string, bundleID string, site *metadata.Site, sess *session.Session) error {
+// RemoveDependency func
+func RemoveDependency(workspaceID string, bundleID string, session *sess.Session) error {
 
 	deleteReq := map[string]reqs.DeleteRequest{}
 	deletePrimary := reqs.DeleteRequest{}
-	dependency, err := getBundleDependency(workspaceID, bundleID, site, sess)
+	dependency, err := getBundleDependency(workspaceID, bundleID, session)
 	if err != nil {
 		return err
 	}
 	deletePrimary["uesio.id"] = dependency.ID
 	deleteReq[dependency.ID] = deletePrimary
 
-	return PlatformDelete("bundledependencies", deleteReq, site, sess)
+	return PlatformDelete("bundledependencies", deleteReq, session)
 }

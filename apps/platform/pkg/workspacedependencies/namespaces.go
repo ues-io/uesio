@@ -1,16 +1,15 @@
 package workspacedependencies
 
 import (
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GetValidNamespaces function
-func GetValidNamespaces(site *metadata.Site, sess *session.Session) (map[string]bool, error) {
-	siteWorkspaceNamespace := site.GetWorkspaceApp()
+func GetValidNamespaces(session *sess.Session) (map[string]bool, error) {
+	siteWorkspaceNamespace := session.GetWorkspaceApp()
 	namespaces := map[string]bool{}
-	bdc, err := datasource.GetBundleDependenciesForWorkspace(site.GetWorkspaceID(), site, sess)
+	bdc, err := datasource.GetBundleDependenciesForWorkspace(session.GetWorkspaceID(), session)
 	if err != nil {
 		return namespaces, err
 	}

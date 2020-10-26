@@ -11,14 +11,12 @@ import (
 
 // Retrieve is good
 func Retrieve(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
 	w.Header().Set("Content-Type", "application/zip")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.zip\"", "retrieve"))
 
-	err := retrieve.Zip(w, site, sess)
+	err := retrieve.Zip(w, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

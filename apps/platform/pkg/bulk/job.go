@@ -1,13 +1,15 @@
 package bulk
 
 import (
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // NewJob func
-func NewJob(spec *metadata.JobSpec, site *metadata.Site, sess *session.Session) (string, error) {
+func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
+
+	site := session.GetSite()
 
 	jobs := metadata.BulkJobCollection{
 		metadata.BulkJob{
@@ -20,7 +22,7 @@ func NewJob(spec *metadata.JobSpec, site *metadata.Site, sess *session.Session) 
 		{
 			Collection: &jobs,
 		},
-	}, site, sess)
+	}, session)
 	if err != nil {
 		return "", err
 	}

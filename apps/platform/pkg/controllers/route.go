@@ -7,18 +7,18 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getRoute(r *http.Request, namespace, path, prefix string, site *metadata.Site, sess *session.Session) (*metadata.Route, error) {
+func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Session) (*metadata.Route, error) {
 	var route metadata.Route
 	var routes metadata.RouteCollection
 
-	err := datasource.LoadMetadataCollection(&routes, namespace, nil, site, sess)
+	err := datasource.LoadMetadataCollection(&routes, namespace, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -80,17 +80,16 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	path := vars["route"]
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
+	workspace := session.GetWorkspace()
 
 	prefix := "/site/routes/" + namespace + "/"
 
-	if site.Workspace != nil {
-		prefix = "/workspace/" + site.Workspace.AppRef + "/" + site.Workspace.Name + "/routes/" + namespace + "/"
+	if workspace != nil {
+		prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + "/routes/" + namespace + "/"
 	}
 
-	route, err := getRoute(r, namespace, path, prefix, site, sess)
+	route, err := getRoute(r, namespace, path, prefix, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		// Respond with the notfound view which is publicly accessible
@@ -113,7 +112,7 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 		Params:        route.Params,
 		Namespace:     route.Namespace,
 		Path:          path,
-		Workspace:     GetWorkspaceMergeData(site),
+		Workspace:     GetWorkspaceMergeData(workspace),
 	}, w, r)
 
 }
@@ -135,24 +134,23 @@ func ServeRoute() http.HandlerFunc {
 		namespace := vars["namespace"]
 		path := vars["route"]
 
-		s := middlewares.GetSession(r)
-		sess := s.GetBrowserSession()
-		site := s.GetSite()
+		session := middlewares.GetSession(r)
+		workspace := session.GetWorkspace()
 
 		prefix := "/app/" + namespace + "/"
 
-		if site.Workspace != nil {
-			prefix = "/workspace/" + site.Workspace.AppRef + "/" + site.Workspace.Name + prefix
+		if workspace != nil {
+			prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + prefix
 		}
 
-		route, err := getRoute(r, namespace, path, prefix, site, sess)
+		route, err := getRoute(r, namespace, path, prefix, session)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
 			RedirectToLogin(w, r)
 			return
 		}
 
-		ExecuteIndexTemplate(w, route, false, site, sess)
+		ExecuteIndexTemplate(w, route, false, session)
 	}
 }
 
@@ -162,17 +160,16 @@ func ServeLocalRoute() http.HandlerFunc {
 		vars := mux.Vars(r)
 		path := vars["route"]
 
-		s := middlewares.GetSession(r)
-		sess := s.GetBrowserSession()
-		site := s.GetSite()
+		session := middlewares.GetSession(r)
+		site := session.GetSite()
 
-		route, err := getRoute(r, site.AppRef, path, "/", site, sess)
+		route, err := getRoute(r, site.AppRef, path, "/", session)
 		if err != nil {
 			logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
 			RedirectToLogin(w, r)
 			return
 		}
 
-		ExecuteIndexTemplate(w, route, false, site, sess)
+		ExecuteIndexTemplate(w, route, false, session)
 	}
 }

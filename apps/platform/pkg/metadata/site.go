@@ -7,26 +7,9 @@ type Site struct {
 	AppRef     string
 	VersionRef string
 	//BundleYaml *BundleYaml TODO:: JAS consider adding this for the site
-	Workspace *Workspace
 }
 
-// GetWorkspaceID function
-func (s *Site) GetWorkspaceID() string {
-	if s.Workspace != nil {
-		return s.Workspace.ID
-	}
-	return ""
-}
-
-// GetWorkspaceApp function
-func (s *Site) GetWorkspaceApp() string {
-	if s.Workspace != nil {
-		return s.Workspace.AppRef
-	}
-	return ""
-}
-
-// Seed config values (these are necessary to make things work)
+// DefaultSites - Seed config values (these are necessary to make things work)
 var DefaultSites = SiteCollection{
 	{
 		Name:       "studio",

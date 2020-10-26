@@ -3,19 +3,19 @@ package filesource
 import (
 	"errors"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Delete function
-func Delete(userFileID string, site *metadata.Site, sess *session.Session) error {
-	userFile, err := datasource.GetUserFile(userFileID, site, sess)
+func Delete(userFileID string, session *sess.Session) error {
+	site := session.GetSite()
+	userFile, err := datasource.GetUserFile(userFileID, session)
 	if err != nil {
 		return err
 	}
-	ufc, fs, err := datasource.GetFileSourceAndCollection(userFile.FileCollectionID, site, sess)
+	ufc, fs, err := datasource.GetFileSourceAndCollection(userFile.FileCollectionID, session)
 	if err != nil {
 		return err
 	}
@@ -23,7 +23,7 @@ func Delete(userFileID string, site *metadata.Site, sess *session.Session) error
 	if err != nil {
 		return err
 	}
-	path, err := ufc.GetPath(userFile, site)
+	path, err := ufc.GetPath(userFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return errors.New("No filesource found")
 	}
@@ -41,7 +41,7 @@ func Delete(userFileID string, site *metadata.Site, sess *session.Session) error
 		return err
 	}
 
-	err = datasource.DeleteUserFileRecord(userFile, site, sess)
+	err = datasource.DeleteUserFileRecord(userFile, session)
 	if err != nil {
 		return err
 	}

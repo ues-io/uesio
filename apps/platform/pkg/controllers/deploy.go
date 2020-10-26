@@ -11,9 +11,8 @@ import (
 
 // Deploy is good
 func Deploy(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
+
 	// Unfortunately, we have to read the whole thing into memory
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -22,7 +21,7 @@ func Deploy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deploy.Deploy(body, site, sess)
+	err = deploy.Deploy(body, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

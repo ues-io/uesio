@@ -7,14 +7,14 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
-func getMappings(columnNames []string, spec *metadata.JobSpec, site *metadata.Site, sess *session.Session) ([]metadata.FieldMapping, *adapters.MetadataCache, error) {
+func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Session) ([]metadata.FieldMapping, *adapters.MetadataCache, error) {
 	collatedMetadata := map[string]*adapters.MetadataCache{}
 	metadataResponse := adapters.MetadataCache{}
 	mappings := []metadata.FieldMapping{}
@@ -32,7 +32,7 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, site *metadata.Si
 		collections.AddField(spec.Collection, mapping.FieldName, nil)
 	}
 
-	err := collections.Load(&metadataResponse, collatedMetadata, site, sess)
+	err := collections.Load(&metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -57,7 +57,7 @@ func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.C
 	return lookups, nil
 }
 
-func processCSV(body io.ReadCloser, spec *metadata.JobSpec, site *metadata.Site, sess *session.Session) (*datasource.SaveRequestBatch, error) {
+func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Session) (*datasource.SaveRequestBatch, error) {
 
 	r := csv.NewReader(body)
 	changes := map[string]reqs.ChangeRequest{}
@@ -68,7 +68,7 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, site *metadata.Site,
 		return nil, err
 	}
 
-	mappings, metadata, err := getMappings(headerRow, spec, site, sess)
+	mappings, metadata, err := getMappings(headerRow, spec, session)
 	if err != nil {
 		return nil, err
 	}

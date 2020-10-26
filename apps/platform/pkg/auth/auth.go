@@ -70,15 +70,12 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
-	s, err := sess.CreatePublicBrowserSession(site)
-	if err != nil {
-		return err
-	}
+	session := sess.NewPublic(site)
 
 	// Get the site's default profile (hardcoding for now)
 	defaultSiteProfile := "uesio.standard"
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
+	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &metadata.UserCollection{
 				{
@@ -91,7 +88,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 				},
 			},
 		},
-	}, site, s)
+	}, session)
 	return err
 }
 
@@ -158,18 +155,15 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
-	s, err := sess.CreatePublicBrowserSession(site)
-	if err != nil {
-		return nil, err
-	}
+	session := sess.NewPublic(site)
+
 	var users metadata.UserCollection
-	err = datasource.PlatformLoad(
+	err := datasource.PlatformLoad(
 		[]metadata.CollectionableGroup{
 			&users,
 		},
 		users.AuthClaimsRequest(claims.AuthType, claims.Subject, site.Name),
-		site,
-		s,
+		session,
 	)
 	if err != nil {
 		return nil, err

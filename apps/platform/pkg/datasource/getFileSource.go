@@ -4,18 +4,18 @@ import (
 	"errors"
 	"os"
 
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GetFileSourceAndCollection function
-func GetFileSourceAndCollection(fileCollectionID string, site *metadata.Site, sess *session.Session) (*metadata.UserFileCollection, *metadata.FileSource, error) {
+func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) (*metadata.UserFileCollection, *metadata.FileSource, error) {
 	ufc, err := metadata.NewUserFileCollection(fileCollectionID)
 	if err != nil {
 		return nil, nil, errors.New("Failed to create file collection")
 	}
-	err = bundles.Load(ufc, site, sess)
+	err = bundles.Load(ufc, session)
 	if err != nil {
 		return nil, nil, errors.New("No file collection found: " + err.Error())
 	}
@@ -23,7 +23,7 @@ func GetFileSourceAndCollection(fileCollectionID string, site *metadata.Site, se
 	if err != nil {
 		return nil, nil, errors.New("Failed to create file source")
 	}
-	err = bundles.Load(fs, site, sess)
+	err = bundles.Load(fs, session)
 	if err != nil {
 		return nil, nil, errors.New("No file source found")
 	}

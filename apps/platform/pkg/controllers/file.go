@@ -19,16 +19,14 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
 	file := metadata.File{
 		Name:      name,
 		Namespace: namespace,
 	}
 
-	err := datasource.LoadMetadataItem(&file, site, sess)
+	err := datasource.LoadMetadataItem(&file, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -44,7 +42,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileStream, mimeType, err := filesource.Download(file.Content, site, sess)
+	fileStream, mimeType, err := filesource.Download(file.Content, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed Download", http.StatusInternalServerError)

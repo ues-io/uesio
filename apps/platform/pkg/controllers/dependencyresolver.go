@@ -17,9 +17,7 @@ import (
 
 // MetadataList is good
 func MetadataList(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
 	vars := mux.Vars(r)
 	metadatatype := vars["type"]
@@ -43,7 +41,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = datasource.LoadMetadataCollection(collection, namespace, conditions, site, sess)
+	err = datasource.LoadMetadataCollection(collection, namespace, conditions, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -83,11 +81,9 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 // NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
-	s := middlewares.GetSession(r)
-	sess := s.GetBrowserSession()
-	site := s.GetSite()
+	session := middlewares.GetSession(r)
 
-	namespaces, err := workspacedependencies.GetValidNamespaces(site, sess)
+	namespaces, err := workspacedependencies.GetValidNamespaces(session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

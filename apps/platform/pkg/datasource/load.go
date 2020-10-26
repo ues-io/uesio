@@ -1,14 +1,16 @@
 package datasource
 
 import (
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Load function
-func Load(requests LoadRequestBatch, site *metadata.Site, sess *session.Session) (*LoadResponseBatch, error) {
+func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch, error) {
+
+	site := session.GetSite()
 
 	collated := map[string]LoadRequestBatch{}
 	collatedMetadata := map[string]*adapters.MetadataCache{}
@@ -48,7 +50,7 @@ func Load(requests LoadRequestBatch, site *metadata.Site, sess *session.Session)
 			}
 		}
 
-		err := collections.Load(&metadataResponse, collatedMetadata, site, sess)
+		err := collections.Load(&metadataResponse, collatedMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -72,7 +74,7 @@ func Load(requests LoadRequestBatch, site *metadata.Site, sess *session.Session)
 			return nil, err
 		}
 
-		err = LoadMetadataItem(datasource, site, sess)
+		err = LoadMetadataItem(datasource, session)
 		if err != nil {
 			return nil, err
 		}

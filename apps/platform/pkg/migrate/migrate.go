@@ -1,27 +1,29 @@
 package migrate
 
 import (
-	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Migrate func
-func Migrate(site *metadata.Site, sess *session.Session) error {
+func Migrate(session *sess.Session) error {
+
+	site := session.GetSite()
 
 	collatedMetadata := map[string]*adapters.MetadataCache{}
 	metadataResponse := adapters.MetadataCache{}
 	var collections metadata.CollectionCollection
-	namespace := site.GetWorkspaceApp()
+	namespace := session.GetWorkspaceApp()
 	// Loop over all collections in the workspace/site and batch by data source
-	err := datasource.LoadMetadataCollection(&collections, namespace, nil, site, sess)
+	err := datasource.LoadMetadataCollection(&collections, namespace, nil, session)
 	if err != nil {
 		return err
 	}
 
 	var fields metadata.FieldCollection
-	err = datasource.LoadMetadataCollection(&fields, namespace, nil, site, sess)
+	err = datasource.LoadMetadataCollection(&fields, namespace, nil, session)
 	if err != nil {
 		return err
 	}
@@ -42,7 +44,7 @@ func Migrate(site *metadata.Site, sess *session.Session) error {
 		}
 	}
 
-	err = metadataRequest.Load(&metadataResponse, collatedMetadata, site, sess)
+	err = metadataRequest.Load(&metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return err
 	}
@@ -56,7 +58,7 @@ func Migrate(site *metadata.Site, sess *session.Session) error {
 			return err
 		}
 
-		err = datasource.LoadMetadataItem(ds, site, sess)
+		err = datasource.LoadMetadataItem(ds, session)
 		if err != nil {
 			return err
 		}

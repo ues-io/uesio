@@ -72,9 +72,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 
-		s := GetSession(r)
-		site := s.GetSite()
-		sess := s.GetBrowserSession()
+		session := GetSession(r)
 
 		// Get the Workspace from the DB
 		var apps metadata.AppCollection
@@ -85,8 +83,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 				&workspaces,
 			},
 			workspaces.ByNameRequest(appName, workspaceName),
-			site,
-			sess,
+			session,
 		)
 		if err != nil {
 			logger.LogError(err)
@@ -104,7 +101,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 
 		workspace.AppRef = app.Name
 
-		site.Workspace = workspace
+		session.SetWorkspace(workspace)
 		next.ServeHTTP(w, r)
 	})
 }
