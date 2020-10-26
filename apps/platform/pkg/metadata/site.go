@@ -6,8 +6,8 @@ type Site struct {
 	Name       string
 	AppRef     string
 	VersionRef string
-	AppVersion *AppVersion
-	Workspace  *Workspace
+	//BundleYaml *BundleYaml TODO:: JAS consider adding this for the site
+	Workspace *Workspace
 }
 
 // GetWorkspaceID function
@@ -34,4 +34,3 @@ var DefaultSites = SiteCollection{
 		VersionRef: "v0.0.1",
 	},
 }
-

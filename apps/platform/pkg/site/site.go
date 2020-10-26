@@ -1,7 +1,6 @@
 package site
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/dependencyresolver"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
@@ -9,11 +8,14 @@ import (
 func GetSite(name string) (*metadata.Site, error) {
 	for _, s := range metadata.DefaultSites {
 		if s.Name == name {
-			version, err := dependencyresolver.GetAppVersion(s.AppRef, s.VersionRef)
-			if err != nil {
-				return nil, err
-			}
-			s.AppVersion = version
+			//TODO:: JAS - We need to store site records
+			//so that we can actually fetch these -
+			//and not need to depend on the DefaultSites
+			//bundleYaml, err := dependencyresolver.GetAppBundle(s.AppRef, s.VersionRef)
+			//if err != nil {
+			//	return nil, err
+			//}
+			//s.BundleYaml = bundleYaml
 			return &s, nil
 		}
 	}
