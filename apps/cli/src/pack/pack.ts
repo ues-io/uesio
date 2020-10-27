@@ -32,9 +32,7 @@ const getEntryFile = async (
 			path.resolve(`./bundle/components/${name}/${name}.tsx`)
 		)
 		if (hasDefinition) {
-			imports.push(
-				`import ${name} from \"../components/${name}/${name}\";`
-			)
+			imports.push(`import ${name} from "../components/${name}/${name}";`)
 			registrations.push(
 				`component.registry.register("${bundleName}", "${name}", ${name});`
 			)
@@ -66,12 +64,12 @@ const getBuilderEntryFile = async (
 			)
 
 			builderImports.push(
-				`import ${builderName} from \"../components/${name}/${builderName}\";`
+				`import ${builderName} from "../components/${name}/${builderName}";`
 			)
 
 			if (hasDef) {
 				defImports.push(
-					`import ${propDefName} from \"../components/${name}/${propDefName}\";`
+					`import ${propDefName} from "../components/${name}/${propDefName}";`
 				)
 			}
 
@@ -107,20 +105,21 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const yamlContents = yaml.parse(contents)
 		const packName = yamlContents.name as string
 		const components = yamlContents.components
-		entries[packName] = path.resolve(
-			`./bundle/componentpacks/${packName}.entry.ts`
+		const fullPackName = `${appName}.${packName}`
+		entries[fullPackName] = path.resolve(
+			`./bundle/componentpacks/${fullPackName}.entry.ts`
 		)
-		entries[packName + ".builder"] = path.resolve(
-			`./bundle/componentpacks/${packName}.builder.entry.ts`
+		entries[fullPackName + ".builder"] = path.resolve(
+			`./bundle/componentpacks/${fullPackName}.builder.entry.ts`
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${packName}.entry.ts`),
+			path.resolve(packDir, `${fullPackName}.entry.ts`),
 			await getEntryFile(appName, components)
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${packName}.builder.entry.ts`),
+			path.resolve(packDir, `${fullPackName}.builder.entry.ts`),
 			await getBuilderEntryFile(appName, components)
 		)
 	}

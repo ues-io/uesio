@@ -11,7 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
-// FileAdapter struct
+// LocalBundleStore struct
 type LocalBundleStore struct {
 }
 
@@ -20,7 +20,8 @@ func getBasePath(namespace, version string) string {
 	return filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
 }
 
-func (b *LocalBundleStore) GetItem(namespace string, version string, objectname string, name string) (*bufio.Reader, io.Closer, error) {
+// GetItem function
+func (b *LocalBundleStore) GetItem(namespace string, version string, objectname string, name string) (io.ReadCloser, error) {
 	var filePath string
 	if objectname == "" {
 		filePath = filepath.Join(getBasePath(namespace, version), name)
@@ -30,12 +31,16 @@ func (b *LocalBundleStore) GetItem(namespace string, version string, objectname 
 	}
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	reader := bufio.NewReader(file)
-	return reader, file, nil
+	return reqs.ItemResponse{
+		Reader: reader,
+		Closer: file,
+	}, nil
 }
 
+// ListItems function
 func (b *LocalBundleStore) ListItems(namespace string, version string, objectname string) ([]string, error) {
 	dirPath := filepath.Join(getBasePath(namespace, version), objectname)
 	d, err := os.Open(dirPath)
@@ -57,6 +62,7 @@ func (b *LocalBundleStore) ListItems(namespace string, version string, objectnam
 	return keys, nil
 }
 
+// StoreItems function
 func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
 	for _, itemStream := range itemStreams {
 		err := storeItem(namespace, version, itemStream)

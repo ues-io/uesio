@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
@@ -62,18 +61,8 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	return &route, nil
 }
 
-func respondWithRoute(response *RouteMergeData, w http.ResponseWriter, r *http.Request) {
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
 // RouteAPI is good
 func RouteAPI(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/yaml")
 
 	vars := mux.Vars(r)
 
@@ -92,11 +81,10 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	route, err := getRoute(r, namespace, path, prefix, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		// Respond with the notfound view which is publicly accessible
-		respondWithRoute(&RouteMergeData{
+		respondJSON(w, r, &RouteMergeData{
 			ViewName:      "notfound",
 			ViewNamespace: "uesio",
-		}, w, r)
+		})
 		return
 	}
 
@@ -106,14 +94,14 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithRoute(&RouteMergeData{
+	respondJSON(w, r, &RouteMergeData{
 		ViewName:      viewName,
 		ViewNamespace: viewNamespace,
 		Params:        route.Params,
 		Namespace:     route.Namespace,
 		Path:          path,
 		Workspace:     GetWorkspaceMergeData(workspace),
-	}, w, r)
+	})
 
 }
 

@@ -1,7 +1,6 @@
 package bundles
 
 import (
-	"bufio"
 	"errors"
 	"os"
 	"strings"
@@ -13,18 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"gopkg.in/yaml.v3"
 )
-
-func decodeYAML(v interface{}, reader *bufio.Reader) error {
-	decoder := yaml.NewDecoder(reader)
-	err := decoder.Decode(v)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 // MetadataLoadItem function
 func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key string) error {
@@ -34,12 +22,12 @@ func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key stri
 	collectionName := item.GetCollectionName()
 	retrievedItem, ok := getFromCache(namespace, version, collectionName, key)
 	if !ok {
-		reader, closer, err := bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, item.GetCollectionName(), key)
+		stream, err := bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, item.GetCollectionName(), key)
 		if err != nil {
 			return err
 		}
-		defer closer.Close()
-		err = decodeYAML(item, reader)
+		defer stream.Close()
+		err = bundlestore.DecodeYAML(item, stream)
 		if err != nil {
 			return err
 		}
@@ -104,16 +92,17 @@ func LoadAll(group metadata.BundleableGroup, namespace string, session *sess.Ses
 	return nil
 }
 
+// GetBundleYaml function
 func GetBundleYaml(name string, version string) (*metadata.BundleYaml, error) {
 	var by metadata.BundleYaml
 	bundleStore := bundlestore.GetBundleStoreByNamespace(name)
-	reader, closer, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
+	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
 	}
-	defer closer.Close()
+	defer stream.Close()
 
-	err = decodeYAML(&by, reader)
+	err = bundlestore.DecodeYAML(&by, stream)
 	if err != nil {
 		return nil, err
 	}

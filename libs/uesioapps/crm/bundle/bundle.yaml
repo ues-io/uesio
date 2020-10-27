@@ -1,1 +1,4 @@
 name: crm
+dependencies:
+  material: "v0.0.1"
+  sample: "v0.0.1"
