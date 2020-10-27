@@ -3,6 +3,7 @@ named:
   workspace_admin: true
 views:
   uesio.login: true
+  uesio.field: true
   uesio.home: true
   uesio.app: true
   uesio.workspace: true
@@ -26,8 +27,11 @@ views:
   uesio.newdatasource: true
   uesio.datasource: true
   uesio.files: true
+  uesio.file: true
+  uesio.newfile: true
 routes:
   uesio.login: true
+  uesio.field: true
   uesio.home: true
   uesio.appdetail: true
   uesio.newworkspace: true
@@ -49,6 +53,8 @@ routes:
   uesio.datasource: true
   uesio.newapp: true
   uesio.files: true
+  uesio.file: true
+  uesio.newfile: true
 files:
   uesio.logo: true
   uesio.logosmall: true

@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react"
 
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire } from "@uesio/ui"
+import { hooks, material, styles, wire, signal } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 
 const useStyles = material.makeStyles((theme) =>
@@ -20,10 +20,11 @@ const useStyles = material.makeStyles((theme) =>
 async function handleChange(
 	selectorFiles: FileList | null,
 	fieldId: string,
-	//record: wire.WireRecord,
+	record: wire.WireRecord,
 	wire: wire.Wire,
 	uesio: hooks.Uesio,
-	fileCollection: string
+	fileCollection: string,
+	signals: signal.SignalDefinition[]
 ) {
 	const collection = wire.getCollection()
 	const collectionName = wire.getCollectionName()
@@ -31,11 +32,14 @@ async function handleChange(
 	const IdField = collection.getIdField()
 	const collectionNamespace = collection.getNamespace()
 
-	//const recordId = record.getFieldValue(
-	//	collectionNamespace + "." + IdField.getId()
-	//	) as string
+	const context = uesio.getContext()
+	const workspace = context.getWorkspace()
 
-	if (selectorFiles) {
+	var recordId = record.getFieldValue(
+		collectionNamespace + "." + IdField.getId()
+	) as string
+
+	if (selectorFiles && recordId) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
 		}
@@ -43,35 +47,44 @@ async function handleChange(
 		const file = selectorFiles[0]
 
 		const fileId = await uesio.file.uploadFile(
-			uesio.getContext(),
+			context,
 			file,
 			file.name,
 			fileCollection,
 			collectionName,
-			"crm_dev_" + file.name,
+			recordId,
 			fieldId
 		)
 
-		// wire.dispatchRecordSet(record.id, {
-		// 	[fieldId]: fileId,
-		// })
+		const navigateSig = {
+			signal: "NAVIGATE",
+			band: "platform",
+			path:
+				`app/` +
+				workspace?.app +
+				`/workspace/` +
+				workspace?.name +
+				`/files`,
+			namespace: "uesio",
+		} as signal.SignalDefinition
+
+		const result = await uesio.signal.run(navigateSig, context)
 	}
 }
 
 function FileUpload(props: FileUploadProps): ReactElement | null {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	//const wire = props.context.getWire()
-	const wire = uesio.wire.useWire(props.definition.wire)
-
-	if (!wire) {
+	const record = props.context.getRecord()
+	const wire = props.context.getWire()
+	if (!wire || !record) {
 		return null
 	}
 
 	const fieldId = props.definition.fieldId
 	const id = props.definition.id
+	const signals = props.definition.signals
 	const fileCollection = props.definition.fileCollection
-
 	const FileUploadProps = {
 		className: classes.root,
 	}
@@ -88,10 +101,11 @@ function FileUpload(props: FileUploadProps): ReactElement | null {
 						handleChange(
 							e.target.files,
 							fieldId,
-							//record,
+							record,
 							wire,
 							uesio,
-							fileCollection
+							fileCollection,
+							signals
 						)
 					}
 				/>
@@ -99,6 +113,10 @@ function FileUpload(props: FileUploadProps): ReactElement | null {
 					color="primary"
 					variant="contained"
 					component="span"
+					onClick={
+						props.definition?.signals &&
+						uesio.signal.getHandler(props.definition.signals)
+					}
 				>
 					Upload New File
 				</material.Button>

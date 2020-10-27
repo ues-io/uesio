@@ -5,7 +5,7 @@ type FileUploadDefinition = {
 	fieldId: string
 	fileCollection: string
 	margin?: styles.MarginDefinition
-	signals?: signal.ComponentSignal[]
+	signals: signal.ComponentSignal[]
 	wire: string
 }
 

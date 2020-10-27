@@ -1,4 +1,4 @@
-name: route
+name: field
 definition:
   # Wires are how we pull in data
   wires:
@@ -28,13 +28,17 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: workspacename
-    routes:
-      collection: uesio.routes
+    collections:
+      collection: uesio.collections
       fields:
         uesio.id:
         uesio.name:
-        uesio.path:
-        uesio.view:
+        uesio.namefield:
+        uesio.idfield:
+        uesio.workspaceid:
+        uesio.workspace:
+        uesio.collectionname:
+        uesio.datasource:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -42,7 +46,38 @@ definition:
           lookupField: uesio.id
         - field: uesio.name
           valueSource: PARAM
-          param: routename
+          param: collectionname
+    fields:
+      collection: uesio.fields
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.type:
+        uesio.label:
+        uesio.propertyname:
+        uesio.collection:
+        uesio.workspaceid:
+        uesio.foreignKeyField:
+        uesio.referencedCollection:
+      conditions:
+        - field: uesio.collection
+          value: $Param{appname}.$Param{collectionname}
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: fieldname
+      defaults:
+        - field: uesio.collection
+          valueSource: LOOKUP
+          lookupWire: collections
+          lookupTemplate: $Param{appname}.$Param{collectionname}
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -53,8 +88,8 @@ definition:
           - material.deck:
               xs: 12
               margin: 0
-              id: routesDeck
-              wire: routes
+              id: fieldDeck
+              wire: fields
               mode: READ
               components:
                 - material.breadcrumbs:
@@ -80,14 +115,21 @@ definition:
                             band: platform
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
-                      - text: routes
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/routes
+                      - text: collections
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/collections
                         signals:
                           - signal: NAVIGATE
                             band: platform
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/routes
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/collections
                             namespace: uesio
-                      - text: $Param{routename}
+                      - text: $Param{collectionname}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
+                        signals:
+                          - signal: NAVIGATE
+                            band: platform
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
+                            namespace: uesio
+                      - text: $Param{fieldname}
                 - material.grid:
                     items:
                       - material.griditem:
@@ -107,47 +149,13 @@ definition:
                                         - material.griditem:
                                             components:
                                               - material.typography:
-                                                  text: ${uesio.path}
-                                                  variant: h5
+                                                  text: ${uesio.name}
                                                   textTransform: "uppercase"
+                                                  variant: h5
                                         - material.griditem:
                                             components:
-                                              - material.dialog:
-                                                  id: "routeDialog"
-                                                  title: "Are you sure to delete this item?"
-                                                  content: "Are you sure you want to permanently delete this element. The information will be permanently delete"
-                                                  mode: "CLOSE"
-                                                  disagreeSignals:
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
-                                                      target: "routeDialog"
-                                                  agreeSignals:
-                                                    - signal: "MARK_FOR_DELETE"
-                                                      band: "wire"
-                                                      target: "routes"
-                                                    - signal: "SAVE"
-                                                      band: "wire"
-                                                      targets:
-                                                        - "routes"
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
-                                                      target: "routeDialog"
-                                                    - signal: "NAVIGATE"
-                                                      band: "platform"
-                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
-                                                      namespace: "uesio"
                                               - material.buttonset:
                                                   buttons:
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Preview"
-                                                        signals:
-                                                          - signal: "REDIRECT"
-                                                            band: platform
-                                                            path: "/workspace/$Param{appname}/$Param{workspacename}/app/$Param{appname}/${uesio.path}"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -156,7 +164,7 @@ definition:
                                                           - signal: "TOGGLE_MODE"
                                                             scope: "material.deck"
                                                             band: "component"
-                                                            target: "routesDeck"
+                                                            target: "fieldDeck"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -165,7 +173,7 @@ definition:
                                                           - signal: "SAVE"
                                                             band: "wire"
                                                             targets:
-                                                              - "routes"
+                                                              - "fields"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -173,22 +181,49 @@ definition:
                                                         signals:
                                                           - signal: "CANCEL"
                                                             band: "wire"
-                                                            target: "routes"
+                                                            target: "fields"
                                                     - material.button:
-                                                        color: "secondary"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.dialog"
-                                                            band: "component"
-                                                            target: "routeDialog"
+                                                          - signal: "MARK_FOR_DELETE"
+                                                            band: "wire"
+                                                            target: "fields"
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "fields"
+                                                          - signal: "NAVIGATE"
+                                                            band: "platform"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}"
+                                                            namespace: "uesio"
                                   - material.field:
-                                      fieldId: uesio.path
-                                  - uesio.metadatafield:
-                                      fieldId: uesio.view
-                                      metadataType: "VIEW"
-                                      label: "View"
+                                      fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.type
+                                  - material.field:
+                                      fieldId: uesio.label
+                                  - material.field:
+                                      fieldId: uesio.propertyname
+                                  - material.field:
+                                      fieldId: uesio.collection
+                                  - material.field:
+                                      fieldId: uesio.workspaceid
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: "REFERENCE"
+                                      components:
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.foreignKeyField
+                                            metadataType: "FIELD"
+                                            label: "Foreign Key Field"
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.referencedCollection
+                                            metadataType: "COLLECTION"
+                                            label: "Ref. Collection"
 
 dependencies:
   componentpacks:
