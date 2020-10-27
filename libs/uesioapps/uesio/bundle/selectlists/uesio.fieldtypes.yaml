@@ -16,4 +16,5 @@ options:
     value: "FILE"
   - label: "Image"
     value: "IMAGE"
-
+  - label: "Datetime"
+    value: "DATETIME"
