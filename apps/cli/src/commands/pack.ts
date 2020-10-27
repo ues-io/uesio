@@ -22,6 +22,10 @@ export default class Pack extends Command {
 
 		console.log("Packing...")
 		const entries = await createEntryFiles()
+		if (!Object.keys(entries).length) {
+			console.log("Nothing to pack.")
+			return
+		}
 		webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
 	}
 }
