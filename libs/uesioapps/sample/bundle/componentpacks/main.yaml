@@ -3,3 +3,4 @@ components:
   hello:
   error:
   progressgauge:
+  datePicker:
