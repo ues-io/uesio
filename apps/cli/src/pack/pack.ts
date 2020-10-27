@@ -95,7 +95,7 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 	const packDir = "./bundle/componentpacks"
 	const entries: EntryFileMap = {}
 
-	const files = await fs.readdir(path.resolve(packDir))
+	const files = await fs.readdir(path.resolve(packDir)).catch(() => [])
 
 	const packs = files.filter((filename) => filename.endsWith(".yaml"))
 
@@ -132,7 +132,15 @@ interface Flags {
 	stats: boolean
 }
 const getLoaderPath = (loaderName: string): string => {
-	return path.resolve(__dirname, "..", "..", "..", "..", "node_modules", loaderName)
+	return path.resolve(
+		__dirname,
+		"..",
+		"..",
+		"..",
+		"..",
+		"node_modules",
+		loaderName
+	)
 }
 const getWebpackConfig = (
 	entries: EntryFileMap,
