@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { FunctionComponent } from "react"
 
 import { material, definition, context, collection } from "@uesio/ui"
 import TextField from "../textfield/textfield"
@@ -18,28 +18,21 @@ type Props = {
 	mode?: context.FieldMode
 } & definition.BaseProps
 
-const SelectField = (props: Props): React.ReactElement | null => {
+const SelectField: FunctionComponent<Props> = (props: Props) => {
 	const classes = useStyles(props)
-	const hideLabel = props.hideLabel
-	const mode = props.mode
-	const options = props.options
-	const value = props.value
+	const { hideLabel, mode, options, value, setValue, label } = props
 
 	if (mode === "READ") {
-		const optionMatch =
-			options &&
-			options.find((option) => {
-				return option.value === value
-			})
-		const valueLabel = (optionMatch && optionMatch.label) || ""
+		const optionMatch = options?.find((option) => option.value === value)
+		const valueLabel = optionMatch?.label || ""
 		return (
 			<TextField
 				{...props}
 				mode={mode}
-				type={"TEXT"}
+				type="TEXT"
 				value={valueLabel}
-				setValue={props.setValue}
-				label={props.label}
+				setValue={setValue}
+				label={label}
 				hideLabel={hideLabel}
 			></TextField>
 		)
@@ -50,9 +43,7 @@ const SelectField = (props: Props): React.ReactElement | null => {
 			{...{
 				select: true,
 				className: classes.root,
-				...(!hideLabel && {
-					label: props.label,
-				}),
+				...(!hideLabel && { label }),
 				fullWidth: true,
 				InputLabelProps: {
 					disableAnimation: true,
@@ -60,19 +51,16 @@ const SelectField = (props: Props): React.ReactElement | null => {
 				},
 				value,
 				onChange: (event): void => {
-					props.setValue(event.target.value as string)
+					setValue(event.target.value)
 				},
 				size: "small",
 			}}
 		>
-			{options &&
-				options.map((option, index) => {
-					return (
-						<material.MenuItem key={index} value={option.value}>
-							{option.label}
-						</material.MenuItem>
-					)
-				})}
+			{options?.map((option, index) => (
+				<material.MenuItem key={index} value={option.value}>
+					{option.label}
+				</material.MenuItem>
+			))}
 		</material.TextField>
 	)
 }
