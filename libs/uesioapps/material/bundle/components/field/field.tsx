@@ -38,24 +38,12 @@ const Field = React.memo(
 			...props,
 		}
 
-		if (["TEXT", "LONGTEXT"].indexOf(type) !== -1) {
+		if (["TEXT", "LONGTEXT", "DATE"].indexOf(type) !== -1) {
 			return (
 				<TextField
 					{...props}
 					mode={mode}
 					type={fieldMetadata.getType()}
-					value={record.getFieldValue(fieldId) || ""}
-					setValue={(value) => record.update(fieldId, value)}
-					label={label}
-					hideLabel={hideLabel}
-				/>
-			)
-		} else if (type === "DATE") {
-			return (
-				<TextField
-					{...props}
-					mode={mode}
-					type="date"
 					value={record.getFieldValue(fieldId) || ""}
 					setValue={(value) => record.update(fieldId, value)}
 					label={label}
