@@ -8,19 +8,20 @@ import CheckBoxField from "../checkboxfield/checkboxfield"
 
 const Field = React.memo(
 	(props: FieldProps): React.ReactElement | null => {
-		const record = props.context.getRecord()
-		const wire = props.context.getWire()
+		const { context, definition } = props
+		const { fieldId, hideLabel } = definition
+
+		const record = context.getRecord()
+		const wire = context.getWire()
 		if (!wire || !record) {
 			return null
 		}
 
 		const collection = wire.getCollection()
-		const fieldId = props.definition.fieldId
-		const hideLabel = props.definition.hideLabel
-		const fieldMetadata = collection.getField(fieldId)
-		const label = props.definition.label || fieldMetadata.getLabel()
 
-		const mode = props.context.getFieldMode() || "READ"
+		const fieldMetadata = collection.getField(fieldId)
+		const label = definition.label || fieldMetadata.getLabel()
+		const mode = context.getFieldMode() || "READ"
 
 		if (!fieldMetadata.isValid()) {
 			return null
