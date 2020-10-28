@@ -2,7 +2,7 @@ import React, { ChangeEvent, FunctionComponent } from "react"
 
 import { material, definition, context } from "@uesio/ui"
 
-console.log("test github action")
+console.log('intended linting error, simple quote.');
 
 type Props = {
 	label: string
