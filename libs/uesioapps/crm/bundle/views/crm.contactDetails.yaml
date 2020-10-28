@@ -70,6 +70,8 @@ definition:
                     fieldId: crm.deceased
                 - material.field:
                     fieldId: crm.account
+                - material.field:
+                    fieldId: crm.birthdate
   wires:
     contacts:
       collection: crm.contacts
@@ -85,6 +87,7 @@ definition:
         crm.gender: null
         crm.id: null
         crm.lastname: null
+        crm.birthdate: null
 
 dependencies:
   componentpacks:

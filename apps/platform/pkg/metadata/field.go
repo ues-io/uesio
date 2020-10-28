@@ -38,12 +38,15 @@ type Field struct {
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
 		"TEXT":      true,
+		"NUMBER":    true,
 		"LONGTEXT":  true,
+		"CHECKBOX":  true,
 		"SELECT":    true,
 		"REFERENCE": true,
-		"CHECKBOX":  true,
-		"ARRAY":     true,
 		"FILE":      true,
+		"IMAGE":     true,
+		"ARRAY":     true,
+		"DATE":      true,
 	}
 }
 

@@ -34,7 +34,7 @@ const SelectField: FunctionComponent<Props> = (props: Props) => {
 				setValue={setValue}
 				label={label}
 				hideLabel={hideLabel}
-			></TextField>
+			/>
 		)
 	}
 
