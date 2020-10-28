@@ -61,6 +61,8 @@ definition:
           - material.column:
               field: crm.account
           - material.column:
+              field: crm.birthdate
+          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -82,6 +84,7 @@ definition:
         crm.gender: null
         crm.id: null
         crm.lastname: null
+        crm.birthdate: null
 dependencies:
   componentpacks:
     material.main:
