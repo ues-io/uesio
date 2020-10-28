@@ -2,6 +2,9 @@ import React, { ChangeEvent, FunctionComponent } from "react"
 
 import { material, definition, context } from "@uesio/ui"
 
+const thomas = 'test'
+console.log(nothing);
+
 type Props = {
 	label: string
 	setValue: (value: string) => void
@@ -38,7 +41,7 @@ const TextField: FunctionComponent<Props> = (props: Props) => {
 				size: "small",
 				// See: https://github.com/mui-org/material-ui/issues/15697
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				variant: variant,
+				variant: variant as any,
 				type,
 				multiline: type === "LONGTEXT",
 				value,
