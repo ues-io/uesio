@@ -130,14 +130,14 @@ definition:
                                                       band: "wire"
                                                       targets:
                                                         - "routes"
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
-                                                      target: "routeDialog"
                                                     - signal: "NAVIGATE"
                                                       band: "platform"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
                                                       namespace: "uesio"
+                                                    - signal: "TOGGLE_MODE"
+                                                      scope: "material.dialog"
+                                                      band: "component"
+                                                      target: "routeDialog"
                                               - material.buttonset:
                                                   buttons:
                                                     - material.button:

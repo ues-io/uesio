@@ -130,14 +130,14 @@ definition:
                                                       band: "wire"
                                                       targets:
                                                         - "files"
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
-                                                      target: "fileDialog"
                                                     - signal: "NAVIGATE"
                                                       band: "platform"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
                                                       namespace: "uesio"
+                                                    - signal: "TOGGLE_MODE"
+                                                      scope: "material.dialog"
+                                                      band: "component"
+                                                      target: "fileDialog"
                                               - material.buttonset:
                                                   buttons:
                                                     - material.button:
