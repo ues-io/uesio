@@ -38,7 +38,7 @@ const TextField: FunctionComponent<Props> = (props: Props) => {
 				size: "small",
 				// See: https://github.com/mui-org/material-ui/issues/15697
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				variant: variant as any,
+				variant: variant,
 				type,
 				multiline: type === "LONGTEXT",
 				value,
