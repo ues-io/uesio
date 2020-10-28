@@ -45,8 +45,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio.id
         - field: uesio.name
-          valueSource: PARAM
-          param: collectionname
+          value: $Param{collectionname}
     fields:
       collection: uesio.fields
       fields:
