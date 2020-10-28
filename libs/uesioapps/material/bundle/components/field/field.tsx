@@ -50,13 +50,14 @@ const Field = React.memo(
 					hideLabel={hideLabel}
 				></TextField>
 			)
-		} else if (type === "DATETIME") {
+		} else if (type === "DATE") {
 			console.log("datetime", props)
+
 			return (
 				<TextField
 					{...props}
 					mode={mode}
-					type="date"
+					type={fieldMetadata.getType()}
 					value={record.getFieldValue(fieldId) || ""}
 					setValue={(value) => record.update(fieldId, value)}
 					label={label}
