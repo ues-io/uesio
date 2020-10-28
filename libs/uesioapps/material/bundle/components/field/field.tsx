@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 
 import { FieldProps } from "./fielddefinition"
 import Reference from "./reference"
@@ -48,11 +48,9 @@ const Field = React.memo(
 					setValue={(value) => record.update(fieldId, value)}
 					label={label}
 					hideLabel={hideLabel}
-				></TextField>
+				/>
 			)
 		} else if (type === "DATE") {
-			console.log("datetime", props)
-
 			return (
 				<TextField
 					{...props}
@@ -62,7 +60,7 @@ const Field = React.memo(
 					setValue={(value) => record.update(fieldId, value)}
 					label={label}
 					hideLabel={hideLabel}
-				></TextField>
+				/>
 			)
 		} else if (type === "SELECT") {
 			return (
@@ -74,7 +72,7 @@ const Field = React.memo(
 					label={label}
 					hideLabel={hideLabel}
 					options={fieldMetadata.getOptions()}
-				></SelectField>
+				/>
 			)
 		} else if (type === "CHECKBOX") {
 			return (
@@ -85,10 +83,10 @@ const Field = React.memo(
 					setValue={(value: boolean) => record.update(fieldId, value)}
 					label={label}
 					hideLabel={hideLabel}
-				></CheckBoxField>
+				/>
 			)
 		} else if (type === "REFERENCE") {
-			return <Reference {...rendererProps}></Reference>
+			return <Reference {...rendererProps} />
 		}
 		return null
 	},
