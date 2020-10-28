@@ -46,7 +46,7 @@ const TextField: FunctionComponent<Props> = (props: Props) => {
 					setValue(event.target.value)
 				},
 			}}
-		></material.TextField>
+		/>
 	)
 }
 
