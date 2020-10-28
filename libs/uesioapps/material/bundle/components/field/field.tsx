@@ -50,6 +50,19 @@ const Field = React.memo(
 					hideLabel={hideLabel}
 				></TextField>
 			)
+		} else if (type === "DATETIME") {
+			console.log("datetime", props)
+			return (
+				<TextField
+					{...props}
+					mode={mode}
+					type="date"
+					value={record.getFieldValue(fieldId) || ""}
+					setValue={(value) => record.update(fieldId, value)}
+					label={label}
+					hideLabel={hideLabel}
+				></TextField>
+			)
 		} else if (type === "SELECT") {
 			return (
 				<SelectField
