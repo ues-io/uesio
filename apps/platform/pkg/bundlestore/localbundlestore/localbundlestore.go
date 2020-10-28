@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,17 +38,21 @@ func (b *LocalBundleStore) GetItem(namespace string, version string, objectname 
 
 func (b *LocalBundleStore) ListItems(namespace string, version string, objectname string) ([]string, error) {
 	dirPath := filepath.Join(getBasePath(namespace, version), objectname)
-	files, err := ioutil.ReadDir(dirPath)
+	d, err := os.Open(dirPath)
 	if err != nil {
 		return []string{}, nil
 	}
-	keys := make([]string, len(files))
-	for i, file := range files {
-		fileName := file.Name()
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
+	if err != nil {
+		return []string{}, nil
+	}
+	keys := []string{}
+	for _, fileName := range names {
 		if !strings.HasSuffix(fileName, ".yaml") {
 			continue
 		}
-		keys[i] = fileName
+		keys = append(keys, strings.TrimSuffix(fileName, ".yaml"))
 	}
 	return keys, nil
 }
