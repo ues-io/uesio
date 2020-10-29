@@ -52,7 +52,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/ui/**/*.ts*"]
+            "lintFilePatterns": ["libs/ui/**/*.ts"]
           }
         },
         "test": {
@@ -80,7 +80,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/buildtime/**/*.ts*"]
+            "lintFilePatterns": ["libs/buildtime/**/*.ts"]
           }
         },
         "test": {
@@ -108,7 +108,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/lazymonaco/**/*.ts*"]
+            "lintFilePatterns": ["libs/lazymonaco/**/*.ts"]
           }
         },
         "test": {
@@ -151,7 +151,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/sample/**/*.ts*"]
+            "lintFilePatterns": ["libs/uesioapps/sample/**/*.tsx"]
           }
         },
         "build": {
@@ -221,7 +221,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/material/**/*.ts*"]
+            "lintFilePatterns": ["libs/uesioapps/material/**/*.ts"]
           }
         },
         "build": {
