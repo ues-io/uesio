@@ -17,7 +17,7 @@ func Logger(message string) {
 }
 
 // RunBot function
-func RunBot(bot *metadata.Bot, request *reqs.SaveRequest, botAPI *BotAPI, vm *goja.Runtime, session *sess.Session) error {
+func RunBot(bot *metadata.Bot, botAPI *BotAPI, vm *goja.Runtime, session *sess.Session) error {
 
 	runner, err := vm.RunString("(" + bot.FileContents + ")")
 	if err != nil {
@@ -60,7 +60,7 @@ func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionM
 		if bot.CollectionRef != request.Collection {
 			continue
 		}
-		err := RunBot(&bot, request, botAPI, vm, session)
+		err := RunBot(&bot, botAPI, vm, session)
 		if err != nil {
 			return err
 		}
