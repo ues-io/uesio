@@ -105,12 +105,6 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/lazymonaco/**/*.ts"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
@@ -151,7 +145,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/sample/**/*.tsx"]
+            "lintFilePatterns": ["libs/uesioapps/sample/**/*.ts"]
           }
         },
         "build": {
@@ -190,12 +184,6 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/uesioapps/crm/**/*.ts"]
-          }
-        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
