@@ -2,6 +2,8 @@ name: datasourcetypes
 options:
   - label: "DynamoDB"
     value: "uesio.dynamodb"
+  - label: "DynamoDB multiple tables"
+    value: "uesio.dynamodbmultiple"
   - label: "PostgreSQL"
     value: "uesio.postgresql"
   - label: "Firestore"

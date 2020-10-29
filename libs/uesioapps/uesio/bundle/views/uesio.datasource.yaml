@@ -191,6 +191,24 @@ definition:
                                       padding: 0
                                       uesio.display:
                                         - field: uesio.type
+                                          value: uesio.dynamodbmultiple
+                                      components:
+                                        - material.field:
+                                            label: AWS Region
+                                            fieldId: uesio.region
+                                        - uesio.metadatafield:
+                                            label: AWS Access Key ID
+                                            metadataType: "SECRET"
+                                            fieldId: uesio.username
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.password
+                                            metadataType: "SECRET"
+                                            label: AWS Secret Access Key
+
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
                                           value: uesio.postgresql
                                       components:
                                         - material.field:
