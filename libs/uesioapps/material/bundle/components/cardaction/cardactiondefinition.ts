@@ -37,6 +37,11 @@ const CardActionPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	traits: ["uesio.standalone"],
 }
+
+// intended lint provoked error
+const {} = CardActionPropertyDefinition.sections[0]
+
+
 export { CardActionProps, CardActionDefinition }
 
 export default CardActionPropertyDefinition
