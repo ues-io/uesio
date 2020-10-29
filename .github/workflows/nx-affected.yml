@@ -24,7 +24,7 @@ jobs:
       - name: Run Affected Tests
         shell: bash
         run: |
-          npm run build-all
+
           npm run affected:e2e -- --base=origin/master --parallel
           npm run affected:libs -- --base=origin/master --parallel
           npm run affected:lint -- --base=origin/master --parallel
