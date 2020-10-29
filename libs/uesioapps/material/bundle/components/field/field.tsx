@@ -1,4 +1,5 @@
-import React from "react"
+// intended lint provoked error, no used useState
+import React, { useState } from "react"
 
 import { FieldProps } from "./fielddefinition"
 import Reference from "./reference"
