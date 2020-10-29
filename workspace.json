@@ -105,6 +105,13 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "command": "echo TODO: set up lint for lazymonaco.",
+            "cwd": "libs/lazymonaco"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
@@ -184,6 +191,13 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "command": "echo TODO: set up lint for uesioapps-crm.",
+            "cwd": "libs/uesioapps/crm"
+          }
+        },
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -264,6 +278,13 @@
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/cli/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for cli.",
+            "cwd": "apps/cli"
           }
         }
       }
