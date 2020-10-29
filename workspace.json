@@ -178,9 +178,10 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/uesio/**/*.ts*"]
+            "command": "echo TODO: set up lint for uesioapps-uesio.",
+            "cwd": "libs/uesioapps/uesio"
           }
         },
         "test": {
