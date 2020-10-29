@@ -88,7 +88,7 @@ function getIndexPath(path: string): string {
 		const segment = pathArray.pop()
 		const isIndex = segment && /^\d+$/.test(segment)
 		if (isIndex) {
-			return fromPath(pathArray) + `[\"${segment}\"]`
+			return fromPath(pathArray) + `["${segment}"]`
 		}
 	}
 	return ""

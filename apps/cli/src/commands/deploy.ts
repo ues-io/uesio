@@ -12,9 +12,7 @@ export default class Deploy extends Command {
 	static args = []
 
 	async run(): Promise<void> {
-		const {
-			/*args , flags */
-		} = this.parse(Deploy)
+		const { args , flags } = this.parse(Deploy)
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
