@@ -7,11 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Vendor is good
+// Vendor serves files from the dist directory
 func Vendor(w http.ResponseWriter, r *http.Request) {
-	filename := mux.Vars(r)["filename"]
-
-	ServeStatic(
-		filepath.Join("..", "..", "dist", filename),
-	)(w, r)
+	http.ServeFile(w, r, filepath.Join("..", "..", "dist", mux.Vars(r)["filename"]))
 }

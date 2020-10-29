@@ -3,6 +3,7 @@ package cmd
 import (
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
@@ -47,9 +48,9 @@ func serve(cmd *cobra.Command, args []string) {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/fonts/{filename}", controllers.Fonts).Methods("GET")
-	r.HandleFunc("/static/loader", controllers.Loader).Methods("GET")
+	r.HandleFunc("/static/loader", controllers.ServeStatic(filepath.Join("platform", "platform.js"))).Methods("GET")
 	r.HandleFunc("/static/{filename:.*}", controllers.Vendor).Methods("GET")
-	r.HandleFunc("/favicon.ico", controllers.Favicon).Methods("GET")
+	r.HandleFunc("/favicon.ico", controllers.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods("GET")
 	r.HandleFunc("/health", controllers.Health).Methods("GET")
 
 	// The workspace router
@@ -63,7 +64,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controllers.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controllers.Save, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controllers.ServeFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controllers.ServeRoute(), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controllers.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controllers.ViewAPI, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/{namespace}/{route:.*}", controllers.RouteAPI, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controllers.ServeComponentPack(true), "GET")
@@ -91,7 +92,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAPI(sr, "/auth/login", controllers.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controllers.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controllers.AuthCheck).Methods("GET")
-	siteAPI(r, "/{route:.*}", controllers.ServeLocalRoute()).Methods("GET")
+	siteAPI(r, "/{route:.*}", controllers.ServeLocalRoute).Methods("GET")
 
 	port := os.Getenv("PORT")
 	if port == "" {
