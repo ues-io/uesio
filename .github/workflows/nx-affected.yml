@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           npm run build-all
-          npm run affected:e2e -- --base=origin/master --parallel
-          npm run affected:libs -- --base=origin/master --parallel
-          npm run affected:lint -- --base=origin/master --parallel
-          npm run affected:test -- --base=origin/master --parallel
+          npm run affected:e2e
+          npm run affected:libs
+          npm run affected:lint
+          npm run affected:test
