@@ -2,9 +2,6 @@ import React, { ChangeEvent, FunctionComponent } from "react"
 
 import { material, definition, context } from "@uesio/ui"
 
-const thomas = 'test'
-console.log(nothing);
-
 type Props = {
 	label: string
 	setValue: (value: string) => void
