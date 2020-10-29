@@ -18,6 +18,9 @@ const useStyles = material.makeStyles((theme) =>
 )
 
 const Avatar: FunctionComponent<AvatarProps> = (props) => {
+	// intended error
+	const {} = props
+
 	const classes = useStyles(props)
 	return <material.Avatar className={classes.root}>BH</material.Avatar>
 }
