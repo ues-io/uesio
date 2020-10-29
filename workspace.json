@@ -260,12 +260,6 @@
             "cwd": "apps/cli"
           }
         },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/cli/**/*.ts"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
