@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 // This component was mostly copied from @material-ui/lab
 // But to avoid a weird bug with lab buttons, I just copied it
 // into here. Eventually, if the Alert component makes it out of

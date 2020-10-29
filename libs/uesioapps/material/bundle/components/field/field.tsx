@@ -8,9 +8,6 @@ import CheckBoxField from "../checkboxfield/checkboxfield"
 
 const Field = React.memo(
 	(props: FieldProps): React.ReactElement | null => {
-		// intended lint provoked error
-		const {} = props
-
 		const { context, definition } = props
 		const { fieldId, hideLabel } = definition
 

@@ -15,8 +15,7 @@ import {
 
 function BooleanProp(props: PropRendererProps): ReactElement {
 	const descriptor = props.descriptor as builder.BooleanProp
-	const { definition } = props
-	var selected = props.getValue() as boolean
+	const selected = props.getValue() as boolean
 
 	switch (descriptor.displaytype) {
 		case "switch":
@@ -35,7 +34,7 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 					label={descriptor.label}
 				/>
 			)
-		case "select":
+		case "select": {
 			const optionslist: builder.PropertySelectOption[] = [
 				{
 					value: "true",
@@ -80,7 +79,7 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 					)}
 				</TextField>
 			)
-
+		}
 		default:
 			//Checkbox as default
 			return (
