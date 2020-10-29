@@ -7,11 +7,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Fonts is good
+// Fonts serves files from the fonts directory
 func Fonts(w http.ResponseWriter, r *http.Request) {
-	filename := mux.Vars(r)["filename"]
-
-	ServeStatic(
-		filepath.Join("fonts", filename),
-	)(w, r)
+	http.ServeFile(w, r, filepath.Join("fonts", mux.Vars(r)["filename"]))
 }

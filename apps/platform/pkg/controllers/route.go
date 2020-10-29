@@ -116,48 +116,44 @@ func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 // ServeRoute serves a route
-func ServeRoute() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		namespace := vars["namespace"]
-		path := vars["route"]
+func ServeRoute(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	namespace := vars["namespace"]
+	path := vars["route"]
 
-		session := middlewares.GetSession(r)
-		workspace := session.GetWorkspace()
+	session := middlewares.GetSession(r)
+	workspace := session.GetWorkspace()
 
-		prefix := "/app/" + namespace + "/"
+	prefix := "/app/" + namespace + "/"
 
-		if workspace != nil {
-			prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + prefix
-		}
-
-		route, err := getRoute(r, namespace, path, prefix, session)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			RedirectToLogin(w, r)
-			return
-		}
-
-		ExecuteIndexTemplate(w, route, false, session)
+	if workspace != nil {
+		prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + prefix
 	}
+
+	route, err := getRoute(r, namespace, path, prefix, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		RedirectToLogin(w, r)
+		return
+	}
+
+	ExecuteIndexTemplate(w, route, false, session)
 }
 
 // ServeLocalRoute serves a route
-func ServeLocalRoute() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		path := vars["route"]
+func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	path := vars["route"]
 
-		session := middlewares.GetSession(r)
-		site := session.GetSite()
+	session := middlewares.GetSession(r)
+	site := session.GetSite()
 
-		route, err := getRoute(r, site.AppRef, path, "/", session)
-		if err != nil {
-			logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
-			RedirectToLogin(w, r)
-			return
-		}
-
-		ExecuteIndexTemplate(w, route, false, session)
+	route, err := getRoute(r, site.AppRef, path, "/", session)
+	if err != nil {
+		logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
+		RedirectToLogin(w, r)
+		return
 	}
+
+	ExecuteIndexTemplate(w, route, false, session)
 }

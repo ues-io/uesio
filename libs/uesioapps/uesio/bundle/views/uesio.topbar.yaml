@@ -16,7 +16,7 @@ definition:
               components:
                 - material.image:
                     file: uesio.logoword
-                    height: 20px
+                    height: 30px
                     align: left
                     margin:
                       - 0
