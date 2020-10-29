@@ -106,7 +106,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "echo TODO: set up lint for lazymonaco.",
             "cwd": "libs/lazymonaco"
@@ -192,7 +192,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "echo TODO: set up lint for uesioapps-crm.",
             "cwd": "libs/uesioapps/crm"
