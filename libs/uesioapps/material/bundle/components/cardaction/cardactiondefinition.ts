@@ -1,4 +1,4 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder, signal, styles } from "@uesio/ui"
 
 type CardActionDefinition = {
 	icon: string
