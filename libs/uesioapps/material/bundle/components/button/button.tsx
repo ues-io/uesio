@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
@@ -14,24 +14,21 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Button(props: ButtonProps): ReactElement {
+const Button: FunctionComponent<ButtonProps> = (props) => {
+	const {
+		definition: { color, variant, fullWidth, signals, text },
+	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const buttonProps = {
 		className: classes.root,
-		color: props.definition?.color || "primary",
-		variant: props.definition?.variant || "contained",
-		fullWidth: props.definition.fullWidth,
-		onClick:
-			props.definition?.signals &&
-			uesio.signal.getHandler(props.definition.signals),
+		color: color || "primary",
+		variant: variant || "contained",
+		fullWidth: fullWidth,
+		onClick: signals && uesio.signal.getHandler(signals),
 	}
 
-	return (
-		<material.Button {...buttonProps}>
-			{props.definition?.text}
-		</material.Button>
-	)
+	return <material.Button {...buttonProps}>{text}</material.Button>
 }
 
 export default Button

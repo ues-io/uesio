@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: git fetch origin master
       - name: Install Dependencies
         run: npm ci
       - name: Run Affected Tests
