@@ -24,7 +24,8 @@ jobs:
       - name: Run Affected Tests
         shell: bash
         run: |
-          npm run nx affected:build -- --base=origin/master --head=HEAD
-          npm run nx affected:lint -- --base=origin/master --head=HEAD
-          npm run nx affected:test -- --base=origin/master --head=HEAD
-          npm run nx affected:e2e -- --base=origin/master --head=HEAD
+          npm run build-all
+          npm run affected:e2e
+          npm run affected:libs
+          npm run affected:lint
+          npm run affected:test
