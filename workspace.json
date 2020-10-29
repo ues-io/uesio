@@ -221,7 +221,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/material/**/*.ts"]
+            "lintFilePatterns": ["libs/uesioapps/material/**/*.tsx?"]
           }
         },
         "build": {
