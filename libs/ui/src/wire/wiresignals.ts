@@ -4,6 +4,7 @@ const TOGGLE_DELETE_STATUS = "TOGGLE_DELETE_STATUS"
 const MARK_FOR_DELETE = "MARK_FOR_DELETE"
 const UNMARK_FOR_DELETE = "UNMARK_FOR_DELETE"
 const CANCEL = "CANCEL"
+const EMPTY = "EMPTY"
 const CREATE_RECORD = "CREATE_RECORD"
 const UPDATE_RECORD = "UPDATE_RECORD"
 const SET_RECORD = "SET_RECORD"
@@ -23,6 +24,10 @@ interface UnmarkForDeleteSignal extends ActorSignal {
 
 interface CancelSignal extends ActorSignal {
 	signal: typeof CANCEL
+}
+
+interface EmptySignal extends ActorSignal {
+	signal: typeof EMPTY
 }
 
 interface ToggleConditionSignal extends ActorSignal {
@@ -49,11 +54,14 @@ export {
 	CREATE_RECORD,
 	UPDATE_RECORD,
 	SET_RECORD,
+	CANCEL,
+	EMPTY,
 	TOGGLE_CONDITION,
 	CreateRecordSignal,
 	UpdateRecordSignal,
 	SetRecordSignal,
 	CancelSignal,
+	EmptySignal,
 	ToggleDeleteStatusSignal,
 	MarkForDeleteSignal,
 	UnmarkForDeleteSignal,

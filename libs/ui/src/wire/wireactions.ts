@@ -6,6 +6,7 @@ const CREATE_RECORD = "CREATE_RECORD"
 const UPDATE_RECORD = "UPDATE_RECORD"
 const SET_RECORD = "SET_RECORD"
 const CANCEL = "CANCEL"
+const EMPTY = "EMPTY"
 const MARK_FOR_DELETE = "MARK_FOR_DELETE"
 const UNMARK_FOR_DELETE = "UNMARK_FOR_DELETE"
 const TOGGLE_DELETE_STATUS = "TOGGLE_DELETE_STATUS"
@@ -36,6 +37,10 @@ interface CancelAction extends ActorAction {
 	name: typeof CANCEL
 }
 
+interface EmptyAction extends ActorAction {
+	name: typeof EMPTY
+}
+
 interface MarkForDeleteAction extends ActorAction {
 	name: typeof MARK_FOR_DELETE
 	data: {
@@ -62,6 +67,7 @@ export {
 	UPDATE_RECORD,
 	SET_RECORD,
 	CANCEL,
+	EMPTY,
 	MARK_FOR_DELETE,
 	UNMARK_FOR_DELETE,
 	TOGGLE_DELETE_STATUS,
@@ -70,6 +76,7 @@ export {
 	UpdateRecordAction,
 	SetRecordAction,
 	CancelAction,
+	EmptyAction,
 	MarkForDeleteAction,
 	UnMarkForDeleteAction,
 	ToggleConditionAction,

@@ -28,7 +28,7 @@ import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { SignalAPI } from "../hooks/signalapi"
 import { batch } from "react-redux"
 import { SaveSignal, LoadSignal, AddWiresSignal } from "./wirebandsignals"
-import { CREATE_RECORD, CANCEL } from "./wireactions"
+import { CREATE_RECORD, EMPTY } from "./wireactions"
 import { Context } from "../context/context"
 import shortid from "shortid"
 import { deleteProperty } from "../util/util"
@@ -311,7 +311,7 @@ class WireBand {
 								await SignalAPI.run(
 									{
 										band: WIRE_BAND,
-										signal: CANCEL,
+										signal: EMPTY,
 										target: wire.getId(),
 									},
 									context,
