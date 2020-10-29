@@ -260,11 +260,10 @@
             "cwd": "apps/cli"
           }
         },
-        "test": {
-          "builder": "@nrwl/jest:jest",
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "jestConfig": "apps/cli/jest.config.js",
-            "passWithNoTests": true
+            "lintFilePatterns": ["apps/cli/**/*.ts"]
           }
         }
       }
