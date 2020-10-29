@@ -1,4 +1,4 @@
-name: newcollection
+name: newfile
 definition:
   # Wires are how we pull in data
   wires:
@@ -26,15 +26,13 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: workspacename
-    collections:
-      collection: uesio.collections
+    files:
+      collection: uesio.files
       fields:
         uesio.id:
         uesio.name:
         uesio.workspaceid:
-        uesio.workspace:
-        uesio.datasource:
-        uesio.collectionname:
+        uesio.content:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -46,6 +44,7 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -54,13 +53,13 @@ definition:
     - material.container:
         components:
           - material.typography:
-              text: Create a New Collection
+              text: Create a New File
               variant: h5
           - material.deck:
               xs: 12
               margin: 0
-              id: collectionsDeck
-              wire: collections
+              id: filesDeck
+              wire: files
               mode: EDIT
               components:
                 - material.card:
@@ -78,36 +77,20 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
-                                      fieldId: uesio.collectionname
-                                  - uesio.metadatafield:
-                                      fieldId: uesio.datasource
-                                      metadataType: "DATASOURCE"
-                                      label: "Data Source"
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
-                                      - "collections"
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
-                                    namespace: "uesio"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
-                                    namespace: "uesio"
+                                  - material.fileupload:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{appname}
+                                      id: "fileuploadid"
+                                      fieldId: uesio.content
+                                      fileCollection: uesio.workspacemetadatafiles
+                                      wire: files
+                                      signals:
+                                        - signal: "SAVE"
+                                          band: "wire"
+                                          targets:
+                                            - "files"
 dependencies:
   componentpacks:
     material.main:

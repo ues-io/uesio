@@ -6,6 +6,7 @@ import InfoOutlined from "@material-ui/icons/InfoOutlined"
 import Launch from "@material-ui/icons/Launch"
 import Visibility from "@material-ui/icons/Visibility"
 import Delete from "@material-ui/icons/Delete"
+import Description from "@material-ui/icons/Description"
 
 import { material } from "@uesio/ui"
 
@@ -22,6 +23,7 @@ const iconMap = {
 	open: Launch,
 	preview: Visibility,
 	delete: Delete,
+	file: Description,
 } as IconMap
 
 export default function getIcon(

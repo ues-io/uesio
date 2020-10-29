@@ -22,3 +22,5 @@ components:
   autocompletefield:
   imageupload:
   fileupload:
+  dialog:
+  file:

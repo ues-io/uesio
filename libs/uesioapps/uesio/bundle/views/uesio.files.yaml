@@ -34,6 +34,7 @@ definition:
         uesio.id:
         uesio.name:
         uesio.content:
+        uesio.mimetype:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -81,6 +82,19 @@ definition:
                       - material.typography:
                           text: Files gallery
                           variant: body2
+                - material.griditem:
+                    components:
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Create New File"
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newfile"
+                                    namespace: "uesio"
           - material.deck:
               xs: 12
               sm: 6
@@ -89,7 +103,7 @@ definition:
               margin: 0
               id: fileDeck
               wire: files
-              mode: EDIT
+              mode: READ
               components:
                 - material.card:
                     media:
@@ -98,17 +112,17 @@ definition:
                       height: 10px
                     margin: 1
                     components:
-                      - material.imageupload:
+                      - material.file:
                           uesio.context:
                             workspace:
                               name: $Param{workspacename}
                               app: $Param{appname}
-                          id: "imageUploadId"
-                          preview: true
+                          id: "fileComponent"
+                          preview: false
                           fileCollection: uesio.workspacemetadatafiles
                           fieldId: uesio.content
-                          width: 150
-                          height: 150
+                          width: 100
+                          height: 100
                           margin:
                             - 0
                             - 2

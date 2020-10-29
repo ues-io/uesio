@@ -45,8 +45,7 @@ definition:
           lookupWire: workspaces
           lookupField: uesio.id
         - field: uesio.name
-          valueSource: PARAM
-          param: collectionname
+          value: $Param{collectionname}
     fields:
       collection: uesio.fields
       fields:
@@ -194,10 +193,14 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.idfield
-                                  - material.field:
+                                      metadataType: "FIELD"
+                                      label: "ID Field"
+                                  - uesio.metadatafield:
                                       fieldId: uesio.namefield
+                                      metadataType: "FIELD"
+                                      label: "Name Field"
                                   - material.field:
                                       fieldId: uesio.collectionname
                                   - uesio.metadatafield:
@@ -239,9 +242,16 @@ definition:
                       - material.column:
                           field: uesio.collection
                       - material.column:
-                          field: uesio.foreignKeyField
-                      - material.column:
-                          field: uesio.referencedCollection
+                          components:
+                            - material.button:
+                                color: primary
+                                variant: contained
+                                text: Edit
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/fields/${uesio.name}"
+                                    namespace: "uesio"
 
 dependencies:
   componentpacks:

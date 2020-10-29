@@ -1,0 +1,3 @@
+name: field
+path: app/{appname}/workspace/{workspacename}/collection/{collectionname}/fields/{fieldname}
+view: uesio.field
