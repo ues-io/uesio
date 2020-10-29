@@ -1,11 +1,15 @@
 package controllers
 
 import (
+	"errors"
 	"io"
+	"mime"
 	"net/http"
 	"path/filepath"
 
 	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -33,31 +37,31 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var stream io.ReadCloser
+	var mimeType string
+
 	if file.Workspace == "" {
-		// The file we're looking for is in a bundle so we can get it by url.
-		// This should use a bundle store just like everything else.
-		basePath := filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
-		filePath := filepath.Join(basePath, "files", file.FileName)
-		http.ServeFile(w, r, filePath)
-		return
+		version, err := bundles.GetVersionFromSite(namespace, session.GetSite())
+		if err != nil {
+			logger.LogError(errors.New("Couldn't get bundle version"))
+			return
+		}
+
+		stream, err = bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, "files", file.FileName)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed File Download", http.StatusInternalServerError)
+		}
+		mimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
+	} else {
+		stream, mimeType, err = filesource.Download(file.Content, session)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed Download", http.StatusInternalServerError)
+			return
+		}
 	}
 
-	fileStream, mimeType, err := filesource.Download(file.Content, session)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, "Failed Download", http.StatusInternalServerError)
-		return
-	}
-
-	defer fileStream.Close()
-
-	w.Header().Set("content-type", mimeType)
-
-	_, err = io.Copy(w, fileStream)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
-		return
-	}
+	respondFile(w, r, mimeType, stream)
 
 }

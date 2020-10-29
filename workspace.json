@@ -202,6 +202,13 @@
             "command": "./../../../apps/cli/bin/run pack",
             "cwd": "libs/uesioapps/crm"
           }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run deploy",
+            "cwd": "libs/uesioapps/crm"
+          }
         }
       }
     },

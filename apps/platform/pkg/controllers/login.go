@@ -27,7 +27,6 @@ type LoginResponse struct {
 
 // Login is good
 func Login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/json")
 
 	// 1. Parse the request object.
 	var loginRequest LoginRequest
@@ -69,18 +68,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		redirectNamespace = "uesio"
 	}
 
-	loginResponse := &LoginResponse{
+	respondJSON(w, r, &LoginResponse{
 		User: GetUserMergeData(session),
 		// We'll want to read this from a setting somewhere
 		RedirectRouteNamespace: redirectNamespace,
 		RedirectRouteName:      redirectRoute,
 		RedirectPath:           redirectPath,
-	}
+	})
 
-	err = json.NewEncoder(w).Encode(loginResponse)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 }

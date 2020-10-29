@@ -2,7 +2,6 @@ package retrieve
 
 import (
 	"archive/zip"
-	"bufio"
 	"io"
 	"path/filepath"
 	"reflect"
@@ -61,16 +60,6 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 
 }
 
-//Maybe pull this from somewhere else
-func decodeYAML(v interface{}, reader *bufio.Reader) error {
-	decoder := yaml.NewDecoder(reader)
-	err := decoder.Decode(v)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	itemStream := reqs.ItemStream{
 		Path: "bundle.yaml",
@@ -107,13 +96,13 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, version string) (*metadata.BundleYamlDep, error) {
 	dep := metadata.BundleYamlDep{Version: version}
 
-	reader, closer, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
+	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
 	}
-	defer closer.Close()
+	defer stream.Close()
 
-	err = decodeYAML(&dep, reader)
+	err = bundlestore.DecodeYAML(&dep, stream)
 	if err != nil {
 		return nil, err
 	}

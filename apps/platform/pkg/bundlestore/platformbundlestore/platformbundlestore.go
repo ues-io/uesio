@@ -1,7 +1,6 @@
 package platformbundlestore
 
 import (
-	"bufio"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -11,8 +10,8 @@ import (
 type PlatformBundleStore struct {
 }
 
-func (b *PlatformBundleStore) GetItem(namespace string, version string, objectname string, name string) (*bufio.Reader, io.Closer, error) {
-	return nil, nil, nil
+func (b *PlatformBundleStore) GetItem(namespace string, version string, objectname string, name string) (io.ReadCloser, error) {
+	return nil, nil
 }
 
 func (b *PlatformBundleStore) ListItems(namespace string, version string, objectname string) ([]string, error) {

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"io"
 	"net/http"
 	"strconv"
 
@@ -40,25 +39,21 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 
 // DownloadUserFile function
 func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text")
 	session := middlewares.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
+		w.Header().Set("content-type", "text")
 		w.Write([]byte("No userfileid in the request URL query"))
 		return
 	}
 	fileStream, mimeType, err := filesource.Download(userFileID, session)
 	if err != nil {
+		w.Header().Set("content-type", "text")
 		w.Write([]byte("Unable to load file"))
 		return
 	}
-	w.Header().Set("content-type", mimeType)
-	_, err = io.Copy(w, fileStream)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, "Failed to Download user file", http.StatusInternalServerError)
-		return
-	}
+
+	respondFile(w, r, mimeType, fileStream)
 }
 
 // DeleteUserFile function

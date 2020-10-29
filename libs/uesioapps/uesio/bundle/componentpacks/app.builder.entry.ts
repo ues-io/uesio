@@ -1,1 +1,0 @@
-import { component } from "@uesio/ui";

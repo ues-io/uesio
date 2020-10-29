@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 
 import { FieldProps } from "./fielddefinition"
 import Reference from "./reference"
@@ -8,19 +8,20 @@ import CheckBoxField from "../checkboxfield/checkboxfield"
 
 const Field = React.memo(
 	(props: FieldProps): React.ReactElement | null => {
-		const record = props.context.getRecord()
-		const wire = props.context.getWire()
+		const { context, definition } = props
+		const { fieldId, hideLabel } = definition
+
+		const record = context.getRecord()
+		const wire = context.getWire()
 		if (!wire || !record) {
 			return null
 		}
 
 		const collection = wire.getCollection()
-		const fieldId = props.definition.fieldId
-		const hideLabel = props.definition.hideLabel
-		const fieldMetadata = collection.getField(fieldId)
-		const label = props.definition.label || fieldMetadata.getLabel()
 
-		const mode = props.context.getFieldMode() || "READ"
+		const fieldMetadata = collection.getField(fieldId)
+		const label = definition.label || fieldMetadata.getLabel()
+		const mode = context.getFieldMode() || "READ"
 
 		if (!fieldMetadata.isValid()) {
 			return null
@@ -38,7 +39,7 @@ const Field = React.memo(
 			...props,
 		}
 
-		if (type === "TEXT" || type === "LONGTEXT") {
+		if (["TEXT", "LONGTEXT", "DATE"].indexOf(type) !== -1) {
 			return (
 				<TextField
 					{...props}
@@ -48,7 +49,7 @@ const Field = React.memo(
 					setValue={(value) => record.update(fieldId, value)}
 					label={label}
 					hideLabel={hideLabel}
-				></TextField>
+				/>
 			)
 		} else if (type === "SELECT") {
 			return (
@@ -60,7 +61,7 @@ const Field = React.memo(
 					label={label}
 					hideLabel={hideLabel}
 					options={fieldMetadata.getOptions()}
-				></SelectField>
+				/>
 			)
 		} else if (type === "CHECKBOX") {
 			return (
@@ -71,10 +72,10 @@ const Field = React.memo(
 					setValue={(value: boolean) => record.update(fieldId, value)}
 					label={label}
 					hideLabel={hideLabel}
-				></CheckBoxField>
+				/>
 			)
 		} else if (type === "REFERENCE") {
-			return <Reference {...rendererProps}></Reference>
+			return <Reference {...rendererProps} />
 		}
 		return null
 	},

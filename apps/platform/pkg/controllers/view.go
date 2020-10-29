@@ -173,7 +173,6 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 
 // ViewAPI is good
 func ViewAPI(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/yaml")
 
 	vars := mux.Vars(r)
 
@@ -234,17 +233,10 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 		dependenciesResponse[componentPacksKey] = cpDependencies
 	}
 
-	viewResponse := &ViewResponse{
+	respondYAML(w, r, &ViewResponse{
 		Name:         view.Name,
 		Namespace:    view.Namespace,
 		Definition:   &view.Definition,
 		Dependencies: dependenciesResponse,
-	}
-
-	err = yaml.NewEncoder(w).Encode(viewResponse)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	})
 }
