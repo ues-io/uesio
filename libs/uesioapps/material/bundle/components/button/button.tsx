@@ -15,20 +15,21 @@ const useStyles = material.makeStyles((theme) =>
 )
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
-	const {
-		definition: { color, variant, fullWidth, signals, text },
-	} = props
+	const { definition } = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const buttonProps = {
 		className: classes.root,
-		color: color || "primary",
-		variant: variant || "contained",
-		fullWidth: fullWidth,
-		onClick: signals && uesio.signal.getHandler(signals),
+		color: definition?.color || "primary",
+		variant: definition?.variant || "contained",
+		fullWidth: definition.fullWidth,
+		onClick:
+			definition?.signals && uesio.signal.getHandler(definition.signals),
 	}
 
-	return <material.Button {...buttonProps}>{text}</material.Button>
+	return (
+		<material.Button {...buttonProps}>{definition?.text}</material.Button>
+	)
 }
 
 export default Button
