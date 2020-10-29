@@ -128,7 +128,7 @@ function SlotBuilder(props: SlotProps): ReactElement | null {
 		classNames.push(classes.expanded)
 	}
 
-	if (dragNode) {
+	if (!!dragNode) {
 		classNames.push(classes.isDragging)
 	}
 
