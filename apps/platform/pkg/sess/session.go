@@ -52,11 +52,11 @@ func NewPublic(site *metadata.Site) *Session {
 }
 
 // Logout function
-func Logout(w http.ResponseWriter, s *Session, site *metadata.Site) *Session {
+func Logout(w http.ResponseWriter, s *Session) *Session {
 	// Remove the logged out session
 	session.Remove(*s.browserSession, w)
 	// Login as the public user
-	return Login(w, nil, site)
+	return Login(w, nil, s.GetSite())
 }
 
 // GetSessionFromRequest function
@@ -74,7 +74,7 @@ func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *metadat
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := browserSession.CAttr("Site")
 	if browserSessionSite != site.Name {
-		return Logout(w, create(&browserSession, site), site), nil
+		return Logout(w, create(&browserSession, site)), nil
 	}
 	return create(&browserSession, site), nil
 }

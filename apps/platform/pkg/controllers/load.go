@@ -11,7 +11,6 @@ import (
 
 // Load is good
 func Load(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/json")
 
 	// 1. Parse the request object.
 	decoder := json.NewDecoder(r.Body)
@@ -34,13 +33,5 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	outData, err := json.Marshal(response)
-	if err != nil {
-		msg := "Invalid response format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	w.Write(outData)
+	respondJSON(w, r, response)
 }
