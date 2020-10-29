@@ -103,7 +103,7 @@ function SlotItem(props: SlotItemProps): ReactElement | null {
 	const classes = useStyles(props)
 	const classNames = [classes.root]
 
-	if (dragNode) {
+	if (!!dragNode) {
 		classNames.push(classes.isDragging)
 	}
 

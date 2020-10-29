@@ -35,7 +35,7 @@ async function handleChange(
 	const context = uesio.getContext()
 	const workspace = context.getWorkspace()
 
-	const recordId = record.getFieldValue(
+	var recordId = record.getFieldValue(
 		collectionNamespace + "." + IdField.getId()
 	) as string
 

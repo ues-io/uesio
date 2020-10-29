@@ -95,7 +95,7 @@ function Dialog(props: DialogProps): ReactElement {
 			uesio.signal.getHandler(props.definition.agreeSignals),
 	}
 
-	const mylocalState = state.mode == "OPEN" ? true : false
+	var mylocalState = state.mode == "OPEN" ? true : false
 
 	return (
 		<material.Dialog

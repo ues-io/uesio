@@ -1,6 +1,7 @@
 // it is important to set global var before any imports
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
+// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/camelcase
 __webpack_public_path__ = window.monacoPublicPath
 
 import React, { lazy, createElement, FC, Suspense } from "react"
@@ -12,11 +13,8 @@ import {
 	EditorDidMount,
 } from "react-monaco-editor"
 
-const LaziestMonaco = lazy(
-	() =>
-		import(
-			/* webpackChunkName: "react-monaco-editor" */ "react-monaco-editor"
-		)
+const LaziestMonaco = lazy(() =>
+	import(/* webpackChunkName: "react-monaco-editor" */ "react-monaco-editor")
 )
 
 type Props = {

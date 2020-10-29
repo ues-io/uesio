@@ -45,7 +45,7 @@ function MetadataField(props: Props): ReactElement | null {
 		"uesio.collectionname"
 	) as string
 
-	let grouping = namespace + "." + value_uesio_collectionname
+	var grouping = namespace + "." + value_uesio_collectionname
 
 	if (!value_uesio_collectionname) {
 		//This reads the fields from the Ref. collection
