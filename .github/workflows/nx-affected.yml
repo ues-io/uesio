@@ -24,8 +24,8 @@ jobs:
       - name: Run Affected Tests
         shell: bash
         run: |
-          npm run build-all
-          npm run affected:e2e
-          npm run affected:libs
-          npm run affected:lint
-          npm run affected:test
+          npm run build-all -- --base=remotes/origin/master
+          npm run affected:e2e -- --base=remotes/origin/master
+          npm run affected:libs -- --base=remotes/origin/master
+          npm run affected:lint -- --base=remotes/origin/master
+          npm run affected:test -- --base=remotes/origin/master
