@@ -242,7 +242,15 @@ func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, session *se
 			if err != nil {
 				return err
 			}
-			err = fa.Delete(userFile.Path, userFile.Name, credentials)
+			bucket, err := ufc.GetBucket(site)
+			if err != nil {
+				return err
+			}
+			path, err := ufc.GetPath(&userFile, site.Name, session.GetWorkspaceID())
+			if err != nil {
+				return errors.New("No filesource found")
+			}
+			err = fa.Delete(bucket, path, credentials)
 			if err != nil {
 				//Since the records have been deleted at this point
 				//it's a bit tricky to know what to do here
