@@ -37,7 +37,6 @@ const CardActionPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	traits: ["uesio.standalone"],
 }
-
 export { CardActionProps, CardActionDefinition }
 
 export default CardActionPropertyDefinition
