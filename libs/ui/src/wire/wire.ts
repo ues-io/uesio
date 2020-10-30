@@ -13,6 +13,7 @@ import {
 	UPDATE_RECORD,
 	SET_RECORD,
 	CANCEL,
+	EMPTY,
 	MARK_FOR_DELETE,
 	UNMARK_FOR_DELETE,
 	TOGGLE_DELETE_STATUS,
@@ -42,6 +43,7 @@ import {
 	TOGGLE_CONDITION,
 	ToggleConditionSignal,
 	SetRecordSignal,
+	EmptySignal,
 } from "./wiresignals"
 import { WireType } from "../definition/wire"
 import { PlainWireDefault } from "./wiredefault"
@@ -154,6 +156,14 @@ class Wire extends Actor {
 				data: {
 					...state.original,
 				},
+				changes: {},
+				deletes: {},
+			}
+		},
+		[EMPTY]: (action: CancelAction, state: PlainWire): PlainWire => {
+			return {
+				...state,
+				data: {},
 				changes: {},
 				deletes: {},
 			}
@@ -370,6 +380,35 @@ class Wire extends Actor {
 				]
 			},
 			dispatcher: (signal: CancelSignal, context: Context): ThunkFunc => {
+				return async (
+					dispatch: Dispatcher<StoreAction>
+				): DispatchReturn => {
+					dispatch({
+						type: ACTOR,
+						band: signal.band,
+						name: signal.signal,
+						target: signal.target,
+						scope: signal.scope,
+						data: {},
+						view: context.getView()?.getId(),
+					})
+					return context
+				}
+			},
+		},
+		[EMPTY]: {
+			label: "Empty",
+			public: true,
+			properties: (): PropDescriptor[] => {
+				return [
+					{
+						name: "target",
+						type: "WIRE",
+						label: "Target",
+					},
+				]
+			},
+			dispatcher: (signal: EmptySignal, context: Context): ThunkFunc => {
 				return async (
 					dispatch: Dispatcher<StoreAction>
 				): DispatchReturn => {
