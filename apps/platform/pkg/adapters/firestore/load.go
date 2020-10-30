@@ -35,7 +35,7 @@ func loadOne(
 	collection := client.Collection(collectionName)
 	var query firestore.Query
 
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata)
+	fieldMap, referenceFields, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,6 @@ func loadOne(
 	// Maps
 	// ReferenceField -> id values needed
 	data := []map[string]interface{}{}
-	idsToLookFor := adapters.ReferenceIDRegistry{}
 	iter := query.Documents(ctx)
 	defer iter.Stop()
 	for {
@@ -122,7 +121,8 @@ func loadOne(
 
 		}
 		// Process reference Fields
-		for _, fieldMetadata := range referenceFields {
+		for _, reference := range referenceFields {
+			fieldMetadata := reference.Metadata
 			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
 			if err != nil {
 				return nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
@@ -137,7 +137,7 @@ func loadOne(
 				continue
 			}
 
-			idsToLookFor.AddValue(fieldMetadata, foreignKeyValue)
+			reference.AddID(foreignKeyValue)
 		}
 		result[collectionMetadata.IDField] = doc.Ref.ID
 		data = append(data, result)
@@ -146,7 +146,7 @@ func loadOne(
 	//names to actual id values we will need to grab from the referenced collection
 	if len(referenceFields) != 0 {
 		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, client, metadata, data, collectionMetadata, idsToLookFor, referenceFields)
+		err = followUpReferenceFieldLoad(ctx, client, metadata, data, collectionMetadata, referenceFields)
 		if err != nil {
 			return nil, err
 		}

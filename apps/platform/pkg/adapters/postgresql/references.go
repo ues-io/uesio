@@ -15,11 +15,10 @@ func followUpReferenceFieldLoad(
 	metadata *adapters.MetadataCache,
 	dataPayload []map[string]interface{},
 	originalCollection *adapters.CollectionMetadata,
-	foreignKeyValues adapters.ReferenceIDRegistry,
-	referenceFields adapters.FieldsMap,
+	referenceFields adapters.ReferenceRegistry,
 ) error {
 
-	referencedCollectionsFields, referencedCollectionsIDs, err := adapters.GetReferenceFieldsAndIDs(referenceFields, metadata, foreignKeyValues)
+	referencedCollectionsFields, referencedCollectionsIDs, err := adapters.GetReferenceFieldsAndIDs(referenceFields)
 	if err != nil {
 		return err
 	}

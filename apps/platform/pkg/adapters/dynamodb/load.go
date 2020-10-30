@@ -43,7 +43,7 @@ func loadOne(
 		return nil, err
 	}
 
-	requestedFields, referenceCollection, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata)
+	requestedFields, referenceCollection, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +125,7 @@ func loadOne(
 		return nil, errors.New("DynamoDB failed to make Query API call:" + err.Error())
 	}
 
-	data, idsToLookFor, err := manageResponse(result, requestedFields, referenceCollection, collectionMetadata)
+	data, err := manageResponse(result, requestedFields, referenceCollection, collectionMetadata)
 
 	if err != nil {
 		return nil, errors.New("DynamoDB failed manage response:" + err.Error())
@@ -135,7 +135,7 @@ func loadOne(
 	//names to actual id values we will need to grab from the referenced collection
 	if len(referenceCollection) != 0 {
 		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, client, metadata, data, collectionMetadata, idsToLookFor, referenceCollection)
+		err = followUpReferenceFieldLoad(ctx, client, metadata, data, collectionMetadata, referenceCollection)
 		if err != nil {
 			return nil, err
 		}

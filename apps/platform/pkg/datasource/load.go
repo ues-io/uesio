@@ -27,7 +27,12 @@ func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch,
 		collections.AddCollection(collectionKey)
 
 		for _, requestField := range request.Fields {
-			collections.AddField(collectionKey, requestField.ID, nil)
+			subFields := FieldsMap{}
+			for _, subField := range requestField.Fields {
+				// TODO: This should be recursive
+				subFields[subField.ID] = FieldsMap{}
+			}
+			collections.AddField(collectionKey, requestField.ID, &subFields)
 		}
 
 		for _, condition := range request.Conditions {

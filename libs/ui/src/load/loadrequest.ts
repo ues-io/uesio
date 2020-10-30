@@ -11,6 +11,7 @@ type LoadRequest = {
 
 type LoadRequestField = {
 	id: string
+	fields?: LoadRequestField[]
 }
 
 type LoadRequestBatch = {

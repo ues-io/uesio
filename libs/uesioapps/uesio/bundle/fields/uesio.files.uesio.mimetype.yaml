@@ -1,6 +1,0 @@
-name: mimetype
-collection: uesio.files
-type: "TEXT"
-label: "Mime Type"
-propertyName: "mimetype"
-readOnly: true

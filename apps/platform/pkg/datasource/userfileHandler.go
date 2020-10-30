@@ -42,10 +42,8 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *s
 	if err != nil {
 		return err
 	}
-	mimeType := mime.TypeByExtension(filepath.Ext(details.Name))
 	changeRequest[details.FieldID] = id
 	changeRequest[meta.IDField] = details.RecordID
-	changeRequest["uesio.mimetype"] = mimeType
 	changes["0"] = changeRequest
 
 	saveRequestBatch := &SaveRequestBatch{
@@ -59,7 +57,7 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *s
 	}
 	_, err = Save(*saveRequestBatch, session)
 	if err != nil {
-		return errors.New("Failed to update field for the given file")
+		return errors.New("Failed to update field for the given file: " + err.Error())
 	}
 	return nil
 }
