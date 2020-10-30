@@ -1,5 +1,4 @@
 name: platform
-type: uesio.firestore
+type: uesio.postgresql
 database: ${uesio.googleProjectId}
 password: uesio.googleGCPAPIKey
-
