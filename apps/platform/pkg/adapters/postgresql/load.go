@@ -13,19 +13,19 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
-func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.FieldsMap, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, adapters.ReferenceIDRegistry, error) {
+func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
 
 	rows, err := loadQuery.RunWith(db).Query()
 
 	if err != nil {
-		return nil, nil, errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load rows in PostgreSQL:" + err.Error())
 	}
 
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, nil, errors.New("Failed to load columns in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load columns in PostgreSQL:" + err.Error())
 	}
 
 	colIndexes := map[string]int{}
@@ -36,7 +36,6 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 
 	allgeneric := make([]map[string]interface{}, 0)
 	colvals := make([]interface{}, len(cols))
-	idsToLookFor := adapters.ReferenceIDRegistry{}
 
 	for rows.Next() {
 		colassoc := make(map[string]interface{}, len(cols))
@@ -44,32 +43,33 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			colvals[i] = new(interface{})
 		}
 		if err := rows.Scan(colvals...); err != nil {
-			return nil, nil, errors.New("Failed to scan values in PostgreSQL:" + err.Error())
+			return nil, errors.New("Failed to scan values in PostgreSQL:" + err.Error())
 		}
 		// Map properties from firestore to uesio fields
 		for fieldID, fieldMetadata := range requestedFields {
 
 			sqlFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 			index, ok := colIndexes[sqlFieldName]
 			if !ok {
-				return nil, nil, errors.New("Column not found: " + sqlFieldName)
+				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
 			colassoc[fieldID] = *colvals[index].(*interface{})
 		}
 
 		allgeneric = append(allgeneric, colassoc)
 
-		for _, fieldMetadata := range referenceFields {
+		for _, reference := range referenceFields {
+			fieldMetadata := reference.Metadata
 			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
 			if err != nil {
-				return nil, nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
+				return nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
 			}
 			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 			foreignKeyValue, ok := colassoc[foreignKeyName]
 			if !ok {
@@ -77,13 +77,13 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 				continue
 			}
 
-			idsToLookFor.AddValue(fieldMetadata, foreignKeyValue)
+			reference.AddID(foreignKeyValue)
 		}
 
 	}
 	rows.Close()
 
-	return allgeneric, idsToLookFor, nil
+	return allgeneric, nil
 
 }
 
@@ -104,7 +104,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 		return nil, err
 	}
 
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata)
+	fieldMap, referenceFields, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return nil, err
 	}
@@ -159,8 +159,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 		}
 	}
 
-	idsToLookFor := adapters.ReferenceIDRegistry{}
-	data, idsToLookFor, err = queryDb(db, loadQuery, fieldMap, referenceFields, collectionMetadata)
+	data, err = queryDb(db, loadQuery, fieldMap, referenceFields, collectionMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +168,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 	//names to actual id values we will need to grab from the referenced collection
 	if len(referenceFields) != 0 {
 		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, db, metadata, data, collectionMetadata, idsToLookFor, referenceFields)
+		err = followUpReferenceFieldLoad(ctx, db, metadata, data, collectionMetadata, referenceFields)
 		if err != nil {
 			return nil, err
 		}

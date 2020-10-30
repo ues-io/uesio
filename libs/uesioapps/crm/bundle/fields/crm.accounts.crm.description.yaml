@@ -1,0 +1,5 @@
+name: description
+collection: crm.accounts
+type: "TEXT"
+label: "Description"
+propertyName: "description"

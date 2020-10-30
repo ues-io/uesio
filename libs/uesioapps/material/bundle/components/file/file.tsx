@@ -35,9 +35,7 @@ function File(props: FileProps): ReactElement | null {
 	}
 
 	const fieldId = props.definition.fieldId
-	const id = props.definition.id
 	const preview = props.definition.preview
-	const fileCollection = props.definition.fileCollection
 	const userFileId = record.getFieldValue(fieldId) as string
 	const fileUrl = uesio.file.getUserFileURL(props.context, userFileId, true)
 	const FileProps = {
@@ -53,7 +51,7 @@ function File(props: FileProps): ReactElement | null {
 		context: props.context,
 	} as IconProps
 
-	const mime = record.getFieldValue("uesio.mimetype") as string
+	const mime = props.context.merge(props.definition.mimeType)
 	const arr_mime = mime.split("/", 2)
 	const mimeType = arr_mime[0]
 	const mimeSubType = arr_mime[1]

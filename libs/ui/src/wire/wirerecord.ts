@@ -1,3 +1,5 @@
+import { formatMs } from "@material-ui/core"
+import get from "lodash.get"
 import { Wire } from "./wire"
 
 type FieldValue = string | number | boolean | undefined | null | PlainWireRecord
@@ -28,7 +30,7 @@ class WireRecord {
 	}
 
 	getFieldValue(fieldName: string): FieldValue {
-		return this.source[fieldName]
+		return get(this.source, fieldName)
 	}
 
 	update(fieldId: string, value: FieldValue): void {

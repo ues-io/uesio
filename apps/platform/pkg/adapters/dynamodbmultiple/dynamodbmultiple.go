@@ -60,9 +60,8 @@ func getExpressionUpdate(requestedFields map[string]*dynamodb.AttributeValue) (e
 }
 
 // This functions maps DBname into UIname
-func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.FieldsMap, referenceCollection adapters.FieldsMap, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, adapters.ReferenceIDRegistry, error) {
+func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.FieldsMap, referenceCollection adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
 	wireData := make([]map[string]interface{}, 0)
-	idsToLookFor := adapters.ReferenceIDRegistry{}
 
 	for _, lmap := range result.Items {
 
@@ -75,12 +74,12 @@ func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.Fields
 
 			fieldID, err := adapters.GetUIFieldName(fieldMetadata)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 
 			dynamoFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 
 			value, ok := lmap[dynamoFieldName]
@@ -92,14 +91,15 @@ func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.Fields
 
 		}
 
-		for _, fieldMetadata := range referenceCollection {
+		for _, reference := range referenceCollection {
+			fieldMetadata := reference.Metadata
 			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
 			if err != nil {
-				return nil, nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
+				return nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
 			}
 			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
 			if err != nil {
-				return nil, nil, err
+				return nil, err
 			}
 
 			foreignKeyValue, ok := wireDataParsed[foreignKeyName]
@@ -108,13 +108,13 @@ func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.Fields
 				continue
 			}
 
-			idsToLookFor.AddValue(fieldMetadata, foreignKeyValue)
+			reference.AddID(foreignKeyValue)
 		}
 
 		wireData = append(wireData, wireDataParsed)
 	}
 
-	return wireData, idsToLookFor, nil
+	return wireData, nil
 }
 
 func describeTableDynamoDB(tableName string, client *dynamodb.DynamoDB) (bool, error) {

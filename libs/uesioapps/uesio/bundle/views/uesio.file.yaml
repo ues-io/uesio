@@ -34,7 +34,9 @@ definition:
         uesio.id:
         uesio.name:
         uesio.content:
-        uesio.mimetype:
+        uesio.fileinfo:
+          fields:
+            uesio.mimetype:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -154,10 +156,9 @@ definition:
                                         workspace:
                                           name: $Param{workspacename}
                                           app: $Param{appname}
-                                      id: "filecompid"
                                       preview: true
-                                      fileCollection: uesio.workspacemetadatafiles
                                       fieldId: uesio.content
+                                      mimeType: ${["uesio.fileinfo"]["uesio.mimetype"]}
                                       width: 600
                                       height: 600
                                       margin:
