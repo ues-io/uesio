@@ -125,7 +125,7 @@ firebase emulators:start
 In a browser visit
 
 ```
-http://localhost:4000/firestore/uesio:apps/crm
+http://localhost:4000/firestore/
 ```
 
 ## Connecting to a real Firestore instance
