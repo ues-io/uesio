@@ -13,18 +13,16 @@ Uesio is a low-code application development platform.
 - ```
   npm install -g firebase-tools
   ```
+- install VS Code and plugins (ESLint, Prettier, Go, GitLens)
 - clone repo
 - ```
   npm install
 
   ```
 
-- install VS Code and plugins (ESLint, Prettier, Go, GitLens)
-
 ## Build
 
 ```
-
 npm run build-all
 
 ```
