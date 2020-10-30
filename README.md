@@ -6,21 +6,19 @@ Uesio is a low-code application development platform.
 
 ## Set up development environment
 
-- install hombrew
-
+- install homebrew (for macOS user)
+- install git
 - install nvm (nodejs and npm)
-
 - ```
   npm install -g firebase-tools
   ```
+- clone repo
+- ```
+  npm install
+
+  ```
 
 ## Build
-
-```
-
-npm install
-
-```
 
 ```
 
