@@ -4,7 +4,7 @@
 
 Uesio is a low-code application development platform.
 
-## Set up development environment
+## Set up dev environment
 
 - install homebrew (for macOS user)
 - install git
