@@ -19,6 +19,28 @@ Uesio is a low-code application development platform.
 - ```
   npm install
   ```
+- create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go
+
+```
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceRoot}",
+        "env": {},
+        "args": ["serve"]
+      }
+    ]
+  }
+
+```
 
 ## Build
 
@@ -98,6 +120,12 @@ firebase init firestore
 
 ```
 firebase emulators:start
+```
+
+In a browser visit
+
+```
+http://localhost:4000/firestore/uesio:apps/crm
 ```
 
 ## Connecting to a real Firestore instance
