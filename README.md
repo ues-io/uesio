@@ -17,19 +17,17 @@ Uesio is a low-code application development platform.
 - clone repo
 - ```
   npm install
-
   ```
 
 ## Build
 
 ```
 npm run build-all
-
 ```
 
 ## Set up SSL
 
-```bash
+```
 npm run setup-ssl
 ```
 
@@ -75,13 +73,13 @@ Mac users can also use a service called dnsmasq for managing local DNS, but that
 
 ## Seed Local Database with Test Data
 
-```bash
+```
 npm run nx -- seed platform
 ```
 
 ## Run Locally
 
-```bash
+```
 npm run nx -- serve platform
 ```
 
