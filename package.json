@@ -27,7 +27,8 @@
   "test": "nx test",
   "update": "nx migrate latest",
   "workspace-schematic": "nx workspace-schematic",
-  "uesio": "./apps/cli/bin/run"
+  "uesio": "./apps/cli/bin/run",
+  "dev-setup-postgresql": "node ./devScripts/seedPostgresql"
  },
  "files": [
   "/apps/cli/bin",
