@@ -1,14 +1,47 @@
 package adapters
 
-import "errors"
+import (
+	"github.com/thecloudmasters/uesio/pkg/reqs"
+)
+
+// ReferenceRequest type
+type ReferenceRequest struct {
+	Fields   []reqs.LoadRequestField
+	Metadata *FieldMetadata
+	IDs      map[string]bool
+}
+
+// AddID function
+func (rr *ReferenceRequest) AddID(value interface{}) {
+	if rr.IDs == nil {
+		//Initialize mapping
+		rr.IDs = map[string]bool{}
+	}
+	foreignKeyValueAsString, ok := value.(string)
+	if ok {
+		rr.IDs[foreignKeyValueAsString] = true
+	}
+}
+
+// ReferenceRegistry type
+type ReferenceRegistry map[string]*ReferenceRequest
+
+// Add function
+func (rr *ReferenceRegistry) Add(fieldMetadata *FieldMetadata, fields []reqs.LoadRequestField) error {
+	fieldName, err := GetUIFieldName(fieldMetadata)
+	if err != nil {
+		return err
+	}
+
+	(*rr)[fieldName] = &ReferenceRequest{
+		Metadata: fieldMetadata,
+		Fields:   fields,
+	}
+	return nil
+}
 
 // ReferenceIDRegistry type
 type ReferenceIDRegistry map[string]map[string]bool
-
-// AddValue function
-func (rr *ReferenceIDRegistry) AddValue(fieldMetadata *FieldMetadata, value interface{}) {
-	rr.AddValueWithKey(fieldMetadata.Name, value)
-}
 
 // AddValueWithKey function
 func (rr *ReferenceIDRegistry) AddValueWithKey(key string, value interface{}) {
@@ -39,26 +72,18 @@ func (rr *ReferenceIDRegistry) GetKeys(key string) []string {
 
 // GetReferenceFieldsAndIDs func
 func GetReferenceFieldsAndIDs(
-	referenceFields FieldsMap,
-	metadata *MetadataCache,
-	foreignKeyValues ReferenceIDRegistry,
+	referenceFields ReferenceRegistry,
 ) (ReferenceIDRegistry, ReferenceIDRegistry, error) {
 	//A mapping of our different collections to their fields we will need from those collections
 	referencedCollectionsFields := ReferenceIDRegistry{}
 	//a mapping of all needed primary keys for the collections we care about
 	referencedCollectionsIDs := ReferenceIDRegistry{}
-	for _, fieldMetadata := range referenceFields {
-		referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
-		if err != nil {
-			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
+	for _, reference := range referenceFields {
+		fieldMetadata := reference.Metadata
+		for _, field := range reference.Fields {
+			referencedCollectionsFields.AddValueWithKey(fieldMetadata.ReferencedCollection, field.ID)
 		}
-		//TODO:: Pulls these fields from display templates or something
-		//TODO:: Make use of this mapping? Should be possible to selectivly retrieve fields in the future.
-		referencedCollectionsFields.AddValueWithKey(fieldMetadata.ReferencedCollection, referencedCollectionMetadata.NameField)
-		referencedCollectionsFields.AddValueWithKey(fieldMetadata.ReferencedCollection, referencedCollectionMetadata.IDField)
-
-		foreignKeyValuesForRef := foreignKeyValues[fieldMetadata.Name]
-		for foreignKeyValue := range foreignKeyValuesForRef {
+		for foreignKeyValue := range reference.IDs {
 			referencedCollectionsIDs.AddValueWithKey(fieldMetadata.ReferencedCollection, foreignKeyValue)
 		}
 	}
@@ -68,14 +93,15 @@ func GetReferenceFieldsAndIDs(
 // MergeReferenceData func
 func MergeReferenceData(
 	dataPayload []map[string]interface{},
-	referenceFields FieldsMap,
+	referenceFields ReferenceRegistry,
 	idToDataMapping map[string]map[string]interface{},
 	collectionMetadata *CollectionMetadata,
 ) error {
 	//Merge in data from reference records into the data payload
 	for _, data := range dataPayload {
 		//For each reference field
-		for _, referenceField := range referenceFields {
+		for _, reference := range referenceFields {
+			referenceField := reference.Metadata
 			if referenceField.ReferencedCollection != collectionMetadata.GetFullName() {
 				//Reference field cares about a different collection
 				continue
@@ -99,29 +125,22 @@ func MergeReferenceData(
 				continue
 			}
 
-			//TODO:: We will want this to handle arbitrary fields in this collection
-			//not just the name field
-			//Also we use the DBName here because we are dealing with raw Firebase records again
-			nameFieldOfReferencedCollection, err := collectionMetadata.GetNameField()
-			if err != nil {
-				return err
+			referenceValue := map[string]interface{}{}
+
+			for _, field := range reference.Fields {
+				displayValue, ok := referenceDoc[field.ID]
+				if !ok {
+					//referenced doc had no entry for the name
+					continue
+				}
+				referenceValue[field.ID] = displayValue
 			}
-			uiFieldName, err := GetUIFieldName(nameFieldOfReferencedCollection)
-			if err != nil {
-				return err
-			}
+
 			referenceUIFieldName, err := GetUIFieldName(referenceField)
 			if err != nil {
 				return err
 			}
-			displayValue, ok := referenceDoc[uiFieldName]
-			if !ok {
-				//referenced doc had no entry for the name
-				continue
-			}
-			//TODO:: Add other fields here too
-			referenceValue := map[string]interface{}{}
-			referenceValue[uiFieldName] = displayValue
+
 			data[referenceUIFieldName] = referenceValue
 		}
 	}

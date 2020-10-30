@@ -1,5 +1,6 @@
 type PlainWireField = {
 	id: string
+	fields?: PlainWireFieldMap
 }
 
 type PlainWireFieldMap = {

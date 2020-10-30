@@ -1,6 +1,9 @@
 function onchange(bot) {
 	bot.changes.get().forEach(function (change) {
 		var name = change.get("crm.name")
+		if (!name) {
+			return
+		}
 		if (name.toLowerCase() === "skuid") {
 			throw new Error("No Skuids Allowed!")
 		}

@@ -61,19 +61,19 @@ func (fm *FieldsMap) GetKeys() []string {
 
 // AddField function
 func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
-	DBFieldName, err := GetUIFieldName(fieldMetadata)
+	fieldName, err := GetUIFieldName(fieldMetadata)
 	if err != nil {
 		return err
 	}
 
-	(*fm)[DBFieldName] = fieldMetadata
+	(*fm)[fieldName] = fieldMetadata
 	return nil
 }
 
 // GetFieldsMap function returns a map of field DB names to field UI names to be used in a load request
-func GetFieldsMap(fields []reqs.LoadRequestField, collectionMetadata *CollectionMetadata) (FieldsMap, FieldsMap, error) {
+func GetFieldsMap(fields []reqs.LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, error) {
 	fieldIDMap := FieldsMap{}
-	referenceFields := FieldsMap{}
+	referenceFields := ReferenceRegistry{}
 	for _, field := range fields {
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
@@ -90,7 +90,18 @@ func GetFieldsMap(fields []reqs.LoadRequestField, collectionMetadata *Collection
 			return nil, nil, errors.New("No foreign key field configured for reference field: " + fieldMetadata.Name)
 		}
 
-		referenceFields.AddField(fieldMetadata)
+		referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		if err != nil {
+			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
+		}
+
+		subFields := append(field.Fields, reqs.LoadRequestField{
+			ID: referencedCollectionMetadata.IDField,
+		}, reqs.LoadRequestField{
+			ID: referencedCollectionMetadata.NameField,
+		})
+
+		referenceFields.Add(fieldMetadata, subFields)
 
 		fkMetadata, err := collectionMetadata.GetField(foreignKeyField)
 		if err != nil {

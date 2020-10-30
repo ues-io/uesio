@@ -1,13 +1,12 @@
-import { definition, builder, styles, signal } from "@uesio/ui"
+import { definition, builder, styles } from "@uesio/ui"
 
 type FileDefinition = {
-	id: string
 	fieldId: string
-	fileCollection: string
 	preview: boolean
 	margin?: styles.MarginDefinition
 	width?: number
 	height?: number
+	mimeType: string
 }
 
 interface FileProps extends definition.BaseProps {

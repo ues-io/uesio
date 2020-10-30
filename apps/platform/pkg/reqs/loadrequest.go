@@ -34,7 +34,8 @@ func GetRequestByWireName(requests []LoadRequest, wireName string) (*LoadRequest
 
 // LoadRequestField struct
 type LoadRequestField struct {
-	ID string `json:"id"`
+	ID     string             `json:"id"`
+	Fields []LoadRequestField `json:"fields"`
 }
 
 // LoadRequestCondition struct

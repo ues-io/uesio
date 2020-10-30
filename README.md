@@ -78,6 +78,16 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
+## Local Development with the Firestore Emulator
+
+```
+firebase init firestore
+```
+
+```
+firebase emulators:start
+```
+
 ## Connecting to a real Firestore instance
 
 1. First set up your google cloud SDK and your first project (see above)

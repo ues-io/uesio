@@ -1,6 +1,6 @@
 import Actor from "../actor/actor"
 import { LoadResponseRecord } from "../load/loadresponse"
-import { LoadRequest } from "../load/loadrequest"
+import { LoadRequest, LoadRequestField } from "../load/loadrequest"
 import RuntimeState from "../store/types/runtimestate"
 import shortid from "shortid"
 import { Collection, PlainCollection } from "../collection/collection"
@@ -616,12 +616,7 @@ class Wire extends Actor {
 			wire: this.getId(),
 			type: this.getType(),
 			collection: this.getCollectionName(),
-			fields:
-				this.source.fields &&
-				Object.keys(this.source.fields).map((fieldName) => ({
-					...this.source.fields[fieldName],
-					id: fieldName,
-				})),
+			fields: getFieldsRequest(this.source.fields) || [],
 			conditions: getLoadRequestConditions(this.getConditions(), context),
 		}
 	}
@@ -634,6 +629,22 @@ class Wire extends Actor {
 			deletes: this.source.deletes,
 		}
 	}
+}
+
+function getFieldsRequest(
+	fields?: PlainWireFieldMap
+): LoadRequestField[] | undefined {
+	if (!fields) {
+		return undefined
+	}
+	return Object.keys(fields).map((fieldName) => {
+		const fieldData = fields[fieldName]
+		const subFields = getFieldsRequest(fieldData?.fields)
+		return {
+			fields: subFields,
+			id: fieldName,
+		}
+	})
 }
 
 export { Wire, PlainWire, PlainWireMap }
