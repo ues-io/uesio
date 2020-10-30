@@ -25,6 +25,7 @@ type Bot struct {
 	CollectionRef string `yaml:"collection" uesio:"uesio.collection"`
 	Namespace     string `yaml:"namespace" uesio:"-"`
 	Type          string `yaml:"type" uesio:"uesio.type"`
+	Trigger       string `yaml:"trigger" uesio:"uesio.trigger"`
 	FileName      string `yaml:"fileName" uesio:"-"`
 	FileContents  string `yaml:"-" uesio:"uesio.filecontents"`
 	Workspace     string `yaml:"-" uesio:"uesio.workspaceid"`

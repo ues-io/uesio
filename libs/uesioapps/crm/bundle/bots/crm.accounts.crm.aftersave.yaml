@@ -1,0 +1,5 @@
+name: aftersave
+collection: crm.accounts
+type: "JAVASCRIPT"
+trigger: "AFTER"
+fileName: aftersave.js

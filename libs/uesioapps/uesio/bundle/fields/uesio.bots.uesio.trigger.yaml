@@ -1,0 +1,5 @@
+name: trigger
+collection: uesio.bots
+type: TEXT
+label: Trigger
+propertyName: trigger

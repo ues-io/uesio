@@ -1,4 +1,5 @@
 name: onchange
 collection: crm.accounts
 type: "JAVASCRIPT"
+trigger: "BEFORE"
 fileName: onchange.js
