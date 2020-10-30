@@ -4,11 +4,45 @@
 
 Uesio is a low-code application development platform.
 
-## Build
+## Set up dev environment
+
+- install homebrew (for macOS user)
+- install git
+- install Oh My Zsh
+- install nvm (nodejs and npm)
+- ```
+  npm install -g firebase-tools
+  ```
+- install Go
+- install VS Code and plugins (ESLint, Prettier, Go, GitLens)
+- clone repo
+- ```
+  npm install
+  ```
+- create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
-npm install
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceRoot}",
+        "env": {},
+        "args": ["serve"]
+      }
+    ]
+  }
+
 ```
+
+## Build
 
 ```
 npm run build-all
@@ -16,7 +50,7 @@ npm run build-all
 
 ## Set up SSL
 
-```bash
+```
 npm run setup-ssl
 ```
 
@@ -62,13 +96,13 @@ Mac users can also use a service called dnsmasq for managing local DNS, but that
 
 ## Seed Local Database with Test Data
 
-```bash
+```
 npm run nx -- seed platform
 ```
 
 ## Run Locally
 
-```bash
+```
 npm run nx -- serve platform
 ```
 
@@ -86,6 +120,12 @@ firebase init firestore
 
 ```
 firebase emulators:start
+```
+
+In a browser visit
+
+```
+http://localhost:4000/firestore/
 ```
 
 ## Connecting to a real Firestore instance
