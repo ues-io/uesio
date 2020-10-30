@@ -19,7 +19,7 @@ Uesio is a low-code application development platform.
 - ```
   npm install
   ```
-- create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go
+- create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
 {
