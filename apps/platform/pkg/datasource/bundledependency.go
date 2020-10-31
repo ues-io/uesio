@@ -45,7 +45,12 @@ func AddDependency(workspaceID string, bundleName string, bundleVersion string, 
 	if err != nil {
 		return err
 	}
+	clearCache(bundleName, workspaceID)
 	return nil
+}
+
+func clearCache(namespace string, workspaceID string) {
+	localcache.RemoveCacheEntry("workspace-dependency", namespace+":"+workspaceID)
 }
 
 func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
@@ -67,7 +72,6 @@ func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.
 	return bdc, err
 }
 
-//TODO: Cache could get stale
 func GetDependencyVersionForWorkspace(namespace string, session *sess.Session) (string, error) {
 	workspaceID := session.GetWorkspaceID()
 	entry, ok := localcache.GetCacheEntry("workspace-dependency", namespace+":"+workspaceID)
@@ -136,6 +140,6 @@ func RemoveDependency(workspaceID string, bundleName string, session *sess.Sessi
 	}
 	deletePrimary["uesio.id"] = dependency.ID
 	deleteReq[dependency.ID] = deletePrimary
-
+	clearCache(bundleName, workspaceID)
 	return PlatformDelete("bundledependencies", deleteReq, session)
 }
