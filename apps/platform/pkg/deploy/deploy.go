@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"io"
 	"io/ioutil"
 	"log"
@@ -50,6 +51,30 @@ func Deploy(body []byte, session *sess.Session) error {
 		dir := filepath.Dir(fileName)
 
 		dirParts := strings.Split(dir, string(os.PathSeparator))
+		if len(dirParts) == 1 && fileName == "bundle/bundle.yaml" {
+			//Break down bundle.yaml into dependency records
+			by := metadata.BundleYaml{}
+			readCloser, err := zipFile.Open()
+			if err != nil {
+				return err
+			}
+			err = bundlestore.DecodeYAML(&by, readCloser)
+			readCloser.Close()
+			if err != nil {
+				return err
+			}
+			if by.Dependencies != nil && len(by.Dependencies) != 0 {
+				for key := range by.Dependencies {
+					dep := by.Dependencies[key]
+					//TODO: Slow - probably should be batched
+					err = datasource.AddDependency(workspace, key, dep.Version, session)
+					if err != nil {
+						return err
+					}
+				}
+			}
+			continue
+		}
 		if len(dirParts) != 2 {
 			continue
 		}

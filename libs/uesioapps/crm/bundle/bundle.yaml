@@ -2,3 +2,5 @@ name: crm
 dependencies:
   sample:
     version: "v0.0.1"
+  material:
+    version: "v0.0.1"
