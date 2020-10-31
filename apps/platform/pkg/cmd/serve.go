@@ -70,8 +70,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controllers.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controllers.ServeComponentPack(false), "GET")
 
-	workspaceAPI(wr, "/metadata/adddependency/{bundleid}", controllers.AddDependency).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/removedependency/{bundleid}", controllers.RemoveDependency).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/adddependency/{bundlename}/{bundleversion}", controllers.AddDependency).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/removedependency/{bundlename}", controllers.RemoveDependency).Methods("POST", "GET")
 
 	workspaceAPI(wr, "/metadata/deploy", controllers.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controllers.Retrieve).Methods("POST", "GET")

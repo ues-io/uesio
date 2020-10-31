@@ -1,0 +1,6 @@
+name: bundleversion
+collection: uesio.bundledependencies
+type: "TEXT"
+label: "Bundle Version"
+propertyName: bundleversion
+readOnly: true

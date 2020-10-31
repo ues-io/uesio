@@ -14,7 +14,7 @@ func GetValidNamespaces(session *sess.Session) (map[string]bool, error) {
 		return namespaces, err
 	}
 	for _, bd := range *bdc {
-		name, _, err := bd.GetNameAndVersion()
+		name := bd.BundleName
 		if err != nil {
 			return namespaces, err
 		}

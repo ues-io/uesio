@@ -62,7 +62,6 @@ func SaveBundleMetadata(namespace string, version string, description string, se
 //func deleteBundle(namespace string, version string, site *metadata.Site, sess *session.Session) error {
 //
 //}
-
 func getBundleMetadataByID(id string, session *sess.Session) (*metadata.Bundle, error) {
 	bc := metadata.BundleCollection{}
 	err := PlatformLoad(

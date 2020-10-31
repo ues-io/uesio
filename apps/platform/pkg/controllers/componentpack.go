@@ -44,9 +44,15 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 
 		var stream io.ReadCloser
 		var mimeType string
-
+		workspaceId := session.GetWorkspaceID()
 		if componentPack.Workspace == "" {
-			version, err := bundles.GetVersionFromSite(namespace, session.GetSite())
+			version := ""
+			var err error
+			if workspaceId != "" {
+				version, err = datasource.GetDependencyVersionForWorkspace(namespace, session)
+			} else {
+				version, err = bundles.GetVersionFromSite(namespace, session.GetSite())
+			}
 			if err != nil {
 				msg := "Couldn't get bundle version: " + err.Error()
 				logger.LogError(errors.New(msg))
