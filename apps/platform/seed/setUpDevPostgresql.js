@@ -73,24 +73,17 @@ client.query(`
 
 */
 
-const populateTable = (dbClient, tableName, records) => {
-	return records.map((rowObject) => {
-		// column id has the app's name
-		const rowKeys = ['id', ...Object.keys(rowObject)];
-		const rowValues = [rowObject['name'], ...Object.values(rowObject)];
-
-		return dbClient.query(
-			`INSERT INTO ${tableName}
-            (${rowKeys.join()})
+const insertRow = (dbClient) => (tableName) => (rowObject) =>
+	dbClient.query(
+		`INSERT INTO ${tableName}
+            (${Object.keys(rowObject).join()})
             VALUES(
-                ${[...new Array(rowKeys.length)]
+                ${[...new Array(Object.keys(rowObject).length)]
 									.map((e, index) => `$${index + 1}`)
 									.join()}
                 );`,
-			rowValues
-		);
-	});
-};
+		Object.values(rowObject)
+	);
 
 const afterDataPopulation = (dbClient) => {
 	dbClient.end();
@@ -116,31 +109,32 @@ const afterDataPopulation = (dbClient) => {
 };
 
 // populate these tables
-const appsPopulationPromises = populateTable(client, 'apps', apps);
-const bundlesPopulationPromises = populateTable(client, 'bundles', bundles);
-const workspacesPopulationPromises = workspaces
+const appsPopulatePromises = apps
+	.map((app) => ({
+		...app,
+		id: app['name'],
+	}))
+	.map(insertRow(client)('apps'));
+
+const bundlesPopulatePromises = bundles
+	.map((app) => ({
+		...app,
+		id: app.namespace + '_v0.0.1',
+	}))
+	.map(insertRow(client)('bundles'));
+
+const workspacesPopulatePromises = workspaces
 	.map((workspace) => ({
 		id: workspace.app.name + '_' + workspace.name,
 		appid: workspace.app.name,
 		name: workspace.name,
 	}))
-	.map((rowObject) =>
-		client.query(
-			`INSERT INTO workspaces
-                (${Object.keys(rowObject).join()})
-                VALUES(
-                    ${[...new Array(Object.keys(rowObject).length)]
-											.map((e, index) => `$${index + 1}`)
-											.join()}
-                    );`,
-			Object.values(rowObject)
-		)
-	);
+	.map(insertRow(client)('workspaces'));
 
 Promise.all([
 	dropTablesPromise,
 	createTablesPromise,
-	...appsPopulationPromises,
-	...bundlesPopulationPromises,
-	...workspacesPopulationPromises,
+	...appsPopulatePromises,
+	...bundlesPopulatePromises,
+	...workspacesPopulatePromises,
 ]).then((results) => afterDataPopulation(client));
