@@ -15,7 +15,8 @@ Uesio is a low-code application development platform.
   ```
 - install [Go](https://golang.org/dl/)
 - install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
-- git clone repo
+- generate a rsa tuple (private/public) for git
+- git clone repo (ssh method)
 - ```
   npm install
   ```
