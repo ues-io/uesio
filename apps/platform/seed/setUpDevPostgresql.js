@@ -1,7 +1,8 @@
 const { Pool, Client } = require('pg');
 const apps = require('./apps.json');
 const bundles = require('./bundles.json');
-// const apps = require('./workspaces.jon');
+const workspaces = require('./workspaces.json');
+const { exec } = require('child_process');
 
 const DB_CONFIG = {
 	user: 'postgres',
@@ -16,17 +17,18 @@ const client = new Client(DB_CONFIG);
 client.connect();
 
 // remove tables if they do exist
-client.query('DROP TABLE IF EXISTS apps, bundles;');
+const dropTablesPromise = client.query(
+	'DROP TABLE IF EXISTS apps, bundles, workspaces;'
+);
 // create minimal tables for the app to work
-client.query(`
+const createTablesPromise = client.query(`
     CREATE TABLE apps(
         id TEXT,
         name TEXT,
         description TEXT,
         color TEXT
     );
-`);
-client.query(`
+
     CREATE TABLE bundles(
         id TEXT,
         namespace TEXT,
@@ -35,7 +37,14 @@ client.query(`
         patch TEXT,
         description TEXT
     );
+
+    CREATE TABLE workspaces(
+        id TEXT,
+        name TEXT,
+        appid TEXT
+    );
 `);
+
 /*
 client.query(`
     CREATE TABLE accounts(
@@ -61,13 +70,7 @@ client.query(`
     );
 `);
 
-client.query(`
-    CREATE TABLE workspaces(
-        id TEXT,
-        name TEXT,
-        appid TEXT
-    );
-`);
+
 */
 
 const populateTable = (dbClient, tableName, collection) => {
@@ -82,21 +85,33 @@ const populateTable = (dbClient, tableName, collection) => {
                 ${[...new Array(rowKeys.length)]
 									.map((e, index) => `$${index + 1}`)
 									.join()}
-                ) RETURNING *`,
+                );`,
 			rowValues
 		);
 	});
 };
 
-const afterPopulation = (dbClient) => {
+const afterDataPopulation = (dbClient) => {
 	dbClient.end();
 	console.log('data populated and connection closed');
+	// run the migration of the uesio cli
+	exec('../../cli/bin/run migrate');
+	console.log('migrate from uesio cli executed.');
 };
 
 // populate these tables
-const appsQueryPromises = populateTable(client, 'apps', apps);
-const bundlesQueryPromises = populateTable(client, 'bundles', bundles);
-
-Promise.all([...appsQueryPromises, ...bundlesQueryPromises]).then((results) =>
-	afterPopulation(client)
+const appsPopulationPromises = populateTable(client, 'apps', apps);
+const bundlesPopulationPromises = populateTable(client, 'bundles', bundles);
+const workspacesPopulationPromises = populateTable(
+	client,
+	'workspaces',
+	workspaces
 );
+
+Promise.all([
+	dropTablesPromise,
+	createTablesPromise,
+	...appsPopulationPromises,
+	...bundlesPopulationPromises,
+	...workspacesPopulationPromises,
+]).then((results) => afterDataPopulation(client));
