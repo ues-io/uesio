@@ -6,20 +6,23 @@ Uesio is a low-code application development platform.
 
 ## Set up dev environment
 
-- install homebrew (for macOS user)
+- install [homebrew](https://brew.sh/) (for macOS user)
 - install git
-- install Oh My Zsh
-- install nvm (nodejs and npm)
+- install [Oh My Zsh](https://ohmyz.sh/)
+- install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - ```
   npm install -g firebase-tools
   ```
-- install Go
-- install VS Code and plugins (ESLint, Prettier, Go, GitLens)
-- clone repo
+- install [Go](https://golang.org/dl/)
+- install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
+
+- git clone repo (ssh method is prefered)
 - ```
   npm install
   ```
-- create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
+- Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- Optional: [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
 {
