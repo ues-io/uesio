@@ -72,24 +72,21 @@ client.query(`
 
 // populate these tables
 const populateTable = (dbClient, tableName, collection) => {
-	dbClient
-		.query(
-			`INSERT INTO ${tableName}
-            (${Object.keys(collection).join()})
+	collection.forEach((rowObject) => {
+		dbClient
+			.query(
+				`INSERT INTO ${tableName}
+            (${Object.keys(rowObject).join()})
             VALUES(
-                ${[...new Array(Object.keys(collection).length)]
+                ${[...new Array(Object.keys(rowObject).length)]
 									.map((e, index) => `$${index + 1}`)
 									.join()}
                 ) RETURNING *`,
-			Object.values(collection)
-		)
-		.catch((e) => console.error(e.stack));
+				Object.values(rowObject)
+			)
+			.catch((e) => console.error(e.stack));
+	});
 };
 
 populateTable(client, 'apps', apps);
 populateTable(client, 'bundles', bundles);
-
-client.query('SELECT * FROM apps', (err, res) => {
-	console.log(err, res.rows);
-	client.end();
-});
