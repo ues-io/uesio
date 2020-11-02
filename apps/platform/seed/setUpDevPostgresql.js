@@ -70,7 +70,6 @@ client.query(`
 `);
 */
 
-// populate these tables
 const populateTable = (dbClient, tableName, collection, cb) => {
 	collection.forEach((rowObject) => {
 		dbClient
@@ -89,8 +88,10 @@ const populateTable = (dbClient, tableName, collection, cb) => {
 	});
 };
 
-const afterPopulation = (client) => {
-	client.end();
+const afterPopulation = (dbClient) => {
+	dbClient.end();
 };
+
+// populate these tables
 populateTable(client, 'apps', apps);
 populateTable(client, 'bundles', bundles, afterPopulation);
