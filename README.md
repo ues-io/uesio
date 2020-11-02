@@ -8,14 +8,14 @@ Uesio is a low-code application development platform.
 
 - install homebrew (for macOS user)
 - install git
-- install Oh My Zsh
-- install nvm (nodejs and npm)
+- install [Oh My Zsh](https://ohmyz.sh/)
+- install [nvm](https://github.com/nvm-sh/nvm) (nodejs and npm)
 - ```
   npm install -g firebase-tools
   ```
-- install Go
-- install VS Code and plugins (ESLint, Prettier, Go, GitLens)
-- clone repo
+- install [Go](https://golang.org/dl/)
+- install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
+- git clone repo
 - ```
   npm install
   ```
