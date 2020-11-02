@@ -71,7 +71,7 @@ client.query(`
 */
 
 // populate these tables
-const populateTable = (dbClient, tableName, collection) => {
+const populateTable = (dbClient, tableName, collection, cb) => {
 	collection.forEach((rowObject) => {
 		dbClient
 			.query(
@@ -84,9 +84,13 @@ const populateTable = (dbClient, tableName, collection) => {
                 ) RETURNING *`,
 				Object.values(rowObject)
 			)
+			.then(() => cb && cb(dbClient))
 			.catch((e) => console.error(e.stack));
 	});
 };
 
+const afterPopulation = (client) => {
+	client.end();
+};
 populateTable(client, 'apps', apps);
-populateTable(client, 'bundles', bundles);
+populateTable(client, 'bundles', bundles, afterPopulation);
