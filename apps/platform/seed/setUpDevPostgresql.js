@@ -50,7 +50,6 @@ const createTablesPromise = client.query(`
         type TEXT
     );
 
-
     CREATE TABLE datasources(
         id TEXT,
         name TEXT,
