@@ -85,8 +85,7 @@ const populateTable = (dbClient, tableName, collection, cb) => {
                 ) RETURNING *`,
 				rowValues
 			)
-			.then(() => cb && cb(dbClient))
-			.catch((e) => console.error(e.stack));
+			.then((result) => cb && cb(dbClient));
 	});
 };
 
