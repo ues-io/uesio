@@ -43,7 +43,7 @@ func StoreBundle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = bundlestore.StoreWorkspaceAsBundle(workspaceApp, version, items)
+	err = bundlestore.StoreWorkspaceAsBundle(workspaceApp, version, items, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

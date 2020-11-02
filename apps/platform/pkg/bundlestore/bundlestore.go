@@ -1,11 +1,14 @@
 package bundlestore
 
 import (
+	"errors"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,26 +20,28 @@ type BundleStore interface {
 }
 
 // StoreWorkspaceAsBundle function
-func StoreWorkspaceAsBundle(appName string, version string, itemStreams []reqs.ItemStream) error {
-	bundleStoreInstance := GetBundleStoreByNamespace(appName)
+func StoreWorkspaceAsBundle(appName string, version string, itemStreams []reqs.ItemStream, session *sess.Session) error {
+	bundleStoreInstance, err := GetBundleStore(appName, session)
+	if err != nil {
+		return err
+	}
 	return bundleStoreInstance.StoreItems(appName, version, itemStreams)
 }
 
-// GetBundleStoreByNamespace function
-func GetBundleStoreByNamespace(namespace string) BundleStore {
-	if namespace == "material" || namespace == "sample" || namespace == "crm" || namespace == "uesio" {
-		return GetBundleStore("local")
-	}
-	//TODO::We will need to flesh this out once it's possible to create bundles
-	return GetBundleStore("platform")
-}
-
 // GetBundleStore function
-func GetBundleStore(name string) BundleStore {
-	if name == "local" {
-		return &localbundlestore.LocalBundleStore{}
+func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error) {
+	// If we're in a workspace context and the namespace we're looking for is that workspace,
+	// use the workspace bundlestore
+	if namespace == "" {
+		return nil, errors.New("Could not get bundlestore: No namespace provided")
 	}
-	return &platformbundlestore.PlatformBundleStore{}
+	if session.GetWorkspaceApp() == namespace {
+		return &workspacebundlestore.WorkspaceBundleStore{}, nil
+	}
+	if namespace == "material" || namespace == "sample" || namespace == "crm" || namespace == "uesio" {
+		return &localbundlestore.LocalBundleStore{}, nil
+	}
+	return &platformbundlestore.PlatformBundleStore{}, nil
 }
 
 // DecodeYAML function

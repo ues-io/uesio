@@ -15,14 +15,18 @@ import (
 )
 
 // MetadataLoadItem function
-func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key string) error {
+func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key string, session *sess.Session) error {
 	if !strings.HasSuffix(key, ".yaml") {
 		key = key + ".yaml"
 	}
 	collectionName := item.GetCollectionName()
 	retrievedItem, ok := getFromCache(namespace, version, collectionName, key)
 	if !ok {
-		stream, err := bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, item.GetCollectionName(), key)
+		bs, err := bundlestore.GetBundleStore(namespace, session)
+		if err != nil {
+			return err
+		}
+		stream, err := bs.GetItem(namespace, version, item.GetCollectionName(), key)
 		if err != nil {
 			return err
 		}
@@ -44,12 +48,16 @@ func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key stri
 }
 
 // MetadataLoadGroup function
-func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.PermissionSet, namespace string, version string) error {
+func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.PermissionSet, namespace string, version string, session *sess.Session) error {
 	bundleGroupName := group.GetName()
 	keys, ok := getFileListFromCache(namespace, version, bundleGroupName)
 	var err error
 	if !ok {
-		keys, err = bundlestore.GetBundleStoreByNamespace(namespace).ListItems(namespace, version, bundleGroupName)
+		bs, err := bundlestore.GetBundleStore(namespace, session)
+		if err != nil {
+			return err
+		}
+		keys, err = bs.ListItems(namespace, version, bundleGroupName)
 		if err != nil {
 			return err
 		}
@@ -58,7 +66,7 @@ func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.Permiss
 
 	for _, key := range keys {
 		retrievedItem := group.NewItem()
-		err = MetadataLoadItem(retrievedItem, namespace, version, key)
+		err = MetadataLoadItem(retrievedItem, namespace, version, key, session)
 		if err != nil {
 			return err
 		}
@@ -70,13 +78,15 @@ func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.Permiss
 	}
 	return nil
 }
+
+// LoadAll function
 func LoadAll(group metadata.BundleableGroup, namespace string, version string, session *sess.Session) error {
 	permSet, err := getProfilePermSet(session)
 	if err != nil {
 		return err
 	}
 
-	err = MetadataLoadGroup(group, permSet, namespace, version)
+	err = MetadataLoadGroup(group, permSet, namespace, version, session)
 	if err != nil {
 		return err
 	}
@@ -86,18 +96,23 @@ func LoadAll(group metadata.BundleableGroup, namespace string, version string, s
 
 // LoadAllSite function
 func LoadAllSite(group metadata.BundleableGroup, namespace string, session *sess.Session) error {
-	site := session.GetSite()
-	version, err := GetVersionFromSite(namespace, site)
+	version, err := GetVersion(namespace, session)
 	if err != nil {
 		return errors.New("Failed to LoadFromSite Metadata Item: " + namespace + " - " + err.Error())
 	}
 	return LoadAll(group, namespace, version, session)
 }
 
-// GetBundleYaml function
-func GetBundleYaml(name string, version string) (*metadata.BundleYaml, error) {
-	var by metadata.BundleYaml
-	bundleStore := bundlestore.GetBundleStoreByNamespace(name)
+// GetBundleDef function
+func GetBundleDef(session *sess.Session) (*metadata.BundleDef, error) {
+	site := session.GetSite()
+	name := site.AppRef
+	version := site.VersionRef
+	var by metadata.BundleDef
+	bundleStore, err := bundlestore.GetBundleStore(name, session)
+	if err != nil {
+		return nil, err
+	}
 	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err
@@ -112,12 +127,16 @@ func GetBundleYaml(name string, version string) (*metadata.BundleYaml, error) {
 }
 
 // GetAppBundle key
-func GetAppBundle(appName, appVersion string) (*metadata.BundleYaml, error) {
+func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
+
+	site := session.GetSite()
+	appName := site.AppRef
+	appVersion := site.VersionRef
 	entry, ok := localcache.GetCacheEntry("bundle-yaml", appName+":"+appVersion)
 	if ok {
-		return entry.(*metadata.BundleYaml), nil
+		return entry.(*metadata.BundleDef), nil
 	}
-	bundleyaml, err := GetBundleYaml(appName, appVersion)
+	bundleyaml, err := GetBundleDef(session)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +147,10 @@ func GetAppBundle(appName, appVersion string) (*metadata.BundleYaml, error) {
 	return bundleyaml, nil
 }
 
-func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
+// GetVersion function
+func GetVersion(namespace string, session *sess.Session) (string, error) {
+
+	site := session.GetSite()
 	// Get the site's version
 	if site.AppRef == namespace {
 		// We always have a license to our own app.
@@ -145,7 +167,7 @@ func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
-	bundle, err := GetAppBundle(site.AppRef, site.VersionRef)
+	bundle, err := GetAppBundle(session)
 	if err != nil {
 		return "", err
 	}
@@ -162,6 +184,7 @@ func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
 	return depBundle.Version, nil
 }
 
+// Load function
 func Load(item metadata.BundleableItem, version string, session *sess.Session) error {
 	namespace := item.GetNamespace()
 	key := item.GetKey()
@@ -175,14 +198,14 @@ func Load(item metadata.BundleableItem, version string, session *sess.Session) e
 		return errors.New("You don't have permission to that file: " + key)
 	}
 
-	return MetadataLoadItem(item, namespace, version, key)
+	return MetadataLoadItem(item, namespace, version, key, session)
 }
 
 // LoadFromSite function
 func LoadFromSite(item metadata.BundleableItem, session *sess.Session) error {
 	namespace := item.GetNamespace()
 
-	version, err := GetVersionFromSite(namespace, session.GetSite())
+	version, err := GetVersion(namespace, session)
 	if err != nil {
 		return errors.New("Failed to LoadFromSite Metadata Item: " + item.GetKey() + " - " + err.Error())
 	}

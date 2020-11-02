@@ -14,7 +14,7 @@ func (wc *WorkspaceCollection) GetName() string {
 
 // GetFields function
 func (wc *WorkspaceCollection) GetFields() []string {
-	return []string{"id", "name"}
+	return []string{"id", "name", "appid"}
 }
 
 // UnMarshal function
@@ -37,30 +37,13 @@ func (wc *WorkspaceCollection) GetItem(index int) CollectionableItem {
 func (wc *WorkspaceCollection) ByNameRequest(appName, workspaceName string) []reqs.LoadRequest {
 	return []reqs.LoadRequest{
 		reqs.NewPlatformLoadRequest(
-			"appsWire",
-			"apps",
-			wc.GetFields(),
-			[]reqs.LoadRequestCondition{
-				{
-					Field: "uesio.name",
-					Value: appName,
-				},
-			},
-		),
-		reqs.NewPlatformLoadRequest(
 			"workspacesWire",
 			wc.GetName(),
 			wc.GetFields(),
 			[]reqs.LoadRequestCondition{
 				{
-					Field: "uesio.name",
-					Value: workspaceName,
-				},
-				{
-					Field:       "uesio.appid",
-					ValueSource: "LOOKUP",
-					LookupField: "uesio.id",
-					LookupWire:  "appsWire",
+					Field: "uesio.id",
+					Value: appName + "_" + workspaceName,
 				},
 			},
 		),
