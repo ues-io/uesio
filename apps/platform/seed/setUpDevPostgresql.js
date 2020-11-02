@@ -18,7 +18,7 @@ client.connect();
 
 // create minimal tables for the app to work
 const createTablesPromise = client.query(`
-    DROP TABLE IF EXISTS apps,bundles,workspaces,secrets,datasources,collections,fields,views,routes,files,selectlists;
+    DROP TABLE IF EXISTS apps,bundles,workspaces,secrets,datasources,fields,files,selectlists;
     
     CREATE TABLE apps(
         id TEXT,
@@ -57,18 +57,6 @@ const createTablesPromise = client.query(`
         type TEXT
     );
 
-    CREATE TABLE collections(
-        id TEXT,
-        name TEXT,
-        namefield TEXT,
-        workspaceid TEXT,
-        idfield TEXT,
-        idformat TEXT,
-        collectionname TEXT,
-        datasource TEXT
-    );
-    
-
     CREATE TABLE fields(
         id TEXT,
         selectlist TEXT,
@@ -82,20 +70,6 @@ const createTablesPromise = client.query(`
         type TEXT
     );
 
-    CREATE TABLE views(
-        name TEXT,
-        workspaceid TEXT,
-        id TEXT,
-        definition TEXT
-    );
-
-    CREATE TABLE routes(
-        path TEXT,
-        name TEXT,
-        workspaceid TEXT,
-        view TEXT,
-        id TEXT
-    );
 
     CREATE TABLE files(
         name TEXT,
