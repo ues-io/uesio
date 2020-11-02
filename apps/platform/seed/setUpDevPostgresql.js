@@ -18,7 +18,7 @@ client.connect();
 
 // remove tables if they do exist
 const dropTablesPromise = client.query(
-	'DROP TABLE IF EXISTS apps,bundles,workspaces,collections,fields;'
+	'DROP TABLE IF EXISTS apps,bundles,workspaces,secrets,datasources,collections,fields,views;'
 );
 // create minimal tables for the app to work
 const createTablesPromise = client.query(`
@@ -44,6 +44,21 @@ const createTablesPromise = client.query(`
         appid TEXT
     );
 
+    CREATE TABLE secrets(
+        id TEXT,
+        name TEXT,
+        workspaceid TEXT,
+        managedby TEXT,
+        type TEXT
+    );
+
+    CREATE TABLE datasources(
+        id TEXT,
+        name TEXT,
+        workspaceid TEXT,
+        type TEXT
+    );
+
     CREATE TABLE collections(
         id TEXT,
         name TEXT,
@@ -66,6 +81,13 @@ const createTablesPromise = client.query(`
         foreignKeyField TEXT,
         referencedCollection TEXT,
         type TEXT
+    );
+
+    CREATE TABLE views(
+        name TEXT,
+        workspaceid TEXT,
+        id TEXT,
+        definition TEXT
     );
 `);
 
@@ -116,7 +138,16 @@ const afterDataPopulation = (dbClient) => {
 
 	exec(
 		`
-        cd ./libs/uesioapps/crm &&  ./../../../apps/cli/bin/run migrate
+        cd ./libs/uesioapps/uesio &&
+        ./../../../apps/cli/bin/run deploy &&
+        ./../../../apps/cli/bin/run migrate &&
+        cd - &&
+        cd ./libs/uesioapps/crm &&
+        ../../../../uesio-cli/bin/run work dev &&
+        ../../../../uesio-cli/bin/run login &&
+        ./../../../apps/cli/bin/run deploy &&
+        ./../../../apps/cli/bin/run migrate &&
+        cd -
         `,
 		(err, stdout, stderr) => {
 			if (err) {
