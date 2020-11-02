@@ -73,10 +73,11 @@ client.query(`
 
 */
 
-const populateTable = (dbClient, tableName, collection) => {
-	return collection.map((rowObject) => {
-		const rowKeys = Object.keys(rowObject);
-		const rowValues = Object.values(rowObject);
+const populateTable = (dbClient, tableName, records) => {
+	return records.map((rowObject) => {
+		// column id has the app's name
+		const rowKeys = ['id', ...Object.keys(rowObject)];
+		const rowValues = [rowObject['name'], ...Object.values(rowObject)];
 
 		return dbClient.query(
 			`INSERT INTO ${tableName}
@@ -102,11 +103,8 @@ const afterDataPopulation = (dbClient) => {
 // populate these tables
 const appsPopulationPromises = populateTable(client, 'apps', apps);
 const bundlesPopulationPromises = populateTable(client, 'bundles', bundles);
-const workspacesPopulationPromises = populateTable(
-	client,
-	'workspaces',
-	workspaces
-);
+const workspacesPopulationPromises =
+	[] || populateTable(client, 'workspaces', workspaces);
 
 Promise.all([
 	dropTablesPromise,
