@@ -42,13 +42,13 @@ func RunBot(bot *metadata.Bot, botAPI *BotAPI, vm *goja.Runtime, session *sess.S
 	return nil
 }
 
-// RunBots function
-func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+// RunBotsBefore function
+func RunBotsBefore(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 
 	botAPI := &BotAPI{
-		Changes: &ChangesAPI{
-			changes:  request.Changes,
-			metadata: collectionMetadata,
+		ChangeRequests: &ChangeRequestsAPI{
+			changerequests: request.Changes,
+			metadata:       collectionMetadata,
 		},
 	}
 
@@ -58,6 +58,37 @@ func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionM
 
 	for _, bot := range bots {
 		if bot.CollectionRef != request.Collection {
+			continue
+		}
+		err := RunBot(&bot, botAPI, vm, session)
+		if err != nil {
+			return err
+		}
+	}
+
+	if botAPI.HasErrors() {
+		return errors.New(botAPI.GetErrorString())
+	}
+
+	return nil
+}
+
+// RunBotsAfter function
+func RunBotsAfter(bots metadata.BotCollection, response *reqs.SaveResponse, session *sess.Session, currentCollection string) error {
+
+	botAPI := &BotAPI{
+		ChangeResponses: &ChangeResponsesAPI{
+			changeresponses: response.ChangeResults,
+			//metadata:        collectionMetadata,
+		},
+	}
+
+	vm := goja.New()
+	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
+	vm.Set("log", Logger)
+
+	for _, bot := range bots {
+		if bot.CollectionRef != currentCollection {
 			continue
 		}
 		err := RunBot(&bot, botAPI, vm, session)

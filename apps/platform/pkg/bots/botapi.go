@@ -4,8 +4,9 @@ import "strings"
 
 // BotAPI type
 type BotAPI struct {
-	Changes *ChangesAPI `bot:"changes"`
-	errors  []string
+	ChangeRequests  *ChangeRequestsAPI  `bot:"changerequests"`
+	ChangeResponses *ChangeResponsesAPI `bot:"changeresponses"`
+	errors          []string
 }
 
 // AddError function

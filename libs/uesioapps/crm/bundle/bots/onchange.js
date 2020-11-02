@@ -1,6 +1,6 @@
 function onchange(bot) {
-	bot.changes.get().forEach(function (change) {
-		var name = change.get("crm.name")
+	bot.changerequests.get().forEach(function (changerequest) {
+		var name = changerequest.get("crm.name")
 		if (!name) {
 			return
 		}
@@ -10,6 +10,6 @@ function onchange(bot) {
 		if (name.toLowerCase() === "skuidify") {
 			bot.addError("No Skuids Allowed!")
 		}
-		change.set("crm.name", name + " ben is cool!!")
+		changerequest.set("crm.name", name + " ben is cool!!")
 	})
 }
