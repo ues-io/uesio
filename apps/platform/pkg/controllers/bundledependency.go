@@ -13,19 +13,25 @@ func AddDependency(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
 
 	vars := mux.Vars(r)
-	bundleID := vars["bundleid"]
+	bundleVersion := vars["bundleversion"]
+	bundleName := vars["bundlename"]
 	workspace := session.GetWorkspaceID()
 
 	if workspace == "" {
 		http.Error(w, "No Workspace provided for bundle storing", http.StatusBadRequest)
 		return
 	}
-	if bundleID == "" {
-		http.Error(w, "No bundleid provided for in the body", http.StatusBadRequest)
+	if bundleName == "" {
+		http.Error(w, "No bundle name provided for in the url", http.StatusBadRequest)
 		return
 	}
 
-	err := datasource.AddDependency(workspace, bundleID, session)
+	if bundleVersion == "" {
+		http.Error(w, "No bundle version provided for in the url", http.StatusBadRequest)
+		return
+	}
+
+	err := datasource.AddDependency(workspace, bundleName, bundleVersion, session)
 	if err != nil {
 		http.Error(w, "Failed to add dependency: "+err.Error(), http.StatusBadRequest)
 		return
@@ -37,19 +43,19 @@ func RemoveDependency(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
 
 	vars := mux.Vars(r)
-	bundleID := vars["bundleid"]
+	bundlename := vars["bundlename"]
 	workspace := session.GetWorkspaceID()
 
 	if workspace == "" {
 		http.Error(w, "No Workspace provided for bundle storing", http.StatusBadRequest)
 		return
 	}
-	if bundleID == "" {
+	if bundlename == "" {
 		http.Error(w, "No bundleid provided for in the body", http.StatusBadRequest)
 		return
 	}
 
-	err := datasource.RemoveDependency(workspace, bundleID, session)
+	err := datasource.RemoveDependency(workspace, bundlename, session)
 	if err != nil {
 		http.Error(w, "Failed to add dependency: "+err.Error(), http.StatusBadRequest)
 		return

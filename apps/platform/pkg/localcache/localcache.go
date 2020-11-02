@@ -23,6 +23,11 @@ func SetCacheEntry(namespace string, key string, cacheEntry interface{}) {
 	cache[namespacedkey(namespace, key)] = cacheEntry
 }
 
+func RemoveCacheEntry(namespace string, key string) {
+	lock.Lock()
+	defer lock.Unlock()
+	delete(cache, namespacedkey(namespace, key))
+}
 func namespacedkey(namespace string, key string) string {
 	return namespace + ":" + key
 }

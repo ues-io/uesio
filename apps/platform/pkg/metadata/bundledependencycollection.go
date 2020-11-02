@@ -10,7 +10,7 @@ func (bc *BundleDependencyCollection) GetName() string {
 
 // GetFields function
 func (bc *BundleDependencyCollection) GetFields() []string {
-	return []string{"id", "bundleid", "workspaceid"}
+	return []string{"id", "workspaceid", "bundlename", "bundleversion"}
 }
 
 // UnMarshal function

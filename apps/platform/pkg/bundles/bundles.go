@@ -70,15 +70,7 @@ func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.Permiss
 	}
 	return nil
 }
-
-// LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, session *sess.Session) error {
-	site := session.GetSite()
-	version, err := GetVersionFromSite(namespace, site)
-	if err != nil {
-		return errors.New("Failed to Load Metadata Item: " + namespace + " - " + err.Error())
-	}
-
+func LoadAll(group metadata.BundleableGroup, namespace string, version string, session *sess.Session) error {
 	permSet, err := getProfilePermSet(session)
 	if err != nil {
 		return err
@@ -90,6 +82,16 @@ func LoadAll(group metadata.BundleableGroup, namespace string, session *sess.Ses
 	}
 
 	return nil
+}
+
+// LoadAllSite function
+func LoadAllSite(group metadata.BundleableGroup, namespace string, session *sess.Session) error {
+	site := session.GetSite()
+	version, err := GetVersionFromSite(namespace, site)
+	if err != nil {
+		return errors.New("Failed to LoadFromSite Metadata Item: " + namespace + " - " + err.Error())
+	}
+	return LoadAll(group, namespace, version, session)
 }
 
 // GetBundleYaml function
@@ -126,9 +128,7 @@ func GetAppBundle(appName, appVersion string) (*metadata.BundleYaml, error) {
 	return bundleyaml, nil
 }
 
-// GetVersionFromSite function
 func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
-
 	// Get the site's version
 	if site.AppRef == namespace {
 		// We always have a license to our own app.
@@ -162,18 +162,9 @@ func GetVersionFromSite(namespace string, site *metadata.Site) (string, error) {
 	return depBundle.Version, nil
 }
 
-// Load function
-func Load(item metadata.BundleableItem, session *sess.Session) error {
+func Load(item metadata.BundleableItem, version string, session *sess.Session) error {
 	namespace := item.GetNamespace()
 	key := item.GetKey()
-
-	site := session.GetSite()
-
-	version, err := GetVersionFromSite(namespace, site)
-	if err != nil {
-		return errors.New("Failed to Load Metadata Item: " + key + " - " + err.Error())
-	}
-
 	// Now Check to make sure we can actually view this item
 	hasPermission := SessionHasPermission(
 		session,
@@ -187,6 +178,18 @@ func Load(item metadata.BundleableItem, session *sess.Session) error {
 	return MetadataLoadItem(item, namespace, version, key)
 }
 
+// LoadFromSite function
+func LoadFromSite(item metadata.BundleableItem, session *sess.Session) error {
+	namespace := item.GetNamespace()
+
+	version, err := GetVersionFromSite(namespace, session.GetSite())
+	if err != nil {
+		return errors.New("Failed to LoadFromSite Metadata Item: " + item.GetKey() + " - " + err.Error())
+	}
+	return Load(item, version, session)
+
+}
+
 // LoadAndHydrateProfile function
 func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.Profile, error) {
 	// TODO: This should happen in the authentication middleware and only be done once per request
@@ -195,12 +198,12 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.
 	if err != nil {
 		return nil, err
 	}
-	err = Load(profile, session)
+	err = LoadFromSite(profile, session)
 	if err != nil {
 		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
 		return nil, err
 	}
-	// Load in the permission sets for this profile
+	// LoadFromSite in the permission sets for this profile
 	for _, permissionSetRef := range profile.PermissionSetRefs {
 
 		permissionSet, err := metadata.NewPermissionSet(permissionSetRef)
@@ -208,7 +211,7 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.
 			return nil, err
 		}
 
-		err = Load(permissionSet, session)
+		err = LoadFromSite(permissionSet, session)
 		if err != nil {
 			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
 			return nil, err

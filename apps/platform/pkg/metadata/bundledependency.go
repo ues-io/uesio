@@ -1,16 +1,15 @@
 package metadata
 
 import (
-	"errors"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"strings"
 )
 
 // Bundle struct
 type BundleDependency struct {
-	ID          string `uesio:"uesio.id"`
-	WorkspaceID string `uesio:"uesio.workspaceid"`
-	BundleID    string `uesio:"uesio.bundleid"`
+	ID            string `uesio:"uesio.id"`
+	WorkspaceID   string `uesio:"uesio.workspaceid"`
+	BundleName    string `uesio:"uesio.bundlename"`
+	BundleVersion string `uesio:"uesio.bundleversion"`
 }
 
 // GetCollectionName function
@@ -22,14 +21,6 @@ func (b *BundleDependency) GetCollectionName() string {
 func (b *BundleDependency) GetCollection() CollectionableGroup {
 	var bc BundleDependencyCollection
 	return &bc
-}
-// This assumes the ID format of Bundle's
-func (b *BundleDependency) GetNameAndVersion() (string, string, error) {
-	parts := strings.Split(b.BundleID, "_")
-	if len(parts) != 2 {
-		return "", "", errors.New("poorly formatted bundle ID: " + b.ID)
-	}
-	return parts[0], parts[1], nil
 }
 
 // GetConditions function

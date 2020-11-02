@@ -52,7 +52,7 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 		session,
 	)
 	if err != nil {
-		return errors.New("Platform Load Failed:" + err.Error())
+		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
 
 	if len(loadResponse.Wires) != len(collections) {
@@ -136,7 +136,7 @@ func LoadMetadataItem(item metadata.BundleableItem, session *sess.Session) error
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 	// If we're in a workspace mode AND the namespace equals that workspace's app name
-	if workspace != nil && workspace.AppRef == namespace {
+	if workspace != nil && namespace != "uesio" {
 		// 1. Make sure we're in a site that can read/modify workspaces
 		if site.Name != "studio" {
 			return errors.New("this site does not allow working with workspaces")
@@ -151,10 +151,18 @@ func LoadMetadataItem(item metadata.BundleableItem, session *sess.Session) error
 		}
 		// 3. TODO Check against the workspace profile (different than site profile)
 		// to determine if the user has access to this workspace metadata item.
-
-		return LoadWorkspaceMetadataItem(item, session)
+		if workspace.AppRef == namespace {
+			return LoadWorkspaceMetadataItem(item, session)
+		} else {
+			version, err := GetDependencyVersionForWorkspace(namespace, session)
+			if err != nil {
+				return err
+			}
+			return bundles.Load(item, version, session)
+		}
 	}
-	return bundles.Load(item, session)
+
+	return bundles.LoadFromSite(item, session)
 }
 
 // LoadMetadataCollection function
@@ -162,7 +170,7 @@ func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, co
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 	// Find all of the accessible namespaces
-	if workspace != nil && workspace.AppRef == namespace {
+	if workspace != nil && namespace != "uesio" {
 		// 1. Make sure we're in a site that can read/modify workspaces
 		if site.Name != "studio" {
 			return errors.New("this site does not allow working with workspaces")
@@ -178,12 +186,18 @@ func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, co
 		// 3. TODO Check against the workspace profile (different than site profile)
 		// to determine if the user has access to this workspace metadata item.
 		// Get All of the metadata from the workspace
-		return LoadWorkspaceMetadataCollection(group, conditions, session)
-
-		// TODO: Get All the metadata from the dependencies (right now workspaces don't have dependencies)
+		if workspace.AppRef == namespace {
+			return LoadWorkspaceMetadataCollection(group, conditions, session)
+		} else {
+			version, err := GetDependencyVersionForWorkspace(namespace, session)
+			if err != nil {
+				return err
+			}
+			return bundles.LoadAll(group, namespace, version, session)
+		}
 	}
 	// Get All the metadata from the site and its dependencies
-	err := bundles.LoadAll(group, namespace, session)
+	err := bundles.LoadAllSite(group, namespace, session)
 	if err != nil {
 		return err
 	}

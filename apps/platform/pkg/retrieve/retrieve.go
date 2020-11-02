@@ -75,10 +75,8 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		by.Dependencies = map[string]metadata.BundleYamlDep{}
 	}
 	for _, bd := range *bdc {
-		name, version, err := bd.GetNameAndVersion()
-		if err != nil {
-			return nil, err
-		}
+		name := bd.BundleName
+		version := bd.BundleVersion
 		bundleStore := bundlestore.GetBundleStoreByNamespace(name)
 		dep, err := getBundleYamlForDep(bundleStore, name, version)
 		if err != nil {

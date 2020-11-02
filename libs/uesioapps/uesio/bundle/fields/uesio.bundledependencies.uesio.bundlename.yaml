@@ -1,6 +1,6 @@
-name: bundleid
+name: bundlename
 collection: uesio.bundledependencies
 type: "TEXT"
-label: "Bundle ID"
-propertyName: bundleid
+label: "Bundle Name"
+propertyName: bundlename
 readOnly: true
