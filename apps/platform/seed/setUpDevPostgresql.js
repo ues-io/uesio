@@ -72,16 +72,18 @@ client.query(`
 
 const populateTable = (dbClient, tableName, collection, cb) => {
 	collection.forEach((rowObject) => {
+		const rowKeys = Object.keys(rowObject);
+		const rowValues = Object.values(rowObject);
 		dbClient
 			.query(
 				`INSERT INTO ${tableName}
-            (${Object.keys(rowObject).join()})
+            (${rowKeys.join()})
             VALUES(
-                ${[...new Array(Object.keys(rowObject).length)]
+                ${[...new Array(rowKeys.length)]
 									.map((e, index) => `$${index + 1}`)
 									.join()}
                 ) RETURNING *`,
-				Object.values(rowObject)
+				rowValues
 			)
 			.then(() => cb && cb(dbClient))
 			.catch((e) => console.error(e.stack));
