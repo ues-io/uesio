@@ -124,8 +124,8 @@ const workspacesPopulationPromises = workspaces
 		appid: workspace.app.name,
 		name: workspace.name,
 	}))
-	.map((rowObject) => {
-		return client.query(
+	.map((rowObject) =>
+		client.query(
 			`INSERT INTO workspaces
                 (${Object.keys(rowObject).join()})
                 VALUES(
@@ -134,8 +134,8 @@ const workspacesPopulationPromises = workspaces
 											.join()}
                     );`,
 			Object.values(rowObject)
-		);
-	});
+		)
+	);
 
 Promise.all([
 	dropTablesPromise,
