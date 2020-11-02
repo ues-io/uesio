@@ -70,22 +70,21 @@ client.query(`
 `);
 */
 
-const populateTable = (dbClient, tableName, collection, cb) => {
-	collection.forEach((rowObject) => {
+const populateTable = (dbClient, tableName, collection) => {
+	return collection.map((rowObject) => {
 		const rowKeys = Object.keys(rowObject);
 		const rowValues = Object.values(rowObject);
-		dbClient
-			.query(
-				`INSERT INTO ${tableName}
+
+		return dbClient.query(
+			`INSERT INTO ${tableName}
             (${rowKeys.join()})
             VALUES(
                 ${[...new Array(rowKeys.length)]
 									.map((e, index) => `$${index + 1}`)
 									.join()}
                 ) RETURNING *`,
-				rowValues
-			)
-			.then((result) => cb && cb(dbClient));
+			rowValues
+		);
 	});
 };
 
@@ -94,5 +93,9 @@ const afterPopulation = (dbClient) => {
 };
 
 // populate these tables
-populateTable(client, 'apps', apps);
-populateTable(client, 'bundles', bundles, afterPopulation);
+const appsQueryPromises = populateTable(client, 'apps', apps);
+const bundlesQueryPromises = populateTable(client, 'bundles', bundles);
+
+Promise.all([...appsQueryPromises, ...bundlesQueryPromises]).then((results) =>
+	afterPopulation(client)
+);
