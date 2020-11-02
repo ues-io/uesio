@@ -6,7 +6,7 @@ Uesio is a low-code application development platform.
 
 ## Set up dev environment
 
-- install homebrew (for macOS user)
+- install [homebrew](https://brew.sh/) (for macOS user)
 - install git
 - install [Oh My Zsh](https://ohmyz.sh/)
 - install [nvm](https://github.com/nvm-sh/nvm) (nodejs and npm)
@@ -19,6 +19,7 @@ Uesio is a low-code application development platform.
 - ```
   npm install
   ```
+- Optional: [iTerm2](https://www.iterm2.com/) (for macOS user)
 - Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
