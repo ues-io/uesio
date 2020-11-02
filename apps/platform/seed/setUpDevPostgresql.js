@@ -18,7 +18,7 @@ client.connect();
 
 // remove tables if they do exist
 const dropTablesPromise = client.query(
-	'DROP TABLE IF EXISTS apps, bundles, workspaces;'
+	'DROP TABLE IF EXISTS apps,bundles,workspaces,collections,fields;'
 );
 // create minimal tables for the app to work
 const createTablesPromise = client.query(`
@@ -42,6 +42,30 @@ const createTablesPromise = client.query(`
         id TEXT,
         name TEXT,
         appid TEXT
+    );
+
+    CREATE TABLE collections(
+        id TEXT,
+        name TEXT,
+        namefield TEXT,
+        workspaceid TEXT,
+        idfield TEXT,
+        idformat TEXT,
+        collectionname TEXT,
+        datasource TEXT
+    );
+
+    CREATE TABLE fields(
+        id TEXT,
+        selectlist TEXT,
+        propertyname TEXT,
+        label TEXT,
+        name TEXT,
+        collection TEXT,
+        workspaceid TEXT,
+        foreignKeyField TEXT,
+        referencedCollection TEXT,
+        type TEXT
     );
 `);
 
@@ -117,9 +141,9 @@ const appsPopulatePromises = apps
 	.map(insertRow(client)('apps'));
 
 const bundlesPopulatePromises = bundles
-	.map((app) => ({
-		...app,
-		id: app.namespace + '_v0.0.1',
+	.map((bundle) => ({
+		...bundle,
+		id: bundle.namespace + '_v0.0.1',
 	}))
 	.map(insertRow(client)('bundles'));
 
