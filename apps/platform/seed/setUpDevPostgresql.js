@@ -90,6 +90,7 @@ const populateTable = (dbClient, tableName, collection) => {
 
 const afterPopulation = (dbClient) => {
 	dbClient.end();
+	console.log('data populated and connection closed');
 };
 
 // populate these tables
