@@ -15,11 +15,12 @@ Uesio is a low-code application development platform.
   ```
 - install [Go](https://golang.org/dl/)
 - install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
-- generate a rsa tuple (private/public) for git
-- git clone repo (ssh method)
+
+- git clone repo (ssh method is prefered)
 - ```
   npm install
   ```
+- Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional: [iTerm2](https://www.iterm2.com/) (for macOS user)
 - Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
