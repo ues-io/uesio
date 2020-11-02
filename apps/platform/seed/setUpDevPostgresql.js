@@ -2,7 +2,7 @@ const { Pool, Client } = require('pg');
 const apps = require('./apps.json');
 const bundles = require('./bundles.json');
 const workspaces = require('./workspaces.json');
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 
 const DB_CONFIG = {
 	user: 'postgres',
@@ -96,15 +96,46 @@ const afterDataPopulation = (dbClient) => {
 	dbClient.end();
 	console.log('data populated and connection closed');
 	// run the migration of the uesio cli
-	exec('../../cli/bin/run migrate');
+
+	exec(
+		`
+        cd ./libs/uesioapps/crm &&  ./../../../apps/cli/bin/run migrate
+        `,
+		(err, stdout, stderr) => {
+			if (err) {
+				//some err occurred
+				console.error(err);
+			} else {
+				// the *entire* stdout and stderr (buffered)
+				console.log(`stdout: ${stdout}`);
+				console.log(`stderr: ${stderr}`);
+			}
+		}
+	);
 	console.log('migrate from uesio cli executed.');
 };
 
 // populate these tables
 const appsPopulationPromises = populateTable(client, 'apps', apps);
 const bundlesPopulationPromises = populateTable(client, 'bundles', bundles);
-const workspacesPopulationPromises =
-	[] || populateTable(client, 'workspaces', workspaces);
+const workspacesPopulationPromises = workspaces
+	.map((workspace) => ({
+		id: workspace.app.name + '_' + workspace.name,
+		appid: workspace.app.name,
+		name: workspace.name,
+	}))
+	.map((rowObject) => {
+		return client.query(
+			`INSERT INTO workspaces
+                (${Object.keys(rowObject).join()})
+                VALUES(
+                    ${[...new Array(Object.keys(rowObject).length)]
+											.map((e, index) => `$${index + 1}`)
+											.join()}
+                    );`,
+			Object.values(rowObject)
+		);
+	});
 
 Promise.all([
 	dropTablesPromise,
