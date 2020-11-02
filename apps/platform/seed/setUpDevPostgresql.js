@@ -16,12 +16,10 @@ const client = new Client(DB_CONFIG);
 
 client.connect();
 
-// remove tables if they do exist
-const dropTablesPromise = client.query(
-	'DROP TABLE IF EXISTS apps,bundles,workspaces,secrets,datasources,collections,fields,views;'
-);
 // create minimal tables for the app to work
 const createTablesPromise = client.query(`
+    DROP TABLE IF EXISTS apps,bundles,workspaces,secrets,datasources,collections,fields,views,routes,files,selectlists;
+    
     CREATE TABLE apps(
         id TEXT,
         name TEXT,
@@ -52,6 +50,7 @@ const createTablesPromise = client.query(`
         type TEXT
     );
 
+
     CREATE TABLE datasources(
         id TEXT,
         name TEXT,
@@ -69,6 +68,7 @@ const createTablesPromise = client.query(`
         collectionname TEXT,
         datasource TEXT
     );
+    
 
     CREATE TABLE fields(
         id TEXT,
@@ -89,6 +89,29 @@ const createTablesPromise = client.query(`
         id TEXT,
         definition TEXT
     );
+
+    CREATE TABLE routes(
+        path TEXT,
+        name TEXT,
+        workspaceid TEXT,
+        view TEXT,
+        id TEXT
+    );
+
+    CREATE TABLE files(
+        name TEXT,
+        workspaceid TEXT,
+        id TEXT,
+        content TEXT
+    );
+
+    CREATE TABLE selectlists(
+        options TEXT,
+        name TEXT,
+        workspaceid TEXT,
+        id TEXT
+    );
+
 `);
 
 /*
@@ -136,6 +159,10 @@ const afterDataPopulation = (dbClient) => {
 	console.log('data populated and connection closed');
 	// run the migration of the uesio cli
 
+	/*
+
+
+    */
 	exec(
 		`
         cd ./libs/uesioapps/uesio &&
@@ -163,33 +190,33 @@ const afterDataPopulation = (dbClient) => {
 	console.log('migrate from uesio cli executed.');
 };
 
-// populate these tables
-const appsPopulatePromises = apps
-	.map((app) => ({
-		...app,
-		id: app['name'],
-	}))
-	.map(insertRow(client)('apps'));
+createTablesPromise.then(() => {
+	// populate these tables
+	const appsPopulatePromises = apps
+		.map((app) => ({
+			...app,
+			id: app['name'],
+		}))
+		.map(insertRow(client)('apps'));
 
-const bundlesPopulatePromises = bundles
-	.map((bundle) => ({
-		...bundle,
-		id: bundle.namespace + '_v0.0.1',
-	}))
-	.map(insertRow(client)('bundles'));
+	const bundlesPopulatePromises = bundles
+		.map((bundle) => ({
+			...bundle,
+			id: bundle.namespace + '_v0.0.1',
+		}))
+		.map(insertRow(client)('bundles'));
 
-const workspacesPopulatePromises = workspaces
-	.map((workspace) => ({
-		id: workspace.app.name + '_' + workspace.name,
-		appid: workspace.app.name,
-		name: workspace.name,
-	}))
-	.map(insertRow(client)('workspaces'));
+	const workspacesPopulatePromises = workspaces
+		.map((workspace) => ({
+			id: workspace.app.name + '_' + workspace.name,
+			appid: workspace.app.name,
+			name: workspace.name,
+		}))
+		.map(insertRow(client)('workspaces'));
 
-Promise.all([
-	dropTablesPromise,
-	createTablesPromise,
-	...appsPopulatePromises,
-	...bundlesPopulatePromises,
-	...workspacesPopulatePromises,
-]).then((results) => afterDataPopulation(client));
+	Promise.all([
+		...appsPopulatePromises,
+		...bundlesPopulatePromises,
+		...workspacesPopulatePromises,
+	]).then((results) => afterDataPopulation(client));
+});
