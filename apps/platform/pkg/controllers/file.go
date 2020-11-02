@@ -41,16 +41,25 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	var mimeType string
 
 	if file.Workspace == "" {
-		version, err := bundles.GetVersionFromSite(namespace, session.GetSite())
+		version, err := bundles.GetVersion(namespace, session)
 		if err != nil {
 			logger.LogError(errors.New("Couldn't get bundle version"))
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		stream, err = bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, "files", file.FileName)
+		bs, err := bundlestore.GetBundleStore(namespace, session)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		stream, err = bs.GetItem(namespace, version, "files", file.FileName)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed File Download", http.StatusInternalServerError)
+			return
 		}
 		mimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
 	} else {

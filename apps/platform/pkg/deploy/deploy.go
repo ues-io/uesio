@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"io"
 	"io/ioutil"
 	"log"
@@ -12,6 +11,8 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -53,7 +54,7 @@ func Deploy(body []byte, session *sess.Session) error {
 		dirParts := strings.Split(dir, string(os.PathSeparator))
 		if len(dirParts) == 1 && fileName == "bundle/bundle.yaml" {
 			//Break down bundle.yaml into dependency records
-			by := metadata.BundleYaml{}
+			by := metadata.BundleDef{}
 			readCloser, err := zipFile.Open()
 			if err != nil {
 				return err

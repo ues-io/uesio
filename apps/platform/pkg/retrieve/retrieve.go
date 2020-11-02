@@ -64,7 +64,7 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	itemStream := reqs.ItemStream{
 		Path: "bundle.yaml",
 	}
-	var by metadata.BundleYaml
+	var by metadata.BundleDef
 	by.Name = session.GetWorkspaceApp()
 	bdc, err := datasource.GetBundleDependenciesForWorkspace(session.GetWorkspaceID(), session)
 
@@ -72,12 +72,15 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		return nil, err
 	}
 	if len(*bdc) != 0 {
-		by.Dependencies = map[string]metadata.BundleYamlDep{}
+		by.Dependencies = map[string]metadata.BundleDefDep{}
 	}
 	for _, bd := range *bdc {
 		name := bd.BundleName
 		version := bd.BundleVersion
-		bundleStore := bundlestore.GetBundleStoreByNamespace(name)
+		bundleStore, err := bundlestore.GetBundleStore(name, session)
+		if err != nil {
+			return nil, err
+		}
 		dep, err := getBundleYamlForDep(bundleStore, name, version)
 		if err != nil {
 			return nil, err
@@ -91,8 +94,8 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	return &itemStream, nil
 }
 
-func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, version string) (*metadata.BundleYamlDep, error) {
-	dep := metadata.BundleYamlDep{Version: version}
+func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, version string) (*metadata.BundleDefDep, error) {
+	dep := metadata.BundleDefDep{Version: version}
 
 	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
 	if err != nil {

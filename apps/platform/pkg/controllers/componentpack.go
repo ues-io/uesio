@@ -44,14 +44,14 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 
 		var stream io.ReadCloser
 		var mimeType string
-		workspaceId := session.GetWorkspaceID()
+		workspaceID := session.GetWorkspaceID()
 		if componentPack.Workspace == "" {
 			version := ""
 			var err error
-			if workspaceId != "" {
+			if workspaceID != "" {
 				version, err = datasource.GetDependencyVersionForWorkspace(namespace, session)
 			} else {
-				version, err = bundles.GetVersionFromSite(namespace, session.GetSite())
+				version, err = bundles.GetVersion(namespace, session)
 			}
 			if err != nil {
 				msg := "Couldn't get bundle version: " + err.Error()
@@ -60,7 +60,14 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 				return
 			}
 
-			stream, err = bundlestore.GetBundleStoreByNamespace(namespace).GetItem(namespace, version, "componentpacks", fileName)
+			bs, err := bundlestore.GetBundleStore(namespace, session)
+			if err != nil {
+				logger.LogError(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			stream, err = bs.GetItem(namespace, version, "componentpacks", fileName)
 			if err != nil {
 				logger.LogError(err)
 				http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)

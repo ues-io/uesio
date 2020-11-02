@@ -75,11 +75,9 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		session := GetSession(r)
 
 		// Get the Workspace from the DB
-		var apps metadata.AppCollection
 		var workspaces metadata.WorkspaceCollection
 		err := datasource.PlatformLoad(
 			[]metadata.CollectionableGroup{
-				&apps,
 				&workspaces,
 			},
 			workspaces.ByNameRequest(appName, workspaceName),
@@ -97,9 +95,6 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		}
 
 		workspace := &workspaces[0]
-		app := &apps[0]
-
-		workspace.AppRef = app.Name
 
 		session.SetWorkspace(workspace)
 		next.ServeHTTP(w, r)
