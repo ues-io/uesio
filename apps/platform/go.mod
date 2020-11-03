@@ -12,7 +12,6 @@ require (
 	github.com/dop251/goja v0.0.0-20201002140143-8ce18d86df5f
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
-	github.com/go-sql-driver/mysql v1.5.0
 	github.com/google/uuid v1.1.1
 	github.com/gorilla/mux v1.7.4
 	github.com/huandu/facebook/v2 v2.5.2
