@@ -190,7 +190,7 @@ func (a *Adapter) Load(requests []reqs.LoadRequest, metadata *adapters.MetadataC
 	db, err := connect()
 	defer db.Close()
 	if err != nil {
-		return nil, errors.New("Failed to connect MySQL:" + err.Error())
+		return nil, errors.New("Failed to connect PostgreSQL:" + err.Error())
 	}
 
 	for _, wire := range requests {
