@@ -7,6 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters/dynamodb"
 	"github.com/thecloudmasters/uesio/pkg/adapters/dynamodbmultiple"
 	"github.com/thecloudmasters/uesio/pkg/adapters/firestore"
+	"github.com/thecloudmasters/uesio/pkg/adapters/mysql"
 	"github.com/thecloudmasters/uesio/pkg/adapters/postgresql"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
@@ -36,6 +37,7 @@ func init() {
 	adapters.RegisterAdapter("uesio.dynamodb", &dynamodb.Adapter{})
 	adapters.RegisterAdapter("uesio.dynamodbmultiple", &dynamodbmultiple.Adapter{})
 	adapters.RegisterAdapter("uesio.postgresql", &postgresql.Adapter{})
+	adapters.RegisterAdapter("uesio.mysql", &mysql.Adapter{})
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})
