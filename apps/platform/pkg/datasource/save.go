@@ -118,17 +118,15 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		}
 
 		//After Save Bots
-		var secondSaves []reqs.SaveRequest
-		for _, r := range adapterResponses {
+		for i, r := range adapterResponses {
 
 			var robots metadata.BotCollection
 			conditions := []reqs.LoadRequestCondition{}
-			//GET current collection, a better way to do this?
-			collectionNamespace, _, err := metadata.ParseKey(dsKey)
+			var currentCollection = requests.Wires[i].GetCollection()
+			collectionNamespace, _, err := metadata.ParseKey(currentCollection)
 			if err != nil {
 				return nil, err
 			}
-			var currentCollection = collectionNamespace + "." + r.Wire
 
 			conditions = append(conditions, reqs.LoadRequestCondition{
 				Field: "uesio.trigger",
@@ -146,46 +144,13 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 				return nil, err
 			}
 
-			//DO this if there are Robtos
-			if len(robots) > 0 {
-				err = bots.RunBotsAfter(robots, &r, session, currentCollection)
-				if err != nil {
-					return nil, err
-				}
-
-				secondSave := r.ToSaveRequest(currentCollection)
-				secondSaves = append(secondSaves, secondSave)
-			} else {
-				response.Wires = append(response.Wires, r)
-			}
-
-		}
-
-		//DO this if there are SecondSaves
-		if len(secondSaves) > 0 {
-
-			//Exclude the delets from the second save since they are already deleted
-			//Add them to the response otherwise we don't notice the changes
-			aux := make([]reqs.SaveRequest, len(secondSaves))
-			copy(aux, secondSaves)
-			for i, save := range aux {
-				save.Deletes = nil
-				aux[i] = save
-			}
-
-			SecondAdapterResponses, err := adapter.Save(aux, collatedMetadata[dsKey], credentials)
+			err = bots.RunBotsAfter(robots, &r, session, currentCollection)
 			if err != nil {
 				return nil, err
 			}
 
-			for i, r := range SecondAdapterResponses {
-				for key, value := range secondSaves[i].Deletes {
-					var chresl reqs.ChangeResult
-					chresl.Data = value
-					r.DeleteResults[key] = chresl
-				}
-				response.Wires = append(response.Wires, r)
-			}
+			response.Wires = append(response.Wires, r)
+
 		}
 
 	}

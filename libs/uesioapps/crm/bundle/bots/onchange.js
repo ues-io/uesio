@@ -1,5 +1,5 @@
 function onchange(bot) {
-	bot.changerequests.get().forEach(function (changerequest) {
+	bot.changes.get().forEach(function (changerequest) {
 		var name = changerequest.get("crm.name")
 		if (!name) {
 			return

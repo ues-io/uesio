@@ -16,8 +16,8 @@ func Logger(message string) {
 	fmt.Println(message)
 }
 
-// RunBot function
-func RunBot(bot *metadata.Bot, botAPI *BotAPI, vm *goja.Runtime, session *sess.Session) error {
+// RunBotBefore function
+func RunBotBefore(bot *metadata.Bot, botAPI *BotBeforeAPI, vm *goja.Runtime, session *sess.Session) error {
 
 	runner, err := vm.RunString("(" + bot.FileContents + ")")
 	if err != nil {
@@ -45,8 +45,8 @@ func RunBot(bot *metadata.Bot, botAPI *BotAPI, vm *goja.Runtime, session *sess.S
 // RunBotsBefore function
 func RunBotsBefore(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 
-	botAPI := &BotAPI{
-		ChangeRequests: &ChangeRequestsAPI{
+	botAPI := &BotBeforeAPI{
+		Changes: &ChangeRequestsAPI{
 			changerequests: request.Changes,
 			metadata:       collectionMetadata,
 		},
@@ -60,7 +60,7 @@ func RunBotsBefore(bots metadata.BotCollection, request *reqs.SaveRequest, colle
 		if bot.CollectionRef != request.Collection {
 			continue
 		}
-		err := RunBot(&bot, botAPI, vm, session)
+		err := RunBotBefore(&bot, botAPI, vm, session)
 		if err != nil {
 			return err
 		}
@@ -73,11 +73,37 @@ func RunBotsBefore(bots metadata.BotCollection, request *reqs.SaveRequest, colle
 	return nil
 }
 
+//RunBotAfter function
+func RunBotAfter(bot *metadata.Bot, botAPI *BotAfterAPI, vm *goja.Runtime, session *sess.Session) error {
+
+	runner, err := vm.RunString("(" + bot.FileContents + ")")
+	if err != nil {
+		return err
+	}
+	change, ok := goja.AssertFunction(runner)
+	if !ok {
+		return err
+	}
+
+	_, err = change(goja.Undefined(), vm.ToValue(botAPI))
+	if err != nil {
+		if jserr, ok := err.(*goja.Exception); ok {
+			botAPI.AddError(jserr.Error())
+		} else {
+			// Not a Javascript error
+			return err
+		}
+
+	}
+
+	return nil
+}
+
 // RunBotsAfter function
 func RunBotsAfter(bots metadata.BotCollection, response *reqs.SaveResponse, session *sess.Session, currentCollection string) error {
 
-	botAPI := &BotAPI{
-		ChangeResponses: &ChangeResponsesAPI{
+	botAPI := &BotAfterAPI{
+		Changes: &ChangeResponsesAPI{
 			changeresponses: response.ChangeResults,
 			//metadata:        collectionMetadata,
 		},
@@ -91,7 +117,7 @@ func RunBotsAfter(bots metadata.BotCollection, response *reqs.SaveResponse, sess
 		if bot.CollectionRef != currentCollection {
 			continue
 		}
-		err := RunBot(&bot, botAPI, vm, session)
+		err := RunBotAfter(&bot, botAPI, vm, session)
 		if err != nil {
 			return err
 		}

@@ -17,11 +17,6 @@ func (c *ChangeResponseAPI) Get(fieldName string) interface{} {
 	return c.changeresponse.Data[fieldName]
 }
 
-// Set function
-func (c *ChangeResponseAPI) Set(fieldName string, value interface{}) {
-	c.changeresponse.Data[fieldName] = value
-}
-
 // AddError function
 func (c *ChangeResponseAPI) AddError(message string) {
 	c.errors = append(c.errors, message)

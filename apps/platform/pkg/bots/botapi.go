@@ -1,25 +1,47 @@
 package bots
 
-import "strings"
+import (
+	"strings"
+)
 
-// BotAPI type
-type BotAPI struct {
-	ChangeRequests  *ChangeRequestsAPI  `bot:"changerequests"`
-	ChangeResponses *ChangeResponsesAPI `bot:"changeresponses"`
-	errors          []string
+// BotBeforeAPI type
+type BotBeforeAPI struct {
+	Changes *ChangeRequestsAPI `bot:"changes"`
+	errors  []string
+}
+
+// BotAfterAPI type
+type BotAfterAPI struct {
+	Changes *ChangeResponsesAPI `bot:"changes"`
+	errors  []string
 }
 
 // AddError function
-func (b *BotAPI) AddError(message string) {
+func (b *BotBeforeAPI) AddError(message string) {
 	b.errors = append(b.errors, message)
 }
 
 // HasErrors function
-func (b *BotAPI) HasErrors() bool {
+func (b *BotBeforeAPI) HasErrors() bool {
 	return len(b.errors) > 0
 }
 
 // GetErrorString function
-func (b *BotAPI) GetErrorString() string {
+func (b *BotBeforeAPI) GetErrorString() string {
+	return strings.Join(b.errors, ", ")
+}
+
+// AddError function
+func (b *BotAfterAPI) AddError(message string) {
+	b.errors = append(b.errors, message)
+}
+
+// HasErrors function
+func (b *BotAfterAPI) HasErrors() bool {
+	return len(b.errors) > 0
+}
+
+// GetErrorString function
+func (b *BotAfterAPI) GetErrorString() string {
 	return strings.Join(b.errors, ", ")
 }
