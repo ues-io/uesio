@@ -64,12 +64,12 @@ func followUpReferenceFieldLoad(
 		rows, err := loadQuery.RunWith(db).Query()
 
 		if err != nil {
-			return errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+			return errors.New("Failed to load rows in MySQL:" + err.Error())
 		}
 
 		cols, err := rows.Columns()
 		if err != nil {
-			return errors.New("Failed to load columns in PostgreSQL:" + err.Error())
+			return errors.New("Failed to load columns in MySQL:" + err.Error())
 		}
 
 		colIndexes := map[string]int{}
@@ -92,7 +92,7 @@ func followUpReferenceFieldLoad(
 				colvals[i] = new(interface{})
 			}
 			if err := rows.Scan(colvals...); err != nil {
-				return errors.New("Failed to scan values in PostgreSQL:" + err.Error())
+				return errors.New("Failed to scan values in MySQL:" + err.Error())
 			}
 
 			for field := range fields {

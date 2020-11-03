@@ -18,14 +18,14 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 	rows, err := loadQuery.RunWith(db).Query()
 
 	if err != nil {
-		return nil, errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load rows in MySQL:" + err.Error())
 	}
 
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, errors.New("Failed to load columns in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load columns in MySQL:" + err.Error())
 	}
 
 	colIndexes := map[string]int{}
@@ -43,7 +43,7 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			colvals[i] = new(interface{})
 		}
 		if err := rows.Scan(colvals...); err != nil {
-			return nil, errors.New("Failed to scan values in PostgreSQL:" + err.Error())
+			return nil, errors.New("Failed to scan values in MySQL:" + err.Error())
 		}
 		// Map properties from firestore to uesio fields
 		for fieldID, fieldMetadata := range requestedFields {

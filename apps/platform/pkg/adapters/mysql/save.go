@@ -97,7 +97,7 @@ func processUpdate(change reqs.ChangeRequest, collectionName string, collectionM
 	_, err = psql.Update(collectionName).SetMap(updates).RunWith(db).Where(idFieldName+" LIKE ? ", postgresSQLId).Query()
 
 	if err != nil {
-		return errors.New("Failed to Update in PostgreSQL:" + err.Error())
+		return errors.New("Failed to Update in MySQL:" + err.Error())
 	}
 	return nil
 }
@@ -139,7 +139,7 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 	result, err := psql.Insert(collectionName).Suffix("RETURNING \"id\"").SetMap(inserts).RunWith(db).Query()
 
 	if err != nil {
-		return "", errors.New("Failed to insert in PostgreSQL:" + err.Error())
+		return "", errors.New("Failed to insert in MySQL:" + err.Error())
 	}
 
 	result.Scan(newID)
@@ -200,7 +200,7 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 
 			result, err := psql.Delete(collectionName).RunWith(db).Where(idFieldName+" LIKE ? ", postgresID).Query()
 			if err != nil {
-				return nil, errors.New("Failed to delete in PostgreSQL:" + err.Error())
+				return nil, errors.New("Failed to delete in MySQL:" + err.Error())
 			}
 			result.Scan(deleteResult.Data[collectionMetadata.IDField])
 
@@ -244,7 +244,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 	defer db.Close()
 
 	if err != nil {
-		return nil, errors.New("Failed to connect to PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to connect to MySQL:" + err.Error())
 	}
 
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)

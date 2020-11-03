@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	_ "github.com/go-sql-driver/mysql" //needed for MySQL
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -21,8 +22,8 @@ const (
 )
 
 func connect() (*sql.DB, error) {
-	//	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:8889)/test-cf94a")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	db, err := sql.Open("mysql", psqlInfo)
 	if err != nil {
 		return db, err
 	}
