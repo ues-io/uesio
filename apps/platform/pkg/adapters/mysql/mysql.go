@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql" //needed for MySQL
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -24,6 +25,10 @@ const (
 func connect() (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("mysql", psqlInfo)
+
+	results, err := db.Query("SELECT * FROM user")
+	log.Print(results)
+
 	if err != nil {
 		return db, err
 	}
