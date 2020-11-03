@@ -132,19 +132,11 @@ const afterDataPopulation = (dbClient) => {
 	console.log('data populated and connection closed');
 	// run the migration of the uesio cli
 
-	/*
-
-
-    */
 	exec(
 		`
-        cd ./libs/uesioapps/uesio &&
-        ./../../../apps/cli/bin/run deploy &&
-        ./../../../apps/cli/bin/run migrate &&
-        cd - &&
         cd ./libs/uesioapps/crm &&
-        ../../../../uesio-cli/bin/run work dev &&
         ../../../../uesio-cli/bin/run login &&
+        ../../../../uesio-cli/bin/run work dev &&
         ./../../../apps/cli/bin/run deploy &&
         ./../../../apps/cli/bin/run migrate &&
         cd -
