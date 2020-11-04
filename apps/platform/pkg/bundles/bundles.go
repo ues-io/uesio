@@ -3,140 +3,46 @@ package bundles
 import (
 	"errors"
 	"os"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
-// MetadataLoadItem function
-func MetadataLoadItem(item metadata.BundleableItem, namespace, version, key string, session *sess.Session) error {
-	if !strings.HasSuffix(key, ".yaml") {
-		key = key + ".yaml"
-	}
-	collectionName := item.GetCollectionName()
-	retrievedItem, ok := getFromCache(namespace, version, collectionName, key)
-	if !ok {
-		bs, err := bundlestore.GetBundleStore(namespace, session)
-		if err != nil {
-			return err
-		}
-		stream, err := bs.GetItem(namespace, version, item.GetCollectionName(), key)
-		if err != nil {
-			return err
-		}
-		defer stream.Close()
-		err = bundlestore.DecodeYAML(item, stream)
-		if err != nil {
-			return err
-		}
-		item.SetNamespace(namespace)
-		addItemToCache(item, namespace, version)
-	} else {
-		err := copier.Copy(item, retrievedItem)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// MetadataLoadGroup function
-func MetadataLoadGroup(group metadata.BundleableGroup, permSet *metadata.PermissionSet, namespace string, version string, session *sess.Session) error {
-	bundleGroupName := group.GetName()
-	keys, ok := getFileListFromCache(namespace, version, bundleGroupName)
-	var err error
-	if !ok {
-		bs, err := bundlestore.GetBundleStore(namespace, session)
-		if err != nil {
-			return err
-		}
-		keys, err = bs.ListItems(namespace, version, bundleGroupName)
-		if err != nil {
-			return err
-		}
-		addListToCache(namespace, version, bundleGroupName, keys)
-	}
-
-	for _, key := range keys {
-		retrievedItem := group.NewItem()
-		err = MetadataLoadItem(retrievedItem, namespace, version, key, session)
-		if err != nil {
-			return err
-		}
-		hasPermission := permSet.HasPermission(retrievedItem.GetPermChecker())
-		if !hasPermission {
-			continue
-		}
-		group.AddItem(retrievedItem)
-	}
-	return nil
-}
-
 // LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, version string, session *sess.Session) error {
-	permSet, err := getProfilePermSet(session)
-	if err != nil {
-		return err
-	}
-
-	err = MetadataLoadGroup(group, permSet, namespace, version, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// LoadAllSite function
-func LoadAllSite(group metadata.BundleableGroup, namespace string, session *sess.Session) error {
+func LoadAll(group metadata.BundleableGroup, namespace string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
 	version, err := GetVersion(namespace, session)
 	if err != nil {
-		return errors.New("Failed to LoadFromSite Metadata Item: " + namespace + " - " + err.Error())
+		return errors.New("Failed to LoadAllSite Metadata Item: " + namespace + " - " + err.Error())
 	}
-	return LoadAll(group, namespace, version, session)
-}
 
-// GetBundleDef function
-func GetBundleDef(session *sess.Session) (*metadata.BundleDef, error) {
-	site := session.GetSite()
-	name := site.AppRef
-	version := site.VersionRef
-	var by metadata.BundleDef
-	bundleStore, err := bundlestore.GetBundleStore(name, session)
+	bs, err := bundlestore.GetBundleStore(namespace, session)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
-	if err != nil {
-		return nil, err
-	}
-	defer stream.Close()
 
-	err = bundlestore.DecodeYAML(&by, stream)
-	if err != nil {
-		return nil, err
-	}
-	return &by, nil
+	return bs.GetItems(group, namespace, version, conditions, session)
 }
 
 // GetAppBundle key
 func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
 
-	site := session.GetSite()
-	appName := site.AppRef
-	appVersion := site.VersionRef
+	appName := session.GetContextAppName()
+	appVersion := session.GetContextVersionName()
+
 	entry, ok := localcache.GetCacheEntry("bundle-yaml", appName+":"+appVersion)
 	if ok {
 		return entry.(*metadata.BundleDef), nil
 	}
-	bundleyaml, err := GetBundleDef(session)
+	bs, err := bundlestore.GetBundleStore(appName, session)
+	if err != nil {
+		return nil, err
+	}
+	bundleyaml, err := bs.GetBundleDef(appName, appVersion, session)
 	if err != nil {
 		return nil, err
 	}
@@ -150,15 +56,16 @@ func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
 // GetVersion function
 func GetVersion(namespace string, session *sess.Session) (string, error) {
 
-	site := session.GetSite()
-	// Get the site's version
-	if site.AppRef == namespace {
+	appName := session.GetContextAppName()
+	appVersion := session.GetContextVersionName()
+
+	if appName == namespace {
 		// We always have a license to our own app.
-		return site.VersionRef, nil
+		return appVersion, nil
 	}
 
 	// Check to see if we have a license to use this namespace
-	license, err := GetAppLicense(site.AppRef, namespace)
+	license, err := GetAppLicense(appName, namespace)
 	if err != nil {
 		return "", err
 	}
@@ -173,7 +80,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 	}
 
 	if bundle == nil {
-		return "", errors.New("That version doesn't exist for that bundle: " + site.AppRef + " " + site.VersionRef)
+		return "", errors.New("That version doesn't exist for that bundle: " + appName + " " + appVersion)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
@@ -185,43 +92,30 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 }
 
 // Load function
-func Load(item metadata.BundleableItem, version string, session *sess.Session) error {
+func Load(item metadata.BundleableItem, session *sess.Session) error {
+
 	namespace := item.GetNamespace()
 	key := item.GetKey()
-	// Now Check to make sure we can actually view this item
-	hasPermission := SessionHasPermission(
-		session,
-		item.GetPermChecker(),
-	)
-
-	if !hasPermission {
-		return errors.New("You don't have permission to that file: " + key)
-	}
-
-	return MetadataLoadItem(item, namespace, version, key, session)
-}
-
-// LoadFromSite function
-func LoadFromSite(item metadata.BundleableItem, session *sess.Session) error {
-	namespace := item.GetNamespace()
 
 	version, err := GetVersion(namespace, session)
 	if err != nil {
-		return errors.New("Failed to LoadFromSite Metadata Item: " + item.GetKey() + " - " + err.Error())
+		return errors.New("Failed to LoadFromSite Metadata Item: " + item.GetCollectionName() + ":" + key + " - " + err.Error())
 	}
-	return Load(item, version, session)
 
+	bs, err := bundlestore.GetBundleStore(namespace, session)
+	if err != nil {
+		return err
+	}
+	return bs.GetItem(item, version, session)
 }
 
 // LoadAndHydrateProfile function
 func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.Profile, error) {
-	// TODO: This should happen in the authentication middleware and only be done once per request
-	// Right now it's happening a lot. On pretty much every metadata request
 	profile, err := metadata.NewProfile(profileKey)
 	if err != nil {
 		return nil, err
 	}
-	err = LoadFromSite(profile, session)
+	err = Load(profile, session)
 	if err != nil {
 		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
 		return nil, err
@@ -234,7 +128,7 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.
 			return nil, err
 		}
 
-		err = LoadFromSite(permissionSet, session)
+		err = Load(permissionSet, session)
 		if err != nil {
 			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
 			return nil, err
@@ -244,16 +138,8 @@ func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.
 	return profile, nil
 }
 
-// ProfileHasPermission returns whether a profile has permission
-func ProfileHasPermission(profileKey string, session *sess.Session, check *metadata.PermissionSet) bool {
-	profile, err := LoadAndHydrateProfile(profileKey, session)
-	if err != nil {
-		return false
-	}
-	return profile.HasPermission(check)
-}
-
-func getProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
+// GetProfilePermSet function
+func GetProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
 	profileKey, err := getProfileKey(session)
 	if err != nil {
 		return nil, err
@@ -275,19 +161,8 @@ func getProfileKey(session *sess.Session) (string, error) {
 	return profile, nil
 }
 
-// SessionHasPermission returns whether a session has permission
-func SessionHasPermission(session *sess.Session, check *metadata.PermissionSet) bool {
-	if check == nil {
-		return true
-	}
-	profileKey, err := getProfileKey(session)
-	if err != nil {
-		return false
-	}
-	return ProfileHasPermission(profileKey, session, check)
-}
-
-func getFileListFromCache(namespace string, version string, objectName string) ([]string, bool) {
+// GetFileListFromCache function
+func GetFileListFromCache(namespace string, version string, objectName string) ([]string, bool) {
 	if os.Getenv("GAE_ENV") == "" {
 		// For Local dev, don't use the cache so we can make lots of changes all the time
 		return nil, false
@@ -299,10 +174,14 @@ func getFileListFromCache(namespace string, version string, objectName string) (
 	}
 	return nil, false
 }
-func addListToCache(namespace string, version string, objectName string, files []string) {
+
+// AddFileListToCache function
+func AddFileListToCache(namespace string, version string, objectName string, files []string) {
 	localcache.SetCacheEntry("file-list", namespace+version+objectName, files)
 }
-func getFromCache(namespace, version, bundleGroupName, name string) (metadata.BundleableItem, bool) {
+
+// GetItemFromCache function
+func GetItemFromCache(namespace, version, bundleGroupName, name string) (metadata.BundleableItem, bool) {
 	// If we're not in app engine, do not use the cache
 	if os.Getenv("GAE_ENV") == "" {
 		// For Local dev, don't use the cache so we can make lots of changes all the time
@@ -316,6 +195,6 @@ func getFromCache(namespace, version, bundleGroupName, name string) (metadata.Bu
 }
 
 // AddItemToCache function
-func addItemToCache(item metadata.BundleableItem, namespace, version string) {
+func AddItemToCache(item metadata.BundleableItem, namespace, version string) {
 	localcache.SetCacheEntry("bundle-entry", namespace+version+item.GetCollectionName()+item.GetKey(), item)
 }

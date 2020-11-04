@@ -121,7 +121,10 @@ func Deploy(body []byte, session *sess.Session) error {
 			continue
 		}
 
-		collectionItem := collection.NewItem()
+		collectionItem, err := collection.NewItem(base)
+		if err != nil {
+			return err
+		}
 		err = readZipFile(zipFile, collectionItem)
 		if err != nil {
 			log.Println(err)
@@ -207,7 +210,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			FileCollectionID: "uesio.workspacemetadatafiles",
 		}
 
-		_, err := filesource.Upload(fileStream, fileDetails, session)
+		_, err := filesource.Upload(fileStream, fileDetails, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err
 		}

@@ -20,13 +20,16 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	Name      string          `yaml:"name" uesio:"uesio.name"`
-	Namespace string          `yaml:"namespace" uesio:"-"`
-	NamedRefs map[string]bool `yaml:"named" uesio:"-"`
-	ViewRefs  map[string]bool `yaml:"views" uesio:"-"`
-	RouteRefs map[string]bool `yaml:"routes" uesio:"-"`
-	FileRefs  map[string]bool `yaml:"files" uesio:"-"`
-	Workspace string          `yaml:"-" uesio:"uesio.workspaceid"`
+	Name           string          `yaml:"name" uesio:"uesio.name"`
+	Namespace      string          `yaml:"namespace" uesio:"-"`
+	NamedRefs      map[string]bool `yaml:"named" uesio:"-"`
+	ViewRefs       map[string]bool `yaml:"views" uesio:"-"`
+	RouteRefs      map[string]bool `yaml:"routes" uesio:"-"`
+	FileRefs       map[string]bool `yaml:"files" uesio:"-"`
+	Workspace      string          `yaml:"-" uesio:"uesio.workspaceid"`
+	AllowAllViews  bool            `yaml:"-" uesio:"-"`
+	AllowAllRoutes bool            `yaml:"-" uesio:"-"`
+	AllowAllFiles  bool            `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -93,27 +96,36 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 			}
 		}
 	}
-	for key, value := range check.ViewRefs {
-		if value {
-			if !ps.ViewRefs[key] {
-				return false
+	if !ps.AllowAllViews {
+		for key, value := range check.ViewRefs {
+			if value {
+				if !ps.ViewRefs[key] {
+					return false
+				}
 			}
 		}
 	}
-	for key, value := range check.RouteRefs {
-		if value {
-			if !ps.RouteRefs[key] {
-				return false
+
+	if !ps.AllowAllRoutes {
+		for key, value := range check.RouteRefs {
+			if value {
+				if !ps.RouteRefs[key] {
+					return false
+				}
 			}
 		}
 	}
-	for key, value := range check.FileRefs {
-		if value {
-			if !ps.FileRefs[key] {
-				return false
+
+	if !ps.AllowAllFiles {
+		for key, value := range check.FileRefs {
+			if value {
+				if !ps.FileRefs[key] {
+					return false
+				}
 			}
 		}
 	}
+
 	return true
 }
 

@@ -11,7 +11,7 @@ import (
 func NewDataSource(key string) (*DataSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Datasource")
+		return nil, errors.New("Bad Key for Datasource: " + key)
 	}
 	return &DataSource{
 		Name:      name,

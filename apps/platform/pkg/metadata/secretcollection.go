@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // SecretCollection slice
 type SecretCollection []Secret
 
@@ -14,9 +19,15 @@ func (sc *SecretCollection) GetFields() []string {
 }
 
 // NewItem function
-func (sc *SecretCollection) NewItem() BundleableItem {
-	var secret Secret
-	return &secret
+func (sc *SecretCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Secret Key: " + key)
+	}
+	return &Secret{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

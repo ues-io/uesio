@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -79,7 +80,7 @@ func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch,
 			return nil, err
 		}
 
-		err = LoadMetadataItem(datasource, session)
+		err = bundles.Load(datasource, session)
 		if err != nil {
 			return nil, err
 		}

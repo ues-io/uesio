@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // SelectListCollection slice
 type SelectListCollection []SelectList
 
@@ -14,9 +19,15 @@ func (slc *SelectListCollection) GetFields() []string {
 }
 
 // NewItem function
-func (slc *SelectListCollection) NewItem() BundleableItem {
-	var selectList SelectList
-	return &selectList
+func (slc *SelectListCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid SelectList Key: " + key)
+	}
+	return &SelectList{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

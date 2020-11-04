@@ -84,6 +84,7 @@ type Session struct {
 	browserSession *session.Session
 	site           *metadata.Site
 	workspace      *metadata.Workspace
+	permissions    *metadata.PermissionSet
 }
 
 // GetSite function
@@ -99,6 +100,16 @@ func (s *Session) SetWorkspace(workspace *metadata.Workspace) {
 // GetWorkspace function
 func (s *Session) GetWorkspace() *metadata.Workspace {
 	return s.workspace
+}
+
+// SetPermissions function
+func (s *Session) SetPermissions(permissions *metadata.PermissionSet) {
+	s.permissions = permissions
+}
+
+// GetPermissions function
+func (s *Session) GetPermissions() *metadata.PermissionSet {
+	return s.permissions
 }
 
 // GetWorkspaceID function
@@ -135,4 +146,33 @@ func (s *Session) GetUserInfo() *metadata.User {
 // GetProfile function
 func (s *Session) GetProfile() string {
 	return s.getBrowserSessionAttribute("Profile")
+}
+
+// RemoveWorkspaceContext function
+func (s *Session) RemoveWorkspaceContext() *Session {
+	return create(s.browserSession, s.site)
+}
+
+// GetContextAppName returns the appname in context
+func (s *Session) GetContextAppName() string {
+	if s.workspace != nil {
+		return s.workspace.AppRef
+	}
+	return s.site.AppRef
+}
+
+// GetContextVersionName returns the appversion in context
+func (s *Session) GetContextVersionName() string {
+	if s.workspace != nil {
+		return s.workspace.Name
+	}
+	return s.site.VersionRef
+}
+
+// GetContextPermissions returns the permissions in context
+func (s *Session) GetContextPermissions() *metadata.PermissionSet {
+	if s.workspace != nil {
+		return s.workspace.Permissions
+	}
+	return s.permissions
 }

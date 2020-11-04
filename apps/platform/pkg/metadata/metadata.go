@@ -32,7 +32,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	NewItem() BundleableItem
+	NewItem(key string) (BundleableItem, error)
 	AddItem(BundleableItem)
 }
 

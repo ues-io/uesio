@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // ComponentPackCollection slice
 type ComponentPackCollection []ComponentPack
 
@@ -14,9 +19,15 @@ func (cpc *ComponentPackCollection) GetFields() []string {
 }
 
 // NewItem function
-func (cpc *ComponentPackCollection) NewItem() BundleableItem {
-	var componentPack ComponentPack
-	return &componentPack
+func (cpc *ComponentPackCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid ComponentPack Key: " + key)
+	}
+	return &ComponentPack{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

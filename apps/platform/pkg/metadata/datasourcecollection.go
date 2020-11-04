@@ -14,9 +14,8 @@ func (dsc *DataSourceCollection) GetFields() []string {
 }
 
 // NewItem function
-func (dsc *DataSourceCollection) NewItem() BundleableItem {
-	var datasource DataSource
-	return &datasource
+func (dsc *DataSourceCollection) NewItem(key string) (BundleableItem, error) {
+	return NewDataSource(key)
 }
 
 // AddItem function

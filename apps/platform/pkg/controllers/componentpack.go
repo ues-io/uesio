@@ -3,9 +3,7 @@ package controllers
 import (
 	"errors"
 	"io"
-	"mime"
 	"net/http"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -25,17 +23,12 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 
 		session := middlewares.GetSession(r)
 
-		fileName := namespace + "." + name + ".bundle.js"
-		if buildMode {
-			fileName = namespace + "." + name + ".builder.bundle.js"
-		}
-
 		componentPack := metadata.ComponentPack{
 			Name:      name,
 			Namespace: namespace,
 		}
 
-		err := datasource.LoadMetadataItem(&componentPack, session)
+		err := bundles.Load(&componentPack, session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Not Found", http.StatusNotFound)
@@ -67,13 +60,13 @@ func ServeComponentPack(buildMode bool) http.HandlerFunc {
 				return
 			}
 
-			stream, err = bs.GetItem(namespace, version, "componentpacks", fileName)
+			stream, err = bs.GetComponentPackStream(namespace, version, buildMode, &componentPack, session)
 			if err != nil {
 				logger.LogError(err)
 				http.Error(w, "Failed ComponentPack Download", http.StatusInternalServerError)
 				return
 			}
-			mimeType = mime.TypeByExtension(filepath.Ext(fileName))
+			mimeType = "application/javascript"
 		} else {
 			// Not Quite ready for this yet.
 			http.Error(w, "Component Packs Don't work in Workspaces yet", http.StatusInternalServerError)

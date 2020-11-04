@@ -13,12 +13,6 @@ func (cc *UserFileMetadataCollection) GetFields() []string {
 	return []string{"name", "path", "recordid", "filecollectionid", "fieldid", "mimetype", "collectionid", "workspaceid", "siteid"}
 }
 
-// NewItem function
-func (cc *UserFileMetadataCollection) NewItem() BundleableItem {
-	var ufc UserFileCollection
-	return &ufc
-}
-
 // AddItem function
 func (cc *UserFileMetadataCollection) AddItem(item BundleableItem) {
 }

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"reflect"
 
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -41,7 +41,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = datasource.LoadMetadataCollection(collection, namespace, conditions, session)
+	err = bundles.LoadAll(collection, namespace, conditions, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -17,7 +17,7 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	var route metadata.Route
 	var routes metadata.RouteCollection
 
-	err := datasource.LoadMetadataCollection(&routes, namespace, nil, session)
+	err := bundles.LoadAll(&routes, namespace, nil, session)
 	if err != nil {
 		return nil, err
 	}

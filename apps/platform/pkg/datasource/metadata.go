@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -75,7 +76,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 			return nil, err
 		}
 
-		err = LoadMetadataItem(collection, session)
+		err = bundles.Load(collection, session)
 		if err != nil {
 			return nil, err
 		}
@@ -95,7 +96,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 		if err != nil {
 			return nil, err
 		}
-		err = LoadMetadataItem(field, session)
+		err = bundles.Load(field, session)
 		if err != nil {
 			return nil, err
 		}
@@ -121,7 +122,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, s
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = LoadMetadataItem(&selectList, session)
+		err = bundles.Load(&selectList, session)
 		if err != nil {
 			return err
 		}

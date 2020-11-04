@@ -1,6 +1,9 @@
 package metadata
 
 import (
+	"errors"
+	"strings"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -18,9 +21,15 @@ func (vc *ViewCollection) GetFields() []string {
 }
 
 // NewItem function
-func (vc *ViewCollection) NewItem() BundleableItem {
-	var view View
-	return &view
+func (vc *ViewCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid View Key: " + key)
+	}
+	return &View{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function
