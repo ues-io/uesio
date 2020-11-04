@@ -6,46 +6,49 @@ Uesio is a low-code application development platform.
 
 ## Set up dev environment
 
-- install [homebrew](https://brew.sh/) (for macOS user)
-- install git
-- install [Oh My Zsh](https://ohmyz.sh/)
-- install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
+- Install [homebrew](https://brew.sh/) (for macOS user)
+- Install git
+
+- Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - ```
   npm install -g firebase-tools
   ```
-- install [Go](https://golang.org/dl/)
-- install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
+- Install [Go](https://golang.org/dl/)
+- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
 
 - git clone repo (ssh method is prefered)
-- ```
+- Download the npm module dependencies
+
+```
   npm install
-  ```
+```
+
+- Optional : install [Oh My Zsh](https://ohmyz.sh/)
 - Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- Optional: [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
 - Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Launch",
-        "type": "go",
-        "request": "launch",
-        "mode": "debug",
-        "program": "${workspaceRoot}",
-        "env": {},
-        "args": ["serve"]
-      }
-    ]
-  }
-
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+    "name": "Launch",
+    "type": "go",
+    "request": "launch",
+    "mode": "debug",
+    "program": "\${workspaceRoot}",
+    "env": {},
+    "args": ["serve"]
+    }
+  ]
+}
 ```
 
-## Build
+## Build (TS compilation into JS)
 
 ```
 npm run build-all
@@ -103,7 +106,7 @@ Mac users can also use a service called dnsmasq for managing local DNS, but that
 npm run nx -- seed platform
 ```
 
-## Run Locally
+## Run the application Locally
 
 ```
 npm run nx -- serve platform
@@ -133,13 +136,11 @@ http://localhost:4000/firestore/
 
 ## Local Development with a database in Docker
 
-```
-0. install docker desktop
-1. create a docker container based on a remote docker image
-2. tag the image
-3. kill the container
-
-```
+0. Install [Docker Desktop](https://docs.docker.com/desktop/)
+1. Create a docker container based on a remote docker image with a tag, i.e. mysql-container-uesio `> docker run --name mysql-container-uesio -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql`
+2. Check if your container is running. `> docker ps`
+3. Stop the container when no need to have it up and running. `> mysql-container-uesio`
+4. Kill the docker container when no longer needed `> ps kill mysql-container-uesio`
 
 ## Connecting to a real Firestore instance
 
