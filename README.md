@@ -137,7 +137,7 @@ http://localhost:4000/firestore/
 ## Local Development with a database in Docker
 
 0. Install [Docker Desktop](https://docs.docker.com/desktop/)
-1. Create a docker container based on a **remote docker image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
+1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
 
 ```
 docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
