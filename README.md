@@ -173,7 +173,7 @@ docker rm -f CONTAINER_NAME
   docker exec -it CONTAINER_NAME /bin/bash
 ```
 
-6. Start an existing container
+6. Optional : Start an existing container
 
 ```
   docker start CONTAINER_NAME
