@@ -137,13 +137,13 @@ http://localhost:4000/firestore/
 ## Local Development with a database in Docker
 
 0. Install [Docker Desktop](https://docs.docker.com/desktop/)
-1. Create a docker container based on a **remote docker image** - _e_._g_. `mysql`. - with a `CONTAINER_TAG` - _e_._g_. `mysql-container-uesio`.
+1. Create a docker container based on a **remote docker image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
 
 ```
 docker run --name mysql-container-uesio -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql
 ```
 
-2. Check if your container is up and running. You have information about the container **id** and **tag name**.
+2. Check if your container is up and running. You have information about the container **id** and **name**.
 
 ```
 docker ps
@@ -152,13 +152,13 @@ docker ps
 3. Stop the container (which as a normal process) when no need to have it up and running.
 
 ```
-docker ps -a -q --filter="name=CONTAINER_TAG"
+docker ps -a -q --filter="name=CONTAINER_NAME"
 ```
 
 4. Remove the docker container when no longer needed.
 
 ```
-docker rm -f CONTAINER_TAG
+docker rm -f CONTAINER_NAME
 ```
 
 5. Get in the container
