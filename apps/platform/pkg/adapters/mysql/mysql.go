@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql" //needed for MySQL
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -16,18 +15,31 @@ type Adapter struct {
 
 const (
 	host     = "localhost"
-	port     = 8889
+	port     = 3306
 	user     = "root"
-	password = "root"
+	password = "example"
 	dbname   = "test-cf94a"
 )
 
 func connect() (*sql.DB, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", user, password, host, port, dbname)
 	db, err := sql.Open("mysql", psqlInfo)
 
-	results, err := db.Query("SELECT * FROM user")
-	log.Print(results)
+	rows, err := db.Query("SELECT * FROM user;")
+
+	for rows.Next() {
+		var (
+			id        int
+			firstname string
+		)
+		if err := rows.Scan(&id, &firstname); err != nil {
+			panic(err)
+		}
+		fmt.Printf("%d is %s\n", id, firstname)
+	}
+	if err := rows.Err(); err != nil {
+		panic(err)
+	}
 
 	if err != nil {
 		return db, err
