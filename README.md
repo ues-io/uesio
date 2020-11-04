@@ -131,6 +131,16 @@ In a browser visit
 http://localhost:4000/firestore/
 ```
 
+## Local Development with a database in Docker
+
+```
+0. install docker desktop
+1. create a docker container based on a remote docker image
+2. tag the image
+3. kill the container
+
+```
+
 ## Connecting to a real Firestore instance
 
 1. First set up your google cloud SDK and your first project (see above)
