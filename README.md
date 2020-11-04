@@ -143,7 +143,7 @@ http://localhost:4000/firestore/
 docker run --name mysql-container-uesio -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql
 ```
 
-2. Check if your container is up and running.
+2. Check if your container is up and running. You have information about the container **id** and **tag name**.
 
 ```
 docker ps
