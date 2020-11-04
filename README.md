@@ -149,13 +149,7 @@ docker run --name mysql-container-uesio -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d my
 docker ps
 ```
 
-3. Stop the container (which as a normal process) when no need to have it running.
-
-```
-docker ps -a -q --filter="name=CONTAINER_NAME"
-```
-
-or
+3. Stop the container (which is as a normal process) when no need to have it running.
 
 ```
 docker stop CONTAINER_ID
