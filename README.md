@@ -152,15 +152,15 @@ docker ps
 3. Get in the container and create a database.
 
 ```
-  docker exec -it CONTAINER_NAME /bin/bash
+docker exec -it CONTAINER_NAME /bin/bash
 ```
 
 ```
-  ./usr/bin/mysql --user=root --password=tcm
+./usr/bin/mysql --user=root --password=tcm
 ```
 
 ```
-  CREATE DATABASE `test-cf94a`;
+CREATE DATABASE `test-cf94a`;
 ```
 
 4. Optional. Stop the container (which is as a normal process) when no need to have it running.
@@ -172,7 +172,7 @@ docker stop CONTAINER_NAME
 5. Optional : Start an existing container
 
 ```
-  docker start CONTAINER_NAME
+docker start CONTAINER_NAME
 ```
 
 6. Remove the docker container when no longer needed.
