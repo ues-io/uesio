@@ -140,7 +140,7 @@ http://localhost:4000/firestore/
 1. Create a docker container based on a **remote docker image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
 
 ```
-docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=example -d mysql
+docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
 ```
 
 2. Check if your container is up and running. You have information about the container **id** and **name**.
@@ -156,11 +156,11 @@ docker ps
 ```
 
 ```
-  ./usr/bin/mysql --user=root --password=example
+  ./usr/bin/mysql --user=root --password=tcm
 ```
 
 ```
-  CREATE DATABASE ;
+  CREATE DATABASE `test-cf94a`;
 ```
 
 4. Optional. Stop the container (which is as a normal process) when no need to have it running.
