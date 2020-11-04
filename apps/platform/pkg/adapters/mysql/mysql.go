@@ -17,7 +17,7 @@ const (
 	host     = "localhost"
 	port     = 3306
 	user     = "root"
-	password = "example"
+	password = "tcm"
 	dbname   = "test-cf94a"
 )
 
