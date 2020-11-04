@@ -161,10 +161,10 @@ docker stop CONTAINER_ID
 docker rm -f CONTAINER_NAME
 ```
 
-5. Optional : get in the container
+5. Optional : get in the container and create a database.
 
 ```
-  docker exec -it CONTAINER_NAME /bin/bash
+  docker exec -it CONTAINER_NAME /bin/bash && ./usr/bin/mysql --user=root --password=
 ```
 
 6. Optional : Start an existing container
