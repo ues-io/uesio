@@ -149,10 +149,16 @@ docker run --name mysql-container-uesio -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d my
 docker ps
 ```
 
-3. Stop the container (which as a normal process) when no need to have it up and running.
+3. Stop the container (which as a normal process) when no need to have it running.
 
 ```
 docker ps -a -q --filter="name=CONTAINER_NAME"
+```
+
+or
+
+```
+docker stop CONTAINER_ID
 ```
 
 4. Remove the docker container when no longer needed.
@@ -161,10 +167,16 @@ docker ps -a -q --filter="name=CONTAINER_NAME"
 docker rm -f CONTAINER_NAME
 ```
 
-5. Get in the container
+5. Optional : get in the container
 
 ```
-  docker exec -it 70de77872ec0 /bin/bash
+  docker exec -it CONTAINER_NAME /bin/bash
+```
+
+6. Start an existing container
+
+```
+  docker start CONTAINER_NAME
 ```
 
 ## Connecting to a real Firestore instance
