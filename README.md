@@ -161,6 +161,12 @@ docker ps -a -q --filter="name=CONTAINER_TAG"
 docker rm -f CONTAINER_TAG
 ```
 
+5. Get in the container
+
+```
+  docker exec -it 70de77872ec0 /bin/bash
+```
+
 ## Connecting to a real Firestore instance
 
 1. First set up your google cloud SDK and your first project (see above)
