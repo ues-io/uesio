@@ -18,9 +18,8 @@ func (bc *BotCollection) GetFields() []string {
 }
 
 // NewItem function
-func (bc *BotCollection) NewItem() BundleableItem {
-	var bot Bot
-	return &bot
+func (bc *BotCollection) NewItem(key string) (BundleableItem, error) {
+	return NewBot(key)
 }
 
 // AddItem function

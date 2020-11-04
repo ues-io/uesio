@@ -4,11 +4,12 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 
 // Workspace struct
 type Workspace struct {
-	ID        string `uesio:"uesio.id"`
-	Name      string `uesio:"uesio.name"`
-	Namespace string `uesio:"-"`
-	AppRef    string `uesio:"uesio.appid"`
-	App       App    `uesio:"uesio.app"`
+	ID          string         `uesio:"uesio.id"`
+	Name        string         `uesio:"uesio.name"`
+	Namespace   string         `uesio:"-"`
+	AppRef      string         `uesio:"uesio.appid"`
+	App         App            `uesio:"uesio.app"`
+	Permissions *PermissionSet `uesio:"-"`
 }
 
 // GetCollectionName function

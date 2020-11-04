@@ -20,7 +20,7 @@ type UserFileMetadata struct {
 
 // GetCollectionName function
 func (ufm *UserFileMetadata) GetCollectionName() string {
-	return ufm.GetBundleGroup().GetName()
+	return ufm.GetCollection().GetName()
 }
 
 // GetCollection function
@@ -37,12 +37,6 @@ func (ufm *UserFileMetadata) GetConditions() ([]reqs.LoadRequestCondition, error
 			Value: ufm.Name,
 		},
 	}, nil
-}
-
-// GetBundleGroup function
-func (ufm *UserFileMetadata) GetBundleGroup() BundleableGroup {
-	var ufmc UserFileMetadataCollection
-	return &ufmc
 }
 
 // GetNamespace function

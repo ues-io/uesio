@@ -11,7 +11,7 @@ import (
 func NewFileSource(key string) (*FileSource, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Datasource")
+		return nil, errors.New("Bad Key for FileSource")
 	}
 	return &FileSource{
 		Name:      name,

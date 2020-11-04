@@ -14,9 +14,8 @@ func (dsc *FileSourceCollection) GetFields() []string {
 }
 
 // NewItem function
-func (dsc *FileSourceCollection) NewItem() BundleableItem {
-	var FileSource FileSource
-	return &FileSource
+func (dsc *FileSourceCollection) NewItem(key string) (BundleableItem, error) {
+	return NewFileSource(key)
 }
 
 // AddItem function

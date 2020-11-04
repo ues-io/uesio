@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -17,13 +18,13 @@ func Migrate(session *sess.Session) error {
 	var collections metadata.CollectionCollection
 	namespace := session.GetWorkspaceApp()
 	// Loop over all collections in the workspace/site and batch by data source
-	err := datasource.LoadMetadataCollection(&collections, namespace, nil, session)
+	err := bundles.LoadAll(&collections, namespace, nil, session)
 	if err != nil {
 		return err
 	}
 
 	var fields metadata.FieldCollection
-	err = datasource.LoadMetadataCollection(&fields, namespace, nil, session)
+	err = bundles.LoadAll(&fields, namespace, nil, session)
 	if err != nil {
 		return err
 	}
@@ -58,7 +59,7 @@ func Migrate(session *sess.Session) error {
 			return err
 		}
 
-		err = datasource.LoadMetadataItem(ds, session)
+		err = bundles.Load(ds, session)
 		if err != nil {
 			return err
 		}

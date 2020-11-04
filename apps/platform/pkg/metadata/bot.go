@@ -2,20 +2,21 @@ package metadata
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // NewBot function
-func NewBot(collectionKey, botKey string) (*Bot, error) {
-	namespace, name, err := ParseKey(botKey)
-	if err != nil {
-		return nil, errors.New("Bad Key for Bot: " + collectionKey + " : " + botKey)
+func NewBot(key string) (*Bot, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 3 {
+		return nil, errors.New("Invalid Bot Key: " + key)
 	}
 	return &Bot{
-		Name:          name,
-		Namespace:     namespace,
-		CollectionRef: collectionKey,
+		CollectionRef: keyArray[0],
+		Namespace:     keyArray[1],
+		Name:          keyArray[2],
 	}, nil
 }
 

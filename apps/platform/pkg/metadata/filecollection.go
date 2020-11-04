@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // FileCollection slice
 type FileCollection []File
 
@@ -14,9 +19,15 @@ func (fc *FileCollection) GetFields() []string {
 }
 
 // NewItem function
-func (fc *FileCollection) NewItem() BundleableItem {
-	var file File
-	return &file
+func (fc *FileCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid File Key: " + key)
+	}
+	return &File{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

@@ -14,9 +14,8 @@ func (ufcc *UserFileCollectionCollection) GetFields() []string {
 }
 
 // NewItem function
-func (ufcc *UserFileCollectionCollection) NewItem() BundleableItem {
-	var ufc UserFileCollection
-	return &ufc
+func (ufcc *UserFileCollectionCollection) NewItem(key string) (BundleableItem, error) {
+	return NewUserFileCollection(key)
 }
 
 // AddItem function

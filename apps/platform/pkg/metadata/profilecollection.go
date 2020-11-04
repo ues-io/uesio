@@ -14,9 +14,8 @@ func (pc *ProfileCollection) GetFields() []string {
 }
 
 // NewItem function
-func (pc *ProfileCollection) NewItem() BundleableItem {
-	var profile Profile
-	return &profile
+func (pc *ProfileCollection) NewItem(key string) (BundleableItem, error) {
+	return NewProfile(key)
 }
 
 // AddItem function

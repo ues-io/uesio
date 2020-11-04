@@ -3,6 +3,7 @@ package datasource
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bots"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -62,7 +63,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
-		err = LoadMetadataCollection(&robots, collectionNamespace, nil, session)
+		err = bundles.LoadAll(&robots, collectionNamespace, nil, session)
 		if err != nil {
 			return nil, err
 		}
@@ -82,7 +83,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			return nil, err
 		}
 
-		err = LoadMetadataItem(datasource, session)
+		err = bundles.Load(datasource, session)
 		if err != nil {
 			return nil, err
 		}

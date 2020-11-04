@@ -2,12 +2,14 @@ package middlewares
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -56,8 +58,13 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		// TODO: Possibly verify that the siteName on the session
-		// matches the siteName we got from our host
+		permSet, err := bundles.GetProfilePermSet(s)
+		if err != nil {
+			http.Error(w, "Failed to load permissions", http.StatusInternalServerError)
+			return
+		}
+
+		s.SetPermissions(permSet)
 
 		// We have a session, use it
 		ctx := context.WithValue(r.Context(), sessionKey, s)
@@ -73,6 +80,27 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		workspaceName := vars["workspace"]
 
 		session := GetSession(r)
+		site := session.GetSite()
+		perms := session.GetPermissions()
+
+		// 1. Make sure we're in a site that can read/modify workspaces
+		if site.Name != "studio" {
+			err := errors.New("this site does not allow working with workspaces")
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// 2. we should have a profile that allows modifying workspaces
+		if !perms.HasPermission(&metadata.PermissionSet{
+			NamedRefs: map[string]bool{
+				"workspace_admin": true,
+			},
+		}) {
+			err := errors.New("your profile does not allow you to work with workspaces")
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// Get the Workspace from the DB
 		var workspaces metadata.WorkspaceCollection
@@ -85,7 +113,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		)
 		if err != nil {
 			logger.LogError(err)
-			http.Error(w, "Failed querying workspace", http.StatusInternalServerError)
+			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -95,6 +123,16 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		}
 
 		workspace := &workspaces[0]
+
+		// Get the workspace permissions and set them on the session
+		// For now give workspace users access to everything.
+		adminPerms := &metadata.PermissionSet{
+			AllowAllViews:  true,
+			AllowAllRoutes: true,
+			AllowAllFiles:  true,
+		}
+
+		workspace.Permissions = adminPerms
 
 		session.SetWorkspace(workspace)
 		next.ServeHTTP(w, r)

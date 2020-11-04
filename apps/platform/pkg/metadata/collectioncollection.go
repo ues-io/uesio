@@ -14,9 +14,8 @@ func (cc *CollectionCollection) GetFields() []string {
 }
 
 // NewItem function
-func (cc *CollectionCollection) NewItem() BundleableItem {
-	var collection Collection
-	return &collection
+func (cc *CollectionCollection) NewItem(key string) (BundleableItem, error) {
+	return NewCollection(key)
 }
 
 // AddItem function

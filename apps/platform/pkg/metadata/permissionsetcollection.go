@@ -14,9 +14,8 @@ func (pc *PermissionSetCollection) GetFields() []string {
 }
 
 // NewItem function
-func (pc *PermissionSetCollection) NewItem() BundleableItem {
-	var permissionSet PermissionSet
-	return &permissionSet
+func (pc *PermissionSetCollection) NewItem(key string) (BundleableItem, error) {
+	return NewPermissionSet(key)
 }
 
 // AddItem function

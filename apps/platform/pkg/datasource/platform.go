@@ -2,15 +2,11 @@ package datasource
 
 import (
 	"errors"
-	"reflect"
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
-	"github.com/jinzhu/copier"
-	"github.com/mitchellh/mapstructure"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
@@ -18,23 +14,6 @@ import (
 type PlatformSaveRequest struct {
 	Collection metadata.CollectionableGroup
 	Options    *reqs.SaveOptions
-}
-
-func decode(in interface{}, out interface{}) error {
-	config := &mapstructure.DecoderConfig{
-		Result:  out,
-		TagName: "uesio",
-	}
-
-	decoder, err := mapstructure.NewDecoder(config)
-	if err != nil {
-		return err
-	}
-
-	if err := decoder.Decode(in); err != nil {
-		return err
-	}
-	return nil
 }
 
 // PlatformLoad function
@@ -49,7 +28,7 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session,
+		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
@@ -81,7 +60,7 @@ func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, 
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session,
+		session.RemoveWorkspaceContext(),
 	)
 
 	return err
@@ -121,173 +100,11 @@ func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.Sav
 			Wires: requests,
 		},
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session,
+		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	return saveResponse.Wires, nil
-}
-
-// LoadMetadataItem function
-func LoadMetadataItem(item metadata.BundleableItem, session *sess.Session) error {
-	namespace := item.GetNamespace()
-	site := session.GetSite()
-	workspace := session.GetWorkspace()
-	// If we're in a workspace mode AND the namespace equals that workspace's app name
-	if workspace != nil && namespace != "uesio" {
-		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.Name != "studio" {
-			return errors.New("this site does not allow working with workspaces")
-		}
-		// 2. we should have a profile that allows modifying workspaces
-		if !bundles.SessionHasPermission(session, &metadata.PermissionSet{
-			NamedRefs: map[string]bool{
-				"workspace_admin": true,
-			},
-		}) {
-			return errors.New("your profile does not allow you to work with workspaces")
-		}
-		// 3. TODO Check against the workspace profile (different than site profile)
-		// to determine if the user has access to this workspace metadata item.
-		if workspace.AppRef == namespace {
-			return LoadWorkspaceMetadataItem(item, session)
-		} else {
-			version, err := GetDependencyVersionForWorkspace(namespace, session)
-			if err != nil {
-				return err
-			}
-			return bundles.Load(item, version, session)
-		}
-	}
-
-	return bundles.LoadFromSite(item, session)
-}
-
-// LoadMetadataCollection function
-func LoadMetadataCollection(group metadata.BundleableGroup, namespace string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
-	site := session.GetSite()
-	workspace := session.GetWorkspace()
-	// Find all of the accessible namespaces
-	if workspace != nil && namespace != "uesio" {
-		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.Name != "studio" {
-			return errors.New("this site does not allow working with workspaces")
-		}
-		// 2. we should have a profile that allows modifying workspaces
-		if !bundles.SessionHasPermission(session, &metadata.PermissionSet{
-			NamedRefs: map[string]bool{
-				"workspace_admin": true,
-			},
-		}) {
-			return errors.New("your profile does not allow you to work with workspaces")
-		}
-		// 3. TODO Check against the workspace profile (different than site profile)
-		// to determine if the user has access to this workspace metadata item.
-		// Get All of the metadata from the workspace
-		if workspace.AppRef == namespace {
-			return LoadWorkspaceMetadataCollection(group, conditions, session)
-		} else {
-			version, err := GetDependencyVersionForWorkspace(namespace, session)
-			if err != nil {
-				return err
-			}
-			return bundles.LoadAll(group, namespace, version, session)
-		}
-	}
-	// Get All the metadata from the site and its dependencies
-	err := bundles.LoadAllSite(group, namespace, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// LoadWorkspaceMetadataItem function
-func LoadWorkspaceMetadataItem(item metadata.CollectionableItem, session *sess.Session) error {
-
-	group := item.GetCollection()
-	conditions, err := item.GetConditions()
-	if err != nil {
-		return err
-	}
-	// Add the workspace id as a condition
-	conditions = append(conditions, reqs.LoadRequestCondition{
-		Field: "uesio.workspaceid",
-		Value: session.GetWorkspaceID(),
-	})
-	err = PlatformLoad(
-		[]metadata.CollectionableGroup{
-			group,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				group.GetName(),
-				group.GetFields(),
-				conditions,
-			),
-		},
-		session,
-	)
-	if err != nil {
-		return err
-	}
-
-	length := reflect.Indirect(reflect.ValueOf(group)).Len()
-
-	if length == 0 {
-		return errors.New("Couldn't find item for platform load: " + item.GetKey())
-	}
-	if length > 1 {
-		return errors.New("Duplicate items found: " + item.GetKey())
-	}
-
-	err = copier.Copy(item, group.GetItem(0))
-	if err != nil {
-		return err
-	}
-
-	item.SetNamespace(session.GetWorkspaceApp())
-
-	return nil
-}
-
-// LoadWorkspaceMetadataCollection function
-func LoadWorkspaceMetadataCollection(group metadata.CollectionableGroup, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
-
-	// Add the workspace id as a condition
-	if conditions == nil {
-		conditions = []reqs.LoadRequestCondition{}
-	}
-	conditions = append(conditions, reqs.LoadRequestCondition{
-		Field: "uesio.workspaceid",
-		Value: session.GetWorkspaceID(),
-	})
-	err := PlatformLoad(
-		[]metadata.CollectionableGroup{
-			group,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				group.GetName(),
-				group.GetFields(),
-				conditions,
-			),
-		},
-		session,
-	)
-	if err != nil {
-		return err
-	}
-	length := reflect.Indirect(reflect.ValueOf(group)).Len()
-
-	for i := 0; i < length; i++ {
-		item := group.GetItem(i)
-		item.SetNamespace(session.GetWorkspaceApp())
-	}
-	return nil
 }

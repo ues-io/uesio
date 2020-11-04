@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // ConfigValueCollection slice
 type ConfigValueCollection []ConfigValue
 
@@ -14,9 +19,15 @@ func (cvc *ConfigValueCollection) GetFields() []string {
 }
 
 // NewItem function
-func (cvc *ConfigValueCollection) NewItem() BundleableItem {
-	var configValue ConfigValue
-	return &configValue
+func (cvc *ConfigValueCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid ComponentPack Key: " + key)
+	}
+	return &ConfigValue{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

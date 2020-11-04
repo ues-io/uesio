@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"reflect"
 
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"gopkg.in/yaml.v3"
 )
@@ -26,7 +26,7 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = datasource.LoadMetadataCollection(group, session.GetWorkspaceApp(), nil, session)
+		err = bundles.LoadAll(group, session.GetWorkspaceApp(), nil, session)
 		if err != nil {
 			return nil, err
 		}
@@ -64,50 +64,22 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	itemStream := reqs.ItemStream{
 		Path: "bundle.yaml",
 	}
-	var by metadata.BundleDef
-	by.Name = session.GetWorkspaceApp()
-	bdc, err := datasource.GetBundleDependenciesForWorkspace(session.GetWorkspaceID(), session)
 
+	bundleStore, err := bundlestore.GetBundleStore(session.GetWorkspaceApp(), session)
 	if err != nil {
 		return nil, err
 	}
-	if len(*bdc) != 0 {
-		by.Dependencies = map[string]metadata.BundleDefDep{}
+
+	by, err := bundleStore.GetBundleDef(session.GetWorkspaceApp(), session.GetWorkspace().Name, session)
+	if err != nil {
+		return nil, err
 	}
-	for _, bd := range *bdc {
-		name := bd.BundleName
-		version := bd.BundleVersion
-		bundleStore, err := bundlestore.GetBundleStore(name, session)
-		if err != nil {
-			return nil, err
-		}
-		dep, err := getBundleYamlForDep(bundleStore, name, version)
-		if err != nil {
-			return nil, err
-		}
-		by.Dependencies[name] = *dep
-	}
+
 	err = yaml.NewEncoder(&itemStream.Buffer).Encode(by)
 	if err != nil {
 		return nil, err
 	}
 	return &itemStream, nil
-}
-
-func getBundleYamlForDep(bundleStore bundlestore.BundleStore, name string, version string) (*metadata.BundleDefDep, error) {
-	dep := metadata.BundleDefDep{Version: version}
-
-	stream, err := bundleStore.GetItem(name, version, "", "bundle.yaml")
-	if err != nil {
-		return nil, err
-	}
-	defer stream.Close()
-
-	err = bundlestore.DecodeYAML(&dep, stream)
-	if err != nil {
-		return nil, err
-	}
-	return &dep, nil
 }
 
 // Zip function

@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"strings"
 )
 
 // FieldCollection slice
@@ -18,9 +19,16 @@ func (fc *FieldCollection) GetFields() []string {
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem() BundleableItem {
-	var field Field
-	return &field
+func (fc *FieldCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 4 {
+		return nil, errors.New("Invalid Field Key: " + key)
+	}
+	return &Field{
+		CollectionRef: keyArray[0] + "." + keyArray[1],
+		Namespace:     keyArray[2],
+		Name:          keyArray[3],
+	}, nil
 }
 
 // AddItem function

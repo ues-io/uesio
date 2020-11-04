@@ -1,5 +1,10 @@
 package metadata
 
+import (
+	"errors"
+	"strings"
+)
+
 // RouteCollection slice
 type RouteCollection []Route
 
@@ -14,9 +19,15 @@ func (rc *RouteCollection) GetFields() []string {
 }
 
 // NewItem function
-func (rc *RouteCollection) NewItem() BundleableItem {
-	var route Route
-	return &route
+func (rc *RouteCollection) NewItem(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Route Key: " + key)
+	}
+	return &Route{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
 }
 
 // AddItem function

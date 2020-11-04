@@ -3,15 +3,11 @@ package controllers
 import (
 	"errors"
 	"io"
-	"mime"
 	"net/http"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -30,7 +26,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		Namespace: namespace,
 	}
 
-	err := datasource.LoadMetadataItem(&file, session)
+	err := bundles.Load(&file, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Not Found", http.StatusNotFound)
@@ -40,35 +36,25 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 	var stream io.ReadCloser
 	var mimeType string
 
-	if file.Workspace == "" {
-		version, err := bundles.GetVersion(namespace, session)
-		if err != nil {
-			logger.LogError(errors.New("Couldn't get bundle version"))
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	version, err := bundles.GetVersion(namespace, session)
+	if err != nil {
+		logger.LogError(errors.New("Couldn't get bundle version"))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		bs, err := bundlestore.GetBundleStore(namespace, session)
-		if err != nil {
-			logger.LogError(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+	bs, err := bundlestore.GetBundleStore(namespace, session)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-		stream, err = bs.GetItem(namespace, version, "files", file.FileName)
-		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "Failed File Download", http.StatusInternalServerError)
-			return
-		}
-		mimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
-	} else {
-		stream, mimeType, err = filesource.Download(file.Content, session)
-		if err != nil {
-			logger.LogError(err)
-			http.Error(w, "Failed Download", http.StatusInternalServerError)
-			return
-		}
+	stream, mimeType, err = bs.GetFileStream(namespace, version, &file, session)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, "Failed File Download", http.StatusInternalServerError)
+		return
 	}
 
 	respondFile(w, r, mimeType, stream)

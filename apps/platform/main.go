@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/adapters/dynamodb"
 	"github.com/thecloudmasters/uesio/pkg/adapters/dynamodbmultiple"
 	"github.com/thecloudmasters/uesio/pkg/adapters/firestore"
@@ -12,10 +13,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
 	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/cmd"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	configenvironmentstore "github.com/thecloudmasters/uesio/pkg/configstore/environment"
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters/localfiles"
@@ -50,6 +54,9 @@ func init() {
 	secretstore.RegisterSecretStore("environment", &secretenvironmentstore.SecretStore{})
 
 	// Bundle Stores
+	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
+	bundlestore.RegisterBundleStore("workspace", &workspacebundlestore.WorkspaceBundleStore{})
+	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})
 }
 
 func main() {

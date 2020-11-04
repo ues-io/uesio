@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -69,7 +70,7 @@ func SaveViews(w http.ResponseWriter, r *http.Request) {
 			Namespace: viewNamespace,
 		}
 		// Get the View ID
-		err = datasource.LoadWorkspaceMetadataItem(&existingView, session)
+		err = bundles.Load(&existingView, session)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -124,7 +125,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		}
 
 		// Make sure this is a legit view that we have access to
-		err := datasource.LoadMetadataItem(&view, session)
+		err := bundles.Load(&view, session)
 		if err != nil {
 			// TODO: This is special. NOTHING SPECIAL!
 			logger.LogErrorWithTrace(r, err)
@@ -155,7 +156,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Make sure this is a legit view that we have access to
-	err := datasource.LoadMetadataItem(&view, session)
+	err := bundles.Load(&view, session)
 	if err != nil {
 		// TODO: This is special. NOTHING SPECIAL!
 		logger.LogErrorWithTrace(r, err)
@@ -187,7 +188,7 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 		Namespace: viewNamespace,
 	}
 
-	err := datasource.LoadMetadataItem(&view, session)
+	err := bundles.Load(&view, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.NotFound(w, r)

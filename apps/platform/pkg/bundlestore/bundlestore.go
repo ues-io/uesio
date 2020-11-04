@@ -4,19 +4,49 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
+var bundleStoreMap = map[string]BundleStore{}
+
+// RegisterBundleStore function
+func RegisterBundleStore(name string, store BundleStore) {
+	bundleStoreMap[name] = store
+}
+
+func getBundleStoreByType(bundleStoreType string) (BundleStore, error) {
+	adapter, ok := bundleStoreMap[bundleStoreType]
+	if !ok {
+		return nil, errors.New("No bundle store found of this type: " + bundleStoreType)
+	}
+	return adapter, nil
+}
+
+// PermissionError struct
+type PermissionError struct {
+	message string
+}
+
+func (e *PermissionError) Error() string { return e.message }
+
+// NewPermissionError creates a new permission error
+func NewPermissionError(message string) *PermissionError {
+	return &PermissionError{
+		message: message,
+	}
+}
+
 // BundleStore interface
 type BundleStore interface {
-	GetItem(namespace string, version string, objectname string, name string) (io.ReadCloser, error)
-	ListItems(namespace string, version string, objectname string) ([]string, error)
-	StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error
+	GetItem(item metadata.BundleableItem, version string, session *sess.Session) error
+	GetItems(group metadata.BundleableGroup, namespace, version string, conditions []reqs.LoadRequestCondition, session *sess.Session) error
+	GetFileStream(namespace, version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error)
+	GetComponentPackStream(namespace, version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error)
+	StoreItems(namespace, version string, itemStreams []reqs.ItemStream) error
+	GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error)
 }
 
 // StoreWorkspaceAsBundle function
@@ -36,12 +66,12 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return nil, errors.New("Could not get bundlestore: No namespace provided")
 	}
 	if session.GetWorkspaceApp() == namespace {
-		return &workspacebundlestore.WorkspaceBundleStore{}, nil
+		return getBundleStoreByType("workspace")
 	}
 	if namespace == "material" || namespace == "sample" || namespace == "crm" || namespace == "uesio" {
-		return &localbundlestore.LocalBundleStore{}, nil
+		return getBundleStoreByType("local")
 	}
-	return &platformbundlestore.PlatformBundleStore{}, nil
+	return getBundleStoreByType("platform")
 }
 
 // DecodeYAML function
