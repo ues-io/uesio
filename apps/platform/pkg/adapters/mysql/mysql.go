@@ -24,23 +24,6 @@ const (
 func connect() (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", user, password, host, port, dbname)
 	db, err := sql.Open("mysql", psqlInfo)
-
-	rows, err := db.Query("SELECT * FROM user;")
-
-	for rows.Next() {
-		var (
-			id        int
-			firstname string
-		)
-		if err := rows.Scan(&id, &firstname); err != nil {
-			panic(err)
-		}
-		fmt.Printf("%d is %s\n", id, firstname)
-	}
-	if err := rows.Err(); err != nil {
-		panic(err)
-	}
-
 	if err != nil {
 		return db, err
 	}
