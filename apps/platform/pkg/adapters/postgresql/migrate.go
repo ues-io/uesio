@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sqlshared"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
@@ -26,7 +27,7 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 		var fieldName string
 		var columns string
 
-		collectionName, err := getDBCollectionName(collectionMetadata)
+		collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
 		if err != nil {
 			return err
 		}
@@ -34,7 +35,7 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 		for key, field := range collectionMetadata.Fields {
 
 			if key == collectionMetadata.IDField {
-				fieldName, err = getDBFieldName(field)
+				fieldName, err = sqlshared.GetDBFieldName(field)
 				if err != nil {
 					return err
 				}
@@ -43,7 +44,7 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 				continue
 			}
 
-			fieldName, err = getDBFieldName(field)
+			fieldName, err = sqlshared.GetDBFieldName(field)
 			if err != nil {
 				return err
 			}

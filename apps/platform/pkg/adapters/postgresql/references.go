@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sqlshared"
 )
 
 func followUpReferenceFieldLoad(
@@ -29,13 +30,13 @@ func followUpReferenceFieldLoad(
 		if err != nil {
 			return err
 		}
-		PostgreSQLCollectionNamego, err := getDBCollectionName(collectionMetadata)
+		PostgreSQLCollectionNamego, err := sqlshared.GetDBCollectionName(collectionMetadata)
 		if err != nil {
 			return err
 		}
 
 		var IDFieldMetadata = collectionMetadata.Fields[collectionMetadata.IDField]
-		IDField, err := getDBFieldName(IDFieldMetadata)
+		IDField, err := sqlshared.GetDBFieldName(IDFieldMetadata)
 		if err != nil {
 			return err
 		}
@@ -49,7 +50,7 @@ func followUpReferenceFieldLoad(
 			if err != nil {
 				return err
 			}
-			sqlFieldName, err := getDBFieldName(fieldMetadata)
+			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return err
 			}
@@ -106,7 +107,7 @@ func followUpReferenceFieldLoad(
 					return err
 				}
 
-				sqlFieldName, err := getDBFieldName(fieldMetadata)
+				sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 				if err != nil {
 					return err
 				}

@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sqlshared"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
@@ -48,7 +49,7 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 		// Map properties from firestore to uesio fields
 		for fieldID, fieldMetadata := range requestedFields {
 
-			sqlFieldName, err := getDBFieldName(fieldMetadata)
+			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return nil, err
 			}
@@ -99,7 +100,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 		return nil, err
 	}
 
-	nameFieldDB, err := getDBFieldName(nameFieldMetadata)
+	nameFieldDB, err := sqlshared.GetDBFieldName(nameFieldMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -112,14 +113,14 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 	requestedFieldArr := []string{}
 
 	for _, fieldMetadata := range fieldMap {
-		firestoreFieldName, err := getDBFieldName(fieldMetadata)
+		firestoreFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
 		}
 		requestedFieldArr = append(requestedFieldArr, firestoreFieldName)
 	}
 
-	collectionName, err := getDBCollectionName(collectionMetadata)
+	collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +145,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 			if !ok {
 				return nil, errors.New("No metadata provided for field: " + condition.Field)
 			}
-			fieldName, err := getDBFieldName(fieldMetadata)
+			fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return nil, err
 			}
