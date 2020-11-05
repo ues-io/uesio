@@ -79,7 +79,8 @@ func followUpReferenceFieldLoad(
 		}
 
 		idToDataMapping := make(map[string]map[string]interface{})
-		colvals := make([]interface{}, len(cols))
+		colvals := make([]sql.RawBytes, len(cols))
+		scanArgs := make([]interface{}, len(colvals))
 
 		IDFieldUIName, err := adapters.GetUIFieldName(IDFieldMetadata)
 		if err != nil {
@@ -89,9 +90,9 @@ func followUpReferenceFieldLoad(
 		for rows.Next() {
 			colassoc := make(map[string]interface{}, len(cols))
 			for i := range colvals {
-				colvals[i] = new(interface{})
+				scanArgs[i] = &colvals[i]
 			}
-			if err := rows.Scan(colvals...); err != nil {
+			if err := rows.Scan(scanArgs...); err != nil {
 				return errors.New("Failed to scan values in MySQL:" + err.Error())
 			}
 
@@ -115,7 +116,7 @@ func followUpReferenceFieldLoad(
 				if !ok {
 					return errors.New("Column not found: " + sqlFieldName)
 				}
-				colassoc[fieldID] = *colvals[index].(*interface{})
+				colassoc[fieldID] = string(colvals[index])
 			}
 			testid := colassoc[IDFieldUIName].(string)
 			idToDataMapping[testid] = colassoc
