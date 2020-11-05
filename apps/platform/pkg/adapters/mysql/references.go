@@ -40,7 +40,7 @@ func followUpReferenceFieldLoad(
 			return err
 		}
 
-		psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+		psql := sq.StatementBuilder
 
 		fieldIDs := []string{}
 
@@ -56,7 +56,7 @@ func followUpReferenceFieldLoad(
 			fieldIDs = append(fieldIDs, sqlFieldName)
 		}
 
-		loadQuery := psql.Select(fieldIDs...).From("public." + PostgreSQLCollectionNamego).Where(
+		loadQuery := psql.Select(fieldIDs...).From(PostgreSQLCollectionNamego).Where(
 			sq.Eq{
 				IDField: ids,
 			})

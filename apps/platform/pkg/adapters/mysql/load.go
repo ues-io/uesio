@@ -125,9 +125,9 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 		return nil, err
 	}
 
-	//	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	psql := sq.StatementBuilder
 
-	loadQuery := sq.Select(requestedFieldArr...).From(collectionName)
+	loadQuery := psql.Select(requestedFieldArr...).From(collectionName)
 
 	if wire.Conditions != nil {
 

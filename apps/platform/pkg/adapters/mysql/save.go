@@ -136,7 +136,7 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 		}
 	}
 
-	result, err := psql.Insert(collectionName).Suffix("RETURNING \"id\"").SetMap(inserts).RunWith(db).Query()
+	result, err := psql.Insert(collectionName).SetMap(inserts).RunWith(db).Query()
 
 	if err != nil {
 		return "", errors.New("Failed to insert in MySQL:" + err.Error())
@@ -247,7 +247,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 		return nil, errors.New("Failed to connect to MySQL:" + err.Error())
 	}
 
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	psql := sq.StatementBuilder
 
 	for _, request := range requests {
 
