@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 	"reflect"
 
@@ -70,12 +69,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		collectionKeyMap[key] = true
 	}
 
-	err = json.NewEncoder(w).Encode(&collectionKeyMap)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	respondJSON(w, r, &collectionKeyMap)
 
 }
 
@@ -90,13 +84,6 @@ func NamespaceList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&namespaces)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	return
+	respondJSON(w, r, &namespaces)
 
 }

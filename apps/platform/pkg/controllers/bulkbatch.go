@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -31,14 +30,8 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	batchResponse := &BatchResponse{
+	respondJSON(w, r, &BatchResponse{
 		ID: batchID,
-	}
+	})
 
-	err = json.NewEncoder(w).Encode(batchResponse)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 }

@@ -98,16 +98,9 @@ func SaveViews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	saveResponse := &ViewSaveResponse{
+	respondJSON(w, r, &ViewSaveResponse{
 		Success: true,
-	}
-
-	err = json.NewEncoder(w).Encode(saveResponse)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	})
 }
 
 // ViewPreview is also good
