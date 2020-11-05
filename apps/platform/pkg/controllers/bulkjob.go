@@ -38,15 +38,8 @@ func BulkJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jobResponse := &JobResponse{
+	respondJSON(w, r, &JobResponse{
 		ID: jobID,
-	}
-
-	err = json.NewEncoder(w).Encode(jobResponse)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	})
 
 }
