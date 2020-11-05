@@ -35,14 +35,22 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 	}
 
 	allgeneric := make([]map[string]interface{}, 0)
-	colvals := make([]interface{}, len(cols))
+	//colvals := make([]interface{}, len(cols))
+
+	// Make a slice for the values
+	values := make([]sql.RawBytes, len(cols))
+
+	// rows.Scan wants '[]interface{}' as an argument, so we must copy the
+	// references into such a slice
+	// See http://code.google.com/p/go-wiki/wiki/InterfaceSlice for details
+	scanArgs := make([]interface{}, len(values))
 
 	for rows.Next() {
 		colassoc := make(map[string]interface{}, len(cols))
-		for i := range colvals {
-			colvals[i] = new(interface{})
+		for i := range values {
+			scanArgs[i] = &values[i]
 		}
-		if err := rows.Scan(colvals...); err != nil {
+		if err := rows.Scan(scanArgs...); err != nil {
 			return nil, errors.New("Failed to scan values in MySQL:" + err.Error())
 		}
 		// Map properties from firestore to uesio fields
@@ -56,7 +64,7 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
-			colassoc[fieldID] = *colvals[index].(*interface{})
+			colassoc[fieldID] = string(values[index])
 		}
 
 		allgeneric = append(allgeneric, colassoc)
