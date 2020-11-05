@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // ProfileCollection slice
 type ProfileCollection []Profile
 
@@ -16,6 +18,11 @@ func (pc *ProfileCollection) GetFields() []string {
 // NewItem function
 func (pc *ProfileCollection) NewItem(key string) (BundleableItem, error) {
 	return NewProfile(key)
+}
+
+// GetKeyPrefix function
+func (pc *ProfileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

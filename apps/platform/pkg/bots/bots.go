@@ -2,65 +2,64 @@ package bots
 
 import (
 	"errors"
-	"fmt"
 
-	"github.com/dop251/goja"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Logger function
-func Logger(message string) {
-	fmt.Println(message)
+// BotDialect interface
+type BotDialect interface {
+	BeforeSave(bot *metadata.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
 }
 
-// RunBot function
-func RunBot(bot *metadata.Bot, botAPI *BotAPI, vm *goja.Runtime, session *sess.Session) error {
+var botDialectMap = map[string]BotDialect{}
 
-	runner, err := vm.RunString("(" + bot.FileContents + ")")
-	if err != nil {
-		return err
-	}
-	change, ok := goja.AssertFunction(runner)
+// RegisterBotDialect function
+func RegisterBotDialect(name string, dialect BotDialect) {
+	botDialectMap[name] = dialect
+}
+
+func getBotDialect(botDialectName string) (BotDialect, error) {
+	dialectKey, ok := metadata.GetBotDialects()[botDialectName]
 	if !ok {
+		return nil, errors.New("Invalid bot dialect name: " + botDialectName)
+	}
+	dialect, ok := botDialectMap[dialectKey]
+	if !ok {
+		return nil, errors.New("No dialect found for this bot: " + botDialectName)
+	}
+	return dialect, nil
+}
+
+// RunBeforeSave function
+func RunBeforeSave(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+	var robots metadata.BotCollection
+
+	err := bundles.LoadAll(&robots, collectionMetadata.Namespace, reqs.BundleConditions{
+		"uesio.collection": collectionMetadata.GetFullName(),
+		"uesio.type":       "BEFORESAVE",
+	}, session)
+	if err != nil {
 		return err
 	}
 
-	_, err = change(goja.Undefined(), vm.ToValue(botAPI))
-	if err != nil {
-		if jserr, ok := err.(*goja.Exception); ok {
-			botAPI.AddError(jserr.Error())
-		} else {
-			// Not a Javascript error
-			return err
-		}
-
-	}
-
-	return nil
-}
-
-// RunBots function
-func RunBots(bots metadata.BotCollection, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
-
-	botAPI := &BotAPI{
+	botAPI := &BeforeSaveAPI{
 		Changes: &ChangesAPI{
 			changes:  request.Changes,
 			metadata: collectionMetadata,
 		},
 	}
 
-	vm := goja.New()
-	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
-	vm.Set("log", Logger)
-
-	for _, bot := range bots {
-		if bot.CollectionRef != request.Collection {
-			continue
+	for _, bot := range robots {
+		dialect, err := getBotDialect(bot.Dialect)
+		if err != nil {
+			return err
 		}
-		err := RunBot(&bot, botAPI, vm, session)
+
+		err = dialect.BeforeSave(&bot, botAPI, session)
 		if err != nil {
 			return err
 		}

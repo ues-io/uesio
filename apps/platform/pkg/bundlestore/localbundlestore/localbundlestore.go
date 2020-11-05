@@ -41,7 +41,7 @@ func getStream(namespace string, version string, objectname string, filename str
 }
 
 // ListItems function
-func listItems(namespace string, version string, objectname string, conditions []reqs.LoadRequestCondition, session *sess.Session) ([]string, error) {
+func listItems(namespace, version, objectname, prefix string, session *sess.Session) ([]string, error) {
 	dirPath := filepath.Join(getBasePath(namespace, version), objectname)
 	d, err := os.Open(dirPath)
 	if err != nil {
@@ -54,6 +54,9 @@ func listItems(namespace string, version string, objectname string, conditions [
 	}
 	keys := []string{}
 	for _, fileName := range names {
+		if prefix != "" && !strings.HasPrefix(fileName, prefix) {
+			continue
+		}
 		if !strings.HasSuffix(fileName, ".yaml") {
 			continue
 		}
@@ -92,12 +95,13 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 }
 
 // GetItems function
-func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
 	bundleGroupName := group.GetName()
 	keys, ok := bundles.GetFileListFromCache(namespace, version, bundleGroupName)
 	var err error
 	if !ok {
-		keys, err = listItems(namespace, version, bundleGroupName, conditions, session)
+		prefix := group.GetKeyPrefix(conditions)
+		keys, err = listItems(namespace, version, bundleGroupName, prefix, session)
 		if err != nil {
 			return err
 		}

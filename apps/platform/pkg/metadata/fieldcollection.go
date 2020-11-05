@@ -3,6 +3,8 @@ package metadata
 import (
 	"errors"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // FieldCollection slice
@@ -29,6 +31,11 @@ func (fc *FieldCollection) NewItem(key string) (BundleableItem, error) {
 		Namespace:     keyArray[2],
 		Name:          keyArray[3],
 	}, nil
+}
+
+// GetKeyPrefix function
+func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

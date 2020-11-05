@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // DataSourceCollection slice
 type DataSourceCollection []DataSource
 
@@ -16,6 +18,11 @@ func (dsc *DataSourceCollection) GetFields() []string {
 // NewItem function
 func (dsc *DataSourceCollection) NewItem(key string) (BundleableItem, error) {
 	return NewDataSource(key)
+}
+
+// GetKeyPrefix function
+func (dsc *DataSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

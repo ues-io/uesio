@@ -10,13 +10,18 @@ import (
 // NewBot function
 func NewBot(key string) (*Bot, error) {
 	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 3 {
+	if len(keyArray) != 5 {
 		return nil, errors.New("Invalid Bot Key: " + key)
 	}
+	botType, err := getBotTypeTypeKeyPart(keyArray[2])
+	if err != nil {
+		return nil, err
+	}
 	return &Bot{
-		CollectionRef: keyArray[0],
-		Namespace:     keyArray[1],
-		Name:          keyArray[2],
+		CollectionRef: keyArray[0] + "." + keyArray[1],
+		Type:          botType,
+		Namespace:     keyArray[3],
+		Name:          keyArray[4],
 	}, nil
 }
 
@@ -26,16 +31,33 @@ type Bot struct {
 	CollectionRef string `yaml:"collection" uesio:"uesio.collection"`
 	Namespace     string `yaml:"namespace" uesio:"-"`
 	Type          string `yaml:"type" uesio:"uesio.type"`
+	Dialect       string `yaml:"dialect" uesio:"uesio.dialect"`
 	FileName      string `yaml:"fileName" uesio:"-"`
 	FileContents  string `yaml:"-" uesio:"uesio.filecontents"`
 	Workspace     string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetBotTypes function
-func GetBotTypes() map[string]bool {
-	return map[string]bool{
-		"JAVASCRIPT": true,
+func GetBotTypes() map[string]string {
+	return map[string]string{
+		"BEFORESAVE": "beforesave",
 	}
+}
+
+// GetBotDialects function
+func GetBotDialects() map[string]string {
+	return map[string]string{
+		"JAVASCRIPT": "javascript",
+	}
+}
+
+func getBotTypeTypeKeyPart(typeKey string) (string, error) {
+	for botType, key := range GetBotTypes() {
+		if key == typeKey {
+			return botType, nil
+		}
+	}
+	return "", errors.New("Bad Type Key for Bot: " + typeKey)
 }
 
 // GetCollectionName function
@@ -60,6 +82,10 @@ func (b *Bot) GetConditions() ([]reqs.LoadRequestCondition, error) {
 			Field: "uesio.collection",
 			Value: b.CollectionRef,
 		},
+		{
+			Field: "uesio.type",
+			Value: b.Type,
+		},
 	}, nil
 }
 
@@ -71,7 +97,7 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (b *Bot) GetKey() string {
-	return b.CollectionRef + "." + b.Namespace + "." + b.Name
+	return b.CollectionRef + "." + GetBotTypes()[b.Type] + "." + b.Namespace + "." + b.Name
 }
 
 // GetPermChecker function

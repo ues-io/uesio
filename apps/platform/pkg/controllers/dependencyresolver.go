@@ -5,13 +5,13 @@ import (
 	"reflect"
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // MetadataList is good
@@ -23,14 +23,11 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	grouping := vars["grouping"]
 
-	conditions := []reqs.LoadRequestCondition{}
+	conditions := reqs.BundleConditions{}
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
-		conditions = append(conditions, reqs.LoadRequestCondition{
-			Field: "uesio.collection",
-			Value: grouping,
-		})
+		conditions["uesio.collection"] = grouping
 	}
 
 	collection, err := metadata.GetBundleableGroupFromType(metadatatype)

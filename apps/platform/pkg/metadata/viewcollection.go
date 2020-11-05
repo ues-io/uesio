@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"gopkg.in/yaml.v3"
 )
 
@@ -30,6 +31,11 @@ func (vc *ViewCollection) NewItem(key string) (BundleableItem, error) {
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
 	}, nil
+}
+
+// GetKeyPrefix function
+func (vc *ViewCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

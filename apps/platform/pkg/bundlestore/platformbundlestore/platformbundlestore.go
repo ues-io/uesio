@@ -18,7 +18,7 @@ func (b *PlatformBundleStore) GetItem(item metadata.BundleableItem, version stri
 }
 
 // GetItems function
-func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
 	return nil
 }
 

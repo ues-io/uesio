@@ -3,6 +3,8 @@ package metadata
 import (
 	"errors"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // RouteCollection slice
@@ -28,6 +30,11 @@ func (rc *RouteCollection) NewItem(key string) (BundleableItem, error) {
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
 	}, nil
+}
+
+// GetKeyPrefix function
+func (rc *RouteCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

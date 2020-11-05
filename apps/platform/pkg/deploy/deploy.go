@@ -121,7 +121,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			continue
 		}
 
-		collectionItem, err := collection.NewItem(base)
+		collectionItem, err := collection.NewItem(strings.TrimSuffix(base, extension))
 		if err != nil {
 			return err
 		}

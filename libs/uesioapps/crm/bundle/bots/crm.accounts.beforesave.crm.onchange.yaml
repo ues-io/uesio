@@ -1,4 +1,5 @@
 name: onchange
 collection: crm.accounts
-type: "JAVASCRIPT"
+dialect: "JAVASCRIPT"
+type: "BEFORESAVE"
 fileName: onchange.js

@@ -14,7 +14,7 @@ import (
 )
 
 // LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+func LoadAll(group metadata.BundleableGroup, namespace string, conditions reqs.BundleConditions, session *sess.Session) error {
 	version, err := GetVersion(namespace, session)
 	if err != nil {
 		return errors.New("Failed to LoadAllSite Metadata Item: " + namespace + " - " + err.Error())
