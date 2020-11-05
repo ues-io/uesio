@@ -35,20 +35,13 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 	}
 
 	allgeneric := make([]map[string]interface{}, 0)
-	//colvals := make([]interface{}, len(cols))
-
-	// Make a slice for the values
-	values := make([]sql.RawBytes, len(cols))
-
-	// rows.Scan wants '[]interface{}' as an argument, so we must copy the
-	// references into such a slice
-	// See http://code.google.com/p/go-wiki/wiki/InterfaceSlice for details
-	scanArgs := make([]interface{}, len(values))
+	colvals := make([]sql.RawBytes, len(cols))
+	scanArgs := make([]interface{}, len(colvals))
 
 	for rows.Next() {
 		colassoc := make(map[string]interface{}, len(cols))
-		for i := range values {
-			scanArgs[i] = &values[i]
+		for i := range colvals {
+			scanArgs[i] = &colvals[i]
 		}
 		if err := rows.Scan(scanArgs...); err != nil {
 			return nil, errors.New("Failed to scan values in MySQL:" + err.Error())
@@ -64,7 +57,7 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
-			colassoc[fieldID] = string(values[index])
+			colassoc[fieldID] = string(colvals[index])
 		}
 
 		allgeneric = append(allgeneric, colassoc)
