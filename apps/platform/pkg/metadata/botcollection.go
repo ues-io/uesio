@@ -2,6 +2,9 @@ package metadata
 
 import (
 	"errors"
+	"fmt"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // BotCollection slice
@@ -14,12 +17,24 @@ func (bc *BotCollection) GetName() string {
 
 // GetFields function
 func (bc *BotCollection) GetFields() []string {
-	return []string{"id", "name", "collection", "type", "filecontents"}
+	return []string{"id", "name", "collection", "type", "dialect", "filecontents"}
 }
 
 // NewItem function
 func (bc *BotCollection) NewItem(key string) (BundleableItem, error) {
 	return NewBot(key)
+}
+
+// GetKeyPrefix function
+func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	collectionKey, hasCollection := conditions["uesio.collection"]
+	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
+	if hasCollection && hasType {
+		fmt.Println("The Right stuff")
+		return collectionKey + "." + botTypeKey + "."
+	}
+	fmt.Println("Not the right stuff!")
+	return ""
 }
 
 // AddItem function

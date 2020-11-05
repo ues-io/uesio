@@ -13,6 +13,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
 	"github.com/thecloudmasters/uesio/pkg/auth/google"
 	"github.com/thecloudmasters/uesio/pkg/auth/mock"
+	"github.com/thecloudmasters/uesio/pkg/bots"
+	"github.com/thecloudmasters/uesio/pkg/bots/jsdialect"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
@@ -57,6 +59,9 @@ func init() {
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
 	bundlestore.RegisterBundleStore("workspace", &workspacebundlestore.WorkspaceBundleStore{})
 	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})
+
+	// Bot Dialects
+	bots.RegisterBotDialect("javascript", &jsdialect.JSDialect{})
 }
 
 func main() {

@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // FileSourceCollection slice
 type FileSourceCollection []FileSource
 
@@ -16,6 +18,11 @@ func (dsc *FileSourceCollection) GetFields() []string {
 // NewItem function
 func (dsc *FileSourceCollection) NewItem(key string) (BundleableItem, error) {
 	return NewFileSource(key)
+}
+
+// GetKeyPrefix function
+func (dsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

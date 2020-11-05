@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // CollectionCollection slice
 type CollectionCollection []Collection
 
@@ -16,6 +18,11 @@ func (cc *CollectionCollection) GetFields() []string {
 // NewItem function
 func (cc *CollectionCollection) NewItem(key string) (BundleableItem, error) {
 	return NewCollection(key)
+}
+
+// GetKeyPrefix function
+func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

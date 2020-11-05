@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // UserFileCollectionCollection slice
 type UserFileCollectionCollection []UserFileCollection
 
@@ -16,6 +18,11 @@ func (ufcc *UserFileCollectionCollection) GetFields() []string {
 // NewItem function
 func (ufcc *UserFileCollectionCollection) NewItem(key string) (BundleableItem, error) {
 	return NewUserFileCollection(key)
+}
+
+// GetKeyPrefix function
+func (ufcc *UserFileCollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

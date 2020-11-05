@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // PermissionSetCollection slice
 type PermissionSetCollection []PermissionSet
 
@@ -16,6 +18,11 @@ func (pc *PermissionSetCollection) GetFields() []string {
 // NewItem function
 func (pc *PermissionSetCollection) NewItem(key string) (BundleableItem, error) {
 	return NewPermissionSet(key)
+}
+
+// GetKeyPrefix function
+func (pc *PermissionSetCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

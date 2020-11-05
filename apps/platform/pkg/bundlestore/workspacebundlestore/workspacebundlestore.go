@@ -67,15 +67,22 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 }
 
 // GetItems function
-func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
 	// Add the workspace id as a condition
-	if conditions == nil {
-		conditions = []reqs.LoadRequestCondition{}
+	loadConditions := []reqs.LoadRequestCondition{
+		{
+			Field: "uesio.workspaceid",
+			Value: session.GetWorkspaceID(),
+		},
 	}
-	conditions = append(conditions, reqs.LoadRequestCondition{
-		Field: "uesio.workspaceid",
-		Value: session.GetWorkspaceID(),
-	})
+
+	for field, value := range conditions {
+		loadConditions = append(loadConditions, reqs.LoadRequestCondition{
+			Field: field,
+			Value: value,
+		})
+	}
+
 	err := datasource.PlatformLoad(
 		[]metadata.CollectionableGroup{
 			group,
@@ -85,7 +92,7 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 				"itemWire",
 				group.GetName(),
 				group.GetFields(),
-				conditions,
+				loadConditions,
 			),
 		},
 		session,

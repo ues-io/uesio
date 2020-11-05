@@ -58,17 +58,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		batch.Wires = append(batch.Wires, request)
 		collated[dsKey] = batch
 
-		var robots metadata.BotCollection
-		collectionNamespace, _, err := metadata.ParseKey(collectionKey)
-		if err != nil {
-			return nil, err
-		}
-		err = bundles.LoadAll(&robots, collectionNamespace, nil, session)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bots.RunBots(robots, &request, collectionMetadata, session)
+		err = bots.RunBeforeSave(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
 		}

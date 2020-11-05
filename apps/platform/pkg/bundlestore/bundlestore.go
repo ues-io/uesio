@@ -42,7 +42,7 @@ func NewPermissionError(message string) *PermissionError {
 // BundleStore interface
 type BundleStore interface {
 	GetItem(item metadata.BundleableItem, version string, session *sess.Session) error
-	GetItems(group metadata.BundleableGroup, namespace, version string, conditions []reqs.LoadRequestCondition, session *sess.Session) error
+	GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error
 	GetFileStream(namespace, version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error)
 	GetComponentPackStream(namespace, version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []reqs.ItemStream) error

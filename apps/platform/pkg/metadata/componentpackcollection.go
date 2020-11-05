@@ -3,6 +3,8 @@ package metadata
 import (
 	"errors"
 	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // ComponentPackCollection slice
@@ -28,6 +30,11 @@ func (cpc *ComponentPackCollection) NewItem(key string) (BundleableItem, error) 
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
 	}, nil
+}
+
+// GetKeyPrefix function
+func (cpc *ComponentPackCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	return ""
 }
 
 // AddItem function

@@ -1,6 +1,6 @@
 name: bots
 dataSource: uesio.platform
 idField: uesio.id
-idFormat: "${uesio.workspaceid}_${uesio.collection}_${uesio.name}"
+idFormat: "${uesio.workspaceid}_${uesio.collection}_${uesio.type}_${uesio.name}"
 nameField: uesio.name
 collectionName: bots
