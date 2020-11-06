@@ -10,7 +10,7 @@ import (
 func NewCollection(key string) (*Collection, error) {
 	namespace, name, err := ParseKey(key)
 	if err != nil {
-		return nil, errors.New("Bad Key for Collection")
+		return nil, errors.New("Bad Key for Collection: " + key)
 	}
 	return &Collection{
 		Name:      name,

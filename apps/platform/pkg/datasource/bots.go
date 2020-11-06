@@ -1,4 +1,4 @@
-package bots
+package datasource
 
 import (
 	"errors"
@@ -13,6 +13,7 @@ import (
 // BotDialect interface
 type BotDialect interface {
 	BeforeSave(bot *metadata.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
+	AfterSave(bot *metadata.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
 }
 
 var botDialectMap = map[string]BotDialect{}
@@ -22,6 +23,7 @@ func RegisterBotDialect(name string, dialect BotDialect) {
 	botDialectMap[name] = dialect
 }
 
+// GetBotDialect function
 func getBotDialect(botDialectName string) (BotDialect, error) {
 	dialectKey, ok := metadata.GetBotDialects()[botDialectName]
 	if !ok {
@@ -34,8 +36,8 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
-// RunBeforeSave function
-func RunBeforeSave(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+// RunBeforeSaveBots function
+func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
 
 	err := bundles.LoadAll(&robots, collectionMetadata.Namespace, reqs.BundleConditions{
@@ -51,6 +53,7 @@ func RunBeforeSave(request *reqs.SaveRequest, collectionMetadata *adapters.Colle
 			changes:  request.Changes,
 			metadata: collectionMetadata,
 		},
+		session: session,
 	}
 
 	for _, bot := range robots {
@@ -60,6 +63,46 @@ func RunBeforeSave(request *reqs.SaveRequest, collectionMetadata *adapters.Colle
 		}
 
 		err = dialect.BeforeSave(&bot, botAPI, session)
+		if err != nil {
+			return err
+		}
+	}
+
+	if botAPI.HasErrors() {
+		return errors.New(botAPI.GetErrorString())
+	}
+
+	return nil
+}
+
+// RunAfterSaveBots function
+func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+	var robots metadata.BotCollection
+
+	err := bundles.LoadAll(&robots, collectionMetadata.Namespace, reqs.BundleConditions{
+		"uesio.collection": collectionMetadata.GetFullName(),
+		"uesio.type":       "AFTERSAVE",
+	}, session)
+	if err != nil {
+		return err
+	}
+
+	botAPI := &AfterSaveAPI{
+		Results: &ResultsAPI{
+			results:  response.ChangeResults,
+			changes:  request.Changes,
+			metadata: collectionMetadata,
+		},
+		session: session,
+	}
+
+	for _, bot := range robots {
+		dialect, err := getBotDialect(bot.Dialect)
+		if err != nil {
+			return err
+		}
+
+		err = dialect.AfterSave(&bot, botAPI, session)
 		if err != nil {
 			return err
 		}

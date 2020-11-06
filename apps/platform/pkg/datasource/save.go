@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bots"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -52,13 +51,16 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		}
 
 		// Get the datasource from the object name
-		collectionMetadata := metadataResponse.Collections[collectionKey]
+		collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
+		if err != nil {
+			return nil, err
+		}
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		batch.Wires = append(batch.Wires, request)
 		collated[dsKey] = batch
 
-		err = bots.RunBeforeSave(&request, collectionMetadata, session)
+		err = RunBeforeSaveBots(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -101,8 +103,21 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			return nil, err
 		}
 
-		for _, r := range adapterResponses {
-			response.Wires = append(response.Wires, r)
+		for i, resp := range adapterResponses {
+
+			request := requests.Wires[i]
+			collectionKey := request.GetCollection()
+
+			collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
+			if err != nil {
+				return nil, err
+			}
+
+			err = RunAfterSaveBots(&resp, &request, collectionMetadata, session)
+			if err != nil {
+				return nil, err
+			}
+			response.Wires = append(response.Wires, resp)
 		}
 
 	}

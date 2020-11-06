@@ -1,0 +1,5 @@
+name: aftersave
+collection: crm.accounts
+dialect: "JAVASCRIPT"
+type: "AFTERSAVE"
+fileName: addcontact.js

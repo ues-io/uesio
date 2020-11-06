@@ -92,3 +92,8 @@ type FieldMetadata struct {
 	ReferencedCollection string                     `json:"referencedCollection"`
 	ForeignKeyField      string                     `json:"foreignKeyField"`
 }
+
+// GetFullName function
+func (fm *FieldMetadata) GetFullName() string {
+	return fm.Namespace + "." + fm.Name
+}

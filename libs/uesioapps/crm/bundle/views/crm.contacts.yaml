@@ -73,6 +73,14 @@ definition:
                         band: "platform"
                         path: "contact/${crm.id}"
                         namespace: "crm"
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Delete
+                    signals:
+                      - signal: TOGGLE_DELETE_STATUS
+                        target: contacts
+                        band: wire
   wires:
     contacts:
       collection: crm.contacts

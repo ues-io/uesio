@@ -2,7 +2,6 @@ package metadata
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
@@ -30,10 +29,8 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
 	if hasCollection && hasType {
-		fmt.Println("The Right stuff")
 		return collectionKey + "." + botTypeKey + "."
 	}
-	fmt.Println("Not the right stuff!")
 	return ""
 }
 
