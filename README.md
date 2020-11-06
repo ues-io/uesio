@@ -50,7 +50,7 @@ Uesio is a low-code application development platform.
 
 ## Build
 
-1. Build all applicaions (compilation)
+1. Build all applications (compilation)
 
 ```
 npm run build-all
