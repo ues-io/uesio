@@ -1,0 +1,5 @@
+name: siteid
+collection: uesio.sitedomains
+type: TEXT
+label: Site ID
+propertyName: siteid

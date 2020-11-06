@@ -55,7 +55,7 @@ func GetSiteFromHost(host string) (*metadata.Site, error) {
 		hostParts := strings.Split(host, ":")
 		domain = hostParts[0] // Strip off the port
 	}
-	site, err := site2.GetSiteFromDomain(domainType, domain)
+	site, err := site2.GetSiteFromDomain(domainType, domain, session)
 	if err != nil {
 		return nil, err
 	}
