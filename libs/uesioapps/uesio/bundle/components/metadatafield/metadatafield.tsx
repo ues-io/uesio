@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { definition, material, component, hooks } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
@@ -11,7 +11,7 @@ interface Props extends definition.BaseProps {
 	definition: MetadataFieldDefinition
 }
 
-function MetadataField(props: Props): ReactElement | null {
+const MetadataField: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
