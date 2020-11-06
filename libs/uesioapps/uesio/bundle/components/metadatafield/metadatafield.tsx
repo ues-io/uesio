@@ -47,11 +47,11 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	) as string
 
 	const grouping = value_uesio_collectionname
-		? //This reads the fields from the Ref. collection
+		? `${namespace}.${value_uesio_collectionname}`
+		: //This reads the fields from the Ref. collection
 		  //grouping = record.getFieldValue("uesio.referencedCollection") as string
 		  //This read the fields from the actual collection
 		  (record.getFieldValue("uesio.collection") as string)
-		: `${namespace}.${value_uesio_collectionname}`
 
 	useEffect(() => {
 		if (!namespaces) {
