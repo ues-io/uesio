@@ -1,9 +1,10 @@
+//  @ts-nocheck
 import React, { FunctionComponent, useEffect } from "react"
 import { definition, material, component, hooks } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string
-	metadataType: string
+	metadataType: "FIELD" | "COLLECTION"
 	label: string
 }
 
@@ -83,11 +84,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const FieldComponent = component.registry.get("material", "field")
 
-	if (metadataType === "FILE") {
-		console.log(" metadataType is true deploy")
-		return <div>FILE</div>
-	}
-
 	if (mode === "READ") {
 		return <FieldComponent {...props} />
 	}
@@ -114,6 +110,12 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						}
 					})) ||
 			  []
+
+	if (metadataType === "FILE") {
+		return <div>this is type file</div>
+	} else {
+		return <div>this is NOT type file</div>
+	}
 
 	return (
 		<material.Grid container spacing={1}>
