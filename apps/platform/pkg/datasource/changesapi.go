@@ -1,4 +1,4 @@
-package bots
+package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"

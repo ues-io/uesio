@@ -171,8 +171,8 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	}
 
 	for changeID, change := range changes {
-		changeResult := reqs.ChangeResult{}
-		changeResult.Data = change
+
+		changeResult := reqs.NewChangeResult(change)
 
 		firestoreID, ok := change[collectionMetadata.IDField].(string)
 		if ok && firestoreID != "" {

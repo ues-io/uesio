@@ -1,11 +1,16 @@
-package bots
+package datasource
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/sess"
+)
 
 // BeforeSaveAPI type
 type BeforeSaveAPI struct {
 	Changes *ChangesAPI `bot:"changes"`
 	errors  []string
+	session *sess.Session
 }
 
 // AddError function

@@ -41,6 +41,7 @@ type Bot struct {
 func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
+		"AFTERSAVE":  "aftersave",
 	}
 }
 

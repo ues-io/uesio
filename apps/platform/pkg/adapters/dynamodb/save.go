@@ -216,8 +216,7 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	}
 
 	for changeID, change := range changes {
-		changeResult := reqs.ChangeResult{}
-		changeResult.Data = change
+		changeResult := reqs.NewChangeResult(change)
 
 		DynamoDBID, ok := change[collectionMetadata.IDField].(string)
 		if ok && DynamoDBID != "" {
