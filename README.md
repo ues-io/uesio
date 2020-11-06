@@ -50,7 +50,7 @@ Uesio is a low-code application development platform.
 
 ## Build
 
-1. Build all applications. Compilation of the go code and transpilation from TS to JS.
+1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
 npm run build-all
