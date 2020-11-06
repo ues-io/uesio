@@ -50,7 +50,7 @@ Uesio is a low-code application development platform.
 
 ## Build
 
-1. Build all applications (compilation)
+1. Build all applications. Compilation of the go code and transpilation from TS to JS.
 
 ```
 npm run build-all
@@ -58,14 +58,14 @@ npm run build-all
 
 2. Build with watcher
 
-On the frontend, the `source map` is enabled in webpack on `dev` mode. As an example,
-while developping you want to rebuilt on saving with the source map in the brower :
+On the frontend, the `source map` is enabled in webpack in `dev` mode. As an example,
+while developping you might want to rebuilt on saving with the source map in the browser :
 
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/run/run pack --develop
 ```
 
-2. Build a dedicated app
+3. Build a dedicated app (without source map and without watcher)
 
 ```
 nx run uesioapps-crm:build
