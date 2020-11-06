@@ -83,6 +83,11 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const FieldComponent = component.registry.get("material", "field")
 
+	if (metadataType === "FILE") {
+		console.log(" metadataType is true deploy")
+		return <div>FILE</div>
+	}
+
 	if (mode === "READ") {
 		return <FieldComponent {...props} />
 	}
@@ -109,10 +114,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						}
 					})) ||
 			  []
-
-	if (metadataType == "FIELD") {
-		return <div>test thomas</div>
-	}
 
 	return (
 		<material.Grid container spacing={1}>
