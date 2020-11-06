@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { definition, material, component, hooks } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
@@ -11,11 +11,12 @@ interface Props extends definition.BaseProps {
 	definition: MetadataFieldDefinition
 }
 
-function MetadataField(props: Props): ReactElement | null {
+const MetadataField: FunctionComponent<Props> = (props) => {
+	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
-	const view = props.context.getView()
+	const record = context.getRecord()
+	const wire = context.getWire()
+	const view = context.getView()
 	const workspaceName = view?.getParam("workspacename")
 	const appName = view?.getParam("appname")
 
@@ -31,12 +32,12 @@ function MetadataField(props: Props): ReactElement | null {
 	})
 
 	const collection = wire.getCollection()
-	const fieldId = props.definition.fieldId
-	const label = props.definition.label
+	const fieldId = definition.fieldId
+	const label = definition.label
 	const fieldMetadata = collection.getField(fieldId)
-	const mode = props.context.getFieldMode() || "READ"
+	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldValue(fieldId) as string
-	const metadataType = props.definition.metadataType
+	const metadataType = definition.metadataType
 	const namespaces = uesio.builder.useAvailableNamespaces()
 	const [namespace, name] = component.path.parseKey(value)
 	const metadata = uesio.builder.useMetadataList(metadataType, namespace)
@@ -45,14 +46,12 @@ function MetadataField(props: Props): ReactElement | null {
 		"uesio.collectionname"
 	) as string
 
-	let grouping = namespace + "." + value_uesio_collectionname
-
-	if (!value_uesio_collectionname) {
-		//This reads the fields from the Ref. collection
-		//grouping = record.getFieldValue("uesio.referencedCollection") as string
-		//This read the fields from the actual collection
-		grouping = record.getFieldValue("uesio.collection") as string
-	}
+	const grouping = value_uesio_collectionname
+		? `${namespace}.${value_uesio_collectionname}`
+		: //This reads the fields from the Ref. collection
+		  //grouping = record.getFieldValue("uesio.referencedCollection") as string
+		  //This read the fields from the actual collection
+		  (record.getFieldValue("uesio.collection") as string)
 
 	useEffect(() => {
 		if (!namespaces) {
@@ -85,68 +84,31 @@ function MetadataField(props: Props): ReactElement | null {
 	const FieldComponent = component.registry.get("material", "field")
 
 	if (mode === "READ") {
-		return <FieldComponent {...props}></FieldComponent>
+		return <FieldComponent {...props} />
 	}
 
 	const SelectField = component.registry.get("material", "selectfield")
 
-	if (metadataType == "FIELD") {
-		return (
-			<material.Grid container spacing={1}>
-				<material.Grid item xs={6}>
-					<SelectField
-						{...props}
-						label={label}
-						value={namespace}
-						options={[
-							{
-								value: "",
-								label: "<No Value>",
-							},
-						].concat(
-							namespaces
-								? Object.keys(namespaces).map((key) => {
-										return {
-											value: key,
-											label: key,
-										}
-								  })
-								: []
-						)}
-						setValue={(value: string) => {
-							record.update(fieldId, value ? value + "." : "")
-						}}
-					></SelectField>
-				</material.Grid>
-				<material.Grid item xs={6}>
-					<SelectField
-						{...props}
-						label=" "
-						value={name}
-						options={
-							metadata
-								? Object.keys(metadata[grouping] as Object).map(
-										(key) => {
-											const [
-												,
-												name,
-											] = component.path.parseKey(key)
-											return {
-												value: name,
-												label: name,
-											}
-										}
-								  )
-								: []
+	const options =
+		metadataType == "FIELD"
+			? (metadata &&
+					Object.keys(metadata[grouping] as Object).map((key) => {
+						const [, name] = component.path.parseKey(key)
+						return {
+							value: name,
+							label: name,
 						}
-						setValue={(value: string) => {
-							record.update(fieldId, namespace + "." + value)
-						}}
-					></SelectField>
-				</material.Grid>
-			</material.Grid>
-		)
-	}
+					})) ||
+			  []
+			: (metadata &&
+					Object.keys(metadata).map((key) => {
+						const [, name] = component.path.parseKey(key)
+						return {
+							value: name,
+							label: name,
+						}
+					})) ||
+			  []
 
 	return (
 		<material.Grid container spacing={1}>
@@ -161,42 +123,28 @@ function MetadataField(props: Props): ReactElement | null {
 							label: "<No Value>",
 						},
 					].concat(
-						namespaces
-							? Object.keys(namespaces).map((key) => {
-									return {
-										value: key,
-										label: key,
-									}
-							  })
-							: []
+						(namespaces &&
+							Object.keys(namespaces).map((key) => ({
+								value: key,
+								label: key,
+							}))) ||
+							[]
 					)}
 					setValue={(value: string) => {
 						record.update(fieldId, value ? value + "." : "")
 					}}
-				></SelectField>
+				/>
 			</material.Grid>
 			<material.Grid item xs={6}>
 				<SelectField
 					{...props}
 					label=" "
 					value={name}
-					options={
-						metadata
-							? Object.keys(metadata).map((key) => {
-									const [, name] = component.path.parseKey(
-										key
-									)
-									return {
-										value: name,
-										label: name,
-									}
-							  })
-							: []
-					}
+					options={options}
 					setValue={(value: string) => {
 						record.update(fieldId, namespace + "." + value)
 					}}
-				></SelectField>
+				/>
 			</material.Grid>
 		</material.Grid>
 	)
