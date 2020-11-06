@@ -85,68 +85,31 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const FieldComponent = component.registry.get("material", "field")
 
 	if (mode === "READ") {
-		return <FieldComponent {...props}></FieldComponent>
+		return <FieldComponent {...props} />
 	}
 
 	const SelectField = component.registry.get("material", "selectfield")
 
-	if (metadataType == "FIELD") {
-		return (
-			<material.Grid container spacing={1}>
-				<material.Grid item xs={6}>
-					<SelectField
-						{...props}
-						label={label}
-						value={namespace}
-						options={[
-							{
-								value: "",
-								label: "<No Value>",
-							},
-						].concat(
-							namespaces
-								? Object.keys(namespaces).map((key) => {
-										return {
-											value: key,
-											label: key,
-										}
-								  })
-								: []
-						)}
-						setValue={(value: string) => {
-							record.update(fieldId, value ? value + "." : "")
-						}}
-					></SelectField>
-				</material.Grid>
-				<material.Grid item xs={6}>
-					<SelectField
-						{...props}
-						label=" "
-						value={name}
-						options={
-							metadata
-								? Object.keys(metadata[grouping] as Object).map(
-										(key) => {
-											const [
-												,
-												name,
-											] = component.path.parseKey(key)
-											return {
-												value: name,
-												label: name,
-											}
-										}
-								  )
-								: []
+	const options =
+		metadataType == "FIELD"
+			? (metadata &&
+					Object.keys(metadata[grouping] as Object).map((key) => {
+						const [, name] = component.path.parseKey(key)
+						return {
+							value: name,
+							label: name,
 						}
-						setValue={(value: string) => {
-							record.update(fieldId, namespace + "." + value)
-						}}
-					></SelectField>
-				</material.Grid>
-			</material.Grid>
-		)
-	}
+					})) ||
+			  []
+			: (metadata &&
+					Object.keys(metadata).map((key) => {
+						const [, name] = component.path.parseKey(key)
+						return {
+							value: name,
+							label: name,
+						}
+					})) ||
+			  []
 
 	return (
 		<material.Grid container spacing={1}>
@@ -180,19 +143,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 					{...props}
 					label=" "
 					value={name}
-					options={
-						metadata
-							? Object.keys(metadata).map((key) => {
-									const [, name] = component.path.parseKey(
-										key
-									)
-									return {
-										value: name,
-										label: name,
-									}
-							  })
-							: []
-					}
+					options={options}
 					setValue={(value: string) => {
 						record.update(fieldId, namespace + "." + value)
 					}}
