@@ -110,6 +110,10 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 					})) ||
 			  []
 
+	if (metadataType == "FIELD") {
+		return <div>test thomas</div>
+	}
+
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>
