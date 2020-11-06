@@ -56,19 +56,25 @@ Uesio is a low-code application development platform.
 npm run build-all
 ```
 
-2. Build with watcher
+2. Build a dedicated app (without watcher and without source map)
+
+```
+cd ./libs/uesioapps/crm && ../../../apps/cli/run/run pack
+```
+
+or
+
+```
+nx run uesioapps-crm:build
+```
+
+3. Build a dedicated app with watcher and source map
 
 On the frontend, the `source map` is enabled in webpack in `dev` mode. As an example,
 while developping you might want to rebuilt on saving with the source map in the browser :
 
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/run/run pack --develop
-```
-
-3. Build a dedicated app (without source map and without watcher)
-
-```
-nx run uesioapps-crm:build
 ```
 
 ## Set up SSL
