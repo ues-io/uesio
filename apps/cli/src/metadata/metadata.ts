@@ -1,6 +1,9 @@
 import { LoadRequestField } from "../wire/loadrequest"
 import { App } from "./app"
 import { Workspace } from "./workspace"
+import { Bundle } from "./bundle"
+// import { Site } from "./site"
+// import { SiteDomain } from "./sitedomain"
 
 interface Metadata {
 	getCollectionName(): string
@@ -16,6 +19,9 @@ type MetadataMap = {
 const metadataMap: MetadataMap = {
 	app: App as Metadata,
 	workspace: Workspace as Metadata,
+	bundle: Bundle as Metadata,
+	// site: Site as Metadata,
+	// domain: SiteDomain as Metadata,
 }
 
 const metadataMapPlural: MetadataMap = {
