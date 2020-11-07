@@ -5,6 +5,7 @@ import inquirer = require("inquirer")
 import {getApp, getWorkspace, getSessionId} from "../config/config"
 import { get } from "../request/request"
 import {authorize} from "../auth/login";
+import {throwIfBadFormat} from "../validation/version"
 
 //TODO: probably don't want to leave it this way. :)
 const UESIO_STUDIO_WORKSPACE = 'workspace'
@@ -33,23 +34,7 @@ class Bundle {
 		]
 	}
 	static getColumns(): TableColumn[] {
-		return [
-			{
-				id: "uesio.id",
-			},
-			{
-				id: "uesio.namespace",
-			},
-			{
-				id: "uesio.major",
-			},
-			{
-				id: "uesio.minor",
-			},
-			{
-				id: "uesio.patch",
-			},
-		]
+		return Bundle.getFields()
 	}
 	static async list(): Promise<void> {
 		const response = await load(this)
@@ -73,28 +58,14 @@ class Bundle {
 		throwIfBadFormat(responses.version);
 		const {cookie} = await authorize()
 
-		const [workspace , app ]= await Promise.all([getWorkspace(), getApp(), getSessionId()])
+		const [workspace , app ]= await Promise.all([getWorkspace(), getApp()])
 		const url = `${UESIO_STUDIO_WORKSPACE}/${app}/${workspace}/${UESIO_BUNDLE_CREATE_ENDPOINT}?version=${responses.version}&description=${responses.description}`
 		try {
-			await get(url, cookie)
+			const response = await get(url, cookie)
+			console.log(await response.text())
 		} catch(e) {
 			console.log(e);
 		}
-	}
-}
-
-function throwIfBadFormat(version: string) {
-	const errorFormat = Error("Version must be formatted like so: \"v#.#.#\" Provided: " + version);
-	if(version[0] !== 'v') throw errorFormat
-	const parts = version.slice(1).split('.')
-	if(parts.length !== 3) {
-		throw errorFormat
-	}
-	const major = parseInt(parts[0]);
-	const minor = parseInt(parts[1]);
-	const patch = parseInt(parts[2]);
-	if(isNaN(major) || isNaN(minor) || isNaN(patch)) {
-		throw errorFormat;
 	}
 }
 

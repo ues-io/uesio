@@ -1,5 +1,5 @@
 name: site
 collection: uesio.bulkjobs
 type: "TEXT"
-label: "Site"
+label: "BundleDependency"
 propertyName: "site"

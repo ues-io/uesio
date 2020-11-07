@@ -3,7 +3,8 @@ import { App } from "./app"
 import { Workspace } from "./workspace"
 import { Bundle } from "./bundle"
 import { Site } from "./site"
-// import { SiteDomain } from "./sitedomain"
+import { SiteDomain } from "./sitedomain"
+import { BundleDependency } from "./bundledependency"
 
 interface Metadata {
 	getCollectionName(): string
@@ -21,7 +22,8 @@ const metadataMap: MetadataMap = {
 	workspace: Workspace as Metadata,
 	bundle: Bundle as Metadata,
 	site: Site as Metadata,
-	// domain: SiteDomain as Metadata,
+	domain: SiteDomain as Metadata,
+	dependency: BundleDependency as Metadata
 }
 
 const metadataMapPlural: MetadataMap = {

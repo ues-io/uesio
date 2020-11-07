@@ -1,6 +1,6 @@
 name: id
 collection: uesio.sites
 type: "TEXT"
-label: "Site ID"
+label: "BundleDependency ID"
 propertyName: "id"
 readOnly: true

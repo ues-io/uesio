@@ -4,6 +4,7 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer = require("inquirer")
 import { save, createChange } from "../wire/save"
 import {getApp} from "../config/config";
+import {throwIfBadFormat} from "../validation/version"
 
 class Site {
 	static getCollectionName(): string {
@@ -26,20 +27,8 @@ class Site {
 		]
 	}
 	static getColumns(): TableColumn[] {
-		return [
-			{
-				id: "uesio.id",
-			},
-			{
-				id: "uesio.name",
-			},
-			{
-				id: "uesio.appref",
-			},
-			{
-				id: "uesio.versionref",
-			},
-		]
+		return Site.getFields()
+
 	}
 	static async list(): Promise<void> {
 		const response = await load(this)
@@ -51,7 +40,7 @@ class Site {
 		const responses = await inquirer.prompt([
 			{
 				name: "name",
-				message: "Site Name",
+				message: "BundleDependency Name",
 				type: "input",
 			},
 			{
@@ -74,18 +63,5 @@ class Site {
 		)
 	}
 }
-function throwIfBadFormat(version: string) {
-	const errorFormat = Error("Version must be formatted like so: \"v#.#.#\" Provided: " + version);
-	if(version[0] !== 'v') throw errorFormat
-	const parts = version.slice(1).split('.')
-	if(parts.length !== 3) {
-		throw errorFormat
-	}
-	const major = parseInt(parts[0]);
-	const minor = parseInt(parts[1]);
-	const patch = parseInt(parts[2]);
-	if(isNaN(major) || isNaN(minor) || isNaN(patch)) {
-		throw errorFormat;
-	}
-}
+
 export { Site }
