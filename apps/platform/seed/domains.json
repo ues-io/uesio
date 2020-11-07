@@ -1,0 +1,27 @@
+[
+  {
+    "site":   "studio",
+    "type":   "domain",
+    "domain": "localhost"
+  },
+  {
+    "site":   "studio",
+    "type":   "domain",
+    "domain": "uesio-dev.com"
+  },
+  {
+    "site":   "studio",
+    "type":   "domain",
+    "domain": "uesio.com"
+  },
+  {
+    "site":   "studio",
+    "type":   "subdomain",
+    "domain": "www"
+  },
+  {
+    "site":   "studio",
+    "type":   "subdomain",
+    "domain": "studio"
+  }
+]

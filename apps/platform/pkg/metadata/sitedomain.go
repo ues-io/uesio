@@ -5,38 +5,9 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 // SiteDomain struct
 type SiteDomain struct {
 	ID     string `uesio:"uesio.id"`
-	Site   string `uesio:"uesio.siteid"`
+	Site   string `uesio:"uesio.site"`
 	Type   string `uesio:"uesio.type"`
 	Domain string `uesio:"uesio.domain"`
-}
-
-// Seed config values (these are necessary to make things work)
-var DefaultSiteDomains = SiteDomainCollection{
-	{
-		Site:   "studio",
-		Type:   "domain",
-		Domain: "localhost",
-	},
-	{
-		Site:   "studio",
-		Type:   "domain",
-		Domain: "uesio-dev.com",
-	},
-	{
-		Site:   "studio",
-		Type:   "domain",
-		Domain: "uesio.com",
-	},
-	{
-		Site:   "studio",
-		Type:   "subdomain",
-		Domain: "www",
-	},
-	{
-		Site:   "studio",
-		Type:   "subdomain",
-		Domain: "studio",
-	},
 }
 
 // GetCollectionName function

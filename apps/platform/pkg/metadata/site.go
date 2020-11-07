@@ -11,16 +11,6 @@ type Site struct {
 	VersionRef string `uesio:"uesio.versionref"`
 }
 
-// DefaultSites - Seed config values (these are necessary to make things work)
-var DefaultSites = SiteCollection{
-	{
-		Name:       "studio",
-		BundleID:   "uesio_v0.0.1",
-		AppRef:     "uesio",
-		VersionRef: "v0.0.1",
-	},
-}
-
 // GetCollectionName function
 func (s *Site) GetCollectionName() string {
 	return s.GetCollection().GetName()

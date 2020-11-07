@@ -10,7 +10,7 @@ func (sdc *SiteDomainCollection) GetName() string {
 
 // GetFields function
 func (sdc *SiteDomainCollection) GetFields() []string {
-	return []string{"id", "domain", "type", "siteid"}
+	return []string{"id", "domain", "type", "site"}
 }
 
 // UnMarshal function

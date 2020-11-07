@@ -26,6 +26,30 @@ func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Ses
 	return &sess
 }
 
+//TODO:: JAS Ask ben what makes the most sense here
+func GetHeadlessSession() *Session {
+	user := &metadata.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}
+	browserSession := session.NewSessionOptions(&session.SessOptions{
+		CAttrs: map[string]interface{}{
+			"Profile":   user.Profile,
+			"FirstName": user.FirstName,
+			"LastName":  user.LastName,
+			"Site":      "studio",
+		},
+	})
+	return &Session{
+		browserSession: &browserSession,
+		site: &metadata.Site{
+			Name:       "studio",
+			VersionRef: "v0.0.1",
+			AppRef:     "uesio",
+		},
+	}
+}
 func create(browserSession *session.Session, site *metadata.Site) *Session {
 	return &Session{
 		browserSession: browserSession,

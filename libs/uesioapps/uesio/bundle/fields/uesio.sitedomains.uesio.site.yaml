@@ -1,5 +1,5 @@
-name: siteid
+name: site
 collection: uesio.sitedomains
 type: TEXT
 label: Site ID
-propertyName: siteid
+propertyName: site

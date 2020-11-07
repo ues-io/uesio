@@ -2,4 +2,4 @@ name: bundleid
 collection: uesio.sites
 type: "TEXT"
 label: "Referenced App Namespace"
-propertyName: versionref
+propertyName: bundleid

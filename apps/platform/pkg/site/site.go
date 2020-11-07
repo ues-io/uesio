@@ -1,12 +1,9 @@
-//JAS:: TODO Load from Bundles the SiteDomain record.
-//JAS:: TODO Load from Bundles the Site record.
-//JAS:: TODO Verify no dependency cycles
-
 package site
 
 import (
 	"errors"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -26,7 +23,7 @@ func GetSite(name string, session *sess.Session) (*metadata.Site, error) {
 				sc.GetFields(),
 				[]reqs.LoadRequestCondition{
 					{
-						Field: "uesio.name",
+						Field: "uesio.id",
 						Value: name,
 					},
 				},
@@ -85,16 +82,23 @@ func getDomain(domainType, domain string, session *sess.Session) (*metadata.Site
 }
 
 // GetSiteFromDomain function
-func GetSiteFromDomain(domainType, domain string, session *sess.Session) (*metadata.Site, error) {
-	siteDomain, err := getDomain(domainType, domain, session)
+func GetSiteFromDomain(domainType, domain string) (*metadata.Site, error) {
+	entry, ok := localcache.GetCacheEntry("domain-site", domainType+":"+domain)
+	if ok {
+		return entry.(*metadata.Site), nil
+	}
+	headlessSession := sess.GetHeadlessSession()
+	siteDomain, err := getDomain(domainType, domain, headlessSession)
 	if err != nil {
 		return nil, err
 	}
-
 	if siteDomain == nil {
-		// Just default to the studio site
-		return GetSite("studio")
+		return nil, errors.New("no site domain record for that host")
 	}
-
-	return GetSite(siteDomain.Site, session)
+	site, err := GetSite(siteDomain.Site, headlessSession)
+	if err == nil {
+		localcache.SetCacheEntry("domain-site", domainType+":"+domain, site)
+		return site, nil
+	}
+	return site, err
 }
