@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -111,6 +112,24 @@ func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, co
 	if botAPI.HasErrors() {
 		return errors.New(botAPI.GetErrorString())
 	}
+
+	return nil
+}
+
+// CallBot function
+func CallBot(namespace, name string, session *sess.Session) error {
+	robot, err := metadata.NewBot("listener." + namespace + "." + name)
+	if err != nil {
+		return err
+	}
+
+	err = bundles.Load(robot, session)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Called Bot")
+	fmt.Println(robot)
 
 	return nil
 }

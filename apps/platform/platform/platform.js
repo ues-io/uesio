@@ -65,6 +65,15 @@ const loader = (mergeData) => {
       }
       return response.json();
     },
+    callBot: async (context, namespace, name, params) => {
+      const prefix = getPrefix(context.getWorkspace());
+      const response = await postJSON(`${prefix}/bots/call/${namespace}/${name}`, params);
+      if (response.status != 200) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+      return response.json();
+    },
     getFileURL: (context, namespace, name) => {
       const prefix = getPrefix(context.getWorkspace());
       return `${prefix}/files/${namespace}/${name}`;

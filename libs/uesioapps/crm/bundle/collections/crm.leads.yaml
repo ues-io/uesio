@@ -1,0 +1,5 @@
+name: leads
+dataSource: crm.dynamo
+idField: crm.id
+nameField: crm.lastname
+collectionName: leads

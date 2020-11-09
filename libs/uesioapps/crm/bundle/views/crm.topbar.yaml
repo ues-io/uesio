@@ -51,6 +51,16 @@ definition:
                                     band: "platform"
                                     path: "contacts"
                                     namespace: "crm"
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                text: Leads
+                                variant: text
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "leads"
+                                    namespace: "crm"
           # Avatar
           - material.griditem:
               components:

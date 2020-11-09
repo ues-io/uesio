@@ -1,0 +1,91 @@
+name: leads
+definition:
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: crm
+    - material.typography:
+        text: Leads
+        variant: h6
+    - material.buttonset:
+        buttons:
+          - material.button:
+              color: primary
+              variant: contained
+              text: Create Row
+              signals:
+                - signal: CREATE_RECORD
+                  band: wire
+                  target: leads
+          - material.button:
+              color: primary
+              variant: contained
+              text: Save
+              signals:
+                - signal: SAVE
+                  band: wire
+                  targets:
+                    - leads
+          - material.button:
+              color: primary
+              variant: contained
+              text: Cancel
+              signals:
+                - signal: CANCEL
+                  band: wire
+                  target: leads
+          - material.button:
+              color: primary
+              signals:
+                - band: component
+                  scope: material.table
+                  signal: TOGGLE_MODE
+                  target: leadsTable
+              text: Mode
+              variant: contained
+    - material.table:
+        id: leadsTable
+        wire: leads
+        mode: EDIT
+        columns:
+          - material.column:
+              field: crm.firstname
+          - material.column:
+              field: crm.lastname
+          - material.column:
+              components:
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Edit
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "lead/${crm.id}"
+                        namespace: "crm"
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Delete
+                    signals:
+                      - signal: TOGGLE_DELETE_STATUS
+                        target: leads
+                        band: wire
+                - material.button:
+                    color: primary
+                    variant: contained
+                    text: Convert Lead
+                    signals:
+                      - signal: CALL
+                        band: bot
+                        bot: "crm.convertlead"
+  wires:
+    leads:
+      collection: crm.leads
+      fields:
+        crm.firstname: null
+        crm.id: null
+        crm.lastname: null
+dependencies:
+  componentpacks:
+    material.main:

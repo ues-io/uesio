@@ -31,6 +31,9 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 	if hasCollection && hasType {
 		return collectionKey + "." + botTypeKey + "."
 	}
+	if hasType && botTypeKey == "listener" {
+		return "listener."
+	}
 	return ""
 }
 
