@@ -25,6 +25,14 @@ type SaveViewResponse = {
 	success: boolean
 }
 
+type BotParams = {
+	[key: string]: string
+}
+
+type BotResponse = {
+	success: boolean
+}
+
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
 	saveViews(
@@ -44,6 +52,12 @@ interface Platform {
 		context: Context,
 		batch: SaveRequestBatch
 	): Promise<SaveResponseBatch>
+	callBot(
+		context: Context,
+		namespace: string,
+		name: string,
+		params: BotParams
+	): Promise<BotResponse>
 	getFileURL(context: Context, namespace: string, name: string): string
 	getUserFileURL(context: Context, userfileid: string): string
 	deleteUserFile(context: Context, userfileid: string): Promise<string>
@@ -74,4 +88,11 @@ interface Platform {
 	logout(): Promise<LoginResponse>
 }
 
-export { Platform, SaveViewRequest, SaveViewResponse, RouteResponse }
+export {
+	Platform,
+	SaveViewRequest,
+	SaveViewResponse,
+	RouteResponse,
+	BotResponse,
+	BotParams,
+}

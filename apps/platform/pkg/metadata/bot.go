@@ -10,9 +10,30 @@ import (
 // NewBot function
 func NewBot(key string) (*Bot, error) {
 	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 5 {
+	keySize := len(keyArray)
+	if keySize != 5 && keySize != 3 {
 		return nil, errors.New("Invalid Bot Key: " + key)
 	}
+	if keySize == 5 {
+		return newTriggerBot(keyArray)
+	}
+
+	return newListenerBot(keyArray)
+}
+
+func newListenerBot(keyArray []string) (*Bot, error) {
+	botType, err := getBotTypeTypeKeyPart(keyArray[0])
+	if err != nil {
+		return nil, err
+	}
+	return &Bot{
+		Type:      botType,
+		Namespace: keyArray[1],
+		Name:      keyArray[2],
+	}, nil
+}
+
+func newTriggerBot(keyArray []string) (*Bot, error) {
 	botType, err := getBotTypeTypeKeyPart(keyArray[2])
 	if err != nil {
 		return nil, err
@@ -42,6 +63,7 @@ func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
 		"AFTERSAVE":  "aftersave",
+		"LISTENER":   "listener",
 	}
 }
 

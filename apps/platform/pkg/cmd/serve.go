@@ -63,6 +63,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controllers.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controllers.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controllers.Save, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controllers.CallBot, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controllers.ServeFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controllers.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controllers.ViewAPI, "GET")

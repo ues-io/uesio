@@ -14,6 +14,7 @@ import (
 type BotDialect interface {
 	BeforeSave(bot *metadata.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
 	AfterSave(bot *metadata.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
+	CallBot(bot *metadata.Bot, botAPI *CallBotAPI, session *sess.Session) error
 }
 
 var botDialectMap = map[string]BotDialect{}
@@ -110,6 +111,35 @@ func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, co
 
 	if botAPI.HasErrors() {
 		return errors.New(botAPI.GetErrorString())
+	}
+
+	return nil
+}
+
+// CallBot function
+func CallBot(namespace, name string, session *sess.Session) error {
+	robot, err := metadata.NewBot("listener." + namespace + "." + name)
+	if err != nil {
+		return err
+	}
+
+	err = bundles.Load(robot, session)
+	if err != nil {
+		return err
+	}
+
+	botAPI := &CallBotAPI{
+		session: session,
+	}
+
+	dialect, err := getBotDialect(robot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	err = dialect.CallBot(robot, botAPI, session)
+	if err != nil {
+		return err
 	}
 
 	return nil
