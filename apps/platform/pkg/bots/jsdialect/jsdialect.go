@@ -79,3 +79,26 @@ func (b *JSDialect) AfterSave(bot *metadata.Bot, botAPI *datasource.AfterSaveAPI
 
 	return nil
 }
+
+// CallBot function
+func (b *JSDialect) CallBot(bot *metadata.Bot, botAPI *datasource.CallBotAPI, session *sess.Session) error {
+	// TODO: We could possibly not start a new VM for every bot we run.
+	vm := goja.New()
+	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
+	vm.Set("log", Logger)
+
+	runner, err := vm.RunString("(" + bot.FileContents + ")")
+	if err != nil {
+		return err
+	}
+	change, ok := goja.AssertFunction(runner)
+	if !ok {
+		return err
+	}
+
+	_, err = change(goja.Undefined(), vm.ToValue(botAPI))
+	if err != nil {
+		return err
+	}
+	return nil
+}

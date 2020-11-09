@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -15,6 +14,7 @@ import (
 type BotDialect interface {
 	BeforeSave(bot *metadata.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
 	AfterSave(bot *metadata.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
+	CallBot(bot *metadata.Bot, botAPI *CallBotAPI, session *sess.Session) error
 }
 
 var botDialectMap = map[string]BotDialect{}
@@ -128,8 +128,19 @@ func CallBot(namespace, name string, session *sess.Session) error {
 		return err
 	}
 
-	fmt.Println("Called Bot")
-	fmt.Println(robot)
+	botAPI := &CallBotAPI{
+		session: session,
+	}
+
+	dialect, err := getBotDialect(robot.Dialect)
+	if err != nil {
+		return err
+	}
+
+	err = dialect.CallBot(robot, botAPI, session)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
