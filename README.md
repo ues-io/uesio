@@ -13,6 +13,9 @@ Uesio is a low-code application development platform.
 - ```
   npm install -g firebase-tools
   ```
+- ```
+  npm install -g nx
+  ```
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
 
@@ -202,6 +205,12 @@ docker start CONTAINER_NAME
 
 ```
 docker rm -f CONTAINER_NAME
+```
+
+## Create a new project inside the monorepo
+
+```
+nx g @nrwl/workspace:library MY_PROJECT
 ```
 
 ## Connecting to a real Firestore instance
