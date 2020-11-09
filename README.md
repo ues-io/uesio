@@ -48,10 +48,33 @@ Uesio is a low-code application development platform.
 }
 ```
 
-## Build (TS compilation into JS)
+## Build
+
+1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
 npm run build-all
+```
+
+2. Build a dedicated app (without watcher and without source map)
+
+```
+cd ./libs/uesioapps/crm && ../../../apps/cli/run/run pack
+```
+
+or
+
+```
+nx run uesioapps-crm:build
+```
+
+3. Build a dedicated app with watcher and source map
+
+On the frontend, the `source map` is enabled in webpack in `dev` mode. As an example,
+while developping you might want to rebuilt on saving with the source map in the browser :
+
+```
+cd ./libs/uesioapps/uesio && ../../../apps/cli/run/run pack --develop
 ```
 
 ## Set up SSL
