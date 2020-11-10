@@ -320,7 +320,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "",
+            "command": "./../../../apps/cli/bin/run help",
             "cwd": "libs/constants"
           }
         },
