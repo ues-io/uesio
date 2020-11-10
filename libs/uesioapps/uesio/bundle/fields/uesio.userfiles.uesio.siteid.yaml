@@ -1,6 +1,6 @@
 name: siteid
 collection: uesio.userfiles
 type: "TEXT"
-label: "BundleDependency Id"
+label: "Site ID"
 propertyName: "siteid"
 readOnly: true

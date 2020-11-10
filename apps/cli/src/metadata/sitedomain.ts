@@ -35,7 +35,7 @@ class SiteDomain {
 		const responses = await inquirer.prompt([
 			{
 				name: "site",
-				message: "BundleDependency for the domain",
+				message: "Site for the domain",
 				type: "input",
 			},
 			{

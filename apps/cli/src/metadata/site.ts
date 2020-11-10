@@ -40,7 +40,7 @@ class Site {
 		const responses = await inquirer.prompt([
 			{
 				name: "name",
-				message: "BundleDependency Name",
+				message: "Site Name",
 				type: "input",
 			},
 			{

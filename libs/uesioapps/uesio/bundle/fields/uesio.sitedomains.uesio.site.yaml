@@ -1,5 +1,5 @@
 name: site
 collection: uesio.sitedomains
 type: TEXT
-label: BundleDependency ID
+label: Site ID
 propertyName: site

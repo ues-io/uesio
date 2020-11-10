@@ -1,5 +1,5 @@
 name: site
 collection: uesio.users
 type: "TEXT"
-label: "BundleDependency"
+label: "Site"
 propertyName: "site"
