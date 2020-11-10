@@ -1,6 +1,4 @@
+import * as metadata from './metadata';
+import * as wire from './wire';
 
-import * as metadata from "./metadata"
-
-export {
-	metadata,
-}
+export { metadata, wire };
