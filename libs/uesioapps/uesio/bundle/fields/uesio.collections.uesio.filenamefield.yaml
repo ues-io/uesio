@@ -1,0 +1,5 @@
+name: filenamefield
+collection: uesio.collections
+type: FILE
+label: File name
+propertyName: filenamefield
