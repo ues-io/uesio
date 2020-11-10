@@ -4,7 +4,7 @@ import { post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
 
-import { metadata } from "@uesio/constants"
+import { metadata } from "@uesio/ui"
 
 export default class Deploy extends Command {
 	static description = "deploy metadata items"

@@ -1,7 +1,7 @@
 import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
-import inquirer = require("inquirer")
+import inquirer from "inquirer"
 
 const MOCK_LOGIN = "mock"
 const GOOGLE_LOGIN = "google"

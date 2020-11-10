@@ -6,7 +6,7 @@ import { SaveResponseBatch } from "../load/saveresponse"
 import { MetadataListStore } from "../store/types/builderstate"
 import { Context } from "../context/context"
 import WorkspaceState from "../store/types/workspacestate"
-import { metadata } from "@uesio/constants"
+import { MetadataType } from "../metadata/metadata"
 
 type RouteResponse = {
 	viewname: string
@@ -80,7 +80,7 @@ interface Platform {
 	getBuilderCoreURL(): string
 	getMetadataList(
 		context: Context,
-		metadataType: metadata.MetadataType,
+		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
 	): Promise<MetadataListStore>

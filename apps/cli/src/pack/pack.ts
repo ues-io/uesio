@@ -2,7 +2,7 @@ import { fileExists, getApp } from "../config/config"
 import * as path from "path"
 import { promises as fs } from "fs"
 import * as yaml from "yaml"
-import webpack = require("webpack")
+import webpack from "webpack"
 import { RuleSetRule } from "webpack"
 
 type ComponentMap = {

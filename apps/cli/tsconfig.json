@@ -1,13 +1,8 @@
 {
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"declaration": true,
-		"importHelpers": true,
-		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
-		"rootDir": "../../",
-		"strict": true,
-		"target": "es2019"
+		"rootDir": "../../"
 	},
 	"include": ["src/**/*"]
 }

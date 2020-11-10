@@ -1,12 +1,12 @@
 import { BandSignal } from "../definition/signal"
-import { metadata } from "@uesio/constants"
+import { MetadataType } from "../metadata/metadata"
 
 const GET_METADATA_LIST = "GET_METADATA_LIST"
 const GET_AVAILABLE_NAMESPACES = "GET_AVAILABLE_NAMESPACES"
 
 interface GetMetadataListSignal extends BandSignal {
 	signal: typeof GET_METADATA_LIST
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	namespace: string
 	grouping?: string
 }

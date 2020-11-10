@@ -2,7 +2,7 @@ import { Command } from "@oclif/command"
 import { authorize } from "../auth/login"
 import { getMetadataByTypePlural } from "../metadata/metadata"
 import { load } from "../wire/load"
-import inquirer = require("inquirer")
+import inquirer from "inquirer"
 import { getApp, setWorkspace } from "../config/config"
 import { printWorkspace } from "../print/workspace"
 

@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react"
-import { definition, material, component, hooks } from "@uesio/ui"
-import { metadata } from "@uesio/constants"
+import { definition, material, component, hooks, metadata } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -93,7 +92,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const options =
 		metadataType == "FIELD"
 			? (metadata &&
-					Object.keys(metadata[grouping] as Object).map((key) => {
+					Object.keys(metadata[grouping] as Record<string, unknown>).map((key) => {
 						const [, name] = component.path.parseKey(key)
 						return {
 							value: name,

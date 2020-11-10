@@ -1,7 +1,7 @@
 import { LoadResponse, PlainCollectionMap } from "../wire/loadresponse"
 
 import cli from "cli-ux"
-import chalk = require("chalk")
+import chalk from "chalk"
 
 type TableColumn = {
 	id: string
