@@ -1,8 +1,8 @@
-type WireType = "CREATE" | "QUERY"
+import { wire } from "@uesio/constants"
 
 type LoadRequest = {
 	wire: string
-	type: WireType
+	type: wire.WireType
 	collection: string
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
