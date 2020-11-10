@@ -4,7 +4,7 @@ import { definition, material, component, hooks } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string
-	metadataType: "FIELD" | "COLLECTION"
+	metadataType: string
 	label: string
 }
 
