@@ -3,6 +3,7 @@ import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer = require("inquirer")
 import { save, createChange } from "../wire/save"
+import {getApp, getWorkspace} from "../config/config";
 
 class SiteDomain {
 	static getCollectionName(): string {
@@ -34,8 +35,8 @@ class SiteDomain {
 	static async create(): Promise<void> {
 		const responses = await inquirer.prompt([
 			{
-				name: "site",
-				message: "Site for the domain",
+				name: "siteName",
+				message: "Site Name",
 				type: "input",
 			},
 			{
@@ -49,11 +50,13 @@ class SiteDomain {
 				type: "input",
 			}
 		])
+		const app = await getApp()
+
 		await save(
 			this,
 			createChange([
 				{
-					"uesio.site": responses.site,
+					"uesio.site": responses.siteName + '_' + app,
 					"uesio.domain": responses.domain,
 					"uesio.type": responses.type,
 				},

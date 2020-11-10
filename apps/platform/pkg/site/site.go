@@ -10,7 +10,7 @@ import (
 )
 
 // GetSite key
-func GetSite(name string, session *sess.Session) (*metadata.Site, error) {
+func GetSite(siteid string, session *sess.Session) (*metadata.Site, error) {
 	sc := metadata.SiteCollection{}
 	err := datasource.PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -24,7 +24,7 @@ func GetSite(name string, session *sess.Session) (*metadata.Site, error) {
 				[]reqs.LoadRequestCondition{
 					{
 						Field: "uesio.id",
-						Value: name,
+						Value: siteid,
 					},
 				},
 			),
@@ -35,10 +35,10 @@ func GetSite(name string, session *sess.Session) (*metadata.Site, error) {
 		return nil, err
 	}
 	if len(sc) < 1 {
-		return nil, errors.New("unable to find matching site record for: " + name)
+		return nil, errors.New("unable to find matching site record for: " + siteid)
 	}
 	if len(sc) > 1 {
-		return nil, errors.New("found multiple matching site records for: " + name)
+		return nil, errors.New("found multiple matching site records for: " + siteid)
 	}
 	return &sc[0], nil
 }
