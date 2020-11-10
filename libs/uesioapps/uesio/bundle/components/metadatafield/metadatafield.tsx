@@ -111,7 +111,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 					})) ||
 			  []
 
-	if (metadataType === "FIELD") {
+	if (metadataType === "FIELD" && fieldMetadata.source.type === "FILE") {
 		return <div>TRUE this is type FILE or meta FIELD </div>
 	} else {
 		return <div>FALSE this is NOT (type FILE or meta FIELD)</div>
