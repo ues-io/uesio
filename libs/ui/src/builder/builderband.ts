@@ -271,12 +271,10 @@ class BuilderBand {
 	): RuntimeState {
 		const handler = this.actionGroup[action.name]
 
-		if (handler) {
-			return Object.assign({}, state, {
-				builder: handler(action, state.builder, state),
-			})
+		return { 
+			...state,
+			...(handler? {builder : handler(action, state.builder, state) as BuilderState} : {})
 		}
-		return state
 	}
 
 	static getActor(): BuilderActor {
