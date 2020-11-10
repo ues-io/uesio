@@ -90,29 +90,33 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const SelectField = component.registry.get("material", "selectfield")
 
-	const options =
-		metadataType === "FIELD"
-			? (metadata &&
-					Object.keys(metadata[grouping] as Object).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})) ||
-			  []
-			: (metadata &&
-					Object.keys(metadata).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})) ||
-			  []
+	let options = null
 
 	if (metadataType === "FIELD" && fieldMetadata.source.type === "FILE") {
-		return <div>TRUE this is type FILE or meta FIELD </div>
+		options = [
+			{ value: "logo.svg", label: "logo.svg" },
+			{ value: "favicon.svg", label: "favicon.svg" },
+		]
+	} else if (metadataType === "FIELD") {
+		options = metadata
+			? Object.keys(metadata[grouping] as Object).map((key) => {
+					const [, name] = component.path.parseKey(key)
+					return {
+						value: name,
+						label: name,
+					}
+			  })
+			: []
+	} else {
+		options = metadata
+			? Object.keys(metadata).map((key) => {
+					const [, name] = component.path.parseKey(key)
+					return {
+						value: name,
+						label: name,
+					}
+			  })
+			: []
 	}
 
 	return (
