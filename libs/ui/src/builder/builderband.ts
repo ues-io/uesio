@@ -258,7 +258,7 @@ class BuilderBand {
 		context: Context
 	): ThunkFunc {
 		const handlers = BuilderBand.getSignalHandlers()
-		const handler = handlers && handlers[signal.signal]
+		const handler = handlers?.[signal.signal]
 		if (!handler) {
 			throw new Error("No Handler found for signal: " + signal.signal)
 		}
@@ -271,9 +271,17 @@ class BuilderBand {
 	): RuntimeState {
 		const handler = this.actionGroup[action.name]
 
-		return { 
+		return {
 			...state,
-			...(handler? {builder : handler(action, state.builder, state) as BuilderState} : {})
+			...(handler
+				? {
+						builder: handler(
+							action,
+							state.builder,
+							state
+						) as BuilderState,
+				  }
+				: {}),
 		}
 	}
 
