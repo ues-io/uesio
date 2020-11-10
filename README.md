@@ -62,7 +62,7 @@ npm run build-all
 2. Build a dedicated app (without watcher and without source map)
 
 ```
-cd ./libs/uesioapps/crm && ../../../apps/cli/run/run pack
+cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 ```
 
 or
