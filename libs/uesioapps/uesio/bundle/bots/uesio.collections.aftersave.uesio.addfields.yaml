@@ -1,0 +1,7 @@
+name: addfields
+collection: uesio.collections
+dialect: "JAVASCRIPT"
+type: "AFTERSAVE"
+fileName: addfields.js
+filecontents: |
+  function addfields(bot) {bot.results.get().forEach(function (result) {if (result.isNew()) {var collectionid = result.get("uesio.id")var workspaceid = result.get("uesio.workspaceid")bot.save("uesio.fields", [{"uesio.collection": collectionid,"uesio.label": "Name","uesio.name": "name","uesio.propertyname": "name","uesio.type": "TEXT","uesio.workspaceid": workspaceid,},])}})}
