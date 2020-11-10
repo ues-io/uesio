@@ -6,4 +6,5 @@ export const metadata = {
     SECRET: "secrets",
 }
 
-export type Metadata = keyof typeof metadata
+export type MetadataType = keyof typeof metadata
+

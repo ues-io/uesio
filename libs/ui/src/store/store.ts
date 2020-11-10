@@ -19,6 +19,7 @@ import { ViewBand } from "../view/viewband"
 import Dependencies from "./types/dependenciesstate"
 import { MetadataListStore } from "./types/builderstate"
 import { Context } from "../context/context"
+import { metadata } from "@uesio/constants"
 
 type DispatchReturn = Promise<Context>
 
@@ -249,7 +250,7 @@ const useBuilderHasChanges = (): boolean => {
 }
 
 const useBuilderMetadataList = (
-	metadataType: string,
+	metadataType: metadata.MetadataType,
 	namespace: string,
 	grouping?: string
 ): MetadataListStore => {

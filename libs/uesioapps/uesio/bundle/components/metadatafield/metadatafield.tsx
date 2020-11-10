@@ -1,9 +1,10 @@
 import React, { FunctionComponent, useEffect } from "react"
 import { definition, material, component, hooks } from "@uesio/ui"
+import { metadata } from "@uesio/constants"
 
 type MetadataFieldDefinition = {
 	fieldId: string
-	metadataType: string
+	metadataType: metadata.MetadataType
 	label: string
 }
 

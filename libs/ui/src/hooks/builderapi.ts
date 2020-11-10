@@ -36,6 +36,7 @@ import { BUILDER_BAND } from "../builder/builderband"
 import { SignalDefinition } from "../definition/signal"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { getBand } from "../actor/band"
+import { metadata } from "@uesio/constants"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -167,7 +168,7 @@ class BuilderAPI {
 
 	getMetadataList(
 		context: Context,
-		metadataType: string,
+		metadataType: metadata.MetadataType,
 		namespace: string,
 		grouping?: string
 	): DispatchReturn {
