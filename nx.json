@@ -39,16 +39,20 @@
       "tags": []
     },
     "uesioapps-sample": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["cli"]
     },
     "uesioapps-uesio": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["cli"]
     },
     "uesioapps-crm": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["cli"]
     },
     "uesioapps-material": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["cli"]
     },
     "vendor": {
       "tags": []
