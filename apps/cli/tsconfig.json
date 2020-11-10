@@ -4,9 +4,13 @@
 		"importHelpers": true,
 		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
-		"rootDir": "src",
+		"rootDir": "../../",
 		"strict": true,
-		"target": "es2019"
+		"target": "es2019",
+		"baseUrl": ".",
+		"paths": {
+			"@uesio/constants": ["../../libs/constants/src"]
+		}
 	},
 	"include": ["src/**/*"]
 }
