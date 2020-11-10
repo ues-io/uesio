@@ -1,6 +1,7 @@
 import * as React from "react"
 
-import { material, definition, context } from "@uesio/ui"
+import { material, definition } from "@uesio/ui"
+import { field } from "@uesio/constants"
 
 const useStyles = material.makeStyles((theme) => ({
 	root: {
@@ -13,7 +14,7 @@ type Props = {
 	label: string
 	setValue: (value: boolean) => void
 	value: definition.Definition
-	mode?: context.FieldMode
+	mode?: field.FieldMode
 } & definition.BaseProps
 
 const CheckBoxField = (props: Props): React.ReactElement | null => {

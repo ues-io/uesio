@@ -1,13 +1,14 @@
 import React, { ChangeEvent, FunctionComponent } from "react"
 
-import { material, definition, context } from "@uesio/ui"
+import { material, definition } from "@uesio/ui"
+import { field } from "@uesio/constants"
 
 type Props = {
 	label: string
 	setValue: (value: string) => void
 	value: definition.Definition
 	type?: string
-	mode?: context.FieldMode
+	mode?: field.FieldMode
 	variant?: "standard" | "filled" | "outlined"
 	hideLabel?: boolean
 } & definition.BaseProps
