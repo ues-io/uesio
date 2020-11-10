@@ -1,5 +1,6 @@
-import * as https from "https"
+import https from "https"
 import fetch, { Response, RequestInit } from "node-fetch"
+import { URLSearchParams } from "url"
 
 const agent = new https.Agent({
 	rejectUnauthorized: false,

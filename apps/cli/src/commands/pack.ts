@@ -5,7 +5,7 @@ import {
 	getWebpackConfig,
 	getWebpackComplete,
 } from "../pack/pack"
-import * as webpack from "webpack"
+import webpack from "webpack"
 
 export default class Pack extends Command {
 	static description = "pack components"

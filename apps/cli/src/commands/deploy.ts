@@ -1,8 +1,10 @@
 import { Command } from "@oclif/command"
-import * as archiver from "archiver"
+import archiver from "archiver"
 import { post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
+
+import { metadata } from "@uesio/constants"
 
 export default class Deploy extends Command {
 	static description = "deploy metadata items"
@@ -12,11 +14,12 @@ export default class Deploy extends Command {
 	static args = []
 
 	async run(): Promise<void> {
-		const { args , flags } = this.parse(Deploy)
+		const { args, flags } = this.parse(Deploy)
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
 
+		console.log(metadata)
 		const user = await authorize()
 
 		const archive = archiver("zip", {
