@@ -1,4 +1,4 @@
-const metadata = {
+const METADATA = {
 	COLLECTION: 'collections',
 	FIELD: 'fields',
 	VIEW: 'views',
@@ -6,6 +6,6 @@ const metadata = {
 	SECRET: 'secrets',
 };
 
-type MetadataType = keyof typeof metadata;
+type MetadataType = keyof typeof METADATA;
 
-export { metadata, MetadataType };
+export { METADATA, MetadataType };
