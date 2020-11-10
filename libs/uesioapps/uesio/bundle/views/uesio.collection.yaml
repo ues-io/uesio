@@ -39,6 +39,7 @@ definition:
         uesio.workspace:
         uesio.collectionname:
         uesio.datasource:
+        uesio.passportPicturefield:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -203,6 +204,10 @@ definition:
                                       label: "Name Field"
                                   - material.field:
                                       fieldId: uesio.collectionname
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.passportPicturefield
+                                      metadataType: "FIELD"
+                                      label: "Passport Picture"
                                   - uesio.metadatafield:
                                       fieldId: uesio.datasource
                                       metadataType: "DATASOURCE"

@@ -1,0 +1,5 @@
+name: passportPicture
+collection: uesio.collections
+type: "FILE"
+label: "Passport picture"
+propertyName: "passportPicture"

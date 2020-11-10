@@ -110,13 +110,13 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						}
 					})) ||
 			  []
-
-	if (metadataType === "FILE") {
-		return <div>this is type file</div>
+	/*
+	if (fieldMetadata.type === "FILE") {
+		return <div>this is type FILE</div>
 	} else {
-		return <div>this is NOT type file</div>
+		return <div>this is NOT type FILE</div>
 	}
-
+*/
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>

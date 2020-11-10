@@ -63,8 +63,6 @@ definition:
           - material.column:
               field: crm.birthdate
           - material.column:
-              field: crm.passportPicture
-          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -97,7 +95,6 @@ definition:
         crm.id: null
         crm.lastname: null
         crm.birthdate: null
-        crm.passportPicture: null
 dependencies:
   componentpacks:
     material.main:
