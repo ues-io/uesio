@@ -1,0 +1,5 @@
+name: type
+collection: uesio.sitedomains
+type: TEXT
+label: type
+propertyName: type

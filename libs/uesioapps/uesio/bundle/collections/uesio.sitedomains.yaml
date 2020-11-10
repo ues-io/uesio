@@ -1,0 +1,6 @@
+name: sitedomains
+dataSource: uesio.platform
+idField: uesio.id
+idFormat: "${uesio.site}_${uesio.domain}_${uesio.type}"
+nameField: uesio.domain
+collectionName: sitedomains

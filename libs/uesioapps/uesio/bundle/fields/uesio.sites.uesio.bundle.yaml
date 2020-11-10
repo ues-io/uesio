@@ -1,0 +1,6 @@
+name: bundle
+collection: uesio.sites
+type: REFERENCE
+label: Bundle
+referencedCollection: uesio.bundle
+foreignKeyField: uesio.bundleid
