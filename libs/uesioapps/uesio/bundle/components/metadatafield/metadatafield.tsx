@@ -91,7 +91,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const SelectField = component.registry.get("material", "selectfield")
 
 	const options =
-		metadataType == "FIELD"
+		metadataType === "FIELD"
 			? (metadata &&
 					Object.keys(metadata[grouping] as Object).map((key) => {
 						const [, name] = component.path.parseKey(key)
@@ -110,13 +110,13 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						}
 					})) ||
 			  []
-	/*
-	if (fieldMetadata.type === "FILE") {
-		return <div>this is type FILE</div>
+
+	if (metadataType === "FIELD") {
+		return <div>TRUE this is type FILE or meta FIELD </div>
 	} else {
-		return <div>this is NOT type FILE</div>
+		return <div>FALSE this is NOT (type FILE or meta FIELD)</div>
 	}
-*/
+
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>
