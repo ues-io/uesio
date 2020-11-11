@@ -26,7 +26,7 @@ Uesio is a low-code application development platform.
 - Optional : install [Oh My Zsh](https://ohmyz.sh/)
 - Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- Optional
+- Optional :
   ```
   npm install -g nx
   ```
