@@ -2,46 +2,26 @@ var path = require('path');
 
 module.exports = {
 	mode: 'production',
-
-	// Enable sourcemaps for debugging webpack's output.
-	devtool: 'source-map',
-
+	devtool: 'inline-source-map',
+	entry: {
+		main: './platform/platform.ts',
+	},
+	output: {
+		path: path.resolve(__dirname, './platform'),
+		filename: 'platform.js',
+	},
 	resolve: {
-		// Add '.ts' and '.tsx' as resolvable extensions.
+		// Add ".ts" and ".tsx" as resolvable extensions.
 		extensions: ['.ts', '.tsx', '.js'],
 	},
-
 	module: {
 		rules: [
+			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
 			{
-				test: /\.ts(x?)$/,
+				test: /\.tsx?$/,
 				exclude: /node_modules/,
-				use: [
-					{
-						loader: 'ts-loader',
-					},
-				],
-			},
-			// All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-			{
-				enforce: 'pre',
-				test: /\.js$/,
-				loader: 'source-map-loader',
+				loader: 'ts-loader',
 			},
 		],
-	},
-
-	entry: {
-		platform: './platform/platform.ts',
-	},
-
-	node: false,
-
-	output: {
-		library: '[name]',
-		libraryTarget: 'umd',
-		filename: '[name].js',
-		sourceMapFilename: '[name].js.map',
-		path: path.join(__dirname, './platform'),
 	},
 };

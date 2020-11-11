@@ -1,3 +1,5 @@
+// Side effect is that the @uesio/contants module works
+import './modulealias';
 import { metadata } from '@uesio/constants';
 
 const getPrefix = (workspace?: { app: string; name: string }) => {

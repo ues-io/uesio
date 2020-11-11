@@ -1,16 +1,23 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "importHelpers": true,
-    "module": "commonjs",
     "outDir": "./platform",
-    "strict": true,
     "target": "es2019",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "strict": true,
+    "sourceMap": true,
+    "lib": ["es2019", "dom"],
     "baseUrl": ".",
     "paths": {
       "@uesio/constants": ["../../libs/constants/src"]
     }
   },
+  "files": ["./platform/platform.ts"],
   "include": ["./platform/platform.ts"],
-  "exclude": ["*.go"]
+  "exclude": [],
+  "references": [
+    {
+      "path": "../../libs/constants/src"
+    }
+  ]
 }

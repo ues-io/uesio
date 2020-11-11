@@ -4,12 +4,12 @@
     "platform": {
       "projectType": "application",
       "root": "apps/platform",
-      "sourceRoot": "apps/platform/src",
+      "sourceRoot": "apps/platform",
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "go build -o ../../dist/platform/uesio && npx tsc",
+            "command": "go build -o ../../dist/platform/uesio && npx webpack --config webpack.config.js",
             "cwd": "apps/platform"
           }
         },
