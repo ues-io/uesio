@@ -32,7 +32,7 @@ module.exports = {
 	},
 
 	entry: {
-		uesio: './platform/platform.ts',
+		platform: './platform/platform.ts',
 	},
 
 	node: false,
