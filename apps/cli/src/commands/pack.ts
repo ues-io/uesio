@@ -7,6 +7,9 @@ import {
 } from "../pack/pack"
 import * as webpack from "webpack"
 
+// Side effect is that the @uesio/contants module works
+import "../modulealias"
+
 export default class Pack extends Command {
 	static description = "pack components"
 
