@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"io/ioutil"
 	"mime"
 	"os"
 	"path/filepath"
@@ -90,7 +91,23 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 		return err
 	}
 	defer stream.Close()
-	return bundlestore.DecodeYAML(item, stream)
+	err = bundlestore.DecodeYAML(item, stream)
+
+	// Special handling for bots
+	if item.GetBundleGroup().GetName() == "bots" {
+		bot := item.(*metadata.Bot)
+		botStream, err := getStream(namespace, version, collectionName, bot.FileName)
+		if err != nil {
+			return err
+		}
+		b, err := ioutil.ReadAll(botStream)
+		if err != nil {
+			return err
+		}
+		bot.FileContents = string(b)
+	}
+
+	return err
 
 }
 

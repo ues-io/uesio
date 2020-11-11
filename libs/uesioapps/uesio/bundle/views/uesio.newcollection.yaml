@@ -35,6 +35,8 @@ definition:
         uesio.workspace:
         uesio.datasource:
         uesio.collectionname:
+        uesio.namefield:
+        uesio.idfield:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -42,6 +44,18 @@ definition:
           lookupField: uesio.id
       type: CREATE
       defaults:
+        - field: uesio.collectionname
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.namefield
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.idfield
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
         - field: uesio.workspaceid
           valueSource: LOOKUP
           lookupWire: workspaces
@@ -78,8 +92,6 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
-                                      fieldId: uesio.collectionname
                                   - uesio.metadatafield:
                                       fieldId: uesio.datasource
                                       metadataType: "DATASOURCE"

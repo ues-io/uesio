@@ -1,0 +1,5 @@
+name: setfields
+collection: uesio.collections
+dialect: "JAVASCRIPT"
+type: "BEFORESAVE"
+fileName: setfields.js
