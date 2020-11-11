@@ -7,10 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/sess"
-	site2 "github.com/thecloudmasters/uesio/pkg/site"
-
 	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -76,21 +74,54 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	site, err := site2.GetSite("studio")
+	// Read files from seed folder
+	var sites metadata.SiteCollection
+	err = GetSeedDataFile(&sites, "sites.json")
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
 
-	session := sess.New(&metadata.User{
-		Profile:   "uesio.standard",
-		FirstName: "seed",
-		LastName:  "seed",
-	}, site)
+	// Read files from seed folder
+	var siteDomains metadata.SiteDomainCollection
+	err = GetSeedDataFile(&siteDomains, "domains.json")
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	session := sess.GetHeadlessSession()
 
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &apps,
+			Options: &reqs.SaveOptions{
+				Upsert: &reqs.UpsertOptions{},
+			},
+		},
+	}, session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
+		{
+			Collection: &sites,
+			Options: &reqs.SaveOptions{
+				Upsert: &reqs.UpsertOptions{},
+			},
+		},
+	}, session)
+
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
+		{
+			Collection: &siteDomains,
 			Options: &reqs.SaveOptions{
 				Upsert: &reqs.UpsertOptions{},
 			},

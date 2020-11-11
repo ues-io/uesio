@@ -1,5 +1,6 @@
 import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
+import { metadata } from "@uesio/constants"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -67,8 +68,6 @@ type BasePropDescriptor = {
 	label: string
 }
 
-type MetadataType = "COLLECTION" | "FIELD"
-
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
@@ -79,7 +78,7 @@ interface NumberProp extends BasePropDescriptor {
 
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
-	metadataType: MetadataType
+	metadataType: metadata.MetadataType
 	groupingParents?: number
 	groupingProperty?: string
 }
@@ -177,5 +176,4 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
-	MetadataType,
 }

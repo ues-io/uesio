@@ -1,5 +1,5 @@
 import { BandAction } from "../store/actions/actions"
-import { MetadataType } from "../buildmode/buildpropdefinition"
+import { metadata } from "@uesio/constants"
 import { MetadataListStore } from "../store/types/builderstate"
 
 const SET_ACTIVE_NODE = "SET_ACTIVE_NODE"
@@ -70,7 +70,7 @@ interface SetViewAction extends BandAction {
 interface SetMetadataListAction extends BandAction {
 	name: typeof SET_METADATA_LIST
 	data: {
-		metadataType: MetadataType
+		metadataType: metadata.MetadataType
 		namespace: string
 		grouping?: string
 		metadata: MetadataListStore

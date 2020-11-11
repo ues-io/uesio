@@ -4,6 +4,27 @@ package metadata
 type SiteDomainCollection []SiteDomain
 
 // GetName function
-func (s *SiteDomainCollection) GetName() string {
-	return "sites"
+func (sdc *SiteDomainCollection) GetName() string {
+	return "sitedomains"
+}
+
+// GetFields function
+func (sdc *SiteDomainCollection) GetFields() []string {
+	return []string{"id", "domain", "type", "site"}
+}
+
+// UnMarshal function
+func (sdc *SiteDomainCollection) UnMarshal(data []map[string]interface{}) error {
+	return StandardDecoder(sdc, data)
+}
+
+// Marshal function
+func (sdc *SiteDomainCollection) Marshal() ([]map[string]interface{}, error) {
+	return StandardEncoder(sdc)
+}
+
+// GetItem function
+func (sdc *SiteDomainCollection) GetItem(index int) CollectionableItem {
+	actual := *sdc
+	return &actual[index]
 }

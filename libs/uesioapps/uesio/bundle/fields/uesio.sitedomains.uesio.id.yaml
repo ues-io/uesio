@@ -1,0 +1,5 @@
+name: id
+collection: uesio.sitedomains
+type: TEXT
+label: ID
+propertyName: id

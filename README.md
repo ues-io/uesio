@@ -62,7 +62,7 @@ npm run build-all
 2. Build a dedicated app (without watcher and without source map)
 
 ```
-cd ./libs/uesioapps/crm && ../../../apps/cli/run/run pack
+cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 ```
 
 or
@@ -77,7 +77,7 @@ On the frontend, the `source map` is enabled in webpack in `dev` mode. As an exa
 while developping you might want to rebuilt on saving with the source map in the browser :
 
 ```
-cd ./libs/uesioapps/uesio && ../../../apps/cli/run/run pack --develop
+cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 ```
 
 ## Set up SSL

@@ -310,6 +310,41 @@
           }
         }
       }
+    },
+    "constants": {
+      "root": "libs/constants",
+      "sourceRoot": "libs/constants/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../apps/cli/bin/run pack",
+            "cwd": "libs/constants"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../apps/cli/bin/run deploy",
+            "cwd": "libs/constants"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/constants/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/constants/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
