@@ -1,9 +1,8 @@
-// @ts-ignore
-import { wire } from "@uesio/constants"
+type WireType = "CREATE" | "QUERY"
 
 type LoadRequest = {
 	wire: string
-	type: wire.WireType
+	type: WireType
 	collection: string
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
