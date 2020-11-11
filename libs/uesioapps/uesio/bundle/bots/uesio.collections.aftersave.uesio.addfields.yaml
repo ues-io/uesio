@@ -1,0 +1,5 @@
+name: addfields
+collection: uesio.collections
+dialect: "JAVASCRIPT"
+type: "AFTERSAVE"
+fileName: addfields.js
