@@ -42,7 +42,7 @@ module.exports = {
 		libraryTarget: 'umd',
 		filename: '[name].js',
 		sourceMapFilename: '[name].js.map',
-		path: path.join(__dirname, '.'),
+		path: path.join(__dirname, './platform'),
 	},
 
 	// When importing a module whose path matches one of the following, just
