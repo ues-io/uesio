@@ -10,7 +10,7 @@ The present monorepo hosts several standalone `applications` which in turn can r
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 
-The `workspace.json` file hold the configuration on how each application and lib should be built, tested, linted.
+The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
 
 ## Set up dev environment
 
