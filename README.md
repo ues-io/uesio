@@ -62,7 +62,7 @@ The `workspace.json` file holds the configuration on how each application and li
 
 ## Build
 
-A standalone application within the monorepo is in charge of the building process, namely the `cli`.
+A standalone application within the monorepo is in charge of the building process, namely the `cli`. This `cli` is called under the hood by `nx`.
 
 1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
