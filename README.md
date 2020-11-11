@@ -102,7 +102,7 @@ Uesio apps such as the **uesio crm** are applications which can be plugged into 
 For plugging such an application into uesio, you have to deploy them obviously after having built it. This deployment process is done by the `cli`.
 
 ```
-
+cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
 ## Set up SSL
