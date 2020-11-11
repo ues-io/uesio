@@ -11,7 +11,7 @@ Uesio is a low-code application development platform.
 
 - Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - ```
-  npm install -g nx firebase-tools
+  npm install -g firebase-tools
   ```
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
@@ -26,6 +26,10 @@ Uesio is a low-code application development platform.
 - Optional : install [Oh My Zsh](https://ohmyz.sh/)
 - Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional
+  ```
+  npm install -g nx
+  ```
 - Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
@@ -73,6 +77,12 @@ cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 or
 
 ```
+npm run nx -- build uesioapps-crm
+```
+
+or (if you have `nx` install globally)
+
+```
 nx run uesioapps-crm:build
 ```
 
@@ -88,6 +98,12 @@ cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 ## Uesio apps deployment
 
 Uesio apps such as the **uesio crm** are applications which can be plugged into the uesio system.
+
+For plugging such application into uesio, we have to deploy them. This deployment process is done by the `cli`.
+
+```
+npm run setup-ssl
+```
 
 ## Set up SSL
 
@@ -204,13 +220,13 @@ CREATE DATABASE `test-cf94a`;
 docker stop CONTAINER_NAME
 ```
 
-5. Optional : Start an existing container
+5. Optional. Start an existing container
 
 ```
 docker start CONTAINER_NAME
 ```
 
-6. Remove the docker container when no longer needed.
+6. Optional. Remove the docker container when no longer needed.
 
 ```
 docker rm -f CONTAINER_NAME
