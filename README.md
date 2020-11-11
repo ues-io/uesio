@@ -6,9 +6,11 @@ Uesio is a low-code application development platform.
 
 ## Monorepo architecture
 
-The present monorepo host several standalone `applications` which in turn can reuse code lying in the `libs` folder.
+The present monorepo hosts several standalone `applications` which in turn can reuse code lying in the `libs` folder.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
+
+The `workspace.json` file hold the configuration on how each application and lib should be built, tested, linted.
 
 ## Set up dev environment
 
