@@ -9,7 +9,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "go build -o ../../dist/platform/uesio && npx webpack --config webpack.config.js",
+            "command": "go build -o ../../dist/platform/uesio && npx tsc",
             "cwd": "apps/platform"
           }
         },

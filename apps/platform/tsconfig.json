@@ -1,16 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ],
   "compilerOptions": {
-    "sourceMap": true
-  }
+    "declaration": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "outDir": "./platform",
+    "strict": true,
+    "target": "es2019",
+    "baseUrl": ".",
+    "paths": {
+      "@uesio/constants": ["../../libs/constants/src"]
+    }
+  },
+  "include": ["./platform/platform.ts"],
+  "exclude": ["*.go"]
 }
