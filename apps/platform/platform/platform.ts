@@ -1,6 +1,5 @@
-// Side effect is that the @uesio/contants module works
-import './modulealias';
-import { metadata } from '@uesio/constants';
+// @ts-ignore
+import { metadata } from '../../../dist/constants/libs/constants/src';
 
 const getPrefix = (workspace?: { app: string; name: string }) => {
 	return workspace ? `/workspace/${workspace.app}/${workspace.name}` : '/site';

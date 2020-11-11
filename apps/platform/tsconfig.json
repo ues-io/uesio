@@ -14,10 +14,5 @@
   },
   "files": ["./platform/platform.ts"],
   "include": ["./platform/platform.ts"],
-  "exclude": [],
-  "references": [
-    {
-      "path": "../../libs/constants/src"
-    }
-  ]
+  "exclude": []
 }
