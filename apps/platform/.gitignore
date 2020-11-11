@@ -31,7 +31,3 @@ firebase.json
 firebase-debug.log
 .firebaserc
 __debug_bin
-
-# static js files, compilated by webpack, which are served by gorilla/mux
-/platform/*.js
-/platform/*.map
