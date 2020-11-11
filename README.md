@@ -11,10 +11,7 @@ Uesio is a low-code application development platform.
 
 - Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - ```
-  npm install -g firebase-tools
-  ```
-- ```
-  npm install -g nx
+  npm install -g nx firebase-tools
   ```
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
