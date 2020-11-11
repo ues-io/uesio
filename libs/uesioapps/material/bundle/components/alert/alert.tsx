@@ -145,8 +145,10 @@ const defaultIconMapping = {
 	warning: "warning",
 	error: "error",
 	info: "info",
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Alert = React.forwardRef(function Alert(props: any, ref) {
 	const {
 		action,
@@ -162,6 +164,7 @@ const Alert = React.forwardRef(function Alert(props: any, ref) {
 		severity = "success",
 		variant = "standard",
 		...other
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} = props as any
 
 	const iconNode = (
@@ -218,5 +221,5 @@ const Alert = React.forwardRef(function Alert(props: any, ref) {
 		</material.Paper>
 	)
 })
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default material.withStyles(styles, { name: "MuiAlert" })(Alert) as any

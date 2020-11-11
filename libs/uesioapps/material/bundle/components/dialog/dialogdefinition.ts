@@ -1,4 +1,4 @@
-import { definition, builder, signal, styles } from "@uesio/ui"
+import { definition, builder, signal } from "@uesio/ui"
 
 type DialogDefinition = {
 	id: string
