@@ -4,15 +4,14 @@ import { View } from "../view/view"
 import RuntimeState from "../store/types/runtimestate"
 import WorkspaceState from "../store/types/workspacestate"
 import RouteState from "../store/types/routestate"
-
-type FieldMode = "READ" | "EDIT"
+import { field } from "@uesio/constants"
 
 type ContextFrame = {
 	wire?: Wire
 	record?: WireRecord
 	view?: View
 	buildMode?: boolean
-	fieldMode?: FieldMode
+	fieldMode?: field.FieldMode
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
@@ -73,7 +72,7 @@ class Context {
 		return this.stack.find((frame) => frame?.wire)?.wire
 	}
 
-	getFieldMode(): FieldMode {
+	getFieldMode(): field.FieldMode {
 		return (
 			this.stack.find((frame) => frame?.fieldMode === "EDIT")
 				?.fieldMode || "READ"
@@ -109,4 +108,4 @@ class Context {
 	}
 }
 
-export { Context, ContextFrame, FieldMode }
+export { Context, ContextFrame }
