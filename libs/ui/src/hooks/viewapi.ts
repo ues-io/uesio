@@ -27,7 +27,6 @@ import {
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
-import { SignalAPI } from "./signalapi"
 import { View, ViewParams } from "../view/view"
 import { SET_SELECTED_NODE } from "../builder/builderbandactions"
 import { batch } from "react-redux"

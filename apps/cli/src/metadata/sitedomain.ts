@@ -3,7 +3,7 @@ import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer = require("inquirer")
 import { save, createChange } from "../wire/save"
-import {getApp, getWorkspace} from "../config/config";
+import {getApp} from "../config/config";
 
 class SiteDomain {
 	static getCollectionName(): string {
