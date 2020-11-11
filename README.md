@@ -50,6 +50,8 @@ Uesio is a low-code application development platform.
 
 ## Build
 
+A standalone application within the monorepo is in charge of the building process, namely the `cli`.
+
 1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
@@ -76,6 +78,10 @@ while developping you might want to rebuilt on saving with the source map in the
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 ```
+
+## Uesio apps deployment
+
+For being plugable within the uesio web application, uesio apps have to be **deployed** into the uesio web application.
 
 ## Set up SSL
 
