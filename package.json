@@ -27,7 +27,7 @@
   "test": "nx test",
   "update": "nx migrate latest",
   "workspace-schematic": "nx workspace-schematic",
-  "uesio": "./apps/cli/bin/run"
+  "uesio": "WD=$PWD && cd $INIT_CWD && $WD/apps/cli/bin/run"
  },
  "files": [
   "/apps/cli/bin",

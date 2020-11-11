@@ -121,7 +121,7 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(namespace, version string,
 
 // StoreItems function
 func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
-	return nil
+	return errors.New("Tried to store items in the workspace bundle store")
 }
 
 // GetBundleDef function
