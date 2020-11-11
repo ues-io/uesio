@@ -97,12 +97,12 @@ cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 
 ## Uesio apps deployment
 
-Uesio apps such as the **uesio crm** are applications which can be plugged into the uesio system.
+Uesio apps such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is under the `libs` folder.
 
-For plugging such application into uesio, we have to deploy them. This deployment process is done by the `cli`.
+For plugging such an application into uesio, you have to deploy them obviously after having built it. This deployment process is done by the `cli`.
 
 ```
-npm run setup-ssl
+
 ```
 
 ## Set up SSL
