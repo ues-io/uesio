@@ -81,7 +81,7 @@ cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 
 ## Uesio apps deployment
 
-For being plugable within the uesio web application, uesio apps have to be **deployed** into the uesio web application.
+Uesio apps such as the **uesio crm** are applications which can be plugged into the uesio system.
 
 ## Set up SSL
 
