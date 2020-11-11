@@ -320,7 +320,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../apps/cli/bin/run pack",
+            "command": "npx tsc",
             "cwd": "libs/constants"
           }
         },
