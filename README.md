@@ -4,6 +4,14 @@
 
 Uesio is a low-code application development platform.
 
+## Monorepo architecture
+
+The present monorepo hosts several standalone `applications` which in turn can reuse code lying in the `libs` folder.
+
+The monorepo is managed by a tool called [nx](https://nx.dev/).
+
+The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
+
 ## Set up dev environment
 
 - Install [homebrew](https://brew.sh/) (for macOS user)
@@ -12,9 +20,6 @@ Uesio is a low-code application development platform.
 - Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - ```
   npm install -g firebase-tools
-  ```
-- ```
-  npm install -g nx
   ```
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
@@ -29,6 +34,10 @@ Uesio is a low-code application development platform.
 - Optional : install [Oh My Zsh](https://ohmyz.sh/)
 - Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional :
+  ```
+  npm install -g nx
+  ```
 - Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
@@ -53,6 +62,8 @@ Uesio is a low-code application development platform.
 
 ## Build
 
+A standalone application within the monorepo is in charge of the building process, namely the `cli`.
+
 1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
@@ -68,6 +79,12 @@ cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 or
 
 ```
+npm run nx -- build uesioapps-crm
+```
+
+or (if you have `nx` install globally)
+
+```
 nx run uesioapps-crm:build
 ```
 
@@ -78,6 +95,16 @@ while developping you might want to rebuilt on saving with the source map in the
 
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
+```
+
+## Uesio apps deployment
+
+**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is under the `libs` folder.
+
+For plugging such an application into uesio, you have to deploy it obviously after having built it. This deployment process is done by the `cli`.
+
+```
+cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
 ## Set up SSL
@@ -195,13 +222,13 @@ CREATE DATABASE `test-cf94a`;
 docker stop CONTAINER_NAME
 ```
 
-5. Optional : Start an existing container
+5. Optional. Start an existing container
 
 ```
 docker start CONTAINER_NAME
 ```
 
-6. Remove the docker container when no longer needed.
+6. Optional. Remove the docker container when no longer needed.
 
 ```
 docker rm -f CONTAINER_NAME
