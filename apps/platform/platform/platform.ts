@@ -1,3 +1,5 @@
+import { metadata } from '@uesio/constants';
+
 const getPrefix = (workspace?: { app: string; name: string }) => {
 	return workspace ? `/workspace/${workspace.app}/${workspace.name}` : '/site';
 };
@@ -156,13 +158,7 @@ const loader = (mergeData: any) => {
 			grouping: string
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
-			const mdTypeMap = {
-				COLLECTION: 'collections',
-				FIELD: 'fields',
-				VIEW: 'views',
-				DATASOURCE: 'datasources',
-				SECRET: 'secrets',
-			};
+			const mdTypeMap = metadata.METADATA;
 			// @ts-ignore
 			const mdType = mdTypeMap[metadataType];
 			const groupingUrl = grouping ? `/${grouping}` : '';
