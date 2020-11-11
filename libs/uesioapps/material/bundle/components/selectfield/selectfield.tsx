@@ -1,6 +1,7 @@
 import React, { FunctionComponent, ChangeEvent } from "react"
 
-import { material, definition, context, collection } from "@uesio/ui"
+import { material, definition, collection } from "@uesio/ui"
+import { field } from "@uesio/constants"
 import TextField from "../textfield/textfield"
 
 const useStyles = material.makeStyles((theme) => ({
@@ -15,7 +16,7 @@ type Props = {
 	setValue: (value: string) => void
 	value: definition.Definition
 	options: collection.SelectOption[] | null
-	mode?: context.FieldMode
+	mode?: field.FieldMode
 } & definition.BaseProps
 
 const SelectField: FunctionComponent<Props> = (props: Props) => {

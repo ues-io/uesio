@@ -1,9 +1,9 @@
-import { WireType } from "../definition/wire"
+import { wire } from "@uesio/constants"
 import { WireConditionState } from "../wire/wirecondition"
 
 type LoadRequest = {
 	wire: string
-	type: WireType
+	type: wire.WireType
 	collection: string
 	fields: LoadRequestField[]
 	conditions: WireConditionState[]

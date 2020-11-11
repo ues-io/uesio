@@ -45,14 +45,14 @@ import {
 	SetRecordSignal,
 	EmptySignal,
 } from "./wiresignals"
-import { WireType } from "../definition/wire"
 import { PlainWireDefault } from "./wiredefault"
 import { WireBand } from "./wireband"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
+import { wire } from "@uesio/constants"
 
 type PlainWire = {
 	name: string
-	type: WireType
+	type: wire.WireType
 	collection: string
 	fields: PlainWireFieldMap
 	conditions: WireConditionState[]
@@ -555,7 +555,7 @@ class Wire extends Actor {
 		return this.source.name
 	}
 
-	getType(): WireType {
+	getType(): wire.WireType {
 		return this.source.type
 	}
 

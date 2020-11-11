@@ -8,6 +8,7 @@ import {
 	component,
 	definition,
 } from "@uesio/ui"
+import { field } from "@uesio/constants"
 import { ColumnDefinition, TableState } from "./tabledefinition"
 
 interface Props {
@@ -24,7 +25,7 @@ interface RowProps {
 	path: string
 	columns: definition.DefinitionList
 	context: context.Context
-	mode: context.FieldMode
+	mode: field.FieldMode
 	record: wire.WireRecord
 }
 

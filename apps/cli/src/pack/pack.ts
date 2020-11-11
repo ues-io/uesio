@@ -137,6 +137,9 @@ const getLoaderPath = (loaderName: string): string => {
 		"..",
 		"..",
 		"..",
+		"..",
+		"..",
+		"..",
 		"node_modules",
 		loaderName
 	)
