@@ -1,4 +1,4 @@
-name: aftersave
+name: addcontact
 collection: crm.accounts
 dialect: "JAVASCRIPT"
 type: "AFTERSAVE"

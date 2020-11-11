@@ -23,7 +23,7 @@ const metadataMap: MetadataMap = {
 	bundle: Bundle as Metadata,
 	site: Site as Metadata,
 	domain: SiteDomain as Metadata,
-	dependency: BundleDependency as Metadata
+	dependency: BundleDependency as Metadata,
 }
 
 const metadataMapPlural: MetadataMap = {
@@ -37,5 +37,8 @@ const getMetadataByType = (type: string): Metadata => {
 const getMetadataByTypePlural = (type: string): Metadata => {
 	return metadataMapPlural[type]
 }
+const getMetadataMap = (): MetadataMap => {
+	return metadataMap
+}
 
-export { Metadata, getMetadataByType, getMetadataByTypePlural }
+export { Metadata, getMetadataMap, getMetadataByType, getMetadataByTypePlural }

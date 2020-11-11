@@ -1,6 +1,6 @@
 import { Command } from "@oclif/command"
 import { authorize } from "../auth/login"
-import { getMetadataByType } from "../metadata/metadata"
+import { getMetadataByType, getMetadataMap } from "../metadata/metadata"
 
 export default class Create extends Command {
 	static description = "create metadata items"
@@ -13,6 +13,16 @@ export default class Create extends Command {
 		const { args /*, flags */ } = this.parse(Create)
 
 		await authorize()
+
+		if (!args.type) {
+			const metadataMap = getMetadataMap()
+			console.log("Please specify a type to create.")
+			Object.keys(metadataMap).forEach((metadataType) => {
+				console.log("create", metadataType)
+			})
+
+			return
+		}
 
 		const metadata = getMetadataByType(args.type)
 		await metadata.create()
