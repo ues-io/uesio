@@ -17,14 +17,16 @@ const postJSON = (url: string, body: object) => {
 (window as any).monacoPublicPath = '/static/lazymonaco/';
 
 // This is a really dumb thing that I had to do to get the aws-amplify sdk to work :(
+
+// @ts-ignore
 if (global === undefined) {
 	var global = window;
 }
 
-const loader = (mergeData) => {
+const loader = (mergeData: any) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
-		getView: async (context, namespace, name) => {
+		getView: async (context: any, namespace: string, name: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await fetch(`${prefix}/views/${namespace}/${name}`);
 			if (response.status !== 200) {
@@ -32,7 +34,7 @@ const loader = (mergeData) => {
 			}
 			return response.text();
 		},
-		saveViews: async (context, saveRequest) => {
+		saveViews: async (context: any, saveRequest: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/views/save`, saveRequest);
 			if (response.status != 200) {
@@ -40,7 +42,7 @@ const loader = (mergeData) => {
 			}
 			return response.json();
 		},
-		getRoute: async (context, namespace, route) => {
+		getRoute: async (context: any, namespace: string, route: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await fetch(`${prefix}/routes/${namespace}/${route}`);
 			if (response.status !== 200) {
@@ -48,7 +50,7 @@ const loader = (mergeData) => {
 			}
 			return response.json();
 		},
-		loadData: async (context, requestBody) => {
+		loadData: async (context: any, requestBody: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/load`, requestBody);
 			if (response.status != 200) {
@@ -57,7 +59,7 @@ const loader = (mergeData) => {
 			}
 			return response.json();
 		},
-		saveData: async (context, requestBody) => {
+		saveData: async (context: any, requestBody: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/save`, requestBody);
 			if (response.status != 200) {
@@ -66,7 +68,12 @@ const loader = (mergeData) => {
 			}
 			return response.json();
 		},
-		callBot: async (context, namespace, name, params) => {
+		callBot: async (
+			context: any,
+			namespace: string,
+			name: string,
+			params: object
+		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(
 				`${prefix}/bots/call/${namespace}/${name}`,
@@ -78,17 +85,17 @@ const loader = (mergeData) => {
 			}
 			return response.json();
 		},
-		getFileURL: (context, namespace, name) => {
+		getFileURL: (context: any, namespace: string, name: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/files/${namespace}/${name}`;
 		},
-		getUserFileURL: (context, userfileid) => {
+		getUserFileURL: (context: any, userfileid: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid
 			)}`;
 		},
-		deleteUserFile: async (context, userfileid) => {
+		deleteUserFile: async (context: any, userfileid: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const url = `${prefix}/userfiles/delete?userfileid=${encodeURIComponent(
 				userfileid
@@ -99,13 +106,13 @@ const loader = (mergeData) => {
 			return response.text();
 		},
 		uploadFile: async (
-			context,
-			fileData,
-			name,
-			fileCollection,
-			collectionID,
-			recordID,
-			fieldID
+			context: any,
+			fileData: any,
+			name: any,
+			fileCollection: any,
+			collectionID: any,
+			recordID: any,
+			fieldID: any
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const url = `${prefix}/userfiles/upload`;
@@ -126,15 +133,28 @@ const loader = (mergeData) => {
 
 			return response.text();
 		},
-		getComponentPackURL: (context, namespace, name, buildMode) => {
+
+		getComponentPackURL: (
+			context: any,
+			namespace: string,
+			name: string,
+			buildMode: boolean
+		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const buildModeSuffix = buildMode ? '/builder' : '';
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`;
 		},
+
 		getBuilderCoreURL: () => {
 			return '/static/buildtime/uesiobuildtime.js';
 		},
-		getMetadataList: async (context, metadataType, namespace, grouping) => {
+
+		getMetadataList: async (
+			context: any,
+			metadataType: string,
+			namespace: string,
+			grouping: string
+		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const mdTypeMap = {
 				COLLECTION: 'collections',
@@ -143,6 +163,7 @@ const loader = (mergeData) => {
 				DATASOURCE: 'datasources',
 				SECRET: 'secrets',
 			};
+			// @ts-ignore
 			const mdType = mdTypeMap[metadataType];
 			const groupingUrl = grouping ? `/${grouping}` : '';
 			const response = await fetch(
@@ -150,15 +171,18 @@ const loader = (mergeData) => {
 			);
 			return response.json();
 		},
-		getAvailableNamespaces: async (context) => {
+
+		getAvailableNamespaces: async (context: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await fetch(`${prefix}/metadata/namespaces`);
 			return response.json();
 		},
-		login: async (requestBody) => {
+
+		login: async (requestBody: object) => {
 			const response = await postJSON('/site/auth/login', requestBody);
 			return response.json();
 		},
+
 		logout: async () => {
 			const response = await postJSON('/site/auth/logout', {});
 			return response.json();
