@@ -8,12 +8,5 @@
 		"strict": true,
 		"target": "es2019"
 	},
-	"include": ["src/**/*"],
-	"references": [
-		{
-			"path": {
-				"@uesio/constants": "../../../libs/constants/src/index.ts"
-			}
-		}
-	]
+	"include": ["src/**/*"]
 }

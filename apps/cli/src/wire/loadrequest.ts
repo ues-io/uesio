@@ -1,3 +1,4 @@
+// @ts-ignore
 import { wire } from "@uesio/constants"
 
 type LoadRequest = {
