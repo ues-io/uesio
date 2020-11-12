@@ -120,7 +120,11 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (b *Bot) GetKey() string {
-	return b.CollectionRef + "." + GetBotTypes()[b.Type] + "." + b.Namespace + "." + b.Name
+	botType := GetBotTypes()[b.Type]
+	if b.Type == "LISTENER" {
+		return botType + "." + b.Namespace + "." + b.Name
+	}
+	return b.CollectionRef + "." + botType + "." + b.Namespace + "." + b.Name
 }
 
 // GetPermChecker function

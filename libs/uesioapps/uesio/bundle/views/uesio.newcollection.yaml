@@ -103,10 +103,14 @@ definition:
                                 variant: "contained"
                                 text: "Save"
                                 signals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
-                                      - "collections"
+                                  - signal: "CALL"
+                                    band: "bot"
+                                    bot: "uesio.newcollection"
+                                    params:
+                                      name: ${uesio.name}
+                                      datasource: ${uesio.datasource}
+                                      workspace: $Param{workspacename}
+                                      app: $Param{appname}
                                   - signal: "NAVIGATE"
                                     band: "platform"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"

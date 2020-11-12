@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,9 +21,18 @@ func CallBot(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
+	var params map[string]string
+	err := json.NewDecoder(r.Body).Decode(&params)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
 	session := middlewares.GetSession(r)
 
-	err := datasource.CallBot(namespace, name, session)
+	err = datasource.CallBot(namespace, name, params, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

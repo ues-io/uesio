@@ -28,7 +28,18 @@ class BotBand {
 						platform: Platform
 					): DispatchReturn => {
 						const [namespace, name] = parseKey(signal.bot)
-						await platform.callBot(context, namespace, name, {})
+						// Merge the parameters
+						const params =
+							signal.params &&
+							Object.fromEntries(
+								Object.entries(signal.params).map((entries) => {
+									return [
+										entries[0],
+										context.merge(entries[1]),
+									]
+								})
+							)
+						await platform.callBot(context, namespace, name, params)
 
 						return context
 					}
