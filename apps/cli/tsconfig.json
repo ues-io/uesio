@@ -5,11 +5,7 @@
 		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
 		"strict": true,
-		"target": "es2019",
-		"baseUrl": ".",
-		"paths": {
-			"@uesio/constants": ["../../libs/constants/src"]
-		}
+		"target": "es2019"
 	},
 	"include": ["src/**/*"]
 }
