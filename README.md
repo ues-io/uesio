@@ -6,11 +6,20 @@ Uesio is a low-code application development platform.
 
 ## Monorepo architecture
 
-The present monorepo hosts several standalone `applications` which in turn can reuse code lying in the `libs` folder.
+The present monorepo hosts several standalone `applications`, such as the `cli`.
+
+Sandalone libs are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
+`nx` has the particularity of having one single `pacakge.json` for the whole monorepo.
 
 The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
+
+For scaffolding a new lib, you can run the following script.
+
+```
+nx g @nrwl/workspace:library NEW_LIB
+```
 
 ## Set up dev environment
 
@@ -25,7 +34,7 @@ The `workspace.json` file holds the configuration on how each application and li
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
 
 - git clone repo (ssh method is prefered)
-- Download the npm module dependencies
+- Download and install the npm module dependencies :
 
 ```
   npm install
@@ -64,13 +73,13 @@ The `workspace.json` file holds the configuration on how each application and li
 
 A standalone application within the monorepo is in charge of the building process, namely the `cli`. This `cli` is called under the hood by `nx`.
 
-1. Build all applications. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
+- Build **all applications and libs**. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
 npm run build-all
 ```
 
-2. Build a dedicated app (without watcher and without source map)
+- Build a **dedicated app** (without watcher and without source map)
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
@@ -88,10 +97,9 @@ or (if you have `nx` install globally)
 nx run uesioapps-crm:build
 ```
 
-3. Build a dedicated app with watcher and source map
+- Build a **dedicated app** with **watcher** and **source map**
 
-On the frontend, the `source map` is enabled in webpack in `dev` mode. As an example,
-while developping you might want to rebuilt on saving with the source map in the browser :
+On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuilt on saving with the source map in the browser :
 
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
@@ -99,7 +107,7 @@ cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 
 ## Uesio apps deployment
 
-**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is under the `libs` folder.
+**Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
 
 For plugging such an application into uesio, you have to deploy it obviously after having built it. This deployment process is done by the `cli`.
 
@@ -232,12 +240,6 @@ docker start CONTAINER_NAME
 
 ```
 docker rm -f CONTAINER_NAME
-```
-
-## Create a new project inside the monorepo
-
-```
-nx g @nrwl/workspace:library MY_PROJECT
 ```
 
 ## Connecting to a real Firestore instance
