@@ -2,15 +2,10 @@ var path = require('path');
 
 module.exports = {
 	mode: 'production',
-	optimization: {
-		minimize: false,
-	},
 	entry: './platform/platform.ts',
 	output: {
 		path: path.resolve(__dirname, './platform'),
 		filename: 'platform.js',
-		library: 'THOMAS',
-		libraryTarget: 'var',
 	},
 	resolve: {
 		// Add ".ts" and ".tsx" as resolvable extensions.

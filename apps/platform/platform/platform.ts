@@ -1,4 +1,3 @@
-// @ts-ignore
 import { metadata } from '@uesio/constants';
 
 const getPrefix = (workspace?: { app: string; name: string }) => {
@@ -26,7 +25,8 @@ if (global === undefined) {
 	var global = window;
 }
 
-const loader = (mergeData: any) => {
+// accessible outside the generated webpack module
+(window as any).UesioSSRLoadervar = (mergeData: any) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
 		getView: async (context: any, namespace: string, name: string) => {
