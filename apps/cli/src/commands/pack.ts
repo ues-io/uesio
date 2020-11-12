@@ -6,7 +6,6 @@ import {
 	getWebpackComplete,
 } from "../pack/pack"
 import * as webpack from "webpack"
-import { metadata } from "../../../../libs/constants/src/index"
 
 export default class Pack extends Command {
 	static description = "pack components"
@@ -22,7 +21,6 @@ export default class Pack extends Command {
 		const { flags } = this.parse(Pack)
 
 		console.log("Packing...")
-		console.log("thomas", metadata.METADATA)
 		const entries = await createEntryFiles()
 		if (!Object.keys(entries).length) {
 			console.log("Nothing to pack.")

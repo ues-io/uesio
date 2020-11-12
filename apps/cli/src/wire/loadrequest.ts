@@ -1,5 +1,6 @@
-import { wire } from "@uesio/constants"
+import { wire, metadata } from "../../../../libs/constants/src/index"
 
+console.log("thomas share loadrequest", metadata.METADATA)
 type LoadRequest = {
 	wire: string
 	type: wire.WireType
