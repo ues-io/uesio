@@ -19,7 +19,7 @@ const postJSON = (url: string, body: object) => {
 (window as any).monacoPublicPath = '/static/lazymonaco/';
 
 // UesioSSRLoadervar is accessible outside the generated webpack bundle
-(window as any).UesioSSRLoadervar = (mergeData: any) => {
+(window as any).UesioSSRLoadervar = (mergeData: object) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
 		getView: async (context: any, namespace: string, name: string) => {
@@ -31,7 +31,7 @@ const postJSON = (url: string, body: object) => {
 			return response.text();
 		},
 
-		saveViews: async (context: any, saveRequest: any) => {
+		saveViews: async (context: any, saveRequest: object) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/views/save`, saveRequest);
 			if (response.status != 200) {
@@ -49,7 +49,7 @@ const postJSON = (url: string, body: object) => {
 			return response.json();
 		},
 
-		loadData: async (context: any, requestBody: any) => {
+		loadData: async (context: any, requestBody: object) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/load`, requestBody);
 			if (response.status != 200) {
@@ -59,7 +59,7 @@ const postJSON = (url: string, body: object) => {
 			return response.json();
 		},
 
-		saveData: async (context: any, requestBody: any) => {
+		saveData: async (context: any, requestBody: object) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/save`, requestBody);
 			if (response.status != 200) {
@@ -93,6 +93,8 @@ const postJSON = (url: string, body: object) => {
 		},
 
 		getUserFileURL: (context: any, userfileid: string) => {
+			console.log('userfileid', userfileid);
+			console.log('type', typeof userfileid);
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid
@@ -104,20 +106,18 @@ const postJSON = (url: string, body: object) => {
 			const url = `${prefix}/userfiles/delete?userfileid=${encodeURIComponent(
 				userfileid
 			)}`;
-			const response = await fetch(url, {
-				method: 'POST',
-			});
+			const response = await fetch(url, { method: 'POST' });
 			return response.text();
 		},
 
 		uploadFile: async (
 			context: any,
 			fileData: any,
-			name: any,
-			fileCollection: any,
-			collectionID: any,
-			recordID: any,
-			fieldID: any
+			name: string,
+			fileCollection: string,
+			collectionID: string,
+			recordID: string,
+			fieldID: string
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const url = `${prefix}/userfiles/upload`;
@@ -156,13 +156,13 @@ const postJSON = (url: string, body: object) => {
 
 		getMetadataList: async (
 			context: any,
-			metadataType: string,
+			metadataType: metadata.MetadataType,
 			namespace: string,
 			grouping: string
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
-			const mdTypeMap = metadata.METADATA;
-			const mdType = mdTypeMap[metadataType];
+
+			const mdType = metadata.METADATA[metadataType];
 			const groupingUrl = grouping ? `/${grouping}` : '';
 			const response = await fetch(
 				`${prefix}/metadata/types/${mdType}/namespace/${namespace}/list${groupingUrl}`
