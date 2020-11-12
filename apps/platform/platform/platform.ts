@@ -18,13 +18,6 @@ const postJSON = (url: string, body: object) => {
 
 (window as any).monacoPublicPath = '/static/lazymonaco/';
 
-// This is a really dumb thing that I had to do to get the aws-amplify sdk to work :(
-
-// @ts-ignore
-if (global === undefined) {
-	var global = window;
-}
-
 // accessible outside the generated webpack module
 (window as any).UesioSSRLoadervar = (mergeData: any) => {
 	// @ts-ignore

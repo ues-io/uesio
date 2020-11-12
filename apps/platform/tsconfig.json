@@ -3,9 +3,7 @@
     "outDir": "./platform",
     "target": "esnext",
     "module": "commonjs",
-    "strict": true,
-    "esModuleInterop": false,
-    "sourceMap": false
+    "strict": true
   },
   "files": ["./platform/platform.ts"],
   "include": ["./platform/platform.ts"],
