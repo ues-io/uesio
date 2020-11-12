@@ -55,14 +55,14 @@ module.exports = {
 		libraryTarget: "umd",
 		filename: "[name].js",
 		chunkFilename: "[name].js",
-    sourceMapFilename: "[name].js.map",
-    path: path.join(__dirname, "../../dist/lazymonaco")
+		sourceMapFilename: "[name].js.map",
+		path: path.join(__dirname, "../../dist/lazymonaco"),
 	},
 
 	plugins: [
 		new MonacoWebpackPlugin({
 			// available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
-			languages: ["yaml"],
+			languages: ["yaml", "json", "javascript"],
 		}),
 		//new BundleAnalyzerPlugin(),
 	],

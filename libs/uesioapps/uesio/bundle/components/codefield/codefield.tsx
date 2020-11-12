@@ -2,13 +2,14 @@ import React, { ReactElement } from "react"
 import { definition, material } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
-type YamlFieldDefinition = {
+type CodeFieldDefinition = {
 	fieldId: string
 	height: string
+	language?: "yaml" | "json" | "javascript"
 }
 
 interface Props extends definition.BaseProps {
-	definition: YamlFieldDefinition
+	definition: CodeFieldDefinition
 }
 
 const useStyles = material.makeStyles((theme) =>
@@ -24,7 +25,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function YamlField(props: Props): ReactElement | null {
+function CodeField(props: Props): ReactElement | null {
 	const classes = useStyles(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
@@ -53,6 +54,7 @@ function YamlField(props: Props): ReactElement | null {
 				<LazyMonaco
 					{...{
 						value: value as string,
+						language: props.definition.language as string,
 						onChange: (newValue /*, event*/): void => {
 							record.update(fieldId, newValue)
 						},
@@ -63,4 +65,4 @@ function YamlField(props: Props): ReactElement | null {
 	)
 }
 
-export default YamlField
+export default CodeField

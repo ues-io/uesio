@@ -167,12 +167,14 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-                                  - uesio.yamlfield:
+                                  - uesio.codefield:
                                       fieldId: uesio.definition
                                       height: 350px
-                                  - uesio.yamlfield:
+                                      language: "yaml"
+                                  - uesio.codefield:
                                       fieldId: uesio.dependencies
                                       height: 150px
+                                      language: "yaml"
 dependencies:
   componentpacks:
     material.main:
