@@ -13,9 +13,8 @@ import (
 func Save(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
-	decoder := json.NewDecoder(r.Body)
 	var saveRequestBatch datasource.SaveRequestBatch
-	err := decoder.Decode(&saveRequestBatch)
+	err := json.NewDecoder(r.Body).Decode(&saveRequestBatch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.Log(msg, logger.ERROR)

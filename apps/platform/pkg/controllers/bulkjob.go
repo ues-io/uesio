@@ -18,9 +18,8 @@ type JobResponse struct {
 // BulkJob is good
 func BulkJob(w http.ResponseWriter, r *http.Request) {
 	// 1. Parse the request object.
-	decoder := json.NewDecoder(r.Body)
 	var spec metadata.JobSpec
-	err := decoder.Decode(&spec)
+	err := json.NewDecoder(r.Body).Decode(&spec)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

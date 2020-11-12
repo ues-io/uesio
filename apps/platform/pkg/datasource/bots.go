@@ -117,7 +117,7 @@ func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, co
 }
 
 // CallBot function
-func CallBot(namespace, name string, session *sess.Session) error {
+func CallBot(namespace, name string, params map[string]string, session *sess.Session) error {
 	robot, err := metadata.NewBot("listener." + namespace + "." + name)
 	if err != nil {
 		return err
@@ -130,6 +130,9 @@ func CallBot(namespace, name string, session *sess.Session) error {
 
 	botAPI := &CallBotAPI{
 		session: session,
+		Params: &ParamsAPI{
+			params: params,
+		},
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)

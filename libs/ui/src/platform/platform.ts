@@ -57,7 +57,7 @@ interface Platform {
 		context: Context,
 		namespace: string,
 		name: string,
-		params: BotParams
+		params?: BotParams
 	): Promise<BotResponse>
 	getFileURL(context: Context, namespace: string, name: string): string
 	getUserFileURL(context: Context, userfileid: string): string
