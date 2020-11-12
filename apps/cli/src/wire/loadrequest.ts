@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { wire } from "../../../../libs/constants/src/index"
 
 type LoadRequest = {

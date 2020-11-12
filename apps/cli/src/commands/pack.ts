@@ -21,7 +21,6 @@ export default class Pack extends Command {
 		const { flags } = this.parse(Pack)
 
 		console.log("Packing...")
-		console.log("Command", Command.length)
 		const entries = await createEntryFiles()
 		if (!Object.keys(entries).length) {
 			console.log("Nothing to pack.")
