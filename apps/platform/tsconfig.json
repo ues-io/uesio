@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "./platform",
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true
+  },
+  "files": ["./platform/platform.ts"],
+  "include": ["./platform/platform.ts"],
+  "exclude": []
+}
