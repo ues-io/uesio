@@ -30,6 +30,7 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.text();
 		},
+
 		saveViews: async (context: any, saveRequest: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/views/save`, saveRequest);
@@ -38,6 +39,7 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.json();
 		},
+
 		getRoute: async (context: any, namespace: string, route: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await fetch(`${prefix}/routes/${namespace}/${route}`);
@@ -46,6 +48,7 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.json();
 		},
+
 		loadData: async (context: any, requestBody: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/load`, requestBody);
@@ -55,6 +58,7 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.json();
 		},
+
 		saveData: async (context: any, requestBody: any) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/wires/save`, requestBody);
@@ -64,6 +68,7 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.json();
 		},
+
 		callBot: async (
 			context: any,
 			namespace: string,
@@ -81,16 +86,19 @@ const postJSON = (url: string, body: object) => {
 			}
 			return response.json();
 		},
+
 		getFileURL: (context: any, namespace: string, name: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/files/${namespace}/${name}`;
 		},
+
 		getUserFileURL: (context: any, userfileid: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid
 			)}`;
 		},
+
 		deleteUserFile: async (context: any, userfileid: string) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const url = `${prefix}/userfiles/delete?userfileid=${encodeURIComponent(
@@ -101,6 +109,7 @@ const postJSON = (url: string, body: object) => {
 			});
 			return response.text();
 		},
+
 		uploadFile: async (
 			context: any,
 			fileData: any,
