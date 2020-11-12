@@ -18,6 +18,9 @@ const postJSON = (url: string, body: object) => {
 
 (window as any).monacoPublicPath = '/static/lazymonaco/';
 
+// aws-sdk requires global to exist
+(window as any).global = window;
+
 // UesioSSRLoadervar is accessible outside the generated webpack bundle
 (window as any).UesioSSRLoadervar = (mergeData: object) => {
 	// @ts-ignore
@@ -115,9 +118,9 @@ const postJSON = (url: string, body: object) => {
 			fileData: any,
 			name: string,
 			fileCollection: string,
-			collectionID: string,
-			recordID: string,
-			fieldID: string
+			collectionID: any,
+			recordID: any,
+			fieldID: any
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const url = `${prefix}/userfiles/upload`;
@@ -150,9 +153,7 @@ const postJSON = (url: string, body: object) => {
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`;
 		},
 
-		getBuilderCoreURL: () => {
-			return '/static/buildtime/uesiobuildtime.js';
-		},
+		getBuilderCoreURL: () => '/static/buildtime/uesiobuildtime.js',
 
 		getMetadataList: async (
 			context: any,
@@ -161,7 +162,6 @@ const postJSON = (url: string, body: object) => {
 			grouping: string
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
-
 			const mdType = metadata.METADATA[metadataType];
 			const groupingUrl = grouping ? `/${grouping}` : '';
 			const response = await fetch(
