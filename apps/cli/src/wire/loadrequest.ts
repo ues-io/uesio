@@ -1,6 +1,5 @@
-import { wire, metadata } from "../../../../libs/constants/src/index"
+import { wire } from "../../../../libs/constants/src/index"
 
-console.log("thomas share loadrequest", metadata.METADATA)
 type LoadRequest = {
 	wire: string
 	type: wire.WireType

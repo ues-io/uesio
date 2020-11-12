@@ -4,12 +4,9 @@
 		"importHelpers": true,
 		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
+		"rootDir": "src",
 		"strict": true,
-		"target": "es2019",
-		"baseUrl": ".",
-		"paths": {
-			"@uesio/constants": ["../../libs/constants/src/index.ts"]
-		}
+		"target": "es2019"
 	},
 	"include": ["src/**/*"]
 }
