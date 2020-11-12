@@ -18,7 +18,7 @@ const postJSON = (url: string, body: object) => {
 
 (window as any).monacoPublicPath = '/static/lazymonaco/';
 
-// accessible outside the generated webpack module
+// UesioSSRLoadervar is accessible outside the generated webpack bundle
 (window as any).UesioSSRLoadervar = (mergeData: any) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
@@ -153,7 +153,6 @@ const postJSON = (url: string, body: object) => {
 		) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const mdTypeMap = metadata.METADATA;
-			// @ts-ignore
 			const mdType = mdTypeMap[metadataType];
 			const groupingUrl = grouping ? `/${grouping}` : '';
 			const response = await fetch(
