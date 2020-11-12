@@ -13,12 +13,16 @@ import {
 	EditorDidMount,
 } from "react-monaco-editor"
 
-const LaziestMonaco = lazy(() =>
-	import(/* webpackChunkName: "react-monaco-editor" */ "react-monaco-editor")
+const LaziestMonaco = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "react-monaco-editor" */ "react-monaco-editor"
+		)
 )
 
 type Props = {
 	value?: string
+	language?: string
 	onChange?: ChangeHandler
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
@@ -30,7 +34,7 @@ const LazyMonaco: FC<Props> = (props) => {
 			<LaziestMonaco
 				{...{
 					value: props?.value,
-					language: "yaml",
+					language: props?.language || "yaml",
 					options: {
 						automaticLayout: true,
 						minimap: {
