@@ -1,5 +1,5 @@
 // @ts-ignore
-import { metadata } from '../../../dist/constants/libs/constants/src';
+import { metadata } from '@uesio/constants';
 
 const getPrefix = (workspace?: { app: string; name: string }) => {
 	return workspace ? `/workspace/${workspace.app}/${workspace.name}` : '/site';

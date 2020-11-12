@@ -1,16 +1,11 @@
 {
   "compilerOptions": {
     "outDir": "./platform",
-    "target": "es2019",
+    "target": "esnext",
     "module": "commonjs",
-    "esModuleInterop": true,
     "strict": true,
-    "sourceMap": true,
-    "lib": ["es2019", "dom"],
-    "baseUrl": ".",
-    "paths": {
-      "@uesio/constants": ["../../libs/constants/src"]
-    }
+    "esModuleInterop": false,
+    "sourceMap": false
   },
   "files": ["./platform/platform.ts"],
   "include": ["./platform/platform.ts"],
