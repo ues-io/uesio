@@ -1,8 +1,9 @@
-type WireType = "CREATE" | "QUERY"
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { wire } from "../../../../libs/constants/src/index"
 
 type LoadRequest = {
 	wire: string
-	type: WireType
+	type: wire.WireType
 	collection: string
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
