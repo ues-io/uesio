@@ -4,7 +4,7 @@ const getPrefix = (workspace?: { app: string; name: string }) => {
 	return workspace ? `/workspace/${workspace.app}/${workspace.name}` : '/site';
 };
 
-const postJSON = (url: string, body: object) => {
+const postJSON = (url: string, body?: object) => {
 	return fetch(url, {
 		method: 'POST',
 		headers: {
@@ -182,7 +182,7 @@ const postJSON = (url: string, body: object) => {
 		},
 
 		logout: async () => {
-			const response = await postJSON('/site/auth/logout', {});
+			const response = await postJSON('/site/auth/logout');
 			return response.json();
 		},
 	}).load(document.querySelector('#root'), mergeData);
