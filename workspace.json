@@ -343,7 +343,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/constants/**/*.ts"]
+            "lintFilePatterns": ["libs/constants/**/*.ts*"]
           }
         },
         "test": {
