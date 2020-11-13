@@ -253,3 +253,26 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+
+## Code style
+
+Our code styling is embeded in various `eslint` rules.
+
+We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
+
+[Prettier](https://prettier.io/) is used for **formatting** our source code.
+
+## Stack backend-side
+
+- [Cobra](https://github.com/spf13/cobra). CLI for go application.
+- [gorilla/mux](https://github.com/gorilla/mux). Web framework in go.
+- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the go web server.
+
+## Stack frontend-side
+
+- [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
+- [webpack](https://webpack.js.org/). Merge code source into on single static file.
+- [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
+- [React](https://reactjs.org/). Library for making UI elements.
+- [Redux](https://redux.js.org/). State mangement system for web application.
+- [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
