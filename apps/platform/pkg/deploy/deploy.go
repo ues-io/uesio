@@ -4,8 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"errors"
-	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -40,10 +38,8 @@ func Deploy(body []byte, session *sess.Session) error {
 
 	dep := map[string]metadata.BundleableGroup{}
 
-	fileStreams := map[string]io.ReadCloser{}
+	fileStreams := []reqs.ReadItemStream{}
 	fileNameMap := map[string]string{}
-	botStreams := map[string]io.ReadCloser{}
-	botNameMap := map[string]string{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -84,22 +80,17 @@ func Deploy(body []byte, session *sess.Session) error {
 		extension := filepath.Ext(fileName)
 		base := filepath.Base(fileName)
 
-		// Special handling for files
-		if metadataType == "files" && extension != ".yaml" && extension != "" {
+		// Special handling for files and bots
+		if (metadataType == "files" || metadataType == "bots") && extension != ".yaml" && extension != "" {
 			f, err := zipFile.Open()
 			if err != nil {
 				return err
 			}
-			fileStreams[base] = f
-		}
-
-		// Special handling for bots
-		if metadataType == "bots" && extension != ".yaml" && extension != "" {
-			f, err := zipFile.Open()
-			if err != nil {
-				return err
-			}
-			botStreams[base] = f
+			fileStreams = append(fileStreams, reqs.ReadItemStream{
+				Type:     metadataType,
+				FileName: base,
+				Data:     f,
+			})
 		}
 
 		if extension != ".yaml" {
@@ -134,45 +125,17 @@ func Deploy(body []byte, session *sess.Session) error {
 		// Special handling for files
 		if metadataType == "files" {
 			file := collectionItem.(*metadata.File)
-			fileNameMap[file.FileName] = file.Name
+			fileNameMap[metadataType+":"+file.FileName] = file.GetKey()
 		}
 
 		// Special handling for bots
 		if metadataType == "bots" {
 			bot := collectionItem.(*metadata.Bot)
-			botNameMap[bot.FileName] = bot.GetKey()
+			fileNameMap[metadataType+":"+bot.FileName] = bot.GetKey()
 		}
 
 		collectionItem.SetWorkspace(workspace)
 		collection.AddItem(collectionItem)
-
-	}
-
-	// Read the botstreams
-	for botName, botStream := range botStreams {
-		defer botStream.Close()
-
-		key, ok := botNameMap[botName]
-		if !ok {
-			continue
-		}
-
-		b, err := ioutil.ReadAll(botStream)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		bots := dep["bots"]
-
-		// Loop over the bots and add their code
-		length := reflect.Indirect(reflect.ValueOf(bots)).Len()
-
-		for i := 0; i < length; i++ {
-			bot := bots.GetItem(i).(*metadata.Bot)
-			if bot.GetKey() == key {
-				bot.FileContents = string(b)
-			}
-		}
 
 	}
 
@@ -194,23 +157,42 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 
 	// Read the filestreams
-	for fileName, fileStream := range fileStreams {
-		defer fileStream.Close()
+	for _, fileStream := range fileStreams {
+		defer fileStream.Data.Close()
 
-		name, ok := fileNameMap[fileName]
+		var recordID string
+
+		itemKey, ok := fileNameMap[fileStream.Type+":"+fileStream.FileName]
 		if !ok {
 			continue
 		}
+		// Special handling for files
+		if fileStream.Type == "files" {
+			file, err := metadata.NewFile(itemKey)
+			if err != nil {
+				return err
+			}
+			recordID = file.Name
+		}
+
+		// Special handling for bots
+		if fileStream.Type == "bots" {
+			bot, err := metadata.NewBot(itemKey)
+			if err != nil {
+				return err
+			}
+			recordID = bot.CollectionRef + "_" + bot.Type + "_" + bot.Name
+		}
 
 		fileDetails := reqs.FileDetails{
-			Name:             fileName,
-			CollectionID:     "uesio.files",
-			RecordID:         session.GetWorkspaceID() + "_" + name,
+			Name:             fileStream.FileName,
+			CollectionID:     "uesio." + fileStream.Type,
+			RecordID:         session.GetWorkspaceID() + "_" + recordID,
 			FieldID:          "uesio.content",
 			FileCollectionID: "uesio.workspacemetadatafiles",
 		}
 
-		_, err := filesource.Upload(fileStream, fileDetails, session.RemoveWorkspaceContext())
+		_, err := filesource.Upload(fileStream.Data, fileDetails, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err
 		}

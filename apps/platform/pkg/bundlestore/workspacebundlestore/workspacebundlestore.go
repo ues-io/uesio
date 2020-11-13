@@ -110,13 +110,19 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 }
 
 // GetFileStream function
-func (b *WorkspaceBundleStore) GetFileStream(namespace, version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
 	return filesource.Download(file.Content, session)
 }
 
 // GetComponentPackStream function
-func (b *WorkspaceBundleStore) GetComponentPackStream(namespace, version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	return nil, nil
+}
+
+// GetBotStream function
+func (b *WorkspaceBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
+	stream, _, err := filesource.Download(bot.Content, session)
+	return stream, err
 }
 
 // StoreItems function

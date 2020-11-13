@@ -23,12 +23,17 @@ func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace
 }
 
 // GetFileStream function
-func (b *PlatformBundleStore) GetFileStream(namespace, version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+func (b *PlatformBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
 	return nil, "", nil
 }
 
 // GetComponentPackStream function
-func (b *PlatformBundleStore) GetComponentPackStream(namespace, version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+	return nil, nil
+}
+
+// GetBotStream function
+func (b *PlatformBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return nil, nil
 }
 

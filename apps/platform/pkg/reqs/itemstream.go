@@ -7,8 +7,16 @@ import (
 
 // ItemStream struct
 type ItemStream struct {
-	Path   string
-	Buffer bytes.Buffer
+	Type     string
+	FileName string
+	Buffer   bytes.Buffer
+}
+
+// ReadItemStream struct
+type ReadItemStream struct {
+	Type     string
+	FileName string
+	Data     io.ReadCloser
 }
 
 // ItemResponse struct

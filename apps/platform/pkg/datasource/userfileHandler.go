@@ -93,7 +93,7 @@ func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMe
 	}
 
 	if len(userfiles) == 0 {
-		return nil, errors.New("No Userfile found")
+		return nil, errors.New("No Userfile found: " + userFileID)
 	}
 
 	return &userfiles[0], nil

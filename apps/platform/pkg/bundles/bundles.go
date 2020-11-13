@@ -2,34 +2,26 @@ package bundles
 
 import (
 	"errors"
-	"os"
+	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
-// LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, conditions reqs.BundleConditions, session *sess.Session) error {
-	version, err := GetVersion(namespace, session)
-	if err != nil {
-		return errors.New("Failed to LoadAllSite Metadata Item: " + namespace + " - " + err.Error())
+func getAppLicense(app, appToCheck string) (*metadata.AppLicense, error) {
+	for _, av := range metadata.DefaultAppLicenses {
+		if av.AppRef == app && av.LicensedAppRef == appToCheck {
+			return &av, nil
+		}
 	}
-
-	bs, err := bundlestore.GetBundleStore(namespace, session)
-	if err != nil {
-		return err
-	}
-
-	return bs.GetItems(group, namespace, version, conditions, session)
+	return nil, nil
 }
 
-// GetAppBundle key
-func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
+func getAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -53,8 +45,7 @@ func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
 	return bundleyaml, nil
 }
 
-// GetVersion function
-func GetVersion(namespace string, session *sess.Session) (string, error) {
+func getVersion(namespace string, session *sess.Session) (string, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -65,7 +56,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 	}
 
 	// Check to see if we have a license to use this namespace
-	license, err := GetAppLicense(appName, namespace)
+	license, err := getAppLicense(appName, namespace)
 	if err != nil {
 		return "", err
 	}
@@ -74,7 +65,7 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
-	bundle, err := GetAppBundle(session)
+	bundle, err := getAppBundle(session)
 	if err != nil {
 		return "", err
 	}
@@ -91,110 +82,63 @@ func GetVersion(namespace string, session *sess.Session) (string, error) {
 	return depBundle.Version, nil
 }
 
+func getBundleStoreWithVersion(namespace string, session *sess.Session) (string, bundlestore.BundleStore, error) {
+	version, err := getVersion(namespace, session)
+	if err != nil {
+		return "", nil, err
+	}
+	bs, err := bundlestore.GetBundleStore(namespace, session)
+	if err != nil {
+		return "", nil, err
+	}
+	return version, bs, nil
+}
+
+// LoadAll function
+func LoadAll(group metadata.BundleableGroup, namespace string, conditions reqs.BundleConditions, session *sess.Session) error {
+	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	if err != nil {
+		return err
+	}
+	return bs.GetItems(group, namespace, version, conditions, session)
+}
+
 // Load function
 func Load(item metadata.BundleableItem, session *sess.Session) error {
-
 	namespace := item.GetNamespace()
-	key := item.GetKey()
-
-	version, err := GetVersion(namespace, session)
-	if err != nil {
-		return errors.New("Failed to LoadFromSite Metadata Item: " + item.GetCollectionName() + ":" + key + " - " + err.Error())
-	}
-
-	bs, err := bundlestore.GetBundleStore(namespace, session)
+	version, bs, err := getBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return err
 	}
 	return bs.GetItem(item, version, session)
 }
 
-// LoadAndHydrateProfile function
-func LoadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.Profile, error) {
-	profile, err := metadata.NewProfile(profileKey)
+//GetFileStream function
+func GetFileStream(file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+	namespace := file.GetNamespace()
+	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	if err != nil {
+		return nil, "", err
+	}
+	return bs.GetFileStream(version, file, session)
+}
+
+//GetComponentPackStream function
+func GetComponentPackStream(componentPack *metadata.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
+	namespace := componentPack.GetNamespace()
+	version, bs, err := getBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return nil, err
 	}
-	err = Load(profile, session)
-	if err != nil {
-		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
-		return nil, err
-	}
-	// LoadFromSite in the permission sets for this profile
-	for _, permissionSetRef := range profile.PermissionSetRefs {
-
-		permissionSet, err := metadata.NewPermissionSet(permissionSetRef)
-		if err != nil {
-			return nil, err
-		}
-
-		err = Load(permissionSet, session)
-		if err != nil {
-			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
-			return nil, err
-		}
-		profile.PermissionSets = append(profile.PermissionSets, *permissionSet)
-	}
-	return profile, nil
+	return bs.GetComponentPackStream(version, buildMode, componentPack, session)
 }
 
-// GetProfilePermSet function
-func GetProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
-	profileKey, err := getProfileKey(session)
+//GetBotStream function
+func GetBotStream(bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
+	namespace := bot.GetNamespace()
+	version, bs, err := getBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return nil, err
 	}
-	profile, err := LoadAndHydrateProfile(profileKey, session)
-	if err != nil {
-		return nil, err
-	}
-
-	return profile.FlattenPermissions(), nil
-}
-
-// getProfileKey function
-func getProfileKey(session *sess.Session) (string, error) {
-	profile := session.GetProfile()
-	if profile == "" {
-		return "", errors.New("No profile found in session")
-	}
-	return profile, nil
-}
-
-// GetFileListFromCache function
-func GetFileListFromCache(namespace string, version string, objectName string) ([]string, bool) {
-	if os.Getenv("GAE_ENV") == "" {
-		// For Local dev, don't use the cache so we can make lots of changes all the time
-		return nil, false
-	}
-
-	files, ok := localcache.GetCacheEntry("file-list", namespace+version+objectName)
-	if ok {
-		return files.([]string), ok
-	}
-	return nil, false
-}
-
-// AddFileListToCache function
-func AddFileListToCache(namespace string, version string, objectName string, files []string) {
-	localcache.SetCacheEntry("file-list", namespace+version+objectName, files)
-}
-
-// GetItemFromCache function
-func GetItemFromCache(namespace, version, bundleGroupName, name string) (metadata.BundleableItem, bool) {
-	// If we're not in app engine, do not use the cache
-	if os.Getenv("GAE_ENV") == "" {
-		// For Local dev, don't use the cache so we can make lots of changes all the time
-		return nil, false
-	}
-	entry, ok := localcache.GetCacheEntry("bundle-entry", namespace+version+bundleGroupName+name)
-	if ok {
-		return entry.(metadata.BundleableItem), ok
-	}
-	return nil, ok
-}
-
-// AddItemToCache function
-func AddItemToCache(item metadata.BundleableItem, namespace, version string) {
-	localcache.SetCacheEntry("bundle-entry", namespace+version+item.GetCollectionName()+item.GetKey(), item)
+	return bs.GetBotStream(version, bot, session)
 }

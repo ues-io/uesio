@@ -38,7 +38,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 			key := item.GetKey()
 
 			itemStream := reqs.ItemStream{
-				Path: filepath.Join(metadataType, key+".yaml"),
+				FileName: key + ".yaml",
+				Type:     metadataType,
 			}
 
 			err = yaml.NewEncoder(&itemStream.Buffer).Encode(item)
@@ -62,7 +63,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 
 func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 	itemStream := reqs.ItemStream{
-		Path: "bundle.yaml",
+		FileName: "bundle.yaml",
+		Type:     "",
 	}
 
 	bundleStore, err := bundlestore.GetBundleStore(session.GetWorkspaceApp(), session)
@@ -94,7 +96,7 @@ func Zip(writer io.Writer, session *sess.Session) error {
 	}
 
 	for _, itemStream := range itemStreams {
-		f, err := zipWriter.Create(itemStream.Path)
+		f, err := zipWriter.Create(filepath.Join(itemStream.Type, itemStream.FileName))
 		if err != nil {
 			return err
 		}

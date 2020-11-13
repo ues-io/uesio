@@ -1,13 +1,10 @@
 package controllers
 
 import (
-	"errors"
-	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -33,24 +30,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var stream io.ReadCloser
-	var mimeType string
-
-	version, err := bundles.GetVersion(namespace, session)
-	if err != nil {
-		logger.LogError(errors.New("Couldn't get bundle version"))
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	bs, err := bundlestore.GetBundleStore(namespace, session)
-	if err != nil {
-		logger.LogError(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	stream, mimeType, err = bs.GetFileStream(namespace, version, &file, session)
+	stream, mimeType, err := bundles.GetFileStream(&file, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)

@@ -13,6 +13,13 @@
             "cwd": "apps/platform"
           }
         },
+        "build-go": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "go build -o ../../dist/platform/uesio",
+            "cwd": "apps/platform"
+          }
+        },
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
