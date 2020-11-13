@@ -11,7 +11,7 @@ The present monorepo hosts several standalone `applications`, such as the `cli`.
 Sandalone libs are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
-`nx` has the particularity of having one single `pacakge.json` for the whole monorepo.
+`nx` that has the particularity of having one single `pacakge.json` for the whole monorepo.
 
 The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
 
@@ -37,17 +37,17 @@ nx g @nrwl/workspace:library NEW_LIB
 - Download and install the npm module dependencies :
 
 ```
-  npm install
+  npm install && npm run build-all
 ```
 
-- Optional : install [Oh My Zsh](https://ohmyz.sh/)
-- Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- Optional :
+- Optional. Install [Oh My Zsh](https://ohmyz.sh/)
+- Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional. Install the nx cli globally.
   ```
   npm install -g nx
   ```
-- Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
+- Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
 {
@@ -94,7 +94,7 @@ npm run nx -- build uesioapps-crm
 or (if you have `nx` install globally)
 
 ```
-nx run uesioapps-crm:build
+nx build uesioapps-crm
 ```
 
 - Build a **dedicated app** with **watcher** and **source map**
