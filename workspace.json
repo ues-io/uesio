@@ -187,7 +187,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/uesio/**/**/**/*.ts*"]
+            "lintFilePatterns": ["libs/uesioapps/uesio/**/*.ts*"]
           }
         },
         "test": {
