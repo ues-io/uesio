@@ -185,9 +185,10 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/uesio/**/*.ts*"]
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json",
+            "cwd": "libs/uesioapps/uesio"
           }
         },
         "test": {
