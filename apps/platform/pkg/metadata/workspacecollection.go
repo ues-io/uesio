@@ -35,8 +35,8 @@ func (wc *WorkspaceCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (wc *WorkspaceCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *wc {
-		err := iter(&item)
+	for index := range *wc {
+		err := iter(wc.GetItem(index))
 		if err != nil {
 			return err
 		}

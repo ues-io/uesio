@@ -63,8 +63,8 @@ func (rc *RouteCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (rc *RouteCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *rc {
-		err := iter(&item)
+	for index := range *rc {
+		err := iter(rc.GetItem(index))
 		if err != nil {
 			return err
 		}

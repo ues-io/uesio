@@ -35,8 +35,8 @@ func (uc *UserCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (uc *UserCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *uc {
-		err := iter(&item)
+	for index := range *uc {
+		err := iter(uc.GetItem(index))
 		if err != nil {
 			return err
 		}

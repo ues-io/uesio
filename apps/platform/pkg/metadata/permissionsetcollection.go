@@ -47,8 +47,8 @@ func (pc *PermissionSetCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (pc *PermissionSetCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *pc {
-		err := iter(&item)
+	for index := range *pc {
+		err := iter(pc.GetItem(index))
 		if err != nil {
 			return err
 		}

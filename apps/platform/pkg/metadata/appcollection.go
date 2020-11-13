@@ -31,8 +31,8 @@ func (ac *AppCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (ac *AppCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *ac {
-		err := iter(&item)
+	for index := range *ac {
+		err := iter(ac.GetItem(index))
 		if err != nil {
 			return err
 		}

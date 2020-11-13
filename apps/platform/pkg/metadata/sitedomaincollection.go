@@ -31,8 +31,8 @@ func (sdc *SiteDomainCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (sdc *SiteDomainCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *sdc {
-		err := iter(&item)
+	for index := range *sdc {
+		err := iter(sdc.GetItem(index))
 		if err != nil {
 			return err
 		}

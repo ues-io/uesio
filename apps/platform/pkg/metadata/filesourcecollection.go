@@ -47,8 +47,8 @@ func (fsc *FileSourceCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (fsc *FileSourceCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *fsc {
-		err := iter(&item)
+	for index := range *fsc {
+		err := iter(fsc.GetItem(index))
 		if err != nil {
 			return err
 		}

@@ -53,8 +53,8 @@ func (fc *FileCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (fc *FileCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *fc {
-		err := iter(&item)
+	for index := range *fc {
+		err := iter(fc.GetItem(index))
 		if err != nil {
 			return err
 		}

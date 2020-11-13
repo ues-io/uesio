@@ -47,8 +47,8 @@ func (ufcc *UserFileCollectionCollection) GetItem(index int) CollectionableItem 
 
 // Loop function
 func (ufcc *UserFileCollectionCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *ufcc {
-		err := iter(&item)
+	for index := range *ufcc {
+		err := iter(ufcc.GetItem(index))
 		if err != nil {
 			return err
 		}
