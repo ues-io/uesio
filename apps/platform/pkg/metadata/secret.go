@@ -10,8 +10,8 @@ import (
 // Secret struct
 type Secret struct {
 	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"namespace" uesio:"-"`
-	Type      string `yaml:"type" uesio:"uesio.type"`
+	Namespace string `yaml:"-" uesio:"-"`
+	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
 	ManagedBy string `yaml:"managedBy" uesio:"uesio.managedby"`
 	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
 }

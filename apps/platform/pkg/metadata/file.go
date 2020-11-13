@@ -21,9 +21,8 @@ func NewFile(key string) (*File, error) {
 // File struct
 type File struct {
 	Name        string `yaml:"name" uesio:"uesio.name"`
-	Namespace   string `yaml:"namespace" uesio:"-"`
-	Type        string `uesio:"-"`
-	ContentType string `uesio:"-"`
+	Namespace   string `yaml:"-" uesio:"-"`
+	ContentType string `yaml:"contentType" uesio:"-"`
 	Content     string `yaml:"-" uesio:"uesio.content"`
 	FileName    string `yaml:"fileName" uesio:"-"`
 	Workspace   string `yaml:"-" uesio:"uesio.workspaceid"`
