@@ -6,9 +6,9 @@ Uesio is a low-code application development platform.
 
 ## Monorepo architecture
 
-The present monorepo hosts several standalone `applications`, such as the `cli`.
+The present monorepo hosts several standalone **applications**, such as the `cli`.
 
-Sandalone libs are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
+Sandalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` that has the particularity of having one single `package.json` for the whole monorepo.
@@ -71,7 +71,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 ## Build
 
-A standalone application within the monorepo is in charge of the building process, namely the `cli`. This `cli` is called under the hood by `nx`.
+The building process is done either by `webpack`, or our own `cli` or `go build` or the typecsript compiler aka `tsc` depending on the application or library.
 
 - Build **all applications and libs**. Compilation of the Go code (code server-side) and transpilation from TS to JS (code client-side).
 
@@ -99,7 +99,7 @@ nx build uesioapps-crm
 
 - Build a **dedicated app** with **watcher** and **source map**
 
-On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuilt on saving with the source map in the browser :
+On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
