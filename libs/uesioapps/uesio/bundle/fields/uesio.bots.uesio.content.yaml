@@ -1,0 +1,5 @@
+name: content
+collection: uesio.bots
+type: FILE
+label: Content
+propertyName: content

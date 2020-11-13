@@ -1,9 +1,6 @@
 package metadata
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -22,14 +19,7 @@ func (fc *FileCollection) GetFields() []string {
 
 // NewItem function
 func (fc *FileCollection) NewItem(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid File Key: " + key)
-	}
-	return &File{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	}, nil
+	return NewFile(key)
 }
 
 // GetKeyPrefix function

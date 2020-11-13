@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"io/ioutil"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -37,6 +38,19 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
+func hydrateBot(bot *metadata.Bot, session *sess.Session) error {
+	stream, err := bundles.GetBotStream(bot, session)
+	if err != nil {
+		return err
+	}
+	content, err := ioutil.ReadAll(stream)
+	if err != nil {
+		return err
+	}
+	bot.FileContents = string(content)
+	return nil
+}
+
 // RunBeforeSaveBots function
 func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
@@ -58,6 +72,11 @@ func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.C
 	}
 
 	for _, bot := range robots {
+		err := hydrateBot(&bot, session)
+		if err != nil {
+			return err
+		}
+
 		dialect, err := getBotDialect(bot.Dialect)
 		if err != nil {
 			return err
@@ -98,6 +117,11 @@ func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, co
 	}
 
 	for _, bot := range robots {
+		err := hydrateBot(&bot, session)
+		if err != nil {
+			return err
+		}
+
 		dialect, err := getBotDialect(bot.Dialect)
 		if err != nil {
 			return err
@@ -133,6 +157,11 @@ func CallBot(namespace, name string, params map[string]string, session *sess.Ses
 		Params: &ParamsAPI{
 			params: params,
 		},
+	}
+
+	err = hydrateBot(robot, session)
+	if err != nil {
+		return err
 	}
 
 	dialect, err := getBotDialect(robot.Dialect)

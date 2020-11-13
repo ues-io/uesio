@@ -58,7 +58,7 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		permSet, err := bundles.GetProfilePermSet(s)
+		permSet, err := getProfilePermSet(s)
 		if err != nil {
 			http.Error(w, "Failed to load permissions", http.StatusInternalServerError)
 			return
@@ -137,4 +137,45 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		session.SetWorkspace(workspace)
 		next.ServeHTTP(w, r)
 	})
+}
+
+func loadAndHydrateProfile(profileKey string, session *sess.Session) (*metadata.Profile, error) {
+	profile, err := metadata.NewProfile(profileKey)
+	if err != nil {
+		return nil, err
+	}
+	err = bundles.Load(profile, session)
+	if err != nil {
+		logger.Log("Failed Permission Request: "+profileKey+" : "+err.Error(), logger.INFO)
+		return nil, err
+	}
+	// LoadFromSite in the permission sets for this profile
+	for _, permissionSetRef := range profile.PermissionSetRefs {
+
+		permissionSet, err := metadata.NewPermissionSet(permissionSetRef)
+		if err != nil {
+			return nil, err
+		}
+
+		err = bundles.Load(permissionSet, session)
+		if err != nil {
+			logger.Log("Failed Permission Request: "+permissionSetRef+" : "+err.Error(), logger.INFO)
+			return nil, err
+		}
+		profile.PermissionSets = append(profile.PermissionSets, *permissionSet)
+	}
+	return profile, nil
+}
+
+func getProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
+	profileKey := session.GetProfile()
+	if profileKey == "" {
+		return nil, errors.New("No profile found in session")
+	}
+	profile, err := loadAndHydrateProfile(profileKey, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return profile.FlattenPermissions(), nil
 }

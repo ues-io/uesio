@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"io/ioutil"
 	"mime"
 	"os"
 	"path/filepath"
@@ -91,23 +90,7 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 		return err
 	}
 	defer stream.Close()
-	err = bundlestore.DecodeYAML(item, stream)
-
-	// Special handling for bots
-	if item.GetBundleGroup().GetName() == "bots" {
-		bot := item.(*metadata.Bot)
-		botStream, err := getStream(namespace, version, collectionName, bot.FileName)
-		if err != nil {
-			return err
-		}
-		b, err := ioutil.ReadAll(botStream)
-		if err != nil {
-			return err
-		}
-		bot.FileContents = string(b)
-	}
-
-	return err
+	return bundlestore.DecodeYAML(item, stream)
 
 }
 
@@ -145,14 +128,21 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 }
 
 // GetFileStream function
-func (b *LocalBundleStore) GetFileStream(namespace, version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
-	stream, err := getStream(namespace, version, "files", file.FileName)
+func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+	stream, err := getStream(file.GetNamespace(), version, "files", file.FileName)
 	return stream, mime.TypeByExtension(filepath.Ext(file.FileName)), err
 }
 
+// GetBotStream function
+func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
+	stream, err := getStream(bot.GetNamespace(), version, "bots", bot.FileName)
+	return stream, err
+}
+
 // GetComponentPackStream function
-func (b *LocalBundleStore) GetComponentPackStream(namespace, version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	name := componentPack.Name
+	namespace := componentPack.GetNamespace()
 	fileName := namespace + "." + name + ".bundle.js"
 	if buildMode {
 		fileName = namespace + "." + name + ".builder.bundle.js"
@@ -172,7 +162,7 @@ func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStre
 }
 
 func storeItem(namespace string, version string, itemStream reqs.ItemStream) error {
-	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Path)
+	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 	directory := filepath.Dir(fullFilePath)
 
 	err := os.MkdirAll(directory, 0744)

@@ -50,11 +50,12 @@ func newTriggerBot(keyArray []string) (*Bot, error) {
 type Bot struct {
 	Name          string `yaml:"name" uesio:"uesio.name"`
 	CollectionRef string `yaml:"collection" uesio:"uesio.collection"`
-	Namespace     string `yaml:"namespace" uesio:"-"`
+	Namespace     string `yaml:"-" uesio:"-"`
 	Type          string `yaml:"type" uesio:"uesio.type"`
 	Dialect       string `yaml:"dialect" uesio:"uesio.dialect"`
+	Content       string `yaml:"-" uesio:"uesio.content"`
 	FileName      string `yaml:"fileName" uesio:"-"`
-	FileContents  string `yaml:"-" uesio:"uesio.filecontents"`
+	FileContents  string `yaml:"-" uesio:"-"`
 	Workspace     string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 

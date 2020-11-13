@@ -16,7 +16,7 @@ func (bc *BotCollection) GetName() string {
 
 // GetFields function
 func (bc *BotCollection) GetFields() []string {
-	return []string{"id", "name", "collection", "type", "dialect", "filecontents"}
+	return []string{"id", "name", "workspaceid", "collection", "type", "dialect", "content"}
 }
 
 // NewItem function

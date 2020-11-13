@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -70,21 +71,6 @@ func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.
 		session,
 	)
 	return bdc, err
-}
-
-func GetDependencyVersionForWorkspace(namespace string, session *sess.Session) (string, error) {
-	workspaceID := session.GetWorkspaceID()
-	entry, ok := localcache.GetCacheEntry("workspace-dependency", namespace+":"+workspaceID)
-	if ok {
-		return entry.(string), nil
-	}
-	dep, err := getBundleDependencyByName(workspaceID, namespace, session)
-	if err != nil {
-		return "", err
-	}
-	version := dep.BundleVersion
-	localcache.SetCacheEntry("workspace-dependency", namespace+":"+workspaceID, version)
-	return version, nil
 }
 
 // GetBundleDependenciesForWorkspace func

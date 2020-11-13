@@ -1,6 +1,22 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
+)
+
+// NewFile function
+func NewFile(key string) (*File, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for File: " + key)
+	}
+	return &File{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
 
 // File struct
 type File struct {
@@ -8,7 +24,7 @@ type File struct {
 	Namespace   string `yaml:"namespace" uesio:"-"`
 	Type        string `uesio:"-"`
 	ContentType string `uesio:"-"`
-	Content     string `uesio:"uesio.content"`
+	Content     string `yaml:"-" uesio:"uesio.content"`
 	FileName    string `yaml:"fileName" uesio:"-"`
 	Workspace   string `yaml:"-" uesio:"uesio.workspaceid"`
 }
