@@ -11,7 +11,7 @@ The present monorepo hosts several standalone `applications`, such as the `cli`.
 Sandalone libs are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
-`nx` that has the particularity of having one single `pacakge.json` for the whole monorepo.
+`nx` that has the particularity of having one single `package.json` for the whole monorepo.
 
 The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
 
