@@ -11,7 +11,7 @@ The present monorepo hosts several standalone `applications`, such as the `cli`.
 Sandalone libs are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
-`nx` has the particularity of having one single `pacakge.json` for the whole monorepo.
+`nx` that has the particularity of having one single `package.json` for the whole monorepo.
 
 The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
 
@@ -37,17 +37,17 @@ nx g @nrwl/workspace:library NEW_LIB
 - Download and install the npm module dependencies :
 
 ```
-  npm install
+  npm install && npm run build-all
 ```
 
-- Optional : install [Oh My Zsh](https://ohmyz.sh/)
-- Optional : [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- Optional: install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- Optional :
+- Optional. Install [Oh My Zsh](https://ohmyz.sh/)
+- Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
+- Optional. Install the nx cli globally.
   ```
   npm install -g nx
   ```
-- Optional: create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
+- Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
 
 ```
 {
@@ -94,7 +94,7 @@ npm run nx -- build uesioapps-crm
 or (if you have `nx` install globally)
 
 ```
-nx run uesioapps-crm:build
+nx build uesioapps-crm
 ```
 
 - Build a **dedicated app** with **watcher** and **source map**
@@ -253,3 +253,26 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+
+## Code style
+
+Our code styling is embeded in various `eslint` rules.
+
+We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
+
+[Prettier](https://prettier.io/) is used for **formatting** our source code.
+
+## Stack backend-side
+
+- [Cobra](https://github.com/spf13/cobra). CLI for go application.
+- [gorilla/mux](https://github.com/gorilla/mux). Web framework in go.
+- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the go web server.
+
+## Stack frontend-side
+
+- [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
+- [webpack](https://webpack.js.org/). Merge code source into on single static file.
+- [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
+- [React](https://reactjs.org/). Library for making UI elements.
+- [Redux](https://redux.js.org/). State mangement system for web application.
+- [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
