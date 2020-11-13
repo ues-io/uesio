@@ -267,6 +267,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 - [Cobra](https://github.com/spf13/cobra). CLI for go application.
 - [gorilla/mux](https://github.com/gorilla/mux). Web framework in go.
 - [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the go web server.
+- [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
 
 ## Stack frontend-side
 
