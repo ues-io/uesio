@@ -22,13 +22,13 @@ func NewDataSource(key string) (*DataSource, error) {
 // DataSource struct
 type DataSource struct {
 	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"namespace" uesio:"-"`
+	Namespace string `yaml:"-" uesio:"-"`
 	TypeRef   string `yaml:"type" uesio:"uesio.type"`
-	URL       string `yaml:"url" uesio:"uesio.url"`
-	Region    string `yaml:"region" uesio:"uesio.region"`
-	Database  string `yaml:"database" uesio:"uesio.database"`
-	Username  string `yaml:"username" uesio:"uesio.username"`
-	Password  string `yaml:"password" uesio:"uesio.password"`
+	URL       string `yaml:"url,omitempty" uesio:"uesio.url"`
+	Region    string `yaml:"region,omitempty" uesio:"uesio.region"`
+	Database  string `yaml:"database,omitempty" uesio:"uesio.database"`
+	Username  string `yaml:"username,omitempty" uesio:"uesio.username"`
+	Password  string `yaml:"password,omitempty" uesio:"uesio.password"`
 	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 

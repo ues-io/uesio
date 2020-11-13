@@ -12,7 +12,7 @@ type SelectListOption struct {
 type SelectList struct {
 	ID        string             `yaml:"-" uesio:"uesio.id"`
 	Name      string             `yaml:"name" uesio:"uesio.name"`
-	Namespace string             `yaml:"namespace" uesio:"-"`
+	Namespace string             `yaml:"-" uesio:"-"`
 	Options   []SelectListOption `yaml:"options" uesio:"-"`
 	Workspace string             `yaml:"-" uesio:"uesio.workspaceid"`
 }

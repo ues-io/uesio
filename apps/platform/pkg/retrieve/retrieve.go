@@ -37,8 +37,16 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 				Type:     metadataType,
 			}
 
+			encoder := yaml.NewEncoder(&itemStream.Buffer)
+			encoder.SetIndent(2)
+
+			err = encoder.Encode(item)
+			if err != nil {
+				return err
+			}
+
 			itemStreams = append(itemStreams, itemStream)
-			return yaml.NewEncoder(&itemStream.Buffer).Encode(item)
+			return nil
 		})
 		if err != nil {
 			return nil, err
@@ -66,7 +74,10 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		return nil, err
 	}
 
-	err = yaml.NewEncoder(&itemStream.Buffer).Encode(by)
+	encoder := yaml.NewEncoder(&itemStream.Buffer)
+	encoder.SetIndent(2)
+
+	err = encoder.Encode(by)
 	if err != nil {
 		return nil, err
 	}

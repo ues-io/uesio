@@ -5,7 +5,7 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 // Route struct
 type Route struct {
 	Name      string            `uesio:"uesio.name"`
-	Namespace string            `uesio:"-"`
+	Namespace string            `yaml:"-" uesio:"-"`
 	Path      string            `yaml:"path" uesio:"uesio.path"`
 	ViewRef   string            `yaml:"view" uesio:"uesio.view"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
