@@ -47,7 +47,7 @@ nx g @nrwl/workspace:library NEW_LIB
   ```
   npm install -g nx
   ```
-- Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in go and paste the following :
+- Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
 {
@@ -73,7 +73,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 A standalone application within the monorepo is in charge of the building process, namely the `cli`. This `cli` is called under the hood by `nx`.
 
-- Build **all applications and libs**. Compilation of the go code (code server-side) and transpilation from TS to JS (code client-side).
+- Build **all applications and libs**. Compilation of the Go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
 npm run build-all
@@ -264,10 +264,11 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 ## Stack backend-side
 
-- [Cobra](https://github.com/spf13/cobra). CLI for go application.
-- [gorilla/mux](https://github.com/gorilla/mux). Web framework in go.
-- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the go web server.
+- [Cobra](https://github.com/spf13/cobra). CLI for Go application.
+- [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
+- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
 - [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
+- [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
 
 ## Stack frontend-side
 
