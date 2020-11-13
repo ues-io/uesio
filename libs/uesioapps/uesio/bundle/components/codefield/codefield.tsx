@@ -6,6 +6,7 @@ type CodeFieldDefinition = {
 	fieldId: string
 	height: string
 	language?: "yaml" | "json" | "javascript"
+	id?: string
 }
 
 interface Props extends definition.BaseProps {
@@ -36,14 +37,13 @@ function CodeField(props: Props): ReactElement | null {
 	const collection = wire.getCollection()
 	const fieldId = props.definition.fieldId
 	const fieldMetadata = collection.getField(fieldId)
-
-	//const mode = props.context.getFieldMode() || "READ";
-
-	const value = record.getFieldValue(fieldId)
+	var value = record.getFieldValue(fieldId)
 
 	if (!fieldMetadata.isValid()) {
 		return null
 	}
+
+	const language = props.definition.language as string
 
 	return (
 		<div className={classes.root}>
@@ -54,7 +54,7 @@ function CodeField(props: Props): ReactElement | null {
 				<LazyMonaco
 					{...{
 						value: value as string,
-						language: props.definition.language as string,
+						language: language,
 						onChange: (newValue /*, event*/): void => {
 							record.update(fieldId, newValue)
 						},

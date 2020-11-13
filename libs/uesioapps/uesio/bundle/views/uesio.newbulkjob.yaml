@@ -1,0 +1,119 @@
+name: newbulkjob
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    collections:
+      collection: uesio.collections
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspaceid:
+        uesio.workspace:
+        uesio.datasource:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      defaults:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    bulkjobs:
+      collection: uesio.bulkjobs
+      fields:
+        uesio.id:
+        uesio.spec:
+        uesio.collection:
+        uesio.site:
+        uesio.name:
+      type: CREATE
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.typography:
+              text: Create a New bulkjob
+              variant: h5
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: bulkjobsDeck
+              wire: bulkjobs
+              mode: EDIT
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color: "orange"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          spacing: 4
+                          items:
+                            - material.griditem:
+                                xs: 3
+                                components:
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "contained"
+                                text: "Save"
+                                signals:
+                                  - signal: "SAVE"
+                                    band: "wire"
+                                    targets:
+                                      - "bulkjobs"
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjob/${uesio.name}"
+                                    namespace: "uesio"
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Cancel"
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjobs"
+                                    namespace: "uesio"
+dependencies:
+  componentpacks:
+    material.main:
+    uesio.app:

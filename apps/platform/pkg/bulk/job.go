@@ -1,6 +1,9 @@
 package bulk
 
 import (
+	"encoding/json"
+
+	"github.com/Pallinder/go-randomdata"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -11,10 +14,17 @@ func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
 
 	site := session.GetSite()
 
+	str, err := json.Marshal(spec)
+	if err != nil {
+		return "", err
+	}
+
 	jobs := metadata.BulkJobCollection{
 		metadata.BulkJob{
-			Spec: *spec,
-			Site: site.Name,
+			Spec:       string(str),
+			Site:       site.Name,
+			Collection: spec.Collection,
+			Name:       randomdata.SillyName(),
 		},
 	}
 

@@ -148,6 +148,15 @@ definition:
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
+                                                        text: "Seed"
+                                                        signals:
+                                                          - signal: "NAVIGATE"
+                                                            band: "platform"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}/bulkjobs"
+                                                            namespace: "uesio"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
                                                         text: "Edit"
                                                         signals:
                                                           - signal: "TOGGLE_MODE"

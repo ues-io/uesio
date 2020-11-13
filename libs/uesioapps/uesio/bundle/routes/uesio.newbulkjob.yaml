@@ -1,0 +1,3 @@
+name: newbulkjob
+path: app/{appname}/workspace/{workspacename}/collection/{collectionname}/newbulkjob
+view: uesio.newbulkjob

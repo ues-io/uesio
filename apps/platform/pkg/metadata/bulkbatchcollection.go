@@ -10,7 +10,7 @@ func (bbc *BulkBatchCollection) GetName() string {
 
 // GetFields function
 func (bbc *BulkBatchCollection) GetFields() []string {
-	return []string{"id", "status"}
+	return []string{"id", "bulkjobid", "status"}
 }
 
 // UnMarshal function
