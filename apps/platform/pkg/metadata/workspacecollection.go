@@ -33,6 +33,22 @@ func (wc *WorkspaceCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// Loop function
+func (wc *WorkspaceCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *wc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (wc *WorkspaceCollection) Len() int {
+	return len(*wc)
+}
+
 // ByNameRequest function
 func (wc *WorkspaceCollection) ByNameRequest(appName, workspaceName string) []reqs.LoadRequest {
 	return []reqs.LoadRequest{

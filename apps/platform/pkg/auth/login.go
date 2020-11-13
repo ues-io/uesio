@@ -9,7 +9,7 @@ import (
 // Login func
 func Login(loginType, token string, site *metadata.Site) (*metadata.User, error) {
 	// 2. Get the authentication type
-	authType, err := GetAuthType(loginType)
+	authType, err := getAuthType(loginType)
 	if err != nil {
 		return nil, errors.New("Invalid auth type")
 	}

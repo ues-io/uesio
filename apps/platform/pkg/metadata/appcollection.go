@@ -28,3 +28,19 @@ func (ac *AppCollection) GetItem(index int) CollectionableItem {
 	actual := *ac
 	return &actual[index]
 }
+
+// Loop function
+func (ac *AppCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *ac {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (ac *AppCollection) Len() int {
+	return len(*ac)
+}

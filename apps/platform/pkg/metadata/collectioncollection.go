@@ -48,3 +48,19 @@ func (cc *CollectionCollection) GetItem(index int) CollectionableItem {
 	actual := *cc
 	return &actual[index]
 }
+
+// Loop function
+func (cc *CollectionCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *cc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (cc *CollectionCollection) Len() int {
+	return len(*cc)
+}

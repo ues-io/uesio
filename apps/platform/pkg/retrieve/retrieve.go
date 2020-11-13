@@ -4,10 +4,8 @@ import (
 	"archive/zip"
 	"io"
 	"path/filepath"
-	"reflect"
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -31,10 +29,7 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 			return nil, err
 		}
 
-		length := reflect.Indirect(reflect.ValueOf(group)).Len()
-
-		for i := 0; i < length; i++ {
-			item := group.GetItem(i)
+		err = group.Loop(func(item metadata.CollectionableItem) error {
 			key := item.GetKey()
 
 			itemStream := reqs.ItemStream{
@@ -44,10 +39,14 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 
 			err = yaml.NewEncoder(&itemStream.Buffer).Encode(item)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			itemStreams = append(itemStreams, itemStream)
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
 
 	}
@@ -67,12 +66,7 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		Type:     "",
 	}
 
-	bundleStore, err := bundlestore.GetBundleStore(session.GetWorkspaceApp(), session)
-	if err != nil {
-		return nil, err
-	}
-
-	by, err := bundleStore.GetBundleDef(session.GetWorkspaceApp(), session.GetWorkspace().Name, session)
+	by, err := bundles.GetAppBundle(session)
 	if err != nil {
 		return nil, err
 	}

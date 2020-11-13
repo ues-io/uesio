@@ -50,3 +50,19 @@ func (fc *FileCollection) GetItem(index int) CollectionableItem {
 	actual := *fc
 	return &actual[index]
 }
+
+// Loop function
+func (fc *FileCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *fc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (fc *FileCollection) Len() int {
+	return len(*fc)
+}

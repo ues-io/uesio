@@ -85,3 +85,19 @@ func (bc *BotCollection) GetItem(index int) CollectionableItem {
 	actual := *bc
 	return &actual[index]
 }
+
+// Loop function
+func (bc *BotCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *bc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (bc *BotCollection) Len() int {
+	return len(*bc)
+}

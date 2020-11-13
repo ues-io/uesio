@@ -60,3 +60,19 @@ func (rc *RouteCollection) GetItem(index int) CollectionableItem {
 	actual := *rc
 	return &actual[index]
 }
+
+// Loop function
+func (rc *RouteCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *rc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (rc *RouteCollection) Len() int {
+	return len(*rc)
+}

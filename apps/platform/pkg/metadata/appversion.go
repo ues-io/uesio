@@ -9,7 +9,7 @@ type AppVersion struct {
 	Dependencies map[string]string
 }
 
-// Seed config values (these are necessary to make things work)
+// DefaultAppVersions Seeds config values (these are necessary to make things work)
 var DefaultAppVersions = AppVersionCollection{
 	{
 		AppRef:      "uesio",
@@ -23,4 +23,3 @@ var DefaultAppVersions = AppVersionCollection{
 		},
 	},
 }
-

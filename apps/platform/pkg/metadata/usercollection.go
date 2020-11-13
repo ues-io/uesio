@@ -33,6 +33,22 @@ func (uc *UserCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// Loop function
+func (uc *UserCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *uc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (uc *UserCollection) Len() int {
+	return len(*uc)
+}
+
 // AuthClaimsRequest function
 func (uc *UserCollection) AuthClaimsRequest(federationType, federationID, siteName string) []reqs.LoadRequest {
 	return []reqs.LoadRequest{

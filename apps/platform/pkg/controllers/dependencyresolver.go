@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"reflect"
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -46,25 +45,21 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap := map[string]bool{}
 
-	length := reflect.Indirect(reflect.ValueOf(collection)).Len()
-
-	for i := 0; i < length; i++ {
-		item := collection.GetItem(i)
-
+	collection.Loop(func(item metadata.CollectionableItem) error {
 		var key string
-
 		// Special handling for fields for now
 		if metadatatype == "fields" {
 			field := item.(*metadata.Field)
 			key = field.Namespace + "." + field.Name
 			if field.CollectionRef != grouping {
-				continue
+				return nil
 			}
 		} else {
 			key = item.GetKey()
 		}
 		collectionKeyMap[key] = true
-	}
+		return nil
+	})
 
 	respondJSON(w, r, &collectionKeyMap)
 

@@ -3,7 +3,6 @@ package workspacebundlestore
 import (
 	"errors"
 	"io"
-	"reflect"
 
 	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -47,7 +46,7 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 		return err
 	}
 
-	length := reflect.Indirect(reflect.ValueOf(group)).Len()
+	length := group.Len()
 
 	if length == 0 {
 		return errors.New("Couldn't find item for platform load: " + item.GetKey())
@@ -100,12 +99,12 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 	if err != nil {
 		return err
 	}
-	length := reflect.Indirect(reflect.ValueOf(group)).Len()
 
-	for i := 0; i < length; i++ {
-		item := group.GetItem(i)
-		item.SetNamespace(session.GetWorkspaceApp())
-	}
+	group.Loop(func(item metadata.CollectionableItem) error {
+		item.SetNamespace(namespace)
+		return nil
+	})
+
 	return nil
 }
 
