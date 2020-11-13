@@ -52,9 +52,8 @@ function File(props: FileProps): ReactElement | null {
 	} as IconProps
 
 	const mime = props.context.merge(props.definition.mimeType)
-	const arr_mime = mime.split("/", 2)
-	const mimeType = arr_mime[0]
-	const mimeSubType = arr_mime[1]
+	const arrMime = mime.split("/", 2)
+	const [mimeType, mimeSubType] = arrMime
 
 	if (!preview) {
 		switch (mimeType) {

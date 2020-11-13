@@ -43,12 +43,12 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const [namespace, name] = component.path.parseKey(value)
 	const metadata = uesio.builder.useMetadataList(metadataType, namespace)
 
-	const value_uesio_collectionname = record.getFieldValue(
+	const valueUesioCollectionname = record.getFieldValue(
 		"uesio.collectionname"
 	) as string
 
-	const grouping = value_uesio_collectionname
-		? `${namespace}.${value_uesio_collectionname}`
+	const grouping = valueUesioCollectionname
+		? `${namespace}.${valueUesioCollectionname}`
 		: //This reads the fields from the Ref. collection
 		  //grouping = record.getFieldValue("uesio.referencedCollection") as string
 		  //This read the fields from the actual collection
@@ -82,9 +82,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
-	const FieldComponent = component.registry.get("material", "field")
-
 	if (mode === "READ") {
+		const FieldComponent = component.registry.get("material", "field")
 		return <FieldComponent {...props} />
 	}
 
@@ -92,24 +91,20 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const options =
 		metadataType == "FIELD"
-			? (metadata &&
-					Object.keys(metadata[grouping] as Object).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})) ||
-			  []
-			: (metadata &&
-					Object.keys(metadata).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})) ||
-			  []
+			? Object.keys(metadata?.[grouping] || {})?.map?.((key) => {
+					const [, name] = component.path.parseKey(key)
+					return {
+						value: name,
+						label: name,
+					}
+			  })
+			: Object.keys(metadata || {}).map((key) => {
+					const [, name] = component.path.parseKey(key)
+					return {
+						value: name,
+						label: name,
+					}
+			  })
 
 	return (
 		<material.Grid container spacing={1}>
@@ -124,12 +119,10 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 							label: "<No Value>",
 						},
 					].concat(
-						(namespaces &&
-							Object.keys(namespaces).map((key) => ({
-								value: key,
-								label: key,
-							}))) ||
-							[]
+						Object.keys(namespaces || {}).map((key) => ({
+							value: key,
+							label: key,
+						}))
 					)}
 					setValue={(value: string) => {
 						record.update(fieldId, value ? value + "." : "")
