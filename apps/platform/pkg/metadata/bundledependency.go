@@ -4,7 +4,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
-// Bundle struct
+// BundleDependency struct
 type BundleDependency struct {
 	ID            string `uesio:"uesio.id"`
 	WorkspaceID   string `uesio:"uesio.workspaceid"`

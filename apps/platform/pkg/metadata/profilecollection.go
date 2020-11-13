@@ -44,3 +44,19 @@ func (pc *ProfileCollection) GetItem(index int) CollectionableItem {
 	actual := *pc
 	return &actual[index]
 }
+
+// Loop function
+func (pc *ProfileCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *pc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (pc *ProfileCollection) Len() int {
+	return len(*pc)
+}

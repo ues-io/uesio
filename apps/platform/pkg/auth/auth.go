@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	site2 "github.com/thecloudmasters/uesio/pkg/site"
+	"github.com/thecloudmasters/uesio/pkg/site"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -20,8 +20,7 @@ type AuthenticationType interface {
 
 var authTypeMap = map[string]AuthenticationType{}
 
-// GetAuthType function
-func GetAuthType(authTypeName string) (AuthenticationType, error) {
+func getAuthType(authTypeName string) (AuthenticationType, error) {
 	authType, ok := authTypeMap[authTypeName]
 	if !ok {
 		return nil, errors.New("No adapter found of this type: " + authTypeName)
@@ -55,7 +54,7 @@ func GetSiteFromHost(host string) (*metadata.Site, error) {
 		hostParts := strings.Split(host, ":")
 		domain = hostParts[0] // Strip off the port
 	}
-	site, err := site2.GetSiteFromDomain(domainType, domain)
+	site, err := site.GetSiteFromDomain(domainType, domain)
 	if err != nil {
 		return nil, err
 	}

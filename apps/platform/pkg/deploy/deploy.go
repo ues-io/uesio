@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -140,7 +139,8 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 
 	for _, collection := range dep {
-		length := reflect.Indirect(reflect.ValueOf(collection)).Len()
+
+		length := collection.Len()
 		if length > 0 {
 			_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 				{

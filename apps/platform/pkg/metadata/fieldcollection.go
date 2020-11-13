@@ -86,3 +86,19 @@ func (fc *FieldCollection) GetItem(index int) CollectionableItem {
 	actual := *fc
 	return &actual[index]
 }
+
+// Loop function
+func (fc *FieldCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *fc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (fc *FieldCollection) Len() int {
+	return len(*fc)
+}

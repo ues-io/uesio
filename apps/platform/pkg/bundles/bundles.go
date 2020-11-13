@@ -21,7 +21,7 @@ func getAppLicense(app, appToCheck string) (*metadata.AppLicense, error) {
 	return nil, nil
 }
 
-func getAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
+func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
 
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -65,7 +65,7 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
-	bundle, err := getAppBundle(session)
+	bundle, err := GetAppBundle(session)
 	if err != nil {
 		return "", err
 	}

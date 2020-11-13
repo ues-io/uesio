@@ -52,6 +52,22 @@ func (vc *ViewCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// Loop function
+func (vc *ViewCollection) Loop(iter func(item CollectionableItem) error) error {
+	for _, item := range *vc {
+		err := iter(&item)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (vc *ViewCollection) Len() int {
+	return len(*vc)
+}
+
 func getYamlWithDefault(dataItem map[string]interface{}, key string, defaultItem map[string]interface{}) (*yaml.Node, error) {
 	yamlNode := yaml.Node{}
 	data, ok := dataItem[key]

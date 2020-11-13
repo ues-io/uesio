@@ -16,6 +16,8 @@ type CollectionableGroup interface {
 	UnMarshal(data []map[string]interface{}) error
 	Marshal() ([]map[string]interface{}, error)
 	GetItem(index int) CollectionableItem
+	Loop(iter func(item CollectionableItem) error) error
+	Len() int
 }
 
 // CollectionableItem interface
@@ -79,10 +81,7 @@ func decode(in interface{}, out interface{}) error {
 		return err
 	}
 
-	if err := decoder.Decode(in); err != nil {
-		return err
-	}
-	return nil
+	return decoder.Decode(in)
 }
 
 // BundleableFactory function type
