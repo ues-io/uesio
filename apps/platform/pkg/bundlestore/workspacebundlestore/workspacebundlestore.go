@@ -109,8 +109,14 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 }
 
 // GetFileStream function
-func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
-	return filesource.Download(file.Content, session)
+func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
+	stream, userFile, err := filesource.Download(file.Content, session)
+	if err != nil {
+		return nil, err
+	}
+	file.MimeType = userFile.MimeType
+	file.FileName = userFile.Name
+	return stream, nil
 }
 
 // GetComponentPackStream function
@@ -120,8 +126,12 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 
 // GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, _, err := filesource.Download(bot.Content, session)
-	return stream, err
+	stream, userFile, err := filesource.Download(bot.Content, session)
+	if err != nil {
+		return nil, err
+	}
+	bot.FileName = userFile.Name
+	return stream, nil
 }
 
 // StoreItems function

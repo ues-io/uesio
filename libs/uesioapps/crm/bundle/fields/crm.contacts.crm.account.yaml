@@ -3,5 +3,5 @@ collection: crm.contacts
 type: REFERENCE
 label: Account
 propertyName: account
-foreignKeyField: crm.accountid
 referencedCollection: crm.accounts
+foreignKeyField: crm.accountid

@@ -114,11 +114,11 @@ func Load(item metadata.BundleableItem, session *sess.Session) error {
 }
 
 //GetFileStream function
-func GetFileStream(file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+func GetFileStream(file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
 	namespace := file.GetNamespace()
 	version, bs, err := getBundleStoreWithVersion(namespace, session)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 	return bs.GetFileStream(version, file, session)
 }

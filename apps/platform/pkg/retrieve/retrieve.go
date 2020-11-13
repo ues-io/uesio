@@ -32,6 +32,51 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 		err = group.Loop(func(item metadata.CollectionableItem) error {
 			key := item.GetKey()
 
+			// Special handling for bots
+			if metadataType == "bots" {
+				bot := item.(*metadata.Bot)
+
+				stream, err := bundles.GetBotStream(bot, session)
+				if err != nil {
+					return err
+				}
+
+				itemStream := reqs.ItemStream{
+					FileName: bot.FileName,
+					Type:     metadataType,
+				}
+
+				_, err = io.Copy(&itemStream.Buffer, stream)
+				if err != nil {
+					return err
+				}
+
+				itemStreams = append(itemStreams, itemStream)
+
+			}
+
+			// Special handling for files
+			if metadataType == "files" {
+				file := item.(*metadata.File)
+
+				stream, err := bundles.GetFileStream(file, session)
+				if err != nil {
+					return err
+				}
+
+				itemStream := reqs.ItemStream{
+					FileName: file.FileName,
+					Type:     metadataType,
+				}
+
+				_, err = io.Copy(&itemStream.Buffer, stream)
+				if err != nil {
+					return err
+				}
+
+				itemStreams = append(itemStreams, itemStream)
+			}
+
 			itemStream := reqs.ItemStream{
 				FileName: key + ".yaml",
 				Type:     metadataType,

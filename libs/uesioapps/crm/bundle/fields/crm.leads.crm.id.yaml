@@ -1,6 +1,6 @@
 name: id
 collection: crm.leads
-type: "TEXT"
-label: "Lead ID"
-propertyName: "id"
+type: TEXT
+label: Lead ID
+propertyName: id
 readOnly: true

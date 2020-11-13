@@ -23,8 +23,8 @@ func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace
 }
 
 // GetFileStream function
-func (b *PlatformBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
-	return nil, "", nil
+func (b *PlatformBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
+	return nil, nil
 }
 
 // GetComponentPackStream function

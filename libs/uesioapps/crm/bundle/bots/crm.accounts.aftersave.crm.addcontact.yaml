@@ -1,5 +1,5 @@
 name: addcontact
 collection: crm.accounts
-dialect: "JAVASCRIPT"
-type: "AFTERSAVE"
+type: AFTERSAVE
+dialect: JAVASCRIPT
 fileName: addcontact.js

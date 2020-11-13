@@ -128,9 +128,10 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 }
 
 // GetFileStream function
-func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, string, error) {
+func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
 	stream, err := getStream(file.GetNamespace(), version, "files", file.FileName)
-	return stream, mime.TypeByExtension(filepath.Ext(file.FileName)), err
+	file.MimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
+	return stream, err
 }
 
 // GetBotStream function
