@@ -31,8 +31,8 @@ func (bbc *BulkBatchCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (bbc *BulkBatchCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *bbc {
-		err := iter(&item)
+	for index := range *bbc {
+		err := iter(bbc.GetItem(index))
 		if err != nil {
 			return err
 		}

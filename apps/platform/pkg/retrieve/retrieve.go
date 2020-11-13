@@ -37,13 +37,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 				Type:     metadataType,
 			}
 
-			err = yaml.NewEncoder(&itemStream.Buffer).Encode(item)
-			if err != nil {
-				return err
-			}
-
 			itemStreams = append(itemStreams, itemStream)
-			return nil
+			return yaml.NewEncoder(&itemStream.Buffer).Encode(item)
 		})
 		if err != nil {
 			return nil, err

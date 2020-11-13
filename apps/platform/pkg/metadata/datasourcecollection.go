@@ -51,8 +51,8 @@ func (dsc *DataSourceCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (dsc *DataSourceCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *dsc {
-		err := iter(&item)
+	for index := range *dsc {
+		err := iter(dsc.GetItem(index))
 		if err != nil {
 			return err
 		}

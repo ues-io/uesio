@@ -31,8 +31,8 @@ func (bjc *BulkJobCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (bjc *BulkJobCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *bjc {
-		err := iter(&item)
+	for index := range *bjc {
+		err := iter(bjc.GetItem(index))
 		if err != nil {
 			return err
 		}

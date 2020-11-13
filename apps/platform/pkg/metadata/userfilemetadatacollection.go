@@ -35,8 +35,8 @@ func (ufmc *UserFileMetadataCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (ufmc *UserFileMetadataCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *ufmc {
-		err := iter(&item)
+	for index := range *ufmc {
+		err := iter(ufmc.GetItem(index))
 		if err != nil {
 			return err
 		}

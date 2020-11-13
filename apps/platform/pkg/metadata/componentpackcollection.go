@@ -63,8 +63,8 @@ func (cpc *ComponentPackCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (cpc *ComponentPackCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *cpc {
-		err := iter(&item)
+	for index := range *cpc {
+		err := iter(cpc.GetItem(index))
 		if err != nil {
 			return err
 		}

@@ -63,8 +63,8 @@ func (cvc *ConfigValueCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (cvc *ConfigValueCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *cvc {
-		err := iter(&item)
+	for index := range *cvc {
+		err := iter(cvc.GetItem(index))
 		if err != nil {
 			return err
 		}

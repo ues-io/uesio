@@ -51,8 +51,8 @@ func (cc *CollectionCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (cc *CollectionCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *cc {
-		err := iter(&item)
+	for index := range *cc {
+		err := iter(cc.GetItem(index))
 		if err != nil {
 			return err
 		}

@@ -31,8 +31,8 @@ func (bc *BundleCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (bc *BundleCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *bc {
-		err := iter(&item)
+	for index := range *bc {
+		err := iter(bc.GetItem(index))
 		if err != nil {
 			return err
 		}

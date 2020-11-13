@@ -31,8 +31,8 @@ func (sc *SiteCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (sc *SiteCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *sc {
-		err := iter(&item)
+	for index := range *sc {
+		err := iter(sc.GetItem(index))
 		if err != nil {
 			return err
 		}

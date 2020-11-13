@@ -54,8 +54,8 @@ func (vc *ViewCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (vc *ViewCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *vc {
-		err := iter(&item)
+	for index := range *vc {
+		err := iter(vc.GetItem(index))
 		if err != nil {
 			return err
 		}

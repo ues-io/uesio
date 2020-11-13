@@ -53,8 +53,8 @@ func (slc *SelectListCollection) GetItem(index int) CollectionableItem {
 
 // Loop function
 func (slc *SelectListCollection) Loop(iter func(item CollectionableItem) error) error {
-	for _, item := range *slc {
-		err := iter(&item)
+	for index := range *slc {
+		err := iter(slc.GetItem(index))
 		if err != nil {
 			return err
 		}
