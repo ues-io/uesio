@@ -15,13 +15,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: cache-nodemodules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ matrix.node-version }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Install npm Dependencies
         run: npm ci
       - name: cache-node_modules-cache
