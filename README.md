@@ -130,7 +130,7 @@ or (if you have `nx` install globally)
 nx build uesioapps-crm
 ```
 
-## Build a dedicated app (with watcher and ource map)
+## Build a dedicated app (with watcher and source map)
 
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
