@@ -1,5 +1,5 @@
 // it is important to set global var before any imports
-;(window as unknown).__webpack_public_path__ = (window as unknown)?.monacoPublicPath
+;(window as any).__webpack_public_path__ = (window as any)?.monacoPublicPath
 
 import React, { lazy, createElement, FC, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
