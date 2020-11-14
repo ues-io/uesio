@@ -15,15 +15,20 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Cache ~/.npm
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Install npm Dependencies
         run: npm ci
-      - name: cache-node_modules-cache
+      - name: Cache ./node_modules/.cache for nx usage
         uses: actions/cache@v2
         with:
           path: ./node_modules/.cache
-          key: ${{ runner.os }}-node-local-${{ hashFiles('./*.json') }}-${{ matrix.node-version }}
-          restore-keys: |
-            ${{ runner.os }}-node-local-
+          key: ${{ runner.os }}-node-cache-${{ hashFiles('./*.json') }}-${{ matrix.node-version }}
       - name: Cache Go modules
         uses: actions/cache@v2
         with:
