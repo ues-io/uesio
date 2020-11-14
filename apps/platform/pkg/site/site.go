@@ -35,7 +35,7 @@ func GetSite(siteid string, session *sess.Session) (*metadata.Site, error) {
 		return nil, err
 	}
 	if len(sc) < 1 {
-		return nil, errors.New("unable! to find matching site record for: " + siteid)
+		return nil, errors.New("unable!!! to find matching site record for: " + siteid)
 	}
 	if len(sc) > 1 {
 		return nil, errors.New("found multiple matching site records for: " + siteid)

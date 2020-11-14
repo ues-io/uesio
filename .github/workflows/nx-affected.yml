@@ -24,6 +24,13 @@ jobs:
           key: ${{ runner.os }}-node-local-${{ hashFiles('**/package-lock.json') }}-${{ matrix.node-version }}
           restore-keys: |
             ${{ runner.os }}-node-local-
+      - name: Cache Go modules
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Run Affected Tests
         shell: bash
         run: |
