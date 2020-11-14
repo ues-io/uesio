@@ -2,7 +2,7 @@
 
 ![Uesio Logo](./libs/uesioapps/uesio/bundle/files/logo.png)
 
-Uesio is a low-code application development platform.
+Uesio is a **low-code** application development platform.
 
 # Code style
 
@@ -70,9 +70,13 @@ nx g @nrwl/workspace:library NEW_LIB
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
 - Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- Optional. Install the nx cli globally.
+- Optional. Install the `nx` cli globally.
   ```
   npm install -g nx
+  ```
+- Optional. Mock data for the CRM uesio app :
+  ```
+   ./apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
   ```
 - Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
