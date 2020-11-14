@@ -76,7 +76,7 @@ nx g @nrwl/workspace:library NEW_LIB
   ```
 - Optional. Mock data for the CRM uesio app :
   ```
-   ./apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
+   cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
   ```
 - Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
