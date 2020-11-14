@@ -1,6 +1,6 @@
 name: externalid
 collection: crm.accounts
-type: "TEXT"
-label: "External ID"
-propertyName: "externalid"
+type: TEXT
+label: External ID
+propertyName: externalid
 readOnly: true

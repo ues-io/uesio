@@ -1,5 +1,5 @@
 name: description
 collection: crm.accounts
-type: "TEXT"
-label: "Description"
-propertyName: "description"
+type: TEXT
+label: Description
+propertyName: description

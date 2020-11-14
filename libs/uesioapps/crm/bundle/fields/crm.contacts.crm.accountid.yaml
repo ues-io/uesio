@@ -1,5 +1,5 @@
 name: accountid
 collection: crm.contacts
-type: "TEXT"
-label: "Account ID"
-propertyName: "accountid"
+type: TEXT
+label: Account ID
+propertyName: accountid

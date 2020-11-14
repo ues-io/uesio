@@ -7,7 +7,8 @@ definition:
     - material.typography:
         text: CRM Home
         variant: h5
-  wires:
+  wires: null
 dependencies:
   componentpacks:
-    material.main:
+    material.main: null
+    sample.main: null
