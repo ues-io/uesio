@@ -16,6 +16,7 @@ export default class Create extends Command {
 
 		if (!args.type) {
 			const metadataMap = getMetadataMap()
+			console.log("Example change")
 			console.log("Please specify a type to create.")
 			Object.keys(metadataMap).forEach((metadataType) => {
 				console.log("create", metadataType)
