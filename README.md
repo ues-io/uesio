@@ -6,7 +6,7 @@ Uesio is a low-code application development platform.
 
 # Code style
 
-Our code styling is embeded in various `eslint` rules.
+Our code styling is embeded in various [eslint](https://eslint.org/) rules.
 
 We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
 
@@ -102,7 +102,7 @@ The building process is done either by `webpack`, or our own `cli` or `go build`
 
 ## Build all applications and libs
 
-Compilation of the Go code (code server-side) and transpilation from TS to JS (code client-side).
+Compilation of the Go code (code server-side) and transpilation from Typescript down to JavaScript (code client-side).
 
 ```
 npm run build-all
