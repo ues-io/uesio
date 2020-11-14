@@ -312,8 +312,8 @@
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "npm run test-building-apps",
-            "cwd": "."
+            "command": "echo TODO: set up test for cli.",
+            "cwd": "apps/cli"
           }
         }
       }
