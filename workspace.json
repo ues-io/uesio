@@ -223,7 +223,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo TODO: set up lint for uesioapps-crm.",
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
             "cwd": "libs/uesioapps/crm"
           }
         },
@@ -306,7 +306,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/cli/**/*.ts"]
+            "lintFilePatterns": ["apps/cli/**/*.ts*"]
           }
         },
         "test": {
@@ -341,7 +341,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/constants/**/*.ts"]
+            "lintFilePatterns": ["libs/constants/**/*.ts*"]
           }
         },
         "test": {
