@@ -58,7 +58,7 @@ nx g @nrwl/workspace:library NEW_LIB
   npm install -g firebase-tools
   ```
 - Install [Go](https://golang.org/dl/)
-- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens)
+- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
 
 - git clone repo (ssh method is prefered)
 - Download and install the npm module dependencies :
