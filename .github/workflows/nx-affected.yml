@@ -15,15 +15,22 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: cachenodemodules
+      - name: cache-nodemodules
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-${{ matrix.node-version }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Install npm Dependencies
         run: npm ci
+      - name: cache-node_modules-cache
+        uses: actions/cache@v2
+        with:
+          path: ./node_modules/.cache
+          key: ${{ runner.os }}-node-local-${{ hashFiles('**/package-lock.json') }}-${{ matrix.node-version }}
+          restore-keys: |
+            ${{ runner.os }}-node-local-
       - name: Run Affected Tests
         shell: bash
         run: |
