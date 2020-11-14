@@ -1,10 +1,37 @@
-# Uesio
+# About Uesio
 
 ![Uesio Logo](./libs/uesioapps/uesio/bundle/files/logo.png)
 
 Uesio is a low-code application development platform.
 
-## Monorepo architecture
+# Code style
+
+Our code styling is embeded in various `eslint` rules.
+
+We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
+
+[Prettier](https://prettier.io/) is used for **formatting** our source code.
+
+# Tech Stack
+
+## Backend
+
+- [Cobra](https://github.com/spf13/cobra). CLI for Go application.
+- [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
+- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
+- [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
+- [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
+
+## Frontend
+
+- [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
+- [webpack](https://webpack.js.org/). Merge code source into on single static file.
+- [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
+- [React](https://reactjs.org/). Library for making UI elements.
+- [Redux](https://redux.js.org/). State mangement system for web application.
+- [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
+
+# Monorepo architecture
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
@@ -21,7 +48,7 @@ For scaffolding a new lib, you can run the following script.
 nx g @nrwl/workspace:library NEW_LIB
 ```
 
-## Set up dev environment
+# Set up dev environment
 
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
@@ -69,17 +96,19 @@ nx g @nrwl/workspace:library NEW_LIB
 }
 ```
 
-## Build
+# Build
 
 The building process is done either by `webpack`, or our own `cli` or `go build` or the typecsript compiler aka `tsc` depending on the application or library.
 
-- Build **all applications and libs**. Compilation of the Go code (code server-side) and transpilation from TS to JS (code client-side).
+## Build all applications and libs
+
+Compilation of the Go code (code server-side) and transpilation from TS to JS (code client-side).
 
 ```
 npm run build-all
 ```
 
-- Build a **dedicated app** (without watcher and without source map)
+## Build a dedicated app (no watcher and no source map)
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
@@ -97,7 +126,7 @@ or (if you have `nx` install globally)
 nx build uesioapps-crm
 ```
 
-- Build a **dedicated app** with **watcher** and **source map**
+## Build a dedicated app (with watcher and ource map)
 
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
@@ -105,7 +134,7 @@ On the frontend, the `source map` is enabled in webpack in `dev` mode. While dev
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 ```
 
-## Uesio apps deployment
+# Uesio apps deployment
 
 **Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
 
@@ -115,7 +144,7 @@ For plugging such an application into uesio, you have to deploy it obviously aft
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
-## Set up SSL
+# Set up SSL
 
 ```
 npm run setup-ssl
@@ -127,7 +156,7 @@ In windows, double-click certificate.crt in the File Explorer. Click "Install Ce
 
 In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com certificate and select "Get Info". Expand the "Trust" section and set it to "Always Trust".
 
-## Set up DNS
+# Set up DNS
 
 On Mac modify the `/etc/hosts` file to include the following lines
 
@@ -139,7 +168,7 @@ On Mac modify the `/etc/hosts` file to include the following lines
 
 Mac users can also use a service called dnsmasq for managing local DNS, but that has not been documented yet.
 
-## Environment Variables
+# Environment Variables
 
 | Environment Variable         | Description                                                                                |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
@@ -161,13 +190,13 @@ Mac users can also use a service called dnsmasq for managing local DNS, but that
 | AWS_SECRET_ACCESS_KEY        | AWS SECRET access key for DyanamoDB                                                        |
 | AWS_REGION                   | The region where the DyanamoDB is located                                                  |
 
-## Seed Local Database with Test Data
+# Seed Local Database with Test Data
 
 ```
 npm run nx -- seed platform
 ```
 
-## Run the application Locally
+# Run the application Locally
 
 ```
 npm run nx -- serve platform
@@ -179,7 +208,7 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
-## Local Development with the Firestore Emulator
+# Local Development with the Firestore Emulator
 
 ```
 firebase init firestore
@@ -195,7 +224,7 @@ In a browser visit
 http://localhost:4000/firestore/
 ```
 
-## Local Development with a database in Docker
+# Local Development with a database in Docker
 
 0. Install [Docker Desktop](https://docs.docker.com/desktop/)
 1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
@@ -242,7 +271,7 @@ docker start CONTAINER_NAME
 docker rm -f CONTAINER_NAME
 ```
 
-## Connecting to a real Firestore instance
+# Connecting to a real Firestore instance
 
 1. First set up your google cloud SDK and your first project (see above)
 2. Initialize Firestore to be "Native Firestore"
@@ -253,28 +282,3 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
-
-## Code style
-
-Our code styling is embeded in various `eslint` rules.
-
-We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
-
-[Prettier](https://prettier.io/) is used for **formatting** our source code.
-
-## Stack backend-side
-
-- [Cobra](https://github.com/spf13/cobra). CLI for Go application.
-- [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
-- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
-- [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
-- [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
-
-## Stack frontend-side
-
-- [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
-- [webpack](https://webpack.js.org/). Merge code source into on single static file.
-- [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
-- [React](https://reactjs.org/). Library for making UI elements.
-- [Redux](https://redux.js.org/). State mangement system for web application.
-- [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
