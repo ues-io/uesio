@@ -25,7 +25,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 ## Frontend
 
 - [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
-- [webpack](https://webpack.js.org/). Merge code source into on single static file.
+- [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 - [React](https://reactjs.org/). Library for making UI elements.
 - [Redux](https://redux.js.org/). State mangement system for web application.
@@ -102,7 +102,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Build
 
-The building process is done either by `webpack`, or our own `cli` or `go build` or the typecsript compiler aka `tsc` depending on the application/library.
+The building process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
 
 ## Build all applications and libs
 
