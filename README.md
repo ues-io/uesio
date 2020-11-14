@@ -98,7 +98,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Build
 
-The building process is done either by `webpack`, or our own `cli` or `go build` or the typecsript compiler aka `tsc` depending on the application or library.
+The building process is done either by `webpack`, or our own `cli` or `go build` or the typecsript compiler aka `tsc` depending on the application/library.
 
 ## Build all applications and libs
 
