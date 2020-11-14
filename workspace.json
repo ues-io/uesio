@@ -136,7 +136,7 @@
     },
     "yaml": {
       "root": "libs/yaml",
-      "sourceRoot": "libs/yaml/src",
+      "sourceRoot": "libs/yaml",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -201,7 +201,7 @@
     },
     "uesioapps-crm": {
       "root": "libs/uesioapps/crm",
-      "sourceRoot": "libs/uesioapps/crm/src",
+      "sourceRoot": "libs/uesioapps/crm",
       "projectType": "library",
       "schematics": {},
       "architect": {
