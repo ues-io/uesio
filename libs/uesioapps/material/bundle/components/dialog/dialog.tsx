@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { hooks, material, signal, action, context, builder } from "@uesio/ui"
+import { hooks, material, signal, action, context, builder, component } from "@uesio/ui"
 import { DialogProps } from "./dialogdefinition"
 import Icon from "../icon/icon"
 
@@ -33,11 +33,11 @@ const signalHandlers: signal.SignalsHandler = {
 		dispatcher: (
 			signal: signal.ComponentSignal,
 			ctx: context.Context
-		): action.Dispatcher<action.ComponentAction> => {
-			return (
+		): signal.ThunkFunc => {
+			return async (
 				dispatch: action.Dispatcher<action.ComponentAction>
-			): action.ComponentAction => {
-				return dispatch({
+			): signal.DispatchReturn => {
+				dispatch({
 					type: action.ACTOR,
 					name: signal.signal,
 					band: signal.band,
@@ -46,6 +46,7 @@ const signalHandlers: signal.SignalsHandler = {
 					data: {},
 					view: ctx.getView()?.getId(),
 				})
+				return ctx
 			}
 		},
 		public: true,
@@ -97,6 +98,14 @@ function Dialog(props: DialogProps): ReactElement {
 
 	const mylocalState = state.mode == "OPEN" ? true : false
 
+	const slotProps = {
+		definition: props.definition,
+		listName: "content",
+		path: props.path,
+		accepts: ["uesio.standalone"],
+		context: props.context,
+	}
+
 	return (
 		<material.Dialog
 			open={mylocalState}
@@ -108,7 +117,7 @@ function Dialog(props: DialogProps): ReactElement {
 			</material.DialogTitle>
 			<material.DialogContent>
 				<material.DialogContentText>
-					{props.definition.content}
+					<component.Slot {...slotProps}></component.Slot>
 				</material.DialogContentText>
 			</material.DialogContent>
 			<material.DialogActions>

@@ -22,9 +22,8 @@ definition:
         uesio.app:
       conditions:
         - field: uesio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: uesio.name
           valueSource: PARAM
           param: workspacename

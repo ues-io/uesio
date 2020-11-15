@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -18,7 +17,6 @@ type WorkspaceBundleStore struct {
 
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version string, session *sess.Session) error {
-	group := item.GetCollection()
 	conditions, err := item.GetConditions()
 	if err != nil {
 		return err
@@ -28,34 +26,11 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 		Field: "uesio.workspaceid",
 		Value: session.GetWorkspaceID(),
 	})
-	err = datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			group,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				group.GetName(),
-				group.GetFields(),
-				conditions,
-			),
-		},
+	err = datasource.PlatformLoadOne(
+		item,
+		conditions,
 		session,
 	)
-	if err != nil {
-		return err
-	}
-
-	length := group.Len()
-
-	if length == 0 {
-		return errors.New("Couldn't find item for platform load: " + item.GetKey())
-	}
-	if length > 1 {
-		return errors.New("Duplicate items found: " + item.GetKey())
-	}
-
-	err = copier.Copy(item, group.GetItem(0))
 	if err != nil {
 		return err
 	}
@@ -143,7 +118,7 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error) {
 	var by metadata.BundleDef
 	by.Name = namespace
-	bdc, err := bundleDependencyLoad(
+	bdc, err := datasource.BundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
@@ -165,24 +140,32 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 			Version: bd.BundleVersion,
 		}
 	}
+
+	// TODO: Finish this
+	_, err = getAppForNamespace(namespace, session)
+	if err != nil {
+		return nil, err
+	}
+
 	return &by, nil
 }
 
-func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
-	bdc := metadata.BundleDependencyCollection{}
-	err := datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&bdc,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				bdc.GetName(),
-				bdc.GetFields(),
-				conditions,
-			),
+func getAppForNamespace(namespace string, session *sess.Session) (*metadata.App, error) {
+	var app metadata.App
+
+	err := datasource.PlatformLoadOne(
+		&app,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: namespace,
+			},
 		},
 		session,
 	)
-	return bdc, err
+	if err != nil {
+		return nil, err
+	}
+
+	return &app, nil
 }

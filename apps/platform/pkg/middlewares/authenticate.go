@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -103,12 +104,15 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		}
 
 		// Get the Workspace from the DB
-		var workspaces metadata.WorkspaceCollection
-		err := datasource.PlatformLoad(
-			[]metadata.CollectionableGroup{
-				&workspaces,
+		var workspace metadata.Workspace
+		err := datasource.PlatformLoadOne(
+			&workspace,
+			[]reqs.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: appName + "_" + workspaceName,
+				},
 			},
-			workspaces.ByNameRequest(appName, workspaceName),
 			session,
 		)
 		if err != nil {
@@ -116,13 +120,6 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		if len(workspaces) != 1 {
-			http.Error(w, "Too many or too few workspaces", http.StatusInternalServerError)
-			return
-		}
-
-		workspace := &workspaces[0]
 
 		// Get the workspace permissions and set them on the session
 		// For now give workspace users access to everything.
@@ -134,7 +131,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 
 		workspace.Permissions = adminPerms
 
-		session.SetWorkspace(workspace)
+		session.SetWorkspace(&workspace)
 		next.ServeHTTP(w, r)
 	})
 }

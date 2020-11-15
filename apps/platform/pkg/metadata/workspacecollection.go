@@ -1,9 +1,5 @@
 package metadata
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
-
 // WorkspaceCollection slice
 type WorkspaceCollection []Workspace
 
@@ -47,21 +43,4 @@ func (wc *WorkspaceCollection) Loop(iter func(item CollectionableItem) error) er
 // Len function
 func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
-}
-
-// ByNameRequest function
-func (wc *WorkspaceCollection) ByNameRequest(appName, workspaceName string) []reqs.LoadRequest {
-	return []reqs.LoadRequest{
-		reqs.NewPlatformLoadRequest(
-			"workspacesWire",
-			wc.GetName(),
-			wc.GetFields(),
-			[]reqs.LoadRequestCondition{
-				{
-					Field: "uesio.id",
-					Value: appName + "_" + workspaceName,
-				},
-			},
-		),
-	}
 }

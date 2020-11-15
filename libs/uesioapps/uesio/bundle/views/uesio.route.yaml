@@ -115,7 +115,9 @@ definition:
                                               - material.dialog:
                                                   id: "routeDialog"
                                                   title: "Are you sure to delete this item?"
-                                                  content: "Are you sure you want to permanently delete this element. The information will be permanently delete"
+                                                  content:
+                                                    - material.typography:
+                                                        text: "Are you sure you want to permanently delete this element. The information will be permanently delete"
                                                   mode: "CLOSE"
                                                   disagreeSignals:
                                                     - signal: "TOGGLE_MODE"

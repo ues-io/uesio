@@ -63,32 +63,19 @@ func SaveBundleMetadata(namespace string, version string, description string, se
 //
 //}
 func getBundleMetadataByID(id string, session *sess.Session) (*metadata.Bundle, error) {
-	bc := metadata.BundleCollection{}
-	err := PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&bc,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				bc.GetName(),
-				bc.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field:    "uesio.id",
-						Value:    id,
-						Operator: "=",
-					},
-				},
-			),
+	b := metadata.Bundle{}
+	err := PlatformLoadOne(
+		&b,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: id,
+			},
 		},
 		session,
 	)
 	if err != nil {
 		return nil, err
 	}
-	if len(bc) < 1 {
-		return nil, errors.New("unable to find Bundle: " + id)
-	}
-	return &bc[0], nil
+	return &b, nil
 }

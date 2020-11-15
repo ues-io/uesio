@@ -20,9 +20,29 @@ definition:
         uesio.name:
       conditions:
         - field: uesio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
+    bundles:
+      collection: uesio.bundles
+      fields:
+        uesio.id:
+        uesio.major:
+        uesio.minor:
+        uesio.patch:
+        uesio.description:
+      conditions:
+        - field: uesio.namespace
+          valueSource: PARAM
+          param: appname
+    sites:
+      collection: uesio.sites
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.appref
+          valueSource: PARAM
+          param: appname
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -168,18 +188,82 @@ definition:
                               band: "platform"
                               path: "app/$Param{appname}/workspace/${uesio.name}"
                               namespace: "uesio"
-                - material.typography:
-                    text: Bundles
-                    variant: h5
-                - material.typography:
-                    text: Create a version of your app with a bundle.
-                    variant: body2
-                - material.typography:
-                    text: Sites
-                    variant: h5
-                - material.typography:
-                    text: Deploy your app to users with a site.
-                    variant: body2
+                - material.grid:
+                    justify: space-between
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Bundles
+                                variant: h5
+                            - material.typography:
+                                text: Pack it up. Pack it in. Let me begin.
+                                variant: body2
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    wire: bundles
+                    id: bundlesDeck
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color: "#581845"
+                            height: 10px
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
+                          signals:
+                            - signal: "NAVIGATE"
+                              band: "platform"
+                              path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
+                              namespace: "uesio"
+                - material.grid:
+                    justify: space-between
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Sites
+                                variant: h5
+                            - material.typography:
+                                text: Your site is in sight.
+                                variant: body2
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    wire: sites
+                    id: sitesDeck
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color: "#581845"
+                            height: 10px
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${uesio.name}"
+                          signals:
+                            - signal: "NAVIGATE"
+                              band: "platform"
+                              path: "app/$Param{appname}/site/${uesio.name}"
+                              namespace: "uesio"
 dependencies:
   componentpacks:
     material.main:
