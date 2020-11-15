@@ -14,25 +14,16 @@ import (
 // NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
 
-	var jobs metadata.BulkJobCollection
+	var job metadata.BulkJob
 
 	// Get the job from the jobID
-	err := datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&jobs,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"jobWire",
-				jobs.GetName(),
-				jobs.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field: "uesio.id",
-						Value: jobID,
-					},
-				},
-			),
+	err := datasource.PlatformLoadOne(
+		&job,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: jobID,
+			},
 		},
 		session,
 	)
@@ -40,7 +31,6 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	job := jobs[0]
 	spec := job.Spec
 	fileFormat := spec.FileType
 	var saveRequestBatch *datasource.SaveRequestBatch

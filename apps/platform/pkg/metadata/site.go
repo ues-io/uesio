@@ -2,7 +2,7 @@ package metadata
 
 import "github.com/thecloudmasters/uesio/pkg/reqs"
 
-// UserFileMetadata struct
+// Site struct
 type Site struct {
 	ID         string `uesio:"uesio.id"`
 	Name       string `uesio:"uesio.name"`

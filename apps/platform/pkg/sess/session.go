@@ -8,11 +8,15 @@ import (
 )
 
 func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Session {
+
+	// Get the site's default profile (hardcoding for now)
+	defaultSitePublicProfile := "uesio.public"
+
 	if user == nil {
 		user = &metadata.User{
 			FirstName: "Guest",
 			LastName:  "User",
-			Profile:   "uesio.public",
+			Profile:   defaultSitePublicProfile,
 		}
 	}
 	sess := session.NewSessionOptions(&session.SessOptions{
@@ -26,7 +30,7 @@ func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Ses
 	return &sess
 }
 
-//TODO:: JAS Ask ben what makes the most sense here
+// GetHeadlessSession TODO:: JAS Ask ben what makes the most sense here
 func GetHeadlessSession() *Session {
 	user := &metadata.User{
 		FirstName: "Guest",

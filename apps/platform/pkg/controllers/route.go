@@ -33,7 +33,18 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	matched := router.Match(r, routematch)
 
 	if !matched {
-		return nil, errors.New("No Route Match Found")
+		// If we're the login route but we didn't find a match, return the uesio login page
+		if path == "login" {
+			return &metadata.Route{
+				ViewRef:   "uesio.login",
+				Namespace: session.GetSite().AppRef,
+				Path:      path,
+			}, nil
+		}
+
+		// If we're logged in return the not found page
+
+		return nil, errors.New("No Route Match Found: " + path)
 	}
 
 	pathTemplate, err := routematch.Route.GetPathTemplate()

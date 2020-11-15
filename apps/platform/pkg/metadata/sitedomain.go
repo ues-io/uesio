@@ -17,8 +17,8 @@ func (s *SiteDomain) GetCollectionName() string {
 
 // GetCollection function
 func (s *SiteDomain) GetCollection() CollectionableGroup {
-	var sc SiteCollection
-	return &sc
+	var sdc SiteDomainCollection
+	return &sdc
 }
 
 // GetConditions function

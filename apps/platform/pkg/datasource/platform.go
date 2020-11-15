@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
@@ -46,6 +47,37 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 	}
 
 	return nil
+}
+
+// PlatformLoadOne function
+func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+	collection := item.GetCollection()
+	collections := []metadata.CollectionableGroup{
+		collection,
+	}
+
+	err := PlatformLoad(collections, []reqs.LoadRequest{
+		reqs.NewPlatformLoadRequest(
+			"itemWire",
+			collection.GetName(),
+			collection.GetFields(),
+			conditions,
+		),
+	}, session)
+
+	if err != nil {
+		return err
+	}
+	length := collection.Len()
+
+	if length == 0 {
+		return errors.New("Couldn't find item from platform load: " + collection.GetName())
+	}
+	if length > 1 {
+		return errors.New("Duplicate item found from platform load: " + collection.GetName())
+	}
+
+	return copier.Copy(item, collection.GetItem(0))
 }
 
 // PlatformDelete function

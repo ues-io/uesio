@@ -19,6 +19,15 @@ var secretValues = map[string]map[string]map[string]string{
 			"aws_secret_access_key": os.Getenv("AWS_SECRET_ACCESS_KEY"),
 		},
 	},
+	"uat": {
+		"uesio": {
+			"googleGCPAPIKey": os.Getenv("GOOGLE_CLOUD_API_KEY"),
+		},
+		"crm": {
+			"aws_access_key_id":     os.Getenv("AWS_ACCESS_KEY_ID"),
+			"aws_secret_access_key": os.Getenv("AWS_SECRET_ACCESS_KEY"),
+		},
+	},
 }
 
 // Get function

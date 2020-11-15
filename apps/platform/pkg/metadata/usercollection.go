@@ -1,9 +1,5 @@
 package metadata
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
-
 // UserCollection slice
 type UserCollection []User
 
@@ -47,29 +43,4 @@ func (uc *UserCollection) Loop(iter func(item CollectionableItem) error) error {
 // Len function
 func (uc *UserCollection) Len() int {
 	return len(*uc)
-}
-
-// AuthClaimsRequest function
-func (uc *UserCollection) AuthClaimsRequest(federationType, federationID, siteName string) []reqs.LoadRequest {
-	return []reqs.LoadRequest{
-		reqs.NewPlatformLoadRequest(
-			"authWire",
-			uc.GetName(),
-			uc.GetFields(),
-			[]reqs.LoadRequestCondition{
-				{
-					Field: "uesio.federationType",
-					Value: federationType,
-				},
-				{
-					Field: "uesio.federationId",
-					Value: federationID,
-				},
-				{
-					Field: "uesio.site",
-					Value: siteName,
-				},
-			},
-		),
-	}
 }

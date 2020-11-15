@@ -1,0 +1,8 @@
+name: standard
+named:
+views:
+  crm.accounts: true
+routes:
+  crm.accounts: true
+files:
+  crm.logo: true
