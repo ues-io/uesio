@@ -98,7 +98,7 @@ nx g @nrwl/workspace:library NEW_LIB
     "type": "go",
     "request": "launch",
     "mode": "debug",
-    "program": "\${workspaceRoot}",
+    "program": "${workspaceRoot}",
     "env": {},
     "args": ["serve"]
     }
@@ -160,7 +160,7 @@ cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the apps/platform/ssl directory. You will need to configure your operating system to trust this self-signed certificate.
+This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. You will need to configure your operating system to trust this self-signed certificate.
 
 In windows, double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
 
