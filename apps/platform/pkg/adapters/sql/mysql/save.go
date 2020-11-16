@@ -1,10 +1,11 @@
-package postgresql
+package mysql
 
 import (
 	"database/sql"
 	"errors"
 	"text/template"
 
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
@@ -28,7 +29,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			if !ok {
 				return nil, "", "", errors.New("Error getting metadata for the ID field")
 			}
-			idFieldName, _ = getDBFieldName(idFieldMetadata)
+			idFieldName, _ = sqlshared.GetDBFieldName(idFieldMetadata)
 			continue
 		}
 
@@ -45,7 +46,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			continue
 		}
 
-		fieldName, err := getDBFieldName(fieldMetadata)
+		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, "", "", err
 		}
@@ -75,7 +76,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			continue
 		}
 
-		fieldName, err := getDBFieldName(fieldMetadata)
+		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +98,7 @@ func processUpdate(change reqs.ChangeRequest, collectionName string, collectionM
 	_, err = psql.Update(collectionName).SetMap(updates).RunWith(db).Where(idFieldName+" LIKE ? ", postgresSQLId).Query()
 
 	if err != nil {
-		return errors.New("Failed to Update in PostgreSQL:" + err.Error())
+		return errors.New("Failed to Update in MySQL:" + err.Error())
 	}
 	return nil
 }
@@ -122,7 +123,7 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 	if !ok {
 		return "", errors.New("No metadata provided for field: " + collectionMetadata.IDField)
 	}
-	fieldName, err := getDBFieldName(idFieldMetadata)
+	fieldName, err := sqlshared.GetDBFieldName(idFieldMetadata)
 	if err != nil {
 		return "", err
 	}
@@ -136,10 +137,10 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 		}
 	}
 
-	result, err := psql.Insert(collectionName).Suffix("RETURNING \"id\"").SetMap(inserts).RunWith(db).Query()
+	result, err := psql.Insert(collectionName).SetMap(inserts).RunWith(db).Query()
 
 	if err != nil {
-		return "", errors.New("Failed to insert in PostgreSQL:" + err.Error())
+		return "", errors.New("Failed to insert in MySQL:" + err.Error())
 	}
 
 	result.Scan(newID)
@@ -193,14 +194,14 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 			if !ok {
 				return nil, errors.New("Error getting metadata for the ID field")
 			}
-			idFieldName, err := getDBFieldName(idFieldMetadata)
+			idFieldName, err := sqlshared.GetDBFieldName(idFieldMetadata)
 			if err != nil {
 				return nil, err
 			}
 
 			result, err := psql.Delete(collectionName).RunWith(db).Where(idFieldName+" LIKE ? ", postgresID).Query()
 			if err != nil {
-				return nil, errors.New("Failed to delete in PostgreSQL:" + err.Error())
+				return nil, errors.New("Failed to delete in MySQL:" + err.Error())
 			}
 			result.Scan(deleteResult.Data[collectionMetadata.IDField])
 
@@ -244,10 +245,10 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 	defer db.Close()
 
 	if err != nil {
-		return nil, errors.New("Failed to connect to PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to connect to MySQL:" + err.Error())
 	}
 
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	psql := sq.StatementBuilder
 
 	for _, request := range requests {
 
@@ -256,7 +257,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 			return nil, errors.New("No metadata provided for collection: " + request.Collection)
 		}
 
-		collectionName, err := getDBCollectionName(collectionMetadata)
+		collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
 		if err != nil {
 			return nil, err
 		}
