@@ -4,7 +4,8 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "echo dev script",
+  "dev": "npm run start && cd ../firebase && firebase emulators:start && cd - && npm run nx -- seed platform && npm run build-all && npm run deploy:apps",
+  "deploy:apps": "cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy && cd - && cd ./libs/uesioapps/material && ../../../apps/cli/bin/run deploy && cd - && cd ./libs/uesioapps/sample && ../../../apps/cli/bin/run deploy && cd - && cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run deploy && cd -",
   "affected": "nx affected",
   "affected:apps": "nx affected:apps",
   "affected:build": "nx affected:build",
