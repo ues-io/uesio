@@ -64,7 +64,13 @@ nx g @nrwl/workspace:library NEW_LIB
 - Download and install the npm module dependencies :
 
 ```
-  npm install && npm run build-all
+  npm install
+```
+
+- Build the monorepo :
+
+```
+  npm run build-all
 ```
 
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
