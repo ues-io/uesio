@@ -73,6 +73,13 @@
             "cwd": "libs/ui"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js",
+            "cwd": "libs/ui"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -99,6 +106,13 @@
           "outputs": ["dist/buildtime"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
+            "cwd": "libs/buildtime"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js",
             "cwd": "libs/buildtime"
           }
         },
@@ -164,6 +178,13 @@
           "outputs": ["dist/yaml"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
+            "cwd": "libs/yaml"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js",
             "cwd": "libs/yaml"
           }
         }
