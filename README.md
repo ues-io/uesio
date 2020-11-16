@@ -112,8 +112,6 @@ The building process is done either by `webpack`, or our own `cli` or `go build`
 
 ## Build all applications and libs
 
-Compilation of the Go code (code server-side) and transpilation from TypeScript down to JavaScript (code client-side).
-
 ```
 npm run build-all
 ```
