@@ -43,6 +43,13 @@
             "cwd": "apps/platform"
           }
         },
+        "build-image": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker build --tag uesio:v0.0.1 -f ./apps/platform/Dockerfile .",
+            "cwd": "."
+          }
+        },
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
