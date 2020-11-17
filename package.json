@@ -4,7 +4,7 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "npm run start && cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run login && ../../../apps/cli/bin/run work dev && cd - && cd ../firebase && firebase emulators:start && cd - && npm run nx -- seed platform && npm run dev:mock:crm && npm run build-all && npm run watch:uesioapps",
+  "dev": "npm run start & cd ../firebase && firebase emulators:start & npm run nx -- seed platform && cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run login && ../../../apps/cli/bin/run work dev && cd - && npm run dev:mock:crm && npm run build-all && npm run watch:uesioapps",
   "watch:uesioapps": "nx run-many --target=watch --all",
   "dev:mock:crm": " cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts",
   "affected": "nx affected",
