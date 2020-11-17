@@ -1,4 +1,4 @@
-FROM golang:1.15
+FROM golang:1.15-alpine
 
 WORKDIR /location/of/source/code
 COPY ./dist ../../dist
