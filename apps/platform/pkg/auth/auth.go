@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/site"
@@ -176,6 +177,11 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 		session,
 	)
 	if err != nil {
+		if _, ok := err.(*datasource.RecordNotFoundError); ok {
+			// User not found. No error though.
+			logger.Log("Could not find user: "+claims.Subject, logger.INFO)
+			return nil, nil
+		}
 		return nil, err
 	}
 

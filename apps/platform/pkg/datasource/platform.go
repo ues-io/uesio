@@ -17,6 +17,20 @@ type PlatformSaveRequest struct {
 	Options    *reqs.SaveOptions
 }
 
+// RecordNotFoundError struct
+type RecordNotFoundError struct {
+	message string
+}
+
+func (e *RecordNotFoundError) Error() string { return e.message }
+
+// NewRecordNotFoundError creates a new record not found error
+func NewRecordNotFoundError(message string) *RecordNotFoundError {
+	return &RecordNotFoundError{
+		message: message,
+	}
+}
+
 // PlatformLoad function
 func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.LoadRequest, session *sess.Session) error {
 
@@ -71,7 +85,7 @@ func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadReq
 	length := collection.Len()
 
 	if length == 0 {
-		return errors.New("Couldn't find item from platform load: " + collection.GetName())
+		return NewRecordNotFoundError("Couldn't find item from platform load: " + collection.GetName())
 	}
 	if length > 1 {
 		return errors.New("Duplicate item found from platform load: " + collection.GetName())
