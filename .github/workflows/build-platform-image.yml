@@ -1,6 +1,7 @@
-name: Nx Affected CI
+name: Platform Image build
 on:
   push:
+    branches: master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,10 +46,17 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - name: Run Affected Tests
+      - name: Run Build all resources
         shell: bash
-        run: |
-          npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run build-all
-          npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-          npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
+        run: npm run build-all
+      - name: Build image
+        run: npm run nx -- build-image platform
+#        Push The image somewhere
+#      - name: Save image
+#        run: docker save -o ./platform-image uesio:v0.0.1
+#      - name: Upload image
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: uesio-image
+#          path: ./platform-image
+
