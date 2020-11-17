@@ -1,7 +1,7 @@
 name: Platform Image build
 on:
   push:
-#    branches: master
+    branches: master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,11 +51,12 @@ jobs:
         run: npm run build-all
       - name: Build image
         run: npm run nx -- build-image platform
-      - name: Save image
-        run: docker save -o ./platform-image uesio:v0.0.1
-      - name: Upload image
-        uses: actions/upload-artifact@v1
-        with:
-          name: uesio-image
-          path: ./platform-image
+#        Push The image somewhere
+#      - name: Save image
+#        run: docker save -o ./platform-image uesio:v0.0.1
+#      - name: Upload image
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: uesio-image
+#          path: ./platform-image
 
