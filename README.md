@@ -152,7 +152,7 @@ For plugging such an application into uesio, you have to deploy it obviously aft
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
-Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is direclty accessing the related files part of that lib.
+Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is directly accessing the related files part of that lib.
 
 # Set up SSL
 
