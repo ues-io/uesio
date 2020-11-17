@@ -1,0 +1,130 @@
+name: bots
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    bots:
+      collection: uesio.bots
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.type:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.breadcrumbs:
+              crumbs:
+                - text: home
+                  href: home
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: home
+                      namespace: uesio
+                - text: $Param{appname}
+                  href: app/$Param{appname}
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: app/$Param{appname}
+                      namespace: uesio
+                - text: $Param{workspacename}
+                  href: app/$Param{appname}/workspace/$Param{workspacename}
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: app/$Param{appname}/workspace/$Param{workspacename}
+                      namespace: uesio
+                - text: bots
+          - material.grid:
+              justify: space-between
+              items:
+                - material.griditem:
+                    components:
+                      - material.typography:
+                          text: Bots
+                          variant: h5
+                      - material.typography:
+                          text: Gotta catch 'em all!
+                          variant: body2
+                - material.griditem:
+                    components:
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Create New Bot"
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
+                                    namespace: "uesio"
+          - material.deck:
+              xs: 12
+              sm: 6
+              md: 4
+              lg: 3
+              margin: 0
+              id: botsDeck
+              wire: bots
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color: "purple"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.typography:
+                          text: "${uesio.id}"
+                      - material.griditem:
+                          components:
+                            - material.icon:
+                                type: "open"
+                                float: right
+                      - material.typography:
+                          text: "${uesio.type}"
+                          textTransform: "capitalize"
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
+                        namespace: "uesio"
+dependencies:
+  componentpacks:
+    material.main:
