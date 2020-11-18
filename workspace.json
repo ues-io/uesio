@@ -25,7 +25,7 @@
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo TODO: watch go file as well as ts file and rebuild &",
+            "command": "npx webpack --watch --config webpack.config.js &",
             "cwd": "apps/platform"
           }
         },
