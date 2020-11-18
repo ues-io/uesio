@@ -1,0 +1,5 @@
+name: homeroute
+collection: uesio.apps
+type: TEXT
+label: Home Route
+propertyName: homeroute

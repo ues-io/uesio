@@ -7,6 +7,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -64,8 +65,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var redirectNamespace, redirectRoute string
 
 	if redirectPath == "" {
-		redirectRoute = "home"
-		redirectNamespace = "uesio"
+		homeRoute := site.GetAppBundle().HomeRoute
+		redirectNamespace, redirectRoute, err = metadata.ParseKey(homeRoute)
+		if err != nil {
+			logger.LogErrorWithTrace(r, err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	respondJSON(w, r, &LoginResponse{

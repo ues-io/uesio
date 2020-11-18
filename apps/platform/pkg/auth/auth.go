@@ -72,8 +72,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 
-	// Get the site's default profile (hardcoding for now)
-	defaultSiteProfile := "uesio.standard"
+	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
