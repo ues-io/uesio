@@ -54,9 +54,6 @@ nx g @nrwl/workspace:library NEW_LIB
 - Install git
 
 - Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
-- ```
-  npm install -g firebase-tools
-  ```
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
 
@@ -73,6 +70,7 @@ nx g @nrwl/workspace:library NEW_LIB
   npm run build-all
 ```
 
+- Optional. If you'd like to work with firestore on your local machine, do follow the instructions here.
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
 - Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
@@ -221,6 +219,12 @@ https://uesio-dev.com:3000
 ```
 
 # Local Development with the Firestore Emulator
+
+1. Create a project in the [firebase console](https://console.firebase.google.com/).
+
+```
+  npm install -g firebase-tools
+```
 
 ```
 firebase init firestore
