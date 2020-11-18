@@ -21,11 +21,23 @@ func getAppLicense(app, appToCheck string) (*metadata.AppLicense, error) {
 	return nil, nil
 }
 
+// GetAppBundle function
 func GetAppBundle(session *sess.Session) (*metadata.BundleDef, error) {
-
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
+	return getAppBundleInternal(appName, appVersion, session)
+}
 
+// GetSiteAppBundle gets the app bundle for the site without regard for the workspace
+func GetSiteAppBundle(site *metadata.Site) (*metadata.BundleDef, error) {
+	// MockSession. Since we're always just going to the local bundles store
+	// we're good with just a fake session.
+	session := &sess.Session{}
+	session.SetSite(site)
+	return getAppBundleInternal(site.AppRef, site.VersionRef, session)
+}
+
+func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*metadata.BundleDef, error) {
 	entry, ok := localcache.GetCacheEntry("bundle-yaml", appName+":"+appVersion)
 	if ok {
 		return entry.(*metadata.BundleDef), nil
