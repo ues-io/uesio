@@ -4,8 +4,8 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "npm run kill:webserver && npm run start & npm run kill:firestore && firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run dev:uesio:login && npm run watch-all",
-  "watch-all": "nx run-many --target=watch --all",
+  "dev": "npm run kill:webserver && npm run start & npm run kill:firestore && firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run dev:uesio:login && npm run watch-all &",
+  "watch-all": "nx run-many --target=watch --all --skip-nx-cache",
   "kill:webserver": "lsof -t -i :3000 | xargs kill -9",
   "kill:firestore": "lsof -t -i :8080 -i :4000 | xargs kill -9",
   "deploy:uesioapps": "nx run-many --target=deploy --all",

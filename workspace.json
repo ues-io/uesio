@@ -373,6 +373,14 @@
             "cwd": "apps/cli"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/cli"],
+          "options": {
+            "command": "npx -w tsc",
+            "cwd": "apps/cli"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
