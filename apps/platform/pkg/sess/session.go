@@ -9,8 +9,8 @@ import (
 
 func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Session {
 
-	// Get the site's default profile (hardcoding for now)
-	defaultSitePublicProfile := "uesio.public"
+	// Get the site's default profile
+	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
 
 	if user == nil {
 		user = &metadata.User{
@@ -101,10 +101,11 @@ func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *metadat
 	}
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := browserSession.CAttr("Site")
+	newSession := create(&browserSession, site)
 	if browserSessionSite != site.Name {
-		return Logout(w, create(&browserSession, site)), nil
+		return Logout(w, newSession), nil
 	}
-	return create(&browserSession, site), nil
+	return newSession, nil
 }
 
 // Session struct
@@ -113,6 +114,11 @@ type Session struct {
 	site           *metadata.Site
 	workspace      *metadata.Workspace
 	permissions    *metadata.PermissionSet
+}
+
+// SetSite function
+func (s *Session) SetSite(site *metadata.Site) {
+	s.site = site
 }
 
 // GetSite function

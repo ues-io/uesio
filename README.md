@@ -40,7 +40,7 @@ Sandalone **libraries** are located in the `libs` folder. These libs are compone
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted.
+The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
 For scaffolding a new lib, you can run the following script.
 
@@ -64,7 +64,13 @@ nx g @nrwl/workspace:library NEW_LIB
 - Download and install the npm module dependencies :
 
 ```
-  npm install && npm run build-all
+  npm install
+```
+
+- Build the monorepo :
+
+```
+  npm run build-all
 ```
 
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
@@ -92,7 +98,7 @@ nx g @nrwl/workspace:library NEW_LIB
     "type": "go",
     "request": "launch",
     "mode": "debug",
-    "program": "\${workspaceRoot}",
+    "program": "${workspaceRoot}",
     "env": {},
     "args": ["serve"]
     }
@@ -102,11 +108,9 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Build
 
-The building process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
+The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
 
 ## Build all applications and libs
-
-Compilation of the Go code (code server-side) and transpilation from TypeScript down to JavaScript (code client-side).
 
 ```
 npm run build-all
@@ -148,13 +152,17 @@ For plugging such an application into uesio, you have to deploy it obviously aft
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
+Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is directly accessing the related files part of that lib.
+
+An **app bundle** is a screenshot or version of a specific uesio app.
+
 # Set up SSL
 
 ```
 npm run setup-ssl
 ```
 
-This script should create the `certificate.crt` and `private.key` files in the apps/platform/ssl directory. You will need to configure your operating system to trust this self-signed certificate.
+This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. You will need to configure your operating system to trust this self-signed certificate.
 
 In windows, double-click certificate.crt in the File Explorer. Click "Install Certificate..." Then place the certificate in the "Trusted Root Certification Authorities".
 

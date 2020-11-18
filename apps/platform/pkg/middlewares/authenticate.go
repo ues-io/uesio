@@ -53,6 +53,14 @@ func Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
+		bundleDef, err := bundles.GetSiteAppBundle(site)
+		if err != nil {
+			http.Error(w, "Failed to get app bundle from site:"+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		site.SetAppBundle(bundleDef)
+
 		s, err := sess.GetSessionFromRequest(w, r, site)
 		if err != nil {
 			http.Error(w, "Failed to create session", http.StatusInternalServerError)

@@ -1,4 +1,8 @@
 name: uesio
+loginRoute: uesio.login
+homeRoute: uesio.home
+defaultProfile: uesio.standard
+publicProfile: uesio.public
 dependencies:
   material:
     version: "v0.0.1"

@@ -35,9 +35,10 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	if !matched {
 		// If we're the login route but we didn't find a match, return the uesio login page
 		if path == "login" {
+			site := session.GetSite()
 			return &metadata.Route{
-				ViewRef:   "uesio.login",
-				Namespace: session.GetSite().AppRef,
+				ViewRef:   site.GetAppBundle().LoginRoute,
+				Namespace: site.AppRef,
 				Path:      path,
 			}, nil
 		}

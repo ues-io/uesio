@@ -12,7 +12,7 @@ func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
 	site := session.GetSite()
 
 	jobs := metadata.BulkJobCollection{
-		metadata.BulkJob{
+		{
 			Spec: *spec,
 			Site: site.Name,
 		},

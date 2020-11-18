@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/site"
@@ -71,8 +72,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 
-	// Get the site's default profile (hardcoding for now)
-	defaultSiteProfile := "uesio.standard"
+	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
@@ -176,6 +176,11 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 		session,
 	)
 	if err != nil {
+		if _, ok := err.(*datasource.RecordNotFoundError); ok {
+			// User not found. No error though.
+			logger.Log("Could not find user: "+claims.Subject, logger.INFO)
+			return nil, nil
+		}
 		return nil, err
 	}
 

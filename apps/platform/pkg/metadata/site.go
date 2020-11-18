@@ -9,6 +9,17 @@ type Site struct {
 	BundleID   string `uesio:"uesio.bundleid"`
 	AppRef     string `uesio:"uesio.appref"`
 	VersionRef string `uesio:"uesio.versionref"`
+	bundleDef  *BundleDef
+}
+
+// SetAppBundle function
+func (s *Site) SetAppBundle(bundleDef *BundleDef) {
+	s.bundleDef = bundleDef
+}
+
+// GetAppBundle function
+func (s *Site) GetAppBundle() *BundleDef {
+	return s.bundleDef
 }
 
 // GetCollectionName function
