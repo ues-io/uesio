@@ -1,4 +1,4 @@
-package postgresql
+package mysql
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
 
 func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
@@ -18,14 +19,14 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 	rows, err := loadQuery.RunWith(db).Query()
 
 	if err != nil {
-		return nil, errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load rows in MySQL:" + err.Error())
 	}
 
 	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, errors.New("Failed to load columns in PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to load columns in MySQL:" + err.Error())
 	}
 
 	colIndexes := map[string]int{}
@@ -35,20 +36,21 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 	}
 
 	allgeneric := make([]map[string]interface{}, 0)
-	colvals := make([]interface{}, len(cols))
+	colvals := make([]sql.RawBytes, len(cols))
+	scanArgs := make([]interface{}, len(colvals))
 
 	for rows.Next() {
 		colassoc := make(map[string]interface{}, len(cols))
 		for i := range colvals {
-			colvals[i] = new(interface{})
+			scanArgs[i] = &colvals[i]
 		}
-		if err := rows.Scan(colvals...); err != nil {
-			return nil, errors.New("Failed to scan values in PostgreSQL:" + err.Error())
+		if err := rows.Scan(scanArgs...); err != nil {
+			return nil, errors.New("Failed to scan values in MySQL:" + err.Error())
 		}
 		// Map properties from firestore to uesio fields
 		for fieldID, fieldMetadata := range requestedFields {
 
-			sqlFieldName, err := getDBFieldName(fieldMetadata)
+			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return nil, err
 			}
@@ -56,7 +58,7 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
-			colassoc[fieldID] = *colvals[index].(*interface{})
+			colassoc[fieldID] = string(colvals[index])
 		}
 
 		allgeneric = append(allgeneric, colassoc)
@@ -99,7 +101,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 		return nil, err
 	}
 
-	nameFieldDB, err := getDBFieldName(nameFieldMetadata)
+	nameFieldDB, err := sqlshared.GetDBFieldName(nameFieldMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -112,21 +114,21 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 	requestedFieldArr := []string{}
 
 	for _, fieldMetadata := range fieldMap {
-		firestoreFieldName, err := getDBFieldName(fieldMetadata)
+		firestoreFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
 		}
 		requestedFieldArr = append(requestedFieldArr, firestoreFieldName)
 	}
 
-	collectionName, err := getDBCollectionName(collectionMetadata)
+	collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
 	if err != nil {
 		return nil, err
 	}
 
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	psql := sq.StatementBuilder
 
-	loadQuery := psql.Select(requestedFieldArr...).From("public." + collectionName)
+	loadQuery := psql.Select(requestedFieldArr...).From(collectionName)
 
 	if wire.Conditions != nil {
 
@@ -136,7 +138,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 				searchToken := condition.Value.(string)
 				colValeStr := ""
 				colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-				loadQuery = loadQuery.Where(nameFieldDB+" ILIKE ? ", colValeStr)
+				loadQuery = loadQuery.Where(nameFieldDB+" LIKE ? ", colValeStr)
 				continue
 			}
 
@@ -144,7 +146,7 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 			if !ok {
 				return nil, errors.New("No metadata provided for field: " + condition.Field)
 			}
-			fieldName, err := getDBFieldName(fieldMetadata)
+			fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return nil, err
 			}
@@ -190,7 +192,7 @@ func (a *Adapter) Load(requests []reqs.LoadRequest, metadata *adapters.MetadataC
 	db, err := connect()
 	defer db.Close()
 	if err != nil {
-		return nil, errors.New("Failed to connect PostgreSQL:" + err.Error())
+		return nil, errors.New("Failed to connect MySQL:" + err.Error())
 	}
 
 	for _, wire := range requests {
