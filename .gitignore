@@ -53,6 +53,7 @@ ui-debug.log
 firestore-debug.log
 firestore.indexes.json
 firestore.rules
+firebase.json
 firebase-debug.log
 .firebaserc
 __debug_bin
