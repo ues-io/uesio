@@ -11,27 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
-func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
-	lookupRequests, err := adapters.GetLookupRequests(request, metadata)
-	if err != nil {
-		return err
-	}
-
-	if lookupRequests != nil && len(lookupRequests) > 0 {
-		lookupResponses, err := a.Load(lookupRequests, metadata, credentials)
-		if err != nil {
-			return err
-		}
-
-		err = adapters.MergeLookupResponses(request, lookupResponses, metadata)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 // Save function
 func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.SaveResponse, error) {
 
@@ -60,7 +39,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 
 		// Sometimes we only have the name of something instead of it's real id
 		// We can use this lookup functionality to get the real id before the save.
-		err = a.handleLookups(request, metadata, credentials)
+		err = sqlshared.HandleLookups(a, request, metadata, credentials)
 		if err != nil {
 			return nil, err
 		}

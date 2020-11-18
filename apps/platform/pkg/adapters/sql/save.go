@@ -5,6 +5,7 @@ import (
 	"errors"
 	"text/template"
 
+	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/Masterminds/squirrel"
@@ -212,4 +213,26 @@ func ProcessDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 	}
 	return deleteResults, nil
 
+}
+
+//HandleLookups function
+func HandleLookups(a adapters.Adapter, request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+	lookupRequests, err := adapters.GetLookupRequests(request, metadata)
+	if err != nil {
+		return err
+	}
+
+	if lookupRequests != nil && len(lookupRequests) > 0 {
+		lookupResponses, err := a.Load(lookupRequests, metadata, credentials)
+		if err != nil {
+			return err
+		}
+
+		err = adapters.MergeLookupResponses(request, lookupResponses, metadata)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
