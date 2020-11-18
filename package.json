@@ -4,10 +4,9 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "npm run kill:firebase && npm run build-all && rm -rf wget-log* && cd ../firebase && firebase emulators:start && cd - && npm run seed-database && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
+  "dev": "npm run kill:firebase && && cd ../firebase && firebase emulators:start & cd - && npm run build-all && rm -rf wget-log* && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
   "watch-all": "nx run-many --target=watch --all",
   "kill:firebase": "lsof -t -i :8008 -i :8080 -i :4000 | xargs kill -9",
-  "seed-database": "nx -- seed platform",
   "deploy:uesioapps": "nx run-many --target=deploy --all",
   "dev:mock:crm": " cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts && cd -",
   "uesio:login": "cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run login && cd -",
