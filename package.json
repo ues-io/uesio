@@ -4,7 +4,7 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "npm run kill:firebase && ../firebase/firebase emulators:start & npm run build-all && rm -rf wget-log* && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
+  "dev": "npm run start & npm run kill:firebase && firebase emulators:start & npm run build-all && rm -rf wget-log* && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
   "watch-all": "nx run-many --target=watch --all",
   "kill:firebase": "lsof -t -i :8080 -i :4000 | xargs kill -9",
   "deploy:uesioapps": "nx run-many --target=deploy --all",
