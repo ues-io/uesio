@@ -4,8 +4,9 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "dev": "npm run start & npm run kill:firebase && firebase emulators:start & npm run build-all && rm -rf wget-log* && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
+  "dev": "npm run kill:webserver && npm run start & npm run kill:firebase && firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run deploy:uesioapps && npm run dev:mock:crm && npm run uesio:login && npm run watch-all &",
   "watch-all": "nx run-many --target=watch --all",
+  "kill:webserver": "lsof -t -i :3000 | xargs kill -9",
   "kill:firebase": "lsof -t -i :8080 -i :4000 | xargs kill -9",
   "deploy:uesioapps": "nx run-many --target=deploy --all",
   "dev:mock:crm": " cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts && cd -",
