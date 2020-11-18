@@ -37,7 +37,7 @@ function CodeField(props: Props): ReactElement | null {
 	const collection = wire.getCollection()
 	const fieldId = props.definition.fieldId
 	const fieldMetadata = collection.getField(fieldId)
-	var value = record.getFieldValue(fieldId)
+	const value = record.getFieldValue(fieldId)
 
 	if (!fieldMetadata.isValid()) {
 		return null
