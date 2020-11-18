@@ -5,59 +5,49 @@ definition:
         name: topbar
         namespace: crm
     - material.deck:
-        xs: 12
-        margin: 0
-        id: oneaccountDeck
-        wire: contacts
-        mode: READ
         components:
           - material.card:
-              media:
-                background:
-                color: "#FF5733"
-                height: 10px
-              margin: 1
               components:
                 - material.grid:
-                    justify: space-between
                     alignitems: center
                     items:
                       - material.griditem:
                           components:
                             - material.typography:
                                 text: ${crm.firstname}
+                                textTransform: uppercase
                                 variant: h5
-                                textTransform: "uppercase"
                       - material.griditem:
                           components:
                             - material.buttonset:
                                 buttons:
                                   - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Edit"
+                                      color: primary
                                       signals:
-                                        - signal: "TOGGLE_MODE"
-                                          scope: "material.deck"
-                                          band: "component"
-                                          target: "oneaccountDeck"
+                                        - band: component
+                                          scope: material.deck
+                                          signal: TOGGLE_MODE
+                                          target: oneaccountDeck
+                                      text: Edit
+                                      variant: outlined
                                   - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Save"
+                                      color: primary
                                       signals:
-                                        - signal: "SAVE"
-                                          band: "wire"
+                                        - band: wire
+                                          signal: SAVE
                                           targets:
-                                            - "contacts"
+                                            - contacts
+                                      text: Save
+                                      variant: outlined
                                   - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Cancel"
+                                      color: primary
                                       signals:
-                                        - signal: "CANCEL"
-                                          band: "wire"
-                                          target: "contacts"
+                                        - band: wire
+                                          signal: CANCEL
+                                          target: contacts
+                                      text: Cancel
+                                      variant: outlined
+                    justify: space-between
                 - material.field:
                     fieldId: crm.id
                 - material.field:
@@ -72,23 +62,33 @@ definition:
                     fieldId: crm.account
                 - material.field:
                     fieldId: crm.birthdate
+              margin: 1
+              media:
+                background: null
+                color: '#FF5733'
+                height: 10px
+        id: oneaccountDeck
+        margin: 0
+        mode: READ
+        wire: contacts
+        xs: 12
   wires:
     contacts:
       collection: crm.contacts
       conditions:
         - field: crm.id
-          valueSource: PARAM
           param: contactid
+          valueSource: PARAM
       fields:
         crm.account: null
         crm.accountid: null
+        crm.birthdate: null
         crm.deceased: null
         crm.firstname: null
         crm.gender: null
         crm.id: null
         crm.lastname: null
-        crm.birthdate: null
-
 dependencies:
   componentpacks:
-    material.main:
+    material.main: null
+    sample.main: null

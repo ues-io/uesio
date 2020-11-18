@@ -64,23 +64,14 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *s
 
 // GetUserFile function
 func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMetadata, error) {
-	var userfiles metadata.UserFileMetadataCollection
-	err := PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&userfiles,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"userfileWire",
-				userfiles.GetName(),
-				userfiles.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field: "uesio.id",
-						Value: userFileID,
-					},
-				},
-			),
+	var userfile metadata.UserFileMetadata
+	err := PlatformLoadOne(
+		&userfile,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: userFileID,
+			},
 		},
 		session,
 	)
@@ -88,15 +79,7 @@ func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMe
 		return nil, err
 	}
 
-	if len(userfiles) > 1 {
-		return nil, errors.New("Duplicate user file found")
-	}
-
-	if len(userfiles) == 0 {
-		return nil, errors.New("No Userfile found: " + userFileID)
-	}
-
-	return &userfiles[0], nil
+	return &userfile, nil
 }
 
 func getFieldIDPart(details reqs.FileDetails) string {

@@ -28,3 +28,19 @@ func (bbc *BulkBatchCollection) GetItem(index int) CollectionableItem {
 	actual := *bbc
 	return &actual[index]
 }
+
+// Loop function
+func (bbc *BulkBatchCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *bbc {
+		err := iter(bbc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (bbc *BulkBatchCollection) Len() int {
+	return len(*bbc)
+}

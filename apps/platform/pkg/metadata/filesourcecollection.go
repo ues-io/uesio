@@ -6,41 +6,57 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 type FileSourceCollection []FileSource
 
 // GetName function
-func (dsc *FileSourceCollection) GetName() string {
+func (fsc *FileSourceCollection) GetName() string {
 	return "FileSources"
 }
 
 // GetFields function
-func (dsc *FileSourceCollection) GetFields() []string {
+func (fsc *FileSourceCollection) GetFields() []string {
 	return []string{"id"}
 }
 
 // NewItem function
-func (dsc *FileSourceCollection) NewItem(key string) (BundleableItem, error) {
+func (fsc *FileSourceCollection) NewItem(key string) (BundleableItem, error) {
 	return NewFileSource(key)
 }
 
 // GetKeyPrefix function
-func (dsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (fsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (dsc *FileSourceCollection) AddItem(item BundleableItem) {
+func (fsc *FileSourceCollection) AddItem(item BundleableItem) {
 }
 
 // UnMarshal function
-func (dsc *FileSourceCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(dsc, data)
+func (fsc *FileSourceCollection) UnMarshal(data []map[string]interface{}) error {
+	return StandardDecoder(fsc, data)
 }
 
 // Marshal function
-func (dsc *FileSourceCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(dsc)
+func (fsc *FileSourceCollection) Marshal() ([]map[string]interface{}, error) {
+	return StandardEncoder(fsc)
 }
 
 // GetItem function
-func (dsc *FileSourceCollection) GetItem(index int) CollectionableItem {
-	actual := *dsc
+func (fsc *FileSourceCollection) GetItem(index int) CollectionableItem {
+	actual := *fsc
 	return &actual[index]
+}
+
+// Loop function
+func (fsc *FileSourceCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *fsc {
+		err := iter(fsc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (fsc *FileSourceCollection) Len() int {
+	return len(*fsc)
 }

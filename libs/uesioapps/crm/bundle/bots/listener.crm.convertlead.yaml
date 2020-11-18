@@ -1,4 +1,4 @@
 name: convertlead
-dialect: "JAVASCRIPT"
-type: "LISTENER"
+type: LISTENER
+dialect: JAVASCRIPT
 fileName: convertlead.js

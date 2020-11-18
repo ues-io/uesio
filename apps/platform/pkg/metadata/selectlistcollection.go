@@ -51,6 +51,22 @@ func (slc *SelectListCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// Loop function
+func (slc *SelectListCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *slc {
+		err := iter(slc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (slc *SelectListCollection) Len() int {
+	return len(*slc)
+}
+
 // UnMarshal function
 func (slc *SelectListCollection) UnMarshal(data []map[string]interface{}) error {
 	err := StandardDecoder(slc, data)

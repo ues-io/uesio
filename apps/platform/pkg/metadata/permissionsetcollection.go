@@ -44,3 +44,19 @@ func (pc *PermissionSetCollection) GetItem(index int) CollectionableItem {
 	actual := *pc
 	return &actual[index]
 }
+
+// Loop function
+func (pc *PermissionSetCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *pc {
+		err := iter(pc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (pc *PermissionSetCollection) Len() int {
+	return len(*pc)
+}

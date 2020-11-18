@@ -23,6 +23,19 @@ var configValues = map[string]map[string]map[string]string{
 			"aws_region": os.Getenv("AWS_REGION"),
 		},
 	},
+	"uat": {
+		"uesio": {
+			"googleClientId":    os.Getenv("GOOGLE_AUTH_CLIENT_ID"),
+			"googleProjectId":   os.Getenv("GOOGLE_CLOUD_PROJECT"),
+			"facebookAppId":     os.Getenv("FACEBOOK_APP_ID"),
+			"cognitoClientId":   os.Getenv("COGNITO_CLIENT_ID"),
+			"cognitoPoolId":     os.Getenv("COGNITO_POOL_ID"),
+			"genericFileBucket": os.Getenv("UESIO_PLATFORM_BUCKET"),
+		},
+		"crm": {
+			"aws_region": os.Getenv("AWS_REGION"),
+		},
+	},
 }
 
 // Get function

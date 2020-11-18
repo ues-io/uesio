@@ -44,3 +44,19 @@ func (ufcc *UserFileCollectionCollection) GetItem(index int) CollectionableItem 
 	actual := *ufcc
 	return &actual[index]
 }
+
+// Loop function
+func (ufcc *UserFileCollectionCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *ufcc {
+		err := iter(ufcc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (ufcc *UserFileCollectionCollection) Len() int {
+	return len(*ufcc)
+}

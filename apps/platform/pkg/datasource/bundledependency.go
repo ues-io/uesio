@@ -54,7 +54,8 @@ func clearCache(namespace string, workspaceID string) {
 	localcache.RemoveCacheEntry("workspace-dependency", namespace+":"+workspaceID)
 }
 
-func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
+// BundleDependencyLoad function
+func BundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
 	bdc := metadata.BundleDependencyCollection{}
 	err := PlatformLoad(
 		[]metadata.CollectionableGroup{
@@ -75,7 +76,7 @@ func bundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.
 
 // GetBundleDependenciesForWorkspace func
 func GetBundleDependenciesForWorkspace(workspaceID string, session *sess.Session) (*metadata.BundleDependencyCollection, error) {
-	bdc, err := bundleDependencyLoad(
+	bdc, err := BundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
@@ -91,7 +92,7 @@ func GetBundleDependenciesForWorkspace(workspaceID string, session *sess.Session
 	return &bdc, nil
 }
 func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*metadata.BundleDependency, error) {
-	bdc, err := bundleDependencyLoad(
+	bdc, err := BundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",

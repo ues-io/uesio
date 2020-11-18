@@ -1,8 +1,8 @@
 name: crm
 dependencies:
-  sample:
-    version: "v0.0.1"
   material:
-    version: "v0.0.1"
+    version: v0.0.1
+  sample:
+    version: v0.0.1
   uesio:
-    version: "v0.0.1"
+    version: v0.0.1

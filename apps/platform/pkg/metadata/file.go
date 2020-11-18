@@ -20,13 +20,12 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
-	Name        string `yaml:"name" uesio:"uesio.name"`
-	Namespace   string `yaml:"namespace" uesio:"-"`
-	Type        string `uesio:"-"`
-	ContentType string `uesio:"-"`
-	Content     string `yaml:"-" uesio:"uesio.content"`
-	FileName    string `yaml:"fileName" uesio:"-"`
-	Workspace   string `yaml:"-" uesio:"uesio.workspaceid"`
+	Name      string `yaml:"name" uesio:"uesio.name"`
+	Namespace string `yaml:"-" uesio:"-"`
+	Content   string `yaml:"-" uesio:"uesio.content"`
+	FileName  string `yaml:"fileName" uesio:"-"`
+	MimeType  string `yaml:"contentType" uesio:"-"`
+	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetCollectionName function

@@ -48,3 +48,19 @@ func (dsc *DataSourceCollection) GetItem(index int) CollectionableItem {
 	actual := *dsc
 	return &actual[index]
 }
+
+// Loop function
+func (dsc *DataSourceCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *dsc {
+		err := iter(dsc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (dsc *DataSourceCollection) Len() int {
+	return len(*dsc)
+}

@@ -21,13 +21,13 @@ func NewCollection(key string) (*Collection, error) {
 // Collection struct
 type Collection struct {
 	Name           string `yaml:"name" uesio:"uesio.name"`
-	Namespace      string `yaml:"namespace" uesio:"-"`
+	Namespace      string `yaml:"-" uesio:"-"`
 	DataSourceRef  string `yaml:"dataSource" uesio:"uesio.datasource"`
 	IDField        string `yaml:"idField" uesio:"uesio.idfield"`
-	IDFormat       string `yaml:"idFormat" uesio:"uesio.idformat"`
+	IDFormat       string `yaml:"idFormat,omitempty" uesio:"uesio.idformat"`
 	NameField      string `yaml:"nameField" uesio:"uesio.namefield"`
 	CollectionName string `yaml:"collectionName" uesio:"uesio.collectionname"`
-	ReadOnly       bool   `yaml:"readOnly" uesio:"-"`
+	ReadOnly       bool   `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace      string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 

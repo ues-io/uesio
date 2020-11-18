@@ -1,8 +1,13 @@
 // it is important to set global var before any imports
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/camelcase
-__webpack_public_path__ = window.monacoPublicPath
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+declare let __webpack_public_path__ : string
+
+declare global {
+	interface Window {
+		monacoPublicPath: string
+	}
+}
 
 import React, { lazy, createElement, FC, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
@@ -12,6 +17,9 @@ import {
 	EditorWillMount,
 	EditorDidMount,
 } from "react-monaco-editor"
+
+// eslint-disable-next-line prefer-const
+__webpack_public_path__ = window.monacoPublicPath
 
 const LaziestMonaco = lazy(
 	() =>

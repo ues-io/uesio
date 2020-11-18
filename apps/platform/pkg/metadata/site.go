@@ -2,13 +2,24 @@ package metadata
 
 import "github.com/thecloudmasters/uesio/pkg/reqs"
 
-// UserFileMetadata struct
+// Site struct
 type Site struct {
 	ID         string `uesio:"uesio.id"`
 	Name       string `uesio:"uesio.name"`
 	BundleID   string `uesio:"uesio.bundleid"`
 	AppRef     string `uesio:"uesio.appref"`
 	VersionRef string `uesio:"uesio.versionref"`
+	bundleDef  *BundleDef
+}
+
+// SetAppBundle function
+func (s *Site) SetAppBundle(bundleDef *BundleDef) {
+	s.bundleDef = bundleDef
+}
+
+// GetAppBundle function
+func (s *Site) GetAppBundle() *BundleDef {
+	return s.bundleDef
 }
 
 // GetCollectionName function

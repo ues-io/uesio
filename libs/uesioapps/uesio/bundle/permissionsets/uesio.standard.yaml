@@ -32,6 +32,8 @@ views:
   uesio.bulkjobs: true
   uesio.bulkjob: true
   uesio.newbulkjob: true
+  uesio.bundle: true
+  uesio.site: true
 routes:
   uesio.login: true
   uesio.field: true
@@ -61,6 +63,8 @@ routes:
   uesio.bulkjobs: true
   uesio.bulkjob: true
   uesio.newbulkjob: true
+  uesio.bundle: true
+  uesio.site: true
 files:
   uesio.logo: true
   uesio.logosmall: true

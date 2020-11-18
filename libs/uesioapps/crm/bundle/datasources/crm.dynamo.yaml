@@ -1,5 +1,5 @@
 name: dynamo
 type: uesio.dynamodbmultiple
+region: ${crm.aws_region}
 username: crm.aws_access_key_id
 password: crm.aws_secret_access_key
-region: ${crm.aws_region}

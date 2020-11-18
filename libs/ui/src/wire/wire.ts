@@ -45,7 +45,7 @@ import {
 	SetRecordSignal,
 	EmptySignal,
 } from "./wiresignals"
-import { PlainWireDefault } from "./wiredefault"
+import { WireDefault } from "./wiredefault"
 import { WireBand } from "./wireband"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { wire } from "@uesio/constants"
@@ -56,7 +56,7 @@ type PlainWire = {
 	collection: string
 	fields: PlainWireFieldMap
 	conditions: WireConditionState[]
-	defaults: PlainWireDefault[]
+	defaults: WireDefault[]
 	data: PlainWireRecordMap
 	view: string
 	original: PlainWireRecordMap
@@ -284,6 +284,12 @@ class Wire extends Actor {
 									defaultRecord[
 										defaultItem.field
 									] = lookupValue
+								}
+							}
+							if (defaultItem.valueSource === "VALUE") {
+								const value = context.merge(defaultItem.value)
+								if (value) {
+									defaultRecord[defaultItem.field] = value
 								}
 							}
 						})
@@ -606,7 +612,7 @@ class Wire extends Actor {
 		return this.getConditions().find((c) => c.id === id) || null
 	}
 
-	getDefaults(): PlainWireDefault[] {
+	getDefaults(): WireDefault[] {
 		return this.source.defaults || []
 	}
 

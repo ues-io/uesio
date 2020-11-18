@@ -9,7 +9,7 @@ import (
 type View struct {
 	ID           string    `yaml:"-" uesio:"uesio.id"`
 	Name         string    `yaml:"name" uesio:"uesio.name"`
-	Namespace    string    `yaml:"namespace" uesio:"-"`
+	Namespace    string    `yaml:"-" uesio:"-"`
 	Definition   yaml.Node `yaml:"definition" uesio:"-"`
 	Dependencies yaml.Node `yaml:"dependencies" uesio:"-"`
 	Workspace    string    `yaml:"-" uesio:"uesio.workspaceid"`

@@ -11,29 +11,29 @@ definition:
         buttons:
           - material.button:
               color: primary
-              variant: contained
-              text: Create Row
               signals:
-                - signal: CREATE_RECORD
-                  band: wire
+                - band: wire
+                  signal: CREATE_RECORD
                   target: accounts
+              text: Create Row
+              variant: contained
           - material.button:
               color: primary
-              variant: contained
-              text: Save
               signals:
-                - signal: SAVE
-                  band: wire
+                - band: wire
+                  signal: SAVE
                   targets:
                     - accounts
+              text: Save
+              variant: contained
           - material.button:
               color: primary
-              variant: contained
-              text: Cancel
               signals:
-                - signal: CANCEL
-                  band: wire
+                - band: wire
+                  signal: CANCEL
                   target: accounts
+              text: Cancel
+              variant: contained
           - material.button:
               color: primary
               signals:
@@ -44,9 +44,6 @@ definition:
               text: Mode
               variant: contained
     - material.table:
-        id: accountsTable
-        wire: accounts
-        mode: EDIT
         columns:
           - material.column:
               field: crm.name
@@ -56,28 +53,32 @@ definition:
               components:
                 - material.button:
                     color: primary
-                    variant: contained
-                    text: Edit
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
-                        path: "account/${crm.id}"
-                        namespace: "crm"
+                      - band: platform
+                        namespace: crm
+                        path: account/${crm.id}
+                        signal: NAVIGATE
+                    text: Edit
+                    variant: contained
                 - material.button:
                     color: primary
-                    variant: contained
-                    text: Delete
                     signals:
-                      - signal: TOGGLE_DELETE_STATUS
+                      - band: wire
+                        signal: TOGGLE_DELETE_STATUS
                         target: accounts
-                        band: wire
+                    text: Delete
+                    variant: contained
+        id: accountsTable
+        mode: EDIT
+        wire: accounts
   wires:
     accounts:
       collection: crm.accounts
       fields:
-        crm.name: null
-        crm.id: null
         crm.description: null
+        crm.id: null
+        crm.name: null
 dependencies:
   componentpacks:
-    material.main:
+    material.main: null
+    sample.main: null

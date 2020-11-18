@@ -21,7 +21,7 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 // PermissionSet struct
 type PermissionSet struct {
 	Name           string          `yaml:"name" uesio:"uesio.name"`
-	Namespace      string          `yaml:"namespace" uesio:"-"`
+	Namespace      string          `yaml:"-" uesio:"-"`
 	NamedRefs      map[string]bool `yaml:"named" uesio:"-"`
 	ViewRefs       map[string]bool `yaml:"views" uesio:"-"`
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"-"`

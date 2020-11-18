@@ -46,14 +46,14 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("No userfileid in the request URL query"))
 		return
 	}
-	fileStream, mimeType, err := filesource.Download(userFileID, session)
+	fileStream, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
 		w.Header().Set("content-type", "text")
 		w.Write([]byte("Unable to load file"))
 		return
 	}
 
-	respondFile(w, r, mimeType, fileStream)
+	respondFile(w, r, userFile.MimeType, fileStream)
 }
 
 // DeleteUserFile function

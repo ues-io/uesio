@@ -60,3 +60,19 @@ func (cvc *ConfigValueCollection) GetItem(index int) CollectionableItem {
 	actual := *cvc
 	return &actual[index]
 }
+
+// Loop function
+func (cvc *ConfigValueCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *cvc {
+		err := iter(cvc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (cvc *ConfigValueCollection) Len() int {
+	return len(*cvc)
+}

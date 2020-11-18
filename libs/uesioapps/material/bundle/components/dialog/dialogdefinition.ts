@@ -4,7 +4,7 @@ type DialogDefinition = {
 	id: string
 	mode: "OPEN" | "CLOSE"
 	title: string
-	content: string
+	content: definition.DefinitionList
 	agreeSignals?: signal.ComponentSignal[]
 	disagreeSignals?: signal.ComponentSignal[]
 }

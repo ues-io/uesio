@@ -1,0 +1,5 @@
+name: readonly
+collection: uesio.fields
+type: BOOLEAN
+label: ReadOnly
+propertyName: readonly

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
@@ -14,6 +15,20 @@ import (
 type PlatformSaveRequest struct {
 	Collection metadata.CollectionableGroup
 	Options    *reqs.SaveOptions
+}
+
+// RecordNotFoundError struct
+type RecordNotFoundError struct {
+	message string
+}
+
+func (e *RecordNotFoundError) Error() string { return e.message }
+
+// NewRecordNotFoundError creates a new record not found error
+func NewRecordNotFoundError(message string) *RecordNotFoundError {
+	return &RecordNotFoundError{
+		message: message,
+	}
 }
 
 // PlatformLoad function
@@ -46,6 +61,37 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 	}
 
 	return nil
+}
+
+// PlatformLoadOne function
+func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+	collection := item.GetCollection()
+	collections := []metadata.CollectionableGroup{
+		collection,
+	}
+
+	err := PlatformLoad(collections, []reqs.LoadRequest{
+		reqs.NewPlatformLoadRequest(
+			"itemWire",
+			collection.GetName(),
+			collection.GetFields(),
+			conditions,
+		),
+	}, session)
+
+	if err != nil {
+		return err
+	}
+	length := collection.Len()
+
+	if length == 0 {
+		return NewRecordNotFoundError("Couldn't find item from platform load: " + collection.GetName())
+	}
+	if length > 1 {
+		return errors.New("Duplicate item found from platform load: " + collection.GetName())
+	}
+
+	return copier.Copy(item, collection.GetItem(0))
 }
 
 // PlatformDelete function

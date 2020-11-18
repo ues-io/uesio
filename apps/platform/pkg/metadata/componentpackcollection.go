@@ -60,3 +60,19 @@ func (cpc *ComponentPackCollection) GetItem(index int) CollectionableItem {
 	actual := *cpc
 	return &actual[index]
 }
+
+// Loop function
+func (cpc *ComponentPackCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *cpc {
+		err := iter(cpc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (cpc *ComponentPackCollection) Len() int {
+	return len(*cpc)
+}

@@ -1,31 +1,26 @@
 name: topbar
 definition:
-  # Wires are how we pull in data
-  wires:
-  # Components are how we describe the layout of our view
   components:
     - material.grid:
-        height: 60px
-        background:
-          color: "#222"
-        justify: space-between
         alignitems: center
+        background:
+          color: '#222'
+        height: 60px
         items:
-          # Uesio Logo
           - material.griditem:
               components:
                 - material.image:
+                    align: left
                     file: crm.logo
                     height: 30px
-                    align: left
                     margin:
                       - 0
                       - 2
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
-                        path: "home"
-                        namespace: "crm"
+                      - band: platform
+                        namespace: crm
+                        path: home
+                        signal: NAVIGATE
           - material.griditem:
               components:
                 - material.grid:
@@ -34,34 +29,33 @@ definition:
                       - material.griditem:
                           components:
                             - material.button:
+                                signals:
+                                  - band: platform
+                                    namespace: crm
+                                    path: accounts
+                                    signal: NAVIGATE
                                 text: Accounts
                                 variant: text
-                                signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
-                                    path: "accounts"
-                                    namespace: "crm"
                       - material.griditem:
                           components:
                             - material.button:
+                                signals:
+                                  - band: platform
+                                    namespace: crm
+                                    path: contacts
+                                    signal: NAVIGATE
                                 text: Contacts
                                 variant: text
-                                signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
-                                    path: "contacts"
-                                    namespace: "crm"
                       - material.griditem:
                           components:
                             - material.button:
+                                signals:
+                                  - band: platform
+                                    namespace: crm
+                                    path: leads
+                                    signal: NAVIGATE
                                 text: Leads
                                 variant: text
-                                signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
-                                    path: "leads"
-                                    namespace: "crm"
-          # Avatar
           - material.griditem:
               components:
                 - material.grid:
@@ -70,11 +64,11 @@ definition:
                       - material.griditem:
                           components:
                             - material.button:
+                                signals:
+                                  - band: platform
+                                    signal: LOGOUT
                                 text: Log Out
                                 variant: text
-                                signals:
-                                  - signal: "LOGOUT"
-                                    band: "platform"
                       - material.griditem:
                           components:
                             - material.avatar:
@@ -83,6 +77,9 @@ definition:
                                   - 2
                                   - 0
                                   - 1
+        justify: space-between
+  wires: null
 dependencies:
   componentpacks:
-    material.main:
+    material.main: null
+    sample.main: null

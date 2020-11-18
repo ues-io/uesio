@@ -35,11 +35,11 @@ const signalHandlers: signal.SignalsHandler = {
 		dispatcher: (
 			signal: signal.ComponentSignal,
 			ctx: context.Context
-		): action.Dispatcher<action.ComponentAction> => {
-			return (
+		): signal.ThunkFunc => {
+			return async (
 				dispatch: action.Dispatcher<action.ComponentAction>
-			): action.ComponentAction => {
-				return dispatch({
+			): signal.DispatchReturn => {
+				dispatch({
 					type: action.ACTOR,
 					name: signal.signal,
 					band: signal.band,
@@ -48,6 +48,7 @@ const signalHandlers: signal.SignalsHandler = {
 					data: {},
 					view: ctx.getView()?.getId(),
 				})
+				return ctx
 			}
 		},
 		public: true,

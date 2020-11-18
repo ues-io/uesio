@@ -21,6 +21,7 @@
   "format:write": "nx format:write",
   "help": "nx help",
   "lint": "nx workspace-lint && nx lint",
+  "lint-all": "nx run-many --target=lint --all",
   "nx": "nx",
   "setup-ssl": "cd ./apps/platform/ssl && ./create.sh",
   "start": "nx serve platform",

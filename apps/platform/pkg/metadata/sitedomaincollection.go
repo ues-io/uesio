@@ -28,3 +28,19 @@ func (sdc *SiteDomainCollection) GetItem(index int) CollectionableItem {
 	actual := *sdc
 	return &actual[index]
 }
+
+// Loop function
+func (sdc *SiteDomainCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *sdc {
+		err := iter(sdc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (sdc *SiteDomainCollection) Len() int {
+	return len(*sdc)
+}

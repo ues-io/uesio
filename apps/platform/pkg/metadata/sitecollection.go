@@ -4,7 +4,7 @@ package metadata
 type SiteCollection []Site
 
 // GetName function
-func (s *SiteCollection) GetName() string {
+func (sc *SiteCollection) GetName() string {
 	return "sites"
 }
 
@@ -27,4 +27,20 @@ func (sc *SiteCollection) Marshal() ([]map[string]interface{}, error) {
 func (sc *SiteCollection) GetItem(index int) CollectionableItem {
 	actual := *sc
 	return &actual[index]
+}
+
+// Loop function
+func (sc *SiteCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *sc {
+		err := iter(sc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (sc *SiteCollection) Len() int {
+	return len(*sc)
 }

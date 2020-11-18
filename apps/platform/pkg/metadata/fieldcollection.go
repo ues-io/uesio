@@ -17,7 +17,7 @@ func (fc *FieldCollection) GetName() string {
 
 // GetFields function
 func (fc *FieldCollection) GetFields() []string {
-	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection"}
+	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly"}
 }
 
 // NewItem function
@@ -85,4 +85,20 @@ func (fc *FieldCollection) Validate() error {
 func (fc *FieldCollection) GetItem(index int) CollectionableItem {
 	actual := *fc
 	return &actual[index]
+}
+
+// Loop function
+func (fc *FieldCollection) Loop(iter func(item CollectionableItem) error) error {
+	for index := range *fc {
+		err := iter(fc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (fc *FieldCollection) Len() int {
+	return len(*fc)
 }

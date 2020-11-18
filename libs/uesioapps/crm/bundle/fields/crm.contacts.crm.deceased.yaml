@@ -1,5 +1,5 @@
 name: deceased
 collection: crm.contacts
-type: "CHECKBOX"
-label: "Is Deceased"
-propertyName: "deceased"
+type: CHECKBOX
+label: Is Deceased
+propertyName: deceased

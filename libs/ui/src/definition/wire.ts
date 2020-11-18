@@ -1,5 +1,5 @@
 import { WireConditionDefinition } from "../wire/wirecondition"
-import { PlainWireDefault } from "../wire/wiredefault"
+import { WireDefault } from "../wire/wiredefault"
 import { wire } from "@uesio/constants"
 
 type WireDefinitionMap = {
@@ -10,7 +10,7 @@ type WireDefinition = {
 	collection: string
 	fields: WireFieldDefinitionMap
 	conditions: WireConditionDefinition[]
-	defaults: PlainWireDefault[]
+	defaults: WireDefault[]
 	type: wire.WireType
 }
 

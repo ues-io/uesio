@@ -4,10 +4,8 @@ import (
 	"archive/zip"
 	"io"
 	"path/filepath"
-	"reflect"
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -31,23 +29,72 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 			return nil, err
 		}
 
-		length := reflect.Indirect(reflect.ValueOf(group)).Len()
-
-		for i := 0; i < length; i++ {
-			item := group.GetItem(i)
+		err = group.Loop(func(item metadata.CollectionableItem) error {
 			key := item.GetKey()
+
+			// Special handling for bots
+			if metadataType == "bots" {
+				bot := item.(*metadata.Bot)
+
+				stream, err := bundles.GetBotStream(bot, session)
+				if err != nil {
+					return err
+				}
+
+				itemStream := reqs.ItemStream{
+					FileName: bot.FileName,
+					Type:     metadataType,
+				}
+
+				_, err = io.Copy(&itemStream.Buffer, stream)
+				if err != nil {
+					return err
+				}
+
+				itemStreams = append(itemStreams, itemStream)
+
+			}
+
+			// Special handling for files
+			if metadataType == "files" {
+				file := item.(*metadata.File)
+
+				stream, err := bundles.GetFileStream(file, session)
+				if err != nil {
+					return err
+				}
+
+				itemStream := reqs.ItemStream{
+					FileName: file.FileName,
+					Type:     metadataType,
+				}
+
+				_, err = io.Copy(&itemStream.Buffer, stream)
+				if err != nil {
+					return err
+				}
+
+				itemStreams = append(itemStreams, itemStream)
+			}
 
 			itemStream := reqs.ItemStream{
 				FileName: key + ".yaml",
 				Type:     metadataType,
 			}
 
-			err = yaml.NewEncoder(&itemStream.Buffer).Encode(item)
+			encoder := yaml.NewEncoder(&itemStream.Buffer)
+			encoder.SetIndent(2)
+
+			err = encoder.Encode(item)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			itemStreams = append(itemStreams, itemStream)
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
 
 	}
@@ -67,17 +114,15 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		Type:     "",
 	}
 
-	bundleStore, err := bundlestore.GetBundleStore(session.GetWorkspaceApp(), session)
+	by, err := bundles.GetAppBundle(session)
 	if err != nil {
 		return nil, err
 	}
 
-	by, err := bundleStore.GetBundleDef(session.GetWorkspaceApp(), session.GetWorkspace().Name, session)
-	if err != nil {
-		return nil, err
-	}
+	encoder := yaml.NewEncoder(&itemStream.Buffer)
+	encoder.SetIndent(2)
 
-	err = yaml.NewEncoder(&itemStream.Buffer).Encode(by)
+	err = encoder.Encode(by)
 	if err != nil {
 		return nil, err
 	}

@@ -4,11 +4,12 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	site2 "github.com/thecloudmasters/uesio/pkg/site"
+	"github.com/thecloudmasters/uesio/pkg/site"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
@@ -20,8 +21,7 @@ type AuthenticationType interface {
 
 var authTypeMap = map[string]AuthenticationType{}
 
-// GetAuthType function
-func GetAuthType(authTypeName string) (AuthenticationType, error) {
+func getAuthType(authTypeName string) (AuthenticationType, error) {
 	authType, ok := authTypeMap[authTypeName]
 	if !ok {
 		return nil, errors.New("No adapter found of this type: " + authTypeName)
@@ -55,7 +55,7 @@ func GetSiteFromHost(host string) (*metadata.Site, error) {
 		hostParts := strings.Split(host, ":")
 		domain = hostParts[0] // Strip off the port
 	}
-	site, err := site2.GetSiteFromDomain(domainType, domain)
+	site, err := site.GetSiteFromDomain(domainType, domain)
 	if err != nil {
 		return nil, err
 	}
@@ -72,8 +72,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 
-	// Get the site's default profile (hardcoding for now)
-	defaultSiteProfile := "uesio.standard"
+	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
@@ -157,27 +156,33 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 
-	var users metadata.UserCollection
-	err := datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&users,
+	var user metadata.User
+	err := datasource.PlatformLoadOne(
+		&user,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.federationType",
+				Value: claims.AuthType,
+			},
+			{
+				Field: "uesio.federationId",
+				Value: claims.Subject,
+			},
+			{
+				Field: "uesio.site",
+				Value: site.Name,
+			},
 		},
-		users.AuthClaimsRequest(claims.AuthType, claims.Subject, site.Name),
 		session,
 	)
 	if err != nil {
+		if _, ok := err.(*datasource.RecordNotFoundError); ok {
+			// User not found. No error though.
+			logger.Log("Could not find user: "+claims.Subject, logger.INFO)
+			return nil, nil
+		}
 		return nil, err
 	}
 
-	if len(users) == 0 {
-		// User not found. No error though.
-		logger.Log("Could not find user: "+claims.Subject, logger.INFO)
-		return nil, nil
-	}
-
-	if len(users) > 1 {
-		return nil, errors.New("Found multiple users in a login request: " + claims.Subject)
-	}
-
-	return &users[0], nil
+	return &user, nil
 }

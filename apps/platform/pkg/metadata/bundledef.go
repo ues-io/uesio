@@ -8,8 +8,12 @@ type BundleDefDep struct {
 
 // BundleDef type
 type BundleDef struct {
-	Name         string                 `yaml:"name"`
-	Dependencies BundleDefDependencyMap `yaml:"dependencies,omitempty"`
+	Name           string                 `yaml:"name"`
+	LoginRoute     string                 `yaml:"loginRoute,omitempty"`
+	HomeRoute      string                 `yaml:"homeRoute,omitempty"`
+	DefaultProfile string                 `yaml:"defaultProfile,omitempty"`
+	PublicProfile  string                 `yaml:"publicProfile,omitempty"`
+	Dependencies   BundleDefDependencyMap `yaml:"dependencies,omitempty"`
 }
 
 // BundleDefDependencyMap type

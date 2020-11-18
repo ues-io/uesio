@@ -19,22 +19,13 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 	var jobSpec metadata.JobSpec
 
 	// Get the job from the jobID
-	err := datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&jobs,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"jobWire",
-				jobs.GetName(),
-				jobs.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field: "uesio.id",
-						Value: jobID,
-					},
-				},
-			),
+	err := datasource.PlatformLoadOne(
+		&job,
+		[]reqs.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: jobID,
+			},
 		},
 		session,
 	)

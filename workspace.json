@@ -8,6 +8,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/platform"],
           "options": {
             "command": "go build -o ../../dist/platform/uesio && npx webpack --config webpack.config.js",
             "cwd": "apps/platform"
@@ -15,6 +16,7 @@
         },
         "build-go": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/platform"],
           "options": {
             "command": "go build -o ../../dist/platform/uesio",
             "cwd": "apps/platform"
@@ -23,7 +25,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo todo",
+            "command": "test -z $(gofmt -l ./pkg/**)",
             "cwd": "apps/platform"
           }
         },
@@ -41,10 +43,17 @@
             "cwd": "apps/platform"
           }
         },
+        "build-image": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "docker build --tag uesio:v0.0.1 -f ./apps/platform/Dockerfile .",
+            "cwd": "."
+          }
+        },
         "test": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo todo",
+            "command": "go test -v ./...",
             "cwd": "apps/platform"
           }
         }
@@ -58,6 +67,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/ui"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/ui"
@@ -86,6 +96,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/buildtime"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/buildtime"
@@ -114,16 +125,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/lazymonaco"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/lazymonaco"
           }
         },
         "lint": {
-          "builder": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "command": "echo TODO: set up lint for lazymonaco.",
-            "cwd": "libs/lazymonaco"
+            "lintFilePatterns": ["libs/lazymonaco/**/*.ts*"]
           }
         },
         "test": {
@@ -137,12 +148,13 @@
     },
     "yaml": {
       "root": "libs/yaml",
-      "sourceRoot": "libs/yaml/src",
+      "sourceRoot": "libs/yaml",
       "projectType": "library",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/yaml"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/yaml"
@@ -152,7 +164,7 @@
     },
     "uesioapps-sample": {
       "root": "libs/uesioapps/sample",
-      "sourceRoot": "libs/uesioapps/sample/src",
+      "sourceRoot": "libs/uesioapps/sample/bundle",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -173,7 +185,7 @@
     },
     "uesioapps-uesio": {
       "root": "libs/uesioapps/uesio",
-      "sourceRoot": "libs/uesioapps/uesio/src",
+      "sourceRoot": "libs/uesioapps/uesio/bundle",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -187,7 +199,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo TODO: set up lint for uesioapps-uesio.",
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
             "cwd": "libs/uesioapps/uesio"
           }
         },
@@ -202,7 +214,7 @@
     },
     "uesioapps-crm": {
       "root": "libs/uesioapps/crm",
-      "sourceRoot": "libs/uesioapps/crm/src",
+      "sourceRoot": "libs/uesioapps/crm",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -223,7 +235,7 @@
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "echo TODO: set up lint for uesioapps-crm.",
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
             "cwd": "libs/uesioapps/crm"
           }
         },
@@ -272,6 +284,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/vendor"],
           "options": {
             "commands": [
               "mkdir -p dist/vendor",
@@ -298,6 +311,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/cli"],
           "options": {
             "command": "npx tsc",
             "cwd": "apps/cli"
@@ -306,7 +320,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/cli/**/*.ts"]
+            "lintFilePatterns": ["apps/cli/**/*.ts*"]
           }
         },
         "test": {
@@ -326,6 +340,7 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/constants"],
           "options": {
             "command": "npx tsc",
             "cwd": "libs/constants"
@@ -341,7 +356,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/constants/**/*.ts"]
+            "lintFilePatterns": ["libs/constants/**/*.ts*"]
           }
         },
         "test": {

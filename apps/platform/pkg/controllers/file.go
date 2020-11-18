@@ -30,13 +30,13 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stream, mimeType, err := bundles.GetFileStream(&file, session)
+	stream, err := bundles.GetFileStream(&file, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, "Failed File Download", http.StatusInternalServerError)
 		return
 	}
 
-	respondFile(w, r, mimeType, stream)
+	respondFile(w, r, file.MimeType, stream)
 
 }
