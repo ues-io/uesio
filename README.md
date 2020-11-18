@@ -70,7 +70,7 @@ nx g @nrwl/workspace:library NEW_LIB
   npm run build-all
 ```
 
-- Optional. If you'd like to work with firestore on your local machine, do follow the instructions here.
+- Optional. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
 - Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 - Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
@@ -218,7 +218,7 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
-# Local Development with the Firestore Emulator
+# <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
 1. Create a project in the [firebase console](https://console.firebase.google.com/).
 
@@ -229,19 +229,19 @@ https://uesio-dev.com:3000
 3. Select the project your created before while interacting with the firebase cli.
 
 ```
-firebase init firestore
-```
-
-4.
+   firebase init firestore
 
 ```
-firebase emulators:start
-```
+
+4. ```
+   firebase emulators:start
+   ```
 
 5. In a browser visit
 
 ```
-http://localhost:4000/firestore/
+   http://localhost:4000/firestore/
+
 ```
 
 # Local Development with a database in Docker
@@ -318,6 +318,18 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+
+```
+
+```
+
+```
+
+```
+
+```
+
+```
 
 ```
 
