@@ -102,7 +102,7 @@ definition:
                                       - "bulkjobs"
                                   - signal: "NAVIGATE"
                                     band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjob/${uesio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
                                 color: "primary"
@@ -111,7 +111,7 @@ definition:
                                 signals:
                                   - signal: "NAVIGATE"
                                     band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjobs"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs"
                                     namespace: "uesio"
 dependencies:
   componentpacks:

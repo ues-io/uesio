@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react"
-import { definition, material, hooks } from "@uesio/ui"
+import { definition, material, hooks, signal } from "@uesio/ui"
 
 type BulkjobDefinition = {
 	id: string
@@ -37,7 +37,7 @@ async function handleChange(
 
 		if (file.type == "text/csv") {
 			fetch(
-				`https://uesio-dev.com:3000/workspace/${workspace?.app}/${workspace?.name}/bulk/job/${jobId}/batch`,
+				`/workspace/${workspace?.app}/${workspace?.name}/bulk/job/${jobId}/batch`,
 				{
 					method: "post",
 					body: file,
@@ -94,25 +94,6 @@ function Bulkjob(props: Props): ReactElement | null {
 					{label}
 				</material.Button>
 			</label>
-			{/* <material.Button
-				color="primary"
-				variant="contained"
-				component="span"
-				onClick={(): void => {
-					fetch(
-						`workspace/${workspace?.app}/${workspace?.name}/bulk/job`,
-						{
-							method: "post",
-							body: spec,
-							headers: {
-								"Content-Type": "application/json",
-							},
-						}
-					)
-				}}
-			>
-				SAVE
-			</material.Button> */}
 		</div>
 	)
 }

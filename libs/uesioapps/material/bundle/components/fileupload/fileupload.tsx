@@ -1,8 +1,6 @@
 import React, { ReactElement } from "react"
-
 import { FileUploadProps } from "./fileuploaddefinition"
 import { hooks, material, styles, wire, signal } from "@uesio/ui"
-import Edit from "@material-ui/icons/Edit"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({

@@ -15,8 +15,8 @@ import (
 // NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
 
-	var jobs metadata.BulkJobCollection
 	var jobSpec metadata.JobSpec
+	var job metadata.BulkJob
 
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
@@ -33,9 +33,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	job := jobs[0]
 	err = json.Unmarshal([]byte(job.Spec), &jobSpec)
-
 	if err != nil {
 		return "", err
 	}

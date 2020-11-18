@@ -63,19 +63,12 @@ definition:
                             band: platform
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
-                      - text: $Param{collectionname}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                        signals:
-                          - signal: NAVIGATE
-                            band: platform
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                            namespace: uesio
                       - text: bulkjobs
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjobs
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs
                         signals:
                           - signal: NAVIGATE
                             band: platform
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjobs
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs
                             namespace: uesio
                       - text: $Param{bulkjobname}
                 - material.grid:
@@ -129,6 +122,16 @@ definition:
           - material.typography:
               text: "Bulk Batches"
               variant: h5
+          - material.button:
+              color: "primary"
+              variant: "outlined"
+              text: "Refresh"
+              signals:
+                - signal: "LOAD"
+                  band: "wire"
+                  targets:
+                    - "bulkjobs"
+                    - "bulkbatches"
           - material.table:
               id: "bulkbatcheslist"
               wire: "bulkbatches"

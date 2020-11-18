@@ -35,9 +35,6 @@ definition:
         uesio.name:
         uesio.spec:
         uesio.collection:
-      conditions:
-        - field: uesio.collection
-          value: $Param{appname}.$Param{collectionname}
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -68,13 +65,6 @@ definition:
                       band: platform
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
-                - text: $Param{collectionname}
-                  href: app/$Param{appname}/collection/$Param{collectionname}
-                  signals:
-                    - signal: NAVIGATE
-                      band: platform
-                      path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                      namespace: uesio
                 - text: bulkjobs
           - material.grid:
               justify: space-between
@@ -98,7 +88,7 @@ definition:
                                 signals:
                                   - signal: "NAVIGATE"
                                     band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/newbulkjob"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newbulkjob"
                                     namespace: "uesio"
           - material.deck:
               xs: 12
@@ -127,7 +117,7 @@ definition:
                     signals:
                       - signal: "NAVIGATE"
                         band: "platform"
-                        path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/bulkjob/${uesio.name}"
+                        path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.name}"
                         namespace: "uesio"
 dependencies:
   componentpacks:
