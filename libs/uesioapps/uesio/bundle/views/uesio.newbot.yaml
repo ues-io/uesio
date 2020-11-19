@@ -102,7 +102,7 @@ definition:
                                   - signal: "SAVE"
                                     band: "wire"
                                     targets:
-                                      - "datasources"
+                                      - "bots"
                                   - signal: "NAVIGATE"
                                     band: "platform"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${uesio.name}"
