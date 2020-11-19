@@ -28,7 +28,7 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: workspacename
-    datasources:
+    bots:
       collection: uesio.bots
       fields:
         uesio.id:
@@ -49,7 +49,7 @@ definition:
           lookupField: uesio.id
         - field: uesio.name
           valueSource: PARAM
-          param: datasourcename
+          param: botname
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -60,7 +60,7 @@ definition:
           - material.deck:
               xs: 12
               margin: 0
-              id: datasourcesDeck
+              id: botsDeck
               wire: bots
               mode: READ
               components:
@@ -92,7 +92,7 @@ definition:
                         signals:
                           - signal: NAVIGATE
                             band: platform
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/datasources
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/bots
                             namespace: uesio
                       - text: $Param{datasourcename}
                 - material.grid:
