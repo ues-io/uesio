@@ -1,0 +1,123 @@
+name: newbot
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    bots:
+      collection: uesio.bots
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.collection:
+        uesio.workspaceid:
+        uesio.dialect:
+        uesio.type:
+        uesio.content:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      type: CREATE
+      defaults:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.typography:
+              text: Create a New Bot
+              variant: h5
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: datasourcesDeck
+              wire: datasources
+              mode: EDIT
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color: "pink"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          spacing: 4
+                          items:
+                            - material.griditem:
+                                xs: 3
+                                components:
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.type
+                                  - material.field:
+                                      fieldId: uesio.region
+                                  - material.field:
+                                      fieldId: uesio.url
+                                  - material.field:
+                                      fieldId: uesio.port
+                                  - material.field:
+                                      fieldId: uesio.username
+                                  - material.field:
+                                      fieldId: uesio.password
+                                  - material.field:
+                                      fieldId: uesio.database
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "contained"
+                                text: "Save"
+                                signals:
+                                  - signal: "SAVE"
+                                    band: "wire"
+                                    targets:
+                                      - "datasources"
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${uesio.name}"
+                                    namespace: "uesio"
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Cancel"
+                                signals:
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                    namespace: "uesio"
+dependencies:
+  componentpacks:
+    material.main:
