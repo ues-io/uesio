@@ -61,8 +61,8 @@ definition:
           - material.deck:
               xs: 12
               margin: 0
-              id: datasourcesDeck
-              wire: datasources
+              id: botsDeck
+              wire: bots
               mode: EDIT
               components:
                 - material.card:
@@ -81,19 +81,17 @@ definition:
                                   - material.field:
                                       fieldId: uesio.name
                                   - material.field:
+                                      fieldId: uesio.collection
+                                  - material.field:
+                                      fieldId: uesio.workspaceid
+                                  - material.field:
+                                      fieldId: uesio.id
+                                  - material.field:
+                                      fieldId: uesio.dialect
+                                  - material.field:
                                       fieldId: uesio.type
                                   - material.field:
-                                      fieldId: uesio.region
-                                  - material.field:
-                                      fieldId: uesio.url
-                                  - material.field:
-                                      fieldId: uesio.port
-                                  - material.field:
-                                      fieldId: uesio.username
-                                  - material.field:
-                                      fieldId: uesio.password
-                                  - material.field:
-                                      fieldId: uesio.database
+                                      fieldId: uesio.content
                       - material.buttonset:
                           buttons:
                             - material.button:
