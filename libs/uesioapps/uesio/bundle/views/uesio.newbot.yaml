@@ -114,7 +114,7 @@ definition:
                                 signals:
                                   - signal: "NAVIGATE"
                                     band: "platform"
-                                    path: "app/$Param{appname}/workspace/$Param{bot}/datasources"
+                                    path: "app/$Param{appname}/workspace/$Param{bot}/bots"
                                     namespace: "uesio"
 dependencies:
   componentpacks:
