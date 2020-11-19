@@ -36,12 +36,8 @@ definition:
         uesio.workspaceid:
         uesio.workspace:
         uesio.type:
-        uesio.region:
-        uesio.url:
-        uesio.username:
-        uesio.password:
-        uesio.database:
-        uesio.port:
+        uesio.dialect:
+        uesio.content:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
