@@ -114,7 +114,7 @@ definition:
                                         - material.griditem:
                                             components:
                                               - material.typography:
-                                                  text: "Datasource"
+                                                  text: "Bot"
                                                   variant: h5
                                         - material.griditem:
                                             components:
@@ -128,7 +128,7 @@ definition:
                                                           - signal: "TOGGLE_MODE"
                                                             scope: "material.deck"
                                                             band: "component"
-                                                            target: "datasourcesDeck"
+                                                            target: "botsDeck"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -137,7 +137,7 @@ definition:
                                                           - signal: "SAVE"
                                                             band: "wire"
                                                             targets:
-                                                              - "datasources"
+                                                              - "bots"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -145,7 +145,7 @@ definition:
                                                         signals:
                                                           - signal: "CANCEL"
                                                             band: "wire"
-                                                            target: "datasources"
+                                                            target: "bots"
                                                           - signal: "CANCEL"
                                                             band: "wire"
                                                             target: "fields"
@@ -156,14 +156,14 @@ definition:
                                                         signals:
                                                           - signal: "MARK_FOR_DELETE"
                                                             band: "wire"
-                                                            target: "datasources"
+                                                            target: "bots"
                                                           - signal: "SAVE"
                                                             band: "wire"
                                                             targets:
-                                                              - "datasources"
+                                                              - "bots"
                                                           - signal: "NAVIGATE"
                                                             band: "platform"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
