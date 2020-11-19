@@ -90,7 +90,7 @@ definition:
                             band: platform
                             path: app/$Param{appname}/workspace/$Param{workspacename}/bots
                             namespace: uesio
-                      - text: $Param{datasourcename}
+                      - text: $Param{botname}
                 - material.grid:
                     items:
                       - material.griditem:
