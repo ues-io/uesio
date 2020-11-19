@@ -34,7 +34,6 @@ definition:
         uesio.id:
         uesio.name:
         uesio.workspaceid:
-        uesio.workspace:
         uesio.type:
         uesio.dialect:
         uesio.content:
