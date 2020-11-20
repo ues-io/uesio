@@ -5,7 +5,8 @@
 		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
 		"strict": true,
-		"target": "es2019"
+		"target": "es2019",
+		"jsx": "react-jsx"
 	},
 	"include": ["src/**/*"]
 }
