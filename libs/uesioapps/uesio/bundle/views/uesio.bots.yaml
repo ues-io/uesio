@@ -110,8 +110,6 @@ definition:
                       height: 10px
                     margin: 1
                     components:
-                      - material.typography:
-                          text: "${uesio.id}"
                       - material.griditem:
                           components:
                             - material.icon:
