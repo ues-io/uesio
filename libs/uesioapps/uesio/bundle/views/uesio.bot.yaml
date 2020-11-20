@@ -36,6 +36,7 @@ definition:
         uesio.workspaceid:
         uesio.type:
         uesio.dialect:
+        uesio.collection:
         uesio.content:
       conditions:
         - field: uesio.workspaceid
@@ -166,6 +167,10 @@ definition:
                                       fieldId: uesio.type
                                   - material.field:
                                       fieldId: uesio.dialect
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
                                   - material.field:
                                       fieldId: uesio.content
 dependencies:
