@@ -20,7 +20,9 @@ const tryParseJSON = (jsonString: string) => {
 		if (o && typeof o === "object") {
 			return o
 		}
-	} catch (e) {}
+	} catch (e) {
+		console.log("Not an Object")
+	}
 
 	return false
 }
