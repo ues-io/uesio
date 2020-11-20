@@ -216,7 +216,7 @@ const getWebpackComplete = (
 			if (err.details) {
 				console.error(err.details)
 			}
-			throw new Error(err.stack)
+			return
 		}
 
 		const info = stats.toJson()
@@ -226,7 +226,11 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors.forEach((message) => console.error(message))
+			info.errors.forEach((message) => {
+				console.error(message)
+				throw new Error(message)
+			})
+			return
 		}
 		if (stats.hasWarnings()) {
 			info.warnings.forEach((message) => console.warn(message))
