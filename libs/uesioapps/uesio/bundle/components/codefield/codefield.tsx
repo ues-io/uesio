@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react"
+import React, { ReactElement, useState } from "react"
 import { definition, material } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -9,7 +9,7 @@ type CodeFieldDefinition = {
 	id?: string
 }
 
-function tryParseJSON(jsonString: string) {
+const tryParseJSON = (jsonString: string) => {
 	try {
 		var o = JSON.parse(jsonString)
 
@@ -46,28 +46,22 @@ function CodeField(props: Props): ReactElement | null {
 	const classes = useStyles(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
-	const [editorContent, setEditorContent] = useState<string | null>(null)
-
 	if (!wire || !record) {
 		return null
 	}
+
 	const collection = wire.getCollection()
 	const fieldId = props.definition.fieldId
+	const [editorContent, setEditorContent] = useState<string>(
+		JSON.stringify(record.getFieldValue(fieldId), null, "\t")
+	)
+
 	const fieldMetadata = collection.getField(fieldId)
 
 	if (!fieldMetadata.isValid()) {
 		return null
 	}
 	const language = props.definition.language as string
-
-	useEffect(() => {
-		if (editorContent === null && language === "json") {
-			console.log("useEffect")
-			setEditorContent(
-				JSON.stringify(record.getFieldValue(fieldId), null, "\t")
-			)
-		}
-	}, [])
 
 	return (
 		<div className={classes.root}>
@@ -92,7 +86,6 @@ function CodeField(props: Props): ReactElement | null {
 									)
 								}
 							} else {
-								setEditorContent(newValue)
 								record.update(fieldId, newValue)
 							}
 						},
