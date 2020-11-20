@@ -168,8 +168,6 @@ definition:
                                   - material.field:
                                       fieldId: uesio.type
                                   - material.field:
-                                      fieldId: uesio.type
-                                  - material.field:
                                       fieldId: uesio.dialect
                                   - uesio.metadatafield:
                                       fieldId: uesio.collection
