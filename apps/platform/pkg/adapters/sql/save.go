@@ -1,4 +1,4 @@
-package postgresql
+package sqlshared
 
 import (
 	"database/sql"
@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/Masterminds/squirrel"
-	sq "github.com/Masterminds/squirrel"
 	guuid "github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -28,7 +27,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			if !ok {
 				return nil, "", "", errors.New("Error getting metadata for the ID field")
 			}
-			idFieldName, _ = getDBFieldName(idFieldMetadata)
+			idFieldName, _ = GetDBFieldName(idFieldMetadata)
 			continue
 		}
 
@@ -45,7 +44,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			continue
 		}
 
-		fieldName, err := getDBFieldName(fieldMetadata)
+		fieldName, err := GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, "", "", err
 		}
@@ -75,7 +74,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			continue
 		}
 
-		fieldName, err := getDBFieldName(fieldMetadata)
+		fieldName, err := GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +96,7 @@ func processUpdate(change reqs.ChangeRequest, collectionName string, collectionM
 	_, err = psql.Update(collectionName).SetMap(updates).RunWith(db).Where(idFieldName+" LIKE ? ", postgresSQLId).Query()
 
 	if err != nil {
-		return errors.New("Failed to Update in PostgreSQL:" + err.Error())
+		return errors.New("Failed to Update in SQL Adapter:" + err.Error())
 	}
 	return nil
 }
@@ -122,7 +121,7 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 	if !ok {
 		return "", errors.New("No metadata provided for field: " + collectionMetadata.IDField)
 	}
-	fieldName, err := getDBFieldName(idFieldMetadata)
+	fieldName, err := GetDBFieldName(idFieldMetadata)
 	if err != nil {
 		return "", err
 	}
@@ -136,17 +135,18 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 		}
 	}
 
-	result, err := psql.Insert(collectionName).Suffix("RETURNING \"id\"").SetMap(inserts).RunWith(db).Query()
+	result, err := psql.Insert(collectionName).SetMap(inserts).RunWith(db).Query()
 
 	if err != nil {
-		return "", errors.New("Failed to insert in PostgreSQL:" + err.Error())
+		return "", errors.New("Failed to insert in SQL Adapter:" + err.Error())
 	}
 
 	result.Scan(newID)
 	return newID, nil
 }
 
-func processChanges(changes map[string]reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
+//ProcessChanges function
+func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
 	changeResults := map[string]reqs.ChangeResult{}
 
 	idTemplate, err := templating.New(collectionMetadata.IDFormat)
@@ -180,7 +180,8 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionName string
 	return changeResults, nil
 }
 
-func processDeletes(deletes map[string]reqs.DeleteRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
+//ProcessDeletes function
+func ProcessDeletes(deletes map[string]reqs.DeleteRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
 	deleteResults := map[string]reqs.ChangeResult{}
 	for deleteID, delete := range deletes {
 		deleteResult := reqs.ChangeResult{}
@@ -193,14 +194,14 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 			if !ok {
 				return nil, errors.New("Error getting metadata for the ID field")
 			}
-			idFieldName, err := getDBFieldName(idFieldMetadata)
+			idFieldName, err := GetDBFieldName(idFieldMetadata)
 			if err != nil {
 				return nil, err
 			}
 
 			result, err := psql.Delete(collectionName).RunWith(db).Where(idFieldName+" LIKE ? ", postgresID).Query()
 			if err != nil {
-				return nil, errors.New("Failed to delete in PostgreSQL:" + err.Error())
+				return nil, errors.New("Failed to delete in SQL Adapter:" + err.Error())
 			}
 			result.Scan(deleteResult.Data[collectionMetadata.IDField])
 
@@ -214,7 +215,8 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 
 }
 
-func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+//HandleLookups function
+func HandleLookups(a adapters.Adapter, request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
 	lookupRequests, err := adapters.GetLookupRequests(request, metadata)
 	if err != nil {
 		return err
@@ -233,57 +235,4 @@ func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.Met
 	}
 
 	return nil
-}
-
-// Save function
-func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.SaveResponse, error) {
-
-	response := []reqs.SaveResponse{}
-
-	db, err := connect()
-	defer db.Close()
-
-	if err != nil {
-		return nil, errors.New("Failed to connect to PostgreSQL:" + err.Error())
-	}
-
-	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-
-	for _, request := range requests {
-
-		collectionMetadata, ok := metadata.Collections[request.Collection]
-		if !ok {
-			return nil, errors.New("No metadata provided for collection: " + request.Collection)
-		}
-
-		collectionName, err := getDBCollectionName(collectionMetadata)
-		if err != nil {
-			return nil, err
-		}
-
-		// Sometimes we only have the name of something instead of it's real id
-		// We can use this lookup functionality to get the real id before the save.
-		err = a.handleLookups(request, metadata, credentials)
-		if err != nil {
-			return nil, err
-		}
-
-		changeResults, err := processChanges(request.Changes, collectionName, collectionMetadata, psql, db)
-		if err != nil {
-			return nil, err
-		}
-
-		deleteResults, err := processDeletes(request.Deletes, collectionName, collectionMetadata, psql, db)
-		if err != nil {
-			return nil, err
-		}
-
-		response = append(response, reqs.SaveResponse{
-			Wire:          request.Wire,
-			ChangeResults: changeResults,
-			DeleteResults: deleteResults,
-		})
-	}
-
-	return response, nil
 }

@@ -22,6 +22,13 @@
             "cwd": "apps/platform"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js &",
+            "cwd": "apps/platform"
+          }
+        },
         "lint": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -73,6 +80,13 @@
             "cwd": "libs/ui"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js &",
+            "cwd": "libs/ui"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -99,6 +113,13 @@
           "outputs": ["dist/buildtime"],
           "options": {
             "command": "npx webpack --config webpack.config.js",
+            "cwd": "libs/buildtime"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js &",
             "cwd": "libs/buildtime"
           }
         },
@@ -131,6 +152,13 @@
             "cwd": "libs/lazymonaco"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js &",
+            "cwd": "libs/lazymonaco"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -159,6 +187,13 @@
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/yaml"
           }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx webpack --watch --config webpack.config.js &",
+            "cwd": "libs/yaml"
+          }
         }
       }
     },
@@ -172,6 +207,13 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/sample"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
             "cwd": "libs/uesioapps/sample"
           }
         },
@@ -193,6 +235,13 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/uesio"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
             "cwd": "libs/uesioapps/uesio"
           }
         },
@@ -222,6 +271,13 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/crm"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
             "cwd": "libs/uesioapps/crm"
           }
         },
@@ -261,6 +317,13 @@
             "cwd": "libs/uesioapps/material"
           }
         },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
+            "cwd": "libs/uesioapps/material"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
@@ -288,16 +351,23 @@
           "options": {
             "commands": [
               "mkdir -p dist/vendor",
-              "wget -O dist/vendor/react.development.js https://unpkg.com/react@16/umd/react.development.js",
-              "wget -O dist/vendor/react.production.min.js https://unpkg.com/react@16/umd/react.production.min.js",
-              "wget -O dist/vendor/react-dom.development.js https://unpkg.com/react-dom@16/umd/react-dom.development.js",
-              "wget -O dist/vendor/react-dom.production.min.js https://unpkg.com/react-dom@16/umd/react-dom.production.min.js",
-              "wget -O dist/vendor/redux.js https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.4/redux.js",
-              "wget -O dist/vendor/react-redux.js https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.js",
-              "wget -O dist/vendor/material-ui.development.js https://unpkg.com/@material-ui/core@latest/umd/material-ui.development.js",
+              "wget -qO dist/vendor/react.development.js https://unpkg.com/react@16/umd/react.development.js &> /dev/null",
+              "wget -qO dist/vendor/react.production.min.js https://unpkg.com/react@16/umd/react.production.min.js &> /dev/null",
+              "wget -qO dist/vendor/react-dom.development.js https://unpkg.com/react-dom@16/umd/react-dom.development.js &> /dev/null",
+              "wget -qO dist/vendor/react-dom.production.min.js https://unpkg.com/react-dom@16/umd/react-dom.production.min.js &> /dev/null",
+              "wget -qO dist/vendor/redux.js https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.4/redux.js &> /dev/null",
+              "wget -qO dist/vendor/react-redux.js https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.js &> /dev/null",
+              "wget -qO dist/vendor/material-ui.development.js https://unpkg.com/@material-ui/core@latest/umd/material-ui.development.js &> /dev/null",
               "echo Done!"
             ],
             "parallel": false
+          },
+          "watch": {
+            "builder": "@nrwl/workspace:run-commands",
+            "options": {
+              "command": "echo TODO: watch libs/vendor &",
+              "cwd": "libs/vendor"
+            }
           }
         }
       }
@@ -314,6 +384,14 @@
           "outputs": ["dist/cli"],
           "options": {
             "command": "npx tsc",
+            "cwd": "apps/cli"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": ["dist/cli"],
+          "options": {
+            "command": "npx -w tsc &",
             "cwd": "apps/cli"
           }
         },
@@ -346,10 +424,10 @@
             "cwd": "libs/constants"
           }
         },
-        "deploy": {
+        "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "./../../apps/cli/bin/run deploy",
+            "command": "npx tsc -w &",
             "cwd": "libs/constants"
           }
         },
