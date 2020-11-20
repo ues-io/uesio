@@ -50,6 +50,8 @@ definition:
           - material.column:
               field: crm.description
           - material.column:
+              field: crm.email
+          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -78,6 +80,7 @@ definition:
         crm.description: null
         crm.id: null
         crm.name: null
+        crm.email: null
 dependencies:
   componentpacks:
     material.main: null

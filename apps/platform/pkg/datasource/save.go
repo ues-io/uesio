@@ -60,6 +60,11 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		batch.Wires = append(batch.Wires, request)
 		collated[dsKey] = batch
 
+		err = FieldValidation(&request, collectionMetadata, session)
+		if err != nil {
+			return nil, err
+		}
+
 		err = RunBeforeSaveBots(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err

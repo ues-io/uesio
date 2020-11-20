@@ -17,7 +17,7 @@ func (fc *FieldCollection) GetName() string {
 
 // GetFields function
 func (fc *FieldCollection) GetFields() []string {
-	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly"}
+	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly", "required", "validate"}
 }
 
 // NewItem function

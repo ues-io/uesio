@@ -43,6 +43,8 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 		ReferencedCollection: f.ReferencedCollection,
 		SelectListName:       f.SelectList,
 		ForeignKeyField:      f.ForeignKeyField,
+		Required:             f.Required,
+		Validate:             f.Validate,
 	}
 }
 

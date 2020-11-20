@@ -3,3 +3,7 @@ collection: crm.accounts
 type: TEXT
 label: Description
 propertyName: description
+required: true
+validate:
+  type: REGEX
+  options: "p([a-z]+)ch"

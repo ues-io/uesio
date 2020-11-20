@@ -1,6 +1,10 @@
 package adapters
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/metadata"
+)
 
 // MetadataCache type
 type MetadataCache struct {
@@ -91,6 +95,8 @@ type FieldMetadata struct {
 	SelectListName       string                     `json:"-"`
 	ReferencedCollection string                     `json:"referencedCollection"`
 	ForeignKeyField      string                     `json:"foreignKeyField"`
+	Required             bool                       `json:"required"`
+	Validate             metadata.Validate
 }
 
 // GetFullName function
