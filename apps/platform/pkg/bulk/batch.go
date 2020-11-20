@@ -1,7 +1,6 @@
 package bulk
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 
@@ -15,7 +14,6 @@ import (
 // NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
 
-	var jobSpec metadata.JobSpec
 	var job metadata.BulkJob
 
 	// Get the job from the jobID
@@ -33,16 +31,12 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	err = json.Unmarshal([]byte(job.Spec), &jobSpec)
-	if err != nil {
-		return "", err
-	}
-
-	fileFormat := jobSpec.FileType
+	spec := job.Spec
+	fileFormat := spec.FileType
 	var saveRequestBatch *datasource.SaveRequestBatch
 
 	if fileFormat == "csv" {
-		saveRequestBatch, err = processCSV(body, &jobSpec, session)
+		saveRequestBatch, err = processCSV(body, &spec, session)
 		if err != nil {
 			return "", err
 		}

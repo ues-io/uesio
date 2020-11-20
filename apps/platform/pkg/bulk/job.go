@@ -1,7 +1,6 @@
 package bulk
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -14,16 +13,11 @@ func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
 
 	site := session.GetSite()
 
-	str, err := json.MarshalIndent(spec, "", "\t")
-	if err != nil {
-		return "", err
-	}
-
 	t := time.Now()
 
 	jobs := metadata.BulkJobCollection{
 		metadata.BulkJob{
-			Spec: string(str),
+			Spec: *spec,
 			Site: site.Name,
 			Name: t.Format("2006-01-02 15:04:05"),
 		},
