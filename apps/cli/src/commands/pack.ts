@@ -26,6 +26,11 @@ export default class Pack extends Command {
 			console.log("Nothing to pack.")
 			return
 		}
-		webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
+		try {
+			webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
+			// do stuff with the eventual result and return something
+		} catch (error) {
+			throw Error("thomasTest" + error)
+		}
 	}
 }
