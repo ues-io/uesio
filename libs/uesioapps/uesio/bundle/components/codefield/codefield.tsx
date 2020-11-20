@@ -47,7 +47,12 @@ function CodeField(props: Props): ReactElement | null {
 
 	return (
 		<div className={classes.root}>
-			<material.InputLabel shrink={true}>
+			<material.InputLabel
+				{...{
+					shrink: true,
+					doNotExploit: "TypeScript",
+				}}
+			>
 				{fieldMetadata.getLabel()}
 			</material.InputLabel>
 			<div className={classes.input}>
