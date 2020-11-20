@@ -1,4 +1,4 @@
-package postgresql
+package mysql
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
 
 func followUpReferenceFieldLoad(
@@ -29,18 +30,18 @@ func followUpReferenceFieldLoad(
 		if err != nil {
 			return err
 		}
-		PostgreSQLCollectionNamego, err := getDBCollectionName(collectionMetadata)
+		PostgreSQLCollectionNamego, err := sqlshared.GetDBCollectionName(collectionMetadata)
 		if err != nil {
 			return err
 		}
 
 		var IDFieldMetadata = collectionMetadata.Fields[collectionMetadata.IDField]
-		IDField, err := getDBFieldName(IDFieldMetadata)
+		IDField, err := sqlshared.GetDBFieldName(IDFieldMetadata)
 		if err != nil {
 			return err
 		}
 
-		psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+		psql := sq.StatementBuilder
 
 		fieldIDs := []string{}
 
@@ -49,14 +50,14 @@ func followUpReferenceFieldLoad(
 			if err != nil {
 				return err
 			}
-			sqlFieldName, err := getDBFieldName(fieldMetadata)
+			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
 				return err
 			}
 			fieldIDs = append(fieldIDs, sqlFieldName)
 		}
 
-		loadQuery := psql.Select(fieldIDs...).From("public." + PostgreSQLCollectionNamego).Where(
+		loadQuery := psql.Select(fieldIDs...).From(PostgreSQLCollectionNamego).Where(
 			sq.Eq{
 				IDField: ids,
 			})
@@ -64,12 +65,12 @@ func followUpReferenceFieldLoad(
 		rows, err := loadQuery.RunWith(db).Query()
 
 		if err != nil {
-			return errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+			return errors.New("Failed to load rows in MySQL:" + err.Error())
 		}
 
 		cols, err := rows.Columns()
 		if err != nil {
-			return errors.New("Failed to load columns in PostgreSQL:" + err.Error())
+			return errors.New("Failed to load columns in MySQL:" + err.Error())
 		}
 
 		colIndexes := map[string]int{}
@@ -79,7 +80,8 @@ func followUpReferenceFieldLoad(
 		}
 
 		idToDataMapping := make(map[string]map[string]interface{})
-		colvals := make([]interface{}, len(cols))
+		colvals := make([]sql.RawBytes, len(cols))
+		scanArgs := make([]interface{}, len(colvals))
 
 		IDFieldUIName, err := adapters.GetUIFieldName(IDFieldMetadata)
 		if err != nil {
@@ -89,10 +91,10 @@ func followUpReferenceFieldLoad(
 		for rows.Next() {
 			colassoc := make(map[string]interface{}, len(cols))
 			for i := range colvals {
-				colvals[i] = new(interface{})
+				scanArgs[i] = &colvals[i]
 			}
-			if err := rows.Scan(colvals...); err != nil {
-				return errors.New("Failed to scan values in PostgreSQL:" + err.Error())
+			if err := rows.Scan(scanArgs...); err != nil {
+				return errors.New("Failed to scan values in MySQL:" + err.Error())
 			}
 
 			for field := range fields {
@@ -106,7 +108,7 @@ func followUpReferenceFieldLoad(
 					return err
 				}
 
-				sqlFieldName, err := getDBFieldName(fieldMetadata)
+				sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 				if err != nil {
 					return err
 				}
@@ -115,7 +117,7 @@ func followUpReferenceFieldLoad(
 				if !ok {
 					return errors.New("Column not found: " + sqlFieldName)
 				}
-				colassoc[fieldID] = *colvals[index].(*interface{})
+				colassoc[fieldID] = string(colvals[index])
 			}
 			testid := colassoc[IDFieldUIName].(string)
 			idToDataMapping[testid] = colassoc
