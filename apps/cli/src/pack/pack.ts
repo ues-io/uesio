@@ -226,8 +226,10 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors.forEach((message) => console.error(message))
-			return
+			info.errors.forEach((message) => {
+				console.error(message)
+				throw new Error(message)
+			})
 		}
 		if (stats.hasWarnings()) {
 			info.warnings.forEach((message) => console.warn(message))
