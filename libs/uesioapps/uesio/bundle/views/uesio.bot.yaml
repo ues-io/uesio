@@ -167,7 +167,7 @@ definition:
                                       fieldId: uesio.type
                                   - material.field:
                                       fieldId: uesio.dialect
-                                  - material.metadatafield:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"

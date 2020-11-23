@@ -80,7 +80,7 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.metadatafield:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
