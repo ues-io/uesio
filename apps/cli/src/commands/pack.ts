@@ -19,6 +19,7 @@ export default class Pack extends Command {
 
 	async run(): Promise<void> {
 		const { flags } = this.parse(Pack)
+		process.exit(1)
 
 		console.log("Packing...")
 		const entries = await createEntryFiles()
