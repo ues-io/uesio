@@ -141,7 +141,7 @@ class Wire extends Actor {
 						signal.data.record
 					),
 				}),
-				originals: Object.assign({}, state.changes, {
+				original: Object.assign({}, state.changes, {
 					[signal.data.recordId]: Object.assign(
 						{},
 						state.data[signal.data.recordId],
