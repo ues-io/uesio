@@ -133,22 +133,23 @@ class Wire extends Actor {
 			if (!idField) {
 				return state
 			}
-			return Object.assign({}, state, {
-				data: Object.assign({}, state.data, {
-					[signal.data.recordId]: Object.assign(
-						{},
-						state.data[signal.data.recordId],
-						signal.data.record
-					),
-				}),
-				original: Object.assign({}, state.changes, {
-					[signal.data.recordId]: Object.assign(
-						{},
-						state.data[signal.data.recordId],
-						signal.data.record
-					),
-				}),
-			})
+			return {
+				...state,
+				data: {
+					...state.data,
+					[signal.data.recordId]: {
+						...state.data[signal.data.recordId],
+						...signal.data.record,
+					},
+				},
+				original: {
+					...state.changes,
+					[signal.data.recordId]: {
+						...state.data[signal.data.recordId],
+						...signal.data.record,
+					},
+				},
+			}
 		},
 		[CANCEL]: (action: CancelAction, state: PlainWire): PlainWire => {
 			return {
