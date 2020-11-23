@@ -87,9 +87,9 @@ definition:
                                   - material.field:
                                       fieldId: uesio.workspaceid
                                   - uesio.metadatafield:
-                                      fieldId: uesio.namefield
+                                      fieldId: uesio.collection
                                       metadataType: "FIELD"
-                                      label: "Name Field"
+                                      label: "Collection"
                                   - material.field:
                                       fieldId: uesio.dialect
                                   - material.field:
