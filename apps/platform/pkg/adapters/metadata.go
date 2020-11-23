@@ -1,6 +1,8 @@
 package adapters
 
-import "errors"
+import (
+	"errors"
+)
 
 // MetadataCache type
 type MetadataCache struct {
@@ -77,6 +79,12 @@ func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
+// ValidationMetadata struct
+type ValidationMetadata struct {
+	Type  string `json:"type"`
+	Regex string `json:"regex"`
+}
+
 // FieldMetadata struct
 type FieldMetadata struct {
 	Name                 string                     `json:"name"`
@@ -91,6 +99,8 @@ type FieldMetadata struct {
 	SelectListName       string                     `json:"-"`
 	ReferencedCollection string                     `json:"referencedCollection"`
 	ForeignKeyField      string                     `json:"foreignKeyField"`
+	Required             bool                       `json:"required"`
+	Validate             *ValidationMetadata        `json:"validate"`
 }
 
 // GetFullName function

@@ -1,0 +1,3 @@
+name: newbot
+path: app/{appname}/workspace/{workspacename}/newbot
+view: uesio.newbot

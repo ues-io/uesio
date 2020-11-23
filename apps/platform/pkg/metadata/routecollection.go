@@ -1,9 +1,6 @@
 package metadata
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -22,14 +19,7 @@ func (rc *RouteCollection) GetFields() []string {
 
 // NewItem function
 func (rc *RouteCollection) NewItem(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid Route Key: " + key)
-	}
-	return &Route{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	}, nil
+	return NewRoute(key)
 }
 
 // GetKeyPrefix function

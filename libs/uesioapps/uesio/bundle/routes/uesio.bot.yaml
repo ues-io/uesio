@@ -1,0 +1,3 @@
+name: bot
+path: app/{appname}/workspace/{workspacename}/bot/{botname}
+view: uesio.bot

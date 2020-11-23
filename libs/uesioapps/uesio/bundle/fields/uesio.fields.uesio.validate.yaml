@@ -1,0 +1,5 @@
+name: validate
+collection: uesio.fields
+type: MAP
+label: Validate
+propertyName: validate

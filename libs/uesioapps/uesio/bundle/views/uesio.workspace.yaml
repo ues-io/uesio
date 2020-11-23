@@ -153,14 +153,14 @@ definition:
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
-                                            text: Import Data
+                                            text: Bots
                                             variant: text
                                             fullWidth: true
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
                                                 band: "platform"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                                                 namespace: "uesio"
                       - material.griditem:
                           xs: true

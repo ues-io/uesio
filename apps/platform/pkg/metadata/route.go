@@ -1,6 +1,23 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"errors"
+	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/reqs"
+)
+
+// NewRoute function
+func NewRoute(key string) (*Route, error) {
+	keyArray := strings.Split(key, ".")
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Route Key: " + key)
+	}
+	return &Route{
+		Namespace: keyArray[0],
+		Name:      keyArray[1],
+	}, nil
+}
 
 // Route struct
 type Route struct {
