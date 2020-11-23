@@ -2,8 +2,6 @@ package adapters
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
 // MetadataCache type
@@ -81,6 +79,12 @@ func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
+// ValidationMetadata struct
+type ValidationMetadata struct {
+	Type  string `json:"type"`
+	Regex string `json:"regex"`
+}
+
 // FieldMetadata struct
 type FieldMetadata struct {
 	Name                 string                     `json:"name"`
@@ -96,7 +100,7 @@ type FieldMetadata struct {
 	ReferencedCollection string                     `json:"referencedCollection"`
 	ForeignKeyField      string                     `json:"foreignKeyField"`
 	Required             bool                       `json:"required"`
-	Validate             metadata.Validate
+	Validate             *ValidationMetadata        `json:"validate"`
 }
 
 // GetFullName function

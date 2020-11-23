@@ -44,7 +44,18 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 		SelectListName:       f.SelectList,
 		ForeignKeyField:      f.ForeignKeyField,
 		Required:             f.Required,
-		Validate:             f.Validate,
+		Validate:             GetValidateMetadata(f.Validate),
+	}
+}
+
+// GetValidateMetadata function
+func GetValidateMetadata(v *metadata.Validate) *adapters.ValidationMetadata {
+	if v == nil {
+		return nil
+	}
+	return &adapters.ValidationMetadata{
+		Type:  v.Type,
+		Regex: v.Regex,
 	}
 }
 

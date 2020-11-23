@@ -1,5 +1,5 @@
 name: email
-collection: crm.accounts
+collection: crm.leads
 type: TEXT
 label: Email
 propertyName: email

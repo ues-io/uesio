@@ -3,7 +3,6 @@ module github.com/thecloudmasters/uesio
 go 1.13
 
 require (
-	cloud.google.com/go v0.66.0
 	cloud.google.com/go/firestore v1.3.0
 	cloud.google.com/go/storage v1.12.0
 	github.com/Masterminds/squirrel v1.4.0

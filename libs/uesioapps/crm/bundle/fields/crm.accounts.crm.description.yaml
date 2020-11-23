@@ -6,4 +6,4 @@ propertyName: description
 required: true
 validate:
   type: REGEX
-  options: "p([a-z]+)ch"
+  regex: "p([a-z]+)ch"
