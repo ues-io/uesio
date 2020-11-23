@@ -128,9 +128,7 @@ cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
-
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
-
 ```
 
 # Uesio apps deployment
@@ -140,9 +138,7 @@ cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 For plugging such an application into uesio, you have to deploy it obviously after having built it. This deployment process is done by the `cli`.
 
 ```
-
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
-
 ```
 
 Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is directly accessing the related files part of that lib.
@@ -152,9 +148,7 @@ An **app bundle** is a screenshot or version of a specific uesio app.
 # Set up SSL
 
 ```
-
 npm run setup-ssl
-
 ```
 
 This script should create the `certificate.crt` and `private.key` files in the `apps/platform/ssl` directory. You will need to configure your operating system to trust this self-signed certificate.
@@ -168,11 +162,9 @@ In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com
 On Mac modify the `/etc/hosts` file to include the following lines
 
 ```
-
 127.0.0.1 uesio-dev.com
 127.0.0.1 studio.uesio-dev.com
 127.0.0.1 www.uesio-dev.com
-
 ```
 
 Mac users can also use a service called dnsmasq for managing local DNS, but that has not been documented yet.
@@ -202,25 +194,19 @@ Mac users can also use a service called dnsmasq for managing local DNS, but that
 # Seed Local Database with Test Data
 
 ```
-
 npm run nx -- seed platform
-
 ```
 
 # Run the application Locally
 
 ```
-
 npm run nx -- serve platform
-
 ```
 
 In a browser visit
 
 ```
-
 https://uesio-dev.com:3000
-
 ```
 
 # Continous integration (CI)
@@ -234,9 +220,6 @@ The continous integration process is done through the cloud service offered by G
 2. ```
    npm install -g firebase-tools
    ```
-
-````
-
 3. Select the project your created before, while interacting with the firebase cli.
 
 ```
@@ -311,4 +294,3 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
-````
