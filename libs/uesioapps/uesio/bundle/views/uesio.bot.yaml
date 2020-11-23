@@ -164,8 +164,6 @@ definition:
                                   - material.field:
                                       fieldId: uesio.name
                                   - material.field:
-                                      fieldId: uesio.workspaceid
-                                  - material.field:
                                       fieldId: uesio.type
                                   - material.field:
                                       fieldId: uesio.dialect
