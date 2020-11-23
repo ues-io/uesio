@@ -7,6 +7,8 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const descriptor = props.descriptor as builder.MetadataProp
 	const metadataType = descriptor.metadataType
+	const { path, getValue, context, setValue } = props
+	const value = getValue() as string
 
 	const namespaces = uesio.builder.useAvailableNamespaces()
 
@@ -14,7 +16,7 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 
 	if (descriptor.groupingParents) {
 		const groupingNodePath = component.path.getAncestorPath(
-			props.path,
+			path,
 			descriptor.groupingParents
 		)
 
@@ -29,7 +31,6 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 		grouping = groupingNode[descriptor.groupingProperty] as string
 	}
 
-	const value = props.getValue() as string
 	const [namespace, name] = component.path.parseKey(value)
 
 	const metadata = uesio.builder.useMetadataList(
@@ -40,12 +41,12 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 
 	useEffect(() => {
 		if (!namespaces) {
-			uesio.builder.getAvailableNamespaces(props.context)
+			uesio.builder.getAvailableNamespaces(context)
 			return
 		}
 		if (!metadata && namespace) {
 			uesio.builder.getMetadataList(
-				props.context,
+				context,
 				metadataType,
 				namespace,
 				grouping
@@ -61,7 +62,7 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 					<SelectProp
 						{...props}
 						setValue={(value: string) => {
-							props.setValue(value + ".")
+							setValue(value + ".")
 						}}
 						getValue={() => namespace}
 						descriptor={{
@@ -81,7 +82,7 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 					<SelectProp
 						{...props}
 						setValue={(value: string) => {
-							props.setValue(namespace + "." + value)
+							setValue(namespace + "." + value)
 						}}
 						getValue={() => name}
 						descriptor={{
