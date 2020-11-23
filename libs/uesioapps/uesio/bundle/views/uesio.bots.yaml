@@ -118,6 +118,8 @@ definition:
                       - material.typography:
                           text: "${uesio.type}"
                           textTransform: "capitalize"
+                      - material.typography:
+                          text: "${uesio.name}"
                     signals:
                       - signal: "NAVIGATE"
                         band: "platform"
