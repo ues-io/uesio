@@ -1,4 +1,8 @@
 name: crm
+loginRoute: uesio.login
+homeRoute: crm.home
+defaultProfile: crm.standard
+publicProfile: uesio.public
 dependencies:
   material:
     version: v0.0.1

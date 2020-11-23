@@ -69,7 +69,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		permSet, err := getProfilePermSet(s)
 		if err != nil {
-			http.Error(w, "Failed to load permissions", http.StatusInternalServerError)
+			http.Error(w, "Failed to load permissions: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -179,7 +179,7 @@ func getProfilePermSet(session *sess.Session) (*metadata.PermissionSet, error) {
 	}
 	profile, err := loadAndHydrateProfile(profileKey, session)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Error Loading Profile: " + profileKey + " : " + err.Error())
 	}
 
 	return profile.FlattenPermissions(), nil

@@ -12,6 +12,10 @@ func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Ses
 	// Get the site's default profile
 	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
 
+	if defaultSitePublicProfile == "" {
+		defaultSitePublicProfile = "uesio.public"
+	}
+
 	if user == nil {
 		user = &metadata.User{
 			FirstName: "Guest",
@@ -180,6 +184,29 @@ func (s *Session) GetUserInfo() *metadata.User {
 // GetProfile function
 func (s *Session) GetProfile() string {
 	return s.getBrowserSessionAttribute("Profile")
+}
+
+// IsPublicProfile function
+func (s *Session) IsPublicProfile() bool {
+	return s.GetProfile() == s.GetPublicProfile()
+}
+
+// GetPublicProfile function
+func (s *Session) GetPublicProfile() string {
+	appBundle := s.site.GetAppBundle()
+	if appBundle == nil {
+		return ""
+	}
+	return appBundle.PublicProfile
+}
+
+// GetLoginRoute function
+func (s *Session) GetLoginRoute() string {
+	appBundle := s.site.GetAppBundle()
+	if appBundle == nil {
+		return ""
+	}
+	return appBundle.LoginRoute
 }
 
 // RemoveWorkspaceContext function

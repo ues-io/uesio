@@ -33,18 +33,6 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	matched := router.Match(r, routematch)
 
 	if !matched {
-		// If we're the login route but we didn't find a match, return the uesio login page
-		if path == "login" {
-			site := session.GetSite()
-			return &metadata.Route{
-				ViewRef:   site.GetAppBundle().LoginRoute,
-				Namespace: site.AppRef,
-				Path:      path,
-			}, nil
-		}
-
-		// If we're logged in return the not found page
-
 		return nil, errors.New("No Route Match Found: " + path)
 	}
 
@@ -117,14 +105,47 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// RedirectToLogin function
-func RedirectToLogin(w http.ResponseWriter, r *http.Request) {
-	// TODO: This is special. NOTHING SPECIAL!
-	redirectPath := "/login"
-	if r.URL.Path != "" && r.URL.Path != "/" {
-		redirectPath = redirectPath + "?r=" + r.URL.Path
+func getNotFoundRoute(path string) *metadata.Route {
+	return &metadata.Route{
+		ViewRef:   "uesio.notfound",
+		Namespace: "uesio",
+		Path:      path,
 	}
-	http.Redirect(w, r, redirectPath, 302)
+}
+
+func getLoginRoute(session *sess.Session) (*metadata.Route, error) {
+	loginRoute, err := metadata.NewRoute(session.GetLoginRoute())
+	if err != nil {
+		return nil, err
+	}
+	err = bundles.Load(loginRoute, session)
+	if err != nil {
+		return nil, err
+	}
+	return loginRoute, nil
+}
+
+// HandleMissingRoute function
+func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Session, path string, err error) {
+	logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
+	// If our profile is the public profile, redirect to the login route
+	if session.IsPublicProfile() {
+		loginRoute, err := getLoginRoute(session)
+		if err == nil {
+			requestedPath := r.URL.Path
+			redirectPath := "/" + loginRoute.Path
+			if requestedPath != "" && requestedPath != "/" {
+				redirectPath = redirectPath + "?r=" + requestedPath
+			}
+			if redirectPath != requestedPath {
+				http.Redirect(w, r, redirectPath, 302)
+				return
+			}
+		}
+	}
+
+	// If we're logged in, but still no route, return the uesio.notfound view
+	ExecuteIndexTemplate(w, getNotFoundRoute(path), false, session)
 }
 
 // ServeRoute serves a route
@@ -134,18 +155,11 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	path := vars["route"]
 
 	session := middlewares.GetSession(r)
-	workspace := session.GetWorkspace()
-
-	prefix := "/app/" + namespace + "/"
-
-	if workspace != nil {
-		prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + prefix
-	}
+	prefix := strings.TrimSuffix(r.URL.Path, path)
 
 	route, err := getRoute(r, namespace, path, prefix, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		RedirectToLogin(w, r)
+		HandleMissingRoute(w, r, session, path, err)
 		return
 	}
 
@@ -162,8 +176,7 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 
 	route, err := getRoute(r, site.AppRef, path, "/", session)
 	if err != nil {
-		logger.LogWithTrace(r, "Error Getting Route: "+err.Error(), logger.INFO)
-		RedirectToLogin(w, r)
+		HandleMissingRoute(w, r, session, path, err)
 		return
 	}
 
