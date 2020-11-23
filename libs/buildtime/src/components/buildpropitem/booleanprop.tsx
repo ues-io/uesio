@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import {
 	FormControlLabel,
 	Checkbox,
@@ -13,9 +13,8 @@ import {
 	inputProps,
 } from "./proprendererdefinition"
 
-function BooleanProp(props: PropRendererProps): ReactElement {
+const BooleanProp: FunctionComponent<PropRendererProps> = (props) => {
 	const descriptor = props.descriptor as builder.BooleanProp
-	const { definition } = props
 	const selected = props.getValue() as boolean
 
 	switch (descriptor.displaytype) {
@@ -24,11 +23,9 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 				<FormControlLabel
 					control={
 						<Switch
-							{...{
-								checked: selected,
-								onChange: (event): void => {
-									props.setValue(event.target.checked)
-								},
+							checked={selected}
+							onChange={(event): void => {
+								props.setValue(event.target.checked)
 							}}
 						/>
 					}
@@ -60,11 +57,9 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 					label={descriptor.label}
 					fullWidth={true}
 					onChange={(event): void => {
-						if (event.target.value == "true") {
-							props.setValue(true)
-						} else {
-							props.setValue(false)
-						}
+						event.target.value == "true"
+							? props.setValue(true)
+							: props.setValue(false)
 					}}
 				>
 					{optionslist?.map(
@@ -83,11 +78,9 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 				<FormControlLabel
 					control={
 						<Checkbox
-							{...{
-								checked: selected,
-								onChange: (event): void => {
-									props.setValue(event.target.checked)
-								},
+							checked={selected}
+							onChange={(event): void => {
+								props.setValue(event.target.checked)
 							}}
 						/>
 					}
