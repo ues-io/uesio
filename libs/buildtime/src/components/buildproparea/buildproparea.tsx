@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { definition, builder } from "@uesio/ui"
 import BuildSection from "./buildsection"
@@ -22,7 +22,7 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-function BuildPropArea(props: Props): ReactElement {
+const BuildPropArea: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const { buildPropsDef, path, definition, context } = props
 
