@@ -40,7 +40,7 @@ Sandalone **libraries** are located in the `libs` folder. These libs are compone
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
+The `workspace.json` is the entry point for the **build**, **tes**, **linting** processes. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
 For scaffolding a new lib, you can run the following script.
 
