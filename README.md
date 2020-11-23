@@ -229,7 +229,6 @@ The continous integration process is done through the cloud service offered by G
 4. ```
    firebase emulators:start
    ```
-
 5. In a browser visit
 
 ```
