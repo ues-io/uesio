@@ -24,23 +24,21 @@ const useStyles = makeStyles(() =>
 
 function BuildPropArea(props: Props): ReactElement {
 	const classes = useStyles(props)
-	const propsDef = props.buildPropsDef
+	const { buildPropsDef, path, definition, context } = props
 
 	return (
 		<div className={classes.wrapper}>
-			{propsDef.properties && (
+			{buildPropsDef.properties && (
 				<div className={classes.propList}>
 					<PropList
-						{...{
-							path: props.path,
-							definition: props.definition,
-							properties: propsDef.properties,
-							context: props.context,
-						}}
+						path={path}
+						definition={definition}
+						properties={buildPropsDef.properties}
+						context={context}
 					/>
 				</div>
 			)}
-			{propsDef.sections.map(
+			{buildPropsDef.sections.map(
 				(section: builder.PropertySection, index: number) => (
 					<BuildSection
 						key={index}
