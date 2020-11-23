@@ -6,7 +6,6 @@ require (
 	cloud.google.com/go/firestore v1.3.0
 	cloud.google.com/go/storage v1.12.0
 	github.com/Masterminds/squirrel v1.4.0
-	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/aws/aws-sdk-go v1.35.21
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dlclark/regexp2 v1.4.0 // indirect
