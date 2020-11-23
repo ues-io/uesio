@@ -218,6 +218,10 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
+# Continous integration (CI)
+
+The continous integration process is done through the service offereted by Github, namely **Github actions**. See the configuration file called `nx-affected.yml`
+
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
 1. Create a project in the [firebase console](https://console.firebase.google.com/).
