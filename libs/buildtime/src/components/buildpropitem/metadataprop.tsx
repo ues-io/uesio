@@ -1,9 +1,9 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder, material } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-function MetadataProp(props: PropRendererProps): ReactElement | null {
+const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const descriptor = props.descriptor as builder.MetadataProp
 	const metadataType = descriptor.metadataType
