@@ -28,7 +28,7 @@ function BuildPropArea(props: Props): ReactElement {
 
 	return (
 		<div className={classes.wrapper}>
-			{buildPropsDef.properties && (
+			{buildPropsDef?.properties && (
 				<div className={classes.propList}>
 					<PropList
 						path={path}
@@ -42,14 +42,12 @@ function BuildPropArea(props: Props): ReactElement {
 				(section: builder.PropertySection, index: number) => (
 					<BuildSection
 						key={index}
-						{...{
-							path: props.path,
-							definition: props.definition,
-							section,
-							index,
-							componentType: "",
-							context: props.context,
-						}}
+						path={path}
+						definition={definition}
+						section={section}
+						index={index}
+						componentType=""
+						context={context}
 					/>
 				)
 			)}
