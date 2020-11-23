@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import PropList from "./proplist"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder } from "@uesio/ui"
 
-function PropListSection(props: SectionRendererProps): ReactElement | null {
+const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const section = props.section as builder.PropListSection
 
 	return (
