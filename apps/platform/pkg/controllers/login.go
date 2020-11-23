@@ -66,6 +66,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	if redirectPath == "" {
 		homeRoute := site.GetAppBundle().HomeRoute
+		if homeRoute == "" {
+			http.Error(w, "No Home Route Specfied", http.StatusInternalServerError)
+			return
+		}
 		redirectNamespace, redirectRoute, err = metadata.ParseKey(homeRoute)
 		if err != nil {
 			logger.LogErrorWithTrace(r, err)
