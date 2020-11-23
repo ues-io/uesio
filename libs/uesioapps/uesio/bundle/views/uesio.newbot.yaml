@@ -85,8 +85,6 @@ definition:
                                       metadataType: "COLLECTION"
                                       label: "Collection"
                                   - material.field:
-                                      fieldId: uesio.workspaceid
-                                  - material.field:
                                       fieldId: uesio.dialect
                                   - material.field:
                                       fieldId: uesio.type

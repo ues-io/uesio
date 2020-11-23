@@ -1,5 +1,5 @@
 name: collection
 collection: uesio.bots
-type: FIELD
+type: TEXT
 label: Collection
 propertyName: collection
