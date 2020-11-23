@@ -40,7 +40,7 @@ Sandalone **libraries** are located in the `libs` folder. These libs are compone
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
+The `workspace.json` is the entry point for the **build**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
 For scaffolding a new lib, you can run the following script.
 
@@ -118,18 +118,9 @@ npm run build-all
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
-```
 
-or
-
-```
-npm run nx -- build uesioapps-crm
-```
-
-or (if you have `nx` install globally)
-
-```
-nx build uesioapps-crm
+// or npm run nx -- build uesioapps-crm
+// or - if you have `nx` globally - nx build uesioapps-crm
 ```
 
 ## Build a dedicated app (with watcher and source map)
@@ -218,6 +209,10 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
+# Continous integration (CI)
+
+The continous integration process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is hold in the file called `nx-affected.yml`.
+
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
 1. Create a project in the [firebase console](https://console.firebase.google.com/).
@@ -225,7 +220,6 @@ https://uesio-dev.com:3000
 2. ```
    npm install -g firebase-tools
    ```
-
 3. Select the project your created before, while interacting with the firebase cli.
 
 ```
@@ -235,12 +229,10 @@ https://uesio-dev.com:3000
 4. ```
    firebase emulators:start
    ```
-
 5. In a browser visit
 
 ```
    http://localhost:4000/firestore/
-
 ```
 
 # Local Development with a database in Docker
