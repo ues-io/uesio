@@ -1,5 +1,6 @@
-name: dialect
+name: bottype
 collection: uesio.bots
-type: TEXT
-label: Dialect
-propertyName: dialect
+type: SELECT
+label: Bot type
+propertyName: type
+selectList: uesio.bottype

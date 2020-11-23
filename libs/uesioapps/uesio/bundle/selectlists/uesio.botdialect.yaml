@@ -1,0 +1,4 @@
+name: botdialect
+options:
+  - label: "javascript"
+    value: "JAVASCRIPT"

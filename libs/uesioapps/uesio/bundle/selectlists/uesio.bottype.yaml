@@ -1,0 +1,8 @@
+name: bottype
+options:
+  - label: "listener"
+    value: "LISTENER"
+  - label: "after save"
+    value: "AFTERSAVE"
+  - label: "before save"
+    value: "BEFORESAVE"

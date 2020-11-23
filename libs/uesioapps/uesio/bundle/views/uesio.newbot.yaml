@@ -80,12 +80,16 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
                                   - material.field:
                                       fieldId: uesio.workspaceid
-                                  - material.field:
-                                      fieldId: uesio.id
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.namefield
+                                      metadataType: "FIELD"
+                                      label: "Name Field"
                                   - material.field:
                                       fieldId: uesio.dialect
                                   - material.field:
