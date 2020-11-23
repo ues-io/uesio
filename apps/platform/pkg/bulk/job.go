@@ -1,8 +1,6 @@
 package bulk
 
 import (
-	"time"
-
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -13,13 +11,10 @@ func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
 
 	site := session.GetSite()
 
-	t := time.Now()
-
 	jobs := metadata.BulkJobCollection{
-		metadata.BulkJob{
+		{
 			Spec: *spec,
 			Site: site.Name,
-			Name: t.Format("2006-01-02 15:04:05"),
 		},
 	}
 

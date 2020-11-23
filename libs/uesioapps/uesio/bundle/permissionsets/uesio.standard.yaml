@@ -29,9 +29,8 @@ views:
   uesio.files: true
   uesio.file: true
   uesio.newfile: true
-  uesio.bulkjobs: true
+  uesio.import: true
   uesio.bulkjob: true
-  uesio.newbulkjob: true
   uesio.bundle: true
   uesio.site: true
   uesio.bots: true
@@ -63,9 +62,8 @@ routes:
   uesio.files: true
   uesio.file: true
   uesio.newfile: true
-  uesio.bulkjobs: true
+  uesio.import: true
   uesio.bulkjob: true
-  uesio.newbulkjob: true
   uesio.bundle: true
   uesio.site: true
   uesio.bots: true

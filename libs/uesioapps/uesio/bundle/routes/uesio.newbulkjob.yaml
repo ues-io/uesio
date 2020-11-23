@@ -1,3 +1,0 @@
-name: newbulkjob
-path: app/{appname}/workspace/{workspacename}/newbulkjob
-view: uesio.newbulkjob

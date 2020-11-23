@@ -5,7 +5,6 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 // BulkJob struct
 type BulkJob struct {
 	ID   string  `uesio:"uesio.id"`
-	Name string  `uesio:"uesio.name"`
 	Spec JobSpec `uesio:"uesio.spec"`
 	Site string  `uesio:"uesio.site"`
 }

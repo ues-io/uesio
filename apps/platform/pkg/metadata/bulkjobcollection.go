@@ -10,7 +10,7 @@ func (bjc *BulkJobCollection) GetName() string {
 
 // GetFields function
 func (bjc *BulkJobCollection) GetFields() []string {
-	return []string{"id", "name", "site", "spec"}
+	return []string{"id", "site", "spec"}
 }
 
 // UnMarshal function

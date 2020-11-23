@@ -6,12 +6,10 @@ definition:
       collection: uesio.bulkjobs
       fields:
         uesio.id:
-        uesio.name:
         uesio.site:
         uesio.spec:
-        uesio.collection:
       conditions:
-        - field: uesio.name
+        - field: uesio.id
           valueSource: PARAM
           param: bulkjobname
     bulkbatches:
@@ -63,12 +61,12 @@ definition:
                             band: platform
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
-                      - text: bulkjobs
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs
+                      - text: import
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/import
                         signals:
                           - signal: NAVIGATE
                             band: platform
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/bulkjobs
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/import
                             namespace: uesio
                       - text: $Param{bulkjobname}
                 - material.grid:
@@ -90,7 +88,7 @@ definition:
                                         - material.griditem:
                                             components:
                                               - material.typography:
-                                                  text: ${uesio.name}
+                                                  text: ${uesio.id}
                                                   textTransform: "uppercase"
                                                   variant: h5
                                         - material.griditem:
