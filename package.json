@@ -21,7 +21,7 @@
   "affected:lint": "nx affected:lint",
   "affected:test": "nx affected:test",
   "build": "nx build",
-  "build-all": "npm run thomas:test:build-uesio && nx run-many --target=build --all",
+  "build-all": "nx run-many --target=build --all && npm run thomas:test:build-uesio",
   "dep-graph": "nx dep-graph",
   "e2e": "nx e2e",
   "format": "nx format:write",
