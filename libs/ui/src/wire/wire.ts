@@ -121,7 +121,7 @@ class Wire extends Actor {
 				},
 			}
 		},
-		// Set a record without setting "changes", also set originals to this value
+		// Set a record without setting "changes", also set original to this value
 		[SET_RECORD]: (
 			signal: UpdateRecordAction,
 			state: PlainWire,
