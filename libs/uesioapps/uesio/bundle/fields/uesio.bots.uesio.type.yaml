@@ -1,6 +1,6 @@
-name: type
+name: dialect
 collection: uesio.bots
 type: SELECT
-label: Dialect type
+label: Dialect
 propertyName: type
 selectList: uesio.botdialect
