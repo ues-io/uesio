@@ -228,7 +228,8 @@ const getWebpackComplete = (
 
 		if (stats.hasErrors()) {
 			info.errors.forEach((message) => console.error(message))
-			return
+			// force the compilation to fail
+			process.exit(1)
 		}
 		if (stats.hasWarnings()) {
 			info.warnings.forEach((message) => console.warn(message))
