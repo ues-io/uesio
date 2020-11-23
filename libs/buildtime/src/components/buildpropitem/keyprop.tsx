@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { TextField } from "@material-ui/core"
 import {
 	PropRendererProps,
@@ -8,9 +8,8 @@ import {
 } from "./proprendererdefinition"
 import { definition, hooks, util } from "@uesio/ui"
 
-function KeyProp(props: PropRendererProps): ReactElement {
-	const path = props.path
-	const descriptor = props.descriptor
+const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
+	const { path, descriptor } = props
 	const pathArray = util.toPath(path)
 	const key = pathArray.pop()
 	const uesio = hooks.useUesio(props)
@@ -24,18 +23,16 @@ function KeyProp(props: PropRendererProps): ReactElement {
 	// Fall back to text component
 	return (
 		<TextField
-			{...{
-				value: getValue(),
-				label: descriptor.label,
-				size: "small",
-				fullWidth: true,
-				style: inputStyles,
-				InputProps: inputProps,
-				InputLabelProps: inputLabelProps,
-				variant: "outlined",
-				onChange: (event): void => {
-					setValue(event.target.value)
-				},
+			value={getValue()}
+			label={descriptor.label}
+			size="small"
+			fullWidth={true}
+			style={inputStyles}
+			InputProps={inputProps}
+			InputLabelProps={inputLabelProps}
+			variant="outlined"
+			onChange={(event): void => {
+				setValue(event.target.value)
 			}}
 		/>
 	)
