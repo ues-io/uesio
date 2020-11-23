@@ -240,7 +240,6 @@ https://uesio-dev.com:3000
 
 ```
    http://localhost:4000/firestore/
-
 ```
 
 # Local Development with a database in Docker
