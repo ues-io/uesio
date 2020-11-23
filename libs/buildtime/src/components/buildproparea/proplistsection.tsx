@@ -5,18 +5,17 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder } from "@uesio/ui"
 
 const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const { path, definition, context } = props
 	const section = props.section as builder.PropListSection
 
 	return (
 		<ExpandPanel defaultExpanded={false} title={section.title}>
 			{section.properties && (
 				<PropList
-					{...{
-						path: props.path,
-						definition: props.definition,
-						properties: section.properties,
-						context: props.context,
-					}}
+					path={path}
+					definition={definition}
+					properties={section.properties}
+					context={context}
 				/>
 			)}
 		</ExpandPanel>
