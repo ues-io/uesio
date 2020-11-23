@@ -70,6 +70,7 @@ nx g @nrwl/workspace:library NEW_LIB
   npm run build-all
 ```
 
+- Install the following chrome plugins, React Developers Tools, Redux DevTools.
 - Optional. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
 - Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
@@ -120,7 +121,7 @@ npm run build-all
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 
 // or npm run nx -- build uesioapps-crm
-// or - if you have `nx` globally - nx build uesioapps-crm
+// or - if you have nx globally - nx build uesioapps-crm
 ```
 
 ## Build a dedicated app (with watcher and source map)
@@ -141,7 +142,7 @@ For plugging such an application into uesio, you have to deploy it obviously aft
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
-Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is directly accessing the related files part of that lib.
+The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
 
 An **app bundle** is a screenshot or version of a specific uesio app.
 
@@ -211,7 +212,7 @@ https://uesio-dev.com:3000
 
 # Continous integration (CI)
 
-The continous integration process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is hold in the file called `nx-affected.yml`.
+The continous integration process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
 
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
