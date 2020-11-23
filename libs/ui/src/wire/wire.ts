@@ -154,7 +154,7 @@ class Wire extends Actor {
 			return {
 				...state,
 				data: {
-					...state.original,
+					...(state?.original ? state.original : {}),
 				},
 				changes: {},
 				deletes: {},
