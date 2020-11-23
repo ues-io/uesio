@@ -2,5 +2,5 @@ name: dialect
 collection: uesio.bots
 type: SELECT
 label: Dialect
-propertyName: type
+propertyName: dialect
 selectList: uesio.botdialect
