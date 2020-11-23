@@ -216,8 +216,7 @@ const getWebpackComplete = (
 			if (err.details) {
 				console.error(err.details)
 			}
-			// force the compilation to fail
-			process.exit(1)
+			return
 		}
 
 		const info = stats.toJson()
