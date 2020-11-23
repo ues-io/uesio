@@ -216,8 +216,8 @@ const getWebpackComplete = (
 			if (err.details) {
 				console.error(err.details)
 			}
-			throw Error("getWebpackComplete0:" + err.stack)
-			return
+			// for the compilation to fail
+			process.exit(1)
 		}
 
 		const info = stats.toJson()
@@ -229,8 +229,8 @@ const getWebpackComplete = (
 		if (stats.hasErrors()) {
 			info.errors.forEach((message) => console.error(message))
 
-			throw Error("getWebpackComplete1:" + JSON.stringify(info.errors))
-			return
+			// for the compilation to fail
+			process.exit(1)
 		}
 		if (stats.hasWarnings()) {
 			info.warnings.forEach((message) => console.warn(message))

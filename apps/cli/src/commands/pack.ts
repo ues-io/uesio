@@ -19,7 +19,6 @@ export default class Pack extends Command {
 
 	async run(): Promise<void> {
 		const { flags } = this.parse(Pack)
-		process.exit(1)
 
 		console.log("Packing...")
 		const entries = await createEntryFiles()
@@ -27,10 +26,6 @@ export default class Pack extends Command {
 			console.log("Nothing to pack.")
 			return
 		}
-		try {
-			webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
-		} catch (e) {
-			process.exit(1)
-		}
+		webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
 	}
 }
