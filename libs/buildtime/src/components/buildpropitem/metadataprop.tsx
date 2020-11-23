@@ -54,65 +54,57 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 		}
 	})
 
-	const namespaceProps = namespaces
-		? {
-				...props,
-				setValue: (value: string) => {
-					props.setValue(value + ".")
-					return
-				},
-				getValue: () => {
-					return namespace
-				},
-				descriptor: {
-					...props.descriptor,
-					options: Object.keys(namespaces).map((key) => {
-						return {
-							value: key,
-							label: key,
-						}
-					}),
-				},
-		  }
-		: props
-
-	const collectionProps = metadata
-		? {
-				...props,
-				setValue: (value: string) => {
-					props.setValue(namespace + "." + value)
-					return
-				},
-				getValue: () => {
-					return name
-				},
-				descriptor: {
-					...props.descriptor,
-					label: "",
-					options: Object.keys(metadata).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					}),
-				},
-		  }
-		: {
-				...props,
-				descriptor: {
-					...props.descriptor,
-					label: "",
-				},
-		  }
-
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>
-				<SelectProp {...namespaceProps} />
+				{namespaces ? (
+					<SelectProp
+						{...props}
+						setValue={(value: string) => {
+							props.setValue(value + ".")
+						}}
+						getValue={() => namespace}
+						descriptor={{
+							...descriptor,
+							options: Object.keys(namespaces).map((key) => ({
+								value: key,
+								label: key,
+							})),
+						}}
+					/>
+				) : (
+					<SelectProp {...props} />
+				)}
 			</material.Grid>
 			<material.Grid item xs={6}>
-				<SelectProp {...collectionProps} />
+				{metadata ? (
+					<SelectProp
+						{...props}
+						setValue={(value: string) => {
+							props.setValue(namespace + "." + value)
+						}}
+						getValue={() => name}
+						descriptor={{
+							...descriptor,
+							label: "",
+							options: Object.keys(metadata).map((key) => {
+								const [, name] = component.path.parseKey(key)
+								return {
+									value: name,
+									label: name,
+								}
+							}),
+						}}
+					/>
+				) : (
+					<SelectProp
+						{...props}
+						descriptor={{
+							...descriptor,
+							label: "",
+						}}
+					/>
+				)}
 			</material.Grid>
 		</material.Grid>
 	)
