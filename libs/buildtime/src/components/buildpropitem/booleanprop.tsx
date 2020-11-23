@@ -49,26 +49,22 @@ function BooleanProp(props: PropRendererProps): ReactElement {
 
 			return (
 				<TextField
-					{...{
-						select: true,
-						SelectProps: {
-							native: true,
-						},
-						variant: "outlined",
-						InputProps: inputProps,
-						InputLabelProps: inputLabelProps,
-						style: inputStyles,
-						size: "small",
-						value: props.getValue(),
-						label: descriptor.label,
-						fullWidth: true,
-						onChange: (event): void => {
-							if (event.target.value == "true") {
-								props.setValue(true)
-							} else {
-								props.setValue(false)
-							}
-						},
+					select={true}
+					SelectProps={{ native: true }}
+					variant="outlined"
+					InputProps={inputProps}
+					InputLabelProps={inputLabelProps}
+					style={inputStyles}
+					size="small"
+					value={props.getValue()}
+					label={descriptor.label}
+					fullWidth={true}
+					onChange={(event): void => {
+						if (event.target.value == "true") {
+							props.setValue(true)
+						} else {
+							props.setValue(false)
+						}
 					}}
 				>
 					{optionslist?.map(
