@@ -57,14 +57,12 @@ const getConditionProperties = (
 		: []
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition, path, context } = props
+	const { section, definition: def, path, context } = props
 	const uesio = hooks.useUesio(props)
 	const theme = material.useTheme()
 	const selectedNode = uesio.builder.useSelectedNode()
 
-	const conditionsDef = definition?.conditions as
-		| definition.Definition[]
-		| undefined
+	const conditionsDef = def?.conditions as definition.Definition[] | undefined
 
 	return (
 		<ExpandPanel
