@@ -74,6 +74,10 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 
 	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
+	if defaultSiteProfile == "" {
+		defaultSiteProfile = "uesio.standard"
+	}
+
 	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &metadata.UserCollection{

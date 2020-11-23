@@ -120,9 +120,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		// Make sure this is a legit view that we have access to
 		err := bundles.Load(&view, session)
 		if err != nil {
-			// TODO: This is special. NOTHING SPECIAL!
-			logger.LogErrorWithTrace(r, err)
-			RedirectToLogin(w, r)
+			HandleMissingRoute(w, r, session, "", err)
 			return
 		}
 
@@ -151,9 +149,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	// Make sure this is a legit view that we have access to
 	err := bundles.Load(&view, session)
 	if err != nil {
-		// TODO: This is special. NOTHING SPECIAL!
-		logger.LogErrorWithTrace(r, err)
-		RedirectToLogin(w, r)
+		HandleMissingRoute(w, r, session, "", err)
 		return
 	}
 
