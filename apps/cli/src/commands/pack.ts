@@ -30,7 +30,7 @@ export default class Pack extends Command {
 			webpack(getWebpackConfig(entries, flags), getWebpackComplete(flags))
 			// do stuff with the eventual result and return something
 		} catch (error) {
-			throw Error("thomasTest" + error)
+			process.exit(1)
 		}
 	}
 }

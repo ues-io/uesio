@@ -213,11 +213,9 @@ const getWebpackComplete = (
 		// Stats Object
 		if (err) {
 			console.error(err.stack || err)
-
 			if (err.details) {
 				console.error(err.details)
 			}
-			throw Error("getWebpackComplete1:" + err.stack)
 			return
 		}
 
@@ -228,10 +226,7 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors.forEach((message) => {
-				console.error(message)
-				throw Error("hasErrors2:" + message)
-			})
+			info.errors.forEach((message) => console.error(message))
 			return
 		}
 		if (stats.hasWarnings()) {
