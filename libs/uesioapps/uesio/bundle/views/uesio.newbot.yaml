@@ -86,10 +86,6 @@ definition:
                                       label: "Collection"
                                   - material.field:
                                       fieldId: uesio.workspaceid
-                                  - uesio.metadatafield:
-                                      fieldId: uesio.collection
-                                      metadataType: "FIELD"
-                                      label: "Collection"
                                   - material.field:
                                       fieldId: uesio.dialect
                                   - material.field:
