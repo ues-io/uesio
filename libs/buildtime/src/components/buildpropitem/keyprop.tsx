@@ -15,9 +15,7 @@ function KeyProp(props: PropRendererProps): ReactElement {
 	const key = pathArray.pop()
 	const uesio = hooks.useUesio(props)
 
-	const getValue = (): definition.Definition => {
-		return key
-	}
+	const getValue = (): definition.Definition => key
 
 	const setValue = (value: string): void => {
 		uesio.view.changeDefinitionKey(path, value)
