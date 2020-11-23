@@ -3,3 +3,4 @@ collection: crm.accounts
 type: TEXT
 label: Name
 propertyName: name
+required: true
