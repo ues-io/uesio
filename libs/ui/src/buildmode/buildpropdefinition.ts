@@ -66,7 +66,7 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
-	//	options?: PropertySelectOption[]
+	options?: PropertySelectOption[]
 }
 
 interface TextProp extends BasePropDescriptor {
