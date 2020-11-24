@@ -6,8 +6,13 @@ import {
 	inputProps,
 	inputLabelProps,
 } from "./proprendererdefinition"
+import { builder } from "@uesio/ui"
 
-const SelectProp: FunctionComponent<PropRendererProps> = ({
+interface SelectPropRendererProps extends PropRendererProps {
+	descriptor: builder.SelectProp
+}
+
+const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	descriptor,
 	setValue,
 	getValue,
