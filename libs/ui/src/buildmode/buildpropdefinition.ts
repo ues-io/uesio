@@ -86,6 +86,7 @@ interface MetadataProp extends BasePropDescriptor {
 
 interface SelectProp extends BasePropDescriptor {
 	type: "SELECT"
+	options: PropertySelectOption[]
 }
 
 interface BooleanProp extends BasePropDescriptor {
@@ -95,6 +96,7 @@ interface BooleanProp extends BasePropDescriptor {
 
 interface MultiSelectProp extends BasePropDescriptor {
 	type: "MULTISELECT"
+	options: PropertySelectOption[]
 }
 
 interface KeyProp extends BasePropDescriptor {
