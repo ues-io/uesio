@@ -1,4 +1,4 @@
-import React, { ReactElement, Fragment } from "react"
+import React, { FunctionComponent, Fragment } from "react"
 import BuildPropItem from "../buildpropitem/buildpropitem"
 import { definition, builder } from "@uesio/ui"
 
@@ -7,8 +7,8 @@ interface Props extends definition.BaseProps {
 	definition: definition.DefinitionMap
 }
 
-function PropList(props: Props): ReactElement | null {
-	const properties = props.properties
+const PropList: FunctionComponent<Props> = (props) => {
+	const { path, definition: def, context, properties } = props
 
 	return (
 		<Fragment>
@@ -16,14 +16,12 @@ function PropList(props: Props): ReactElement | null {
 				(descriptor: builder.PropDescriptor, index: number) => (
 					<BuildPropItem
 						key={index}
-						{...{
-							path: props.path,
-							definition: props.definition,
-							descriptor: descriptor,
-							index,
-							componentType: "",
-							context: props.context,
-						}}
+						path={path}
+						definition={def}
+						descriptor={descriptor}
+						index={index}
+						componentType=""
+						context={context}
 					/>
 				)
 			)}
