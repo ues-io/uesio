@@ -53,7 +53,8 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 
 	batches := metadata.BulkBatchCollection{
 		metadata.BulkBatch{
-			Status: "started",
+			Status:    "started",
+			BulkJobID: jobID,
 		},
 	}
 

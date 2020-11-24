@@ -157,7 +157,7 @@ class ViewBand {
 														targets: wireList,
 													},
 													context.addFrame({
-														view,
+														view: viewId,
 													}),
 													dispatch
 												)
@@ -206,8 +206,8 @@ class ViewBand {
 		return state
 	}
 
-	static getActor(state: RuntimeState, target: string): View {
-		return new View(state.view?.[target] || null)
+	static getActor(state: RuntimeState, target?: string): View {
+		return new View((target && state.view?.[target]) || null)
 	}
 
 	static makeId(namespace: string, name: string, path: string): string {

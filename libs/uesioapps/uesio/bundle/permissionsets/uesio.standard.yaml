@@ -29,11 +29,16 @@ views:
   uesio.files: true
   uesio.file: true
   uesio.newfile: true
+  uesio.import: true
+  uesio.bulkjob: true
   uesio.bundle: true
   uesio.site: true
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.bots: true
+  uesio.newbot: true
+  uesio.bot: true
 routes:
   uesio.login: true
   uesio.field: true
@@ -60,11 +65,16 @@ routes:
   uesio.files: true
   uesio.file: true
   uesio.newfile: true
+  uesio.import: true
+  uesio.bulkjob: true
   uesio.bundle: true
   uesio.site: true
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.bots: true
+  uesio.newbot: true
+  uesio.bot: true
 files:
   uesio.logo: true
   uesio.logosmall: true

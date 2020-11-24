@@ -1,8 +1,8 @@
 {
-	"collection": "crm.contacts",
-	"filetype": "csv",
-	"upsertkey": "crm.externalid",
-	"mappings": {
+	"uesio.collection": "crm.contacts",
+	"uesio.filetype": "csv",
+	"uesio.upsertkey": "crm.externalid",
+	"uesio.mappings": {
 		"crm.account": {
 			"fieldname": "crm.account",
 			"matchfield": "crm.externalid"

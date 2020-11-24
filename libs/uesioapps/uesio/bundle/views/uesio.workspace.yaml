@@ -67,6 +67,18 @@ definition:
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
+                                            text: Bots
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "NAVIGATE"
+                                                band: "platform"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
                                             text: Collections
                                             variant: text
                                             fullWidth: true
@@ -189,29 +201,12 @@ definition:
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
-                                                        text: "Edit"
+                                                        text: "Import Data"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.deck"
-                                                            band: "component"
-                                                            target: "workspaceDeck"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Save"
-                                                        signals:
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
-                                                              - "workspaces"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Cancel"
-                                                        signals:
-                                                          - signal: "CANCEL"
-                                                            band: "wire"
-                                                            target: "workspaces"
+                                                          - signal: "NAVIGATE"
+                                                            band: "platform"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                            namespace: "uesio"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"

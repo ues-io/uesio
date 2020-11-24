@@ -11,10 +11,10 @@ type BulkJob struct {
 
 // JobSpec struct
 type JobSpec struct {
-	FileType   string                  `json:"filetype" uesio:"uesio.filetype"`
-	Collection string                  `json:"collection" uesio:"uesio.collection"`
-	UpsertKey  string                  `json:"upsertkey" uesio:"uesio.upsertkey"`
-	Mappings   map[string]FieldMapping `json:"mappings" uesio:"uesio.mappings"`
+	FileType   string                  `json:"uesio.filetype" uesio:"uesio.filetype"`
+	Collection string                  `json:"uesio.collection" uesio:"uesio.collection"`
+	UpsertKey  string                  `json:"uesio.upsertkey" uesio:"uesio.upsertkey"`
+	Mappings   map[string]FieldMapping `json:"uesio.mappings" uesio:"uesio.mappings"`
 }
 
 // FieldMapping struct

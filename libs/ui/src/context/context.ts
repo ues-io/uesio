@@ -1,15 +1,18 @@
 import { Wire } from "../wire/wire"
 import { WireRecord } from "../wire/wirerecord"
 import { View } from "../view/view"
-import RuntimeState from "../store/types/runtimestate"
 import WorkspaceState from "../store/types/workspacestate"
 import RouteState from "../store/types/routestate"
 import { field } from "@uesio/constants"
+import { getStore } from "../store/store"
+import { ViewBand } from "../view/viewband"
+import { WireBand } from "../wire/wireband"
+import { CollectionBand } from "../collection/collectionband"
 
 type ContextFrame = {
-	wire?: Wire
-	record?: WireRecord
-	view?: View
+	wire?: string
+	record?: string
+	view?: string
 	buildMode?: boolean
 	fieldMode?: field.FieldMode
 	noMerge?: boolean
@@ -46,12 +49,26 @@ class Context {
 
 	stack: ContextFrame[]
 
-	getRecord(): WireRecord | undefined {
+	getRecordId(): string | undefined {
 		return this.stack.find((frame) => frame?.record)?.record
 	}
 
-	getView(): View | undefined {
+	getRecord(): WireRecord | undefined {
+		const recordId = this.getRecordId()
+		const wire = this.getWire()
+		return recordId ? wire?.getRecord(recordId) : undefined
+	}
+
+	getViewId(): string | undefined {
 		return this.stack.find((frame) => frame?.view)?.view
+	}
+
+	getView(): View | undefined {
+		const store = getStore()
+		const state = store.getState()
+		const viewId = this.getViewId()
+		const view = ViewBand.getActor(state, viewId)
+		return view.valid ? view : undefined
 	}
 
 	getRoute(): RouteState | undefined {
@@ -62,14 +79,22 @@ class Context {
 		return this.stack.find((frame) => frame?.workspace)?.workspace
 	}
 
-	getLatestView(state: RuntimeState): View | undefined {
-		const view = this.getView()
-		const latestViewState = view && state.view?.[view.getId()]
-		return latestViewState && new View(latestViewState)
+	getWireId(): string | undefined {
+		return this.stack.find((frame) => frame?.wire)?.wire
 	}
 
 	getWire(): Wire | undefined {
-		return this.stack.find((frame) => frame?.wire)?.wire
+		const store = getStore()
+		const state = store.getState()
+		const wireId = this.getWireId()
+		const viewId = this.getViewId()
+		const wire = WireBand.getActor(state, wireId, viewId)
+		const collection = CollectionBand.getActor(
+			state,
+			wire.getCollectionName()
+		)
+		wire.attachCollection(collection.source)
+		return wire.valid ? wire : undefined
 	}
 
 	getFieldMode(): field.FieldMode {

@@ -100,8 +100,8 @@ const TableRow: FC<RowProps> = (props: RowProps) => {
 				const cellProps: CellProps = {
 					column,
 					context: context.addFrame({
-						record,
-						wire,
+						record: record.getId(),
+						wire: wire.getId(),
 						fieldMode: mode,
 					}),
 					path,

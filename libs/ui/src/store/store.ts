@@ -42,15 +42,17 @@ const defaultState = {
 }
 
 let platform: Platform
+let store: Store
 
 const create = (plat: Platform, initialState: RuntimeState): Store => {
 	const state = Object.assign({}, defaultState, initialState)
 	platform = plat
-	return createStore(
+	store = createStore(
 		mainReducer,
 		state,
 		composeWithDevTools(applyMiddleware(thunk.withExtraArgument(plat)))
 	)
+	return store
 }
 
 const getDispatcher = (): Dispatcher<StoreAction> => {
@@ -59,6 +61,10 @@ const getDispatcher = (): Dispatcher<StoreAction> => {
 
 const getPlatform = (): Platform => {
 	return platform
+}
+
+const getStore = (): Store => {
+	return store
 }
 
 // Both gets wire state and subscribes the component to wire changes
@@ -320,6 +326,7 @@ export {
 	DispatchReturn,
 	getDispatcher,
 	getPlatform,
+	getStore,
 	useWire,
 	useCollection,
 	useView,

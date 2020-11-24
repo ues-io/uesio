@@ -61,9 +61,8 @@ async function handleChange(
 			fieldId
 		)
 
-		wire.dispatchRecordSet(record.id, {
-			[fieldId]: fileId,
-		})
+		record.set(fieldId, fileId)
+
 	}
 }
 
