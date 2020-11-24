@@ -18,75 +18,69 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 				iconOnClick={(): void => {
 					uesio.builder.setRightPanel("")
 				}}
-			></ToolbarTitle>
+			/>
 			<LazyMonaco
-				{...{
-					value: yamlDoc && yamlDoc.toString(),
-					onChange: (newValue, event): void => {
-						const newAST = util.yaml.parse(newValue)
-						if (newAST.errors.length > 0) {
-							return
-						}
-						event.changes.forEach((change) => {
-							if (
-								currentAST.current?.contents &&
-								newAST &&
-								newAST.contents
-							) {
-								// If the change contains newlines, give up. Just parse the entire thing.
-								if (change.text.includes("\n")) {
-									uesio.view.setYaml("", newAST)
-								} else {
-									// We need to find the first shared parent of the start offset and end offset
-									const [
-										,
-										startPath,
-									] = util.yaml.getNodeAtOffset(
-										change.rangeOffset,
-										currentAST.current.contents,
-										""
-									)
-									const [
-										,
-										endPath,
-									] = util.yaml.getNodeAtOffset(
-										change.rangeOffset + change.rangeLength,
-										currentAST.current.contents,
-										""
-									)
+				value={yamlDoc && yamlDoc.toString()}
+				onChange={(newValue, event): void => {
+					const newAST = util.yaml.parse(newValue)
+					if (newAST.errors.length > 0) {
+						return
+					}
+					event.changes.forEach((change) => {
+						if (
+							currentAST.current?.contents &&
+							newAST &&
+							newAST.contents
+						) {
+							// If the change contains newlines, give up. Just parse the entire thing.
+							if (change.text.includes("\n")) {
+								uesio.view.setYaml("", newAST)
+							} else {
+								// We need to find the first shared parent of the start offset and end offset
+								const [, startPath] = util.yaml.getNodeAtOffset(
+									change.rangeOffset,
+									currentAST.current.contents,
+									""
+								)
+								const [, endPath] = util.yaml.getNodeAtOffset(
+									change.rangeOffset + change.rangeLength,
+									currentAST.current.contents,
+									""
+								)
 
-									const commonPath = util.yaml.getCommonAncestorPath(
-										startPath,
-										endPath
-									)
-									const commonNode = util.yaml.getNodeAtPath(
+								const commonPath = util.yaml.getCommonAncestorPath(
+									startPath,
+									endPath
+								)
+								const commonNode = util.yaml.getNodeAtPath(
+									commonPath,
+									currentAST.current.contents
+								)
+
+								if (commonNode && commonPath) {
+									const newNode = util.yaml.getNodeAtPath(
 										commonPath,
-										currentAST.current.contents
+										newAST.contents
 									)
-
-									if (commonNode && commonPath) {
-										const newNode = util.yaml.getNodeAtPath(
-											commonPath,
-											newAST.contents
+									if (newNode) {
+										const yamlDoc = new yaml.Document()
+										yamlDoc.contents = newNode
+										uesio.view.setYaml(
+											util.yaml.getPathFromPathArray(
+												commonPath
+											),
+											yamlDoc
 										)
-										if (newNode) {
-											const yamlDoc = new yaml.Document()
-											yamlDoc.contents = newNode
-											uesio.view.setYaml(
-												util.yaml.getPathFromPathArray(
-													commonPath
-												),
-												yamlDoc
-											)
-										}
 									}
 								}
 							}
-						})
+						}
+					})
 
-						currentAST.current = newAST
-					},
-					editorWillMount(/*monaco*/): void {
+					currentAST.current = newAST
+				}}
+				editorWillMount={
+					(/*monaco*/): void => {
 						/*
 					monaco.languages.registerCompletionItemProvider("yaml", {
 						provideCompletionItems: function(model, position) {
@@ -130,61 +124,52 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 						}
 					});
 					*/
-					},
-					editorDidMount: (editor /*, monaco*/): void => {
-						// Set currentAST again because sometimes monaco reformats the text
-						// (like removing trailing spaces and such)
-						currentAST.current = util.yaml.parse(editor.getValue())
-						editor.onDidChangeCursorPosition((e) => {
-							const model = editor.getModel()
-							const position = e.position
-							if (
-								model &&
-								position &&
-								currentAST.current?.contents
-							) {
-								const offset = model.getOffsetAt(position)
-								const [
-									relevantNode,
-									nodePath,
-								] = util.yaml.getNodeAtOffset(
-									offset,
-									currentAST.current.contents,
-									"",
-									true
-								)
-								if (relevantNode && nodePath) {
-									uesio.builder.setSelectedNode(nodePath)
-								}
+					}
+				}
+				editorDidMount={(editor /*, monaco*/): void => {
+					// Set currentAST again because sometimes monaco reformats the text
+					// (like removing trailing spaces and such)
+					currentAST.current = util.yaml.parse(editor.getValue())
+					editor.onDidChangeCursorPosition((e) => {
+						const model = editor.getModel()
+						const position = e.position
+						if (model && position && currentAST.current?.contents) {
+							const offset = model.getOffsetAt(position)
+							const [
+								relevantNode,
+								nodePath,
+							] = util.yaml.getNodeAtOffset(
+								offset,
+								currentAST.current.contents,
+								"",
+								true
+							)
+							if (relevantNode && nodePath) {
+								uesio.builder.setSelectedNode(nodePath)
 							}
-						})
-
-						editor.onMouseMove((e) => {
-							const model = editor.getModel()
-							const position = e.target.position
-							if (
-								model &&
-								position &&
-								currentAST.current?.contents
-							) {
-								const offset = model.getOffsetAt(position)
-								const [
-									relevantNode,
-									nodePath,
-								] = util.yaml.getNodeAtOffset(
-									offset,
-									currentAST.current.contents,
-									"",
-									true
-								)
-								if (relevantNode && nodePath) {
-									uesio.builder.setActiveNode(nodePath)
-								}
+						}
+					})
+					editor.onMouseMove((e) => {
+						const model = editor.getModel()
+						const position = e.target.position
+						if (model && position && currentAST.current?.contents) {
+							const offset = model.getOffsetAt(position)
+							const [
+								relevantNode,
+								nodePath,
+							] = util.yaml.getNodeAtOffset(
+								offset,
+								currentAST.current.contents,
+								"",
+								true
+							)
+							if (relevantNode && nodePath) {
+								uesio.builder.setActiveNode(nodePath)
 							}
-						})
-					},
+						}
+					})
 				}}
-			></LazyMonaco>
+			/>
 		</Fragment>
 	)
 }
