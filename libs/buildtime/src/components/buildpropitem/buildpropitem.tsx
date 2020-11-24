@@ -40,23 +40,16 @@ function BuildPropItem(props: Props): ReactElement {
 
 	const uesio = hooks.useUesio(props)
 
-	const getValue = (): definition.Definition => {
-		return definition ? definition[descriptor.name] : ""
-	}
+	const getValue = (): definition.Definition =>
+		definition ? definition[descriptor.name] : ""
 
 	const setValue = (value: string): void => {
 		uesio.view.setDefinition(path + '["' + descriptor.name + '"]', value)
 	}
 
-	const rendererProps = {
-		...props,
-		getValue,
-		setValue,
-	}
-
 	const PropHandler = getPropHandler(descriptor.type)
 
-	return <PropHandler {...rendererProps} />
+	return <PropHandler getValue={getValue} setValue={setValue} {...props} />
 }
 
 export default BuildPropItem
