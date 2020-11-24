@@ -33,7 +33,7 @@ const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 				setValue(event.target.value)
 			}}
 		>
-			{descriptor?.options.map((option: builder.PropertySelectOption) => (
+			{descriptor.options?.map((option) => (
 				<MenuItem key={option.value} value={option.value}>
 					<Checkbox checked={value.indexOf(option.value) > -1} />
 					<ListItemText primary={option.label} />
