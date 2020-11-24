@@ -18,7 +18,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 				iconOnClick={(): void => {
 					uesio.builder.setRightPanel("")
 				}}
-			></ToolbarTitle>
+			/>
 			<LazyMonaco
 				{...{
 					value: yamlDoc && yamlDoc.toString(),
