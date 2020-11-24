@@ -61,9 +61,9 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 					flex: "1",
 				}}
 			>
-				{filteredList.map((_, index) => (
+				{filteredList.map((element, index) => (
 					<ExpandPanel
-						title={filteredList[index].namespace}
+						title={element.namespace}
 						defaultExpanded={true}
 						key={index}
 					>
@@ -72,7 +72,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 								(value, indexTag) => (
 									<PropNodeTag
 										draggable={component.dragdrop.createComponentBankKey(
-											filteredList[index].namespace,
+											element.namespace,
 											value
 										)}
 										title={value}
