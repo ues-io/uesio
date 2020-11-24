@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import { makeStyles, createStyles } from "@material-ui/core"
 
@@ -13,7 +13,7 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const Canvas: FC<definition.BaseProps> = (props: definition.BaseProps) => {
+const Canvas: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles()
 	const route = props.context.getRoute()
 
@@ -58,13 +58,11 @@ const Canvas: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 			className={classes.content}
 		>
 			<component.View
-				{...{
-					...props,
-					definition: {
-						name: route.viewname,
-						namespace: route.viewnamespace,
-						params: route.params,
-					},
+				{...props}
+				definition={{
+					name: route.viewname,
+					namespace: route.viewnamespace,
+					params: route.params,
 				}}
 			/>
 		</div>
