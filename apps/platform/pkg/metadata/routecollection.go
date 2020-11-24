@@ -14,7 +14,7 @@ func (rc *RouteCollection) GetName() string {
 
 // GetFields function
 func (rc *RouteCollection) GetFields() []string {
-	return []string{"id", "name", "path", "workspaceid", "view"}
+	return []string{"id", "name", "path", "workspaceid", "view", "theme"}
 }
 
 // NewItem function

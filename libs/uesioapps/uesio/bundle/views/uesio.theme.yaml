@@ -35,7 +35,6 @@ definition:
         uesio.name:
         uesio.definition:
         uesio.workspaceid:
-        uesio.route:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -159,8 +158,6 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
-                                      fieldId: uesio.route
                                   - uesio.codefield:
                                       fieldId: uesio.definition
                                       height: 350px

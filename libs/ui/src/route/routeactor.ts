@@ -26,6 +26,7 @@ class RouteActor extends Actor {
 			params: {},
 			namespace: "",
 			path: "",
+			theme: "",
 		}
 	}
 

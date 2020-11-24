@@ -23,6 +23,7 @@ class RouteBand {
 				viewnamespace: action.data.namespace,
 				params: action.data.params,
 				workspace: action.data.workspace,
+				theme: action.data.theme,
 			}
 		},
 	}

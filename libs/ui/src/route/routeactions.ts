@@ -11,6 +11,7 @@ interface SetRouteAction extends BandAction {
 		namespace: string
 		params: ViewParams
 		workspace?: WorkspaceState
+		theme: string
 	}
 }
 

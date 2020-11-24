@@ -8,6 +8,7 @@ type RouteState = {
 	namespace: string
 	path: string
 	workspace?: WorkspaceState
+	theme: string
 }
 
 export default RouteState
