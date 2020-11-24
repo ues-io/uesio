@@ -10,7 +10,7 @@ import {
 
 const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 	const descriptor = props.descriptor as builder.MultiSelectProp
-	const { definition } = props
+	const { definition, setValue } = props
 
 	const value = (definition?.[descriptor.name] || []) as string[]
 
@@ -30,18 +30,15 @@ const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 			label={descriptor.label}
 			fullWidth={true}
 			onChange={(event): void => {
-				console.log("multi", event.target.value)
-				props.setValue(event.target.value)
+				setValue(event.target.value)
 			}}
 		>
-			{descriptor?.options.map((option: builder.PropertySelectOption) => {
-				return (
-					<MenuItem key={option.value} value={option.value}>
-						<Checkbox checked={value.indexOf(option.value) > -1} />
-						<ListItemText primary={option.label} />
-					</MenuItem>
-				)
-			})}
+			{descriptor?.options.map((option: builder.PropertySelectOption) => (
+				<MenuItem key={option.value} value={option.value}>
+					<Checkbox checked={value.indexOf(option.value) > -1} />
+					<ListItemText primary={option.label} />
+				</MenuItem>
+			))}
 		</TextField>
 	)
 }
