@@ -5,6 +5,7 @@ import SelectProp from "./selectprop"
 
 const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const descriptor = props.descriptor
 	const wires = uesio.view.useDefinition(
 		`["wires"]`
 	) as wire.WireDefinitionMap
@@ -13,7 +14,8 @@ const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 		<SelectProp
 			{...props}
 			descriptor={{
-				...props.descriptor,
+				...descriptor,
+				type: "SELECT",
 				options: Object.keys(wires).map((wireId) => ({
 					value: wireId,
 					label: wireId,
