@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import CodeToolbar from "./codetoolbar/codetoolbar"
 import { definition, material } from "@uesio/ui"
@@ -9,9 +9,10 @@ interface Props extends definition.BaseProps {
 
 const MINI_TOOLBAR_WIDTH = 50
 
-const RightBuildbar: FC<Props> = (props: Props) => {
-	const selected = props.selectedPanel as "code"
-
+const RightBuildbar: FunctionComponent<Props> = ({
+	selectedPanel,
+	context,
+}) => {
 	const toolbarMap = {
 		code: {
 			component: CodeToolbar,
@@ -19,17 +20,15 @@ const RightBuildbar: FC<Props> = (props: Props) => {
 		},
 	}
 
-	const current = toolbarMap[selected]
+	const current = toolbarMap[selectedPanel as "code"]
 
 	return (
 		<MiniToolbar
-			{...{
-				anchor: "right",
-				width: current.width,
-				right: MINI_TOOLBAR_WIDTH,
-				open: !!props.selectedPanel,
-				variant: "persistent",
-			}}
+			anchor="right"
+			width={current.width}
+			right={MINI_TOOLBAR_WIDTH}
+			open={!!selectedPanel}
+			variant="persistent"
 		>
 			{current && (
 				<material.Paper
@@ -39,12 +38,7 @@ const RightBuildbar: FC<Props> = (props: Props) => {
 						height: "100%",
 					}}
 				>
-					<current.component
-						{...{
-							path: "",
-							context: props.context,
-						}}
-					/>
+					<current.component path="" context={context} />
 				</material.Paper>
 			)}
 		</MiniToolbar>
