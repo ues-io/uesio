@@ -4,8 +4,9 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 
 // BulkBatch struct
 type BulkBatch struct {
-	ID     string `uesio:"uesio.id"`
-	Status string `uesio:"uesio.status"`
+	ID        string `uesio:"uesio.id"`
+	BulkJobID string `uesio:"uesio.bulkjobid"`
+	Status    string `uesio:"uesio.status"`
 }
 
 // GetCollectionName function

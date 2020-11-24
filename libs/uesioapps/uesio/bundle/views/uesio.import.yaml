@@ -1,0 +1,135 @@
+name: import
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    bulkjobs:
+      collection: uesio.bulkjobs
+      fields:
+        uesio.id:
+        uesio.spec:
+    newbulkjob:
+      collection: uesio.bulkjobs
+      fields:
+        uesio.id:
+        uesio.spec:
+      type: EMPTY
+
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.breadcrumbs:
+              crumbs:
+                - text: home
+                  href: home
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: home
+                      namespace: uesio
+                - text: $Param{appname}
+                  href: app/$Param{appname}
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: app/$Param{appname}
+                      namespace: uesio
+                - text: $Param{workspacename}
+                  href: app/$Param{appname}/workspace/$Param{workspacename}
+                  signals:
+                    - signal: NAVIGATE
+                      band: platform
+                      path: app/$Param{appname}/workspace/$Param{workspacename}
+                      namespace: uesio
+                - text: import
+          - material.grid:
+              justify: space-between
+              items:
+                - material.griditem:
+                    components:
+                      - material.typography:
+                          text: Data Import Jobs
+                          variant: h5
+                      - material.typography:
+                          text: Gotta catch 'em all!
+                          variant: body2
+                - material.griditem:
+                    components:
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Create New Import Job"
+                                signals:
+                                  - signal: "CREATE_RECORD"
+                                    band: "wire"
+                                    target: "newbulkjob"
+                                  - signal: "SAVE"
+                                    band: "wire"
+                                    targets:
+                                      - newbulkjob
+                                  - signal: "NAVIGATE"
+                                    band: "platform"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
+                                    namespace: "uesio"
+          - material.deck:
+              xs: 12
+              sm: 6
+              md: 4
+              lg: 3
+              margin: 0
+              id: bulkjobsDeck
+              wire: bulkjobs
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color: "purple"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.griditem:
+                          components:
+                            - material.icon:
+                                type: "open"
+                                float: right
+                      - material.typography:
+                          text: "${uesio.id}"
+                    signals:
+                      - signal: "NAVIGATE"
+                        band: "platform"
+                        path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
+                        namespace: "uesio"
+dependencies:
+  componentpacks:
+    material.main:

@@ -21,20 +21,34 @@ async function getSpec(
 	collection?: string,
 	upsertKey?: string
 ): Promise<Spec> {
-	const spec = specFile
+	const specData = specFile
 		? JSON.parse(await fs.promises.readFile(specFile, "utf8"))
 		: {}
 
-	spec.filetype = "csv"
+	const spec: Spec = {
+		filetype: specData["uesio.filetype"] || "csv",
+		collection: specData["uesio.collection"],
+		upsertkey: specData["uesio.upsertkey"],
+		mappings: specData["uesio.mappings"],
+	}
 
 	if (collection) {
 		spec.collection = collection
 	}
 
 	if (upsertKey) {
-		spec.upsertKey = upsertKey
+		spec.upsertkey = upsertKey
 	}
 	return spec
+}
+
+function getSpecString(spec: Spec) {
+	return JSON.stringify({
+		"uesio.filetype": spec.filetype,
+		"uesio.collection": spec.collection,
+		"uesio.upsertkey": spec.upsertkey,
+		"uesio.mappings": spec.mappings,
+	})
 }
 
 export default class Pack extends Command {
@@ -82,7 +96,7 @@ export default class Pack extends Command {
 		// Start a new job
 		const jobResponse = await post(
 			`workspace/${app}/${workspace}/bulk/job`,
-			JSON.stringify(spec),
+			getSpecString(spec),
 			user.cookie
 		)
 		const jobResponseObj = await jobResponse.json()
