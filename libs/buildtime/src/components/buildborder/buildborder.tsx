@@ -1,4 +1,4 @@
-import React, { ReactElement, MouseEvent, ReactNode } from "react"
+import React, { FunctionComponent, MouseEvent, ReactNode } from "react"
 import { material } from "@uesio/ui"
 
 const ACTIVE_COLOR = "#eee"
@@ -77,7 +77,7 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 }))
 
-type Props = {
+interface Props {
 	onClick?: (event: MouseEvent) => void
 	onMouseEnter?: (event: MouseEvent) => void
 	onMouseLeave?: (event: MouseEvent) => void
@@ -89,11 +89,21 @@ type Props = {
 	isExpanded: boolean
 }
 
-function BuildBorder(props: Props): ReactElement {
+const BuildBorder: FunctionComponent<Props> = (props) => {
+	const {
+		onClick,
+		onMouseEnter,
+		onMouseLeave,
+		isSelected,
+		setDragging,
+		isActive,
+		isExpanded,
+		children,
+		title,
+	} = props
 	const classes = useStyles(props)
-	const isExpanded = props.isExpanded
 	const wrapperClass =
-		props.isActive || props.isSelected || isExpanded
+		isActive || isSelected || isExpanded
 			? isExpanded
 				? classes.maskExpanded
 				: classes.mask
@@ -101,21 +111,19 @@ function BuildBorder(props: Props): ReactElement {
 	const headerClass = isExpanded ? classes.headerExpanded : classes.header
 	return (
 		<div
-			{...{
-				className: wrapperClass,
-				// Using MouseDown here instead of Click because of weirdness
-				// with propagation.
-				onMouseDown: props.onClick,
-				onMouseEnter: props.onMouseEnter,
-				onMouseLeave: props.onMouseLeave,
-			}}
+			className={wrapperClass}
+			// Using MouseDown here instead of Click because of weirdness
+			// with propagation.
+			onMouseDown={onClick}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 		>
-			{(props.isSelected || isExpanded) && (
-				<div onMouseDown={props.setDragging} className={headerClass}>
-					{props.title}
+			{(isSelected || isExpanded) && (
+				<div onMouseDown={setDragging} className={headerClass}>
+					{title}
 				</div>
 			)}
-			{props.children}
+			{children}
 		</div>
 	)
 }
