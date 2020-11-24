@@ -1,4 +1,4 @@
 import { Collection, PlainCollection } from "./collection/collection"
-import { Field, SelectOption } from "./collection/field"
+import { Field, FieldType, SelectOption } from "./collection/field"
 
-export { Collection, Field, SelectOption, PlainCollection }
+export { Collection, Field, FieldType, SelectOption, PlainCollection }

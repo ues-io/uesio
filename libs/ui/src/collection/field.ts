@@ -73,4 +73,4 @@ class Field {
 	}
 }
 
-export { FieldMetadata, FieldMetadataMap, Field, SelectOption }
+export { FieldMetadata, FieldMetadataMap, Field, SelectOption, FieldType }
