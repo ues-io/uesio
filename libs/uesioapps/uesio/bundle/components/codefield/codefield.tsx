@@ -54,16 +54,17 @@ function CodeField(props: Props): ReactElement | null {
 
 	const collection = wire.getCollection()
 	const fieldId = props.definition.fieldId
-	const [editorContent, setEditorContent] = useState<string>(
-		JSON.stringify(record.getFieldValue(fieldId), null, "\t")
-	)
 
 	const fieldMetadata = collection.getField(fieldId)
+	const fieldType = fieldMetadata.getType()
+	const value = record.getFieldValue(fieldId)
+	// TODO: Add special handline for fields of type "FILE"
+	const stringValue = fieldType == "MAP" ? JSON.stringify(value, null, "\t") : value as string
 
 	if (!fieldMetadata.isValid()) {
 		return null
 	}
-	const language = props.definition.language as string
+	const language = props.definition.language || "yaml"
 
 	return (
 		<div className={classes.root}>
@@ -73,21 +74,22 @@ function CodeField(props: Props): ReactElement | null {
 			<div className={classes.input}>
 				<LazyMonaco
 					{...{
-						value:
-							language === "json"
-								? (editorContent as string)
-								: (record.getFieldValue(fieldId) as string),
+						value: stringValue,
 						language: language,
 						onChange: (newValue /*, event*/): void => {
-							if (language === "json") {
-								if (tryParseJSON(newValue)) {
-									setEditorContent(newValue)
-									record.update(
-										fieldId,
-										tryParseJSON(newValue)
-									)
+							// TODO: Add special handline for fields of type "FILE"
+							if (fieldType == "MAP") {
+								if (language === "json") {
+									const jsonValue = tryParseJSON(newValue)
+									if (jsonValue) {
+										record.update(
+											fieldId,
+											jsonValue
+										)
+									}
 								}
-							} else {
+							}
+							else {
 								record.update(fieldId, newValue)
 							}
 						},

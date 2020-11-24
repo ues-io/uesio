@@ -2,7 +2,17 @@ type FieldMetadataMap = {
 	[key: string]: FieldMetadata
 }
 
-type FieldType = "NUMBER" | "TEXT" | "REFERENCE" | "LONGTEXT" | "SELECT" | "CHECKBOX" | "DATE"| "IMAGE" | "FILE"
+type FieldType =
+	| "NUMBER"
+	| "TEXT"
+	| "REFERENCE"
+	| "LONGTEXT"
+	| "SELECT"
+	| "CHECKBOX"
+	| "DATE"
+	| "IMAGE"
+	| "FILE"
+	| "MAP"
 
 type SelectOption = {
 	label: string
