@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { TextField } from "@material-ui/core"
 import {
 	PropRendererProps,
@@ -7,7 +7,7 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 
-function TextProp(props: PropRendererProps): ReactElement {
+const TextProp: FunctionComponent<PropRendererProps> = (props) => {
 	const { descriptor } = props
 
 	// Fall back to text component
