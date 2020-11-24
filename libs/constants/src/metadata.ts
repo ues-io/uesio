@@ -4,6 +4,7 @@ const METADATA = {
 	VIEW: 'views',
 	DATASOURCE: 'datasources',
 	SECRET: 'secrets',
+	THEME: 'themes',
 };
 
 type MetadataType = keyof typeof METADATA;

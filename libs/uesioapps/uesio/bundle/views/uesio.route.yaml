@@ -35,6 +35,7 @@ definition:
         uesio.name:
         uesio.path:
         uesio.view:
+        uesio.theme:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -191,6 +192,10 @@ definition:
                                       fieldId: uesio.view
                                       metadataType: "VIEW"
                                       label: "View"
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.theme
+                                      metadataType: "THEME"
+                                      label: "Theme"
 
 dependencies:
   componentpacks:

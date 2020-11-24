@@ -27,6 +27,7 @@ type Route struct {
 	ViewRef   string            `yaml:"view" uesio:"uesio.view"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
 	Workspace string            `yaml:"-" uesio:"uesio.workspaceid"`
+	ThemeRef  string            `yaml:"theme" uesio:"uesio.theme"`
 }
 
 // GetCollectionName function

@@ -20,6 +20,8 @@ import Dependencies from "./types/dependenciesstate"
 import { MetadataListStore } from "./types/builderstate"
 import { Context } from "../context/context"
 import { metadata } from "@uesio/constants"
+import themereducers from "../theme/themereducers"
+import { combineReducers } from "redux"
 
 type DispatchReturn = Promise<Context>
 
@@ -39,17 +41,19 @@ const defaultState = {
 	collection: {},
 	view: {},
 	viewdef: {},
+	theme: {},
 }
 
 let platform: Platform
 let store: Store
 
 const create = (plat: Platform, initialState: RuntimeState): Store => {
-	const state = Object.assign({}, defaultState, initialState)
+	//	const state = Object.assign({}, defaultState, initialState)
+
 	platform = plat
 	store = createStore(
-		mainReducer,
-		state,
+		combineReducers({ mainReducer, theme: themereducers }),
+		//		state,
 		composeWithDevTools(applyMiddleware(thunk.withExtraArgument(plat)))
 	)
 	return store

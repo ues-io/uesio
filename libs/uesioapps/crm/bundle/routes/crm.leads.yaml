@@ -1,3 +1,4 @@
 name: leads
 path: leads
 view: crm.leads
+theme: crm.default

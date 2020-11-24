@@ -1,3 +1,4 @@
 name: newview
 path: app/{appname}/workspace/{workspacename}/newview
 view: uesio.newview
+theme: uesio.default

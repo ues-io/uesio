@@ -1,0 +1,5 @@
+name: name
+collection: uesio.themes
+type: TEXT
+label: Name
+propertyName: name

@@ -36,6 +36,7 @@ type BotResponse = {
 
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
+	getTheme(context: Context, namespace: string, name: string): Promise<string>
 	saveViews(
 		context: Context,
 		views: SaveViewRequest

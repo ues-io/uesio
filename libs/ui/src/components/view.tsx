@@ -1,13 +1,15 @@
-import React, { useEffect, FC } from "react"
-
+import React, { useEffect, FC, useState } from "react"
+import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 import { BaseProps } from "../definition/definition"
-
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
+
+import { fetchTheme } from "../theme/themeoperations"
+import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -43,8 +45,32 @@ interface Props extends BaseProps {
 	}
 }
 
+interface AppThemePalette {
+	primary: string
+	secondary: string
+	error: string
+	warning: string
+	info: string
+	success: string
+}
+interface ThemeAPIResponse {
+	id: string
+	name: string
+	namespace: string
+	workspace: string
+	definition: AppThemePalette
+}
+
+const makeTheme = (themePalette: PaletteOptions) =>
+	createMuiTheme({
+		palette: { ...themePalette },
+	})
+
 const View: FC<Props> = (props: Props) => {
 	const uesio = useUesio(props)
+	const [materialTheme, setMaterialTheme] = useState<PaletteOptions | null>(
+		null
+	)
 	const viewname = props.definition.name
 	const viewnamespace = props.definition.namespace
 	const viewparams = props.definition.params
@@ -64,6 +90,11 @@ const View: FC<Props> = (props: Props) => {
 		neededScripts,
 		scriptResult.scripts
 	)
+	const route = uesio.route.useRoute()
+
+	const [themenamespace, themename] = route.theme
+		? parseKey(route.theme)
+		: ["", ""]
 
 	useEffect(() => {
 		const hasNewParams = viewparams !== view.source.params
@@ -80,15 +111,58 @@ const View: FC<Props> = (props: Props) => {
 		}
 	}, [])
 
+	useEffect(() => {
+		console.log("themenamespaceUseEffect", themenamespace)
+		console.log("themenameUseEffect", themename)
+
+		console.log("themenamespaceUseEffect", themenamespace)
+		console.log("themenameUseEffect", themename)
+
+		if (themenamespace && themename) {
+			fetchTheme(themenamespace, themename)
+		}
+
+		fetch(
+			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themenamespace}/${themename}`
+			// `https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
+		)
+			.then((response) => response.json())
+			.then((themeResponse: ThemeAPIResponse) => {
+				console.log("response", themeResponse)
+				setMaterialTheme({
+					primary: {
+						main: themeResponse.definition.primary,
+					},
+					secondary: {
+						main: themeResponse.definition.secondary,
+					},
+					error: {
+						main: themeResponse.definition.error,
+					},
+					warning: {
+						main: themeResponse.definition.warning,
+					},
+					info: {
+						main: themeResponse.definition.info,
+					},
+					success: {
+						main: themeResponse.definition.success,
+					},
+				})
+			})
+	}, [])
+
 	const useRunTime =
 		(!buildMode && scriptsHaveLoaded) || (buildMode && !scriptsHaveLoaded)
 	const useBuildTime = buildMode && scriptsHaveLoaded
+
 	if (
 		(useRunTime || useBuildTime) &&
 		definition &&
 		view.valid &&
 		view.source.loaded
 	) {
+<<<<<<< HEAD
 		const slotProps = {
 			definition,
 			listName: "components",
@@ -100,6 +174,25 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 		return <Slot {...slotProps} />
+=======
+		console.log("themenamespaceRender", themenamespace)
+		console.log("themenameUseRender", themename)
+		return (
+			<ThemeProvider theme={makeTheme(materialTheme as PaletteOptions)}>
+				<CssBaseline />
+				<Slot
+					definition={definition}
+					listName="components"
+					path="" // View slots paths are always empty
+					accepts={["uesio.standalone"]}
+					context={props.context.addFrame({
+						view: view.getId(),
+						buildMode: useBuildTime,
+					})}
+				/>
+			</ThemeProvider>
+		)
+>>>>>>> f0f0a1f... Theming
 	}
 	return null
 }
