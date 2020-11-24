@@ -1,3 +1,3 @@
-type WireType = 'CREATE' | 'QUERY';
+type WireType = 'CREATE' | 'QUERY' | 'EMPTY';
 
 export { WireType };

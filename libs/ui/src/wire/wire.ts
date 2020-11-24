@@ -24,7 +24,7 @@ import {
 	UpdateRecordAction,
 	ToggleConditionAction,
 } from "./wireactions"
-import { Dispatcher, DispatchReturn, ThunkFunc } from "../store/store"
+import { Dispatcher, DispatchReturn, getStore, ThunkFunc } from "../store/store"
 import {
 	ACTOR,
 	ActorAction,
@@ -78,24 +78,26 @@ class Wire extends Actor {
 
 	static actionGroup: ActionGroup = {
 		[CREATE_RECORD]: (
-			signal: CreateRecordAction,
+			action: CreateRecordAction,
 			state: PlainWire
 		): PlainWire => {
-			const newId = shortid.generate()
+			const newId = action.id
 			return {
 				...state,
-				data: { ...state.data, [newId]: signal.data || {} },
-				changes: { ...state.changes, [newId]: signal.data || {} },
+				data: { ...state.data, [newId]: action.data || {} },
+				changes: { ...state.changes, [newId]: action.data || {} },
 			}
 		},
 		[UPDATE_RECORD]: (
-			signal: UpdateRecordAction,
+			action: UpdateRecordAction,
 			state: PlainWire,
 			allState: RuntimeState
 		): PlainWire => {
 			const collection = state.collection
 			const collectionMetadata = allState.collection?.[collection]
 			const idField = collectionMetadata?.idField
+			const data = action.data
+			const { record, recordId } = data
 			if (!idField) {
 				return state
 			}
@@ -103,19 +105,18 @@ class Wire extends Actor {
 				...state,
 				data: {
 					...state.data,
-					[signal.data.recordId]: {
-						...state.data[signal.data.recordId],
-						...signal.data.record,
+					[recordId]: {
+						...state.data[recordId],
+						...record,
 					},
 				},
 				changes: {
 					...state.changes,
-					[signal.data.recordId]: {
-						...state.changes[signal.data.recordId],
+					[recordId]: {
+						...state.changes[recordId],
 						...{
-							...signal.data.record,
-							[idField]:
-								state.data[signal.data.recordId][idField],
+							...record,
+							[idField]: state.data[recordId][idField],
 						},
 					},
 				},
@@ -123,13 +124,15 @@ class Wire extends Actor {
 		},
 		// Set a record without setting "changes", also set original to this value
 		[SET_RECORD]: (
-			signal: UpdateRecordAction,
+			action: UpdateRecordAction,
 			state: PlainWire,
 			allState: RuntimeState
 		): PlainWire => {
 			const collection = state.collection
 			const collectionMetadata = allState.collection?.[collection]
 			const idField = collectionMetadata?.idField
+			const data = action.data
+			const { record, recordId } = data
 			if (!idField) {
 				return state
 			}
@@ -137,16 +140,16 @@ class Wire extends Actor {
 				...state,
 				data: {
 					...state.data,
-					[signal.data.recordId]: {
-						...state.data[signal.data.recordId],
-						...signal.data.record,
+					[recordId]: {
+						...state.data[recordId],
+						...record,
 					},
 				},
 				original: {
 					...state.changes,
-					[signal.data.recordId]: {
-						...state.data[signal.data.recordId],
-						...signal.data.record,
+					[recordId]: {
+						...state.data[recordId],
+						...record,
 					},
 				},
 			}
@@ -256,55 +259,52 @@ class Wire extends Actor {
 					dispatch: Dispatcher<StoreAction>,
 					getState: () => RuntimeState
 				): DispatchReturn => {
-					const view = context.getView()
-					if (view) {
-						const state = getState()
-						const viewId = view.getId()
-						const wire = WireBand.getActor(
-							state,
-							signal.target,
-							viewId
-						)
-						const defaults = wire.getDefaults()
-						const defaultRecord: LoadResponseRecord = {}
-						defaults.forEach((defaultItem) => {
-							if (defaultItem.valueSource === "LOOKUP") {
-								const lookupWire = WireBand.getActor(
-									state,
-									defaultItem.lookupWire,
-									viewId
-								)
-								const lookupValue = defaultItem.lookupField
-									? lookupWire
-											.getFirstRecord()
-											.getFieldValue(
-												defaultItem.lookupField
-											)
-									: context.merge(defaultItem.lookupTemplate)
-								if (lookupValue) {
-									defaultRecord[
-										defaultItem.field
-									] = lookupValue
-								}
-							}
-							if (defaultItem.valueSource === "VALUE") {
-								const value = context.merge(defaultItem.value)
-								if (value) {
-									defaultRecord[defaultItem.field] = value
-								}
-							}
-						})
-						dispatch({
-							type: ACTOR,
-							band: signal.band,
-							name: signal.signal,
-							target: signal.target,
-							scope: signal.scope,
-							data: defaultRecord,
-							view: viewId,
-						})
+					const viewId = context.getViewId()
+					if (!viewId) {
+						return context
 					}
-					return context
+					const state = getState()
+					const wire = WireBand.getActor(state, signal.target, viewId)
+					const defaults = wire.getDefaults()
+					const defaultRecord: LoadResponseRecord = {}
+					defaults.forEach((defaultItem) => {
+						if (defaultItem.valueSource === "LOOKUP") {
+							const lookupWire = WireBand.getActor(
+								state,
+								defaultItem.lookupWire,
+								viewId
+							)
+							const lookupValue = defaultItem.lookupField
+								? lookupWire
+										.getFirstRecord()
+										.getFieldValue(defaultItem.lookupField)
+								: context.merge(defaultItem.lookupTemplate)
+							if (lookupValue) {
+								defaultRecord[defaultItem.field] = lookupValue
+							}
+						}
+						if (defaultItem.valueSource === "VALUE") {
+							const value = context.merge(defaultItem.value)
+							if (value) {
+								defaultRecord[defaultItem.field] = value
+							}
+						}
+					})
+					const recordId = shortid.generate()
+					dispatch({
+						type: ACTOR,
+						band: signal.band,
+						name: signal.signal,
+						target: signal.target,
+						scope: signal.scope,
+						data: defaultRecord,
+						id: recordId,
+						view: viewId,
+					})
+
+					return context.addFrame({
+						record: recordId,
+					})
 				}
 			},
 		},
@@ -524,7 +524,6 @@ class Wire extends Actor {
 	source: PlainWire
 	valid: boolean
 	collection: Collection
-	dispatcher: Dispatcher<StoreAction>
 
 	receiveAction(action: ActorAction, state: RuntimeState): RuntimeState {
 		const actionHandler = Wire.actionGroup[action.name]
@@ -596,6 +595,10 @@ class Wire extends Actor {
 			: []
 	}
 
+	getViewId(): string {
+		return this.source?.view
+	}
+
 	getRecord(id: string): WireRecord {
 		return new WireRecord(this.source.data[id], id, this)
 	}
@@ -618,42 +621,35 @@ class Wire extends Actor {
 	}
 
 	dispatchRecordUpdate(recordId: string, record: PlainWireRecord): void {
-		this.dispatcher &&
-			this.dispatcher({
-				type: ACTOR,
-				band: "wire",
-				name: "UPDATE_RECORD",
-				data: {
-					recordId,
-					record,
-				},
-				target: this.getId(),
-				view: this.source.view,
-			})
+		getStore().dispatch({
+			type: ACTOR,
+			band: "wire",
+			name: "UPDATE_RECORD",
+			data: {
+				recordId,
+				record,
+			},
+			target: this.getId(),
+			view: this.source.view,
+		})
 	}
 
 	dispatchRecordSet(recordId: string, record: PlainWireRecord): void {
-		this.dispatcher &&
-			this.dispatcher({
-				type: ACTOR,
-				band: "wire",
-				name: "SET_RECORD",
-				data: {
-					recordId,
-					record,
-				},
-				target: this.getId(),
-				view: this.source.view,
-			})
+		getStore().dispatch({
+			type: ACTOR,
+			band: "wire",
+			name: "SET_RECORD",
+			data: {
+				recordId,
+				record,
+			},
+			target: this.getId(),
+			view: this.source.view,
+		})
 	}
 
 	attachCollection(collection: PlainCollection | null): Wire {
 		this.collection = new Collection(collection)
-		return this
-	}
-
-	attachDispatcher(dispatcher: Dispatcher<StoreAction>): Wire {
-		this.dispatcher = dispatcher
 		return this
 	}
 

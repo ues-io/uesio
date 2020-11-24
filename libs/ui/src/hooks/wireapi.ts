@@ -23,9 +23,7 @@ class WireAPI {
 	useWire(wireName: string): Wire {
 		const plainWire = useWire(wireName, this.uesio.getView()?.getId())
 		const plainCollection = useCollection(plainWire && plainWire.collection)
-		return new Wire(plainWire)
-			.attachCollection(plainCollection)
-			.attachDispatcher(this.dispatcher)
+		return new Wire(plainWire).attachCollection(plainCollection)
 	}
 }
 

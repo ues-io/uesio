@@ -46,6 +46,8 @@ definition:
     - material.table:
         columns:
           - material.column:
+              field: crm.externalid
+          - material.column:
               field: crm.name
           - material.column:
               field: crm.description
@@ -78,6 +80,7 @@ definition:
         crm.description: null
         crm.id: null
         crm.name: null
+        crm.externalid: null
 dependencies:
   componentpacks:
     material.main: null

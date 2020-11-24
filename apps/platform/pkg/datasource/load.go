@@ -66,7 +66,7 @@ func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch,
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		if request.Type != "CREATE" {
+		if request.Type == "QUERY" || request.Type == "" {
 			batch.Wires = append(batch.Wires, request)
 		}
 		collated[dsKey] = batch

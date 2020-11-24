@@ -125,7 +125,7 @@ class ViewAPI {
 			},
 			new Context([
 				{
-					view,
+					view: view?.getId(),
 				},
 			])
 		)
