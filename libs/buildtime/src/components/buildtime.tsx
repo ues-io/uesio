@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 
 import { definition, hooks } from "@uesio/ui"
 
@@ -6,7 +6,7 @@ import LeftToolbar from "./toolbar/lefttoolbar"
 import RightToolbar from "./toolbar/righttoolbar"
 import Canvas from "./canvas"
 
-const Buildtime: FC<definition.BaseProps> = (props: definition.BaseProps) => {
+const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio()
 	const route = props.context.getRoute()
 
@@ -20,22 +20,15 @@ const Buildtime: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 		props.path
 	)
 
-	const toolbarProps = {
-		path: "",
-		context: props.context.addFrame({
-			view: view.getId(),
-		}),
-	}
+	const addFrame = props.context.addFrame({
+		view: view.getId(),
+	})
 
 	return (
-		<div
-			style={{
-				display: "flex",
-			}}
-		>
-			<LeftToolbar {...toolbarProps} />
-			<Canvas {...toolbarProps} />
-			<RightToolbar {...toolbarProps} />
+		<div style={{ display: "flex" }}>
+			<LeftToolbar path="" context={addFrame} />
+			<Canvas path="" context={addFrame} />
+			<RightToolbar path="" context={addFrame} />
 		</div>
 	)
 }
