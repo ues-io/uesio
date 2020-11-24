@@ -45,7 +45,7 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					iconOnClick={(): void => {
 						uesio.builder.setSelectedNode("")
 					}}
-				/>
+				></ToolbarTitle>
 				<BuildPropArea
 					index={0}
 					buildPropsDef={propDef}
