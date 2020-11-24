@@ -1,3 +1,4 @@
 name: home
 path: home
 view: uesio.home
+theme: uesio.default

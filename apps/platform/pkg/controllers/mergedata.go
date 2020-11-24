@@ -21,6 +21,7 @@ type RouteMergeData struct {
 	Namespace     string              `json:"namespace"`
 	Path          string              `json:"path"`
 	Workspace     *WorkspaceMergeData `json:"workspace"`
+	Theme         string              `json:"theme"`
 }
 
 // UserMergeData stuff to merge
@@ -111,6 +112,15 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 		return
 	}
 
+	//if we don't have ThemeRef we can -->
+	//Get the route from the view, this might lead to some problems since we can have multiple routes pointing to the same view
+
+	// err = bundles.Load(route, session)
+	// if err != nil {
+	// 	//HandleMissingRoute(w, r, session, "", err)
+	// 	return
+	// }
+
 	mergeData := MergeData{
 		Route: &RouteMergeData{
 			ViewName:      viewName,
@@ -119,6 +129,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 			Namespace:     route.Namespace,
 			Path:          route.Path,
 			Workspace:     GetWorkspaceMergeData(workspace),
+			Theme:         route.ThemeRef,
 		},
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
