@@ -1,26 +1,26 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { hooks, wire } from "@uesio/ui"
 import MultiSelectProp from "./multiselectprop"
 
-function WiresProp(props: PropRendererProps): ReactElement | null {
+const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const wires = uesio.view.useDefinition(
 		`["wires"]`
 	) as wire.WireDefinitionMap
 
-	const rendererProps = {
-		...props,
-		descriptor: {
-			...props.descriptor,
-			options: Object.keys(wires).map((wireId) => ({
-				value: wireId,
-				label: wireId,
-			})),
-		},
-	}
-
-	return <MultiSelectProp {...rendererProps} />
+	return (
+		<MultiSelectProp
+			{...props}
+			descriptor={{
+				...props.descriptor,
+				options: Object.keys(wires).map((wireId) => ({
+					value: wireId,
+					label: wireId,
+				})),
+			}}
+		/>
+	)
 }
 
 export default WiresProp
