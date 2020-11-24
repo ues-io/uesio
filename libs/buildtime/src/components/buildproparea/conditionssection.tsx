@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { ReactElement, FunctionComponent } from "react"
 import { material, definition, wire, hooks, builder } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
@@ -15,57 +15,52 @@ function getConditionTitle(condition: wire.WireConditionDefinition): string {
 	return ""
 }
 
-function getConditionProperties(
+const getConditionProperties = (
 	condition: wire.WireConditionDefinition
-): builder.PropDescriptor[] {
-	if (condition.valueSource === "VALUE" || !condition.valueSource) {
-		return [
-			{
-				name: "field",
-				type: "METADATA",
-				metadataType: "FIELD",
-				label: "Field",
-				groupingParents: 2,
-				groupingProperty: "collection",
-			},
-			{
-				name: "value",
-				type: "TEXT",
-				label: "Value",
-			},
-			{
-				name: "valueSource",
-				type: "SELECT",
-				label: "Value Source",
-				options: [
-					{
-						label: "Lookup",
-						value: "LOOKUP",
-					},
-					{
-						label: "Param",
-						value: "PARAM",
-					},
-				],
-			},
-			{
-				name: "id",
-				type: "TEXT",
-				label: "Id",
-			},
-		]
-	}
-	return []
-}
+): builder.PropDescriptor[] =>
+	condition.valueSource === "VALUE" || !condition.valueSource
+		? [
+				{
+					name: "field",
+					type: "METADATA",
+					metadataType: "FIELD",
+					label: "Field",
+					groupingParents: 2,
+					groupingProperty: "collection",
+				},
+				{
+					name: "value",
+					type: "TEXT",
+					label: "Value",
+				},
+				{
+					name: "valueSource",
+					type: "SELECT",
+					label: "Value Source",
+					options: [
+						{
+							label: "Lookup",
+							value: "LOOKUP",
+						},
+						{
+							label: "Param",
+							value: "PARAM",
+						},
+					],
+				},
+				{
+					name: "id",
+					type: "TEXT",
+					label: "Id",
+				},
+		  ]
+		: []
 
-function ConditionsSection(props: SectionRendererProps): ReactElement | null {
-	const section = props.section
-	const def = props.definition
-
+const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const { section, definition: def, path, context } = props
 	const uesio = hooks.useUesio(props)
 	const theme = material.useTheme()
 	const selectedNode = uesio.builder.useSelectedNode()
-	const path = props.path
 
 	const conditionsDef = def?.conditions as definition.Definition[] | undefined
 
@@ -100,8 +95,8 @@ function ConditionsSection(props: SectionRendererProps): ReactElement | null {
 							<PropertiesPanel
 								path={conditionPath}
 								index={0}
-								componentType={""}
-								context={props.context}
+								componentType=""
+								context={context}
 								definition={condition}
 								propDef={{
 									title: "Condition",
