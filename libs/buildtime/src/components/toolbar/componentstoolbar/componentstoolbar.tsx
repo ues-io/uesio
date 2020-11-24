@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from "react"
+import React, { FunctionComponent, Fragment } from "react"
 import { component, definition, hooks } from "@uesio/ui"
 import ToolbarTitle from "../toolbartitle"
 import ExpandPanel from "../expandpanel/expandpanel"
@@ -14,7 +14,7 @@ interface filteredListInterface {
 	names: string[]
 }
 
-const ComponentsToolbar: FC<Props> = (props) => {
+const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const onDragStart = (e: React.DragEvent) => {
 		const target = e.target as HTMLDivElement
@@ -41,11 +41,7 @@ const ComponentsToolbar: FC<Props> = (props) => {
 					namespace,
 					name
 				)
-				if (
-					definition &&
-					definition.traits &&
-					definition.traits.includes("uesio.standalone")
-				) {
+				if (definition?.traits?.includes("uesio.standalone")) {
 					filteredListItem.names.push(name)
 				}
 			})
@@ -65,36 +61,29 @@ const ComponentsToolbar: FC<Props> = (props) => {
 					flex: "1",
 				}}
 			>
-				{filteredList.map(
-					(value: filteredListInterface, index: number) => {
-						return (
-							<ExpandPanel
-								title={filteredList[index].namespace}
-								defaultExpanded={true}
-								key={index}
-							>
-								<div>
-									{filteredList[index].names.map(
-										(value: string, indexTag: number) => {
-											return (
-												<PropNodeTag
-													draggable={component.dragdrop.createComponentBankKey(
-														filteredList[index]
-															.namespace,
-														value
-													)}
-													title={value}
-													icon={DragIndicator}
-													key={indexTag}
-												></PropNodeTag>
-											)
-										}
-									)}
-								</div>
-							</ExpandPanel>
-						)
-					}
-				)}
+				{filteredList.map((_, index) => (
+					<ExpandPanel
+						title={filteredList[index].namespace}
+						defaultExpanded={true}
+						key={index}
+					>
+						<div>
+							{filteredList[index].names.map(
+								(value, indexTag) => (
+									<PropNodeTag
+										draggable={component.dragdrop.createComponentBankKey(
+											filteredList[index].namespace,
+											value
+										)}
+										title={value}
+										icon={DragIndicator}
+										key={indexTag}
+									/>
+								)
+							)}
+						</div>
+					</ExpandPanel>
+				))}
 			</div>
 		</Fragment>
 	)
