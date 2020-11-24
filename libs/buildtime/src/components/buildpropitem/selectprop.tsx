@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react"
 import { TextField } from "@material-ui/core"
-import { builder } from "@uesio/ui"
 import {
 	PropRendererProps,
 	inputStyles,
@@ -31,7 +30,7 @@ const SelectProp: FunctionComponent<PropRendererProps> = ({
 		}}
 	>
 		<option value=""></option>
-		{descriptor.options?.map((option) => (
+		{descriptor?.options?.map((option) => (
 			<option key={option.value} value={option.value}>
 				{option.label}
 			</option>
