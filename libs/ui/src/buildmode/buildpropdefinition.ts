@@ -66,7 +66,7 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
-	options?: { value: string; label: string }[]
+	options?: PropertySelectOption[]
 }
 
 interface TextProp extends BasePropDescriptor {
@@ -86,7 +86,6 @@ interface MetadataProp extends BasePropDescriptor {
 
 interface SelectProp extends BasePropDescriptor {
 	type: "SELECT"
-	options: PropertySelectOption[]
 }
 
 interface BooleanProp extends BasePropDescriptor {
@@ -96,7 +95,6 @@ interface BooleanProp extends BasePropDescriptor {
 
 interface MultiSelectProp extends BasePropDescriptor {
 	type: "MULTISELECT"
-	options: PropertySelectOption[]
 }
 
 interface KeyProp extends BasePropDescriptor {
