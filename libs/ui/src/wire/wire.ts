@@ -304,6 +304,7 @@ class Wire extends Actor {
 
 					return context.addFrame({
 						record: recordId,
+						wire: wire.getId(),
 					})
 				}
 			},
