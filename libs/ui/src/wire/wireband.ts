@@ -252,7 +252,7 @@ class WireBand {
 					getState: () => RuntimeState,
 					platform: Platform
 				): DispatchReturn => {
-					const view = context.getLatestView(getState())
+					const view = context.getView()
 					if (signal.targets && signal.targets.length && view) {
 						const viewId = view.getId()
 						const wires = view.source.wires
@@ -462,8 +462,10 @@ class WireBand {
 		return hydratedWires
 	}
 
-	static getActor(state: RuntimeState, target: string, view: string): Wire {
-		return new Wire(state.view?.[view]?.wires[target] || null)
+	static getActor(state: RuntimeState, target?: string, view?: string): Wire {
+		return new Wire(
+			(target && view && state.view?.[view]?.wires[target]) || null
+		)
 	}
 }
 

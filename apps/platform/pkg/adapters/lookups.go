@@ -91,8 +91,13 @@ func GetLookupRequests(request reqs.SaveRequest, metadata *MetadataCache) ([]req
 func getLookupResultMap(data []map[string]interface{}, keyField string) map[string]map[string]interface{} {
 	lookupResult := map[string]map[string]interface{}{}
 	for _, record := range data {
-		keyVal := record[keyField].(string)
-		lookupResult[keyVal] = record
+		keyVal, ok := record[keyField]
+		if ok {
+			keyString, ok := keyVal.(string)
+			if ok {
+				lookupResult[keyString] = record
+			}
+		}
 	}
 	return lookupResult
 }

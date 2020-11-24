@@ -68,6 +68,10 @@ class Uesio {
 		return this.getContext().getView()
 	}
 
+	getViewId = (): string | undefined => {
+		return this.getContext().getViewId()
+	}
+
 	addContextFrame = (frame: ContextFrame): void => {
 		this._props.context = this.getContext().addFrame(frame)
 	}

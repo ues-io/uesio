@@ -15,6 +15,7 @@ const TOGGLE_CONDITION = "TOGGLE_CONDITION"
 interface CreateRecordAction extends ActorAction {
 	name: typeof CREATE_RECORD
 	data: LoadResponseRecord
+	id: string
 }
 
 interface UpdateRecordAction extends ActorAction {

@@ -95,8 +95,8 @@ function Deck(props: DeckProps): ReactElement | null {
 					accepts: ["uesio.context"],
 					direction: "manual",
 					context: context.addFrame({
-						record,
-						wire,
+						record: record.getId(),
+						wire: wire.getId(),
 						fieldMode: state.mode,
 					}),
 				}

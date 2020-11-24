@@ -95,7 +95,7 @@ const View: FC<Props> = (props: Props) => {
 			path: "", // View slots paths are always empty
 			accepts: ["uesio.standalone"],
 			context: props.context.addFrame({
-				view,
+				view: view.getId(),
 				buildMode: useBuildTime,
 			}),
 		}
