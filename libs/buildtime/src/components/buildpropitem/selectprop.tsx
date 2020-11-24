@@ -8,8 +8,12 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 
-function SelectProp(props: PropRendererProps): ReactElement {
-	const descriptor = props.descriptor as builder.SelectProp
+interface SelectPropRendererProps extends PropRendererProps {
+	descriptor: builder.SelectProp
+}
+
+function SelectProp(props: SelectPropRendererProps): ReactElement {
+	const descriptor = props.descriptor
 
 	return (
 		<TextField

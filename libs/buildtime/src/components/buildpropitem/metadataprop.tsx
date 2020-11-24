@@ -3,9 +3,13 @@ import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder, material } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
+interface MetadataPropRendererProps extends PropRendererProps {
+	descriptor: builder.MetadataProp
+}
+
+const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const descriptor = props.descriptor as builder.MetadataProp
+	const descriptor = props.descriptor
 	const metadataType = descriptor.metadataType
 	const { path, getValue, context, setValue } = props
 	const value = getValue() as string
@@ -67,6 +71,7 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 						getValue={() => namespace}
 						descriptor={{
 							...descriptor,
+							type: "SELECT",
 							options: Object.keys(namespaces).map((key) => ({
 								value: key,
 								label: key,
@@ -74,7 +79,15 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 						}}
 					/>
 				) : (
-					<SelectProp {...props} />
+					<SelectProp
+						{...props}
+						descriptor={{
+							...descriptor,
+							type: "SELECT",
+							label: "",
+							options: [],
+						}}
+					/>
 				)}
 			</material.Grid>
 			<material.Grid item xs={6}>
@@ -87,6 +100,7 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 						getValue={() => name}
 						descriptor={{
 							...descriptor,
+							type: "SELECT",
 							label: "",
 							options: Object.keys(metadata).map((key) => {
 								const [, name] = component.path.parseKey(key)
@@ -102,7 +116,9 @@ const MetadataProp: FunctionComponent<PropRendererProps> = (props) => {
 						{...props}
 						descriptor={{
 							...descriptor,
+							type: "SELECT",
 							label: "",
+							options: [],
 						}}
 					/>
 				)}
