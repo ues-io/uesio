@@ -72,6 +72,8 @@ definition:
                         band: "platform"
                         path: "app/${uesio.name}"
                         namespace: "uesio"
+                - material.themeMaker:
+                    fieldId: "uesio.name"
 dependencies:
   componentpacks:
     material.main:
