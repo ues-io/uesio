@@ -7,27 +7,24 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 
-const TextProp: FunctionComponent<PropRendererProps> = (props) => {
-	const { descriptor } = props
-
-	// Fall back to text component
-	return (
-		<TextField
-			{...{
-				value: props.getValue(),
-				label: descriptor.label,
-				size: "small",
-				fullWidth: true,
-				style: inputStyles,
-				InputProps: inputProps,
-				InputLabelProps: inputLabelProps,
-				variant: "outlined",
-				onChange: (event): void => {
-					props.setValue(event.target.value)
-				},
-			}}
-		/>
-	)
-}
+const TextProp: FunctionComponent<PropRendererProps> = ({
+	getValue,
+	descriptor,
+	setValue,
+}) => (
+	<TextField
+		value={getValue()}
+		label={descriptor.label}
+		size="small"
+		fullWidth={true}
+		style={inputStyles}
+		InputProps={inputProps}
+		InputLabelProps={inputLabelProps}
+		variant="outlined"
+		onChange={(event): void => {
+			setValue(event.target.value)
+		}}
+	/>
+)
 
 export default TextProp
