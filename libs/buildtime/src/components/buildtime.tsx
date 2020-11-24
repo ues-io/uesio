@@ -23,7 +23,7 @@ const Buildtime: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 	const toolbarProps = {
 		path: "",
 		context: props.context.addFrame({
-			view: view,
+			view: view.getId(),
 		}),
 	}
 

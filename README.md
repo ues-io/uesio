@@ -40,7 +40,7 @@ Sandalone **libraries** are located in the `libs` folder. These libs are compone
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` file holds the configuration on how each application and lib should be built, tested, linted. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
+The `workspace.json` is the entry point for the **build**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
 For scaffolding a new lib, you can run the following script.
 
@@ -70,6 +70,7 @@ nx g @nrwl/workspace:library NEW_LIB
   npm run build-all
 ```
 
+- Install the following chrome plugins, React Developers Tools, Redux DevTools.
 - Optional. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
 - Optional. Install [Oh My Zsh](https://ohmyz.sh/)
 - Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
@@ -118,18 +119,9 @@ npm run build-all
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
-```
 
-or
-
-```
-npm run nx -- build uesioapps-crm
-```
-
-or (if you have `nx` install globally)
-
-```
-nx build uesioapps-crm
+// or npm run nx -- build uesioapps-crm
+// or - if you have nx globally - nx build uesioapps-crm
 ```
 
 ## Build a dedicated app (with watcher and source map)
@@ -150,7 +142,7 @@ For plugging such an application into uesio, you have to deploy it obviously aft
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 ```
 
-Remark. The `uesio` lib under `uesioapps` does not need to be deployed. The backend is directly accessing the related files part of that lib.
+The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
 
 An **app bundle** is a screenshot or version of a specific uesio app.
 
@@ -218,6 +210,10 @@ In a browser visit
 https://uesio-dev.com:3000
 ```
 
+# Continous integration (CI)
+
+The continous integration process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
+
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
 1. Create a project in the [firebase console](https://console.firebase.google.com/).
@@ -225,7 +221,6 @@ https://uesio-dev.com:3000
 2. ```
    npm install -g firebase-tools
    ```
-
 3. Select the project your created before, while interacting with the firebase cli.
 
 ```
@@ -235,12 +230,10 @@ https://uesio-dev.com:3000
 4. ```
    firebase emulators:start
    ```
-
 5. In a browser visit
 
 ```
    http://localhost:4000/firestore/
-
 ```
 
 # Local Development with a database in Docker

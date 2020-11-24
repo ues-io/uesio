@@ -28,12 +28,22 @@ class WireRecord {
 		return this.id
 	}
 
+	getWire(): Wire {
+		return this.wire
+	}
+
 	getFieldValue(fieldName: string): FieldValue {
 		return get(this.source, fieldName)
 	}
 
 	update(fieldId: string, value: FieldValue): void {
 		this.wire.dispatchRecordUpdate(this.id, {
+			[fieldId]: value,
+		})
+	}
+
+	set(fieldId: string, value: FieldValue): void {
+		this.wire.dispatchRecordSet(this.id, {
 			[fieldId]: value,
 		})
 	}
