@@ -14,6 +14,7 @@ const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
 			{...props}
 			descriptor={{
 				...props.descriptor,
+				type: "MULTISELECT",
 				options: Object.keys(wires).map((wireId) => ({
 					value: wireId,
 					label: wireId,
