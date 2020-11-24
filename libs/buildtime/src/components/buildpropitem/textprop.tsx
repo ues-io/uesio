@@ -12,6 +12,7 @@ const TextProp: FunctionComponent<PropRendererProps> = ({
 	descriptor,
 	setValue,
 }) => (
+	// Fall back to text component
 	<TextField
 		value={getValue()}
 		label={descriptor.label}
