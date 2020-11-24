@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, builder } from "@uesio/ui"
 import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"
@@ -23,18 +23,16 @@ function getSectionHandler(type?: string) {
 	}
 }
 
-function BuildSection(props: Props): ReactElement | null {
-	const section = props.section
+const BuildSection: FunctionComponent<Props> = (props) => {
+	const { section, context, path, definition } = props
 	const SectionHandler = getSectionHandler(section.type)
 
 	return (
 		<SectionHandler
-			{...{
-				section,
-				path: props.path,
-				definition: props.definition,
-				context: props.context,
-			}}
+			section={section}
+			path={path}
+			definition={definition}
+			context={context}
 		/>
 	)
 }
