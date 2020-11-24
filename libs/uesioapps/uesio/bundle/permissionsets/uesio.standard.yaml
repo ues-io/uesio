@@ -31,6 +31,9 @@ views:
   uesio.newfile: true
   uesio.bundle: true
   uesio.site: true
+  uesio.themes: true
+  uesio.theme: true
+  uesio.newtheme: true
 routes:
   uesio.login: true
   uesio.field: true
@@ -59,6 +62,9 @@ routes:
   uesio.newfile: true
   uesio.bundle: true
   uesio.site: true
+  uesio.themes: true
+  uesio.theme: true
+  uesio.newtheme: true
 files:
   uesio.logo: true
   uesio.logosmall: true

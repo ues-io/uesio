@@ -101,6 +101,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	"selectlists":    func() BundleableGroup { return &SelectListCollection{} },
 	"routes":         func() BundleableGroup { return &RouteCollection{} },
 	"views":          func() BundleableGroup { return &ViewCollection{} },
+	"themes":         func() BundleableGroup { return &ThemeCollection{} },
 }
 
 // GetBundleableGroupFromType function
