@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState, memo } from "react"
+import clsx from "clsx"
 import {
 	makeStyles,
 	Theme,
@@ -54,14 +55,15 @@ const MiniToolbarButton: FunctionComponent<Props> = memo(
 		// Go away when clicked.
 		const [open, setOpen] = useState(false)
 		const [listen, setListen] = useState(true)
-
-		const applyClasses = [classes.button]
-
-		if (variant === "save" || variant === "cancel") {
-			applyClasses.push(classes[variant])
-		}
-
-		const classNames = applyClasses.join(" ")
+		const buttonClasses = clsx(
+			classes.button,
+			variant && classes?.[variant]
+				? {
+						[classes[variant]]:
+							variant === "save" || variant === "cancel",
+				  }
+				: {}
+		)
 
 		return (
 			<Tooltip
@@ -83,7 +85,7 @@ const MiniToolbarButton: FunctionComponent<Props> = memo(
 			>
 				<IconButton
 					color="primary"
-					className={classNames}
+					className={buttonClasses}
 					disabled={disabled}
 					size="small"
 					onClick={(): void => {

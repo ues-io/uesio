@@ -1,5 +1,6 @@
 import { definition, component, hooks } from "@uesio/ui"
 import React, { FunctionComponent, Fragment } from "react"
+import clsx from "clsx"
 import { makeStyles, createStyles } from "@material-ui/core"
 import SlotItem from "./slotitem"
 import { handleDrop, getDropIndex, isDropAllowed } from "./dragdrop"
@@ -121,38 +122,29 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	}
 
 	const classes = useStyles()
-
-	const classNames = [classes.root]
-
-	if (isExpanded) {
-		classNames.push(classes.expanded)
-	}
-
-	if (dragNode) {
-		classNames.push(classes.isDragging)
-	}
-
-	classNames.push(
-		direction === "horizontal" ? classes.horizontal : classes.vertical
+	const containerClasses = clsx(
+		classes.root,
+		direction === "horizontal" ? classes.horizontal : classes.vertical,
+		{
+			[classes.expanded]: isExpanded,
+			[classes.isDragging]: dragNode,
+		}
 	)
 
 	const addPlaceholder =
 		dropNode === path || dropNode === `${path}["${size}"]`
 
-	const placeHolderClasses = [classes.placeHolder]
-
-	if (
-		addPlaceholder &&
-		component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`
-	) {
-		placeHolderClasses.push(classes.placeHolderNoMargin)
-	}
+	const placeholderClasses = clsx(classes.placeHolder, {
+		[classes.placeHolderNoMargin]:
+			addPlaceholder &&
+			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,
+	})
 
 	return (
 		<div
 			onDragOver={onDragOver}
 			onDrop={onDrop}
-			className={classNames.join(" ")}
+			className={containerClasses}
 		>
 			{items.map((itemDef, index) => (
 				<SlotItem
@@ -170,7 +162,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					dropNode={dropNode}
 				/>
 			))}
-			{addPlaceholder && <div className={placeHolderClasses.join(" ")} />}
+			{addPlaceholder && <div className={placeholderClasses} />}
 		</div>
 	)
 }
