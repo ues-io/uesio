@@ -1,4 +1,4 @@
-import React, { ReactElement, SyntheticEvent, FC } from "react"
+import React, { SyntheticEvent, FunctionComponent } from "react"
 import {
 	useTheme,
 	SvgIconProps,
@@ -7,9 +7,9 @@ import {
 } from "@material-ui/core"
 import SmallIconButton from "../../toolbar/smalliconbutton"
 
-type Props = {
+interface Props {
 	title: string
-	icon: FC<SvgIconProps>
+	icon: FunctionComponent<SvgIconProps>
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
 }
@@ -22,7 +22,7 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-function ActionButton(props: Props): ReactElement {
+const ActionButton: FunctionComponent<Props> = (props) => {
 	const theme = useTheme()
 	const classes = useStyles(props)
 
@@ -34,7 +34,7 @@ function ActionButton(props: Props): ReactElement {
 			color={theme.palette.primary.main}
 			disabled={props.disabled}
 			className={classes.root}
-		></SmallIconButton>
+		/>
 	)
 }
 
