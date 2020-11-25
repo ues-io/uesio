@@ -1,10 +1,10 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks, builder, component } from "@uesio/ui"
 import AddIcon from "@material-ui/icons/Add"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
-function AddAction(props: ActionProps): ReactElement | null {
+const AddAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	const action = props.action as builder.AddAction
@@ -33,7 +33,7 @@ function AddAction(props: ActionProps): ReactElement | null {
 				}
 			}}
 			icon={AddIcon}
-		></ActionButton>
+		/>
 	)
 }
 
