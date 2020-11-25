@@ -9,9 +9,9 @@ interface MetadataPropRendererProps extends PropRendererProps {
 
 const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const descriptor = props.descriptor
+	const { path, getValue, context, setValue, descriptor } = props
 	const metadataType = descriptor.metadataType
-	const { path, getValue, context, setValue } = props
+
 	const value = getValue() as string
 
 	const namespaces = uesio.builder.useAvailableNamespaces()
