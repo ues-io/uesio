@@ -140,7 +140,7 @@ const View: FC<Props> = (props: Props) => {
 		console.log("themename", themename)
 
 		const resp = fetch(
-			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themenamespace}/${themename}`,
+			`https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`,
 			{
 				method: "get",
 			}
@@ -170,7 +170,7 @@ const View: FC<Props> = (props: Props) => {
 		}
 		return (
 			<ThemeProvider theme={makeTheme(PaletteOptions)}>
-				<CssBaseline></CssBaseline>
+				<CssBaseline />
 				<Slot {...slotProps}></Slot>
 			</ThemeProvider>
 		)
