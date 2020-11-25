@@ -56,7 +56,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					InputLabelProps={inputLabelProps}
 					style={inputStyles}
 					size="small"
-					value={getValue()}
+					value={selected}
 					label={descriptor.label}
 					fullWidth={true}
 					onChange={(event): void => {
