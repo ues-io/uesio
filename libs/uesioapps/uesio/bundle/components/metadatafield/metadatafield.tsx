@@ -59,7 +59,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			uesio.builder.getAvailableNamespaces(uesio.getContext())
 			return
 		}
-		if (!metadata && namespace && metadataType == "FIELD") {
+		if (!metadata && namespace && metadataType === "FIELD") {
 			uesio.builder.getMetadataList(
 				uesio.getContext(),
 				metadataType,
@@ -90,7 +90,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const SelectField = component.registry.get("material", "selectfield")
 
 	const options =
-		metadataType == "FIELD"
+		metadataType === "FIELD"
 			? Object.keys(metadata?.[grouping] || {})?.map?.((key) => {
 					const [, name] = component.path.parseKey(key)
 					return {

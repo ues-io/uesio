@@ -35,7 +35,7 @@ async function handleChange(
 		const context = uesio.getContext()
 		const workspace = context.getWorkspace()
 
-		if (file.type == "text/csv") {
+		if (file.type === "text/csv") {
 			fetch(
 				`/workspace/${workspace?.app}/${workspace?.name}/bulk/job/${jobId}/batch`,
 				{

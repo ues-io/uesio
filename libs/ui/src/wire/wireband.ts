@@ -73,9 +73,7 @@ class WireBand {
 						const newData: PlainWireRecordMap = {}
 						const newOriginal: PlainWireRecordMap = {}
 						Object.keys(state[wire.wire].data)
-							.filter((recordId) => {
-								return recordId != tempId
-							})
+							.filter((recordId) => recordId !== tempId)
 							.forEach((recordId) => {
 								newData[recordId] =
 									state[wire.wire].data[recordId]
