@@ -145,6 +145,7 @@ const View: FC<Props> = (props: Props) => {
 				method: "get",
 			}
 		)
+
 		console.log("RESP", resp)
 	}, [])
 
