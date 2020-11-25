@@ -1,13 +1,15 @@
 import React, { useEffect, FC } from "react"
-
 import { BaseProps } from "../definition/definition"
-
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
+
+import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
+import { colors } from "@material-ui/core"
+import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -43,6 +45,25 @@ interface Props extends BaseProps {
 	}
 }
 
+const makeTheme = (theme: PaletteOptions) =>
+	createMuiTheme({
+		palette: { ...theme },
+		/*
+	palette: {
+		primary: colors.purple,
+		secondary: colors.deepPurple,
+	},
+	typography: {
+		fontFamily: [
+			"Montserrat",
+			"Roboto",
+			"Arial",
+			"sans-serif",
+		].join(","),
+	},
+	*/
+	})
+
 const View: FC<Props> = (props: Props) => {
 	const uesio = useUesio(props)
 	const viewname = props.definition.name
@@ -65,6 +86,40 @@ const View: FC<Props> = (props: Props) => {
 		scriptResult.scripts
 	)
 
+	///
+	const PaletteOptions = {
+		primary: {
+			// light: will be calculated from palette.primary.main,
+			main: "#ff4400",
+			// dark: will be calculated from palette.primary.main,
+			// contrastText: will be calculated to contrast with palette.primary.main
+		},
+		secondary: {
+			light: "#0066ff",
+			main: "#0044ff",
+			// dark: will be calculated from palette.secondary.main,
+			contrastText: "#ffcc00",
+		},
+		// Used by `getContrastText()` to maximize the contrast between
+		// the background and the text.
+		contrastThreshold: 3,
+		// Used by the functions below to shift a color's luminance by approximately
+		// two indexes within its tonal palette.
+		// E.g., shift from Red 500 to Red 300 or Red 700.
+		tonalOffset: 0.2,
+	}
+
+	const route = uesio.route.useRoute()
+	const context = uesio.getContext()
+
+	let themenamespace = ""
+	let themename = ""
+	if (route.theme) {
+		;[themenamespace, themename] = parseKey(route.theme)
+	}
+
+	///
+
 	useEffect(() => {
 		const hasNewParams = viewparams !== view.source.params
 		// We could think about letting this go forward before loading viewdef deps
@@ -78,6 +133,20 @@ const View: FC<Props> = (props: Props) => {
 			)
 			return
 		}
+	}, [])
+
+	useEffect(() => {
+		console.log("themenamespace", themenamespace)
+		console.log("themename", themename)
+
+		const resp = fetch(
+			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themenamespace}/${themename}`,
+			{
+				method: "get",
+			}
+		)
+
+		console.log("RESP", resp)
 	}, [])
 
 	const useRunTime =
@@ -99,7 +168,12 @@ const View: FC<Props> = (props: Props) => {
 				buildMode: useBuildTime,
 			}),
 		}
-		return <Slot {...slotProps}></Slot>
+		return (
+			<ThemeProvider theme={makeTheme(PaletteOptions)}>
+				<CssBaseline></CssBaseline>
+				<Slot {...slotProps}></Slot>
+			</ThemeProvider>
+		)
 	}
 	return null
 }

@@ -7,11 +7,11 @@ import (
 
 // Theme struct
 type Theme struct {
-	ID         string    `yaml:"-" uesio:"uesio.id"`
-	Name       string    `yaml:"name" uesio:"uesio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"-"`
-	Workspace  string    `yaml:"-" uesio:"uesio.workspaceid"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
+	Name       string     `yaml:"name" uesio:"uesio.name"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Definition *yaml.Node `yaml:"definition" uesio:"-"`
+	Workspace  string     `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetCollectionName function
