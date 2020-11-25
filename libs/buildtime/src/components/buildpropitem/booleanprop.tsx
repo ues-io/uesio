@@ -13,11 +13,14 @@ import {
 	inputProps,
 } from "./proprendererdefinition"
 
-const BooleanProp: FunctionComponent<PropRendererProps> = (props) => {
-	const descriptor = props.descriptor as builder.BooleanProp
-	const selected = props.getValue() as boolean
+const BooleanProp: FunctionComponent<PropRendererProps> = ({
+	descriptor,
+	getValue,
+	setValue,
+}) => {
+	const selected = getValue() as boolean
 
-	switch (descriptor.displaytype) {
+	switch ((descriptor as builder.BooleanProp).displaytype) {
 		case "switch":
 			return (
 				<FormControlLabel
@@ -25,7 +28,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = (props) => {
 						<Switch
 							checked={selected}
 							onChange={(event): void => {
-								props.setValue(event.target.checked)
+								setValue(event.target.checked)
 							}}
 						/>
 					}
@@ -53,22 +56,20 @@ const BooleanProp: FunctionComponent<PropRendererProps> = (props) => {
 					InputLabelProps={inputLabelProps}
 					style={inputStyles}
 					size="small"
-					value={props.getValue()}
+					value={selected}
 					label={descriptor.label}
 					fullWidth={true}
 					onChange={(event): void => {
 						event.target.value == "true"
-							? props.setValue(true)
-							: props.setValue(false)
+							? setValue(true)
+							: setValue(false)
 					}}
 				>
-					{optionslist?.map(
-						(option: builder.PropertySelectOption) => (
-							<option key={option.value} value={option.value}>
-								{option.label}
-							</option>
-						)
-					)}
+					{optionslist.map((option: builder.PropertySelectOption) => (
+						<option key={option.value} value={option.value}>
+							{option.label}
+						</option>
+					))}
 				</TextField>
 			)
 		}
@@ -80,7 +81,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = (props) => {
 						<Checkbox
 							checked={selected}
 							onChange={(event): void => {
-								props.setValue(event.target.checked)
+								setValue(event.target.checked)
 							}}
 						/>
 					}
