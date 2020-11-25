@@ -36,11 +36,17 @@ interface Props {
 	editorDidMount?: EditorDidMount
 }
 
-const LazyMonaco: FunctionComponent<Props> = (props) => (
+const LazyMonaco: FunctionComponent<Props> = ({
+	value,
+	language,
+	onChange,
+	editorWillMount,
+	editorDidMount,
+}) => (
 	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
-			value={props?.value}
-			language={props?.language || "yaml"}
+			value={value}
+			language={language || "yaml"}
 			options={{
 				automaticLayout: true,
 				minimap: {
@@ -49,13 +55,13 @@ const LazyMonaco: FunctionComponent<Props> = (props) => (
 				//quickSuggestions: true,
 			}}
 			onChange={(newValue, event): void => {
-				props?.onChange?.(newValue, event)
+				onChange?.(newValue, event)
 			}}
 			editorWillMount={(monaco): void => {
-				props?.editorWillMount?.(monaco)
+				editorWillMount?.(monaco)
 			}}
 			editorDidMount={async (editor, monaco): Promise<void> => {
-				props?.editorDidMount?.(editor, monaco)
+				editorDidMount?.(editor, monaco)
 			}}
 		/>
 	</Suspense>
