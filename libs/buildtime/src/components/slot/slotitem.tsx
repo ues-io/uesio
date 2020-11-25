@@ -1,5 +1,6 @@
 import { definition, component, hooks } from "@uesio/ui"
 import React, { FunctionComponent, SyntheticEvent } from "react"
+import classNames from "classnames"
 import BuildBorder from "../buildborder/buildborder"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { handleDrop, getDropIndex, isDropAllowed, isNextSlot } from "./dragdrop"
@@ -103,26 +104,15 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const addPlaceholder = path === dropNode
 
 	const classes = useStyles(props)
-	const classNames = [classes.root]
-
-	if (dragNode) {
-		classNames.push(classes.isDragging)
-	}
-
-	if (addPlaceholder) {
-		classNames.push(classes.placeHolder)
-	}
-
-	if (isExpanded) {
-		classNames.push(classes.expanded)
-	}
-
-	if (isLast) {
-		classNames.push(classes.isLast)
-	}
-
-	classNames.push(
-		direction === "horizontal" ? classes.horizontal : classes.vertical
+	const containerClasses = classNames(
+		classes.root,
+		direction === "horizontal" ? classes.horizontal : classes.vertical,
+		{
+			[classes.isDragging]: dragNode,
+			[classes.placeHolder]: addPlaceholder,
+			[classes.expanded]: isExpanded,
+			[classes.isLast]: isLast,
+		}
 	)
 
 	const onDragOver = (e: React.DragEvent) => {
@@ -195,7 +185,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 			onDrop={onDrop}
 			onDragStart={onDragStart}
 			onDragEnd={onDragEnd}
-			className={classNames.join(" ")}
+			className={containerClasses}
 			draggable={dragNode === fullPath}
 		>
 			<BuildBorder
