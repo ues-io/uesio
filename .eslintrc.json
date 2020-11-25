@@ -16,6 +16,7 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "eqeqeq": "error",
     "radix": "error",
     "no-new-wrappers": "error",
     "@typescript-eslint/naming-convention": [

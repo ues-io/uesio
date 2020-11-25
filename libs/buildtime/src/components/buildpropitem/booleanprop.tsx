@@ -60,7 +60,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					label={descriptor.label}
 					fullWidth={true}
 					onChange={(event): void => {
-						event.target.value == "true"
+						event.target.value === "true"
 							? setValue(true)
 							: setValue(false)
 					}}

@@ -195,10 +195,8 @@ const Alert = React.forwardRef(function Alert(props: any, ref) {
 				<div className={classes.icon}>{icon || iconNode}</div>
 			) : null}
 			<div className={classes.message}>{children}</div>
-			{action != null ? (
-				<div className={classes.action}>{action}</div>
-			) : null}
-			{action == null && onClose ? (
+			{action ? <div className={classes.action}>{action}</div> : null}
+			{!action && onClose ? (
 				<div className={classes.action}>
 					<material.IconButton
 						size="small"

@@ -80,7 +80,7 @@ function File(props: FileProps): ReactElement | null {
 				)
 				break
 			case "application":
-				if (mimeSubType == "pdf") {
+				if (mimeSubType === "pdf") {
 					return (
 						<iframe
 							src={fileUrl}

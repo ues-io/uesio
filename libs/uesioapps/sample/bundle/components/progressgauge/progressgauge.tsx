@@ -7,7 +7,7 @@ const useStyles = material.makeStyles(() =>
 		// add padding depending on indicator
 		root: (props: ProgressGaugeProps) => ({
 			padding: "20px",
-			paddingTop: props.definition.indicator == "off" ? "20px" : "40px",
+			paddingTop: props.definition.indicator === "off" ? "20px" : "40px",
 			backgroundColor: "White",
 		}),
 	})

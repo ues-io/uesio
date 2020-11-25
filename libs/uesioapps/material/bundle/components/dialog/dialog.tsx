@@ -1,5 +1,13 @@
 import React, { ReactElement } from "react"
-import { hooks, material, signal, action, context, builder, component } from "@uesio/ui"
+import {
+	hooks,
+	material,
+	signal,
+	action,
+	context,
+	builder,
+	component,
+} from "@uesio/ui"
 import { DialogProps } from "./dialogdefinition"
 import Icon from "../icon/icon"
 
@@ -96,7 +104,7 @@ function Dialog(props: DialogProps): ReactElement {
 			uesio.signal.getHandler(props.definition.agreeSignals),
 	}
 
-	const mylocalState = state.mode == "OPEN" ? true : false
+	const mylocalState = state.mode === "OPEN" ? true : false
 
 	const slotProps = {
 		definition: props.definition,
