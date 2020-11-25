@@ -111,7 +111,7 @@ const View: FC<Props> = (props: Props) => {
 			})
 		})
 		simulateBackend.then(
-			(response: {
+			(themeResponse: {
 				primary: string
 				secondary: string
 				error: string
@@ -121,22 +121,22 @@ const View: FC<Props> = (props: Props) => {
 			}) =>
 				setMaterialTheme({
 					primary: {
-						main: response.primary,
+						main: themeResponse.primary,
 					},
 					secondary: {
-						main: response.secondary,
+						main: themeResponse.secondary,
 					},
 					error: {
-						main: response.error,
+						main: themeResponse.error,
 					},
 					warning: {
-						main: response.warning,
+						main: themeResponse.warning,
 					},
 					info: {
-						main: response.info,
+						main: themeResponse.info,
 					},
 					success: {
-						main: response.success,
+						main: themeResponse.success,
 					},
 				})
 		)
