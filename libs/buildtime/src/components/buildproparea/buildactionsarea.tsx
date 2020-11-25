@@ -42,23 +42,19 @@ function getActionHandler(type?: string) {
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const actions = props.actions
-	//const propsDef = props.buildPropsDef
-	const actionProps: ActionProps = {
-		...props,
-		definition,
-	}
-
 	return (
 		<div className={classes.wrapper}>
-			<DeleteAction {...actionProps}></DeleteAction>
-			<MoveActions {...actionProps}></MoveActions>
+			<DeleteAction {...props} definition={definition} />
+			<MoveActions {...props} definition={definition} />
 			{actions?.map?.((action, index) => {
 				const ActionHandler = getActionHandler(action.type)
 				if (ActionHandler) {
 					return (
 						<ActionHandler
+							{...props}
 							key={index}
-							{...{ ...actionProps, ...{ action } }}
+							definition={definition}
+							action={action}
 						/>
 					)
 				}
