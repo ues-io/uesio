@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, FC } from "react"
+import React, { PropsWithChildren, FunctionComponent } from "react"
 import { Drawer, makeStyles, createStyles } from "@material-ui/core"
 
 type Props = {
@@ -30,23 +30,19 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const MiniToolbar: FC<PropsWithChildren<Props>> = (
-	props: PropsWithChildren<Props>
-) => {
+const MiniToolbar: FunctionComponent<PropsWithChildren<Props>> = (props) => {
 	const classes = useStyles(props)
 
 	return (
 		<Drawer
-			{...{
-				variant: props.variant || "permanent",
-				open: props.open,
-				anchor: props.anchor,
-				className: classes.drawer,
-				classes: {
-					paper: classes.drawerPaper,
-				},
-				transitionDuration: 0,
+			variant={props.variant || "permanent"}
+			open={props.open}
+			anchor={props.anchor}
+			className={classes.drawer}
+			classes={{
+				paper: classes.drawerPaper,
 			}}
+			transitionDuration={0}
 		>
 			{props.children}
 		</Drawer>
