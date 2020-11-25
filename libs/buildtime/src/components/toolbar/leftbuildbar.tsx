@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import WiresToolbar from "./wirestoolbar/wirestoolbar"
 import ComponentsToolbar from "./componentstoolbar/componentstoolbar"
@@ -12,9 +12,9 @@ interface Props extends definition.BaseProps {
 
 const MINI_TOOLBAR_WIDTH = 50
 
-const LeftBuildbar: FC<Props> = (props: Props) => {
+const LeftBuildbar: FunctionComponent<Props> = (props: Props) => {
 	const selected = props.selectedPanel as "wires" | "components"
-	const path = props.selectedNode
+	const { path, context, selectedNode } = props
 	const uesio = hooks.useUesio(props)
 
 	const toolbarMap = {
@@ -44,13 +44,11 @@ const LeftBuildbar: FC<Props> = (props: Props) => {
 
 	return (
 		<MiniToolbar
-			{...{
-				anchor: "left",
-				width: 240,
-				left: MINI_TOOLBAR_WIDTH,
-				open: true,
-				variant: "persistent",
-			}}
+			anchor="left"
+			width={240}
+			left={MINI_TOOLBAR_WIDTH}
+			open={true}
+			variant="persistent"
 		>
 			<material.Paper
 				style={{
@@ -65,7 +63,7 @@ const LeftBuildbar: FC<Props> = (props: Props) => {
 					path={trimmedPath}
 					index={0}
 					componentType=""
-					context={props.context}
+					context={context}
 					definition={definition}
 					propDef={propDef}
 				/>
@@ -81,12 +79,10 @@ const LeftBuildbar: FC<Props> = (props: Props) => {
 			>
 				{currentToolbarPanel && (
 					<currentToolbarPanel.component
-						{...{
-							selectedNode: props.selectedNode,
-							path: "",
-							context: props.context,
-						}}
-					></currentToolbarPanel.component>
+						selectedNode={selectedNode}
+						path=""
+						context={context}
+					/>
 				)}
 			</material.Paper>
 		</MiniToolbar>

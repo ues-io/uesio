@@ -1,42 +1,44 @@
-import React, { FC, ReactElement, SyntheticEvent } from "react"
+import React, { FunctionComponent, SyntheticEvent } from "react"
 
 import { SvgIconProps, IconButton, Tooltip } from "@material-ui/core"
 
-type Props = {
+interface Props {
 	title?: string
-	icon: FC<SvgIconProps>
+	icon: FunctionComponent<SvgIconProps>
 	color?: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
 	className?: string
 }
 
-function SmallIconButton(props: Props): ReactElement {
-	const color = props.disabled ? "#ccc" : props.color
+const SmallIconButton: FunctionComponent<Props> = ({
+	disabled,
+	color,
+	onClick,
+	className,
+	title,
+	icon: Icon,
+}) => {
+	const localColor = disabled ? "#ccc" : color
 	const button = (
 		<IconButton
-			onClick={props.onClick}
+			onClick={onClick}
 			size="small"
-			disabled={props.disabled}
-			className={props.className}
+			disabled={disabled}
+			className={className}
 		>
-			<props.icon
+			<Icon
 				style={{
 					fontSize: "0.9rem",
-					color,
+					color: localColor,
 				}}
 				fontSize="small"
 			/>
 		</IconButton>
 	)
-	if (props.title && !props.disabled) {
+	if (title && !disabled) {
 		return (
-			<Tooltip
-				enterDelay={1000}
-				title={props.title}
-				arrow
-				placement="top"
-			>
+			<Tooltip enterDelay={1000} title={title} arrow placement="top">
 				{button}
 			</Tooltip>
 		)

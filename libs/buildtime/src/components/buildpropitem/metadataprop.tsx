@@ -1,12 +1,18 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder, material } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-function MetadataProp(props: PropRendererProps): ReactElement | null {
+interface MetadataPropRendererProps extends PropRendererProps {
+	descriptor: builder.MetadataProp
+}
+
+const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const descriptor = props.descriptor as builder.MetadataProp
+	const descriptor = props.descriptor
 	const metadataType = descriptor.metadataType
+	const { path, getValue, context, setValue } = props
+	const value = getValue() as string
 
 	const namespaces = uesio.builder.useAvailableNamespaces()
 
@@ -14,7 +20,7 @@ function MetadataProp(props: PropRendererProps): ReactElement | null {
 
 	if (descriptor.groupingParents) {
 		const groupingNodePath = component.path.getAncestorPath(
-			props.path,
+			path,
 			descriptor.groupingParents
 		)
 
@@ -29,7 +35,6 @@ function MetadataProp(props: PropRendererProps): ReactElement | null {
 		grouping = groupingNode[descriptor.groupingProperty] as string
 	}
 
-	const value = props.getValue() as string
 	const [namespace, name] = component.path.parseKey(value)
 
 	const metadata = uesio.builder.useMetadataList(
@@ -40,12 +45,12 @@ function MetadataProp(props: PropRendererProps): ReactElement | null {
 
 	useEffect(() => {
 		if (!namespaces) {
-			uesio.builder.getAvailableNamespaces(props.context)
+			uesio.builder.getAvailableNamespaces(context)
 			return
 		}
 		if (!metadata && namespace) {
 			uesio.builder.getMetadataList(
-				props.context,
+				context,
 				metadataType,
 				namespace,
 				grouping
@@ -54,65 +59,69 @@ function MetadataProp(props: PropRendererProps): ReactElement | null {
 		}
 	})
 
-	const namespaceProps = namespaces
-		? {
-				...props,
-				setValue: (value: string) => {
-					props.setValue(value + ".")
-					return
-				},
-				getValue: () => {
-					return namespace
-				},
-				descriptor: {
-					...props.descriptor,
-					options: Object.keys(namespaces).map((key) => {
-						return {
-							value: key,
-							label: key,
-						}
-					}),
-				},
-		  }
-		: props
-
-	const collectionProps = metadata
-		? {
-				...props,
-				setValue: (value: string) => {
-					props.setValue(namespace + "." + value)
-					return
-				},
-				getValue: () => {
-					return name
-				},
-				descriptor: {
-					...props.descriptor,
-					label: "",
-					options: Object.keys(metadata).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					}),
-				},
-		  }
-		: {
-				...props,
-				descriptor: {
-					...props.descriptor,
-					label: "",
-				},
-		  }
-
 	return (
 		<material.Grid container spacing={1}>
 			<material.Grid item xs={6}>
-				<SelectProp {...namespaceProps} />
+				{namespaces ? (
+					<SelectProp
+						{...props}
+						setValue={(value: string) => {
+							setValue(value + ".")
+						}}
+						getValue={() => namespace}
+						descriptor={{
+							...descriptor,
+							type: "SELECT",
+							options: Object.keys(namespaces).map((key) => ({
+								value: key,
+								label: key,
+							})),
+						}}
+					/>
+				) : (
+					<SelectProp
+						{...props}
+						descriptor={{
+							...descriptor,
+							type: "SELECT",
+							label: "",
+							options: [],
+						}}
+					/>
+				)}
 			</material.Grid>
 			<material.Grid item xs={6}>
-				<SelectProp {...collectionProps} />
+				{metadata ? (
+					<SelectProp
+						{...props}
+						setValue={(value: string) => {
+							setValue(namespace + "." + value)
+						}}
+						getValue={() => name}
+						descriptor={{
+							...descriptor,
+							type: "SELECT",
+							label: "",
+							options: Object.keys(metadata).map((key) => {
+								const [, name] = component.path.parseKey(key)
+								return {
+									value: name,
+									label: name,
+								}
+							}),
+						}}
+					/>
+				) : (
+					<SelectProp
+						{...props}
+						descriptor={{
+							...descriptor,
+							type: "SELECT",
+							label: "",
+							options: [],
+						}}
+					/>
+				)}
 			</material.Grid>
 		</material.Grid>
 	)

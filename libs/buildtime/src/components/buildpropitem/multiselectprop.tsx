@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { TextField, MenuItem, Checkbox, ListItemText } from "@material-ui/core"
 import { builder } from "@uesio/ui"
 import {
@@ -8,48 +8,37 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 
-function MultiSelectProp(props: PropRendererProps): ReactElement {
+const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 	const descriptor = props.descriptor as builder.MultiSelectProp
-	const { definition } = props
+	const { definition, setValue } = props
 
 	const value = (definition?.[descriptor.name] || []) as string[]
 
 	return (
 		<TextField
-			{...{
-				select: true,
-				SelectProps: {
-					multiple: true,
-					renderValue: (selected) =>
-						(selected as string[]).join(", "),
-				},
-				variant: "outlined",
-				InputProps: inputProps,
-				InputLabelProps: inputLabelProps,
-				style: inputStyles,
-				size: "small",
-				value,
-				label: descriptor.label,
-				fullWidth: true,
-				onChange: (event): void => {
-					console.log("multi", event.target.value)
-					props.setValue(event.target.value)
-				},
+			select={true}
+			SelectProps={{
+				multiple: true,
+				renderValue: (selected) => (selected as string[]).join(", "),
+			}}
+			variant="outlined"
+			InputProps={inputProps}
+			InputLabelProps={inputLabelProps}
+			style={inputStyles}
+			size="small"
+			value={value}
+			label={descriptor.label}
+			fullWidth={true}
+			onChange={(event): void => {
+				setValue(event.target.value)
 			}}
 		>
-			{descriptor.options &&
-				descriptor.options.map(
-					(option: builder.PropertySelectOption) => {
-						return (
-							<MenuItem key={option.value} value={option.value}>
-								<Checkbox
-									checked={value.indexOf(option.value) > -1}
-								/>
-								<ListItemText primary={option.label} />
-							</MenuItem>
-						)
-					}
-				)}
+			{descriptor.options?.map((option) => (
+				<MenuItem key={option.value} value={option.value}>
+					<Checkbox checked={value.indexOf(option.value) > -1} />
+					<ListItemText primary={option.label} />
+				</MenuItem>
+			))}
 		</TextField>
 	)
 }

@@ -1,5 +1,5 @@
 import { definition, component, hooks } from "@uesio/ui"
-import React, { ReactElement, SyntheticEvent } from "react"
+import React, { FunctionComponent, SyntheticEvent } from "react"
 import BuildBorder from "../buildborder/buildborder"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { handleDrop, getDropIndex, isDropAllowed, isNextSlot } from "./dragdrop"
@@ -75,25 +75,27 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-function SlotItem(props: SlotItemProps): ReactElement | null {
-	const wrapperPath = props.path
-	const index = props.index || 0
+const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
+	const {
+		path: wrapperPath,
+		context,
+		direction,
+		dropNode,
+		accepts,
+		dragNode,
+		isExpanded,
+		size = 0,
+		index = 0,
+	} = props
 	const path = `${wrapperPath}["${index}"]`
-	const context = props.context
-	const direction = props.direction
 	const definition = props.definition as definition.DefinitionMap
 	const defKey = component.path.getDefinitionKey(definition)
 	const fullPath = `${path}["${defKey}"]`
-	const dropNode = props.dropNode
-	const dragNode = props.dragNode
-	const accepts = props.accepts
 
 	const uesio = hooks.useUesio(props)
 	const nodeState = uesio.builder.useNodeState(fullPath)
 	const isActive = nodeState === "active" || nodeState === "activeChild"
 	const isSelected = nodeState === "selected" || nodeState === "selectedChild"
-	const isExpanded = props.isExpanded
-	const size = props.size || 0
 	const isLast = index === size - 1
 
 	const propDef = component.registry.getPropertiesDefinitionFromPath(fullPath)
@@ -197,27 +199,25 @@ function SlotItem(props: SlotItemProps): ReactElement | null {
 			draggable={dragNode === fullPath}
 		>
 			<BuildBorder
-				{...{
-					isExpanded,
-					isActive,
-					isSelected,
-					onClick: (event: SyntheticEvent): void => {
-						!isSelected && uesio.builder.setSelectedNode(fullPath)
-						event.stopPropagation()
-					},
-					onMouseEnter: (): void => {
-						!isActive && uesio.builder.setActiveNode(fullPath)
-					},
-					onMouseLeave: (): void => {
-						isActive && uesio.builder.setActiveNode("")
-					},
-					setDragging: (): void => {
-						if (dragNode !== fullPath) {
-							uesio.builder.setDragNode(fullPath)
-						}
-					},
-					title: propDef ? propDef.title : "Unknown",
+				isExpanded={isExpanded}
+				isActive={isActive}
+				isSelected={isSelected}
+				onClick={(event: SyntheticEvent): void => {
+					!isSelected && uesio.builder.setSelectedNode(fullPath)
+					event.stopPropagation()
 				}}
+				onMouseEnter={(): void => {
+					!isActive && uesio.builder.setActiveNode(fullPath)
+				}}
+				onMouseLeave={(): void => {
+					isActive && uesio.builder.setActiveNode("")
+				}}
+				setDragging={(): void => {
+					if (dragNode !== fullPath) {
+						uesio.builder.setDragNode(fullPath)
+					}
+				}}
+				title={propDef ? propDef.title : "Unknown"}
 			>
 				{component.create(definition, index, path, context)}
 			</BuildBorder>

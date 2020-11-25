@@ -28,8 +28,9 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 - [React](https://reactjs.org/). Library for making UI elements.
-- [Redux](https://redux.js.org/). State mangement system for web application.
+- [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
+- [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # Monorepo architecture
 
@@ -40,7 +41,7 @@ Sandalone **libraries** are located in the `libs` folder. These libs are compone
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.
 
-The `workspace.json` is the entry point for the **build**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
+The `workspace.json` is the entry point for the **build**, **watcher**, **test**, **linting** processes for the whole monorepo. `nx.json` holds the configuration on dependency of apps/libs - esp. for the build process.
 
 For scaffolding a new lib, you can run the following script.
 
@@ -70,20 +71,27 @@ nx g @nrwl/workspace:library NEW_LIB
   npm run build-all
 ```
 
-- Install the following chrome plugins, React Developers Tools, Redux DevTools.
-- Optional. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
-- Optional. Install [Oh My Zsh](https://ohmyz.sh/)
-- Optional. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- Optional. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- Optional. Install the `nx` cli globally.
+- Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+
+---
+
+- _Optional_. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
+- _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
+  ```
+  npm run dev
+  ```
+- _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
+- _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+- _Optional_. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
+- _Optional_. Install the `nx` cli globally.
   ```
   npm install -g nx
   ```
-- Optional. Mock data for the CRM uesio app :
+- _Optional_. Mock data for the CRM uesio app :
   ```
    cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
   ```
-- Optional. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
+- _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
 {
@@ -120,8 +128,10 @@ npm run build-all
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 
-// or npm run nx -- build uesioapps-crm
-// or - if you have nx globally - nx build uesioapps-crm
+// or
+npm run nx -- build uesioapps-crm
+// or, if you have nx globally
+nx build uesioapps-crm
 ```
 
 ## Build a dedicated app (with watcher and source map)
@@ -132,11 +142,19 @@ On the frontend, the `source map` is enabled in webpack in `dev` mode. While dev
 cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
 ```
 
+# Watch mode
+
+While developping you may want the entire monorepo to rebuild upon file saving.
+
+```
+npm run watch-all
+```
+
 # Uesio apps deployment
 
 **Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
 
-For plugging such an application into uesio, you have to deploy it obviously after having built it. This deployment process is done by the `cli`.
+For plugging such an application into uesio, you have to deploy it, obviously after having built it. This deployment process is done by the `cli`.
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
@@ -265,19 +283,19 @@ docker exec -it CONTAINER_NAME /bin/bash
 CREATE DATABASE `test-cf94a`;
 ```
 
-4. Optional. Stop the container (which is as a normal process) when no need to have it running.
+4. _Optional_. Stop the container (which is as a normal process) when no need to have it running.
 
 ```
 docker stop CONTAINER_NAME
 ```
 
-5. Optional. Start an existing container
+5. _Optional_. Start an existing container
 
 ```
 docker start CONTAINER_NAME
 ```
 
-6. Optional. Remove the docker container when no longer needed.
+6. _Optional_. Remove the docker container when no longer needed.
 
 ```
 docker rm -f CONTAINER_NAME

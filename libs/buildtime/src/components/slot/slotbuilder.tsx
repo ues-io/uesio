@@ -1,5 +1,5 @@
 import { definition, component, hooks } from "@uesio/ui"
-import React, { ReactElement, Fragment } from "react"
+import React, { FunctionComponent, Fragment } from "react"
 import { makeStyles, createStyles } from "@material-ui/core"
 import SlotItem from "./slotitem"
 import { handleDrop, getDropIndex, isDropAllowed } from "./dragdrop"
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-function SlotBuilder(props: SlotProps): ReactElement | null {
+const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const { definition, path, context } = props
 	const items = definition.items as definition.DefinitionList
 	const accepts = definition.accepts
@@ -154,26 +154,22 @@ function SlotBuilder(props: SlotProps): ReactElement | null {
 			onDrop={onDrop}
 			className={classNames.join(" ")}
 		>
-			{items?.map((itemDef, index) => {
-				return (
-					<SlotItem
-						key={index}
-						{...{
-							path,
-							index,
-							definition: itemDef,
-							isExpanded,
-							direction,
-							size,
-							componentType: "",
-							context: context,
-							accepts,
-							dragNode,
-							dropNode,
-						}}
-					/>
-				)
-			})}
+			{items.map((itemDef, index) => (
+				<SlotItem
+					key={index}
+					path={path}
+					index={index}
+					definition={itemDef}
+					isExpanded={isExpanded}
+					direction={direction}
+					size={size}
+					componentType=""
+					context={context}
+					accepts={accepts}
+					dragNode={dragNode}
+					dropNode={dropNode}
+				/>
+			))}
 			{addPlaceholder && <div className={placeHolderClasses.join(" ")} />}
 		</div>
 	)
