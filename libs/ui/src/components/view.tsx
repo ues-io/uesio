@@ -73,7 +73,6 @@ const View: FC<Props> = (props: Props) => {
 		scriptResult.scripts
 	)
 	const route = uesio.route.useRoute()
-	const context = uesio.getContext()
 
 	const [themenamespace, themename] = route.theme
 		? parseKey(route.theme)
