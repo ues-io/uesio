@@ -1,4 +1,4 @@
-import React, { useEffect, FC } from "react"
+import React, { useEffect, FC, useState } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
@@ -48,24 +48,11 @@ interface Props extends BaseProps {
 const makeTheme = (theme: PaletteOptions) =>
 	createMuiTheme({
 		palette: { ...theme },
-		/*
-	palette: {
-		primary: colors.purple,
-		secondary: colors.deepPurple,
-	},
-	typography: {
-		fontFamily: [
-			"Montserrat",
-			"Roboto",
-			"Arial",
-			"sans-serif",
-		].join(","),
-	},
-	*/
 	})
 
 const View: FC<Props> = (props: Props) => {
 	const uesio = useUesio(props)
+	const [materialTheme, setMaterialTheme] = useState<PaletteOptions>({})
 	const viewname = props.definition.name
 	const viewnamespace = props.definition.namespace
 	const viewparams = props.definition.params
@@ -148,7 +135,28 @@ const View: FC<Props> = (props: Props) => {
 				info: "#ea9e0f8",
 			})
 		})
-		simulateBackend.then((response) => console.log("response", response))
+		simulateBackend.then(
+			(response: {
+				primary: string
+				error: string
+				info: string
+				secondary: string
+			}) =>
+				setMaterialTheme({
+					primary: {
+						main: response.primary,
+					},
+					secondary: {
+						main: response.secondary,
+					},
+					info: {
+						main: response.info,
+					},
+					error: {
+						main: response.error,
+					},
+				})
+		)
 	}, [])
 
 	const useRunTime =
@@ -171,7 +179,7 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 		return (
-			<ThemeProvider theme={makeTheme(PaletteOptions)}>
+			<ThemeProvider theme={makeTheme(materialTheme)}>
 				<CssBaseline />
 				<Slot {...slotProps}></Slot>
 			</ThemeProvider>
