@@ -149,9 +149,10 @@ class ViewDef extends Actor {
 			const parent = get(state.definition, pathArray)
 			if (index) {
 				const newParent = Array.isArray(parent)
-					? parent.filter((item: Definition, itemIndex: number) => {
-							return parseInt(index) !== itemIndex
-					  })
+					? parent.filter(
+							(item: Definition, itemIndex: number) =>
+								parseInt(index, 10) !== itemIndex
+					  )
 					: deleteProperty(parent, index)
 				if (state.definition) {
 					setWith(
@@ -222,8 +223,8 @@ class ViewDef extends Actor {
 				move(
 					fromParent,
 					toParent,
-					parseInt(fromIndex),
-					parseInt(toIndex)
+					parseInt(fromIndex, 10),
+					parseInt(toIndex, 10)
 				)
 
 				const destParentPath = getParentPath(destPath)
