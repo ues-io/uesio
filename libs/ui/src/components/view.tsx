@@ -151,20 +151,19 @@ const View: FC<Props> = (props: Props) => {
 		view.valid &&
 		view.source.loaded
 	) {
-		const slotProps = {
-			definition,
-			listName: "components",
-			path: "", // View slots paths are always empty
-			accepts: ["uesio.standalone"],
-			context: props.context.addFrame({
-				view: view.getId(),
-				buildMode: useBuildTime,
-			}),
-		}
 		return (
 			<ThemeProvider theme={makeTheme(materialTheme)}>
 				<CssBaseline />
-				<Slot {...slotProps}></Slot>
+				<Slot
+					definition={definition}
+					listName="components"
+					path="" // View slots paths are always empty
+					accepts={["uesio.standalone"]}
+					context={props.context.addFrame({
+						view: view.getId(),
+						buildMode: useBuildTime,
+					})}
+				></Slot>
 			</ThemeProvider>
 		)
 	}
