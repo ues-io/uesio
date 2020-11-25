@@ -140,8 +140,15 @@ const View: FC<Props> = (props: Props) => {
 		const resp = fetch(
 			`https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
 		)
-
-		console.log("RESP", resp)
+		const simulateBackend = new Promise((resolve, reject) => {
+			resolve({
+				primary: "#23fa0f8",
+				secondary: "#09fa0f8",
+				error: "#33a20f8",
+				info: "#ea9e0f8",
+			})
+		})
+		simulateBackend.then((response) => console.log("response", response))
 	}, [])
 
 	const useRunTime =
