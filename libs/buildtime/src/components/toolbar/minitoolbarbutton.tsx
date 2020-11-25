@@ -1,4 +1,4 @@
-import React, { FC, useState, memo } from "react"
+import React, { FunctionComponent, useState, memo } from "react"
 import {
 	makeStyles,
 	Theme,
@@ -13,7 +13,7 @@ import { material } from "@uesio/ui"
 
 type Props = {
 	id: string
-	icon: FC<SvgIconProps>
+	icon: FunctionComponent<SvgIconProps>
 	title: string
 	disabled?: boolean
 	tooltipPlacement?: PopperPlacementType
@@ -37,64 +37,66 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
-const MiniToolbarButton: FC<Props> = memo((props: Props) => {
-	const theme = useTheme()
-	const classes = useStyles(theme)
+const MiniToolbarButton: FunctionComponent<Props> = memo(
+	({
+		variant,
+		title,
+		tooltipPlacement,
+		disabled,
+		onClick,
+		id,
+		icon: Icon,
+	}) => {
+		const theme = useTheme()
+		const classes = useStyles(theme)
 
-	// Special handling for tooltips so that they
-	// Go away when clicked.
-	const [open, setOpen] = useState(false)
-	const [listen, setListen] = useState(true)
+		// Special handling for tooltips so that they
+		// Go away when clicked.
+		const [open, setOpen] = useState(false)
+		const [listen, setListen] = useState(true)
 
-	const tooltipProps = {
-		title: props.title,
-		placement: props.tooltipPlacement,
-		arrow: true,
-		open: open,
-		disableFocusListener: true,
-		onOpen: (): void => {
-			if (listen) {
-				setOpen(true)
-				setListen(false)
-			}
-		},
-		onClose: (): void => {
-			setOpen(false)
-			setListen(true)
-		},
-	}
+		const applyClasses = [classes.button]
 
-	const applyClasses = [classes.button]
+		if (variant === "save" || variant === "cancel") {
+			applyClasses.push(classes[variant])
+		}
 
-	if (props.variant === "save" || props.variant === "cancel") {
-		applyClasses.push(classes[props.variant])
-	}
+		const classNames = applyClasses.join(" ")
 
-	const classNames = applyClasses.join(" ")
-
-	return (
-		<Tooltip {...tooltipProps}>
-			<IconButton
-				{...{
-					color: "primary",
-					className: classNames,
-					disabled: props.disabled,
-					size: "small",
-					onClick: (): void => {
-						setOpen(false)
-						return props.onClick && props.onClick(props.id)
-					},
+		return (
+			<Tooltip
+				title={title}
+				placement={tooltipPlacement}
+				arrow={true}
+				open={open}
+				disableFocusListener={true}
+				onOpen={(): void => {
+					if (listen) {
+						setOpen(true)
+						setListen(false)
+					}
+				}}
+				onClose={(): void => {
+					setOpen(false)
+					setListen(true)
 				}}
 			>
-				<props.icon
-					style={{
-						fontSize: 16,
+				<IconButton
+					color="primary"
+					className={classNames}
+					disabled={disabled}
+					size="small"
+					onClick={(): void => {
+						setOpen(false)
+						return onClick && onClick(id)
 					}}
-				></props.icon>
-			</IconButton>
-		</Tooltip>
-	)
-})
+				>
+					<Icon style={{ fontSize: 16 }} />
+				</IconButton>
+			</Tooltip>
+		)
+	}
+)
 
 MiniToolbarButton.displayName = "MiniToolbarButton"
 
