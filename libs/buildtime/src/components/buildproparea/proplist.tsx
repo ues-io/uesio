@@ -7,26 +7,25 @@ interface Props extends definition.BaseProps {
 	definition: definition.DefinitionMap
 }
 
-const PropList: FunctionComponent<Props> = (props) => {
-	const { path, definition: def, context, properties } = props
-
-	return (
-		<Fragment>
-			{properties.map(
-				(descriptor: builder.PropDescriptor, index: number) => (
-					<BuildPropItem
-						key={index}
-						path={path}
-						definition={def}
-						descriptor={descriptor}
-						index={index}
-						componentType=""
-						context={context}
-					/>
-				)
-			)}
-		</Fragment>
-	)
-}
+const PropList: FunctionComponent<Props> = ({
+	path,
+	definition: def,
+	context,
+	properties,
+}) => (
+	<Fragment>
+		{properties.map((descriptor, index) => (
+			<BuildPropItem
+				key={index}
+				path={path}
+				definition={def}
+				descriptor={descriptor}
+				index={index}
+				componentType=""
+				context={context}
+			/>
+		))}
+	</Fragment>
+)
 
 export default PropList
