@@ -3,7 +3,6 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import { definition, builder } from "@uesio/ui"
 
 import DeleteAction from "./actions/deleteaction"
-import { ActionProps } from "./actions/actiondefinition"
 import MoveActions from "./actions/moveactions"
 import AddAction from "./actions/addaction"
 import RunSignalsAction from "./actions/runsignalsaction"
