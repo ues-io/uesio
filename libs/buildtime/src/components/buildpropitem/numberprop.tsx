@@ -23,7 +23,7 @@ const NumberProp: FunctionComponent<PropRendererProps> = ({
 		InputLabelProps={inputLabelProps}
 		variant="outlined"
 		onChange={(event): void => {
-			setValue(parseInt(event.target.value))
+			setValue(parseInt(event.target.value, 10))
 		}}
 	/>
 )
