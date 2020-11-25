@@ -129,18 +129,22 @@ const View: FC<Props> = (props: Props) => {
 		)
 		const simulateBackend = new Promise((resolve, reject) => {
 			resolve({
-				primary: "#23fa0f8",
-				secondary: "#09fa0f8",
-				error: "#33a20f8",
-				info: "#ea9e0f8",
+				primary: "#4791db",
+				secondary: "#e33371",
+				error: "#e57373",
+				warning: "#ffb74d",
+				info: "#64b5f6",
+				success: "#81c784",
 			})
 		})
 		simulateBackend.then(
 			(response: {
 				primary: string
-				error: string
-				info: string
 				secondary: string
+				error: string
+				warning: string
+				info: string
+				success: string
 			}) =>
 				setMaterialTheme({
 					primary: {
@@ -149,11 +153,17 @@ const View: FC<Props> = (props: Props) => {
 					secondary: {
 						main: response.secondary,
 					},
+					error: {
+						main: response.error,
+					},
+					warning: {
+						main: response.warning,
+					},
 					info: {
 						main: response.info,
 					},
-					error: {
-						main: response.error,
+					success: {
+						main: response.success,
 					},
 				})
 		)
