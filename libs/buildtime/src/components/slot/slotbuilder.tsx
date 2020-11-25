@@ -1,6 +1,6 @@
 import { definition, component, hooks } from "@uesio/ui"
 import React, { FunctionComponent, Fragment } from "react"
-import classNames from "classnames"
+import clsx from "clsx"
 import { makeStyles, createStyles } from "@material-ui/core"
 import SlotItem from "./slotitem"
 import { handleDrop, getDropIndex, isDropAllowed } from "./dragdrop"
@@ -122,7 +122,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	}
 
 	const classes = useStyles()
-	const containerClasses = classNames(
+	const containerClasses = clsx(
 		classes.root,
 		direction === "horizontal" ? classes.horizontal : classes.vertical,
 		{
@@ -134,7 +134,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const addPlaceholder =
 		dropNode === path || dropNode === `${path}["${size}"]`
 
-	const placeholderClasses = classNames(classes.placeHolder, {
+	const placeholderClasses = clsx(classes.placeHolder, {
 		[classes.placeHolderNoMargin]:
 			addPlaceholder &&
 			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,

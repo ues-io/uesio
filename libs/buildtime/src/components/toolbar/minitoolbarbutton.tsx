@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState, memo } from "react"
-import classNames from "classnames"
+import clsx from "clsx"
 import {
 	makeStyles,
 	Theme,
@@ -55,7 +55,7 @@ const MiniToolbarButton: FunctionComponent<Props> = memo(
 		// Go away when clicked.
 		const [open, setOpen] = useState(false)
 		const [listen, setListen] = useState(true)
-		const buttonClasses = classNames(
+		const buttonClasses = clsx(
 			classes.button,
 			variant && classes?.[variant]
 				? {
