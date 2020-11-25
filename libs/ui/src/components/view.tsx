@@ -140,10 +140,7 @@ const View: FC<Props> = (props: Props) => {
 		console.log("themename", themename)
 
 		const resp = fetch(
-			`https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`,
-			{
-				method: "get",
-			}
+			`https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
 		)
 
 		console.log("RESP", resp)
