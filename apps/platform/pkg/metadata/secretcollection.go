@@ -39,10 +39,7 @@ func (sc *SecretCollection) GetKeyPrefix(conditions reqs.BundleConditions) strin
 
 // AddItem function
 func (sc *SecretCollection) AddItem(item BundleableItem) {
-	actual := *sc
-	secret := item.(*Secret)
-	actual = append(actual, *secret)
-	*sc = actual
+	*sc = append(*sc, *item.(*Secret))
 }
 
 // UnMarshal function

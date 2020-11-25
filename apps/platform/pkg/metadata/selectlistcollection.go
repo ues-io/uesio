@@ -39,10 +39,7 @@ func (slc *SelectListCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 
 // AddItem function
 func (slc *SelectListCollection) AddItem(item BundleableItem) {
-	actual := *slc
-	selectList := item.(*SelectList)
-	actual = append(actual, *selectList)
-	*slc = actual
+	*slc = append(*slc, *item.(*SelectList))
 }
 
 // GetItem function

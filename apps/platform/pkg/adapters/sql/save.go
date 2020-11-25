@@ -155,8 +155,7 @@ func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string
 	}
 
 	for changeID, change := range changes {
-		changeResult := reqs.ChangeResult{}
-		changeResult.Data = change
+		changeResult := reqs.NewChangeResult(change)
 
 		postgresID, ok := change[collectionMetadata.IDField].(string)
 		if ok && postgresID != "" {
