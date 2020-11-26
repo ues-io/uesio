@@ -8,7 +8,7 @@ function CardActionBuilder(props: CardActionProps): ReactElement {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as CardActionDefinition
-	return <CardAction {...props} definition={definition}></CardAction>
+	return <CardAction {...props} definition={definition} />
 }
 
 export default CardActionBuilder
