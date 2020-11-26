@@ -38,7 +38,7 @@ func (slc *SelectListCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (slc *SelectListCollection) AddItem(item BundleableItem) {
+func (slc *SelectListCollection) AddItem(item CollectionableItem) {
 	*slc = append(*slc, *item.(*SelectList))
 }
 

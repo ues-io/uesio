@@ -29,6 +29,11 @@ func (uc *UserCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (uc *UserCollection) AddItem(item CollectionableItem) {
+	*uc = append(*uc, *item.(*User))
+}
+
 // Loop function
 func (uc *UserCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *uc {

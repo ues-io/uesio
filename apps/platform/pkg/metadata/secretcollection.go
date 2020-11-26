@@ -38,7 +38,7 @@ func (sc *SecretCollection) GetKeyPrefix(conditions reqs.BundleConditions) strin
 }
 
 // AddItem function
-func (sc *SecretCollection) AddItem(item BundleableItem) {
+func (sc *SecretCollection) AddItem(item CollectionableItem) {
 	*sc = append(*sc, *item.(*Secret))
 }
 

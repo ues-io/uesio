@@ -28,7 +28,7 @@ func (fc *FileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string 
 }
 
 // AddItem function
-func (fc *FileCollection) AddItem(item BundleableItem) {
+func (fc *FileCollection) AddItem(item CollectionableItem) {
 	*fc = append(*fc, *item.(*File))
 }
 

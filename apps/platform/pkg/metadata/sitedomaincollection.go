@@ -29,6 +29,11 @@ func (sdc *SiteDomainCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (sdc *SiteDomainCollection) AddItem(item CollectionableItem) {
+	*sdc = append(*sdc, *item.(*SiteDomain))
+}
+
 // Loop function
 func (sdc *SiteDomainCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *sdc {

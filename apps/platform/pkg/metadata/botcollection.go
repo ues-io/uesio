@@ -38,7 +38,7 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item BundleableItem) {
+func (bc *BotCollection) AddItem(item CollectionableItem) {
 	*bc = append(*bc, *item.(*Bot))
 }
 

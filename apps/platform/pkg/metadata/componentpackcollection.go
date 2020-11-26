@@ -38,7 +38,7 @@ func (cpc *ComponentPackCollection) GetKeyPrefix(conditions reqs.BundleCondition
 }
 
 // AddItem function
-func (cpc *ComponentPackCollection) AddItem(item BundleableItem) {
+func (cpc *ComponentPackCollection) AddItem(item CollectionableItem) {
 	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 

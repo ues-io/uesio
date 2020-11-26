@@ -18,6 +18,7 @@ type CollectionableGroup interface {
 	GetItem(index int) CollectionableItem
 	Loop(iter func(item CollectionableItem) error) error
 	Len() int
+	AddItem(CollectionableItem)
 }
 
 // CollectionableItem interface
@@ -35,7 +36,6 @@ type CollectionableItem interface {
 type BundleableGroup interface {
 	CollectionableGroup
 	NewItem(key string) (BundleableItem, error)
-	AddItem(BundleableItem)
 	GetKeyPrefix(reqs.BundleConditions) string
 }
 

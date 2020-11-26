@@ -26,7 +26,7 @@ func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) s
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item BundleableItem) {
+func (cc *CollectionCollection) AddItem(item CollectionableItem) {
 	*cc = append(*cc, *item.(*Collection))
 }
 

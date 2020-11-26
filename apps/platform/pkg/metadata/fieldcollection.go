@@ -39,7 +39,7 @@ func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item BundleableItem) {
+func (fc *FieldCollection) AddItem(item CollectionableItem) {
 	*fc = append(*fc, *item.(*Field))
 }
 

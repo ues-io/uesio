@@ -26,7 +26,7 @@ func (ufcc *UserFileCollectionCollection) GetKeyPrefix(conditions reqs.BundleCon
 }
 
 // AddItem function
-func (ufcc *UserFileCollectionCollection) AddItem(item BundleableItem) {
+func (ufcc *UserFileCollectionCollection) AddItem(item CollectionableItem) {
 }
 
 // UnMarshal function

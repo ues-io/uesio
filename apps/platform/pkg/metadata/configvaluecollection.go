@@ -38,7 +38,7 @@ func (cvc *ConfigValueCollection) GetKeyPrefix(conditions reqs.BundleConditions)
 }
 
 // AddItem function
-func (cvc *ConfigValueCollection) AddItem(item BundleableItem) {
+func (cvc *ConfigValueCollection) AddItem(item CollectionableItem) {
 	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 

@@ -29,6 +29,11 @@ func (bc *BundleDependencyCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (bc *BundleDependencyCollection) AddItem(item CollectionableItem) {
+	*bc = append(*bc, *item.(*BundleDependency))
+}
+
 // Loop function
 func (bc *BundleDependencyCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *bc {
