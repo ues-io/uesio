@@ -20,13 +20,13 @@
     "radix": "error",
     "no-new-wrappers": "error",
     "react/self-closing-comp": [
-      1,
+      "error",
       {
         "component": true,
         "html": true
       }
     ],
-    "react/jsx-closing-bracket-location": 1,
+    "react/jsx-closing-bracket-location": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {

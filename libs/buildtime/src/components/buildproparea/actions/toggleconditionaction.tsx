@@ -49,7 +49,7 @@ function ToggleConditionAction(props: ActionProps): ReactElement | null {
 			title={action.label}
 			onClick={clickHandler}
 			icon={condition.active ? OffIcon : OnIcon}
-		></ActionButton>
+		/>
 	)
 }
 

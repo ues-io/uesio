@@ -41,7 +41,7 @@ function MoveActions(props: ActionProps): ReactElement {
 				}}
 				icon={UpIcon}
 				disabled={!enableBackward}
-			></ActionButton>
+			/>
 			<ActionButton
 				title="Move Forward"
 				onClick={(): void => {
@@ -49,7 +49,7 @@ function MoveActions(props: ActionProps): ReactElement {
 				}}
 				icon={DownIcon}
 				disabled={!enableForward}
-			></ActionButton>
+			/>
 		</>
 	)
 }

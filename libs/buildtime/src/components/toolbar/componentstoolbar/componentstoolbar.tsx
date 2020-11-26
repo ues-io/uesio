@@ -52,7 +52,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 
 	return (
 		<Fragment>
-			<ToolbarTitle title="Components"></ToolbarTitle>
+			<ToolbarTitle title="Components" />
 			<div
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
