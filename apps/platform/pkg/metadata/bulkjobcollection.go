@@ -29,6 +29,11 @@ func (bjc *BulkJobCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (bjc *BulkJobCollection) AddItem(item CollectionableItem) {
+	*bjc = append(*bjc, *item.(*BulkJob))
+}
+
 // Loop function
 func (bjc *BulkJobCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *bjc {

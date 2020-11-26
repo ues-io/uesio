@@ -26,7 +26,7 @@ func (fsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (fsc *FileSourceCollection) AddItem(item BundleableItem) {
+func (fsc *FileSourceCollection) AddItem(item CollectionableItem) {
 }
 
 // UnMarshal function

@@ -26,11 +26,8 @@ func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) s
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item BundleableItem) {
-	actual := *cc
-	collection := item.(*Collection)
-	actual = append(actual, *collection)
-	*cc = actual
+func (cc *CollectionCollection) AddItem(item CollectionableItem) {
+	*cc = append(*cc, *item.(*Collection))
 }
 
 // UnMarshal function

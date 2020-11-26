@@ -38,11 +38,8 @@ func (cpc *ComponentPackCollection) GetKeyPrefix(conditions reqs.BundleCondition
 }
 
 // AddItem function
-func (cpc *ComponentPackCollection) AddItem(item BundleableItem) {
-	actual := *cpc
-	componentPack := item.(*ComponentPack)
-	actual = append(actual, *componentPack)
-	*cpc = actual
+func (cpc *ComponentPackCollection) AddItem(item CollectionableItem) {
+	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 
 // UnMarshal function

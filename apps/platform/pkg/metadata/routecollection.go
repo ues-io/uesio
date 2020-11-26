@@ -28,11 +28,8 @@ func (rc *RouteCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (rc *RouteCollection) AddItem(item BundleableItem) {
-	actual := *rc
-	route := item.(*Route)
-	actual = append(actual, *route)
-	*rc = actual
+func (rc *RouteCollection) AddItem(item CollectionableItem) {
+	*rc = append(*rc, *item.(*Route))
 }
 
 // UnMarshal function

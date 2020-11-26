@@ -29,6 +29,11 @@ func (sc *SiteCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (sc *SiteCollection) AddItem(item CollectionableItem) {
+	*sc = append(*sc, *item.(*Site))
+}
+
 // Loop function
 func (sc *SiteCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *sc {

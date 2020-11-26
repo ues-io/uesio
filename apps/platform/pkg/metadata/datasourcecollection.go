@@ -26,11 +26,8 @@ func (dsc *DataSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (dsc *DataSourceCollection) AddItem(item BundleableItem) {
-	actual := *dsc
-	datasource := item.(*DataSource)
-	actual = append(actual, *datasource)
-	*dsc = actual
+func (dsc *DataSourceCollection) AddItem(item CollectionableItem) {
+	*dsc = append(*dsc, *item.(*DataSource))
 }
 
 // UnMarshal function

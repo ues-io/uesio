@@ -28,11 +28,8 @@ func (fc *FileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string 
 }
 
 // AddItem function
-func (fc *FileCollection) AddItem(item BundleableItem) {
-	actual := *fc
-	file := item.(*File)
-	actual = append(actual, *file)
-	*fc = actual
+func (fc *FileCollection) AddItem(item CollectionableItem) {
+	*fc = append(*fc, *item.(*File))
 }
 
 // UnMarshal function

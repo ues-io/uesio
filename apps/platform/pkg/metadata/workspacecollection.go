@@ -29,6 +29,11 @@ func (wc *WorkspaceCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (wc *WorkspaceCollection) AddItem(item CollectionableItem) {
+	*wc = append(*wc, *item.(*Workspace))
+}
+
 // Loop function
 func (wc *WorkspaceCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *wc {
