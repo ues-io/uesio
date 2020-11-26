@@ -11,7 +11,7 @@ function ProgressGaugeBuilder(props: ProgressGaugeProps): ReactElement {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as ProgressGaugeDefinition
-	return <ProgressGauge {...props} definition={definition}></ProgressGauge>
+	return <ProgressGauge {...props} definition={definition} />
 }
 
 export default ProgressGaugeBuilder

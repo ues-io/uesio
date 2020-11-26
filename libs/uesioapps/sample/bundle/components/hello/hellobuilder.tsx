@@ -6,7 +6,7 @@ import { HelloProps, HelloDefinition } from "./hellodefinition"
 function HelloBuilder(props: HelloProps): ReactElement {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as HelloDefinition
-	return <Hello {...props} definition={definition}></Hello>
+	return <Hello {...props} definition={definition} />
 }
 
 export default HelloBuilder
