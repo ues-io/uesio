@@ -110,7 +110,7 @@ function Deck(props: DeckProps): ReactElement | null {
 				}
 				return (
 					<material.Grid key={record.getId()} {...itemProps}>
-						<component.Slot {...slotProps}></component.Slot>
+						<component.Slot {...slotProps} />
 					</material.Grid>
 				)
 			})}

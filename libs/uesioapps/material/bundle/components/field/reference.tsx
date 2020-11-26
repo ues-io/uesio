@@ -136,7 +136,7 @@ const Reference = (props: RendererProps): React.ReactElement | null => {
 						)
 					},
 				}}
-			></AutoCompleteField>
+			/>
 		)
 	}
 }

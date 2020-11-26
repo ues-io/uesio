@@ -8,7 +8,7 @@ function ContainerBuilder(props: ContainerProps): ReactElement | null {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as ContainerDefinition
-	return <Container {...props} definition={definition}></Container>
+	return <Container {...props} definition={definition} />
 }
 
 export default ContainerBuilder

@@ -24,7 +24,7 @@ function Container(props: ContainerProps): ReactElement {
 	}
 	return (
 		<material.Container className={classes.root}>
-			<component.Slot {...slotProps}></component.Slot>
+			<component.Slot {...slotProps} />
 		</material.Container>
 	)
 }

@@ -33,10 +33,10 @@ function TableBuilder(props: TableProps): ReactElement {
 						backgroundColor: "#f5f5f5",
 					}}
 				>
-					<component.Slot {...slotProps}></component.Slot>
+					<component.Slot {...slotProps} />
 				</div>
 			)}
-			<Table {...props} definition={definition}></Table>
+			<Table {...props} definition={definition} />
 		</>
 	)
 }

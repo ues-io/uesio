@@ -8,7 +8,7 @@ function GridItemBuilder(props: GridItemProps): ReactElement {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as GridItemDefinition
-	return <GridItem {...props} definition={definition}></GridItem>
+	return <GridItem {...props} definition={definition} />
 }
 
 export default GridItemBuilder

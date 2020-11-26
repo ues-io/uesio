@@ -8,7 +8,7 @@ function ButtonSetBuilder(props: ButtonSetProps): ReactElement {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as ButtonSetDefinition
-	return <ButtonSet {...props} definition={definition}></ButtonSet>
+	return <ButtonSet {...props} definition={definition} />
 }
 
 export default ButtonSetBuilder

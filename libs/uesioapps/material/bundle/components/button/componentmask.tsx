@@ -15,7 +15,7 @@ const useStyles = material.makeStyles(() =>
 
 function ComponentMask(): ReactElement {
 	const classes = useStyles({})
-	return <div className={classes.mask}></div>
+	return <div className={classes.mask} />
 }
 
 export default ComponentMask
