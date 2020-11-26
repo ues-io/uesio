@@ -1,48 +1,31 @@
-import React, { ReactElement } from "react"
-import { hooks, material, component, styles } from "@uesio/ui"
+import React, { FunctionComponent } from "react"
+import { hooks, material } from "@uesio/ui"
 import { CardActionProps } from "./cardactiondefinition"
 import Icon from "../icon/icon"
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: {
-			margin: theme.spacing(1),
-		},
-	})
-)
-
-function CardAction(props: CardActionProps): ReactElement {
-	const classes = useStyles(props)
+const CardAction: FunctionComponent<CardActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const definition = props.definition
-	const cardProps = {
-		className: classes.root,
-	}
-
-	const TooltipProps = {
-		title: props.definition?.helptext ? props.definition?.helptext : "",
-		placement: props.definition?.helptextposition,
-	}
-
-	const iconProps = {
-		definition: {
-			type: props.definition.icon,
-			size: props.definition.size,
-		},
-		path: props.path,
-		context: props.context,
-	}
-
-	const cardActionProps = {
-		onClick:
-			props.definition?.signals &&
-			uesio.signal.getHandler(props.definition.signals),
-	}
+	const { definition, path, context } = props
 
 	return (
-		<material.Tooltip {...TooltipProps}>
-			<material.IconButton {...cardActionProps}>
-				<Icon {...iconProps}></Icon>
+		<material.Tooltip
+			title={definition?.helptext || ""}
+			placement={definition?.helptextposition}
+		>
+			<material.IconButton
+				onClick={
+					definition?.signals &&
+					uesio.signal.getHandler(definition.signals)
+				}
+			>
+				<Icon
+					definition={{
+						type: definition.icon,
+						size: definition.size,
+					}}
+					path={path}
+					context={context}
+				/>
 			</material.IconButton>
 		</material.Tooltip>
 	)
