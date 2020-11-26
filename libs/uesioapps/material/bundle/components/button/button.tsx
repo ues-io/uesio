@@ -18,17 +18,20 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const buttonProps = {
-		className: classes.root,
-		color: definition?.color || "primary",
-		variant: definition?.variant || "contained",
-		fullWidth: definition.fullWidth,
-		onClick:
-			definition?.signals && uesio.signal.getHandler(definition.signals),
-	}
 
 	return (
-		<material.Button {...buttonProps}>{definition?.text}</material.Button>
+		<material.Button
+			className={classes.root}
+			color={definition?.color || "primary"}
+			variant={definition?.variant || "contained"}
+			fullWidth={definition.fullWidth}
+			onClick={
+				definition?.signals &&
+				uesio.signal.getHandler(definition.signals)
+			}
+		>
+			{definition?.text}
+		</material.Button>
 	)
 }
 
