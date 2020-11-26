@@ -32,7 +32,7 @@ function LoginIcon(props: IconProps): ReactElement | null {
 	const classes = useStyles(props)
 	return (
 		<div className={classes.loginButtonIcon}>
-			<div className={classes.loginButtonIconImage}></div>
+			<div className={classes.loginButtonIconImage} />
 		</div>
 	)
 }

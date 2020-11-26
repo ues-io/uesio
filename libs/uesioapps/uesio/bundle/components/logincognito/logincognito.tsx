@@ -87,8 +87,8 @@ function LoginButton(props: LoginButtonProps): ReactElement {
 			}}
 			className={classes.loginButton}
 		>
-			<LoginIcon image="uesio.amazonsmall"></LoginIcon>
-			<LoginText text={props.text}></LoginText>
+			<LoginIcon image="uesio.amazonsmall" />
+			<LoginText text={props.text} />
 		</button>
 	)
 }
@@ -215,7 +215,7 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 					<LoginButton
 						setMode={setMode}
 						text={props.definition.text}
-					></LoginButton>
+					/>
 				</LoginWrapper>
 			)}
 			{mode === "login" && (
@@ -225,7 +225,7 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 						logIn,
 						setMessage,
 					}}
-				></LoginForm>
+				/>
 			)}
 			{mode === "signup" && (
 				<SignupForm
@@ -237,7 +237,7 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 						setSignupPassword,
 						signUp,
 					}}
-				></SignupForm>
+				/>
 			)}
 			{mode === "confirm" && (
 				<ConfirmForm
@@ -245,7 +245,7 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 						setMode,
 						confirm,
 					}}
-				></ConfirmForm>
+				/>
 			)}
 		</div>
 	)

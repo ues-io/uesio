@@ -74,7 +74,7 @@ function ColorPicker(props: Props): ReactElement | null {
 							style={{
 								backgroundColor: color,
 							}}
-						></div>
+						/>
 					)
 				}
 				return null

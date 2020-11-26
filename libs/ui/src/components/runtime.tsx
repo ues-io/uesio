@@ -108,7 +108,7 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline></CssBaseline>
+			<CssBaseline />
 			<Route
 				{...{
 					path: props.path,
@@ -118,7 +118,7 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 						buildMode: buildMode && scriptsHaveLoaded,
 					}),
 				}}
-			></Route>
+			/>
 		</ThemeProvider>
 	)
 }
@@ -134,7 +134,7 @@ const Runtime: FC<Props> = (props: Props) => {
 					componentType: props.componentType,
 					context: props.context,
 				}}
-			></RuntimeInner>
+			/>
 		</Provider>
 	)
 }

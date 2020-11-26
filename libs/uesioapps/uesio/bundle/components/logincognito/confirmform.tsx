@@ -24,7 +24,7 @@ function ConfirmForm(props: ConfirmFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setVerificationCode(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.Button
 				onClick={() => {
 					props.setMode("")

@@ -20,7 +20,7 @@ const RunMode: FC<BaseProps> = (props: BaseProps) => {
 		},
 	}
 
-	return <View {...viewprops}></View>
+	return <View {...viewprops} />
 }
 
 export default RunMode

@@ -34,7 +34,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setFirstName(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.TextField
 				label="Last Name"
 				variant="outlined"
@@ -44,7 +44,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setLastName(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.TextField
 				label="Username"
 				variant="outlined"
@@ -54,7 +54,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					props.setSignupUsername(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.TextField
 				label="Email"
 				variant="outlined"
@@ -64,7 +64,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setEmail(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.TextField
 				label="Password"
 				variant="outlined"
@@ -75,7 +75,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					props.setSignupPassword(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.Button
 				onClick={() => {
 					props.setMode("")

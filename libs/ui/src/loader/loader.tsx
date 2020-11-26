@@ -25,7 +25,7 @@ class Loader {
 					componentType: "uesio.runtime",
 					context: new Context(),
 				}}
-			></Runtime>,
+			/>,
 			element
 		)
 	}
