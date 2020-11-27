@@ -55,6 +55,7 @@ func GetFieldTypes() map[string]bool {
 		"IMAGE":     true,
 		"ARRAY":     true,
 		"DATE":      true,
+		"MAP":       true,
 	}
 }
 

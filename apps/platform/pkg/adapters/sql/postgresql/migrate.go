@@ -48,6 +48,13 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 			if err != nil {
 				return err
 			}
+
+			if field.Type == "MAP" {
+				lfield = fieldName + " json"
+				otherfields = append(otherfields, lfield)
+				continue
+			}
+
 			lfield = fieldName + " text"
 
 			otherfields = append(otherfields, lfield)

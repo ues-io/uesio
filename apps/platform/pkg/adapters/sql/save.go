@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"text/template"
 
@@ -49,6 +50,15 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			return nil, "", "", err
 		}
 
+		if fieldMetadata.Type == "MAP" {
+			jsonValue, err := json.Marshal(value)
+			if err != nil {
+				return nil, "", "", errors.New("Error converting from map to json: " + fieldID)
+			}
+			postgresSQLUpdate[fieldName] = jsonValue
+			continue
+		}
+
 		postgresSQLUpdate[fieldName] = value
 
 	}
@@ -77,6 +87,15 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		fieldName, err := GetDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
+		}
+
+		if fieldMetadata.Type == "MAP" {
+			jsonValue, err := json.Marshal(value)
+			if err != nil {
+				return nil, errors.New("Error converting from map to json: " + fieldID)
+			}
+			inserts[fieldName] = jsonValue
+			continue
 		}
 
 		inserts[fieldName] = value

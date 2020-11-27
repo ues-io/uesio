@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -58,6 +59,25 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
+
+			if fieldMetadata.Type == "MAP" {
+
+				if len(colvals[index]) != 0 {
+					var anyJSON map[string]interface{}
+					err = json.Unmarshal(colvals[index], &anyJSON)
+
+					if err != nil {
+						return nil, errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+					}
+
+					colassoc[fieldID] = anyJSON
+				} else {
+					colassoc[fieldID] = nil
+				}
+
+				continue
+			}
+
 			colassoc[fieldID] = string(colvals[index])
 		}
 

@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -13,6 +14,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
+
+//GetBytes interface to bytes function
+func GetBytes(key interface{}) ([]byte, error) {
+	buf, ok := key.([]byte)
+	if !ok {
+		return nil, errors.New("GetBytes Error")
+	}
+
+	return buf, nil
+}
 
 func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
 
@@ -57,6 +68,33 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
+
+			if fieldMetadata.Type == "MAP" {
+
+				var aux = *colvals[index].(*interface{})
+
+				if aux != nil {
+					res, err := GetBytes(aux)
+
+					if err != nil {
+						return nil, err
+					}
+
+					var anyJSON map[string]interface{}
+					err = json.Unmarshal(res, &anyJSON)
+
+					if err != nil {
+						return nil, errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+					}
+
+					colassoc[fieldID] = anyJSON
+				} else {
+					colassoc[fieldID] = nil
+				}
+
+				continue
+			}
+
 			colassoc[fieldID] = *colvals[index].(*interface{})
 		}
 
