@@ -26,7 +26,7 @@ func (pc *PermissionSetCollection) GetKeyPrefix(conditions reqs.BundleConditions
 }
 
 // AddItem function
-func (pc *PermissionSetCollection) AddItem(item BundleableItem) {
+func (pc *PermissionSetCollection) AddItem(item CollectionableItem) {
 }
 
 // UnMarshal function

@@ -12,9 +12,10 @@ interface Props extends definition.BaseProps {
 
 const MINI_TOOLBAR_WIDTH = 50
 
-const LeftBuildbar: FunctionComponent<Props> = (props: Props) => {
+const LeftBuildbar: FunctionComponent<Props> = (props) => {
 	const selected = props.selectedPanel as "wires" | "components"
-	const { path, context, selectedNode } = props
+	const { context, selectedNode } = props
+	const path = selectedNode
 	const uesio = hooks.useUesio(props)
 
 	const toolbarMap = {

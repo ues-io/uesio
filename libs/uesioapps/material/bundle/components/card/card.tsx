@@ -4,7 +4,6 @@ import { hooks, material, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"
 
 import CardAction from "../cardaction/cardaction"
-import { CardActionProps } from "../cardaction/cardactiondefinition"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -27,50 +26,44 @@ const useStyles = material.makeStyles((theme) =>
 const Card: FunctionComponent<CardProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const definition = props.definition
+	const { definition, path, context } = props
 
-	const slotProps = {
-		definition,
-		listName: "components",
-		path: props.path,
-		accepts: ["uesio.standalone"],
-		context: props.context,
-	}
-
-	const cardActionAreaProps = {
-		onClick:
-			props.definition?.signals &&
-			uesio.signal.getHandler(props.definition.signals),
-	}
+	const cardActionAreaClickHandler = () =>
+		definition?.signals && uesio.signal.getHandler(definition.signals)
 
 	const cardMedia = <material.CardMedia className={classes.media} />
 	const cardContent = (
 		<material.CardContent>
-			<component.Slot {...slotProps}></component.Slot>
+			<component.Slot
+				definition={definition}
+				listName="components"
+				path={path}
+				accepts={["uesio.standalone"]}
+				context={context}
+			/>
 		</material.CardContent>
 	)
 	const cardActionList =
-		props.definition?.actions?.map?.((cardaction, index) => {
-			const cardActionProps: CardActionProps = {
-				definition: {
+		definition?.actions?.map?.((cardaction, index) => (
+			<CardAction
+				definition={{
 					icon: cardaction.icon,
 					size: cardaction.size,
 					signals: cardaction.signals,
 					helptext: cardaction.helptext,
 					helptextposition: cardaction.helptextposition,
-				},
-				path: props.path,
-				context: props.context,
-			}
-
-			return <CardAction {...cardActionProps} key={index}></CardAction>
-		}) || null
+				}}
+				path={path}
+				context={context}
+				key={index}
+			/>
+		)) || null
 
 	//Actions + Signals
-	if (props.definition?.actions && props.definition?.signals) {
+	if (definition?.actions && definition?.signals) {
 		return (
 			<material.Card className={classes.root}>
-				<material.CardActionArea {...cardActionAreaProps}>
+				<material.CardActionArea onClick={cardActionAreaClickHandler()}>
 					{cardMedia}
 					{cardContent}
 				</material.CardActionArea>
@@ -81,7 +74,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 		)
 	}
 	//Just Actions
-	if (props.definition?.actions) {
+	if (definition?.actions) {
 		return (
 			<material.Card className={classes.root}>
 				{cardMedia}
@@ -93,10 +86,10 @@ const Card: FunctionComponent<CardProps> = (props) => {
 		)
 	}
 	//Just Signals
-	if (props.definition?.signals) {
+	if (definition?.signals) {
 		return (
 			<material.Card className={classes.root}>
-				<material.CardActionArea {...cardActionAreaProps}>
+				<material.CardActionArea onClick={cardActionAreaClickHandler()}>
 					{cardMedia}
 					{cardContent}
 				</material.CardActionArea>

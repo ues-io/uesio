@@ -38,11 +38,8 @@ func (cvc *ConfigValueCollection) GetKeyPrefix(conditions reqs.BundleConditions)
 }
 
 // AddItem function
-func (cvc *ConfigValueCollection) AddItem(item BundleableItem) {
-	actual := *cvc
-	configValue := item.(*ConfigValue)
-	actual = append(actual, *configValue)
-	*cvc = actual
+func (cvc *ConfigValueCollection) AddItem(item CollectionableItem) {
+	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 
 // UnMarshal function

@@ -38,11 +38,8 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item BundleableItem) {
-	actual := *bc
-	bot := item.(*Bot)
-	actual = append(actual, *bot)
-	*bc = actual
+func (bc *BotCollection) AddItem(item CollectionableItem) {
+	*bc = append(*bc, *item.(*Bot))
 }
 
 // UnMarshal function

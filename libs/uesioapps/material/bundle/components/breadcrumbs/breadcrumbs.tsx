@@ -22,15 +22,18 @@ const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = (props) => {
 				const absHref =
 					href && !href.startsWith("/") ? `/${href}` : href
 				if (crumbDef.href) {
-					const linkProps = {
-						href: absHref,
-						onClick: (event: SyntheticEvent): void => {
-							event.preventDefault()
-							crumbDef.signals &&
-								uesio.signal.getHandler(crumbDef.signals)()
-						},
-					}
-					return <material.Link {...linkProps}>{text}</material.Link>
+					return (
+						<material.Link
+							href={absHref}
+							onClick={(event: SyntheticEvent): void => {
+								event.preventDefault()
+								crumbDef.signals &&
+									uesio.signal.getHandler(crumbDef.signals)()
+							}}
+						>
+							{text}
+						</material.Link>
+					)
 				}
 				return (
 					<material.Typography key={index}>

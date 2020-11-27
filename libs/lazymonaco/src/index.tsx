@@ -1,7 +1,7 @@
 // it is important to set global var before any imports
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-declare let __webpack_public_path__ : string
+declare let __webpack_public_path__: string
 
 declare global {
 	interface Window {
@@ -9,7 +9,7 @@ declare global {
 	}
 }
 
-import React, { lazy, createElement, FC, Suspense } from "react"
+import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
 
 import {
@@ -28,7 +28,7 @@ const LaziestMonaco = lazy(
 		)
 )
 
-type Props = {
+interface Props {
 	value?: string
 	language?: string
 	onChange?: ChangeHandler
@@ -36,34 +36,36 @@ type Props = {
 	editorDidMount?: EditorDidMount
 }
 
-const LazyMonaco: FC<Props> = (props) => {
-	return (
-		<Suspense fallback={createElement(LinearProgress)}>
-			<LaziestMonaco
-				{...{
-					value: props?.value,
-					language: props?.language || "yaml",
-					options: {
-						automaticLayout: true,
-						minimap: {
-							enabled: false,
-						},
-						//quickSuggestions: true,
-					},
-					onChange(newValue, event): void {
-						props?.onChange?.(newValue, event)
-					},
-					editorWillMount(monaco): void {
-						props?.editorWillMount?.(monaco)
-					},
-					editorDidMount: async (editor, monaco): Promise<void> => {
-						props?.editorDidMount?.(editor, monaco)
-					},
-				}}
-			></LaziestMonaco>
-		</Suspense>
-	)
-}
+const LazyMonaco: FunctionComponent<Props> = ({
+	value,
+	language,
+	onChange,
+	editorWillMount,
+	editorDidMount,
+}) => (
+	<Suspense fallback={createElement(LinearProgress)}>
+		<LaziestMonaco
+			value={value}
+			language={language || "yaml"}
+			options={{
+				automaticLayout: true,
+				minimap: {
+					enabled: false,
+				},
+				//quickSuggestions: true,
+			}}
+			onChange={(newValue, event): void => {
+				onChange?.(newValue, event)
+			}}
+			editorWillMount={(monaco): void => {
+				editorWillMount?.(monaco)
+			}}
+			editorDidMount={async (editor, monaco): Promise<void> => {
+				editorDidMount?.(editor, monaco)
+			}}
+		/>
+	</Suspense>
+)
 
 LazyMonaco.displayName = "LazyMonaco"
 

@@ -14,7 +14,7 @@ func (ufmc *UserFileMetadataCollection) GetFields() []string {
 }
 
 // AddItem function
-func (ufmc *UserFileMetadataCollection) AddItem(item BundleableItem) {
+func (ufmc *UserFileMetadataCollection) AddItem(item CollectionableItem) {
 }
 
 // UnMarshal function

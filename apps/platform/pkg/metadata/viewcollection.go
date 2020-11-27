@@ -39,11 +39,8 @@ func (vc *ViewCollection) GetKeyPrefix(conditions reqs.BundleConditions) string 
 }
 
 // AddItem function
-func (vc *ViewCollection) AddItem(item BundleableItem) {
-	actual := *vc
-	view := item.(*View)
-	actual = append(actual, *view)
-	*vc = actual
+func (vc *ViewCollection) AddItem(item CollectionableItem) {
+	*vc = append(*vc, *item.(*View))
 }
 
 // GetItem function

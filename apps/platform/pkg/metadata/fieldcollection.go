@@ -39,11 +39,8 @@ func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item BundleableItem) {
-	actual := *fc
-	field := item.(*Field)
-	actual = append(actual, *field)
-	*fc = actual
+func (fc *FieldCollection) AddItem(item CollectionableItem) {
+	*fc = append(*fc, *item.(*Field))
 }
 
 // UnMarshal function

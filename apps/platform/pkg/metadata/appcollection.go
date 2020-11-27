@@ -29,6 +29,11 @@ func (ac *AppCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (ac *AppCollection) AddItem(item CollectionableItem) {
+	*ac = append(*ac, *item.(*App))
+}
+
 // Loop function
 func (ac *AppCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *ac {

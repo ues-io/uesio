@@ -29,6 +29,11 @@ func (bbc *BulkBatchCollection) GetItem(index int) CollectionableItem {
 	return &actual[index]
 }
 
+// AddItem function
+func (bbc *BulkBatchCollection) AddItem(item CollectionableItem) {
+	*bbc = append(*bbc, *item.(*BulkBatch))
+}
+
 // Loop function
 func (bbc *BulkBatchCollection) Loop(iter func(item CollectionableItem) error) error {
 	for index := range *bbc {

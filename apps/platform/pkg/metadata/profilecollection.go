@@ -26,7 +26,7 @@ func (pc *ProfileCollection) GetKeyPrefix(conditions reqs.BundleConditions) stri
 }
 
 // AddItem function
-func (pc *ProfileCollection) AddItem(item BundleableItem) {
+func (pc *ProfileCollection) AddItem(item CollectionableItem) {
 }
 
 // UnMarshal function
