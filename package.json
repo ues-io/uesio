@@ -4,8 +4,9 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "kill-all-but-this": "ps ax | grep 'node' | egrep -v 'npm' | cut -b1-06 | xargs -t kill",
-  "dev": "npm run kill:webserver && npm run start & npm run kill:firestore && firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run dev:mock:crm && npm run dev:uesio:login && npm run deploy:uesioapps && npm run watch-all &",
+  "doofscript":"node toma.js & echo toma finished",
+  "kill-all-but-this": "pgrep node | grep -vf npm | xargs kill -9",
+  "dev": "npm run kill-all-but-this && npm run start & firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run dev:mock:crm && npm run dev:uesio:login && npm run deploy:uesioapps && npm run watch-all &",
   "watch-all": "nx run-many --target=watch --parallel --all",
   "kill:webserver": "lsof -t -i :3000 | xargs kill -9",
   "kill:firestore": "lsof -t -i :8080 -i :4000 | xargs kill -9",
