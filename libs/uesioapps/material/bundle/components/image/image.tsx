@@ -38,7 +38,7 @@ function Image(props: ImageProps): ReactElement | null {
 		)
 		return (
 			<div {...ImageProps}>
-				<img className={classes.inner} src={fileUrl}></img>
+				<img className={classes.inner} src={fileUrl} />
 			</div>
 		)
 	}

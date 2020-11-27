@@ -69,7 +69,7 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<GoogleLogin {...options}></GoogleLogin>
+			<GoogleLogin {...options} />
 		</LoginWrapper>
 	)
 }

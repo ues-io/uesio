@@ -99,7 +99,7 @@ const View: FC<Props> = (props: Props) => {
 				buildMode: useBuildTime,
 			}),
 		}
-		return <Slot {...slotProps}></Slot>
+		return <Slot {...slotProps} />
 	}
 	return null
 }

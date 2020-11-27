@@ -20,9 +20,7 @@ function Icon(props: IconProps): ReactElement | null {
 
 	const IconLoader = getIcon(iconType)
 
-	return (
-		<IconLoader className={classes.root} fontSize={iconsize}></IconLoader>
-	)
+	return <IconLoader className={classes.root} fontSize={iconsize} />
 }
 
 export default Icon

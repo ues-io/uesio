@@ -74,7 +74,7 @@ const SlotCell: FC<CellProps> = (props: CellProps) => {
 	}
 	return (
 		<material.TableCell key={fieldId}>
-			<component.Slot {...slotProps}></component.Slot>
+			<component.Slot {...slotProps} />
 		</material.TableCell>
 	)
 }
@@ -109,10 +109,10 @@ const TableRow: FC<RowProps> = (props: RowProps) => {
 				}
 
 				if (!column.components) {
-					return <FieldCell {...cellProps}></FieldCell>
+					return <FieldCell {...cellProps} />
 				}
 
-				return <SlotCell key={index} {...cellProps}></SlotCell>
+				return <SlotCell key={index} {...cellProps} />
 			})}
 		</material.TableRow>
 	)
@@ -134,7 +134,7 @@ const TableBody: FC<Props> = (props: Props) => {
 						context={props.context}
 						mode={props.state.mode}
 						record={record}
-					></TableRow>
+					/>
 				)
 			})}
 		</material.TableBody>

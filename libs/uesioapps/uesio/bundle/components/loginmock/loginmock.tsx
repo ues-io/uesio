@@ -44,8 +44,8 @@ function LoginMock(props: LoginProps): ReactElement | null {
 				}}
 				className={classes.loginButton}
 			>
-				<LoginIcon image="uesio.logosmall"></LoginIcon>
-				<LoginText text={buttonText}></LoginText>
+				<LoginIcon image="uesio.logosmall" />
+				<LoginText text={buttonText} />
 			</button>
 		</LoginWrapper>
 	)

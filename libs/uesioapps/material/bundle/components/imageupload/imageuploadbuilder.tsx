@@ -11,7 +11,7 @@ const ImageUploadBuilder = (props: ImageUploadProps): ReactElement => {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as ImageUploadDefinition
-	return <ImageUpload {...props} definition={definition}></ImageUpload>
+	return <ImageUpload {...props} definition={definition} />
 }
 
 export default ImageUploadBuilder

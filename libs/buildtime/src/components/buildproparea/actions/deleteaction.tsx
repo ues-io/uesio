@@ -13,7 +13,7 @@ function DeleteAction(props: ActionProps): ReactElement {
 				uesio.view.removeDefinition()
 			}}
 			icon={DeleteIcon}
-		></ActionButton>
+		/>
 	)
 }
 

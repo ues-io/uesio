@@ -125,7 +125,7 @@ function Dialog(props: DialogProps): ReactElement {
 			</material.DialogTitle>
 			<material.DialogContent>
 				<material.DialogContentText>
-					<component.Slot {...slotProps}></component.Slot>
+					<component.Slot {...slotProps} />
 				</material.DialogContentText>
 			</material.DialogContent>
 			<material.DialogActions>

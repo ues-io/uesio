@@ -6,7 +6,7 @@ import { hooks } from "@uesio/ui"
 function DialogBuilder(props: DialogProps): ReactElement {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as DialogDefinition
-	return <Dialog {...props} definition={definition}></Dialog>
+	return <Dialog {...props} definition={definition} />
 }
 
 export default DialogBuilder

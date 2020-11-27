@@ -25,7 +25,7 @@ function RunSignalsAction(props: ActionProps): ReactElement | null {
 			title={action.label}
 			onClick={clickHandler}
 			icon={SignalsIcon}
-		></ActionButton>
+		/>
 	)
 }
 

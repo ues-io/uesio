@@ -40,7 +40,7 @@ function GridItem(props: GridItemProps): ReactElement {
 
 	return (
 		<material.Grid {...gridItemProps}>
-			<component.Slot {...slotprops}></component.Slot>
+			<component.Slot {...slotprops} />
 		</material.Grid>
 	)
 }
