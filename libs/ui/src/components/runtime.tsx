@@ -4,14 +4,11 @@ import { BaseProps } from "../definition/definition"
 
 import { Platform } from "../platform/platform"
 
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
-
 import { Provider, create, getPlatform } from "../store/store"
 import { useUesio } from "../hooks/hooks"
 import RuntimeState from "../store/types/runtimestate"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import { Context } from "../context/context"
-import { colors } from "@material-ui/core"
 import { createComponent } from "../component/component"
 import Route from "./route"
 
@@ -19,30 +16,6 @@ type Props = BaseProps & {
 	platform: Platform
 	initialState: RuntimeState
 }
-
-const theme = createMuiTheme({
-	palette: {
-		primary: {
-			light: colors.teal[100],
-			main: colors.teal[500],
-			dark: colors.teal[700],
-		},
-	},
-	/*
-	palette: {
-		primary: colors.purple,
-		secondary: colors.deepPurple,
-	},
-	typography: {
-		fontFamily: [
-			"Montserrat",
-			"Roboto",
-			"Arial",
-			"sans-serif",
-		].join(","),
-	},
-	*/
-})
 
 function getNeededScripts(buildMode: boolean): string[] {
 	return buildMode ? [getPlatform().getBuilderCoreURL()] : []
@@ -107,19 +80,16 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 	}, [])
 
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<Route
-				{...{
-					path: props.path,
-					index: props.index,
-					componentType: props.componentType,
-					context: props.context.addFrame({
-						buildMode: buildMode && scriptsHaveLoaded,
-					}),
-				}}
-			/>
-		</ThemeProvider>
+		<Route
+			{...{
+				path: props.path,
+				index: props.index,
+				componentType: props.componentType,
+				context: props.context.addFrame({
+					buildMode: buildMode && scriptsHaveLoaded,
+				}),
+			}}
+		/>
 	)
 }
 
