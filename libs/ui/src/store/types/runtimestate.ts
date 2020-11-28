@@ -5,7 +5,7 @@ import SiteState from "./sitestate"
 import RouteState from "./routestate"
 import { PlainViewMap } from "../../view/view"
 import { PlainViewDefMap } from "../../viewdef/viewdef"
-import { Theme } from "../../theme/themetypes"
+import { ThemeState } from "../../theme/themetypes"
 
 type RuntimeState = {
 	collection?: PlainCollectionMap
@@ -15,7 +15,7 @@ type RuntimeState = {
 	route: RouteState
 	user: UserState
 	site: SiteState
-	theme: Theme
+	theme: ThemeState
 }
 
 export default RuntimeState
