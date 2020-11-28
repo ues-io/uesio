@@ -7,7 +7,6 @@ import { Platform } from "../platform/platform"
 import { mainReducer } from "../store/reducers"
 import RuntimeState from "./types/runtimestate"
 import { PlainWire } from "../wire/wire"
-import { PlainCollection } from "../collection/collection"
 import { PlainComponentState } from "../componentactor/componentactor"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
@@ -73,20 +72,6 @@ const useWire = (
 			return state.view?.[viewId].wires[wireName] || null
 		}
 		return null
-	})
-}
-
-// Both gets collection state and subscribes the component to collection changes
-const useCollection = (
-	collectionName: string | null
-): PlainCollection | null => {
-	// Even if we don't have a collectionName sent in, we still need to call useSelector
-	// That way if a collection of that name ever comes available, we will be able to
-	// pick up that subscription.
-	return useSelector((state: RuntimeState) => {
-		return collectionName && state.collection
-			? state.collection[collectionName]
-			: null
 	})
 }
 
@@ -321,7 +306,6 @@ export {
 	getPlatform,
 	getStore,
 	useWire,
-	useCollection,
 	useView,
 	useComponentState,
 	useBuilderNodeState,

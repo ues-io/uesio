@@ -1,20 +1,5 @@
-import { FieldMetadataMap, Field } from "./field"
-
-type PlainCollection = {
-	name: string
-	namespace: string
-	idField: string
-	nameField: string
-	createable: boolean
-	accessible: boolean
-	updateable: boolean
-	deleteable: boolean
-	fields: FieldMetadataMap
-}
-
-type PlainCollectionMap = {
-	[key: string]: PlainCollection
-}
+import Field from "../field/class"
+import { PlainCollection } from "./types"
 
 class Collection {
 	constructor(source: PlainCollection | null) {
@@ -48,4 +33,4 @@ class Collection {
 	}
 }
 
-export { Collection, PlainCollectionMap, PlainCollection }
+export default Collection

@@ -34,7 +34,7 @@ import shortid from "shortid"
 import { deleteProperty } from "../util/util"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { getInitializedConditions } from "./wirecondition"
-import { collectionActions } from "../bands/collection"
+import { load as loadCollection } from "../bands/collection"
 import { AnyAction } from "redux"
 
 const WIRE_BAND = "wire"
@@ -294,9 +294,7 @@ class WireBand {
 								},
 								view: viewId,
 							})
-							dispatch(
-								collectionActions.load(response.collections)
-							)
+							dispatch(loadCollection(response.collections))
 						})
 
 						for (const wire of wireList) {

@@ -1,4 +1,4 @@
-import { PlainCollectionMap } from "../collection/collection"
+import { PlainCollectionMap } from "../bands/collection/types"
 
 type LoadResponse = {
 	wire: string

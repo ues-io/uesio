@@ -1,7 +1,6 @@
 import RuntimeState from "../store/types/runtimestate"
 import { SignalDefinition } from "../definition/signal"
 import Actor from "./actor"
-import { BotBand } from "../bot/botband"
 import { WireBand } from "../wire/wireband"
 import { ComponentBand } from "../componentactor/componentband"
 import { BuilderBand } from "../builder/builderband"
@@ -26,7 +25,6 @@ type BandMap = {
 }
 
 const bandMap: BandMap = {
-	bot: BotBand,
 	builder: BuilderBand,
 	component: ComponentBand,
 	platform: PlatformBand,

@@ -9,6 +9,8 @@ import { AnyAction } from "redux"
 const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
 	const band = getBand(action.band)
 
+	// Old method of running action reducers
+	// TODO: Remove this completely
 	if (band) {
 		if (action.type === ACTOR) {
 			if (action.target) {

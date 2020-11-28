@@ -18,6 +18,20 @@ import RuntimeState from "../store/types/runtimestate"
 import { COMPONENT_BAND } from "../componentactor/componentband"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
+import { registry as botRegistry } from "../bands/bot/signals"
+import { BotSignal } from "../bands/bot/types"
+
+const signalRegistry = {
+	bot: botRegistry,
+}
+
+type RegisteredSignal = BotSignal
+
+const validateSignalBand = (
+	signal: SignalDefinition
+): signal is RegisteredSignal => {
+	return signal.band in signalRegistry
+}
 
 function getSignalHandler(
 	signal: SignalDefinition,
@@ -27,6 +41,17 @@ function getSignalHandler(
 		dispatch: Dispatcher<StoreAction>,
 		getState: () => RuntimeState
 	): DispatchReturn => {
+		// New method of calling signals (ducks with signal registries)
+		if (validateSignalBand(signal)) {
+			const registry = signalRegistry[signal.band]
+			if (registry.validateSignal(signal)) {
+				const handler = registry.handlers[signal.signal]
+				return dispatch(handler.dispatcher(signal, context))
+			}
+		}
+
+		// Old method of calling signals (Actor and Band classes)
+		// TODO: remove this completely
 		const band = getBand(signal.band)
 		const target = signal.target
 			? band.getActor(

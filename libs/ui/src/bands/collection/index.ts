@@ -1,8 +1,18 @@
-import reducer from "./reducers"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { PlainCollectionMap } from "./types"
 
-//export { default as collectionSelectors } from "./selectors";
-//export { default as collectionOperations } from "./operations";
-export { default as collectionActions } from "./actions"
-//export { default as collectionTypes } from "./types"
+const initialState: PlainCollectionMap = {}
 
-export default reducer
+const collectionSlice = createSlice({
+	name: "collection",
+	initialState,
+	reducers: {
+		load: (state, { payload }: PayloadAction<PlainCollectionMap>) => ({
+			...state,
+			...payload,
+		}),
+	},
+})
+
+export const { load } = collectionSlice.actions
+export default collectionSlice.reducer

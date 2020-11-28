@@ -1,35 +1,4 @@
-type FieldMetadataMap = {
-	[key: string]: FieldMetadata
-}
-
-type FieldType =
-	| "NUMBER"
-	| "TEXT"
-	| "REFERENCE"
-	| "LONGTEXT"
-	| "SELECT"
-	| "CHECKBOX"
-	| "DATE"
-	| "IMAGE"
-	| "FILE"
-	| "MAP"
-
-type SelectOption = {
-	label: string
-	value: string
-}
-
-type FieldMetadata = {
-	name: string
-	createable: boolean
-	accessible: boolean
-	updateable: boolean
-	type: FieldType
-	label: string
-	options?: SelectOption[]
-	foreignKeyField?: string
-	referencedCollection?: string
-}
+import { FieldMetadata, FieldType, SelectOption } from "./types"
 
 class Field {
 	constructor(source: FieldMetadata | null) {
@@ -73,4 +42,4 @@ class Field {
 	}
 }
 
-export { FieldMetadata, FieldMetadataMap, Field, SelectOption, FieldType }
+export default Field
