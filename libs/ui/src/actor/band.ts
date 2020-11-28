@@ -9,7 +9,6 @@ import { ViewDefBand } from "../viewdef/viewdefband"
 import { ThunkFunc } from "../store/store"
 import { BandAction } from "../store/actions/actions"
 import { PlatformBand } from "../platform/platformband"
-import { RouteBand } from "../route/routeband"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
 
@@ -28,7 +27,6 @@ const bandMap: BandMap = {
 	builder: BuilderBand,
 	component: ComponentBand,
 	platform: PlatformBand,
-	route: RouteBand,
 	view: ViewBand,
 	viewdef: ViewDefBand,
 	wire: WireBand,

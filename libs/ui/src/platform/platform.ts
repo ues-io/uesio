@@ -5,8 +5,8 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { MetadataListStore } from "../store/types/builderstate"
 import { Context } from "../context/context"
-import WorkspaceState from "../store/types/workspacestate"
 import { metadata } from "@uesio/constants"
+import { WorkspaceState } from "../bands/route/types"
 
 type RouteResponse = {
 	viewname: string

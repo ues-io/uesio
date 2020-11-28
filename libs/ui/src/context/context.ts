@@ -1,13 +1,12 @@
 import { Wire } from "../wire/wire"
 import { WireRecord } from "../wire/wirerecord"
 import { View } from "../view/view"
-import WorkspaceState from "../store/types/workspacestate"
-import RouteState from "../store/types/routestate"
 import { field } from "@uesio/constants"
 import { getStore } from "../store/store"
 import { ViewBand } from "../view/viewband"
 import { WireBand } from "../wire/wireband"
 import Collection from "../bands/collection/class"
+import { RouteState, WorkspaceState } from "../bands/route/types"
 
 type ContextFrame = {
 	wire?: string

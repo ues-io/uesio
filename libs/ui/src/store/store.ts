@@ -11,7 +11,6 @@ import { PlainComponentState } from "../componentactor/componentactor"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
 import yaml from "yaml"
-import RouteState from "./types/routestate"
 import { PlainView, View } from "../view/view"
 import { ViewBand } from "../view/viewband"
 import Dependencies from "./types/dependenciesstate"
@@ -258,12 +257,6 @@ const useBuilderAvailableNamespaces = (): MetadataListStore => {
 	})
 }
 
-const useRoute = (): RouteState => {
-	return useSelector((state: RuntimeState) => {
-		return state.route
-	})
-}
-
 const useViewDefinition = (view: View, path?: string): Definition => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
@@ -319,7 +312,6 @@ export {
 	useBuilderHasChanges,
 	useBuilderMetadataList,
 	useBuilderAvailableNamespaces,
-	useRoute,
 	useViewYAML,
 	useViewDefinition,
 	useViewDependencies,

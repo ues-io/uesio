@@ -1,5 +1,9 @@
 import { ViewParams } from "../../view/view"
-import WorkspaceState from "./workspacestate"
+
+type WorkspaceState = {
+	name: string
+	app: string
+}
 
 type RouteState = {
 	viewname: string
@@ -10,4 +14,4 @@ type RouteState = {
 	workspace?: WorkspaceState
 }
 
-export default RouteState
+export { RouteState, WorkspaceState }

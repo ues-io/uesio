@@ -27,8 +27,8 @@ import { batch } from "react-redux"
 import { LoginAction, LogoutAction } from "./platformbandactions"
 import { BUILDER_BAND } from "../builder/builderband"
 import { CLEAR_AVAILABLE_METADATA } from "../builder/builderbandactions"
-import { SET_ROUTE } from "../route/routeactions"
-import { ROUTE_BAND } from "../route/routeband"
+import { set as setRoute } from "../bands/route"
+import { AnyAction } from "redux"
 
 async function responseRedirect(
 	response: LoginResponse,
@@ -144,7 +144,7 @@ class PlatformBand {
 				context: Context
 			): ThunkFunc => {
 				return async (
-					dispatch: Dispatcher<StoreAction>,
+					dispatch: Dispatcher<AnyAction>,
 					getState: () => RuntimeState,
 					platform: Platform
 				): DispatchReturn => {
@@ -177,18 +177,14 @@ class PlatformBand {
 							band: BUILDER_BAND,
 							name: CLEAR_AVAILABLE_METADATA,
 						})
-						// Set the view name and namespace values
-						dispatch({
-							type: BAND,
-							band: ROUTE_BAND,
-							name: SET_ROUTE,
-							data: {
+						dispatch(
+							setRoute({
 								name: viewName,
 								namespace: viewNamespace,
 								params: routeResponse.params,
 								workspace: routeResponse.workspace,
-							},
-						})
+							})
+						)
 					})
 					if (!signal.noPushState) {
 						const prefix = getWorkspacePrefix(context, signal)
