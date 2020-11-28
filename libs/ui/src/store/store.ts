@@ -1,7 +1,7 @@
-import { createStore, applyMiddleware, Store } from "redux"
+import { AnyAction, Store } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch, useSelector } from "react-redux"
-import { composeWithDevTools } from "redux-devtools-extension"
+import { configureStore } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
 import { mainReducer } from "../store/reducers"
@@ -12,7 +12,6 @@ import { PlainComponentState } from "../componentactor/componentactor"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
 import yaml from "yaml"
-import { StoreAction } from "./actions/actions"
 import RouteState from "./types/routestate"
 import { PlainView, View } from "../view/view"
 import { ViewBand } from "../view/viewband"
@@ -23,17 +22,8 @@ import { metadata } from "@uesio/constants"
 
 type DispatchReturn = Promise<Context>
 
-type Dispatcher<T extends StoreAction> = ThunkDispatch<
-	RuntimeState,
-	Platform,
-	T
->
-type ThunkFunc = ThunkAction<
-	DispatchReturn,
-	RuntimeState,
-	Platform,
-	StoreAction
->
+type Dispatcher<T extends AnyAction> = ThunkDispatch<RuntimeState, Platform, T>
+type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
 
 const defaultState = {
 	collection: {},
@@ -45,17 +35,20 @@ let platform: Platform
 let store: Store
 
 const create = (plat: Platform, initialState: RuntimeState): Store => {
-	const state = Object.assign({}, defaultState, initialState)
 	platform = plat
-	store = createStore(
-		mainReducer,
-		state,
-		composeWithDevTools(applyMiddleware(thunk.withExtraArgument(plat)))
-	)
+	store = configureStore({
+		reducer: mainReducer,
+		devTools: true,
+		preloadedState: {
+			...defaultState,
+			...initialState,
+		},
+		middleware: [thunk.withExtraArgument(plat)],
+	})
 	return store
 }
 
-const getDispatcher = (): Dispatcher<StoreAction> => {
+const getDispatcher = (): Dispatcher<AnyAction> => {
 	return useDispatch()
 }
 

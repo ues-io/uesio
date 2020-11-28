@@ -7,7 +7,7 @@ import { field } from "@uesio/constants"
 import { getStore } from "../store/store"
 import { ViewBand } from "../view/viewband"
 import { WireBand } from "../wire/wireband"
-import { CollectionBand } from "../collection/collectionband"
+import { Collection } from "../collection/collection"
 
 type ContextFrame = {
 	wire?: string
@@ -89,9 +89,8 @@ class Context {
 		const wireId = this.getWireId()
 		const viewId = this.getViewId()
 		const wire = WireBand.getActor(state, wireId, viewId)
-		const collection = CollectionBand.getActor(
-			state,
-			wire.getCollectionName()
+		const collection = new Collection(
+			state?.collection?.[wire.getCollectionName()] || null
 		)
 		wire.attachCollection(collection.source)
 		return wire.valid ? wire : undefined

@@ -11,7 +11,6 @@ import { ThunkFunc } from "../store/store"
 import { BandAction } from "../store/actions/actions"
 import { PlatformBand } from "../platform/platformband"
 import { RouteBand } from "../route/routeband"
-import { CollectionBand } from "../collection/collectionband"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
 
@@ -30,7 +29,6 @@ const bandMap: BandMap = {
 	bot: BotBand,
 	builder: BuilderBand,
 	component: ComponentBand,
-	collection: CollectionBand,
 	platform: PlatformBand,
 	route: RouteBand,
 	view: ViewBand,

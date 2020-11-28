@@ -1,8 +1,4 @@
-import Actor from "../actor/actor"
-import RuntimeState from "../store/types/runtimestate"
 import { FieldMetadataMap, Field } from "./field"
-import { ActorAction, StoreAction } from "../store/actions/actions"
-import { Dispatcher } from "../store/store"
 
 type PlainCollection = {
 	name: string
@@ -20,28 +16,14 @@ type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
-class Collection extends Actor {
+class Collection {
 	constructor(source: PlainCollection | null) {
-		super()
 		this.valid = !!source
 		this.source = source || ({} as PlainCollection)
 	}
 
 	source: PlainCollection
 	valid: boolean
-
-	receiveAction(action: ActorAction, state: RuntimeState): RuntimeState {
-		return state
-	}
-
-	receiveSignal(): Dispatcher<StoreAction> {
-		return (): null => null
-	}
-
-	// Serializes this wire into a redux state
-	toState(): PlainCollection {
-		return { ...this.source }
-	}
 
 	getId(): string {
 		return this.source.name
