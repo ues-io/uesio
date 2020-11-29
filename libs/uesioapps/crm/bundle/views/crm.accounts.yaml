@@ -56,10 +56,9 @@ definition:
                 - material.button:
                     color: primary
                     signals:
-                      - band: route
-                        namespace: crm
+                      - namespace: crm
                         path: account/${crm.id}
-                        signal: NAVIGATE
+                        signal: route/NAVIGATE
                     text: Edit
                     variant: contained
                 - material.button:

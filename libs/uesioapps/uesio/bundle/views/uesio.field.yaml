@@ -97,36 +97,31 @@ definition:
                       - text: home
                         href: home
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: collections
                         href: app/$Param{appname}/workspace/$Param{workspacename}/collections
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/collections
                             namespace: uesio
                       - text: $Param{collectionname}
                         href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
                             namespace: uesio
                       - text: $Param{fieldname}
@@ -194,8 +189,7 @@ definition:
                                                             band: "wire"
                                                             targets:
                                                               - "fields"
-                                                          - signal: "NAVIGATE"
-                                                            band: "route"
+                                                          - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}"
                                                             namespace: "uesio"
                                   - material.field:

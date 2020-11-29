@@ -17,10 +17,9 @@ definition:
                       - 0
                       - 2
                     signals:
-                      - band: route
-                        namespace: crm
+                      - namespace: crm
                         path: home
-                        signal: NAVIGATE
+                        signal: route/NAVIGATE
           - material.griditem:
               components:
                 - material.grid:
@@ -30,30 +29,27 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: route
-                                    namespace: crm
+                                  - namespace: crm
                                     path: accounts
-                                    signal: NAVIGATE
+                                    signal: route/NAVIGATE
                                 text: Accounts
                                 variant: text
                       - material.griditem:
                           components:
                             - material.button:
                                 signals:
-                                  - band: route
-                                    namespace: crm
+                                  - namespace: crm
                                     path: contacts
-                                    signal: NAVIGATE
+                                    signal: route/NAVIGATE
                                 text: Contacts
                                 variant: text
                       - material.griditem:
                           components:
                             - material.button:
                                 signals:
-                                  - band: route
-                                    namespace: crm
+                                  - namespace: crm
                                     path: leads
-                                    signal: NAVIGATE
+                                    signal: route/NAVIGATE
                                 text: Leads
                                 variant: text
           - material.griditem:
@@ -65,8 +61,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: user
-                                    signal: LOGOUT
+                                  - signal: user/LOGOUT
                                 text: Log Out
                                 variant: text
                       - material.griditem:

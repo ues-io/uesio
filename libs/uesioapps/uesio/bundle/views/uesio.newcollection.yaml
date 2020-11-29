@@ -103,16 +103,14 @@ definition:
                                 variant: "contained"
                                 text: "Save"
                                 signals:
-                                  - signal: "CALL"
-                                    band: "bot"
+                                  - signal: "bot/CALL"
                                     bot: "uesio.newcollection"
                                     params:
                                       name: ${uesio.name}
                                       datasource: ${uesio.datasource}
                                       workspace: $Param{workspacename}
                                       app: $Param{appname}
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -120,8 +118,7 @@ definition:
                                 variant: "outlined"
                                 text: "Cancel"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
                                     namespace: "uesio"
 dependencies:

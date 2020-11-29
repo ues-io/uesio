@@ -1,5 +1,8 @@
 import { metadata } from "@uesio/constants"
-import { getAvailableNamespacesSignal, getMetadataListSignal } from "./signals"
+import {
+	getAvailableNamespacesCreator,
+	getMetadataListCreator,
+} from "./signals"
 
 type MetadataListStore = {
 	[key: string]: MetadataListStore | null
@@ -25,19 +28,15 @@ type MetadataListResponse = {
 	metadata: MetadataListStore
 }
 
-type GetMetadataListSignal = ReturnType<typeof getMetadataListSignal>
+type GetMetadataListSignal = ReturnType<typeof getMetadataListCreator>
 type GetAvailableNamespacesSignal = ReturnType<
-	typeof getAvailableNamespacesSignal
+	typeof getAvailableNamespacesCreator
 >
-
-// A type that describes all signals in the bot band
-type BuilderSignal = GetMetadataListSignal | GetAvailableNamespacesSignal
 
 export {
 	BuilderState,
 	MetadataListStore,
 	MetadataListResponse,
-	BuilderSignal,
 	GetMetadataListSignal,
 	GetAvailableNamespacesSignal,
 }

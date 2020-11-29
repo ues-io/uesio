@@ -1,8 +1,5 @@
-import { callSignal } from "./signals"
+import { callCreator } from "./signals"
 
-type CallSignal = ReturnType<typeof callSignal>
+type CallSignal = ReturnType<typeof callCreator>
 
-// A type that describes all signals in the bot band
-type BotSignal = CallSignal
-
-export { BotSignal, CallSignal }
+export { CallSignal }

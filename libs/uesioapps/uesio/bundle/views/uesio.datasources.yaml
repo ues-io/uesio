@@ -51,22 +51,19 @@ definition:
                 - text: home
                   href: home
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: datasources
@@ -90,8 +87,7 @@ definition:
                                 variant: "outlined"
                                 text: "Create New Datasource"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newdatasource"
                                     namespace: "uesio"
           - material.deck:
@@ -117,8 +113,7 @@ definition:
                       - material.typography:
                           text: "${uesio.workspace}"
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "route"
+                      - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${uesio.name}"
                         namespace: "uesio"
 dependencies:

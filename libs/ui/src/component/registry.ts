@@ -9,7 +9,7 @@ type ComponentNamespaceRegistry = {
 }
 
 type ComponentRegistry = {
-	[key: string]: React.ComponentType<BaseProps>
+	[key: string]: React.FunctionComponent<BaseProps> | undefined
 }
 
 type DefinitionNamespaceRegistry = {
@@ -24,77 +24,57 @@ const registry: ComponentNamespaceRegistry = {}
 const builderRegistry: ComponentNamespaceRegistry = {}
 const definitionRegistry: DefinitionNamespaceRegistry = {}
 
-function addToRegistry(
+const addToRegistry = (
 	registry: ComponentNamespaceRegistry | DefinitionNamespaceRegistry,
 	namespace: string,
 	name: string,
-	componentType: React.ComponentType<BaseProps> | BuildPropertiesDefinition
-): void {
+	componentType:
+		| React.FunctionComponent<BaseProps>
+		| BuildPropertiesDefinition
+) => {
 	if (!registry[namespace]) {
 		registry[namespace] = {}
 	}
 	registry[namespace][name] = componentType
 }
 
-function register(
+const register = (
 	namespace: string,
 	name: string,
-	componentType: React.ComponentType<BaseProps>
-): void {
+	componentType: React.FunctionComponent<BaseProps>
+) => {
 	addToRegistry(registry, namespace, name, componentType)
 }
 
-function registerBuilder(
+const registerBuilder = (
 	namespace: string,
 	name: string,
-	componentType: React.ComponentType<BaseProps>,
+	componentType: React.FunctionComponent<BaseProps>,
 	definition: BuildPropertiesDefinition | null
-): void {
+) => {
 	addToRegistry(builderRegistry, namespace, name, componentType)
 	definition && addToRegistry(definitionRegistry, namespace, name, definition)
 }
 
-function getBuildtimeLoader(
-	namespace: string,
-	name: string
-): React.ComponentType<BaseProps> {
-	return (
-		(builderRegistry[namespace] && builderRegistry[namespace][name]) ||
-		getRuntimeLoader(namespace, name)
-	)
-}
+const getBuildtimeLoader = (namespace: string, name: string) =>
+	builderRegistry[namespace]?.[name] || getRuntimeLoader(namespace, name)
 
-function getRuntimeLoader(
-	namespace: string,
-	name: string
-): React.ComponentType<BaseProps> {
-	return registry[namespace] && registry[namespace][name]
-}
+const getRuntimeLoader = (namespace: string, name: string) =>
+	registry[namespace]?.[name]
 
-function getLoader(
-	namespace: string,
-	name: string,
-	buildMode: boolean
-): React.ComponentType<BaseProps> | null {
-	return buildMode
+const getLoader = (namespace: string, name: string, buildMode: boolean) =>
+	buildMode
 		? getBuildtimeLoader(namespace, name)
 		: getRuntimeLoader(namespace, name)
-}
 
-function get(
+const get = (
 	namespace: string,
 	name: string
-): React.ComponentType<BasePropsPlus> {
-	const loader = getLoader(namespace, name, false)
-	return loader || NotFound
-}
+): React.ComponentType<BasePropsPlus> =>
+	getLoader(namespace, name, false) || NotFound
 
-function getPropertiesDefinition(
-	namespace: string,
-	name: string
-): BuildPropertiesDefinition | null {
-	const propDef =
-		definitionRegistry[namespace] && definitionRegistry[namespace][name]
+const getPropertiesDefinition = (namespace: string, name: string) => {
+	const propDef = definitionRegistry[namespace]?.[name]
 	if (propDef) {
 		propDef.name = name
 		propDef.namespace = namespace
@@ -102,9 +82,7 @@ function getPropertiesDefinition(
 	return propDef
 }
 
-function getPropertiesDefinitionFromPath(
-	path: string
-): BuildPropertiesDefinition | null {
+const getPropertiesDefinitionFromPath = (path: string) => {
 	const pathArray = toPath(path)
 	if (pathArray[0] === "wires") {
 		return getPropertiesDefinition("uesio", "wire")
@@ -117,13 +95,9 @@ function getPropertiesDefinitionFromPath(
 	return null
 }
 
-function getBuilderNamespaces(): string[] {
-	return Object.keys(builderRegistry)
-}
-
-function getBuilderComponents(namespace: string): string[] {
-	return Object.keys(builderRegistry[namespace])
-}
+const getBuilderNamespaces = () => Object.keys(builderRegistry)
+const getBuilderComponents = (namespace: string) =>
+	Object.keys(builderRegistry[namespace])
 
 export {
 	register,

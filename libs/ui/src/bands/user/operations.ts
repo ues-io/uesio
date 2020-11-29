@@ -8,7 +8,7 @@ import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
 import RuntimeState from "../../store/types/runtimestate"
 import { set as setUser } from "."
 import { LoginSignal, LogoutSignal } from "./types"
-import { navigateSignal, redirectSignal } from "../route/signals"
+import { navigateCreator, redirectCreator } from "../route/signals"
 
 async function responseRedirect(
 	response: LoginResponse,
@@ -17,12 +17,12 @@ async function responseRedirect(
 ): DispatchReturn {
 	"redirectPath" in response
 		? await SignalAPI.run(
-				redirectSignal(response.redirectPath),
+				redirectCreator(response.redirectPath),
 				context,
 				dispatch
 		  )
 		: await SignalAPI.run(
-				navigateSignal(
+				navigateCreator(
 					response.redirectRouteName,
 					response.redirectRouteNamespace
 				),
