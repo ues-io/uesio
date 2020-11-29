@@ -3,10 +3,10 @@ import { LoadResponseBatch } from "../load/loadresponse"
 import { LoginRequest, LoginResponse } from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
-import { MetadataListStore } from "../store/types/builderstate"
 import { Context } from "../context/context"
 import { metadata } from "@uesio/constants"
 import { WorkspaceState } from "../bands/route/types"
+import { MetadataListStore } from "../bands/builder/types"
 
 type RouteResponse = {
 	viewname: string

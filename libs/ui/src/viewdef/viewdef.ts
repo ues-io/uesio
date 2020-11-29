@@ -1,6 +1,6 @@
 import Actor from "../actor/actor"
 import RuntimeState from "../store/types/runtimestate"
-import { ActionGroup, ACTOR, BAND, StoreAction } from "../store/actions/actions"
+import { ActionGroup, ACTOR } from "../store/actions/actions"
 import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
 import {
 	DefinitionMap,
@@ -49,10 +49,10 @@ import { useStyleProperty } from "../styles/styles"
 import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { AddDefinitionSignal } from "./viewdefsignals"
 import { batch } from "react-redux"
-import { SET_SELECTED_NODE } from "../builder/builderbandactions"
-import { BUILDER_BAND } from "../builder/builderband"
 import { getParentPath, getDefinitionKey } from "../component/path"
 import { Context } from "../context/context"
+import { setSelectedNode } from "../bands/builder"
+import { AnyAction } from "redux"
 
 type PlainViewDef = {
 	name: string
@@ -407,7 +407,7 @@ class ViewDef extends Actor {
 				context: Context
 			): ThunkFunc => {
 				return async (
-					dispatch: Dispatcher<StoreAction>,
+					dispatch: Dispatcher<AnyAction>,
 					getState: () => RuntimeState
 				): DispatchReturn => {
 					const { path, definition, index } = signal
@@ -440,15 +440,7 @@ class ViewDef extends Actor {
 							const newPath = `${path}["${newIndex}"]["${getDefinitionKey(
 								definition as DefinitionMap
 							)}"]`
-							dispatch({
-								type: BAND,
-								band: BUILDER_BAND,
-								name: SET_SELECTED_NODE,
-								data: {
-									path: newPath,
-								},
-								target: view.getViewDefId(),
-							})
+							dispatch(setSelectedNode(newPath))
 						})
 					}
 					return context

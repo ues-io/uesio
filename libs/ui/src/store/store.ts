@@ -14,9 +14,7 @@ import yaml from "yaml"
 import { PlainView, View } from "../view/view"
 import { ViewBand } from "../view/viewband"
 import Dependencies from "./types/dependenciesstate"
-import { MetadataListStore } from "./types/builderstate"
 import { Context } from "../context/context"
-import { metadata } from "@uesio/constants"
 
 type DispatchReturn = Promise<Context>
 
@@ -105,158 +103,6 @@ const useComponentState = (
 	})
 }
 
-const isMatch = (componentPath: string, testPath?: string): boolean => {
-	if (testPath) {
-		if (testPath === componentPath) {
-			return true
-		}
-		if (testPath.startsWith(componentPath)) {
-			const suffix = testPath.substring(componentPath.length)
-			if (!suffix.includes(".")) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-const useBuilderNodeState = (path: string): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (isMatch(path, buildState.selectedNode)) {
-				return "selected"
-			}
-			if (isMatch(path, buildState.activeNode)) {
-				return "active"
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderSelectedNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.selectedNode) {
-				return buildState.selectedNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderDragNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.draggingNode) {
-				return buildState.draggingNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderDropNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.droppingNode) {
-				return buildState.droppingNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderLeftPanel = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.leftPanel) {
-				return buildState.leftPanel
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderRightPanel = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.rightPanel) {
-				return buildState.rightPanel
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderView = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.buildView) {
-				return buildState.buildView
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderMode = (): boolean => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			return !!buildState.buildMode
-		}
-		return false
-	})
-}
-
-const useBuilderHasChanges = (): boolean => {
-	return useSelector((state: RuntimeState) => {
-		// Loop over view defs
-		if (state.viewdef) {
-			for (const defKey of Object.keys(state.viewdef)) {
-				const viewDef = state.viewdef[defKey]
-				if (viewDef.yaml !== viewDef.originalYaml) {
-					return true
-				}
-			}
-		}
-		return false
-	})
-}
-
-const useBuilderMetadataList = (
-	metadataType: metadata.MetadataType,
-	namespace: string,
-	grouping?: string
-): MetadataListStore => {
-	if (grouping) {
-		return useSelector((state: RuntimeState) => {
-			return (
-				state.builder?.metadata?.[metadataType]?.[namespace]?.[
-					grouping
-				] || null
-			)
-		})
-	}
-	return useSelector((state: RuntimeState) => {
-		return state.builder?.metadata?.[metadataType]?.[namespace] || null
-	})
-}
-
-const useBuilderAvailableNamespaces = (): MetadataListStore => {
-	return useSelector((state: RuntimeState) => {
-		return state.builder?.namespaces || null
-	})
-}
-
 const useViewDefinition = (view: View, path?: string): Definition => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
@@ -301,17 +147,6 @@ export {
 	useWire,
 	useView,
 	useComponentState,
-	useBuilderNodeState,
-	useBuilderSelectedNode,
-	useBuilderMode,
-	useBuilderDragNode,
-	useBuilderDropNode,
-	useBuilderLeftPanel,
-	useBuilderRightPanel,
-	useBuilderView,
-	useBuilderHasChanges,
-	useBuilderMetadataList,
-	useBuilderAvailableNamespaces,
 	useViewYAML,
 	useViewDefinition,
 	useViewDependencies,

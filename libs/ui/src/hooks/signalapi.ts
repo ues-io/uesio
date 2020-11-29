@@ -19,12 +19,14 @@ import { COMPONENT_BAND } from "../componentactor/componentband"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 import { registry as botRegistry } from "../bands/bot/signals"
+import { registry as builderRegistry } from "../bands/builder/signals"
 import { registry as userRegistry } from "../bands/user/signals"
 import { registry as routeRegistry } from "../bands/route/signals"
 import { BotSignal } from "../bands/bot/types"
 
 const signalRegistry = {
 	bot: botRegistry,
+	builder: builderRegistry,
 	user: userRegistry,
 	route: routeRegistry,
 }

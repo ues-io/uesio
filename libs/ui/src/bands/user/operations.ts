@@ -15,23 +15,21 @@ async function responseRedirect(
 	dispatch: Dispatcher<StoreAction>,
 	context: Context
 ): DispatchReturn {
-	if ("redirectPath" in response) {
-		await SignalAPI.run(
-			redirectSignal(response.redirectPath),
-			context,
-			dispatch
-		)
-	} else {
-		await SignalAPI.run(
-			navigateSignal(
-				response.redirectRouteName,
-				response.redirectRouteNamespace
-			),
-			// Always run the logout action in the site context.
-			new Context(),
-			dispatch
-		)
-	}
+	"redirectPath" in response
+		? await SignalAPI.run(
+				redirectSignal(response.redirectPath),
+				context,
+				dispatch
+		  )
+		: await SignalAPI.run(
+				navigateSignal(
+					response.redirectRouteName,
+					response.redirectRouteNamespace
+				),
+				// Always run the logout action in the site context.
+				new Context(),
+				dispatch
+		  )
 	return context
 }
 

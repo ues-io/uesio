@@ -1,15 +1,13 @@
 import { batch } from "react-redux"
 import { AnyAction } from "redux"
-import { BUILDER_BAND } from "../../builder/builderband"
-import { CLEAR_AVAILABLE_METADATA } from "../../builder/builderbandactions"
 import { Context } from "../../context/context"
 import { SignalAPI } from "../../hooks/signalapi"
 import { Platform } from "../../platform/platform"
-import { BAND } from "../../store/actions/actions"
 import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
 import { set as setRoute } from "."
 import RuntimeState from "../../store/types/runtimestate"
 import { NavigateSignal, RedirectSignal } from "./types"
+import { clearAvailableMetadata } from "../builder"
 
 function getWorkspacePrefix(context: Context, signal: NavigateSignal): string {
 	const workspace = context.getWorkspace()
@@ -60,11 +58,7 @@ const navigate = (
 	)
 
 	batch(() => {
-		dispatch({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: CLEAR_AVAILABLE_METADATA,
-		})
+		dispatch(clearAvailableMetadata())
 		dispatch(
 			setRoute({
 				name: viewName,

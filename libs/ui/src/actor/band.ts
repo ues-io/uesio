@@ -3,7 +3,6 @@ import { SignalDefinition } from "../definition/signal"
 import Actor from "./actor"
 import { WireBand } from "../wire/wireband"
 import { ComponentBand } from "../componentactor/componentband"
-import { BuilderBand } from "../builder/builderband"
 import { ViewBand } from "../view/viewband"
 import { ViewDefBand } from "../viewdef/viewdefband"
 import { ThunkFunc } from "../store/store"
@@ -23,7 +22,6 @@ type BandMap = {
 }
 
 const bandMap: BandMap = {
-	builder: BuilderBand,
 	component: ComponentBand,
 	view: ViewBand,
 	viewdef: ViewDefBand,
