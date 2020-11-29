@@ -110,7 +110,7 @@ definition:
                                     targets:
                                       - "datasources"
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -119,7 +119,7 @@ definition:
                                 text: "Cancel"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
                                     namespace: "uesio"
 dependencies:

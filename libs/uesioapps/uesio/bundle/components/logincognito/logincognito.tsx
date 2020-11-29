@@ -118,12 +118,10 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 				const accessToken = result.getIdToken().getJwtToken()
 				await uesio.signal.run(
 					{
-						band: "platform",
+						band: "user",
 						signal: "LOGIN",
-						data: {
-							type: "cognito",
-							token: accessToken,
-						},
+						type: "cognito",
+						token: accessToken,
 					},
 					props.context
 				)

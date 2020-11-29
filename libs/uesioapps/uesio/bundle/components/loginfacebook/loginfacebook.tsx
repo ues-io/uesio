@@ -38,12 +38,10 @@ function LoginFacebook(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "platform",
+				band: "user",
 				signal: "LOGIN",
-				data: {
-					type: "facebook",
-					token: response.accessToken,
-				},
+				type: "facebook",
+				token: response.accessToken,
 			},
 			props.context
 		)

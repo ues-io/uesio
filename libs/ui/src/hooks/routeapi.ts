@@ -1,6 +1,7 @@
+import { useRoute } from "../bands/route/selectors"
+import { RouteState } from "../bands/route/types"
 import { StoreAction } from "../store/actions/actions"
-import { Dispatcher, useRoute } from "../store/store"
-import RouteState from "../store/types/routestate"
+import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
 
 class RouteAPI {

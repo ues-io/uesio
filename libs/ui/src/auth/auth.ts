@@ -1,4 +1,4 @@
-import UserState from "../store/types/userstate"
+import { UserState } from "../bands/user/types"
 
 type LoginRequest = {
 	type: string

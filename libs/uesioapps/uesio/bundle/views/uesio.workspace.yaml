@@ -47,14 +47,14 @@ definition:
                         href: home
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: ${uesio.name}
@@ -73,7 +73,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -85,7 +85,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -104,7 +104,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -116,7 +116,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -135,7 +135,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -147,7 +147,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
                                                 namespace: "uesio"
                                   - material.buttonset:
@@ -159,7 +159,7 @@ definition:
                                             margin: 0
                                             signals:
                                               - signal: "NAVIGATE"
-                                                band: "platform"
+                                                band: "route"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
                                                 namespace: "uesio"
                       - material.griditem:
@@ -192,7 +192,7 @@ definition:
                                                         text: "Import Data"
                                                         signals:
                                                           - signal: "NAVIGATE"
-                                                            band: "platform"
+                                                            band: "route"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
                                                             namespace: "uesio"
                                                     - material.button:
@@ -208,7 +208,7 @@ definition:
                                                             targets:
                                                               - "workspaces"
                                                           - signal: "NAVIGATE"
-                                                            band: "platform"
+                                                            band: "route"
                                                             path: "app/$Param{appname}"
                                                             namespace: "uesio"
                                   - material.field:

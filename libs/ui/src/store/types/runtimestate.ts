@@ -1,10 +1,10 @@
-import { PlainCollectionMap } from "../../collection/collection"
-import BuilderState from "./builderstate"
-import UserState from "./userstate"
+import { PlainCollectionMap } from "../../bands/collection/types"
 import SiteState from "./sitestate"
-import RouteState from "./routestate"
 import { PlainViewMap } from "../../view/view"
 import { PlainViewDefMap } from "../../viewdef/viewdef"
+import { RouteState } from "../../bands/route/types"
+import { UserState } from "../../bands/user/types"
+import { BuilderState } from "../../bands/builder/types"
 
 type RuntimeState = {
 	collection?: PlainCollectionMap

@@ -9,6 +9,8 @@ const Route: FC<BaseProps> = (props: BaseProps) => {
 	const uesio = useUesio(props)
 	const route = uesio.route.useRoute()
 
+	if (!route) return null
+
 	useEffect(() => {
 		// This makes sure that the namespace and path of the route is specified in the history.
 		window.history.replaceState(

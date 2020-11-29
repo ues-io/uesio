@@ -1,39 +1,25 @@
-import { createStore, applyMiddleware, Store } from "redux"
+import { AnyAction, Store } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch, useSelector } from "react-redux"
-import { composeWithDevTools } from "redux-devtools-extension"
+import { configureStore } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
 import { mainReducer } from "../store/reducers"
 import RuntimeState from "./types/runtimestate"
 import { PlainWire } from "../wire/wire"
-import { PlainCollection } from "../collection/collection"
 import { PlainComponentState } from "../componentactor/componentactor"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
 import yaml from "yaml"
-import { StoreAction } from "./actions/actions"
-import RouteState from "./types/routestate"
 import { PlainView, View } from "../view/view"
 import { ViewBand } from "../view/viewband"
 import Dependencies from "./types/dependenciesstate"
-import { MetadataListStore } from "./types/builderstate"
 import { Context } from "../context/context"
-import { metadata } from "@uesio/constants"
 
 type DispatchReturn = Promise<Context>
 
-type Dispatcher<T extends StoreAction> = ThunkDispatch<
-	RuntimeState,
-	Platform,
-	T
->
-type ThunkFunc = ThunkAction<
-	DispatchReturn,
-	RuntimeState,
-	Platform,
-	StoreAction
->
+type Dispatcher<T extends AnyAction> = ThunkDispatch<RuntimeState, Platform, T>
+type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
 
 const defaultState = {
 	collection: {},
@@ -45,17 +31,20 @@ let platform: Platform
 let store: Store
 
 const create = (plat: Platform, initialState: RuntimeState): Store => {
-	const state = Object.assign({}, defaultState, initialState)
 	platform = plat
-	store = createStore(
-		mainReducer,
-		state,
-		composeWithDevTools(applyMiddleware(thunk.withExtraArgument(plat)))
-	)
+	store = configureStore({
+		reducer: mainReducer,
+		devTools: true,
+		preloadedState: {
+			...defaultState,
+			...initialState,
+		},
+		middleware: [thunk.withExtraArgument(plat)],
+	})
 	return store
 }
 
-const getDispatcher = (): Dispatcher<StoreAction> => {
+const getDispatcher = (): Dispatcher<AnyAction> => {
 	return useDispatch()
 }
 
@@ -80,20 +69,6 @@ const useWire = (
 			return state.view?.[viewId].wires[wireName] || null
 		}
 		return null
-	})
-}
-
-// Both gets collection state and subscribes the component to collection changes
-const useCollection = (
-	collectionName: string | null
-): PlainCollection | null => {
-	// Even if we don't have a collectionName sent in, we still need to call useSelector
-	// That way if a collection of that name ever comes available, we will be able to
-	// pick up that subscription.
-	return useSelector((state: RuntimeState) => {
-		return collectionName && state.collection
-			? state.collection[collectionName]
-			: null
 	})
 }
 
@@ -125,164 +100,6 @@ const useComponentState = (
 			return state.view[viewId].components[componentId] || null
 		}
 		return null
-	})
-}
-
-const isMatch = (componentPath: string, testPath?: string): boolean => {
-	if (testPath) {
-		if (testPath === componentPath) {
-			return true
-		}
-		if (testPath.startsWith(componentPath)) {
-			const suffix = testPath.substring(componentPath.length)
-			if (!suffix.includes(".")) {
-				return true
-			}
-		}
-	}
-	return false
-}
-
-const useBuilderNodeState = (path: string): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (isMatch(path, buildState.selectedNode)) {
-				return "selected"
-			}
-			if (isMatch(path, buildState.activeNode)) {
-				return "active"
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderSelectedNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.selectedNode) {
-				return buildState.selectedNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderDragNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.draggingNode) {
-				return buildState.draggingNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderDropNode = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.droppingNode) {
-				return buildState.droppingNode
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderLeftPanel = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.leftPanel) {
-				return buildState.leftPanel
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderRightPanel = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.rightPanel) {
-				return buildState.rightPanel
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderView = (): string => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			if (buildState.buildView) {
-				return buildState.buildView
-			}
-		}
-		return ""
-	})
-}
-
-const useBuilderMode = (): boolean => {
-	return useSelector((state: RuntimeState) => {
-		const buildState = state.builder
-		if (buildState) {
-			return !!buildState.buildMode
-		}
-		return false
-	})
-}
-
-const useBuilderHasChanges = (): boolean => {
-	return useSelector((state: RuntimeState) => {
-		// Loop over view defs
-		if (state.viewdef) {
-			for (const defKey of Object.keys(state.viewdef)) {
-				const viewDef = state.viewdef[defKey]
-				if (viewDef.yaml !== viewDef.originalYaml) {
-					return true
-				}
-			}
-		}
-		return false
-	})
-}
-
-const useBuilderMetadataList = (
-	metadataType: metadata.MetadataType,
-	namespace: string,
-	grouping?: string
-): MetadataListStore => {
-	if (grouping) {
-		return useSelector((state: RuntimeState) => {
-			return (
-				state.builder?.metadata?.[metadataType]?.[namespace]?.[
-					grouping
-				] || null
-			)
-		})
-	}
-	return useSelector((state: RuntimeState) => {
-		return state.builder?.metadata?.[metadataType]?.[namespace] || null
-	})
-}
-
-const useBuilderAvailableNamespaces = (): MetadataListStore => {
-	return useSelector((state: RuntimeState) => {
-		return state.builder?.namespaces || null
-	})
-}
-
-const useRoute = (): RouteState => {
-	return useSelector((state: RuntimeState) => {
-		return state.route
 	})
 }
 
@@ -328,21 +145,8 @@ export {
 	getPlatform,
 	getStore,
 	useWire,
-	useCollection,
 	useView,
 	useComponentState,
-	useBuilderNodeState,
-	useBuilderSelectedNode,
-	useBuilderMode,
-	useBuilderDragNode,
-	useBuilderDropNode,
-	useBuilderLeftPanel,
-	useBuilderRightPanel,
-	useBuilderView,
-	useBuilderHasChanges,
-	useBuilderMetadataList,
-	useBuilderAvailableNamespaces,
-	useRoute,
 	useViewYAML,
 	useViewDefinition,
 	useViewDependencies,

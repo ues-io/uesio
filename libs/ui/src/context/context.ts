@@ -1,13 +1,12 @@
 import { Wire } from "../wire/wire"
 import { WireRecord } from "../wire/wirerecord"
 import { View } from "../view/view"
-import WorkspaceState from "../store/types/workspacestate"
-import RouteState from "../store/types/routestate"
 import { field } from "@uesio/constants"
 import { getStore } from "../store/store"
 import { ViewBand } from "../view/viewband"
 import { WireBand } from "../wire/wireband"
-import { CollectionBand } from "../collection/collectionband"
+import Collection from "../bands/collection/class"
+import { RouteState, WorkspaceState } from "../bands/route/types"
 
 type ContextFrame = {
 	wire?: string
@@ -18,6 +17,10 @@ type ContextFrame = {
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
+}
+
+type StringMap = {
+	[key: string]: string
 }
 
 const getFromContext = (
@@ -89,9 +92,8 @@ class Context {
 		const wireId = this.getWireId()
 		const viewId = this.getViewId()
 		const wire = WireBand.getActor(state, wireId, viewId)
-		const collection = CollectionBand.getActor(
-			state,
-			wire.getCollectionName()
+		const collection = new Collection(
+			state?.collection?.[wire.getCollectionName()] || null
 		)
 		wire.attachCollection(collection.source)
 		return wire.valid ? wire : undefined
@@ -130,6 +132,17 @@ class Context {
 			return template || ""
 		}
 		return template ? inject(template, this) : ""
+	}
+
+	mergeMap(map?: StringMap): StringMap | undefined {
+		if (!map) {
+			return map
+		}
+		return Object.fromEntries(
+			Object.entries(map).map((entries) => {
+				return [entries[0], this.merge(entries[1])]
+			})
+		)
 	}
 }
 

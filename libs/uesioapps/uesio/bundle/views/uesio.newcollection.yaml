@@ -112,7 +112,7 @@ definition:
                                       workspace: $Param{workspacename}
                                       app: $Param{appname}
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -121,7 +121,7 @@ definition:
                                 text: "Cancel"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
                                     namespace: "uesio"
 dependencies:

@@ -7,7 +7,7 @@ import {
 	useViewYAML,
 	useViewDependencies,
 } from "../store/store"
-import { ACTOR, BAND } from "../store/actions/actions"
+import { ACTOR } from "../store/actions/actions"
 import {
 	SET_DEFINITION,
 	SET_YAML,
@@ -22,23 +22,20 @@ import {
 	SetYamlAction,
 	MoveDefinitionAction,
 	SetDefinitionAction,
-	ViewDefAction,
 } from "../viewdef/viewdefactions"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
 import { View, ViewParams } from "../view/view"
-import { SET_SELECTED_NODE } from "../builder/builderbandactions"
 import { batch } from "react-redux"
 import { LOAD } from "../view/viewbandsignals"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 import toPath from "lodash.topath"
-import { BUILDER_BAND } from "../builder/builderband"
 import Dependencies from "../store/types/dependenciesstate"
 import { trimPathToComponent } from "../component/path"
-
-import { SetSelectedNodeAction } from "../builder/builderbandactions"
+import { AnyAction } from "redux"
+import { setSelectedNode } from "../bands/builder"
 
 const VIEW_BAND = "view"
 const VIEWDEF_BAND = "viewdef"
@@ -50,7 +47,7 @@ class ViewAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<ViewDefAction | SetSelectedNodeAction>
+	dispatcher: Dispatcher<AnyAction>
 
 	// Wraps our store's useView result (POJO) in a nice View class
 	// with convenience methods to make the api easier to consume for end users.
@@ -185,16 +182,7 @@ class ViewAPI {
 				const pathArray = toPath(usePath)
 				pathArray.pop()
 				const newPath = trimPathToComponent(pathArray)
-				const setSelectedNodeAction: SetSelectedNodeAction = {
-					type: BAND,
-					band: BUILDER_BAND,
-					name: SET_SELECTED_NODE,
-					data: {
-						path: newPath,
-					},
-				}
-
-				this.dispatcher(setSelectedNodeAction)
+				this.dispatcher(setSelectedNode(newPath))
 			})
 		}
 	}

@@ -34,6 +34,8 @@ import shortid from "shortid"
 import { deleteProperty } from "../util/util"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { getInitializedConditions } from "./wirecondition"
+import { load as loadCollection } from "../bands/collection"
+import { AnyAction } from "redux"
 
 const WIRE_BAND = "wire"
 
@@ -246,7 +248,7 @@ class WireBand {
 			},
 			dispatcher: (signal: LoadSignal, context: Context): ThunkFunc => {
 				return async (
-					dispatch: Dispatcher<StoreAction>,
+					dispatch: Dispatcher<AnyAction>,
 					getState: () => RuntimeState,
 					platform: Platform
 				): DispatchReturn => {
@@ -292,16 +294,7 @@ class WireBand {
 								},
 								view: viewId,
 							})
-							// Dispatch the metadata change to the collection band
-							dispatch({
-								type: BAND,
-								band: "collection",
-								name: signal.signal,
-								data: {
-									collections: response.collections,
-								},
-								view: viewId,
-							})
+							dispatch(loadCollection(response.collections))
 						})
 
 						for (const wire of wireList) {

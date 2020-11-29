@@ -56,7 +56,7 @@ async function handleChange(
 
 		const navigateSig = {
 			signal: "NAVIGATE",
-			band: "platform",
+			band: "route",
 			path:
 				`app/` +
 				workspace?.app +

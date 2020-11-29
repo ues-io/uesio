@@ -102,7 +102,7 @@ definition:
                                     targets:
                                       - "bots"
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -111,7 +111,7 @@ definition:
                                 text: "Cancel"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                                     namespace: "uesio"
 dependencies:

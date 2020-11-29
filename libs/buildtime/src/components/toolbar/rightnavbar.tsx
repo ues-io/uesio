@@ -61,7 +61,7 @@ const RightNavbar: FC<Props> = (props: Props) => {
 
 					uesio.signal.run(
 						{
-							band: "platform",
+							band: "route",
 							signal: "REDIRECT",
 							path: `/app/${workspace.app}/workspace/${workspace.name}/view/${route.viewname}`,
 						},
