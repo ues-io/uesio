@@ -52,21 +52,21 @@ definition:
                   href: home
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: datasources
@@ -91,7 +91,7 @@ definition:
                                 text: "Create New Datasource"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newdatasource"
                                     namespace: "uesio"
           - material.deck:
@@ -118,7 +118,7 @@ definition:
                           text: "${uesio.workspace}"
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${uesio.name}"
                         namespace: "uesio"
 dependencies:

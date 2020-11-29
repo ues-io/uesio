@@ -69,14 +69,14 @@ definition:
                         href: home
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: ${uesio.name}

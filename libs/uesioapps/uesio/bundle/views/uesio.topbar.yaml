@@ -23,7 +23,7 @@ definition:
                       - 2
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "home"
                         namespace: "uesio"
           # Avatar
@@ -39,7 +39,7 @@ definition:
                                 variant: text
                                 signals:
                                   - signal: "LOGOUT"
-                                    band: "platform"
+                                    band: "user"
                       - material.griditem:
                           components:
                             - material.avatar:

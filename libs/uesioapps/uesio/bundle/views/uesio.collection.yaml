@@ -94,28 +94,28 @@ definition:
                         href: home
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: collections
                         href: app/$Param{appname}/workspace/$Param{workspacename}/collections
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}/collections
                             namespace: uesio
                       - text: $Param{collectionname}
@@ -188,7 +188,7 @@ definition:
                                                             targets:
                                                               - "collections"
                                                           - signal: "NAVIGATE"
-                                                            band: "platform"
+                                                            band: "route"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
                                                             namespace: "uesio"
                                   - material.field:
@@ -249,7 +249,7 @@ definition:
                                 text: Edit
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/fields/${uesio.name}"
                                     namespace: "uesio"
 

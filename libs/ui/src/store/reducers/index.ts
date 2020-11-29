@@ -5,6 +5,7 @@ import { getBand } from "../../actor/band"
 
 import collectionReducer from "../../bands/collection"
 import routeReducer from "../../bands/route"
+import userReducer from "../../bands/user"
 import { AnyAction } from "redux"
 
 const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
@@ -31,6 +32,7 @@ const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
 		...{
 			collection: collectionReducer(state.collection, action),
 			route: routeReducer(state.route, action),
+			user: userReducer(state.user, action),
 		},
 	}
 }

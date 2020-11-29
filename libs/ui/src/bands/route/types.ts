@@ -1,4 +1,5 @@
 import { ViewParams } from "../../view/view"
+import { navigateSignal, redirectSignal } from "./signals"
 
 type WorkspaceState = {
 	name: string
@@ -12,6 +13,18 @@ type RouteState = {
 	namespace: string
 	path: string
 	workspace?: WorkspaceState
-}
+} | null
 
-export { RouteState, WorkspaceState }
+type RedirectSignal = ReturnType<typeof redirectSignal>
+type NavigateSignal = ReturnType<typeof navigateSignal>
+
+// A type that describes all signals in the bot band
+type RouteSignal = RedirectSignal | NavigateSignal
+
+export {
+	RouteState,
+	WorkspaceState,
+	RouteSignal,
+	RedirectSignal,
+	NavigateSignal,
+}

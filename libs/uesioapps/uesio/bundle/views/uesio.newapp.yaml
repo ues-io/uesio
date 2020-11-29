@@ -61,7 +61,7 @@ definition:
                                     targets:
                                       - "apps"
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -70,7 +70,7 @@ definition:
                                 text: "Cancel"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "home"
                                     namespace: "uesio"
 dependencies:

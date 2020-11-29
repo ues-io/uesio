@@ -30,7 +30,7 @@ definition:
                     variant: outlined
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "login"
                         namespace: "uesio"
 dependencies:

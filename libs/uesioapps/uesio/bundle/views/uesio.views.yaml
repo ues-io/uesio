@@ -51,21 +51,21 @@ definition:
                   href: home
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: views
@@ -90,7 +90,7 @@ definition:
                                 text: "Create New View"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newview"
                                     namespace: "uesio"
           - material.deck:
@@ -119,7 +119,7 @@ definition:
                           textTransform: "capitalize"
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/view/${uesio.name}"
                         namespace: "uesio"
                     actions:
@@ -130,7 +130,7 @@ definition:
                         helptextposition: "right"
                         signals:
                           - signal: "REDIRECT"
-                            band: "platform"
+                            band: "route"
                             path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${uesio.name}/preview"
                       - action:
                         icon: "delete"

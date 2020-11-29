@@ -63,28 +63,28 @@ definition:
                         href: home
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: routes
                         href: app/$Param{appname}/workspace/$Param{workspacename}/routes
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}/routes
                             namespace: uesio
                       - text: $Param{routename}
@@ -133,7 +133,7 @@ definition:
                                                       targets:
                                                         - "routes"
                                                     - signal: "NAVIGATE"
-                                                      band: "platform"
+                                                      band: "route"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
                                                       namespace: "uesio"
                                                     - signal: "TOGGLE_MODE"
@@ -148,7 +148,7 @@ definition:
                                                         text: "Preview"
                                                         signals:
                                                           - signal: "REDIRECT"
-                                                            band: platform
+                                                            band: route
                                                             path: "/workspace/$Param{appname}/$Param{workspacename}/app/$Param{appname}/${uesio.path}"
                                                     - material.button:
                                                         color: "primary"

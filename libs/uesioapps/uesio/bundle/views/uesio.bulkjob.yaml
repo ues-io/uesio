@@ -44,28 +44,28 @@ definition:
                         href: home
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: import
                         href: app/$Param{appname}/workspace/$Param{workspacename}/import
                         signals:
                           - signal: NAVIGATE
-                            band: platform
+                            band: route
                             path: app/$Param{appname}/workspace/$Param{workspacename}/import
                             namespace: uesio
                       - text: $Param{bulkjobname}

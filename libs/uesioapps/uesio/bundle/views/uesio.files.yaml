@@ -55,21 +55,21 @@ definition:
                   href: home
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: files
@@ -94,7 +94,7 @@ definition:
                                 text: "Create New File"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newfile"
                                     namespace: "uesio"
           - material.deck:
@@ -135,7 +135,7 @@ definition:
                           text: "${uesio.name}"
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${uesio.name}"
                         namespace: "uesio"
                     actions:

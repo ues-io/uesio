@@ -2,13 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { ViewParams } from "../../view/view"
 import { RouteState, WorkspaceState } from "./types"
 
-const initialState: RouteState = {
-	viewname: "",
-	viewnamespace: "",
-	namespace: "",
-	path: "",
-}
-
 type RoutePayload = {
 	name: string
 	namespace: string
@@ -18,7 +11,7 @@ type RoutePayload = {
 
 const routeSlice = createSlice({
 	name: "route",
-	initialState,
+	initialState: null as RouteState,
 	reducers: {
 		set: (state, { payload }: PayloadAction<RoutePayload>) => ({
 			...state,
@@ -26,6 +19,8 @@ const routeSlice = createSlice({
 			viewnamespace: payload.namespace,
 			params: payload.params,
 			workspace: payload.workspace,
+			namespace: "",
+			path: "",
 		}),
 	},
 })

@@ -41,12 +41,10 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "platform",
+				band: "user",
 				signal: "LOGIN",
-				data: {
-					type: "google",
-					token: response.getAuthResponse().id_token,
-				},
+				type: "google",
+				token: response.getAuthResponse().id_token,
 			},
 			props.context
 		)

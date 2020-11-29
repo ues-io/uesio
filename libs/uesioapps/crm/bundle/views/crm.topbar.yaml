@@ -4,7 +4,7 @@ definition:
     - material.grid:
         alignitems: center
         background:
-          color: '#222'
+          color: "#222"
         height: 60px
         items:
           - material.griditem:
@@ -17,7 +17,7 @@ definition:
                       - 0
                       - 2
                     signals:
-                      - band: platform
+                      - band: route
                         namespace: crm
                         path: home
                         signal: NAVIGATE
@@ -30,7 +30,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: platform
+                                  - band: route
                                     namespace: crm
                                     path: accounts
                                     signal: NAVIGATE
@@ -40,7 +40,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: platform
+                                  - band: route
                                     namespace: crm
                                     path: contacts
                                     signal: NAVIGATE
@@ -50,7 +50,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: platform
+                                  - band: route
                                     namespace: crm
                                     path: leads
                                     signal: NAVIGATE
@@ -65,7 +65,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - band: platform
+                                  - band: user
                                     signal: LOGOUT
                                 text: Log Out
                                 variant: text

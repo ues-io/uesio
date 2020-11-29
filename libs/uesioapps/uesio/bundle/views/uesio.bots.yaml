@@ -52,21 +52,21 @@ definition:
                   href: home
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: NAVIGATE
-                      band: platform
+                      band: route
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: bots
@@ -91,7 +91,7 @@ definition:
                                 text: "Create New Bot"
                                 signals:
                                   - signal: "NAVIGATE"
-                                    band: "platform"
+                                    band: "route"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
                                     namespace: "uesio"
           - material.deck:
@@ -122,7 +122,7 @@ definition:
                           text: "${uesio.name}"
                     signals:
                       - signal: "NAVIGATE"
-                        band: "platform"
+                        band: "route"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${uesio.name}"
                         namespace: "uesio"
 dependencies:

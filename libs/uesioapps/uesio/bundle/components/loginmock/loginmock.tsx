@@ -32,12 +32,10 @@ function LoginMock(props: LoginProps): ReactElement | null {
 				onClick={async (): Promise<void> => {
 					await uesio.signal.run(
 						{
-							band: "platform",
+							band: "user",
 							signal: "LOGIN",
-							data: {
-								type: "mock",
-								token: "mockToken",
-							},
+							type: "mock",
+							token: "mockToken",
 						},
 						props.context
 					)
