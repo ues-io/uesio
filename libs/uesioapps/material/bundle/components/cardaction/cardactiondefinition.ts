@@ -21,7 +21,7 @@ type CardActionDefinition = {
 	signals?: signal.ComponentSignal[]
 }
 
-interface CardActionProps extends definition.BaseProps {
+type CardActionProps = definition.BaseProps & {
 	definition: CardActionDefinition
 }
 
