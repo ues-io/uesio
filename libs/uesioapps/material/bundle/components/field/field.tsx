@@ -38,7 +38,7 @@ const Field = (props: FieldProps): React.ReactElement | null => {
 		...props,
 	}
 
-	if (["TEXT", "LONGTEXT", "DATE"].indexOf(type) !== -1) {
+	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {
 		return (
 			<TextField
 				{...props}

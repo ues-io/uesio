@@ -55,6 +55,18 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 				continue
 			}
 
+			if field.Type == "DATE" {
+				lfield = fieldName + " date"
+				otherfields = append(otherfields, lfield)
+				continue
+			}
+
+			if field.Type == "NUMBER" {
+				lfield = fieldName + " bigint"
+				otherfields = append(otherfields, lfield)
+				continue
+			}
+
 			lfield = fieldName + " text"
 
 			otherfields = append(otherfields, lfield)

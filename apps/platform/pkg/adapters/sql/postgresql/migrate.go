@@ -50,7 +50,19 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 			}
 
 			if field.Type == "MAP" {
-				lfield = fieldName + " json"
+				lfield = fieldName + " jsonb"
+				otherfields = append(otherfields, lfield)
+				continue
+			}
+
+			if field.Type == "DATE" {
+				lfield = fieldName + " date"
+				otherfields = append(otherfields, lfield)
+				continue
+			}
+
+			if field.Type == "NUMBER" {
+				lfield = fieldName + " bigint"
 				otherfields = append(otherfields, lfield)
 				continue
 			}

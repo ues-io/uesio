@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -74,6 +75,17 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 				} else {
 					colassoc[fieldID] = nil
 				}
+
+				continue
+			}
+
+			if fieldMetadata.Type == "DATE" {
+
+				input := string(colvals[index])
+				layout := "2006-01-02"
+				t, _ := time.Parse(layout, input)
+
+				colassoc[fieldID] = t.Format("2006-01-02")
 
 				continue
 			}

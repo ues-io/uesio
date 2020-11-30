@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -74,10 +75,10 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 				var aux = *colvals[index].(*interface{})
 
 				if aux != nil {
-					res, err := GetBytes(aux)
 
-					if err != nil {
-						return nil, err
+					res, ok := aux.([]byte)
+					if !ok {
+						return nil, errors.New("Casting to byte Error")
 					}
 
 					var anyJSON map[string]interface{}
@@ -91,6 +92,15 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 				} else {
 					colassoc[fieldID] = nil
 				}
+
+				continue
+			}
+
+			if fieldMetadata.Type == "DATE" {
+
+				var aux = *colvals[index].(*interface{})
+				var date = aux.(time.Time)
+				colassoc[fieldID] = date.Format("2006-01-02")
 
 				continue
 			}
