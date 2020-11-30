@@ -112,15 +112,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 		return
 	}
 
-	//if we don't have ThemeRef we can -->
-	//Get the route from the view, this might lead to some problems since we can have multiple routes pointing to the same view
-
-	// err = bundles.Load(route, session)
-	// if err != nil {
-	// 	//HandleMissingRoute(w, r, session, "", err)
-	// 	return
-	// }
-
 	mergeData := MergeData{
 		Route: &RouteMergeData{
 			ViewName:      viewName,
