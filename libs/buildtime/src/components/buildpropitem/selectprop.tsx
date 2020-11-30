@@ -34,7 +34,7 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 			setValue(event.target.value)
 		}}
 	>
-		<option value=""></option>
+		<option value="" />
 		{descriptor.options.map((option) => (
 			<option key={option.value} value={option.value}>
 				{option.label}

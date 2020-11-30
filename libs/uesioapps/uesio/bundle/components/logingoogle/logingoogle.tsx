@@ -41,12 +41,10 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "platform",
-				signal: "LOGIN",
-				data: {
-					type: "google",
-					token: response.getAuthResponse().id_token,
-				},
+				band: "", //TODO: remove this
+				signal: "user/LOGIN",
+				type: "google",
+				token: response.getAuthResponse().id_token,
 			},
 			props.context
 		)
@@ -69,7 +67,7 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<GoogleLogin {...options}></GoogleLogin>
+			<GoogleLogin {...options} />
 		</LoginWrapper>
 	)
 }

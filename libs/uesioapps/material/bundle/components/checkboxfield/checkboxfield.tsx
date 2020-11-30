@@ -40,7 +40,7 @@ const CheckBoxField = (props: Props): React.ReactElement | null => {
 					props.setValue(event.target.checked)
 				},
 			}}
-		></material.Checkbox>
+		/>
 	)
 }
 

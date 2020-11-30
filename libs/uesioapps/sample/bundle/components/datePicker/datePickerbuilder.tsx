@@ -8,7 +8,7 @@ const DatePickerBuilder: FunctionComponent<DatePickerProps> = (props) => {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as DatePickerDefinition
-	return <DatePicker {...props} definition={definition}></DatePicker>
+	return <DatePicker {...props} definition={definition} />
 }
 
 export default DatePickerBuilder

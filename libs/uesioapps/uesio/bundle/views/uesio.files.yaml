@@ -54,22 +54,19 @@ definition:
                 - text: home
                   href: home
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: files
@@ -93,8 +90,7 @@ definition:
                                 variant: "outlined"
                                 text: "Create New File"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newfile"
                                     namespace: "uesio"
           - material.deck:
@@ -134,8 +130,7 @@ definition:
                       - material.typography:
                           text: "${uesio.name}"
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
+                      - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${uesio.name}"
                         namespace: "uesio"
                     actions:

@@ -8,7 +8,7 @@ const FileUploadBuilder = (props: FileUploadProps): ReactElement => {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as FileUploadDefinition
-	return <FileUpload {...props} definition={definition}></FileUpload>
+	return <FileUpload {...props} definition={definition} />
 }
 
 export default FileUploadBuilder

@@ -146,7 +146,7 @@ function CodeField(props: Props): ReactElement | null {
 						setMessage,
 						setStringValue
 					)}
-				></LazyMonaco>
+				/>
 			</div>
 		</div>
 	)

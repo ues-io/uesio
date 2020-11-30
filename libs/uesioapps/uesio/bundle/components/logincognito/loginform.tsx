@@ -25,7 +25,7 @@ function LoginForm(props: LoginFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setUsername(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.TextField
 				label="Password"
 				variant="outlined"
@@ -36,7 +36,7 @@ function LoginForm(props: LoginFormProps): ReactElement {
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
 					setPassword(e.target.value)
 				}
-			></material.TextField>
+			/>
 			<material.Button
 				onClick={() => {
 					props.setMode("")

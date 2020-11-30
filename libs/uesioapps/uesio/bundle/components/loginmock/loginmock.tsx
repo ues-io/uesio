@@ -32,20 +32,18 @@ function LoginMock(props: LoginProps): ReactElement | null {
 				onClick={async (): Promise<void> => {
 					await uesio.signal.run(
 						{
-							band: "platform",
-							signal: "LOGIN",
-							data: {
-								type: "mock",
-								token: "mockToken",
-							},
+							band: "", //TODO: remove this
+							signal: "user/LOGIN",
+							type: "mock",
+							token: "mockToken",
 						},
 						props.context
 					)
 				}}
 				className={classes.loginButton}
 			>
-				<LoginIcon image="uesio.logosmall"></LoginIcon>
-				<LoginText text={buttonText}></LoginText>
+				<LoginIcon image="uesio.logosmall" />
+				<LoginText text={buttonText} />
 			</button>
 		</LoginWrapper>
 	)

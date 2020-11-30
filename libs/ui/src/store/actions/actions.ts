@@ -1,3 +1,4 @@
+import { AnyAction } from "redux"
 import { StateFragment } from "../../definition/definition"
 import RuntimeState from "../types/runtimestate"
 
@@ -5,7 +6,7 @@ const ACTOR = "ACTOR"
 const BAND = "BAND"
 
 type ActionReducer = (
-	action: StoreAction,
+	action: AnyAction,
 	targetState: StateFragment,
 	allState: RuntimeState
 ) => StateFragment

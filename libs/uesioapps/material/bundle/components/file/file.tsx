@@ -67,7 +67,7 @@ function File(props: FileProps): ReactElement | null {
 				return (
 					<div {...FileProps}>
 						<material.Avatar className={classes.avatar}>
-							<Icon {...iconProps}></Icon>
+							<Icon {...iconProps} />
 						</material.Avatar>
 					</div>
 				)
@@ -75,26 +75,18 @@ function File(props: FileProps): ReactElement | null {
 	} else {
 		switch (mimeType) {
 			case "image":
-				return (
-					<iframe src={fileUrl} width="100%" height="500px"></iframe>
-				)
+				return <iframe src={fileUrl} width="100%" height="500px" />
 				break
 			case "application":
 				if (mimeSubType === "pdf") {
-					return (
-						<iframe
-							src={fileUrl}
-							width="100%"
-							height="500px"
-						></iframe>
-					)
+					return <iframe src={fileUrl} width="100%" height="500px" />
 				} else {
 					return (
 						<material.Button
 							variant="contained"
 							color="primary"
 							href={fileUrl}
-							endIcon={<Icon {...iconProps}></Icon>}
+							endIcon={<Icon {...iconProps} />}
 						>
 							Download
 						</material.Button>

@@ -14,6 +14,7 @@ import { Context } from "../context/context"
 import { colors } from "@material-ui/core"
 import { createComponent } from "../component/component"
 import Route from "./route"
+import { navigateCreator, redirectCreator } from "../bands/route/signals"
 
 type Props = BaseProps & {
 	platform: Platform
@@ -75,23 +76,13 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
 				uesio.signal.run(
-					{
-						band: "platform",
-						signal: "REDIRECT",
-						path: document.location.pathname,
-					},
+					redirectCreator(document.location.pathname),
 					new Context()
 				)
 				return
 			}
 			uesio.signal.run(
-				{
-					band: "platform",
-					signal: "NAVIGATE",
-					path: event.state.path,
-					namespace: event.state.namespace,
-					noPushState: true,
-				},
+				navigateCreator(event.state.path, event.state.namespace, true),
 				new Context([
 					{
 						workspace: event.state.workspace,
@@ -108,7 +99,7 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline></CssBaseline>
+			<CssBaseline />
 			<Route
 				{...{
 					path: props.path,
@@ -118,7 +109,7 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 						buildMode: buildMode && scriptsHaveLoaded,
 					}),
 				}}
-			></Route>
+			/>
 		</ThemeProvider>
 	)
 }
@@ -134,7 +125,7 @@ const Runtime: FC<Props> = (props: Props) => {
 					componentType: props.componentType,
 					context: props.context,
 				}}
-			></RuntimeInner>
+			/>
 		</Provider>
 	)
 }

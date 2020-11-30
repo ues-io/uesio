@@ -45,7 +45,7 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					iconOnClick={(): void => {
 						uesio.builder.setSelectedNode("")
 					}}
-				></ToolbarTitle>
+				/>
 				<BuildPropArea
 					index={0}
 					buildPropsDef={propDef}
@@ -53,7 +53,7 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					path={path}
 					componentType=""
 					context={props.context}
-				></BuildPropArea>
+				/>
 				<BuildActionsArea
 					index={0}
 					actions={propDef.actions}
@@ -61,7 +61,7 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					path={path}
 					componentType=""
 					context={props.context}
-				></BuildActionsArea>
+				/>
 			</Fragment>
 		)
 	}

@@ -8,7 +8,7 @@ function TypographyBuilder(props: TypographyProps): ReactElement {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as TypographyDefinition
-	return <Typography {...props} definition={definition}></Typography>
+	return <Typography {...props} definition={definition} />
 }
 
 export default TypographyBuilder

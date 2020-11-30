@@ -62,8 +62,7 @@ definition:
                       - text: home
                         href: /home
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: route/NAVIGATE
                             path: home
                             namespace: uesio
                       - text: ${uesio.name}
@@ -126,8 +125,7 @@ definition:
                                                 band: "wire"
                                                 targets:
                                                   - "apps"
-                                              - signal: "NAVIGATE"
-                                                band: "platform"
+                                              - signal: "route/NAVIGATE"
                                                 path: "home"
                                                 namespace: "uesio"
                       - material.field:
@@ -156,8 +154,7 @@ definition:
                                       variant: "outlined"
                                       text: "Create a Workspace"
                                       signals:
-                                        - signal: "NAVIGATE"
-                                          band: "platform"
+                                        - signal: "route/NAVIGATE"
                                           path: "app/${uesio.name}/newworkspace"
                                           namespace: "uesio"
                 - material.deck:
@@ -184,8 +181,7 @@ definition:
                                 text: "$Record{uesio.name}"
                                 textTransform: "capitalize"
                           signals:
-                            - signal: "NAVIGATE"
-                              band: "platform"
+                            - signal: "route/NAVIGATE"
                               path: "app/$Param{appname}/workspace/${uesio.name}"
                               namespace: "uesio"
                 - material.grid:
@@ -222,8 +218,7 @@ definition:
                             - material.typography:
                                 text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
                           signals:
-                            - signal: "NAVIGATE"
-                              band: "platform"
+                            - signal: "route/NAVIGATE"
                               path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
                               namespace: "uesio"
                 - material.grid:
@@ -260,8 +255,7 @@ definition:
                             - material.typography:
                                 text: "${uesio.name}"
                           signals:
-                            - signal: "NAVIGATE"
-                              band: "platform"
+                            - signal: "route/NAVIGATE"
                               path: "app/$Param{appname}/site/${uesio.name}"
                               namespace: "uesio"
 dependencies:

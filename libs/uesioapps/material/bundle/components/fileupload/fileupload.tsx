@@ -55,8 +55,8 @@ async function handleChange(
 		)
 
 		const navigateSig = {
-			signal: "NAVIGATE",
-			band: "platform",
+			signal: "route/NAVIGATE",
+			band: "", //TODO: remove this
 			path:
 				`app/` +
 				workspace?.app +

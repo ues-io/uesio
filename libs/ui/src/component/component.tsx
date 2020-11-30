@@ -111,7 +111,7 @@ function createComponent(
 				path,
 				context,
 			}}
-		></Loader>
+		/>
 	)
 }
 

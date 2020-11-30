@@ -1,42 +1,42 @@
 import {
-	Dispatcher,
-	useBuilderNodeState,
 	useBuilderMode,
-	useBuilderSelectedNode,
 	useBuilderDragNode,
 	useBuilderDropNode,
 	useBuilderView,
 	useBuilderRightPanel,
 	useBuilderLeftPanel,
 	useBuilderHasChanges,
-	DispatchReturn,
 	useBuilderMetadataList,
 	useBuilderAvailableNamespaces,
-} from "../store/store"
-import { BAND, StoreAction } from "../store/actions/actions"
-import {
-	SET_ACTIVE_NODE,
-	SET_SELECTED_NODE,
-	TOGGLE_BUILD_MODE,
-	SET_DRAG_NODE,
-	SET_RIGHT_PANEL,
-	SET_LEFT_PANEL,
-	SET_VIEW,
-	SET_DROP_NODE,
-} from "../builder/builderbandactions"
+} from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 import { VIEWDEF_BAND } from "../viewdef/viewdefband"
 import { SAVE, CANCEL } from "../viewdef/viewdefbandsignals"
-import {
-	GET_AVAILABLE_NAMESPACES,
-	GET_METADATA_LIST,
-} from "../builder/builderbandsignals"
-import { BUILDER_BAND } from "../builder/builderband"
 import { SignalDefinition } from "../definition/signal"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { getBand } from "../actor/band"
 import { metadata } from "@uesio/constants"
+import {
+	setActiveNode,
+	setDragNode,
+	setDropNode,
+	setLeftPanel,
+	setRightPanel,
+	setSelectedNode,
+	setView,
+	toggleBuildMode,
+} from "../bands/builder"
+import { AnyAction } from "redux"
+import {
+	useBuilderNodeState,
+	useBuilderSelectedNode,
+} from "../bands/builder/selectors"
+import {
+	getAvailableNamespacesCreator,
+	getMetadataListCreator,
+} from "../bands/builder/signals"
+import { Dispatcher, DispatchReturn } from "../store/store"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -45,7 +45,7 @@ class BuilderAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<StoreAction>
+	dispatcher: Dispatcher<AnyAction>
 
 	useNodeState = useBuilderNodeState
 	useSelectedNode = useBuilderSelectedNode
@@ -61,89 +61,35 @@ class BuilderAPI {
 	useAvailableNamespaces = useBuilderAvailableNamespaces
 
 	setActiveNode(path: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_ACTIVE_NODE,
-			data: {
-				path,
-			},
-		})
+		this.dispatcher(setActiveNode(path))
 	}
 
 	setSelectedNode(path: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_SELECTED_NODE,
-			data: {
-				path,
-			},
-		})
+		this.dispatcher(setSelectedNode(path))
 	}
 
 	setDragNode(path: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_DRAG_NODE,
-			data: {
-				path,
-			},
-		})
+		this.dispatcher(setDragNode(path))
 	}
 
 	setDropNode(path: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_DROP_NODE,
-			data: {
-				path,
-			},
-		})
+		this.dispatcher(setDropNode(path))
 	}
 
 	setRightPanel(panel: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_RIGHT_PANEL,
-			data: {
-				panel,
-			},
-		})
+		this.dispatcher(setRightPanel(panel))
 	}
 
 	setLeftPanel(panel: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_LEFT_PANEL,
-			data: {
-				panel,
-			},
-		})
+		this.dispatcher(setLeftPanel(panel))
 	}
 
 	setView(view: string): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: SET_VIEW,
-			data: {
-				view,
-			},
-		})
+		this.dispatcher(setView(view))
 	}
 
 	toggleBuildMode(): void {
-		this.dispatcher({
-			type: BAND,
-			band: BUILDER_BAND,
-			name: TOGGLE_BUILD_MODE,
-			data: {},
-		})
+		this.dispatcher(toggleBuildMode())
 	}
 
 	save(): DispatchReturn {
@@ -152,7 +98,7 @@ class BuilderAPI {
 				band: VIEWDEF_BAND,
 				signal: SAVE,
 			},
-			new Context()
+			this.uesio.getContext() || new Context()
 		)
 	}
 
@@ -173,25 +119,13 @@ class BuilderAPI {
 		grouping?: string
 	): DispatchReturn {
 		return this.uesio.signal.run(
-			{
-				band: BUILDER_BAND,
-				signal: GET_METADATA_LIST,
-				namespace,
-				metadataType,
-				grouping,
-			},
+			getMetadataListCreator(metadataType, namespace, grouping),
 			context
 		)
 	}
 
 	getAvailableNamespaces(context: Context): DispatchReturn {
-		return this.uesio.signal.run(
-			{
-				band: BUILDER_BAND,
-				signal: GET_AVAILABLE_NAMESPACES,
-			},
-			context
-		)
+		return this.uesio.signal.run(getAvailableNamespacesCreator(), context)
 	}
 
 	getSignalProperties(signal: SignalDefinition): PropDescriptor[] {

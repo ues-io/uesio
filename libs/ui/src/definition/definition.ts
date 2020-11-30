@@ -25,7 +25,12 @@ export type DefinitionList = DefinitionMap[]
 
 export type DefinitionValue = string | number | boolean | null | undefined
 
-export type Definition = DefinitionValue | DefinitionMap | Definition[]
+export type Definition =
+	| DefinitionValue
+	| DefinitionMap
+	| string[]
+	| number[]
+	| DefinitionMap[]
 
 export type StateMap = {
 	[key: string]: StateFragment

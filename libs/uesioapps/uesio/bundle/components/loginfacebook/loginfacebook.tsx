@@ -38,12 +38,10 @@ function LoginFacebook(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "platform",
-				signal: "LOGIN",
-				data: {
-					type: "facebook",
-					token: response.accessToken,
-				},
+				band: "", //TODO: remove this
+				signal: "user/LOGIN",
+				type: "facebook",
+				token: response.accessToken,
 			},
 			props.context
 		)
@@ -54,14 +52,14 @@ function LoginFacebook(props: LoginProps): ReactElement | null {
 		autoLoad: false,
 		fields: "name,email",
 		callback: responseFacebook,
-		icon: <LoginIcon image="uesio.facebooksmall"></LoginIcon>,
+		icon: <LoginIcon image="uesio.facebooksmall" />,
 		textButton: buttonText,
 		cssClass: classes.FacebookLoginButton,
 	}
 
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<FacebookLogin {...options}></FacebookLogin>
+			<FacebookLogin {...options} />
 		</LoginWrapper>
 	)
 }

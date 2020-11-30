@@ -40,7 +40,7 @@ function LoadWireAction(props: ActionProps): ReactElement | null {
 			title={action.label}
 			onClick={clickHandler}
 			icon={RefreshIcon}
-		></ActionButton>
+		/>
 	)
 }
 

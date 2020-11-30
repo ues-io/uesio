@@ -32,10 +32,10 @@ function DeckBuilder(props: DeckProps): ReactElement {
 						backgroundColor: "#f5f5f5",
 					}}
 				>
-					<component.Slot {...slotProps}></component.Slot>
+					<component.Slot {...slotProps} />
 				</div>
 			)}
-			<Deck {...props} definition={definition}></Deck>
+			<Deck {...props} definition={definition} />
 		</>
 	)
 }

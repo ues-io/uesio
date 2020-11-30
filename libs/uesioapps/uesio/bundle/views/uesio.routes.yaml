@@ -52,22 +52,19 @@ definition:
                 - text: home
                   href: home
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
-                    - signal: NAVIGATE
-                      band: platform
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: routes
@@ -91,8 +88,7 @@ definition:
                                 variant: "outlined"
                                 text: "Create New Route"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newroute"
                                     namespace: "uesio"
           - material.deck:
@@ -129,8 +125,7 @@ definition:
                       - material.typography:
                           text: "${uesio.view}"
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
+                      - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/route/${uesio.name}"
                         namespace: "uesio"
                     actions:
@@ -140,8 +135,7 @@ definition:
                         helptext: "Preview"
                         helptextposition: "right"
                         signals:
-                          - signal: "REDIRECT"
-                            band: "platform"
+                          - signal: "route/REDIRECT"
                             path: "/workspace/$Param{appname}/$Param{workspacename}/app/$Param{appname}/${uesio.path}"
                       - action:
                         icon: "delete"

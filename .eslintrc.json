@@ -7,7 +7,7 @@
     "project": "./tsconfig.*?.json"
   },
   "ignorePatterns": ["**/*"],
-  "plugins": ["@typescript-eslint", "@nrwl/nx"],
+  "plugins": ["@typescript-eslint", "@nrwl/nx", "react"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -19,6 +19,14 @@
     "eqeqeq": "error",
     "radix": "error",
     "no-new-wrappers": "error",
+    "react/self-closing-comp": [
+      "error",
+      {
+        "component": true,
+        "html": true
+      }
+    ],
+    "react/jsx-closing-bracket-location": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {

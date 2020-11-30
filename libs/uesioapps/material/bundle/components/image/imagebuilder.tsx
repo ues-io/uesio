@@ -6,7 +6,7 @@ import { hooks } from "@uesio/ui"
 const ImageBuilder = (props: ImageProps): ReactElement => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as ImageDefinition
-	return <Image {...props} definition={definition}></Image>
+	return <Image {...props} definition={definition} />
 }
 
 export default ImageBuilder

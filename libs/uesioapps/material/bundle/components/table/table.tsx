@@ -112,8 +112,8 @@ const Table: FC<TableProps> = (props: TableProps) => {
 				<TableHeader
 					columns={definition.columns}
 					collection={collection}
-				></TableHeader>
-				<TableBody {...bodyProps}></TableBody>
+				/>
+				<TableBody {...bodyProps} />
 			</material.Table>
 		</>
 	)

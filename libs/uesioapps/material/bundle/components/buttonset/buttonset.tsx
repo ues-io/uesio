@@ -13,7 +13,7 @@ function ButtonSet(props: ButtonSetProps): ReactElement {
 	}
 	return (
 		<div>
-			<component.Slot {...slotProps}></component.Slot>
+			<component.Slot {...slotProps} />
 		</div>
 	)
 }

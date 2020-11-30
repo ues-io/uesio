@@ -60,8 +60,7 @@ definition:
                                     band: "wire"
                                     targets:
                                       - "apps"
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -69,8 +68,7 @@ definition:
                                 variant: "outlined"
                                 text: "Cancel"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
+                                  - signal: "route/NAVIGATE"
                                     path: "home"
                                     namespace: "uesio"
 dependencies:

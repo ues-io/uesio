@@ -64,29 +64,25 @@ definition:
                       - text: home
                         href: home
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: route/NAVIGATE
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: files
                         href: app/$Param{appname}/workspace/$Param{workspacename}/files
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/files
                             namespace: uesio
                       - text: $Param{filename}
@@ -134,8 +130,7 @@ definition:
                                                       band: "wire"
                                                       targets:
                                                         - "files"
-                                                    - signal: "NAVIGATE"
-                                                      band: "platform"
+                                                    - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
                                                       namespace: "uesio"
                                                     - signal: "TOGGLE_MODE"

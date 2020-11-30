@@ -1,17 +1,12 @@
 import RuntimeState from "../store/types/runtimestate"
 import { SignalDefinition } from "../definition/signal"
 import Actor from "./actor"
-import { BotBand } from "../bot/botband"
 import { WireBand } from "../wire/wireband"
 import { ComponentBand } from "../componentactor/componentband"
-import { BuilderBand } from "../builder/builderband"
 import { ViewBand } from "../view/viewband"
 import { ViewDefBand } from "../viewdef/viewdefband"
 import { ThunkFunc } from "../store/store"
 import { BandAction } from "../store/actions/actions"
-import { PlatformBand } from "../platform/platformband"
-import { RouteBand } from "../route/routeband"
-import { CollectionBand } from "../collection/collectionband"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
 
@@ -27,12 +22,7 @@ type BandMap = {
 }
 
 const bandMap: BandMap = {
-	bot: BotBand,
-	builder: BuilderBand,
 	component: ComponentBand,
-	collection: CollectionBand,
-	platform: PlatformBand,
-	route: RouteBand,
 	view: ViewBand,
 	viewdef: ViewDefBand,
 	wire: WireBand,

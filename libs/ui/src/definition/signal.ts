@@ -9,6 +9,7 @@ type SignalDispatcher = (
 ) => ThunkFunc
 
 type SignalDescriptor = {
+	key?: string
 	label?: string
 	public?: boolean
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
@@ -41,6 +42,7 @@ type SignalDefinition = BandSignal | ActorSignal
 
 export {
 	SignalDefinition,
+	SignalDescriptor,
 	ActorSignal,
 	BandSignal,
 	SignalHandlerStore,

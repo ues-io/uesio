@@ -36,8 +36,7 @@ definition:
                                 variant: "outlined"
                                 text: "Create New App"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "platform"
+                                  - signal: "route/NAVIGATE"
                                     path: "newapp"
                                     namespace: "uesio"
           - material.deck:
@@ -68,8 +67,7 @@ definition:
                           text: "${uesio.description}"
                           variant: body2
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
+                      - signal: "route/NAVIGATE"
                         path: "app/${uesio.name}"
                         namespace: "uesio"
 dependencies:

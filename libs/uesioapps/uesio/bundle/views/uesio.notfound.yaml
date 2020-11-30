@@ -29,8 +29,7 @@ definition:
                     text: "Go To Login Page"
                     variant: outlined
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
+                      - signal: "route/NAVIGATE"
                         path: "login"
                         namespace: "uesio"
 dependencies:

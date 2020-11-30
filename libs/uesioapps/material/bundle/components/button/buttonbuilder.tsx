@@ -22,8 +22,8 @@ const ButtonBuilder = memo(
 
 		return (
 			<div className={classes.root}>
-				<Button {...props} definition={definition}></Button>
-				<ComponentMask></ComponentMask>
+				<Button {...props} definition={definition} />
+				<ComponentMask />
 			</div>
 		)
 	},

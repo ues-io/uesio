@@ -22,8 +22,7 @@ definition:
                       - 0
                       - 2
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "platform"
+                      - signal: "route/NAVIGATE"
                         path: "home"
                         namespace: "uesio"
           # Avatar
@@ -38,8 +37,7 @@ definition:
                                 text: Log Out
                                 variant: text
                                 signals:
-                                  - signal: "LOGOUT"
-                                    band: "platform"
+                                  - signal: "user/LOGOUT"
                       - material.griditem:
                           components:
                             - material.avatar:
