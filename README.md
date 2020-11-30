@@ -12,6 +12,10 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
+Frontend-side, the concepts coming from functional programming are recommended.
+
+Redux-wise we do follow the [redux guide](https://redux.js.org/style-guide/style-guide) and implemented the [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - when it comes to the structure of the redux features (reducer, action creator).
+
 # Tech Stack
 
 ## Backend
@@ -29,7 +33,9 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 - [React](https://reactjs.org/). Library for making UI elements.
 - [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
+- [Redux-toolkit](https://redux.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
+- [Immer](https://github.com/immerjs/immer). Immutable data structure library.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # Monorepo architecture
