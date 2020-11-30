@@ -24,7 +24,10 @@ type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
 const defaultState = {
 	collection: {},
 	view: {},
-	viewdef: {},
+	viewdef: {
+		entities: {},
+		ids: [],
+	},
 }
 
 let platform: Platform

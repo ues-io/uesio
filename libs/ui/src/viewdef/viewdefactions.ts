@@ -1,30 +1,12 @@
 import { ActorAction } from "../store/actions/actions"
-import Dependencies from "../store/types/dependenciesstate"
-import { YamlDoc, Definition } from "../definition/definition"
+import { Definition } from "../definition/definition"
 
-const SET_YAML = "SET_YAML"
-const SET_DEPENDENCIES = "SET_DEPENDENCIES"
 const SET_DEFINITION = "SET_DEFINITION"
 const ADD_DEFINITION = "ADD_DEFINITION"
 const ADD_DEFINITION_PAIR = "ADD_DEFINITION_PAIR"
 const MOVE_DEFINITION = "MOVE_DEFINITION"
 const REMOVE_DEFINITION = "REMOVE_DEFINITION"
 const CHANGE_DEFINITION_KEY = "CHANGE_DEFINITION_KEY"
-
-interface SetDependenciesAction extends ActorAction {
-	name: typeof SET_DEPENDENCIES
-	data: {
-		dependencies: Dependencies
-	}
-}
-
-interface SetYamlAction extends ActorAction {
-	name: typeof SET_YAML
-	data: {
-		path: string
-		yaml: YamlDoc
-	}
-}
 
 interface SetDefinitionAction extends ActorAction {
 	name: typeof SET_DEFINITION
@@ -76,8 +58,6 @@ type ChangeDefinitionKeyAction = {
 } & ActorAction
 
 type ViewDefAction =
-	| SetDependenciesAction
-	| SetYamlAction
 	| SetDefinitionAction
 	| AddDefinitionAction
 	| AddDefinitionPairAction
@@ -87,16 +67,12 @@ type ViewDefAction =
 
 export {
 	ViewDefAction,
-	SET_YAML,
-	SET_DEPENDENCIES,
 	SET_DEFINITION,
 	ADD_DEFINITION,
 	ADD_DEFINITION_PAIR,
 	REMOVE_DEFINITION,
 	MOVE_DEFINITION,
 	CHANGE_DEFINITION_KEY,
-	SetDependenciesAction,
-	SetYamlAction,
 	SetDefinitionAction,
 	AddDefinitionAction,
 	AddDefinitionPairAction,

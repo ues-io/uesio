@@ -8,7 +8,7 @@ const BAND = "BAND"
 type ActionReducer = (
 	action: AnyAction,
 	targetState: StateFragment,
-	allState: RuntimeState
+	allState?: RuntimeState
 ) => StateFragment
 
 type ActionGroup = {
