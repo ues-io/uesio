@@ -161,8 +161,7 @@ definition:
                                             fullWidth: true
                                             margin: 0
                                             signals:
-                                              - signal: "NAVIGATE"
-                                                band: "platform"
+                                              - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
                                                 namespace: "uesio"
                       - material.griditem:
