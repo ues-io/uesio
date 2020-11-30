@@ -106,44 +106,40 @@ const View: FC<Props> = (props: Props) => {
 	const [materialTheme, setMaterialTheme] = useState<PaletteOptions | null>(
 		null
 	)
-	const route = uesio.route.useRoute()
-
-	console.log("route", route)
-	const [themenamespace, themename] = ["", ""]
-
-	// const [themenamespace, themename] = route?.theme
-	// 	? parseKey(route?.theme)
-	// 	: ["", ""]
 
 	useEffect(() => {
-		fetch(
-			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themenamespace}/${themename}`
-			// `https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
-		)
-			.then((response) => response.json())
-			.then((themeResponse: ThemeAPIResponse) => {
-				console.log("response", themeResponse)
-				setMaterialTheme({
-					primary: {
-						main: themeResponse.definition.primary,
-					},
-					secondary: {
-						main: themeResponse.definition.secondary,
-					},
-					error: {
-						main: themeResponse.definition.error,
-					},
-					warning: {
-						main: themeResponse.definition.warning,
-					},
-					info: {
-						main: themeResponse.definition.info,
-					},
-					success: {
-						main: themeResponse.definition.success,
-					},
+		const route = props.context.getRoute()
+		const [themeNamespace, themeName] = route?.theme || ["", ""]
+		if (themeNamespace && themeName) {
+			fetch(
+				`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
+				// `https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
+			)
+				.then((response) => response.json())
+				.then((themeResponse: ThemeAPIResponse) => {
+					console.log("response", themeResponse)
+					setMaterialTheme({
+						primary: {
+							main: themeResponse.definition.primary,
+						},
+						secondary: {
+							main: themeResponse.definition.secondary,
+						},
+						error: {
+							main: themeResponse.definition.error,
+						},
+						warning: {
+							main: themeResponse.definition.warning,
+						},
+						info: {
+							main: themeResponse.definition.info,
+						},
+						success: {
+							main: themeResponse.definition.success,
+						},
+					})
 				})
-			})
+		}
 	}, [])
 
 	const useRunTime =

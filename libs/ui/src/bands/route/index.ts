@@ -21,6 +21,7 @@ const routeSlice = createSlice({
 			workspace: payload.workspace,
 			namespace: "",
 			path: "",
+			theme: "",
 		}),
 	},
 })
