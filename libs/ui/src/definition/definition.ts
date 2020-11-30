@@ -29,6 +29,7 @@ export type Definition =
 	| DefinitionValue
 	| DefinitionMap
 	| string[]
+	| number[]
 	| DefinitionMap[]
 
 export type StateMap = {
