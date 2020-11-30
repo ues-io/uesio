@@ -54,10 +54,9 @@ definition:
                 - material.button:
                     color: primary
                     signals:
-                      - band: route
-                        namespace: crm
+                      - namespace: crm
                         path: lead/${crm.id}
-                        signal: NAVIGATE
+                        signal: route/NAVIGATE
                     text: Edit
                     variant: contained
                 - material.button:
@@ -71,9 +70,8 @@ definition:
                 - material.button:
                     color: primary
                     signals:
-                      - band: bot
-                        bot: crm.convertlead
-                        signal: CALL
+                      - bot: crm.convertlead
+                        signal: bot/CALL
                     text: Convert Lead
                     variant: contained
         id: leadsTable

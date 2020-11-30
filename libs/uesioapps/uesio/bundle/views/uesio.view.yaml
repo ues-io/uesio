@@ -64,29 +64,25 @@ definition:
                       - text: home
                         href: home
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: views
                         href: app/$Param{appname}/workspace/$Param{workspacename}/views
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/views
                             namespace: uesio
                       - text: $Param{viewname}
@@ -121,16 +117,14 @@ definition:
                                                         variant: "outlined"
                                                         text: "Preview"
                                                         signals:
-                                                          - signal: "REDIRECT"
-                                                            band: route
+                                                          - signal: "route/REDIRECT"
                                                             path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${uesio.name}/preview"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
                                                         text: "Edit"
                                                         signals:
-                                                          - signal: "REDIRECT"
-                                                            band: route
+                                                          - signal: "route/REDIRECT"
                                                             path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${uesio.name}/edit"
                                                     - material.button:
                                                         color: "primary"
@@ -161,8 +155,7 @@ definition:
                                                             band: "wire"
                                                             targets:
                                                               - "views"
-                                                          - signal: "NAVIGATE"
-                                                            band: "route"
+                                                          - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
                                                             namespace: "uesio"
                                   - material.field:

@@ -65,29 +65,25 @@ definition:
                       - text: home
                         href: home
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: bots
                         href: app/$Param{appname}/workspace/$Param{workspacename}/bots
                         signals:
-                          - signal: NAVIGATE
-                            band: route
+                          - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/bots
                             namespace: uesio
                       - text: $Param{botname}
@@ -157,8 +153,7 @@ definition:
                                                             band: "wire"
                                                             targets:
                                                               - "bots"
-                                                          - signal: "NAVIGATE"
-                                                            band: "route"
+                                                          - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                                                             namespace: "uesio"
                                   - material.field:

@@ -1,4 +1,4 @@
-import { loginSignal, logoutSignal } from "./signals"
+import { loginCreator, logoutCreator } from "./signals"
 
 type UserState = {
 	site: string
@@ -7,10 +7,7 @@ type UserState = {
 	profile: string
 } | null
 
-type LoginSignal = ReturnType<typeof loginSignal>
-type LogoutSignal = ReturnType<typeof logoutSignal>
+type LoginSignal = ReturnType<typeof loginCreator>
+type LogoutSignal = ReturnType<typeof logoutCreator>
 
-// A type that describes all signals in the bot band
-type UserSignal = LoginSignal | LogoutSignal
-
-export { UserState, UserSignal, LoginSignal, LogoutSignal }
+export { UserState, LoginSignal, LogoutSignal }

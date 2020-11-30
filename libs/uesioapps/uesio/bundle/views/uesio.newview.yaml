@@ -88,8 +88,7 @@ definition:
                                     band: "wire"
                                     targets:
                                       - "views"
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/view/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:
@@ -97,8 +96,7 @@ definition:
                                 variant: "outlined"
                                 text: "Cancel"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
                                     namespace: "uesio"
 dependencies:

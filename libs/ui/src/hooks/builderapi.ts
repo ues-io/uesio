@@ -33,8 +33,8 @@ import {
 	useBuilderSelectedNode,
 } from "../bands/builder/selectors"
 import {
-	getAvailableNamespacesSignal,
-	getMetadataListSignal,
+	getAvailableNamespacesCreator,
+	getMetadataListCreator,
 } from "../bands/builder/signals"
 import { Dispatcher, DispatchReturn } from "../store/store"
 
@@ -119,13 +119,13 @@ class BuilderAPI {
 		grouping?: string
 	): DispatchReturn {
 		return this.uesio.signal.run(
-			getMetadataListSignal(metadataType, namespace, grouping),
+			getMetadataListCreator(metadataType, namespace, grouping),
 			context
 		)
 	}
 
 	getAvailableNamespaces(context: Context): DispatchReturn {
-		return this.uesio.signal.run(getAvailableNamespacesSignal(), context)
+		return this.uesio.signal.run(getAvailableNamespacesCreator(), context)
 	}
 
 	getSignalProperties(signal: SignalDefinition): PropDescriptor[] {

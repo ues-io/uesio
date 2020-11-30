@@ -51,22 +51,19 @@ definition:
                 - text: home
                   href: home
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: home
                       namespace: uesio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}
                       namespace: uesio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
-                    - signal: NAVIGATE
-                      band: route
+                    - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
                       namespace: uesio
                 - text: bots
@@ -90,8 +87,7 @@ definition:
                                 variant: "outlined"
                                 text: "Create New Bot"
                                 signals:
-                                  - signal: "NAVIGATE"
-                                    band: "route"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
                                     namespace: "uesio"
           - material.deck:
@@ -121,8 +117,7 @@ definition:
                       - material.typography:
                           text: "${uesio.name}"
                     signals:
-                      - signal: "NAVIGATE"
-                        band: "route"
+                      - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${uesio.name}"
                         namespace: "uesio"
 dependencies:
