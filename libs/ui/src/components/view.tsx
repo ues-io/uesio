@@ -115,9 +115,6 @@ const View: FC<Props> = (props: Props) => {
 		console.log("themenamespaceUseEffect", themenamespace)
 		console.log("themenameUseEffect", themename)
 
-		console.log("themenamespaceUseEffect", themenamespace)
-		console.log("themenameUseEffect", themename)
-
 		if (themenamespace && themename) {
 			fetchTheme(themenamespace, themename)
 		}
@@ -162,7 +159,6 @@ const View: FC<Props> = (props: Props) => {
 		view.valid &&
 		view.source.loaded
 	) {
-<<<<<<< HEAD
 		const slotProps = {
 			definition,
 			listName: "components",
@@ -174,25 +170,6 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 		return <Slot {...slotProps} />
-=======
-		console.log("themenamespaceRender", themenamespace)
-		console.log("themenameUseRender", themename)
-		return (
-			<ThemeProvider theme={makeTheme(materialTheme as PaletteOptions)}>
-				<CssBaseline />
-				<Slot
-					definition={definition}
-					listName="components"
-					path="" // View slots paths are always empty
-					accepts={["uesio.standalone"]}
-					context={props.context.addFrame({
-						view: view.getId(),
-						buildMode: useBuildTime,
-					})}
-				/>
-			</ThemeProvider>
-		)
->>>>>>> f0f0a1f... Theming
 	}
 	return null
 }
