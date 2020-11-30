@@ -112,34 +112,7 @@ const View: FC<Props> = (props: Props) => {
 		const [themeNamespace, themeName] = (route?.theme &&
 			parseKey(route.theme)) || ["", ""]
 		if (themeNamespace && themeName) {
-			fetch(
-				`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
-				// `https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
-			)
-				.then((response) => response.json())
-				.then((themeResponse: ThemeAPIResponse) => {
-					console.log("response", themeResponse)
-					setMaterialTheme({
-						primary: {
-							main: themeResponse.definition.primary,
-						},
-						secondary: {
-							main: themeResponse.definition.secondary,
-						},
-						error: {
-							main: themeResponse.definition.error,
-						},
-						warning: {
-							main: themeResponse.definition.warning,
-						},
-						info: {
-							main: themeResponse.definition.info,
-						},
-						success: {
-							main: themeResponse.definition.success,
-						},
-					})
-				})
+			fetchTheme(themeNamespace, themeName)
 		}
 	}, [])
 

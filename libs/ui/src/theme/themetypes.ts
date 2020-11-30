@@ -4,12 +4,12 @@ enum actionTypes {
 }
 
 interface Palette {
-	primary?: string
-	secondary?: string
-	error?: string
-	warning?: string
-	info?: string
-	success?: string
+	primary: string
+	secondary: string
+	error: string
+	warning: string
+	info: string
+	success: string
 }
 
 interface Theme {
