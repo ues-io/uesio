@@ -98,7 +98,7 @@ class BuilderAPI {
 				band: VIEWDEF_BAND,
 				signal: SAVE,
 			},
-			new Context()
+			this.uesio.getContext() || new Context()
 		)
 	}
 
