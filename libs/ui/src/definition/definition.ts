@@ -13,7 +13,7 @@ export type BaseProps = {
 	context: Context
 }
 
-export type BasePropsPlus = BaseProps & {
+export interface BasePropsPlus extends BaseProps {
 	[x: string]: unknown
 }
 
