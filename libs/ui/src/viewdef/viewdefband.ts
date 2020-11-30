@@ -23,14 +23,11 @@ import {
 } from "../store/actions/actions"
 import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
-import {
-	ADD_VIEWDEF,
-	AddViewDefAction,
-	CancelViewDefAction,
-	SaveViewDefAction,
-} from "./viewdefbandactions"
+import { CancelViewDefAction, SaveViewDefAction } from "./viewdefbandactions"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
+import { add as addViewDef } from "../bands/viewdef"
+import { AnyAction } from "redux"
 
 const VIEWDEF_BAND = "viewdef"
 
@@ -47,26 +44,6 @@ const getDefinitionDoc = (doc: yaml.Document.Parsed): yaml.Document => {
 
 class ViewDefBand {
 	static actionGroup: ActionGroup = {
-		[ADD_VIEWDEF]: (
-			action: AddViewDefAction,
-			state: PlainViewDefMap
-		): PlainViewDefMap => {
-			const namespace = action.data.namespace
-			const name = action.data.name
-			const viewDefId = ViewDefBand.makeId(
-				action.data.namespace,
-				action.data.name
-			)
-
-			return {
-				...state,
-				[viewDefId]: {
-					...state[viewDefId],
-					name,
-					namespace,
-				},
-			}
-		},
 		[CANCEL]: (
 			action: CancelViewDefAction,
 			state: PlainViewDefMap,
@@ -202,7 +179,7 @@ class ViewDefBand {
 					context: Context
 				): ThunkFunc => {
 					return async (
-						dispatch: Dispatcher<StoreAction>,
+						dispatch: Dispatcher<AnyAction>,
 						getState: () => RuntimeState,
 						platform: Platform
 					): DispatchReturn => {
@@ -225,15 +202,7 @@ class ViewDefBand {
 						)
 
 						batch(() => {
-							dispatch({
-								type: BAND,
-								band: VIEWDEF_BAND,
-								name: ADD_VIEWDEF,
-								data: {
-									namespace,
-									name: viewname,
-								},
-							})
+							dispatch(addViewDef(namespace + "." + viewname))
 							if (dependenciesDoc) {
 								const dependencies = dependenciesDoc.toJSON()
 								dispatch({
