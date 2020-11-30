@@ -32,11 +32,11 @@ type BasePropSection = {
 	type: string
 }
 
-type FieldsSection = BasePropSection & {
+interface FieldsSection extends BasePropSection {
 	type: "FIELDS"
 }
 
-type ConditionsSection = BasePropSection & {
+interface ConditionsSection extends BasePropSection {
 	type: "CONDITIONS"
 }
 
