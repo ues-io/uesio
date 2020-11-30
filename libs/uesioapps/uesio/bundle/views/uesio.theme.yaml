@@ -62,29 +62,25 @@ definition:
                       - text: home
                         href: home
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: "route/NAVIGATE"
                             path: home
                             namespace: uesio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: "route/NAVIGATE"
                             path: app/$Param{appname}
                             namespace: uesio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: "route/NAVIGATE"
                             path: app/$Param{appname}/workspace/$Param{workspacename}
                             namespace: uesio
                       - text: themes
                         href: app/$Param{appname}/workspace/$Param{workspacename}/themes
                         signals:
-                          - signal: NAVIGATE
-                            band: platform
+                          - signal: "route/NAVIGATE"
                             path: app/$Param{appname}/workspace/$Param{workspacename}/themes
                             namespace: uesio
                       - text: $Param{themename}
@@ -152,8 +148,7 @@ definition:
                                                             band: "wire"
                                                             targets:
                                                               - "themes"
-                                                          - signal: "NAVIGATE"
-                                                            band: "platform"
+                                                          - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
                                                             namespace: "uesio"
                                   - material.field:
