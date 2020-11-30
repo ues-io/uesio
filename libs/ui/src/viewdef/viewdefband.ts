@@ -1,6 +1,5 @@
 import RuntimeState from "../store/types/runtimestate"
-import { ViewDef, PlainViewDefMap } from "./viewdef"
-import { SET_YAML, SET_DEPENDENCIES } from "./viewdefactions"
+import { ViewDef } from "./viewdef"
 import {
 	LOAD,
 	LoadSignal,
@@ -14,20 +13,19 @@ import { getNodeAtPath } from "../yamlutils/yamlutils"
 import { Platform, SaveViewRequest } from "../platform/platform"
 
 import { batch } from "react-redux"
-import {
-	BandAction,
-	ActionGroup,
-	ACTOR,
-	StoreAction,
-	BAND,
-} from "../store/actions/actions"
+import { BandAction } from "../store/actions/actions"
 import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
-import { CancelViewDefAction, SaveViewDefAction } from "./viewdefbandactions"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
-import { add as addViewDef } from "../bands/viewdef"
+import {
+	add as addViewDef,
+	cancel as cancelViewDef,
+	save as saveViewDef,
+	setYaml,
+} from "../bands/viewdef"
 import { AnyAction } from "redux"
+import { PayloadAction } from "@reduxjs/toolkit"
 
 const VIEWDEF_BAND = "viewdef"
 
@@ -43,81 +41,6 @@ const getDefinitionDoc = (doc: yaml.Document.Parsed): yaml.Document => {
 }
 
 class ViewDefBand {
-	static actionGroup: ActionGroup = {
-		[CANCEL]: (
-			action: CancelViewDefAction,
-			state: PlainViewDefMap,
-			allState: RuntimeState
-		): PlainViewDefMap => {
-			// Loop over view defs
-			for (const defKey of Object.keys(state)) {
-				const viewDef = ViewDefBand.getActor(allState, defKey)
-
-				if (viewDef.valid) {
-					const defState = state[defKey]
-					if (defState.yaml === defState.originalYaml) {
-						continue
-					}
-					const original = defState.originalYaml
-					delete defState.yaml
-					delete defState.originalYaml
-					if (original) {
-						viewDef.receiveAction(
-							{
-								type: ACTOR,
-								name: SET_YAML,
-								target: defKey,
-								band: VIEWDEF_BAND,
-								data: {
-									path: "",
-									yaml: original,
-								},
-							},
-							allState
-						)
-					}
-				}
-			}
-			return { ...state }
-		},
-		[SAVE]: (
-			action: SaveViewDefAction,
-			state: PlainViewDefMap,
-			allState: RuntimeState
-		): PlainViewDefMap => {
-			// Loop over view defs
-			for (const defKey of Object.keys(state)) {
-				const viewDef = ViewDefBand.getActor(allState, defKey)
-
-				if (viewDef.valid) {
-					const defState = state[defKey]
-					if (defState.yaml === defState.originalYaml) {
-						continue
-					}
-					const yamlDoc = defState.yaml
-					delete defState.originalYaml
-					delete defState.yaml
-					if (yamlDoc) {
-						viewDef.receiveAction(
-							{
-								type: ACTOR,
-								name: SET_YAML,
-								target: defKey,
-								band: VIEWDEF_BAND,
-								data: {
-									path: "",
-									yaml: yamlDoc,
-								},
-							},
-							allState
-						)
-					}
-				}
-			}
-			return { ...state }
-		},
-	}
-
 	static getSignalHandlers(): SignalsHandler {
 		return {
 			[SAVE]: {
@@ -126,20 +49,20 @@ class ViewDefBand {
 					context: Context
 				): ThunkFunc => {
 					return async (
-						dispatch: Dispatcher<StoreAction>,
+						dispatch: Dispatcher<PayloadAction>,
 						getState: () => RuntimeState,
 						platform: Platform
 					): DispatchReturn => {
 						const saveRequest: SaveViewRequest = {}
-						const state = getState().viewdef
+						const state = getState().viewdef?.entities
 						// Loop over view defs
 						if (state) {
 							for (const defKey of Object.keys(state)) {
 								const defState = state[defKey]
-								if (defState.yaml === defState.originalYaml) {
+								if (defState?.yaml === defState?.originalYaml) {
 									continue
 								}
-								if (defState.yaml) {
+								if (defState?.yaml) {
 									saveRequest[
 										defKey
 									] = defState.yaml.toString()
@@ -147,11 +70,7 @@ class ViewDefBand {
 							}
 						}
 						await platform.saveViews(context, saveRequest)
-						dispatch({
-							type: BAND,
-							band: VIEWDEF_BAND,
-							name: SAVE,
-						})
+						dispatch(saveViewDef())
 						return context
 					}
 				},
@@ -162,13 +81,9 @@ class ViewDefBand {
 					context: Context
 				): ThunkFunc => {
 					return async (
-						dispatch: Dispatcher<StoreAction>
+						dispatch: Dispatcher<PayloadAction>
 					): DispatchReturn => {
-						dispatch({
-							type: BAND,
-							band: VIEWDEF_BAND,
-							name: CANCEL,
-						})
+						dispatch(cancelViewDef())
 						return context
 					}
 				},
@@ -202,29 +117,20 @@ class ViewDefBand {
 						)
 
 						batch(() => {
-							dispatch(addViewDef(namespace + "." + viewname))
-							if (dependenciesDoc) {
-								const dependencies = dependenciesDoc.toJSON()
-								dispatch({
-									type: ACTOR,
-									band: VIEWDEF_BAND,
-									name: SET_DEPENDENCIES,
-									target: viewid,
-									data: {
-										dependencies,
-									},
+							dispatch(
+								addViewDef({
+									namespace,
+									name: viewname,
+									dependencies: dependenciesDoc?.toJSON(),
 								})
-							}
-							dispatch({
-								type: ACTOR,
-								band: VIEWDEF_BAND,
-								name: SET_YAML,
-								target: viewid,
-								data: {
+							)
+							dispatch(
+								setYaml({
+									viewDef: viewid,
 									path: "",
 									yaml: defDoc,
-								},
-							})
+								})
+							)
 						})
 						return context
 					}
@@ -249,18 +155,11 @@ class ViewDefBand {
 		action: BandAction,
 		state: RuntimeState
 	): RuntimeState {
-		const handler = this.actionGroup[action.name]
-
-		if (handler) {
-			return Object.assign({}, state, {
-				viewdef: handler(action, state.viewdef, state),
-			})
-		}
 		return state
 	}
 
 	static getActor(state: RuntimeState, target: string): ViewDef {
-		return new ViewDef(state.viewdef?.[target] || null)
+		return new ViewDef(state.viewdef?.entities?.[target] || null)
 	}
 
 	static makeId(namespace: string, name: string): string {

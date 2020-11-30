@@ -24,10 +24,6 @@ import clone from "lodash.clone"
 import setWith from "lodash.setwith"
 import get from "lodash.get"
 import {
-	SET_DEPENDENCIES,
-	SetDependenciesAction,
-	SET_YAML,
-	SetYamlAction,
 	RemoveDefinitionAction,
 	REMOVE_DEFINITION,
 	SET_DEFINITION,
@@ -88,54 +84,6 @@ const cloneWithDefault = (value: unknown): unknown => clone(value) || {}
 
 class ViewDef extends Actor {
 	static actionGroup: ActionGroup = {
-		[SET_DEPENDENCIES]: (
-			action: SetDependenciesAction,
-			state: PlainViewDef
-		): PlainViewDef => {
-			return Object.assign({}, state, {
-				dependencies: action.data.dependencies,
-			})
-		},
-		[SET_YAML]: (
-			action: SetYamlAction,
-			state: PlainViewDef
-		): PlainViewDef => {
-			const yamlDoc = action.data.yaml
-			const path = action.data.path
-			const pathArray = toPath(path)
-			const definition = yamlDoc.toJSON()
-
-			// Set the definition JS Object from the yaml
-			setWith(
-				state,
-				["definition"].concat(pathArray),
-				definition,
-				cloneWithDefault
-			)
-
-			if (!state.originalYaml) {
-				Object.assign(state, {
-					originalYaml: yamlDoc,
-				})
-			}
-
-			if (!state.yaml) {
-				Object.assign(state, {
-					yaml: yamlDoc,
-				})
-			} else {
-				if (state.yaml === state.originalYaml) {
-					state.originalYaml = yaml.parseDocument(
-						state.originalYaml.toString(),
-						YAML_OPTIONS
-					)
-				}
-
-				// We actually don't want components using useYaml to rerender
-				setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
-			}
-			return state
-		},
 		[REMOVE_DEFINITION]: (
 			action: RemoveDefinitionAction,
 			state: PlainViewDef
@@ -462,9 +410,21 @@ class ViewDef extends Actor {
 		const actionHandler = ViewDef.actionGroup[action.name]
 		const target = this.getId()
 		if (actionHandler) {
-			return Actor.assignState("viewdef", state, {
-				[target]: actionHandler(action, state.viewdef?.[target], state),
-			})
+			return {
+				...state,
+				viewdef: {
+					...state.viewdef,
+					entities: {
+						...state.viewdef?.entities,
+						[target]: actionHandler(
+							action,
+							state.viewdef?.entities?.[target],
+							state
+						) as PlainViewDef,
+					},
+					ids: state?.viewdef?.ids || [],
+				},
+			}
 		}
 		return state
 	}

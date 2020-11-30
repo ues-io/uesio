@@ -10,7 +10,6 @@ import {
 import { ACTOR } from "../store/actions/actions"
 import {
 	SET_DEFINITION,
-	SET_YAML,
 	ADD_DEFINITION,
 	REMOVE_DEFINITION,
 	MOVE_DEFINITION,
@@ -19,7 +18,6 @@ import {
 	RemoveDefinitionAction,
 	ChangeDefinitionKeyAction,
 	AddDefinitionPairAction,
-	SetYamlAction,
 	MoveDefinitionAction,
 	SetDefinitionAction,
 } from "../viewdef/viewdefactions"
@@ -36,6 +34,7 @@ import Dependencies from "../store/types/dependenciesstate"
 import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
 import { setSelectedNode } from "../bands/builder"
+import { setYaml } from "../bands/viewdef"
 
 const VIEW_BAND = "view"
 const VIEWDEF_BAND = "viewdef"
@@ -58,34 +57,22 @@ class ViewAPI {
 
 	useConfigValue(key: string): string {
 		const view = this.uesio.getView()
-		if (view) {
-			return useViewConfigValue(view, key)
-		}
-		return ""
+		return view ? useViewConfigValue(view, key) : ""
 	}
 
 	useDefinition(path?: string, view?: View): Definition {
 		const useView = view || this.uesio.getView()
-		if (useView) {
-			return useViewDefinition(useView, path)
-		}
-		return undefined
+		return useView ? useViewDefinition(useView, path) : undefined
 	}
 
 	useDependencies(view?: View): Dependencies | undefined {
 		const useView = view || this.uesio.getView()
-		if (useView) {
-			return useViewDependencies(useView)
-		}
-		return undefined
+		return useView ? useViewDependencies(useView) : undefined
 	}
 
 	useYAML(): yaml.Document | undefined {
 		const view = this.uesio.getView()
-		if (view) {
-			return useViewYAML(view)
-		}
-		return undefined
+		return view ? useViewYAML(view) : undefined
 	}
 
 	setDefinition(path: string, definition: Definition): void {
@@ -207,17 +194,13 @@ class ViewAPI {
 	setYaml(path: string, yamlDoc: yaml.Document): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: SetYamlAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: SET_YAML,
-				data: {
+			this.dispatcher(
+				setYaml({
+					viewDef: view.getViewDefId(),
 					path,
 					yaml: yamlDoc,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
