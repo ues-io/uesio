@@ -109,7 +109,8 @@ const View: FC<Props> = (props: Props) => {
 
 	useEffect(() => {
 		const route = props.context.getRoute()
-		const [themeNamespace, themeName] = route?.theme || ["", ""]
+		const [themeNamespace, themeName] = (route?.theme &&
+			parseKey(route.theme)) || ["", ""]
 		if (themeNamespace && themeName) {
 			fetch(
 				`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
