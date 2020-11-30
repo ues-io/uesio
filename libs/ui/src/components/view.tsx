@@ -165,7 +165,12 @@ const View: FC<Props> = (props: Props) => {
 				buildMode: useBuildTime,
 			}),
 		}
-		return <Slot {...slotProps} />
+		return (
+			<ThemeProvider theme={makeTheme(materialTheme as PaletteOptions)}>
+				<CssBaseline />
+				<Slot {...slotProps} />
+			</ThemeProvider>
+		)
 	}
 	return null
 }
