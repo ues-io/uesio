@@ -67,6 +67,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controllers.ServeFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controllers.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controllers.ViewAPI, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/themes/{namespace}/{name}", controllers.ThemeAPI, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/routes/{namespace}/{route:.*}", controllers.RouteAPI, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controllers.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controllers.ServeComponentPack(false), "GET")

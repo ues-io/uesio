@@ -1,3 +1,4 @@
 name: newapp
 path: newapp
 view: uesio.newapp
+theme: uesio.default

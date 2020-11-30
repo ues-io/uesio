@@ -1,3 +1,4 @@
 name: collections
 path: app/{appname}/workspace/{workspacename}/collections
 view: uesio.collections
+theme: uesio.default

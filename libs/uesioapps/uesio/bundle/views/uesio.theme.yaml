@@ -1,0 +1,163 @@
+name: theme
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    themes:
+      collection: uesio.themes
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.definition:
+        uesio.workspaceid:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: themename
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        name: topbar
+        namespace: uesio
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: themeDeck
+              wire: themes
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: "route/NAVIGATE"
+                            path: home
+                            namespace: uesio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: "route/NAVIGATE"
+                            path: app/$Param{appname}
+                            namespace: uesio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: "route/NAVIGATE"
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: uesio
+                      - text: themes
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/themes
+                        signals:
+                          - signal: "route/NAVIGATE"
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/themes
+                            namespace: uesio
+                      - text: $Param{themename}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color: "green"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${uesio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: "TOGGLE_MODE"
+                                                            scope: "material.deck"
+                                                            band: "component"
+                                                            target: "themeDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "themes"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: "CANCEL"
+                                                            band: "wire"
+                                                            target: "themes"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: "MARK_FOR_DELETE"
+                                                            band: "wire"
+                                                            target: "themes"
+                                                          - signal: "SAVE"
+                                                            band: "wire"
+                                                            targets:
+                                                              - "themes"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
+                                                            namespace: "uesio"
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - uesio.codefield:
+                                      fieldId: uesio.definition
+                                      height: 350px
+                                      language: "yaml"
+dependencies:
+  componentpacks:
+    material.main:
+    uesio.app:
