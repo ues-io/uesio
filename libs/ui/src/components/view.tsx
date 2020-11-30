@@ -1,13 +1,36 @@
-import React, { useEffect, FC } from "react"
+import React, { useEffect, FC, useState } from "react"
+import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
 import { BaseProps } from "../definition/definition"
-
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
+import { fetchTheme } from "../theme/themeoperations"
+import { PaletteOptions } from "@material-ui/core/styles/createPalette"
+
+interface AppThemePalette {
+	primary: string
+	secondary: string
+	error: string
+	warning: string
+	info: string
+	success: string
+}
+interface ThemeAPIResponse {
+	id: string
+	name: string
+	namespace: string
+	workspace: string
+	definition: AppThemePalette
+}
+
+const makeTheme = (themePalette: PaletteOptions) =>
+	createMuiTheme({
+		palette: { ...themePalette },
+	})
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -78,6 +101,49 @@ const View: FC<Props> = (props: Props) => {
 			)
 			return
 		}
+	}, [])
+
+	const [materialTheme, setMaterialTheme] = useState<PaletteOptions | null>(
+		null
+	)
+	const route = uesio.route.useRoute()
+
+	console.log("route", route)
+	const [themenamespace, themename] = ["", ""]
+
+	// const [themenamespace, themename] = route?.theme
+	// 	? parseKey(route?.theme)
+	// 	: ["", ""]
+
+	useEffect(() => {
+		fetch(
+			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themenamespace}/${themename}`
+			// `https://uesio-dev.com:3000/workspace/${route?.workspace?.app}/${route?.workspace?.name}/themes/${themenamespace}/${themename}`
+		)
+			.then((response) => response.json())
+			.then((themeResponse: ThemeAPIResponse) => {
+				console.log("response", themeResponse)
+				setMaterialTheme({
+					primary: {
+						main: themeResponse.definition.primary,
+					},
+					secondary: {
+						main: themeResponse.definition.secondary,
+					},
+					error: {
+						main: themeResponse.definition.error,
+					},
+					warning: {
+						main: themeResponse.definition.warning,
+					},
+					info: {
+						main: themeResponse.definition.info,
+					},
+					success: {
+						main: themeResponse.definition.success,
+					},
+				})
+			})
 	}, [])
 
 	const useRunTime =
