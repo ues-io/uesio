@@ -20,10 +20,10 @@ interface Theme {
 	definition?: Palette
 }
 
-interface ThemeState {
+type ThemeState = {
 	theme?: Theme
 	isFetching?: boolean
-}
+} | null
 
 interface BaseAction {
 	type: keyof typeof actionTypes

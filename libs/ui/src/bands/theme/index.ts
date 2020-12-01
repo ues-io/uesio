@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { Theme, actionTypes } from "./types"
+import { Theme, actionTypes, ThemeState } from "./types"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -18,9 +18,9 @@ const fetchTheme = createAsyncThunk<
 
 const themeSlice = createSlice({
 	name: "theme",
-	initialState: undefined,
+	initialState: null,
 	reducers: {
-		fetchTheme: (state, { payload }: PayloadAction<Theme>) => {
+		fetchTheme: (state: ThemeState, { payload }: PayloadAction<Theme>) => {
 			console.log(" fetching", payload)
 			return {
 				...(state || {}),
