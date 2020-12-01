@@ -114,6 +114,7 @@ const View: FC<Props> = (props: Props) => {
 		const [themeNamespace, themeName] = (route?.theme &&
 			parseKey(route.theme)) || ["", ""]
 		if (themeNamespace && themeName) {
+			//@ts-ignore
 			dispatch(fetchTheme(themeNamespace, themeName))
 		}
 	}, [])

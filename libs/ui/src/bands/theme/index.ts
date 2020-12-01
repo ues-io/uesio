@@ -3,7 +3,12 @@ import { Theme } from "./themetypes"
 
 const fetchTheme = createAsyncThunk(
 	"theme/fetch",
-	async (themeNamespace, themeName, thunkAPI) => {
+	//@ts-ignore
+	async (_) => {
+		const themeNamespace = "uesio"
+		const themeName = "default"
+		console.log("themeNamespace", themeNamespace)
+		console.log("themeName", themeName)
 		const response = await fetch(
 			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
 		)
