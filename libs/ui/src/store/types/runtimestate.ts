@@ -16,7 +16,7 @@ type RuntimeState = {
 	route: RouteState
 	user: UserState
 	site: SiteState
-	theme?: ThemeState
+	theme: ThemeState
 }
 
 export default RuntimeState

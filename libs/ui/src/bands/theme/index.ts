@@ -18,12 +18,12 @@ const fetchTheme = createAsyncThunk<
 
 const themeSlice = createSlice({
 	name: "theme",
-	initialState: {},
+	initialState: undefined,
 	reducers: {
 		fetchTheme: (state, { payload }: PayloadAction<Theme>) => {
 			console.log(" fetching", payload)
 			return {
-				...state,
+				...(state || {}),
 				...payload,
 				isFetching: true,
 			}
@@ -35,7 +35,7 @@ const themeSlice = createSlice({
 			// Add user to the state array
 			console.log("reducer fetched", action)
 			return {
-				...state,
+				...(state || {}),
 				...action.payload,
 				isFetching: false,
 			}
