@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { FunctionComponent } from "react"
 
 import { material, definition } from "@uesio/ui"
 import { field } from "@uesio/constants"
@@ -17,29 +17,23 @@ type Props = {
 	mode?: field.FieldMode
 } & definition.BaseProps
 
-const CheckBoxField = (props: Props): React.ReactElement | null => {
+const CheckBoxField: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
-	const hideLabel = props.hideLabel
-	const mode = props.mode
+	const { hideLabel, mode, value, setValue, label } = props
 
 	return (
 		<material.Checkbox
-			{...{
-				className: classes.root,
-				...(!hideLabel && {
-					label: props.label,
-				}),
-				checked: !!props.value,
-				disabled: mode === "READ",
-				fullWidth: true,
-				InputLabelProps: {
-					disableAnimation: true,
-					shrink: true,
-				},
-				onChange: (event): void => {
-					props.setValue(event.target.checked)
-				},
+			className={classes.root}
+			checked={!!value}
+			disabled={mode === "READ"}
+			InputLabelProps={{
+				disableAnimation: true,
+				shrink: true,
 			}}
+			onChange={(event): void => {
+				setValue(event.target.checked)
+			}}
+			{...(!hideLabel && { label })}
 		/>
 	)
 }
