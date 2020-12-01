@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from "react"
+import React, { ReactElement } from "react"
 import { hooks } from "@uesio/ui"
 import { CardActionProps, CardActionDefinition } from "./cardactiondefinition"
 import CardAction from "./cardaction"
 
-const CardActionBuilder: FunctionComponent<CardActionProps> = (props) => {
+function CardActionBuilder(props: CardActionProps): ReactElement {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path
