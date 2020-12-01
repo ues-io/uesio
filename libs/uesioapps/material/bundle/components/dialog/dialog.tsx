@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import {
 	hooks,
 	material,
@@ -9,7 +9,6 @@ import {
 	component,
 } from "@uesio/ui"
 import { DialogProps } from "./dialogdefinition"
-import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -29,11 +28,10 @@ const actionReducers: action.ActionGroup = {
 	TOGGLE_MODE: (
 		action: action.ComponentAction,
 		state: DialogState
-	): DialogState => {
-		return Object.assign({}, state, {
-			mode: state.mode === "OPEN" ? "CLOSE" : "OPEN",
-		})
-	},
+	): DialogState => ({
+		...state,
+		mode: state.mode === "OPEN" ? "CLOSE" : "OPEN",
+	}),
 }
 
 const signalHandlers: signal.SignalsHandler = {
@@ -72,10 +70,10 @@ const signalHandlers: signal.SignalsHandler = {
 	},
 }
 
-function Dialog(props: DialogProps): ReactElement {
+const Dialog: FunctionComponent<DialogProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = useStyles(props)
-	const definition = props.definition
+	const { definition, path, context } = props
 
 	const initialState: DialogState = {
 		mode: definition.mode || "CLOSE",
@@ -90,49 +88,43 @@ function Dialog(props: DialogProps): ReactElement {
 
 	const state = componentActor.toState() as DialogState
 
-	const disagreeButtonProps = {
-		className: classes.root,
-		onClick:
-			props.definition?.disagreeSignals &&
-			uesio.signal.getHandler(props.definition.disagreeSignals),
-	}
-
-	const agreeButtonProps = {
-		className: classes.root,
-		onClick:
-			props.definition?.agreeSignals &&
-			uesio.signal.getHandler(props.definition.agreeSignals),
-	}
-
-	const mylocalState = state.mode === "OPEN" ? true : false
-
-	const slotProps = {
-		definition: props.definition,
-		listName: "content",
-		path: props.path,
-		accepts: ["uesio.standalone"],
-		context: props.context,
-	}
-
 	return (
 		<material.Dialog
-			open={mylocalState}
+			open={state.mode === "OPEN"}
 			aria-labelledby="alert-dialog-title"
 			aria-describedby="alert-dialog-description"
 		>
-			<material.DialogTitle>
-				{props.definition.title}
-			</material.DialogTitle>
+			<material.DialogTitle>{definition.title}</material.DialogTitle>
 			<material.DialogContent>
 				<material.DialogContentText>
-					<component.Slot {...slotProps} />
+					<component.Slot
+						definition={definition}
+						listName="content"
+						path={path}
+						accepts={["uesio.standalone"]}
+						context={context}
+					/>
 				</material.DialogContentText>
 			</material.DialogContent>
 			<material.DialogActions>
-				<material.Button color="primary" {...disagreeButtonProps}>
+				<material.Button
+					color="primary"
+					className={classes.root}
+					onClick={
+						definition?.disagreeSignals &&
+						uesio.signal.getHandler(definition.disagreeSignals)
+					}
+				>
 					Disagree
 				</material.Button>
-				<material.Button color="primary" {...agreeButtonProps}>
+				<material.Button
+					color="primary"
+					className={classes.root}
+					onClick={
+						definition?.agreeSignals &&
+						uesio.signal.getHandler(definition.agreeSignals)
+					}
+				>
 					Agree
 				</material.Button>
 			</material.DialogActions>
