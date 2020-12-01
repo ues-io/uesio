@@ -18,8 +18,14 @@ const fetchTheme = createAsyncThunk<
 const themeSlice = createSlice({
 	name: "theme",
 	initialState: null,
-	reducers: {},
+	reducers: {
+		theme: null,
+		isFetching: false,
+	},
 	extraReducers: {
+		[fetchPosts.pending]: (state, action) => {
+			state.isFetching = true
+		},
 		// @ts-ignore
 		[fetchTheme.fulfilled]: (state, action) => {
 			// Add user to the state array
