@@ -25,7 +25,6 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 		<material.Checkbox
 			className={classes.root}
 			checked={!!value}
-			fullWidth={true}
 			disabled={mode === "READ"}
 			onChange={(event): void => {
 				setValue(event.target.checked)
