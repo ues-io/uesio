@@ -12,7 +12,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side, the concepts coming from functional programming are recommended (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.).
+Frontend-side, the concepts coming from functional programming are favoured (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.).
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
 The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, etc).
