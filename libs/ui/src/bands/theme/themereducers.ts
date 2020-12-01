@@ -1,10 +1,5 @@
 import { Reducer } from "redux"
-import {
-	ThemeState,
-	actionTypes,
-	ActionFetch,
-	ActionFetching,
-} from "./themetypes"
+import { ThemeState, actionTypes, ActionFetch, ActionFetching } from "./types"
 
 const initialState = {
 	theme: {},

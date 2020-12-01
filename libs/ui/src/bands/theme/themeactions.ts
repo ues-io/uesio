@@ -1,4 +1,4 @@
-import { actionTypes, Theme } from "./themetypes"
+import { actionTypes, Theme } from "./types"
 
 const makeThemeFectch = (theme: Theme) => ({
 	type: actionTypes.themefetch,
