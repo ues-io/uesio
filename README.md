@@ -12,9 +12,10 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side, the concepts coming from functional programming are recommended.
+Frontend-side, the concepts coming from functional programming are recommended (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.).
 
-Redux-wise we do follow the [redux guide](https://redux.js.org/style-guide/style-guide) and implemented the [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - when it comes to the structure of the redux features (reducer, action creator).
+Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
+The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, etc).
 
 # Tech Stack
 
@@ -33,7 +34,7 @@ Redux-wise we do follow the [redux guide](https://redux.js.org/style-guide/style
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 - [React](https://reactjs.org/). Library for making UI elements.
 - [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
-- [Redux-toolkit](https://redux.js.org/). Bootstrap for Redux.
+- [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
 - [Immer](https://github.com/immerjs/immer). Immutable data structure library.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
@@ -136,6 +137,7 @@ cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
 
 // or
 npm run nx -- build uesioapps-crm
+
 // or, if you have nx globally
 nx build uesioapps-crm
 ```
@@ -182,7 +184,7 @@ In windows, double-click certificate.crt in the File Explorer. Click "Install Ce
 
 In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com certificate and select "Get Info". Expand the "Trust" section and set it to "Always Trust".
 
-# Set up DNS
+# Set up your local DNS
 
 On Mac modify the `/etc/hosts` file to include the following lines
 
