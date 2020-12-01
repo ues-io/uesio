@@ -26,7 +26,7 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 			className={classes.root}
 			checked={!!value}
 			disabled={mode === "READ"}
-			InputLabelProps={{
+			inputlabel={{
 				disableAnimation: true,
 				shrink: true,
 			}}
