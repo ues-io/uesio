@@ -3,12 +3,8 @@ import { Theme } from "./themetypes"
 
 const fetchTheme = createAsyncThunk(
 	"theme/fetch",
-	//@ts-ignore
-	async (_) => {
-		const themeNamespace = "uesio"
-		const themeName = "default"
-		console.log("themeNamespace", themeNamespace)
-		console.log("themeName", themeName)
+	async (theme: { themeNamespace: string; themeName: string }, _) => {
+		const { themeNamespace, themeName } = theme
 		const response = await fetch(
 			`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
 		)
@@ -23,12 +19,12 @@ const themeSlice = createSlice({
 	name: "theme",
 	initialState,
 	reducers: {
-		whatever: (state, { payload }: PayloadAction<Theme>) => {
-			console.log(" slice theme payload", payload)
+		fetchTheme: (state, { payload }: PayloadAction<Theme>) => {
+			console.log(" fetching", payload)
 			return {
 				...state,
 				...payload,
-				isFetching: false,
+				isFetching: true,
 			}
 		},
 	},
@@ -37,7 +33,7 @@ const themeSlice = createSlice({
 		//@ts-ignore
 		[fetchTheme.fulfilled]: (state, action) => {
 			// Add user to the state array
-			console.log("reducer slice")
+			console.log("reducer fetched", action)
 			return {
 				...state,
 				...action.payload,
