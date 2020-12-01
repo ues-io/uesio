@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) =>
 
 const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const { definition, path, context } = props
-	const items = definition.items as definition.DefinitionList
+	const items = definition?.items || ([] as definition.DefinitionList)
 	const accepts = definition.accepts
 	const direction =
 		definition.direction === "horizontal" ? "horizontal" : "vertical"
@@ -82,7 +82,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	// Temporary Hack
 	if (definition.direction === "manual") {
-		const items = definition.items as definition.DefinitionList
+		const items = definition?.items || ([] as definition.DefinitionList)
 		const listPath = path
 		return (
 			<Fragment>
