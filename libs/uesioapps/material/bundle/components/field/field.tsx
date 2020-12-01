@@ -1,4 +1,4 @@
-import React from "react"
+import React, { FunctionComponent } from "react"
 
 import { FieldProps } from "./fielddefinition"
 import Reference from "./reference"
@@ -6,7 +6,7 @@ import TextField from "../textfield/textfield"
 import SelectField from "../selectfield/selectfield"
 import CheckBoxField from "../checkboxfield/checkboxfield"
 
-const Field = (props: FieldProps): React.ReactElement | null => {
+const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId, hideLabel } = definition
 
@@ -27,16 +27,6 @@ const Field = (props: FieldProps): React.ReactElement | null => {
 	}
 
 	const type = fieldMetadata.getType()
-
-	const rendererProps = {
-		fieldMetadata,
-		mode,
-		fieldId,
-		hideLabel,
-		record,
-		wire,
-		...props,
-	}
 
 	if (["TEXT", "LONGTEXT", "DATE"].indexOf(type) !== -1) {
 		return (
@@ -74,7 +64,17 @@ const Field = (props: FieldProps): React.ReactElement | null => {
 			/>
 		)
 	} else if (type === "REFERENCE") {
-		return <Reference {...rendererProps} />
+		return (
+			<Reference
+				{...props}
+				fieldMetadata={fieldMetadata}
+				mode={mode}
+				fieldId={fieldId}
+				hideLabel={hideLabel}
+				record={record}
+				wire={wire}
+			/>
+		)
 	}
 	return null
 }
