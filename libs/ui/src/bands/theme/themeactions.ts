@@ -1,12 +1,12 @@
 import { actionTypes, Theme } from "./themetypes"
 
 const makeThemeFectch = (theme: Theme) => ({
-	type: actionTypes.THEME_FETCH,
+	type: actionTypes.themefetch,
 	payload: theme,
 })
 
 const makeThemeFectching = (isLoading: boolean) => ({
-	type: actionTypes.THEME_FETCHING,
+	type: actionTypes.themefetching,
 	payload: isLoading,
 })
 

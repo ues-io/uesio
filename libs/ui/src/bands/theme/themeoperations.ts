@@ -18,12 +18,7 @@ const fetchTheme = (themeNamespace: string, themeName: string) => (
 					namespace: response.namespace,
 					workspace: response.workspace,
 					definition: {
-						primary: response.definition.primary,
-						secondary: response.definition.secondary,
-						error: response.definition.error,
-						warning: response.definition.warning,
-						info: response.definition.info,
-						success: response.definition.success,
+						...response.definitions,
 					},
 				})
 			)

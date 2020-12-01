@@ -1,6 +1,6 @@
 enum actionTypes {
-	THEME_FETCH = "THEME_FETCH",
-	THEME_FETCHING = "THEME_FETCHING",
+	themefetch = "themefetch",
+	themefetching = "themefetching",
 }
 
 interface Palette {
@@ -30,12 +30,12 @@ interface BaseAction {
 }
 
 interface ActionFetch extends BaseAction {
-	type: actionTypes.THEME_FETCH
+	type: actionTypes.themefetch
 	payload: Theme
 }
 
 interface ActionFetching extends BaseAction {
-	type: actionTypes.THEME_FETCHING
+	type: actionTypes.themefetching
 	payload: boolean
 }
 

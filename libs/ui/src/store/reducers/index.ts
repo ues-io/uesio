@@ -8,6 +8,7 @@ import routeReducer from "../../bands/route"
 import userReducer from "../../bands/user"
 import builderReducer from "../../bands/builder"
 import viewDefReducer from "../../bands/viewdef"
+import themeReducer from "../../bands/theme"
 import { AnyAction } from "redux"
 
 const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
@@ -37,6 +38,7 @@ const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
 			user: userReducer(state.user, action),
 			builder: builderReducer(state.builder, action),
 			viewdef: viewDefReducer(state.viewdef, action),
+			theme: themeReducer(state.theme, action),
 		},
 	}
 }

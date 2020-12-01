@@ -1,5 +1,6 @@
 import React, { useEffect, FC, useState } from "react"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
+import { useDispatch } from "react-redux"
 
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
@@ -8,7 +9,7 @@ import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
-import { fetchTheme } from "../theme/themeoperations"
+import { fetchTheme } from "../bands/theme"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 interface AppThemePalette {
@@ -107,12 +108,13 @@ const View: FC<Props> = (props: Props) => {
 		null
 	)
 
+	const dispatch = useDispatch()
 	useEffect(() => {
 		const route = props.context.getRoute()
 		const [themeNamespace, themeName] = (route?.theme &&
 			parseKey(route.theme)) || ["", ""]
 		if (themeNamespace && themeName) {
-			fetchTheme(themeNamespace, themeName)
+			dispatch(fetchTheme(themeNamespace, themeName))
 		}
 	}, [])
 
