@@ -1,4 +1,4 @@
-import React, { useEffect, FC, useState } from "react"
+import React, { useEffect, FC } from "react"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 import { useDispatch } from "react-redux"
 
@@ -10,6 +10,7 @@ import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
 import { fetchTheme } from "../bands/theme"
+import { useTheme } from "../bands/theme/selector"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 interface AppThemePalette {
@@ -73,6 +74,7 @@ const View: FC<Props> = (props: Props) => {
 	const viewnamespace = props.definition.namespace
 	const viewparams = props.definition.params
 	const path = props.path
+	const theme = useTheme()
 
 	const view = uesio.view.useView(viewnamespace, viewname, path)
 
@@ -104,10 +106,6 @@ const View: FC<Props> = (props: Props) => {
 		}
 	}, [])
 
-	const [materialTheme, setMaterialTheme] = useState<PaletteOptions | null>(
-		null
-	)
-
 	const dispatch = useDispatch()
 	useEffect(() => {
 		const route = props.context.getRoute()
@@ -125,7 +123,8 @@ const View: FC<Props> = (props: Props) => {
 		(useRunTime || useBuildTime) &&
 		definition &&
 		view.valid &&
-		view.source.loaded
+		view.source.loaded &&
+		theme
 	) {
 		const slotProps = {
 			definition,
@@ -138,7 +137,7 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 		return (
-			<ThemeProvider theme={makeTheme(materialTheme as PaletteOptions)}>
+			<ThemeProvider theme={makeTheme(theme as PaletteOptions)}>
 				<CssBaseline />
 				<Slot {...slotProps} />
 			</ThemeProvider>

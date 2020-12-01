@@ -30,6 +30,7 @@ const themeSlice = createSlice({
 		},
 	},
 	extraReducers: {
+		// @ts-ignore
 		[fetchTheme.fulfilled]: (state, action) => {
 			// Add user to the state array
 			console.log("reducer fetched", action)
