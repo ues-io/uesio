@@ -126,7 +126,7 @@ class ViewDefBand {
 							)
 							dispatch(
 								setYaml({
-									viewDef: viewid,
+									entity: viewid,
 									path: "",
 									yaml: defDoc,
 								})

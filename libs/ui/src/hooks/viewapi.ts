@@ -7,20 +7,6 @@ import {
 	useViewYAML,
 	useViewDependencies,
 } from "../store/store"
-import { ACTOR } from "../store/actions/actions"
-import {
-	SET_DEFINITION,
-	ADD_DEFINITION,
-	REMOVE_DEFINITION,
-	MOVE_DEFINITION,
-	ADD_DEFINITION_PAIR,
-	CHANGE_DEFINITION_KEY,
-	RemoveDefinitionAction,
-	ChangeDefinitionKeyAction,
-	AddDefinitionPairAction,
-	MoveDefinitionAction,
-	SetDefinitionAction,
-} from "../viewdef/viewdefactions"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
@@ -34,7 +20,15 @@ import Dependencies from "../store/types/dependenciesstate"
 import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
 import { setSelectedNode } from "../bands/builder"
-import { setYaml } from "../bands/viewdef"
+import {
+	setYaml,
+	removeDefinition,
+	setDefinition,
+	moveDefinition,
+	addDefinitionPair,
+	changeDefinitionKey,
+} from "../bands/viewdef"
+import { ADD_DEFINITION } from "../viewdef/viewdefsignals"
 
 const VIEW_BAND = "view"
 const VIEWDEF_BAND = "viewdef"
@@ -78,17 +72,13 @@ class ViewAPI {
 	setDefinition(path: string, definition: Definition): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: SetDefinitionAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: SET_DEFINITION,
-				data: {
+			this.dispatcher(
+				setDefinition({
+					entity: view.getViewDefId(),
 					path,
 					definition,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
@@ -118,35 +108,27 @@ class ViewAPI {
 	addDefinitionPair(path: string, definition: Definition, key: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: AddDefinitionPairAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: ADD_DEFINITION_PAIR,
-				data: {
+			this.dispatcher(
+				addDefinitionPair({
+					entity: view.getViewDefId(),
 					path,
 					definition,
 					key,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
 	changeDefinitionKey(path: string, key: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: ChangeDefinitionKeyAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: CHANGE_DEFINITION_KEY,
-				data: {
+			this.dispatcher(
+				changeDefinitionKey({
+					entity: view.getViewDefId(),
 					path,
 					key,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
@@ -155,16 +137,12 @@ class ViewAPI {
 		const usePath = path || this.uesio.getPath()
 		if (view) {
 			batch(() => {
-				const removeDefAction: RemoveDefinitionAction = {
-					type: ACTOR,
-					band: VIEWDEF_BAND,
-					name: REMOVE_DEFINITION,
-					data: {
+				this.dispatcher(
+					removeDefinition({
+						entity: view.getViewDefId(),
 						path: usePath,
-					},
-					target: view.getViewDefId(),
-				}
-				this.dispatcher(removeDefAction)
+					})
+				)
 				// When a definition is removed, select its parent
 				const pathArray = toPath(usePath)
 				pathArray.pop()
@@ -177,17 +155,13 @@ class ViewAPI {
 	moveDefinition(fromPath: string, toPath: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: MoveDefinitionAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: MOVE_DEFINITION,
-				data: {
+			this.dispatcher(
+				moveDefinition({
+					entity: view.getViewDefId(),
 					fromPath,
 					toPath,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
@@ -196,7 +170,7 @@ class ViewAPI {
 		if (view) {
 			this.dispatcher(
 				setYaml({
-					viewDef: view.getViewDefId(),
+					entity: view.getViewDefId(),
 					path,
 					yaml: yamlDoc,
 				})
