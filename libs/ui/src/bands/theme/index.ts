@@ -7,8 +7,7 @@ const fetchTheme = createAsyncThunk<
 		themeNamespace: string
 		themeName: string
 	}
->(actionTypes.themefetch, async (theme, _) => {
-	const { themeNamespace, themeName } = theme
+>(actionTypes.themefetch, async ({ themeNamespace, themeName }, _) => {
 	const response = await fetch(
 		`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
 	)
@@ -19,16 +18,7 @@ const fetchTheme = createAsyncThunk<
 const themeSlice = createSlice({
 	name: "theme",
 	initialState: null,
-	reducers: {
-		fetchTheme: (state: ThemeState, { payload }: PayloadAction<Theme>) => {
-			console.log(" fetching", payload)
-			return {
-				...(state || {}),
-				...payload,
-				isFetching: true,
-			}
-		},
-	},
+	reducers: {},
 	extraReducers: {
 		// @ts-ignore
 		[fetchTheme.fulfilled]: (state, action) => {
