@@ -17,7 +17,7 @@ interface Theme {
 	definition?: Palette
 }
 
-type ThemeState = {
+interface ThemeState {
 	theme?: Theme
 	isFetching: boolean
 }

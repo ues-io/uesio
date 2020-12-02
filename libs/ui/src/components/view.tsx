@@ -122,8 +122,28 @@ const View: FC<Props> = (props: Props) => {
 				buildMode: useBuildTime,
 			}),
 		}
+		const paletteTheme = {
+			primary: {
+				main: theme.theme.definition?.primary,
+			},
+			secondary: {
+				main: theme.theme.definition?.secondary,
+			},
+			error: {
+				main: theme.theme.definition?.error,
+			},
+			success: {
+				main: theme.theme.definition?.success,
+			},
+			warning: {
+				main: theme.theme.definition?.warning,
+			},
+			info: {
+				main: theme.theme.definition?.info,
+			},
+		}
 		return (
-			<ThemeProvider theme={makeTheme(theme.theme as PaletteOptions)}>
+			<ThemeProvider theme={makeTheme(paletteTheme as PaletteOptions)}>
 				<CssBaseline />
 				<Slot {...slotProps} />
 			</ThemeProvider>

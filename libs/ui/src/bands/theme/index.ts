@@ -34,7 +34,7 @@ const themeSlice = createSlice({
 			// Add user to the state array
 			console.log("reducer fetched", action)
 			return {
-				theme: action.payload,
+				...action.payload,
 				isFetching: false,
 			}
 		},
