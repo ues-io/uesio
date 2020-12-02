@@ -13,22 +13,6 @@ import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selector"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
-interface AppThemePalette {
-	primary: string
-	secondary: string
-	error: string
-	warning: string
-	info: string
-	success: string
-}
-interface ThemeAPIResponse {
-	id: string
-	name: string
-	namespace: string
-	workspace: string
-	definition: AppThemePalette
-}
-
 const makeTheme = (themePalette: PaletteOptions) =>
 	createMuiTheme({
 		palette: { ...themePalette },
