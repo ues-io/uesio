@@ -96,7 +96,7 @@ const View: FC<Props> = (props: Props) => {
 		const [themeNamespace, themeName] = (route?.theme &&
 			parseKey(route.theme)) || ["", ""]
 
-		if (themeNamespace && themeName) {
+		if (themeNamespace && themeName && !theme?.routeTheme) {
 			dispatch(fetchTheme({ themeNamespace, themeName }))
 		}
 	}, [])
@@ -110,7 +110,7 @@ const View: FC<Props> = (props: Props) => {
 		view.valid &&
 		view.source.loaded &&
 		!theme?.isFetching &&
-		theme?.theme
+		theme?.routeTheme
 	) {
 		const slotProps = {
 			definition,
@@ -124,22 +124,22 @@ const View: FC<Props> = (props: Props) => {
 		}
 		const paletteTheme = {
 			primary: {
-				main: theme.theme.definition?.primary,
+				main: theme.routeTheme?.definition?.primary,
 			},
 			secondary: {
-				main: theme.theme.definition?.secondary,
+				main: theme.routeTheme?.definition?.secondary,
 			},
 			error: {
-				main: theme.theme.definition?.error,
-			},
-			success: {
-				main: theme.theme.definition?.success,
+				main: theme.routeTheme.definition?.error,
 			},
 			warning: {
-				main: theme.theme.definition?.warning,
+				main: theme.routeTheme?.definition?.warning,
 			},
 			info: {
-				main: theme.theme.definition?.info,
+				main: theme.routeTheme?.definition?.info,
+			},
+			success: {
+				main: theme.routeTheme?.definition?.success,
 			},
 		}
 		return (
@@ -149,6 +149,7 @@ const View: FC<Props> = (props: Props) => {
 			</ThemeProvider>
 		)
 	}
+	console.log("theme in view", theme)
 	return null
 }
 

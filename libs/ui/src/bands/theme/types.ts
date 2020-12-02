@@ -18,7 +18,7 @@ interface Theme {
 }
 
 interface ThemeState {
-	theme?: Theme
+	routeTheme?: Theme
 	isFetching: boolean
 }
 
