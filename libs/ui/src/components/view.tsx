@@ -124,7 +124,8 @@ const View: FC<Props> = (props: Props) => {
 		definition &&
 		view.valid &&
 		view.source.loaded &&
-		theme
+		!theme?.isFetching &&
+		theme?.theme
 	) {
 		const slotProps = {
 			definition,
