@@ -1,11 +1,10 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 import image from "../image/image"
 import Icon from "../icon/icon"
-import { IconProps } from "../icon/icondefinition"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -25,7 +24,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function File(props: FileProps): ReactElement | null {
+const File: FunctionComponent<FileProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const record = props.context.getRecord()
@@ -38,18 +37,17 @@ function File(props: FileProps): ReactElement | null {
 	const preview = props.definition.preview
 	const userFileId = record.getFieldValue(fieldId) as string
 	const fileUrl = uesio.file.getUserFileURL(props.context, userFileId, true)
-	const FileProps = {
-		className: classes.root,
-	}
 
-	const iconProps = {
-		definition: {
-			type: "file",
-			size: "large",
-		},
-		path: props.path,
-		context: props.context,
-	} as IconProps
+	const iconJsx = (
+		<Icon
+			definition={{
+				type: "file",
+				size: "large",
+			}}
+			path={props.path}
+			context={props.context}
+		/>
+	)
 
 	const mime = props.context.merge(props.definition.mimeType)
 	const arrMime = mime.split("/", 2)
@@ -65,9 +63,9 @@ function File(props: FileProps): ReactElement | null {
 
 			default:
 				return (
-					<div {...FileProps}>
+					<div className={classes.root}>
 						<material.Avatar className={classes.avatar}>
-							<Icon {...iconProps} />
+							{iconJsx}
 						</material.Avatar>
 					</div>
 				)
@@ -86,7 +84,7 @@ function File(props: FileProps): ReactElement | null {
 							variant="contained"
 							color="primary"
 							href={fileUrl}
-							endIcon={<Icon {...iconProps} />}
+							endIcon={iconJsx}
 						>
 							Download
 						</material.Button>
