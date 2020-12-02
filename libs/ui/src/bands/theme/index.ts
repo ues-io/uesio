@@ -24,19 +24,22 @@ const themeSlice = createSlice({
 	name: "theme",
 	initialState: initialState,
 	reducers: {},
-	extraReducers: {
-		// @ts-ignore
-		[fetchTheme.pending]: (state, action) => {
-			state.isFetching = true
-		},
-		// @ts-ignore
-		[fetchTheme.fulfilled]: (state, action: PayloadAction<Theme>) => {
-			// Add user to the state array
+	extraReducers: (builder) => {
+		builder.addCase(
+			fetchTheme.fulfilled,
+			(state, { payload }: PayloadAction<Theme>) => {
+				return {
+					routeTheme: payload,
+					isFetching: false,
+				}
+			}
+		)
+		builder.addCase(fetchTheme.pending, (state, { payload }) => {
 			return {
-				routeTheme: action.payload,
+				...state,
 				isFetching: false,
 			}
-		},
+		})
 	},
 })
 
