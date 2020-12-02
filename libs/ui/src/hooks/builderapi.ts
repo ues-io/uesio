@@ -33,6 +33,7 @@ import builderOps from "../bands/builder/operations"
 import { Dispatcher, DispatchReturn } from "../store/store"
 import { useBuilderHasChanges } from "../bands/viewdef/selectors"
 import viewDefOps from "../bands/viewdef/operations"
+import { cancel as cancelViewChanges } from "../bands/viewdef"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -94,8 +95,8 @@ class BuilderAPI {
 		)
 	}
 
-	cancel(): DispatchReturn {
-		return this.uesio.signal.dispatcher(viewDefOps.cancel(new Context()))
+	cancel(): void {
+		this.dispatcher(cancelViewChanges())
 	}
 
 	getMetadataList(

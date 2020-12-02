@@ -3,12 +3,7 @@ import { Context } from "../../context/context"
 import { Platform, SaveViewRequest } from "../../platform/platform"
 import { Dispatcher } from "../../store/store"
 import RuntimeState from "../../store/types/runtimestate"
-import {
-	save as saveViewDef,
-	cancel as cancelViewDef,
-	add as addViewDef,
-	setYaml,
-} from "."
+import { save as saveViewDef, add as addViewDef, setYaml } from "."
 import yaml from "yaml"
 import { batch } from "react-redux"
 import { getNodeAtPath, YAML_OPTIONS } from "../../yamlutils/yamlutils"
@@ -40,13 +35,6 @@ const save = (context: Context) => async (
 	}
 	await platform.saveViews(context, saveRequest)
 	dispatch(saveViewDef())
-	return context
-}
-
-const cancel = (context: Context) => async (
-	dispatch: Dispatcher<PayloadAction>
-) => {
-	dispatch(cancelViewDef())
 	return context
 }
 
@@ -131,7 +119,6 @@ const addDefinition = (
 
 export default {
 	save,
-	cancel,
 	load,
 	addDefinition,
 }

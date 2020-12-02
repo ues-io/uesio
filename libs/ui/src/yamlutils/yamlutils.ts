@@ -97,9 +97,8 @@ const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
 	return commonPath
 }
 
-const getPathFromPathArray = (pathArray: string[]): string => {
-	return pathArray.map((pathPart) => `["${pathPart}"]`).join("")
-}
+const getPathFromPathArray = (pathArray: string[]): string =>
+	pathArray.map((pathPart) => `["${pathPart}"]`).join("")
 
 const getCommonAncestorPath = (
 	startPath: string,
