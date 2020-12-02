@@ -1,7 +1,11 @@
 import toPath from "lodash.topath"
 import { Pair, Node, Collection } from "yaml/types"
 import yaml from "yaml"
-import { YAML_OPTIONS } from "../viewdef/viewdefband"
+
+const YAML_OPTIONS = {
+	simpleKeys: true,
+	keepNodeTypes: false,
+}
 
 function parse(str: string): yaml.Document.Parsed {
 	return yaml.parseDocument(str, YAML_OPTIONS)
@@ -163,4 +167,5 @@ export {
 	getCommonAncestorPath,
 	getPathFromPathArray,
 	parse,
+	YAML_OPTIONS,
 }

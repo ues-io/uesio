@@ -4,7 +4,6 @@ import Actor from "./actor"
 import { WireBand } from "../wire/wireband"
 import { ComponentBand } from "../componentactor/componentband"
 import { ViewBand } from "../view/viewband"
-import { ViewDefBand } from "../viewdef/viewdefband"
 import { ThunkFunc } from "../store/store"
 import { BandAction } from "../store/actions/actions"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
@@ -24,7 +23,6 @@ type BandMap = {
 const bandMap: BandMap = {
 	component: ComponentBand,
 	view: ViewBand,
-	viewdef: ViewDefBand,
 	wire: WireBand,
 }
 

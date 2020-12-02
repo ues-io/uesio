@@ -109,7 +109,7 @@ const useComponentState = (
 const useViewDefinition = (view: View, path?: string): Definition => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		const definition = viewDef.getDefinition()
+		const definition = viewDef?.definition
 		if (path) {
 			return get(definition, path || "")
 		}
@@ -120,21 +120,21 @@ const useViewDefinition = (view: View, path?: string): Definition => {
 const useViewDependencies = (view: View): Dependencies | undefined => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		return viewDef.getDependencies()
+		return viewDef?.dependencies
 	})
 }
 
 const useViewYAML = (view: View): yaml.Document | undefined => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		return viewDef.source.yaml
+		return viewDef?.yaml
 	})
 }
 
 const useViewConfigValue = (view: View, key: string): string => {
 	return useSelector((state: RuntimeState) => {
 		const viewdef = view.getViewDef(state)
-		return viewdef.getDependencies()?.configvalues[key] || ""
+		return viewdef?.dependencies?.configvalues[key] || ""
 	})
 }
 

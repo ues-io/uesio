@@ -3,41 +3,31 @@ import { AnyAction } from "redux"
 import { Context } from "../../context/context"
 import { SignalAPI } from "../../hooks/signalapi"
 import { Platform } from "../../platform/platform"
-import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
+import { Dispatcher } from "../../store/store"
 import { set as setRoute } from "."
 import RuntimeState from "../../store/types/runtimestate"
-import { NavigateSignal, RedirectSignal } from "./types"
 import { clearAvailableMetadata } from "../builder"
 
-function getWorkspacePrefix(context: Context, signal: NavigateSignal): string {
-	const workspace = context.getWorkspace()
-	if (workspace && workspace.app && workspace.name) {
-		return `/workspace/${workspace.app}/${workspace.name}/app/${signal.namespace}/`
-	}
-	return "/"
-}
-
-const redirect = (
-	signal: RedirectSignal,
-	context: Context
-): ThunkFunc => async (): DispatchReturn => {
-	const mergedPath = context.merge(signal.path)
+const redirect = (context: Context, path: string) => async () => {
+	const mergedPath = context.merge(path)
 	window.location.href = mergedPath
 	return context
 }
 
 const navigate = (
-	signal: NavigateSignal,
-	context: Context
-): ThunkFunc => async (
+	context: Context,
+	path: string,
+	namespace: string,
+	noPushState?: boolean
+) => async (
 	dispatch: Dispatcher<AnyAction>,
 	getState: () => RuntimeState,
 	platform: Platform
-): DispatchReturn => {
-	const mergedPath = context.merge(signal.path)
+) => {
+	const mergedPath = context.merge(path)
 	const routeResponse = await platform.getRoute(
 		context,
-		signal.namespace,
+		namespace,
 		mergedPath
 	)
 	const viewName = routeResponse.viewname
@@ -68,13 +58,17 @@ const navigate = (
 			})
 		)
 	})
-	if (!signal.noPushState) {
-		const prefix = getWorkspacePrefix(context, signal)
+	if (!noPushState) {
+		const workspace = context.getWorkspace()
+		const prefix =
+			workspace && workspace.app && workspace.name
+				? `/workspace/${workspace.app}/${workspace.name}/app/${namespace}/`
+				: "/"
 		window.history.pushState(
 			{
-				namespace: signal.namespace,
+				namespace: namespace,
 				path: mergedPath,
-				workspace: context.getWorkspace(),
+				workspace,
 			},
 			"",
 			prefix + mergedPath
