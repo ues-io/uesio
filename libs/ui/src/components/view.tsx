@@ -11,7 +11,7 @@ import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
 import { fetchTheme } from "../bands/theme"
-import { useTheme } from "../bands/theme/selector"
+import { useTheme } from "../bands/theme/selectors"
 import { ThemeState } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
