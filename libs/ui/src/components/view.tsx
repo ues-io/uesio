@@ -122,26 +122,17 @@ const View: FC<Props> = (props: Props) => {
 				buildMode: useBuildTime,
 			}),
 		}
-		const paletteTheme = {
-			primary: {
-				main: theme.routeTheme?.definition?.primary,
-			},
-			secondary: {
-				main: theme.routeTheme?.definition?.secondary,
-			},
-			error: {
-				main: theme.routeTheme.definition?.error,
-			},
-			warning: {
-				main: theme.routeTheme?.definition?.warning,
-			},
-			info: {
-				main: theme.routeTheme?.definition?.info,
-			},
-			success: {
-				main: theme.routeTheme?.definition?.success,
-			},
-		}
+
+		const paletteTheme = Object.entries(
+			theme?.routeTheme?.definition || {}
+		).reduce(
+			(acc, [label, color]) => ({
+				...acc,
+				[label]: { main: color },
+			}),
+			{}
+		)
+
 		return (
 			<ThemeProvider theme={makeTheme(paletteTheme as PaletteOptions)}>
 				<CssBaseline />
