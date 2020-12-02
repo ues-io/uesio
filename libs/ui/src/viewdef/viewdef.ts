@@ -1,13 +1,12 @@
 import Actor from "../actor/actor"
 import RuntimeState from "../store/types/runtimestate"
-import { ActionGroup, ACTOR } from "../store/actions/actions"
+import { ActionGroup } from "../store/actions/actions"
 import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
 import { DefinitionMap } from "../definition/definition"
 import { YamlDoc } from "../definition/definition"
 import Dependencies from "../store/types/dependenciesstate"
 
 import get from "lodash.get"
-import { VIEWDEF_BAND } from "./viewdefband"
 import { useStyleProperty } from "../styles/styles"
 import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { AddDefinitionSignal, ADD_DEFINITION } from "./viewdefsignals"
@@ -15,6 +14,7 @@ import { batch } from "react-redux"
 import { getDefinitionKey } from "../component/path"
 import { Context } from "../context/context"
 import { setSelectedNode } from "../bands/builder"
+import { addDefinition } from "../bands/viewdef"
 import { AnyAction } from "redux"
 
 type PlainViewDef = {
@@ -63,17 +63,14 @@ class ViewDef extends Actor {
 						)
 
 						batch(() => {
-							dispatch({
-								type: ACTOR,
-								band: VIEWDEF_BAND,
-								name: ADD_DEFINITION,
-								data: {
+							dispatch(
+								addDefinition({
+									entity: view.getViewDefId(),
 									path,
 									definition,
 									index: newIndex,
-								},
-								target: view.getViewDefId(),
-							})
+								})
+							)
 
 							const newPath = `${path}["${newIndex}"]["${getDefinitionKey(
 								definition as DefinitionMap
