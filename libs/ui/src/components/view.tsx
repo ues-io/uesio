@@ -11,7 +11,17 @@ import Slot from "./slot"
 import { parseKey } from "../component/path"
 import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selector"
+import { ThemeState } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
+
+const makePaletteTheme = (theme: ThemeState) =>
+	Object.entries(theme?.routeTheme?.definition || {}).reduce(
+		(acc, [label, color]) => ({
+			...acc,
+			[label]: { main: color },
+		}),
+		{}
+	)
 
 const makeTheme = (themePalette: PaletteOptions) =>
 	createMuiTheme({
@@ -123,18 +133,10 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 
-		const paletteTheme = Object.entries(
-			theme?.routeTheme?.definition || {}
-		).reduce(
-			(acc, [label, color]) => ({
-				...acc,
-				[label]: { main: color },
-			}),
-			{}
-		)
-
 		return (
-			<ThemeProvider theme={makeTheme(paletteTheme as PaletteOptions)}>
+			<ThemeProvider
+				theme={makeTheme(makePaletteTheme(theme) as PaletteOptions)}
+			>
 				<CssBaseline />
 				<Slot {...slotProps} />
 			</ThemeProvider>
