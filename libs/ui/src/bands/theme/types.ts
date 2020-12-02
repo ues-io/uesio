@@ -1,15 +1,12 @@
-enum actionTypes {
-	themefetch = "themefetch",
-	themefetching = "themefetching",
-}
+const themefetchActionType = "theme/fetch"
 
 interface Palette {
-	primary: string
-	secondary: string
-	error: string
-	warning: string
-	info: string
-	success: string
+	primary?: string
+	secondary?: string
+	error?: string
+	warning?: string
+	info?: string
+	success?: string
 }
 
 interface Theme {
@@ -22,21 +19,7 @@ interface Theme {
 
 type ThemeState = {
 	theme?: Theme
-	isFetching?: boolean
-} | null
-
-interface BaseAction {
-	type: keyof typeof actionTypes
+	isFetching: boolean
 }
 
-interface ActionFetch extends BaseAction {
-	type: actionTypes.themefetch
-	payload: Theme
-}
-
-interface ActionFetching extends BaseAction {
-	type: actionTypes.themefetching
-	payload: boolean
-}
-
-export { actionTypes, Palette, Theme, ThemeState, ActionFetching, ActionFetch }
+export { themefetchActionType, Palette, Theme, ThemeState }

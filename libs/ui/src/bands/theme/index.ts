@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { Theme, actionTypes, ThemeState } from "./types"
+import { Theme, themefetchActionType, ThemeState } from "./types"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -7,33 +7,34 @@ const fetchTheme = createAsyncThunk<
 		themeNamespace: string
 		themeName: string
 	}
->(actionTypes.themefetch, async ({ themeNamespace, themeName }, _) => {
+>(themefetchActionType, async ({ themeNamespace, themeName }, thunkApi) => {
 	const response = await fetch(
 		`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
 	)
-	const parsed = (await response.json()) as Theme
-	return parsed
+	const parsed = await response.json()
+	return parsed as Theme
 })
+
+const initialState: ThemeState = {
+	theme: undefined,
+	isFetching: false,
+}
 
 const themeSlice = createSlice({
 	name: "theme",
-	initialState: {
-		theme: null,
-		isFetching: false,
-	},
+	initialState: initialState,
 	reducers: {},
 	extraReducers: {
 		// @ts-ignore
-		[fetchPosts.pending]: (state, action) => {
+		[fetchTheme.pending]: (state, action) => {
 			state.isFetching = true
 		},
 		// @ts-ignore
-		[fetchTheme.fulfilled]: (state, action) => {
+		[fetchTheme.fulfilled]: (state, action: PayloadAction<Theme>) => {
 			// Add user to the state array
 			console.log("reducer fetched", action)
 			return {
-				...(state || {}),
-				...action.payload,
+				theme: action.payload,
 				isFetching: false,
 			}
 		},

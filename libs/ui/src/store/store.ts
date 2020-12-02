@@ -28,7 +28,6 @@ const defaultState = {
 		entities: {},
 		ids: [],
 	},
-	theme: null,
 }
 
 let platform: Platform
