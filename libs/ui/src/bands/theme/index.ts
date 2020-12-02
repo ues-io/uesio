@@ -13,6 +13,7 @@ const fetchTheme = createAsyncThunk<
 	}
 >(
 	themefetchActionType,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async ({ themeNamespace, themeName, platform, context }, thunkApi) => {
 		const themeResponse = await platform?.getTheme(
 			context,
@@ -42,6 +43,7 @@ const themeSlice = createSlice({
 				}
 			}
 		)
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		builder.addCase(fetchTheme.pending, (state, { payload }) => {
 			return {
 				...state,
