@@ -150,7 +150,7 @@ const View: FC<Props> = (props: Props) => {
 			</ThemeProvider>
 		)
 	}
-	console.log("theme in view", theme)
+
 	return null
 }
 
