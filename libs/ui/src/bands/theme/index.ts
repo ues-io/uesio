@@ -1,19 +1,27 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Theme, themefetchActionType, ThemeState } from "./types"
+import { Platform } from "../../platform/platform"
+import { Context } from "../../context/context"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
 	{
 		themeNamespace: string
 		themeName: string
+		platform: Platform
+		context: Context
 	}
->(themefetchActionType, async ({ themeNamespace, themeName }, thunkApi) => {
-	const response = await fetch(
-		`https://uesio-dev.com:3000/workspace/crm/dev/themes/${themeNamespace}/${themeName}`
-	)
-	const parsed = await response.json()
-	return parsed as Theme
-})
+>(
+	themefetchActionType,
+	async ({ themeNamespace, themeName, platform, context }, thunkApi) => {
+		const themeResponse = await platform?.getTheme(
+			context,
+			themeNamespace,
+			themeName
+		)
+		return themeResponse as Theme
+	}
+)
 
 const initialState: ThemeState = {
 	routeTheme: undefined,

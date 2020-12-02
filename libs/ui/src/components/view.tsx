@@ -2,6 +2,7 @@ import React, { useEffect, FC } from "react"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 import { useDispatch } from "react-redux"
 
+import { getPlatform } from "../store/store"
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
@@ -107,7 +108,14 @@ const View: FC<Props> = (props: Props) => {
 			parseKey(route.theme)) || ["", ""]
 
 		if (themeNamespace && themeName && !theme?.routeTheme) {
-			dispatch(fetchTheme({ themeNamespace, themeName }))
+			dispatch(
+				fetchTheme({
+					themeNamespace,
+					themeName,
+					platform: getPlatform(),
+					context: uesio.getContext(),
+				})
+			)
 		}
 	}, [])
 

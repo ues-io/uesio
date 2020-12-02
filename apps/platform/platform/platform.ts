@@ -40,7 +40,7 @@ const postJSON = (url: string, body?: object) => {
 			if (response.status !== 200) {
 				throw new Error('Theme Not Found');
 			}
-			return response.text();
+			return response.json();
 		},
 
 		saveViews: async (context: any, saveRequest: object) => {
