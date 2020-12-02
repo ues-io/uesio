@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
 import { hooks, material, styles, wire, signal } from "@uesio/ui"
 
@@ -70,40 +70,33 @@ async function handleChange(
 	}
 }
 
-function FileUpload(props: FileUploadProps): ReactElement | null {
+const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
+	const { definition, context } = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
+	const record = context.getRecord()
+	const wire = context.getWire()
 	if (!wire || !record) {
 		return null
 	}
 
-	const fieldId = props.definition.fieldId
-	const id = props.definition.id
-	const signals = props.definition.signals
-	const fileCollection = props.definition.fileCollection
-	const FileUploadProps = {
-		className: classes.root,
-	}
-
 	return (
-		<div {...FileUploadProps}>
-			<label htmlFor={id}>
+		<div className={classes.root}>
+			<label htmlFor={definition.id}>
 				<input
 					type="file"
 					className={classes.input}
-					id={id}
-					name={id}
+					id={definition.id}
+					name={definition.id}
 					onChange={(e) =>
 						handleChange(
 							e.target.files,
-							fieldId,
+							definition.fieldId,
 							record,
 							wire,
 							uesio,
-							fileCollection,
-							signals
+							definition.fileCollection,
+							definition.signals
 						)
 					}
 				/>
@@ -112,8 +105,8 @@ function FileUpload(props: FileUploadProps): ReactElement | null {
 					variant="contained"
 					component="span"
 					onClick={
-						props.definition?.signals &&
-						uesio.signal.getHandler(props.definition.signals)
+						definition?.signals &&
+						uesio.signal.getHandler(definition.signals)
 					}
 				>
 					Upload New File
@@ -121,8 +114,6 @@ function FileUpload(props: FileUploadProps): ReactElement | null {
 			</label>
 		</div>
 	)
-
-	return null
 }
 
 export default FileUpload
