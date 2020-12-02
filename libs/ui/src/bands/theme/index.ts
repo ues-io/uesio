@@ -37,7 +37,7 @@ const themeSlice = createSlice({
 		builder.addCase(fetchTheme.pending, (state, { payload }) => {
 			return {
 				...state,
-				isFetching: false,
+				isFetching: true,
 			}
 		})
 	},
