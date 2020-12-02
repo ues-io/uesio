@@ -95,6 +95,7 @@ const View: FC<Props> = (props: Props) => {
 		const route = props.context.getRoute()
 		const [themeNamespace, themeName] = (route?.theme &&
 			parseKey(route.theme)) || ["", ""]
+
 		if (themeNamespace && themeName) {
 			dispatch(fetchTheme({ themeNamespace, themeName }))
 		}
@@ -122,7 +123,7 @@ const View: FC<Props> = (props: Props) => {
 			}),
 		}
 		return (
-			<ThemeProvider theme={makeTheme(theme as PaletteOptions)}>
+			<ThemeProvider theme={makeTheme(theme.theme as PaletteOptions)}>
 				<CssBaseline />
 				<Slot {...slotProps} />
 			</ThemeProvider>
