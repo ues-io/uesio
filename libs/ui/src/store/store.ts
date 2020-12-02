@@ -33,7 +33,7 @@ const defaultState = {
 let platform: Platform
 let store: Store
 
-const create = (plat: Platform, initialState: RuntimeState): Store => {
+const create = (plat: Platform, initialState: RuntimeState) => {
 	platform = plat
 	store = configureStore({
 		reducer: mainReducer,
@@ -47,94 +47,68 @@ const create = (plat: Platform, initialState: RuntimeState): Store => {
 	return store
 }
 
-const getDispatcher = (): Dispatcher<AnyAction> => {
-	return useDispatch()
-}
-
-const getPlatform = (): Platform => {
-	return platform
-}
-
-const getStore = (): Store => {
-	return store
-}
+const getDispatcher = (): Dispatcher<AnyAction> => useDispatch()
+const getPlatform = () => platform
+const getStore = () => store
 
 // Both gets wire state and subscribes the component to wire changes
 const useWire = (
 	wireName: string | null,
 	viewId: string | undefined
-): PlainWire | null => {
-	// Even if we don't have a wireName sent in, we still need to call useSelector
-	// That way if a wire of that name ever comes available, we will be able to
-	// pick up that subscription.
-	return useSelector((state: RuntimeState) => {
-		if (wireName && viewId) {
-			return state.view?.[viewId].wires[wireName] || null
-		}
-		return null
+): PlainWire | null =>
+	useSelector((state: RuntimeState) => {
+		return wireName && viewId
+			? state.view?.[viewId].wires[wireName] || null
+			: null
 	})
-}
 
 // Both gets view state and subscribes the component to wire changes
 const useView = (
 	namespace: string,
 	name: string,
 	path: string
-): PlainView | null => {
-	// Even if we don't have a viewName sent in, we still need to call useSelector
-	// That way if a wire of that name ever comes available, we will be able to
-	// pick up that subscription.
-	return useSelector((state: RuntimeState) => {
+): PlainView | null =>
+	useSelector((state: RuntimeState) => {
 		const viewId = ViewBand.makeId(namespace, name, path)
 		return state.view?.[viewId] || null
 	})
-}
 
 // Both gets component state and subscribes to component changes
 const useComponentState = (
 	componentId: string | null,
 	viewId: string | undefined
-): PlainComponentState | null => {
-	// Even if we don't have a componentId sent in, we still need to call useSelector
-	// That way if a component of that id ever comes available, we will be able to
-	// pick up that subscription.
-	return useSelector((state: RuntimeState) => {
-		if (componentId && state.view && viewId) {
-			return state.view[viewId].components[componentId] || null
-		}
-		return null
+): PlainComponentState | null =>
+	useSelector((state: RuntimeState) => {
+		return componentId && state.view && viewId
+			? state.view[viewId].components[componentId] || null
+			: null
 	})
-}
 
-const useViewDefinition = (view: View, path?: string): Definition => {
-	return useSelector((state: RuntimeState) => {
+const useViewDefinition = (view: View, path?: string): Definition =>
+	useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		const definition = viewDef.getDefinition()
-		if (path) {
-			return get(definition, path || "")
-		}
-		return definition
+		const definition = viewDef?.definition
+		return path ? get(definition, path || "") : definition
 	})
-}
 
 const useViewDependencies = (view: View): Dependencies | undefined => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		return viewDef.getDependencies()
+		return viewDef?.dependencies
 	})
 }
 
 const useViewYAML = (view: View): yaml.Document | undefined => {
 	return useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
-		return viewDef.source.yaml
+		return viewDef?.yaml
 	})
 }
 
 const useViewConfigValue = (view: View, key: string): string => {
 	return useSelector((state: RuntimeState) => {
 		const viewdef = view.getViewDef(state)
-		return viewdef.getDependencies()?.configvalues[key] || ""
+		return viewdef?.dependencies?.configvalues[key] || ""
 	})
 }
 

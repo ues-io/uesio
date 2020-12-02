@@ -1,8 +1,4 @@
 import { metadata } from "@uesio/constants"
-import {
-	getAvailableNamespacesCreator,
-	getMetadataListCreator,
-} from "./signals"
 
 type MetadataListStore = {
 	[key: string]: MetadataListStore | null
@@ -28,15 +24,4 @@ type MetadataListResponse = {
 	metadata: MetadataListStore
 }
 
-type GetMetadataListSignal = ReturnType<typeof getMetadataListCreator>
-type GetAvailableNamespacesSignal = ReturnType<
-	typeof getAvailableNamespacesCreator
->
-
-export {
-	BuilderState,
-	MetadataListStore,
-	MetadataListResponse,
-	GetMetadataListSignal,
-	GetAvailableNamespacesSignal,
-}
+export { BuilderState, MetadataListStore, MetadataListResponse }

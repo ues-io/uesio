@@ -1,26 +1,22 @@
+import { Context } from "../../context/context"
+import { BandSignal } from "../../definition/signal"
 import { BotParams } from "../../platform/platform"
 import operations from "./operations"
 
 // The key for the entire band
 const BOT_BAND = "bot"
 
-// The keys for all signals in the band
-const CALL = `${BOT_BAND}/CALL`
-
-// "Signal Creators" for all of the signals in the band
-const callCreator = (bot: string, params?: BotParams) => ({
-	signal: CALL,
-	band: "", //TODO: remove this
-	bot,
-	params,
-})
+interface CallSignal extends BandSignal {
+	bot: string
+	params: BotParams
+}
 
 const signals = [
 	{
-		key: CALL,
-		dispatcher: operations.call,
+		key: `${BOT_BAND}/CALL`,
+		dispatcher: (signal: CallSignal, context: Context) =>
+			operations.call(context, signal.bot, signal.params),
 	},
 ]
 
-export { callCreator }
 export default signals

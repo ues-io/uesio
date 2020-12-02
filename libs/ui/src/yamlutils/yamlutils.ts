@@ -1,7 +1,11 @@
 import toPath from "lodash.topath"
 import { Pair, Node, Collection } from "yaml/types"
 import yaml from "yaml"
-import { YAML_OPTIONS } from "../viewdef/viewdefband"
+
+const YAML_OPTIONS = {
+	simpleKeys: true,
+	keepNodeTypes: false,
+}
 
 function parse(str: string): yaml.Document.Parsed {
 	return yaml.parseDocument(str, YAML_OPTIONS)
@@ -93,9 +97,8 @@ const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
 	return commonPath
 }
 
-const getPathFromPathArray = (pathArray: string[]): string => {
-	return pathArray.map((pathPart) => `["${pathPart}"]`).join("")
-}
+const getPathFromPathArray = (pathArray: string[]): string =>
+	pathArray.map((pathPart) => `["${pathPart}"]`).join("")
 
 const getCommonAncestorPath = (
 	startPath: string,
@@ -163,4 +166,5 @@ export {
 	getCommonAncestorPath,
 	getPathFromPathArray,
 	parse,
+	YAML_OPTIONS,
 }

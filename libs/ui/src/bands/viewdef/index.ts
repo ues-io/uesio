@@ -7,8 +7,6 @@ import {
 	DefinitionMap,
 	YamlDoc,
 } from "../../definition/definition"
-import { PlainViewDef } from "../../viewdef/viewdef"
-import { YAML_OPTIONS } from "../../viewdef/viewdefband"
 import yaml from "yaml"
 import {
 	addNodeAtPath,
@@ -16,12 +14,14 @@ import {
 	getNodeAtPath,
 	removeNodeAtPath,
 	setNodeAtPath,
+	YAML_OPTIONS,
 } from "../../yamlutils/yamlutils"
 import get from "lodash.get"
 import { deleteProperty } from "../../util/util"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
 import { getParentPath } from "../../component/path"
+import { PlainViewDef } from "./types"
 
 type YamlUpdatePayload = {
 	path: string
