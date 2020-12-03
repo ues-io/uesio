@@ -30,10 +30,10 @@ import {
 	useBuilderSelectedNode,
 } from "../bands/builder/selectors"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher, DispatchReturn } from "../store/store"
+import { Dispatcher } from "../store/store"
 import { useBuilderHasChanges } from "../bands/viewdef/selectors"
-import viewDefOps from "../bands/viewdef/operations"
 import { cancel as cancelViewChanges } from "../bands/viewdef"
+import saveViewDef from "../bands/viewdef/operations/save"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -57,55 +57,54 @@ class BuilderAPI {
 	useMetadataList = useBuilderMetadataList
 	useAvailableNamespaces = useBuilderAvailableNamespaces
 
-	setActiveNode(path: string): void {
+	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))
 	}
 
-	setSelectedNode(path: string): void {
+	setSelectedNode = (path: string) => {
 		this.dispatcher(setSelectedNode(path))
 	}
 
-	setDragNode(path: string): void {
+	setDragNode = (path: string) => {
 		this.dispatcher(setDragNode(path))
 	}
 
-	setDropNode(path: string): void {
+	setDropNode = (path: string) => {
 		this.dispatcher(setDropNode(path))
 	}
 
-	setRightPanel(panel: string): void {
+	setRightPanel = (panel: string) => {
 		this.dispatcher(setRightPanel(panel))
 	}
 
-	setLeftPanel(panel: string): void {
+	setLeftPanel = (panel: string) => {
 		this.dispatcher(setLeftPanel(panel))
 	}
 
-	setView(view: string): void {
+	setView = (view: string) => {
 		this.dispatcher(setView(view))
 	}
 
-	toggleBuildMode(): void {
+	toggleBuildMode = () => {
 		this.dispatcher(toggleBuildMode())
 	}
 
-	save(): DispatchReturn {
-		return this.uesio.signal.dispatcher(
-			viewDefOps.save(this.uesio.getContext() || new Context())
+	save = () =>
+		this.uesio.signal.dispatcher(
+			saveViewDef({ context: this.uesio.getContext() || new Context() })
 		)
-	}
 
-	cancel(): void {
+	cancel = () => {
 		this.dispatcher(cancelViewChanges())
 	}
 
-	getMetadataList(
+	getMetadataList = (
 		context: Context,
 		metadataType: metadata.MetadataType,
 		namespace: string,
 		grouping?: string
-	): DispatchReturn {
-		return this.dispatcher(
+	) =>
+		this.dispatcher(
 			builderOps.getMetadataList(
 				context,
 				metadataType,
@@ -113,13 +112,11 @@ class BuilderAPI {
 				grouping
 			)
 		)
-	}
 
-	getAvailableNamespaces(context: Context): DispatchReturn {
-		return this.dispatcher(builderOps.getAvailableNamespaces(context))
-	}
+	getAvailableNamespaces = (context: Context) =>
+		this.dispatcher(builderOps.getAvailableNamespaces(context))
 
-	getSignalProperties(signal: SignalDefinition): PropDescriptor[] {
+	getSignalProperties = (signal: SignalDefinition) => {
 		const bandSelect: PropDescriptor[] = [
 			{
 				name: "band",
@@ -141,11 +138,9 @@ class BuilderAPI {
 		const bandName = signal.band
 		const band = getBand(bandName)
 
-		if (!band) {
-			return bandSelect
-		}
-
-		return bandSelect.concat(band.getSignalProps(signal))
+		return band
+			? bandSelect.concat(band.getSignalProps(signal))
+			: bandSelect
 	}
 }
 

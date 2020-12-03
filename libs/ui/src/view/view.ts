@@ -77,9 +77,17 @@ class View extends Actor {
 		const actionHandler = View.actionGroup[action.name]
 		const target = this.getId()
 		if (actionHandler) {
-			return Actor.assignState("view", state, {
-				[target]: actionHandler(action, state.view?.[target], state),
-			})
+			return {
+				...state,
+				view: {
+					...state.view,
+					[target]: actionHandler(
+						action,
+						state.view?.[target],
+						state
+					) as PlainView,
+				},
+			}
 		}
 		return state
 	}

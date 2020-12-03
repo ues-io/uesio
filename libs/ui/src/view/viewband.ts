@@ -17,7 +17,7 @@ import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
 import { WIRE_BAND } from "../wire/wireband"
 import { SET_LOADED, SET_PARAMS } from "./viewactions"
-import viewDefOps from "../bands/viewdef/operations"
+import loadViewDef from "../bands/viewdef/operations/load"
 
 const VIEW_BAND = "view"
 
@@ -97,7 +97,7 @@ class ViewBand {
 
 						if (!viewDef) {
 							await dispatch(
-								viewDefOps.load(context, namespace, name)
+								loadViewDef({ context, namespace, name })
 							)
 						}
 

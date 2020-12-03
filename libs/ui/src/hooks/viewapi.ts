@@ -1,7 +1,6 @@
 import {
 	Dispatcher,
 	useView,
-	DispatchReturn,
 	useViewDefinition,
 	useViewConfigValue,
 	useViewYAML,
@@ -27,8 +26,8 @@ import {
 	moveDefinition,
 	addDefinitionPair,
 	changeDefinitionKey,
+	addDefinition,
 } from "../bands/viewdef"
-import viewDefOps from "../bands/viewdef/operations"
 
 const VIEW_BAND = "view"
 
@@ -68,7 +67,7 @@ class ViewAPI {
 		return view ? useViewYAML(view) : undefined
 	}
 
-	setDefinition(path: string, definition: Definition): void {
+	setDefinition(path: string, definition: Definition) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -81,24 +80,18 @@ class ViewAPI {
 		}
 	}
 
-	addDefinition(
-		path: string,
-		definition: Definition,
-		index?: number
-	): DispatchReturn {
+	addDefinition(path: string, definition: Definition, index?: number): void {
 		const view = this.uesio.getView()
-		return this.uesio.signal.dispatcher(
-			viewDefOps.addDefinition(
-				new Context([
-					{
-						view: view?.getId(),
-					},
-				]),
-				path,
-				definition,
-				index
+		if (view) {
+			this.dispatcher(
+				addDefinition({
+					entity: view.getViewDefId(),
+					path,
+					definition,
+					index,
+				})
 			)
-		)
+		}
 	}
 
 	addDefinitionPair(path: string, definition: Definition, key: string): void {
@@ -161,7 +154,7 @@ class ViewAPI {
 		}
 	}
 
-	setYaml(path: string, yamlDoc: yaml.Document): void {
+	setYaml(path: string, yamlDoc: yaml.Document) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -174,14 +167,14 @@ class ViewAPI {
 		}
 	}
 
-	loadView(
+	loadView = (
 		namespace: string,
 		name: string,
 		path: string,
 		params: ViewParams | undefined,
 		context: Context
-	): DispatchReturn {
-		return this.uesio.signal.run(
+	) =>
+		this.uesio.signal.run(
 			{
 				band: VIEW_BAND,
 				signal: LOAD,
@@ -192,7 +185,6 @@ class ViewAPI {
 			},
 			context
 		)
-	}
 }
 
 export { ViewAPI }
