@@ -5,14 +5,11 @@ import {
 	useBuilderView,
 	useBuilderRightPanel,
 	useBuilderLeftPanel,
-	useBuilderHasChanges,
 	useBuilderMetadataList,
 	useBuilderAvailableNamespaces,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
-import { VIEWDEF_BAND } from "../viewdef/viewdefband"
-import { SAVE, CANCEL } from "../viewdef/viewdefbandsignals"
 import { SignalDefinition } from "../definition/signal"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { getBand } from "../actor/band"
@@ -32,11 +29,11 @@ import {
 	useBuilderNodeState,
 	useBuilderSelectedNode,
 } from "../bands/builder/selectors"
-import {
-	getAvailableNamespacesCreator,
-	getMetadataListCreator,
-} from "../bands/builder/signals"
+import builderOps from "../bands/builder/operations"
 import { Dispatcher, DispatchReturn } from "../store/store"
+import { useBuilderHasChanges } from "../bands/viewdef/selectors"
+import viewDefOps from "../bands/viewdef/operations"
+import { cancel as cancelViewChanges } from "../bands/viewdef"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -93,23 +90,13 @@ class BuilderAPI {
 	}
 
 	save(): DispatchReturn {
-		return this.uesio.signal.run(
-			{
-				band: VIEWDEF_BAND,
-				signal: SAVE,
-			},
-			this.uesio.getContext() || new Context()
+		return this.uesio.signal.dispatcher(
+			viewDefOps.save(this.uesio.getContext() || new Context())
 		)
 	}
 
-	cancel(): DispatchReturn {
-		return this.uesio.signal.run(
-			{
-				band: VIEWDEF_BAND,
-				signal: CANCEL,
-			},
-			new Context()
-		)
+	cancel(): void {
+		this.dispatcher(cancelViewChanges())
 	}
 
 	getMetadataList(
@@ -118,14 +105,18 @@ class BuilderAPI {
 		namespace: string,
 		grouping?: string
 	): DispatchReturn {
-		return this.uesio.signal.run(
-			getMetadataListCreator(metadataType, namespace, grouping),
-			context
+		return this.dispatcher(
+			builderOps.getMetadataList(
+				context,
+				metadataType,
+				namespace,
+				grouping
+			)
 		)
 	}
 
 	getAvailableNamespaces(context: Context): DispatchReturn {
-		return this.uesio.signal.run(getAvailableNamespacesCreator(), context)
+		return this.dispatcher(builderOps.getAvailableNamespaces(context))
 	}
 
 	getSignalProperties(signal: SignalDefinition): PropDescriptor[] {

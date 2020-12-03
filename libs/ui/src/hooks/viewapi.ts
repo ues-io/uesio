@@ -28,10 +28,9 @@ import {
 	addDefinitionPair,
 	changeDefinitionKey,
 } from "../bands/viewdef"
-import { ADD_DEFINITION } from "../viewdef/viewdefsignals"
+import viewDefOps from "../bands/viewdef/operations"
 
 const VIEW_BAND = "view"
-const VIEWDEF_BAND = "viewdef"
 
 class ViewAPI {
 	constructor(uesio: Uesio) {
@@ -88,20 +87,17 @@ class ViewAPI {
 		index?: number
 	): DispatchReturn {
 		const view = this.uesio.getView()
-		return this.uesio.signal.run(
-			{
-				band: VIEWDEF_BAND,
-				signal: ADD_DEFINITION,
-				target: view?.getViewDefId(),
+		return this.uesio.signal.dispatcher(
+			viewDefOps.addDefinition(
+				new Context([
+					{
+						view: view?.getId(),
+					},
+				]),
 				path,
 				definition,
-				index,
-			},
-			new Context([
-				{
-					view: view?.getId(),
-				},
-			])
+				index
+			)
 		)
 	}
 

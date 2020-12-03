@@ -12,9 +12,8 @@ import RuntimeState from "../store/types/runtimestate"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import { Context } from "../context/context"
 import { colors } from "@material-ui/core"
-import { createComponent } from "../component/component"
 import Route from "./route"
-import { navigateCreator, redirectCreator } from "../bands/route/signals"
+import routeOps from "../bands/route/operations"
 
 type Props = BaseProps & {
 	platform: Platform
@@ -75,19 +74,22 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
-				uesio.signal.run(
-					redirectCreator(document.location.pathname),
-					new Context()
+				uesio.signal.dispatcher(
+					routeOps.redirect(new Context(), document.location.pathname)
 				)
 				return
 			}
-			uesio.signal.run(
-				navigateCreator(event.state.path, event.state.namespace, true),
-				new Context([
-					{
-						workspace: event.state.workspace,
-					},
-				])
+			uesio.signal.dispatcher(
+				routeOps.navigate(
+					new Context([
+						{
+							workspace: event.state.workspace,
+						},
+					]),
+					event.state.path,
+					event.state.namespace,
+					true
+				)
 			)
 		}
 

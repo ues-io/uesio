@@ -2,8 +2,6 @@ import Actor from "../actor/actor"
 import RuntimeState from "../store/types/runtimestate"
 import { ActorAction, ActionGroup } from "../store/actions/actions"
 import { ThunkFunc } from "../store/store"
-import { ViewDefBand } from "../viewdef/viewdefband"
-import { ViewDef } from "../viewdef/viewdef"
 import { PlainWireMap } from "../wire/wire"
 import { PlainComponentStateMap } from "../componentactor/componentactor"
 import {
@@ -13,6 +11,7 @@ import {
 	SetLoadedAction,
 } from "./viewactions"
 import { SignalDefinition } from "../definition/signal"
+import { PlainViewDef } from "../bands/viewdef/types"
 
 type ErrorState = {
 	type: string
@@ -123,11 +122,11 @@ class View extends Actor {
 	}
 
 	getViewDefId(): string {
-		return ViewDefBand.makeId(this.getNamespace(), this.getName())
+		return `${this.getNamespace()}.${this.getName()}`
 	}
 
-	getViewDef(state: RuntimeState): ViewDef {
-		return ViewDefBand.getActor(state, this.getViewDefId())
+	getViewDef(state: RuntimeState): PlainViewDef | undefined {
+		return state.viewdef?.entities[this.getViewDefId()]
 	}
 }
 

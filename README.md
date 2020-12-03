@@ -12,10 +12,10 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side, the concepts coming from functional programming are favoured (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.).
+Frontend-side are favoured the concepts coming from functional programming (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.) and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
-The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, etc).
+The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
 
 # Tech Stack
 
@@ -29,7 +29,7 @@ The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-wit
 
 ## Frontend
 
-- [TypeScript](https://www.typescriptlang.org/). Wrapper over JavaScript.
+- [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
 - [React](https://reactjs.org/). Library for making UI elements.
@@ -95,9 +95,14 @@ nx g @nrwl/workspace:library NEW_LIB
   npm install -g nx
   ```
 - _Optional_. Mock data for the CRM uesio app :
+
   ```
    cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
+
+   // or
+   npm run dev:mock:crm
   ```
+
 - _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
@@ -172,6 +177,10 @@ The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The back
 
 An **app bundle** is a screenshot or version of a specific uesio app.
 
+# Continous integration (CI)
+
+The **continous integration** process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
+
 # Set up SSL
 
 ```
@@ -235,10 +244,6 @@ In a browser visit
 ```
 https://uesio-dev.com:3000
 ```
-
-# Continous integration (CI)
-
-The continous integration process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
 
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 

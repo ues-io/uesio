@@ -1,19 +1,18 @@
 import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
-import { Platform } from "../../platform/platform"
-import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
+import { BotParams, Platform } from "../../platform/platform"
+import { Dispatcher } from "../../store/store"
 import RuntimeState from "../../store/types/runtimestate"
-import { CallSignal } from "./types"
 
-const call = (signal: CallSignal, context: Context): ThunkFunc => async (
+const call = (context: Context, bot: string, params?: BotParams) => async (
 	dispatch: Dispatcher<never>,
 	getState: () => RuntimeState,
 	platform: Platform
-): DispatchReturn => {
-	const [namespace, name] = parseKey(signal.bot)
+) => {
+	const [namespace, name] = parseKey(bot)
 	// Merge the parameters
-	const params = context.mergeMap(signal.params)
-	await platform.callBot(context, namespace, name, params || {})
+	const mergedParams = context.mergeMap(params)
+	await platform.callBot(context, namespace, name, mergedParams || {})
 	return context
 }
 

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { component, material, styles } from "@uesio/ui"
 import { GridProps } from "./griddefinition"
 
@@ -14,29 +14,25 @@ const useStyles = material.makeStyles(() => {
 	})
 })
 
-function Grid(props: GridProps): ReactElement {
+const Grid: FunctionComponent<GridProps> = (props) => {
 	const classes = useStyles(props)
-
-	const slotprops = {
-		definition: props.definition,
-		listName: "items",
-		path: props.path,
-		accepts: ["material.griditem"],
-		direction: "manual",
-		context: props.context,
-	}
-
-	const gridProps = {
-		className: classes.root,
-		justify: props.definition.justify,
-		direction: props.definition.direction,
-		alignItems: props.definition.alignitems,
-		container: true,
-		spacing: props.definition.spacing,
-	}
 	return (
-		<material.Grid {...gridProps}>
-			<component.Slot {...slotprops} />
+		<material.Grid
+			className={classes.root}
+			justify={props.definition.justify}
+			direction={props.definition.direction}
+			alignItems={props.definition.alignitems}
+			container={true}
+			spacing={props.definition.spacing}
+		>
+			<component.Slot
+				definition={props.definition}
+				listName="items"
+				path={props.path}
+				accepts={["material.griditem"]}
+				direction="manual"
+				context={props.context}
+			/>
 		</material.Grid>
 	)
 }
