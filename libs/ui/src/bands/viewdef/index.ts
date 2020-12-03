@@ -1,4 +1,8 @@
-import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
+import {
+	createEntityAdapter,
+	createSlice,
+	PayloadAction,
+} from "@reduxjs/toolkit"
 import setWith from "lodash.setwith"
 import toPath from "lodash.topath"
 import {
@@ -22,6 +26,8 @@ import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
 import { getParentPath } from "../../component/path"
 import { PlainViewDef } from "./types"
+import loadOp from "./operations/load"
+import saveOp from "./operations/save"
 
 type YamlUpdatePayload = {
 	path: string
@@ -45,7 +51,7 @@ type MoveDefinitionPayload = {
 type AddDefinitionPayload = {
 	path: string
 	definition: Definition
-	index: number
+	index?: number
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -84,17 +90,18 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 
 	if (!state.yaml) {
 		state.yaml = yamlDoc
-	} else {
-		if (state.yaml === state.originalYaml) {
-			state.originalYaml = yaml.parseDocument(
-				state.originalYaml.toString(),
-				YAML_OPTIONS
-			)
-		}
-
-		// We actually don't want components using useYaml to rerender
-		setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
+		return
 	}
+
+	if (state.yaml === state.originalYaml) {
+		state.originalYaml = yaml.parseDocument(
+			state.originalYaml.toString(),
+			YAML_OPTIONS
+		)
+	}
+
+	// We actually don't want components using useYaml to rerender
+	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
 }
 
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
@@ -206,7 +213,8 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const pathArray = toPath(path)
 	const definition = payload.definition
 	const currentArray = get(state.definition, path) || []
-	const newIndex = payload.index || 0
+
+	const newIndex = payload.index || currentArray.length
 	currentArray.splice(newIndex, 0, definition)
 	setWith(state, ["definition"].concat(pathArray), currentArray)
 
@@ -282,7 +290,6 @@ const viewDefSlice = createSlice({
 	name: "viewdef",
 	initialState: viewdefAdapter.getInitialState(),
 	reducers: {
-		add: viewdefAdapter.upsertOne,
 		setYaml: createEntityReducer<YamlUpdatePayload, PlainViewDef>(
 			updateYaml
 		),
@@ -330,7 +337,30 @@ const viewDefSlice = createSlice({
 				}
 			}
 		},
-		save: (state) => {
+	},
+	extraReducers: (builder) => {
+		builder.addCase(
+			loadOp.fulfilled,
+			(state, { payload }: PayloadAction<string>) => {
+				const yamlDoc = yaml.parseDocument(payload, YAML_OPTIONS)
+				const defDoc = new yaml.Document(YAML_OPTIONS)
+				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
+				const dependenciesDoc = getNodeAtPath(
+					"dependencies",
+					yamlDoc.contents
+				)
+
+				viewdefAdapter.upsertOne(state, {
+					namespace: yamlDoc.get("namespace"),
+					name: yamlDoc.get("name"),
+					dependencies: dependenciesDoc?.toJSON(),
+					yaml: defDoc,
+					originalYaml: defDoc,
+					definition: defDoc.toJSON(),
+				})
+			}
+		)
+		builder.addCase(saveOp.fulfilled, (state) => {
 			const viewdefs = state.entities
 			for (const defKey of Object.keys(viewdefs)) {
 				const defState = viewdefs[defKey]
@@ -351,14 +381,12 @@ const viewDefSlice = createSlice({
 					})
 				}
 			}
-		},
+		})
 	},
 })
 
 export const {
-	add,
 	cancel,
-	save,
 	setYaml,
 	removeDefinition,
 	setDefinition,

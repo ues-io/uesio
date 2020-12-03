@@ -16,30 +16,24 @@ type ScriptResult = {
 	scripts: string[]
 }
 
-function depsHaveNotLoaded(want: string[], have: string[]): boolean {
-	return want.some((key) => !have.includes(key))
-}
+const depsHaveNotLoaded = (want: string[], have: string[]) =>
+	want.some((key) => !have.includes(key))
 
-function depsHaveLoaded(want: string[], have: string[]): boolean {
-	return !depsHaveNotLoaded(want, have)
-}
+const depsHaveLoaded = (want: string[], have: string[]) =>
+	!depsHaveNotLoaded(want, have)
 
-function areNotAllLoaded(cache: ScriptMap): boolean {
-	return Object.keys(cache).some((key) => !cache[key].loaded)
-}
+const areNotAllLoaded = (cache: ScriptMap) =>
+	Object.keys(cache).some((key) => !cache[key].loaded)
 
-function areAllLoaded(cache: ScriptMap): boolean {
-	return !areNotAllLoaded(cache)
-}
+const areAllLoaded = (cache: ScriptMap) => !areNotAllLoaded(cache)
 
-function getLoadedScripts(cache: ScriptMap): string[] {
-	return Object.keys(cache).reduce(
+const getLoadedScripts = (cache: ScriptMap) =>
+	Object.keys(cache).reduce(
 		(acc, key) => [...acc, ...(cache[key].loaded ? [key] : [])],
 		[]
 	)
-}
 
-function useScripts(sources: string[]): ScriptResult {
+const useScripts = (sources: string[]): ScriptResult => {
 	// Keeping track of script loaded and error state
 	const [state, setState] = useState({
 		loaded: false,
