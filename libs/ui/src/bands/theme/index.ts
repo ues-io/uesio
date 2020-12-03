@@ -36,20 +36,16 @@ const themeSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(
 			fetchTheme.fulfilled,
-			(state, { payload }: PayloadAction<Theme>) => {
-				return {
-					routeTheme: payload,
-					isFetching: false,
-				}
-			}
+			(state, { payload }: PayloadAction<Theme>) => ({
+				routeTheme: payload,
+				isFetching: false,
+			})
 		)
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		builder.addCase(fetchTheme.pending, (state, { payload }) => {
-			return {
-				...state,
-				isFetching: true,
-			}
-		})
+		builder.addCase(fetchTheme.pending, (state, { payload }) => ({
+			...state,
+			isFetching: true,
+		}))
 	},
 })
 
