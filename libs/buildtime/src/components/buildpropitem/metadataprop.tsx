@@ -11,9 +11,18 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path, getValue, context, setValue, descriptor } = props
 	const metadataType = descriptor.metadataType
-	const value = getValue() as string
 
 	const namespaces = uesio.builder.useAvailableNamespaces()
+
+	const setViewName = (name: string): void => {
+		uesio.view.setDefinition(path + '["name"]', name)
+	}
+
+	const setViewNamespace = (namespace: string): void => {
+		uesio.view.setDefinition(path + '["namespace"]', namespace)
+	}
+
+	const value = getValue() as string
 
 	let grouping = ""
 
@@ -47,7 +56,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			uesio.builder.getAvailableNamespaces(context)
 			return
 		}
-		if (!metadata && namespace) {
+		if (!metadata && namespace !== "undefined") {
 			uesio.builder.getMetadataList(
 				context,
 				metadataType,
@@ -65,7 +74,11 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 					<SelectProp
 						{...props}
 						setValue={(value: string) => {
-							setValue(value + ".")
+							if (descriptor.metadataType === "VIEW") {
+								setViewNamespace(value)
+							} else {
+								setValue(value + ".")
+							}
 						}}
 						getValue={() => namespace}
 						descriptor={{
@@ -94,7 +107,11 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 					<SelectProp
 						{...props}
 						setValue={(value: string) => {
-							setValue(namespace + "." + value)
+							if (descriptor.metadataType === "VIEW") {
+								setViewName(value)
+							} else {
+								setValue(namespace + "." + value)
+							}
 						}}
 						getValue={() => name}
 						descriptor={{

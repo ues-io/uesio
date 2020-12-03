@@ -68,7 +68,12 @@ const View: FC<Props> = (props: Props) => {
 	useEffect(() => {
 		const hasNewParams = viewparams !== view.source.params
 		// We could think about letting this go forward before loading viewdef deps
-		if ((!view.valid || hasNewParams) && scriptsHaveLoaded) {
+		if (
+			(!view.valid || hasNewParams) &&
+			scriptsHaveLoaded &&
+			viewnamespace &&
+			viewname
+		) {
 			uesio.view.loadView(
 				viewnamespace,
 				viewname,

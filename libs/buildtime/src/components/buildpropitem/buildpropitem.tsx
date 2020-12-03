@@ -40,8 +40,21 @@ function BuildPropItem(props: Props): ReactElement {
 
 	const uesio = hooks.useUesio(props)
 
-	const getValue = (): definition.Definition =>
-		definition ? definition[descriptor.name] : ""
+	const getValue = (): definition.Definition => {
+		if (
+			descriptor.type === "METADATA" &&
+			descriptor.metadataType === "VIEW"
+		) {
+			if (definition) {
+				const name = definition["name"] as string
+				const namespace = definition["namespace"] as string
+
+				return namespace + "." + name
+			}
+		} else {
+			return definition ? definition[descriptor.name] : ""
+		}
+	}
 
 	const setValue = (value: string): void => {
 		uesio.view.setDefinition(path + '["' + descriptor.name + '"]', value)

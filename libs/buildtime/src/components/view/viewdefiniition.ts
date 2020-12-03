@@ -10,17 +10,13 @@ const ViewPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [
 		{
 			name: "name",
-			type: "KEY",
-			label: "Name",
-		},
-		{
-			name: "collection",
 			type: "METADATA",
-			metadataType: "COLLECTION",
-			label: "Collection",
+			metadataType: "VIEW",
+			label: "",
 		},
 	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export { ViewPropertyDefinition }
