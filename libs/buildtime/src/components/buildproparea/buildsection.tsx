@@ -7,7 +7,6 @@ import SignalsSection from "./signalssection"
 
 interface Props extends definition.BaseProps {
 	section: builder.PropertySection
-	definition: definition.DefinitionMap
 }
 
 function getSectionHandler(type?: string) {

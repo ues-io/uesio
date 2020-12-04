@@ -63,7 +63,6 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 				<PropertiesPanel
 					path={trimmedPath}
 					index={0}
-					componentType=""
 					context={context}
 					definition={definition}
 					propDef={propDef}

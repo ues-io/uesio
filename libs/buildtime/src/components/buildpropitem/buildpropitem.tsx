@@ -10,7 +10,6 @@ import NumberProp from "./numberprop"
 import BooleanProp from "./booleanprop"
 
 interface Props extends definition.BaseProps {
-	definition: definition.DefinitionMap
 	descriptor: builder.PropDescriptor
 }
 

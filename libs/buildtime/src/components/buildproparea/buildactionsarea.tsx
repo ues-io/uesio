@@ -11,7 +11,6 @@ import ToggleConditionAction from "./actions/toggleconditionaction"
 
 interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
-	definition: definition.DefinitionMap
 }
 
 const useStyles = makeStyles(() =>

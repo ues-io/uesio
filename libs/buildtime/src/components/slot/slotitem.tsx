@@ -90,8 +90,10 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	} = props
 	const path = `${wrapperPath}["${index}"]`
 	const definition = props.definition as definition.DefinitionMap
-	const defKey = component.path.getDefinitionKey(definition)
-	const fullPath = `${path}["${defKey}"]`
+	const [componentType, unWrappedDef] = component.path.unWrapDefinition(
+		definition
+	)
+	const fullPath = `${path}["${componentType}"]`
 
 	const uesio = hooks.useUesio(props)
 	const nodeState = uesio.builder.useNodeState(fullPath)
@@ -209,7 +211,13 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 				}}
 				title={propDef ? propDef.title : "Unknown"}
 			>
-				{component.create(definition, index, path, context)}
+				<component.Component
+					definition={unWrappedDef}
+					componentType={componentType}
+					index={index}
+					path={path}
+					context={context}
+				/>
 			</BuildBorder>
 		</div>
 	)

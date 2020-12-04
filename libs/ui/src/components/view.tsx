@@ -1,5 +1,5 @@
 import React, { useEffect, FC } from "react"
-import { BaseProps } from "../definition/definition"
+import { BaseProps, DefinitionMap } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Dependencies from "../store/types/dependenciesstate"
@@ -53,7 +53,7 @@ const View: FC<Props> = (props: Props) => {
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!props.context.getBuildMode() && path === ""
 
-	const definition = uesio.view.useDefinition("", view)
+	const definition = uesio.view.useDefinition("", view) as DefinitionMap
 	const dependencies = uesio.view.useDependencies(view)
 
 	const neededScripts = getNeededScripts(dependencies, uesio, buildMode)

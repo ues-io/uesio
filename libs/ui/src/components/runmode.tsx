@@ -7,9 +7,7 @@ import View from "./view"
 const RunMode: FC<BaseProps> = (props: BaseProps) => {
 	const route = props.context.getRoute()
 
-	if (!route) {
-		return null
-	}
+	if (!route) return null
 
 	const viewprops = {
 		...props,

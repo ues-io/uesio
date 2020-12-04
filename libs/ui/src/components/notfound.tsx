@@ -1,9 +1,9 @@
 import React, { FC } from "react"
 import { BaseProps } from "../definition/definition"
 
-const NotFound: FC<BaseProps> = () => {
-	return <div>Component Not Found</div>
-}
+const NotFound: FC<BaseProps> = (props) => (
+	<div>Component Not Found: {props.componentType}</div>
+)
 
 NotFound.displayName = "NotFound"
 

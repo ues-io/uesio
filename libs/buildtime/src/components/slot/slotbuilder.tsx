@@ -82,23 +82,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	// Temporary Hack
 	if (definition.direction === "manual") {
-		const items = definition?.items || ([] as definition.DefinitionList)
-		const listPath = path
-		return (
-			<Fragment>
-				{items
-					? items.map((itemDef, index) => {
-							const itemPath = `${listPath}["${index}"]`
-							return component.create(
-								itemDef,
-								index,
-								itemPath,
-								context
-							)
-					  })
-					: []}
-			</Fragment>
-		)
+		return <component.SlotRuntime {...props} />
 	}
 
 	const onDragOver = (e: React.DragEvent) => {
@@ -155,7 +139,6 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					isExpanded={isExpanded}
 					direction={direction}
 					size={size}
-					componentType=""
 					context={context}
 					accepts={accepts}
 					dragNode={dragNode}

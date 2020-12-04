@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react"
 import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selectors"
-import { createComponent } from "../component/component"
+import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
@@ -26,7 +26,7 @@ const makeTheme = (themePalette: PaletteOptions) =>
 		palette: { ...themePalette },
 	})
 
-const Route: FC<BaseProps> = (props: BaseProps) => {
+const Route: FC<BaseProps> = (props) => {
 	const uesio = useUesio(props)
 	const route = uesio.route.useRoute()
 	const theme = useTheme()
@@ -66,11 +66,13 @@ const Route: FC<BaseProps> = (props: BaseProps) => {
 	if (theme.isFetching || !theme.routeTheme) return null
 
 	return (
-		<ThemeProvider
-			theme={makeTheme(makePaletteTheme(theme) as PaletteOptions)}
-		>
+		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>
 			<CssBaseline />
-			{createComponent("uesio", "runtime", {}, 0, "", routeContext)}
+			<ComponentInternal
+				componentType="uesio.runtime"
+				path=""
+				context={routeContext}
+			/>
 		</ThemeProvider>
 	)
 }

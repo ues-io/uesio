@@ -6,7 +6,6 @@ import PropList from "./proplist"
 
 interface Props extends definition.BaseProps {
 	buildPropsDef: builder.BuildPropertiesDefinition
-	definition: definition.DefinitionMap
 }
 
 const useStyles = makeStyles(() =>
@@ -46,7 +45,6 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 						definition={definition}
 						section={section}
 						index={index}
-						componentType=""
 						context={context}
 					/>
 				)

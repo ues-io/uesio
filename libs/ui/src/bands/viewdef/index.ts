@@ -1,6 +1,7 @@
 import {
 	createEntityAdapter,
 	createSlice,
+	EntityState,
 	PayloadAction,
 } from "@reduxjs/toolkit"
 import setWith from "lodash.setwith"
@@ -282,6 +283,50 @@ const changeDefKey = (
 	}
 }
 
+const saveAllDefs = (state: EntityState<PlainViewDef>) => {
+	const viewdefs = state.entities
+	for (const defKey of Object.keys(viewdefs)) {
+		const defState = viewdefs[defKey]
+
+		if (!defState) continue
+		const yamlDoc = defState.yaml
+		const originalYamlDoc = defState.originalYaml
+		if (yamlDoc === originalYamlDoc) continue
+		if (!yamlDoc) continue
+
+		delete defState.originalYaml
+		delete defState.yaml
+
+		updateYaml(defState, {
+			entity: defKey,
+			path: "",
+			yaml: yamlDoc,
+		})
+	}
+}
+
+const cancelAllDefs = (state: EntityState<PlainViewDef>) => {
+	const viewdefs = state.entities
+	for (const defKey of Object.keys(viewdefs)) {
+		const defState = viewdefs[defKey]
+
+		if (!defState) continue
+		const yamlDoc = defState.yaml
+		const originalYamlDoc = defState.originalYaml
+		if (yamlDoc === originalYamlDoc) continue
+		if (!originalYamlDoc) continue
+
+		delete defState.originalYaml
+		delete defState.yaml
+
+		updateYaml(defState, {
+			entity: defKey,
+			path: "",
+			yaml: originalYamlDoc,
+		})
+	}
+}
+
 const viewdefAdapter = createEntityAdapter<PlainViewDef>({
 	selectId: (viewdef) => `${viewdef.namespace}.${viewdef.name}`,
 })
@@ -315,28 +360,7 @@ const viewDefSlice = createSlice({
 			ChangeDefinitionKeyPayload,
 			PlainViewDef
 		>(changeDefKey),
-		cancel: (state) => {
-			const viewdefs = state.entities
-			for (const defKey of Object.keys(viewdefs)) {
-				const defState = viewdefs[defKey]
-				if (!defState) {
-					continue
-				}
-				if (defState.yaml === defState.originalYaml) {
-					continue
-				}
-				const original = defState.originalYaml
-				delete defState.yaml
-				delete defState.originalYaml
-				if (original) {
-					updateYaml(defState, {
-						entity: defKey,
-						path: "",
-						yaml: original,
-					})
-				}
-			}
-		},
+		cancel: cancelAllDefs,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
@@ -360,28 +384,7 @@ const viewDefSlice = createSlice({
 				})
 			}
 		)
-		builder.addCase(saveOp.fulfilled, (state) => {
-			const viewdefs = state.entities
-			for (const defKey of Object.keys(viewdefs)) {
-				const defState = viewdefs[defKey]
-				if (!defState) {
-					continue
-				}
-				if (defState.yaml === defState.originalYaml) {
-					continue
-				}
-				const yamlDoc = defState.yaml
-				delete defState.originalYaml
-				delete defState.yaml
-				if (yamlDoc) {
-					updateYaml(defState, {
-						entity: defKey,
-						path: "",
-						yaml: yamlDoc,
-					})
-				}
-			}
-		})
+		builder.addCase(saveOp.fulfilled, saveAllDefs)
 	},
 })
 

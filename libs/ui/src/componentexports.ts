@@ -3,6 +3,7 @@ import View from "./components/view"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
 import * as dragdrop from "./component/dragdrop"
-import { create, createComponent } from "./component/component"
+import { Component } from "./component/component"
+import SlotRuntime from "./components/slotruntime"
 
-export { Slot, View, path, registry, dragdrop, create, createComponent }
+export { Slot, SlotRuntime, View, path, registry, dragdrop, Component }
