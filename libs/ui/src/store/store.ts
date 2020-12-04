@@ -1,3 +1,4 @@
+import { memo, FunctionComponent } from "react"
 import { AnyAction, Store } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch, useSelector } from "react-redux"
@@ -20,6 +21,9 @@ type DispatchReturn = Promise<Context>
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RuntimeState, Platform, T>
 type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
+interface PreventComponentRerendering {
+	doPreventRerendering?: boolean
+}
 
 const defaultState = {
 	collection: {},
@@ -111,6 +115,15 @@ const useViewConfigValue = (view: View, key: string): string => {
 		return viewdef?.dependencies?.configvalues[key] || ""
 	})
 }
+
+const controlRerenderingHOC = <P extends object & PreventComponentRerendering>(
+	WrappedComponent: FunctionComponent<P>
+) =>
+	memo(
+		(props) => <WrappedComponent {...(props as P)} />,
+		(prevProps: P, nextProps: P) =>
+			nextProps.doPreventRerendering === true ? true : false
+	)
 
 export {
 	create,
