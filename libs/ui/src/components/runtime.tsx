@@ -74,14 +74,12 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 
 	return (
 		<Route
-			{...{
-				path: props.path,
-				index: props.index,
-				componentType: props.componentType,
-				context: props.context.addFrame({
-					buildMode: buildMode && scriptsHaveLoaded,
-				}),
-			}}
+			path={props.path}
+			index={props.index}
+			componentType={props.componentType}
+			context={props.context.addFrame({
+				buildMode: buildMode && scriptsHaveLoaded,
+			})}
 		/>
 	)
 }
@@ -91,12 +89,10 @@ const Runtime: FC<Props> = (props: Props) => {
 	return (
 		<Provider store={store}>
 			<RuntimeInner
-				{...{
-					path: props.path,
-					index: props.index,
-					componentType: props.componentType,
-					context: props.context,
-				}}
+				path={props.path}
+				index={props.index}
+				componentType={props.componentType}
+				context={props.context}
 			/>
 		</Provider>
 	)
