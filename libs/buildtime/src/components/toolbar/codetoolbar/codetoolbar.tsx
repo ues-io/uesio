@@ -6,11 +6,11 @@ import yaml from "yaml"
 import { connect } from "react-redux"
 import CloseIcon from "@material-ui/icons/Close"
 
-interface PreventComponentRerendering {
+interface WithPreventRerendering {
 	doPreventRerendering?: boolean
 }
 
-const controlRerenderingHOC = <P extends {} & PreventComponentRerendering>(
+const withPreventRerendering = <P extends {} & WithPreventRerendering>(
 	WrappedComponent: ComponentType<P>
 ) =>
 	memo(
@@ -24,9 +24,7 @@ const CodeToolbar: FC<definition.BaseProps & { yamlDoc?: yaml.Document }> = (
 ) => {
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = props.yamlDoc
-	const currentAST = useRef<yaml.Document | undefined | yaml.Document>(
-		props.yamlDoc
-	)
+	const currentAST = useRef<yaml.Document | undefined>(props.yamlDoc)
 
 	return (
 		<Fragment>
@@ -200,4 +198,4 @@ export default connect((state, props) => {
 		doPreventRerendering: true,
 		yamaDoc: viewDef?.yaml,
 	}
-})(controlRerenderingHOC(CodeToolbar))
+})(withPreventRerendering(CodeToolbar))
