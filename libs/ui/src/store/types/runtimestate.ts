@@ -4,6 +4,7 @@ import { PlainViewMap } from "../../view/view"
 import { RouteState } from "../../bands/route/types"
 import { UserState } from "../../bands/user/types"
 import { BuilderState } from "../../bands/builder/types"
+import { ThemeState } from "../../bands/theme/types"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../../bands/viewdef/types"
 
@@ -15,6 +16,7 @@ type RuntimeState = {
 	route: RouteState
 	user: UserState
 	site: SiteState
+	theme: ThemeState
 }
 
 export default RuntimeState
