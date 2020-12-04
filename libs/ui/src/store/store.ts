@@ -120,9 +120,9 @@ const controlRerenderingHOC = <P extends object & PreventComponentRerendering>(
 	WrappedComponent: FunctionComponent<P>
 ) =>
 	memo(
-		(props) => <WrappedComponent {...(props as P)} />,
+		(props: P) => <WrappedComponent {...(props as P)} />,
 		(prevProps: P, nextProps: P) =>
-			nextProps.doPreventRerendering === true ? true : false
+			nextProps?.doPreventRerendering === true ? true : false
 	)
 
 export {
