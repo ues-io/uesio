@@ -7,6 +7,7 @@ import { Context } from "../context/context"
 import { metadata } from "@uesio/constants"
 import { WorkspaceState } from "../bands/route/types"
 import { MetadataListStore } from "../bands/builder/types"
+import { Theme } from "../bands/theme/types"
 
 type RouteResponse = {
 	viewname: string
@@ -36,7 +37,7 @@ type BotResponse = {
 
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
-	getTheme(context: Context, namespace: string, name: string): Promise<string>
+	getTheme(context: Context, namespace: string, name: string): Promise<Theme>
 	saveViews(
 		context: Context,
 		views: SaveViewRequest

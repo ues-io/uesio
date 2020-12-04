@@ -1,8 +1,4 @@
 import React, { useEffect, FC } from "react"
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
-import { useDispatch } from "react-redux"
-
-import { getPlatform } from "../store/store"
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
@@ -10,24 +6,6 @@ import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
-import { fetchTheme } from "../bands/theme"
-import { useTheme } from "../bands/theme/selectors"
-import { ThemeState } from "../bands/theme/types"
-import { PaletteOptions } from "@material-ui/core/styles/createPalette"
-
-const makePaletteTheme = (theme: ThemeState) =>
-	Object.entries(theme?.routeTheme?.definition || {}).reduce(
-		(acc, [label, color]) => ({
-			...acc,
-			[label]: { main: color },
-		}),
-		{}
-	)
-
-const makeTheme = (themePalette: PaletteOptions) =>
-	createMuiTheme({
-		palette: { ...themePalette },
-	})
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -69,7 +47,6 @@ const View: FC<Props> = (props: Props) => {
 	const viewnamespace = props.definition.namespace
 	const viewparams = props.definition.params
 	const path = props.path
-	const theme = useTheme()
 
 	const view = uesio.view.useView(viewnamespace, viewname, path)
 
@@ -97,25 +74,6 @@ const View: FC<Props> = (props: Props) => {
 				viewparams,
 				props.context
 			)
-			return
-		}
-	}, [])
-
-	const dispatch = useDispatch()
-	useEffect(() => {
-		const route = props.context.getRoute()
-		const [themeNamespace, themeName] = (route?.theme &&
-			parseKey(route.theme)) || ["", ""]
-
-		if (themeNamespace && themeName && !theme?.routeTheme) {
-			dispatch(
-				fetchTheme({
-					themeNamespace,
-					themeName,
-					platform: getPlatform(),
-					context: uesio.getContext(),
-				})
-			)
 		}
 	}, [])
 
@@ -126,28 +84,19 @@ const View: FC<Props> = (props: Props) => {
 		(useRunTime || useBuildTime) &&
 		definition &&
 		view.valid &&
-		view.source.loaded &&
-		!theme?.isFetching &&
-		theme?.routeTheme
+		view.source.loaded
 	) {
-		const slotProps = {
-			definition,
-			listName: "components",
-			path: "", // View slots paths are always empty
-			accepts: ["uesio.standalone"],
-			context: props.context.addFrame({
-				view: view.getId(),
-				buildMode: useBuildTime,
-			}),
-		}
-
 		return (
-			<ThemeProvider
-				theme={makeTheme(makePaletteTheme(theme) as PaletteOptions)}
-			>
-				<CssBaseline />
-				<Slot {...slotProps} />
-			</ThemeProvider>
+			<Slot
+				definition={definition}
+				listName="components"
+				path=""
+				accepts={["uesio.standalone"]}
+				context={props.context.addFrame({
+					view: view.getId(),
+					buildMode: useBuildTime,
+				})}
+			/>
 		)
 	}
 

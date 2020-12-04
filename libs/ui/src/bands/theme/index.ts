@@ -1,27 +1,18 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { Theme, themefetchActionType, ThemeState } from "./types"
-import { Platform } from "../../platform/platform"
 import { Context } from "../../context/context"
+import { UesioThunkAPI } from "../utils"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
 	{
-		themeNamespace: string
-		themeName: string
-		platform: Platform
+		namespace: string
+		name: string
 		context: Context
-	}
->(
-	themefetchActionType,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	async ({ themeNamespace, themeName, platform, context }, thunkApi) => {
-		const themeResponse = await platform?.getTheme(
-			context,
-			themeNamespace,
-			themeName
-		)
-		return themeResponse as Theme
-	}
+	},
+	UesioThunkAPI
+>(themefetchActionType, async ({ namespace, name, context }, api) =>
+	api.extra.getTheme(context, namespace, name)
 )
 
 const initialState: ThemeState = {
@@ -41,8 +32,7 @@ const themeSlice = createSlice({
 				isFetching: false,
 			})
 		)
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		builder.addCase(fetchTheme.pending, (state, { payload }) => ({
+		builder.addCase(fetchTheme.pending, (state) => ({
 			...state,
 			isFetching: true,
 		}))
