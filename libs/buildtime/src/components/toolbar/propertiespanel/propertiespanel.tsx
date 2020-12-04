@@ -51,7 +51,6 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					buildPropsDef={propDef}
 					definition={definition}
 					path={path}
-					componentType=""
 					context={props.context}
 				/>
 				<BuildActionsArea
@@ -59,7 +58,6 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 					actions={propDef.actions}
 					definition={definition}
 					path={path}
-					componentType=""
 					context={props.context}
 				/>
 			</Fragment>

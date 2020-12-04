@@ -48,7 +48,6 @@ function SignalsSection(props: SectionRendererProps): ReactElement | null {
 						<PropertiesPanel
 							path={signalPath}
 							index={0}
-							componentType={""}
 							context={props.context}
 							definition={signal}
 							propDef={{

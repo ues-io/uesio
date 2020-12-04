@@ -4,7 +4,7 @@ import yaml from "yaml"
 export type YamlDoc = yaml.Document
 
 export type BaseProps = {
-	definition?: Definition
+	definition?: DefinitionMap
 	style?: React.CSSProperties
 	children?: React.ReactNode
 	index?: number

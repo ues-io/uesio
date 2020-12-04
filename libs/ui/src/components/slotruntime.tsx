@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react"
 import { DefinitionList, BaseProps } from "../definition/definition"
-import { create } from "../component/component"
+import { Component } from "../component/component"
+import { unWrapDefinition } from "../component/path"
 
 type SlotDefinition = {
 	items: DefinitionList
@@ -17,8 +18,18 @@ function SlotRuntime(props: SlotProps): ReactElement | null {
 		<>
 			{items
 				? items.map((itemDef, index) => {
-						const itemPath = `${listPath}["${index}"]`
-						return create(itemDef, index, itemPath, props.context)
+						const [componentType, unWrappedDef] = unWrapDefinition(
+							itemDef
+						)
+						return (
+							<Component
+								componentType={componentType}
+								definition={unWrappedDef}
+								index={index}
+								path={`${listPath}["${index}"]`}
+								context={props.context}
+							/>
+						)
 				  })
 				: []}
 		</>

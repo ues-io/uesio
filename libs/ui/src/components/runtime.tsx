@@ -2,30 +2,20 @@ import React, { useEffect, FC } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import { Platform } from "../platform/platform"
-
-import { Provider, create, getPlatform } from "../store/store"
+import { getPlatform } from "../store/store"
 import { useUesio } from "../hooks/hooks"
-import RuntimeState from "../store/types/runtimestate"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import { Context } from "../context/context"
 import Route from "./route"
 import routeOps from "../bands/route/operations"
 
-type Props = BaseProps & {
-	platform: Platform
-	initialState: RuntimeState
-}
-
-function getNeededScripts(buildMode: boolean): string[] {
+function getNeededScripts(buildMode: boolean) {
 	return buildMode ? [getPlatform().getBuilderCoreURL()] : []
 }
 
-const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
+const Runtime: FC<BaseProps> = (props) => {
 	const uesio = useUesio(props)
-
 	const buildMode = uesio.builder.useMode()
-
 	const neededScripts = getNeededScripts(buildMode)
 	const scriptResult = useScripts(neededScripts)
 	const scriptsHaveLoaded = depsHaveLoaded(
@@ -75,8 +65,6 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 	return (
 		<Route
 			path={props.path}
-			index={props.index}
-			componentType={props.componentType}
 			context={props.context.addFrame({
 				buildMode: buildMode && scriptsHaveLoaded,
 			})}
@@ -84,21 +72,6 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 	)
 }
 
-const Runtime: FC<Props> = (props: Props) => {
-	const store = create(props.platform, props.initialState)
-	return (
-		<Provider store={store}>
-			<RuntimeInner
-				path={props.path}
-				index={props.index}
-				componentType={props.componentType}
-				context={props.context}
-			/>
-		</Provider>
-	)
-}
-
 Runtime.displayName = "Runtime"
-RuntimeInner.displayName = "RuntimeInner"
 
 export default Runtime

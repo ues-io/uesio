@@ -95,7 +95,6 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							<PropertiesPanel
 								path={conditionPath}
 								index={0}
-								componentType=""
 								context={context}
 								definition={condition}
 								propDef={{

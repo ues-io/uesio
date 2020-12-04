@@ -4,7 +4,6 @@ import { definition, builder } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
-	definition: definition.DefinitionMap
 }
 
 const PropList: FunctionComponent<Props> = ({
@@ -21,7 +20,6 @@ const PropList: FunctionComponent<Props> = ({
 				definition={def}
 				descriptor={descriptor}
 				index={index}
-				componentType=""
 				context={context}
 			/>
 		))}

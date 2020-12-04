@@ -36,45 +36,39 @@ interface CellProps {
 	index: number
 }
 
-const FieldCell: FC<CellProps> = (props: CellProps) => {
-	const column = props.column
-	const fieldId = column.field
-	const path = props.path
-	const index = props.index
-	return (
-		<material.TableCell key={fieldId}>
-			{component.create(
-				{
-					"material.field": {
-						fieldId,
-						hideLabel: true,
-					},
-				},
-				index,
-				path + '["columns"]["' + index + '"]',
-				props.context
-			)}
-		</material.TableCell>
-	)
-}
+const FieldCell: FC<CellProps> = ({
+	column: { field },
+	path,
+	index,
+	context,
+}: CellProps) => (
+	<material.TableCell key={field}>
+		<component.Component
+			componentType="material.field"
+			definition={{
+				fieldId: field,
+				hideLabel: true,
+			}}
+			index={index}
+			path={path + '["columns"]["' + index + '"]'}
+			context={context}
+		/>
+	</material.TableCell>
+)
 
 const SlotCell: FC<CellProps> = (props: CellProps) => {
-	const column = props.column
+	const { column, path, index, context } = props
 	const fieldId = column.field
-	const path = props.path
-	const index = props.index
-
-	const slotProps = {
-		definition: column,
-		listName: "components",
-		path: path + '["columns"]["' + index + '"]["material.column"]',
-		accepts: ["uesio.context"],
-		direction: "horizontal",
-		context: props.context,
-	}
 	return (
 		<material.TableCell key={fieldId}>
-			<component.Slot {...slotProps} />
+			<component.Slot
+				definition={column}
+				listName="components"
+				path={path + '["columns"]["' + index + '"]["material.column"]'}
+				accepts={["uesio.context"]}
+				direction="horizontal"
+				context={context}
+			/>
 		</material.TableCell>
 	)
 }
