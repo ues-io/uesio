@@ -3,8 +3,10 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -13,6 +15,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
+
+//GetBytes interface to bytes function
+func GetBytes(key interface{}) ([]byte, error) {
+	buf, ok := key.([]byte)
+	if !ok {
+		return nil, errors.New("GetBytes Error")
+	}
+
+	return buf, nil
+}
 
 func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
 
@@ -57,6 +69,42 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			if !ok {
 				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
+
+			if fieldMetadata.Type == "MAP" {
+
+				var aux = *colvals[index].(*interface{})
+
+				if aux != nil {
+
+					res, ok := aux.([]byte)
+					if !ok {
+						return nil, errors.New("Casting to byte Error")
+					}
+
+					var anyJSON map[string]interface{}
+					err = json.Unmarshal(res, &anyJSON)
+
+					if err != nil {
+						return nil, errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+					}
+
+					colassoc[fieldID] = anyJSON
+				} else {
+					colassoc[fieldID] = nil
+				}
+
+				continue
+			}
+
+			if fieldMetadata.Type == "DATE" {
+
+				var aux = *colvals[index].(*interface{})
+				var date = aux.(time.Time)
+				colassoc[fieldID] = date.Format("2006-01-02")
+
+				continue
+			}
+
 			colassoc[fieldID] = *colvals[index].(*interface{})
 		}
 
