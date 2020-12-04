@@ -3,6 +3,7 @@ import Buildtime from "./components/buildtime"
 import SlotBuilder from "./components/slot/slotbuilder"
 import Wire from "./components/wire/wire"
 import { WirePropertyDefinition } from "./components/wire/wiredefinition"
+import { ViewPropertyDefinition } from "./components/view/viewdefiniition"
 
 component.registry.registerBuilder("uesio", "runtime", Buildtime, null)
 component.registry.registerBuilder("uesio", "slot", SlotBuilder, null)
@@ -11,4 +12,10 @@ component.registry.registerBuilder(
 	"wire",
 	Wire,
 	WirePropertyDefinition
+)
+component.registry.registerBuilder(
+	"uesio",
+	"view",
+	component.View,
+	ViewPropertyDefinition
 )

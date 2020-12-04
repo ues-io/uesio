@@ -35,16 +35,14 @@ function getNeededScripts(
 
 interface Props extends BaseProps {
 	definition: {
-		name: string
-		namespace: string
+		view: string
 		params?: ViewParams
 	}
 }
 
 const View: FC<Props> = (props: Props) => {
 	const uesio = useUesio(props)
-	const viewname = props.definition.name
-	const viewnamespace = props.definition.namespace
+	const [viewnamespace, viewname] = parseKey(props.definition.view)
 	const viewparams = props.definition.params
 	const path = props.path
 

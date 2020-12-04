@@ -2,8 +2,7 @@ name: leads
 definition:
   components:
     - uesio.view:
-        name: topbar
-        namespace: crm
+        view: crm.topbar
     - material.typography:
         text: Leads
         variant: h6

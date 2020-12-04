@@ -2,8 +2,7 @@ name: contactDetails
 definition:
   components:
     - uesio.view:
-        name: topbar
-        namespace: crm
+        view: crm.topbar
     - material.deck:
         components:
           - material.card:
@@ -65,7 +64,7 @@ definition:
               margin: 1
               media:
                 background: null
-                color: '#FF5733'
+                color: "#FF5733"
                 height: 10px
         id: oneaccountDeck
         margin: 0

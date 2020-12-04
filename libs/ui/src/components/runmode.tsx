@@ -14,8 +14,7 @@ const RunMode: FC<BaseProps> = (props: BaseProps) => {
 	const viewprops = {
 		...props,
 		definition: {
-			name: route.viewname,
-			namespace: route.viewnamespace,
+			view: `${route.viewnamespace}.${route.viewname}`,
 			params: route.params,
 		},
 	}
