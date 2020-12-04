@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import {
 	material,
@@ -23,11 +23,10 @@ const actionReducers: action.ActionGroup = {
 	TOGGLE_MODE: (
 		action: action.ComponentAction,
 		state: DeckState
-	): DeckState => {
-		return Object.assign({}, state, {
-			mode: state.mode === "READ" ? "EDIT" : "READ",
-		})
-	},
+	): DeckState => ({
+		...state,
+		mode: state.mode === "READ" ? "EDIT" : "READ",
+	}),
 }
 
 const signalHandlers: signal.SignalsHandler = {
@@ -54,15 +53,13 @@ const signalHandlers: signal.SignalsHandler = {
 	},
 }
 
-function Deck(props: DeckProps): ReactElement | null {
+const Deck: FunctionComponent<DeckProps> = (props) => {
+	const { path, context, definition } = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const definition = props.definition
 	const wire = uesio.wire.useWire(definition.wire)
 	const data = wire.getData()
 	const collection = wire.getCollection()
-	const path = props.path
-	const context = props.context
 
 	const initialState: DeckState = {
 		mode: definition.mode || "READ",
@@ -80,40 +77,32 @@ function Deck(props: DeckProps): ReactElement | null {
 
 	const state = componentActor.toState() as DeckState
 
-	const deckProps = {
-		className: classes.root,
-		container: true,
-	}
-
 	return (
-		<material.Grid {...deckProps}>
-			{data.map((record) => {
-				const slotProps = {
-					definition,
-					listName: "components",
-					path,
-					accepts: ["uesio.context"],
-					direction: "manual",
-					context: context.addFrame({
-						record: record.getId(),
-						wire: wire.getId(),
-						fieldMode: state.mode,
-					}),
-				}
-				const itemProps = {
-					xs: props.definition.xs,
-					sm: props.definition.sm,
-					md: props.definition.md,
-					lg: props.definition.lg,
-					xl: props.definition.xl,
-					item: true,
-				}
-				return (
-					<material.Grid key={record.getId()} {...itemProps}>
-						<component.Slot {...slotProps} />
-					</material.Grid>
-				)
-			})}
+		<material.Grid className={classes.root} container={true}>
+			{data.map((record) => (
+				<material.Grid
+					key={record.getId()}
+					xs={props.definition.xs}
+					sm={props.definition.sm}
+					md={props.definition.md}
+					lg={props.definition.lg}
+					xl={props.definition.xl}
+					item={true}
+				>
+					<component.Slot
+						definition={definition}
+						listName="components"
+						path={path}
+						accepts={["uesio.context"]}
+						direction="manual"
+						context={context.addFrame({
+							record: record.getId(),
+							wire: wire.getId(),
+							fieldMode: state.mode,
+						})}
+					/>
+				</material.Grid>
+			))}
 		</material.Grid>
 	)
 }

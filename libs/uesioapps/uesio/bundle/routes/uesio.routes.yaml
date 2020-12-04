@@ -1,3 +1,4 @@
 name: routes
 path: app/{appname}/workspace/{workspacename}/routes
 view: uesio.routes
+theme: uesio.default

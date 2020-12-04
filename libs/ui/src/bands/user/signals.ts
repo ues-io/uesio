@@ -1,36 +1,27 @@
+import { Context } from "../../context/context"
+import { BandSignal } from "../../definition/signal"
 import operations from "./operations"
 
 // The key for the entire band
 const USER_BAND = "user"
 
-// The keys for all signals in the band
-const LOGIN = `${USER_BAND}/LOGIN`
-const LOGOUT = `${USER_BAND}/LOGOUT`
-
-// "Signal Creators" for all of the signals in the band
-const loginCreator = (type: string, token: string) => ({
-	signal: LOGIN,
-	band: "", //TODO: remove this
-	type,
-	token,
-})
-
-const logoutCreator = () => ({
-	signal: LOGOUT,
-	band: "", //TODO: remove this
-})
+interface LoginSignal extends BandSignal {
+	type: string
+	token: string
+}
 
 // "Signal Handlers" for all of the signals in the band
 const signals = [
 	{
-		key: LOGIN,
-		dispatcher: operations.login,
+		key: `${USER_BAND}/LOGIN`,
+		dispatcher: (signal: LoginSignal, context: Context) =>
+			operations.login(context, signal.type, signal.token),
 	},
 	{
-		key: LOGOUT,
-		dispatcher: operations.logout,
+		key: `${USER_BAND}/LOGOUT`,
+		dispatcher: (signal: BandSignal, context: Context) =>
+			operations.logout(context),
 	},
 ]
 
-export { loginCreator, logoutCreator }
 export default signals

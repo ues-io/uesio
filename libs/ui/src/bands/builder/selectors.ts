@@ -54,20 +54,6 @@ const useBuilderMode = (): boolean =>
 		builder ? !!builder.buildMode : false
 	)
 
-const useBuilderHasChanges = (): boolean =>
-	useSelector(({ viewdef }: RuntimeState) => {
-		// Loop over view defs
-		if (viewdef) {
-			for (const defKey of Object.keys(viewdef)) {
-				const viewDef = viewdef[defKey]
-				if (viewDef.yaml !== viewDef.originalYaml) {
-					return true
-				}
-			}
-		}
-		return false
-	})
-
 const useBuilderMetadataList = (
 	metadataType: metadata.MetadataType,
 	namespace: string,
@@ -97,7 +83,6 @@ export {
 	useBuilderLeftPanel,
 	useBuilderRightPanel,
 	useBuilderView,
-	useBuilderHasChanges,
 	useBuilderMetadataList,
 	useBuilderAvailableNamespaces,
 }

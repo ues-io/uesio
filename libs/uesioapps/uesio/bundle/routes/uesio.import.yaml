@@ -1,3 +1,4 @@
 name: import
 path: app/{appname}/workspace/{workspacename}/import
 view: uesio.import
+theme: uesio.default

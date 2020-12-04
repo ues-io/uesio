@@ -1,3 +1,4 @@
 name: datasource
 path: app/{appname}/workspace/{workspacename}/datasource/{datasourcename}
 view: uesio.datasource
+theme: uesio.default

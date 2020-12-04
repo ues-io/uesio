@@ -21,7 +21,6 @@ import { Context } from "../context/context"
 import { SignalDescriptor } from "../definition/signal"
 
 import botSignals from "../bands/bot/signals"
-import builderSignals from "../bands/builder/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
 
@@ -41,7 +40,6 @@ const register = (descriptors: SignalDescriptor[]) => {
 }
 
 register(botSignals)
-register(builderSignals)
 register(routeSignals)
 register(userSignals)
 
@@ -49,16 +47,16 @@ function getSignalHandler(
 	signal: SignalDefinition,
 	context: Context
 ): ThunkFunc {
+	// New method of calling signals
+	const descriptor = registry[signal.signal]
+	if (descriptor) {
+		return descriptor.dispatcher(signal, context)
+	}
+
 	return (
 		dispatch: Dispatcher<StoreAction>,
 		getState: () => RuntimeState
 	): DispatchReturn => {
-		// New method of calling signals
-		const descriptor = registry[signal.signal]
-		if (descriptor) {
-			return dispatch(descriptor.dispatcher(signal, context))
-		}
-
 		// Old method of calling signals (Actor and Band classes)
 		// TODO: remove this completely
 		const band = getBand(signal.band)
@@ -94,6 +92,7 @@ class SignalAPI {
 		}
 	}
 
+	// Runs a signal that has been registered in the signal registry
 	static run(
 		signal: SignalDefinition,
 		context: Context,
@@ -103,7 +102,7 @@ class SignalAPI {
 	}
 
 	run(signal: SignalDefinition, context: Context): DispatchReturn {
-		return this.dispatcher(getSignalHandler(signal, context))
+		return SignalAPI.run(signal, context, this.dispatcher)
 	}
 
 	useSignals(

@@ -1,21 +1,22 @@
+import { metadata } from "@uesio/constants"
 import { AnyAction } from "redux"
 import { setAvailableNamespaces, setMetadataList } from "."
 import { Context } from "../../context/context"
 import { Platform } from "../../platform/platform"
-import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
+import { Dispatcher } from "../../store/store"
 import RuntimeState from "../../store/types/runtimestate"
-import { GetAvailableNamespacesSignal, GetMetadataListSignal } from "./types"
 
 const getMetadataList = (
-	signal: GetMetadataListSignal,
-	context: Context
-): ThunkFunc => {
+	context: Context,
+	metadataType: metadata.MetadataType,
+	namespace: string,
+	grouping?: string
+) => {
 	return async (
 		dispatch: Dispatcher<AnyAction>,
 		getState: () => RuntimeState,
 		platform: Platform
-	): DispatchReturn => {
-		const { metadataType, namespace, grouping } = signal
+	) => {
 		const metadata = await platform.getMetadataList(
 			context,
 			metadataType,
@@ -34,15 +35,12 @@ const getMetadataList = (
 	}
 }
 
-const getAvailableNamespaces = (
-	signal: GetAvailableNamespacesSignal,
-	context: Context
-): ThunkFunc => {
+const getAvailableNamespaces = (context: Context) => {
 	return async (
 		dispatch: Dispatcher<AnyAction>,
 		getState: () => RuntimeState,
 		platform: Platform
-	): DispatchReturn => {
+	) => {
 		const namespaces = await platform.getAvailableNamespaces(context)
 		dispatch(setAvailableNamespaces(namespaces))
 		return context

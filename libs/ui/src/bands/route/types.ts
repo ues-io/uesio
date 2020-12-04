@@ -1,5 +1,4 @@
 import { ViewParams } from "../../view/view"
-import { navigateCreator, redirectCreator } from "./signals"
 
 type WorkspaceState = {
 	name: string
@@ -13,9 +12,7 @@ type RouteState = {
 	namespace: string
 	path: string
 	workspace?: WorkspaceState
+	theme: string
 } | null
 
-type RedirectSignal = ReturnType<typeof redirectCreator>
-type NavigateSignal = ReturnType<typeof navigateCreator>
-
-export { RouteState, WorkspaceState, RedirectSignal, NavigateSignal }
+export { RouteState, WorkspaceState }

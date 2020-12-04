@@ -1,28 +1,11 @@
 import {
 	Dispatcher,
 	useView,
-	DispatchReturn,
 	useViewDefinition,
 	useViewConfigValue,
 	useViewYAML,
 	useViewDependencies,
 } from "../store/store"
-import { ACTOR } from "../store/actions/actions"
-import {
-	SET_DEFINITION,
-	SET_YAML,
-	ADD_DEFINITION,
-	REMOVE_DEFINITION,
-	MOVE_DEFINITION,
-	ADD_DEFINITION_PAIR,
-	CHANGE_DEFINITION_KEY,
-	RemoveDefinitionAction,
-	ChangeDefinitionKeyAction,
-	AddDefinitionPairAction,
-	SetYamlAction,
-	MoveDefinitionAction,
-	SetDefinitionAction,
-} from "../viewdef/viewdefactions"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
@@ -36,9 +19,17 @@ import Dependencies from "../store/types/dependenciesstate"
 import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
 import { setSelectedNode } from "../bands/builder"
+import {
+	setYaml,
+	removeDefinition,
+	setDefinition,
+	moveDefinition,
+	addDefinitionPair,
+	changeDefinitionKey,
+	addDefinition,
+} from "../bands/viewdef"
 
 const VIEW_BAND = "view"
-const VIEWDEF_BAND = "viewdef"
 
 class ViewAPI {
 	constructor(uesio: Uesio) {
@@ -58,108 +49,75 @@ class ViewAPI {
 
 	useConfigValue(key: string): string {
 		const view = this.uesio.getView()
-		if (view) {
-			return useViewConfigValue(view, key)
-		}
-		return ""
+		return view ? useViewConfigValue(view, key) : ""
 	}
 
 	useDefinition(path?: string, view?: View): Definition {
 		const useView = view || this.uesio.getView()
-		if (useView) {
-			return useViewDefinition(useView, path)
-		}
-		return undefined
+		return useView ? useViewDefinition(useView, path) : undefined
 	}
 
 	useDependencies(view?: View): Dependencies | undefined {
 		const useView = view || this.uesio.getView()
-		if (useView) {
-			return useViewDependencies(useView)
-		}
-		return undefined
+		return useView ? useViewDependencies(useView) : undefined
 	}
 
 	useYAML(): yaml.Document | undefined {
 		const view = this.uesio.getView()
-		if (view) {
-			return useViewYAML(view)
-		}
-		return undefined
+		return view ? useViewYAML(view) : undefined
 	}
 
-	setDefinition(path: string, definition: Definition): void {
+	setDefinition(path: string, definition: Definition) {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: SetDefinitionAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: SET_DEFINITION,
-				data: {
+			this.dispatcher(
+				setDefinition({
+					entity: view.getViewDefId(),
 					path,
 					definition,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
-	addDefinition(
-		path: string,
-		definition: Definition,
-		index?: number
-	): DispatchReturn {
+	addDefinition(path: string, definition: Definition, index?: number): void {
 		const view = this.uesio.getView()
-		return this.uesio.signal.run(
-			{
-				band: VIEWDEF_BAND,
-				signal: ADD_DEFINITION,
-				target: view?.getViewDefId(),
-				path,
-				definition,
-				index,
-			},
-			new Context([
-				{
-					view: view?.getId(),
-				},
-			])
-		)
+		if (view) {
+			this.dispatcher(
+				addDefinition({
+					entity: view.getViewDefId(),
+					path,
+					definition,
+					index,
+				})
+			)
+		}
 	}
 
 	addDefinitionPair(path: string, definition: Definition, key: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: AddDefinitionPairAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: ADD_DEFINITION_PAIR,
-				data: {
+			this.dispatcher(
+				addDefinitionPair({
+					entity: view.getViewDefId(),
 					path,
 					definition,
 					key,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
 	changeDefinitionKey(path: string, key: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: ChangeDefinitionKeyAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: CHANGE_DEFINITION_KEY,
-				data: {
+			this.dispatcher(
+				changeDefinitionKey({
+					entity: view.getViewDefId(),
 					path,
 					key,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
@@ -168,16 +126,12 @@ class ViewAPI {
 		const usePath = path || this.uesio.getPath()
 		if (view) {
 			batch(() => {
-				const removeDefAction: RemoveDefinitionAction = {
-					type: ACTOR,
-					band: VIEWDEF_BAND,
-					name: REMOVE_DEFINITION,
-					data: {
+				this.dispatcher(
+					removeDefinition({
+						entity: view.getViewDefId(),
 						path: usePath,
-					},
-					target: view.getViewDefId(),
-				}
-				this.dispatcher(removeDefAction)
+					})
+				)
 				// When a definition is removed, select its parent
 				const pathArray = toPath(usePath)
 				pathArray.pop()
@@ -190,45 +144,37 @@ class ViewAPI {
 	moveDefinition(fromPath: string, toPath: string): void {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: MoveDefinitionAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: MOVE_DEFINITION,
-				data: {
+			this.dispatcher(
+				moveDefinition({
+					entity: view.getViewDefId(),
 					fromPath,
 					toPath,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
-	setYaml(path: string, yamlDoc: yaml.Document): void {
+	setYaml(path: string, yamlDoc: yaml.Document) {
 		const view = this.uesio.getView()
 		if (view) {
-			const action: SetYamlAction = {
-				type: ACTOR,
-				band: VIEWDEF_BAND,
-				name: SET_YAML,
-				data: {
+			this.dispatcher(
+				setYaml({
+					entity: view.getViewDefId(),
 					path,
 					yaml: yamlDoc,
-				},
-				target: view.getViewDefId(),
-			}
-			this.dispatcher(action)
+				})
+			)
 		}
 	}
 
-	loadView(
+	loadView = (
 		namespace: string,
 		name: string,
 		path: string,
 		params: ViewParams | undefined,
 		context: Context
-	): DispatchReturn {
-		return this.uesio.signal.run(
+	) =>
+		this.uesio.signal.run(
 			{
 				band: VIEW_BAND,
 				signal: LOAD,
@@ -239,7 +185,6 @@ class ViewAPI {
 			},
 			context
 		)
-	}
 }
 
 export { ViewAPI }

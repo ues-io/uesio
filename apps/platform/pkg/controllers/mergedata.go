@@ -21,6 +21,7 @@ type RouteMergeData struct {
 	Namespace     string              `json:"namespace"`
 	Path          string              `json:"path"`
 	Workspace     *WorkspaceMergeData `json:"workspace"`
+	Theme         string              `json:"theme"`
 }
 
 // UserMergeData stuff to merge
@@ -119,6 +120,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 			Namespace:     route.Namespace,
 			Path:          route.Path,
 			Workspace:     GetWorkspaceMergeData(workspace),
+			Theme:         route.ThemeRef,
 		},
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{

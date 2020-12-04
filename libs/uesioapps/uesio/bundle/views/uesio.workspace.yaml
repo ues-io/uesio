@@ -153,6 +153,17 @@ definition:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
                                                 namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Themes
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
+                                                namespace: "uesio"
                       - material.griditem:
                           xs: true
                           components:

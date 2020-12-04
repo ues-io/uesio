@@ -1,3 +1,4 @@
 name: contactDetails
 path: contact/{contactid}
 view: crm.contactDetails
+theme: crm.default

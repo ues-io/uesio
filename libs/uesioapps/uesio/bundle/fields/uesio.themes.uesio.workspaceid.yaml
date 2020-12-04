@@ -1,0 +1,5 @@
+name: workspaceid
+collection: uesio.themes
+type: TEXT
+label: Workspace ID
+propertyName: workspaceid

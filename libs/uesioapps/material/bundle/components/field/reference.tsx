@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { FunctionComponent } from "react"
 import { material, wire, hooks, collection } from "@uesio/ui"
 import { RendererProps } from "./fielddefinition"
 import AutoCompleteField, {
@@ -36,12 +36,10 @@ const generateReferenceFieldDisplayValue = (
 	return value
 }
 
-const Reference = (props: RendererProps): React.ReactElement | null => {
+const Reference: FunctionComponent<RendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = useStyles(props)
-	const fieldMetadata = props.fieldMetadata
-	const hideLabel = props.hideLabel
-	const mode = props.mode
+	const { fieldMetadata, hideLabel, mode, fieldId, record, context } = props
 
 	const referencedCollection = uesio.wire.useCollection(
 		fieldMetadata.source.referencedCollection || ""
@@ -52,89 +50,79 @@ const Reference = (props: RendererProps): React.ReactElement | null => {
 	}
 
 	const value = generateReferenceFieldDisplayValue(
-		props.fieldId,
+		fieldId,
 		referencedCollection,
-		props.record
+		record
 	)
 
 	const foreignFieldId = fieldMetadata.source.foreignKeyField
 	if (mode === "READ") {
 		return (
 			<material.TextField
-				{...{
-					className: classes.root,
-					...(!hideLabel && {
-						label: fieldMetadata.getLabel(),
-					}),
-					fullWidth: true,
-					InputLabelProps: {
-						disableAnimation: true,
-						shrink: true,
-					},
-					InputProps: {
-						readOnly: true,
-						disableUnderline: true,
-					},
-					value,
+				className={classes.root}
+				fullWidth={true}
+				InputLabelProps={{
+					disableAnimation: true,
+					shrink: true,
 				}}
+				InputProps={{
+					readOnly: true,
+					disableUnderline: true,
+				}}
+				value={value}
+				{...(!hideLabel && {
+					label: fieldMetadata.getLabel(),
+				})}
 			/>
 		)
 	} else {
 		return (
 			<AutoCompleteField
-				{...{
-					...props,
-					value,
-					setValue: (value: string) => {
-						if (!foreignFieldId) {
-							return
-						}
-						props.record.update(foreignFieldId, value)
-					},
-					getItems: async (
-						searchText: string,
-						callback: (items: SelectedItem[]) => void
-					) => {
-						const refCol = referencedCollection
-						const result = await uesio.platform.loadData(
-							props.context,
+				{...props}
+				value={value}
+				setValue={(value: string) => {
+					if (!foreignFieldId) {
+						return
+					}
+					record.update(foreignFieldId, value)
+				}}
+				getItems={async (
+					searchText: string,
+					callback: (items: SelectedItem[]) => void
+				) => {
+					const refCol = referencedCollection
+					const result = await uesio.platform.loadData(context, {
+						wires: [
 							{
-								wires: [
+								wire: "search",
+								type: "QUERY",
+								collection:
+									refCol.namespace + "." + refCol.name,
+								fields: [
 									{
-										wire: "search",
-										type: "QUERY",
-										collection:
-											refCol.namespace +
-											"." +
-											refCol.name,
-										fields: [
-											{
-												id: refCol.idField,
-											},
-											{
-												id: refCol.nameField,
-											},
-										],
-										conditions: [
-											{
-												type: "SEARCH",
-												value: searchText,
-												valueSource: "VALUE",
-												active: true,
-											},
-										],
+										id: refCol.idField,
+									},
+									{
+										id: refCol.nameField,
 									},
 								],
-							}
-						)
-						callback(
-							result.wires[0].data.map((record) => ({
-								value:
-									record[referencedCollection.nameField] + "",
-								id: record[referencedCollection.idField] + "",
-							}))
-						)
-					},
+								conditions: [
+									{
+										type: "SEARCH",
+										value: searchText,
+										valueSource: "VALUE",
+										active: true,
+									},
+								],
+							},
+						],
+					})
+					callback(
+						result.wires[0].data.map((record) => ({
+							value: record[referencedCollection.nameField] + "",
+							id: record[referencedCollection.idField] + "",
+						}))
+					)
 				}}
 			/>
 		)

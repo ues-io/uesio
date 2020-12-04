@@ -34,6 +34,15 @@ const postJSON = (url: string, body?: object) => {
 			return response.text();
 		},
 
+		getTheme: async (context: any, namespace: string, name: string) => {
+			const prefix = getPrefix(context.getWorkspace());
+			const response = await fetch(`${prefix}/themes/${namespace}/${name}`);
+			if (response.status !== 200) {
+				throw new Error('Theme Not Found');
+			}
+			return response.json();
+		},
+
 		saveViews: async (context: any, saveRequest: object) => {
 			const prefix = getPrefix(context.getWorkspace());
 			const response = await postJSON(`${prefix}/views/save`, saveRequest);

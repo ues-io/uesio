@@ -11,14 +11,13 @@ import { SignalDefinition, SignalsHandler } from "../definition/signal"
 import { SignalAPI } from "../hooks/signalapi"
 import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
 import { ADD_WIRES } from "../wire/wirebandactions"
-import { ViewDefBand, VIEWDEF_BAND } from "../viewdef/viewdefband"
 import { LoadSignal, LOAD } from "./viewbandsignals"
-import { LOAD as LOAD_DEF } from "../viewdef/viewdefbandsignals"
 import { ADD_VIEW, AddViewAction } from "./viewbandactions"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { Context } from "../context/context"
 import { WIRE_BAND } from "../wire/wireband"
 import { SET_LOADED, SET_PARAMS } from "./viewactions"
+import loadViewDef from "../bands/viewdef/operations/load"
 
 const VIEW_BAND = "view"
 
@@ -63,16 +62,13 @@ class ViewBand {
 						const namespace = signal.namespace
 						const name = signal.name
 						const state = getState()
-						const viewDefId = ViewDefBand.makeId(namespace, name)
+						const viewDefId = `${namespace}.${name}`
 						const viewId = ViewBand.makeId(
 							namespace,
 							name,
 							signal.path
 						)
-						const viewDef = ViewDefBand.getActor(
-							getState(),
-							viewDefId
-						)
+						const viewDef = state.viewdef?.entities[viewDefId]
 						const view = ViewBand.getActor(state, viewId)
 
 						if (!view.valid) {
@@ -99,16 +95,9 @@ class ViewBand {
 							})
 						}
 
-						if (!viewDef.valid) {
-							await SignalAPI.run(
-								{
-									band: VIEWDEF_BAND,
-									signal: LOAD_DEF,
-									namespace,
-									name,
-								},
-								context,
-								dispatch
+						if (!viewDef) {
+							await dispatch(
+								loadViewDef({ context, namespace, name })
 							)
 						}
 
@@ -118,13 +107,11 @@ class ViewBand {
 								getState: () => RuntimeState
 							): Promise<void> => {
 								const state = getState()
-								const viewDef = ViewDefBand.getActor(
-									state,
-									viewDefId
-								)
+								const viewDef =
+									state.viewdef?.entities[viewDefId]
 
-								if (viewDef.valid) {
-									const definition = viewDef.getDefinition()
+								if (viewDef) {
+									const definition = viewDef.definition
 									if (definition && definition.wires) {
 										dispatch({
 											type: BAND,

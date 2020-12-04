@@ -4,46 +4,18 @@ import { BaseProps } from "../definition/definition"
 
 import { Platform } from "../platform/platform"
 
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
-
 import { Provider, create, getPlatform } from "../store/store"
 import { useUesio } from "../hooks/hooks"
 import RuntimeState from "../store/types/runtimestate"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import { Context } from "../context/context"
-import { colors } from "@material-ui/core"
-import { createComponent } from "../component/component"
 import Route from "./route"
-import { navigateCreator, redirectCreator } from "../bands/route/signals"
+import routeOps from "../bands/route/operations"
 
 type Props = BaseProps & {
 	platform: Platform
 	initialState: RuntimeState
 }
-
-const theme = createMuiTheme({
-	palette: {
-		primary: {
-			light: colors.teal[100],
-			main: colors.teal[500],
-			dark: colors.teal[700],
-		},
-	},
-	/*
-	palette: {
-		primary: colors.purple,
-		secondary: colors.deepPurple,
-	},
-	typography: {
-		fontFamily: [
-			"Montserrat",
-			"Roboto",
-			"Arial",
-			"sans-serif",
-		].join(","),
-	},
-	*/
-})
 
 function getNeededScripts(buildMode: boolean): string[] {
 	return buildMode ? [getPlatform().getBuilderCoreURL()] : []
@@ -75,19 +47,22 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
-				uesio.signal.run(
-					redirectCreator(document.location.pathname),
-					new Context()
+				uesio.signal.dispatcher(
+					routeOps.redirect(new Context(), document.location.pathname)
 				)
 				return
 			}
-			uesio.signal.run(
-				navigateCreator(event.state.path, event.state.namespace, true),
-				new Context([
-					{
-						workspace: event.state.workspace,
-					},
-				])
+			uesio.signal.dispatcher(
+				routeOps.navigate(
+					new Context([
+						{
+							workspace: event.state.workspace,
+						},
+					]),
+					event.state.path,
+					event.state.namespace,
+					true
+				)
 			)
 		}
 
@@ -98,19 +73,14 @@ const RuntimeInner: FC<BaseProps> = (props: BaseProps) => {
 	}, [])
 
 	return (
-		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<Route
-				{...{
-					path: props.path,
-					index: props.index,
-					componentType: props.componentType,
-					context: props.context.addFrame({
-						buildMode: buildMode && scriptsHaveLoaded,
-					}),
-				}}
-			/>
-		</ThemeProvider>
+		<Route
+			path={props.path}
+			index={props.index}
+			componentType={props.componentType}
+			context={props.context.addFrame({
+				buildMode: buildMode && scriptsHaveLoaded,
+			})}
+		/>
 	)
 }
 
@@ -119,12 +89,10 @@ const Runtime: FC<Props> = (props: Props) => {
 	return (
 		<Provider store={store}>
 			<RuntimeInner
-				{...{
-					path: props.path,
-					index: props.index,
-					componentType: props.componentType,
-					context: props.context,
-				}}
+				path={props.path}
+				index={props.index}
+				componentType={props.componentType}
+				context={props.context}
 			/>
 		</Provider>
 	)
