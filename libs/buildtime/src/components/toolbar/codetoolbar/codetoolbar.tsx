@@ -1,14 +1,32 @@
-import React, { FC, Fragment, useRef } from "react"
+import React, { FC, Fragment, useRef, memo, ComponentType } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
 import yaml from "yaml"
+import { connect } from "react-redux"
 import CloseIcon from "@material-ui/icons/Close"
 
-const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
+interface PreventComponentRerendering {
+	doPreventRerendering?: boolean
+}
+
+const controlRerenderingHOC = <P extends {} & PreventComponentRerendering>(
+	WrappedComponent: ComponentType<P>
+) =>
+	memo(
+		(props: P) => <WrappedComponent {...(props as P)} />,
+		(prevProps: P, nextProps: P) =>
+			nextProps?.doPreventRerendering === true ? true : false
+	)
+
+const CodeToolbar: FC<definition.BaseProps & { yamlDoc?: yaml.Document }> = (
+	props
+) => {
 	const uesio = hooks.useUesio(props)
-	const yamlDoc = uesio.view.useYAML()
-	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const yamlDoc = props.yamlDoc
+	const currentAST = useRef<yaml.Document | undefined | yaml.Document>(
+		props.yamlDoc
+	)
 
 	return (
 		<Fragment>
@@ -174,4 +192,12 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 	)
 }
 
-export default CodeToolbar
+export default connect((state, props) => {
+	const uesio = hooks.useUesio(props)
+	const view = uesio.getView()
+	const viewDef = view.getViewDef(state)
+	return {
+		doPreventRerendering: true,
+		yamaDoc: viewDef?.yaml,
+	}
+})(controlRerenderingHOC(CodeToolbar))
