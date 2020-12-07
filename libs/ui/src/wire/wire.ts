@@ -311,42 +311,38 @@ class Wire extends Actor {
 			dispatcher: (
 				signal: UpdateRecordSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: signal.signal,
-						target: signal.target,
-						scope: signal.scope,
-						data: {},
-						view: context.getView()?.getId(),
-					})
-					return context
-				}
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: signal.signal,
+					target: signal.target,
+					scope: signal.scope,
+					data: {},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[SET_RECORD]: {
 			dispatcher: (
 				signal: SetRecordSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: signal.signal,
-						target: signal.target,
-						scope: signal.scope,
-						data: {},
-						view: context.getView()?.getId(),
-					})
-					return context
-				}
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: signal.signal,
+					target: signal.target,
+					scope: signal.scope,
+					data: {},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[TOGGLE_CONDITION]: {
@@ -517,7 +513,10 @@ class Wire extends Actor {
 	valid: boolean
 	collection: Collection
 
-	receiveAction(action: ActorAction, state: RuntimeState): RuntimeState {
+	receiveAction = (
+		action: ActorAction,
+		state: RuntimeState
+	): RuntimeState => {
 		const actionHandler = Wire.actionGroup[action.name]
 		const target = this.getId()
 		if (actionHandler && action.view && state.view) {
@@ -535,15 +534,13 @@ class Wire extends Actor {
 		}
 		return state
 	}
-
-	receiveSignal(signal: SignalDefinition, context: Context): ThunkFunc {
+	receiveSignal = (signal: SignalDefinition, context: Context): ThunkFunc => {
 		const handler = Wire.signalsHandler[signal.signal]
 		if (!handler) {
 			throw new Error("No Handler found for signal: " + signal.signal)
 		}
 		return handler.dispatcher(signal, context)
 	}
-
 	// Serializes this wire into a redux state
 	toState = (): PlainWire => ({ ...this.source })
 	getId = (): string => this.source.name
@@ -559,33 +556,21 @@ class Wire extends Actor {
 		)
 	getData = (): WireRecord[] =>
 		Object.keys(this.source?.data || {}).map((id) => this.getRecord(id))
-
-	getViewId(): string {
-		return this.source?.view
-	}
-
-	getRecord(id: string): WireRecord {
-		return new WireRecord(this.source.data[id], id, this)
-	}
-
-	getFirstRecord(): WireRecord {
+	getViewId = (): string | undefined => this.source?.view
+	getRecord = (id: string): WireRecord =>
+		new WireRecord(this.source.data[id], id, this)
+	getFirstRecord = (): WireRecord => {
 		const recordId = Object.keys(this.source.data)[0]
 		return this.getRecord(recordId)
 	}
-
-	getConditions(): WireConditionState[] {
-		return this.source.conditions || []
-	}
-
-	getCondition(id: string): WireConditionState | null {
-		return this.getConditions().find((c) => c.id === id) || null
-	}
-
-	getDefaults(): WireDefault[] {
-		return this.source.defaults || []
-	}
-
-	dispatchRecordUpdate(recordId: string, record: PlainWireRecord): void {
+	getConditions = (): WireConditionState[] => this.source.conditions || []
+	getCondition = (id: string): WireConditionState | null =>
+		this.getConditions().find((c) => c.id === id) || null
+	getDefaults = (): WireDefault[] => this.source.defaults || []
+	dispatchRecordUpdate = (
+		recordId: string,
+		record: PlainWireRecord
+	): void => {
 		getStore().dispatch({
 			type: ACTOR,
 			band: "wire",
@@ -598,8 +583,7 @@ class Wire extends Actor {
 			view: this.source.view,
 		})
 	}
-
-	dispatchRecordSet(recordId: string, record: PlainWireRecord): void {
+	dispatchRecordSet = (recordId: string, record: PlainWireRecord): void => {
 		getStore().dispatch({
 			type: ACTOR,
 			band: "wire",
@@ -612,30 +596,23 @@ class Wire extends Actor {
 			view: this.source.view,
 		})
 	}
-
-	attachCollection(collection: PlainCollection | null): Wire {
+	attachCollection = (collection: PlainCollection | null): Wire => {
 		this.collection = new Collection(collection)
 		return this
 	}
-
-	getLoadRequest(context: Context): LoadRequest {
-		return {
-			wire: this.getId(),
-			type: this.getType(),
-			collection: this.getCollectionName(),
-			fields: getFieldsRequest(this.source.fields) || [],
-			conditions: getLoadRequestConditions(this.getConditions(), context),
-		}
-	}
-
-	getSaveRequest(): SaveRequest {
-		return {
-			wire: this.getId(),
-			collection: this.getCollectionName(),
-			changes: this.source.changes,
-			deletes: this.source.deletes,
-		}
-	}
+	getLoadRequest = (context: Context): LoadRequest => ({
+		wire: this.getId(),
+		type: this.getType(),
+		collection: this.getCollectionName(),
+		fields: getFieldsRequest(this.source.fields) || [],
+		conditions: getLoadRequestConditions(this.getConditions(), context),
+	})
+	getSaveRequest = (): SaveRequest => ({
+		wire: this.getId(),
+		collection: this.getCollectionName(),
+		changes: this.source.changes,
+		deletes: this.source.deletes,
+	})
 }
 
 function getFieldsRequest(
