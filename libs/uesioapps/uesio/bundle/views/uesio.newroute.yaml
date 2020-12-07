@@ -51,8 +51,7 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
-        name: topbar
-        namespace: uesio
+        view: uesio.topbar
     - material.container:
         components:
           - material.typography:

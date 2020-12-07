@@ -2,8 +2,7 @@ name: accountDetails
 definition:
   components:
     - uesio.view:
-        name: topbar
-        namespace: crm
+        view: crm.topbar
     - material.deck:
         components:
           - material.card:

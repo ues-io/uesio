@@ -60,8 +60,7 @@ const Canvas: FunctionComponent<definition.BaseProps> = (props) => {
 			<component.View
 				{...props}
 				definition={{
-					name: route.viewname,
-					namespace: route.viewnamespace,
+					view: `${route.viewnamespace}.${route.viewname}`,
 					params: route.params,
 				}}
 			/>
