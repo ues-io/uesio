@@ -84,12 +84,14 @@ class WireBand {
 								{}
 							)
 						const newOriginal: PlainWireRecordMap = { ...newData }
-						state = Object.assign({}, state, {
-							[wire.wire]: Object.assign({}, state[wire.wire], {
+						state = {
+							...state,
+							[wire.wire]: {
+								...state[wire.wire],
 								data: newData,
 								original: newOriginal,
-							}),
-						})
+							},
+						}
 					})
 
 					// Remove errors on a successful save
