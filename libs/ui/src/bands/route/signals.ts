@@ -16,14 +16,12 @@ interface NavigateSignal extends BandSignal {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals = [
-	{
-		key: `${ROUTE_BAND}/REDIRECT`,
+const signals = {
+	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
 			operations.redirect(context, signal.path),
 	},
-	{
-		key: `${ROUTE_BAND}/NAVIGATE`,
+	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
 			operations.navigate(
 				context,
@@ -32,6 +30,6 @@ const signals = [
 				signal.noPushState
 			),
 	},
-]
+}
 
 export default signals

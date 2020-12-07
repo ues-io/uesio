@@ -9,6 +9,7 @@ import userReducer from "../../bands/user"
 import builderReducer from "../../bands/builder"
 import viewDefReducer from "../../bands/viewdef"
 import themeReducer from "../../bands/theme"
+import componentReducer from "../../bands/component"
 import { AnyAction } from "redux"
 
 const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
@@ -34,6 +35,7 @@ const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
 		...state,
 		...{
 			collection: collectionReducer(state.collection, action),
+			component: componentReducer(state.component, action),
 			route: routeReducer(state.route, action),
 			user: userReducer(state.user, action),
 			builder: builderReducer(state.builder, action),

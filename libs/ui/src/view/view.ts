@@ -3,7 +3,6 @@ import RuntimeState from "../store/types/runtimestate"
 import { ActorAction, ActionGroup } from "../store/actions/actions"
 import { ThunkFunc } from "../store/store"
 import { PlainWireMap } from "../wire/wire"
-import { PlainComponentStateMap } from "../componentactor/componentactor"
 import {
 	SET_LOADED,
 	SET_PARAMS,
@@ -34,7 +33,6 @@ type PlainView = {
 	errors?: ErrorMap
 	loaded: boolean
 	wires: PlainWireMap
-	components: PlainComponentStateMap
 }
 
 type PlainViewMap = {
@@ -105,7 +103,6 @@ class View extends Actor {
 			params: {},
 			loaded: false,
 			wires: {},
-			components: {},
 		}
 	}
 

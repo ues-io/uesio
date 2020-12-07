@@ -1,19 +1,34 @@
 import { Context } from "../context/context"
 import { Definition } from "./definition"
-import { ThunkFunc } from "../store/store"
+import { DispatchReturn, ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
+import { PlainComponentState } from "../bands/component/types"
 
 type SignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context
 ) => ThunkFunc
 
+type ComponentSignalDispatcher = (
+	signal: SignalDefinition,
+	context: Context
+) => (
+	setState: (state: PlainComponentState) => void,
+	getState: () => PlainComponentState | undefined
+) => DispatchReturn
+
 type SignalDescriptor = {
-	key?: string
 	label?: string
 	public?: boolean
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: SignalDispatcher
+}
+
+type ComponentSignalDescriptor = {
+	label?: string
+	public?: boolean
+	properties?: (signal: SignalDefinition) => PropDescriptor[]
+	dispatcher: ComponentSignalDispatcher
 }
 
 type SignalsHandler = {
@@ -43,6 +58,7 @@ type SignalDefinition = BandSignal | ActorSignal
 export {
 	SignalDefinition,
 	SignalDescriptor,
+	ComponentSignalDescriptor,
 	ActorSignal,
 	BandSignal,
 	SignalHandlerStore,

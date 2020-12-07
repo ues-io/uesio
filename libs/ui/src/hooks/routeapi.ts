@@ -1,5 +1,4 @@
 import { useRoute } from "../bands/route/selectors"
-import { RouteState } from "../bands/route/types"
 import { StoreAction } from "../store/actions/actions"
 import { Dispatcher } from "../store/store"
 import { Uesio } from "./hooks"
@@ -13,9 +12,7 @@ class RouteAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<StoreAction>
 
-	useRoute(): RouteState {
-		return useRoute()
-	}
+	useRoute = useRoute
 }
 
 export { RouteAPI }

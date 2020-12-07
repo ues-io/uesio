@@ -4,8 +4,8 @@ import SlotBuilder from "./components/slot/slotbuilder"
 import Wire from "./components/wire/wire"
 import { WirePropertyDefinition } from "./components/wire/wiredefinition"
 
-component.registry.registerBuilder("uesio", "runtime", Buildtime, null)
-component.registry.registerBuilder("uesio", "slot", SlotBuilder, null)
+component.registry.registerBuilder("uesio", "runtime", Buildtime)
+component.registry.registerBuilder("uesio", "slot", SlotBuilder)
 component.registry.registerBuilder(
 	"uesio",
 	"wire",

@@ -128,18 +128,14 @@ definition:
                                   - signal: "CANCEL"
                                     band: "wire"
                                     target: newdomain
-                                  - signal: "TOGGLE_MODE"
-                                    scope: "material.dialog"
-                                    band: "component"
+                                  - signal: component/material.dialog/TOGGLE_MODE
                                     target: "createDomainDialog"
                                 agreeSignals:
                                   - signal: "SAVE"
                                     band: "wire"
                                     targets:
                                       - newdomain
-                                  - signal: "TOGGLE_MODE"
-                                    scope: "material.dialog"
-                                    band: "component"
+                                  - signal: component/material.dialog/TOGGLE_MODE
                                     target: "createDomainDialog"
                                   - signal: "EMPTY"
                                     band: "wire"
@@ -158,9 +154,7 @@ definition:
                                       variant: "outlined"
                                       text: "Add a Domain"
                                       signals:
-                                        - signal: "TOGGLE_MODE"
-                                          scope: "material.dialog"
-                                          band: "component"
+                                        - signal: component/material.dialog/TOGGLE_MODE
                                           target: "createDomainDialog"
                 - material.deck:
                     xs: 12

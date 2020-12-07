@@ -3,7 +3,7 @@ import { definition, builder, signal } from "@uesio/ui"
 type CrumbDefinition = {
 	text: string
 	href: string
-	signals: signal.ComponentSignal[]
+	signals: signal.SignalDefinition[]
 }
 
 type BreadcrumbsDefinition = {

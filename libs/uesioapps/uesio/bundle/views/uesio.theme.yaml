@@ -115,9 +115,7 @@ definition:
                                                         variant: "outlined"
                                                         text: "Edit"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.deck"
-                                                            band: "component"
+                                                          - signal: component/material.deck/TOGGLE_MODE
                                                             target: "themeDeck"
                                                     - material.button:
                                                         color: "primary"

@@ -42,7 +42,6 @@ class ViewBand {
 					path,
 					params,
 					wires: {},
-					components: {},
 				},
 			}
 		},

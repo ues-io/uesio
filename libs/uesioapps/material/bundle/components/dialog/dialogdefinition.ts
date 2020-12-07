@@ -1,12 +1,18 @@
 import { definition, builder, signal } from "@uesio/ui"
 
+type DialogMode = "OPEN" | "CLOSE"
+
+type DialogState = {
+	mode: DialogMode
+}
+
 type DialogDefinition = {
 	id: string
-	mode: "OPEN" | "CLOSE"
+	mode: DialogMode
 	title: string
 	content: definition.DefinitionList
-	agreeSignals?: signal.ComponentSignal[]
-	disagreeSignals?: signal.ComponentSignal[]
+	agreeSignals?: signal.SignalDefinition[]
+	disagreeSignals?: signal.SignalDefinition[]
 }
 
 interface DialogProps extends definition.BaseProps {
@@ -25,6 +31,6 @@ const DialogPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	traits: ["uesio.standalone"],
 }
-export { DialogProps, DialogDefinition }
+export { DialogProps, DialogDefinition, DialogState }
 
 export default DialogPropertyDefinition

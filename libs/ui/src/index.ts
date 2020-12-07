@@ -3,7 +3,6 @@ import RunMode from "./components/runmode"
 import View from "./components/view"
 
 // For use in exports as the uesio api
-import * as action from "./actionexports"
 import * as builder from "./buildmode/buildpropdefinition"
 import * as collection from "./collectionexports"
 import * as component from "./componentexports"
@@ -24,7 +23,6 @@ register("uesio", "runtime", RunMode)
 register("uesio", "view", View)
 
 export {
-	action,
 	builder,
 	collection,
 	component,

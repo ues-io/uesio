@@ -5,7 +5,7 @@ type ImageDefinition = {
 	height?: string
 	align?: "left" | "center" | "right"
 	margin: styles.MarginDefinition
-	signals?: signal.ComponentSignal[]
+	signals?: signal.SignalDefinition[]
 }
 
 interface ImageProps extends definition.BaseProps {

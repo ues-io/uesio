@@ -1,14 +1,6 @@
 import React, { FunctionComponent } from "react"
 
-import {
-	material,
-	styles,
-	hooks,
-	component,
-	action,
-	signal,
-	context,
-} from "@uesio/ui"
+import { material, styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
 
 const useStyles = material.makeStyles((theme) =>
@@ -18,40 +10,6 @@ const useStyles = material.makeStyles((theme) =>
 		}),
 	})
 )
-
-const actionReducers: action.ActionGroup = {
-	TOGGLE_MODE: (
-		action: action.ComponentAction,
-		state: DeckState
-	): DeckState => ({
-		...state,
-		mode: state.mode === "READ" ? "EDIT" : "READ",
-	}),
-}
-
-const signalHandlers: signal.SignalsHandler = {
-	TOGGLE_MODE: {
-		dispatcher: (
-			signal: signal.ComponentSignal,
-			ctx: context.Context
-		): signal.ThunkFunc => {
-			return async (
-				dispatch: action.Dispatcher<action.ComponentAction>
-			): signal.DispatchReturn => {
-				dispatch({
-					type: action.ACTOR,
-					name: signal.signal,
-					band: signal.band,
-					target: signal.target,
-					scope: signal.scope,
-					data: {},
-					view: ctx.getView()?.getId(),
-				})
-				return ctx
-			}
-		},
-	},
-}
 
 const Deck: FunctionComponent<DeckProps> = (props) => {
 	const { path, context, definition } = props
@@ -65,17 +23,12 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		mode: definition.mode || "READ",
 	}
 
-	const componentActor = uesio.signal.useSignals(
+	const componentState = uesio.component.useState(
 		definition.id,
-		signalHandlers,
-		actionReducers,
 		initialState
-	)
+	) as DeckState
 
-	if (!wire.isValid() || !collection.isValid() || !componentActor.isValid())
-		return null
-
-	const state = componentActor.toState() as DeckState
+	if (!wire.isValid() || !collection.isValid() || !componentState) return null
 
 	return (
 		<material.Grid className={classes.root} container={true}>
@@ -98,7 +51,7 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 						context={context.addFrame({
 							record: record.getId(),
 							wire: wire.getId(),
-							fieldMode: state.mode,
+							fieldMode: componentState.mode,
 						})}
 					/>
 				</material.Grid>

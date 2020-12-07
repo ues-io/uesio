@@ -1,14 +1,6 @@
 import React, { FunctionComponent } from "react"
-import {
-	hooks,
-	material,
-	signal,
-	action,
-	context,
-	builder,
-	component,
-} from "@uesio/ui"
-import { DialogProps } from "./dialogdefinition"
+import { hooks, material, component } from "@uesio/ui"
+import { DialogProps, DialogState } from "./dialogdefinition"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -17,58 +9,6 @@ const useStyles = material.makeStyles((theme) =>
 		},
 	})
 )
-
-type DialogMode = "OPEN" | "CLOSE"
-
-type DialogState = {
-	mode: DialogMode
-}
-
-const actionReducers: action.ActionGroup = {
-	TOGGLE_MODE: (
-		action: action.ComponentAction,
-		state: DialogState
-	): DialogState => ({
-		...state,
-		mode: state.mode === "OPEN" ? "CLOSE" : "OPEN",
-	}),
-}
-
-const signalHandlers: signal.SignalsHandler = {
-	TOGGLE_MODE: {
-		dispatcher: (
-			signal: signal.ComponentSignal,
-			ctx: context.Context
-		): signal.ThunkFunc => {
-			return async (
-				dispatch: action.Dispatcher<action.ComponentAction>
-			): signal.DispatchReturn => {
-				dispatch({
-					type: action.ACTOR,
-					name: signal.signal,
-					band: signal.band,
-					target: signal.target,
-					scope: signal.scope,
-					data: {},
-					view: ctx.getView()?.getId(),
-				})
-				return ctx
-			}
-		},
-		public: true,
-		label: "Open Dialog",
-		properties: (): builder.PropDescriptor[] => {
-			return [
-				{
-					name: "target",
-					type: "COMPONENT",
-					scope: "material.dialog",
-					label: "Target",
-				},
-			]
-		},
-	},
-}
 
 const Dialog: FunctionComponent<DialogProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -79,18 +19,16 @@ const Dialog: FunctionComponent<DialogProps> = (props) => {
 		mode: definition.mode || "CLOSE",
 	}
 
-	const componentActor = uesio.signal.useSignals(
+	const componentState = uesio.component.useState(
 		definition.id,
-		signalHandlers,
-		actionReducers,
 		initialState
-	)
+	) as DialogState
 
-	const state = componentActor.toState() as DialogState
+	if (!componentState) return null
 
 	return (
 		<material.Dialog
-			open={state.mode === "OPEN"}
+			open={componentState.mode === "OPEN"}
 			aria-labelledby="alert-dialog-title"
 			aria-describedby="alert-dialog-description"
 		>

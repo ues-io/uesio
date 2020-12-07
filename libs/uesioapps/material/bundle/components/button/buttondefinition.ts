@@ -4,7 +4,7 @@ type ButtonDefinition = {
 	text?: string
 	color?: "inherit" | "primary" | "secondary" | "default"
 	variant?: "text" | "outlined" | "contained"
-	signals?: signal.ComponentSignal[]
+	signals?: signal.SignalDefinition[]
 	fullWidth?: boolean
 	margin?: number
 }

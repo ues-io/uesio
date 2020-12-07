@@ -18,7 +18,7 @@ type CardActionDefinition = {
 		| "top"
 		| undefined
 	size?: "inherit" | "default" | "large" | "small" | undefined
-	signals?: signal.ComponentSignal[]
+	signals?: signal.SignalDefinition[]
 }
 
 interface CardActionProps extends definition.BaseProps {

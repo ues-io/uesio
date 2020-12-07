@@ -8,7 +8,6 @@ import { ComponentAPI } from "./componentapi"
 import { PlatformAPI } from "./platformapi"
 import { BaseProps } from "../definition/definition"
 import { RouteAPI } from "./routeapi"
-import { View } from "../view/view"
 import { ContextFrame, Context } from "../context/context"
 import { StoreAction } from "../store/actions/actions"
 
@@ -44,42 +43,18 @@ class Uesio {
 	_props: BaseProps
 	_dispatcher: Dispatcher<StoreAction>
 
-	getProps = (): BaseProps => {
-		return this._props
-	}
-
-	getPath = (): string => {
-		return this._props.path
-	}
-
-	getComponentType = (): string => {
-		return this._props.componentType || ""
-	}
-
-	getContext = (): Context => {
-		return this._props.context
-	}
-
-	getDispatcher = (): Dispatcher<StoreAction> => {
-		return this._dispatcher
-	}
-
-	getView = (): View | undefined => {
-		return this.getContext().getView()
-	}
-
-	getViewId = (): string | undefined => {
-		return this.getContext().getViewId()
-	}
-
-	addContextFrame = (frame: ContextFrame): void => {
+	getProps = () => this._props
+	getPath = () => this._props.path
+	getComponentType = () => this._props.componentType || ""
+	getContext = () => this._props.context
+	getDispatcher = () => this._dispatcher
+	getView = () => this.getContext().getView()
+	getViewId = () => this.getContext().getViewId()
+	addContextFrame = (frame: ContextFrame) => {
 		this._props.context = this.getContext().addFrame(frame)
 	}
 }
 
-function useUesio(props?: BaseProps): Uesio {
-	const dispatch = getDispatcher()
-	return new Uesio(dispatch, props)
-}
+const useUesio = (props?: BaseProps) => new Uesio(getDispatcher(), props)
 
 export { useUesio, Uesio }

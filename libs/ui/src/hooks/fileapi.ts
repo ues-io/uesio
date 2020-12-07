@@ -3,24 +3,19 @@ import { Dispatcher, getPlatform } from "../store/store"
 import { StoreAction } from "../store/actions/actions"
 import { Context } from "../context/context"
 
-function getURL(context: Context, namespace: string, name: string): string {
-	const platform = getPlatform()
-	return platform.getFileURL(context, namespace, name)
-}
+const getURL = (context: Context, namespace: string, name: string) =>
+	getPlatform().getFileURL(context, namespace, name)
 
-function getURLFromFullName(
-	context: Context,
-	fullName: string
-): string | undefined {
+const getURLFromFullName = (context: Context, fullName: string) => {
 	const [namespace, name] = fullName.split(".")
 	return getURL(context, namespace, name)
 }
 
-function getUserFileURL(
+const getUserFileURL = (
 	context: Context,
 	userfileid: string,
 	cacheBuster?: boolean
-): string {
+) => {
 	if (!userfileid) {
 		return ""
 	}
@@ -29,12 +24,10 @@ function getUserFileURL(
 	return cacheBuster ? url + "&cb=" + Date.now() : url
 }
 
-function deleteUserFile(context: Context, userfileid: string): Promise<string> {
-	const platform = getPlatform()
-	return platform.deleteUserFile(context, userfileid)
-}
+const deleteUserFile = (context: Context, userfileid: string) =>
+	getPlatform().deleteUserFile(context, userfileid)
 
-function uploadFile(
+const uploadFile = (
 	context: Context,
 	fileData: File,
 	name: string,
@@ -42,9 +35,8 @@ function uploadFile(
 	collectionID: string,
 	recordID: string,
 	fieldID: string
-): Promise<string> {
-	const platform = getPlatform()
-	return platform.uploadFile(
+) =>
+	getPlatform().uploadFile(
 		context,
 		fileData,
 		name,
@@ -53,7 +45,6 @@ function uploadFile(
 		recordID,
 		fieldID
 	)
-}
 
 class FileAPI {
 	constructor(uesio: Uesio) {

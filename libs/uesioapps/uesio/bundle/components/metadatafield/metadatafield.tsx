@@ -13,7 +13,7 @@ interface Props extends definition.BaseProps {
 }
 
 const MetadataField: FunctionComponent<Props> = (props) => {
-	const { context, definition } = props
+	const { context, definition, path } = props
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -83,8 +83,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	}
 
 	if (mode === "READ") {
-		const FieldComponent = component.registry.get("material", "field")
-		return <FieldComponent {...props} />
+		return <component.Component {...props} componentType="material.field" />
 	}
 
 	const SelectField = component.registry.get("material", "selectfield")

@@ -11,12 +11,11 @@ interface CallSignal extends BandSignal {
 	params: BotParams
 }
 
-const signals = [
-	{
-		key: `${BOT_BAND}/CALL`,
+const signals = {
+	[`${BOT_BAND}/CALL`]: {
 		dispatcher: (signal: CallSignal, context: Context) =>
 			operations.call(context, signal.bot, signal.params),
 	},
-]
+}
 
 export default signals

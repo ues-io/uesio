@@ -3,54 +3,47 @@ import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash.topath"
 import NotFound from "../components/notfound"
+import { FC } from "react"
+import { ComponentSignalDescriptor } from "../definition/signal"
 
-type ComponentNamespaceRegistry = {
-	[key: string]: ComponentRegistry
-}
+const registry: Record<string, Record<string, FC<BaseProps>>> = {}
+const builderRegistry: Record<string, Record<string, FC<BaseProps>>> = {}
+const definitionRegistry: Record<
+	string,
+	Record<string, BuildPropertiesDefinition>
+> = {}
+const componentSignalsRegistry: Record<
+	string,
+	Record<string, Record<string, ComponentSignalDescriptor>>
+> = {}
 
-type ComponentRegistry = {
-	[key: string]: React.FunctionComponent<BaseProps> | undefined
-}
-
-type DefinitionNamespaceRegistry = {
-	[key: string]: DefinitionRegistry
-}
-
-type DefinitionRegistry = {
-	[key: string]: BuildPropertiesDefinition
-}
-
-const registry: ComponentNamespaceRegistry = {}
-const builderRegistry: ComponentNamespaceRegistry = {}
-const definitionRegistry: DefinitionNamespaceRegistry = {}
-
-const addToRegistry = (
-	registry: ComponentNamespaceRegistry | DefinitionNamespaceRegistry,
+const addToRegistry = <T>(
+	registry: Record<string, Record<string, T>>,
 	namespace: string,
 	name: string,
-	componentType:
-		| React.FunctionComponent<BaseProps>
-		| BuildPropertiesDefinition
+	item: T
 ) => {
 	if (!registry[namespace]) {
 		registry[namespace] = {}
 	}
-	registry[namespace][name] = componentType
+	registry[namespace][name] = item
 }
 
 const register = (
 	namespace: string,
 	name: string,
-	componentType: React.FunctionComponent<BaseProps>
+	componentType: React.FunctionComponent<BaseProps>,
+	signals?: Record<string, ComponentSignalDescriptor>
 ) => {
-	addToRegistry(registry, namespace, name, componentType)
+	addToRegistry<FC<BaseProps>>(registry, namespace, name, componentType)
+	signals && addToRegistry(componentSignalsRegistry, namespace, name, signals)
 }
 
 const registerBuilder = (
 	namespace: string,
 	name: string,
 	componentType: React.FunctionComponent<BaseProps>,
-	definition: BuildPropertiesDefinition | null
+	definition?: BuildPropertiesDefinition
 ) => {
 	addToRegistry(builderRegistry, namespace, name, componentType)
 	definition && addToRegistry(definitionRegistry, namespace, name, definition)
@@ -72,6 +65,9 @@ const get = (
 	name: string
 ): React.ComponentType<BasePropsPlus> =>
 	getLoader(namespace, name, false) || NotFound
+
+const getSignal = (namespace: string, name: string, signal: string) =>
+	componentSignalsRegistry[namespace]?.[name]?.[signal]
 
 const getPropertiesDefinition = (namespace: string, name: string) => {
 	const propDef = definitionRegistry[namespace]?.[name]
@@ -104,6 +100,7 @@ export {
 	registerBuilder,
 	get,
 	getLoader,
+	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
 	getBuilderNamespaces,

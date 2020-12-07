@@ -118,9 +118,7 @@ definition:
                                                         text: "Are you sure you want to permanently delete this element. The information will be permanently delete"
                                                   mode: "CLOSE"
                                                   disagreeSignals:
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
+                                                    - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "fileDialog"
                                                   agreeSignals:
                                                     - signal: "MARK_FOR_DELETE"
@@ -133,9 +131,7 @@ definition:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
                                                       namespace: "uesio"
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
+                                                    - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "fileDialog"
                                               - material.buttonset:
                                                   buttons:
@@ -144,9 +140,7 @@ definition:
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.dialog"
-                                                            band: "component"
+                                                          - signal: component/material.dialog/TOGGLE_MODE
                                                             target: "fileDialog"
                                   - material.file:
                                       uesio.context:

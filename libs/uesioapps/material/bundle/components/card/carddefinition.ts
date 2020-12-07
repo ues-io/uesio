@@ -8,7 +8,7 @@ type CardDefinition = {
 		height: string
 		background: styles.BackgroundDefinition
 	}
-	signals?: signal.ComponentSignal[]
+	signals?: signal.SignalDefinition[]
 	actions?: CardActionDefinition[]
 }
 
