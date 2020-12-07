@@ -1,7 +1,6 @@
 import { Dispatcher, ThunkFunc } from "../store/store"
 import { SignalDefinition } from "../definition/signal"
 import { StoreAction } from "../store/actions/actions"
-import { useEffect } from "react"
 import { getBand } from "../actor/band"
 import RuntimeState from "../store/types/runtimestate"
 import { Uesio } from "./hooks"
@@ -14,7 +13,7 @@ import userSignals from "../bands/user/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { getSignal } from "../component/registry"
 import { parseKey } from "../component/path"
-import { selectState, useComponentState } from "../bands/component/selectors"
+import { selectState } from "../bands/component/selectors"
 import { PlainComponentState } from "../bands/component/types"
 
 type SignalRegistry = {
@@ -117,35 +116,6 @@ class SignalAPI {
 
 	run = (signal: SignalDefinition, context: Context) =>
 		SignalAPI.run(signal, context, this.dispatcher)
-
-	useComponentState = (
-		componentId: string,
-		initialState: PlainComponentState
-	): PlainComponentState | undefined => {
-		const view = this.uesio.getView()
-		const componentType = this.uesio.getComponentType()
-		const state = useComponentState(
-			componentType,
-			componentId,
-			view?.getId()
-		)
-
-		useEffect(() => {
-			if (!state && view) {
-				this.dispatcher({
-					type: "component/set",
-					payload: {
-						id: componentId,
-						componentType,
-						view: view.getId(),
-						state: initialState,
-					},
-				})
-			}
-		})
-
-		return state
-	}
 }
 
 export { SignalAPI, SignalRegistry }

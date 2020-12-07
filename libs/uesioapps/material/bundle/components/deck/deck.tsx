@@ -23,7 +23,7 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		mode: definition.mode || "READ",
 	}
 
-	const componentState = uesio.signal.useComponentState(
+	const componentState = uesio.component.useState(
 		definition.id,
 		initialState
 	) as DeckState

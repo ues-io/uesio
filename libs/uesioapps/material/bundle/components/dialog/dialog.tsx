@@ -19,7 +19,7 @@ const Dialog: FunctionComponent<DialogProps> = (props) => {
 		mode: definition.mode || "CLOSE",
 	}
 
-	const componentState = uesio.signal.useComponentState(
+	const componentState = uesio.component.useState(
 		definition.id,
 		initialState
 	) as DialogState
