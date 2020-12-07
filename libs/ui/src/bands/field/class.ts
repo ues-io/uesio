@@ -9,11 +9,11 @@ class Field {
 	source: FieldMetadata
 	valid: boolean
 
-	getId(): string {
+	getId = (): string => {
 		return this.source.name
 	}
 
-	isValid(): boolean {
+	isValid = (): boolean => {
 		return this.valid
 	}
 
