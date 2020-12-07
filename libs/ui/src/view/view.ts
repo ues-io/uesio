@@ -44,22 +44,18 @@ class View extends Actor {
 		[SET_PARAMS]: (
 			action: SetParamsAction,
 			state: PlainView
-		): PlainView => {
-			return {
-				...state,
-				...(action?.data?.params ? { params: action.data.params } : {}),
-				loaded: false,
-			}
-		},
+		): PlainView => ({
+			...state,
+			...(action?.data?.params ? { params: action.data.params } : {}),
+			loaded: false,
+		}),
 		[SET_LOADED]: (
 			action: SetLoadedAction,
 			state: PlainView
-		): PlainView => {
-			return {
-				...state,
-				loaded: true,
-			}
-		},
+		): PlainView => ({
+			...state,
+			loaded: true,
+		}),
 	}
 
 	constructor(source: PlainView | null) {
@@ -71,7 +67,10 @@ class View extends Actor {
 	source: PlainView
 	valid: boolean
 
-	receiveAction(action: ActorAction, state: RuntimeState): RuntimeState {
+	receiveAction = (
+		action: ActorAction,
+		state: RuntimeState
+	): RuntimeState => {
 		const actionHandler = View.actionGroup[action.name]
 		const target = this.getId()
 		if (actionHandler) {
@@ -90,49 +89,29 @@ class View extends Actor {
 		return state
 	}
 
-	receiveSignal(signal: SignalDefinition): ThunkFunc {
+	receiveSignal = (signal: SignalDefinition): ThunkFunc => {
 		throw new Error("No Handler found for signal: " + signal.signal)
 	}
 
 	// Serializes this wire into a redux state
-	toState(): PlainView {
-		return {
-			name: "",
-			namespace: "",
-			path: "",
-			params: {},
-			loaded: false,
-			wires: {},
-		}
-	}
-
-	getId(): string {
-		return `${this.source.namespace}.${this.source.name}(${this.source.path})`
-	}
-
-	getName(): string {
-		return this.source.name
-	}
-
-	getNamespace(): string {
-		return this.source.namespace
-	}
-
-	getParams(): ViewParams {
-		return this.source.params
-	}
-
-	getParam(param: string): string | null {
-		return this.source.params?.[param] || null
-	}
-
-	getViewDefId(): string {
-		return `${this.getNamespace()}.${this.getName()}`
-	}
-
-	getViewDef(state: RuntimeState): PlainViewDef | undefined {
-		return state.viewdef?.entities[this.getViewDefId()]
-	}
+	toState = (): PlainView => ({
+		name: "",
+		namespace: "",
+		path: "",
+		params: {},
+		loaded: false,
+		wires: {},
+	})
+	getId = (): string =>
+		`${this.source.namespace}.${this.source.name}(${this.source.path})`
+	getName = (): string => this.source.name
+	getNamespace = (): string => this.source.namespace
+	getParams = (): ViewParams => this.source.params
+	getParam = (param: string): string | null =>
+		this.source.params?.[param] || null
+	getViewDefId = (): string => `${this.getNamespace()}.${this.getName()}`
+	getViewDef = (state: RuntimeState): PlainViewDef | undefined =>
+		state.viewdef?.entities[this.getViewDefId()]
 }
 
 export { View, PlainView, PlainViewMap, ViewParams }

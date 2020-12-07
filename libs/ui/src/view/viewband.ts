@@ -27,11 +27,9 @@ class ViewBand {
 			action: AddViewAction,
 			state: PlainViewMap
 		): PlainViewMap => {
-			const namespace = action.data.namespace
-			const name = action.data.name
-			const path = action.data.path
-			const params = action.data.params
-
+			const {
+				data: { namespace, name, path, params },
+			} = action
 			const viewId = ViewBand.makeId(namespace, name, path)
 			return {
 				...state,
@@ -58,8 +56,7 @@ class ViewBand {
 						dispatch: Dispatcher<StoreAction>,
 						getState: () => RuntimeState
 					): DispatchReturn => {
-						const namespace = signal.namespace
-						const name = signal.name
+						const { namespace, name } = signal
 						const state = getState()
 						const viewDefId = `${namespace}.${name}`
 						const viewId = ViewBand.makeId(
@@ -111,7 +108,7 @@ class ViewBand {
 
 								if (viewDef) {
 									const definition = viewDef.definition
-									if (definition && definition.wires) {
+									if (definition?.wires) {
 										dispatch({
 											type: BAND,
 											band: WIRE_BAND,
@@ -135,7 +132,7 @@ class ViewBand {
 												const wires = view.source.wires
 												const wireList = Object.keys(
 													wires
-												).map((wireId) => wireId)
+												)
 												await SignalAPI.run(
 													{
 														signal: "LOAD",
@@ -171,7 +168,7 @@ class ViewBand {
 		context: Context
 	): ThunkFunc {
 		const handlers = ViewBand.getSignalHandlers()
-		const handler = handlers && handlers[signal.signal]
+		const handler = handlers?.[signal.signal]
 		if (!handler) {
 			throw new Error("No Handler found for signal: " + signal.signal)
 		}
@@ -192,17 +189,11 @@ class ViewBand {
 		return state
 	}
 
-	static getActor(state: RuntimeState, target?: string): View {
-		return new View((target && state.view?.[target]) || null)
-	}
-
-	static makeId(namespace: string, name: string, path: string): string {
-		return `${namespace}.${name}(${path})`
-	}
-
-	static getSignalProps(/*signal: SignalDefinition*/): PropDescriptor[] {
-		return []
-	}
+	static getActor = (state: RuntimeState, target?: string): View =>
+		new View((target && state.view?.[target]) || null)
+	static makeId = (namespace: string, name: string, path: string): string =>
+		`${namespace}.${name}(${path})`
+	static getSignalProps = (/*signal: SignalDefinition*/): PropDescriptor[] => []
 }
 
 export { ViewBand }

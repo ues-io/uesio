@@ -155,24 +155,20 @@ class Wire extends Actor {
 				},
 			}
 		},
-		[CANCEL]: (action: CancelAction, state: PlainWire): PlainWire => {
-			return {
-				...state,
-				data: {
-					...(state?.original ? state.original : {}),
-				},
-				changes: {},
-				deletes: {},
-			}
-		},
-		[EMPTY]: (action: CancelAction, state: PlainWire): PlainWire => {
-			return {
-				...state,
-				data: {},
-				changes: {},
-				deletes: {},
-			}
-		},
+		[CANCEL]: (action: CancelAction, state: PlainWire): PlainWire => ({
+			...state,
+			data: {
+				...(state?.original ? state.original : {}),
+			},
+			changes: {},
+			deletes: {},
+		}),
+		[EMPTY]: (action: CancelAction, state: PlainWire): PlainWire => ({
+			...state,
+			data: {},
+			changes: {},
+			deletes: {},
+		}),
 		[MARK_FOR_DELETE]: (
 			action: MarkForDeleteAction,
 			state: PlainWire,
@@ -357,23 +353,21 @@ class Wire extends Actor {
 			dispatcher: (
 				signal: ToggleConditionSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: signal.signal,
-						target: signal.target,
-						scope: signal.scope,
-						data: {
-							conditionId: signal.conditionId,
-						},
-						view: context.getView()?.getId(),
-					})
-					return context
-				}
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: signal.signal,
+					target: signal.target,
+					scope: signal.scope,
+					data: {
+						conditionId: signal.conditionId,
+					},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[CANCEL]: {
@@ -388,21 +382,22 @@ class Wire extends Actor {
 					},
 				]
 			},
-			dispatcher: (signal: CancelSignal, context: Context): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: signal.signal,
-						target: signal.target,
-						scope: signal.scope,
-						data: {},
-						view: context.getView()?.getId(),
-					})
-					return context
-				}
+			dispatcher: (
+				signal: CancelSignal,
+				context: Context
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: signal.signal,
+					target: signal.target,
+					scope: signal.scope,
+					data: {},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[EMPTY]: {
@@ -417,21 +412,22 @@ class Wire extends Actor {
 					},
 				]
 			},
-			dispatcher: (signal: EmptySignal, context: Context): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: signal.signal,
-						target: signal.target,
-						scope: signal.scope,
-						data: {},
-						view: context.getView()?.getId(),
-					})
-					return context
-				}
+			dispatcher: (
+				signal: EmptySignal,
+				context: Context
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: signal.signal,
+					target: signal.target,
+					scope: signal.scope,
+					data: {},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[MARK_FOR_DELETE]: {
@@ -440,26 +436,24 @@ class Wire extends Actor {
 			dispatcher: (
 				signal: MarkForDeleteSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					const record = context.getRecord()?.getId()
-					if (!record || !signal.target) {
-						return context
-					}
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: MARK_FOR_DELETE,
-						target: signal.target,
-						data: {
-							record,
-						},
-						view: context.getView()?.getId(),
-					})
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				const record = context.getRecord()?.getId()
+				if (!record || !signal.target) {
 					return context
 				}
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: MARK_FOR_DELETE,
+					target: signal.target,
+					data: {
+						record,
+					},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[UNMARK_FOR_DELETE]: {
@@ -468,26 +462,24 @@ class Wire extends Actor {
 			dispatcher: (
 				signal: UnmarkForDeleteSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					const record = context.getRecord()?.getId()
-					if (!record || !signal.target) {
-						return context
-					}
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: UNMARK_FOR_DELETE,
-						target: signal.target,
-						data: {
-							record,
-						},
-						view: context.getView()?.getId(),
-					})
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				const record = context.getRecord()?.getId()
+				if (!record || !signal.target) {
 					return context
 				}
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: UNMARK_FOR_DELETE,
+					target: signal.target,
+					data: {
+						record,
+					},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 		[TOGGLE_DELETE_STATUS]: {
@@ -496,29 +488,27 @@ class Wire extends Actor {
 			dispatcher: (
 				signal: ToggleDeleteStatusSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					const record = context.getRecord()?.getId()
-					const view = context.getView()
-					if (!record || !signal.target || !view) {
-						return context
-					}
-					const isDeleted =
-						view.source.wires[signal.target].deletes[record]
-					dispatch({
-						type: ACTOR,
-						band: signal.band,
-						name: isDeleted ? UNMARK_FOR_DELETE : MARK_FOR_DELETE,
-						target: signal.target,
-						data: {
-							record,
-						},
-						view: context.getView()?.getId(),
-					})
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				const record = context.getRecord()?.getId()
+				const view = context.getView()
+				if (!record || !signal.target || !view) {
 					return context
 				}
+				const isDeleted =
+					view.source.wires[signal.target].deletes[record]
+				dispatch({
+					type: ACTOR,
+					band: signal.band,
+					name: isDeleted ? UNMARK_FOR_DELETE : MARK_FOR_DELETE,
+					target: signal.target,
+					data: {
+						record,
+					},
+					view: context.getView()?.getId(),
+				})
+				return context
 			},
 		},
 	}
@@ -555,47 +545,20 @@ class Wire extends Actor {
 	}
 
 	// Serializes this wire into a redux state
-	toState(): PlainWire {
-		return { ...this.source }
-	}
-
-	getId(): string {
-		return this.source.name
-	}
-
-	getType(): wire.WireType {
-		return this.source.type
-	}
-
-	getCollectionName(): string {
-		return this.source.collection
-	}
-
-	getCollection(): Collection {
-		return this.collection
-	}
-
-	isValid(): boolean {
-		return this.valid
-	}
-
-	isMarkedForDeletion(recordId: string): boolean {
-		return !!this.source.deletes[recordId]
-	}
-
-	getFieldsList(): WireField[] {
-		return this.source?.fields
-			? Object.keys(this.source.fields).map(
-					(id) => new WireField(this.source.fields[id], id)
-			  )
-			: []
-	}
-
-	getData(): WireRecord[] {
-		return this.source?.data
-			? Object.keys(this.source.data).map((id) => this.getRecord(id))
-			: []
-	}
+	toState = (): PlainWire => ({ ...this.source })
+	getId = (): string => this.source.name
+	getType = (): wire.WireType => this.source.type
+	getCollectionName = (): string => this.source.collection
+	getCollection = (): Collection => this.collection
+	isValid = (): boolean => this.valid
+	isMarkedForDeletion = (recordId: string): boolean =>
+		!!this.source.deletes[recordId]
+	getFieldsList = (): WireField[] =>
+		Object.keys(this.source?.fields || {}).map(
+			(id) => new WireField(this.source.fields[id], id)
+		)
+	getData = (): WireRecord[] =>
+		Object.keys(this.source?.data || {}).map((id) => this.getRecord(id))
 
 	getViewId(): string {
 		return this.source?.view
