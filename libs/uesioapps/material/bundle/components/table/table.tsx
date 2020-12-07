@@ -1,14 +1,6 @@
 import React, { FC } from "react"
 
-import {
-	definition,
-	hooks,
-	signal,
-	action,
-	material,
-	builder,
-	context,
-} from "@uesio/ui"
+import { definition, hooks, material } from "@uesio/ui"
 
 import { TableDefinition, TableState } from "./tabledefinition"
 import TableHeader from "./tableheader"
@@ -19,54 +11,7 @@ interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
 }
 
-const actionReducers: action.ActionGroup = {
-	TOGGLE_MODE: (
-		action: action.ComponentAction,
-		state: TableState
-	): TableState => {
-		return Object.assign({}, state, {
-			mode: state.mode === "READ" ? "EDIT" : "READ",
-		})
-	},
-}
-
-const signalHandlers: signal.SignalsHandler = {
-	TOGGLE_MODE: {
-		dispatcher: (
-			signal: signal.ComponentSignal,
-			ctx: context.Context
-		): signal.ThunkFunc => {
-			return async (
-				dispatch: action.Dispatcher<action.ComponentAction>
-			): signal.DispatchReturn => {
-				dispatch({
-					type: action.ACTOR,
-					name: signal.signal,
-					band: signal.band,
-					target: signal.target,
-					scope: signal.scope,
-					data: {},
-					view: ctx.getView()?.getId(),
-				})
-				return ctx
-			}
-		},
-		public: true,
-		label: "Toggle Mode",
-		properties: (): builder.PropDescriptor[] => {
-			return [
-				{
-					name: "target",
-					type: "COMPONENT",
-					scope: "material.table",
-					label: "Target",
-				},
-			]
-		},
-	},
-}
-
-const Table: FC<TableProps> = (props: TableProps) => {
+const Table: FC<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = props.definition
 	const wire = uesio.wire.useWire(definition.wire)
@@ -76,17 +21,12 @@ const Table: FC<TableProps> = (props: TableProps) => {
 		mode: definition.mode || "READ",
 	}
 
-	const componentActor = uesio.signal.useSignals(
+	const componentState = uesio.signal.useComponentState(
 		definition.id,
-		signalHandlers,
-		actionReducers,
 		initialState
-	)
+	) as TableState
 
-	if (!wire.isValid() || !collection.isValid() || !componentActor.isValid())
-		return null
-
-	const state = componentActor.toState() as TableState
+	if (!wire.isValid() || !collection.isValid() || !componentState) return null
 
 	const tableStyle = {
 		marginBottom: "16px",
@@ -95,7 +35,7 @@ const Table: FC<TableProps> = (props: TableProps) => {
 	const bodyProps = {
 		wire,
 		collection,
-		state,
+		state: componentState,
 		columns: definition.columns,
 		path: props.path,
 		context: props.context,

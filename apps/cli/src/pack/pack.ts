@@ -32,9 +32,20 @@ const getEntryFile = async (
 			path.resolve(`./bundle/components/${name}/${name}.tsx`)
 		)
 		if (hasDefinition) {
+			const hasSignals = await fileExists(
+				path.resolve(`./bundle/components/${name}/signals.ts`)
+			)
 			imports.push(`import ${name} from "../components/${name}/${name}";`)
+
+			if (hasSignals) {
+				imports.push(
+					`import ${name}signals from "../components/${name}/signals";`
+				)
+			}
 			registrations.push(
-				`component.registry.register("${bundleName}", "${name}", ${name});`
+				`component.registry.register("${bundleName}", "${name}", ${name}${
+					hasSignals ? `, ${name}signals` : ""
+				});`
 			)
 		}
 	}

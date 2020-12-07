@@ -117,9 +117,7 @@ definition:
                                                         text: "Are you sure you want to permanently delete this element. The information will be permanently delete"
                                                   mode: "CLOSE"
                                                   disagreeSignals:
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
+                                                    - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "routeDialog"
                                                   agreeSignals:
                                                     - signal: "MARK_FOR_DELETE"
@@ -132,9 +130,7 @@ definition:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
                                                       namespace: "uesio"
-                                                    - signal: "TOGGLE_MODE"
-                                                      scope: "material.dialog"
-                                                      band: "component"
+                                                    - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "routeDialog"
                                               - material.buttonset:
                                                   buttons:
@@ -150,9 +146,7 @@ definition:
                                                         variant: "outlined"
                                                         text: "Edit"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.deck"
-                                                            band: "component"
+                                                          - signal: component/material.deck/TOGGLE_MODE
                                                             target: "routesDeck"
                                                     - material.button:
                                                         color: "primary"
@@ -176,9 +170,7 @@ definition:
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
-                                                          - signal: "TOGGLE_MODE"
-                                                            scope: "material.dialog"
-                                                            band: "component"
+                                                          - signal: component/material.dialog/TOGGLE_MODE
                                                             target: "routeDialog"
                                   - material.field:
                                       fieldId: uesio.path

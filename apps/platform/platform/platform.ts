@@ -105,8 +105,6 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		getUserFileURL: (context: any, userfileid: string) => {
-			console.log('userfileid', userfileid);
-			console.log('type', typeof userfileid);
 			const prefix = getPrefix(context.getWorkspace());
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid

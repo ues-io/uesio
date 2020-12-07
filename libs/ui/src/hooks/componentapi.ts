@@ -13,18 +13,16 @@ class ComponentAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<StoreAction>
 
-	getPackURL(namespace: string, name: string, buildMode: boolean): string {
-		return this.dispatcher(
-			(dispatch, getState: () => RuntimeState, platform: Platform) => {
-				return platform.getComponentPackURL(
+	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
+		this.dispatcher(
+			(dispatch, getState: () => RuntimeState, platform: Platform) =>
+				platform.getComponentPackURL(
 					this.uesio.getContext(),
 					namespace,
 					name,
 					buildMode
 				)
-			}
 		)
-	}
 }
 
 export { ComponentAPI }

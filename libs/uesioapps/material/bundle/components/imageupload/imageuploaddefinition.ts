@@ -8,7 +8,7 @@ type ImageUploadDefinition = {
 	margin?: styles.MarginDefinition
 	width?: number
 	height?: number
-	signals?: signal.ComponentSignal[]
+	signals?: signal.SignalDefinition[]
 }
 
 interface ImageUploadProps extends definition.BaseProps {

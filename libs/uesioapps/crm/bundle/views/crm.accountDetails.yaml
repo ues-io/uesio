@@ -34,10 +34,8 @@ definition:
                                   - material.button:
                                       color: primary
                                       signals:
-                                        - band: component
-                                          scope: material.deck
-                                          signal: TOGGLE_MODE
-                                          target: oneaccountDeck
+                                        signal: component/material.deck/TOGGLE_MODE
+                                        target: oneaccountDeck
                                       text: Edit
                                       variant: outlined
                                   - material.button:

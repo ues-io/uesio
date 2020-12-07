@@ -11,17 +11,15 @@ interface LoginSignal extends BandSignal {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals = [
-	{
-		key: `${USER_BAND}/LOGIN`,
+const signals = {
+	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
 			operations.login(context, signal.type, signal.token),
 	},
-	{
-		key: `${USER_BAND}/LOGOUT`,
+	[`${USER_BAND}/LOGOUT`]: {
 		dispatcher: (signal: BandSignal, context: Context) =>
 			operations.logout(context),
 	},
-]
+}
 
 export default signals

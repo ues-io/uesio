@@ -37,9 +37,7 @@ definition:
           - material.button:
               color: primary
               signals:
-                - band: component
-                  scope: material.table
-                  signal: TOGGLE_MODE
+                - signal: component/material.table/TOGGLE_MODE
                   target: accountsTable
               text: Mode
               variant: contained

@@ -7,12 +7,14 @@ import { BuilderState } from "../../bands/builder/types"
 import { ThemeState } from "../../bands/theme/types"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../../bands/viewdef/types"
+import { ComponentState } from "../../bands/component/types"
 
 type RuntimeState = {
-	collection?: PlainCollectionMap
+	collection: PlainCollectionMap
+	component: EntityState<ComponentState>
 	builder?: BuilderState
 	view?: PlainViewMap
-	viewdef?: EntityState<PlainViewDef>
+	viewdef: EntityState<PlainViewDef>
 	route: RouteState
 	user: UserState
 	site: SiteState

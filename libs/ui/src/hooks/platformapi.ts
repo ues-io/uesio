@@ -1,10 +1,9 @@
 import { Dispatcher } from "../store/store"
 import RuntimeState from "../store/types/runtimestate"
 import { Platform } from "../platform/platform"
-import { LoginRequest, LoginResponse } from "../auth/auth"
+import { LoginRequest } from "../auth/auth"
 import { Uesio } from "./hooks"
 import { LoadRequestBatch } from "../load/loadrequest"
-import { LoadResponseBatch } from "../load/loadresponse"
 import { StoreAction } from "../store/actions/actions"
 import { Context } from "../context/context"
 
@@ -17,32 +16,23 @@ class PlatformAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<StoreAction>
 
-	login(request: LoginRequest): Promise<LoginResponse> {
-		return this.dispatcher(
+	login = (request: LoginRequest) =>
+		this.dispatcher(
 			async (
 				dispatch,
 				getState: () => RuntimeState,
 				platform: Platform
-			) => {
-				return platform.login(request)
-			}
+			) => platform.login(request)
 		)
-	}
 
-	loadData(
-		context: Context,
-		request: LoadRequestBatch
-	): Promise<LoadResponseBatch> {
-		return this.dispatcher(
+	loadData = (context: Context, request: LoadRequestBatch) =>
+		this.dispatcher(
 			async (
 				dispatch,
 				getState: () => RuntimeState,
 				platform: Platform
-			) => {
-				return platform.loadData(context, request)
-			}
+			) => platform.loadData(context, request)
 		)
-	}
 }
 
 export { PlatformAPI }
