@@ -10,25 +10,25 @@ class Collection {
 	source: PlainCollection
 	valid: boolean
 
-	getId(): string {
+	getId = (): string => {
 		return this.source.name
 	}
 
-	getNamespace(): string {
+	getNamespace = (): string => {
 		return this.source.namespace
 	}
 
-	isValid(): boolean {
+	isValid = (): boolean => {
 		return this.valid
 	}
 
-	getField(fieldName: string | null): Field {
+	getField = (fieldName: string | null): Field => {
 		const fieldMetadata =
 			this.source && fieldName ? this.source.fields[fieldName] : null
 		return new Field(fieldMetadata)
 	}
 
-	getIdField(): Field {
+	getIdField = (): Field => {
 		return this.getField(this.source ? this.source.idField : null)
 	}
 }

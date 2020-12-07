@@ -9,37 +9,14 @@ class Field {
 	source: FieldMetadata
 	valid: boolean
 
-	getId = (): string => {
-		return this.source.name
-	}
-
-	isValid = (): boolean => {
-		return this.valid
-	}
-
-	getLabel(): string {
-		return this.source.label
-	}
-
-	getType(): FieldType {
-		return this.source.type
-	}
-
-	getCreateable(): boolean {
-		return this.source.createable
-	}
-
-	getUpdateable(): boolean {
-		return this.source.updateable
-	}
-
-	getAccessible(): boolean {
-		return this.source.accessible
-	}
-
-	getOptions(): SelectOption[] | null {
-		return this.source.options || null
-	}
+	getId = (): string => this.source.name
+	isValid = (): boolean => this.valid
+	getLabel = (): string => this.source.label
+	getType = (): FieldType => this.source.type
+	getCreateable = (): boolean => this.source.createable
+	getUpdateable = (): boolean => this.source.updateable
+	getAccessible = (): boolean => this.source.accessible
+	getOptions = (): SelectOption[] | null => this.source.options || null
 }
 
 export default Field
