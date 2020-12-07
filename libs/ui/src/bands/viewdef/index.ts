@@ -77,7 +77,7 @@ const move = (
 }
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
-	console.log("updateYAML")
+	console.log("updateYAML viewDefSlice", state)
 	const yamlDoc = payload.yaml
 	const path = payload.path
 	const pathArray = toPath(path)
