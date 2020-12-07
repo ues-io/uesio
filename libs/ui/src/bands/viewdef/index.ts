@@ -77,8 +77,7 @@ const move = (
 }
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
-	const yamlDoc = payload.yaml
-	const path = payload.path
+	const { path, yaml: yamlDoc } = payload
 	const pathArray = toPath(path)
 	const definition = yamlDoc.toJSON()
 
@@ -106,9 +105,8 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 }
 
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
-	const path = payload.path
+	const { path, definition } = payload
 	const pathArray = toPath(path)
-	const definition = payload.definition
 
 	// Set the definition JS Object
 	setWith(state, ["definition"].concat(pathArray), definition)
@@ -122,9 +120,8 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 }
 
 const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
-	const path = payload.path
-	const pathArray = toPath(path)
-	if (pathArray[0] === "components") {
+	const pathArray = toPath(payload.path)
+	if (pathArray.length > 0 && pathArray[0] === "components") {
 		pathArray.pop() // Remove the component name
 	}
 	const index = pathArray.pop() // Get the index
@@ -148,8 +145,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const fromPath = payload.fromPath
-	const destPath = payload.toPath
+	const { fromPath, toPath: destPath } = payload
 	// Traverse paths simultaneously until paths diverge.
 	const fromPathArr = toPath(fromPath)
 	const toPathArr = toPath(destPath)
@@ -210,9 +206,8 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
-	const path = payload.path
+	const { path, definition } = payload
 	const pathArray = toPath(path)
-	const definition = payload.definition
 	const currentArray = get(state.definition, path) || []
 
 	const newIndex = payload.index || currentArray.length
@@ -230,10 +225,8 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 }
 
 const addDefPair = (state: PlainViewDef, payload: AddDefinitionPairPayload) => {
-	const path = payload.path
+	const { path, definition, key } = payload
 	const pathArray = toPath(path)
-	const definition = payload.definition
-	const key = payload.key
 
 	setWith(state, ["definition"].concat(pathArray).concat(key), definition)
 
@@ -249,10 +242,9 @@ const changeDefKey = (
 	state: PlainViewDef,
 	payload: ChangeDefinitionKeyPayload
 ) => {
-	const path = payload.path
+	const { path, key: newKey } = payload
 	const pathArray = toPath(path)
 	const oldKey = pathArray.pop()
-	const newKey = payload.key
 
 	if (oldKey) {
 		const parent = get(state.definition, pathArray)
