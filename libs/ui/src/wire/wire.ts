@@ -444,9 +444,7 @@ class Wire extends Actor {
 					band: signal.band,
 					name: MARK_FOR_DELETE,
 					target: signal.target,
-					data: {
-						record,
-					},
+					data: { record },
 					view: context.getView()?.getId(),
 				})
 				return context
@@ -470,9 +468,7 @@ class Wire extends Actor {
 					band: signal.band,
 					name: UNMARK_FOR_DELETE,
 					target: signal.target,
-					data: {
-						record,
-					},
+					data: { record },
 					view: context.getView()?.getId(),
 				})
 				return context
@@ -499,9 +495,7 @@ class Wire extends Actor {
 					band: signal.band,
 					name: isDeleted ? UNMARK_FOR_DELETE : MARK_FOR_DELETE,
 					target: signal.target,
-					data: {
-						record,
-					},
+					data: { record },
 					view: context.getView()?.getId(),
 				})
 				return context
