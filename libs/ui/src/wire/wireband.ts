@@ -72,16 +72,18 @@ class WireBand {
 						})
 					})
 					Object.keys(wire.deleteResults).forEach((tempId) => {
-						const newData: PlainWireRecordMap = {}
-						const newOriginal: PlainWireRecordMap = {}
-						Object.keys(state[wire.wire].data)
+						const newData: PlainWireRecordMap = Object.keys(
+							state[wire.wire].data
+						)
 							.filter((recordId) => recordId !== tempId)
-							.forEach((recordId) => {
-								newData[recordId] =
-									state[wire.wire].data[recordId]
-								newOriginal[recordId] =
-									state[wire.wire].data[recordId]
-							})
+							.reduce(
+								(acc, recordId) => ({
+									...acc,
+									[recordId]: state[wire.wire].data[recordId],
+								}),
+								{}
+							)
+						const newOriginal: PlainWireRecordMap = { ...newData }
 						state = Object.assign({}, state, {
 							[wire.wire]: Object.assign({}, state[wire.wire], {
 								data: newData,
