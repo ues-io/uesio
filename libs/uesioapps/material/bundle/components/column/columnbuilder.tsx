@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { hooks, material } from "@uesio/ui"
 import { ColumnProps, ColumnDefinition } from "./columndefinition"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles((theme: material.Theme) =>
 	material.createStyles({
 		root: () => ({
 			padding: theme.spacing(1),

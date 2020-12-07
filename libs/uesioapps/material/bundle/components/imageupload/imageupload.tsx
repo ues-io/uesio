@@ -4,7 +4,7 @@ import { ImageUploadProps } from "./imageuploaddefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles((theme: material.Theme) =>
 	material.createStyles({
 		root: (props: ImageUploadProps) => ({
 			display: "block",

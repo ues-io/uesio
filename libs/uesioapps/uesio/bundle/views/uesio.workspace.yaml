@@ -169,7 +169,7 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -196,7 +196,7 @@ definition:
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
                                                             namespace: "uesio"
                                                     - material.button:
-                                                        color: "primary"
+                                                        color: "error"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:

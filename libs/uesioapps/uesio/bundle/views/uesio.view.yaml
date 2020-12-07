@@ -93,7 +93,7 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -141,7 +141,7 @@ definition:
                                                           - signal: wire/CANCEL
                                                             wire: "views"
                                                     - material.button:
-                                                        color: "primary"
+                                                        color: "error"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:

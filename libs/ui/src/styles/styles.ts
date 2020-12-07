@@ -5,9 +5,17 @@ import { Context } from "../context/context"
 
 import { CSSProperties } from "@material-ui/styles"
 
+type ThemeColor =
+	| "primary"
+	| "secondary"
+	| "error"
+	| "warning"
+	| "info"
+	| "success"
+
 type BackgroundDefinition =
 	| {
-			image: string
+			image?: string
 			color: string
 	  }
 	| undefined
@@ -74,6 +82,7 @@ export {
 	getBackgroundStyles,
 	getMarginStyles,
 	getFloatStyles,
+	ThemeColor,
 	BackgroundDefinition,
 	MarginDefinition,
 	FloatDefinition,

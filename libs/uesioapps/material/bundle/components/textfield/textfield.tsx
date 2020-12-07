@@ -13,7 +13,7 @@ type Props = {
 	hideLabel?: boolean
 } & definition.BaseProps
 
-const useStyles = material.makeStyles((theme) => ({
+const useStyles = material.makeStyles((theme: material.Theme) => ({
 	root: {
 		margin: theme.spacing(1),
 	},

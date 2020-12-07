@@ -5,7 +5,7 @@ import AutoCompleteField, {
 	SelectedItem,
 } from "../autocompletefield/autocompletefield"
 
-const useStyles = material.makeStyles((theme) => ({
+const useStyles = material.makeStyles((theme: material.Theme) => ({
 	root: {
 		margin: theme.spacing(1),
 	},

@@ -93,7 +93,7 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color: "primary"
                                   height: 10px
                                 margin: 1
                                 components:

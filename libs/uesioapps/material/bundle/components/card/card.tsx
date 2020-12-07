@@ -5,18 +5,25 @@ import { CardProps } from "./carddefinition"
 
 import CardAction from "../cardaction/cardaction"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles((theme: material.Theme) =>
 	material.createStyles({
 		root: {
 			margin: theme.spacing(1),
 		},
-		media: (props: CardProps) => ({
-			height: props.definition.media?.height,
-			...styles.getBackgroundStyles(
-				props.definition.media?.background,
-				props.context
-			),
-		}),
+		media: (props: CardProps) => {
+			const color = props.definition.media?.background?.color
+			const themePaletteColor =
+				color && theme.palette?.[color as styles.ThemeColor]?.main
+			return {
+				height: props.definition.media?.height,
+				...styles.getBackgroundStyles(
+					// for color definition such as primary, secondary and so on
+					(themePaletteColor && { color: themePaletteColor }) ||
+						props.definition.media?.background,
+					props.context
+				),
+			}
+		},
 		actions: {
 			borderTop: "3px ridge",
 		},

@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { ContainerProps } from "./containerdefinition"
 import { component, material, styles } from "@uesio/ui"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles((theme: material.Theme) =>
 	material.createStyles({
 		root: (props: ContainerProps) => ({
 			padding: theme.spacing(

@@ -3,7 +3,7 @@ import React, { FunctionComponent, SyntheticEvent } from "react"
 import { hooks, material } from "@uesio/ui"
 import { BreadcrumbsProps } from "./breadcrumbsdefinition"
 
-const useStyles = material.makeStyles((theme) => ({
+const useStyles = material.makeStyles((theme: material.Theme) => ({
 	root: {
 		margin: theme.spacing(1),
 	},

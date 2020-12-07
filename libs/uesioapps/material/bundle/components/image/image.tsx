@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react"
 import { ImageProps } from "./imagedefinition"
 import { hooks, material, styles } from "@uesio/ui"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles((theme: material.Theme) =>
 	material.createStyles({
 		root: (props: ImageProps) => ({
 			display: "block",
