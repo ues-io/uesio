@@ -34,14 +34,14 @@ const parseKey = (fullName: string): [string, string] => {
 
 // Trims a path and then returns the last element of the path.
 const getPathSuffix = (path: string | string[]) => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const trimmedPath = trimPath(pathArray)
 	return trimmedPath.pop() || null
 }
 
 // Trims a path and returns the string representation of the path.
 const trimPathToComponent = (path: string | string[]) => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const trimmedPath = trimPath(pathArray)
 	return fromPath(trimmedPath)
 }
