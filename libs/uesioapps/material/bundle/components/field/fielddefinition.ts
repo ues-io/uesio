@@ -23,15 +23,8 @@ type RendererProps = {
 
 const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Field",
-	defaultDefinition: () => ({
-		hideLabel: false,
-	}),
+	defaultDefinition: () => ({}),
 	properties: [
-		{
-			name: "fieldId",
-			type: "TEXT",
-			label: "fieldId",
-		},
 		{
 			name: "label",
 			type: "TEXT",
@@ -41,7 +34,6 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "hideLabel",
 			type: "BOOLEAN",
 			label: "Hide label",
-			displaytype: "checkbox",
 		},
 	],
 	sections: [],
