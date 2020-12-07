@@ -159,23 +159,21 @@ class WireBand {
 			dispatcher: (
 				signal: AddWiresSignal,
 				context: Context
-			): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>
-				): DispatchReturn => {
-					const view = context.getView()
-					if (view) {
-						const viewId = view.getId()
-						dispatch({
-							type: BAND,
-							band: signal.band,
-							name: signal.signal,
-							data: signal.defs,
-							view: viewId,
-						})
-					}
-					return context
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>
+			): DispatchReturn => {
+				const view = context.getView()
+				if (view) {
+					const viewId = view.getId()
+					dispatch({
+						type: BAND,
+						band: signal.band,
+						name: signal.signal,
+						data: signal.defs,
+						view: viewId,
+					})
 				}
+				return context
 			},
 		},
 		[SAVE]: {
@@ -190,51 +188,52 @@ class WireBand {
 					},
 				]
 			},
-			dispatcher: (signal: SaveSignal, context: Context): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<StoreAction>,
-					getState: () => RuntimeState,
-					platform: Platform
-				): DispatchReturn => {
-					const view = context.getView()
-					if (signal.targets && signal.targets.length && view) {
-						const viewId = view.getId()
-						const wires = view.source.wires
-						const wiresToSave = signal.targets
-							// Don't save null wires
-							.filter((wireId) => wires[wireId])
-						const wireList = wiresToSave.map(
-							(wireId) => new Wire(wires[wireId])
-						)
-						const response = await WireBand.save(
-							wireList,
-							context,
-							platform
-						).catch((err) => {
-							dispatch({
-								type: BAND,
-								band: signal.band,
-								name: ADD_ERRORS,
-								data: {
-									error: err.message,
-									targets: wiresToSave,
-								},
-								view: viewId,
-							})
+			dispatcher: (
+				signal: SaveSignal,
+				context: Context
+			): ThunkFunc => async (
+				dispatch: Dispatcher<StoreAction>,
+				getState: () => RuntimeState,
+				platform: Platform
+			): DispatchReturn => {
+				const view = context.getView()
+				if (signal.targets && signal.targets.length && view) {
+					const viewId = view.getId()
+					const wires = view.source.wires
+					const wiresToSave = signal.targets
+						// Don't save null wires
+						.filter((wireId) => wires[wireId])
+					const wireList = wiresToSave.map(
+						(wireId) => new Wire(wires[wireId])
+					)
+					const response = await WireBand.save(
+						wireList,
+						context,
+						platform
+					).catch((err) => {
+						dispatch({
+							type: BAND,
+							band: signal.band,
+							name: ADD_ERRORS,
+							data: {
+								error: err.message,
+								targets: wiresToSave,
+							},
+							view: viewId,
 						})
+					})
 
-						if (response) {
-							dispatch({
-								type: BAND,
-								band: signal.band,
-								name: signal.signal,
-								data: response,
-								view: viewId,
-							})
-						}
+					if (response) {
+						dispatch({
+							type: BAND,
+							band: signal.band,
+							name: signal.signal,
+							data: response,
+							view: viewId,
+						})
 					}
-					return context
 				}
+				return context
 			},
 		},
 
@@ -250,82 +249,83 @@ class WireBand {
 					},
 				]
 			},
-			dispatcher: (signal: LoadSignal, context: Context): ThunkFunc => {
-				return async (
-					dispatch: Dispatcher<AnyAction>,
-					getState: () => RuntimeState,
-					platform: Platform
-				): DispatchReturn => {
-					const view = context.getView()
-					if (signal.targets && signal.targets.length && view) {
-						const viewId = view.getId()
-						const wires = view.source.wires
-						const wiresToLoad = signal.targets
-							// Don't load null wires
-							.filter((wireId) => wires[wireId])
-						const wireList = wiresToLoad.map(
-							(wireId) => new Wire(wires[wireId])
-						)
-						const response = await WireBand.load(
-							wireList,
-							context,
-							platform
-						).catch((err) => {
-							dispatch({
-								type: BAND,
-								band: signal.band,
-								name: ADD_ERRORS,
-								data: {
-									error: err.message,
-									targets: wiresToLoad,
-								},
-								view: viewId,
-							})
+			dispatcher: (
+				signal: LoadSignal,
+				context: Context
+			): ThunkFunc => async (
+				dispatch: Dispatcher<AnyAction>,
+				getState: () => RuntimeState,
+				platform: Platform
+			): DispatchReturn => {
+				const view = context.getView()
+				if (signal.targets && signal.targets.length && view) {
+					const viewId = view.getId()
+					const wires = view.source.wires
+					const wiresToLoad = signal.targets
+						// Don't load null wires
+						.filter((wireId) => wires[wireId])
+					const wireList = wiresToLoad.map(
+						(wireId) => new Wire(wires[wireId])
+					)
+					const response = await WireBand.load(
+						wireList,
+						context,
+						platform
+					).catch((err) => {
+						dispatch({
+							type: BAND,
+							band: signal.band,
+							name: ADD_ERRORS,
+							data: {
+								error: err.message,
+								targets: wiresToLoad,
+							},
+							view: viewId,
 						})
+					})
 
-						if (!response) {
-							return context
-						}
+					if (!response) {
+						return context
+					}
 
-						batch(() => {
-							dispatch({
-								type: BAND,
-								band: signal.band,
-								name: signal.signal,
-								data: {
-									responses: response.wires,
-									targets: signal.targets,
-								},
-								view: viewId,
-							})
-							dispatch(loadCollection(response.collections))
+					batch(() => {
+						dispatch({
+							type: BAND,
+							band: signal.band,
+							name: signal.signal,
+							data: {
+								responses: response.wires,
+								targets: signal.targets,
+							},
+							view: viewId,
 						})
+						dispatch(loadCollection(response.collections))
+					})
 
-						for (const wire of wireList) {
-							if (wire.getType() === "CREATE") {
-								await SignalAPI.run(
-									{
-										band: WIRE_BAND,
-										signal: EMPTY,
-										target: wire.getId(),
-									},
-									context,
-									dispatch
-								)
-								await SignalAPI.run(
-									{
-										band: WIRE_BAND,
-										signal: CREATE_RECORD,
-										target: wire.getId(),
-									},
-									context,
-									dispatch
-								)
-							}
+					for (const wire of wireList) {
+						if (wire.getType() === "CREATE") {
+							await SignalAPI.run(
+								{
+									band: WIRE_BAND,
+									signal: EMPTY,
+									target: wire.getId(),
+								},
+								context,
+								dispatch
+							)
+							await SignalAPI.run(
+								{
+									band: WIRE_BAND,
+									signal: CREATE_RECORD,
+									target: wire.getId(),
+								},
+								context,
+								dispatch
+							)
 						}
 					}
-					return context
 				}
+				return context
 			},
 		},
 	}
@@ -444,10 +444,7 @@ class WireBand {
 					original[localId] = item
 				})
 				const existingWire: PlainWire = deleteProperty(
-					Object.assign({}, existingWires[response.wire], {
-						data,
-						original,
-					}),
+					{ ...existingWires[response.wire], data, original },
 					"error"
 				)
 
@@ -457,11 +454,12 @@ class WireBand {
 		return hydratedWires
 	}
 
-	static getActor(state: RuntimeState, target?: string, view?: string): Wire {
-		return new Wire(
-			(target && view && state.view?.[view]?.wires[target]) || null
-		)
-	}
+	static getActor = (
+		state: RuntimeState,
+		target?: string,
+		view?: string
+	): Wire =>
+		new Wire((target && view && state.view?.[view]?.wires[target]) || null)
 }
 
 export { WireBand, WIRE_BAND }
