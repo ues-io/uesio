@@ -104,12 +104,10 @@ class WireBand {
 			}
 			return state
 		},
-		[LOAD]: (action: LoadAction, state: PlainWireMap): PlainWireMap => {
-			return {
-				...state,
-				...WireBand.hydrate(state, action.data.responses),
-			}
-		},
+		[LOAD]: (action: LoadAction, state: PlainWireMap): PlainWireMap => ({
+			...state,
+			...WireBand.hydrate(state, action.data.responses),
+		}),
 		[ADD_WIRES]: (
 			action: AddWiresAction,
 			state: PlainWireMap
@@ -351,18 +349,17 @@ class WireBand {
 	}
 
 	// Builds a load request batch from a list of wires
-	static getLoadRequests(wires: Wire[], context: Context): LoadRequestBatch {
-		return {
-			wires: wires.map((wire) => wire.getLoadRequest(context)),
-		}
-	}
+	static getLoadRequests = (
+		wires: Wire[],
+		context: Context
+	): LoadRequestBatch => ({
+		wires: wires.map((wire) => wire.getLoadRequest(context)),
+	})
 
 	// Builds a save request batch from a list of wires
-	static getSaveRequests(wires: Wire[]): SaveRequestBatch {
-		return {
-			wires: wires.map((wire) => wire.getSaveRequest()),
-		}
-	}
+	static getSaveRequests = (wires: Wire[]): SaveRequestBatch => ({
+		wires: wires.map((wire) => wire.getSaveRequest()),
+	})
 
 	static receiveAction(
 		action: BandAction,
