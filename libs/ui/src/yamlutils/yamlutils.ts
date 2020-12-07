@@ -79,7 +79,7 @@ const getNodeAtPath = (
 	path: string | string[],
 	node: Node | null
 ): Node | null => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	return (node as Collection)?.getIn(pathArray, true)
 }
 
@@ -114,7 +114,7 @@ const setNodeAtPath = (
 	node: Node | null,
 	setNode: Node | null
 ): void => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const parentPath = pathArray.slice(0, -1)
 	const parentNode = (node as Collection)?.getIn(parentPath)
 	if (!parentNode && parentPath.length > 0) {
@@ -129,7 +129,7 @@ const addNodeAtPath = (
 	setNode: Node,
 	index: number
 ): void => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	let parentNode = (node as Collection)?.getIn(pathArray)
 	if (!parentNode && path.length > 0) {
 		setNodeAtPath(path, node, yaml.createNode([]))
@@ -144,7 +144,7 @@ const addNodePairAtPath = (
 	setNode: Node,
 	key: string
 ): void => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const parentNode = (node as Collection)?.getIn(pathArray)
 	parentNode
 		? (node as Collection)?.addIn(pathArray, new Pair(key, setNode))
@@ -152,7 +152,7 @@ const addNodePairAtPath = (
 }
 
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
-	const pathArray = path instanceof Array ? path : toPath(path)
+	const pathArray = Array.isArray(path) ? path : toPath(path)
 	;(node as Collection)?.deleteIn(pathArray)
 }
 

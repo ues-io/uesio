@@ -50,7 +50,7 @@ const getMarginStyles = (
 	if (!definition) {
 		return {}
 	}
-	if (definition instanceof Array) {
+	if (Array.isArray(definition)) {
 		return {
 			margin: theme.spacing(
 				...(definition as [number, number, number, number])
