@@ -100,6 +100,7 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 		)
 	}
 
+	// We actually don't want components using useYaml to rerender
 	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
 }
 
