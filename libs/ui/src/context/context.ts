@@ -32,10 +32,10 @@ const getFromContext = (
 	const view = context.getView()
 	if ((mergeType === "" || mergeType === "Record") && record) {
 		const value = record.getFieldValue(mergeExpression)
-		return value ? value + "" : ""
+		return value ? `${value}` : ""
 	} else if (mergeType === "Param" && view) {
 		const value = view.getParam(mergeExpression)
-		return value ? value + "" : ""
+		return value ? `${value}` : ""
 	}
 	return ""
 }
@@ -52,21 +52,19 @@ class Context {
 
 	stack: ContextFrame[]
 
-	getRecordId(): string | undefined {
-		return this.stack.find((frame) => frame?.record)?.record
-	}
+	getRecordId = (): string | undefined =>
+		this.stack.find((frame) => frame?.record)?.record
 
-	getRecord(): WireRecord | undefined {
+	getRecord = (): WireRecord | undefined => {
 		const recordId = this.getRecordId()
 		const wire = this.getWire()
 		return recordId ? wire?.getRecord(recordId) : undefined
 	}
 
-	getViewId(): string | undefined {
-		return this.stack.find((frame) => frame?.view)?.view
-	}
+	getViewId = (): string | undefined =>
+		this.stack.find((frame) => frame?.view)?.view
 
-	getView(): View | undefined {
+	getView = (): View | undefined => {
 		const store = getStore()
 		const state = store.getState()
 		const viewId = this.getViewId()
@@ -74,19 +72,16 @@ class Context {
 		return view.valid ? view : undefined
 	}
 
-	getRoute(): RouteState | undefined {
-		return this.stack.find((frame) => frame?.route)?.route
-	}
+	getRoute = (): RouteState | undefined =>
+		this.stack.find((frame) => frame?.route)?.route
 
-	getWorkspace(): WorkspaceState | undefined {
-		return this.stack.find((frame) => frame?.workspace)?.workspace
-	}
+	getWorkspace = (): WorkspaceState | undefined =>
+		this.stack.find((frame) => frame?.workspace)?.workspace
 
-	getWireId(): string | undefined {
-		return this.stack.find((frame) => frame?.wire)?.wire
-	}
+	getWireId = (): string | undefined =>
+		this.stack.find((frame) => frame?.wire)?.wire
 
-	getWire(): Wire | undefined {
+	getWire = (): Wire | undefined => {
 		const store = getStore()
 		const state = store.getState()
 		const wireId = this.getWireId()
@@ -99,14 +94,11 @@ class Context {
 		return wire.valid ? wire : undefined
 	}
 
-	getFieldMode(): field.FieldMode {
-		return (
-			this.stack.find((frame) => frame?.fieldMode === "EDIT")
-				?.fieldMode || "READ"
-		)
-	}
+	getFieldMode = (): field.FieldMode =>
+		this.stack.find((frame) => frame?.fieldMode === "EDIT")?.fieldMode ||
+		"READ"
 
-	getBuildMode(): boolean {
+	getBuildMode = (): boolean => {
 		for (const frame of this.stack) {
 			if (frame.buildMode) {
 				return true
@@ -118,15 +110,12 @@ class Context {
 		return false
 	}
 
-	getNoMerge(): boolean {
-		return this.stack.some((frame) => frame?.noMerge)
-	}
+	getNoMerge = (): boolean => this.stack.some((frame) => frame?.noMerge)
 
-	addFrame(frame: ContextFrame): Context {
-		return new Context([frame].concat(this.stack))
-	}
+	addFrame = (frame: ContextFrame): Context =>
+		new Context([frame].concat(this.stack))
 
-	merge(template: string | undefined): string {
+	merge = (template: string | undefined): string => {
 		// If we are in a no-merge context, just return the template
 		if (this.getNoMerge()) {
 			return template || ""
@@ -134,16 +123,15 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap(map?: StringMap): StringMap | undefined {
-		if (!map) {
-			return map
-		}
-		return Object.fromEntries(
-			Object.entries(map).map((entries) => {
-				return [entries[0], this.merge(entries[1])]
-			})
-		)
-	}
+	mergeMap = (map?: StringMap): StringMap | undefined =>
+		!map
+			? map
+			: Object.fromEntries(
+					Object.entries(map).map((entries) => [
+						entries[0],
+						this.merge(entries[1]),
+					])
+			  )
 }
 
 export { Context, ContextFrame }
