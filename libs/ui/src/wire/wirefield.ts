@@ -18,9 +18,7 @@ class WireField {
 	source: PlainWireField
 	valid: boolean
 
-	getId(): string {
-		return this.id
-	}
+	getId = (): string => this.id
 }
 
 export { WireField, PlainWireFieldMap }
