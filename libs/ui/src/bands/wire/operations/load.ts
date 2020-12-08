@@ -2,13 +2,17 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import { LoadResponseBatch } from "../../../load/loadresponse"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
 import {
 	getInitializedConditions,
 	getLoadRequestConditions,
 } from "../../../wire/wirecondition"
+import shortid from "shortid"
+import { PlainWireRecordMap } from "../../../wire/wirerecord"
+import { PlainCollection } from "../../collection/types"
+import { PlainWire } from "../types"
+import { getDefaultRecord } from "../../../wire/wiredefault"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -27,7 +31,7 @@ function getFieldsRequest(
 }
 
 export default createAsyncThunk<
-	[LoadResponseBatch, string],
+	[PlainWire[], Record<string, PlainCollection>],
 	{
 		context: Context
 		wires: string[]
@@ -54,5 +58,60 @@ export default createAsyncThunk<
 		}),
 	}
 	const response = await api.extra.loadData(context, batch)
-	return [response, viewId]
+
+	// Add the local ids
+	const wiresResponse: PlainWire[] =
+		response.wires?.map((wire) => {
+			const data: PlainWireRecordMap = {}
+			const original: PlainWireRecordMap = {}
+			wire.data.forEach((item) => {
+				const localId = shortid.generate()
+				data[localId] = item
+				original[localId] = item
+			})
+
+			return {
+				name: wire.wire,
+				view: viewId,
+				data,
+				original,
+				changes: {},
+				deletes: {},
+				error: undefined,
+				conditions: [],
+			}
+		}) || []
+
+	// Add defaults to response
+	for (const wire of batch.wires) {
+		if (wire.type === "CREATE") {
+			const localId = shortid.generate()
+			wiresResponse.push({
+				name: wire.wire,
+				view: viewId,
+				data: {
+					[localId]: getDefaultRecord(
+						context,
+						api.getState(),
+						viewId,
+						wire.wire
+					),
+				},
+				original: {},
+				changes: {
+					[localId]: getDefaultRecord(
+						context,
+						api.getState(),
+						viewId,
+						wire.wire
+					),
+				},
+				deletes: {},
+				error: undefined,
+				conditions: [],
+			})
+		}
+	}
+
+	return [wiresResponse, response.collections]
 })
