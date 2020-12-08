@@ -12,7 +12,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side are favoured the concepts coming from functional programming (delayed evaluation, pure function, immutability, memoization, algebraic data type, etc.) and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
 The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
@@ -36,7 +36,7 @@ The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-wit
 - [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
-- [Immer](https://github.com/immerjs/immer). Immutable data structure library.
+- [Immer](https://github.com/immerjs/immer). Immutable data structure library. Immer is **implicitely** used in the reducers of Redux-toolkit.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # Monorepo architecture
@@ -161,6 +161,10 @@ While developping you may want the entire monorepo to rebuild upon file saving.
 
 ```
 npm run watch-all
+
+// terminating that script does not kill
+// the watcher jobs running in parallel.
+// For killing all of them, do run `killall node`
 ```
 
 # Uesio apps deployment
