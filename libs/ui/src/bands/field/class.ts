@@ -1,4 +1,4 @@
-import { FieldMetadata, FieldType, SelectOption } from "./types"
+import { FieldMetadata } from "./types"
 
 class Field {
 	constructor(source: FieldMetadata) {
@@ -7,33 +7,13 @@ class Field {
 
 	source: FieldMetadata
 
-	getId() {
-		return this.source.namespace + "." + this.source.name
-	}
-
-	getLabel(): string {
-		return this.source.label
-	}
-
-	getType(): FieldType {
-		return this.source.type
-	}
-
-	getCreateable(): boolean {
-		return this.source.createable
-	}
-
-	getUpdateable(): boolean {
-		return this.source.updateable
-	}
-
-	getAccessible(): boolean {
-		return this.source.accessible
-	}
-
-	getOptions(): SelectOption[] | null {
-		return this.source.options || null
-	}
+	getId = () => this.source.namespace + "." + this.source.name
+	getLabel = () => this.source.label
+	getType = () => this.source.type
+	getCreateable = () => this.source.createable
+	getUpdateable = () => this.source.updateable
+	getAccessible = () => this.source.accessible
+	getOptions = () => this.source.options || null
 }
 
 export default Field

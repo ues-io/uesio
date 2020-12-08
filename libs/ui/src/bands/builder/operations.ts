@@ -11,40 +11,36 @@ const getMetadataList = (
 	metadataType: metadata.MetadataType,
 	namespace: string,
 	grouping?: string
+) => async (
+	dispatch: Dispatcher<AnyAction>,
+	getState: () => RuntimeState,
+	platform: Platform
 ) => {
-	return async (
-		dispatch: Dispatcher<AnyAction>,
-		getState: () => RuntimeState,
-		platform: Platform
-	) => {
-		const metadata = await platform.getMetadataList(
-			context,
+	const metadata = await platform.getMetadataList(
+		context,
+		metadataType,
+		namespace,
+		grouping
+	)
+	dispatch(
+		setMetadataList({
 			metadataType,
 			namespace,
-			grouping
-		)
-		dispatch(
-			setMetadataList({
-				metadataType,
-				namespace,
-				grouping,
-				metadata,
-			})
-		)
-		return context
-	}
+			grouping,
+			metadata,
+		})
+	)
+	return context
 }
 
-const getAvailableNamespaces = (context: Context) => {
-	return async (
-		dispatch: Dispatcher<AnyAction>,
-		getState: () => RuntimeState,
-		platform: Platform
-	) => {
-		const namespaces = await platform.getAvailableNamespaces(context)
-		dispatch(setAvailableNamespaces(namespaces))
-		return context
-	}
+const getAvailableNamespaces = (context: Context) => async (
+	dispatch: Dispatcher<AnyAction>,
+	getState: () => RuntimeState,
+	platform: Platform
+) => {
+	const namespaces = await platform.getAvailableNamespaces(context)
+	dispatch(setAvailableNamespaces(namespaces))
+	return context
 }
 
 export default { getMetadataList, getAvailableNamespaces }

@@ -8,24 +8,16 @@ class Collection {
 
 	source: PlainCollection
 
-	getId(): string {
-		return this.source.name
-	}
-
-	getNamespace(): string {
-		return this.source.namespace
-	}
-
-	getField(fieldName: string | null): Field | undefined {
+	getId = () => this.source.name
+	getNamespace = () => this.source.namespace
+	getField = (fieldName: string | null) => {
 		const fieldMetadata =
 			this.source && fieldName ? this.source.fields[fieldName] : null
 		if (!fieldMetadata) return undefined
 		return new Field(fieldMetadata)
 	}
 
-	getIdField(): Field | undefined {
-		return this.getField(this.source ? this.source.idField : null)
-	}
+	getIdField = () => this.getField(this.source ? this.source.idField : null)
 }
 
 export default Collection
