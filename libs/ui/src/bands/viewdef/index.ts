@@ -29,6 +29,7 @@ import { getParentPath } from "../../component/path"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
+import RuntimeState from "../../store/types/runtimestate"
 
 type YamlUpdatePayload = {
 	path: string
@@ -380,6 +381,10 @@ const viewDefSlice = createSlice({
 	},
 })
 
+const selectors = viewdefAdapter.getSelectors(
+	(state: RuntimeState) => state.viewdef
+)
+
 export const {
 	cancel,
 	setYaml,
@@ -390,4 +395,5 @@ export const {
 	addDefinitionPair,
 	changeDefinitionKey,
 } = viewDefSlice.actions
+export { selectors }
 export default viewDefSlice.reducer

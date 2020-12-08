@@ -1,18 +1,29 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { PlainCollectionMap } from "./types"
+import wireLoadOp from "../wire/operations/load"
+import { LoadResponseBatch } from "../../load/loadresponse"
 
 const initialState: PlainCollectionMap = {}
 
 const collectionSlice = createSlice({
 	name: "collection",
 	initialState,
-	reducers: {
-		load: (state, { payload }: PayloadAction<PlainCollectionMap>) => ({
-			...state,
-			...payload,
-		}),
+	reducers: {},
+	extraReducers: (builder) => {
+		builder.addCase(
+			wireLoadOp.fulfilled,
+			(
+				state,
+				{ payload }: PayloadAction<[LoadResponseBatch, string]>
+			) => {
+				const [response] = payload
+				return {
+					...state,
+					...response.collections,
+				}
+			}
+		)
 	},
 })
 
-export const { load } = collectionSlice.actions
 export default collectionSlice.reducer

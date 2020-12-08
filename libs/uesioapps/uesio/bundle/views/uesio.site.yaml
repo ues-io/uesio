@@ -124,27 +124,22 @@ definition:
                                             fieldId: uesio.domain
                                 mode: "CLOSE"
                                 disagreeSignals:
-                                  - signal: "CANCEL"
-                                    band: "wire"
-                                    target: newdomain
+                                  - signal: wire/CANCEL
+                                    wire: newdomain
                                   - signal: component/material.dialog/TOGGLE_MODE
                                     target: "createDomainDialog"
                                 agreeSignals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/SAVE
+                                    wires:
                                       - newdomain
                                   - signal: component/material.dialog/TOGGLE_MODE
                                     target: "createDomainDialog"
-                                  - signal: "EMPTY"
-                                    band: "wire"
-                                    target: newdomain
-                                  - signal: "CREATE_RECORD"
-                                    band: "wire"
-                                    target: newdomain
-                                  - signal: "LOAD"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/EMPTY
+                                    wire: newdomain
+                                  - signal: wire/CREATE_RECORD
+                                    wire: newdomain
+                                  - signal: wire/LOAD
+                                    wires:
                                       - domains
                             - material.buttonset:
                                 buttons:

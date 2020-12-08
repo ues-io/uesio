@@ -1,20 +1,14 @@
 import { FieldMetadata, FieldType, SelectOption } from "./types"
 
 class Field {
-	constructor(source: FieldMetadata | null) {
-		this.valid = !!source
-		this.source = source || ({} as FieldMetadata)
+	constructor(source: FieldMetadata) {
+		this.source = source
 	}
 
 	source: FieldMetadata
-	valid: boolean
 
-	getId(): string {
-		return this.source.name
-	}
-
-	isValid(): boolean {
-		return this.valid
+	getId() {
+		return this.source.namespace + "." + this.source.name
 	}
 
 	getLabel(): string {

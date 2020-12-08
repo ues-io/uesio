@@ -57,18 +57,16 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
+
 	const record = context.getRecord()
 	const wire = context.getWire()
-	if (!wire || !record) {
-		return null
-	}
+	if (!wire || !record) return null
 
-	const WireCollection = wire.getCollection()
-	const IdField = WireCollection.getIdField()
-	const collectionNamespace = WireCollection.getNamespace()
-	const jobId = record.getFieldValue(
-		collectionNamespace + "." + IdField.getId()
-	) as string
+	const wireCollection = wire.getCollection()
+	const idField = wireCollection.getIdField()
+	if (!idField) return null
+
+	const jobId = record.getFieldValue(idField.getId()) as string
 
 	return (
 		<div className={classes.root}>

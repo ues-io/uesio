@@ -137,12 +137,9 @@ definition:
                         icon: "delete"
                         size: "small"
                         signals:
-                          - signal: "MARK_FOR_DELETE"
-                            band: "wire"
-                            target: "files"
-                          - signal: "SAVE"
-                            band: "wire"
-                            targets:
+                          - signal: wire/MARK_FOR_DELETE
+                          - signal: wire/SAVE
+                            wires:
                               - "files"
 dependencies:
   componentpacks:

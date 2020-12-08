@@ -2,10 +2,12 @@ import React, { useEffect, FC } from "react"
 import { BaseProps, DefinitionMap } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
-import Dependencies from "../store/types/dependenciesstate"
 import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
+import { Dependencies } from "../bands/viewdef/types"
+import { VIEW_BAND } from "../hooks/viewapi"
+import { LOAD } from "../view/viewbandsignals"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -44,7 +46,7 @@ const View: FC<Props> = (props: Props) => {
 	const uesio = useUesio(props)
 	const [viewnamespace, viewname] = parseKey(props.definition.view)
 	const viewparams = props.definition.params
-	const path = props.path
+	const { path, context } = props
 
 	const view = uesio.view.useView(viewnamespace, viewname, path)
 
@@ -65,40 +67,36 @@ const View: FC<Props> = (props: Props) => {
 		const hasNewParams = viewparams !== view.source.params
 		// We could think about letting this go forward before loading viewdef deps
 		if ((!view.valid || hasNewParams) && scriptsHaveLoaded) {
-			uesio.view.loadView(
-				viewnamespace,
-				viewname,
-				path,
-				viewparams,
-				props.context
+			uesio.signal.run(
+				{
+					band: VIEW_BAND,
+					signal: LOAD,
+					namespace: viewnamespace,
+					name: viewname,
+					path,
+					params: viewparams,
+				},
+				context
 			)
 		}
 	}, [])
 
-	const useRunTime =
-		(!buildMode && scriptsHaveLoaded) || (buildMode && !scriptsHaveLoaded)
 	const useBuildTime = buildMode && scriptsHaveLoaded
-	if (
-		(useRunTime || useBuildTime) &&
-		definition &&
-		view.valid &&
-		view.source.loaded
-	) {
-		return (
-			<Slot
-				definition={definition}
-				listName="components"
-				path=""
-				accepts={["uesio.standalone"]}
-				context={props.context.addFrame({
-					view: view.getId(),
-					buildMode: useBuildTime,
-				})}
-			/>
-		)
-	}
 
-	return null
+	if (!definition || !view.valid || !view.source.loaded) return null
+
+	return (
+		<Slot
+			definition={definition}
+			listName="components"
+			path=""
+			accepts={["uesio.standalone"]}
+			context={context.addFrame({
+				view: view.getId(),
+				buildMode: useBuildTime,
+			})}
+		/>
+	)
 }
 
 export default View

@@ -10,6 +10,7 @@ import { SignalDescriptor } from "../definition/signal"
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
+import wireSignals from "../bands/wire/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { getSignal } from "../component/registry"
 import { parseKey } from "../component/path"
@@ -31,6 +32,7 @@ const register = (descriptors: SignalRegistry) => {
 register(botSignals)
 register(routeSignals)
 register(userSignals)
+register(wireSignals)
 
 function getSignalHandler(
 	signal: SignalDefinition,
