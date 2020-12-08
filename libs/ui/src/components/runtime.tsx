@@ -1,4 +1,4 @@
-import React, { useEffect, FC } from "react"
+import React, { useEffect, FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
@@ -9,11 +9,10 @@ import { Context } from "../context/context"
 import Route from "./route"
 import routeOps from "../bands/route/operations"
 
-function getNeededScripts(buildMode: boolean) {
-	return buildMode ? [getPlatform().getBuilderCoreURL()] : []
-}
+const getNeededScripts = (buildMode: boolean) =>
+	buildMode ? [getPlatform().getBuilderCoreURL()] : []
 
-const Runtime: FC<BaseProps> = (props) => {
+const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
 	const buildMode = uesio.builder.useMode()
 	const neededScripts = getNeededScripts(buildMode)
