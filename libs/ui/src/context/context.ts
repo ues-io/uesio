@@ -126,9 +126,10 @@ class Context {
 	mergeMap = (map?: Record<string, string>) =>
 		map
 			? Object.fromEntries(
-					Object.entries(map).map((entries) => {
-						return [entries[0], this.merge(entries[1])]
-					})
+					Object.entries(map).map((entries) => [
+						entries[0],
+						this.merge(entries[1]),
+					])
 			  )
 			: map
 }
