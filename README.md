@@ -163,7 +163,7 @@ While developping you may want the entire monorepo to rebuild upon file saving.
 npm run watch-all
 
 // terminating that script does not kill
-// the watcher jobs running in parallel.
+// the watcher jobs running in background in parallel.
 // For killing all of them, do run `killall node`
 ```
 
