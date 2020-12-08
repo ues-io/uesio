@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
-import { selectors } from "."
 import RuntimeState from "../../store/types/runtimestate"
+import { selectors } from "./adapter"
 import { PlainWire } from "./types"
 
 // Both gets wire state and subscribes the component to wire changes

@@ -3,8 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { SaveResponseBatch } from "../../../load/saveresponse"
-import { selectors as wireSelectors } from "../index"
-import { getStore } from "../../../store/store"
+import { selectors } from "../adapter"
 
 export default createAsyncThunk<
 	[SaveResponseBatch, string],
@@ -20,8 +19,8 @@ export default createAsyncThunk<
 	const batch = {
 		wires: wires.map((wirename) => {
 			const wiredef = context.getWireDef(wirename)
-			const wire = wireSelectors.selectById(
-				getStore().getState(),
+			const wire = selectors.selectById(
+				api.getState(),
 				viewId + "/" + wirename
 			)
 			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)

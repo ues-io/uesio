@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { PlainCollectionMap } from "./types"
+import { PlainCollection, PlainCollectionMap } from "./types"
 import wireLoadOp from "../wire/operations/load"
-import { LoadResponseBatch } from "../../load/loadresponse"
+import { PlainWire } from "../wire/types"
 
 const initialState: PlainCollectionMap = {}
 
@@ -14,14 +14,13 @@ const collectionSlice = createSlice({
 			wireLoadOp.fulfilled,
 			(
 				state,
-				{ payload }: PayloadAction<[LoadResponseBatch, string]>
-			) => {
-				const [response] = payload
-				return {
-					...state,
-					...response.collections,
-				}
-			}
+				{
+					payload: [, collections],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
+			) => ({
+				...state,
+				...collections,
+			})
 		)
 	},
 })

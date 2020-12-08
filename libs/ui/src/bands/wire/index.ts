@@ -1,14 +1,10 @@
-import {
-	createEntityAdapter,
-	createSlice,
-	PayloadAction,
-} from "@reduxjs/toolkit"
-import shortid from "shortid"
-import { LoadResponseBatch, LoadResponseRecord } from "../../load/loadresponse"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { LoadResponseRecord } from "../../load/loadresponse"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import RuntimeState from "../../store/types/runtimestate"
 import { PlainWireRecord, PlainWireRecordMap } from "../../wire/wirerecord"
+import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
+import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
@@ -36,10 +32,6 @@ type CreateRecordPayload = {
 type ToggleConditionPayload = {
 	conditionId: string
 } & EntityPayload
-
-const wireAdapter = createEntityAdapter<PlainWire>({
-	selectId: (wire) => `${wire.view}/${wire.name}`,
-})
 
 const wireSlice = createSlice({
 	name: "wire",
@@ -128,30 +120,11 @@ const wireSlice = createSlice({
 			loadOp.fulfilled,
 			(
 				state,
-				{ payload }: PayloadAction<[LoadResponseBatch, string]>
+				{
+					payload: [wires],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
 			) => {
-				const [response, viewId] = payload
-				const loadResponses = response.wires
-				if (loadResponses) {
-					loadResponses.forEach((response) => {
-						const data: PlainWireRecordMap = {}
-						const original: PlainWireRecordMap = {}
-						response.data.forEach((item) => {
-							const localId = shortid.generate()
-							data[localId] = item
-							original[localId] = item
-						})
-						wireAdapter.upsertOne(state, {
-							name: response.wire,
-							view: viewId,
-							data,
-							original,
-							changes: {},
-							deletes: {},
-							error: undefined,
-						} as PlainWire)
-					})
-				}
+				wireAdapter.upsertMany(state, wires)
 			}
 		)
 		builder.addCase(
@@ -233,7 +206,6 @@ const wireSlice = createSlice({
 	},
 })
 
-const selectors = wireAdapter.getSelectors((state: RuntimeState) => state.wire)
 export const {
 	markForDelete,
 	unmarkForDelete,
@@ -244,5 +216,4 @@ export const {
 	empty,
 	toggleCondition,
 } = wireSlice.actions
-export { selectors }
 export default wireSlice.reducer
