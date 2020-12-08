@@ -16,9 +16,7 @@ const getUserFileURL = (
 	userfileid: string,
 	cacheBuster?: boolean
 ) => {
-	if (!userfileid) {
-		return ""
-	}
+	if (!userfileid) return ""
 	const platform = getPlatform()
 	const url = platform.getUserFileURL(context, userfileid)
 	return cacheBuster ? url + "&cb=" + Date.now() : url

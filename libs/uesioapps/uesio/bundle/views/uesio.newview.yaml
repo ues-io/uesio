@@ -83,9 +83,8 @@ definition:
                                 variant: "contained"
                                 text: "Save"
                                 signals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/SAVE
+                                    wires:
                                       - "views"
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/view/${uesio.name}"

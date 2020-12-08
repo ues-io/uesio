@@ -18,7 +18,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 	getValue,
 	setValue,
 }) => {
-	const selected = getValue() as boolean
+	const selected = (getValue() as boolean) || false
 
 	switch ((descriptor as builder.BooleanProp).displaytype) {
 		case "switch":

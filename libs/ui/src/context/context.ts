@@ -1,12 +1,11 @@
-import { Wire } from "../wire/wire"
-import { WireRecord } from "../wire/wirerecord"
-import { View } from "../view/view"
 import { field } from "@uesio/constants"
 import { getStore } from "../store/store"
 import { ViewBand } from "../view/viewband"
-import { WireBand } from "../wire/wireband"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
+import { selectors as viewDefSelectors } from "../bands/viewdef"
+import { selectWire } from "../bands/wire/selectors"
+import { Wire } from "../wire/wire"
 
 type ContextFrame = {
 	wire?: string
@@ -17,10 +16,6 @@ type ContextFrame = {
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
-}
-
-type StringMap = {
-	[key: string]: string
 }
 
 const getFromContext = (
@@ -52,61 +47,59 @@ class Context {
 
 	stack: ContextFrame[]
 
-	getRecordId(): string | undefined {
-		return this.stack.find((frame) => frame?.record)?.record
-	}
+	getRecordId = () => this.stack.find((frame) => frame?.record)?.record
 
-	getRecord(): WireRecord | undefined {
+	getRecord = () => {
 		const recordId = this.getRecordId()
 		const wire = this.getWire()
 		return recordId ? wire?.getRecord(recordId) : undefined
 	}
 
-	getViewId(): string | undefined {
-		return this.stack.find((frame) => frame?.view)?.view
-	}
+	getViewId = () => this.stack.find((frame) => frame?.view)?.view
 
-	getView(): View | undefined {
-		const store = getStore()
-		const state = store.getState()
+	getView = () => {
 		const viewId = this.getViewId()
-		const view = ViewBand.getActor(state, viewId)
+		const view = ViewBand.getActor(getStore().getState(), viewId)
 		return view.valid ? view : undefined
 	}
 
-	getRoute(): RouteState | undefined {
-		return this.stack.find((frame) => frame?.route)?.route
+	getViewDef = () => {
+		const viewDefId = this.getView()?.getViewDefId()
+		return viewDefId
+			? viewDefSelectors.selectById(getStore().getState(), viewDefId)
+			: undefined
 	}
 
-	getWorkspace(): WorkspaceState | undefined {
-		return this.stack.find((frame) => frame?.workspace)?.workspace
-	}
+	getWireDef = (wirename: string) =>
+		this.getViewDef()?.definition?.wires[wirename]
 
-	getWireId(): string | undefined {
-		return this.stack.find((frame) => frame?.wire)?.wire
-	}
+	getRoute = () => this.stack.find((frame) => frame?.route)?.route
 
-	getWire(): Wire | undefined {
-		const store = getStore()
-		const state = store.getState()
+	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
+
+	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
+
+	getWire = () => {
+		const state = getStore().getState()
 		const wireId = this.getWireId()
 		const viewId = this.getViewId()
-		const wire = WireBand.getActor(state, wireId, viewId)
+		if (!wireId) return undefined
+		const plainWire = selectWire(state, wireId, viewId)
+		const wireDef = this.getWireDef(wireId)
+		if (!wireDef) return undefined
+		const wire = new Wire(plainWire)
 		const collection = new Collection(
-			state?.collection?.[wire.getCollectionName()] || null
+			state?.collection?.[wireDef.collection] || null
 		)
 		wire.attachCollection(collection.source)
-		return wire.valid ? wire : undefined
+		return wire
 	}
 
-	getFieldMode(): field.FieldMode {
-		return (
-			this.stack.find((frame) => frame?.fieldMode === "EDIT")
-				?.fieldMode || "READ"
-		)
-	}
+	getFieldMode = () =>
+		this.stack.find((frame) => frame?.fieldMode === "EDIT")?.fieldMode ||
+		"READ"
 
-	getBuildMode(): boolean {
+	getBuildMode = () => {
 		for (const frame of this.stack) {
 			if (frame.buildMode) {
 				return true
@@ -118,15 +111,11 @@ class Context {
 		return false
 	}
 
-	getNoMerge(): boolean {
-		return this.stack.some((frame) => frame?.noMerge)
-	}
+	getNoMerge = () => this.stack.some((frame) => frame?.noMerge)
 
-	addFrame(frame: ContextFrame): Context {
-		return new Context([frame].concat(this.stack))
-	}
+	addFrame = (frame: ContextFrame) => new Context([frame].concat(this.stack))
 
-	merge(template: string | undefined): string {
+	merge = (template: string | undefined) => {
 		// If we are in a no-merge context, just return the template
 		if (this.getNoMerge()) {
 			return template || ""
@@ -134,7 +123,7 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap(map?: StringMap): StringMap | undefined {
+	mergeMap = (map?: Record<string, string>) => {
 		if (!map) {
 			return map
 		}

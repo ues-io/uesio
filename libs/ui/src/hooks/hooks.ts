@@ -7,7 +7,6 @@ import { FileAPI } from "./fileapi"
 import { ComponentAPI } from "./componentapi"
 import { PlatformAPI } from "./platformapi"
 import { BaseProps } from "../definition/definition"
-import { RouteAPI } from "./routeapi"
 import { ContextFrame, Context } from "../context/context"
 import { StoreAction } from "../store/actions/actions"
 
@@ -27,7 +26,6 @@ class Uesio {
 		this.file = new FileAPI(this)
 		this.component = new ComponentAPI(this)
 		this.platform = new PlatformAPI(this)
-		this.route = new RouteAPI(this)
 	}
 
 	// Public Apis
@@ -35,7 +33,6 @@ class Uesio {
 	wire: WireAPI
 	builder: BuilderAPI
 	view: ViewAPI
-	route: RouteAPI
 	file: FileAPI
 	component: ComponentAPI
 	platform: PlatformAPI
@@ -50,6 +47,7 @@ class Uesio {
 	getDispatcher = () => this._dispatcher
 	getView = () => this.getContext().getView()
 	getViewId = () => this.getContext().getViewId()
+	getWireDef = (wirename: string) => this.getContext().getWireDef(wirename)
 	addContextFrame = (frame: ContextFrame) => {
 		this._props.context = this.getContext().addFrame(frame)
 	}

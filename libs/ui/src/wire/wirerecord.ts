@@ -14,14 +14,12 @@ type PlainWireRecordMap = {
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
 		this.id = id
-		this.valid = !!source
 		this.source = source || ({} as PlainWireRecord)
 		this.wire = wire
 	}
 
 	id: string
 	source: PlainWireRecord
-	valid: boolean
 	wire: Wire
 
 	getId = (): string => this.id

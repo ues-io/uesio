@@ -119,12 +119,9 @@ definition:
                                                     - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "routeDialog"
                                                   agreeSignals:
-                                                    - signal: "MARK_FOR_DELETE"
-                                                      band: "wire"
-                                                      target: "routes"
-                                                    - signal: "SAVE"
-                                                      band: "wire"
-                                                      targets:
+                                                    - signal: wire/MARK_FOR_DELETE
+                                                    - signal: wire/SAVE
+                                                      wires:
                                                         - "routes"
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
@@ -152,18 +149,16 @@ definition:
                                                         variant: "outlined"
                                                         text: "Save"
                                                         signals:
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
+                                                          - signal: wire/SAVE
+                                                            wires:
                                                               - "routes"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
                                                         text: "Cancel"
                                                         signals:
-                                                          - signal: "CANCEL"
-                                                            band: "wire"
-                                                            target: "routes"
+                                                          - signal: wire/CANCEL
+                                                            wire: "routes"
                                                     - material.button:
                                                         color: "secondary"
                                                         variant: "outlined"

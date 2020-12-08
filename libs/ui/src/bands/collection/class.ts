@@ -2,13 +2,11 @@ import Field from "../field/class"
 import { PlainCollection } from "./types"
 
 class Collection {
-	constructor(source: PlainCollection | null) {
-		this.valid = !!source
-		this.source = source || ({} as PlainCollection)
+	constructor(source: PlainCollection) {
+		this.source = source
 	}
 
 	source: PlainCollection
-	valid: boolean
 
 	getId(): string {
 		return this.source.name
@@ -18,17 +16,14 @@ class Collection {
 		return this.source.namespace
 	}
 
-	isValid(): boolean {
-		return this.valid
-	}
-
-	getField(fieldName: string | null): Field {
+	getField(fieldName: string | null): Field | undefined {
 		const fieldMetadata =
 			this.source && fieldName ? this.source.fields[fieldName] : null
+		if (!fieldMetadata) return undefined
 		return new Field(fieldMetadata)
 	}
 
-	getIdField(): Field {
+	getIdField(): Field | undefined {
 		return this.getField(this.source ? this.source.idField : null)
 	}
 }

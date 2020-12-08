@@ -78,9 +78,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		}
 	})
 
-	if (!fieldMetadata.isValid()) {
-		return null
-	}
+	if (!fieldMetadata) return null
 
 	if (mode === "READ") {
 		return <component.Component {...props} componentType="material.field" />

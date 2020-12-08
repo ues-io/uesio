@@ -10,6 +10,7 @@ import builderReducer from "../../bands/builder"
 import viewDefReducer from "../../bands/viewdef"
 import themeReducer from "../../bands/theme"
 import componentReducer from "../../bands/component"
+import wireReducer from "../../bands/wire"
 import { AnyAction } from "redux"
 
 const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
@@ -41,6 +42,7 @@ const mainReducer = (state: RuntimeState, action: AnyAction): RuntimeState => {
 			builder: builderReducer(state.builder, action),
 			viewdef: viewDefReducer(state.viewdef, action),
 			theme: themeReducer(state.theme, action),
+			wire: wireReducer(state.wire, action),
 		},
 	}
 }
