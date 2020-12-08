@@ -1,7 +1,6 @@
 import { PlainCollection } from "../bands/collection/types"
 import Collection from "../bands/collection/class"
 import { WireRecord, PlainWireRecord } from "./wirerecord"
-import { WireConditionState } from "./wirecondition"
 import { getStore } from "../store/store"
 import { setRecord, updateRecord } from "../bands/wire"
 import { PlainWire } from "../bands/wire/types"
@@ -14,50 +13,30 @@ class Wire {
 	source: PlainWire
 	collection: Collection
 
-	getId(): string {
-		return this.source.name
-	}
+	getId = () => this.source.name
+	getFullId = () => `${this.source.view}/${this.source.name}`
+	getCollection = () => this.collection
+	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
 
-	getFullId(): string {
-		return `${this.source.view}/${this.source.name}`
-	}
-
-	getCollection(): Collection {
-		return this.collection
-	}
-
-	isMarkedForDeletion(recordId: string): boolean {
-		return !!this.source.deletes[recordId]
-	}
-
-	getData(): WireRecord[] {
-		return this.source?.data
+	getData = () =>
+		this.source?.data
 			? Object.keys(this.source.data).map((id) => this.getRecord(id))
 			: []
-	}
 
-	getViewId(): string {
-		return this.source?.view
-	}
+	getViewId = () => this.source?.view
+	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 
-	getRecord(id: string): WireRecord {
-		return new WireRecord(this.source.data[id], id, this)
-	}
-
-	getFirstRecord(): WireRecord {
+	getFirstRecord = () => {
 		const recordId = Object.keys(this.source.data)[0]
 		return this.getRecord(recordId)
 	}
 
-	getConditions(): WireConditionState[] {
-		return this.source.conditions || []
-	}
+	getConditions = () => this.source.conditions || []
 
-	getCondition(id: string): WireConditionState | null {
-		return this.getConditions().find((c) => c.id === id) || null
-	}
+	getCondition = (id: string) =>
+		this.getConditions().find((c) => c.id === id) || null
 
-	dispatchRecordUpdate(recordId: string, record: PlainWireRecord): void {
+	dispatchRecordUpdate = (recordId: string, record: PlainWireRecord) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -70,7 +49,7 @@ class Wire {
 		)
 	}
 
-	dispatchRecordSet(recordId: string, record: PlainWireRecord): void {
+	dispatchRecordSet = (recordId: string, record: PlainWireRecord) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -83,7 +62,7 @@ class Wire {
 		)
 	}
 
-	attachCollection(collection: PlainCollection): Wire {
+	attachCollection = (collection: PlainCollection) => {
 		this.collection = new Collection(collection)
 		return this
 	}
