@@ -135,7 +135,7 @@ const conditionHandlers: ConditionHandlers = {
 const getLoadRequestConditions = (
 	conditions: WireConditionState[],
 	context: Context
-): WireConditionState[] =>
+) =>
 	conditions
 		.filter((condition) => condition.active)
 		.map((condition) => {
@@ -147,9 +147,7 @@ const getLoadRequestConditions = (
 			throw new Error("Invalid condition type")
 		})
 
-const getInitializedConditions = (
-	definitions: WireConditionDefinition[]
-): WireConditionState[] =>
+const getInitializedConditions = (definitions: WireConditionDefinition[]) =>
 	definitions
 		? definitions.map((definition) => {
 				const initializer =

@@ -22,18 +22,17 @@ class WireRecord {
 	source: PlainWireRecord
 	wire: Wire
 
-	getId = (): string => this.id
-	getWire = (): Wire => this.wire
-	getFieldValue = (fieldName: string): FieldValue =>
-		get(this.source, fieldName)
+	getId = () => this.id
+	getWire = () => this.wire
+	getFieldValue = (fieldName: string) => get(this.source, fieldName)
 
-	update = (fieldId: string, value: FieldValue): void => {
+	update = (fieldId: string, value: FieldValue) => {
 		this.wire.dispatchRecordUpdate(this.id, {
 			[fieldId]: value,
 		})
 	}
 
-	set = (fieldId: string, value: FieldValue): void => {
+	set = (fieldId: string, value: FieldValue) => {
 		this.wire.dispatchRecordSet(this.id, {
 			[fieldId]: value,
 		})
