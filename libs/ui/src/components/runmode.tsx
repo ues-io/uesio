@@ -1,10 +1,10 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
 import View from "./view"
 
-const RunMode: FC<BaseProps> = (props: BaseProps) => {
+const RunMode: FunctionComponent<BaseProps> = (props) => {
 	const route = props.context.getRoute()
 
 	if (!route) return null

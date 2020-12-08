@@ -1,5 +1,5 @@
-import React, { ReactElement } from "react"
-import { definition, material, hooks, signal } from "@uesio/ui"
+import React, { FunctionComponent } from "react"
+import { definition, material, hooks } from "@uesio/ui"
 
 type BulkjobDefinition = {
 	id: string
@@ -50,28 +50,26 @@ async function handleChange(
 	}
 }
 
-function Bulkjob(props: Props): ReactElement | null {
+const Bulkjob: FunctionComponent<Props> = (props) => {
+	const { definition, context } = props
+	const id = definition.id
+	const label = definition.label
+
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
+
+	const record = context.getRecord()
+	const wire = context.getWire()
 	if (!wire || !record) return null
 
-	const id = props.definition.id
-	const label = props.definition.label
 	const wireCollection = wire.getCollection()
 	const idField = wireCollection.getIdField()
 	if (!idField) return null
 
-	const collectionNamespace = wireCollection.getNamespace()
 	const jobId = record.getFieldValue(idField.getId()) as string
 
-	const BulkjobProps = {
-		className: classes.root,
-	}
-
 	return (
-		<div {...BulkjobProps}>
+		<div className={classes.root}>
 			<label htmlFor={id}>
 				<input
 					type="file"
