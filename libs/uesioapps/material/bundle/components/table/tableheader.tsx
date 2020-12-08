@@ -20,7 +20,7 @@ const TableHeader: FC<Props> = (props: Props) => {
 					const fieldMetadata = props.collection.getField(fieldId)
 					return (
 						<material.TableCell key={fieldId}>
-							{column.label || fieldMetadata.getLabel()}
+							{column.label || fieldMetadata?.getLabel()}
 						</material.TableCell>
 					)
 				})}

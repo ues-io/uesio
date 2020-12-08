@@ -55,22 +55,16 @@ function Bulkjob(props: Props): ReactElement | null {
 	const uesio = hooks.useUesio(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
-	if (!wire || !record) {
-		return null
-	}
+	if (!wire || !record) return null
 
 	const id = props.definition.id
 	const label = props.definition.label
-	const WireCollection = wire.getCollection()
-	const IdField = WireCollection.getIdField()
-	const collectionNamespace = WireCollection.getNamespace()
-	const context = uesio.getContext()
-	const workspace = context.getWorkspace()
-	const jobId = record.getFieldValue(
-		collectionNamespace + "." + IdField.getId()
-	) as string
+	const wireCollection = wire.getCollection()
+	const idField = wireCollection.getIdField()
+	if (!idField) return null
 
-	const spec = JSON.stringify(record.getFieldValue("uesio.spec"))
+	const collectionNamespace = wireCollection.getNamespace()
+	const jobId = record.getFieldValue(idField.getId()) as string
 
 	const BulkjobProps = {
 		className: classes.root,

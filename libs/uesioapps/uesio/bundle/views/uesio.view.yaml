@@ -130,29 +130,24 @@ definition:
                                                         variant: "outlined"
                                                         text: "Save"
                                                         signals:
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
+                                                          - signal: wire/SAVE
+                                                            wires:
                                                               - "views"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
                                                         text: "Cancel"
                                                         signals:
-                                                          - signal: "CANCEL"
-                                                            band: "wire"
-                                                            target: "views"
+                                                          - signal: wire/CANCEL
+                                                            wire: "views"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
-                                                          - signal: "MARK_FOR_DELETE"
-                                                            band: "wire"
-                                                            target: "views"
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
                                                               - "views"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/views"

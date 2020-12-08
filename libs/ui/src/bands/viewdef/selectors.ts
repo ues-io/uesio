@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux"
 import RuntimeState from "../../store/types/runtimestate"
 
-const useBuilderHasChanges = (): boolean =>
+const useBuilderHasChanges = () =>
 	useSelector(({ viewdef }: RuntimeState) => {
 		const entities = viewdef?.entities
 		// Loop over view defs

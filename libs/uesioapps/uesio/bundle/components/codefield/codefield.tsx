@@ -107,12 +107,10 @@ function CodeField(props: Props): ReactElement | null {
 	const fieldId = props.definition.fieldId
 
 	const fieldMetadata = collection.getField(fieldId)
+	if (!fieldMetadata) return null
 	const fieldType = fieldMetadata.getType()
 	const value = record.getFieldValue(fieldId)
 
-	if (!fieldMetadata.isValid()) {
-		return null
-	}
 	const language = props.definition.language || "yaml"
 
 	const AlertComponent = component.registry.get("material", "alert")

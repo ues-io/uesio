@@ -87,12 +87,10 @@ definition:
                                 variant: "outlined"
                                 text: "Create New Import Job"
                                 signals:
-                                  - signal: "CREATE_RECORD"
-                                    band: "wire"
-                                    target: "newbulkjob"
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/CREATE_RECORD
+                                    wire: "newbulkjob"
+                                  - signal: wire/SAVE
+                                    wires:
                                       - newbulkjob
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"

@@ -108,9 +108,8 @@ definition:
                                                                     variant: "outlined"
                                                                     text: "SAVE"
                                                                     signals:
-                                                                      - signal: "SAVE"
-                                                                        band: "wire"
-                                                                        targets:
+                                                                      - signal: wire/SAVE
+                                                                        wires:
                                                                           - "bulkjobs"
                                   - uesio.codefield:
                                       fieldId: uesio.spec
@@ -126,9 +125,8 @@ definition:
               variant: "outlined"
               text: "Refresh"
               signals:
-                - signal: "LOAD"
-                  band: "wire"
-                  targets:
+                - signal: wire/LOAD
+                  wires:
                     - "bulkjobs"
                     - "bulkbatches"
           - material.table:

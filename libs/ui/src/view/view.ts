@@ -2,7 +2,6 @@ import Actor from "../actor/actor"
 import RuntimeState from "../store/types/runtimestate"
 import { ActorAction, ActionGroup } from "../store/actions/actions"
 import { ThunkFunc } from "../store/store"
-import { PlainWireMap } from "../wire/wire"
 import {
 	SET_LOADED,
 	SET_PARAMS,
@@ -32,7 +31,6 @@ type PlainView = {
 	params: ViewParams
 	errors?: ErrorMap
 	loaded: boolean
-	wires: PlainWireMap
 }
 
 type PlainViewMap = {
@@ -92,18 +90,6 @@ class View extends Actor {
 
 	receiveSignal(signal: SignalDefinition): ThunkFunc {
 		throw new Error("No Handler found for signal: " + signal.signal)
-	}
-
-	// Serializes this wire into a redux state
-	toState(): PlainView {
-		return {
-			name: "",
-			namespace: "",
-			path: "",
-			params: {},
-			loaded: false,
-			wires: {},
-		}
 	}
 
 	getId(): string {

@@ -152,9 +152,8 @@ definition:
                                                         variant: "outlined"
                                                         text: "Save"
                                                         signals:
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
+                                                          - signal: wire/SAVE
+                                                            wires:
                                                               - "collections"
                                                               - "fields"
                                                     - material.button:
@@ -162,23 +161,18 @@ definition:
                                                         variant: "outlined"
                                                         text: "Cancel"
                                                         signals:
-                                                          - signal: "CANCEL"
-                                                            band: "wire"
-                                                            target: "collections"
-                                                          - signal: "CANCEL"
-                                                            band: "wire"
-                                                            target: "fields"
+                                                          - signal: wire/CANCEL
+                                                            wire: "collections"
+                                                          - signal: wire/CANCEL
+                                                            wire: "fields"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
-                                                          - signal: "MARK_FOR_DELETE"
-                                                            band: "wire"
-                                                            target: "collections"
-                                                          - signal: "SAVE"
-                                                            band: "wire"
-                                                            targets:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
                                                               - "collections"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
@@ -206,9 +200,8 @@ definition:
                           variant: "outlined"
                           text: "New Field"
                           signals:
-                            - signal: "CREATE_RECORD"
-                              band: "wire"
-                              target: "fields"
+                            - signal: wire/CREATE_RECORD
+                              wire: "fields"
                       - material.button:
                           color: "primary"
                           variant: "outlined"

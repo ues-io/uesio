@@ -86,9 +86,8 @@ definition:
                                       fileCollection: uesio.workspacemetadatafiles
                                       wire: files
                                       signals:
-                                        - signal: "SAVE"
-                                          band: "wire"
-                                          targets:
+                                        - signal: wire/SAVE
+                                          wires:
                                             - "files"
 dependencies:
   componentpacks:

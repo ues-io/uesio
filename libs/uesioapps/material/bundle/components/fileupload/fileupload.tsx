@@ -27,15 +27,14 @@ async function handleChange(
 	const collection = wire.getCollection()
 	const collectionName = wire.getCollectionName()
 
-	const IdField = collection.getIdField()
+	const idField = collection.getIdField()
+	if (!idField) return
 	const collectionNamespace = collection.getNamespace()
 
 	const context = uesio.getContext()
 	const workspace = context.getWorkspace()
 
-	const recordId = record.getFieldValue(
-		collectionNamespace + "." + IdField.getId()
-	) as string
+	const recordId = record.getFieldValue(idField.getId()) as string
 
 	if (selectorFiles && recordId) {
 		if (selectorFiles.length !== 1) {
