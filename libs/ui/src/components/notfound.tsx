@@ -1,7 +1,7 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 
-const NotFound: FC<BaseProps> = (props) => (
+const NotFound: FunctionComponent<BaseProps> = (props) => (
 	<div>Component Not Found: {props.componentType}</div>
 )
 

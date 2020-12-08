@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { BaseProps, DefinitionMap } from "../definition/definition"
 import { ComponentInternal } from "../component/component"
 
@@ -8,10 +8,12 @@ interface SlotProps extends BaseProps {
 	direction?: string
 }
 
-function Slot(props: SlotProps): ReactElement | null {
-	const definition = props.definition
-	if (!props.definition) return null
-	const { path, context, listName } = props
+const Slot: FunctionComponent<SlotProps> = (props) => {
+	const { path, context, listName, definition, accepts, direction } = props
+	if (!definition) {
+		return null
+	}
+
 	const listDef = definition?.[listName]
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	return (
@@ -19,8 +21,8 @@ function Slot(props: SlotProps): ReactElement | null {
 			componentType="uesio.slot"
 			definition={{
 				items: listDef,
-				accepts: props.accepts,
-				direction: props.direction,
+				accepts: accepts,
+				direction,
 			}}
 			path={listPath}
 			context={context}
