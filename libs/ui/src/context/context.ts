@@ -27,10 +27,10 @@ const getFromContext = (
 	const view = context.getView()
 	if ((mergeType === "" || mergeType === "Record") && record) {
 		const value = record.getFieldValue(mergeExpression)
-		return value ? value + "" : ""
+		return value ? `${value}` : ""
 	} else if (mergeType === "Param" && view) {
 		const value = view.getParam(mergeExpression)
-		return value ? value + "" : ""
+		return value ? `${value}` : ""
 	}
 	return ""
 }
@@ -123,16 +123,15 @@ class Context {
 		return template ? inject(template, this) : ""
 	}
 
-	mergeMap = (map?: Record<string, string>) => {
-		if (!map) {
-			return map
-		}
-		return Object.fromEntries(
-			Object.entries(map).map((entries) => {
-				return [entries[0], this.merge(entries[1])]
-			})
-		)
-	}
+	mergeMap = (map?: Record<string, string>) =>
+		map
+			? Object.fromEntries(
+					Object.entries(map).map((entries) => [
+						entries[0],
+						this.merge(entries[1]),
+					])
+			  )
+			: map
 }
 
 export { Context, ContextFrame }
