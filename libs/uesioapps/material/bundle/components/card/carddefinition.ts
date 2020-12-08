@@ -1,4 +1,4 @@
-import { definition, builder, signal, styles } from "@uesio/ui"
+import { definition, builder, signal, styles, hooks } from "@uesio/ui"
 
 import { CardActionDefinition } from "../cardaction/cardactiondefinition"
 
@@ -27,6 +27,23 @@ const CardPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	traits: ["uesio.standalone"],
+	handleFieldDrop: (
+		dragNode: string,
+		dropNode: string,
+		dropIndex: number,
+		propDef: builder.BuildPropertiesDefinition,
+		uesio: hooks.Uesio
+	) => {
+		uesio.view.addDefinition(
+			dropNode,
+			{
+				["material.field"]: {
+					fieldId: propDef.namespace + "." + propDef.name,
+				},
+			},
+			dropIndex
+		)
+	},
 }
 export { CardProps, CardDefinition }
 
