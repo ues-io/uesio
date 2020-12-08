@@ -16,8 +16,6 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
-	const data = wire.getData()
-	const collection = wire.getCollection()
 
 	const initialState: DeckState = {
 		mode: definition.mode || "READ",
@@ -28,7 +26,9 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		initialState
 	) as DeckState
 
-	if (!wire.isValid() || !collection.isValid() || !componentState) return null
+	if (!wire || !componentState) return null
+
+	const data = wire.getData()
 
 	return (
 		<material.Grid className={classes.root} container={true}>

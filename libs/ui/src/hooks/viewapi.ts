@@ -9,13 +9,10 @@ import {
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
-import { View, ViewParams } from "../view/view"
+import { View } from "../view/view"
 import { batch } from "react-redux"
-import { LOAD } from "../view/viewbandsignals"
 import { Uesio } from "./hooks"
-import { Context } from "../context/context"
 import toPath from "lodash.topath"
-import Dependencies from "../store/types/dependenciesstate"
 import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
 import { setSelectedNode } from "../bands/builder"
@@ -42,7 +39,7 @@ class ViewAPI {
 
 	// Wraps our store's useView result (POJO) in a nice View class
 	// with convenience methods to make the api easier to consume for end users.
-	useView(namespace: string, name: string, path: string): View {
+	useView(namespace: string, name: string, path: string) {
 		const plainView = useView(namespace, name, path)
 		return new View(plainView)
 	}
@@ -52,17 +49,17 @@ class ViewAPI {
 		return view ? useViewConfigValue(view, key) : ""
 	}
 
-	useDefinition(path?: string, view?: View): Definition {
+	useDefinition(path?: string, view?: View) {
 		const useView = view || this.uesio.getView()
 		return useView ? useViewDefinition(useView, path) : undefined
 	}
 
-	useDependencies(view?: View): Dependencies | undefined {
+	useDependencies(view?: View) {
 		const useView = view || this.uesio.getView()
 		return useView ? useViewDependencies(useView) : undefined
 	}
 
-	useYAML(): yaml.Document | undefined {
+	useYAML() {
 		const view = this.uesio.getView()
 		return view ? useViewYAML(view) : undefined
 	}
@@ -80,7 +77,7 @@ class ViewAPI {
 		}
 	}
 
-	addDefinition(path: string, definition: Definition, index?: number): void {
+	addDefinition(path: string, definition: Definition, index?: number) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -94,7 +91,7 @@ class ViewAPI {
 		}
 	}
 
-	addDefinitionPair(path: string, definition: Definition, key: string): void {
+	addDefinitionPair(path: string, definition: Definition, key: string) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -108,7 +105,7 @@ class ViewAPI {
 		}
 	}
 
-	changeDefinitionKey(path: string, key: string): void {
+	changeDefinitionKey(path: string, key: string) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -121,7 +118,7 @@ class ViewAPI {
 		}
 	}
 
-	removeDefinition(path?: string): void {
+	removeDefinition(path?: string) {
 		const view = this.uesio.getView()
 		const usePath = path || this.uesio.getPath()
 		if (view) {
@@ -141,7 +138,7 @@ class ViewAPI {
 		}
 	}
 
-	moveDefinition(fromPath: string, toPath: string): void {
+	moveDefinition(fromPath: string, toPath: string) {
 		const view = this.uesio.getView()
 		if (view) {
 			this.dispatcher(
@@ -166,25 +163,6 @@ class ViewAPI {
 			)
 		}
 	}
-
-	loadView = (
-		namespace: string,
-		name: string,
-		path: string,
-		params: ViewParams | undefined,
-		context: Context
-	) =>
-		this.uesio.signal.run(
-			{
-				band: VIEW_BAND,
-				signal: LOAD,
-				namespace,
-				name,
-				path,
-				params,
-			},
-			context
-		)
 }
 
-export { ViewAPI }
+export { ViewAPI, VIEW_BAND }

@@ -18,3 +18,5 @@ options:
     value: "IMAGE"
   - label: "Date"
     value: "DATE"
+  - label: "Map"
+    value: "MAP"

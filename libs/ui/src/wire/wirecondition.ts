@@ -79,34 +79,28 @@ type ConditionInitializers = {
 }
 
 const conditionInitializers: ConditionInitializers = {
-	[PARAM]: (definition: ParamConditionDefinition) => {
-		return {
-			field: definition.field,
-			valueSource: definition.valueSource,
-			param: definition.param,
-			id: definition.id,
-			active: true,
-		}
-	},
-	[VALUE]: (definition: ValueConditionDefinition) => {
-		return {
-			field: definition.field,
-			valueSource: VALUE,
-			value: definition.value,
-			id: definition.id,
-			active: true,
-		}
-	},
-	[LOOKUP]: (definition: LookupConditionDefinition) => {
-		return {
-			field: definition.field,
-			valueSource: definition.valueSource,
-			lookupWire: definition.lookupWire,
-			lookupField: definition.lookupField,
-			id: definition.id,
-			active: true,
-		}
-	},
+	[PARAM]: (definition: ParamConditionDefinition) => ({
+		field: definition.field,
+		valueSource: definition.valueSource,
+		param: definition.param,
+		id: definition.id,
+		active: true,
+	}),
+	[VALUE]: (definition: ValueConditionDefinition) => ({
+		field: definition.field,
+		valueSource: VALUE,
+		value: definition.value,
+		id: definition.id,
+		active: true,
+	}),
+	[LOOKUP]: (definition: LookupConditionDefinition) => ({
+		field: definition.field,
+		valueSource: definition.valueSource,
+		lookupWire: definition.lookupWire,
+		lookupField: definition.lookupField,
+		id: definition.id,
+		active: true,
+	}),
 }
 
 const conditionHandlers: ConditionHandlers = {
@@ -141,8 +135,8 @@ const conditionHandlers: ConditionHandlers = {
 const getLoadRequestConditions = (
 	conditions: WireConditionState[],
 	context: Context
-): WireConditionState[] => {
-	return conditions
+) =>
+	conditions
 		.filter((condition) => condition.active)
 		.map((condition) => {
 			const conditionHandler =
@@ -152,12 +146,9 @@ const getLoadRequestConditions = (
 			}
 			throw new Error("Invalid condition type")
 		})
-}
 
-const getInitializedConditions = (
-	definitions: WireConditionDefinition[]
-): WireConditionState[] => {
-	return definitions
+const getInitializedConditions = (definitions: WireConditionDefinition[]) =>
+	definitions
 		? definitions.map((definition) => {
 				const initializer =
 					conditionInitializers[definition.valueSource || VALUE]
@@ -167,7 +158,6 @@ const getInitializedConditions = (
 				throw new Error("Invalid condition type")
 		  })
 		: []
-}
 
 export {
 	WireConditionState,

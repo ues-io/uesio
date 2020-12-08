@@ -6,13 +6,10 @@ import { configureStore } from "@reduxjs/toolkit"
 import { Platform } from "../platform/platform"
 import { mainReducer } from "../store/reducers"
 import RuntimeState from "./types/runtimestate"
-import { PlainWire } from "../wire/wire"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
-import yaml from "yaml"
 import { PlainView, View } from "../view/view"
 import { ViewBand } from "../view/viewband"
-import Dependencies from "./types/dependenciesstate"
 import { Context } from "../context/context"
 
 type DispatchReturn = Promise<Context>
@@ -50,15 +47,6 @@ const getDispatcher = (): Dispatcher<AnyAction> => useDispatch()
 const getPlatform = () => platform
 const getStore = () => store
 
-// Both gets wire state and subscribes the component to wire changes
-const useWire = (
-	wireName: string | null,
-	viewId: string | undefined
-): PlainWire | null =>
-	useSelector((state: RuntimeState) =>
-		wireName && viewId ? state.view?.[viewId].wires[wireName] || null : null
-	)
-
 // Both gets view state and subscribes the component to wire changes
 const useView = (
 	namespace: string,
@@ -77,19 +65,19 @@ const useViewDefinition = (view: View, path?: string): Definition =>
 		return path ? get(definition, path || "") : definition
 	})
 
-const useViewDependencies = (view: View): Dependencies | undefined =>
+const useViewDependencies = (view: View) =>
 	useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
 		return viewDef?.dependencies
 	})
 
-const useViewYAML = (view: View): yaml.Document | undefined =>
+const useViewYAML = (view: View) =>
 	useSelector((state: RuntimeState) => {
 		const viewDef = view.getViewDef(state)
 		return viewDef?.yaml
 	})
 
-const useViewConfigValue = (view: View, key: string): string =>
+const useViewConfigValue = (view: View, key: string) =>
 	useSelector((state: RuntimeState) => {
 		const viewdef = view.getViewDef(state)
 		return viewdef?.dependencies?.configvalues[key] || ""
@@ -104,7 +92,6 @@ export {
 	getDispatcher,
 	getPlatform,
 	getStore,
-	useWire,
 	useView,
 	useViewYAML,
 	useViewDefinition,

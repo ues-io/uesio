@@ -120,12 +120,9 @@ definition:
                                                     - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "fileDialog"
                                                   agreeSignals:
-                                                    - signal: "MARK_FOR_DELETE"
-                                                      band: "wire"
-                                                      target: "files"
-                                                    - signal: "SAVE"
-                                                      band: "wire"
-                                                      targets:
+                                                    - signal: wire/MARK_FOR_DELETE
+                                                    - signal: wire/SAVE
+                                                      wires:
                                                         - "files"
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
