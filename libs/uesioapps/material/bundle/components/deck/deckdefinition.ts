@@ -28,6 +28,7 @@ const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 		id: "NEW_DECK",
 		wire: null,
 		mode: "READ",
+		components: [],
 	}),
 	properties: [
 		{

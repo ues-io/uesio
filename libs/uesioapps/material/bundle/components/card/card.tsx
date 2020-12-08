@@ -38,7 +38,7 @@ const Card: FunctionComponent<CardProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone"]}
+				accepts={["uesio.standalone", "uesio.field"]}
 				context={context}
 			/>
 		</material.CardContent>
