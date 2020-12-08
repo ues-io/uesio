@@ -1,5 +1,5 @@
-import { BandAction } from "../store/actions/actions"
-import { ViewParams } from "./view"
+import { BandAction } from "../../store/actions/actions"
+import { ViewParams } from "../../view/view"
 
 const ADD_VIEW = "ADD_VIEW"
 

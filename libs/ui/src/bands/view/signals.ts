@@ -1,5 +1,5 @@
-import { BandSignal } from "../definition/signal"
-import { ViewParams } from "./view"
+import { BandSignal } from "../../definition/signal"
+import { ViewParams } from "../../view/view"
 
 const LOAD = "LOAD"
 

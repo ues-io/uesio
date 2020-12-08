@@ -1,9 +1,9 @@
-import { Platform } from "../platform/platform"
-import { LoadResponseBatch, LoadResponse } from "../load/loadresponse"
-import { LoadRequestBatch } from "../load/loadrequest"
-import RuntimeState from "../store/types/runtimestate"
+import { Platform } from "../../platform/platform"
+import { LoadResponseBatch, LoadResponse } from "../../load/loadresponse"
+import { LoadRequestBatch } from "../../load/loadrequest"
+import RuntimeState from "../../store/types/runtimestate"
 
-import { Wire, PlainWireMap, PlainWire } from "./wire"
+import { Wire, PlainWireMap, PlainWire } from "../../wire/wire"
 import {
 	ADD_WIRES,
 	SAVE,
@@ -13,28 +13,28 @@ import {
 	AddWiresAction,
 	ADD_ERRORS,
 	AddErrorsAction,
-} from "./wirebandactions"
-import { Dispatcher, DispatchReturn, ThunkFunc } from "../store/store"
-import { SaveResponseBatch, SaveResponse } from "../load/saveresponse"
-import { SaveRequestBatch } from "../load/saverequest"
-import { PlainWireRecordMap } from "./wirerecord"
+} from "./actions"
+import { Dispatcher, DispatchReturn, ThunkFunc } from "../../store/store"
+import { SaveResponseBatch, SaveResponse } from "../../load/saveresponse"
+import { SaveRequestBatch } from "../../load/saverequest"
+import { PlainWireRecordMap } from "../../wire/wirerecord"
 import {
 	BandAction,
 	ActionGroup,
 	StoreAction,
 	BAND,
-} from "../store/actions/actions"
-import { SignalDefinition, SignalsHandler } from "../definition/signal"
-import { SignalAPI } from "../hooks/signalapi"
+} from "../../store/actions/actions"
+import { SignalDefinition, SignalsHandler } from "../../definition/signal"
+import { SignalAPI } from "../../hooks/signalapi"
 import { batch } from "react-redux"
-import { SaveSignal, LoadSignal, AddWiresSignal } from "./wirebandsignals"
-import { CREATE_RECORD, EMPTY } from "./wireactions"
-import { Context } from "../context/context"
+import { SaveSignal, LoadSignal, AddWiresSignal } from "./signals"
+import { CREATE_RECORD, EMPTY } from "../../wire/wireactions"
+import { Context } from "../../context/context"
 import shortid from "shortid"
-import { deleteProperty } from "../util/util"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { getInitializedConditions } from "./wirecondition"
-import { load as loadCollection } from "../bands/collection"
+import { deleteProperty } from "../../util/util"
+import { PropDescriptor } from "../../buildmode/buildpropdefinition"
+import { getInitializedConditions } from "../../wire/wirecondition"
+import { load as loadCollection } from "../collection"
 import { AnyAction } from "redux"
 
 const WIRE_BAND = "wire"

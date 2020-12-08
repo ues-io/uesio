@@ -11,7 +11,7 @@ import { Definition } from "../definition/definition"
 import get from "lodash.get"
 import yaml from "yaml"
 import { PlainView, View } from "../view/view"
-import { ViewBand } from "../view/viewband"
+import { ViewBand } from "../bands/view/band"
 import Dependencies from "./types/dependenciesstate"
 import { Context } from "../context/context"
 

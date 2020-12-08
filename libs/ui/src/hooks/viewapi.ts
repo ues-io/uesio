@@ -11,7 +11,7 @@ import yaml from "yaml"
 
 import { View, ViewParams } from "../view/view"
 import { batch } from "react-redux"
-import { LOAD } from "../view/viewbandsignals"
+import { LOAD } from "../bands/view/signals"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 import toPath from "lodash.topath"

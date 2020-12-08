@@ -47,7 +47,7 @@ import {
 	EmptySignal,
 } from "./wiresignals"
 import { WireDefault } from "./wiredefault"
-import { WireBand } from "./wireband"
+import { WireBand } from "../bands/wire/band"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { wire } from "@uesio/constants"
 

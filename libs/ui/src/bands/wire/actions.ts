@@ -1,7 +1,7 @@
-import { WireDefinitionMap } from "../definition/wire"
-import { LoadResponse } from "../load/loadresponse"
-import { SaveResponseBatch } from "../load/saveresponse"
-import { BandAction } from "../store/actions/actions"
+import { WireDefinitionMap } from "../../definition/wire"
+import { LoadResponse } from "../../load/loadresponse"
+import { SaveResponseBatch } from "../../load/saveresponse"
+import { BandAction } from "../../store/actions/actions"
 
 const SAVE = "SAVE"
 const LOAD = "LOAD"

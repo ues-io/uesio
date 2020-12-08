@@ -1,23 +1,23 @@
-import RuntimeState from "../store/types/runtimestate"
-import { View, PlainViewMap } from "./view"
+import RuntimeState from "../../store/types/runtimestate"
+import { View, PlainViewMap } from "../../view/view"
 import {
 	BandAction,
 	BAND,
 	ActionGroup,
 	StoreAction,
 	ACTOR,
-} from "../store/actions/actions"
-import { SignalDefinition, SignalsHandler } from "../definition/signal"
-import { SignalAPI } from "../hooks/signalapi"
-import { ThunkFunc, Dispatcher, DispatchReturn } from "../store/store"
-import { ADD_WIRES } from "../wire/wirebandactions"
-import { LoadSignal, LOAD } from "./viewbandsignals"
-import { ADD_VIEW, AddViewAction } from "./viewbandactions"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { Context } from "../context/context"
-import { WIRE_BAND } from "../wire/wireband"
-import { SET_LOADED, SET_PARAMS } from "./viewactions"
-import loadViewDef from "../bands/viewdef/operations/load"
+} from "../../store/actions/actions"
+import { SignalDefinition, SignalsHandler } from "../../definition/signal"
+import { SignalAPI } from "../../hooks/signalapi"
+import { ThunkFunc, Dispatcher, DispatchReturn } from "../../store/store"
+import { ADD_WIRES } from "../wire/actions"
+import { LoadSignal, LOAD } from "./signals"
+import { ADD_VIEW, AddViewAction } from "./actions"
+import { PropDescriptor } from "../../buildmode/buildpropdefinition"
+import { Context } from "../../context/context"
+import { WIRE_BAND } from "../wire/band"
+import { SET_LOADED, SET_PARAMS } from "../../view/viewactions"
+import loadViewDef from "../viewdef/operations/load"
 
 const VIEW_BAND = "view"
 

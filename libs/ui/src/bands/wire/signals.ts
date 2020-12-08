@@ -1,5 +1,5 @@
-import { BandSignal } from "../definition/signal"
-import { WireDefinitionMap } from "../wireexports"
+import { BandSignal } from "../../definition/signal"
+import { WireDefinitionMap } from "../../wireexports"
 
 const LOAD = "LOAD"
 const SAVE = "SAVE"
