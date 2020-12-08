@@ -55,9 +55,8 @@ definition:
                                 variant: "contained"
                                 text: "Save"
                                 signals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/SAVE
+                                    wires:
                                       - "apps"
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"

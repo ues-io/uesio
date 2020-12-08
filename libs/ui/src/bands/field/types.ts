@@ -21,6 +21,7 @@ type SelectOption = {
 
 type FieldMetadata = {
 	name: string
+	namespace: string
 	createable: boolean
 	accessible: boolean
 	updateable: boolean

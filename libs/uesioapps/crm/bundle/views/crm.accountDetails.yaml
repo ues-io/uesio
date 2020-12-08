@@ -40,18 +40,16 @@ definition:
                                   - material.button:
                                       color: primary
                                       signals:
-                                        - band: wire
-                                          signal: SAVE
-                                          targets:
+                                        - signal: wire/SAVE
+                                          wires:
                                             - accounts
                                       text: Save
                                       variant: outlined
                                   - material.button:
                                       color: primary
                                       signals:
-                                        - band: wire
-                                          signal: CANCEL
-                                          target: accounts
+                                        - signal: wire/CANCEL
+                                          wire: accounts
                                       text: Cancel
                                       variant: outlined
                     justify: space-between

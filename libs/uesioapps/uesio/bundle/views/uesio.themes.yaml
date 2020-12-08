@@ -123,12 +123,9 @@ definition:
                         helptext: "Delete"
                         helptextposition: "right"
                         signals:
-                          - signal: "MARK_FOR_DELETE"
-                            band: "wire"
-                            target: "themes"
-                          - signal: "SAVE"
-                            band: "wire"
-                            targets:
+                          - signal: wire/MARK_FOR_DELETE
+                          - signal: wire/SAVE
+                            wires:
                               - "themes"
 dependencies:
   componentpacks:

@@ -17,7 +17,7 @@ function ToggleConditionAction(props: ActionProps): ReactElement | null {
 
 	const conditionId = def.id as string
 
-	if (!wireName || !conditionId || !wire.isValid()) {
+	if (!wireName || !conditionId || !wire) {
 		return null
 	}
 
@@ -25,15 +25,15 @@ function ToggleConditionAction(props: ActionProps): ReactElement | null {
 
 	const signals: signal.SignalDefinition[] = [
 		{
-			band: "wire",
-			signal: "TOGGLE_CONDITION",
-			target: wireName,
+			band: "",
+			signal: "wire/TOGGLE_CONDITION",
+			wire: wireName,
 			conditionId,
 		},
 		{
-			band: "wire",
-			signal: "LOAD",
-			targets: [wireName],
+			band: "",
+			signal: "wire/LOAD",
+			wires: [wireName],
 		},
 	]
 

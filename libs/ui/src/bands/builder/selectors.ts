@@ -1,9 +1,8 @@
 import { metadata } from "@uesio/constants"
 import { useSelector } from "react-redux"
 import RuntimeState from "../../store/types/runtimestate"
-import { MetadataListStore } from "./types"
 
-const isMatch = (componentPath: string, testPath?: string): boolean => {
+const isMatch = (componentPath: string, testPath?: string) => {
 	if (testPath) {
 		if (testPath === componentPath) {
 			return true
@@ -18,7 +17,7 @@ const isMatch = (componentPath: string, testPath?: string): boolean => {
 	return false
 }
 
-const useBuilderNodeState = (path: string): string =>
+const useBuilderNodeState = (path: string) =>
 	useSelector(({ builder }: RuntimeState) => {
 		if (builder) {
 			if (isMatch(path, builder.selectedNode)) {
@@ -31,25 +30,25 @@ const useBuilderNodeState = (path: string): string =>
 		return ""
 	})
 
-const useBuilderSelectedNode = (): string =>
+const useBuilderSelectedNode = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.selectedNode || "")
 
-const useBuilderDragNode = (): string =>
+const useBuilderDragNode = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.draggingNode || "")
 
-const useBuilderDropNode = (): string =>
+const useBuilderDropNode = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.droppingNode || "")
 
-const useBuilderLeftPanel = (): string =>
+const useBuilderLeftPanel = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.leftPanel || "")
 
-const useBuilderRightPanel = (): string =>
+const useBuilderRightPanel = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.rightPanel || "")
 
-const useBuilderView = (): string =>
+const useBuilderView = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.buildView || "")
 
-const useBuilderMode = (): boolean =>
+const useBuilderMode = () =>
 	useSelector(({ builder }: RuntimeState) =>
 		builder ? !!builder.buildMode : false
 	)
@@ -58,7 +57,7 @@ const useBuilderMetadataList = (
 	metadataType: metadata.MetadataType,
 	namespace: string,
 	grouping?: string
-): MetadataListStore =>
+) =>
 	grouping
 		? useSelector(
 				({ builder }: RuntimeState) =>
@@ -71,7 +70,7 @@ const useBuilderMetadataList = (
 					builder?.metadata?.[metadataType]?.[namespace] || null
 		  )
 
-const useBuilderAvailableNamespaces = (): MetadataListStore =>
+const useBuilderAvailableNamespaces = () =>
 	useSelector(({ builder }: RuntimeState) => builder?.namespaces || null)
 
 export {

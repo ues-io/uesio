@@ -15,7 +15,6 @@ const Table: FC<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = props.definition
 	const wire = uesio.wire.useWire(definition.wire)
-	const collection = wire.getCollection()
 
 	const initialState: TableState = {
 		mode: definition.mode || "READ",
@@ -26,7 +25,9 @@ const Table: FC<TableProps> = (props) => {
 		initialState
 	) as TableState
 
-	if (!wire.isValid() || !collection.isValid() || !componentState) return null
+	if (!wire || !componentState) return null
+
+	const collection = wire.getCollection()
 
 	const tableStyle = {
 		marginBottom: "16px",

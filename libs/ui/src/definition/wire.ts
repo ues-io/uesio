@@ -20,6 +20,7 @@ type WireFieldDefinitionMap = {
 
 type WireFieldDefinition = {
 	id: string
+	fields: WireFieldDefinitionMap
 }
 
 export {

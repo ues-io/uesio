@@ -11,6 +11,8 @@ import { ThemeState } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 import { useUesio } from "../hooks/hooks"
+import { useRoute } from "../bands/route/selectors"
+import { getDispatcher } from "../store/store"
 
 const makePaletteTheme = (theme: ThemeState) =>
 	Object.entries(theme?.routeTheme?.definition || {}).reduce(
@@ -27,8 +29,8 @@ const makeTheme = (themePalette: PaletteOptions) =>
 	})
 
 const Route: FC<BaseProps> = (props) => {
-	const uesio = useUesio(props)
-	const route = uesio.route.useRoute()
+	const dispatcher = getDispatcher()
+	const route = useRoute()
 	const theme = useTheme()
 
 	if (!route) return null
@@ -52,7 +54,7 @@ const Route: FC<BaseProps> = (props) => {
 		const [namespace, name] = parseKey(route.theme)
 
 		if (namespace && name && !theme.routeTheme) {
-			uesio.getDispatcher()(
+			dispatcher(
 				fetchTheme({
 					namespace,
 					name,

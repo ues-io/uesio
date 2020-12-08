@@ -11,26 +11,23 @@ definition:
           - material.button:
               color: primary
               signals:
-                - band: wire
-                  signal: CREATE_RECORD
-                  target: leads
+                - signal: wire/CREATE_RECORD
+                  wire: leads
               text: Create Row
               variant: contained
           - material.button:
               color: primary
               signals:
-                - band: wire
-                  signal: SAVE
-                  targets:
+                - signal: wire/SAVE
+                  wires:
                     - leads
               text: Save
               variant: contained
           - material.button:
               color: primary
               signals:
-                - band: wire
-                  signal: CANCEL
-                  target: leads
+                - signal: wire/CANCEL
+                  wire: leads
               text: Cancel
               variant: contained
           - material.button:
@@ -59,9 +56,7 @@ definition:
                 - material.button:
                     color: primary
                     signals:
-                      - band: wire
-                        signal: TOGGLE_DELETE_STATUS
-                        target: leads
+                      - signal: wire/TOGGLE_DELETE_STATUS
                     text: Delete
                     variant: contained
                 - material.button:

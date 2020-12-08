@@ -1,5 +1,22 @@
 import { DefinitionMap, YamlDoc } from "../../definition/definition"
-import Dependencies from "../../store/types/dependenciesstate"
+import { WireDefinitionMap } from "../../definition/wire"
+
+type ConfigValueDependencies = {
+	[key: string]: string
+}
+
+type ComponentPackDependency = {
+	loaded: boolean
+}
+
+type ComponentPackDependencies = {
+	[key: string]: ComponentPackDependency
+}
+
+type Dependencies = {
+	configvalues: ConfigValueDependencies
+	componentpacks: ComponentPackDependencies
+}
 
 type PlainViewDef = {
 	name: string
@@ -16,7 +33,7 @@ type PlainViewDefMap = {
 
 type ViewDefinition = {
 	components: DefinitionMap
-	wires: DefinitionMap
+	wires: WireDefinitionMap
 }
 
-export { PlainViewDef, PlainViewDefMap }
+export { PlainViewDef, PlainViewDefMap, Dependencies }

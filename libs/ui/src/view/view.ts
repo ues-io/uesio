@@ -2,7 +2,6 @@ import Actor from "../actor/actor"
 import RuntimeState from "../store/types/runtimestate"
 import { ActorAction, ActionGroup } from "../store/actions/actions"
 import { ThunkFunc } from "../store/store"
-import { PlainWireMap } from "../wire/wire"
 import {
 	SET_LOADED,
 	SET_PARAMS,
@@ -10,7 +9,6 @@ import {
 	SetLoadedAction,
 } from "./viewactions"
 import { SignalDefinition } from "../definition/signal"
-import { PlainViewDef } from "../bands/viewdef/types"
 
 type ErrorState = {
 	type: string
@@ -32,7 +30,6 @@ type PlainView = {
 	params: ViewParams
 	errors?: ErrorMap
 	loaded: boolean
-	wires: PlainWireMap
 }
 
 type PlainViewMap = {
@@ -93,24 +90,14 @@ class View extends Actor {
 		throw new Error("No Handler found for signal: " + signal.signal)
 	}
 
-	// Serializes this wire into a redux state
-	toState = (): PlainView => ({
-		name: "",
-		namespace: "",
-		path: "",
-		params: {},
-		loaded: false,
-		wires: {},
-	})
-	getId = (): string =>
+	getId = () =>
 		`${this.source.namespace}.${this.source.name}(${this.source.path})`
-	getName = (): string => this.source.name
-	getNamespace = (): string => this.source.namespace
-	getParams = (): ViewParams => this.source.params
-	getParam = (param: string): string | null =>
-		this.source.params?.[param] || null
-	getViewDefId = (): string => `${this.getNamespace()}.${this.getName()}`
-	getViewDef = (state: RuntimeState): PlainViewDef | undefined =>
+	getName = () => this.source.name
+	getNamespace = () => this.source.namespace
+	getParams = () => this.source.params
+	getParam = (param: string) => this.source.params?.[param] || null
+	getViewDefId = () => `${this.getNamespace()}.${this.getName()}`
+	getViewDef = (state: RuntimeState) =>
 		state.viewdef?.entities[this.getViewDefId()]
 }
 
