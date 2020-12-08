@@ -36,7 +36,7 @@ async function handleChange(
 	fileCollection: string
 ) {
 	const collection = wire.getCollection()
-	const collectionName = wire.getCollectionName()
+	const collectionName = collection.getId()
 
 	const idField = collection.getIdField()
 	if (!idField) return

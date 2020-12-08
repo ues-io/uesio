@@ -25,7 +25,7 @@ async function handleChange(
 	signals: signal.SignalDefinition[]
 ) {
 	const collection = wire.getCollection()
-	const collectionName = wire.getCollectionName()
+	const collectionName = collection.getId()
 
 	const idField = collection.getIdField()
 	if (!idField) return
