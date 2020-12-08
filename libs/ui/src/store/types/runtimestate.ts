@@ -1,5 +1,4 @@
 import { PlainCollectionMap } from "../../bands/collection/types"
-import SiteState from "./sitestate"
 import { PlainViewMap } from "../../view/view"
 import { RouteState } from "../../bands/route/types"
 import { UserState } from "../../bands/user/types"
@@ -8,6 +7,7 @@ import { ThemeState } from "../../bands/theme/types"
 import { EntityState } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../../bands/viewdef/types"
 import { ComponentState } from "../../bands/component/types"
+import { PlainWire } from "../../bands/wire/types"
 
 type RuntimeState = {
 	collection: PlainCollectionMap
@@ -17,8 +17,13 @@ type RuntimeState = {
 	viewdef: EntityState<PlainViewDef>
 	route: RouteState
 	user: UserState
-	site: SiteState
+	site: {
+		name: string
+		app: string
+		version: string
+	}
 	theme: ThemeState
+	wire: EntityState<PlainWire>
 }
 
 export default RuntimeState

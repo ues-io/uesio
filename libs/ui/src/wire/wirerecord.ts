@@ -14,35 +14,25 @@ type PlainWireRecordMap = {
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
 		this.id = id
-		this.valid = !!source
 		this.source = source || ({} as PlainWireRecord)
 		this.wire = wire
 	}
 
 	id: string
 	source: PlainWireRecord
-	valid: boolean
 	wire: Wire
 
-	getId(): string {
-		return this.id
-	}
+	getId = () => this.id
+	getWire = () => this.wire
+	getFieldValue = (fieldName: string) => get(this.source, fieldName)
 
-	getWire(): Wire {
-		return this.wire
-	}
-
-	getFieldValue(fieldName: string): FieldValue {
-		return get(this.source, fieldName)
-	}
-
-	update(fieldId: string, value: FieldValue): void {
+	update = (fieldId: string, value: FieldValue) => {
 		this.wire.dispatchRecordUpdate(this.id, {
 			[fieldId]: value,
 		})
 	}
 
-	set(fieldId: string, value: FieldValue): void {
+	set = (fieldId: string, value: FieldValue) => {
 		this.wire.dispatchRecordSet(this.id, {
 			[fieldId]: value,
 		})

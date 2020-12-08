@@ -42,9 +42,7 @@ function ColorPicker(props: Props): ReactElement | null {
 	const classes = useStyles(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
-	if (!wire || !record) {
-		return null
-	}
+	if (!wire || !record) return null
 
 	const collection = wire.getCollection()
 	const fieldId = props.definition.fieldId
@@ -52,9 +50,7 @@ function ColorPicker(props: Props): ReactElement | null {
 
 	const mode = props.context.getFieldMode() || "READ"
 
-	if (!fieldMetadata.isValid()) {
-		return null
-	}
+	if (!fieldMetadata) return null
 
 	return (
 		<div className={classes.root}>

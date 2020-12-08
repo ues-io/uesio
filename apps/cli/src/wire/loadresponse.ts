@@ -6,6 +6,7 @@ type FieldType = "TEXT" | "REFERENCE" | "LONGTEXT"
 
 type FieldMetadata = {
 	name: string
+	namespace: string
 	createable: boolean
 	accessible: boolean
 	updateable: boolean
@@ -52,5 +53,5 @@ export {
 	LoadResponseRecord,
 	FieldValue,
 	KeyValue,
-  PlainCollectionMap,
+	PlainCollectionMap,
 }

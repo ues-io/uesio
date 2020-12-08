@@ -1,7 +1,6 @@
 import RuntimeState from "../store/types/runtimestate"
 import { SignalDefinition } from "../definition/signal"
 import Actor from "./actor"
-import { WireBand } from "../wire/wireband"
 import { ViewBand } from "../view/viewband"
 import { ThunkFunc } from "../store/store"
 import { BandAction } from "../store/actions/actions"
@@ -21,7 +20,6 @@ type BandMap = {
 
 const bandMap: BandMap = {
 	view: ViewBand,
-	wire: WireBand,
 }
 
 const getBand = (bandName: string): Band => bandMap[bandName]

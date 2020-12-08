@@ -12,20 +12,16 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 
 	const record = context.getRecord()
 	const wire = context.getWire()
-	if (!wire || !record) {
-		return null
-	}
+	if (!wire || !record) return null
 
 	const collection = wire.getCollection()
 
 	const fieldMetadata = collection.getField(fieldId)
+
+	if (!fieldMetadata) return null
+
 	const label = definition.label || fieldMetadata.getLabel()
 	const mode = context.getFieldMode() || "READ"
-
-	if (!fieldMetadata.isValid()) {
-		return null
-	}
-
 	const type = fieldMetadata.getType()
 
 	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {

@@ -82,11 +82,10 @@ definition:
                                 variant: "contained"
                                 text: "Save"
                                 signals:
-                                  - signal: "SAVE"
-                                    band: "wire"
-                                    targets:
+                                  - signal: wire/SAVE
+                                    wires:
                                       - "themes"
-                                  - signal: "route/"NAVIGATE"
+                                  - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${uesio.name}"
                                     namespace: "uesio"
                             - material.button:

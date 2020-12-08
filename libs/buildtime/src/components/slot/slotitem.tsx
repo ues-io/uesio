@@ -97,8 +97,8 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 
 	const uesio = hooks.useUesio(props)
 	const nodeState = uesio.builder.useNodeState(fullPath)
-	const isActive = nodeState === "active" || nodeState === "activeChild"
-	const isSelected = nodeState === "selected" || nodeState === "selectedChild"
+	const isActive = nodeState === "active"
+	const isSelected = nodeState === "selected"
 	const isLast = index === size - 1
 
 	const propDef = component.registry.getPropertiesDefinitionFromPath(fullPath)
