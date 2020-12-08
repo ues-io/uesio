@@ -18,9 +18,8 @@ definition:
           - material.button:
               color: primary
               signals:
-                - band: wire
-                  signal: SAVE
-                  targets:
+                - signal: wire/SAVE
+                  wires:
                     - leads
               text: Save
               variant: contained
