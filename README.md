@@ -36,7 +36,7 @@ The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-wit
 - [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
-- [Immer](https://github.com/immerjs/immer). Immutable data structure library. Immer is **implicitely** used in the reducers of Redux-toolkit.
+- [Immer](https://github.com/immerjs/immer). Immutable data structure library. Immer is **implicitely** used in the reducer of Redux-toolkit.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # Monorepo architecture
