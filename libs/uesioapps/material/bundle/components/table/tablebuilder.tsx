@@ -1,27 +1,15 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks, component } from "@uesio/ui"
 import { TableProps, TableDefinition } from "./tabledefinition"
 import Table from "./table"
 
-function TableBuilder(props: TableProps): ReactElement {
+const TableBuilder: FunctionComponent<TableProps> = (props) => {
+	const { path, context } = props
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as TableDefinition
 	const buildView = uesio.builder.useView()
 	const isExpanded = buildView === "expandedview"
 
-	const path = props.path
-	const context = props.context
-
-	const slotProps = {
-		definition,
-		listName: "columns",
-		path,
-		accepts: ["uesio.field", "material.column"],
-		context: context.addFrame({
-			noMerge: true,
-		}),
-		direction: "horizontal",
-	}
 	return (
 		<>
 			{isExpanded && (
@@ -33,7 +21,14 @@ function TableBuilder(props: TableProps): ReactElement {
 						backgroundColor: "#f5f5f5",
 					}}
 				>
-					<component.Slot {...slotProps} />
+					<component.Slot
+						definition={definition}
+						listName="columns"
+						path={path}
+						accepts={["uesio.field", "material.column"]}
+						context={context.addFrame({ noMerge: true })}
+						direction="horizontal"
+					/>
 				</div>
 			)}
 			<Table {...props} definition={definition} />
