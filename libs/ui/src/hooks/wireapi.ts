@@ -18,7 +18,7 @@ class WireAPI {
 	// Wraps our store's useWire result (POJO) in a nice Wire class
 	// with convenience methods to make the api easier to consume for end users.
 	useWire(wireName: string): Wire | undefined {
-		const plainWire = useWire(wireName, this.uesio.getViewId())
+		const plainWire = useWire(this.uesio.getViewId(), wireName)
 		const wireDef = this.uesio.getWireDef(wireName)
 		const collectionName = wireDef?.collection
 		const plainCollection = this.useCollection(collectionName)

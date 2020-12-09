@@ -1,7 +1,8 @@
-import { selectWire } from "../bands/wire/selectors"
+import { Dictionary } from "@reduxjs/toolkit"
+import { getFullWireId } from "../bands/wire/selectors"
+import { PlainWire } from "../bands/wire/types"
 import { Context } from "../context/context"
 import { LoadResponseRecord } from "../load/loadresponse"
-import RuntimeState from "../store/types/runtimestate"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -27,7 +28,7 @@ type WireDefault = ValueDefault | LookupDefault
 
 const getDefaultRecord = (
 	context: Context,
-	state: RuntimeState,
+	wires: Dictionary<PlainWire>,
 	viewId: string,
 	wireName: string
 ): LoadResponseRecord => {
@@ -38,15 +39,13 @@ const getDefaultRecord = (
 	const defaultRecord: LoadResponseRecord = {}
 	defaults?.forEach((defaultItem) => {
 		if (defaultItem.valueSource === "LOOKUP") {
-			const lookupPlainWire = selectWire(
-				state,
-				defaultItem.lookupWire,
-				viewId
-			)
-			if (!lookupPlainWire) return
+			const lookupWire =
+				wires[getFullWireId(viewId, defaultItem.lookupWire)]
+			if (!lookupWire) return
 
+			const firstRecord = Object.values(lookupWire.data)[0]
 			const lookupValue = defaultItem.lookupField
-				? lookupPlainWire.data[0][defaultItem.lookupField]
+				? firstRecord[defaultItem.lookupField]
 				: context.merge(defaultItem.lookupTemplate)
 			if (lookupValue) {
 				defaultRecord[defaultItem.field] = lookupValue

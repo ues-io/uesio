@@ -16,7 +16,12 @@ export default (context: Context, wirename: string) => async (
 	dispatch(
 		createRecord({
 			recordId,
-			record: getDefaultRecord(context, getState(), viewId, wirename),
+			record: getDefaultRecord(
+				context,
+				getState().wire.entities,
+				viewId,
+				wirename
+			),
 			entity: `${viewId}/${wirename}`,
 		})
 	)

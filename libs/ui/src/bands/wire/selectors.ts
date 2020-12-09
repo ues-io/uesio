@@ -4,10 +4,15 @@ import { selectors } from "./adapter"
 import { PlainWire } from "./types"
 
 // Both gets wire state and subscribes the component to wire changes
-const useWire = (wireName?: string, viewId?: string): PlainWire | undefined =>
-	useSelector((state: RuntimeState) => selectWire(state, wireName, viewId))
+const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
+	useSelector((state: RuntimeState) => selectWire(state, viewId, wireName))
 
-const selectWire = (state: RuntimeState, wireName?: string, viewId?: string) =>
-	selectors.selectById(state, `${viewId}/${wireName}`)
+const selectWire = (state: RuntimeState, viewId?: string, wireName?: string) =>
+	viewId && wireName
+		? selectors.selectById(state, getFullWireId(viewId, wireName))
+		: undefined
 
-export { useWire, selectWire }
+const getFullWireId = (viewId: string, wireName: string) =>
+	`${viewId}/${wireName}`
+
+export { useWire, selectWire, getFullWireId }

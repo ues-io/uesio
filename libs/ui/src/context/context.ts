@@ -88,7 +88,7 @@ class Context {
 		const wireId = this.getWireId()
 		const viewId = this.getViewId()
 		if (!wireId) return undefined
-		const plainWire = selectWire(state, wireId, viewId)
+		const plainWire = selectWire(state, viewId, wireId)
 		const wireDef = this.getWireDef(wireId)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
