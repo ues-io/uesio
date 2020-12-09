@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 
 import {
 	material,
@@ -36,7 +36,7 @@ interface CellProps {
 	index: number
 }
 
-const FieldCell: FC<CellProps> = ({
+const FieldCell: FunctionComponent<CellProps> = ({
 	column: { field },
 	path,
 	index,
@@ -50,13 +50,13 @@ const FieldCell: FC<CellProps> = ({
 				hideLabel: true,
 			}}
 			index={index}
-			path={path + '["columns"]["' + index + '"]'}
+			path={`${path}["columns"]["${index}"]`}
 			context={context}
 		/>
 	</material.TableCell>
 )
 
-const SlotCell: FC<CellProps> = (props: CellProps) => {
+const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
 	const { column, path, index, context } = props
 	const fieldId = column.field
 	return (
@@ -64,7 +64,7 @@ const SlotCell: FC<CellProps> = (props: CellProps) => {
 			<component.Slot
 				definition={column}
 				listName="components"
-				path={path + '["columns"]["' + index + '"]["material.column"]'}
+				path={`${path}["columns"]["${index}"]["material.column"]`}
 				accepts={["uesio.context"]}
 				direction="horizontal"
 				context={context}
@@ -73,64 +73,66 @@ const SlotCell: FC<CellProps> = (props: CellProps) => {
 	)
 }
 
-const TableRow: FC<RowProps> = (props: RowProps) => {
-	const path = props.path
-	const wire = props.wire
-	const columns = props.columns
-	const context = props.context
-	const mode = props.mode
-	const record = props.record
-
+const TableRow: FunctionComponent<RowProps> = (props) => {
+	const { path, wire, columns, context, mode, record } = props
 	const style = wire.isMarkedForDeletion(record.getId())
-		? {
-				backgroundColor: "#ffcdd2",
-		  }
+		? { backgroundColor: "#ffcdd2" }
 		: {}
 	return (
 		<material.TableRow style={style}>
 			{columns.map((columnDef, index) => {
 				const column = columnDef["material.column"] as ColumnDefinition
 
-				const cellProps: CellProps = {
-					column,
-					context: context.addFrame({
-						record: record.getId(),
-						wire: wire.getId(),
-						fieldMode: mode,
-					}),
-					path,
-					index,
-				}
-
 				if (!column.components) {
-					return <FieldCell {...cellProps} />
+					return (
+						<FieldCell
+							column={column}
+							context={context.addFrame({
+								record: record.getId(),
+								wire: wire.getId(),
+								fieldMode: mode,
+							})}
+							path={path}
+							index={index}
+						/>
+					)
 				}
 
-				return <SlotCell key={index} {...cellProps} />
+				return (
+					<SlotCell
+						key={index}
+						column={column}
+						context={context.addFrame({
+							record: record.getId(),
+							wire: wire.getId(),
+							fieldMode: mode,
+						})}
+						path={path}
+						index={index}
+					/>
+				)
 			})}
 		</material.TableRow>
 	)
 }
 
-const TableBody: FC<Props> = (props: Props) => {
+const TableBody: FunctionComponent<Props> = (props) => {
 	const wire = props.wire
 	const data = wire.getData()
 
 	return (
 		<material.TableBody>
-			{data.map((record) => {
-				return (
-					<TableRow
-						key={record.getId()}
-						wire={wire}
-						path={props.path}
-						columns={props.columns}
-						context={props.context}
-						mode={props.state.mode}
-						record={record}
-					/>
-				)
-			})}
+			{data.map((record) => (
+				<TableRow
+					key={record.getId()}
+					wire={wire}
+					path={props.path}
+					columns={props.columns}
+					context={props.context}
+					mode={props.state.mode}
+					record={record}
+				/>
+			))}
 		</material.TableBody>
 	)
 }
