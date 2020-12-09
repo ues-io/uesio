@@ -10,9 +10,33 @@ import Description from "@material-ui/icons/Description"
 
 import { material } from "@uesio/ui"
 
-type IconMap = {
-	[key: string]: React.ComponentType<material.SvgIconProps>
+type IconMap<K extends string> = {
+	[key in K]: React.ComponentType<material.SvgIconProps>
 }
+
+/*
+const iconMap: IconMap<
+	| "close"
+	| "success"
+	| "warning"
+	| "error"
+	| "info"
+	| "open"
+	| "preview"
+	| "delete"
+	| "file"
+> = {
+	close: Close,
+	success: CheckCircleOutline,
+	warning: ReportProblemOutlined,
+	error: ErrorOutline,
+	info: InfoOutlined,
+	open: Launch,
+	preview: Visibility,
+	delete: Delete,
+	file: Description,
+}
+*/
 
 const iconMap = {
 	close: Close,
@@ -24,10 +48,24 @@ const iconMap = {
 	preview: Visibility,
 	delete: Delete,
 	file: Description,
-} as IconMap
+}
+
+const dictionary: Record<string, React.ComponentType<material.SvgIconProps>> = {
+	close: Close,
+	success: CheckCircleOutline,
+	warning: ReportProblemOutlined,
+	error: ErrorOutline,
+	info: InfoOutlined,
+	open: Launch,
+	preview: Visibility,
+	delete: Delete,
+	file: Description,
+}
+
+console.log("dico", dictionary)
 
 export default function getIcon(
-	key?: string
+	key?: keyof iconMap
 ): React.ComponentType<material.SvgIconProps> {
 	const fallback = Close
 	if (!key) {
