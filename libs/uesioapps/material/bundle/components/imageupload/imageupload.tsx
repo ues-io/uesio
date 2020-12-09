@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { ImageUploadProps } from "./imageuploaddefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
@@ -63,7 +63,7 @@ async function handleChange(
 	}
 }
 
-function ImageUpload(props: ImageUploadProps): ReactElement | null {
+const ImageUpload: FunctionComponent<ImageUploadProps> = (props) => {
 	const {
 		context,
 		definition: { fieldId, id, preview, fileCollection },
