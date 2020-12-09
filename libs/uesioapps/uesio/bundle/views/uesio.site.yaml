@@ -162,7 +162,7 @@ definition:
                       - material.card:
                           media:
                             background:
-                              color: "#581845"
+                              color: "secondary"
                             height: 10px
                           components:
                             - material.typography:
