@@ -1,9 +1,5 @@
-import {
-	GoogleLogin,
-	GoogleLoginResponse,
-	GoogleLoginProps,
-} from "react-google-login"
-import React, { ReactElement } from "react"
+import { GoogleLogin, GoogleLoginResponse } from "react-google-login"
+import React, { FunctionComponent } from "react"
 import { definition, hooks, material } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonWidth } from "../loginhelpers/button"
@@ -27,7 +23,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginGoogle(props: LoginProps): ReactElement | null {
+const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const clientIdKey = props.definition.clientId
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
@@ -54,19 +50,17 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 		console.log("Login Failed", error)
 	}
 
-	const options: GoogleLoginProps = {
-		clientId: clientIdValue,
-		buttonText: buttonText,
-		onSuccess: responseGoogle,
-		onFailure: responseGoogleFail,
-		cookiePolicy: "single_host_origin",
-		className: classes.googleButton,
-		autoLoad: false,
-	}
-
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<GoogleLogin {...options} />
+			<GoogleLogin
+				clientId={clientIdValue}
+				buttonText={buttonText}
+				onSuccess={responseGoogle}
+				onFailure={responseGoogleFail}
+				cookiePolicy="single_host_origin"
+				className={classes.googleButton}
+				autoLoad={false}
+			/>
 		</LoginWrapper>
 	)
 }
