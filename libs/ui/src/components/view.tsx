@@ -1,13 +1,15 @@
 import React, { useEffect, FC } from "react"
-import { BaseProps, DefinitionMap } from "../definition/definition"
+import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
-import { ViewParams } from "../view/view"
 import Slot from "./slot"
 import { parseKey } from "../component/path"
 import { Dependencies } from "../bands/viewdef/types"
-import { VIEW_BAND } from "../hooks/viewapi"
-import { LOAD } from "../view/viewbandsignals"
+import { ViewParams } from "../bands/view/types"
+import { useView } from "../bands/view/selectors"
+import { useViewDef } from "../bands/viewdef/selectors"
+import loadViewDefOp from "../bands/viewdef/operations/load"
+import loadViewOp from "../bands/view/operations/load"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -42,59 +44,63 @@ interface Props extends BaseProps {
 	}
 }
 
-const View: FC<Props> = (props: Props) => {
+const View: FC<Props> = (props) => {
 	const uesio = useUesio(props)
-	const [viewnamespace, viewname] = parseKey(props.definition.view)
-	const viewparams = props.definition.params
-	const { path, context } = props
+	const {
+		path,
+		context,
+		definition: { params, view: viewDefId },
+	} = props
 
-	const view = uesio.view.useView(viewnamespace, viewname, path)
+	const viewId = `${viewDefId}(${path})`
+	const viewDef = useViewDef(viewDefId)
+	const view = useView(viewId)
 
 	// Currently only going into buildtime for the base view. We could change this later.
-	const buildMode = !!props.context.getBuildMode() && path === ""
-
-	const definition = uesio.view.useDefinition("", view) as DefinitionMap
-	const dependencies = uesio.view.useDependencies(view)
-
-	const neededScripts = getNeededScripts(dependencies, uesio, buildMode)
+	const buildMode = !!context.getBuildMode() && path === ""
+	const neededScripts = getNeededScripts(
+		viewDef?.dependencies,
+		uesio,
+		buildMode
+	)
 	const scriptResult = useScripts(neededScripts)
 	const scriptsHaveLoaded = depsHaveLoaded(
 		neededScripts,
 		scriptResult.scripts
 	)
 
+	const useBuildTime = buildMode && scriptsHaveLoaded
+
+	const viewContext = context.addFrame({
+		view: viewId,
+		viewDef: viewDefId,
+		buildMode: useBuildTime,
+	})
+
 	useEffect(() => {
-		const hasNewParams = viewparams !== view.source.params
-		// We could think about letting this go forward before loading viewdef deps
-		if ((!view.valid || hasNewParams) && scriptsHaveLoaded) {
-			uesio.signal.run(
-				{
-					band: VIEW_BAND,
-					signal: LOAD,
-					namespace: viewnamespace,
-					name: viewname,
+		if (!view) {
+			const [namespace, name] = parseKey(viewDefId)
+			uesio.getDispatcher()(
+				loadViewOp({
+					context: viewContext,
+					namespace,
+					name,
 					path,
-					params: viewparams,
-				},
-				context
+					params,
+				})
 			)
 		}
 	}, [])
 
-	const useBuildTime = buildMode && scriptsHaveLoaded
-
-	if (!definition || !view.valid || !view.source.loaded) return null
+	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
 
 	return (
 		<Slot
-			definition={definition}
+			definition={viewDef.definition}
 			listName="components"
 			path=""
 			accepts={["uesio.standalone"]}
-			context={context.addFrame({
-				view: view.getId(),
-				buildMode: useBuildTime,
-			})}
+			context={viewContext}
 		/>
 	)
 }

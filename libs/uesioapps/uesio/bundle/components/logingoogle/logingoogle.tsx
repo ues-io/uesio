@@ -41,7 +41,6 @@ function LoginGoogle(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "", //TODO: remove this
 				signal: "user/LOGIN",
 				type: "google",
 				token: response.getAuthResponse().id_token,

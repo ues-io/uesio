@@ -1,5 +1,4 @@
 import { PlainCollectionMap } from "../../bands/collection/types"
-import { PlainViewMap } from "../../view/view"
 import { RouteState } from "../../bands/route/types"
 import { UserState } from "../../bands/user/types"
 import { BuilderState } from "../../bands/builder/types"
@@ -8,12 +7,13 @@ import { EntityState } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../../bands/viewdef/types"
 import { ComponentState } from "../../bands/component/types"
 import { PlainWire } from "../../bands/wire/types"
+import { PlainView } from "../../bands/view/types"
 
 type RuntimeState = {
 	collection: PlainCollectionMap
 	component: EntityState<ComponentState>
 	builder?: BuilderState
-	view?: PlainViewMap
+	view: EntityState<PlainView>
 	viewdef: EntityState<PlainViewDef>
 	route: RouteState
 	user: UserState

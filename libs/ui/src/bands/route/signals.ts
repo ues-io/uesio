@@ -1,15 +1,15 @@
 import { Context } from "../../context/context"
-import { BandSignal } from "../../definition/signal"
+import { SignalDefinition } from "../../definition/signal"
 import operations from "./operations"
 
 // The key for the entire band
 const ROUTE_BAND = "route"
 
-interface RedirectSignal extends BandSignal {
+interface RedirectSignal extends SignalDefinition {
 	path: string
 }
 
-interface NavigateSignal extends BandSignal {
+interface NavigateSignal extends SignalDefinition {
 	path: string
 	namespace: string
 	noPushState?: boolean

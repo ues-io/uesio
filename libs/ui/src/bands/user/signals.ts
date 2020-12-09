@@ -1,11 +1,11 @@
 import { Context } from "../../context/context"
-import { BandSignal } from "../../definition/signal"
+import { SignalDefinition } from "../../definition/signal"
 import operations from "./operations"
 
 // The key for the entire band
 const USER_BAND = "user"
 
-interface LoginSignal extends BandSignal {
+interface LoginSignal extends SignalDefinition {
 	type: string
 	token: string
 }
@@ -17,7 +17,7 @@ const signals = {
 			operations.login(context, signal.type, signal.token),
 	},
 	[`${USER_BAND}/LOGOUT`]: {
-		dispatcher: (signal: BandSignal, context: Context) =>
+		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
 	},
 }

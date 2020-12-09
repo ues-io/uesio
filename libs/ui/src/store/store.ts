@@ -4,27 +4,26 @@ import { Provider, useDispatch, useSelector } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
-import { mainReducer } from "../store/reducers"
 import RuntimeState from "./types/runtimestate"
 import { Definition } from "../definition/definition"
 import get from "lodash.get"
-import { PlainView, View } from "../view/view"
-import { ViewBand } from "../view/viewband"
 import { Context } from "../context/context"
+import { selectors } from "../bands/viewdef/adapter"
+
+import collection from "../bands/collection"
+import route from "../bands/route"
+import user from "../bands/user"
+import builder from "../bands/builder"
+import viewdef from "../bands/viewdef"
+import theme from "../bands/theme"
+import component from "../bands/component"
+import wire from "../bands/wire"
+import view from "../bands/view"
 
 type DispatchReturn = Promise<Context>
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RuntimeState, Platform, T>
 type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
-
-const defaultState = {
-	collection: {},
-	view: {},
-	viewdef: {
-		entities: {},
-		ids: [],
-	},
-}
 
 let platform: Platform
 let store: Store
@@ -32,12 +31,21 @@ let store: Store
 const create = (plat: Platform, initialState: RuntimeState) => {
 	platform = plat
 	store = configureStore({
-		reducer: mainReducer,
-		devTools: true,
-		preloadedState: {
-			...defaultState,
-			...initialState,
+		reducer: {
+			collection,
+			component,
+			route,
+			user,
+			builder,
+			viewdef,
+			view,
+			theme,
+			wire,
+			site: (state) => state || {},
+			workspace: (state) => state || {},
 		},
+		devTools: true,
+		preloadedState: initialState,
 		middleware: [thunk.withExtraArgument(plat)],
 	})
 	return store
@@ -47,40 +55,23 @@ const getDispatcher = (): Dispatcher<AnyAction> => useDispatch()
 const getPlatform = () => platform
 const getStore = () => store
 
-// Both gets view state and subscribes the component to wire changes
-const useView = (
-	namespace: string,
-	name: string,
-	path: string
-): PlainView | null =>
+const useViewDefinition = (viewDefId: string, path?: string): Definition =>
 	useSelector((state: RuntimeState) => {
-		const viewId = ViewBand.makeId(namespace, name, path)
-		return state.view?.[viewId] || null
-	})
-
-const useViewDefinition = (view: View, path?: string): Definition =>
-	useSelector((state: RuntimeState) => {
-		const viewDef = view.getViewDef(state)
+		const viewDef = selectors.selectById(state, viewDefId)
 		const definition = viewDef?.definition
 		return path ? get(definition, path || "") : definition
 	})
 
-const useViewDependencies = (view: View) =>
+const useViewYAML = (viewDefId: string) =>
 	useSelector((state: RuntimeState) => {
-		const viewDef = view.getViewDef(state)
-		return viewDef?.dependencies
-	})
-
-const useViewYAML = (view: View) =>
-	useSelector((state: RuntimeState) => {
-		const viewDef = view.getViewDef(state)
+		const viewDef = selectors.selectById(state, viewDefId)
 		return viewDef?.yaml
 	})
 
-const useViewConfigValue = (view: View, key: string) =>
+const useViewConfigValue = (viewDefId: string, key: string) =>
 	useSelector((state: RuntimeState) => {
-		const viewdef = view.getViewDef(state)
-		return viewdef?.dependencies?.configvalues[key] || ""
+		const viewDef = selectors.selectById(state, viewDefId)
+		return viewDef?.dependencies?.configvalues[key] || ""
 	})
 
 export {
@@ -92,9 +83,7 @@ export {
 	getDispatcher,
 	getPlatform,
 	getStore,
-	useView,
 	useViewYAML,
 	useViewDefinition,
-	useViewDependencies,
 	useViewConfigValue,
 }

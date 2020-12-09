@@ -1,5 +1,4 @@
 import { Context } from "../../context/context"
-import { BandSignal } from "../../definition/signal"
 import { PropDescriptor } from "../../buildmode/buildpropdefinition"
 import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
@@ -12,32 +11,33 @@ import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
 import { AnyAction } from "redux"
+import { SignalDefinition } from "../../definition/signal"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
 
-interface CreateRecordSignal extends BandSignal {
+interface CreateRecordSignal extends SignalDefinition {
 	wire: string
 }
 
-interface CancelWireSignal extends BandSignal {
+interface CancelWireSignal extends SignalDefinition {
 	wire: string
 }
 
-interface EmptyWireSignal extends BandSignal {
+interface EmptyWireSignal extends SignalDefinition {
 	wire: string
 }
 
-interface ToggleConditionSignal extends BandSignal {
+interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
 	condition: string
 }
 
-interface LoadWiresSignal extends BandSignal {
+interface LoadWiresSignal extends SignalDefinition {
 	wires: string[]
 }
 
-interface SaveWiresSignal extends BandSignal {
+interface SaveWiresSignal extends SignalDefinition {
 	wires: string[]
 }
 
@@ -46,19 +46,19 @@ const signals = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle Delete Status",
 		public: true,
-		dispatcher: (signal: BandSignal, context: Context) =>
+		dispatcher: (signal: SignalDefinition, context: Context) =>
 			toggleDeleteOp(context),
 	},
 	[`${WIRE_BAND}/MARK_FOR_DELETE`]: {
 		label: "Mark For Delete",
 		public: true,
-		dispatcher: (signal: BandSignal, context: Context) =>
+		dispatcher: (signal: SignalDefinition, context: Context) =>
 			markForDeleteOp(context),
 	},
 	[`${WIRE_BAND}/UNMARK_FOR_DELETE`]: {
 		label: "Unmark For Delete",
 		public: true,
-		dispatcher: (signal: BandSignal, context: Context) =>
+		dispatcher: (signal: SignalDefinition, context: Context) =>
 			unMarkForDeleteOp(context),
 	},
 	[`${WIRE_BAND}/CREATE_RECORD`]: {

@@ -31,22 +31,18 @@ class ComponentAPI {
 		componentId: string,
 		initialState: PlainComponentState
 	): PlainComponentState | undefined => {
-		const view = this.uesio.getView()
+		const viewId = this.uesio.getViewId()
 		const componentType = this.uesio.getComponentType()
-		const state = useComponentState(
-			componentType,
-			componentId,
-			view?.getId()
-		)
+		const state = useComponentState(componentType, componentId, viewId)
 
 		useEffect(() => {
-			if (!state && view) {
+			if (!state && viewId) {
 				this.dispatcher({
 					type: "component/set",
 					payload: {
 						id: componentId,
 						componentType,
-						view: view.getId(),
+						view: viewId,
 						state: initialState,
 					},
 				})

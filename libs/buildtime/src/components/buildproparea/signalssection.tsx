@@ -5,7 +5,6 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 import SignalsIcon from "@material-ui/icons/Router"
 import { material, hooks, definition, signal } from "@uesio/ui"
 import AddIcon from "@material-ui/icons/AddBox"
-import PropList from "./proplist"
 import PropertiesPanel from "../toolbar/propertiespanel/propertiespanel"
 
 function SignalsSection(props: SectionRendererProps): ReactElement | null {

@@ -38,7 +38,6 @@ function LoginFacebook(props: LoginProps): ReactElement | null {
 	): Promise<void> => {
 		await uesio.signal.run(
 			{
-				band: "", //TODO: remove this
 				signal: "user/LOGIN",
 				type: "facebook",
 				token: response.accessToken,

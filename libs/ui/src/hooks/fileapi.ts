@@ -1,6 +1,5 @@
 import { Uesio } from "./hooks"
-import { Dispatcher, getPlatform } from "../store/store"
-import { StoreAction } from "../store/actions/actions"
+import { getPlatform } from "../store/store"
 import { Context } from "../context/context"
 
 const getURL = (context: Context, namespace: string, name: string) =>
@@ -47,11 +46,9 @@ const uploadFile = (
 class FileAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
-		this.dispatcher = uesio.getDispatcher()
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<StoreAction>
 
 	getURL = getURL
 	getURLFromFullName = getURLFromFullName

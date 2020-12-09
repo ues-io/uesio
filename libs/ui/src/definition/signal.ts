@@ -31,36 +31,9 @@ type ComponentSignalDescriptor = {
 	dispatcher: ComponentSignalDispatcher
 }
 
-type SignalsHandler = {
-	[key: string]: SignalDescriptor
-}
-type SignalHandlerStore = {
-	[key: string]: SignalsHandler
-}
-type SignalBase = {
+type SignalDefinition = {
 	signal: string
-	band: string
-	target?: string
-	scope?: string
 	[key: string]: Definition
 }
 
-interface ActorSignal extends SignalBase {
-	target: string
-}
-
-interface BandSignal extends SignalBase {
-	targets?: string[]
-}
-
-type SignalDefinition = BandSignal | ActorSignal
-
-export {
-	SignalDefinition,
-	SignalDescriptor,
-	ComponentSignalDescriptor,
-	ActorSignal,
-	BandSignal,
-	SignalHandlerStore,
-	SignalsHandler,
-}
+export { SignalDefinition, SignalDescriptor, ComponentSignalDescriptor }

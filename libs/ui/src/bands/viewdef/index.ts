@@ -1,9 +1,4 @@
-import {
-	createEntityAdapter,
-	createSlice,
-	EntityState,
-	PayloadAction,
-} from "@reduxjs/toolkit"
+import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import setWith from "lodash.setwith"
 import toPath from "lodash.topath"
 import {
@@ -29,7 +24,7 @@ import { getParentPath } from "../../component/path"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
-import RuntimeState from "../../store/types/runtimestate"
+import viewdefAdapter from "./adapter"
 
 type YamlUpdatePayload = {
 	path: string
@@ -320,10 +315,6 @@ const cancelAllDefs = (state: EntityState<PlainViewDef>) => {
 	}
 }
 
-const viewdefAdapter = createEntityAdapter<PlainViewDef>({
-	selectId: (viewdef) => `${viewdef.namespace}.${viewdef.name}`,
-})
-
 const viewDefSlice = createSlice({
 	name: "viewdef",
 	initialState: viewdefAdapter.getInitialState(),
@@ -381,10 +372,6 @@ const viewDefSlice = createSlice({
 	},
 })
 
-const selectors = viewdefAdapter.getSelectors(
-	(state: RuntimeState) => state.viewdef
-)
-
 export const {
 	cancel,
 	setYaml,
@@ -395,5 +382,5 @@ export const {
 	addDefinitionPair,
 	changeDefinitionKey,
 } = viewDefSlice.actions
-export { selectors }
+
 export default viewDefSlice.reducer
