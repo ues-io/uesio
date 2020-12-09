@@ -1,9 +1,6 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, hooks, material } from "@uesio/ui"
-import FacebookLogin, {
-	ReactFacebookLoginInfo,
-	ReactFacebookLoginProps,
-} from "react-facebook-login"
+import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonStyles } from "../loginhelpers/button"
@@ -24,7 +21,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginFacebook(props: LoginProps): ReactElement | null {
+const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const facebookAppIdKey = props.definition.clientId
 	const facebookAppId = uesio.view.useConfigValue(facebookAppIdKey)
@@ -46,19 +43,17 @@ function LoginFacebook(props: LoginProps): ReactElement | null {
 		)
 	}
 
-	const options: ReactFacebookLoginProps = {
-		appId: facebookAppId,
-		autoLoad: false,
-		fields: "name,email",
-		callback: responseFacebook,
-		icon: <LoginIcon image="uesio.facebooksmall" />,
-		textButton: buttonText,
-		cssClass: classes.FacebookLoginButton,
-	}
-
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<FacebookLogin {...options} />
+			<FacebookLogin
+				appId={facebookAppId}
+				autoLoad={false}
+				fields="name,email"
+				callback={responseFacebook}
+				icon={<LoginIcon image="uesio.facebooksmall" />}
+				textButton={buttonText}
+				cssClass={classes.FacebookLoginButton}
+			/>
 		</LoginWrapper>
 	)
 }
