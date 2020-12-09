@@ -31,11 +31,3 @@ export type Definition =
 	| string[]
 	| number[]
 	| DefinitionMap[]
-
-export type StateMap = {
-	[key: string]: StateFragment
-}
-
-export type StateValue = DefinitionValue | YamlDoc
-
-export type StateFragment = StateValue | StateMap | StateFragment[]

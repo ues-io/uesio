@@ -1,7 +1,5 @@
 import { Dispatcher, ThunkFunc } from "../store/store"
 import { SignalDefinition } from "../definition/signal"
-import { StoreAction } from "../store/actions/actions"
-import { getBand } from "../actor/band"
 import RuntimeState from "../store/types/runtimestate"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
@@ -39,7 +37,6 @@ function getSignalHandler(
 	context: Context
 ): ThunkFunc {
 	// New method of calling signals
-	const target = signal.target
 	const descriptor = registry[signal.signal]
 	if (descriptor) {
 		return descriptor.dispatcher(signal, context)
@@ -47,6 +44,7 @@ function getSignalHandler(
 
 	// Find component signals
 	const [band, scope, type] = signal.signal.split("/")
+	const target = signal.target as string
 
 	if (band === "component" && scope && type && target) {
 		const [namespace, name] = parseKey(scope)
@@ -72,22 +70,7 @@ function getSignalHandler(
 			)
 	}
 
-	return (
-		dispatch: Dispatcher<StoreAction>,
-		getState: () => RuntimeState
-	) => {
-		// Old method of calling signals (Actor and Band classes)
-		// TODO: remove this completely
-		const band = getBand(signal.band)
-		const target = signal.target
-			? band.getActor(
-					getState(),
-					signal.target,
-					context.getView()?.getId()
-			  )
-			: band
-		return dispatch(target.receiveSignal(signal, context))
-	}
+	return async () => context
 }
 
 class SignalAPI {

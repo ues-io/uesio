@@ -1,4 +1,4 @@
-import { ViewParams } from "../../view/view"
+import { ViewParams } from "../view/types"
 
 type WorkspaceState = {
 	name: string

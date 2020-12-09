@@ -16,7 +16,6 @@ function LoadWireAction(props: ActionProps): ReactElement | null {
 
 	const signals: signal.SignalDefinition[] = [
 		{
-			band: "",
 			signal: "wire/LOAD",
 			wires: [wireName],
 		},

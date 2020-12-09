@@ -8,11 +8,11 @@ import { ComponentAPI } from "./componentapi"
 import { PlatformAPI } from "./platformapi"
 import { BaseProps } from "../definition/definition"
 import { ContextFrame, Context } from "../context/context"
-import { StoreAction } from "../store/actions/actions"
+import { AnyAction } from "redux"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
-	constructor(dispatcher: Dispatcher<StoreAction>, props?: BaseProps) {
+	constructor(dispatcher: Dispatcher<AnyAction>, props?: BaseProps) {
 		this._dispatcher = dispatcher
 		this._props = props || {
 			path: "",
@@ -38,7 +38,7 @@ class Uesio {
 	platform: PlatformAPI
 
 	_props: BaseProps
-	_dispatcher: Dispatcher<StoreAction>
+	_dispatcher: Dispatcher<AnyAction>
 
 	getProps = () => this._props
 	getPath = () => this._props.path
@@ -47,6 +47,8 @@ class Uesio {
 	getDispatcher = () => this._dispatcher
 	getView = () => this.getContext().getView()
 	getViewId = () => this.getContext().getViewId()
+	getViewDef = () => this.getContext().getViewDef()
+	getViewDefId = () => this.getContext().getViewDefId()
 	getWireDef = (wirename: string) => this.getContext().getWireDef(wirename)
 	addContextFrame = (frame: ContextFrame) => {
 		this._props.context = this.getContext().addFrame(frame)

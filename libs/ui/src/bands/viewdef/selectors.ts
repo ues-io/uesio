@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux"
 import RuntimeState from "../../store/types/runtimestate"
+import { selectors } from "./adapter"
 
 const useBuilderHasChanges = () =>
 	useSelector(({ viewdef }: RuntimeState) => {
@@ -16,4 +17,7 @@ const useBuilderHasChanges = () =>
 		return false
 	})
 
-export { useBuilderHasChanges }
+const useViewDef = (viewDefId: string) =>
+	useSelector((state: RuntimeState) => selectors.selectById(state, viewDefId))
+
+export { useBuilderHasChanges, useViewDef }

@@ -10,17 +10,13 @@ const Buildtime: FunctionComponent<definition.BaseProps> = ({
 	context,
 	path,
 }) => {
-	const uesio = hooks.useUesio()
 	const route = context.getRoute()
 
-	if (!route) {
-		return null
-	}
-
-	const view = uesio.view.useView(route.viewnamespace, route.viewname, path)
+	if (!route) return null
 
 	const addView = context.addFrame({
-		view: view.getId(),
+		view: `${route.viewnamespace}.${route.viewname}(${path})`,
+		viewDef: `${route.viewnamespace}.${route.viewname}`,
 	})
 
 	return (

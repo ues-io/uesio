@@ -25,13 +25,11 @@ function ToggleConditionAction(props: ActionProps): ReactElement | null {
 
 	const signals: signal.SignalDefinition[] = [
 		{
-			band: "",
 			signal: "wire/TOGGLE_CONDITION",
 			wire: wireName,
 			conditionId,
 		},
 		{
-			band: "",
 			signal: "wire/LOAD",
 			wires: [wireName],
 		},

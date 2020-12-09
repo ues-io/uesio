@@ -118,7 +118,6 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 				const accessToken = result.getIdToken().getJwtToken()
 				await uesio.signal.run(
 					{
-						band: "", //TODO: remove this
 						signal: "user/LOGIN",
 						type: "cognito",
 						token: accessToken,

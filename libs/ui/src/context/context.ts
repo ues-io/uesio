@@ -1,16 +1,17 @@
 import { field } from "@uesio/constants"
 import { getStore } from "../store/store"
-import { ViewBand } from "../view/viewband"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
-import { selectors as viewDefSelectors } from "../bands/viewdef"
+import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { Wire } from "../wire/wire"
+import { selectors } from "../bands/view/adapter"
 
 type ContextFrame = {
 	wire?: string
 	record?: string
 	view?: string
+	viewDef?: string
 	buildMode?: boolean
 	fieldMode?: field.FieldMode
 	noMerge?: boolean
@@ -29,7 +30,7 @@ const getFromContext = (
 		const value = record.getFieldValue(mergeExpression)
 		return value ? `${value}` : ""
 	} else if (mergeType === "Param" && view) {
-		const value = view.getParam(mergeExpression)
+		const value = view.params?.[mergeExpression]
 		return value ? `${value}` : ""
 	}
 	return ""
@@ -59,16 +60,19 @@ class Context {
 
 	getView = () => {
 		const viewId = this.getViewId()
-		const view = ViewBand.getActor(getStore().getState(), viewId)
-		return view.valid ? view : undefined
+		return viewId
+			? selectors.selectById(getStore().getState(), viewId)
+			: undefined
 	}
 
 	getViewDef = () => {
-		const viewDefId = this.getView()?.getViewDefId()
+		const viewDefId = this.getViewDefId()
 		return viewDefId
 			? viewDefSelectors.selectById(getStore().getState(), viewDefId)
 			: undefined
 	}
+
+	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
 	getWireDef = (wirename: string) =>
 		this.getViewDef()?.definition?.wires[wirename]

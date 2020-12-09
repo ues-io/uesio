@@ -11,8 +11,6 @@ import {
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
-import { PropDescriptor } from "../buildmode/buildpropdefinition"
-import { getBand } from "../actor/band"
 import { metadata } from "@uesio/constants"
 import {
 	setActiveNode,
@@ -117,30 +115,8 @@ class BuilderAPI {
 		this.dispatcher(builderOps.getAvailableNamespaces(context))
 
 	getSignalProperties = (signal: SignalDefinition) => {
-		const bandSelect: PropDescriptor[] = [
-			{
-				name: "band",
-				type: "SELECT",
-				label: "Band",
-				options: [
-					{
-						value: "wire",
-						label: "Wire",
-					},
-					{
-						value: "component",
-						label: "Component",
-					},
-				],
-			},
-		]
-
-		const bandName = signal.band
-		const band = getBand(bandName)
-
-		return band
-			? bandSelect.concat(band.getSignalProps(signal))
-			: bandSelect
+		console.log(signal)
+		return []
 	}
 }
 

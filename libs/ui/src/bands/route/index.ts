@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { ViewParams } from "../../view/view"
+import { ViewParams } from "../view/types"
 import { RouteState, WorkspaceState } from "./types"
 
 type RoutePayload = {

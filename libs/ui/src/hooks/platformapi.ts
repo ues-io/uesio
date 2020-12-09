@@ -4,8 +4,8 @@ import { Platform } from "../platform/platform"
 import { LoginRequest } from "../auth/auth"
 import { Uesio } from "./hooks"
 import { LoadRequestBatch } from "../load/loadrequest"
-import { StoreAction } from "../store/actions/actions"
 import { Context } from "../context/context"
+import { AnyAction } from "redux"
 
 class PlatformAPI {
 	constructor(uesio: Uesio) {
@@ -14,7 +14,7 @@ class PlatformAPI {
 	}
 
 	uesio: Uesio
-	dispatcher: Dispatcher<StoreAction>
+	dispatcher: Dispatcher<AnyAction>
 
 	login = (request: LoginRequest) =>
 		this.dispatcher(

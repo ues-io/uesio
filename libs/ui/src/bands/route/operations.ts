@@ -1,12 +1,12 @@
 import { batch } from "react-redux"
 import { AnyAction } from "redux"
 import { Context } from "../../context/context"
-import { SignalAPI } from "../../hooks/signalapi"
 import { Platform } from "../../platform/platform"
 import { Dispatcher } from "../../store/store"
 import { set as setRoute } from "."
 import RuntimeState from "../../store/types/runtimestate"
 import { clearAvailableMetadata } from "../builder"
+import loadViewOp from "../view/operations/load"
 
 const redirect = (context: Context, path: string) => async () => {
 	const mergedPath = context.merge(path)
@@ -34,17 +34,17 @@ const navigate = (
 	const viewNamespace = routeResponse.viewnamespace
 
 	// Pre-load the view for faster appearances and no white flash
-	await SignalAPI.run(
-		{
-			band: "view",
-			signal: "LOAD",
+	await dispatch(
+		loadViewOp({
+			context: context.addFrame({
+				view: `${viewNamespace}.${viewName}()`,
+				viewDef: `${viewNamespace}.${viewName}`,
+			}),
 			namespace: viewNamespace,
 			name: viewName,
 			path: "",
 			params: routeResponse.params,
-		},
-		context,
-		dispatch
+		})
 	)
 
 	batch(() => {
