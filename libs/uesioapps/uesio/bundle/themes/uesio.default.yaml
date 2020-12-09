@@ -2,7 +2,7 @@ name: default
 definition:
   primary: "#FF0000"
   secondary: "#dc004e"
-  error: "#f44336"
+  error: "#f5e342"
   warning: "#ff9800"
   info: "#2196f3"
   success: "#4caf50"

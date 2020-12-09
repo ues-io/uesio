@@ -109,7 +109,7 @@ definition:
                                               - signal: wire/CANCEL
                                                 wire: "apps"
                                         - material.button:
-                                            color: "error"
+                                            color: "primary"
                                             variant: "outlined"
                                             text: "Delete"
                                             signals:

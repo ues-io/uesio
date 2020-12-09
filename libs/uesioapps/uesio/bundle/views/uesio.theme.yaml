@@ -132,7 +132,7 @@ definition:
                                                           - signal: wire/CANCEL
                                                             wire: "themes"
                                                     - material.button:
-                                                        color: "error"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:

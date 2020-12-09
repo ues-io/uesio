@@ -196,7 +196,7 @@ definition:
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
                                                             namespace: "uesio"
                                                     - material.button:
-                                                        color: "error"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:

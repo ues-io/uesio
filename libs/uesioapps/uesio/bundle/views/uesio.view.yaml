@@ -141,7 +141,7 @@ definition:
                                                           - signal: wire/CANCEL
                                                             wire: "views"
                                                     - material.button:
-                                                        color: "error"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
