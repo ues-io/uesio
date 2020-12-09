@@ -17,8 +17,11 @@ interface GridItemProps extends definition.BaseProps {
 
 const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Grid Item",
-	defaultDefinition: () => ({}),
+	defaultDefinition: () => ({
+		components: [],
+	}),
 	sections: [],
+	traits: ["uesio.standalone"],
 }
 export { GridItemProps, GridItemDefinition }
 
