@@ -19,7 +19,7 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 }))
 
-const TextField: FunctionComponent<Props> = (props: Props) => {
+const TextField: FunctionComponent<Props> = (props) => {
 	const { hideLabel, type, mode, label, value, variant, setValue } = props
 	const classes = useStyles(props)
 	return (
