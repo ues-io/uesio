@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { material, component, styles } from "@uesio/ui"
 import { GridItemProps } from "./griditemdefinition"
 
@@ -17,30 +17,26 @@ const useStyles = material.makeStyles(() => {
 	})
 })
 
-function GridItem(props: GridItemProps): ReactElement {
+const GridItem: FunctionComponent<GridItemProps> = (props) => {
 	const classes = useStyles(props)
 
-	const slotprops = {
-		definition: props.definition,
-		listName: "components",
-		path: props.path,
-		accepts: ["uesio.standalone"],
-		context: props.context,
-	}
-
-	const gridItemProps = {
-		className: classes.root,
-		xs: props.definition.xs,
-		sm: props.definition.sm,
-		md: props.definition.md,
-		lg: props.definition.lg,
-		xl: props.definition.xl,
-		item: true,
-	}
-
 	return (
-		<material.Grid {...gridItemProps}>
-			<component.Slot {...slotprops} />
+		<material.Grid
+			className={classes.root}
+			xs={props.definition.xs}
+			sm={props.definition.sm}
+			md={props.definition.md}
+			lg={props.definition.lg}
+			xl={props.definition.xl}
+			item={true}
+		>
+			<component.Slot
+				definition={props.definition}
+				listName="components"
+				path={props.path}
+				accepts={["uesio.standalone"]}
+				context={props.context}
+			/>
 		</material.Grid>
 	)
 }
