@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react"
+import React, { useState, FunctionComponent } from "react"
 import { definition, material, hooks, component } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
@@ -54,31 +54,28 @@ type LoginButtonProps = {
 	text: string
 }
 
-function getAuthDetails(
+const getAuthDetails = (
 	username: string,
 	password: string
-): AuthenticationDetails {
-	return new AuthenticationDetails({
+): AuthenticationDetails =>
+	new AuthenticationDetails({
 		Username: username,
 		Password: password,
 	})
-}
 
-function getUser(username: string, pool: CognitoUserPool): CognitoUser {
-	return new CognitoUser({
+const getUser = (username: string, pool: CognitoUserPool): CognitoUser =>
+	new CognitoUser({
 		Username: username,
 		Pool: pool,
 	})
-}
 
-function getPool(userPoolId: string, clientId: string): CognitoUserPool {
-	return new CognitoUserPool({
+const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
+	new CognitoUserPool({
 		UserPoolId: userPoolId, // Your user pool id here
 		ClientId: clientId, // Your client id here
 	})
-}
 
-function LoginButton(props: LoginButtonProps): ReactElement {
+const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	const classes = useLoginStyles(props)
 	return (
 		<button
@@ -93,7 +90,7 @@ function LoginButton(props: LoginButtonProps): ReactElement {
 	)
 }
 
-function LoginCognito(props: LoginProps): ReactElement | null {
+const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = useLoginStyles(props)
 	const clientIdKey = props.definition.clientId
@@ -196,13 +193,11 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 			{message && (
 				<AlertComponent
 					{...props}
-					{...{
-						onClose: () => {
-							setMessage("")
-						},
-						className: classes.errormsg,
-						severity: "error",
+					onClose={() => {
+						setMessage("")
 					}}
+					className={classes.errormsg}
+					severity="error"
 				>
 					{message}
 				</AlertComponent>
@@ -217,32 +212,23 @@ function LoginCognito(props: LoginProps): ReactElement | null {
 			)}
 			{mode === "login" && (
 				<LoginForm
-					{...{
-						setMode,
-						logIn,
-						setMessage,
-					}}
+					setMode={setMode}
+					logIn={logIn}
+					setMessage={setMessage}
 				/>
 			)}
 			{mode === "signup" && (
 				<SignupForm
-					{...{
-						setMode,
-						signupUsername,
-						setSignupUsername,
-						signupPassword,
-						setSignupPassword,
-						signUp,
-					}}
+					setMode={setMode}
+					signupUsername={signupUsername}
+					setSignupUsername={setSignupUsername}
+					signupPassword={signupPassword}
+					setSignupPassword={setSignupPassword}
+					signUp={signUp}
 				/>
 			)}
 			{mode === "confirm" && (
-				<ConfirmForm
-					{...{
-						setMode,
-						confirm,
-					}}
-				/>
+				<ConfirmForm setMode={setMode} confirm={confirm} />
 			)}
 		</div>
 	)
