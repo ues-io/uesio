@@ -1,5 +1,6 @@
 import React, { ReactElement } from "react"
 import { definition, material } from "@uesio/ui"
+import clsx from "clsx"
 
 type ColorPickerDefinition = {
 	fieldId: string
@@ -60,16 +61,13 @@ function ColorPicker(props: Props): ReactElement | null {
 				if ((isReadMode && isSelected) || !isReadMode) {
 					return (
 						<div
-							className={
-								classes.color +
-								(isSelected ? " " + classes.selected : "")
-							}
+							className={clsx(classes.color, {
+								[classes.selected]: isSelected,
+							})}
 							onClick={(): void => {
 								record.update(fieldId, color)
 							}}
-							style={{
-								backgroundColor: color,
-							}}
+							style={{ backgroundColor: color }}
 						/>
 					)
 				}
