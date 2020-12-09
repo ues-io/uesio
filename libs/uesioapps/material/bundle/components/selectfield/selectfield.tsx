@@ -19,7 +19,7 @@ type Props = {
 	mode?: field.FieldMode
 } & definition.BaseProps
 
-const SelectField: FunctionComponent<Props> = (props: Props) => {
+const SelectField: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const { hideLabel, mode, options, value, setValue, label } = props
 
@@ -41,21 +41,19 @@ const SelectField: FunctionComponent<Props> = (props: Props) => {
 
 	return (
 		<material.TextField
-			{...{
-				select: true,
-				className: classes.root,
-				...(!hideLabel && { label }),
-				fullWidth: true,
-				InputLabelProps: {
-					disableAnimation: true,
-					shrink: true,
-				},
-				value,
-				onChange: (event: ChangeEvent<HTMLInputElement>): void => {
-					setValue(event.target.value)
-				},
-				size: "small",
+			select={true}
+			className={classes.root}
+			fullWidth={true}
+			InputLabelProps={{
+				disableAnimation: true,
+				shrink: true,
 			}}
+			value={value}
+			onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+				setValue(event.target.value)
+			}}
+			size="small"
+			{...(!hideLabel && { label })}
 		>
 			{options?.map((option, index) => (
 				<material.MenuItem key={index} value={option.value}>
