@@ -10,6 +10,7 @@ class Collection {
 
 	getId = () => this.source.name
 	getNamespace = () => this.source.namespace
+	getFullName = () => this.getNamespace() + "." + this.getId()
 	getField = (fieldName: string | null) => {
 		const fieldMetadata =
 			this.source && fieldName ? this.source.fields[fieldName] : null

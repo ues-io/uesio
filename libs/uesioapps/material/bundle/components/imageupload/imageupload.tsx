@@ -36,7 +36,7 @@ async function handleChange(
 	fileCollection: string
 ) {
 	const collection = wire.getCollection()
-	const collectionName = collection.getId()
+	const collectionFullName = collection.getFullName()
 
 	const idField = collection.getIdField()
 	if (!idField) return
@@ -54,7 +54,7 @@ async function handleChange(
 			file,
 			file.name,
 			fileCollection,
-			collectionName,
+			collectionFullName,
 			recordId,
 			fieldId
 		)
