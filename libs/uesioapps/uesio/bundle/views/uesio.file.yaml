@@ -132,7 +132,7 @@ definition:
                                               - material.buttonset:
                                                   buttons:
                                                     - material.button:
-                                                        color: "secondary"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
