@@ -1,3 +1,4 @@
+import { ComponentType } from "react"
 import Close from "@material-ui/icons/Close"
 import CheckCircleOutline from "@material-ui/icons/CheckCircleOutline"
 import ReportProblemOutlined from "@material-ui/icons/ReportProblemOutlined"
@@ -10,9 +11,7 @@ import Description from "@material-ui/icons/Description"
 
 import { material } from "@uesio/ui"
 
-interface IconMap {
-	[key: string]: React.ComponentType<material.SvgIconProps>
-}
+type IconMap = Record<string, ComponentType<material.SvgIconProps>>
 
 const iconMap: IconMap = {
 	close: Close,
@@ -28,6 +27,6 @@ const iconMap: IconMap = {
 
 export default function getIcon(
 	key?: string
-): React.ComponentType<material.SvgIconProps> {
+): ComponentType<material.SvgIconProps> {
 	return (key && iconMap?.[key]) || Close
 }
