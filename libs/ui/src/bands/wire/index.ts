@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { LoadResponseRecord } from "../../load/loadresponse"
-import { SaveResponseBatch, SaveResponse } from "../../load/saveresponse"
+import { SaveResponseBatch } from "../../load/saveresponse"
 import { PlainWireRecord, PlainWireRecordMap } from "../../wire/wirerecord"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
