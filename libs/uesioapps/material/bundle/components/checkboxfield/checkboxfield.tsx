@@ -19,10 +19,16 @@ type Props = {
 
 const CheckBoxField: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
-	const { hideLabel, mode, value, setValue, label } = props
+	const { hideLabel, mode, value, setValue, label, definition } = props
 
 	return (
 		<material.Checkbox
+			color={
+				// find used for the sake of type checking
+				(["primary", "secondary"].find(
+					(color) => color === definition?.color
+				) || "primary") as "primary" | "secondary"
+			}
 			className={classes.root}
 			checked={!!value}
 			disabled={mode === "READ"}
