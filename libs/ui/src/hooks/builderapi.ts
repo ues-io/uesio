@@ -114,8 +114,10 @@ class BuilderAPI {
 	getAvailableNamespaces = (context: Context) =>
 		this.dispatcher(builderOps.getAvailableNamespaces(context))
 
-	getSignalProperties = (signal: SignalDefinition) =>
-		console.log(signal) || []
+	getSignalProperties = (signal: SignalDefinition) => {
+		console.log(signal)
+		return []
+	}
 }
 
 export { BuilderAPI }
