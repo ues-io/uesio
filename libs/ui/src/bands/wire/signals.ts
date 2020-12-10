@@ -42,7 +42,7 @@ interface SaveWiresSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals = {
+export default {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle Delete Status",
 		public: true,
@@ -121,5 +121,3 @@ const signals = {
 		},
 	},
 }
-
-export default signals
