@@ -160,7 +160,7 @@ definition:
                                                           - signal: wire/CANCEL
                                                             wire: "routes"
                                                     - material.button:
-                                                        color: "secondary"
+                                                        color: "primary"
                                                         variant: "outlined"
                                                         text: "Delete"
                                                         signals:
