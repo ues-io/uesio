@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { LoadResponseRecord } from "../../load/loadresponse"
-import { SaveResponseBatch } from "../../load/saveresponse"
+import { SaveResponseBatch, SaveResponse } from "../../load/saveresponse"
 import { PlainWireRecord, PlainWireRecordMap } from "../../wire/wirerecord"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
@@ -203,6 +203,16 @@ const wireSlice = createSlice({
 				}
 			}
 		)
+		builder.addCase(saveOp.rejected, (state, action) => {
+			const viewId = action.meta.arg.context.getViewId()
+
+			action.meta.arg.wires.forEach((entityName) => {
+				const entity = state.entities[`${viewId}/${entityName}`]
+				if (entity) {
+					entity.error = action.error.message
+				}
+			})
+		})
 	},
 })
 
