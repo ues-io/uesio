@@ -1,4 +1,4 @@
-# Uesio Redux Archetecture
+# Uesio Redux Architecture
 
 ## Structure
 
