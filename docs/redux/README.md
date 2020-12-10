@@ -18,6 +18,12 @@ If this particular band will need a slice of the redux state, that slice should 
 
 ### types.ts
 
+This file describes any types that are used within this slice
+
 ### selectors.ts
 
+Any selectors that read items from within this slice
+
 ### signals.ts
+
+Signals that will be registered with the signals api to be run from views and components
