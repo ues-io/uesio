@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 
 import { definition, hooks, material } from "@uesio/ui"
 
@@ -11,9 +11,9 @@ interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
 }
 
-const Table: FC<TableProps> = (props) => {
+const Table: FunctionComponent<TableProps> = (props) => {
+	const { definition, path, context } = props
 	const uesio = hooks.useUesio(props)
-	const definition = props.definition
 	const wire = uesio.wire.useWire(definition.wire)
 
 	const initialState: TableState = {
@@ -28,20 +28,6 @@ const Table: FC<TableProps> = (props) => {
 	if (!wire || !componentState) return null
 
 	const collection = wire.getCollection()
-
-	const tableStyle = {
-		marginBottom: "16px",
-	}
-
-	const bodyProps = {
-		wire,
-		collection,
-		state: componentState,
-		columns: definition.columns,
-		path: props.path,
-		context: props.context,
-	}
-
 	return (
 		<>
 			{wire.source.error && (
@@ -49,12 +35,19 @@ const Table: FC<TableProps> = (props) => {
 					{wire.source.error}
 				</Alert>
 			)}
-			<material.Table style={tableStyle}>
+			<material.Table style={{ marginBottom: "16px" }}>
 				<TableHeader
 					columns={definition.columns}
 					collection={collection}
 				/>
-				<TableBody {...bodyProps} />
+				<TableBody
+					wire={wire}
+					collection={collection}
+					state={componentState}
+					columns={definition.columns}
+					path={path}
+					context={context}
+				/>
 			</material.Table>
 		</>
 	)

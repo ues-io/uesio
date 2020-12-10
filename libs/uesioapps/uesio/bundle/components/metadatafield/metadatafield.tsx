@@ -13,7 +13,10 @@ interface Props extends definition.BaseProps {
 }
 
 const MetadataField: FunctionComponent<Props> = (props) => {
-	const { context, definition, path } = props
+	const {
+		context,
+		definition: { fieldId, label, metadataType },
+	} = props
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -33,12 +36,9 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	})
 
 	const collection = wire.getCollection()
-	const fieldId = definition.fieldId
-	const label = definition.label
 	const fieldMetadata = collection.getField(fieldId)
 	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldValue(fieldId) as string
-	const metadataType = definition.metadataType
 	const namespaces = uesio.builder.useAvailableNamespaces()
 	const [namespace, name] = component.path.parseKey(value)
 	const metadata = uesio.builder.useMetadataList(metadataType, namespace)

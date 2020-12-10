@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit"
+import { createAsyncThunk, Dictionary } from "@reduxjs/toolkit"
 
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
@@ -13,6 +13,7 @@ import { PlainWireRecordMap } from "../../../wire/wirerecord"
 import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getDefaultRecord } from "../../../wire/wiredefault"
+import { getFullWireId } from "../selectors"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -60,39 +61,38 @@ export default createAsyncThunk<
 	const response = await api.extra.loadData(context, batch)
 
 	// Add the local ids
-	const wiresResponse: PlainWire[] =
-		response.wires?.map((wire) => {
-			const data: PlainWireRecordMap = {}
-			const original: PlainWireRecordMap = {}
-			wire.data.forEach((item) => {
-				const localId = shortid.generate()
-				data[localId] = item
-				original[localId] = item
-			})
-
-			return {
-				name: wire.wire,
-				view: viewId,
-				data,
-				original,
-				changes: {},
-				deletes: {},
-				error: undefined,
-				conditions: [],
-			}
-		}) || []
+	const wiresResponse: Dictionary<PlainWire> = {}
+	for (const wire of response?.wires || []) {
+		const data: PlainWireRecordMap = {}
+		const original: PlainWireRecordMap = {}
+		wire.data.forEach((item) => {
+			const localId = shortid.generate()
+			data[localId] = item
+			original[localId] = item
+		})
+		wiresResponse[getFullWireId(viewId, wire.wire)] = {
+			name: wire.wire,
+			view: viewId,
+			data,
+			original,
+			changes: {},
+			deletes: {},
+			error: undefined,
+			conditions: [],
+		}
+	}
 
 	// Add defaults to response
 	for (const wire of batch.wires) {
 		if (wire.type === "CREATE") {
 			const localId = shortid.generate()
-			wiresResponse.push({
+			wiresResponse[getFullWireId(viewId, wire.wire)] = {
 				name: wire.wire,
 				view: viewId,
 				data: {
 					[localId]: getDefaultRecord(
 						context,
-						api.getState(),
+						wiresResponse,
 						viewId,
 						wire.wire
 					),
@@ -101,7 +101,7 @@ export default createAsyncThunk<
 				changes: {
 					[localId]: getDefaultRecord(
 						context,
-						api.getState(),
+						wiresResponse,
 						viewId,
 						wire.wire
 					),
@@ -109,9 +109,14 @@ export default createAsyncThunk<
 				deletes: {},
 				error: undefined,
 				conditions: [],
-			})
+			}
 		}
 	}
+	const wiresArray: PlainWire[] = []
+	for (const wireKey in wiresResponse) {
+		const wire = wiresResponse[wireKey]
+		if (wire) wiresArray.push(wire)
+	}
 
-	return [wiresResponse, response.collections]
+	return [wiresArray, response.collections]
 })

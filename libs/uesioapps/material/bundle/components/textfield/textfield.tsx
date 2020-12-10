@@ -19,34 +19,32 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 }))
 
-const TextField: FunctionComponent<Props> = (props: Props) => {
+const TextField: FunctionComponent<Props> = (props) => {
 	const { hideLabel, type, mode, label, value, variant, setValue } = props
 	const classes = useStyles(props)
 	return (
 		<material.TextField
-			{...{
-				className: classes.root,
-				...(!hideLabel && { label }),
-				fullWidth: true,
-				InputLabelProps: {
-					disableAnimation: true,
-					shrink: true,
-				},
-				InputProps: {
-					readOnly: mode === "READ",
-					disableUnderline: mode === "READ",
-				},
-				size: "small",
-				// See: https://github.com/mui-org/material-ui/issues/15697
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				variant: variant as any,
-				type,
-				multiline: type === "LONGTEXT",
-				value,
-				onChange: (event: ChangeEvent<HTMLInputElement>): void => {
-					setValue(event.target.value)
-				},
+			className={classes.root}
+			fullWidth={true}
+			InputLabelProps={{
+				disableAnimation: true,
+				shrink: true,
 			}}
+			InputProps={{
+				readOnly: mode === "READ",
+				disableUnderline: mode === "READ",
+			}}
+			size="small"
+			// See: https://github.com/mui-org/material-ui/issues/15697
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			variant={variant as any}
+			type={type}
+			multiline={type === "LONGTEXT"}
+			value={value}
+			onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+				setValue(event.target.value)
+			}}
+			{...(!hideLabel && { label })}
 		/>
 	)
 }

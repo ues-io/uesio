@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { ImageUploadProps } from "./imageuploaddefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
@@ -40,7 +40,6 @@ async function handleChange(
 
 	const idField = collection.getIdField()
 	if (!idField) return
-	const collectionNamespace = collection.getNamespace()
 
 	const recordId = record.getFieldValue(idField.getId()) as string
 	if (selectorFiles && recordId) {
@@ -64,37 +63,32 @@ async function handleChange(
 	}
 }
 
-function ImageUpload(props: ImageUploadProps): ReactElement | null {
+const ImageUpload: FunctionComponent<ImageUploadProps> = (props) => {
+	const {
+		context,
+		definition: { fieldId, id, preview, fileCollection },
+	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
+	const record = context.getRecord()
+	const wire = context.getWire()
 	if (!wire || !record) {
 		return null
 	}
 
-	const fieldId = props.definition.fieldId
-	const id = props.definition.id
-
-	const preview = props.definition.preview
-	const fileCollection = props.definition.fileCollection
-
 	const userFileId = record.getFieldValue(fieldId) as string
-	const fileUrl = uesio.file.getUserFileURL(props.context, userFileId, true)
-	const ImageUploadProps = {
-		className: classes.root,
-	}
-	const mode = props.context.getFieldMode() || "READ"
+	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
+	const mode = context.getFieldMode() || "READ"
 
 	if (mode === "READ" && preview && fileUrl) {
 		return (
-			<div {...ImageUploadProps}>
+			<div className={classes.root}>
 				<material.Avatar className={classes.avatar} src={fileUrl} />
 			</div>
 		)
 	} else if (mode === "EDIT") {
 		return (
-			<div {...ImageUploadProps}>
+			<div className={classes.root}>
 				<material.Badge
 					overlap="circle"
 					anchorOrigin={{
