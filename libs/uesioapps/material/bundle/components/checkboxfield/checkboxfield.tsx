@@ -24,7 +24,7 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 	return (
 		<material.Checkbox
 			color={
-				// find used for the sake of type checking
+				// type checking
 				(["primary", "secondary"].find(
 					(color) => color === definition?.color
 				) || "primary") as "primary" | "secondary"
