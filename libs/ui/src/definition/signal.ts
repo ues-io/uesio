@@ -1,6 +1,6 @@
 import { Context } from "../context/context"
 import { Definition } from "./definition"
-import { DispatchReturn, ThunkFunc } from "../store/store"
+import { ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
 
@@ -15,7 +15,7 @@ type ComponentSignalDispatcher = (
 ) => (
 	setState: (state: PlainComponentState) => void,
 	getState: () => PlainComponentState | undefined
-) => DispatchReturn
+) => Promise<Context>
 
 type SignalDescriptor = {
 	label?: string

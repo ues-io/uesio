@@ -1,4 +1,4 @@
-import { Dispatcher, ThunkFunc } from "../store/store"
+import { Dispatcher } from "../store/store"
 import { SignalDefinition } from "../definition/signal"
 import RuntimeState from "../store/types/runtimestate"
 import { Uesio } from "./hooks"
@@ -32,45 +32,33 @@ register(routeSignals)
 register(userSignals)
 register(wireSignals)
 
-function getSignalHandler(
+const runComponentSignal = (
 	signal: SignalDefinition,
 	context: Context
-): ThunkFunc {
-	// New method of calling signals
-	const descriptor = registry[signal.signal]
-	if (descriptor) {
-		return descriptor.dispatcher(signal, context)
-	}
-
-	// Find component signals
+) => async (dispatch: Dispatcher<AnyAction>, getState: () => RuntimeState) => {
+	// Call Component Signal
 	const [band, scope, type] = signal.signal.split("/")
 	const target = signal.target as string
-
 	if (band === "component" && scope && type && target) {
 		const [namespace, name] = parseKey(scope)
 		const handler = getSignal(namespace, name, type)
 		const viewId = context.getViewId()
-		return (
-			dispatch: Dispatcher<AnyAction>,
-			getState: () => RuntimeState
-		) =>
-			handler.dispatcher(signal, context)(
-				(state: PlainComponentState) => {
-					dispatch({
-						type: "component/set",
-						payload: {
-							id: target,
-							componentType: scope,
-							view: viewId,
-							state,
-						},
-					})
-				},
-				() => selectState(getState(), scope, target, viewId)
-			)
+		handler.dispatcher(signal, context)(
+			(state: PlainComponentState) => {
+				dispatch({
+					type: "component/set",
+					payload: {
+						id: target,
+						componentType: scope,
+						view: viewId,
+						state,
+					},
+				})
+			},
+			() => selectState(getState(), scope, target, viewId)
+		)
 	}
-
-	return async () => context
+	return context
 }
 
 class SignalAPI {
@@ -84,7 +72,15 @@ class SignalAPI {
 
 	// Returns a handler function for running a list of signals
 	getHandler = (signals: SignalDefinition[]) => async () => {
-		let context = this.uesio.getProps().context
+		/*
+		// More confusing alternative
+		signals.reduce<Promise<Context>>(
+			async (context, signal) => this.run(signal, await context),
+			Promise.resolve(this.uesio.getContext())
+		)
+		*/
+
+		let context = this.uesio.getContext()
 		for (const signal of signals) {
 			// Keep adding to context as each signal is run
 			context = await this.run(signal, context)
@@ -92,15 +88,15 @@ class SignalAPI {
 		return context
 	}
 
-	// Runs a signal that has been registered in the signal registry
-	static run = (
-		signal: SignalDefinition,
-		context: Context,
-		dispatcher: Dispatcher<AnyAction>
-	) => dispatcher(getSignalHandler(signal, context))
-
-	run = (signal: SignalDefinition, context: Context) =>
-		SignalAPI.run(signal, context, this.dispatcher)
+	run = (signal: SignalDefinition, context: Context) => {
+		// New method of calling signals
+		const descriptor = registry[signal.signal]
+		return this.dispatcher(
+			descriptor
+				? descriptor.dispatcher(signal, context)
+				: runComponentSignal(signal, context)
+		)
+	}
 }
 
 export { SignalAPI, SignalRegistry }

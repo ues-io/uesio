@@ -11,11 +11,9 @@ interface CallSignal extends SignalDefinition {
 	params: BotParams
 }
 
-const signals = {
+export default {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher: (signal: CallSignal, context: Context) =>
 			operations.call(context, signal.bot, signal.params),
 	},
 }
-
-export default signals

@@ -17,6 +17,8 @@ Frontend-side are favoured the concepts coming from functional programming and [
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
 The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
 
+[Uesio Specific Redux Docs](./docs/redux/README.md)
+
 # Tech Stack
 
 ## Backend
