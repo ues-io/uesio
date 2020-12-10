@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react"
 import { material, styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: DeckProps) => ({
 			...styles.getMarginStyles(props.definition.margin, theme),

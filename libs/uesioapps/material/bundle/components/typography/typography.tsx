@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { material } from "@uesio/ui"
 import { TypographyProps } from "./typographydefinition"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: TypographyProps) => ({
 			margin: theme.spacing(1),

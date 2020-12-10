@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { hooks, material, component } from "@uesio/ui"
 import { DialogProps, DialogState } from "./dialogdefinition"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: {
 			margin: theme.spacing(1),

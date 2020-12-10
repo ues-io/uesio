@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react"
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: ButtonProps) => ({
 			fontWeight: 400,

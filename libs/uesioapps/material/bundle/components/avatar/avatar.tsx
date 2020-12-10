@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react"
 import { material, styles } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: AvatarProps) => ({
 			fontSize: "10pt",

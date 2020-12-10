@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
 import { hooks, material, styles, wire, signal } from "@uesio/ui"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: FileUploadProps) => ({
 			display: "block",

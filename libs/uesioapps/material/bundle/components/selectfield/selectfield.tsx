@@ -4,7 +4,7 @@ import { material, definition, collection } from "@uesio/ui"
 import { field } from "@uesio/constants"
 import TextField from "../textfield/textfield"
 
-const useStyles = material.makeStyles((theme: material.Theme) => ({
+const useStyles = material.makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
 	},

@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react"
 import { material, definition } from "@uesio/ui"
 import { field } from "@uesio/constants"
 
-const useStyles = material.makeStyles((theme: material.Theme) => ({
+const useStyles = material.makeStyles((theme) => ({
 	root: {
 		margin: theme.spacing(1),
 	},

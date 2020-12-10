@@ -5,7 +5,7 @@ import { CardProps } from "./carddefinition"
 
 import CardAction from "../cardaction/cardaction"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: {
 			margin: theme.spacing(1),

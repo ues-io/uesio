@@ -4,7 +4,7 @@ import { FileProps } from "./filedefinition"
 import { hooks, material, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: FileProps) => ({
 			display: "block",

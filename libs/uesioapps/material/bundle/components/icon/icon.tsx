@@ -4,7 +4,7 @@ import { IconProps } from "./icondefinition"
 import { material, styles } from "@uesio/ui"
 import getIcon from "./iconmap"
 
-const useStyles = material.makeStyles((theme: material.Theme) =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		root: (props: IconProps) => ({
 			...styles.getFloatStyles(props.definition?.float),
