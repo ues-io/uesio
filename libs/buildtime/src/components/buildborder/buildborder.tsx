@@ -105,8 +105,8 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const wrapperClass = clsx({
 		[classes.maskExpanded]:
-			(isActive || isSelected || isExpanded) && isExpanded,
-		[classes.mask]: (isActive || isSelected || isExpanded) && !isExpanded,
+			isExpanded,
+		[classes.mask]: (isActive || isSelected) && !isExpanded,
 	})
 	const headerClass = isExpanded ? classes.headerExpanded : classes.header
 	return (
