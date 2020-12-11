@@ -1,4 +1,5 @@
 import React, { FunctionComponent, MouseEvent, ReactNode } from "react"
+import clsx from "clsx"
 import { material } from "@uesio/ui"
 
 const ACTIVE_COLOR = "#eee"
@@ -102,12 +103,10 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 		title,
 	} = props
 	const classes = useStyles(props)
-	const wrapperClass =
-		isActive || isSelected || isExpanded
-			? isExpanded
-				? classes.maskExpanded
-				: classes.mask
-			: ""
+	const wrapperClass = clsx({
+		[classes.maskExpanded]: isExpanded,
+		[classes.mask]: (isActive || isSelected) && !isExpanded,
+	})
 	const headerClass = isExpanded ? classes.headerExpanded : classes.header
 	return (
 		<div
