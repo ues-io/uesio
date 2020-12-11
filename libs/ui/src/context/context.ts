@@ -6,6 +6,8 @@ import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { Wire } from "../wire/wire"
 import { selectors } from "../bands/view/adapter"
+import { PlainView } from "../bands/view/types"
+import { WireRecord } from "../wire/wirerecord"
 
 type ContextFrame = {
 	wire?: string
@@ -21,17 +23,14 @@ type ContextFrame = {
 
 const getFromContext = (
 	mergeType: string,
-	mergeExpression: string,
+	expression: string,
 	context: Context
-): string => {
-	const record = context.getRecord()
-	const view = context.getView()
-	if ((mergeType === "" || mergeType === "Record") && record) {
-		const value = record.getFieldValue(mergeExpression)
+) => {
+	if (mergeType === "" || mergeType === "Record") {
+		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
-	} else if (mergeType === "Param" && view) {
-		const value = view.params?.[mergeExpression]
-		return value ? `${value}` : ""
+	} else if (mergeType === "Param") {
+		return context.getView()?.params?.[expression] || ""
 	}
 	return ""
 }
