@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, FunctionComponent } from "react"
+import React, { FunctionComponent } from "react"
 import { Drawer, makeStyles, createStyles } from "@material-ui/core"
 
 type Props = {
@@ -30,7 +30,7 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const MiniToolbar: FunctionComponent<PropsWithChildren<Props>> = (props) => {
+const MiniToolbar: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 
 	return (
