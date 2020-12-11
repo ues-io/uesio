@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
@@ -7,14 +7,11 @@ import { material, hooks, definition, signal } from "@uesio/ui"
 import AddIcon from "@material-ui/icons/AddBox"
 import PropertiesPanel from "../toolbar/propertiespanel/propertiespanel"
 
-function SignalsSection(props: SectionRendererProps): ReactElement | null {
-	const section = props.section
-	const def = props.definition
-
+const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const { section, definition: def, path } = props
 	const uesio = hooks.useUesio(props)
 	const theme = material.useTheme()
 	const selectedNode = uesio.builder.useSelectedNode()
-	const path = props.path
 
 	const signalsDef = def?.signals as definition.Definition[] | undefined
 
@@ -24,14 +21,14 @@ function SignalsSection(props: SectionRendererProps): ReactElement | null {
 			title={section.title}
 			action={AddIcon}
 			actionColor={theme.palette.primary.main}
-			actionOnClick={(): void => {
-				uesio.view.addDefinition(path + '["signals"]', {
+			actionOnClick={(): void =>
+				uesio.view.addDefinition(`${path}["signals"]`, {
 					signal: "NEW_SIGNAL",
 				})
-			}}
+			}
 		>
 			{signalsDef?.map((signal: signal.SignalDefinition, index) => {
-				const signalPath = path + `["signals"]["${index}"]`
+				const signalPath = `${path}["signals"]["${index}"]`
 				const selected = selectedNode.startsWith(signalPath)
 				return (
 					<PropNodeTag
@@ -40,9 +37,9 @@ function SignalsSection(props: SectionRendererProps): ReactElement | null {
 						selected={selected}
 						iconColor={theme.palette.primary.main}
 						key={index}
-						onClick={(): void => {
+						onClick={(): void =>
 							uesio.builder.setSelectedNode(signalPath)
-						}}
+						}
 					>
 						<PropertiesPanel
 							path={signalPath}

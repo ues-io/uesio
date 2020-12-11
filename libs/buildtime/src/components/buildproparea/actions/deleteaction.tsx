@@ -9,9 +9,7 @@ const DeleteAction: FunctionComponent<ActionProps> = (props) => {
 	return (
 		<ActionButton
 			title="Delete"
-			onClick={(): void => {
-				uesio.view.removeDefinition()
-			}}
+			onClick={(): void => uesio.view.removeDefinition()}
 			icon={DeleteIcon}
 		/>
 	)

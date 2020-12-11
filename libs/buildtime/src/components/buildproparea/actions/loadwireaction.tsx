@@ -7,7 +7,6 @@ import RefreshIcon from "@material-ui/icons/Refresh"
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const path = props.path
-	const def = uesio.view.useDefinition(path) as definition.DefinitionMap
 	const wireName = component.path.getKeyAtPath(path)
 
 	if (!wireName) {

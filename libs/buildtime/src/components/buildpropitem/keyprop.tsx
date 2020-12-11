@@ -16,9 +16,8 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 
 	const getValue = (): definition.Definition => key
 
-	const setValue = (value: string): void => {
+	const setValue = (value: string): void =>
 		uesio.view.changeDefinitionKey(path, value)
-	}
 
 	// Fall back to text component
 	return (
@@ -31,9 +30,7 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 			InputProps={inputProps}
 			InputLabelProps={inputLabelProps}
 			variant="outlined"
-			onChange={(event): void => {
-				setValue(event.target.value)
-			}}
+			onChange={(event): void => setValue(event.target.value)}
 		/>
 	)
 }

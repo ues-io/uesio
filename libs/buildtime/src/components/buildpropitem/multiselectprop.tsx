@@ -29,9 +29,7 @@ const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 			value={value}
 			label={descriptor.label}
 			fullWidth={true}
-			onChange={(event): void => {
-				setValue(event.target.value)
-			}}
+			onChange={(event): void => setValue(event.target.value)}
 		>
 			{descriptor.options.map((option) => (
 				<MenuItem key={option.value} value={option.value}>

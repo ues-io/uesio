@@ -1,4 +1,4 @@
-import React, { FC, useRef, ReactNode } from "react"
+import React, { FunctionComponent, useRef, ReactNode } from "react"
 import {
 	Card,
 	makeStyles,
@@ -12,7 +12,7 @@ import { material } from "@uesio/ui"
 
 type Props = {
 	title: string
-	icon?: FC<SvgIconProps>
+	icon?: FunctionComponent<SvgIconProps>
 	iconColor?: string
 	selected?: boolean
 	onClick?: () => void
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-const PropNodeTag: FC<Props> = (props: Props) => {
+const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const ref = useRef<HTMLDivElement>(null)
 	const innerArea = (
