@@ -79,7 +79,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		>
 			{conditionsDef?.map(
 				(condition: wire.WireConditionDefinition, index) => {
-					const conditionPath = path + `["conditions"]["${index}"]`
+					const conditionPath = `${path}["conditions"]["${index}"]`
 					const selected = selectedNode.startsWith(conditionPath)
 					return (
 						<PropNodeTag
