@@ -14,8 +14,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
-Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide), with some exceptions - we do store not only plain object in the redux store and a home-made creator layer is added right before the thunk generation -.
-The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
+Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide). The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
 
 [Uesio Specific Redux Docs](./docs/redux/README.md)
 
@@ -177,6 +176,13 @@ For plugging such an application into uesio, you have to deploy it, obviously af
 
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
+
+// or
+npm run nx -- deploy uesioapps-crm
+
+// or, if you have nx globally
+nx deploy uesioapps-crm
+
 ```
 
 The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
