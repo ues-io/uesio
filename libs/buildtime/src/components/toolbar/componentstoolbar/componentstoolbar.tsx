@@ -68,19 +68,17 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 						key={index}
 					>
 						<div>
-							{filteredList[index].names.map(
-								(value, indexTag) => (
-									<PropNodeTag
-										draggable={component.dragdrop.createComponentBankKey(
-											element.namespace,
-											value
-										)}
-										title={value}
-										icon={DragIndicator}
-										key={indexTag}
-									/>
-								)
-							)}
+							{element.names.map((value, indexTag) => (
+								<PropNodeTag
+									draggable={component.dragdrop.createComponentBankKey(
+										element.namespace,
+										value
+									)}
+									title={value}
+									icon={DragIndicator}
+									key={indexTag}
+								/>
+							))}
 						</div>
 					</ExpandPanel>
 				))}

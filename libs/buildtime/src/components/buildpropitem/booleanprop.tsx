@@ -59,13 +59,13 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					value={selected}
 					label={descriptor.label}
 					fullWidth={true}
-					onChange={(event): void => {
+					onChange={(event): void =>
 						event.target.value === "true"
 							? setValue(true)
 							: setValue(false)
-					}}
+					}
 				>
-					{optionslist.map((option: builder.PropertySelectOption) => (
+					{optionslist.map((option) => (
 						<option key={option.value} value={option.value}>
 							{option.label}
 						</option>

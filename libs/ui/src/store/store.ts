@@ -20,10 +20,13 @@ import component from "../bands/component"
 import wire from "../bands/wire"
 import view from "../bands/view"
 
-type DispatchReturn = Promise<Context>
-
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RuntimeState, Platform, T>
-type ThunkFunc = ThunkAction<DispatchReturn, RuntimeState, Platform, AnyAction>
+type ThunkFunc = ThunkAction<
+	Promise<Context>,
+	RuntimeState,
+	Platform,
+	AnyAction
+>
 
 let platform: Platform
 let store: Store
@@ -79,7 +82,6 @@ export {
 	Provider,
 	Dispatcher,
 	ThunkFunc,
-	DispatchReturn,
 	getDispatcher,
 	getPlatform,
 	getStore,

@@ -36,10 +36,12 @@ const navigate = (
 	// Pre-load the view for faster appearances and no white flash
 	await dispatch(
 		loadViewOp({
-			context: context.addFrame({
-				view: `${viewNamespace}.${viewName}()`,
-				viewDef: `${viewNamespace}.${viewName}`,
-			}),
+			context: new Context([
+				{
+					view: `${viewNamespace}.${viewName}()`,
+					viewDef: `${viewNamespace}.${viewName}`,
+				},
+			]),
 			namespace: viewNamespace,
 			name: viewName,
 			path: "",

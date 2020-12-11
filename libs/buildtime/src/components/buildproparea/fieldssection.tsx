@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import { hooks, material, component, definition } from "@uesio/ui"
@@ -6,9 +6,8 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import CheckBox from "@material-ui/icons/CheckBox"
 
-function FieldsSection(props: SectionRendererProps): ReactElement | null {
-	const section = props.section
-	const def = props.definition
+const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const { section, definition: def } = props
 	const collectionKey = def?.collection as string | undefined
 
 	if (!collectionKey) {

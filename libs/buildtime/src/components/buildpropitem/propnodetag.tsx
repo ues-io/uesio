@@ -1,4 +1,4 @@
-import React, { FC, useRef, ReactNode } from "react"
+import React, { FunctionComponent, useRef, ReactNode } from "react"
 import {
 	Card,
 	makeStyles,
@@ -12,7 +12,7 @@ import { material } from "@uesio/ui"
 
 type Props = {
 	title: string
-	icon?: FC<SvgIconProps>
+	icon?: FunctionComponent<SvgIconProps>
 	iconColor?: string
 	selected?: boolean
 	onClick?: () => void
@@ -55,50 +55,54 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-const PropNodeTag: FC<Props> = (props: Props) => {
+const PropNodeTag: FunctionComponent<Props> = (props) => {
+	const {
+		title,
+		onClick,
+		children,
+		draggable,
+		icon: Icon,
+		iconColor,
+		selected,
+	} = props
+
 	const classes = useStyles(props)
 	const ref = useRef<HTMLDivElement>(null)
 	const innerArea = (
 		<div className={classes.wrapper}>
-			{props.icon && (
+			{Icon && (
 				<div className={classes.icon}>
-					<props.icon
+					<Icon
 						style={{
 							fontSize: "0.9rem",
 							display: "block",
-							color: props.iconColor,
+							color: iconColor,
 						}}
 					/>
 				</div>
 			)}
-			<div className={classes.content}>{props.title}</div>
+			<div className={classes.content}>{title}</div>
 		</div>
 	)
 	return (
-		<div
-			ref={ref}
-			draggable={!!props.draggable}
-			data-type={props.draggable}
-		>
+		<div ref={ref} draggable={!!draggable} data-type={draggable}>
 			<Card elevation={0} className={classes.card}>
-				{props.onClick ? (
-					<CardActionArea disableRipple onClick={props.onClick}>
+				{onClick ? (
+					<CardActionArea disableRipple onClick={onClick}>
 						{innerArea}
 					</CardActionArea>
 				) : (
 					innerArea
 				)}
 			</Card>
-			{props.selected && ref.current && props.children && (
+			{selected && ref.current && children && (
 				<Popper
 					className={classes.popper}
 					anchorEl={ref.current}
 					open={true}
 					placement="right"
 				>
-					<Paper className={classes.popperPaper}>
-						{props.children}
-					</Paper>
+					<Paper className={classes.popperPaper}>{children}</Paper>
 				</Popper>
 			)}
 		</div>

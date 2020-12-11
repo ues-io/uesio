@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks, component, definition } from "@uesio/ui"
 import UpIcon from "@material-ui/icons/ArrowUpward"
 import DownIcon from "@material-ui/icons/ArrowDownward"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
-function MoveActions(props: ActionProps): ReactElement {
+const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const path = props.path
 

@@ -1,11 +1,11 @@
-import React, { FC, Fragment, useRef } from "react"
+import React, { FunctionComponent, Fragment, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 
-const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
+const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
@@ -15,9 +15,7 @@ const CodeToolbar: FC<definition.BaseProps> = (props: definition.BaseProps) => {
 			<ToolbarTitle
 				title="Code"
 				icon={CloseIcon}
-				iconOnClick={(): void => {
-					uesio.builder.setRightPanel("")
-				}}
+				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
 				value={yamlDoc && yamlDoc.toString()}

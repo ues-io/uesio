@@ -16,7 +16,7 @@ interface NavigateSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals = {
+export default {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
 			operations.redirect(context, signal.path),
@@ -31,5 +31,3 @@ const signals = {
 			),
 	},
 }
-
-export default signals
