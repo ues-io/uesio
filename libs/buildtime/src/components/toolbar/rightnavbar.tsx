@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import MiniToolbarButton from "./minitoolbarbutton"
 import SaveIcon from "@material-ui/icons/CheckCircle"
@@ -15,7 +15,7 @@ interface Props extends definition.BaseProps {
 
 const MINI_TOOLBAR_WIDTH = 50
 
-const RightNavbar: FC<Props> = (props: Props) => {
+const RightNavbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const hasChanges = uesio.builder.useHasChanges()
 	return (
@@ -38,9 +38,7 @@ const RightNavbar: FC<Props> = (props: Props) => {
 				variant="cancel"
 				title="Cancel"
 				tooltipPlacement="left"
-				onClick={(): void => {
-					uesio.builder.cancel()
-				}}
+				onClick={(): void => uesio.builder.cancel()}
 			/>
 			<Divider
 				style={{

@@ -7,7 +7,7 @@ const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const descriptor = props.descriptor
 	const wires = uesio.view.useDefinition(
-		`["wires"]`
+		'["wires"]'
 	) as wire.WireDefinitionMap
 
 	return (

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, builder, hooks } from "@uesio/ui"
 import TextProp from "./textprop"
 import SelectProp from "./selectprop"
@@ -34,7 +34,7 @@ function getPropHandler(type?: string) {
 	}
 }
 
-function BuildPropItem(props: Props): ReactElement {
+const BuildPropItem: FunctionComponent<Props> = (props) => {
 	const { definition, descriptor, path } = props
 
 	const uesio = hooks.useUesio(props)
@@ -42,9 +42,8 @@ function BuildPropItem(props: Props): ReactElement {
 	const getValue = (): definition.Definition =>
 		definition ? definition[descriptor.name] : ""
 
-	const setValue = (value: string): void => {
+	const setValue = (value: string): void =>
 		uesio.view.setDefinition(path + '["' + descriptor.name + '"]', value)
-	}
 
 	const PropHandler = getPropHandler(descriptor.type)
 
