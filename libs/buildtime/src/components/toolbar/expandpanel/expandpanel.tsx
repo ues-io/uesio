@@ -1,8 +1,4 @@
-import React, {
-	PropsWithChildren,
-	FunctionComponent,
-	SyntheticEvent,
-} from "react"
+import React, { FunctionComponent, SyntheticEvent } from "react"
 import {
 	AccordionSummary,
 	Accordion,
@@ -80,7 +76,7 @@ const useDetailStyles = makeStyles(() =>
 	})
 )
 
-const ExpandPanel: FunctionComponent<PropsWithChildren<Props>> = (props) => {
+const ExpandPanel: FunctionComponent<Props> = (props) => {
 	const {
 		children,
 		action,
