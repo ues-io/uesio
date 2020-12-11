@@ -203,6 +203,16 @@ const wireSlice = createSlice({
 				}
 			}
 		)
+		builder.addCase(saveOp.rejected, (state, action) => {
+			const viewId = action.meta.arg.context.getViewId()
+
+			action.meta.arg.wires.forEach((entityName) => {
+				const entity = state.entities[`${viewId}/${entityName}`]
+				if (entity) {
+					entity.error = action.error.message
+				}
+			})
+		})
 	},
 })
 
