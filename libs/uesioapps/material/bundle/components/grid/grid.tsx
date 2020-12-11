@@ -30,7 +30,6 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 				listName="items"
 				path={props.path}
 				accepts={["material.griditem"]}
-				//direction="manual"
 				context={props.context}
 			/>
 		</material.Grid>

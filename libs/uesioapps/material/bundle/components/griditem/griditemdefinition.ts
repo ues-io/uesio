@@ -21,7 +21,6 @@ const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
 		components: [],
 	}),
 	sections: [],
-	traits: ["uesio.standalone"],
 }
 export { GridItemProps, GridItemDefinition }
 
