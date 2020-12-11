@@ -22,9 +22,7 @@ const TextProp: FunctionComponent<PropRendererProps> = ({
 		InputProps={inputProps}
 		InputLabelProps={inputLabelProps}
 		variant="outlined"
-		onChange={(event): void => {
-			setValue(event.target.value)
-		}}
+		onChange={(event): void => setValue(event.target.value)}
 	/>
 )
 

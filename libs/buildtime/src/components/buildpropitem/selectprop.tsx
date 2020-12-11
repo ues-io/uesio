@@ -30,9 +30,7 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 		value={getValue()}
 		label={descriptor.label}
 		fullWidth={true}
-		onChange={(event): void => {
-			setValue(event.target.value)
-		}}
+		onChange={(event): void => setValue(event.target.value)}
 	>
 		<option value="" />
 		{descriptor.options.map((option) => (
