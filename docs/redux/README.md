@@ -1,4 +1,4 @@
-# Uesio Redux Archetecture
+# Uesio Redux Architecture
 
 ## Structure
 
@@ -27,3 +27,7 @@ Any selectors that read items from within this slice
 ### signals.ts
 
 Signals that will be registered with the signals api to be run from views and components
+
+## Redux store data structure
+
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store but API as well.
