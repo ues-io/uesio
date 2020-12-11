@@ -177,6 +177,9 @@ For plugging such an application into uesio, you have to deploy it, obviously af
 ```
 cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
 
+// or
+npm run nx -- deploy uesioapps-crm
+
 // or, if you have nx globally
 nx deploy uesioapps-crm
 
