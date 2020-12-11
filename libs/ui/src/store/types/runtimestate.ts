@@ -26,4 +26,10 @@ type RuntimeState = {
 	wire: EntityState<PlainWire>
 }
 
+export type AppThunk<ReturnType = void> = ThunkAction<
+	ReturnType,
+	RootState,
+	unknown,
+	Action<string>
+>
 export default RuntimeState

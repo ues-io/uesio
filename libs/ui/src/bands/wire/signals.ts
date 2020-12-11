@@ -10,6 +10,7 @@ import toggleConditionOp from "./operations/togglecondition"
 import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
+import { AppThunk } from "../../store/types/runtimestate"
 import { AnyAction } from "redux"
 import { SignalDefinition } from "../../definition/signal"
 
@@ -105,17 +106,19 @@ export default {
 			toggleConditionOp(context, signal.wire, signal.condition),
 	},
 	[`${WIRE_BAND}/LOAD`]: {
-		dispatcher: (signal: LoadWiresSignal, context: Context) => async (
-			dispatch: Dispatcher<AnyAction>
-		) => {
+		dispatcher: (
+			signal: LoadWiresSignal,
+			context: Context
+		): AppThunk => async (dispatch: Dispatcher<AnyAction>) => {
 			await dispatch(loadWiresOp({ context, wires: signal.wires }))
 			return context
 		},
 	},
 	[`${WIRE_BAND}/SAVE`]: {
-		dispatcher: (signal: SaveWiresSignal, context: Context) => async (
-			dispatch: Dispatcher<AnyAction>
-		) => {
+		dispatcher: (
+			signal: SaveWiresSignal,
+			context: Context
+		): AppThunk => async (dispatch: Dispatcher<AnyAction>) => {
 			await dispatch(saveWiresOp({ context, wires: signal.wires }))
 			return context
 		},
