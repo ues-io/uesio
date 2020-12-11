@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -113,6 +114,17 @@ func loadOne(
 			if err != nil {
 				return nil, err
 			}
+
+			if fieldMetadata.Type == "TIMESTAMP" {
+				timeData, err := doc.DataAtPath([]string{firestoreFieldName})
+				if err != nil {
+					continue
+				}
+				result[fieldID] = timeData.(time.Time).Unix()
+
+				continue
+			}
+
 			fieldData, err := doc.DataAtPath([]string{firestoreFieldName})
 			if err != nil {
 				continue

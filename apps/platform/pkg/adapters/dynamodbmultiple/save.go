@@ -3,6 +3,7 @@ package dynamodbmultiple
 import (
 	"errors"
 	"text/template"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -59,6 +60,11 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			return nil, nil, err
 		}
 
+		if fieldMetadata.Type == "TIMESTAMP" && fieldMetadata.AutoPopulate == "UPDATE" {
+			dynamoDBUpdate[fieldName] = time.Now().Unix()
+			continue
+		}
+
 		if fieldID != collectionMetadata.IDField {
 			dynamoDBUpdate[fieldName] = value
 		} else {
@@ -87,6 +93,11 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		fieldName, err := getDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
+		}
+
+		if fieldMetadata.Type == "TIMESTAMP" && fieldMetadata.AutoPopulate == "CREATE" {
+			inserts[fieldName] = time.Now().Unix()
+			continue
 		}
 
 		if fieldID == collectionMetadata.IDField && newID != "" {

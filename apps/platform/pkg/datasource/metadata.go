@@ -45,6 +45,7 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 		ForeignKeyField:      f.ForeignKeyField,
 		Required:             f.Required,
 		Validate:             GetValidateMetadata(f.Validate),
+		AutoPopulate:         f.AutoPopulate,
 	}
 }
 
