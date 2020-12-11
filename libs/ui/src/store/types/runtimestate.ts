@@ -3,7 +3,7 @@ import { RouteState } from "../../bands/route/types"
 import { UserState } from "../../bands/user/types"
 import { BuilderState } from "../../bands/builder/types"
 import { ThemeState } from "../../bands/theme/types"
-import { EntityState } from "@reduxjs/toolkit"
+import { Action, EntityState, ThunkAction } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../../bands/viewdef/types"
 import { ComponentState } from "../../bands/component/types"
 import { PlainWire } from "../../bands/wire/types"
@@ -28,7 +28,7 @@ type RuntimeState = {
 
 export type AppThunk<ReturnType = void> = ThunkAction<
 	ReturnType,
-	RootState,
+	RuntimeState,
 	unknown,
 	Action<string>
 >
