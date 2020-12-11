@@ -6,8 +6,6 @@ import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { Wire } from "../wire/wire"
 import { selectors } from "../bands/view/adapter"
-import { PlainView } from "../bands/view/types"
-import { WireRecord } from "../wire/wirerecord"
 
 type ContextFrame = {
 	wire?: string
