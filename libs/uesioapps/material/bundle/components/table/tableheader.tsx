@@ -8,7 +8,7 @@ type Props = {
 	collection: collection.Collection
 }
 
-const TableHeader: FunctionComponent<Props> = (props: Props) => (
+const TableHeader: FunctionComponent<Props> = (props) => (
 	<material.TableHead key={0}>
 		<material.TableRow>
 			{props.columns.map((columnDef) => {
