@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { material } from "@uesio/ui"
 
 const useStyles = material.makeStyles(() =>
@@ -13,7 +13,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function ComponentMask(): ReactElement {
+const ComponentMask: FunctionComponent<{}> = () => {
 	const classes = useStyles({})
 	return <div className={classes.mask} />
 }
