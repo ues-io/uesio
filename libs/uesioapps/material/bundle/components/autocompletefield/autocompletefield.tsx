@@ -85,19 +85,20 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 				{...getMenuProps()}
 				style={{ position: "absolute", zIndex: 1 }}
 			>
-				{options?.map((item, index) => (
-					<material.ListItem
-						style={
-							highlightedIndex === index
-								? { backgroundColor: "#bde4ff" }
-								: { backgroundColor: "white" }
-						}
-						key={`${item.value}${index}`}
-						{...getItemProps({ item, index })}
-					>
-						<material.ListItemText primary={item.value} />
-					</material.ListItem>
-				))}
+				{isOpen &&
+					options.map((item, index) => (
+						<material.ListItem
+							style={
+								highlightedIndex === index
+									? { backgroundColor: "#bde4ff" }
+									: { backgroundColor: "white" }
+							}
+							key={`${item.value}${index}`}
+							{...getItemProps({ item, index })}
+						>
+							<material.ListItemText primary={item.value} />
+						</material.ListItem>
+					))}
 			</material.List>
 		</>
 	)
