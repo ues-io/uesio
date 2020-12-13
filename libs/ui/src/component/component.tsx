@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import { DefinitionMap, BaseProps } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"
@@ -53,12 +53,12 @@ function additionalContext(
 	return context
 }
 
-const Component: FC<BaseProps> = (props) => {
+const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
 
-const ComponentInternal: FC<BaseProps> = (props) => {
+const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
 	if (!shouldDisplay(context, definition)) return null

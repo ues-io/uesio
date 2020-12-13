@@ -1,4 +1,4 @@
-import React, { useEffect, FC } from "react"
+import React, { useEffect, FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
@@ -8,7 +8,6 @@ import { Dependencies } from "../bands/viewdef/types"
 import { ViewParams } from "../bands/view/types"
 import { useView } from "../bands/view/selectors"
 import { useViewDef } from "../bands/viewdef/selectors"
-import loadViewDefOp from "../bands/viewdef/operations/load"
 import loadViewOp from "../bands/view/operations/load"
 
 function getNeededScripts(
@@ -44,7 +43,7 @@ interface Props extends BaseProps {
 	}
 }
 
-const View: FC<Props> = (props) => {
+const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
 	const {
 		path,
