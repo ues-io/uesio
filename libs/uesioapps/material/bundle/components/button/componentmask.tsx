@@ -13,7 +13,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-const ComponentMask: FunctionComponent<{}> = () => {
+const ComponentMask: FunctionComponent<unknown> = () => {
 	const classes = useStyles({})
 	return <div className={classes.mask} />
 }
