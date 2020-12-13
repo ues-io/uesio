@@ -38,19 +38,11 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 		getItemProps,
 	} = useCombobox({
 		items: options,
-		itemToString: (item) => {
-			if (item) {
-				return item.value
-			}
-			return ""
-		},
+		itemToString: (item) => (item ? item.value : ""),
 		initialSelectedItem: { value },
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem as SelectedItem
-			if (!selectedItem) {
-				return
-			}
-			setValue(selectedItem.id)
+			selectedItem && setValue(selectedItem.id)
 		},
 		onInputValueChange: ({ inputValue, type }) => {
 			lastInputChange.current = Date.now()
@@ -93,20 +85,19 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 				{...getMenuProps()}
 				style={{ position: "absolute", zIndex: 1 }}
 			>
-				{isOpen &&
-					options.map((item, index) => (
-						<material.ListItem
-							style={
-								highlightedIndex === index
-									? { backgroundColor: "#bde4ff" }
-									: { backgroundColor: "white" }
-							}
-							key={`${item.value}${index}`}
-							{...getItemProps({ item, index })}
-						>
-							<material.ListItemText primary={item.value} />
-						</material.ListItem>
-					))}
+				{options?.map((item, index) => (
+					<material.ListItem
+						style={
+							highlightedIndex === index
+								? { backgroundColor: "#bde4ff" }
+								: { backgroundColor: "white" }
+						}
+						key={`${item.value}${index}`}
+						{...getItemProps({ item, index })}
+					>
+						<material.ListItemText primary={item.value} />
+					</material.ListItem>
+				))}
 			</material.List>
 		</>
 	)
