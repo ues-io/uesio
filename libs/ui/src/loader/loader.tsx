@@ -13,13 +13,12 @@ class Loader {
 
 	platform: Platform
 
-	async load(
-		element: HTMLElement,
-		initialState: RuntimeState
-	): Promise<void> {
+	load(element: HTMLElement, initialState: RuntimeState): void {
 		ReactDOM.render(
 			<Provider store={create(this.platform, initialState)}>
-				<Runtime path="" context={new Context()} />
+				<React.StrictMode>
+					<Runtime path="" context={new Context()} />
+				</React.StrictMode>
 			</Provider>,
 			element
 		)
