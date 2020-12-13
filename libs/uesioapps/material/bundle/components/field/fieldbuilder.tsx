@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { FieldProps, FieldDefinition } from "./fielddefinition"
 import Field from "./field"
 import { hooks } from "@uesio/ui"
 
-const FieldBuilder = (props: FieldProps): ReactElement | null => {
+const FieldBuilder: FunctionComponent<FieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as FieldDefinition
 
