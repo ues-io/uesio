@@ -1,5 +1,5 @@
 import { material } from "@uesio/ui"
-import React, { ReactElement, useState, ChangeEvent } from "react"
+import React, { useState, ChangeEvent, FunctionComponent } from "react"
 import { useLoginStyles } from "./logincognito"
 
 type SignupFormProps = {
@@ -17,7 +17,7 @@ type SignupFormProps = {
 	) => Promise<void>
 }
 
-function SignupForm(props: SignupFormProps): ReactElement {
+const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 	const classes = useLoginStyles(props)
 	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
@@ -77,9 +77,7 @@ function SignupForm(props: SignupFormProps): ReactElement {
 				}
 			/>
 			<material.Button
-				onClick={() => {
-					props.setMode("")
-				}}
+				onClick={() => props.setMode("")}
 				className={classes.button}
 			>
 				Cancel

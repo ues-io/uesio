@@ -79,9 +79,7 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	const classes = useLoginStyles(props)
 	return (
 		<button
-			onClick={() => {
-				props.setMode("login")
-			}}
+			onClick={() => props.setMode("login")}
 			className={classes.loginButton}
 		>
 			<LoginIcon image="uesio.amazonsmall" />
@@ -193,9 +191,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 			{message && (
 				<AlertComponent
 					{...props}
-					onClose={() => {
-						setMessage("")
-					}}
+					onClose={() => setMessage("")}
 					className={classes.errormsg}
 					severity="error"
 				>
