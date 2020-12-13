@@ -29,7 +29,6 @@ async function handleChange(
 
 	const idField = collection.getIdField()
 	if (!idField) return
-	const collectionNamespace = collection.getNamespace()
 
 	const context = uesio.getContext()
 	const workspace = context.getWorkspace()
@@ -64,7 +63,7 @@ async function handleChange(
 			namespace: "uesio",
 		} as signal.SignalDefinition
 
-		const result = await uesio.signal.run(navigateSig, context)
+		await uesio.signal.run(navigateSig, context)
 	}
 }
 
