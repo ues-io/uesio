@@ -14,7 +14,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
-Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide). The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - folder feature - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
+Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide). The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - "folder-by-type" approach - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
 
 [Uesio Specific Redux Docs](./docs/redux/README.md)
 
