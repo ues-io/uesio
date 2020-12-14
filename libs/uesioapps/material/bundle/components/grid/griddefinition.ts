@@ -114,6 +114,14 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	traits: ["uesio.standalone"],
+	actions: [
+		{
+			label: "Add Item",
+			type: "ADD",
+			componentKey: "material.griditem",
+			slot: "items",
+		},
+	],
 }
 export { GridProps, GridDefinition }
 
