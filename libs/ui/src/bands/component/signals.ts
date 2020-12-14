@@ -3,8 +3,8 @@ import { parseKey } from "../../component/path"
 import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
-import { Dispatcher } from "../../store/store"
-import RuntimeState, { AppThunk } from "../../store/types/runtimestate"
+import { Dispatcher, ThunkFunc } from "../../store/store"
+import RuntimeState from "../../store/types/runtimestate"
 import { selectState } from "./selectors"
 import { PlainComponentState } from "./types"
 
@@ -13,7 +13,10 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 export default {
-	dispatcher: (signal: ComponentSignal, context: Context): AppThunk => async (
+	dispatcher: (
+		signal: ComponentSignal,
+		context: Context
+	): ThunkFunc => async (
 		dispatch: Dispatcher<AnyAction>,
 		getState: () => RuntimeState
 	) => {

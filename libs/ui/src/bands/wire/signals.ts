@@ -9,8 +9,7 @@ import emptyWireOp from "./operations/empty"
 import toggleConditionOp from "./operations/togglecondition"
 import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
-import { Dispatcher } from "../../store/store"
-import { AppThunk } from "../../store/types/runtimestate"
+import { Dispatcher, ThunkFunc } from "../../store/store"
 import { AnyAction } from "redux"
 import { SignalDefinition } from "../../definition/signal"
 
@@ -109,9 +108,7 @@ export default {
 		dispatcher: (
 			signal: LoadWiresSignal,
 			context: Context
-		): AppThunk<Promise<Context>> => async (
-			dispatch: Dispatcher<AnyAction>
-		) => {
+		): ThunkFunc => async (dispatch: Dispatcher<AnyAction>) => {
 			await dispatch(loadWiresOp({ context, wires: signal.wires }))
 			return context
 		},
@@ -120,9 +117,7 @@ export default {
 		dispatcher: (
 			signal: SaveWiresSignal,
 			context: Context
-		): AppThunk<Promise<Context>> => async (
-			dispatch: Dispatcher<AnyAction>
-		) => {
+		): ThunkFunc => async (dispatch: Dispatcher<AnyAction>) => {
 			await dispatch(saveWiresOp({ context, wires: signal.wires }))
 			return context
 		},
