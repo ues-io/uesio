@@ -13,10 +13,7 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 export default {
-	dispatcher: (
-		signal: ComponentSignal,
-		context: Context
-	): AppThunk<Promise<Context>> => async (
+	dispatcher: (signal: ComponentSignal, context: Context): AppThunk => async (
 		dispatch: Dispatcher<AnyAction>,
 		getState: () => RuntimeState
 	) => {
