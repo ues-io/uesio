@@ -2,13 +2,8 @@ import React, { FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 import { ComponentInternal } from "../component/component"
 
-type Props = {
-	type: string
-	message: JSX.Element
-} & BaseProps
-
-const Feedback: FunctionComponent<Props> = (props) => {
-	const { message, context } = props
+const Feedback: FunctionComponent<BaseProps> = (props) => {
+	const { children, context } = props
 	return (
 		<ComponentInternal
 			{...props}
@@ -16,7 +11,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 			path=""
 			context={context}
 		>
-			<div>Component Not Found: {message}</div>
+			<div>Component Not Found: {!!children}</div>
 		</ComponentInternal>
 	)
 }
