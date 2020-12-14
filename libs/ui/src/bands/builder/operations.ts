@@ -4,14 +4,14 @@ import { setAvailableNamespaces, setMetadataList } from "."
 import { Context } from "../../context/context"
 import { Platform } from "../../platform/platform"
 import { Dispatcher } from "../../store/store"
-import RuntimeState from "../../store/types/runtimestate"
+import RuntimeState, { AppThunk } from "../../store/types/runtimestate"
 
 const getMetadataList = (
 	context: Context,
 	metadataType: metadata.MetadataType,
 	namespace: string,
 	grouping?: string
-) => async (
+): AppThunk<Promise<Context>> => async (
 	dispatch: Dispatcher<AnyAction>,
 	getState: () => RuntimeState,
 	platform: Platform
@@ -33,7 +33,9 @@ const getMetadataList = (
 	return context
 }
 
-const getAvailableNamespaces = (context: Context) => async (
+const getAvailableNamespaces = (
+	context: Context
+): AppThunk<Promise<Context>> => async (
 	dispatch: Dispatcher<AnyAction>,
 	getState: () => RuntimeState,
 	platform: Platform

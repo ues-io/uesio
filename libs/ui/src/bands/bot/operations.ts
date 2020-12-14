@@ -2,8 +2,7 @@ import { parseKey } from "../../component/path"
 import { Context } from "../../context/context"
 import { BotParams, Platform } from "../../platform/platform"
 import { Dispatcher } from "../../store/store"
-import { AppThunk } from "../../store/types/runtimestate"
-import RuntimeState from "../../store/types/runtimestate"
+import RuntimeState, { AppThunk } from "../../store/types/runtimestate"
 
 const call = (
 	context: Context,
