@@ -52,6 +52,15 @@ definition:
                                     signal: route/NAVIGATE
                                 text: Leads
                                 variant: text
+                      - material.griditem:
+                          components:
+                            - material.button:
+                                signals:
+                                  - namespace: crm
+                                    path: opportunities
+                                    signal: route/NAVIGATE
+                                text: Opportunities
+                                variant: text
           - material.griditem:
               components:
                 - material.grid:

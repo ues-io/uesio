@@ -1,11 +1,21 @@
 name: standard
 named:
 views:
-  crm.accounts: true
   crm.home: true
   crm.topbar: true
-routes:
   crm.accounts: true
+  crm.accountDetails: true
+  crm.contacts: true
+  crm.contactDetails: true
+  crm.opportunities: true
+  crm.opportunityDetails: true
+routes:
   crm.home: true
+  crm.accounts: true
+  crm.accountDetails: true
+  crm.contacts: true
+  crm.contactDetails: true
+  crm.opportunities: true
+  crm.opportunityDetails: true
 files:
   crm.logo: true

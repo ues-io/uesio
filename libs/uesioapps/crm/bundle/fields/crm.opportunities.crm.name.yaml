@@ -1,0 +1,5 @@
+name: name
+collection: crm.opportunities
+type: TEXT
+label: Name
+propertyName: name

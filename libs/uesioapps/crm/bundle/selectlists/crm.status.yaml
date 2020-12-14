@@ -1,0 +1,10 @@
+name: status
+options:
+  - label: Qualify
+    value: QUALIFY
+  - label: Develop
+    value: DEVELOP
+  - label: Propose
+    value: PROPOSE
+  - label: Closed
+    value: CLOSED
