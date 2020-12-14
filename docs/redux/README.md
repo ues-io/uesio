@@ -30,8 +30,4 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Redux store data structure
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store but API as well. This API is the so-called `platform` API can be retrieved in any components, that way :
-
-```
- const platform = getPlatform()
-```
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store but API as well. For example, `yaml.Document` data structure is stored in the redux store which is not a plain JavaScript object.
