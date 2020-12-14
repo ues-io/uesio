@@ -20,7 +20,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<div style={{ position: "absolute", top: 0, left: 0 }}>
+		<div style={{ position: "absolute", bottom: 10, right: 10 }}>
 			<ComponentInternal
 				{...props}
 				componentType="material.alert"
