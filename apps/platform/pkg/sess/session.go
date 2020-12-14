@@ -214,6 +214,14 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return create(s.browserSession, s.site)
 }
 
+// GetContextAppBundle returns the appbundle in context
+func (s *Session) GetContextAppBundle() *metadata.BundleDef {
+	if s.workspace != nil {
+		return s.workspace.GetAppBundle()
+	}
+	return s.site.GetAppBundle()
+}
+
 // GetContextAppName returns the appname in context
 func (s *Session) GetContextAppName() string {
 	if s.workspace != nil {

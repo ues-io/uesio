@@ -2,6 +2,7 @@ package bundles
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
@@ -77,10 +78,7 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return "", errors.New("You aren't licensed to use that app: " + namespace)
 	}
 
-	bundle, err := GetAppBundle(session)
-	if err != nil {
-		return "", err
-	}
+	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
 		return "", errors.New("That version doesn't exist for that bundle: " + appName + " " + appVersion)
@@ -104,6 +102,16 @@ func getBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 		return "", nil, err
 	}
 	return version, bs, nil
+}
+
+// LoadAllFromAny function
+func LoadAllFromAny(group metadata.BundleableGroup, conditions reqs.BundleConditions, session *sess.Session) error {
+	// Get all avaliable namespaces
+	bundleDef := session.GetContextAppBundle()
+	for namespace := range bundleDef.Dependencies {
+		fmt.Println(namespace)
+	}
+	return nil
 }
 
 // LoadAll function

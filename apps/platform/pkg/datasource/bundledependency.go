@@ -74,23 +74,6 @@ func BundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.
 	return bdc, err
 }
 
-// GetBundleDependenciesForWorkspace func
-func GetBundleDependenciesForWorkspace(workspaceID string, session *sess.Session) (*metadata.BundleDependencyCollection, error) {
-	bdc, err := BundleDependencyLoad(
-		[]reqs.LoadRequestCondition{
-			{
-				Field:    "uesio.workspaceid",
-				Value:    workspaceID,
-				Operator: "=",
-			},
-		},
-
-		session)
-	if err != nil {
-		return nil, err
-	}
-	return &bdc, nil
-}
 func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*metadata.BundleDependency, error) {
 	bdc, err := BundleDependencyLoad(
 		[]reqs.LoadRequestCondition{
