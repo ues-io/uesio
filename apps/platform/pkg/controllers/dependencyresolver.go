@@ -67,16 +67,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 // NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
-	bundleDef := session.GetContextAppBundle()
-
-	namespaces := map[string]bool{
-		bundleDef.Name: true,
-	}
-
-	for name := range bundleDef.Dependencies {
-		namespaces[name] = true
-	}
-
+	namespaces := session.GetContextNamespaces()
 	respondJSON(w, r, &namespaces)
-
 }

@@ -2,7 +2,6 @@ package bundles
 
 import (
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
@@ -107,9 +106,9 @@ func getBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 // LoadAllFromAny function
 func LoadAllFromAny(group metadata.BundleableGroup, conditions reqs.BundleConditions, session *sess.Session) error {
 	// Get all avaliable namespaces
-	bundleDef := session.GetContextAppBundle()
-	for namespace := range bundleDef.Dependencies {
-		fmt.Println(namespace)
+	namespaces := session.GetContextNamespaces()
+	for namespace := range namespaces {
+		LoadAll(group, namespace, conditions, session)
 	}
 	return nil
 }

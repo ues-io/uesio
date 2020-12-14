@@ -19,9 +19,9 @@ func getDeletesForChange(delete reqs.DeleteRequest, collectionMetadata *adapters
 	dynamoDBDeleteKey := make(map[string]interface{})
 	for fieldID, value := range delete {
 
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		fieldName, err := getDBFieldName(fieldMetadata)
@@ -44,9 +44,9 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 
 	for fieldID, value := range change {
 
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, nil, err
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -74,9 +74,9 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	inserts := map[string]interface{}{}
 
 	for fieldID, value := range change {
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -167,9 +167,9 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 		return "", err
 	}
 
-	idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-	if !ok {
-		return "", errors.New("Error getting metadata for the ID field")
+	idFieldMetadata, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return "", err
 	}
 	idFieldName, err := getDBFieldName(idFieldMetadata)
 	if err != nil {
@@ -283,9 +283,9 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 
 	for _, request := range requests {
 
-		collectionMetadata, ok := metadata.Collections[request.Collection]
-		if !ok {
-			return nil, errors.New("No metadata provided for collection: " + request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		if err != nil {
+			return nil, err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)

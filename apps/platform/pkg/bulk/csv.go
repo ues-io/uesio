@@ -2,7 +2,6 @@ package bulk
 
 import (
 	"encoding/csv"
-	"errors"
 	"io"
 	"strconv"
 
@@ -43,9 +42,9 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.CollectionMetadata) ([]reqs.Lookup, error) {
 	lookups := []reqs.Lookup{}
 	for _, mapping := range mappings {
-		fieldMetadata, ok := collectionMetadata.Fields[mapping.FieldName]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + collectionMetadata.Name + " : " + mapping.FieldName)
+		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
+		if err != nil {
+			return nil, err
 		}
 		if fieldMetadata.Type == "REFERENCE" {
 			lookups = append(lookups, reqs.Lookup{
@@ -73,9 +72,9 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 		return nil, err
 	}
 
-	collectionMetadata, ok := metadata.Collections[spec.Collection]
-	if !ok {
-		return nil, errors.New("No metadata provided for collection: " + spec.Collection)
+	collectionMetadata, err := metadata.GetCollection(spec.Collection)
+	if err != nil {
+		return nil, err
 	}
 
 	changeIndex := 0
@@ -92,17 +91,17 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 
 		for index, mapping := range mappings {
 			fieldName := mapping.FieldName
-			fieldMetadata, ok := collectionMetadata.Fields[fieldName]
-			if !ok {
-				return nil, errors.New("No metadata provided for field: " + spec.Collection + " : " + fieldName)
+			fieldMetadata, err := collectionMetadata.GetField(fieldName)
+			if err != nil {
+				return nil, err
 			}
 			if fieldMetadata.Type == "CHECKBOX" {
 				changeRequest[mapping.FieldName] = record[index] == "true"
 			} else if fieldMetadata.Type == "REFERENCE" {
 
-				refCollectionMetadata, ok := metadata.Collections[fieldMetadata.ReferencedCollection]
-				if !ok {
-					return nil, errors.New("No metadata provided for collection: " + fieldMetadata.ReferencedCollection)
+				refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+				if err != nil {
+					return nil, err
 				}
 
 				matchField := refCollectionMetadata.NameField
