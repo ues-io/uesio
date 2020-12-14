@@ -13,10 +13,6 @@ type EntryFileMap = {
 	[key: string]: string
 }
 
-interface WebpackError extends Error {
-	details?: string
-}
-
 const factory = ['import { component } from "@uesio/ui";']
 
 const getEntryFile = async (
@@ -170,6 +166,10 @@ const getWebpackConfig = (
 		resolve: {
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
+			alias: {
+				crypto: "crypto-browserify",
+				stream: "stream-browserify",
+			},
 		},
 		module: {
 			rules: [
@@ -213,57 +213,4 @@ const getWebpackConfig = (
 	}
 }
 
-const getWebpackComplete = (
-	flags: Flags
-): ((err: WebpackError, stats: webpack.Stats) => void) => {
-	const dev = flags.develop
-	const getStats = flags.stats
-	let firstMessage = true
-	let firstRebuild = true
-	return (err: WebpackError, stats: webpack.Stats): void => {
-		// Stats Object
-		if (err) {
-			console.error(err.stack || err)
-			if (err.details) {
-				console.error(err.details)
-			}
-			return
-		}
-
-		const info = stats.toJson()
-
-		if (getStats) {
-			fs.writeFile("stats.json", JSON.stringify(info))
-		}
-
-		if (stats.hasErrors()) {
-			info.errors.forEach((message) => console.error(message))
-
-			// force the build process to fail upon compilation error
-			process.exit(1)
-		}
-		if (stats.hasWarnings()) {
-			info.warnings.forEach((message) => console.warn(message))
-		}
-		if (dev) {
-			if (firstMessage) {
-				console.log("Done PACKING!")
-				firstMessage = false
-			} else {
-				//There does not seem to be a way in webpack API to detect this initial compilation
-				//completed from a watch command - so we have this hacky workaround
-				if (firstRebuild) {
-					console.log("Watching Pack...")
-					firstRebuild = false
-				} else {
-					console.log("Rebuilt pack")
-				}
-			}
-		} else {
-			console.log("Done PACKING!")
-		}
-		// Done processing
-	}
-}
-
-export { createEntryFiles, getWebpackConfig, getWebpackComplete }
+export { createEntryFiles, getWebpackConfig }

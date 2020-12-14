@@ -14,6 +14,7 @@ module.exports = {
 
 	module: {
 		rules: [
+			{ test: /\.js$/, type: 'javascript/auto' },
 			{
 				test: /\.ts(x?)$/,
 				exclude: /node_modules/,

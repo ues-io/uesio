@@ -9,7 +9,6 @@ module.exports = {
 	mode: "production",
 
 	// Enable sourcemaps for debugging webpack's output.
-	devtool: "source-map",
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
@@ -28,11 +27,13 @@ module.exports = {
 				],
 			},
 			// All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+			/*
 			{
 				enforce: "pre",
 				test: /\.js$/,
 				loader: "source-map-loader",
 			},
+			*/
 			{
 				test: /\.css$/,
 				include: MONACO_DIR,
@@ -55,7 +56,6 @@ module.exports = {
 		libraryTarget: "umd",
 		filename: "[name].js",
 		chunkFilename: "[name].js",
-		sourceMapFilename: "[name].js.map",
 		path: path.join(__dirname, "../../dist/lazymonaco"),
 	},
 

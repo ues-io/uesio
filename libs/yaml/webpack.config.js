@@ -10,6 +10,12 @@ module.exports = {
 		extensions: [".js"],
 	},
 
+	module: {
+		rules: [
+			{ test: /node_modules\/yaml\/browser\/dist\/.*/, type: 'javascript/auto' }
+		],
+	},
+
 	entry: {
 		yaml: "../../node_modules/yaml/index.js",
 	},
