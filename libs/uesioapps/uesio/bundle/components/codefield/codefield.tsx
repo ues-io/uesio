@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState } from "react"
+import isJSON from "validator/lib/isJSON"
 import { definition, material, collection, wire, component } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -10,22 +11,6 @@ type CodeFieldDefinition = {
 }
 
 type CodeFieldLanguage = "yaml" | "json" | "javascript"
-
-const tryParseJSON = (jsonString: string) => {
-	try {
-		const o = JSON.parse(jsonString)
-
-		// Handle non-exception-throwing cases:
-		// Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
-		// but... JSON.parse(null) returns null, and typeof null === "object",
-		// so we must check for that, too. Thankfully, null is falsey, so this suffices:
-		if (o && typeof o === "object") {
-			return o
-		}
-	} catch (e) {
-		return false
-	}
-}
 
 interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
@@ -57,7 +42,7 @@ function getChangeHandler(
 			return (newValue: string) => {
 				if (language === "json") {
 					setStringValue(newValue)
-					const jsonValue = tryParseJSON(newValue)
+					const jsonValue = isJSON(newValue)
 					if (jsonValue) {
 						record.update(fieldId, jsonValue)
 						setMessage("")
