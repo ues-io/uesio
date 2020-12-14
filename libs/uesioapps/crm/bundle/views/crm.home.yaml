@@ -3,10 +3,92 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.typography:
-        text: CRM Home
-        variant: h5
-  wires: null
+    - material.grid:
+        direction: column
+        justify: flex-start
+        items:
+          - material.griditem:
+              components:
+                - material.typography:
+                    text: "Recent Leads:"
+                    color: textSecondary
+                - material.deck:
+                    id: homeLeads
+                    margin: 0
+                    mode: READ
+                    wire: leads
+                    xs: 3
+                    components:
+                      - material.card:
+                          components:
+                            - material.field:
+                                fieldId: crm.firstname
+          - material.griditem:
+              components:
+                - material.typography:
+                    text: "Recent Accounts:"
+                    color: textSecondary
+                - material.deck:
+                    id: homeAccounts
+                    margin: 0
+                    mode: READ
+                    wire: accounts
+                    xs: 3
+                    components:
+                      - material.card:
+                          components:
+                            - material.field:
+                                fieldId: crm.name
+          - material.griditem:
+              components:
+                - material.typography:
+                    text: "Recent Contacts:"
+                    color: textSecondary
+                - material.deck:
+                    id: homeContacts
+                    margin: 0
+                    mode: READ
+                    wire: contacts
+                    xs: 3
+                    components:
+                      - material.card:
+                          components:
+                            - material.field:
+                                fieldId: crm.firstname
+          - material.griditem:
+              components:
+                - material.typography:
+                    text: "Recent Opportunities:"
+                    color: textSecondary
+                - material.deck:
+                    id: homeOpportunities
+                    margin: 0
+                    mode: READ
+                    wire: opportunities
+                    xs: 3
+                    components:
+                      - material.card:
+                          components:
+                            - material.field:
+                                fieldId: crm.name
+
+  wires:
+    accounts:
+      collection: crm.accounts
+      fields:
+        crm.name: null
+    contacts:
+      collection: crm.contacts
+      fields:
+        crm.firstname: null
+    leads:
+      collection: crm.leads
+      fields:
+        crm.firstname: null
+    opportunities:
+      collection: crm.opportunities
+      fields:
+        crm.name: null
 dependencies:
   componentpacks:
     material.main: null
