@@ -2,8 +2,8 @@ import { AnyAction } from "redux"
 import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
 import { Platform } from "../../platform/platform"
-import { Dispatcher } from "../../store/store"
-import RuntimeState, { AppThunk } from "../../store/types/runtimestate"
+import { Dispatcher, ThunkFunc } from "../../store/store"
+import RuntimeState from "../../store/types/runtimestate"
 import { set as setUser } from "."
 import routeOps from "../../bands/route/operations"
 
@@ -29,7 +29,7 @@ const login = (
 	context: Context,
 	type: string,
 	token: string
-): AppThunk<Promise<Context>> => async (
+): ThunkFunc => async (
 	dispatch: Dispatcher<AnyAction>,
 	getState: () => RuntimeState,
 	platform: Platform
@@ -42,7 +42,7 @@ const login = (
 	return responseRedirect(response, dispatch, context)
 }
 
-const logout = (context: Context): AppThunk<Promise<Context>> => async (
+const logout = (context: Context): ThunkFunc => async (
 	dispatch: Dispatcher<AnyAction>,
 	getState: () => RuntimeState,
 	platform: Platform
