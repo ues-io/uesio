@@ -1,8 +1,8 @@
+import { AnyAction } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import markForDeleteOp from "./markfordelete"
 import unmarkForDeleteOp from "./unmarkfordelete"
 import { Dispatcher } from "../../..//store/store"
-import { AnyAction } from "@reduxjs/toolkit"
 
 export default (context: Context) => async (
 	dispatch: Dispatcher<AnyAction>
