@@ -10,6 +10,17 @@ type Workspace struct {
 	AppRef      string         `uesio:"uesio.appid"`
 	App         App            `uesio:"uesio.app"`
 	Permissions *PermissionSet `uesio:"-"`
+	bundleDef   *BundleDef
+}
+
+// SetAppBundle function
+func (w *Workspace) SetAppBundle(bundleDef *BundleDef) {
+	w.bundleDef = bundleDef
+}
+
+// GetAppBundle function
+func (w *Workspace) GetAppBundle() *BundleDef {
+	return w.bundleDef
 }
 
 // GetCollectionName function

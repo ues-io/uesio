@@ -114,15 +114,12 @@ func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
 		Type:     "",
 	}
 
-	by, err := bundles.GetAppBundle(session)
-	if err != nil {
-		return nil, err
-	}
+	by := session.GetContextAppBundle()
 
 	encoder := yaml.NewEncoder(&itemStream.Buffer)
 	encoder.SetIndent(2)
 
-	err = encoder.Encode(by)
+	err := encoder.Encode(by)
 	if err != nil {
 		return nil, err
 	}

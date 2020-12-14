@@ -72,9 +72,9 @@ func loadOne(
 				continue
 			}
 
-			fieldMetadata, ok := collectionMetadata.Fields[condition.Field]
-			if !ok {
-				return nil, errors.New("No metadata provided for field: " + condition.Field)
+			fieldMetadata, err := collectionMetadata.GetField(condition.Field)
+			if err != nil {
+				return nil, err
 			}
 			fieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {

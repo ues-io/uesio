@@ -19,7 +19,7 @@ func validateRequired(field *adapters.FieldMetadata) validationFunc {
 	return func(change reqs.ChangeRequest) error {
 		key := field.GetFullName()
 		val := change[key]
-		if val == "" {
+		if val == nil || val == "" {
 			return errors.New("Field: " + field.Label + " is required")
 		}
 		return nil

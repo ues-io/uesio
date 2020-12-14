@@ -24,9 +24,9 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	for fieldID, value := range change {
 		if fieldID == collectionMetadata.IDField {
 			// We don't need to add the id field to the update
-			idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-			if !ok {
-				return nil, "", "", errors.New("Error getting metadata for the ID field")
+			idFieldMetadata, err := collectionMetadata.GetIDField()
+			if err != nil {
+				return nil, "", "", err
 			}
 			idFieldName, _ = GetDBFieldName(idFieldMetadata)
 			continue
@@ -35,9 +35,9 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		if fieldID == collectionMetadata.NameField {
 			searchableValues = append(searchableValues, value.(string))
 		}
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, "", "", errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, "", "", err
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -70,9 +70,9 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
 	for fieldID, value := range change {
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldID == collectionMetadata.NameField {
@@ -136,9 +136,9 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 		newID = guuid.New().String()
 	}
 
-	idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-	if !ok {
-		return "", errors.New("No metadata provided for field: " + collectionMetadata.IDField)
+	idFieldMetadata, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return "", err
 	}
 	fieldName, err := GetDBFieldName(idFieldMetadata)
 	if err != nil {
@@ -208,9 +208,9 @@ func ProcessDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 		postgresID, ok := delete[collectionMetadata.IDField].(string)
 		if ok {
 
-			idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-			if !ok {
-				return nil, errors.New("Error getting metadata for the ID field")
+			idFieldMetadata, err := collectionMetadata.GetIDField()
+			if err != nil {
+				return nil, err
 			}
 			idFieldName, err := GetDBFieldName(idFieldMetadata)
 			if err != nil {

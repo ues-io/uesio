@@ -214,6 +214,26 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 	return create(s.browserSession, s.site)
 }
 
+// GetContextNamespaces function
+func (s *Session) GetContextNamespaces() map[string]bool {
+	bundleDef := s.GetContextAppBundle()
+	namespaces := map[string]bool{
+		bundleDef.Name: true,
+	}
+	for name := range bundleDef.Dependencies {
+		namespaces[name] = true
+	}
+	return namespaces
+}
+
+// GetContextAppBundle returns the appbundle in context
+func (s *Session) GetContextAppBundle() *metadata.BundleDef {
+	if s.workspace != nil {
+		return s.workspace.GetAppBundle()
+	}
+	return s.site.GetAppBundle()
+}
+
 // GetContextAppName returns the appname in context
 func (s *Session) GetContextAppName() string {
 	if s.workspace != nil {

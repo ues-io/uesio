@@ -35,6 +35,10 @@ func (fc *FieldCollection) NewItem(key string) (BundleableItem, error) {
 
 // GetKeyPrefix function
 func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	collectionKey, hasCollection := conditions["uesio.collection"]
+	if hasCollection {
+		return collectionKey + "."
+	}
 	return ""
 }
 
