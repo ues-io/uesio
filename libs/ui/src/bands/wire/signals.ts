@@ -109,7 +109,9 @@ export default {
 		dispatcher: (
 			signal: LoadWiresSignal,
 			context: Context
-		): AppThunk => async (dispatch: Dispatcher<AnyAction>) => {
+		): AppThunk<Promise<Context>> => async (
+			dispatch: Dispatcher<AnyAction>
+		) => {
 			await dispatch(loadWiresOp({ context, wires: signal.wires }))
 			return context
 		},
@@ -118,7 +120,9 @@ export default {
 		dispatcher: (
 			signal: SaveWiresSignal,
 			context: Context
-		): AppThunk => async (dispatch: Dispatcher<AnyAction>) => {
+		): AppThunk<Promise<Context>> => async (
+			dispatch: Dispatcher<AnyAction>
+		) => {
 			await dispatch(saveWiresOp({ context, wires: signal.wires }))
 			return context
 		},
