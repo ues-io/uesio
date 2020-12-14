@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef, ReactNode } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import {
 	Card,
 	makeStyles,
@@ -16,7 +16,6 @@ type Props = {
 	iconColor?: string
 	selected?: boolean
 	onClick?: () => void
-	children?: ReactNode
 	draggable?: string
 }
 

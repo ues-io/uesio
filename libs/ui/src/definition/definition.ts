@@ -6,7 +6,6 @@ export type YamlDoc = yaml.Document
 export type BaseProps = {
 	definition?: DefinitionMap
 	style?: React.CSSProperties
-	children?: React.ReactNode
 	index?: number
 	path: string
 	componentType?: string

@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { GridItemProps, GridItemDefinition } from "./griditemdefinition"
 import GridItem from "./griditem"
 import { hooks } from "@uesio/ui"
 
-function GridItemBuilder(props: GridItemProps): ReactElement {
+const GridItemBuilder: FunctionComponent<GridItemProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path

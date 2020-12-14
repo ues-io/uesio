@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks, material } from "@uesio/ui"
 import { ColumnProps, ColumnDefinition } from "./columndefinition"
 
@@ -10,7 +10,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function ColumnBuilder(props: ColumnProps): ReactElement | null {
+const ColumnBuilder: FunctionComponent<ColumnProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as ColumnDefinition

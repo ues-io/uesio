@@ -1,5 +1,5 @@
 import { context, styles, material } from "@uesio/ui"
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 interface IconProps {
 	image: string
@@ -28,7 +28,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginIcon(props: IconProps): ReactElement | null {
+const LoginIcon: FunctionComponent<IconProps> = (props) => {
 	const classes = useStyles(props)
 	return (
 		<div className={classes.loginButtonIcon}>

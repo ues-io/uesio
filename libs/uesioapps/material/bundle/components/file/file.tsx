@@ -1,9 +1,7 @@
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
-import { hooks, material, styles, wire } from "@uesio/ui"
-import Edit from "@material-ui/icons/Edit"
-import image from "../image/image"
+import { hooks, material, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>

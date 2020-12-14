@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 import { IconProps } from "./icondefinition"
 import { material, styles } from "@uesio/ui"
@@ -13,7 +13,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Icon(props: IconProps): ReactElement | null {
+const Icon: FunctionComponent<IconProps> = (props) => {
 	const classes = useStyles(props)
 	const iconType = props.definition?.type
 	const iconsize = props.definition?.size || "small"
