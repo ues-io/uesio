@@ -5,7 +5,7 @@ import unmarkForDeleteOp from "./unmarkfordelete"
 import { Dispatcher } from "../../../store/store"
 import { AppThunk } from "../../../store/types/runtimestate"
 
-export default (context: Context) => async (
+export default (context: Context): AppThunk<Promise<Context>> => async (
 	dispatch: Dispatcher<AnyAction>
 ) => {
 	const record = context.getRecord()
