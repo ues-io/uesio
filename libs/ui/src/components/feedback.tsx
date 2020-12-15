@@ -37,7 +37,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 		if (!mounted.current) {
 			// componentDidMount
 			mounted.current = true
-			setTimeout(() => setIsHidden(false), 1000)
+			setTimeout(() => setIsHidden(false), 0)
 		} else {
 			// componentDidUpdate
 			if (!isHidden) {
