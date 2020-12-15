@@ -14,7 +14,7 @@ const useStyles = makeStyles(() =>
 			bottom: -120,
 			right: 0,
 			width: "100%",
-			transition: `bottom ${duration} ease-out`,
+			transition: `bottom ${duration}ms ease-out`,
 		}),
 		shown: {
 			position: "absolute",
