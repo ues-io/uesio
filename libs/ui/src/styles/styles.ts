@@ -76,14 +76,18 @@ const getMarginStyles = (
 }
 
 const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
-	!definition ? {} : { float: definition }
+	!definition
+		? {}
+		: {
+				float: definition,
+		  }
 
 const getColor = ({
 	color,
 	shadePercentage,
 	theme,
 }: {
-	color?: string
+	color?: ThemeColor | string
 	shadePercentage?: number | string
 	theme?: Theme
 }): undefined | string => {
