@@ -24,14 +24,12 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		collectionKey := request.GetCollection()
 
 		// Keep a running tally of all requested collections
-		collections := MetadataRequest{}
-		collections.AddCollection(collectionKey)
-
-		for _, change := range request.Changes {
-			for fieldKey := range change {
-				collections.AddField(collectionKey, fieldKey, nil)
-			}
+		collections := MetadataRequest{
+			Options: &MetadataRequestOptions{
+				LoadAllFields: true,
+			},
 		}
+		collections.AddCollection(collectionKey)
 
 		if request.Options != nil && request.Options.Lookups != nil {
 			for _, lookup := range request.Options.Lookups {

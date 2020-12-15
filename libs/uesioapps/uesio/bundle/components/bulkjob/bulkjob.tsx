@@ -51,9 +51,10 @@ async function handleChange(
 }
 
 const Bulkjob: FunctionComponent<Props> = (props) => {
-	const { definition, context } = props
-	const id = definition.id
-	const label = definition.label
+	const {
+		definition: { id, label },
+		context,
+	} = props
 
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)

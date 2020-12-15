@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, material } from "@uesio/ui"
 import clsx from "clsx"
 
@@ -39,7 +39,7 @@ const colors = [
 	"#ffa600",
 ]
 
-function ColorPicker(props: Props): ReactElement | null {
+const ColorPicker: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
@@ -64,9 +64,7 @@ function ColorPicker(props: Props): ReactElement | null {
 							className={clsx(classes.color, {
 								[classes.selected]: isSelected,
 							})}
-							onClick={(): void => {
-								record.update(fieldId, color)
-							}}
+							onClick={(): void => record.update(fieldId, color)}
 							style={{ backgroundColor: color }}
 						/>
 					)

@@ -138,9 +138,9 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 
 func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *adapters.MetadataCache, requests []reqs.LoadRequest, responses []reqs.LoadResponse) (*reqs.LoadResponse, error) {
 	data := []map[string]interface{}{}
-	collectionMetadata, ok := metadata.Collections[wire.Collection]
-	if !ok {
-		return nil, errors.New("No metadata provided for collection: " + wire.Collection)
+	collectionMetadata, err := metadata.GetCollection(wire.Collection)
+	if err != nil {
+		return nil, err
 	}
 
 	nameFieldMetadata, err := collectionMetadata.GetNameField()
@@ -189,9 +189,9 @@ func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *a
 				continue
 			}
 
-			fieldMetadata, ok := collectionMetadata.Fields[condition.Field]
-			if !ok {
-				return nil, errors.New("No metadata provided for field: " + condition.Field)
+			fieldMetadata, err := collectionMetadata.GetField(condition.Field)
+			if err != nil {
+				return nil, err
 			}
 			fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react"
+import React, { FunctionComponent, useEffect } from "react"
 import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"
@@ -10,7 +10,6 @@ import { BaseProps } from "../definition/definition"
 import { ThemeState } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
-import { useUesio } from "../hooks/hooks"
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
 
@@ -28,7 +27,7 @@ const makeTheme = (themePalette: PaletteOptions) =>
 		palette: { ...themePalette },
 	})
 
-const Route: FC<BaseProps> = (props) => {
+const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
 	const route = useRoute()
 	const theme = useTheme()

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react"
+import React, { FunctionComponent, useState } from "react"
 import { definition, material, collection, wire, component } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -93,7 +93,7 @@ function getValue(
 	}
 }
 
-function CodeField(props: Props): ReactElement | null {
+const CodeField: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()

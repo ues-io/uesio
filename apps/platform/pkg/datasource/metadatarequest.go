@@ -16,10 +16,16 @@ func ParseSelectListKey(key string) (string, string, string) {
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 
+// MetadataRequestOptions struct
+type MetadataRequestOptions struct {
+	LoadAllFields bool
+}
+
 // MetadataRequest type
 type MetadataRequest struct {
 	Collections FieldsMap
 	SelectLists map[string]bool
+	Options     *MetadataRequestOptions
 }
 
 // HasRequests function
@@ -78,15 +84,14 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 			return err
 		}
 
-		// Automagially add the id field and the name field whether they were requested or not.
-		_, err = LoadFieldMetadata(metadata.IDField, collectionKey, metadata, session)
-		if err != nil {
-			return err
-		}
-
-		_, err = LoadFieldMetadata(metadata.NameField, collectionKey, metadata, session)
-		if err != nil {
-			return err
+		if mr.Options != nil && mr.Options.LoadAllFields {
+			err = LoadAllFieldsMetadata(collectionKey, metadata, session)
+		} else {
+			// Automagially add the id field and the name field whether they were requested or not.
+			err = LoadFieldsMetadata([]string{metadata.IDField, metadata.NameField}, collectionKey, metadata, session)
+			if err != nil {
+				return err
+			}
 		}
 
 		for fieldKey, subFields := range collection {

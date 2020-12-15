@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -99,6 +100,35 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 		metadataCache.AddCollection(key, collectionMetadata)
 	}
 	return collectionMetadata, nil
+}
+
+// LoadAllFieldsMetadata function
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+	var fields metadata.FieldCollection
+
+	err := bundles.LoadAllFromAny(&fields, reqs.BundleConditions{
+		"uesio.collection": collectionKey,
+	}, session)
+	if err != nil {
+		return err
+	}
+
+	for _, field := range fields {
+		fieldMetadata := GetFieldMetadata(&field)
+		collectionMetadata.Fields[field.Namespace+"."+field.Name] = fieldMetadata
+	}
+	return nil
+}
+
+// LoadFieldsMetadata function
+func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+	for _, key := range keys {
+		_, err := LoadFieldMetadata(key, collectionKey, collectionMetadata, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // LoadFieldMetadata function

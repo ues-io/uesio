@@ -1,9 +1,4 @@
-import React, {
-	ReactElement,
-	PropsWithChildren,
-	FC,
-	SyntheticEvent,
-} from "react"
+import React, { FunctionComponent, SyntheticEvent } from "react"
 import {
 	AccordionSummary,
 	Accordion,
@@ -19,7 +14,7 @@ import SmallIconButton from "../smalliconbutton"
 interface Props {
 	title: string
 	defaultExpanded: boolean
-	action?: FC<SvgIconProps>
+	action?: FunctionComponent<SvgIconProps>
 	actionColor?: string
 	actionOnClick?: () => void
 }
@@ -81,7 +76,16 @@ const useDetailStyles = makeStyles(() =>
 	})
 )
 
-function ExpandPanel(props: PropsWithChildren<Props>): ReactElement {
+const ExpandPanel: FunctionComponent<Props> = (props) => {
+	const {
+		children,
+		action,
+		actionColor,
+		title,
+		defaultExpanded,
+		actionOnClick,
+	} = props
+
 	const summaryClasses = useSummaryStyles(props)
 	const expansionClasses = useExpansionStyles(props)
 	const detailClasses = useDetailStyles(props)
@@ -90,48 +94,30 @@ function ExpandPanel(props: PropsWithChildren<Props>): ReactElement {
 		<Accordion
 			classes={expansionClasses}
 			square
-			defaultExpanded={props.defaultExpanded}
+			defaultExpanded={defaultExpanded}
 			elevation={0}
 		>
 			<AccordionSummary
 				classes={summaryClasses}
-				expandIcon={
-					<ExpandMoreIcon
-						style={{
-							fontSize: "1.25rem",
-						}}
-					/>
-				}
-				IconButtonProps={{
-					size: "small",
-				}}
+				expandIcon={<ExpandMoreIcon style={{ fontSize: "1.25rem" }} />}
+				IconButtonProps={{ size: "small" }}
 			>
-				<div
-					style={{
-						flex: "1",
-					}}
-				>
-					{props.title}
-				</div>
-				<div
-					style={{
-						flex: "0",
-					}}
-				>
-					{props.action && (
+				<div style={{ flex: "1" }}>{title}</div>
+				<div style={{ flex: "0" }}>
+					{action && (
 						<SmallIconButton
 							onClick={(event: SyntheticEvent): void => {
 								event.stopPropagation()
-								props.actionOnClick?.()
+								actionOnClick?.()
 							}}
-							icon={props.action}
-							color={props.actionColor}
+							icon={action}
+							color={actionColor}
 						/>
 					)}
 				</div>
 			</AccordionSummary>
 			<AccordionDetails classes={detailClasses}>
-				{props.children}
+				{children}
 			</AccordionDetails>
 		</Accordion>
 	)

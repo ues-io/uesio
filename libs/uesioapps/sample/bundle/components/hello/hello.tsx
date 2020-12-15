@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { HelloProps } from "./hellodefinition"
 import { material } from "@uesio/ui"
 
@@ -11,7 +11,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function Hello(props: HelloProps): ReactElement {
+const Hello: FunctionComponent<HelloProps> = (props) => {
 	const classes = useStyles(props)
 	return (
 		<div className={classes.root}>

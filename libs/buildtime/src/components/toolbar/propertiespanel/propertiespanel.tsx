@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from "react"
+import React, { FunctionComponent, Fragment } from "react"
 import ToolbarTitle from "../toolbartitle"
 import { definition, hooks, builder } from "@uesio/ui"
 import BuildPropArea from "../../buildproparea/buildproparea"
@@ -28,13 +28,11 @@ interface Props extends definition.BaseProps {
 	definition: definition.DefinitionMap
 }
 
-const PropertiesPanel: FC<Props> = (props: Props) => {
+const PropertiesPanel: FunctionComponent<Props> = (props) => {
+	const { path, propDef, definition, context } = props
 	// Get the property descriptor from the path
 	const uesio = hooks.useUesio(props)
 	const classes = useStyles(props)
-	const path = props.path
-	const propDef = props.propDef
-	const definition = props.definition
 
 	if (propDef && definition !== undefined) {
 		return (
@@ -42,23 +40,21 @@ const PropertiesPanel: FC<Props> = (props: Props) => {
 				<ToolbarTitle
 					title={propDef.title}
 					icon={CloseIcon}
-					iconOnClick={(): void => {
-						uesio.builder.setSelectedNode("")
-					}}
+					iconOnClick={(): void => uesio.builder.setSelectedNode("")}
 				/>
 				<BuildPropArea
 					index={0}
 					buildPropsDef={propDef}
 					definition={definition}
 					path={path}
-					context={props.context}
+					context={context}
 				/>
 				<BuildActionsArea
 					index={0}
 					actions={propDef.actions}
 					definition={definition}
 					path={path}
-					context={props.context}
+					context={context}
 				/>
 			</Fragment>
 		)

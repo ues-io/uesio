@@ -7,6 +7,7 @@ function addcontact(bot) {
 					"crm.firstname": "George",
 					"crm.lastname": "Washington",
 					"crm.accountid": accountId,
+					"crm.email": "george.washington@gmail.com"
 				}
 			])
 		}

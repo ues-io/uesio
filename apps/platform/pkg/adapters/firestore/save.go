@@ -45,9 +45,9 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		if fieldID == collectionMetadata.NameField {
 			searchableValues = append(searchableValues, value.(string))
 		}
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -90,9 +90,9 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
 	for fieldID, value := range change {
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldID == collectionMetadata.NameField {
@@ -160,9 +160,9 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	}
 
 	// Add in the new id field as the id field
-	idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-	if !ok {
-		return "", errors.New("No metadata provided for field: " + collectionMetadata.IDField)
+	idFieldMetadata, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return "", err
 	}
 	fieldName, err := getDBFieldName(idFieldMetadata)
 	if err != nil {
@@ -272,9 +272,9 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 
 	for _, request := range requests {
 
-		collectionMetadata, ok := metadata.Collections[request.Collection]
-		if !ok {
-			return nil, errors.New("No metadata provided for collection: " + request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		if err != nil {
+			return nil, err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)

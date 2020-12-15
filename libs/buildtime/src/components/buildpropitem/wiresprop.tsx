@@ -6,7 +6,7 @@ import MultiSelectProp from "./multiselectprop"
 const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const wires = uesio.view.useDefinition(
-		`["wires"]`
+		'["wires"]'
 	) as wire.WireDefinitionMap
 
 	return (

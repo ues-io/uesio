@@ -1,5 +1,5 @@
 import { material } from "@uesio/ui"
-import React, { ReactElement, useState, ChangeEvent } from "react"
+import React, { FunctionComponent, useState, ChangeEvent } from "react"
 import { useLoginStyles } from "./logincognito"
 
 type LoginFormProps = {
@@ -8,7 +8,7 @@ type LoginFormProps = {
 	logIn: (username: string, password: string) => Promise<void>
 }
 
-function LoginForm(props: LoginFormProps): ReactElement {
+const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 	const classes = useLoginStyles(props)
 
 	const [username, setUsername] = useState("")
@@ -64,9 +64,7 @@ function LoginForm(props: LoginFormProps): ReactElement {
 					component="button"
 					variant="body2"
 					className={classes.textbutton}
-					onClick={() => {
-						console.info("I'm a button.")
-					}}
+					onClick={() => console.info("I'm a button.")}
 				>
 					Reset password
 				</material.Link>

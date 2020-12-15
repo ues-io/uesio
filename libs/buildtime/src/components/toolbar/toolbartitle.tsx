@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FunctionComponent } from "react"
 import {
 	createStyles,
 	makeStyles,
@@ -10,7 +10,7 @@ import SmallIconButton from "./smalliconbutton"
 
 type Props = {
 	title: string
-	icon?: FC<SvgIconProps>
+	icon?: FunctionComponent<SvgIconProps>
 	iconColor?: string
 	iconOnClick?: () => void
 }
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
-const ToolbarTitle: FC<Props> = (props: Props) => {
+const ToolbarTitle: FunctionComponent<Props> = (props) => {
 	const classes = useStyles()
 	return (
 		<div className={classes.wrapper}>

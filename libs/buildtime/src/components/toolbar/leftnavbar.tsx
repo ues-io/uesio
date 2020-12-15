@@ -14,7 +14,7 @@ interface Props {
 
 const MINI_TOOLBAR_WIDTH = 50
 
-const LeftNavbar: FunctionComponent<Props> = (props: Props) => (
+const LeftNavbar: FunctionComponent<Props> = (props) => (
 	<MiniToolbar anchor="left" width={MINI_TOOLBAR_WIDTH}>
 		<MiniToolbarButton
 			id="wires"

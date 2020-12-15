@@ -26,9 +26,7 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 			className={classes.root}
 			checked={!!value}
 			disabled={mode === "READ"}
-			onChange={(event): void => {
-				setValue(event.target.checked)
-			}}
+			onChange={(event): void => setValue(event.target.checked)}
 			{...(!hideLabel && { label })}
 		/>
 	)

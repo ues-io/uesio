@@ -1,11 +1,11 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { builder, hooks, signal, definition, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import OnIcon from "@material-ui/icons/Visibility"
 import OffIcon from "@material-ui/icons/VisibilityOff"
 
-function ToggleConditionAction(props: ActionProps): ReactElement | null {
+const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const path = props.path
 

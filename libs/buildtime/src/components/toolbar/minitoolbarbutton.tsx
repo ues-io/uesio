@@ -38,68 +38,66 @@ const useStyles = makeStyles((theme: Theme) =>
 	})
 )
 
-const MiniToolbarButton: FunctionComponent<Props> = memo(
-	({
-		variant,
-		title,
-		tooltipPlacement,
-		disabled,
-		onClick,
-		id,
-		icon: Icon,
-	}) => {
-		const theme = useTheme()
-		const classes = useStyles(theme)
+const MiniToolbarButton: FunctionComponent<Props> = ({
+	variant,
+	title,
+	tooltipPlacement,
+	disabled,
+	onClick,
+	id,
+	icon: Icon,
+}) => {
+	const theme = useTheme()
+	const classes = useStyles(theme)
 
-		// Special handling for tooltips so that they
-		// Go away when clicked.
-		const [open, setOpen] = useState(false)
-		const [listen, setListen] = useState(true)
-		const buttonClasses = clsx(
-			classes.button,
-			variant && classes?.[variant]
-				? {
-						[classes[variant]]:
-							variant === "save" || variant === "cancel",
-				  }
-				: {}
-		)
+	// Special handling for tooltips so that they
+	// Go away when clicked.
+	const [open, setOpen] = useState(false)
+	const [listen, setListen] = useState(true)
+	const buttonClasses = clsx(
+		classes.button,
+		variant && classes?.[variant]
+			? {
+					[classes[variant]]:
+						variant === "save" || variant === "cancel",
+			  }
+			: {}
+	)
 
-		return (
-			<Tooltip
-				title={title}
-				placement={tooltipPlacement}
-				arrow={true}
-				open={open}
-				disableFocusListener={true}
-				onOpen={(): void => {
-					if (listen) {
-						setOpen(true)
-						setListen(false)
-					}
-				}}
-				onClose={(): void => {
+	return (
+		<Tooltip
+			title={title}
+			placement={tooltipPlacement}
+			arrow={true}
+			open={open}
+			disableFocusListener={true}
+			onOpen={(): void => {
+				if (listen) {
+					setOpen(true)
+					setListen(false)
+				}
+			}}
+			onClose={(): void => {
+				setOpen(false)
+				setListen(true)
+			}}
+		>
+			<IconButton
+				color="primary"
+				className={buttonClasses}
+				disabled={disabled}
+				size="small"
+				onClick={(): void => {
 					setOpen(false)
-					setListen(true)
+					onClick && onClick(id)
 				}}
 			>
-				<IconButton
-					color="primary"
-					className={buttonClasses}
-					disabled={disabled}
-					size="small"
-					onClick={(): void => {
-						setOpen(false)
-						return onClick && onClick(id)
-					}}
-				>
-					<Icon style={{ fontSize: 16 }} />
-				</IconButton>
-			</Tooltip>
-		)
-	}
-)
+				<Icon style={{ fontSize: 16 }} />
+			</IconButton>
+		</Tooltip>
+	)
+}
 
 MiniToolbarButton.displayName = "MiniToolbarButton"
 
-export default MiniToolbarButton
+export default memo(MiniToolbarButton)

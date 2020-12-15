@@ -1,5 +1,5 @@
 import { material } from "@uesio/ui"
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 
 interface TextProps {
 	text: string
@@ -14,7 +14,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginText(props: TextProps): ReactElement | null {
+const LoginText: FunctionComponent<TextProps> = (props) => {
 	const classes = useStyles(props)
 	return <span className={classes.loginButtonText}>{props.text}</span>
 }

@@ -38,19 +38,11 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 		getItemProps,
 	} = useCombobox({
 		items: options,
-		itemToString: (item) => {
-			if (item) {
-				return item.value
-			}
-			return ""
-		},
+		itemToString: (item) => (item ? item.value : ""),
 		initialSelectedItem: { value },
 		onSelectedItemChange: (changes) => {
 			const selectedItem = changes.selectedItem as SelectedItem
-			if (!selectedItem) {
-				return
-			}
-			setValue(selectedItem.id)
+			selectedItem && setValue(selectedItem.id)
 		},
 		onInputValueChange: ({ inputValue, type }) => {
 			lastInputChange.current = Date.now()

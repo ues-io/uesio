@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import {
 	ImageUploadProps,
 	ImageUploadDefinition,
@@ -6,7 +6,7 @@ import {
 import ImageUpload from "./imageupload"
 import { hooks } from "@uesio/ui"
 
-const ImageUploadBuilder = (props: ImageUploadProps): ReactElement => {
+const ImageUploadBuilder: FunctionComponent<ImageUploadProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path

@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks } from "@uesio/ui"
 import { ContainerProps, ContainerDefinition } from "./containerdefinition"
 import Container from "./container"
 
-function ContainerBuilder(props: ContainerProps): ReactElement | null {
+const ContainerBuilder: FunctionComponent<ContainerProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path
