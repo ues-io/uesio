@@ -120,7 +120,7 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 
 	for _, change := range changes {
 
-		keyVal, err := templating.Execute(template, change)
+		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
 			return errors.New("Could not get key for upsert change")
 		}
@@ -128,7 +128,7 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 
 		// If we find a match, populate the id field so that it's an update instead of an insert
 		if ok {
-			change[collectionMetadata.IDField] = match[collectionMetadata.IDField]
+			change.FieldChanges[collectionMetadata.IDField] = match[collectionMetadata.IDField]
 		}
 
 	}
@@ -159,14 +159,14 @@ func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Looku
 
 	for _, change := range changes {
 
-		keyRef := change[lookupField].(map[string]interface{})
+		keyRef := change.FieldChanges[lookupField].(map[string]interface{})
 		keyVal := keyRef[matchField].(string)
 		match, ok := lookupResult[keyVal]
 
 		if ok {
-			change[fieldMetadata.ForeignKeyField] = match[refCollectionMetadata.IDField]
+			change.FieldChanges[fieldMetadata.ForeignKeyField] = match[refCollectionMetadata.IDField]
 		} else {
-			change[fieldMetadata.ForeignKeyField] = nil
+			change.FieldChanges[fieldMetadata.ForeignKeyField] = nil
 		}
 
 	}

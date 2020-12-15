@@ -37,13 +37,15 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *sess.Session) error {
 
 	changes := map[string]reqs.ChangeRequest{}
-	changeRequest := map[string]interface{}{}
+	changeRequest := reqs.ChangeRequest{
+		FieldChanges: map[string]interface{}{},
+	}
 	meta, err := getCollectionMetadata(details.CollectionID, details.FieldID, session)
 	if err != nil {
 		return err
 	}
-	changeRequest[details.FieldID] = id
-	changeRequest[meta.IDField] = details.RecordID
+	changeRequest.FieldChanges[details.FieldID] = id
+	changeRequest.FieldChanges[meta.IDField] = details.RecordID
 	changes["0"] = changeRequest
 
 	saveRequestBatch := &SaveRequestBatch{

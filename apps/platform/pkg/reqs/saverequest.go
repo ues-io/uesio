@@ -1,5 +1,7 @@
 package reqs
 
+import "encoding/json"
+
 // Lookup struct
 type Lookup struct {
 	RefField   string // The name of the reference field to lookup
@@ -38,7 +40,21 @@ func (sr *SaveRequest) GetWire() string {
 }
 
 // ChangeRequest struct
-type ChangeRequest map[string]interface{}
+type ChangeRequest struct {
+	FieldChanges map[string]interface{}
+	IsNew        bool
+	IDValue      interface{}
+}
+
+// UnmarshalJSON custom functionality
+func (cr *ChangeRequest) UnmarshalJSON(data []byte) error {
+	var changes map[string]interface{}
+	if err := json.Unmarshal(data, &changes); err != nil {
+		return err
+	}
+	cr.FieldChanges = changes
+	return nil
+}
 
 // DeleteRequest struct
 type DeleteRequest map[string]interface{}

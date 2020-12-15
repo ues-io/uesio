@@ -18,8 +18,8 @@ type validationFunc func(change reqs.ChangeRequest) error
 func validateRequired(field *adapters.FieldMetadata) validationFunc {
 	return func(change reqs.ChangeRequest) error {
 		key := field.GetFullName()
-		val := change[key]
-		if val == nil || val == "" {
+		val, ok := change.FieldChanges[key]
+		if (change.IsNew && !ok) || val == "" {
 			return errors.New("Field: " + field.Label + " is required")
 		}
 		return nil
@@ -29,7 +29,8 @@ func validateRequired(field *adapters.FieldMetadata) validationFunc {
 func validateEmail(field *adapters.FieldMetadata) validationFunc {
 	return func(change reqs.ChangeRequest) error {
 		key := field.GetFullName()
-		if val, ok := change[key]; ok {
+		val, ok := change.FieldChanges[key]
+		if ok {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
 				return errors.New(field.Label + " is not a valid email address")
 			}
@@ -73,11 +74,12 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 
 func matchRegex(change reqs.ChangeRequest, key string, regex *regexp.Regexp) bool {
 
-	if val, ok := change[key]; ok {
+	val, ok := change.FieldChanges[key]
+	if ok {
 		return regex.MatchString(fmt.Sprintf("%v", val))
 	}
 
-	return false
+	return true
 }
 
 func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func(reqs.ChangeRequest) error {
@@ -111,11 +113,23 @@ func FieldValidation(request *reqs.SaveRequest, collectionMetadata *adapters.Col
 
 	var listErrors []string
 	validationFunc := getValidationFunction(collectionMetadata)
-	for _, change := range request.Changes {
+	idField, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return err
+	}
+	for index, change := range request.Changes {
+		idValue, ok := change.FieldChanges[idField.GetFullName()]
+		if !ok {
+			change.IsNew = true
+		} else {
+			change.IDValue = idValue
+		}
 		err := validationFunc(change)
 		if err != nil {
 			listErrors = append(listErrors, err.Error())
 		}
+		// Put the changes back into the map
+		request.Changes[index] = change
 	}
 
 	if len(listErrors) != 0 {
