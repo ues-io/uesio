@@ -75,28 +75,22 @@ const getMarginStyles = (
 }
 
 const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
-	!definition
-		? {}
-		: {
-				float: definition,
-		  }
+	!definition ? {} : { float: definition }
 
 const getColor = ({
 	color,
 	shadePercentage,
-	themeColor,
 	theme,
 }: {
 	color?: string
 	shadePercentage?: number | string
-	themeColor?: ThemeColor
 	theme?: Theme
 }) => {
 	let computedColor = null
 
-	// match the themeColor (primary, etc.) with the color defined in the theme
-	if (themeColor && THEME_COLORS?.[themeColor] && theme) {
-		computedColor = theme.palette?.[themeColor as ThemeColor]?.main
+	// map the color (primary, etc.) with the color defined in the theme
+	if (color && THEME_COLORS?.[color as ThemeColor] && theme) {
+		computedColor = theme.palette?.[color as ThemeColor]?.main
 	}
 
 	// apply the shade if necessary

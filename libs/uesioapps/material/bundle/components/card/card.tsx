@@ -12,8 +12,9 @@ const useStyles = material.makeStyles((theme) =>
 		},
 		media: (props: CardProps) => {
 			const color = styles.getColor({
-				themeColor: "primary",
-				shadePercentage: 0.66,
+				color: "secondary",
+				shadePercentage: 0.33,
+				theme,
 			})
 
 			return {
