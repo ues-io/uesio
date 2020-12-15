@@ -55,7 +55,7 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 		}
 	})
 
-	// destroy the component after the feeback vanished
+	// destroy the component after it have vanished
 	if (doDestroy) {
 		return null
 	}
