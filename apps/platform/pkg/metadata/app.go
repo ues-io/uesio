@@ -8,10 +8,10 @@ type App struct {
 	Name           string `uesio:"uesio.name"`
 	Description    string `uesio:"uesio.description"`
 	Color          string `uesio:"uesio.color"`
-	LoginRoute     string `uesio:"uesio.loginRoute"`
-	HomeRoute      string `uesio:"uesio.homeRoute"`
-	DefaultProfile string `uesio:"uesio.defaultProfile"`
-	PublicProfile  string `uesio:"uesio.publicProfile"`
+	LoginRoute     string `uesio:"uesio.loginroute"`
+	HomeRoute      string `uesio:"uesio.homeroute"`
+	DefaultProfile string `uesio:"uesio.defaultprofile"`
+	PublicProfile  string `uesio:"uesio.publicprofile"`
 }
 
 // GetCollectionName function
