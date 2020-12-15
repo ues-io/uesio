@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 	"text/template"
-	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -60,14 +59,6 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 			return nil, err
 		}
 
-		if fieldMetadata.Type == "TIMESTAMP" && fieldMetadata.AutoPopulate == "UPDATE" {
-			updates = append(updates, firestore.Update{
-				Path:  fieldName,
-				Value: time.Now(),
-			})
-			continue
-		}
-
 		updates = append(updates, firestore.Update{
 			Path:  fieldName,
 			Value: value,
@@ -107,11 +98,6 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		fieldName, err := getDBFieldName(fieldMetadata)
 		if err != nil {
 			return nil, err
-		}
-
-		if fieldMetadata.Type == "TIMESTAMP" && fieldMetadata.AutoPopulate == "CREATE" {
-			inserts[fieldName] = time.Now()
-			continue
 		}
 
 		inserts[fieldName] = value

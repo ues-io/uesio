@@ -63,6 +63,11 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			return nil, err
 		}
 
+		err = AddTimestamps(&request, collectionMetadata, session)
+		if err != nil {
+			return nil, err
+		}
+
 		err = RunBeforeSaveBots(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
