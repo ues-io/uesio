@@ -18,7 +18,7 @@ const useStyles = makeStyles(() =>
 		},
 		shown: {
 			position: "absolute",
-			bottom: 100,
+			bottom: 30,
 			right: 10,
 			width: "100%",
 			transition: "bottom 1000ms ease-in",
@@ -37,15 +37,19 @@ const Feedback: FunctionComponent<Props> = (props) => {
 		if (!mounted.current) {
 			// componentDidMount
 			mounted.current = true
-			setTimeout(() => setIsHidden(false), 0)
+			setTimeout(() => setIsHidden(false), 1000)
 		} else {
 			// componentDidUpdate
 			if (!isHidden) {
-				// force hidding after 3000ms
+				// force hidding after 5000ms
 				setTimeout(() => {
 					setIsHidden(true)
+				}, 5000)
+
+				// force destroying once job is done
+				setTimeout(() => {
 					setDoDestroy(true)
-				}, 3000)
+				}, 6000)
 			}
 		}
 	})
@@ -55,15 +59,11 @@ const Feedback: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
-	const p = {
-		...props,
-		padding: "50px",
-	}
-
 	return (
-		<div className={isHidden ? classes.hidden : classes.shown}>
+		<div id="grosCon" className={isHidden ? classes.hidden : classes.shown}>
 			<ComponentInternal
-				{...p}
+				style={{ padding: "30px" }}
+				{...props}
 				componentType="material.alert"
 				path=""
 				context={context}
