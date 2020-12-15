@@ -6,9 +6,21 @@ import TextField from "../textfield/textfield"
 import SelectField from "../selectfield/selectfield"
 import CheckBoxField from "../checkboxfield/checkboxfield"
 
+function toLocalISOString(d: Date) {
+	const off = d.getTimezoneOffset()
+	return new Date(
+		d.getFullYear(),
+		d.getMonth(),
+		d.getDate(),
+		d.getHours(),
+		d.getMinutes() - off,
+		d.getSeconds(),
+		d.getMilliseconds()
+	).toISOString()
+}
+
 function unixToISO(unixTimestamp: number) {
-	//TO-DO Get User Timezone and out the time
-	const isoStr = new Date(unixTimestamp * 1e3).toISOString()
+	const isoStr = toLocalISOString(new Date(unixTimestamp * 1e3))
 	return isoStr.substring(0, isoStr.length - 1)
 }
 

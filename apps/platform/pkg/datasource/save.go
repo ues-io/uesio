@@ -54,12 +54,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			return nil, err
 		}
 
-		err = FieldValidation(&request, collectionMetadata, session)
-		if err != nil {
-			return nil, err
-		}
-
-		err = AddTimestamps(&request, collectionMetadata, session)
+		err = PopulateAndValidate(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
 		}
