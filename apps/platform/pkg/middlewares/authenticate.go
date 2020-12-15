@@ -140,6 +140,14 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		workspace.Permissions = adminPerms
 
 		session.SetWorkspace(&workspace)
+
+		bundleDef, err := bundles.GetAppBundle(session)
+		if err != nil {
+			http.Error(w, "Failed to get app bundle from site:"+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		session.GetWorkspace().SetAppBundle(bundleDef)
 		next.ServeHTTP(w, r)
 	})
 }

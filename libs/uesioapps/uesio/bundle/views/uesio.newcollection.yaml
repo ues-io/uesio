@@ -37,6 +37,7 @@ definition:
         uesio.collectionname:
         uesio.namefield:
         uesio.idfield:
+        uesio.created:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -91,6 +92,8 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.created
                                   - uesio.metadatafield:
                                       fieldId: uesio.datasource
                                       metadataType: "DATASOURCE"

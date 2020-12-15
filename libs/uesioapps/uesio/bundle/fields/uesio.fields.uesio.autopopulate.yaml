@@ -1,0 +1,6 @@
+name: autopopulate
+collection: uesio.fields
+type: SELECT
+selectList: uesio.autopopulatetypes
+label: Auto Populate
+propertyName: autopopulate

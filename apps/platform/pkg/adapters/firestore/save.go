@@ -35,7 +35,7 @@ func getSearchIndex(values []string) map[string]bool {
 func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) ([]firestore.Update, error) {
 	updates := []firestore.Update{}
 	searchableValues := []string{}
-	for fieldID, value := range change {
+	for fieldID, value := range change.FieldChanges {
 		if fieldID == collectionMetadata.IDField {
 			// We don't need to add the id field to the update
 			continue
@@ -44,9 +44,9 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 		if fieldID == collectionMetadata.NameField {
 			searchableValues = append(searchableValues, value.(string))
 		}
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -80,10 +80,10 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
-	for fieldID, value := range change {
-		fieldMetadata, ok := collectionMetadata.Fields[fieldID]
-		if !ok {
-			return nil, errors.New("No metadata provided for field: " + fieldID)
+	for fieldID, value := range change.FieldChanges {
+		fieldMetadata, err := collectionMetadata.GetField(fieldID)
+		if err != nil {
+			return nil, err
 		}
 
 		if fieldID == collectionMetadata.NameField {
@@ -112,14 +112,14 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return inserts, nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef, firestoreID string) error {
+func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) error {
 	// it's an update!
 	updates, err := getUpdatesForChange(change, collectionMetadata)
 	if err != nil {
 		return err
 	}
 
-	doc := collection.Doc(firestoreID)
+	doc := collection.Doc(change.IDValue.(string))
 	batch = batch.Update(doc, updates)
 
 	return nil
@@ -127,7 +127,7 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 
 func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef, idTemplate *template.Template) (string, error) {
 	// it's an insert!
-	newID, err := templating.Execute(idTemplate, change)
+	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
 		return "", err
 	}
@@ -146,9 +146,9 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	}
 
 	// Add in the new id field as the id field
-	idFieldMetadata, ok := collectionMetadata.Fields[collectionMetadata.IDField]
-	if !ok {
-		return "", errors.New("No metadata provided for field: " + collectionMetadata.IDField)
+	idFieldMetadata, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return "", err
 	}
 	fieldName, err := getDBFieldName(idFieldMetadata)
 	if err != nil {
@@ -174,13 +174,11 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 
 		changeResult := reqs.NewChangeResult(change)
 
-		firestoreID, ok := change[collectionMetadata.IDField].(string)
-		if ok && firestoreID != "" {
-			err := processUpdate(change, collectionMetadata, batch, collection, firestoreID)
+		if !change.IsNew && change.IDValue != nil {
+			err := processUpdate(change, collectionMetadata, batch, collection)
 			if err != nil {
 				return nil, err
 			}
-			changeResult.Data[collectionMetadata.IDField] = firestoreID
 
 		} else {
 			newID, err := processInsert(change, collectionMetadata, batch, collection, idTemplate)
@@ -258,9 +256,9 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 
 	for _, request := range requests {
 
-		collectionMetadata, ok := metadata.Collections[request.Collection]
-		if !ok {
-			return nil, errors.New("No metadata provided for collection: " + request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		if err != nil {
+			return nil, err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)

@@ -5,7 +5,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/workspacedependencies"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -68,14 +67,6 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 // NamespaceList is good
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
-
-	namespaces, err := workspacedependencies.GetValidNamespaces(session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+	namespaces := session.GetContextNamespaces()
 	respondJSON(w, r, &namespaces)
-
 }

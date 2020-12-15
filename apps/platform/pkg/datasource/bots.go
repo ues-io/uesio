@@ -55,7 +55,7 @@ func hydrateBot(bot *metadata.Bot, session *sess.Session) error {
 func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
 
-	err := bundles.LoadAll(&robots, collectionMetadata.Namespace, reqs.BundleConditions{
+	err := bundles.LoadAllFromAny(&robots, reqs.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "BEFORESAVE",
 	}, session)
@@ -99,7 +99,7 @@ func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.C
 func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
 
-	err := bundles.LoadAll(&robots, collectionMetadata.Namespace, reqs.BundleConditions{
+	err := bundles.LoadAllFromAny(&robots, reqs.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "AFTERSAVE",
 	}, session)

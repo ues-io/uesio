@@ -27,18 +27,18 @@ func getUpsertLookupReqeust(request reqs.SaveRequest, matchField string, collect
 }
 
 func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*reqs.LoadRequest, error) {
-	fieldMetadata, ok := collectionMetadata.Fields[lookup.RefField]
-	if !ok {
-		return nil, errors.New("No metadata provided for field: " + lookup.RefField)
+	fieldMetadata, err := collectionMetadata.GetField(lookup.RefField)
+	if err != nil {
+		return nil, err
 	}
 
 	if fieldMetadata.Type != "REFERENCE" {
 		return nil, errors.New("Can only lookup on reference field: " + lookup.RefField)
 	}
 
-	refCollectionMetadata, ok := metadata.Collections[fieldMetadata.ReferencedCollection]
-	if !ok {
-		return nil, errors.New("No metadata provided for collection: " + request.Collection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	if err != nil {
+		return nil, err
 	}
 
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
@@ -63,9 +63,9 @@ func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, col
 func GetLookupRequests(request reqs.SaveRequest, metadata *MetadataCache) ([]reqs.LoadRequest, error) {
 	options := request.Options
 	lookupRequests := []reqs.LoadRequest{}
-	collectionMetadata, ok := metadata.Collections[request.Collection]
-	if !ok {
-		return nil, errors.New("No metadata provided for collection: " + request.Collection)
+	collectionMetadata, err := metadata.GetCollection(request.Collection)
+	if err != nil {
+		return nil, err
 	}
 
 	if options == nil {
@@ -118,9 +118,9 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 		return errors.New("Cannot upsert without id format metadata")
 	}
 
-	for _, change := range changes {
+	for index, change := range changes {
 
-		keyVal, err := templating.Execute(template, change)
+		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
 			return errors.New("Could not get key for upsert change")
 		}
@@ -128,7 +128,11 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 
 		// If we find a match, populate the id field so that it's an update instead of an insert
 		if ok {
-			change[collectionMetadata.IDField] = match[collectionMetadata.IDField]
+			idValue := match[collectionMetadata.IDField]
+			change.FieldChanges[collectionMetadata.IDField] = idValue
+			change.IsNew = false
+			change.IDValue = idValue
+			changes[index] = change
 		}
 
 	}
@@ -139,18 +143,18 @@ func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Looku
 
 	lookupField := lookup.RefField
 
-	fieldMetadata, ok := collectionMetadata.Fields[lookupField]
-	if !ok {
-		return errors.New("No metadata provided for field: " + lookupField)
+	fieldMetadata, err := collectionMetadata.GetField(lookupField)
+	if err != nil {
+		return err
 	}
 
 	if fieldMetadata.Type != "REFERENCE" {
 		return errors.New("Can only lookup on reference field: " + lookupField)
 	}
 
-	refCollectionMetadata, ok := metadata.Collections[fieldMetadata.ReferencedCollection]
-	if !ok {
-		return errors.New("No metadata provided for collection: " + fieldMetadata.ReferencedCollection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	if err != nil {
+		return err
 	}
 
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
@@ -159,14 +163,14 @@ func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Looku
 
 	for _, change := range changes {
 
-		keyRef := change[lookupField].(map[string]interface{})
+		keyRef := change.FieldChanges[lookupField].(map[string]interface{})
 		keyVal := keyRef[matchField].(string)
 		match, ok := lookupResult[keyVal]
 
 		if ok {
-			change[fieldMetadata.ForeignKeyField] = match[refCollectionMetadata.IDField]
+			change.FieldChanges[fieldMetadata.ForeignKeyField] = match[refCollectionMetadata.IDField]
 		} else {
-			change[fieldMetadata.ForeignKeyField] = nil
+			change.FieldChanges[fieldMetadata.ForeignKeyField] = nil
 		}
 
 	}
@@ -176,9 +180,9 @@ func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Looku
 // MergeLookupResponses function
 func MergeLookupResponses(request reqs.SaveRequest, responses []reqs.LoadResponse, metadata *MetadataCache) error {
 
-	collectionMetadata, ok := metadata.Collections[request.Collection]
-	if !ok {
-		return errors.New("No metadata provided for collection: " + request.Collection)
+	collectionMetadata, err := metadata.GetCollection(request.Collection)
+	if err != nil {
+		return err
 	}
 
 	if request.Options == nil {

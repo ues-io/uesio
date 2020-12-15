@@ -49,13 +49,17 @@ func GetHeadlessSession() *Session {
 			"Site":      "studio",
 		},
 	})
+	site := &metadata.Site{
+		Name:       "studio",
+		VersionRef: "v0.0.1",
+		AppRef:     "uesio",
+	}
+	site.SetAppBundle(&metadata.BundleDef{
+		Name: "uesio",
+	})
 	return &Session{
 		browserSession: &browserSession,
-		site: &metadata.Site{
-			Name:       "studio",
-			VersionRef: "v0.0.1",
-			AppRef:     "uesio",
-		},
+		site:           site,
 	}
 }
 func create(browserSession *session.Session, site *metadata.Site) *Session {
@@ -212,6 +216,26 @@ func (s *Session) GetLoginRoute() string {
 // RemoveWorkspaceContext function
 func (s *Session) RemoveWorkspaceContext() *Session {
 	return create(s.browserSession, s.site)
+}
+
+// GetContextNamespaces function
+func (s *Session) GetContextNamespaces() map[string]bool {
+	bundleDef := s.GetContextAppBundle()
+	namespaces := map[string]bool{
+		bundleDef.Name: true,
+	}
+	for name := range bundleDef.Dependencies {
+		namespaces[name] = true
+	}
+	return namespaces
+}
+
+// GetContextAppBundle returns the appbundle in context
+func (s *Session) GetContextAppBundle() *metadata.BundleDef {
+	if s.workspace != nil {
+		return s.workspace.GetAppBundle()
+	}
+	return s.site.GetAppBundle()
 }
 
 // GetContextAppName returns the appname in context

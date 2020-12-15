@@ -24,14 +24,12 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		collectionKey := request.GetCollection()
 
 		// Keep a running tally of all requested collections
-		collections := MetadataRequest{}
-		collections.AddCollection(collectionKey)
-
-		for _, change := range request.Changes {
-			for fieldKey := range change {
-				collections.AddField(collectionKey, fieldKey, nil)
-			}
+		collections := MetadataRequest{
+			Options: &MetadataRequestOptions{
+				LoadAllFields: true,
+			},
 		}
+		collections.AddCollection(collectionKey)
 
 		if request.Options != nil && request.Options.Lookups != nil {
 			for _, lookup := range request.Options.Lookups {
@@ -55,12 +53,8 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
-		dsKey := collectionMetadata.DataSource
-		batch := collated[dsKey]
-		batch.Wires = append(batch.Wires, request)
-		collated[dsKey] = batch
 
-		err = FieldValidation(&request, collectionMetadata, session)
+		err = PopulateAndValidate(&request, collectionMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -69,6 +63,11 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
+
+		dsKey := collectionMetadata.DataSource
+		batch := collated[dsKey]
+		batch.Wires = append(batch.Wires, request)
+		collated[dsKey] = batch
 
 	}
 

@@ -17,7 +17,7 @@ func (fc *FieldCollection) GetName() string {
 
 // GetFields function
 func (fc *FieldCollection) GetFields() []string {
-	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly", "required", "validate"}
+	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly", "required", "validate", "autopopulate"}
 }
 
 // NewItem function
@@ -35,6 +35,10 @@ func (fc *FieldCollection) NewItem(key string) (BundleableItem, error) {
 
 // GetKeyPrefix function
 func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+	collectionKey, hasCollection := conditions["uesio.collection"]
+	if hasCollection {
+		return collectionKey + "."
+	}
 	return ""
 }
 

@@ -31,14 +31,14 @@ func GetConditionValue(
 			return nil, errors.New("Must lookup on wires with only one record")
 		}
 
-		lookupCollectionMetadata, ok := metadata.Collections[lookupRequest.GetCollection()]
-		if !ok {
-			return nil, errors.New("No metadata provided for lookup collection: " + wire.Collection)
+		lookupCollectionMetadata, err := metadata.GetCollection(lookupRequest.GetCollection())
+		if err != nil {
+			return nil, err
 		}
 
-		lookupFieldMetadata, ok := lookupCollectionMetadata.Fields[condition.LookupField]
-		if !ok {
-			return nil, errors.New("No metadata provided for lookup field: " + condition.LookupField)
+		lookupFieldMetadata, err := lookupCollectionMetadata.GetField(condition.LookupField)
+		if err != nil {
+			return nil, err
 		}
 
 		lookupFieldName, err := GetUIFieldName(lookupFieldMetadata)
