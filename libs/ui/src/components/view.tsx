@@ -103,7 +103,8 @@ const View: FunctionComponent<Props> = (props) => {
 				</Feedback>
 			)}
 			<Slot
-				definition={viewDef.definition}
+				// @ts-ignore
+				definition={console.log("MOUting") || viewDef.definition}
 				listName="components"
 				path=""
 				accepts={["uesio.standalone"]}
