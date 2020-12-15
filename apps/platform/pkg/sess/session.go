@@ -217,9 +217,14 @@ func (s *Session) RemoveWorkspaceContext() *Session {
 // GetContextNamespaces function
 func (s *Session) GetContextNamespaces() map[string]bool {
 	bundleDef := s.GetContextAppBundle()
-	namespaces := map[string]bool{
-		bundleDef.Name: true,
+
+	namespaces := map[string]bool{}
+	if bundleDef == nil {
+		return namespaces
 	}
+
+	namespaces[bundleDef.Name] = true
+
 	for name := range bundleDef.Dependencies {
 		namespaces[name] = true
 	}
