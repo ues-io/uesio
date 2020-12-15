@@ -14,14 +14,16 @@ const useStyles = makeStyles(() =>
 			bottom: -120,
 			right: 0,
 			width: "100%",
-			transition: `bottom ${duration}ms ease-out`,
+			transition: `all ${duration}ms ease-out`,
+			opacity: 0,
 		}),
 		shown: {
 			position: "absolute",
 			bottom: 0,
 			right: 0,
 			width: "100%",
-			transition: "bottom 1000ms ease-in",
+			transition: "all 1000ms ease-in",
+			opacity: 1,
 		},
 	})
 )
