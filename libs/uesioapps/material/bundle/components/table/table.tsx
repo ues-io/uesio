@@ -6,6 +6,7 @@ import { TableDefinition, TableState } from "./tabledefinition"
 import TableHeader from "./tableheader"
 import TableBody from "./tablebody"
 import Alert from "../alert/alert"
+import Feedback from "../feedback/feedback"
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
@@ -25,7 +26,13 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		initialState
 	) as TableState
 
-	if (!wire || !componentState) return null
+	if (!wire || !componentState) {
+		return (
+			<Feedback {...props} severity="error">
+				<b>Wire cannot be found</b>
+			</Feedback>
+		)
+	}
 
 	const collection = wire.getCollection()
 	return (

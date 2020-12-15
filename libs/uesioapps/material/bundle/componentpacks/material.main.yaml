@@ -1,5 +1,6 @@
 name: main
 components:
+  feedback:
   alert:
   avatar:
   breadcrumbs:

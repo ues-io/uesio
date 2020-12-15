@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useState, useEffect, useRef } from "react"
-import { BaseProps } from "../definition/definition"
-import { ComponentInternal } from "../component/component"
 import { makeStyles, createStyles } from "@material-ui/core"
+import { definition } from "@uesio/ui"
+import Alert from "../alert/alert"
 
-type Props = {
+interface FeedbackProps extends definition.BaseProps {
 	severity?: "error" | "success" | "info" | "warning"
-} & BaseProps
+}
 
 const useStyles = makeStyles(() =>
 	createStyles({
@@ -26,8 +26,8 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const Feedback: FunctionComponent<Props> = (props) => {
-	const { children, context } = props
+const Feedback: FunctionComponent<FeedbackProps> = (props) => {
+	const { children } = props
 	const [isHidden, setIsHidden] = useState(true)
 	const [doDestroy, setDoDestroy] = useState(false)
 	const mounted = useRef<boolean>(false)
@@ -61,15 +61,9 @@ const Feedback: FunctionComponent<Props> = (props) => {
 
 	return (
 		<div className={isHidden ? classes.hidden : classes.shown}>
-			<ComponentInternal
-				style={{ padding: "30px" }}
-				{...props}
-				componentType="material.alert"
-				path=""
-				context={context}
-			>
+			<Alert style={{ padding: "30px" }} {...props}>
 				{children}
-			</ComponentInternal>
+			</Alert>
 		</div>
 	)
 }
