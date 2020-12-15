@@ -17,11 +17,11 @@ import (
 
 func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, string, string, error) {
 	postgresSQLUpdate := map[string]interface{}{}
-	postgresSQLId, _ := change[collectionMetadata.IDField].(string)
+	postgresSQLId, _ := change.FieldChanges[collectionMetadata.IDField].(string)
 	idFieldName := ""
 
 	searchableValues := []string{}
-	for fieldID, value := range change {
+	for fieldID, value := range change.FieldChanges {
 		if fieldID == collectionMetadata.IDField {
 			// We don't need to add the id field to the update
 			idFieldMetadata, err := collectionMetadata.GetIDField()
@@ -69,7 +69,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
-	for fieldID, value := range change {
+	for fieldID, value := range change.FieldChanges {
 		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
 			return nil, err
@@ -105,7 +105,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return inserts, nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB, postgresID string) error {
+func processUpdate(change reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) error {
 	// it's an update!
 	updates, postgresSQLId, idFieldName, err := getUpdatesForChange(change, collectionMetadata)
 	if err != nil {
@@ -122,7 +122,7 @@ func processUpdate(change reqs.ChangeRequest, collectionName string, collectionM
 
 func processInsert(change reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB, idTemplate *template.Template) (string, error) {
 	// it's an insert!
-	newID, err := templating.Execute(idTemplate, change)
+	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
 		return "", err
 	}
@@ -176,9 +176,8 @@ func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string
 	for changeID, change := range changes {
 		changeResult := reqs.NewChangeResult(change)
 
-		postgresID, ok := change[collectionMetadata.IDField].(string)
-		if ok && postgresID != "" {
-			err := processUpdate(change, collectionName, collectionMetadata, psql, db, postgresID)
+		if !change.IsNew && change.IDValue != nil {
+			err := processUpdate(change, collectionName, collectionMetadata, psql, db)
 			if err != nil {
 				return nil, err
 			}

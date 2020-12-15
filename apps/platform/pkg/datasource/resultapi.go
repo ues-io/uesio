@@ -19,13 +19,5 @@ func (r *ResultAPI) Get(fieldName string) interface{} {
 
 // IsNew function
 func (r *ResultAPI) IsNew() bool {
-	idField, err := r.metadata.GetIDField()
-	if err != nil {
-		// It's ok to panic here because it will be thrown as a javascript exception
-		panic("No ID Field Found")
-	}
-
-	_, ok := r.change[idField.GetFullName()]
-
-	return !ok
+	return r.change.IsNew
 }
