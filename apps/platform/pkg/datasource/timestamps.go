@@ -25,21 +25,15 @@ func AddTimestamps(request *reqs.SaveRequest, collectionMetadata *adapters.Colle
 
 	timestampfields := getTimestampsFields(collectionMetadata)
 	timestamp := time.Now().Unix()
-	idField, _ := collectionMetadata.GetIDField()
 
 	for _, change := range request.Changes {
 
-		_, ok := change[idField.GetFullName()]
-
 		for _, field := range timestampfields {
 
-			if !ok && field.AutoPopulate == "CREATE" {
-				//insert
-				change[field.GetFullName()] = timestamp
-			}
-			if ok && field.AutoPopulate == "UPDATE" {
-				//update
-				change[field.GetFullName()] = timestamp
+			// Only populate fields marked with CREATE on insert
+			// Always populate the fields marked with UPDATE
+			if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
+				change.FieldChanges[field.GetFullName()] = timestamp
 			}
 
 		}
