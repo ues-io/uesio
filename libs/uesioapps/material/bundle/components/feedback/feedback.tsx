@@ -11,14 +11,14 @@ const useStyles = makeStyles(() =>
 	createStyles({
 		hidden: {
 			position: "absolute",
-			bottom: -130,
+			bottom: -120,
 			right: 0,
 			width: "100%",
 			transition: "bottom 1000ms ease-out",
 		},
 		shown: {
 			position: "absolute",
-			bottom: 1,
+			bottom: 0,
 			right: 0,
 			width: "100%",
 			transition: "bottom 1000ms ease-in",
@@ -39,6 +39,7 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 			mounted.current = true
 			setTimeout(() => setIsHidden(false), 0)
 		} else {
+			/*
 			// componentDidUpdate
 			if (!isHidden) {
 				// force hidding after 5000ms
@@ -50,7 +51,7 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 				setTimeout(() => {
 					setDoDestroy(true)
 				}, 6000)
-			}
+			}*/
 		}
 	})
 
