@@ -46,7 +46,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 					setIsHidden(true)
 				}, 5000)
 
-				// force destroying once job is done
+				// force destroying once the job is done
 				setTimeout(() => {
 					setDoDestroy(true)
 				}, 6000)
