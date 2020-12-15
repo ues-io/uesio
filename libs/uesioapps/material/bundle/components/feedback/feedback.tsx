@@ -11,15 +11,15 @@ const useStyles = makeStyles(() =>
 	createStyles({
 		hidden: {
 			position: "absolute",
-			bottom: -500,
-			right: 10,
+			bottom: -130,
+			right: 0,
 			width: "100%",
 			transition: "bottom 1000ms ease-out",
 		},
 		shown: {
 			position: "absolute",
-			bottom: 30,
-			right: 10,
+			bottom: 1,
+			right: 0,
 			width: "100%",
 			transition: "bottom 1000ms ease-in",
 		},
