@@ -82,8 +82,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		return (
 			<TextField
 				{...props}
-				mode={"READ"}
-				type={"datetime-local"}
+				mode="READ"
+				type={timestamp ? "datetime-local" : "text"}
 				value={timestamp ? unixToISO(timestamp) : ""}
 				setValue={(value) => record.update(fieldId, value)}
 				label={label}

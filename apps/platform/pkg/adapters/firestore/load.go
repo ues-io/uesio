@@ -113,7 +113,6 @@ func loadOne(
 			if err != nil {
 				return nil, err
 			}
-
 			fieldData, err := doc.DataAtPath([]string{firestoreFieldName})
 			if err != nil {
 				continue

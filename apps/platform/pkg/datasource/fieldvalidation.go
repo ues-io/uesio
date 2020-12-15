@@ -119,7 +119,7 @@ func FieldValidation(request *reqs.SaveRequest, collectionMetadata *adapters.Col
 	}
 	for index, change := range request.Changes {
 		idValue, ok := change.FieldChanges[idField.GetFullName()]
-		if !ok {
+		if !ok || idValue.(string) == "" {
 			change.IsNew = true
 		} else {
 			change.IDValue = idValue
