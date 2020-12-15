@@ -12,15 +12,14 @@ const useStyles = material.makeStyles((theme) =>
 		},
 		media: (props: CardProps) => {
 			const color = styles.getColor({
-				color: "secondary",
-				shadePercentage: 0.33,
+				color: props.definition.media?.background?.color,
+				shadePercentage: props.definition?.media?.background?.shade,
 				theme,
 			})
 
 			return {
 				height: props.definition.media?.height,
 				...styles.getBackgroundStyles(
-					// for color definition such as primary, secondary and so on
 					(color && { color: color }) ||
 						props.definition.media?.background,
 					props.context

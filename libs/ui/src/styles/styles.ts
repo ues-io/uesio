@@ -21,6 +21,7 @@ type BackgroundDefinition =
 	| {
 			image?: string
 			color: string
+			shade?: string | number
 	  }
 	| undefined
 
@@ -85,8 +86,8 @@ const getColor = ({
 	color?: string
 	shadePercentage?: number | string
 	theme?: Theme
-}) => {
-	let computedColor = null
+}): undefined | string => {
+	let computedColor = undefined
 
 	// map the color (primary, etc.) with the color defined in the theme
 	if (color && THEME_COLORS?.[color as ThemeColor] && theme) {

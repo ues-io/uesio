@@ -68,7 +68,8 @@ definition:
                 - material.card:
                     media:
                       background:
-                        color: "${uesio.color}"
+                        color: "rgba(231, 212, 32, 0.5)"
+                        shade: 0.2
                       height: 10px
                     margin: 1
                     components:
@@ -162,6 +163,7 @@ definition:
                           media:
                             background:
                               color: "secondary"
+                              shade: 0.1
                             height: 10px
                           components:
                             - material.griditem:
@@ -200,6 +202,7 @@ definition:
                           media:
                             background:
                               color: "secondary"
+                              shade: 0.5
                             height: 10px
                           components:
                             - material.griditem:
