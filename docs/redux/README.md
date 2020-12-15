@@ -30,8 +30,8 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Redux store data structure
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store but API as well. This API is the so-called `platform` API can be retrieved in any components, that way :
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store. For example, `yaml.Document` data structure is stored in the redux store which is not a plain JavaScript object.
 
-```
- const platform = getPlatform()
-```
+## Injection of the platform API into the middleware
+
+The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function `createAsyncThunk` of redux-toolkit. This is done by this statement, `middleware: [thunk.withExtraArgument(plat)]`. This injection is compliant with the redux style guide.
