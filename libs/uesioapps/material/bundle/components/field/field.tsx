@@ -6,6 +6,24 @@ import TextField from "../textfield/textfield"
 import SelectField from "../selectfield/selectfield"
 import CheckBoxField from "../checkboxfield/checkboxfield"
 
+function toLocalISOString(d: Date) {
+	const off = d.getTimezoneOffset()
+	return new Date(
+		d.getFullYear(),
+		d.getMonth(),
+		d.getDate(),
+		d.getHours(),
+		d.getMinutes() - off,
+		d.getSeconds(),
+		d.getMilliseconds()
+	).toISOString()
+}
+
+function unixToISO(unixTimestamp: number) {
+	const isoStr = toLocalISOString(new Date(unixTimestamp * 1e3))
+	return isoStr.substring(0, isoStr.length - 1)
+}
+
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
 	const { fieldId, hideLabel } = definition
@@ -69,6 +87,19 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				hideLabel={hideLabel}
 				record={record}
 				wire={wire}
+			/>
+		)
+	} else if (type === "TIMESTAMP") {
+		const timestamp = record.getFieldValue(fieldId) as number
+		return (
+			<TextField
+				{...props}
+				mode="READ"
+				type={timestamp ? "datetime-local" : "text"}
+				value={timestamp ? unixToISO(timestamp) : ""}
+				setValue={(value) => record.update(fieldId, value)}
+				label={label}
+				hideLabel={hideLabel}
 			/>
 		)
 	}

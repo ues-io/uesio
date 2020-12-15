@@ -118,7 +118,7 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 		return errors.New("Cannot upsert without id format metadata")
 	}
 
-	for _, change := range changes {
+	for index, change := range changes {
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
@@ -128,7 +128,11 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 
 		// If we find a match, populate the id field so that it's an update instead of an insert
 		if ok {
-			change.FieldChanges[collectionMetadata.IDField] = match[collectionMetadata.IDField]
+			idValue := match[collectionMetadata.IDField]
+			change.FieldChanges[collectionMetadata.IDField] = idValue
+			change.IsNew = false
+			change.IDValue = idValue
+			changes[index] = change
 		}
 
 	}
