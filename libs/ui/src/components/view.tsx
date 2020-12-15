@@ -98,7 +98,7 @@ const View: FunctionComponent<Props> = (props) => {
 	return (
 		<div>
 			{test && (
-				<Feedback path="" context={viewContext} severity="info">
+				<Feedback path="" context={viewContext} severity="success">
 					<b>Feedback : something happened</b>
 				</Feedback>
 			)}

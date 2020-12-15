@@ -1,28 +1,69 @@
-import React, { FunctionComponent, useState, useEffect } from "react"
+import React, { FunctionComponent, useState, useEffect, useRef } from "react"
 import { BaseProps } from "../definition/definition"
 import { ComponentInternal } from "../component/component"
+import { makeStyles, createStyles } from "@material-ui/core"
 
 type Props = {
 	severity?: "error" | "success" | "info" | "warning"
 } & BaseProps
 
+const useStyles = makeStyles(() =>
+	createStyles({
+		hidden: {
+			position: "absolute",
+			bottom: -500,
+			right: 10,
+			width: "100%",
+			transition: "bottom 1000ms ease-out",
+		},
+		shown: {
+			position: "absolute",
+			bottom: 100,
+			right: 10,
+			width: "100%",
+			transition: "bottom 1000ms ease-in",
+		},
+	})
+)
+
 const Feedback: FunctionComponent<Props> = (props) => {
 	const { children, context } = props
-	const [doUnmount, setDoUnmont] = useState(false)
+	const [isHidden, setIsHidden] = useState(true)
+	const [doDestroy, setDoDestroy] = useState(false)
+	const mounted = useRef<boolean>(false)
+	const classes = useStyles()
 
-	// componentDidMount
 	useEffect(() => {
-		setTimeout(() => setDoUnmont(true), 2000)
-	}, [])
+		if (!mounted.current) {
+			// componentDidMount
+			mounted.current = true
+			setTimeout(() => setIsHidden(false), 0)
+		} else {
+			// componentDidUpdate
+			if (!isHidden) {
+				// force hidding after 3000ms
+				setTimeout(() => {
+					setIsHidden(true)
+					setDoDestroy(true)
+				}, 3000)
+			}
+		}
+	})
 
-	if (doUnmount) {
+	// destroy the component after the feeback vanished
+	if (doDestroy) {
 		return null
 	}
 
+	const p = {
+		...props,
+		padding: "50px",
+	}
+
 	return (
-		<div style={{ position: "absolute", bottom: 10, right: 10 }}>
+		<div className={isHidden ? classes.hidden : classes.shown}>
 			<ComponentInternal
-				{...props}
+				{...p}
 				componentType="material.alert"
 				path=""
 				context={context}
