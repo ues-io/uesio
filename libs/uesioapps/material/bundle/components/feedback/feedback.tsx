@@ -39,7 +39,6 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 			mounted.current = true
 			setTimeout(() => setIsHidden(false), 0)
 		} else {
-			/*
 			// componentDidUpdate
 			if (!isHidden) {
 				// force hidding after 5000ms
@@ -47,11 +46,11 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 					setIsHidden(true)
 				}, 5000)
 
-				// force destroying once the job is done
+				// force component to rerender
 				setTimeout(() => {
 					setDoDestroy(true)
 				}, 6000)
-			}*/
+			}
 		}
 	})
 
