@@ -31,10 +31,12 @@ func (as *AfterSaveAPI) GetErrorString() string {
 }
 
 // Save function
-func (as *AfterSaveAPI) Save(collection string, changes []reqs.ChangeRequest) (*SaveResponseBatch, error) {
+func (as *AfterSaveAPI) Save(collection string, changes []map[string]interface{}) (*SaveResponseBatch, error) {
 	changeRequestMap := map[string]reqs.ChangeRequest{}
 	for index, req := range changes {
-		changeRequestMap[strconv.Itoa(index)] = req
+		changeRequestMap[strconv.Itoa(index)] = reqs.ChangeRequest{
+			FieldChanges: req,
+		}
 	}
 	return Save(SaveRequestBatch{
 		Wires: []reqs.SaveRequest{

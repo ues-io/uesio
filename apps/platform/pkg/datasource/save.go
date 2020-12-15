@@ -53,10 +53,6 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
-		dsKey := collectionMetadata.DataSource
-		batch := collated[dsKey]
-		batch.Wires = append(batch.Wires, request)
-		collated[dsKey] = batch
 
 		err = FieldValidation(&request, collectionMetadata, session)
 		if err != nil {
@@ -72,6 +68,11 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
+
+		dsKey := collectionMetadata.DataSource
+		batch := collated[dsKey]
+		batch.Wires = append(batch.Wires, request)
+		collated[dsKey] = batch
 
 	}
 

@@ -130,7 +130,9 @@ func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.Sav
 		changeRequests := map[string]reqs.ChangeRequest{}
 
 		for index, item := range data {
-			changeRequests[strconv.Itoa(index)] = item
+			changeRequests[strconv.Itoa(index)] = reqs.ChangeRequest{
+				FieldChanges: item,
+			}
 		}
 
 		requests = append(requests, reqs.SaveRequest{

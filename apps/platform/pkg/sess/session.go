@@ -49,13 +49,17 @@ func GetHeadlessSession() *Session {
 			"Site":      "studio",
 		},
 	})
+	site := &metadata.Site{
+		Name:       "studio",
+		VersionRef: "v0.0.1",
+		AppRef:     "uesio",
+	}
+	site.SetAppBundle(&metadata.BundleDef{
+		Name: "uesio",
+	})
 	return &Session{
 		browserSession: &browserSession,
-		site: &metadata.Site{
-			Name:       "studio",
-			VersionRef: "v0.0.1",
-			AppRef:     "uesio",
-		},
+		site:           site,
 	}
 }
 func create(browserSession *session.Session, site *metadata.Site) *Session {

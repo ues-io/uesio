@@ -45,7 +45,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	dynamoDBUpdate := make(map[string]interface{})
 	dynamoDBUpdateKey := make(map[string]interface{})
 
-	for fieldID, value := range change {
+	for fieldID, value := range change.FieldChanges {
 
 		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
@@ -78,7 +78,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, newID string) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 
-	for fieldID, value := range change {
+	for fieldID, value := range change.FieldChanges {
 		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
 			return nil, err
@@ -127,7 +127,7 @@ func processOneDelete(delete reqs.DeleteRequest, collectionMetadata *adapters.Co
 	return nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, DynamoDBID string, collectionName string, client *dynamodb.DynamoDB) error {
+func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) error {
 	// it's an update!
 	updates, key, err := getUpdatesForChange(change, collectionMetadata, collectionName)
 	if err != nil {
@@ -162,7 +162,7 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 
 func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB, idTemplate *template.Template) (string, error) {
 	// it's an insert!
-	newID, err := templating.Execute(idTemplate, change)
+	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
 		return "", err
 	}
@@ -218,9 +218,8 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	for changeID, change := range changes {
 		changeResult := reqs.NewChangeResult(change)
 
-		DynamoDBID, ok := change[collectionMetadata.IDField].(string)
-		if ok && DynamoDBID != "" {
-			err := processUpdate(change, collectionMetadata, DynamoDBID, collectionName, client)
+		if !change.IsNew && change.IDValue != nil {
+			err := processUpdate(change, collectionMetadata, collectionName, client)
 			if err != nil {
 				return nil, err
 			}

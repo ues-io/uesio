@@ -17,7 +17,7 @@ type ChangeResult struct {
 // NewChangeResult create a new change result struct and copies the change request data in
 func NewChangeResult(change ChangeRequest) ChangeResult {
 	changeCopy := map[string]interface{}{}
-	for k, v := range change {
+	for k, v := range change.FieldChanges {
 		changeCopy[k] = v
 	}
 	return ChangeResult{

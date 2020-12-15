@@ -87,7 +87,9 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 			return nil, err
 		}
 
-		changeRequest := map[string]interface{}{}
+		changeRequest := reqs.ChangeRequest{
+			FieldChanges: map[string]interface{}{},
+		}
 
 		for index, mapping := range mappings {
 			fieldName := mapping.FieldName
@@ -96,7 +98,7 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 				return nil, err
 			}
 			if fieldMetadata.Type == "CHECKBOX" {
-				changeRequest[mapping.FieldName] = record[index] == "true"
+				changeRequest.FieldChanges[mapping.FieldName] = record[index] == "true"
 			} else if fieldMetadata.Type == "REFERENCE" {
 
 				refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
@@ -110,11 +112,11 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 					matchField = mapping.MatchField
 				}
 
-				changeRequest[mapping.FieldName] = map[string]interface{}{
+				changeRequest.FieldChanges[mapping.FieldName] = map[string]interface{}{
 					matchField: record[index],
 				}
 			} else {
-				changeRequest[mapping.FieldName] = record[index]
+				changeRequest.FieldChanges[mapping.FieldName] = record[index]
 			}
 		}
 
