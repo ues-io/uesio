@@ -5,7 +5,7 @@
  "license": "MIT",
  "scripts": {
   "clean": "rm -rf dist; rm -rf node_modules/.cache/nx",
-  "dev": "npm run kill:webserver && npm run start & npm run kill:firestore && firebase emulators:start & npm run build-all && npm run nx -- seed platform && npm run dev:mock:crm && npm run dev:uesio:login && npm run deploy:uesioapps && npm run watch-all &",
+  "dev": "npm run kill:webserver; npm run kill:firestore; npm run build-all; npm run start & firebase emulators:start & npm run nx -- seed platform; npm run dev:mock:crm; npm run dev:uesio:login; npm run deploy:uesioapps; npm run watch-all &",
   "watch-all": "nx run-many --target=watch --parallel --all",
   "kill:webserver": "lsof -t -i :3000 | xargs kill -9",
   "kill:firestore": "lsof -t -i :8080 -i :4000 | xargs kill -9",

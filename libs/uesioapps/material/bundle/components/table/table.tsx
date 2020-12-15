@@ -27,6 +27,8 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	if (!wire || !componentState) return null
 
+	const testLinter = true
+
 	const collection = wire.getCollection()
 	return (
 		<>
