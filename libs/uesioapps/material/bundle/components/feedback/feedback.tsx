@@ -9,13 +9,13 @@ interface FeedbackProps extends definition.BaseProps {
 
 const useStyles = makeStyles(() =>
 	createStyles({
-		hidden: {
+		hidden: ({ duration }: { duration: number }) => ({
 			position: "absolute",
 			bottom: -120,
 			right: 0,
 			width: "100%",
-			transition: "bottom 1000ms ease-out",
-		},
+			transition: `bottom ${duration} ease-out`,
+		}),
 		shown: {
 			position: "absolute",
 			bottom: 0,
@@ -27,11 +27,13 @@ const useStyles = makeStyles(() =>
 )
 
 const Feedback: FunctionComponent<FeedbackProps> = (props) => {
+	const hidingAnimationDuration = 1000
+	const displayDuration = 5000
 	const { children } = props
 	const [isHidden, setIsHidden] = useState(true)
 	const [doDestroy, setDoDestroy] = useState(false)
 	const mounted = useRef<boolean>(false)
-	const classes = useStyles()
+	const classes = useStyles({ duration: hidingAnimationDuration })
 
 	useEffect(() => {
 		if (!mounted.current) {
@@ -44,12 +46,12 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 				// force hidding after 5000ms
 				setTimeout(() => {
 					setIsHidden(true)
-				}, 5000)
+				}, displayDuration)
 
-				// force component to rerender
+				// force component to re-render
 				setTimeout(() => {
 					setDoDestroy(true)
-				}, 6000)
+				}, displayDuration + hidingAnimationDuration)
 			}
 		}
 	})
