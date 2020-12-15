@@ -9,6 +9,7 @@ import { ViewParams } from "../bands/view/types"
 import { useView } from "../bands/view/selectors"
 import { useViewDef } from "../bands/viewdef/selectors"
 import loadViewOp from "../bands/view/operations/load"
+import Feedback from "./Feedback"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -93,14 +94,22 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
 
+	const test = true
 	return (
-		<Slot
-			definition={viewDef.definition}
-			listName="components"
-			path=""
-			accepts={["uesio.standalone"]}
-			context={viewContext}
-		/>
+		<div>
+			{test && (
+				<Feedback path="" context={viewContext} severity="info">
+					<b>Feedback : something happened</b>
+				</Feedback>
+			)}
+			<Slot
+				definition={viewDef.definition}
+				listName="components"
+				path=""
+				accepts={["uesio.standalone"]}
+				context={viewContext}
+			/>
+		</div>
 	)
 }
 
