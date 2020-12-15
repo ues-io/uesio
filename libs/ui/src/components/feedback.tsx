@@ -60,7 +60,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<div id="grosCon" className={isHidden ? classes.hidden : classes.shown}>
+		<div className={isHidden ? classes.hidden : classes.shown}>
 			<ComponentInternal
 				style={{ padding: "30px" }}
 				{...props}
