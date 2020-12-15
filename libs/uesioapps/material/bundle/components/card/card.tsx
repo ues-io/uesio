@@ -11,14 +11,13 @@ const useStyles = material.makeStyles((theme) =>
 			margin: theme.spacing(1),
 		},
 		media: (props: CardProps) => {
-			const color = props.definition.media?.background?.color
-			const themePaletteColor =
-				color && theme.palette?.[color as styles.ThemeColor]?.main
+			const color = styles.getColor({ colorHue: "blue", shade: 500 })
+
 			return {
 				height: props.definition.media?.height,
 				...styles.getBackgroundStyles(
 					// for color definition such as primary, secondary and so on
-					(themePaletteColor && { color: themePaletteColor }) ||
+					(color && { color: color }) ||
 						props.definition.media?.background,
 					props.context
 				),

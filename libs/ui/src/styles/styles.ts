@@ -1,9 +1,10 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import { Theme } from "@material-ui/core"
+import { Theme, PaletteColorOptions, Color } from "@material-ui/core"
 import { CreateCSSProperties } from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
 
 import { CSSProperties } from "@material-ui/styles"
+import * as MaterialUIColors from "@material-ui/core/colors"
 
 type ThemeColor =
 	| "primary"
@@ -77,6 +78,41 @@ const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
 				float: definition,
 		  }
 
+const getColor = ({
+	colorFormat,
+	colorHue,
+	shade,
+	themeColor,
+	theme,
+}: {
+	colorFormat?: string
+	colorHue?: string
+	shade?: number | string
+	themeColor?: ThemeColor
+	theme?: Theme
+}) => {
+	// the color is formatted (rgb, rgba, hexadecimal)
+	if (colorFormat) {
+		return colorFormat
+	}
+
+	// match the color theme (primary, etc.) with the color defined in the theme
+	if (themeColor && theme) {
+		const themePaletteColor =
+			theme.palette?.[themeColor as ThemeColor]?.main
+		return themePaletteColor
+	}
+
+	// generate the color based on the hue and shade
+
+	// @ts-ignore
+	if (shade && colorHue && MaterialUIColors?.[colorHue]) {
+		// @ts-ignore
+		const hue = MaterialUIColors?.[colorHue]
+		return hue?.[shade as keyof Color]
+	}
+}
+
 export {
 	useStyleProperty,
 	getBackgroundStyles,
@@ -87,4 +123,5 @@ export {
 	MarginDefinition,
 	FloatDefinition,
 	CSSProperties,
+	getColor,
 }
