@@ -68,7 +68,7 @@ const Feedback: FunctionComponent<Props> = (props) => {
 				path=""
 				context={context}
 			>
-				<div>Component Not Found: {children}</div>
+				{children}
 			</ComponentInternal>
 		</div>
 	)
