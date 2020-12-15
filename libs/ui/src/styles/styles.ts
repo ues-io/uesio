@@ -1,18 +1,21 @@
+import { shade } from "polished"
 import { getURLFromFullName } from "../hooks/fileapi"
-import { Theme, PaletteColorOptions, Color } from "@material-ui/core"
+import { Theme } from "@material-ui/core"
 import { CreateCSSProperties } from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
 
 import { CSSProperties } from "@material-ui/styles"
-import * as MaterialUIColors from "@material-ui/core/colors"
 
-type ThemeColor =
-	| "primary"
-	| "secondary"
-	| "error"
-	| "warning"
-	| "info"
-	| "success"
+const THEME_COLORS = {
+	primary: "primary",
+	secondary: "secondary",
+	error: "error",
+	warning: "warning",
+	info: "info",
+	success: "success",
+}
+
+type ThemeColor = keyof typeof THEME_COLORS
 
 type BackgroundDefinition =
 	| {
@@ -79,38 +82,32 @@ const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
 		  }
 
 const getColor = ({
-	colorFormat,
-	colorHue,
-	shade,
+	color,
+	shadePercentage,
 	themeColor,
 	theme,
 }: {
-	colorFormat?: string
-	colorHue?: string
-	shade?: number | string
+	color?: string
+	shadePercentage?: number | string
 	themeColor?: ThemeColor
 	theme?: Theme
 }) => {
-	// the color is formatted (rgb, rgba, hexadecimal)
-	if (colorFormat) {
-		return colorFormat
+	let computedColor = null
+
+	// match the themeColor (primary, etc.) with the color defined in the theme
+	if (themeColor && THEME_COLORS?.[themeColor] && theme) {
+		computedColor = theme.palette?.[themeColor as ThemeColor]?.main
 	}
 
-	// match the color theme (primary, etc.) with the color defined in the theme
-	if (themeColor && theme) {
-		const themePaletteColor =
-			theme.palette?.[themeColor as ThemeColor]?.main
-		return themePaletteColor
+	// apply the shade if necessary
+	if (shadePercentage && (computedColor || color)) {
+		computedColor = shade(
+			shadePercentage,
+			(computedColor || color) as string
+		)
 	}
 
-	// generate the color based on the hue and shade
-
-	// @ts-ignore
-	if (shade && colorHue && MaterialUIColors?.[colorHue]) {
-		// @ts-ignore
-		const hue = MaterialUIColors?.[colorHue]
-		return hue?.[shade as keyof Color]
-	}
+	return computedColor
 }
 
 export {

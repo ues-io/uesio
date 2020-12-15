@@ -11,7 +11,10 @@ const useStyles = material.makeStyles((theme) =>
 			margin: theme.spacing(1),
 		},
 		media: (props: CardProps) => {
-			const color = styles.getColor({ colorHue: "blue", shade: 500 })
+			const color = styles.getColor({
+				themeColor: "primary",
+				shadePercentage: 0.66,
+			})
 
 			return {
 				height: props.definition.media?.height,
