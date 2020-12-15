@@ -7,9 +7,7 @@ import View from "./view"
 const RunMode: FunctionComponent<BaseProps> = (props) => {
 	const route = props.context.getRoute()
 
-	if (!route) {
-		return null
-	}
+	if (!route) return null
 
 	return (
 		<View
