@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { hooks } from "@uesio/ui"
 import { TypographyProps, TypographyDefinition } from "./typographydefinition"
 import Typography from "./typography"
 
-function TypographyBuilder(props: TypographyProps): ReactElement {
+const TypographyBuilder: FunctionComponent<TypographyProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path

@@ -1,0 +1,6 @@
+name: autopopulatetypes
+options:
+  - label: "Create"
+    value: "CREATE"
+  - label: "Update"
+    value: "UPDATE"

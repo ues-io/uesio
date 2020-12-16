@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import ProgressGauge from "./progressgauge"
 import { hooks } from "@uesio/ui"
 import {
@@ -6,7 +6,7 @@ import {
 	ProgressGaugeDefinition,
 } from "./progressgaugedefinition"
 
-function ProgressGaugeBuilder(props: ProgressGaugeProps): ReactElement {
+const ProgressGaugeBuilder: FunctionComponent<ProgressGaugeProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(
 		props.path

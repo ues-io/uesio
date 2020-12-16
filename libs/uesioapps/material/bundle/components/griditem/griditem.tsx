@@ -2,12 +2,13 @@ import React, { FunctionComponent } from "react"
 import { material, component, styles } from "@uesio/ui"
 import { GridItemProps } from "./griditemdefinition"
 
-const useStyles = material.makeStyles(() => {
-	return material.createStyles({
+const useStyles = material.makeStyles((theme) =>
+	material.createStyles({
 		root: (props: GridItemProps) => ({
 			height: props.definition.height,
 			...styles.getBackgroundStyles(
 				props.definition.background,
+				theme,
 				props.context
 			),
 			...(props.definition.align && {
@@ -15,7 +16,7 @@ const useStyles = material.makeStyles(() => {
 			}),
 		}),
 	})
-})
+)
 
 const GridItem: FunctionComponent<GridItemProps> = (props) => {
 	const classes = useStyles(props)

@@ -20,3 +20,5 @@ options:
     value: "DATE"
   - label: "Map"
     value: "MAP"
+  - label: "Timestamp"
+    value: "TIMESTAMP"

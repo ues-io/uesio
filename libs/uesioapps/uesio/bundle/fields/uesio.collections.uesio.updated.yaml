@@ -1,0 +1,6 @@
+name: updated
+collection: uesio.collections
+type: TIMESTAMP
+label: Updated
+propertyName: updated
+autopopulate: UPDATE

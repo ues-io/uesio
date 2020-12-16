@@ -27,9 +27,9 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 
 	for _, request := range requests {
 
-		collectionMetadata, ok := metadata.Collections[request.Collection]
-		if !ok {
-			return nil, errors.New("No metadata provided for collection: " + request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		if err != nil {
+			return nil, err
 		}
 
 		collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)

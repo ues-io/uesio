@@ -1,4 +1,4 @@
-import React, { FunctionComponent, MouseEvent, ReactNode } from "react"
+import React, { FunctionComponent, MouseEvent } from "react"
 import clsx from "clsx"
 import { material } from "@uesio/ui"
 
@@ -86,7 +86,6 @@ interface Props {
 	isSelected?: boolean
 	isActive?: boolean
 	title?: string
-	children?: ReactNode
 	isExpanded: boolean
 }
 

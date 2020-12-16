@@ -1,9 +1,8 @@
 import { material } from "@uesio/ui"
-import React, { ReactElement, ReactNode } from "react"
+import React, { FunctionComponent } from "react"
 
 interface WrapperProps {
 	align: "left" | "center" | "right"
-	children?: ReactNode
 }
 
 const useStyles = material.makeStyles(() =>
@@ -15,7 +14,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginWrapper(props: WrapperProps): ReactElement | null {
+const LoginWrapper: FunctionComponent<WrapperProps> = (props) => {
 	const classes = useStyles(props)
 	return <div className={classes.root}>{props.children}</div>
 }

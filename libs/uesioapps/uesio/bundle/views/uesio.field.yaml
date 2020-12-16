@@ -59,6 +59,7 @@ definition:
         uesio.workspaceid:
         uesio.foreignKeyField:
         uesio.referencedCollection:
+        uesio.autopopulate:
       conditions:
         - field: uesio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -132,7 +133,8 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color:
+                                      intention: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -194,8 +196,6 @@ definition:
                                       fieldId: uesio.propertyname
                                   - material.field:
                                       fieldId: uesio.collection
-                                  - material.field:
-                                      fieldId: uesio.workspaceid
                                   - material.container:
                                       padding: 0
                                       uesio.display:
@@ -210,6 +210,14 @@ definition:
                                             fieldId: uesio.referencedCollection
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: "TIMESTAMP"
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.autopopulate
 
 dependencies:
   componentpacks:

@@ -10,6 +10,8 @@ const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 		'["wires"]'
 	) as wire.WireDefinitionMap
 
+	if (!wires) return null
+
 	return (
 		<SelectProp
 			{...props}

@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { material } from "@uesio/ui"
 import { TypographyProps } from "./typographydefinition"
 
@@ -11,7 +11,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-function Typography(props: TypographyProps): ReactElement {
+const Typography: FunctionComponent<TypographyProps> = (props) => {
 	const classes = useStyles(props)
 	const mergedText = props.context.merge(props.definition.text)
 	return (

@@ -75,12 +75,11 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 		return err
 	}
 
-	group.Loop(func(item metadata.CollectionableItem) error {
+	return group.Loop(func(item metadata.CollectionableItem) error {
 		item.SetNamespace(namespace)
 		return nil
 	})
 
-	return nil
 }
 
 // GetFileStream function

@@ -40,6 +40,7 @@ const navigate = (
 				{
 					view: `${viewNamespace}.${viewName}()`,
 					viewDef: `${viewNamespace}.${viewName}`,
+					workspace: context.getWorkspace(),
 				},
 			]),
 			namespace: viewNamespace,

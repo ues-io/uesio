@@ -1,6 +1,6 @@
-crm.externalid,crm.firstname,crm.lastname,crm.gender,crm.deceased,crm.account
-C-0001,Jason,Bourne,FEMALE,false,
-C-0002,Bruce,Willis,MALE,false,
-C-0003,Jackie,Chan,FEMALE,false,
-C-0004,Jane,Fonda,MALE,true,A-0002
-C-0005,Michelle,Yeoh,FEMALE,false,A-0001
+crm.externalid,crm.firstname,crm.lastname,crm.gender,crm.deceased,crm.account,crm.email
+C-0001,Jason,Bourne,FEMALE,false,,jbourne@hotmail.com
+C-0002,Bruce,Willis,MALE,false,,diehard@aol.com
+C-0003,Jackie,Chan,FEMALE,false,,jackieattackie@gmail.com
+C-0004,Jane,Fonda,MALE,true,A-0002,callmejayne@fondamail.com
+C-0005,Michelle,Yeoh,FEMALE,false,A-0001,yo@yo.edu

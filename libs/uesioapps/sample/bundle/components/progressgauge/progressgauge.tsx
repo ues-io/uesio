@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { ProgressGaugeProps } from "./progressgaugedefinition"
 import { material } from "@uesio/ui"
 
@@ -13,7 +13,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function ProgressGauge(props: ProgressGaugeProps): ReactElement {
+const ProgressGauge: FunctionComponent<ProgressGaugeProps> = (props) => {
 	const classes = useStyles(props)
 	return (
 		<div className={classes.root}>

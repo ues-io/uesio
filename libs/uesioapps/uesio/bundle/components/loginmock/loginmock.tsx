@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, hooks, material } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
@@ -21,7 +21,7 @@ const useStyles = material.makeStyles(() =>
 	})
 )
 
-function LoginMock(props: LoginProps): ReactElement | null {
+const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = useStyles(props)
 	const buttonText = props.definition.text
