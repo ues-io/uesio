@@ -16,6 +16,7 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "no-duplicate-imports": "error",
     "eqeqeq": "error",
     "radix": "error",
     "no-new-wrappers": "error",
