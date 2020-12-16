@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { builder, hooks, signal, definition, component } from "@uesio/ui"
+import { builder, hooks, signal, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import RefreshIcon from "@material-ui/icons/Refresh"
@@ -20,16 +20,15 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 		},
 	]
 
-	const clickHandler = signals && uesio.signal.getHandler(signals)
-
 	const action = props.action as builder.AddAction
 	if (!action || !signals) {
 		return null
 	}
+
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={clickHandler}
+			onClick={uesio.signal.getHandler(signals)}
 			icon={RefreshIcon}
 		/>
 	)
