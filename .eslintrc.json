@@ -16,6 +16,8 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "no-nested-ternary": "error",
+    "no-unneeded-ternary": "error",
     "object-shorthand": "error",
     "no-duplicate-imports": "error",
     "eqeqeq": "error",
