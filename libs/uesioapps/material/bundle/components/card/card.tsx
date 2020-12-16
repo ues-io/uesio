@@ -10,22 +10,14 @@ const useStyles = material.makeStyles((theme) =>
 		root: {
 			margin: theme.spacing(1),
 		},
-		media: (props: CardProps) => {
-			const color = styles.getColor({
-				color: props.definition.media?.background?.color,
-				shadePercentage: props.definition?.media?.background?.shade,
+		media: (props: CardProps) => ({
+			height: props.definition.media?.height,
+			...styles.getBackgroundStyles(
+				props.definition.media?.background,
 				theme,
-			})
-
-			return {
-				height: props.definition.media?.height,
-				...styles.getBackgroundStyles(
-					(color && { color: color }) ||
-						props.definition.media?.background,
-					props.context
-				),
-			}
-		},
+				props.context
+			),
+		}),
 		actions: {
 			borderTop: "3px ridge",
 		},

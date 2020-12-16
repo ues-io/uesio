@@ -108,7 +108,6 @@
   "monaco-editor-webpack-plugin": "^2.0.0",
   "node-fetch": "^2.6.1",
   "nyc": "^15.1.0",
-  "polished": "^4.0.5",
   "prettier": "2.1.2",
   "react": "^16.13.1",
   "react-dom": "^16.13.1",

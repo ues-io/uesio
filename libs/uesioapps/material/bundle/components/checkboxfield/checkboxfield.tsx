@@ -23,12 +23,6 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 
 	return (
 		<material.Checkbox
-			color={
-				// type checking
-				(["primary", "secondary"].find(
-					(color) => color === definition?.color
-				) || "primary") as "primary" | "secondary"
-			}
 			className={classes.root}
 			checked={!!value}
 			disabled={mode === "READ"}

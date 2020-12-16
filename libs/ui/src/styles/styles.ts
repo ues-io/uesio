@@ -1,27 +1,25 @@
-import { shade } from "polished"
 import { getURLFromFullName } from "../hooks/fileapi"
-import { Theme } from "@material-ui/core"
+import { Theme, colors, Color } from "@material-ui/core"
 import { CreateCSSProperties } from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
 
 import { CSSProperties } from "@material-ui/styles"
+import { PaletteColor } from "@material-ui/core/styles/createPalette"
 
-const THEME_COLORS = {
-	primary: "primary",
-	secondary: "secondary",
-	error: "error",
-	warning: "warning",
-	info: "info",
-	success: "success",
-}
-
-type ThemeColor = keyof typeof THEME_COLORS
+type ThemeIntention =
+	| "primary"
+	| "secondary"
+	| "error"
+	| "warning"
+	| "info"
+	| "success"
+type ThemeHue = keyof typeof colors
+type ThemeShade = keyof Color
 
 type BackgroundDefinition =
 	| {
 			image?: string
-			color: string
-			shade?: string | number
+			color?: ColorDefinition
 	  }
 	| undefined
 
@@ -29,12 +27,24 @@ type MarginDefinition = number[] | undefined
 
 type FloatDefinition = "left" | "right" | undefined
 
+type ColorDefinition =
+	| string
+	| undefined
+	| {
+			value?: string
+			intention?: ThemeIntention
+			key?: keyof PaletteColor
+			hue?: ThemeHue
+			shade?: ThemeShade
+	  }
+
 function useStyleProperty<T>(property: T | undefined, defaultValue: T): T {
 	return property !== undefined ? property : defaultValue
 }
 
 const getBackgroundImage = (
 	definition: BackgroundDefinition,
+	theme: Theme,
 	context: Context
 ): string | undefined => {
 	const image = definition?.image
@@ -43,15 +53,12 @@ const getBackgroundImage = (
 
 const getBackgroundStyles = (
 	definition: BackgroundDefinition,
+	theme: Theme,
 	context: Context
 ): CreateCSSProperties => {
-	const color =
-		definition?.color && context
-			? context.merge(definition?.color)
-			: definition?.color
 	return {
-		backgroundColor: color,
-		backgroundImage: getBackgroundImage(definition, context),
+		backgroundColor: getColor(definition?.color, theme, context),
+		backgroundImage: getBackgroundImage(definition, theme, context),
 		backgroundSize: "cover",
 	}
 }
@@ -82,31 +89,22 @@ const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
 				float: definition,
 		  }
 
-const getColor = ({
-	color,
-	shadePercentage,
-	theme,
-}: {
-	color?: ThemeColor | string
-	shadePercentage?: number | string
-	theme?: Theme
-}): undefined | string => {
-	let computedColor = undefined
-
-	// map the color (primary, etc.) with the color defined in the theme
-	if (color && THEME_COLORS?.[color as ThemeColor] && theme) {
-		computedColor = theme.palette?.[color as ThemeColor]?.main
+const getColor = (
+	definition: ColorDefinition,
+	theme: Theme,
+	context: Context
+): undefined | string => {
+	if (!definition) return undefined
+	if (typeof definition === "string") return context.merge(definition)
+	if (definition.value) return context.merge(definition.value)
+	if (definition.intention) {
+		const intention = theme.palette?.[definition.intention]
+		return intention[definition.key || "main"]
 	}
-
-	// apply the shade if necessary
-	if (shadePercentage && (computedColor || color)) {
-		computedColor = shade(
-			shadePercentage,
-			(computedColor || color) as string
-		)
+	if (definition.hue) {
+		const hue = colors?.[definition.hue] as Color
+		return hue[definition.shade || 500]
 	}
-
-	return computedColor
 }
 
 export {
@@ -114,7 +112,6 @@ export {
 	getBackgroundStyles,
 	getMarginStyles,
 	getFloatStyles,
-	ThemeColor,
 	BackgroundDefinition,
 	MarginDefinition,
 	FloatDefinition,
