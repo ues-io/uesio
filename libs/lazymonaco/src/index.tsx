@@ -18,7 +18,7 @@ import {
 	EditorDidMount,
 } from "react-monaco-editor"
 
-// eslint-disable-next-line prefer-const
+// eslint-disable-next-line prefer-const, @typescript-eslint/no-unused-vars
 __webpack_public_path__ = window.monacoPublicPath
 
 const LaziestMonaco = lazy(

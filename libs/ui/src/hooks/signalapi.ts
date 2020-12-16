@@ -1,8 +1,7 @@
 import { Dispatcher } from "../store/store"
-import { SignalDefinition } from "../definition/signal"
+import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
-import { SignalDescriptor } from "../definition/signal"
 
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
