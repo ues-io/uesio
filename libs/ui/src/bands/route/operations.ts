@@ -1,10 +1,7 @@
 import { batch } from "react-redux"
-import { AnyAction } from "redux"
 import { Context } from "../../context/context"
-import { Platform } from "../../platform/platform"
-import { Dispatcher } from "../../store/store"
+import { ThunkFunc } from "../../store/store"
 import { set as setRoute } from "."
-import RuntimeState from "../../store/types/runtimestate"
 import { clearAvailableMetadata } from "../builder"
 import loadViewOp from "../view/operations/load"
 
@@ -19,11 +16,7 @@ const navigate = (
 	path: string,
 	namespace: string,
 	noPushState?: boolean
-) => async (
-	dispatch: Dispatcher<AnyAction>,
-	getState: () => RuntimeState,
-	platform: Platform
-) => {
+): ThunkFunc => async (dispatch, getState, platform) => {
 	const mergedPath = context.merge(path)
 	const routeResponse = await platform.getRoute(
 		context,
