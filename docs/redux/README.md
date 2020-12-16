@@ -30,8 +30,12 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Redux store data structure
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide), not only plain JavaScript objects are stored in the redux store. For example, `yaml.Document` data structure is stored in the redux store which is not a plain JavaScript object.
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. `yaml.Document` data structure deviates on that.
 
 ## Injection of the platform API into the middleware
 
-The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function `createAsyncThunk` of redux-toolkit. This is done by this statement, `middleware: [thunk.withExtraArgument(plat)]`. This injection is compliant with the redux style guide.
+The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of [Redux Toolkit](https://redux-toolkit.js.org/). This is done through the field `middleware`, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore). This injection is compliant with the [redux style guide](https://redux.js.org/style-guide/style-guide).
+
+## Reducers are pure function
+
+The [redux style guide](https://redux.js.org/style-guide/style-guide/#reducers-must-not-have-side-effects) enforces the reducers to be pure functions. [Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) complies with that by using [Immer](https://github.com/immerjs/immer) in the reducers. So, even if the code may look like having side-effects, there are no such things.
