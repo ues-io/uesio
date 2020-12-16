@@ -1,4 +1,4 @@
-import { AnyAction, Store } from "redux"
+import { AnyAction } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch, useSelector } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
@@ -29,11 +29,11 @@ type ThunkFunc = ThunkAction<
 >
 
 let platform: Platform
-let store: Store
+let store: ReturnType<typeof create>
 
 const create = (plat: Platform, initialState: RuntimeState) => {
 	platform = plat
-	store = configureStore({
+	const newStore = configureStore({
 		reducer: {
 			collection,
 			component,
@@ -51,7 +51,8 @@ const create = (plat: Platform, initialState: RuntimeState) => {
 		preloadedState: initialState,
 		middleware: [thunk.withExtraArgument(plat)],
 	})
-	return store
+	store = newStore
+	return newStore
 }
 
 const getDispatcher = (): Dispatcher<AnyAction> => useDispatch()
