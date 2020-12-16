@@ -34,7 +34,7 @@ In contrast to the [redux style guide](https://redux.js.org/style-guide/style-gu
 
 ## Injection of the platform API into the middleware
 
-The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of [Redux Toolkit](https://redux-toolkit.js.org/). This is done through the field `middleware`, like so `middleware: [thunk.withExtraArgument(plat)]` of [configureStore](https://redux-toolkit.js.org/api/configureStore). This injection is compliant with the [redux style guide](https://redux.js.org/style-guide/style-guide).
+The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of [Redux Toolkit](https://redux-toolkit.js.org/). This is done through the field `middleware`, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore). This injection is compliant with the [redux style guide](https://redux.js.org/style-guide/style-guide).
 
 ## Reducers are pure function
 
