@@ -101,7 +101,8 @@ definition:
                 - material.card:
                     media:
                       background:
-                        color: "orange"
+                        color:
+                          intention: "primary"
                       height: 10px
                     margin: 1
                     components:
