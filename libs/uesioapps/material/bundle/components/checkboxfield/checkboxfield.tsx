@@ -19,7 +19,7 @@ type Props = {
 
 const CheckBoxField: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
-	const { hideLabel, mode, value, setValue, label, definition } = props
+	const { hideLabel, mode, value, setValue, label } = props
 
 	return (
 		<material.Checkbox
