@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react"
 
-import { definition, hooks } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 
 import LeftToolbar from "./toolbar/lefttoolbar"
 import RightToolbar from "./toolbar/righttoolbar"
