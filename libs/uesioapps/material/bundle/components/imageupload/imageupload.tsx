@@ -11,9 +11,9 @@ const useStyles = material.makeStyles((theme) =>
 			lineHeight: 0,
 			...styles.getMarginStyles(props.definition?.margin, theme),
 		}),
-		input: (/*props: ImageUploadProps*/) => ({
+		input: {
 			display: "none",
-		}),
+		},
 		avatar: (props: ImageUploadProps) => ({
 			width: props.definition?.width ? props.definition.width : 200,
 			height: props.definition?.height ? props.definition.height : 200,

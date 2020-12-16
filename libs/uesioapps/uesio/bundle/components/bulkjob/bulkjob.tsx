@@ -12,12 +12,12 @@ interface Props extends definition.BaseProps {
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: () => ({
+		root: {
 			margin: theme.spacing(1),
-		}),
-		input: () => ({
+		},
+		input: {
 			display: "none",
-		}),
+		},
 	})
 )
 

@@ -9,9 +9,9 @@ const useStyles = material.makeStyles((theme) =>
 			lineHeight: 0,
 			...styles.getMarginStyles(props.definition?.margin, theme),
 		}),
-		input: (/*props: FileUploadProps*/) => ({
+		input: {
 			display: "none",
-		}),
+		},
 	})
 )
 

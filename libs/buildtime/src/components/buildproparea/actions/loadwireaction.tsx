@@ -20,16 +20,15 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 		},
 	]
 
-	const clickHandler = signals && uesio.signal.getHandler(signals)
-
 	const action = props.action as builder.AddAction
 	if (!action || !signals) {
 		return null
 	}
+
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={clickHandler}
+			onClick={uesio.signal.getHandler(signals)}
 			icon={RefreshIcon}
 		/>
 	)
