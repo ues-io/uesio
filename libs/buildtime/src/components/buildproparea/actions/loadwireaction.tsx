@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { builder, hooks, signal, definition, component } from "@uesio/ui"
+import { builder, hooks, signal, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import RefreshIcon from "@material-ui/icons/Refresh"
