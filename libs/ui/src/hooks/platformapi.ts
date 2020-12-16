@@ -1,6 +1,4 @@
 import { Dispatcher } from "../store/store"
-import RuntimeState from "../store/types/runtimestate"
-import { Platform } from "../platform/platform"
 import { LoginRequest } from "../auth/auth"
 import { Uesio } from "./hooks"
 import { LoadRequestBatch } from "../load/loadrequest"
@@ -17,21 +15,13 @@ class PlatformAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	login = (request: LoginRequest) =>
-		this.dispatcher(
-			async (
-				dispatch,
-				getState: () => RuntimeState,
-				platform: Platform
-			) => platform.login(request)
+		this.dispatcher(async (dispatch, getState, platform) =>
+			platform.login(request)
 		)
 
 	loadData = (context: Context, request: LoadRequestBatch) =>
-		this.dispatcher(
-			async (
-				dispatch,
-				getState: () => RuntimeState,
-				platform: Platform
-			) => platform.loadData(context, request)
+		this.dispatcher(async (dispatch, getState, platform) =>
+			platform.loadData(context, request)
 		)
 }
 

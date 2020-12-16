@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 
-const useTheme = () => useSelector((state: RuntimeState) => state.theme)
+const useTheme = () => useSelector((state: RootState) => state.theme)
 
 export { useTheme }

@@ -1,6 +1,6 @@
 import { metadata } from "@uesio/constants"
 import { useSelector } from "react-redux"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 
 const isMatch = (componentPath: string, testPath?: string) => {
 	if (testPath) {
@@ -18,7 +18,7 @@ const isMatch = (componentPath: string, testPath?: string) => {
 }
 
 const useBuilderNodeState = (path: string) =>
-	useSelector(({ builder }: RuntimeState) => {
+	useSelector(({ builder }: RootState) => {
 		if (builder) {
 			if (isMatch(path, builder.selectedNode)) {
 				return "selected"
@@ -31,25 +31,25 @@ const useBuilderNodeState = (path: string) =>
 	})
 
 const useBuilderSelectedNode = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.selectedNode || "")
+	useSelector(({ builder }: RootState) => builder?.selectedNode || "")
 
 const useBuilderDragNode = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.draggingNode || "")
+	useSelector(({ builder }: RootState) => builder?.draggingNode || "")
 
 const useBuilderDropNode = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.droppingNode || "")
+	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
 const useBuilderLeftPanel = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.leftPanel || "")
+	useSelector(({ builder }: RootState) => builder?.leftPanel || "")
 
 const useBuilderRightPanel = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.rightPanel || "")
+	useSelector(({ builder }: RootState) => builder?.rightPanel || "")
 
 const useBuilderView = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.buildView || "")
+	useSelector(({ builder }: RootState) => builder?.buildView || "")
 
 const useBuilderMode = () =>
-	useSelector(({ builder }: RuntimeState) =>
+	useSelector(({ builder }: RootState) =>
 		builder ? !!builder.buildMode : false
 	)
 
@@ -60,18 +60,18 @@ const useBuilderMetadataList = (
 ) =>
 	grouping
 		? useSelector(
-				({ builder }: RuntimeState) =>
+				({ builder }: RootState) =>
 					builder?.metadata?.[metadataType]?.[namespace]?.[
 						grouping
 					] || null
 		  )
 		: useSelector(
-				({ builder }: RuntimeState) =>
+				({ builder }: RootState) =>
 					builder?.metadata?.[metadataType]?.[namespace] || null
 		  )
 
 const useBuilderAvailableNamespaces = () =>
-	useSelector(({ builder }: RuntimeState) => builder?.namespaces || null)
+	useSelector(({ builder }: RootState) => builder?.namespaces || null)
 
 export {
 	useBuilderNodeState,

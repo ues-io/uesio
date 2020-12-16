@@ -47,7 +47,7 @@ export default createAsyncThunk<
 			const wiredef = context.getWireDef(wire)
 			if (!wiredef) throw new Error("Invalid Wire: " + wire)
 			return {
-				wire: wire,
+				wire,
 				type: wiredef.type,
 				collection: wiredef.collection,
 				fields: getFieldsRequest(wiredef.fields) || [],

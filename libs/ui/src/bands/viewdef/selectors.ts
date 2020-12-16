@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 import { selectors } from "./adapter"
 
 const useBuilderHasChanges = () =>
-	useSelector(({ viewdef }: RuntimeState) => {
+	useSelector(({ viewdef }: RootState) => {
 		const entities = viewdef?.entities
 		// Loop over view defs
 		if (entities) {
@@ -18,6 +18,6 @@ const useBuilderHasChanges = () =>
 	})
 
 const useViewDef = (viewDefId: string) =>
-	useSelector((state: RuntimeState) => selectors.selectById(state, viewDefId))
+	useSelector((state: RootState) => selectors.selectById(state, viewDefId))
 
 export { useBuilderHasChanges, useViewDef }
