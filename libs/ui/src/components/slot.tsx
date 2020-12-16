@@ -21,7 +21,7 @@ const Slot: FunctionComponent<SlotProps> = (props) => {
 			componentType="uesio.slot"
 			definition={{
 				items: listDef,
-				accepts: accepts,
+				accepts,
 				direction,
 			}}
 			path={listPath}

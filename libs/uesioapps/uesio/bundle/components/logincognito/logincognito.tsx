@@ -108,7 +108,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 		const authenticationDetails = getAuthDetails(username, password)
 		const cognitoUser = getUser(username, pool)
 		cognitoUser.authenticateUser(authenticationDetails, {
-			onSuccess: async function (result) {
+			onSuccess: async (result) => {
 				setMessage("")
 				const accessToken = result.getIdToken().getJwtToken()
 				await uesio.signal.run(
@@ -121,7 +121,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 				)
 			},
 
-			onFailure: function (err) {
+			onFailure: (err) => {
 				setMessage(err.message || JSON.stringify(err))
 			},
 		})

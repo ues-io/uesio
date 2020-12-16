@@ -62,7 +62,7 @@ const navigate = (
 				: "/"
 		window.history.pushState(
 			{
-				namespace: namespace,
+				namespace,
 				path: mergedPath,
 				workspace,
 			},
