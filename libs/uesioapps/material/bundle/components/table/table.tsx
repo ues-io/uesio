@@ -26,11 +26,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		initialState
 	) as TableState
 
-	const test = true
-	if (test || !wire || !componentState) {
+	if (!wire || !componentState) {
 		return (
 			<Feedback {...props} severity="error">
-				<b>Wire cannot be found</b>
+				{!wire ? <b>Wire cannot be found</b> : <b>Network issue</b>}
 			</Feedback>
 		)
 	}
