@@ -23,7 +23,6 @@ const useStyles = makeStyles(() =>
 				width: "100%",
 				transition: `all ${hidingAnimationDuration}ms ease-out`,
 				opacity: 0,
-				zIndex: 10000,
 			},
 			...{ [location]: -120 },
 		}),
