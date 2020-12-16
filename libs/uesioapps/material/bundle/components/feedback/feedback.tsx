@@ -3,41 +3,55 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import { definition } from "@uesio/ui"
 import Alert from "../alert/alert"
 
+type Location = "bottom" | "top"
 interface FeedbackProps extends definition.BaseProps {
 	severity?: "error" | "success" | "info" | "warning"
-	position?: "bottom" | "top"
+	location?: Location
 	displayDuration?: number
 	hidingAnimationDuration?: number
 }
+type FeedbackStyle = Required<
+	Pick<FeedbackProps, "location" | "hidingAnimationDuration">
+>
 
 const useStyles = makeStyles(() =>
 	createStyles({
-		hidden: ({ duration }: { duration: number }) => ({
-			position: "absolute",
-			bottom: -120,
-			right: 0,
-			width: "100%",
-			transition: `all ${duration}ms ease-out`,
-			opacity: 0,
+		hidden: ({ hidingAnimationDuration, location }: FeedbackStyle) => ({
+			...{
+				position: "absolute",
+				right: 0,
+				width: "100%",
+				transition: `all ${hidingAnimationDuration}ms ease-out`,
+				opacity: 0,
+				zIndex: 10000,
+			},
+			...{ [location]: -120 },
 		}),
-		shown: {
-			position: "absolute",
-			bottom: 0,
-			right: 0,
-			width: "100%",
-			transition: "all 1000ms ease-in",
-			opacity: 1,
-		},
+		shown: ({ location }: FeedbackStyle) => ({
+			...{
+				position: "absolute",
+				right: 0,
+				width: "100%",
+				transition: "all 1000ms ease-in",
+				opacity: 1,
+			},
+			...{ [location]: 0 },
+		}),
 	})
 )
 
 const Feedback: FunctionComponent<FeedbackProps> = (props) => {
-	const { displayDuration = 5000, hidingAnimationDuration = 1000 } = props
-	const { children } = props
+	const {
+		displayDuration = 5000,
+		hidingAnimationDuration = 1000,
+		location = "bottom",
+		children,
+	} = props
+
 	const [isHidden, setIsHidden] = useState(true)
 	const [doDestroy, setDoDestroy] = useState(false)
 	const mounted = useRef<boolean>(false)
-	const classes = useStyles({ duration: hidingAnimationDuration })
+	const classes = useStyles({ hidingAnimationDuration, location })
 
 	useEffect(() => {
 		if (!mounted.current) {
