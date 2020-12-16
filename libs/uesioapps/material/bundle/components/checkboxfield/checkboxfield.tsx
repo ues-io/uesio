@@ -23,6 +23,7 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 
 	return (
 		<material.Checkbox
+			color="primary"
 			className={classes.root}
 			checked={!!value}
 			disabled={mode === "READ"}
