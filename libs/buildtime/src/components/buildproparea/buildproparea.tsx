@@ -37,18 +37,16 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					/>
 				</div>
 			)}
-			{buildPropsDef.sections.map(
-				(section: builder.PropertySection, index: number) => (
-					<BuildSection
-						key={index}
-						path={path}
-						definition={definition}
-						section={section}
-						index={index}
-						context={context}
-					/>
-				)
-			)}
+			{buildPropsDef.sections.map((section, index) => (
+				<BuildSection
+					key={index}
+					path={path}
+					definition={definition}
+					section={section}
+					index={index}
+					context={context}
+				/>
+			))}
 		</div>
 	)
 }
