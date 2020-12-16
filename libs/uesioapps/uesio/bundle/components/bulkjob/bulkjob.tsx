@@ -15,9 +15,9 @@ const useStyles = material.makeStyles((theme) =>
 		root: () => ({
 			margin: theme.spacing(1),
 		}),
-		input: (props: Props) => ({
+		input: {
 			display: "none",
-		}),
+		},
 	})
 )
 
