@@ -179,7 +179,6 @@ npm run nx -- deploy uesioapps-crm
 
 // or, if you have nx globally
 nx deploy uesioapps-crm
-
 ```
 
 The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.
