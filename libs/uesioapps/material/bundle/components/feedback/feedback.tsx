@@ -5,6 +5,9 @@ import Alert from "../alert/alert"
 
 interface FeedbackProps extends definition.BaseProps {
 	severity?: "error" | "success" | "info" | "warning"
+	position?: "bottom" | "top"
+	displayDuration?: number
+	hidingAnimationDuration?: number
 }
 
 const useStyles = makeStyles(() =>
@@ -29,8 +32,7 @@ const useStyles = makeStyles(() =>
 )
 
 const Feedback: FunctionComponent<FeedbackProps> = (props) => {
-	const hidingAnimationDuration = 1000
-	const displayDuration = 5000
+	const { displayDuration = 5000, hidingAnimationDuration = 1000 } = props
 	const { children } = props
 	const [isHidden, setIsHidden] = useState(true)
 	const [doDestroy, setDoDestroy] = useState(false)
@@ -45,12 +47,12 @@ const Feedback: FunctionComponent<FeedbackProps> = (props) => {
 		} else {
 			// componentDidUpdate
 			if (!isHidden) {
-				// force hidding after 5000ms
+				// force hidding after displayDuration elapsed
 				setTimeout(() => {
 					setIsHidden(true)
 				}, displayDuration)
 
-				// force component to re-render
+				// force unmounting component after the hiding animation completed
 				setTimeout(() => {
 					setDoDestroy(true)
 				}, displayDuration + hidingAnimationDuration)
