@@ -1,10 +1,8 @@
-import { AnyAction } from "redux"
 import { parseKey } from "../../component/path"
 import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
-import { Dispatcher } from "../../store/store"
-import RuntimeState from "../../store/types/runtimestate"
+import { ThunkFunc } from "../../store/store"
 import { selectState } from "./selectors"
 import { PlainComponentState } from "./types"
 
@@ -13,10 +11,10 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 export default {
-	dispatcher: (signal: ComponentSignal, context: Context) => async (
-		dispatch: Dispatcher<AnyAction>,
-		getState: () => RuntimeState
-	) => {
+	dispatcher: (
+		signal: ComponentSignal,
+		context: Context
+	): ThunkFunc => async (dispatch, getState) => {
 		const { target, signal: signalName } = signal
 		const [band, scope, type] = signalName.split("/")
 		if (band !== "component" || !scope || !type || !target) return context

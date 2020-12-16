@@ -51,13 +51,5 @@
         ]
       }
     ]
-  },
-  "overrides": [
-    {
-      "files": ["*.tsx"],
-      "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
-      }
-    }
-  ]
+  }
 }

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { BaseProps, DefinitionMap } from "../definition/definition"
+import { BaseProps } from "../definition/definition"
 import { ComponentInternal } from "../component/component"
 
 interface SlotProps extends BaseProps {

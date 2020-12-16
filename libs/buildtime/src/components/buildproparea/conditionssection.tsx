@@ -1,4 +1,4 @@
-import React, { ReactElement, FunctionComponent } from "react"
+import React, { FunctionComponent } from "react"
 import { material, definition, wire, hooks, builder } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"

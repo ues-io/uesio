@@ -1,14 +1,12 @@
-import { Dispatcher } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { AnyAction } from "redux"
-import RuntimeState from "../../../store/types/runtimestate"
 import shortid from "shortid"
 import { createRecord } from ".."
 import { getDefaultRecord } from "../../../wire/wiredefault"
 
-export default (context: Context, wirename: string) => async (
-	dispatch: Dispatcher<AnyAction>,
-	getState: () => RuntimeState
+export default (context: Context, wirename: string): ThunkFunc => async (
+	dispatch,
+	getState
 ) => {
 	const viewId = context.getViewId()
 	if (!viewId) return context
