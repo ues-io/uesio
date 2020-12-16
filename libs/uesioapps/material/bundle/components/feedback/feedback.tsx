@@ -3,13 +3,13 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import { definition } from "@uesio/ui"
 import Alert from "../alert/alert"
 
-type Location = "bottom" | "top"
 interface FeedbackProps extends definition.BaseProps {
 	severity?: "error" | "success" | "info" | "warning"
-	location?: Location
+	location?: "bottom" | "top"
 	displayDuration?: number
 	hidingAnimationDuration?: number
 }
+
 type FeedbackStyle = Required<
 	Pick<FeedbackProps, "location" | "hidingAnimationDuration">
 >
