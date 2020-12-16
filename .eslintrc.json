@@ -16,6 +16,7 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "object-shorthand": ["error"],
     "eqeqeq": "error",
     "radix": "error",
     "no-new-wrappers": "error",
