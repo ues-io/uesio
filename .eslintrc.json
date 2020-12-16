@@ -17,6 +17,7 @@
   ],
   "rules": {
     "no-nested-ternary": "error",
+    "no-unneeded-ternary": "error",
     "eqeqeq": "error",
     "radix": "error",
     "no-new-wrappers": "error",
