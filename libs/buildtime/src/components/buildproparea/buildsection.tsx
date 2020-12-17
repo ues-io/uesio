@@ -9,7 +9,7 @@ interface Props extends definition.BaseProps {
 	section: builder.PropertySection
 }
 
-const getSectionHandler = (type?: string) => {
+function getSectionHandler(type?: string) {
 	switch (type) {
 		case "FIELDS":
 			return FieldsSection
