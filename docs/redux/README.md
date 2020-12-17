@@ -45,9 +45,9 @@ The platform API is injected into the redux-thunk so we can easily access it upo
 
 ## Reducer is a pure function
 
-The [redux style guide](https://redux.js.org/style-guide/style-guide/#reducers-must-not-have-side-effects) enforces the reducers to be pure functions.
+Redux [enforces](https://redux.js.org/understanding/thinking-in-redux/glossary#reducer) the reducers to be pure functions.
 
-[Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) complies with that by using [Immer](https://github.com/immerjs/immer) in the reducers. So, even if the code may look like having **side-effects**, there are no such things.
+[Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) complies with that by using [Immer](https://github.com/immerjs/immer) in the reducers. So, even if the code may look like of having **side-effects**, there are no such things.
 
 ## Action creator with TypesScript
 
