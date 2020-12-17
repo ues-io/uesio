@@ -1,5 +1,10 @@
 # Uesio Redux Architecture
 
+## Redux Toolkit
+
+We introduced Redux Toolkit in our stack upon a code refactoring. Redux alone requires a lot of boilerplate such as manual coding of action creators as well as having separate files for reducer and action.
+This is where Redux Toolkit kicks in.
+
 ## Structure
 
 As much as possible we try to use the [Redux Toolkit](https://redux-toolkit.js.org/) and follow the best practices in the [redux style guide](https://redux.js.org/style-guide/style-guide). Any deviation from this should be clearly documented.
