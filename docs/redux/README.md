@@ -36,8 +36,12 @@ In contrast to the [redux style guide](https://redux.js.org/style-guide/style-gu
 
 The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of [Redux Toolkit](https://redux-toolkit.js.org/). This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
 
-## Reducers are pure function
+## Reducer is a pure function
 
 The [redux style guide](https://redux.js.org/style-guide/style-guide/#reducers-must-not-have-side-effects) enforces the reducers to be pure functions.
 
 [Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) complies with that by using [Immer](https://github.com/immerjs/immer) in the reducers. So, even if the code may look like having **side-effects**, there are no such things.
+
+## Action creator and typescript
+
+[Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) recommend of having a type for the **action creator generating a thunk**.
