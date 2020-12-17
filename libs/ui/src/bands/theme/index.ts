@@ -22,7 +22,7 @@ const initialState: ThemeState = {
 
 const themeSlice = createSlice({
 	name: "theme",
-	initialState: initialState,
+	initialState,
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(

@@ -4,9 +4,9 @@ import { ColumnProps, ColumnDefinition } from "./columndefinition"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: () => ({
+		root: {
 			padding: theme.spacing(1),
-		}),
+		},
 	})
 )
 

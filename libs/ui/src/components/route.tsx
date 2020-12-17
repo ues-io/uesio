@@ -35,7 +35,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!route) return null
 
 	const routeContext = props.context.addFrame({
-		route: route,
+		route,
 		workspace: route.workspace,
 		buildMode: props.context.getBuildMode() && !!route.workspace,
 	})

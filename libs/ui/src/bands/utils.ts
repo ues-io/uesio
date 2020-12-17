@@ -1,6 +1,6 @@
 import { EntityState, PayloadAction } from "@reduxjs/toolkit"
 import { Platform } from "../platform/platform"
-import RuntimeState from "../store/types/runtimestate"
+import { RootState } from "../store/store"
 
 type EntityPayload = {
 	entity: string
@@ -8,7 +8,7 @@ type EntityPayload = {
 
 type UesioThunkAPI = {
 	extra: Platform
-	state: RuntimeState
+	state: RootState
 }
 
 const createEntityReducer = <T extends EntityPayload, S>(
