@@ -54,7 +54,7 @@ Redux [enforces](https://redux.js.org/understanding/thinking-in-redux/glossary#r
 As a reminder, an **action creator** is a function generating either a plain object, called an **action**, like so :
 
 ```
-const action = {
+{
     type: "user/fetch",
     payload: {
         first: "Simon",
@@ -66,13 +66,13 @@ const action = {
 or a function, called a **thunk**, like so :
 
 ```
-const thunk = (dispatch) => {
+(dispatch) => {
     fetch("http://example.com/users/19")
     .then((response) => response.json())
     .then((response) => dispatch(makeUser(response)))
 }
 // or using async/await
-const thunk = async (dispatch) => {
+async (dispatch) => {
     const userPromise = await fetch("http://example.com/users/19");
     const userParsed = await userPromise.json();
     dispatch(makeUser(userParsed));
