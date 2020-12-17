@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -197,6 +198,9 @@ func Deploy(body []byte, session *sess.Session) error {
 			return err
 		}
 	}
+
+	// Clear out the bundle definition cache
+	bundles.ClearAppBundleCache(session)
 
 	return nil
 
