@@ -37,6 +37,13 @@ func GetSiteAppBundle(site *metadata.Site) (*metadata.BundleDef, error) {
 	return getAppBundleInternal(site.AppRef, site.VersionRef, session)
 }
 
+// ClearAppBundleCache entry
+func ClearAppBundleCache(session *sess.Session) {
+	appName := session.GetContextAppName()
+	appVersion := session.GetContextVersionName()
+	localcache.RemoveCacheEntry("bundle-yaml", appName+":"+appVersion)
+}
+
 func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*metadata.BundleDef, error) {
 	entry, ok := localcache.GetCacheEntry("bundle-yaml", appName+":"+appVersion)
 	if ok {
