@@ -5,6 +5,7 @@ const METADATA = {
 	DATASOURCE: 'datasources',
 	SECRET: 'secrets',
 	THEME: 'themes',
+	SELECTLIST: 'selectlists',
 };
 
 type MetadataType = keyof typeof METADATA;
