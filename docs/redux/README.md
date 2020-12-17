@@ -49,7 +49,7 @@ The [redux style guide](https://redux.js.org/style-guide/style-guide/#reducers-m
 
 ## Action creator with TypesScript
 
-As a reminder, an **action creator** is a function generating either an plain object, called an **action**, like so :
+As a reminder, an **action creator** is a function generating either a plain object, called an **action**, like so :
 
 ```
 const action = {
@@ -61,7 +61,7 @@ const action = {
 }
 ```
 
-or a **thunk**, like so :
+or a function, called a **thunk**, like so :
 
 ```
 const thunk = (dispatch) => {
@@ -79,4 +79,17 @@ const thunk = async (dispatch) => {
 
 The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
 
-[Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) recommend of having a type for the **action creator generating a thunk**.
+Redux Toolkit does recommend of having a [dedicated type]() for the action creator generating a thunk.
+By doing that we do not need to individually type the arguments of the thunk. See the snippet below.
+
+```diff
+- (context: Context, wirename: string) => async (
+-	dispatch: Dispatcher<AnyAction>,
+-	getState: () => RuntimeState
++ (context: Context, wirename: string): ThunkFunc => async (
++	dispatch,
++	getState
+) => {
+    // body of the thunk here
+}
+```
