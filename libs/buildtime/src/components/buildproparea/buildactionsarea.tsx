@@ -46,8 +46,8 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 			<MoveActions {...props} definition={definition} />
 			{actions?.map?.((action, index) => {
 				const ActionHandler = getActionHandler(action.type)
-				if (ActionHandler) {
-					return (
+				return (
+					ActionHandler && (
 						<ActionHandler
 							{...props}
 							key={index}
@@ -55,7 +55,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 							action={action}
 						/>
 					)
-				}
+				)
 			})}
 		</div>
 	)
