@@ -42,6 +42,36 @@ The [redux style guide](https://redux.js.org/style-guide/style-guide/#reducers-m
 
 [Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) complies with that by using [Immer](https://github.com/immerjs/immer) in the reducers. So, even if the code may look like having **side-effects**, there are no such things.
 
-## Action creator and typescript
+## Action creator with TypesScript
+
+As a reminder, an **action creator** is a function generating either an plain object, called an **action**, like so :
+
+```
+const action = {
+    type: "user/fetch",
+    payload: {
+        first: "Simon",
+        last: "Lebon",
+    }
+}
+```
+
+or a **thunk**, like so :
+
+```
+const thunk = (dispatch):void => {
+    fetch("http://mydomain/users/19")
+    .then((response) => response.json())
+    .then((response) => dispatch(makeUser(response)))
+}
+// or using async/await
+const thunk = async (dispatch):Promise<User> => {
+    const userPromise = await fetch("http://mydomain/users/19");
+    const userParsed = await userPromise.json();
+    dispatch(makeUser(userParsed));
+}
+```
+
+The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
 
 [Redux Toolkit](https://redux-toolkit.js.org/api/createReducer#direct-state-mutation) recommend of having a type for the **action creator generating a thunk**.
