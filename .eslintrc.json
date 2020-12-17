@@ -16,7 +16,6 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
-    "no-array-constructor": "error",
     "array-callback-return": "error",
     "no-nested-ternary": "error",
     "no-unneeded-ternary": "error",
