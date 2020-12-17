@@ -2,7 +2,7 @@
 
 ## Redux Toolkit
 
-We introduced Redux Toolkit in our stack upon a code refactoring.
+We introduced [Redux Toolkit](https://redux-toolkit.js.org/) in our stack upon a code refactoring.
 
 Redux alone requires a lot of boilerplate such as manual coding of the action type and action creators, having separate files for reducer and action as well as cloning objects in the reducers.
 This is where Redux Toolkit kicks in.
@@ -67,13 +67,13 @@ or a function, called a **thunk**, like so :
 
 ```
 const thunk = (dispatch) => {
-    fetch("http://mydomain/users/19")
+    fetch("http://example.com/users/19")
     .then((response) => response.json())
     .then((response) => dispatch(makeUser(response)))
 }
 // or using async/await
 const thunk = async (dispatch) => {
-    const userPromise = await fetch("http://mydomain/users/19");
+    const userPromise = await fetch("http://example.com/users/19");
     const userParsed = await userPromise.json();
     dispatch(makeUser(userParsed));
 }
