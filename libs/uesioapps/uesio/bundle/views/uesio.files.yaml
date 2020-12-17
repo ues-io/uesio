@@ -42,6 +42,24 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+    filesCreate:
+      collection: uesio.files
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspaceid:
+        uesio.content:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      type: CREATE
+      defaults:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -82,16 +100,24 @@ definition:
                           variant: body2
                 - material.griditem:
                     components:
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Create New File"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newfile"
-                                    namespace: "uesio"
+                      - material.deck:
+                          xs: 12
+                          sm: 6
+                          md: 4
+                          lg: 3
+                          margin: 0
+                          id: fileDeck
+                          wire: filesCreate
+                          mode: READ
+                          components:
+                            - material.fileupload:
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{appname}
+                                id: "fileuploadid"
+                                fieldId: uesio.content
+                                fileCollection: uesio.workspacemetadatafiles
           - material.deck:
               xs: 12
               sm: 6

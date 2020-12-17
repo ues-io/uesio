@@ -8,6 +8,7 @@ import Launch from "@material-ui/icons/Launch"
 import Visibility from "@material-ui/icons/Visibility"
 import Delete from "@material-ui/icons/Delete"
 import Description from "@material-ui/icons/Description"
+import LibraryAdd from "@material-ui/icons/LibraryAdd"
 
 import { material } from "@uesio/ui"
 
@@ -23,6 +24,7 @@ const iconMap: IconMap = {
 	preview: Visibility,
 	delete: Delete,
 	file: Description,
+	librayadd: LibraryAdd,
 }
 
 export default function getIcon(

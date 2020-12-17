@@ -19,6 +19,8 @@ class Collection {
 	}
 
 	getIdField = () => this.getField(this.source ? this.source.idField : null)
+	getNameField = () =>
+		this.getField(this.source ? this.source.nameField : null)
 }
 
 export default Collection

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, signal } from "@uesio/ui"
+import { hooks, material, styles, wire, signal, context } from "@uesio/ui"
+import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -21,7 +22,8 @@ async function handleChange(
 	record: wire.WireRecord,
 	wire: wire.Wire,
 	uesio: hooks.Uesio,
-	fileCollection: string
+	fileCollection: string,
+	context: context.Context
 ) {
 	const collection = wire.getCollection()
 	const collectionName = collection.getId()
@@ -29,17 +31,22 @@ async function handleChange(
 	const idField = collection.getIdField()
 	if (!idField) return
 
-	const context = uesio.getContext()
+	const nameField = collection.getNameField()
+	const nameNameField = nameField?.getId()
+	if (!nameNameField) return
+
 	const workspace = context.getWorkspace()
 
-	const recordId = record.getFieldValue(idField.getId()) as string
-
-	if (selectorFiles && recordId) {
+	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
 		}
 
 		const file = selectorFiles[0]
+		record.update(nameNameField, file.name)
+		await wire.save(context)
+		//TO-DO get the ID from the DataBase for the new file just created in the wire.save()
+		const recordId = record.getFieldValue(idField.getId()) as string
 
 		await uesio.file.uploadFile(
 			context,
@@ -50,6 +57,9 @@ async function handleChange(
 			recordId,
 			fieldId
 		)
+
+		//TO-DO insted of navigate we might want to keep a reference to the other wire and refresh?
+		//I am using two wires in the view(uesio.files) one to create files, and another to display the list of files all pointing to the same collection(files)
 
 		const navigateSig = {
 			signal: "route/NAVIGATE",
@@ -91,7 +101,8 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 							record,
 							wire,
 							uesio,
-							definition.fileCollection
+							definition.fileCollection,
+							context
 						)
 					}
 				/>
@@ -99,12 +110,15 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 					color="primary"
 					variant="contained"
 					component="span"
-					onClick={
-						definition?.signals &&
-						uesio.signal.getHandler(definition.signals)
-					}
 				>
-					Upload New File
+					<Icon
+						definition={{
+							type: "librayadd",
+							size: "small",
+						}}
+						path={props.path}
+						context={props.context}
+					/>
 				</material.Button>
 			</label>
 		</div>
