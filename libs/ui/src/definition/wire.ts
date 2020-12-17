@@ -1,6 +1,6 @@
-import { WireConditionDefinition } from "../wire/wirecondition"
-import { WireDefault } from "../wire/wiredefault"
 import { wire } from "@uesio/constants"
+import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
+import { WireDefault } from "../bands/wire/defaults/defaults"
 
 type WireDefinitionMap = {
 	[key: string]: WireDefinition

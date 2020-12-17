@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { LoadResponseRecord } from "../../load/loadresponse"
 import { SaveResponseBatch } from "../../load/saveresponse"
-import { PlainWireRecord, PlainWireRecordMap } from "../../wire/wirerecord"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
+import { PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
@@ -167,8 +167,11 @@ const wireSlice = createSlice({
 							})
 						})
 						Object.keys(wire.deleteResults).forEach((tempId) => {
-							const newData: PlainWireRecordMap = {}
-							const newOriginal: PlainWireRecordMap = {}
+							const newData: Record<string, PlainWireRecord> = {}
+							const newOriginal: Record<
+								string,
+								PlainWireRecord
+							> = {}
 							const data = state.entities[wireId]?.data
 							if (!data) return
 							Object.keys(data)

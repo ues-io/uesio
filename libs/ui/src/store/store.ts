@@ -1,13 +1,10 @@
 import { AnyAction } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
-import { Provider, useDispatch, useSelector } from "react-redux"
+import { Provider, useDispatch } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
 
 import { Platform } from "../platform/platform"
-import { Definition } from "../definition/definition"
-import get from "lodash.get"
 import { Context } from "../context/context"
-import { selectors } from "../bands/viewdef/adapter"
 
 import collection from "../bands/collection"
 import route from "../bands/route"
@@ -65,28 +62,9 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-const getDispatcher = (): Dispatcher<AnyAction> => useDispatch()
+const getDispatcher = () => useDispatch<Dispatcher<AnyAction>>()
 const getPlatform = () => platform
 const getStore = () => store
-
-const useViewDefinition = (viewDefId: string, path?: string): Definition =>
-	useSelector((state: RootState) => {
-		const viewDef = selectors.selectById(state, viewDefId)
-		const definition = viewDef?.definition
-		return path ? get(definition, path || "") : definition
-	})
-
-const useViewYAML = (viewDefId: string) =>
-	useSelector((state: RootState) => {
-		const viewDef = selectors.selectById(state, viewDefId)
-		return viewDef?.yaml
-	})
-
-const useViewConfigValue = (viewDefId: string, key: string) =>
-	useSelector((state: RootState) => {
-		const viewDef = selectors.selectById(state, viewDefId)
-		return viewDef?.dependencies?.configvalues[key] || ""
-	})
 
 export {
 	create,
@@ -98,7 +76,4 @@ export {
 	getDispatcher,
 	getPlatform,
 	getStore,
-	useViewYAML,
-	useViewDefinition,
-	useViewConfigValue,
 }

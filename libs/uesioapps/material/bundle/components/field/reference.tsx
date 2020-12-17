@@ -13,26 +13,28 @@ const useStyles = material.makeStyles((theme) => ({
 // TODO:: Modify this to accept an arbitary display template
 const generateReferenceFieldDisplayValue = (
 	fieldId: string,
-	referencedCollection: collection.PlainCollection,
+	referencedCollection: collection.Collection,
 	record: wire.WireRecord
 ): string => {
-	const nameFieldOfReferencedCollection = referencedCollection.nameField
-	const referenceFieldValue = record.getFieldValue(
-		fieldId
-	) as wire.PlainWireRecord
-	if (!referenceFieldValue) {
+	const nameFieldOfReferencedCollection = referencedCollection
+		.getNameField()
+		?.getId()
+	const referenceFieldValue = record.getFieldValue(fieldId)
+	if (
+		!referenceFieldValue ||
+		typeof referenceFieldValue !== "object" ||
+		!nameFieldOfReferencedCollection
+	)
 		return ""
-	}
+
 	const value = referenceFieldValue[nameFieldOfReferencedCollection]
-	if (typeof value === "number" || typeof value === "boolean") {
+	if (typeof value === "number" || typeof value === "boolean")
 		return `${value}`
-	}
-	if (typeof value === "object") {
-		return ""
-	}
-	if (!value) {
-		return ""
-	}
+
+	if (typeof value === "object") return ""
+
+	if (!value) return ""
+
 	return value
 }
 
@@ -90,20 +92,23 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 					searchText: string,
 					callback: (items: SelectedItem[]) => void
 				) => {
-					const refCol = referencedCollection
+					const idField = referencedCollection.getIdField()?.getId()
+					const nameField = referencedCollection
+						.getNameField()
+						?.getId()
+					if (!idField || !nameField) return
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{
 								wire: "search",
 								type: "QUERY",
-								collection:
-									refCol.namespace + "." + refCol.name,
+								collection: referencedCollection.getFullName(),
 								fields: [
 									{
-										id: refCol.idField,
+										id: idField,
 									},
 									{
-										id: refCol.nameField,
+										id: nameField,
 									},
 								],
 								conditions: [
@@ -119,8 +124,8 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 					})
 					callback(
 						result.wires[0].data.map((record) => ({
-							value: record[referencedCollection.nameField] + "",
-							id: record[referencedCollection.idField] + "",
+							value: record[nameField] + "",
+							id: record[idField] + "",
 						}))
 					)
 				}}

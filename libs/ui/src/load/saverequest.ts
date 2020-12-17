@@ -1,10 +1,10 @@
-import { PlainWireRecordMap } from "../wire/wirerecord"
+import { PlainWireRecord } from "../bands/wirerecord/types"
 
 type SaveRequest = {
 	wire: string
 	collection: string
-	changes: PlainWireRecordMap
-	deletes: PlainWireRecordMap
+	changes: Record<string, PlainWireRecord>
+	deletes: Record<string, PlainWireRecord>
 }
 
 type SaveRequestBatch = {

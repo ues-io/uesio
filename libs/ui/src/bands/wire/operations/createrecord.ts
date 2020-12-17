@@ -2,7 +2,7 @@ import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
 import shortid from "shortid"
 import { createRecord } from ".."
-import { getDefaultRecord } from "../../../wire/wiredefault"
+import { getDefaultRecord } from "../defaults/defaults"
 
 export default (context: Context, wirename: string): ThunkFunc => async (
 	dispatch,
