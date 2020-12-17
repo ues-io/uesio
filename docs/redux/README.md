@@ -37,11 +37,11 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Redux store data structure
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` deviates on that.
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` - which is a class - deviates on that.
 
 ## Platform API injection
 
-The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
+The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the config argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
 
 ## Reducers with Immer
 
