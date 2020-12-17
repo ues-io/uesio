@@ -98,4 +98,8 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 ## Promise vs async/await
 
-We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell.
+We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. This choice is also the one of [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic).
+
+## Redux middleware
+
+There are many different middleware for redux. The most famous are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
