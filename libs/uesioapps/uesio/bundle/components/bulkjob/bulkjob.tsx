@@ -27,15 +27,15 @@ const handleChange = (
 	jobId: string
 ): void => {
 	if (selectorFiles) {
-		if (selectorFiles.length >= 2) {
+		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
 		}
 
-		const file = selectorFiles?.[0]
+		const file = selectorFiles[0]
 		const context = uesio.getContext()
 		const workspace = context.getWorkspace()
 
-		if (file?.type === "text/csv") {
+		if (file.type === "text/csv") {
 			fetch(
 				`/workspace/${workspace?.app}/${workspace?.name}/bulk/job/${jobId}/batch`,
 				{
