@@ -1,7 +1,5 @@
 import { FC } from "react"
 
-const Wire: FC = () => {
-	return null
-}
+const Wire: FC = () => null
 
 export default Wire
