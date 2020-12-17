@@ -59,13 +59,13 @@ const action = {
 or a **thunk**, like so :
 
 ```
-const thunk = (dispatch):void => {
+const thunk = (dispatch) => {
     fetch("http://mydomain/users/19")
     .then((response) => response.json())
     .then((response) => dispatch(makeUser(response)))
 }
 // or using async/await
-const thunk = async (dispatch):Promise<User> => {
+const thunk = async (dispatch) => {
     const userPromise = await fetch("http://mydomain/users/19");
     const userParsed = await userPromise.json();
     dispatch(makeUser(userParsed));
