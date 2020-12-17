@@ -2,7 +2,9 @@
 
 ## Redux Toolkit
 
-We introduced Redux Toolkit in our stack upon a code refactoring. Redux alone requires a lot of boilerplate such as manual coding of action creators, having separate files for reducer and action as well as cloning objects in the reducers.
+We introduced Redux Toolkit in our stack upon a code refactoring.
+
+Redux alone requires a lot of boilerplate such as manual coding of the action type and action creators, having separate files for reducer and action as well as cloning objects in the reducers.
 This is where Redux Toolkit kicks in.
 
 ## Structure
