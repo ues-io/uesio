@@ -1,11 +1,12 @@
-import { PlainCollection } from "../bands/collection/types"
-import Collection from "../bands/collection/class"
-import { WireRecord, PlainWireRecord } from "./wirerecord"
-import { getStore } from "../store/store"
-import { setRecord, updateRecord } from "../bands/wire"
-import saveWiresOp from "../bands/wire/operations/save"
-import { PlainWire } from "../bands/wire/types"
-import { Context } from "../context/context"
+import { PlainCollection } from "../collection/types"
+import Collection from "../collection/class"
+import { getStore } from "../../store/store"
+import { setRecord, updateRecord } from "."
+import saveWiresOp from "./operations/save"
+import { PlainWire } from "./types"
+import { Context } from "../../context/context"
+import WireRecord from "../wirerecord/class"
+import { PlainWireRecord } from "../wirerecord/types"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -76,4 +77,4 @@ class Wire {
 	}
 }
 
-export { Wire }
+export default Wire

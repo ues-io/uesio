@@ -1,9 +1,4 @@
-import {
-	Dispatcher,
-	useViewDefinition,
-	useViewConfigValue,
-	useViewYAML,
-} from "../store/store"
+import { Dispatcher } from "../store/store"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
 
@@ -22,6 +17,11 @@ import {
 	changeDefinitionKey,
 	addDefinition,
 } from "../bands/viewdef"
+import {
+	useViewConfigValue,
+	useViewDefinition,
+	useViewYAML,
+} from "../bands/viewdef/selectors"
 
 const VIEW_BAND = "view"
 

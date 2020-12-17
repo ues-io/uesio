@@ -1,5 +1,5 @@
 import { wire } from "@uesio/constants"
-import { WireConditionState } from "../wire/wirecondition"
+import { WireConditionState } from "../bands/wire/conditions/conditions"
 
 type LoadRequest = {
 	wire: string

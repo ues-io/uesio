@@ -1,22 +1,21 @@
-import { WireRecord, FieldValue, PlainWireRecord } from "./wire/wirerecord"
 import { WireDefinitionMap, WireDefinition } from "./definition/wire"
-import { Wire } from "./wire/wire"
+
+import Wire from "./bands/wire/class"
+import WireRecord from "./bands/wirerecord/class"
+import { FieldValue } from "./bands/wirerecord/types"
 import {
-	WireConditionState,
-	WireConditionDefinition,
 	ValueConditionDefinition,
-} from "./wire/wirecondition"
-import { LoadResponseBatch } from "./load/loadresponse"
+	WireConditionDefinition,
+	WireConditionState,
+} from "./bands/wire/conditions/conditions"
 
 export {
 	WireRecord,
 	Wire,
 	FieldValue,
-	PlainWireRecord,
 	WireDefinition,
 	WireDefinitionMap,
 	WireConditionState,
 	WireConditionDefinition,
 	ValueConditionDefinition,
-	LoadResponseBatch,
 }

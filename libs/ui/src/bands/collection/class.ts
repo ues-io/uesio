@@ -12,13 +12,13 @@ class Collection {
 	getNamespace = () => this.source.namespace
 	getFullName = () => this.getNamespace() + "." + this.getId()
 	getField = (fieldName: string | null) => {
-		const fieldMetadata =
-			this.source && fieldName ? this.source.fields[fieldName] : null
+		const fieldMetadata = fieldName ? this.source.fields[fieldName] : null
 		if (!fieldMetadata) return undefined
 		return new Field(fieldMetadata)
 	}
 
-	getIdField = () => this.getField(this.source ? this.source.idField : null)
+	getIdField = () => this.getField(this.source.idField)
+	getNameField = () => this.getField(this.source.nameField)
 }
 
 export default Collection
