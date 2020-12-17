@@ -16,6 +16,7 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "dot-notation": "error",
     "no-nested-ternary": "error",
     "no-unneeded-ternary": "error",
     "object-shorthand": "error",
