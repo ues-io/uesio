@@ -4,8 +4,8 @@
 
 We introduced [Redux Toolkit](https://redux-toolkit.js.org/) in our stack upon a code refactoring.
 
-Redux alone requires a lot of boilerplate such as manual coding of the action type and action creators, having separate files for reducer and action as well as cloning objects in the reducers.
-This is where Redux Toolkit kicks in.
+Redux alone requires a lot of **boilerplate** such as manual coding of the **action type** and **action creators**, having **separate files** for reducer and action as well as **cloning objects** in the reducers.
+This is where Redux Toolkit - a sort of utility library for Redux - kicks in which.
 
 ## Structure
 
@@ -37,13 +37,13 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Redux store data structure
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. `yaml.Document` data structure deviates on that.
+In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` deviates on that.
 
 ## Platform API injection
 
-The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of [Redux Toolkit](https://redux-toolkit.js.org/). This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
+The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
 
-## Reducer is a pure function
+## Reducers with Immer
 
 Redux [enforces](https://redux.js.org/understanding/thinking-in-redux/glossary#reducer) the reducers to be pure functions.
 
@@ -81,7 +81,7 @@ async (dispatch) => {
 
 The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
 
-Redux does recommend of using the [built-in type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) `ThunkAction` for the action creator generating a thunk.
+Redux does recommend of using the [built-in type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) for the action creator generating a thunk.
 By doing that, there is no need to individually type the arguments of the thunk. See the snippet below.
 
 ```diff
@@ -95,3 +95,7 @@ By doing that, there is no need to individually type the arguments of the thunk.
     // body of the thunk here
 }
 ```
+
+## Promise vs async/await
+
+We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell.

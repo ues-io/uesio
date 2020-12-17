@@ -14,7 +14,7 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
-[Uesio Specific Redux Docs](./docs/redux/README.md)
+Redux-wise we do follow some code style with some exceptions. More detail on that [here](#redux-architecture).
 
 # Tech Stack
 
@@ -36,6 +36,10 @@ Frontend-side are favoured the concepts coming from functional programming and [
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
+
+# <a id="redux-architecture"></a> Redux architecture
+
+See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
 # Monorepo architecture
 
