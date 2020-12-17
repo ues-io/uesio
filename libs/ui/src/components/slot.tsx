@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { BaseProps, DefinitionMap } from "../definition/definition"
+import { BaseProps } from "../definition/definition"
 import { ComponentInternal } from "../component/component"
 
 interface SlotProps extends BaseProps {
@@ -21,7 +21,7 @@ const Slot: FunctionComponent<SlotProps> = (props) => {
 			componentType="uesio.slot"
 			definition={{
 				items: listDef,
-				accepts: accepts,
+				accepts,
 				direction,
 			}}
 			path={listPath}

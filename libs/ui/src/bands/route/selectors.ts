@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 
-const useRoute = () => useSelector((state: RuntimeState) => state.route)
+const useRoute = () => useSelector((state: RootState) => state.route)
 
 export { useRoute }

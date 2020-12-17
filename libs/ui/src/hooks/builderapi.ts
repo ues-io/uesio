@@ -7,6 +7,8 @@ import {
 	useBuilderLeftPanel,
 	useBuilderMetadataList,
 	useBuilderAvailableNamespaces,
+	useBuilderNodeState,
+	useBuilderSelectedNode,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
@@ -23,10 +25,6 @@ import {
 	toggleBuildMode,
 } from "../bands/builder"
 import { AnyAction } from "redux"
-import {
-	useBuilderNodeState,
-	useBuilderSelectedNode,
-} from "../bands/builder/selectors"
 import builderOps from "../bands/builder/operations"
 import { Dispatcher } from "../store/store"
 import { useBuilderHasChanges } from "../bands/viewdef/selectors"

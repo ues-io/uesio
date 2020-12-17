@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
 
 const componentAdapter = createEntityAdapter<ComponentState>({
@@ -16,7 +16,7 @@ const componentSlice = createSlice({
 })
 
 const selectors = componentAdapter.getSelectors(
-	(state: RuntimeState) => state.component
+	(state: RootState) => state.component
 )
 export const { set } = componentSlice.actions
 export { selectors }

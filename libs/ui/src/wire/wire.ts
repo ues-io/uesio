@@ -3,7 +3,9 @@ import Collection from "../bands/collection/class"
 import { WireRecord, PlainWireRecord } from "./wirerecord"
 import { getStore } from "../store/store"
 import { setRecord, updateRecord } from "../bands/wire"
+import saveWiresOp from "../bands/wire/operations/save"
 import { PlainWire } from "../bands/wire/types"
+import { Context } from "../context/context"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -65,6 +67,12 @@ class Wire {
 	attachCollection = (collection: PlainCollection) => {
 		this.collection = new Collection(collection)
 		return this
+	}
+
+	save = async (context: Context) => {
+		return getStore().dispatch(
+			saveWiresOp({ context, wires: [this.getId()] })
+		)
 	}
 }
 

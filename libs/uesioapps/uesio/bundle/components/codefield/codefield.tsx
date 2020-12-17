@@ -33,9 +33,9 @@ interface Props extends definition.BaseProps {
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: () => ({
+		root: {
 			margin: theme.spacing(1),
-		}),
+		},
 		input: (props: Props) => ({
 			height: props.definition.height || "200px",
 			margin: theme.spacing(1, 0),

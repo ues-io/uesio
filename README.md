@@ -14,8 +14,6 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
 
-Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide). The [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) - "folder-by-type" approach - has been chosen when it comes to the structure of the redux features (reducer, selector, action creator, types, etc.).
-
 [Uesio Specific Redux Docs](./docs/redux/README.md)
 
 # Tech Stack
@@ -37,7 +35,6 @@ Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide
 - [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 - [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
-- [Immer](https://github.com/immerjs/immer). Immutable data structure library. Immer is **implicitely** used in the reducer of Redux-toolkit.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # Monorepo architecture
@@ -182,7 +179,6 @@ npm run nx -- deploy uesioapps-crm
 
 // or, if you have nx globally
 nx deploy uesioapps-crm
-
 ```
 
 The `uesio` lib under `uesioapps` does **not** need to be **deployed**. The backend is directly accessing the related files part of that lib.

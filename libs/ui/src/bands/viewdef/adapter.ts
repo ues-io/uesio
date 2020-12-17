@@ -1,5 +1,5 @@
 import { createEntityAdapter } from "@reduxjs/toolkit"
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 import { PlainViewDef } from "./types"
 
 const viewdefAdapter = createEntityAdapter<PlainViewDef>({
@@ -7,7 +7,7 @@ const viewdefAdapter = createEntityAdapter<PlainViewDef>({
 })
 
 const selectors = viewdefAdapter.getSelectors(
-	(state: RuntimeState) => state.viewdef
+	(state: RootState) => state.viewdef
 )
 
 export { selectors }

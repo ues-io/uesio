@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { selectors } from "."
-import RuntimeState from "../../store/types/runtimestate"
+import { RootState } from "../../store/store"
 
 // Both gets component state and subscribes to component changes
 const useComponentState = (
@@ -8,12 +8,12 @@ const useComponentState = (
 	componentId: string,
 	viewId?: string
 ) =>
-	useSelector((state: RuntimeState) =>
+	useSelector((state: RootState) =>
 		selectState(state, componentType, componentId, viewId)
 	)
 
 const selectState = (
-	state: RuntimeState,
+	state: RootState,
 	componentType: string,
 	componentId: string,
 	viewId?: string

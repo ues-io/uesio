@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, ChangeEvent } from "react"
 import { definition, material, hooks } from "@uesio/ui"
 
 type BulkjobDefinition = {
@@ -12,20 +12,20 @@ interface Props extends definition.BaseProps {
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: () => ({
+		root: {
 			margin: theme.spacing(1),
-		}),
-		input: (props: Props) => ({
+		},
+		input: {
 			display: "none",
-		}),
+		},
 	})
 )
 
-async function handleChange(
+const handleChange = (
 	selectorFiles: FileList | null,
 	uesio: hooks.Uesio,
 	jobId: string
-) {
+): void => {
 	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
@@ -77,7 +77,9 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 					className={classes.input}
 					id={id}
 					name={id}
-					onChange={(e) => handleChange(e.target.files, uesio, jobId)}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						handleChange(e.target.files, uesio, jobId)
+					}
 				/>
 				<material.Button
 					color="primary"

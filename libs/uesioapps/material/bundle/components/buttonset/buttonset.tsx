@@ -2,15 +2,19 @@ import React, { FunctionComponent } from "react"
 import { component } from "@uesio/ui"
 import { ButtonSetProps } from "./buttonsetdefinition"
 
-const ButtonSet: FunctionComponent<ButtonSetProps> = (props) => (
+const ButtonSet: FunctionComponent<ButtonSetProps> = ({
+	definition,
+	path,
+	context,
+}) => (
 	<div>
 		<component.Slot
-			definition={props.definition}
+			definition={definition}
 			listName="buttons"
-			path={props.path}
+			path={path}
 			accepts={["material.button"]}
 			direction="horizontal"
-			context={props.context}
+			context={context}
 		/>
 	</div>
 )

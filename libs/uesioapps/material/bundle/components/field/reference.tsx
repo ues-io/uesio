@@ -25,7 +25,7 @@ const generateReferenceFieldDisplayValue = (
 	}
 	const value = referenceFieldValue[nameFieldOfReferencedCollection]
 	if (typeof value === "number" || typeof value === "boolean") {
-		return value + ""
+		return `${value}`
 	}
 	if (typeof value === "object") {
 		return ""
