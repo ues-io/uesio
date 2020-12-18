@@ -79,6 +79,8 @@ async (dispatch) => {
 }
 ```
 
+As a side note, even if the two thunks in the snippet above are equivalent, pay attention to the **retuned value**. The first thunk written with a promise returns `void` while the second one, written in `async/await` manner, returns a `Promise`.
+
 The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
 
 Redux does recommend of using the [built-in generic type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) for the action creator generating a thunk.
