@@ -29,17 +29,17 @@ const SESSION_KEY = "sessid"
 
 const authHandlers = {
 	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => {
-		return {
+		return await Promise.resolve({
 			type: "mock",
 			token: "mocktoken",
-		}
+		})
 	},
-	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
+	[GOOGLE_LOGIN]: (): never => {
 		throw new Error("Google Auth is not yet supported.")
 	},
 } as AuthHandlers
 
-const getCookie = async (): Promise<string | null> => {
+const getCookie = async (): Promise<ReturnType<getSessionId>> => {
 	const sessId = await getSessionId()
 	return `${SESSION_KEY}=${sessId}`
 }
@@ -68,7 +68,7 @@ const check = async (): Promise<User | null> => {
 	return null
 }
 
-const login = async (authType: string): Promise<User> => {
+const login = async (authType: string): Promise<User> | never => {
 	const handler = authHandlers[authType]
 	if (!handler) {
 		throw new Error("That auth type is not yet supported.")
@@ -90,7 +90,7 @@ const login = async (authType: string): Promise<User> => {
 	return user
 }
 
-const logout = async (): Promise<void> => {
+const logout = async (): Promise<void | ReturnType<typeof post>> => {
 	const user = await check()
 	if (!user) {
 		console.log("Not logged in, so can't log out")
