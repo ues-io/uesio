@@ -5,7 +5,7 @@ import { set as setRoute } from "."
 import { clearAvailableMetadata } from "../builder"
 import loadViewOp from "../view/operations/load"
 
-const redirect = (context: Context, path: string) => async () => {
+const redirect = (context: Context, path: string) => () => {
 	window.location.href = context.merge(path)
 	return context
 }
