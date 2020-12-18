@@ -15,7 +15,7 @@ type ComponentSignalDispatcher = (
 ) => (
 	setState: (state: PlainComponentState) => void,
 	getState: () => PlainComponentState | undefined
-) => Promise<Context> | Context
+) => Promise<Context>
 
 type SignalDescriptor = {
 	label?: string

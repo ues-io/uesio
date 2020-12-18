@@ -20,12 +20,7 @@ import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
-type ThunkFunc = ThunkAction<
-	Promise<Context> | Context,
-	RootState,
-	Platform,
-	AnyAction
->
+type ThunkFunc = ThunkAction<Promise<Context>, RootState, Platform, AnyAction>
 
 type InitialState = {
 	builder: BuilderState
