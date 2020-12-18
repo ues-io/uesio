@@ -28,18 +28,17 @@ type AuthHandlers = {
 const SESSION_KEY = "sessid"
 
 const authHandlers = {
-	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => {
-		return await Promise.resolve({
+	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> =>
+		await Promise.resolve({
 			type: "mock",
 			token: "mocktoken",
-		})
-	},
+		}),
 	[GOOGLE_LOGIN]: (): never => {
 		throw new Error("Google Auth is not yet supported.")
 	},
 } as AuthHandlers
 
-const getCookie = async (): Promise<ReturnType<getSessionId>> => {
+const getCookie = async (): Promise<string> => {
 	const sessId = await getSessionId()
 	return `${SESSION_KEY}=${sessId}`
 }
