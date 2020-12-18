@@ -3,7 +3,10 @@ import { DialogState } from "./dialogdefinition"
 
 const sigHandler = {
 	TOGGLE_MODE: {
-		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
+		dispatcher: (
+			signal: signal.SignalDefinition,
+			ctx: context.Context
+		) => async (
 			setState: (state: DialogState) => void,
 			getState: () => DialogState
 		) => {
