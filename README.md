@@ -58,11 +58,12 @@ nx g @nrwl/workspace:library NEW_LIB
 
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
-
+- ```
+  brew install wget
+  ```
 - Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
-
 - git clone repo (ssh method is prefered)
 - Download and install the npm module dependencies :
 
@@ -70,6 +71,9 @@ nx g @nrwl/workspace:library NEW_LIB
   npm install
 ```
 
+- Do follow the instructions for setting up SSL [here](#set-up-ssl).
+- Do follow the instructions for environment variables [here](#environment-variables).
+- Do follow the instructions for setting up DNS [here](#set-up-local-dns).
 - Build the monorepo :
 
 ```
@@ -189,7 +193,7 @@ An **app bundle** is a screenshot or version of a specific uesio app.
 
 The **continous integration** process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
 
-# Set up SSL
+# <a id="set-up-ssl"></a> Set up SSL
 
 ```
 npm run setup-ssl
@@ -201,7 +205,7 @@ In windows, double-click certificate.crt in the File Explorer. Click "Install Ce
 
 In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com certificate and select "Get Info". Expand the "Trust" section and set it to "Always Trust".
 
-# Set up your local DNS
+# <a id="set-up-local-dns"></a> Set up your local DNS
 
 On Mac modify the `/etc/hosts` file to include the following lines
 
@@ -213,7 +217,9 @@ On Mac modify the `/etc/hosts` file to include the following lines
 
 Mac users can also use a service called dnsmasq for managing local DNS, but that has not been documented yet.
 
-# Environment Variables
+# <a id="environment-variables"></a> Environment Variables
+
+Do define the following environment variables in `~/.zshenv`.
 
 | Environment Variable         | Description                                                                                |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
@@ -260,7 +266,10 @@ https://uesio-dev.com:3000
 2. ```
    npm install -g firebase-tools
    ```
-3. Select the project your created before, while interacting with the firebase cli.
+3. ```
+   cd PATH_TO_UESIO // go to the uesio project folder
+   ```
+4. Select the project your created before, while interacting with the firebase cli.
 
 ```
    firebase init firestore
