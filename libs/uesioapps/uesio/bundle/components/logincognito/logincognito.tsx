@@ -130,19 +130,20 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	async function confirm(verificationCode: string): Promise<void> {
 		const cognitoUser = getUser(signupUsername, pool)
 		console.log("confirm?", verificationCode)
-		cognitoUser.confirmRegistration(verificationCode, true, function (
-			err,
-			result
-		) {
-			if (err) {
-				setMessage(err.message || JSON.stringify(err))
-				return
+		cognitoUser.confirmRegistration(
+			verificationCode,
+			true,
+			(err, result) => {
+				if (err) {
+					setMessage(err.message || JSON.stringify(err))
+					return
+				}
+				if (result === "SUCCESS") {
+					setMessage("")
+					logIn(signupUsername, signupPassword)
+				}
 			}
-			if (result === "SUCCESS") {
-				setMessage("")
-				logIn(signupUsername, signupPassword)
-			}
-		})
+		)
 	}
 
 	async function signUp(
@@ -167,10 +168,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 			}),
 		]
 
-		pool.signUp(username, password, attributeList, [], function (
-			err,
-			result
-		) {
+		pool.signUp(username, password, attributeList, [], (err, result) => {
 			if (err) {
 				setMessage(err.message || JSON.stringify(err))
 				return

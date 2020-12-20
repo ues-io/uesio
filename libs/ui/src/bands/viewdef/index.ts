@@ -261,9 +261,9 @@ const changeDefKey = (
 				pathArray,
 				state.yaml.contents
 			) as Collection
-			const keyNode = parent?.items.find((item) => {
-				return item.key.value === oldKey
-			})
+			const keyNode = parent?.items.find(
+				(item) => item.key.value === oldKey
+			)
 
 			keyNode.key.value = newKey
 		}
