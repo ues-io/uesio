@@ -29,14 +29,14 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 
 	const filteredList: Array<filteredListInterface> = []
 
-	component.registry.getBuilderNamespaces().map((namespace: string) => {
+	component.registry.getBuilderNamespaces().forEach((namespace: string) => {
 		const filteredListItem = {} as filteredListInterface
 		filteredListItem.namespace = namespace
 		filteredListItem.names = []
 
 		component.registry
 			.getBuilderComponents(namespace)
-			.map((name: string) => {
+			.forEach((name: string) => {
 				const definition = component.registry.getPropertiesDefinition(
 					namespace,
 					name

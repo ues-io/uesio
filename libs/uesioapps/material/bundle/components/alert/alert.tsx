@@ -149,7 +149,7 @@ const defaultIconMapping = {
 } as any
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Alert = React.forwardRef(function Alert(props: any, ref) {
+const Alert = React.forwardRef((props: any, ref) => {
 	const {
 		action,
 		children,

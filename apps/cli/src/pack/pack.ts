@@ -141,8 +141,8 @@ interface Flags {
 	develop: boolean
 	stats: boolean
 }
-const getLoaderPath = (loaderName: string): string => {
-	return path.resolve(
+const getLoaderPath = (loaderName: string): string =>
+	path.resolve(
 		__dirname,
 		"..",
 		"..",
@@ -154,7 +154,7 @@ const getLoaderPath = (loaderName: string): string => {
 		"node_modules",
 		loaderName
 	)
-}
+
 const getWebpackConfig = (
 	entries: EntryFileMap,
 	flags: Flags

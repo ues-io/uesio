@@ -16,6 +16,10 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "array-callback-return": "error",
+    "dot-notation": "error",
+    "prefer-arrow-callback": "error",
+    "arrow-body-style": "error",
     "no-nested-ternary": "error",
     "no-unneeded-ternary": "error",
     "object-shorthand": "error",
