@@ -39,9 +39,9 @@ export default class Work extends Command {
 
 		if (workspaceName) {
 			// Verify that the workspace specified is available
-			const found = workspaceList.some((item) => {
-				return item["uesio.name"] === workspaceName
-			})
+			const found = workspaceList.some(
+				(item) => item["uesio.name"] === workspaceName
+			)
 
 			if (!found) {
 				throw new Error("Invalid Workspace")
@@ -54,12 +54,10 @@ export default class Work extends Command {
 					name: "workspace",
 					message: "Select a Workspace",
 					type: "list",
-					choices: workspaceList.map((item) => {
-						return {
-							name: item["uesio.name"],
-							value: item["uesio.name"],
-						}
-					}),
+					choices: workspaceList.map((item) => ({
+						name: item["uesio.name"],
+						value: item["uesio.name"],
+					})),
 				},
 			])
 

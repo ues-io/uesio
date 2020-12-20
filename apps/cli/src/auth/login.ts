@@ -28,12 +28,10 @@ type AuthHandlers = {
 const SESSION_KEY = "sessid"
 
 const authHandlers = {
-	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => {
-		return {
-			type: "mock",
-			token: "mocktoken",
-		}
-	},
+	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
+		type: "mock",
+		token: "mocktoken",
+	}),
 	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
 		throw new Error("Google Auth is not yet supported.")
 	},

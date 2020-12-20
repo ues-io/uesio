@@ -1,11 +1,8 @@
 import { hooks, component, builder } from "@uesio/ui"
 
-const isExistingComponent = (dragNode: string): boolean => {
-	return (
-		!component.dragdrop.isComponentBankKey(dragNode) &&
-		!component.dragdrop.isFieldBankKey(dragNode)
-	)
-}
+const isExistingComponent = (dragNode: string): boolean =>
+	!component.dragdrop.isComponentBankKey(dragNode) &&
+	!component.dragdrop.isFieldBankKey(dragNode)
 
 function getDropHandler(dragNode: string) {
 	if (component.dragdrop.isFieldBankKey(dragNode)) {

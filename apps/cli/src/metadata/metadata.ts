@@ -31,14 +31,11 @@ const metadataMapPlural: MetadataMap = {
 	workspaces: Workspace as Metadata,
 }
 
-const getMetadataByType = (type: string): Metadata => {
-	return metadataMap[type]
-}
-const getMetadataByTypePlural = (type: string): Metadata => {
-	return metadataMapPlural[type]
-}
-const getMetadataMap = (): MetadataMap => {
-	return metadataMap
-}
+const getMetadataByType = (type: string): Metadata => metadataMap[type]
+
+const getMetadataByTypePlural = (type: string): Metadata =>
+	metadataMapPlural[type]
+
+const getMetadataMap = (): MetadataMap => metadataMap
 
 export { Metadata, getMetadataMap, getMetadataByType, getMetadataByTypePlural }
