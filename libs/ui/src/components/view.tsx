@@ -92,9 +92,7 @@ const View: FunctionComponent<Props> = (props) => {
 		}
 	}, [])
 
-	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
-
-	if (context?.wire) {
+	if (!context.getWire()) {
 		return (
 			<Component
 				componentType="material.snackbar"
@@ -102,10 +100,12 @@ const View: FunctionComponent<Props> = (props) => {
 				context={viewContext}
 				severity="error"
 			>
-				<span>Network issue, please reload the page</span>
+				<span>Wire could not be found</span>
 			</Component>
 		)
 	}
+
+	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
 
 	return (
 		<Slot
