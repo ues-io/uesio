@@ -10,7 +10,6 @@ import { ViewParams } from "../bands/view/types"
 import { useView } from "../bands/view/selectors"
 import { useViewDef } from "../bands/viewdef/selectors"
 import loadViewOp from "../bands/view/operations/load"
-import Wire from "../bands/wire/class"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -57,8 +56,6 @@ const View: FunctionComponent<Props> = (props) => {
 	const viewDef = useViewDef(viewDefId)
 	const view = useView(viewId)
 
-	const wire = undefined
-
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && path === ""
 	const neededScripts = getNeededScripts(
@@ -97,7 +94,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
 
-	if (wire) {
+	if (context?.wire) {
 		return (
 			<Component
 				componentType="material.snackbar"
