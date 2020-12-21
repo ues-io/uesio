@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useState, SyntheticEvent } from "react"
 import { definition, material } from "@uesio/ui"
 import Alert from "../alert/alert"
 
@@ -10,10 +10,10 @@ interface SnackbarProps extends definition.BaseProps {
 }
 
 const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
-	const { children } = props
-	const [open, setOpen] = React.useState(true)
+	const { children, severity } = props
+	const [open, setOpen] = useState(true)
 
-	const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+	const handleClose = (event?: SyntheticEvent, reason?: string) => {
 		if (reason === "clickaway") {
 			return
 		}
@@ -27,7 +27,7 @@ const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
 			autoHideDuration={6000}
 			onClose={handleClose}
 		>
-			<Alert onClose={handleClose} severity="success">
+			<Alert onClose={handleClose} severity={severity}>
 				{children}
 			</Alert>
 		</material.Snackbar>

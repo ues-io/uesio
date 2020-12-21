@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { DefinitionMap, BaseProps } from "../definition/definition"
+import { DefinitionMap, BasePropsPlus } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"
 import { getLoader } from "./registry"
@@ -44,12 +44,12 @@ function additionalContext(context: Context, definition?: DefinitionMap) {
 	return context
 }
 
-const Component: FunctionComponent<BaseProps> = (props) => {
+const Component: FunctionComponent<BasePropsPlus> = (props) => {
 	const { componentType, path } = props
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
 
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+const ComponentInternal: FunctionComponent<BasePropsPlus> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
 	if (!shouldDisplay(context, definition)) return null
