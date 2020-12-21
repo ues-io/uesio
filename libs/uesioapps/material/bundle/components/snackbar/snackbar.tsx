@@ -25,7 +25,7 @@ const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
 		<material.Snackbar
 			anchorOrigin={{
 				vertical: "top",
-				horizontal: "left",
+				horizontal: "center",
 			}}
 			open={open}
 			autoHideDuration={6000}
