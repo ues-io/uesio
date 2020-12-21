@@ -25,9 +25,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		initialState
 	) as TableState
 
-	if (!wire || !componentState) {
-		return null
-	}
+	if (!wire || !componentState) return null
 
 	const collection = wire.getCollection()
 	return (
