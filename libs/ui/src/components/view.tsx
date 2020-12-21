@@ -97,6 +97,7 @@ const View: FunctionComponent<Props> = (props) => {
 			componentType="material.snackbar"
 			path=""
 			context={viewContext}
+			severity="error"
 		>
 			<span>wire cannot be found</span>
 		</Component>
@@ -106,7 +107,7 @@ const View: FunctionComponent<Props> = (props) => {
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
 		return null;
 	}
-	
+
 	return (
 		<Slot
 			definition={viewDef.definition}

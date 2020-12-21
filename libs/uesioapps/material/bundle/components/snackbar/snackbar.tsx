@@ -10,7 +10,7 @@ interface SnackbarProps extends definition.BaseProps {
 }
 
 const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
-	const children = { props }
+	const { children } = props
 	const [open, setOpen] = React.useState(true)
 
 	const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
