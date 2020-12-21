@@ -4,13 +4,14 @@ import Alert from "../alert/alert"
 
 interface SnackbarProps extends definition.BaseProps {
 	severity?: "error" | "success" | "info" | "warning"
-	location?: "bottom" | "top"
-	displayDuration?: number
-	hidingAnimationDuration?: number
+	autoHideDuration?: number
 }
 
-const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
-	const { children, severity } = props
+const Snackbar: FunctionComponent<SnackbarProps> = ({
+	children,
+	severity,
+	autoHideDuration = 6000,
+}) => {
 	const [open, setOpen] = useState(true)
 
 	const handleClose = (event?: SyntheticEvent, reason?: string) => {
@@ -28,7 +29,7 @@ const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
 				horizontal: "center",
 			}}
 			open={open}
-			autoHideDuration={6000}
+			autoHideDuration={autoHideDuration}
 			onClose={handleClose}
 		>
 			<Alert onClose={handleClose} severity={severity}>
