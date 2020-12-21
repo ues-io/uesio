@@ -92,20 +92,17 @@ const View: FunctionComponent<Props> = (props) => {
 		}
 	}, [])
 
-	return (
-		<Component
-			componentType="material.snackbar"
-			path=""
-			context={viewContext}
-			severity="error"
-		>
-			<span>wire cannot be found</span>
-		</Component>
-	)
-
-	/*
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
-		return null;
+		return (
+			<Component
+				componentType="material.snackbar"
+				path=""
+				context={viewContext}
+				severity="error"
+			>
+				<span>Network issue, please reload the page</span>
+			</Component>
+		)
 	}
 
 	return (
@@ -116,7 +113,7 @@ const View: FunctionComponent<Props> = (props) => {
 			accepts={["uesio.standalone"]}
 			context={viewContext}
 		/>
-	)*/
+	)
 }
 
 export default View
