@@ -1,6 +1,6 @@
 import React, { useEffect, FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
-import { ComponentInternal } from "../component/component"
+import { Component } from "../component/component"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Slot from "./slot"
@@ -93,15 +93,15 @@ const View: FunctionComponent<Props> = (props) => {
 	}, [])
 
 	return (
-		<ComponentInternal
-			{...props}
-			componentType="material.alert"
+		<Component
+			componentType="material.feedback"
 			path=""
 			context={viewContext}
 		>
 			<span>c'est tellement joli</span>
-		</ComponentInternal>
+		</Component>
 	)
+
 	/*		return (
 		<ComponentInternal
 			{...props}

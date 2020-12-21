@@ -1,6 +1,7 @@
 name: main
 components:
   feedback:
+  snackbar:
   alert:
   avatar:
   breadcrumbs:
