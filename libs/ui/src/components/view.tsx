@@ -98,7 +98,7 @@ const View: FunctionComponent<Props> = (props) => {
 			path=""
 			context={viewContext}
 		>
-			<span>c'est tellement joli</span>
+			<span>wire cannot be found</span>
 		</Component>
 	)
 
@@ -106,6 +106,7 @@ const View: FunctionComponent<Props> = (props) => {
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
 		return null;
 	}
+	
 	return (
 		<Slot
 			definition={viewDef.definition}

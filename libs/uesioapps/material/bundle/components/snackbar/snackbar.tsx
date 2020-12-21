@@ -10,6 +10,7 @@ interface SnackbarProps extends definition.BaseProps {
 }
 
 const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
+	const children = { props }
 	const [open, setOpen] = React.useState(true)
 
 	const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -26,10 +27,11 @@ const Snackbar: FunctionComponent<SnackbarProps> = (props) => {
 			autoHideDuration={6000}
 			onClose={handleClose}
 		>
-			<Alert> This is a success message!</Alert>
+			<Alert onClose={handleClose} severity="success">
+				{children}
+			</Alert>
 		</material.Snackbar>
 	)
-	//return <material.Snackbar {...props}>{children}</material.Snackbar>
 }
 
 Snackbar.displayName = "Snackbar"
