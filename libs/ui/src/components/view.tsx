@@ -1,5 +1,6 @@
 import React, { useEffect, FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
+import { ComponentInternal } from "../component/component"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import Slot from "./slot"
@@ -91,7 +92,38 @@ const View: FunctionComponent<Props> = (props) => {
 		}
 	}, [])
 
-	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
+	return (
+		<ComponentInternal
+			{...props}
+			componentType="material.alert"
+			path=""
+			context={viewContext}
+		>
+			<span>c'est tellement joli</span>
+		</ComponentInternal>
+	)
+	/*		return (
+		<ComponentInternal
+			{...props}
+			componentType="material.alert"
+			path=""
+			context={viewContext}
+		>
+			<span>c'est tellement joli</span>
+		</ComponentInternal>
+	)
+	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
+		return (
+			<ComponentInternal
+				{...props}
+				componentType="material.alert"
+				path=""
+				context={viewContext}
+			>
+				<span>c'est tellement joli</span>
+			</ComponentInternal>
+		)
+	}
 
 	return (
 		<Slot
@@ -101,7 +133,7 @@ const View: FunctionComponent<Props> = (props) => {
 			accepts={["uesio.standalone"]}
 			context={viewContext}
 		/>
-	)
+	)*/
 }
 
 export default View
