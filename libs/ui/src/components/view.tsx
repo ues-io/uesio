@@ -94,7 +94,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	return (
 		<Component
-			componentType="material.feedback"
+			componentType="material.snackbar"
 			path=""
 			context={viewContext}
 		>
@@ -102,29 +102,10 @@ const View: FunctionComponent<Props> = (props) => {
 		</Component>
 	)
 
-	/*		return (
-		<ComponentInternal
-			{...props}
-			componentType="material.alert"
-			path=""
-			context={viewContext}
-		>
-			<span>c'est tellement joli</span>
-		</ComponentInternal>
-	)
+	/*
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
-		return (
-			<ComponentInternal
-				{...props}
-				componentType="material.alert"
-				path=""
-				context={viewContext}
-			>
-				<span>c'est tellement joli</span>
-			</ComponentInternal>
-		)
+		return null;
 	}
-
 	return (
 		<Slot
 			definition={viewDef.definition}
