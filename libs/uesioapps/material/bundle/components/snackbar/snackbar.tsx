@@ -32,7 +32,7 @@ const Snackbar: FunctionComponent<SnackbarProps> = ({
 			autoHideDuration={autoHideDuration}
 			onClose={handleClose}
 		>
-			<Alert onClose={handleClose} severity={severity}>
+			<Alert elevation={6} onClose={handleClose} severity={severity}>
 				{children}
 			</Alert>
 		</material.Snackbar>
