@@ -95,9 +95,7 @@ const View: FunctionComponent<Props> = (props) => {
 		}
 	}, [])
 
-	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
-		return null
-	}
+	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) return null
 
 	if (wire) {
 		return (
