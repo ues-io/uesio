@@ -10,6 +10,7 @@ import { ViewParams } from "../bands/view/types"
 import { useView } from "../bands/view/selectors"
 import { useViewDef } from "../bands/viewdef/selectors"
 import loadViewOp from "../bands/view/operations/load"
+import Wire from "../bands/wire/class"
 
 function getNeededScripts(
 	dependencies: Dependencies | undefined,
@@ -46,15 +47,15 @@ interface Props extends BaseProps {
 
 const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
-	const {
-		path,
-		context,
-		definition: { params, view: viewDefId },
-	} = props
+	const { path, context, definition } = props
+	const { params, view: viewDefId } = definition
 
 	const viewId = `${viewDefId}(${path})`
 	const viewDef = useViewDef(viewDefId)
 	const view = useView(viewId)
+
+	const df = definition as Props["definition"] & { wire?: Wire }
+	const wire = uesio.wire.useWire(df?.wire)
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && path === ""
@@ -93,6 +94,10 @@ const View: FunctionComponent<Props> = (props) => {
 	}, [])
 
 	if (!viewDef || !view || !view.loaded || !scriptsHaveLoaded) {
+		return null
+	}
+
+	if (wire) {
 		return (
 			<Component
 				componentType="material.snackbar"
