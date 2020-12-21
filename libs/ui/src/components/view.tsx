@@ -47,15 +47,17 @@ interface Props extends BaseProps {
 
 const View: FunctionComponent<Props> = (props) => {
 	const uesio = useUesio(props)
-	const { path, context, definition } = props
-	const { params, view: viewDefId } = definition
+	const {
+		path,
+		context,
+		definition: { params, view: viewDefId },
+	} = props
 
 	const viewId = `${viewDefId}(${path})`
 	const viewDef = useViewDef(viewDefId)
 	const view = useView(viewId)
 
-	const df = definition as Props["definition"] & { wire?: Wire }
-	const wire = uesio.wire.useWire(df?.wire)
+	const wire = undefined
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && path === ""
