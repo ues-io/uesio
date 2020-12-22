@@ -6,15 +6,17 @@ Uesio is a **low-code** application development platform.
 
 # Code style
 
-Our code styling is embeded in various [eslint](https://eslint.org/) rules.
+As much as possible, our code style is embeded in dedicated [eslint](https://eslint.org/) rules.
 
 We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-Redux-wise we do follow some code style with some exceptions. More detail on that [here](#redux-architecture).
+Redux-wise we do follow some code style with some exceptions. More details on that [here](#redux-architecture).
+
+Generally speaking, in the frontend-side are favoured the concepts coming from functional programming and the concept of [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/).
 
 # Tech Stack
 
