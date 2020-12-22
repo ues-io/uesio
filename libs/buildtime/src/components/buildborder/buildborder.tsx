@@ -1,4 +1,4 @@
-import { FunctionComponent, MouseEvent } from "react";
+import { FunctionComponent, MouseEvent } from "react"
 import clsx from "clsx"
 import { material } from "@uesio/ui"
 
