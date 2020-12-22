@@ -18,10 +18,8 @@ const useStyles = makeStyles(() =>
 		},
 		drawerPaper: {
 			width: (props: Props): string => props.width + "px",
-			left: (props: Props): string =>
-				props.left ? props.left + "px" : "",
-			right: (props: Props): string =>
-				props.right ? props.right + "px" : "",
+			left: ({ left }: Props): string => (left ? left + "px" : ""),
+			right: ({ right }: Props): string => (right ? right + "px" : ""),
 			backgroundColor: "transparent",
 			borderLeft: "0px solid transparent",
 			borderRight: "0px solid transparent",
@@ -32,19 +30,18 @@ const useStyles = makeStyles(() =>
 
 const MiniToolbar: FunctionComponent<Props> = (props) => {
 	const classes = useStyles(props)
+	const { variant, anchor, children, open } = props
 
 	return (
 		<Drawer
-			variant={props.variant || "permanent"}
-			open={props.open}
-			anchor={props.anchor}
+			variant={variant || "permanent"}
+			open={open}
+			anchor={anchor}
 			className={classes.drawer}
-			classes={{
-				paper: classes.drawerPaper,
-			}}
+			classes={{ paper: classes.drawerPaper }}
 			transitionDuration={0}
 		>
-			{props.children}
+			{children}
 		</Drawer>
 	)
 }
