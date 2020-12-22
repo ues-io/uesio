@@ -32,7 +32,7 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 	const { path, propDef, definition, context } = props
 	// Get the property descriptor from the path
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = useStyles()
 
 	if (propDef && definition !== undefined) {
 		return (
