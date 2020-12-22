@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, FunctionComponent } from "react"
+import { SyntheticEvent, FunctionComponent } from "react";
 import {
 	useTheme,
 	SvgIconProps,

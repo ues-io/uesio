@@ -1,5 +1,5 @@
+import { FunctionComponent } from "react"
 import { GoogleLogin, GoogleLoginResponse } from "react-google-login"
-import React, { FunctionComponent } from "react"
 import { definition, hooks, material } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonWidth } from "../loginhelpers/button"

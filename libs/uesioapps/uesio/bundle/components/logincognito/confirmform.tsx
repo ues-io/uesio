@@ -1,5 +1,5 @@
+import { FunctionComponent, useState, ChangeEvent } from "react"
 import { material } from "@uesio/ui"
-import React, { FunctionComponent, useState, ChangeEvent } from "react"
 import { useLoginStyles } from "./logincognito"
 
 type ConfirmFormProps = {

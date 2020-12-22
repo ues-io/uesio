@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 
 import { FileProps } from "./filedefinition"
 import { hooks, material, styles } from "@uesio/ui"

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import MiniToolbar from "./minitoolbar"
 import CodeToolbar from "./codetoolbar/codetoolbar"
 import { definition, material } from "@uesio/ui"

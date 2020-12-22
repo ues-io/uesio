@@ -1,4 +1,4 @@
-import React, { FunctionComponent, SyntheticEvent } from "react"
+import { FunctionComponent, SyntheticEvent } from "react";
 
 import { SvgIconProps, IconButton, Tooltip } from "@material-ui/core"
 

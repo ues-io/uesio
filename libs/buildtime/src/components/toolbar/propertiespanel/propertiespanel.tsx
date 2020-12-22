@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import { FunctionComponent, Fragment } from "react";
 import ToolbarTitle from "../toolbartitle"
 import { definition, hooks, builder } from "@uesio/ui"
 import BuildPropArea from "../../buildproparea/buildproparea"

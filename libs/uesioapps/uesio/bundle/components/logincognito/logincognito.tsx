@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from "react"
+import { useState, FunctionComponent } from "react"
 import { definition, material, hooks, component } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"

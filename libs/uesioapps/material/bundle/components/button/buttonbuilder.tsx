@@ -1,4 +1,4 @@
-import React, { FunctionComponent, memo } from "react"
+import { FunctionComponent, memo } from "react";
 import { ButtonProps, ButtonDefinition } from "./buttondefinition"
 import Button from "./button"
 import ComponentMask from "./componentmask"

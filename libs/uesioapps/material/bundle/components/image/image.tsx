@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 
 import { ImageProps } from "./imagedefinition"
 import { hooks, material, styles } from "@uesio/ui"

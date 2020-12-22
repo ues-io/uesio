@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect } from "react";
 import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"

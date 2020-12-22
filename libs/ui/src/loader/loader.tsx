@@ -1,4 +1,4 @@
-import React from "react"
+import { StrictMode } from "react"
 import ReactDOM from "react-dom"
 import Runtime from "../components/runtime"
 import { Platform } from "../platform/platform"
@@ -15,9 +15,9 @@ class Loader {
 	load(element: HTMLElement, initialState: InitialState): void {
 		ReactDOM.render(
 			<Provider store={create(this.platform, initialState)}>
-				<React.StrictMode>
+				<StrictMode>
 					<Runtime path="" context={new Context()} />
-				</React.StrictMode>
+				</StrictMode>
 			</Provider>,
 			element
 		)

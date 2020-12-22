@@ -1,4 +1,4 @@
-import React, { useState, useRef, FunctionComponent } from "react"
+import { useState, useRef, FunctionComponent } from "react";
 import { useCombobox } from "downshift"
 import { material, definition } from "@uesio/ui"
 import debounce from "lodash.debounce"

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import { IconProps, IconDefinition } from "./icondefinition"
 import Icon from "./icon"
 import { hooks } from "@uesio/ui"

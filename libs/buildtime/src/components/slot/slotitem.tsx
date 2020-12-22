@@ -1,5 +1,5 @@
+import { FunctionComponent, SyntheticEvent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
-import React, { FunctionComponent, SyntheticEvent } from "react"
 import clsx from "clsx"
 import BuildBorder from "../buildborder/buildborder"
 import { makeStyles, createStyles } from "@material-ui/core"

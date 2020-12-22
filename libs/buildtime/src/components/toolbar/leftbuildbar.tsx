@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import MiniToolbar from "./minitoolbar"
 import WiresToolbar from "./wirestoolbar/wirestoolbar"
 import ComponentsToolbar from "./componentstoolbar/componentstoolbar"

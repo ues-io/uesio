@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState } from "react"
 import { definition, material, collection, wire, component } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 

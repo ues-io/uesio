@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import { material, wire, hooks, collection } from "@uesio/ui"
 import { RendererProps } from "./fielddefinition"
 import AutoCompleteField, {

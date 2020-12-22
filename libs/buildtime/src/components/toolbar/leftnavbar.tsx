@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import MiniToolbar from "./minitoolbar"
 import MiniToolbarButton from "./minitoolbarbutton"
 import WireIcon from "@material-ui/icons/Power"

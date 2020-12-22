@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 
 import { material, styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"

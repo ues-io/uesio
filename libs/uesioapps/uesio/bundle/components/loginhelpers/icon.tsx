@@ -1,5 +1,5 @@
+import { FunctionComponent } from "react"
 import { context, styles, material } from "@uesio/ui"
-import React, { FunctionComponent } from "react"
 
 interface IconProps {
 	image: string

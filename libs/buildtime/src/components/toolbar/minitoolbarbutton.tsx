@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, memo } from "react"
+import { FunctionComponent, useState, memo } from "react";
 import clsx from "clsx"
 import {
 	makeStyles,

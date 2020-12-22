@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import PropList from "./proplist"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import { SectionRendererProps } from "./sectionrendererdefinition"

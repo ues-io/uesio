@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import { FunctionComponent, Fragment } from "react";
 import BuildPropItem from "../buildpropitem/buildpropitem"
 import { definition, builder } from "@uesio/ui"
 

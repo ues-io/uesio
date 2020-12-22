@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import { makeStyles, createStyles } from "@material-ui/core"
 

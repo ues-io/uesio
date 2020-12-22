@@ -1,4 +1,4 @@
-import React, { FunctionComponent, SyntheticEvent } from "react"
+import { FunctionComponent, SyntheticEvent } from "react";
 import {
 	AccordionSummary,
 	Accordion,

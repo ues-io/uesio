@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 import { definition, builder, hooks } from "@uesio/ui"
 import TextProp from "./textprop"
 import SelectProp from "./selectprop"

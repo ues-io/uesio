@@ -1,5 +1,5 @@
+import { FunctionComponent } from "react"
 import { material } from "@uesio/ui"
-import React, { FunctionComponent } from "react"
 
 interface TextProps {
 	text: string

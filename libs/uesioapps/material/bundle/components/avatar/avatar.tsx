@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react";
 
 import { material, styles } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"

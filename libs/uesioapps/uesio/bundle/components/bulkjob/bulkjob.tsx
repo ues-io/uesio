@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ChangeEvent } from "react"
+import { FunctionComponent, ChangeEvent } from "react";
 import { definition, material, hooks } from "@uesio/ui"
 
 type BulkjobDefinition = {
