@@ -139,7 +139,7 @@ const signUp = (
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useLoginStyles(props)
+	const classes = useLoginStyles()
 	const clientIdKey = props.definition.clientId
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
