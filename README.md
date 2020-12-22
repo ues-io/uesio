@@ -142,7 +142,7 @@ Most of commmands you might run related to Node.js.
 npm install lodash.isempty -D
 ```
 
-- Minor update of an existing dependency :
+- Update minor changes (no breaking changes) of an existing dependency :
 
 ```
 npm updade react -D
@@ -172,7 +172,7 @@ npm install react@latest -D
  npm outdated
 ```
 
-- Update all dependencies :
+- Update minor changes (no breaking changes) all dependencies :
 
 ```
  npm update
