@@ -88,6 +88,52 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	)
 }
 
+const signUp = (
+	pool: CognitoUserPool,
+	setMessage: (message: string) => void,
+	setMode: (message: string) => void
+) => (
+	firstname: string,
+	lastname: string,
+	username: string,
+	email: string,
+	password: string
+): void => {
+	const attributeList = [
+		new CognitoUserAttribute({
+			Name: "email",
+			Value: email,
+		}),
+		new CognitoUserAttribute({
+			Name: "family_name",
+			Value: lastname,
+		}),
+		new CognitoUserAttribute({
+			Name: "given_name",
+			Value: firstname,
+		}),
+	]
+
+	pool.signUp(
+		username,
+		password,
+		attributeList,
+		[],
+		(err: Error, result: unknown) => {
+			if (err) {
+				setMessage(err.message || JSON.stringify(err))
+				return
+			}
+			if (!result) {
+				setMessage("No result!")
+				return
+			}
+			setMessage("")
+			setMode("confirm")
+		}
+	)
+}
+
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = useLoginStyles(props)
@@ -146,42 +192,6 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 		)
 	}
 
-	async function signUp(
-		firstname: string,
-		lastname: string,
-		username: string,
-		email: string,
-		password: string
-	): Promise<void> {
-		const attributeList = [
-			new CognitoUserAttribute({
-				Name: "email",
-				Value: email,
-			}),
-			new CognitoUserAttribute({
-				Name: "family_name",
-				Value: lastname,
-			}),
-			new CognitoUserAttribute({
-				Name: "given_name",
-				Value: firstname,
-			}),
-		]
-
-		pool.signUp(username, password, attributeList, [], (err, result) => {
-			if (err) {
-				setMessage(err.message || JSON.stringify(err))
-				return
-			}
-			if (!result) {
-				setMessage("No result!")
-				return
-			}
-			setMessage("")
-			setMode("confirm")
-		})
-	}
-
 	const AlertComponent = component.registry.get("material", "alert")
 
 	return (
@@ -218,7 +228,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					setSignupUsername={setSignupUsername}
 					signupPassword={signupPassword}
 					setSignupPassword={setSignupPassword}
-					signUp={signUp}
+					signUp={signUp(pool, setMessage, setMode)}
 				/>
 			)}
 			{mode === "confirm" && (
