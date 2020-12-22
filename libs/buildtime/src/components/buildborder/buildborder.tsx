@@ -5,19 +5,30 @@ import { material } from "@uesio/ui"
 const ACTIVE_COLOR = "#eee"
 const SELECTED_COLOR = "#aaa"
 
-const getColor = (props: Props): string =>
-	props.isSelected ? SELECTED_COLOR : ACTIVE_COLOR
+interface Props {
+	onClick?: (event: MouseEvent) => void
+	onMouseEnter?: (event: MouseEvent) => void
+	onMouseLeave?: (event: MouseEvent) => void
+	setDragging?: (event: MouseEvent) => void
+	isSelected?: boolean
+	isActive?: boolean
+	title?: string
+	isExpanded: boolean
+}
+
+const getColor = ({ isSelected }: Props): string =>
+	isSelected ? SELECTED_COLOR : ACTIVE_COLOR
 const getOutline = (props: Props): string =>
-	props.isActive || props.isSelected ? "1px solid " + getColor(props) : "none"
-const getBackgroundColor = (props: Props): string =>
-	props.isSelected ? "white" : "transparent"
+	props.isActive || props.isSelected ? `1px solid ${getColor(props)}` : "none"
+const getBackgroundColor = ({ isSelected }: Props): string =>
+	isSelected ? "white" : "transparent"
 
 const useStyles = material.makeStyles((theme) => ({
 	mask: {
-		outline: getOutline,
+		outline: (props: Props) => getOutline(props),
 		boxShadow: (props: Props): string =>
 			props.isSelected ? theme.shadows[3] : theme.shadows[0],
-		backgroundColor: getBackgroundColor,
+		backgroundColor: (props: Props) => getBackgroundColor(props),
 		/*
 		"&:hover": {
 			outline: getOutline,
@@ -26,7 +37,7 @@ const useStyles = material.makeStyles((theme) => ({
 		*/
 	},
 	maskExpanded: {
-		backgroundColor: getBackgroundColor,
+		backgroundColor: (props: Props) => getBackgroundColor(props),
 		outline: (props: Props): string =>
 			props.isSelected ? getOutline(props) : "",
 		border: (props: Props): string =>
@@ -47,17 +58,17 @@ const useStyles = material.makeStyles((theme) => ({
 	header: {
 		boxShadow: (props: Props): string =>
 			props.isSelected ? theme.shadows[3] : theme.shadows[0],
-		outline: getOutline,
+		outline: (props: Props): string => getOutline(props),
 		position: "absolute",
 		top: "-24px",
-		left: "0px",
+		left: 0,
 		fontSize: "9pt",
 		textTransform: "uppercase",
 		color: "#333",
 		padding: "8px 8px 0px 10px",
 		opacity: 0.95,
 		fontWeight: "bold",
-		backgroundColor: getBackgroundColor,
+		backgroundColor: (props: Props) => getBackgroundColor(props),
 		width: "100%",
 		"&::after": {
 			height: "7px",
@@ -66,7 +77,7 @@ const useStyles = material.makeStyles((theme) => ({
 			content: "''",
 			position: "absolute",
 			bottom: "-7px",
-			left: "0",
+			left: 0,
 		},
 	},
 	headerExpanded: {
@@ -77,17 +88,6 @@ const useStyles = material.makeStyles((theme) => ({
 		fontSize: "9pt",
 	},
 }))
-
-interface Props {
-	onClick?: (event: MouseEvent) => void
-	onMouseEnter?: (event: MouseEvent) => void
-	onMouseLeave?: (event: MouseEvent) => void
-	setDragging?: (event: MouseEvent) => void
-	isSelected?: boolean
-	isActive?: boolean
-	title?: string
-	isExpanded: boolean
-}
 
 const BuildBorder: FunctionComponent<Props> = (props) => {
 	const {
