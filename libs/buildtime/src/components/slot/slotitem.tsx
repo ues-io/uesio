@@ -25,20 +25,20 @@ const useStyles = makeStyles(() =>
 			display: "flex",
 			width: "unset",
 			"&$expanded": {
-				padding: "0px 8px 0px 0px",
+				padding: "0 8px 0 0",
 			},
 			"&$isLast": {
-				padding: "0",
+				padding: 0,
 			},
 		},
 		vertical: {
 			display: "block",
 			width: "100%",
 			"&$expanded": {
-				padding: "0px 0px 8px 0px",
+				padding: "0 0p 8px 0",
 			},
 			"&$isLast": {
-				padding: "0",
+				padding: 0,
 			},
 		},
 		expanded: {},
@@ -49,7 +49,7 @@ const useStyles = makeStyles(() =>
 			},
 			"&$horizontal::before": {
 				display: "flex",
-				width: "0px",
+				width: 0,
 				alignSelf: "stretch",
 			},
 			"&::before": {
@@ -85,13 +85,13 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		accepts,
 		dragNode,
 		isExpanded,
+		definition,
 		size = 0,
 		index = 0,
 	} = props
 	const path = `${wrapperPath}["${index}"]`
-	const definition = props.definition as definition.DefinitionMap
 	const [componentType, unWrappedDef] = component.path.unWrapDefinition(
-		definition
+		definition as definition.DefinitionMap
 	)
 	const fullPath = `${path}["${componentType}"]`
 
@@ -105,7 +105,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 
 	const addPlaceholder = path === dropNode
 
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const containerClasses = clsx(
 		classes.root,
 		direction === "horizontal" ? classes.horizontal : classes.vertical,
@@ -209,7 +209,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 						uesio.builder.setDragNode(fullPath)
 					}
 				}}
-				title={propDef ? propDef.title : "Unknown"}
+				title={propDef?.title || "Unknown"}
 			>
 				<component.Component
 					definition={unWrappedDef}
