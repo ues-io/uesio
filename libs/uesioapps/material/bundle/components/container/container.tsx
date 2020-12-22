@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { ContainerProps } from "./containerdefinition"
 import { component, material, styles } from "@uesio/ui"
 

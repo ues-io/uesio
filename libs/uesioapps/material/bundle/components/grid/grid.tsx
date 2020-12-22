@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { component, material, styles } from "@uesio/ui"
 import { GridProps } from "./griddefinition"
 

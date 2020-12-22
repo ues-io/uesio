@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { hooks, wire } from "@uesio/ui"
 import MultiSelectProp from "./multiselectprop"

@@ -1,4 +1,4 @@
-import { useEffect, FunctionComponent } from "react";
+import { useEffect, FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio, Uesio } from "../hooks/hooks"
 import { useScripts, depsHaveLoaded } from "../hooks/usescripts"

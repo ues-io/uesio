@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import MiniToolbarButton from "./minitoolbarbutton"
 import SaveIcon from "@material-ui/icons/CheckCircle"

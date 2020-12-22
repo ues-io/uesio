@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { DatePickerProps } from "./datePickerdefinition"
 import { material } from "@uesio/ui"
 

@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { TextField } from "@material-ui/core"
 import {
 	PropRendererProps,

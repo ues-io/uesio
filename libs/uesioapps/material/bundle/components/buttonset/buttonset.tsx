@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { component } from "@uesio/ui"
 import { ButtonSetProps } from "./buttonsetdefinition"
 

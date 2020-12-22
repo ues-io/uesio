@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { ProgressGaugeProps } from "./progressgaugedefinition"
 import { material } from "@uesio/ui"
 

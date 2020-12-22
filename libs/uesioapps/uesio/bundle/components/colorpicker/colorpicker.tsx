@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { definition, material } from "@uesio/ui"
 import clsx from "clsx"
 

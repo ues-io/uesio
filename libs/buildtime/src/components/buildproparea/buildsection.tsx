@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { definition, builder } from "@uesio/ui"
 import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"

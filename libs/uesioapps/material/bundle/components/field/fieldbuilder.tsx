@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { FieldProps, FieldDefinition } from "./fielddefinition"
 import Field from "./field"
 import { hooks } from "@uesio/ui"

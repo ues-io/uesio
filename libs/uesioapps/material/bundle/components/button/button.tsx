@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"

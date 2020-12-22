@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { definition, builder } from "@uesio/ui"
 import BuildSection from "./buildsection"

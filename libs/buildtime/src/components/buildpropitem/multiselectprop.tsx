@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { TextField, MenuItem, Checkbox, ListItemText } from "@material-ui/core"
 import { builder } from "@uesio/ui"
 import {

@@ -1,4 +1,4 @@
-import { FunctionComponent, SyntheticEvent } from "react";
+import { FunctionComponent, SyntheticEvent } from "react"
 
 import { hooks, material } from "@uesio/ui"
 import { BreadcrumbsProps } from "./breadcrumbsdefinition"

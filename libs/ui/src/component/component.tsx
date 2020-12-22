@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { DefinitionMap, BaseProps } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"

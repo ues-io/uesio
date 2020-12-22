@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { DefinitionList, BaseProps } from "../definition/definition"
 import { Component } from "../component/component"
 import { unWrapDefinition } from "../component/path"

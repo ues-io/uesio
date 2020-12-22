@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder, material } from "@uesio/ui"
 import SelectProp from "./selectprop"

@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect } from "react"
 import { definition, material, component, hooks } from "@uesio/ui"
 import { metadata } from "@uesio/constants"
 

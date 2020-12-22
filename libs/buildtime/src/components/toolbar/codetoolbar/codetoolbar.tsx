@@ -1,4 +1,4 @@
-import { FunctionComponent, Fragment, useRef } from "react";
+import { FunctionComponent, Fragment, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"

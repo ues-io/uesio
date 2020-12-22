@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { hooks, component, definition } from "@uesio/ui"
 import UpIcon from "@material-ui/icons/ArrowUpward"
 import DownIcon from "@material-ui/icons/ArrowDownward"

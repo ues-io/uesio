@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent } from "react"
 import { Drawer, makeStyles, createStyles } from "@material-ui/core"
 
 type Props = {
