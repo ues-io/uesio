@@ -27,7 +27,7 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const clientIdKey = props.definition.clientId
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const buttonText = props.definition.text
 
 	if (!clientIdValue) return null
