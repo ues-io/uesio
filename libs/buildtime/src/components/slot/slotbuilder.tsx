@@ -77,7 +77,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	const isExpanded = buildView === "expandedview"
 
-	const size = items.length || 0
+	const size = items.length
 
 	// Temporary Hack
 	if (direction === "manual") {
