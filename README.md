@@ -130,7 +130,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # npm dependencies
 
-As mentioned in the [monorepo](#monorepo-architecture) section, a signle `package.json` file describes the dependencies for the whole monorepo.
+As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
 All npm pacakges we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
 
