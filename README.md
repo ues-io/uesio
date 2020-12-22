@@ -28,7 +28,7 @@ Redux-wise we do follow some code style with some exceptions. More detail on tha
 
 ## Frontend
 
-- [Node.js](https://www.nodejs.org/). For package dependency, building process and for our home-made cli application.
+- [Node.js](https://www.nodejs.org/). For package management, building process and for our home-made cli application.
 - [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
@@ -132,29 +132,29 @@ nx g @nrwl/workspace:library NEW_LIB
 
 As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
-All npm pacakges we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+All npm packages we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
 
 Most of commmands you might run related to Node.js.
 
-- Install a new npm dependency :
+- Install a new dependency :
 
 ```
 npm install lodash.isempty -D
 ```
 
-- Minor update of an existing npm dependency :
+- Minor update of an existing dependency :
 
 ```
 npm updade react -D
 ```
 
-- Major update and latest of an existing npm dependency :
+- Major update and latest of an existing dependency :
 
 ```
 npm install react@latest -D
 ```
 
-- List all dependencies of the monorepo :
+- List all dependencies of the monorepo and the related version :
 
 ```
  npm list --depth=0
@@ -164,6 +164,18 @@ npm install react@latest -D
 
 ```
  npm uninstall lodash.isempty -D
+```
+
+- List dependencies having newer versions :
+
+```
+ npm outdated
+```
+
+- Update all dependencies :
+
+```
+ npm update
 ```
 
 # Build
