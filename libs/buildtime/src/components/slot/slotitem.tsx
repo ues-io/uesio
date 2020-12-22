@@ -209,7 +209,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 						uesio.builder.setDragNode(fullPath)
 					}
 				}}
-				title={propDef?.title || "Unknown"}
+				title={propDef?.title ?? "Unknown"}
 			>
 				<component.Component
 					definition={unWrappedDef}
