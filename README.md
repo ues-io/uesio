@@ -134,7 +134,7 @@ As mentioned in the [monorepo](#monorepo-architecture) section, a single `packag
 
 All npm pacakges we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
 
-Most of commmand you might run related to Node.js.
+Most of commmands you might run related to Node.js.
 
 - Install a new npm dependency :
 
