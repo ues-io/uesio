@@ -35,7 +35,7 @@ const useStyles = makeStyles(() =>
 			display: "block",
 			width: "100%",
 			"&$expanded": {
-				padding: "0 0p 8px 0",
+				padding: "0 0 8px 0",
 			},
 			"&$isLast": {
 				padding: 0,
