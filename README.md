@@ -148,7 +148,7 @@ npm install lodash.isempty -D
 npm updade react -D
 ```
 
-- Major update of an existing npm dependency :
+- Major update and latest of an existing npm dependency :
 
 ```
 npm install react@latest -D
