@@ -6,15 +6,17 @@ Uesio is a **low-code** application development platform.
 
 # Code style
 
-Our code styling is embeded in various [eslint](https://eslint.org/) rules.
+As much as possible, our code style is embeded in dedicated [eslint](https://eslint.org/) rules.
 
 We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-[Uesio Specific Redux Docs](./docs/redux/README.md)
+Redux-wise we do follow some code style with some exceptions. More details on that [here](#redux-architecture).
+
+Generally speaking, in the frontend-side are favoured the concepts coming from functional programming and the concept of [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/).
 
 # Tech Stack
 
@@ -28,6 +30,7 @@ Frontend-side are favoured the concepts coming from functional programming and [
 
 ## Frontend
 
+- [Node.js](https://www.nodejs.org/). For package management, building process and for our home-made cli application.
 - [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
@@ -37,7 +40,11 @@ Frontend-side are favoured the concepts coming from functional programming and [
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
-# Monorepo architecture
+# <a id="redux-architecture"></a> Redux architecture
+
+See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
+
+# <a id="monorepo-architecture"></a> Monorepo architecture
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
@@ -121,6 +128,56 @@ nx g @nrwl/workspace:library NEW_LIB
     }
   ]
 }
+```
+
+# npm dependencies
+
+As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
+
+All npm packages we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+
+Most of commmands you might run related to Node.js.
+
+- Install a new dependency :
+
+```
+npm install lodash.isempty -D
+```
+
+- Update minor changes (no breaking changes) of an existing dependency :
+
+```
+npm update react -D
+```
+
+- Major update and latest of an existing dependency :
+
+```
+npm install react@latest -D
+```
+
+- List all dependencies of the monorepo and the related version :
+
+```
+ npm list --depth=0
+```
+
+- Remove a dependency of the monorepo :
+
+```
+ npm uninstall lodash.isempty -D
+```
+
+- List dependencies having newer versions :
+
+```
+ npm outdated
+```
+
+- Update minor changes (no breaking changes) all dependencies :
+
+```
+ npm update
 ```
 
 # Build
