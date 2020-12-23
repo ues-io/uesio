@@ -1,3 +1,5 @@
+import { Archiver } from "archiver"
+import { ReadStream } from "fs"
 import * as https from "https"
 import fetch, { Response, RequestInit } from "node-fetch"
 
@@ -29,8 +31,9 @@ const post = (
 		| string
 		| ArrayBuffer
 		| ArrayBufferView
-		| NodeJS.ReadableStream
 		| URLSearchParams
+		| Archiver
+		| ReadStream
 		| undefined,
 	cookie?: string,
 	init?: RequestInit | undefined
