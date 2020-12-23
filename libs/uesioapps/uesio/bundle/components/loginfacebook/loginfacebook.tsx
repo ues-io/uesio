@@ -25,7 +25,7 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const facebookAppIdKey = props.definition.clientId
 	const facebookAppId = uesio.view.useConfigValue(facebookAppIdKey)
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const buttonText = props.definition.text
 
 	if (!facebookAppId) return null
