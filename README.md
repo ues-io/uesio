@@ -68,7 +68,13 @@ nx g @nrwl/workspace:library NEW_LIB
 - ```
   brew install wget
   ```
-- Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
+- Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
+- Install latest version of Node.js _via_ `nvm` :
+
+```
+  nvm install node
+```
+
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
 - git clone repo (ssh method is prefered)
@@ -138,9 +144,9 @@ nx g @nrwl/workspace:library NEW_LIB
 
 As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
 
-All npm packages we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
 
-Most of commmands you might run related to Node.js.
+Most of commmands you might run related to npm modules.
 
 - Install a new dependency :
 
@@ -154,7 +160,7 @@ npm install lodash.isempty -D
 npm update react -D
 ```
 
-- Major update and latest of an existing dependency :
+- Major update and latest (with breaking changes) of an existing dependency :
 
 ```
 npm install react@latest -D
@@ -166,7 +172,7 @@ npm install react@latest -D
  npm list --depth=0
 ```
 
-- Remove a dependency of the monorepo :
+- Remove a dependency :
 
 ```
  npm uninstall lodash.isempty -D
@@ -225,6 +231,8 @@ npm run watch-all
 // the watcher jobs running in background in parallel.
 // For killing all of them, do run `killall node`
 ```
+
+As a side note, the npm script, `dev` does include this `watch-all` npm script.
 
 # Uesio apps deployment
 
