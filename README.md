@@ -69,7 +69,7 @@ nx g @nrwl/workspace:library NEW_LIB
   brew install wget
   ```
 - Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
-- Install latest version of Node.js _via_ `nvm` :
+- Install the latest version of Node.js _via_ `nvm` :
 
 ```
   nvm install node
