@@ -75,15 +75,18 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 		ClientId: clientId, // Your client id here
 	})
 
-const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
-	const classes = useLoginStyles(props)
+const LoginButton: FunctionComponent<LoginButtonProps> = ({
+	setMode,
+	text,
+}) => {
+	const classes = useLoginStyles()
 	return (
 		<button
-			onClick={() => props.setMode("login")}
+			onClick={() => setMode("login")}
 			className={classes.loginButton}
 		>
 			<LoginIcon image="uesio.amazonsmall" />
-			<LoginText text={props.text} />
+			<LoginText text={text} />
 		</button>
 	)
 }
@@ -136,7 +139,7 @@ const signUp = (
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useLoginStyles(props)
+	const classes = useLoginStyles()
 	const clientIdKey = props.definition.clientId
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
