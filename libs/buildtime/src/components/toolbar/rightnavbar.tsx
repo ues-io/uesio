@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import MiniToolbarButton from "./minitoolbarbutton"
-import SaveIcon from "@material-ui/icons/CheckCircle"
+import SaveIcon from "@material-ui/icons/Save"
 import CancelIcon from "@material-ui/icons/Cancel"
 import ViewDetailIcon from "@material-ui/icons/ListAlt"
 import CodeIcon from "@material-ui/icons/Code"
