@@ -25,10 +25,10 @@ const getBackgroundColor = ({ isSelected }: Props): string =>
 
 const useStyles = material.makeStyles((theme) => ({
 	mask: {
-		outline: (props: Props) => getOutline(props),
+		outline: getOutline,
 		boxShadow: (props: Props): string =>
 			props.isSelected ? theme.shadows[3] : theme.shadows[0],
-		backgroundColor: (props: Props) => getBackgroundColor(props),
+		backgroundColor: getBackgroundColor,
 		/*
 		"&:hover": {
 			outline: getOutline,
@@ -37,7 +37,7 @@ const useStyles = material.makeStyles((theme) => ({
 		*/
 	},
 	maskExpanded: {
-		backgroundColor: (props: Props) => getBackgroundColor(props),
+		backgroundColor: getBackgroundColor,
 		outline: (props: Props): string =>
 			props.isSelected ? getOutline(props) : "",
 		border: (props: Props): string =>
@@ -58,7 +58,7 @@ const useStyles = material.makeStyles((theme) => ({
 	header: {
 		boxShadow: (props: Props): string =>
 			props.isSelected ? theme.shadows[3] : theme.shadows[0],
-		outline: (props: Props): string => getOutline(props),
+		outline: getOutline,
 		position: "absolute",
 		top: "-24px",
 		left: 0,
@@ -68,7 +68,7 @@ const useStyles = material.makeStyles((theme) => ({
 		padding: "8px 8px 0px 10px",
 		opacity: 0.95,
 		fontWeight: "bold",
-		backgroundColor: (props: Props) => getBackgroundColor(props),
+		backgroundColor: getBackgroundColor,
 		width: "100%",
 		"&::after": {
 			height: "7px",
