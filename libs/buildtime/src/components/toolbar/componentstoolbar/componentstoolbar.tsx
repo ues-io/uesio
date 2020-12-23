@@ -58,7 +58,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 				onDragEnd={onDragEnd}
 				style={{
 					overflow: "auto",
-					flex: "1",
+					flex: 1,
 				}}
 			>
 				{filteredList.map((element, index) => (
