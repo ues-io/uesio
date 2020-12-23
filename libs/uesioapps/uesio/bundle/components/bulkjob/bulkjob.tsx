@@ -25,7 +25,7 @@ const handleChange = (
 	selectorFiles: FileList | null,
 	uesio: hooks.Uesio,
 	jobId: string
-): void => {
+): void | never => {
 	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
@@ -56,7 +56,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const uesio = hooks.useUesio(props)
 
 	const record = context.getRecord()
