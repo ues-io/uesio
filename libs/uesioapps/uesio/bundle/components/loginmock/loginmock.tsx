@@ -23,7 +23,7 @@ const useStyles = material.makeStyles(() =>
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const buttonText = props.definition.text
 
 	return (
