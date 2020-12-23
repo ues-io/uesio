@@ -147,7 +147,7 @@ npm install lodash.isempty -D
 - Update minor changes (no breaking changes) of an existing dependency :
 
 ```
-npm updade react -D
+npm update react -D
 ```
 
 - Major update and latest of an existing dependency :
