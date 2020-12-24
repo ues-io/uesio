@@ -4,7 +4,7 @@ import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import SignalsIcon from "@material-ui/icons/Router"
 import { material, hooks, definition, signal } from "@uesio/ui"
-import AddIcon from "@material-ui/icons/AddBox"
+import AddIcon from "@material-ui/icons/Cake"
 import PropertiesPanel from "../toolbar/propertiespanel/propertiespanel"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
