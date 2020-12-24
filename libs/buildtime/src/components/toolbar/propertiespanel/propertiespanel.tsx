@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import ToolbarTitle from "../toolbartitle"
 import { definition, hooks, builder } from "@uesio/ui"
 import BuildPropArea from "../../buildproparea/buildproparea"
@@ -36,7 +36,7 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 
 	if (propDef && definition !== undefined) {
 		return (
-			<Fragment>
+			<>
 				<ToolbarTitle
 					title={propDef.title}
 					icon={CloseIcon}
@@ -56,7 +56,7 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 					path={path}
 					context={context}
 				/>
-			</Fragment>
+			</>
 		)
 	}
 	return (

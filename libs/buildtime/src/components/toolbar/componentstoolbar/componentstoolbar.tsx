@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import { component, definition, hooks } from "@uesio/ui"
 import ToolbarTitle from "../toolbartitle"
 import ExpandPanel from "../expandpanel/expandpanel"
@@ -51,7 +51,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 	})
 
 	return (
-		<Fragment>
+		<>
 			<ToolbarTitle title="Components" />
 			<div
 				onDragStart={onDragStart}
@@ -83,7 +83,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 					</ExpandPanel>
 				))}
 			</div>
-		</Fragment>
+		</>
 	)
 }
 
