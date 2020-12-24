@@ -30,7 +30,7 @@ Generally speaking, in the frontend-side are favoured the concepts coming from f
 
 ## Frontend
 
-- [Node.js](https://www.nodejs.org/). For package management, building process and for our home-made cli application.
+- [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
 - [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
