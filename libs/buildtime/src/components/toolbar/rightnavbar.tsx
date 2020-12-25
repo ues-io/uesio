@@ -40,11 +40,7 @@ const RightNavbar: FunctionComponent<Props> = (props) => {
 				tooltipPlacement="left"
 				onClick={(): void => uesio.builder.cancel()}
 			/>
-			<Divider
-				style={{
-					margin: "8px 8px 0 8px",
-				}}
-			/>
+			<Divider style={{ margin: "8px 8px 0 8px" }} />
 			<MiniToolbarButton
 				id="views"
 				icon={ViewDetailIcon}
