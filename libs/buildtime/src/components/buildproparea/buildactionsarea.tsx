@@ -38,7 +38,7 @@ function getActionHandler(type?: string) {
 }
 
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const actions = props.actions
 	return (
 		<div className={classes.wrapper}>
