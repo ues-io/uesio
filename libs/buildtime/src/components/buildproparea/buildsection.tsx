@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, ComponentType } from "react"
 import { definition, builder } from "@uesio/ui"
 import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"
@@ -9,23 +9,22 @@ interface Props extends definition.BaseProps {
 	section: builder.PropertySection
 }
 
-function getSectionHandler(type?: string) {
-	switch (type) {
-		case "FIELDS":
-			return FieldsSection
-		case "CONDITIONS":
-			return ConditionsSection
-		case "SIGNALS":
-			return SignalsSection
-		default:
-			return PropListSection
-	}
+const SECTION_TO_COMPONENT: {
+	[K in builder.PropertySection["type"]]: ComponentType<Props>
+} = {
+	FIELDS: FieldsSection,
+	CONDITIONS: ConditionsSection,
+	SIGNALS: SignalsSection,
+	PROPLIST: PropListSection,
 }
 
-const BuildSection: FunctionComponent<Props> = (props) => {
-	const { section, context, path, definition } = props
-	const SectionHandler = getSectionHandler(section.type)
-
+const BuildSection: FunctionComponent<Props> = ({
+	section,
+	context,
+	path,
+	definition,
+}) => {
+	const SectionHandler = SECTION_TO_COMPONENT[section.type]
 	return (
 		<SectionHandler
 			section={section}
