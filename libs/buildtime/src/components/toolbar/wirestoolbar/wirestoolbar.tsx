@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import { definition, hooks, material } from "@uesio/ui"
 import ToolbarTitle from "../toolbartitle"
 
@@ -19,7 +19,7 @@ const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
 	) as definition.DefinitionMap
 	const selectedNode = uesio.builder.useSelectedNode()
 	return (
-		<Fragment>
+		<>
 			<ToolbarTitle
 				title="Wires"
 				icon={AddIcon}
@@ -49,7 +49,7 @@ const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
 						)
 					})}
 			</div>
-		</Fragment>
+		</>
 	)
 }
 

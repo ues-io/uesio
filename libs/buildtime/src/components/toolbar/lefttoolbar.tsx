@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import LeftNavbar from "./leftnavbar"
 import LeftBuildbar from "./leftbuildbar"
 import { hooks, definition } from "@uesio/ui"
@@ -10,7 +10,7 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const selectedNode = uesio.builder.useSelectedNode()
 
 	return (
-		<Fragment>
+		<>
 			<LeftNavbar
 				viewMode={builderView}
 				onChange={(toolbarId: string): void => {
@@ -36,7 +36,7 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					context={props.context}
 				/>
 			)}
-		</Fragment>
+		</>
 	)
 }
 
