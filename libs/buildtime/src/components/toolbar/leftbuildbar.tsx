@@ -10,6 +10,15 @@ interface Props extends definition.BaseProps {
 	selectedNode: string
 }
 
+const TOOLBAR_TO_COMPONENT = {
+	wires: {
+		component: WiresToolbar,
+	},
+	components: {
+		component: ComponentsToolbar,
+	},
+}
+
 const MINI_TOOLBAR_WIDTH = 50
 
 const LeftBuildbar: FunctionComponent<Props> = (props) => {
@@ -18,16 +27,7 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 	const path = selectedNode
 	const uesio = hooks.useUesio(props)
 
-	const toolbarMap = {
-		wires: {
-			component: WiresToolbar,
-		},
-		components: {
-			component: ComponentsToolbar,
-		},
-	}
-
-	const currentToolbarPanel = toolbarMap[selected]
+	const currentToolbarPanel = TOOLBAR_TO_COMPONENT[selected]
 
 	// Trim the path to the closest namespaced component
 	// For Example:
