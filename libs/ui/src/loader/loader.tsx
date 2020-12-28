@@ -14,11 +14,11 @@ class Loader {
 
 	load(element: HTMLElement, initialState: InitialState): void {
 		ReactDOM.render(
-			<Provider store={create(this.platform, initialState)}>
-				<React.StrictMode>
+			<React.StrictMode>
+				<Provider store={create(this.platform, initialState)}>
 					<Runtime path="" context={new Context()} />
-				</React.StrictMode>
-			</Provider>,
+				</Provider>
+			</React.StrictMode>,
 			element
 		)
 	}
