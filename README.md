@@ -76,7 +76,7 @@ nx g @nrwl/workspace:library NEW_LIB
 ```
 
 - Install [Go](https://golang.org/dl/)
-- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
+- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 - git clone repo (ssh method is prefered)
 - Download and install the npm module dependencies :
 
