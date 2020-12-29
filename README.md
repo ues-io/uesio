@@ -63,20 +63,22 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Set up dev environment
 
-> This set up works with the following environments :
+> This set up has been tested - and does work - with the following environments :
 >
 > ```
 > go --version
 > go version go1.15.6 darwin/amd64
->```
+> ```
+>
 > ```
 > npm -v
 > 6.14.4
->```
+> ```
+>
 > ```
 > node -v
 > v12.16.3
->```
+> ```
 
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
@@ -145,6 +147,7 @@ nx g @nrwl/workspace:library NEW_LIB
   ]
 }
 ```
+
 # Build
 
 The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
@@ -290,15 +293,20 @@ https://uesio-dev.com:3000
    ```
 3. ```
    firebase login
-  ```
-4. 
+   ```
+
 ```
-   firebase init firestore
+4.
 ```
+
+firebase init firestore
+
+````
 5. In the firebase cli, select ```Don't set up a default project```, and hit enter in the further questions.
 6. ```
    firebase emulators:start
-  ```
+````
+
 7. In a browser visit
 
 ```
@@ -363,6 +371,7 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+
 # npm dependencies
 
 As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
