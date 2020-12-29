@@ -11,7 +11,7 @@
   "kill:webserver": "lsof -t -i :3000 | xargs kill -9",
   "kill:firestore": "lsof -t -i :8080 -i :4000 | xargs kill -9",
   "deploy:uesioapps": "nx run-many --target=deploy --all",
-  "dev:mock:crm": " cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts && cd -",
+  "dev:mock:crm": "cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run work dev && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts && cd -",
   "dev:uesio:login": "cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run login && cd -",
   "affected": "nx affected",
   "affected:apps": "nx affected:apps",
