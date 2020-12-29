@@ -326,24 +326,24 @@ https://uesio-dev.com:3000
 
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
-1. Create a project in the [firebase console](https://console.firebase.google.com/).
-
-2. ```
+0. First off, firebase is written in  Java, so you need to insall [JRE](https://java.com/en/download/manual.jsp).
+1. ```
    npm install -g firebase-tools
    ```
 3. ```
    cd PATH_TO_UESIO // go to the uesio project folder
    ```
-4. Select the project your created before, while interacting with the firebase cli.
-
+4. ```
+   firebase login
+  ```
+5. Select the project your created before, while interacting with the firebase cli.
 ```
    firebase init firestore
 ```
-
-4. ```
+6. ```
    firebase emulators:start
-   ```
-5. In a browser visit
+  ```
+7. In a browser visit
 
 ```
    http://localhost:4000/firestore/
