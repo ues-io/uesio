@@ -327,7 +327,8 @@ https://uesio-dev.com:3000
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
 0. First off, firebase is written in  Java, so you need to insall [JRE](https://java.com/en/download/manual.jsp).
-1. ```
+1. Create a project in the [firebase console](https://console.firebase.google.com/).
+2. ```
    npm install -g firebase-tools
    ```
 3. ```
