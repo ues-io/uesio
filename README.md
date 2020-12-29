@@ -63,21 +63,6 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Set up dev environment
 
-> This set works with the following environments :
->
-> ```
-> go --version
-> go version go1.15.6 darwin/amd64
->```
-> ```
-> npm -v
-> 6.14.4
->```
-> ```
-> node -v
-> v12.16.3
->```
-
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
 - ```
