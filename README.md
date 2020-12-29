@@ -130,57 +130,6 @@ nx g @nrwl/workspace:library NEW_LIB
   ]
 }
 ```
-
-# npm dependencies
-
-As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
-
-All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
-
-Most of commmands you might run related to npm modules.
-
-- Install a new dependency :
-
-```
-npm install lodash.isempty -D
-```
-
-- Update minor changes (no breaking changes) of an existing dependency :
-
-```
-npm update react -D
-```
-
-- Major update and latest (with breaking changes) of an existing dependency :
-
-```
-npm install react@latest -D
-```
-
-- List all dependencies of the monorepo and the related version :
-
-```
- npm list --depth=0
-```
-
-- Remove a dependency :
-
-```
- npm uninstall lodash.isempty -D
-```
-
-- List dependencies having newer versions :
-
-```
- npm outdated
-```
-
-- Update minor changes (no breaking changes) all dependencies :
-
-```
- npm update
-```
-
 # Build
 
 The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
@@ -399,3 +348,52 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+# npm dependencies
+
+As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
+
+All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+
+Most of commmands you might run related to npm modules.
+
+- Install a new dependency :
+
+```
+npm install lodash.isempty -D
+```
+
+- Update minor changes (no breaking changes) of an existing dependency :
+
+```
+npm update react -D
+```
+
+- Major update and latest (with breaking changes) of an existing dependency :
+
+```
+npm install react@latest -D
+```
+
+- List all dependencies of the monorepo and the related version :
+
+```
+ npm list --depth=0
+```
+
+- Remove a dependency :
+
+```
+ npm uninstall lodash.isempty -D
+```
+
+- List dependencies having newer versions :
+
+```
+ npm outdated
+```
+
+- Update minor changes (no breaking changes) all dependencies :
+
+```
+ npm update
+```
