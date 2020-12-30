@@ -190,7 +190,7 @@ npm run watch-all
 // For killing all of them, do run `killall node`
 ```
 
-As a side note, the npm script, `dev` does include this `watch-all` npm script.
+As a side note, the `dev` npm script does include this `watch-all` npm script.
 
 # Uesio apps deployment
 
@@ -294,23 +294,17 @@ https://uesio-dev.com:3000
 3. ```
    firebase login
    ```
-
-```
-4.
-```
-
-firebase init firestore
-
-````
-5. In the firebase cli, select ```Don't set up a default project```, and hit enter in the further questions.
+4. ```
+   firebase init firestore
+   ```
+5. In the firebase cli, select `Don't set up a default project`, and hit enter in the further questions.
 6. ```
    firebase emulators:start
-````
-
+   ```
 7. In a browser visit
 
 ```
-   http://localhost:4000/firestore/
+http://localhost:4000/firestore/
 ```
 
 # Local Development with a database in Docker
@@ -401,23 +395,23 @@ npm install react@latest -D
 - List all dependencies of the monorepo and the related version :
 
 ```
- npm list --depth=0
+npm list --depth=0
 ```
 
 - Remove a dependency :
 
 ```
- npm uninstall lodash.isempty -D
+npm uninstall lodash.isempty -D
 ```
 
 - List dependencies having newer versions :
 
 ```
- npm outdated
+npm outdated
 ```
 
 - Update minor changes (no breaking changes) all dependencies :
 
 ```
- npm update
+npm update
 ```
