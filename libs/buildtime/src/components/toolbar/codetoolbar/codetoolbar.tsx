@@ -9,7 +9,14 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
-
+	const str = JSON.stringify(yamlDoc)
+	if (str.includes("Yo!")) {
+		console.log("yes Yo!")
+		console.dir(yamlDoc?.toString())
+	} else {
+		console.log("no yo!")
+		console.dir(yamlDoc?.toString())
+	}
 	return (
 		<>
 			<ToolbarTitle
@@ -18,6 +25,16 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
+				options={{
+					selectOnLineNumbers: false,
+					lineNumbers: (lineNumber: number): string => {
+						if (lineNumber === 10) {
+							return "cyan"
+						} else {
+							return "pink"
+						}
+					},
+				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)

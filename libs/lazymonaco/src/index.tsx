@@ -16,6 +16,7 @@ import {
 	ChangeHandler,
 	EditorWillMount,
 	EditorDidMount,
+	MonacoEditorProps,
 } from "react-monaco-editor"
 
 // eslint-disable-next-line prefer-const, @typescript-eslint/no-unused-vars
@@ -34,6 +35,7 @@ interface Props {
 	onChange?: ChangeHandler
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
+	options?: MonacoEditorProps["options"]
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -42,6 +44,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
+	options,
 }) => (
 	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
@@ -53,6 +56,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 					enabled: false,
 				},
 				//quickSuggestions: true,
+				...(options ? options : {}),
 			}}
 			onChange={(newValue, event): void => {
 				onChange?.(newValue, event)
