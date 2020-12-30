@@ -63,7 +63,7 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Set up dev environment
 
-> This set up has been tested - and does work - with the following environments :
+> This set up has been successfully tested with the following environments :
 >
 > ```
 > go --version
@@ -304,7 +304,7 @@ https://uesio-dev.com:3000
 7. In a browser visit
 
 ```
-http://localhost:4000/firestore/
+  http://localhost:4000/firestore/
 ```
 
 # Local Development with a database in Docker
@@ -313,45 +313,45 @@ http://localhost:4000/firestore/
 1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
 
 ```
-docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
+  docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
 ```
 
 2. Check if your container is up and running. You have information about the container **id** and **name**.
 
 ```
-docker ps
+  docker ps
 ```
 
 3. Get in the container and create a database.
 
 ```
-docker exec -it CONTAINER_NAME /bin/bash
+  docker exec -it CONTAINER_NAME /bin/bash
 ```
 
 ```
-./usr/bin/mysql --user=root --password=tcm
+  ./usr/bin/mysql --user=root --password=tcm
 ```
 
 ```
-CREATE DATABASE `test-cf94a`;
+  CREATE DATABASE `test-cf94a`;
 ```
 
 4. _Optional_. Stop the container (which is as a normal process) when no need to have it running.
 
 ```
-docker stop CONTAINER_NAME
+  docker stop CONTAINER_NAME
 ```
 
 5. _Optional_. Start an existing container
 
 ```
-docker start CONTAINER_NAME
+  docker start CONTAINER_NAME
 ```
 
 6. _Optional_. Remove the docker container when no longer needed.
 
 ```
-docker rm -f CONTAINER_NAME
+  docker rm -f CONTAINER_NAME
 ```
 
 # Connecting to a real Firestore instance
@@ -377,41 +377,41 @@ Most of commmands you might run related to npm modules.
 - Install a new dependency :
 
 ```
-npm install lodash.isempty -D
+  npm install lodash.isempty -D
 ```
 
 - Update minor changes (no breaking changes) of an existing dependency :
 
 ```
-npm update react -D
+  npm update react -D
 ```
 
 - Major update and latest (with breaking changes) of an existing dependency :
 
 ```
-npm install react@latest -D
+  npm install react@latest -D
 ```
 
 - List all dependencies of the monorepo and the related version :
 
 ```
-npm list --depth=0
+  npm list --depth=0
 ```
 
 - Remove a dependency :
 
 ```
-npm uninstall lodash.isempty -D
+  npm uninstall lodash.isempty -D
 ```
 
 - List dependencies having newer versions :
 
 ```
-npm outdated
+  npm outdated
 ```
 
 - Update minor changes (no breaking changes) all dependencies :
 
 ```
-npm update
+  npm update
 ```
