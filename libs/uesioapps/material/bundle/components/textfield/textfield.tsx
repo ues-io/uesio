@@ -56,6 +56,4 @@ const TextField: FunctionComponent<Props> = ({
 	)
 }
 
-TextField.displayName = "TextField"
-
 export default TextField
