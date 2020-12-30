@@ -26,7 +26,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				options={{
-					selectOnLineNumbers: false,
+					selectOnLineNumbers: true,
 					lineNumbers: (lineNumber: number): string => {
 						if (lineNumber === 10) {
 							return "cyan"
