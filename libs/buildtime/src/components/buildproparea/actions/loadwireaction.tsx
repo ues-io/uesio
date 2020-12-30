@@ -1,15 +1,15 @@
 import React, { FunctionComponent } from "react"
-import { builder, hooks, signal, component } from "@uesio/ui"
+import { hooks, signal, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import RefreshIcon from "@material-ui/icons/Refresh"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const path = props.path
+	const { path, action } = props
 	const wireName = component.path.getKeyAtPath(path)
 
-	if (!wireName) {
+	if (!action || !wireName) {
 		return null
 	}
 
@@ -19,12 +19,6 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 			wires: [wireName],
 		},
 	]
-
-	const action = props.action as builder.AddAction
-	if (!action || !signals) {
-		return null
-	}
-
 	return (
 		<ActionButton
 			title={action.label}
