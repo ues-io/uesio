@@ -22,12 +22,12 @@ const TOOLBAR_TO_COMPONENT = {
 const MINI_TOOLBAR_WIDTH = 50
 
 const LeftBuildbar: FunctionComponent<Props> = (props) => {
-	const selected = props.selectedPanel as "wires" | "components"
-	const { context, selectedNode } = props
+	const { context, selectedNode, selectedPanel: selected } = props
 	const path = selectedNode
 	const uesio = hooks.useUesio(props)
 
-	const currentToolbarPanel = TOOLBAR_TO_COMPONENT[selected]
+	const currentToolbarPanel =
+		TOOLBAR_TO_COMPONENT[selected as "wires" | "components"]
 
 	// Trim the path to the closest namespaced component
 	// For Example:

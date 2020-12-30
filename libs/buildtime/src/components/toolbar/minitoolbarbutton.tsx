@@ -87,7 +87,7 @@ const MiniToolbarButton: FunctionComponent<Props> = ({
 				size="small"
 				onClick={(): void => {
 					setOpen(false)
-					onClick && onClick(id)
+					onClick?.(id)
 				}}
 			>
 				<Icon style={{ fontSize: 16 }} />
