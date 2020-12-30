@@ -14,9 +14,9 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-Redux-wise we do follow some code style with some exceptions. More details on that [here](#redux-architecture).
+Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-Generally speaking, in the frontend-side are favoured the concepts coming from functional programming and the concept of [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/).
+Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred.
 
 # Tech Stack
 
