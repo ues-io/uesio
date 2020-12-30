@@ -65,7 +65,7 @@ const useStyles = material.makeStyles((theme) => ({
 		fontSize: "9pt",
 		textTransform: "uppercase",
 		color: "#333",
-		padding: "8px 8px 0px 10px",
+		padding: "8px 8px 0 10px",
 		opacity: 0.95,
 		fontWeight: "bold",
 		backgroundColor: getBackgroundColor,

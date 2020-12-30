@@ -15,7 +15,7 @@ const useStyles = makeStyles(() =>
 			flex: 1,
 		},
 		propList: {
-			padding: "10px 6px 0px 6px",
+			padding: "10px 6px 0 6px",
 			borderBottom: "1px solid #ccc",
 		},
 	})
