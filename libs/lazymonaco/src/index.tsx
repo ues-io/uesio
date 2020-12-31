@@ -18,6 +18,7 @@ import {
 	EditorDidMount,
 	MonacoEditorProps,
 } from "react-monaco-editor"
+import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api"
 
 // eslint-disable-next-line prefer-const, @typescript-eslint/no-unused-vars
 __webpack_public_path__ = window.monacoPublicPath
@@ -35,7 +36,8 @@ interface Props {
 	onChange?: ChangeHandler
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
-	options?: MonacoEditorProps["options"]
+	options?: MonacoEditorProps["options"] &
+		monacoEditor.editor.IModelDecorationOptions
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({

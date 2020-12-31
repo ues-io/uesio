@@ -1,14 +1,39 @@
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
+import { makeStyles, createStyles } from "@material-ui/core"
+
+const useStyles = makeStyles(() =>
+	createStyles({
+		editor: {
+			backgroundColor: "lightblue",
+			width: "5px !important",
+			marginLeft: "3px",
+		},
+	})
+)
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
+	const classes = useStyles()
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+
+	const yamlDocContent = yamlDoc?.toString()
+	const previousYamlRef = useRef<string | undefined>(yamlDocContent)
+
+	useEffect(() => {
+		console.log("change occurs accross re-rendering")
+		// TODO: here comparison between previous an new yaml content
+
+		// update ref on re-rendering
+		previousYamlRef.current = yamlDocContent
+	}, [yamlDocContent])
+
+	/*
 	const str = JSON.stringify(yamlDoc)
 	if (str.includes("Yo!")) {
 		console.log("yes Yo!")
@@ -17,6 +42,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 		console.log("no yo!")
 		console.dir(yamlDoc?.toString())
 	}
+	*/
 	return (
 		<>
 			<ToolbarTitle
@@ -26,7 +52,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				options={{
-					selectOnLineNumbers: true,
 					lineNumbers: (lineNumber: number): string => {
 						if (lineNumber === 10) {
 							return "cyan"
@@ -34,6 +59,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							return "pink"
 						}
 					},
+					linesDecorationsClassName: classes.editor,
 				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
