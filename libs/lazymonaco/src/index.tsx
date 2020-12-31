@@ -38,6 +38,7 @@ interface Props {
 	editorDidMount?: EditorDidMount
 	options?: MonacoEditorProps["options"] &
 		monacoEditor.editor.IModelDecorationOptions
+	editorWillUpdate?: boolean
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -47,6 +48,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	editorWillMount,
 	editorDidMount,
 	options,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	editorWillUpdate,
 }) => (
 	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
@@ -64,9 +67,11 @@ const LazyMonaco: FunctionComponent<Props> = ({
 				onChange?.(newValue, event)
 			}}
 			editorWillMount={(monaco): void => {
+				console.log("editorWillMount")
 				editorWillMount?.(monaco)
 			}}
 			editorDidMount={(editor, monaco): void => {
+				console.log("editorDidMount")
 				editorDidMount?.(editor, monaco)
 			}}
 		/>

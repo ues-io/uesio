@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
@@ -25,24 +25,20 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYamlRef = useRef<string | undefined>(yamlDocContent)
 
-	useEffect(() => {
-		console.log("change occurs accross re-rendering")
-		// TODO: here comparison between previous an new yaml content
+	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
 
-		// update ref on re-rendering
+	// code responsible for tracking change upon drag'n dropping in the builder
+	useEffect(() => {
+		if (yamlDocContent !== previousYamlRef.current) {
+			setHasYamlChanged(true)
+		} else {
+			setHasYamlChanged(false)
+		}
+
+		// update ref for the next re-rendering
 		previousYamlRef.current = yamlDocContent
 	}, [yamlDocContent])
 
-	/*
-	const str = JSON.stringify(yamlDoc)
-	if (str.includes("Yo!")) {
-		console.log("yes Yo!")
-		console.dir(yamlDoc?.toString())
-	} else {
-		console.log("no yo!")
-		console.dir(yamlDoc?.toString())
-	}
-	*/
 	return (
 		<>
 			<ToolbarTitle
@@ -51,6 +47,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
+				editorWillUpdate={hasYamlChanged}
 				options={{
 					lineNumbers: (lineNumber: number): string => {
 						if (lineNumber === 10) {
