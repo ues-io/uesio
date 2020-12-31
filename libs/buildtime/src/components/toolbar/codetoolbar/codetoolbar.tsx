@@ -1,11 +1,28 @@
 import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
-import { hooks, util, definition } from "@uesio/ui"
+import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
+import { makeStyles, createStyles } from "@material-ui/core"
+
+const useStyles = makeStyles((theme) =>
+	createStyles({
+		myLineDecoration: (props: definition.BaseProps) => ({
+			backgroundColor: styles.getColor(
+				{ intention: "primary" },
+				theme,
+				props.context
+			),
+			width: "5px !important",
+			marginLeft: "10px",
+		}),
+	})
+)
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
+	console.log("CodeToolbar props.definition props", props)
+
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
@@ -35,15 +52,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				editorWillUpdate={hasYamlChanged}
-				options={{
-					lineNumbers: (lineNumber: number): string => {
-						if (lineNumber === 10) {
-							return "cyan"
-						} else {
-							return "pink"
-						}
-					},
+				thomas={{
+					forceUpdate: hasYamlChanged,
+					className: useStyles(props).myLineDecoration,
 				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {

@@ -10,7 +10,7 @@ declare global {
 }
 
 import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
-import { LinearProgress, makeStyles, createStyles } from "@material-ui/core"
+import { LinearProgress } from "@material-ui/core"
 
 import {
 	ChangeHandler,
@@ -38,18 +38,8 @@ interface Props {
 	editorDidMount?: EditorDidMount
 	options?: MonacoEditorProps["options"] &
 		monacoEditor.editor.IModelDecorationOptions
-	editorWillUpdate?: boolean
+	thomas: { forceUpdate: boolean; className: string }
 }
-
-const useStyles = makeStyles(() =>
-	createStyles({
-		myLineDecoration: {
-			backgroundColor: "lightblue",
-			width: "5px !important",
-			marginLeft: "3px",
-		},
-	})
-)
 
 const LazyMonaco: FunctionComponent<Props> = ({
 	value,
@@ -57,10 +47,10 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	editorWillUpdate,
+	thomas,
 }) => {
-	const classes = useStyles()
-	return editorWillUpdate ? (
+	const { forceUpdate, className } = thomas
+	return forceUpdate ? (
 		<LaziestMonaco
 			value={value}
 			language={language || "yaml"}
@@ -85,8 +75,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 							range: new monaco.Range(3, 1, 5, 1),
 							options: {
 								isWholeLine: true,
-								linesDecorationsClassName:
-									classes.myLineDecoration,
+								linesDecorationsClassName: className,
 							},
 						},
 					]
