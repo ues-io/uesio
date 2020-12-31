@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -31,16 +31,14 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
-	const hasYamlChanged = useRef<boolean>(false)
+	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
 		if (yamlDocContent !== previousYaml.current) {
-			hasYamlChanged.current = true
-
-			console.log("yes changed", hasYamlChanged.current)
+			setHasYamlChanged(true)
 		} else {
-			hasYamlChanged.current = false
+			setHasYamlChanged(false)
 		}
 
 		// update ref for the next re-rendering
@@ -56,7 +54,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				// force the LazyMonaco component to unmount if hasYamlChanged is true
-				{...(hasYamlChanged.current ? { key: yamlDocContent } : {})}
+				{...(hasYamlChanged ? { key: yamlDocContent } : {})}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
@@ -205,22 +203,27 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						}
 					})
-					// if (hasYamlChanged.current) {
-					const rand = genRadomNumber(1, 81 - 3)
-					editor.deltaDecorations(
-						[],
-						[
-							{
-								range: new monaco.Range(rand, 1, rand + 3, 1),
-								options: {
-									isWholeLine: true,
-									linesDecorationsClassName:
-										classes.myLineDecoration,
+					if (hasYamlChanged) {
+						const rand = genRadomNumber(1, 81 - 3)
+						editor.deltaDecorations(
+							[],
+							[
+								{
+									range: new monaco.Range(
+										rand,
+										1,
+										rand + 3,
+										1
+									),
+									options: {
+										isWholeLine: true,
+										linesDecorationsClassName:
+											classes.myLineDecoration,
+									},
 								},
-							},
-						]
-					)
-					//	}
+							]
+						)
+					}
 				}}
 			/>
 		</>
