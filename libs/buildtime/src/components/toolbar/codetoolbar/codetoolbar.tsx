@@ -6,6 +6,9 @@ import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 
+const genRadomNumber = (min: number, max: number) =>
+	Math.random() * (max - min) + min
+
 const useStyles = makeStyles((theme) =>
 	createStyles({
 		myLineDecoration: (props: definition.BaseProps) => ({
@@ -203,11 +206,12 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						}
 					})
 					// if (hasYamlChanged.current) {
+					const rand = genRadomNumber(1, 81 - 3)
 					editor.deltaDecorations(
 						[],
 						[
 							{
-								range: new monaco.Range(3, 1, 5, 1),
+								range: new monaco.Range(rand, 1, rand + 3, 1),
 								options: {
 									isWholeLine: true,
 									linesDecorationsClassName:
