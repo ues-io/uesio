@@ -21,8 +21,6 @@ const useStyles = makeStyles((theme) =>
 )
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
-	console.log("CodeToolbar props.definition props", props)
-
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
