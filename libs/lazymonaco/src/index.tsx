@@ -10,7 +10,7 @@ declare global {
 }
 
 import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
-import { LinearProgress } from "@material-ui/core"
+import { LinearProgress, makeStyles, createStyles } from "@material-ui/core"
 
 import {
 	ChangeHandler,
@@ -41,17 +41,26 @@ interface Props {
 	editorWillUpdate?: boolean
 }
 
+const useStyles = makeStyles(() =>
+	createStyles({
+		myLineDecoration: {
+			backgroundColor: "lightblue",
+			width: "5px !important",
+			marginLeft: "3px",
+		},
+	})
+)
+
 const LazyMonaco: FunctionComponent<Props> = ({
 	value,
 	language,
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	options,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	editorWillUpdate,
-}) => (
-	<Suspense fallback={createElement(LinearProgress)}>
+}) => {
+	const classes = useStyles()
+	return editorWillUpdate ? (
 		<LaziestMonaco
 			value={value}
 			language={language || "yaml"}
@@ -61,21 +70,54 @@ const LazyMonaco: FunctionComponent<Props> = ({
 					enabled: false,
 				},
 				//quickSuggestions: true,
-				...(options ? options : {}),
 			}}
 			onChange={(newValue, event): void => {
 				onChange?.(newValue, event)
 			}}
 			editorWillMount={(monaco): void => {
-				console.log("editorWillMount")
 				editorWillMount?.(monaco)
 			}}
 			editorDidMount={(editor, monaco): void => {
-				console.log("editorDidMount")
+				editor.deltaDecorations(
+					[],
+					[
+						{
+							range: new monaco.Range(3, 1, 5, 1),
+							options: {
+								isWholeLine: true,
+								linesDecorationsClassName:
+									classes.myLineDecoration,
+							},
+						},
+					]
+				)
 				editorDidMount?.(editor, monaco)
 			}}
 		/>
-	</Suspense>
-)
+	) : (
+		<Suspense fallback={createElement(LinearProgress)}>
+			<LaziestMonaco
+				value={value}
+				language={language || "yaml"}
+				options={{
+					automaticLayout: true,
+					minimap: {
+						enabled: false,
+					},
+					//quickSuggestions: true,
+				}}
+				onChange={(newValue, event): void => {
+					onChange?.(newValue, event)
+				}}
+				editorWillMount={(monaco): void => {
+					editorWillMount?.(monaco)
+				}}
+				editorDidMount={(editor, monaco): void => {
+					editorDidMount?.(editor, monaco)
+				}}
+			/>
+		</Suspense>
+	)
+}
 
 export default LazyMonaco

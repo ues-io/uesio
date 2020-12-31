@@ -4,20 +4,8 @@ import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
-import { makeStyles, createStyles } from "@material-ui/core"
-
-const useStyles = makeStyles(() =>
-	createStyles({
-		editor: {
-			backgroundColor: "lightblue",
-			width: "5px !important",
-			marginLeft: "3px",
-		},
-	})
-)
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
-	const classes = useStyles()
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
@@ -56,7 +44,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							return "pink"
 						}
 					},
-					linesDecorationsClassName: classes.editor,
 				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
