@@ -38,7 +38,6 @@ interface Props {
 	editorDidMount?: EditorDidMount
 	options?: MonacoEditorProps["options"] &
 		monacoEditor.editor.IModelDecorationOptions
-	thomas: { forceUpdate: boolean; className: string }
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -47,10 +46,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	thomas,
-}) => {
-	const { forceUpdate, className } = thomas
-	return forceUpdate ? (
+}) => (
+	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
 			value={value}
 			language={language || "yaml"}
@@ -68,45 +65,10 @@ const LazyMonaco: FunctionComponent<Props> = ({
 				editorWillMount?.(monaco)
 			}}
 			editorDidMount={(editor, monaco): void => {
-				editor.deltaDecorations(
-					[],
-					[
-						{
-							range: new monaco.Range(3, 1, 5, 1),
-							options: {
-								isWholeLine: true,
-								linesDecorationsClassName: className,
-							},
-						},
-					]
-				)
 				editorDidMount?.(editor, monaco)
 			}}
 		/>
-	) : (
-		<Suspense fallback={createElement(LinearProgress)}>
-			<LaziestMonaco
-				value={value}
-				language={language || "yaml"}
-				options={{
-					automaticLayout: true,
-					minimap: {
-						enabled: false,
-					},
-					//quickSuggestions: true,
-				}}
-				onChange={(newValue, event): void => {
-					onChange?.(newValue, event)
-				}}
-				editorWillMount={(monaco): void => {
-					editorWillMount?.(monaco)
-				}}
-				editorDidMount={(editor, monaco): void => {
-					editorDidMount?.(editor, monaco)
-				}}
-			/>
-		</Suspense>
-	)
-}
+	</Suspense>
+)
 
 export default LazyMonaco

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useEffect, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -21,25 +21,27 @@ const useStyles = makeStyles((theme) =>
 )
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
+	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 
 	const yamlDocContent = yamlDoc?.toString()
-	const previousYamlRef = useRef<string | undefined>(yamlDocContent)
-
-	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
+	const previousYaml = useRef<string | undefined>(yamlDocContent)
+	const hasYamlChanged = useRef<boolean>(false)
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
-		if (yamlDocContent !== previousYamlRef.current) {
-			setHasYamlChanged(true)
+		if (yamlDocContent !== previousYaml.current) {
+			hasYamlChanged.current = true
+
+			console.log("yes changed", hasYamlChanged.current)
 		} else {
-			setHasYamlChanged(false)
+			hasYamlChanged.current = false
 		}
 
 		// update ref for the next re-rendering
-		previousYamlRef.current = yamlDocContent
+		previousYaml.current = yamlDocContent
 	}, [yamlDocContent])
 
 	return (
@@ -50,10 +52,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				thomas={{
-					forceUpdate: hasYamlChanged,
-					className: useStyles(props).myLineDecoration,
-				}}
+				// force the LazyMonaco component to unmount if hasYamlChanged is true
+				{...(hasYamlChanged.current ? { key: yamlDocContent } : {})}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
@@ -160,7 +160,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					*/
 					}
 				}
-				editorDidMount={(editor /*, monaco*/): void => {
+				editorDidMount={(editor, monaco): void => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
@@ -202,6 +202,21 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						}
 					})
+					// if (hasYamlChanged.current) {
+					editor.deltaDecorations(
+						[],
+						[
+							{
+								range: new monaco.Range(3, 1, 5, 1),
+								options: {
+									isWholeLine: true,
+									linesDecorationsClassName:
+										classes.myLineDecoration,
+								},
+							},
+						]
+					)
+					//	}
 				}}
 			/>
 		</>
