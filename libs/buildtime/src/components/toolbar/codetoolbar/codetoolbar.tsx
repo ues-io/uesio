@@ -6,7 +6,7 @@ import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
-import { diffLines } from "diff"
+import { diffLines, Change } from "diff"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -31,18 +31,11 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
 	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
-	const yamlDiff = useRef<
-		Array<{
-			count?: number
-			added?: boolean
-			value?: string
-		}>
-	>([])
+	const yamlDiff = useRef<Array<Change>>([])
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
 		if (
-			yamlDocContent &&
 			previousYaml.current !== undefined &&
 			yamlDocContent !== undefined &&
 			yamlDocContent !== previousYaml.current
@@ -52,17 +45,17 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					previousYaml.current as string,
 					yamlDocContent
 				)
+				// update ref for the next re-rendering
 				previousYaml.current = yamlDocContent
-				console.log("yamlDiff", yamlDiff.current)
 				return true
 			})
 		} else {
 			setHasYamlChanged(() => {
+				// update ref for the next re-rendering
 				previousYaml.current = yamlDocContent
 				return false
 			})
 		}
-		// update ref for the next re-rendering
 	}, [yamlDocContent])
 
 	return (
