@@ -207,6 +207,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						}
 					})
+					// code responsible for highlighting the changes reflected in the yaml structure
 					if (hasYamlChanged) {
 						const rand = genRadomNumber(1, 81 - 3)
 						editor.deltaDecorations(
