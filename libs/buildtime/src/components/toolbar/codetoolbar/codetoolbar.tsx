@@ -5,6 +5,7 @@ import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
+import md5 from "md5"
 
 const genRadomNumber = (min: number, max: number) =>
 	Math.random() * (max - min) + min
@@ -32,6 +33,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
 	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
+	console.log("previousYaml", previousYaml)
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
@@ -54,7 +56,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				// force the LazyMonaco component to unmount if hasYamlChanged is true
-				{...(hasYamlChanged ? { key: yamlDocContent } : {})}
+				{...(hasYamlChanged && yamlDocContent
+					? { key: md5(yamlDocContent) }
+					: {})}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
