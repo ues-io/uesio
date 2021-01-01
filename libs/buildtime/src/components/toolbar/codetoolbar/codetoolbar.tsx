@@ -31,17 +31,38 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
 	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
+	const yamlDiff = useRef<
+		Array<{
+			count?: number
+			added?: boolean
+			value?: string
+		}>
+	>([])
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
-		if (yamlDocContent !== previousYaml.current) {
-			setHasYamlChanged(true)
+		if (
+			yamlDocContent &&
+			previousYaml.current !== undefined &&
+			yamlDocContent !== undefined &&
+			yamlDocContent !== previousYaml.current
+		) {
+			setHasYamlChanged(() => {
+				yamlDiff.current = diffLines(
+					previousYaml.current as string,
+					yamlDocContent
+				)
+				previousYaml.current = yamlDocContent
+				console.log("yamlDiff", yamlDiff.current)
+				return true
+			})
 		} else {
-			setHasYamlChanged(false)
+			setHasYamlChanged(() => {
+				previousYaml.current = yamlDocContent
+				return false
+			})
 		}
-
 		// update ref for the next re-rendering
-		previousYaml.current = yamlDocContent
 	}, [yamlDocContent])
 
 	return (
@@ -205,19 +226,15 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						}
 					})
 					// code responsible for highlighting the changes reflected in the yaml structure
-					if (
-						hasYamlChanged &&
-						yamlDocContent &&
-						previousYaml.current
-					) {
-						const diff = diffLines(
-							previousYaml.current,
-							yamlDocContent
-						)
-						console.log("difference", diff)
-						if (diff?.[0]?.count && diff?.[1]?.count) {
-							const startOffset = diff?.[0]?.count + 1
-							const endOffset = startOffset + diff?.[1]?.count - 1
+					if (hasYamlChanged) {
+						if (
+							yamlDiff.current?.[0]?.count &&
+							yamlDiff.current?.[1]?.count &&
+							yamlDiff.current?.[1]?.added
+						) {
+							const startOffset = yamlDiff.current[0].count + 1
+							const endOffset =
+								startOffset + yamlDiff.current[1].count - 1
 							editor.deltaDecorations(
 								[],
 								[
