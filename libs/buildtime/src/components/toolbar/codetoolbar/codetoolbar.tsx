@@ -45,18 +45,18 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					previousYaml.current as string,
 					yamlDocContent
 				)
-				// update ref for the next re-rendering
-				previousYaml.current = yamlDocContent
+
 				return true
 			})
 		} else {
-			setHasYamlChanged(() => {
-				// update ref for the next re-rendering
-				previousYaml.current = yamlDocContent
-				return false
-			})
+			setHasYamlChanged(false)
 		}
 	}, [yamlDocContent])
+
+	useEffect(() => {
+		// update ref for the next re-rendering
+		previousYaml.current = yamlDocContent
+	}, [hasYamlChanged])
 
 	return (
 		<>
