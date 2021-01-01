@@ -11,12 +11,12 @@ func (cc *CollectionCollection) GetName() string {
 }
 
 // GetFields function
-func (cc *CollectionCollection) GetFields() []string {
-	return []string{"id", "name", "datasource", "idfield", "namefield", "collectionname"}
+func (cc *CollectionCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(cc)
 }
 
-// NewItem function
-func (cc *CollectionCollection) NewItem(key string) (BundleableItem, error) {
+// NewBundleableItem function
+func (cc *CollectionCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewCollection(key)
 }
 
@@ -26,28 +26,23 @@ func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) s
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item CollectionableItem) {
+func (cc *CollectionCollection) AddItem(item LoadableItem) {
 	*cc = append(*cc, *item.(*Collection))
 }
 
-// UnMarshal function
-func (cc *CollectionCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(cc, data)
-}
-
-// Marshal function
-func (cc *CollectionCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(cc)
+// NewItem function
+func (cc *CollectionCollection) NewItem() LoadableItem {
+	return &Collection{}
 }
 
 // GetItem function
-func (cc *CollectionCollection) GetItem(index int) CollectionableItem {
+func (cc *CollectionCollection) GetItem(index int) LoadableItem {
 	actual := *cc
 	return &actual[index]
 }
 
 // Loop function
-func (cc *CollectionCollection) Loop(iter func(item CollectionableItem) error) error {
+func (cc *CollectionCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index))
 		if err != nil {

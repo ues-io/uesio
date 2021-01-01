@@ -5,38 +5,42 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/reqs"
-
-	"github.com/mitchellh/mapstructure"
 )
+
+// LoadableGroup interface
+type LoadableGroup interface {
+	GetItem(index int) LoadableItem
+	Loop(iter func(item LoadableItem) error) error
+	Len() int
+	AddItem(LoadableItem)
+	NewItem() LoadableItem
+}
+
+// LoadableItem interface
+type LoadableItem interface {
+	SetField(string, interface{}) error
+	GetField(string) (interface{}, error)
+}
 
 // CollectionableGroup interface
 type CollectionableGroup interface {
+	LoadableGroup
 	GetName() string
-	GetFields() []string
-	UnMarshal(data []map[string]interface{}) error
-	Marshal() ([]map[string]interface{}, error)
-	GetItem(index int) CollectionableItem
-	Loop(iter func(item CollectionableItem) error) error
-	Len() int
-	AddItem(CollectionableItem)
+	GetFields() []reqs.LoadRequestField
 }
 
 // CollectionableItem interface
 type CollectionableItem interface {
+	LoadableItem
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
-	GetConditions() ([]reqs.LoadRequestCondition, error)
-	SetNamespace(string)
-	GetNamespace() string
-	SetWorkspace(string)
-	GetKey() string
 }
 
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	NewItem(key string) (BundleableItem, error)
 	GetKeyPrefix(reqs.BundleConditions) string
+	NewBundleableItem(key string) (BundleableItem, error)
 }
 
 // BundleableItem interface
@@ -44,6 +48,11 @@ type BundleableItem interface {
 	CollectionableItem
 	GetBundleGroup() BundleableGroup
 	GetPermChecker() *PermissionSet
+	GetKey() string
+	GetConditions() ([]reqs.LoadRequestCondition, error)
+	SetNamespace(string)
+	GetNamespace() string
+	SetWorkspace(string)
 }
 
 // ParseKey function
@@ -55,33 +64,32 @@ func ParseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
-// StandardDecoder function
-func StandardDecoder(group CollectionableGroup, data []map[string]interface{}) error {
-	return decode(data, group)
+// StandardGetFields function
+func StandardGetFields(group CollectionableGroup) []reqs.LoadRequestField {
+	fieldRequests := []reqs.LoadRequestField{}
+	tags, err := Tags(group.NewItem(), "uesio")
+	if err != nil {
+		return fieldRequests
+	}
+	for _, tag := range tags {
+		if tag == "-" {
+			continue
+		}
+		fieldRequests = append(fieldRequests, reqs.LoadRequestField{
+			ID: tag,
+		})
+	}
+	return fieldRequests
 }
 
-// StandardEncoder function
-func StandardEncoder(group CollectionableGroup) ([]map[string]interface{}, error) {
-	var data []map[string]interface{}
-	err := decode(group, &data)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
+// StandardFieldGet function
+func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
+	return GetField(item, fieldName)
 }
 
-func decode(in interface{}, out interface{}) error {
-	config := &mapstructure.DecoderConfig{
-		Result:  out,
-		TagName: "uesio",
-	}
-
-	decoder, err := mapstructure.NewDecoder(config)
-	if err != nil {
-		return err
-	}
-
-	return decoder.Decode(in)
+// StandardFieldSet function
+func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
+	return SetField(item, fieldName, value)
 }
 
 // BundleableFactory function type

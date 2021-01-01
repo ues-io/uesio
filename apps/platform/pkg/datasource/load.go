@@ -1,73 +1,100 @@
 package datasource
 
 import (
+	"fmt"
+
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getMetadataForLoad(
+	op adapters.LoadOp,
+	metadataResponse *adapters.MetadataCache,
+	collatedMetadata map[string]*adapters.MetadataCache,
+	ops []adapters.LoadOp,
+	session *sess.Session) error {
+	collectionKey := op.CollectionName
+
+	// Keep a running tally of all requested collections
+	collections := MetadataRequest{}
+	err := collections.AddCollection(collectionKey)
+	if err != nil {
+		return err
+	}
+
+	for _, requestField := range op.Fields {
+		subFields := FieldsMap{}
+		for _, subField := range requestField.Fields {
+			// TODO: This should be recursive
+			subFields[subField.ID] = FieldsMap{}
+		}
+		err := collections.AddField(collectionKey, requestField.ID, &subFields)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, condition := range op.Conditions {
+
+		if condition.Type == "SEARCH" {
+			// We don't need any extra field metadata for search conditions yet
+			continue
+		}
+		err := collections.AddField(collectionKey, condition.Field, nil)
+		if err != nil {
+			return fmt.Errorf("condition field: %v", err)
+		}
+
+		if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
+
+			// Look through the previous wires to find the one to look up on.
+			var lookupCollectionKey string
+			for _, op := range ops {
+				if op.WireName == condition.LookupWire {
+					lookupCollectionKey = op.CollectionName
+				}
+			}
+			err := collections.AddField(lookupCollectionKey, condition.LookupField, nil)
+			if err != nil {
+				return fmt.Errorf("lookup field: %v", err)
+			}
+		}
+
+	}
+
+	return collections.Load(metadataResponse, collatedMetadata, session)
+
+}
+
 // Load function
-func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch, error) {
-
+func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache, error) {
 	site := session.GetSite()
-
-	collated := map[string]LoadRequestBatch{}
+	collated := map[string][]adapters.LoadOp{}
 	collatedMetadata := map[string]*adapters.MetadataCache{}
 	metadataResponse := adapters.MetadataCache{}
-	response := LoadResponseBatch{}
 
-	// Loop over the requests and batch per data source
-	for _, request := range requests.Wires {
-
-		collectionKey := request.GetCollection()
-
-		// Keep a running tally of all requested collections
-		collections := MetadataRequest{}
-		collections.AddCollection(collectionKey)
-
-		for _, requestField := range request.Fields {
-			subFields := FieldsMap{}
-			for _, subField := range requestField.Fields {
-				// TODO: This should be recursive
-				subFields[subField.ID] = FieldsMap{}
-			}
-			collections.AddField(collectionKey, requestField.ID, &subFields)
+	// Loop over the ops and batch per data source
+	for _, op := range ops {
+		err := getMetadataForLoad(op, &metadataResponse, collatedMetadata, ops, session)
+		if err != nil {
+			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
 
-		for _, condition := range request.Conditions {
-
-			if condition.Type == "SEARCH" {
-				// We don't need any extra field metadata for search conditions yet
-				continue
-			}
-			collections.AddField(collectionKey, condition.Field, nil)
-
-			if condition.ValueSource == "LOOKUP" && condition.LookupField != "" && condition.LookupWire != "" {
-
-				lookupRequest, err := reqs.GetRequestByWireName(requests.Wires, condition.LookupWire)
-				if err != nil {
-					return nil, err
-				}
-
-				lookupCollectionKey := lookupRequest.GetCollection()
-				collections.AddField(lookupCollectionKey, condition.LookupField, nil)
-			}
-		}
-
-		err := collections.Load(&metadataResponse, collatedMetadata, session)
+		// Get the datasource from the object name
+		collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 		if err != nil {
 			return nil, err
 		}
 
-		// Get the datasource from the object name
-		collectionMetadata := metadataResponse.Collections[collectionKey]
-
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		if request.Type == "QUERY" || request.Type == "" {
-			batch.Wires = append(batch.Wires, request)
+		if op.Type == "QUERY" || op.Type == "" {
+			if batch == nil {
+				batch = []adapters.LoadOp{}
+			}
+			batch = append(batch, op)
 		}
 		collated[dsKey] = batch
 	}
@@ -99,18 +126,11 @@ func Load(requests LoadRequestBatch, session *sess.Session) (*LoadResponseBatch,
 			return nil, err
 		}
 
-		adapterResponses, err := adapter.Load(batch.Wires, collatedMetadata[dsKey], credentials)
+		err = adapter.Load(batch, collatedMetadata[dsKey], credentials)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, r := range adapterResponses {
-			response.Wires = append(response.Wires, r)
-		}
-
 	}
-
-	response.Collections = metadataResponse.Collections
-
-	return &response, nil
+	return &metadataResponse, nil
 }

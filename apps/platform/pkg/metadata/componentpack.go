@@ -46,6 +46,16 @@ func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(cp, fieldName, value)
+}
+
+// GetField function
+func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(cp, fieldName)
+}
+
 // GetNamespace function
 func (cp *ComponentPack) GetNamespace() string {
 	return cp.Namespace

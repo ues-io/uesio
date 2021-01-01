@@ -28,7 +28,7 @@ func Upload(fileBody io.Reader, details reqs.FileDetails, session *sess.Session)
 	}
 	newUserFile, err := datasource.GetUserFile(id, session)
 	if err != nil {
-		return "", errors.New("error Fetching newly created userfile")
+		return "", errors.New("error Fetching newly created userfile: " + id + " : " + err.Error())
 	}
 	path, err := ufc.GetPath(newUserFile, site.Name, session.GetWorkspaceID())
 	if err != nil {

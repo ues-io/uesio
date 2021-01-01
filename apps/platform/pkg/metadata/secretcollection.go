@@ -16,12 +16,17 @@ func (sc *SecretCollection) GetName() string {
 }
 
 // GetFields function
-func (sc *SecretCollection) GetFields() []string {
-	return []string{"id", "name", "type", "managedby"}
+func (sc *SecretCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(sc)
 }
 
 // NewItem function
-func (sc *SecretCollection) NewItem(key string) (BundleableItem, error) {
+func (sc *SecretCollection) NewItem() LoadableItem {
+	return &Secret{}
+}
+
+// NewBundleableItem function
+func (sc *SecretCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Secret Key: " + key)
@@ -38,28 +43,18 @@ func (sc *SecretCollection) GetKeyPrefix(conditions reqs.BundleConditions) strin
 }
 
 // AddItem function
-func (sc *SecretCollection) AddItem(item CollectionableItem) {
+func (sc *SecretCollection) AddItem(item LoadableItem) {
 	*sc = append(*sc, *item.(*Secret))
 }
 
-// UnMarshal function
-func (sc *SecretCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(sc, data)
-}
-
-// Marshal function
-func (sc *SecretCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(sc)
-}
-
 // GetItem function
-func (sc *SecretCollection) GetItem(index int) CollectionableItem {
+func (sc *SecretCollection) GetItem(index int) LoadableItem {
 	actual := *sc
 	return &actual[index]
 }
 
 // Loop function
-func (sc *SecretCollection) Loop(iter func(item CollectionableItem) error) error {
+func (sc *SecretCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index))
 		if err != nil {

@@ -3,15 +3,16 @@ package adapters
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/loadresponse"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getUpsertLookupReqeust(request reqs.SaveRequest, matchField string, collectionMetadata *CollectionMetadata) *reqs.LoadRequest {
-	return &reqs.LoadRequest{
-		Collection: request.Collection,
-		Wire:       request.Wire,
+func getUpsertLookupOp(request reqs.SaveRequest, matchField string, collectionMetadata *CollectionMetadata) *LoadOp {
+	return &LoadOp{
+		CollectionName: request.Collection,
+		WireName:       request.Wire,
 		Fields: []reqs.LoadRequestField{
 			{
 				ID: collectionMetadata.IDField,
@@ -20,13 +21,14 @@ func getUpsertLookupReqeust(request reqs.SaveRequest, matchField string, collect
 				ID: matchField,
 			},
 		},
+		Collection: &loadresponse.Collection{},
 		// TODO: This is incomplete. We need to set the load
 		// request conditions from the match fields
 		Conditions: []reqs.LoadRequestCondition{},
 	}
 }
 
-func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*reqs.LoadRequest, error) {
+func getReferenceLookupOp(request reqs.SaveRequest, lookup reqs.Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
 	fieldMetadata, err := collectionMetadata.GetField(lookup.RefField)
 	if err != nil {
 		return nil, err
@@ -42,9 +44,9 @@ func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, col
 	}
 
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
-	return &reqs.LoadRequest{
-		Collection: fieldMetadata.ReferencedCollection,
-		Wire:       request.Wire,
+	return &LoadOp{
+		CollectionName: fieldMetadata.ReferencedCollection,
+		WireName:       request.Wire,
 		Fields: []reqs.LoadRequestField{
 			{
 				ID: refCollectionMetadata.IDField,
@@ -53,6 +55,7 @@ func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, col
 				ID: matchField,
 			},
 		},
+		Collection: &loadresponse.Collection{},
 		// TODO: This is incomplete. We need to set the load
 		// request conditions from the match fields
 		Conditions: []reqs.LoadRequestCondition{},
@@ -60,9 +63,9 @@ func getReferenceLookupRequest(request reqs.SaveRequest, lookup reqs.Lookup, col
 }
 
 // GetLookupRequests function
-func GetLookupRequests(request reqs.SaveRequest, metadata *MetadataCache) ([]reqs.LoadRequest, error) {
+func GetLookupOps(request reqs.SaveRequest, metadata *MetadataCache) ([]LoadOp, error) {
 	options := request.Options
-	lookupRequests := []reqs.LoadRequest{}
+	lookupRequests := []LoadOp{}
 	collectionMetadata, err := metadata.GetCollection(request.Collection)
 	if err != nil {
 		return nil, err
@@ -75,10 +78,10 @@ func GetLookupRequests(request reqs.SaveRequest, metadata *MetadataCache) ([]req
 	if options.Upsert != nil {
 		// If we have a match field option, use that, otherwise, use the name field
 		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.NameField)
-		lookupRequests = append(lookupRequests, *getUpsertLookupReqeust(request, upsertKey, collectionMetadata))
+		lookupRequests = append(lookupRequests, *getUpsertLookupOp(request, upsertKey, collectionMetadata))
 	}
 	for _, lookup := range request.Options.Lookups {
-		referenceLookup, err := getReferenceLookupRequest(request, lookup, collectionMetadata, metadata)
+		referenceLookup, err := getReferenceLookupOp(request, lookup, collectionMetadata, metadata)
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +91,7 @@ func GetLookupRequests(request reqs.SaveRequest, metadata *MetadataCache) ([]req
 	return lookupRequests, nil
 }
 
-func getLookupResultMap(data []map[string]interface{}, keyField string) map[string]map[string]interface{} {
+func getLookupResultMap(data []loadresponse.Item, keyField string) map[string]map[string]interface{} {
 	lookupResult := map[string]map[string]interface{}{}
 	for _, record := range data {
 		keyVal, ok := record[keyField]
@@ -102,7 +105,7 @@ func getLookupResultMap(data []map[string]interface{}, keyField string) map[stri
 	return lookupResult
 }
 
-func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]reqs.ChangeRequest, options *reqs.UpsertOptions, collectionMetadata *CollectionMetadata) error {
+func mergeUpsertLookupResponse(response *loadresponse.Collection, changes map[string]reqs.ChangeRequest, options *reqs.UpsertOptions, collectionMetadata *CollectionMetadata) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
 	lookupResult := getLookupResultMap(response.Data, matchField)
@@ -139,7 +142,7 @@ func mergeUpsertLookupResponse(response *reqs.LoadResponse, changes map[string]r
 	return nil
 }
 
-func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Lookup, changes map[string]reqs.ChangeRequest, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeReferenceLookupResponse(response *loadresponse.Collection, lookup reqs.Lookup, changes map[string]reqs.ChangeRequest, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	lookupField := lookup.RefField
 
@@ -178,7 +181,7 @@ func mergeReferenceLookupResponse(response *reqs.LoadResponse, lookup reqs.Looku
 }
 
 // MergeLookupResponses function
-func MergeLookupResponses(request reqs.SaveRequest, responses []reqs.LoadResponse, metadata *MetadataCache) error {
+func MergeLookupResponses(request reqs.SaveRequest, responses []LoadOp, metadata *MetadataCache) error {
 
 	collectionMetadata, err := metadata.GetCollection(request.Collection)
 	if err != nil {
@@ -189,7 +192,7 @@ func MergeLookupResponses(request reqs.SaveRequest, responses []reqs.LoadRespons
 		return nil
 	}
 
-	var upsertResponse *reqs.LoadResponse
+	var upsertResponse *LoadOp
 
 	// If we're doing an upsert, then the first response is going to be the upsert response,
 	// while all the other responses will be "lookup responses" for matching foreign keys.
@@ -200,7 +203,8 @@ func MergeLookupResponses(request reqs.SaveRequest, responses []reqs.LoadRespons
 
 	for index, lookupResponse := range responses {
 		lookup := request.Options.Lookups[index]
-		err := mergeReferenceLookupResponse(&lookupResponse, lookup, request.Changes, collectionMetadata, metadata)
+		collection := lookupResponse.Collection.(*loadresponse.Collection)
+		err := mergeReferenceLookupResponse(collection, lookup, request.Changes, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}
@@ -208,7 +212,8 @@ func MergeLookupResponses(request reqs.SaveRequest, responses []reqs.LoadRespons
 	}
 
 	if upsertResponse != nil {
-		err := mergeUpsertLookupResponse(upsertResponse, request.Changes, request.Options.Upsert, collectionMetadata)
+		collection := upsertResponse.Collection.(*loadresponse.Collection)
+		err := mergeUpsertLookupResponse(collection, request.Changes, request.Options.Upsert, collectionMetadata)
 		if err != nil {
 			return err
 		}

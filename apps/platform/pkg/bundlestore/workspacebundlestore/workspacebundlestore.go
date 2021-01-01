@@ -57,26 +57,13 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 		})
 	}
 
-	err := datasource.PlatformLoad(
-		[]metadata.CollectionableGroup{
-			group,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				group.GetName(),
-				group.GetFields(),
-				loadConditions,
-			),
-		},
-		session,
-	)
+	err := datasource.PlatformLoad(group, loadConditions, session)
 	if err != nil {
 		return err
 	}
 
-	return group.Loop(func(item metadata.CollectionableItem) error {
-		item.SetNamespace(namespace)
+	return group.Loop(func(item metadata.LoadableItem) error {
+		item.(metadata.BundleableItem).SetNamespace(namespace)
 		return nil
 	})
 

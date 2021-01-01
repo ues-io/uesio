@@ -120,7 +120,7 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	}
 
 	doc := collection.Doc(change.IDValue.(string))
-	batch = batch.Update(doc, updates)
+	batch.Update(doc, updates)
 
 	return nil
 }
@@ -157,7 +157,7 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 
 	inserts[fieldName] = doc.ID
 
-	batch = batch.Create(doc, inserts)
+	batch.Create(doc, inserts)
 
 	return doc.ID, nil
 }
@@ -216,18 +216,19 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *a
 }
 
 func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
-	lookupRequests, err := adapters.GetLookupRequests(request, metadata)
+
+	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err
 	}
 
-	if lookupRequests != nil && len(lookupRequests) > 0 {
-		lookupResponses, err := a.Load(lookupRequests, metadata, credentials)
+	if len(lookupOps) > 0 {
+		err := a.Load(lookupOps, metadata, credentials)
 		if err != nil {
 			return err
 		}
 
-		err = adapters.MergeLookupResponses(request, lookupResponses, metadata)
+		err = adapters.MergeLookupResponses(request, lookupOps, metadata)
 		if err != nil {
 			return err
 		}

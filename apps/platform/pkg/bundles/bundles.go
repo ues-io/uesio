@@ -131,8 +131,7 @@ func LoadAll(group metadata.BundleableGroup, namespace string, conditions reqs.B
 
 // Load function
 func Load(item metadata.BundleableItem, session *sess.Session) error {
-	namespace := item.GetNamespace()
-	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	version, bs, err := getBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
 		return err
 	}
@@ -141,8 +140,7 @@ func Load(item metadata.BundleableItem, session *sess.Session) error {
 
 //GetFileStream function
 func GetFileStream(file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
-	namespace := file.GetNamespace()
-	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	version, bs, err := getBundleStoreWithVersion(file.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
@@ -151,8 +149,7 @@ func GetFileStream(file *metadata.File, session *sess.Session) (io.ReadCloser, e
 
 //GetComponentPackStream function
 func GetComponentPackStream(componentPack *metadata.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
-	namespace := componentPack.GetNamespace()
-	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	version, bs, err := getBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
@@ -161,8 +158,7 @@ func GetComponentPackStream(componentPack *metadata.ComponentPack, buildMode boo
 
 //GetBotStream function
 func GetBotStream(bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	namespace := bot.GetNamespace()
-	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	version, bs, err := getBundleStoreWithVersion(bot.Namespace, session)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package datasource
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -34,7 +35,10 @@ func (mr *MetadataRequest) HasRequests() bool {
 }
 
 // AddCollection function
-func (mr *MetadataRequest) AddCollection(collectionName string) {
+func (mr *MetadataRequest) AddCollection(collectionName string) error {
+	if collectionName == "" {
+		return fmt.Errorf("adding field: %s", collectionName)
+	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}
 	}
@@ -42,11 +46,18 @@ func (mr *MetadataRequest) AddCollection(collectionName string) {
 	if !ok {
 		mr.Collections[collectionName] = FieldsMap{}
 	}
+	return nil
 }
 
 // AddField function
-func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) {
-	mr.AddCollection(collectionName)
+func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields *FieldsMap) error {
+	if collectionName == "" || fieldName == "" {
+		return fmt.Errorf("adding field: %s, %s", collectionName, fieldName)
+	}
+	err := mr.AddCollection(collectionName)
+	if err != nil {
+		return err
+	}
 	if mr.Collections[collectionName] == nil {
 		mr.Collections[collectionName] = FieldsMap{}
 	}
@@ -54,6 +65,7 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 		subFields = &FieldsMap{}
 	}
 	mr.Collections[collectionName][fieldName] = *subFields
+	return nil
 }
 
 // AddSelectList function
@@ -86,6 +98,9 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 
 		if mr.Options != nil && mr.Options.LoadAllFields {
 			err = LoadAllFieldsMetadata(collectionKey, metadata, session)
+			if err != nil {
+				return err
+			}
 		} else {
 			// Automagially add the id field and the name field whether they were requested or not.
 			err = LoadFieldsMetadata([]string{metadata.IDField, metadata.NameField}, collectionKey, metadata, session)
@@ -102,10 +117,16 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 			}
 
 			if fieldMetadata.Type == "REFERENCE" {
-				additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+				err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+				if err != nil {
+					return err
+				}
 
 				for fieldKey, subsubFields := range subFields {
-					additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
+					err := additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
+					if err != nil {
+						return err
+					}
 				}
 
 				_, err = LoadFieldMetadata(fieldMetadata.ForeignKeyField, collectionKey, metadata, session)

@@ -16,12 +16,17 @@ func (slc *SelectListCollection) GetName() string {
 }
 
 // GetFields function
-func (slc *SelectListCollection) GetFields() []string {
-	return []string{"id", "name", "options"}
+func (slc *SelectListCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(slc)
 }
 
 // NewItem function
-func (slc *SelectListCollection) NewItem(key string) (BundleableItem, error) {
+func (slc *SelectListCollection) NewItem() LoadableItem {
+	return &SelectList{}
+}
+
+// NewBundleableItem function
+func (slc *SelectListCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid SelectList Key: " + key)
@@ -38,18 +43,18 @@ func (slc *SelectListCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (slc *SelectListCollection) AddItem(item CollectionableItem) {
+func (slc *SelectListCollection) AddItem(item LoadableItem) {
 	*slc = append(*slc, *item.(*SelectList))
 }
 
 // GetItem function
-func (slc *SelectListCollection) GetItem(index int) CollectionableItem {
+func (slc *SelectListCollection) GetItem(index int) LoadableItem {
 	actual := *slc
 	return &actual[index]
 }
 
 // Loop function
-func (slc *SelectListCollection) Loop(iter func(item CollectionableItem) error) error {
+func (slc *SelectListCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *slc {
 		err := iter(slc.GetItem(index))
 		if err != nil {
@@ -62,54 +67,4 @@ func (slc *SelectListCollection) Loop(iter func(item CollectionableItem) error) 
 // Len function
 func (slc *SelectListCollection) Len() int {
 	return len(*slc)
-}
-
-// UnMarshal function
-func (slc *SelectListCollection) UnMarshal(data []map[string]interface{}) error {
-	err := StandardDecoder(slc, data)
-	if err != nil {
-		return err
-	}
-	for index := range *slc {
-		dataItem := data[index]
-		options := dataItem["uesio.options"].([]interface{})
-		unMarshalledOptions := []SelectListOption{}
-
-		for _, item := range options {
-			option := item.(map[string]interface{})
-			unMarshalledOptions = append(unMarshalledOptions, SelectListOption{
-				Label: option["label"].(string),
-				Value: option["value"].(string),
-			})
-		}
-
-		slcActual := *slc
-		slcActual[index].Options = unMarshalledOptions
-	}
-	return nil
-}
-
-// Marshal function
-func (slc *SelectListCollection) Marshal() ([]map[string]interface{}, error) {
-	data, err := StandardEncoder(slc)
-	if err != nil {
-		return nil, err
-	}
-
-	slcActual := *slc
-	for index := range data {
-		options := slcActual[index].Options
-		marshalledOptions := []map[string]string{}
-
-		for _, option := range options {
-			marshalledOptions = append(marshalledOptions, map[string]string{
-				"value": option.Value,
-				"label": option.Label,
-			})
-		}
-
-		data[index]["uesio.options"] = marshalledOptions
-	}
-
-	return data, nil
 }

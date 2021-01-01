@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/loadresponse"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 )
@@ -24,7 +26,20 @@ func Load(w http.ResponseWriter, r *http.Request) {
 
 	session := middlewares.GetSession(r)
 
-	response, err := datasource.Load(loadRequestBatch, session)
+	ops := make([]adapters.LoadOp, len(loadRequestBatch.Wires))
+
+	for i := range loadRequestBatch.Wires {
+		wire := loadRequestBatch.Wires[i]
+		ops[i] = adapters.LoadOp{
+			WireName:       wire.Wire,
+			CollectionName: wire.Collection,
+			Collection:     &loadresponse.Collection{},
+			Conditions:     wire.Conditions,
+			Fields:         wire.Fields,
+		}
+	}
+
+	metadata, err := datasource.Load(ops, session)
 	if err != nil {
 		msg := "Load Failed: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -32,5 +47,8 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, response)
+	respondJSON(w, r, &datasource.LoadResponseBatch{
+		Wires:       ops,
+		Collections: metadata.Collections,
+	})
 }

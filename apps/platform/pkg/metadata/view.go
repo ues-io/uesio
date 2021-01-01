@@ -7,12 +7,12 @@ import (
 
 // View struct
 type View struct {
-	ID           string    `yaml:"-" uesio:"uesio.id"`
-	Name         string    `yaml:"name" uesio:"uesio.name"`
-	Namespace    string    `yaml:"-" uesio:"-"`
-	Definition   yaml.Node `yaml:"definition" uesio:"-"`
-	Dependencies yaml.Node `yaml:"dependencies" uesio:"-"`
-	Workspace    string    `yaml:"-" uesio:"uesio.workspaceid"`
+	ID           string                `yaml:"-" uesio:"uesio.id"`
+	Name         string                `yaml:"name" uesio:"uesio.name"`
+	Namespace    string                `yaml:"-" uesio:"-"`
+	Definition   yaml.Node             `yaml:"definition" uesio:"uesio.definition"`
+	Dependencies map[string]Dependency `yaml:"dependencies" uesio:"uesio.dependencies"`
+	Workspace    string                `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // Dependency struct
@@ -58,6 +58,34 @@ func (v *View) GetPermChecker() *PermissionSet {
 			key: true,
 		},
 	}
+}
+
+// SetField function
+func (v *View) SetField(fieldName string, value interface{}) error {
+	if fieldName == "uesio.definition" {
+		var definition yaml.Node
+		err := yaml.Unmarshal([]byte(value.(string)), &definition)
+		if err != nil {
+			return err
+		}
+		v.Dependencies = map[string]Dependency{
+			"componentpacks": map[string]interface{}{
+				"material.main": nil,
+				"sample.main":   nil,
+			},
+		}
+		v.Definition = *definition.Content[0]
+		return nil
+	}
+	if fieldName == "uesio.dependencies" {
+		return nil
+	}
+	return StandardFieldSet(v, fieldName, value)
+}
+
+// GetField function
+func (v *View) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(v, fieldName)
 }
 
 // GetNamespace function

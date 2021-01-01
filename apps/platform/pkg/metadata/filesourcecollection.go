@@ -11,12 +11,17 @@ func (fsc *FileSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (fsc *FileSourceCollection) GetFields() []string {
-	return []string{"id"}
+func (fsc *FileSourceCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(fsc)
 }
 
 // NewItem function
-func (fsc *FileSourceCollection) NewItem(key string) (BundleableItem, error) {
+func (fsc *FileSourceCollection) NewItem() LoadableItem {
+	return &FileSource{}
+}
+
+// NewBundleableItem function
+func (fsc *FileSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewFileSource(key)
 }
 
@@ -26,27 +31,18 @@ func (fsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (fsc *FileSourceCollection) AddItem(item CollectionableItem) {
-}
-
-// UnMarshal function
-func (fsc *FileSourceCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(fsc, data)
-}
-
-// Marshal function
-func (fsc *FileSourceCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(fsc)
+func (fsc *FileSourceCollection) AddItem(item LoadableItem) {
+	*fsc = append(*fsc, *item.(*FileSource))
 }
 
 // GetItem function
-func (fsc *FileSourceCollection) GetItem(index int) CollectionableItem {
+func (fsc *FileSourceCollection) GetItem(index int) LoadableItem {
 	actual := *fsc
 	return &actual[index]
 }
 
 // Loop function
-func (fsc *FileSourceCollection) Loop(iter func(item CollectionableItem) error) error {
+func (fsc *FileSourceCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *fsc {
 		err := iter(fsc.GetItem(index))
 		if err != nil {

@@ -5,13 +5,23 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+//ThemeDefinition struct
+type ThemeDefinition struct {
+	Error     string `json:"error"`
+	Info      string `json:"info"`
+	Primary   string `json:"primary"`
+	Secondary string `json:"secondary"`
+	Success   string `json:"success"`
+	Warning   string `json:"warning"`
+}
+
 // Theme struct
 type Theme struct {
-	ID         string    `yaml:"-" uesio:"uesio.id"`
-	Name       string    `yaml:"name" uesio:"uesio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"-"`
-	Workspace  string    `yaml:"-" uesio:"uesio.workspaceid"`
+	ID         string          `yaml:"-" uesio:"uesio.id"`
+	Name       string          `yaml:"name" uesio:"uesio.name"`
+	Namespace  string          `yaml:"-" uesio:"-"`
+	Definition ThemeDefinition `yaml:"definition" uesio:"uesio.definition"`
+	Workspace  string          `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -49,6 +59,19 @@ func (t *Theme) GetKey() string {
 // GetPermChecker function
 func (t *Theme) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (t *Theme) SetField(fieldName string, value interface{}) error {
+	if fieldName == "uesio.definition" {
+		return yaml.Unmarshal([]byte(value.(string)), &t.Definition)
+	}
+	return StandardFieldSet(t, fieldName, value)
+}
+
+// GetField function
+func (t *Theme) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(t, fieldName)
 }
 
 // GetNamespace function

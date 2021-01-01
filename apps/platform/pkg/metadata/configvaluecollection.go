@@ -16,12 +16,17 @@ func (cvc *ConfigValueCollection) GetName() string {
 }
 
 // GetFields function
-func (cvc *ConfigValueCollection) GetFields() []string {
-	return []string{"id", "name", "type", "managedby"}
+func (cvc *ConfigValueCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(cvc)
 }
 
 // NewItem function
-func (cvc *ConfigValueCollection) NewItem(key string) (BundleableItem, error) {
+func (cvc *ConfigValueCollection) NewItem() LoadableItem {
+	return &ConfigValue{}
+}
+
+// NewBundleableItem function
+func (cvc *ConfigValueCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
@@ -38,28 +43,18 @@ func (cvc *ConfigValueCollection) GetKeyPrefix(conditions reqs.BundleConditions)
 }
 
 // AddItem function
-func (cvc *ConfigValueCollection) AddItem(item CollectionableItem) {
+func (cvc *ConfigValueCollection) AddItem(item LoadableItem) {
 	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 
-// UnMarshal function
-func (cvc *ConfigValueCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(cvc, data)
-}
-
-// Marshal function
-func (cvc *ConfigValueCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(cvc)
-}
-
 // GetItem function
-func (cvc *ConfigValueCollection) GetItem(index int) CollectionableItem {
+func (cvc *ConfigValueCollection) GetItem(index int) LoadableItem {
 	actual := *cvc
 	return &actual[index]
 }
 
 // Loop function
-func (cvc *ConfigValueCollection) Loop(iter func(item CollectionableItem) error) error {
+func (cvc *ConfigValueCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *cvc {
 		err := iter(cvc.GetItem(index))
 		if err != nil {

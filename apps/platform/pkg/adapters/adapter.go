@@ -4,12 +4,23 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
+// LoadOp type
+type LoadOp struct {
+	CollectionName string                      `json:"collection"`
+	WireName       string                      `json:"wire"`
+	Collection     metadata.LoadableGroup      `json:"data"`
+	Conditions     []reqs.LoadRequestCondition `json:"-"`
+	Fields         []reqs.LoadRequestField     `json:"-"`
+	Type           string                      `json:"-"`
+}
+
 // Adapter interface
 type Adapter interface {
-	Load([]reqs.LoadRequest, *MetadataCache, *creds.AdapterCredentials) ([]reqs.LoadResponse, error)
+	Load([]LoadOp, *MetadataCache, *creds.AdapterCredentials) error
 	Save([]reqs.SaveRequest, *MetadataCache, *creds.AdapterCredentials) ([]reqs.SaveResponse, error)
 	Migrate(*MetadataCache, *creds.AdapterCredentials) error
 }

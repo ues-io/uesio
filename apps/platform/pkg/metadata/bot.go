@@ -133,6 +133,16 @@ func (b *Bot) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (b *Bot) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(b, fieldName, value)
+}
+
+// GetField function
+func (b *Bot) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(b, fieldName)
+}
+
 // GetNamespace function
 func (b *Bot) GetNamespace() string {
 	return b.Namespace

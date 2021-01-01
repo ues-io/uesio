@@ -64,7 +64,7 @@ export default createAsyncThunk<
 	for (const wire of response?.wires || []) {
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
-		wire.data.forEach((item) => {
+		wire.data?.forEach((item) => {
 			const localId = shortid.generate()
 			data[localId] = item
 			original[localId] = item

@@ -186,19 +186,11 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Process Dependencies and add values
-	var dependenciesMap map[string]metadata.Dependency
-	err = view.Dependencies.Decode(&dependenciesMap)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	dependenciesResponse := map[string]DependencyResponse{}
 
 	// Process Configuration Value Dependencies
 	configValuesKey := "configvalues"
-	cvd, ok := dependenciesMap[configValuesKey]
+	cvd, ok := view.Dependencies[configValuesKey]
 	if ok {
 		configDependencies := map[string]interface{}{}
 
@@ -215,7 +207,7 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 
 	// Process ComponentPack Dependencies
 	componentPacksKey := "componentpacks"
-	csd, ok := dependenciesMap[componentPacksKey]
+	csd, ok := view.Dependencies[componentPacksKey]
 	if ok {
 		cpDependencies := map[string]interface{}{}
 

@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 // Workspace struct
 type Workspace struct {
 	ID          string         `uesio:"uesio.id"`
@@ -34,32 +32,12 @@ func (w *Workspace) GetCollection() CollectionableGroup {
 	return &wc
 }
 
-// GetConditions function
-func (w *Workspace) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: w.Name,
-		},
-	}, nil
+// SetField function
+func (w *Workspace) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(w, fieldName, value)
 }
 
-// GetKey function
-func (w *Workspace) GetKey() string {
-	return w.ID
-}
-
-// GetNamespace function
-func (w *Workspace) GetNamespace() string {
-	return w.Namespace
-}
-
-// SetNamespace function
-func (w *Workspace) SetNamespace(namespace string) {
-	w.Namespace = namespace
-}
-
-// SetWorkspace function
-func (w *Workspace) SetWorkspace(workspace string) {
-
+// GetField function
+func (w *Workspace) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(w, fieldName)
 }

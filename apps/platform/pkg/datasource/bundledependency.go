@@ -57,20 +57,7 @@ func clearCache(namespace string, workspaceID string) {
 // BundleDependencyLoad function
 func BundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
 	bdc := metadata.BundleDependencyCollection{}
-	err := PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&bdc,
-		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				bdc.GetName(),
-				bdc.GetFields(),
-				conditions,
-			),
-		},
-		session,
-	)
+	err := PlatformLoad(&bdc, conditions, session)
 	return bdc, err
 }
 

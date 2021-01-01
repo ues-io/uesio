@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // AppCollection slice
 type AppCollection []App
 
@@ -9,33 +11,28 @@ func (ac *AppCollection) GetName() string {
 }
 
 // GetFields function
-func (ac *AppCollection) GetFields() []string {
-	return []string{"id"}
-}
-
-// UnMarshal function
-func (ac *AppCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(ac, data)
-}
-
-// Marshal function
-func (ac *AppCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(ac)
+func (ac *AppCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(ac)
 }
 
 // GetItem function
-func (ac *AppCollection) GetItem(index int) CollectionableItem {
+func (ac *AppCollection) GetItem(index int) LoadableItem {
 	actual := *ac
 	return &actual[index]
 }
 
 // AddItem function
-func (ac *AppCollection) AddItem(item CollectionableItem) {
+func (ac *AppCollection) AddItem(item LoadableItem) {
 	*ac = append(*ac, *item.(*App))
 }
 
+// NewItem function
+func (ac *AppCollection) NewItem() LoadableItem {
+	return &App{}
+}
+
 // Loop function
-func (ac *AppCollection) Loop(iter func(item CollectionableItem) error) error {
+func (ac *AppCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *ac {
 		err := iter(ac.GetItem(index))
 		if err != nil {

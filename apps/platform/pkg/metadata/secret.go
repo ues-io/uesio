@@ -53,6 +53,16 @@ func (s *Secret) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (s *Secret) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(s, fieldName, value)
+}
+
+// GetField function
+func (s *Secret) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(s, fieldName)
+}
+
 // GetNamespace function
 func (s *Secret) GetNamespace() string {
 	return s.Namespace

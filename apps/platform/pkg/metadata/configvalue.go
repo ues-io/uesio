@@ -54,6 +54,16 @@ func (cv *ConfigValue) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (cv *ConfigValue) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(cv, fieldName, value)
+}
+
+// GetField function
+func (cv *ConfigValue) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(cv, fieldName)
+}
+
 // GetNamespace function
 func (cv *ConfigValue) GetNamespace() string {
 	return cv.Namespace

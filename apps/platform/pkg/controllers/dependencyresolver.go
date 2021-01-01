@@ -44,7 +44,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap := map[string]bool{}
 
-	collection.Loop(func(item metadata.CollectionableItem) error {
+	collection.Loop(func(item metadata.LoadableItem) error {
 		var key string
 		// Special handling for fields for now
 		if metadatatype == "fields" {
@@ -54,7 +54,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 				return nil
 			}
 		} else {
-			key = item.GetKey()
+			key = item.(metadata.BundleableItem).GetKey()
 		}
 		collectionKeyMap[key] = true
 		return nil
