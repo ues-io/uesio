@@ -40,20 +40,19 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			yamlDocContent !== undefined &&
 			yamlDocContent !== previousYaml.current
 		) {
-			setHasYamlChanged(() => {
-				yamlDiff.current = diffLines(
-					previousYaml.current as string,
-					yamlDocContent
-				)
-
-				return true
-			})
+			setHasYamlChanged(true)
 		} else {
 			setHasYamlChanged(false)
 		}
 	}, [yamlDocContent])
 
 	useEffect(() => {
+		if (hasYamlChanged) {
+			yamlDiff.current = diffLines(
+				previousYaml.current as string,
+				yamlDocContent as string
+			)
+		}
 		// update ref for the next re-rendering
 		previousYaml.current = yamlDocContent
 	}, [hasYamlChanged])
