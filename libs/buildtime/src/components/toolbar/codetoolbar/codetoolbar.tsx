@@ -6,9 +6,7 @@ import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
-
-const genRadomNumber = (min: number, max: number) =>
-	Math.random() * (max - min) + min
+import { diffLines } from "diff"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -33,7 +31,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
 	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
-	console.log("previousYaml", previousYaml)
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
@@ -208,26 +205,38 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						}
 					})
 					// code responsible for highlighting the changes reflected in the yaml structure
-					if (hasYamlChanged) {
-						const rand = genRadomNumber(1, 81 - 3)
-						editor.deltaDecorations(
-							[],
-							[
-								{
-									range: new monaco.Range(
-										rand,
-										1,
-										rand + 3,
-										1
-									),
-									options: {
-										isWholeLine: true,
-										linesDecorationsClassName:
-											classes.myLineDecoration,
-									},
-								},
-							]
+					if (
+						hasYamlChanged &&
+						yamlDocContent &&
+						previousYaml.current
+					) {
+						const diff = diffLines(
+							previousYaml.current,
+							yamlDocContent
 						)
+						console.log("difference", diff)
+						if (diff?.[0]?.count && diff?.[1]?.count) {
+							const startOffset = diff?.[0]?.count + 1
+							const endOffset = startOffset + diff?.[1]?.count - 1
+							editor.deltaDecorations(
+								[],
+								[
+									{
+										range: new monaco.Range(
+											startOffset,
+											1,
+											endOffset,
+											1
+										),
+										options: {
+											isWholeLine: true,
+											linesDecorationsClassName:
+												classes.myLineDecoration,
+										},
+									},
+								]
+							)
+						}
 					}
 				}}
 			/>
