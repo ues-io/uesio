@@ -168,7 +168,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					*/
 					}
 				}
-				editorDidMount={(editor /*monaco*/): void => {
+				editorDidMount={(editor /*, monaco*/): void => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
