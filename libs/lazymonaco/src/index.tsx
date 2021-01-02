@@ -38,8 +38,8 @@ interface Props {
 	editorDecoration?: {
 		gutterClass: string
 		doForceUpdate: boolean
-		currentPlainYaml: string
 		previousPlainYaml: string
+		currentPlainYaml: string
 	}
 }
 
@@ -52,8 +52,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	editorDecoration: {
 		gutterClass,
 		doForceUpdate,
-		currentPlainYaml,
 		previousPlainYaml,
+		currentPlainYaml,
 	},
 }) => {
 	// force the LazyMonaco component to unmount if hasYamlChanged is true
