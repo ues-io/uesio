@@ -45,6 +45,7 @@ class ViewAPI {
 	}
 
 	useYAML() {
+		console.log("useYAML")
 		const viewDefId = this.uesio.getViewDefId()
 		return viewDefId ? useViewYAML(viewDefId) : undefined
 	}

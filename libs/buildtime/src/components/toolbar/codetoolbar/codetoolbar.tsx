@@ -5,8 +5,6 @@ import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
-import md5 from "md5"
-import { diffLines, Change } from "diff"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -31,55 +29,25 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDocContent = yamlDoc?.toString()
 	const previousYaml = useRef<string | undefined>(yamlDocContent)
 	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
-	const yamlDiff = useRef<Array<Change>>([])
 
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
 		if (
-			previousYaml !== undefined &&
+			previousYaml.current !== undefined &&
 			yamlDocContent !== undefined &&
 			yamlDocContent !== previousYaml.current
 		) {
-			setHasYamlChanged(() => {
-				const diff = diffLines(
-					previousYaml.current as string,
-					yamlDocContent as string
-				)
-				// update ref for the next re-rendering
-				previousYaml.current = yamlDocContent
-				yamlDiff.current = diff
-				return true
-			})
+			setHasYamlChanged(true)
 		} else {
-			setHasYamlChanged(() => {
-				// update ref for the next re-rendering
-				previousYaml.current = yamlDocContent
-				yamlDiff.current = []
-				return false
-			})
+			setHasYamlChanged(false)
 		}
 	}, [yamlDocContent])
 
-	/*
 	useEffect(() => {
-		if (hasYamlChanged) {
-			setYamlDiff(() => {
-				const diff = diffLines(
-					previousYaml.current as string,
-					yamlDocContent as string
-				)
-				previousYaml.current = yamlDocContent
-				return diff
-			})
-		} else {
-			setYamlDiff(() => {
-				previousYaml.current = yamlDocContent
-				return []
-			})
-		}
 		// update ref for the next re-rendering
-	}, [hasYamlChanged])
-*/
+		previousYaml.current = yamlDocContent
+	}, [yamlDocContent])
+
 	return (
 		<>
 			<ToolbarTitle
@@ -88,10 +56,12 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				// force the LazyMonaco component to unmount if hasYamlChanged is true
-				{...(hasYamlChanged && yamlDocContent
-					? { key: md5(yamlDocContent) }
-					: {})}
+				editorDecoration={{
+					gutterClass: classes.myLineDecoration,
+					doForceUpdate: hasYamlChanged,
+					previousPlainYaml: previousYaml.current || "",
+					currentPlainYaml: yamlDocContent || "",
+				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
@@ -198,7 +168,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					*/
 					}
 				}
-				editorDidMount={(editor, monaco): void => {
+				editorDidMount={(editor /*monaco*/): void => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
@@ -240,39 +210,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						}
 					})
-					// code responsible for highlighting the changes reflected in the yaml structure
-					if (hasYamlChanged) {
-						console.log("decoration previousYaml", previousYaml)
-						console.log("decoration hasYamlChanded", hasYamlChanged)
-						console.log("decoration yamlDiff", yamlDiff)
-						if (
-							yamlDiff?.current?.[0]?.count &&
-							yamlDiff?.current?.[1]?.count &&
-							yamlDiff?.current?.[1]?.added
-						) {
-							const startOffset = yamlDiff.current[0].count + 1
-							const endOffset =
-								startOffset + yamlDiff.current[1].count - 1
-							editor.deltaDecorations(
-								[],
-								[
-									{
-										range: new monaco.Range(
-											startOffset,
-											1,
-											endOffset,
-											1
-										),
-										options: {
-											isWholeLine: true,
-											linesDecorationsClassName:
-												classes.myLineDecoration,
-										},
-									},
-								]
-							)
-						}
-					}
 				}}
 			/>
 		</>
