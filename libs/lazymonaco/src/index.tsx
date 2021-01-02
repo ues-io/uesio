@@ -49,20 +49,18 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	editorDecoration: {
-		gutterClass,
-		doForceUpdate,
-		previousPlainYaml,
-		currentPlainYaml,
-	},
+	editorDecoration,
 }) => {
 	// force the LazyMonaco component to unmount if hasYamlChanged is true
 	/*	{...(hasYamlChanged && yamlDocContent
 						? { key: md5(yamlDocContent) }
 						: {})}
 	*/
-	if (doForceUpdate) {
-		const diff: Change[] = diffLines(currentPlainYaml, previousPlainYaml)
+	if (editorDecoration?.doForceUpdate) {
+		const diff: Change[] = diffLines(
+			editorDecoration.currentPlainYaml,
+			editorDecoration.previousPlainYaml
+		)
 		return (
 			<Suspense key={Date.now()} fallback={createElement(LinearProgress)}>
 				<LaziestMonaco
@@ -84,8 +82,14 @@ const LazyMonaco: FunctionComponent<Props> = ({
 					editorDidMount={(editor, monaco): void => {
 						editorDidMount?.(editor, monaco)
 
-						console.log("currentPlainYaml", currentPlainYaml)
-						console.log("previousPlainYaml", previousPlainYaml)
+						console.log(
+							"currentPlainYaml",
+							editorDecoration.currentPlainYaml
+						)
+						console.log(
+							"previousPlainYaml",
+							editorDecoration.previousPlainYaml
+						)
 						if (
 							diff?.[0]?.count &&
 							diff?.[1]?.count &&
@@ -105,7 +109,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 										),
 										options: {
 											isWholeLine: true,
-											linesDecorationsClassName: gutterClass,
+											linesDecorationsClassName:
+												editorDecoration.gutterClass,
 										},
 									},
 								]
