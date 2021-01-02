@@ -36,27 +36,50 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	// code responsible for tracking change upon drag'n dropping in the builder
 	useEffect(() => {
 		if (
-			previousYaml.current !== undefined &&
+			previousYaml !== undefined &&
 			yamlDocContent !== undefined &&
 			yamlDocContent !== previousYaml.current
 		) {
-			setHasYamlChanged(true)
+			setHasYamlChanged(() => {
+				const diff = diffLines(
+					previousYaml.current as string,
+					yamlDocContent as string
+				)
+				// update ref for the next re-rendering
+				previousYaml.current = yamlDocContent
+				yamlDiff.current = diff
+				return true
+			})
 		} else {
-			setHasYamlChanged(false)
+			setHasYamlChanged(() => {
+				// update ref for the next re-rendering
+				previousYaml.current = yamlDocContent
+				yamlDiff.current = []
+				return false
+			})
 		}
 	}, [yamlDocContent])
 
+	/*
 	useEffect(() => {
 		if (hasYamlChanged) {
-			yamlDiff.current = diffLines(
-				previousYaml.current as string,
-				yamlDocContent as string
-			)
+			setYamlDiff(() => {
+				const diff = diffLines(
+					previousYaml.current as string,
+					yamlDocContent as string
+				)
+				previousYaml.current = yamlDocContent
+				return diff
+			})
+		} else {
+			setYamlDiff(() => {
+				previousYaml.current = yamlDocContent
+				return []
+			})
 		}
 		// update ref for the next re-rendering
-		previousYaml.current = yamlDocContent
 	}, [hasYamlChanged])
-
+*/
 	return (
 		<>
 			<ToolbarTitle
@@ -219,10 +242,13 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					})
 					// code responsible for highlighting the changes reflected in the yaml structure
 					if (hasYamlChanged) {
+						console.log("decoration previousYaml", previousYaml)
+						console.log("decoration hasYamlChanded", hasYamlChanged)
+						console.log("decoration yamlDiff", yamlDiff)
 						if (
-							yamlDiff.current?.[0]?.count &&
-							yamlDiff.current?.[1]?.count &&
-							yamlDiff.current?.[1]?.added
+							yamlDiff?.current?.[0]?.count &&
+							yamlDiff?.current?.[1]?.count &&
+							yamlDiff?.current?.[1]?.added
 						) {
 							const startOffset = yamlDiff.current[0].count + 1
 							const endOffset =
