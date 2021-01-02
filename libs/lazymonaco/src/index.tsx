@@ -49,19 +49,18 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	editorDecoration,
+	editorDecoration: {
+		gutterClass,
+		doForceUpdate,
+		currentPlainYaml,
+		previousPlainYaml,
+	},
 }) => {
 	// force the LazyMonaco component to unmount if hasYamlChanged is true
 	/*	{...(hasYamlChanged && yamlDocContent
 						? { key: md5(yamlDocContent) }
 						: {})}
 	*/
-	const {
-		gutterClass,
-		doForceUpdate,
-		currentPlainYaml,
-		previousPlainYaml,
-	} = editorDecoration
 	if (doForceUpdate) {
 		const diff: Change[] = diffLines(currentPlainYaml, previousPlainYaml)
 		return (
