@@ -8,7 +8,7 @@ import { makeStyles, createStyles } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
-		myLineDecoration: (props: definition.BaseProps) => ({
+		gutter: (props: definition.BaseProps) => ({
 			backgroundColor: styles.getColor(
 				{ intention: "primary" },
 				theme,
@@ -57,7 +57,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				editorDecoration={{
-					gutterClass: classes.myLineDecoration,
+					gutterClass: classes.gutter,
 					doForceUpdate: hasYamlChanged,
 					previousPlainYaml: previousYaml.current || "",
 					currentPlainYaml: yamlDocContent || "",

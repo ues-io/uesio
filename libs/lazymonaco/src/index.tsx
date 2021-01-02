@@ -61,8 +61,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	*/
 	if (editorDecoration?.doForceUpdate) {
 		const diff: Change[] = diffLines(
-			editorDecoration.currentPlainYaml,
-			editorDecoration.previousPlainYaml
+			editorDecoration.previousPlainYaml,
+			editorDecoration.currentPlainYaml
 		)
 		console.log("diff", diff)
 		return (
@@ -93,6 +93,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 							diff?.[1]?.count &&
 							diff?.[1]?.added
 						) {
+							console.log("is true")
 							const startOffset = diff[0].count + 1
 							const endOffset = startOffset + diff[1].count - 1
 							editor.deltaDecorations(
