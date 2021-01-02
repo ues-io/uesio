@@ -12,6 +12,7 @@ declare global {
 import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
 import { diffLines, Change } from "diff"
+import md5 from "md5"
 
 import {
 	ChangeHandler,
@@ -51,6 +52,8 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	editorDidMount,
 	editorDecoration,
 }) => {
+	console.log("editorDecoration", editorDecoration)
+
 	// force the LazyMonaco component to unmount if hasYamlChanged is true
 	/*	{...(hasYamlChanged && yamlDocContent
 						? { key: md5(yamlDocContent) }
@@ -61,8 +64,12 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorDecoration.currentPlainYaml,
 			editorDecoration.previousPlainYaml
 		)
+		console.log("diff", diff)
 		return (
-			<Suspense key={Date.now()} fallback={createElement(LinearProgress)}>
+			<Suspense
+				key={md5(editorDecoration?.currentPlainYaml)}
+				fallback={createElement(LinearProgress)}
+			>
 				<LaziestMonaco
 					value={value}
 					language={language || "yaml"}
@@ -81,15 +88,6 @@ const LazyMonaco: FunctionComponent<Props> = ({
 					}}
 					editorDidMount={(editor, monaco): void => {
 						editorDidMount?.(editor, monaco)
-
-						console.log(
-							"currentPlainYaml",
-							editorDecoration.currentPlainYaml
-						)
-						console.log(
-							"previousPlainYaml",
-							editorDecoration.previousPlainYaml
-						)
 						if (
 							diff?.[0]?.count &&
 							diff?.[1]?.count &&
