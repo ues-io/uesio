@@ -67,7 +67,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 		console.log("diff", diff)
 		return (
 			<Suspense
-				key={md5(editorDecoration?.currentPlainYaml)}
+				key={md5(editorDecoration.currentPlainYaml)}
 				fallback={createElement(LinearProgress)}
 			>
 				<LaziestMonaco
@@ -93,7 +93,6 @@ const LazyMonaco: FunctionComponent<Props> = ({
 							diff?.[1]?.count &&
 							diff?.[1]?.added
 						) {
-							console.log("is true")
 							const startOffset = diff[0].count + 1
 							const endOffset = startOffset + diff[1].count - 1
 							editor.deltaDecorations(
