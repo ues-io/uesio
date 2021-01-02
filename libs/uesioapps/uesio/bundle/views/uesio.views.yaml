@@ -136,6 +136,3 @@ definition:
                           - signal: wire/SAVE
                             wires:
                               - "views"
-dependencies:
-  componentpacks:
-    material.main:

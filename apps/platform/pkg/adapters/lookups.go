@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/loadresponse"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -91,24 +92,31 @@ func GetLookupOps(request reqs.SaveRequest, metadata *MetadataCache) ([]LoadOp, 
 	return lookupRequests, nil
 }
 
-func getLookupResultMap(data []loadresponse.Item, keyField string) map[string]map[string]interface{} {
-	lookupResult := map[string]map[string]interface{}{}
-	for _, record := range data {
-		keyVal, ok := record[keyField]
-		if ok {
+func getLookupResultMap(op *LoadOp, keyField string) (map[string]metadata.LoadableItem, error) {
+	lookupResult := map[string]metadata.LoadableItem{}
+	err := op.Collection.Loop(func(item metadata.LoadableItem) error {
+		keyVal, err := item.GetField(keyField)
+		if err == nil {
 			keyString, ok := keyVal.(string)
 			if ok {
-				lookupResult[keyString] = record
+				lookupResult[keyString] = item
 			}
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
-	return lookupResult
+	return lookupResult, nil
 }
 
-func mergeUpsertLookupResponse(response *loadresponse.Collection, changes map[string]reqs.ChangeRequest, options *reqs.UpsertOptions, collectionMetadata *CollectionMetadata) error {
+func mergeUpsertLookupResponse(op *LoadOp, changes map[string]reqs.ChangeRequest, options *reqs.UpsertOptions, collectionMetadata *CollectionMetadata) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
-	lookupResult := getLookupResultMap(response.Data, matchField)
+	lookupResult, err := getLookupResultMap(op, matchField)
+	if err != nil {
+		return err
+	}
 
 	matchTemplate := getStringWithDefault(options.MatchTemplate, collectionMetadata.IDFormat)
 
@@ -131,7 +139,10 @@ func mergeUpsertLookupResponse(response *loadresponse.Collection, changes map[st
 
 		// If we find a match, populate the id field so that it's an update instead of an insert
 		if ok {
-			idValue := match[collectionMetadata.IDField]
+			idValue, err := match.GetField(collectionMetadata.IDField)
+			if err != nil {
+				return err
+			}
 			change.FieldChanges[collectionMetadata.IDField] = idValue
 			change.IsNew = false
 			change.IDValue = idValue
@@ -142,7 +153,7 @@ func mergeUpsertLookupResponse(response *loadresponse.Collection, changes map[st
 	return nil
 }
 
-func mergeReferenceLookupResponse(response *loadresponse.Collection, lookup reqs.Lookup, changes map[string]reqs.ChangeRequest, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeReferenceLookupResponse(op *LoadOp, lookup reqs.Lookup, changes map[string]reqs.ChangeRequest, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	lookupField := lookup.RefField
 
@@ -162,7 +173,10 @@ func mergeReferenceLookupResponse(response *loadresponse.Collection, lookup reqs
 
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
 
-	lookupResult := getLookupResultMap(response.Data, matchField)
+	lookupResult, err := getLookupResultMap(op, matchField)
+	if err != nil {
+		return err
+	}
 
 	for _, change := range changes {
 
@@ -171,7 +185,11 @@ func mergeReferenceLookupResponse(response *loadresponse.Collection, lookup reqs
 		match, ok := lookupResult[keyVal]
 
 		if ok {
-			change.FieldChanges[fieldMetadata.ForeignKeyField] = match[refCollectionMetadata.IDField]
+			idValue, err := match.GetField(refCollectionMetadata.IDField)
+			if err != nil {
+				return err
+			}
+			change.FieldChanges[fieldMetadata.ForeignKeyField] = idValue
 		} else {
 			change.FieldChanges[fieldMetadata.ForeignKeyField] = nil
 		}
@@ -203,8 +221,7 @@ func MergeLookupResponses(request reqs.SaveRequest, responses []LoadOp, metadata
 
 	for index, lookupResponse := range responses {
 		lookup := request.Options.Lookups[index]
-		collection := lookupResponse.Collection.(*loadresponse.Collection)
-		err := mergeReferenceLookupResponse(collection, lookup, request.Changes, collectionMetadata, metadata)
+		err := mergeReferenceLookupResponse(&lookupResponse, lookup, request.Changes, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}
@@ -212,8 +229,7 @@ func MergeLookupResponses(request reqs.SaveRequest, responses []LoadOp, metadata
 	}
 
 	if upsertResponse != nil {
-		collection := upsertResponse.Collection.(*loadresponse.Collection)
-		err := mergeUpsertLookupResponse(collection, request.Changes, request.Options.Upsert, collectionMetadata)
+		err := mergeUpsertLookupResponse(upsertResponse, request.Changes, request.Options.Upsert, collectionMetadata)
 		if err != nil {
 			return err
 		}

@@ -1,9 +1,6 @@
 package metadata
 
 import (
-	"errors"
-	"strings"
-
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -27,14 +24,7 @@ func (cvc *ConfigValueCollection) NewItem() LoadableItem {
 
 // NewBundleableItem function
 func (cvc *ConfigValueCollection) NewBundleableItem(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 2 {
-		return nil, errors.New("Invalid ComponentPack Key: " + key)
-	}
-	return &ConfigValue{
-		Namespace: keyArray[0],
-		Name:      keyArray[1],
-	}, nil
+	return NewConfigValue(key)
 }
 
 // GetKeyPrefix function

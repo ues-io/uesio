@@ -152,7 +152,3 @@ definition:
                                       margin:
                                         - 0
                                         - 2
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

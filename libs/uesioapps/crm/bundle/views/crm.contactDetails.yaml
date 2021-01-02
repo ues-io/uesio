@@ -83,7 +83,3 @@ definition:
         crm.gender: null
         crm.id: null
         crm.lastname: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null

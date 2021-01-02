@@ -160,7 +160,3 @@ definition:
                                       label: "Collection"
                                   - material.field:
                                       fieldId: uesio.content
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

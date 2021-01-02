@@ -150,7 +150,3 @@ definition:
                                       fieldId: uesio.definition
                                       height: 350px
                                       language: "yaml"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

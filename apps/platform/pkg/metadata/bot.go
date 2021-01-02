@@ -48,6 +48,7 @@ func newTriggerBot(keyArray []string) (*Bot, error) {
 
 // Bot struct
 type Bot struct {
+	ID            string `uesio:"uesio.id"`
 	Name          string `yaml:"name" uesio:"uesio.name"`
 	CollectionRef string `yaml:"collection,omitempty" uesio:"uesio.collection"`
 	Namespace     string `yaml:"-" uesio:"-"`

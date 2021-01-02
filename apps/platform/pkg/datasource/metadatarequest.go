@@ -37,7 +37,7 @@ func (mr *MetadataRequest) HasRequests() bool {
 // AddCollection function
 func (mr *MetadataRequest) AddCollection(collectionName string) error {
 	if collectionName == "" {
-		return fmt.Errorf("adding field: %s", collectionName)
+		return fmt.Errorf("adding collection: %s", collectionName)
 	}
 	if mr.Collections == nil {
 		mr.Collections = map[string]FieldsMap{}

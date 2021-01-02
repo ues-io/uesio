@@ -81,7 +81,3 @@ definition:
         crm.name: null
         crm.profilepic: null
         crm.description: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null

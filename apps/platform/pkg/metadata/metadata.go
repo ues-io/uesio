@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/reflecttools"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -67,16 +68,13 @@ func ParseKey(key string) (string, string, error) {
 // StandardGetFields function
 func StandardGetFields(group CollectionableGroup) []reqs.LoadRequestField {
 	fieldRequests := []reqs.LoadRequestField{}
-	tags, err := Tags(group.NewItem(), "uesio")
+	names, err := reflecttools.GetFieldNames(group.NewItem())
 	if err != nil {
 		return fieldRequests
 	}
-	for _, tag := range tags {
-		if tag == "-" {
-			continue
-		}
+	for _, name := range names {
 		fieldRequests = append(fieldRequests, reqs.LoadRequestField{
-			ID: tag,
+			ID: name,
 		})
 	}
 	return fieldRequests
@@ -84,12 +82,12 @@ func StandardGetFields(group CollectionableGroup) []reqs.LoadRequestField {
 
 // StandardFieldGet function
 func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
-	return GetField(item, fieldName)
+	return reflecttools.GetField(item, fieldName)
 }
 
 // StandardFieldSet function
 func StandardFieldSet(item CollectionableItem, fieldName string, value interface{}) error {
-	return SetField(item, fieldName, value)
+	return reflecttools.SetField(item, fieldName, value)
 }
 
 // BundleableFactory function type

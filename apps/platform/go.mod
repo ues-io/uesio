@@ -15,7 +15,6 @@ require (
 	github.com/icza/mighty v0.0.0-20200205104645-c377cb773678 // indirect
 	github.com/icza/session v1.2.0
 	github.com/jinzhu/copier v0.0.0-20201025035756-632e723a6687
-	github.com/mitchellh/mapstructure v1.3.3
 	github.com/spf13/cobra v1.1.1
 	google.golang.org/api v0.34.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776

@@ -7,7 +7,3 @@ definition:
         text: CRM Home
         variant: h5
   wires: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null

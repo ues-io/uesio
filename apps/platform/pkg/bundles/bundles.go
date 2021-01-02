@@ -115,7 +115,10 @@ func LoadAllFromAny(group metadata.BundleableGroup, conditions reqs.BundleCondit
 	// Get all avaliable namespaces
 	namespaces := session.GetContextNamespaces()
 	for namespace := range namespaces {
-		LoadAll(group, namespace, conditions, session)
+		err := LoadAll(group, namespace, conditions, session)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

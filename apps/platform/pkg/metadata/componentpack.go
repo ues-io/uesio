@@ -4,9 +4,14 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 
 // ComponentPack struct
 type ComponentPack struct {
-	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"namespace" uesio:"-"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+	Name       string                            `yaml:"name" uesio:"uesio.name"`
+	Namespace  string                            `yaml:"namespace" uesio:"-"`
+	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`
+	Components map[string]*ComponentDependencies `yaml:"components" uesio:"uesio.components"`
+}
+
+type ComponentDependencies struct {
+	ConfigValues []string `yaml:"configvalues"`
 }
 
 // GetCollectionName function

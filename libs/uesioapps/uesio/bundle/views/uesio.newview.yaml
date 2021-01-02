@@ -98,6 +98,3 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
                                     namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:

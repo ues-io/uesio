@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
@@ -17,8 +18,13 @@ import (
 type ViewResponse struct {
 	Name         string
 	Namespace    string
-	Definition   *yaml.Node                    `yaml:"definition"`
-	Dependencies map[string]DependencyResponse `yaml:"dependencies"`
+	Definition   *yaml.Node        `yaml:"definition"`
+	Dependencies *ViewDependencies `yaml:"dependencies"`
+}
+
+type ViewDependencies struct {
+	ComponentPacks map[string]bool   `yaml:"componentpacks,omitempty"`
+	ConfigValues   map[string]string `yaml:"configvalues,omitempty"`
 }
 
 // ViewSaveResponse struct
@@ -28,9 +34,6 @@ type ViewSaveResponse struct {
 
 // SaveViewRequest type
 type SaveViewRequest map[string]string
-
-// DependencyResponse struct
-type DependencyResponse map[string]interface{}
 
 // SaveViews is way good - so good
 func SaveViews(w http.ResponseWriter, r *http.Request) {
@@ -78,11 +81,10 @@ func SaveViews(w http.ResponseWriter, r *http.Request) {
 		}
 
 		views = append(views, metadata.View{
-			Name:         viewName,
-			Workspace:    existingView.Workspace,
-			Definition:   defNode,
-			Dependencies: existingView.Dependencies,
-			ID:           existingView.ID,
+			Name:       viewName,
+			Workspace:  existingView.Workspace,
+			Definition: defNode,
+			ID:         existingView.ID,
 		})
 
 	}
@@ -163,6 +165,71 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	ExecuteIndexTemplate(w, route, true, session)
 }
 
+func getViewDependencies(view *metadata.View, session *sess.Session) (*ViewDependencies, error) {
+	site := session.GetSite()
+	// Process Configuration Value Dependencies
+	componentsUsed, err := view.GetComponents()
+	if err != nil {
+		return nil, err
+	}
+
+	packs := map[string]metadata.ComponentPackCollection{}
+
+	cPackDeps := map[string]bool{}
+	configDependencies := map[string]string{}
+
+	for key := range componentsUsed {
+		namespace, name, err := metadata.ParseKey(key)
+		if err != nil {
+			return nil, err
+		}
+
+		packsForNamespace, ok := packs[namespace]
+		if !ok {
+			var packs metadata.ComponentPackCollection
+			err = bundles.LoadAll(&packs, namespace, nil, session)
+			if err != nil {
+				return nil, err
+			}
+			packsForNamespace = packs
+		}
+
+		for _, pack := range packsForNamespace {
+			componentInfo, ok := pack.Components[name]
+			if ok {
+				cPackDeps[pack.GetKey()] = true
+				if componentInfo != nil {
+					for _, key := range componentInfo.ConfigValues {
+						_, ok := configDependencies[key]
+						if !ok {
+							configValue, err := metadata.NewConfigValue(key)
+							if err != nil {
+								return nil, err
+							}
+							err = bundles.Load(configValue, session)
+							if err != nil {
+								return nil, err
+							}
+							value, err := metadata.GetConfigValue(key, site)
+							if err != nil {
+								return nil, err
+							}
+							configDependencies[key] = value
+						}
+					}
+				}
+			}
+		}
+	}
+
+	dependenciesResponse := ViewDependencies{
+		ComponentPacks: cPackDeps,
+		ConfigValues:   configDependencies,
+	}
+
+	return &dependenciesResponse, nil
+}
+
 // ViewAPI is good
 func ViewAPI(w http.ResponseWriter, r *http.Request) {
 
@@ -172,7 +239,6 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 	viewName := vars["name"]
 
 	session := middlewares.GetSession(r)
-	site := session.GetSite()
 
 	view := metadata.View{
 		Name:      viewName,
@@ -186,41 +252,16 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dependenciesResponse := map[string]DependencyResponse{}
-
-	// Process Configuration Value Dependencies
-	configValuesKey := "configvalues"
-	cvd, ok := view.Dependencies[configValuesKey]
-	if ok {
-		configDependencies := map[string]interface{}{}
-
-		for key := range cvd {
-			configValue, err := metadata.GetConfigValue(key, site)
-			if err != nil {
-				logger.LogErrorWithTrace(r, err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-			}
-			configDependencies[key] = configValue
-		}
-		dependenciesResponse[configValuesKey] = configDependencies
-	}
-
-	// Process ComponentPack Dependencies
-	componentPacksKey := "componentpacks"
-	csd, ok := view.Dependencies[componentPacksKey]
-	if ok {
-		cpDependencies := map[string]interface{}{}
-
-		for key := range csd {
-			cpDependencies[key] = true
-		}
-		dependenciesResponse[componentPacksKey] = cpDependencies
+	dependencies, err := getViewDependencies(&view, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	respondYAML(w, r, &ViewResponse{
 		Name:         view.Name,
 		Namespace:    view.Namespace,
 		Definition:   &view.Definition,
-		Dependencies: dependenciesResponse,
+		Dependencies: dependencies,
 	})
 }

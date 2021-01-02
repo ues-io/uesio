@@ -71,6 +71,13 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
+	if fieldName == "uesio.definition" {
+		bytes, err := yaml.Marshal(t.Definition)
+		if err != nil {
+			return nil, err
+		}
+		return string(bytes), nil
+	}
 	return StandardFieldGet(t, fieldName)
 }
 
