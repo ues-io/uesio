@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import { component, definition, hooks } from "@uesio/ui"
 import ToolbarTitle from "../toolbartitle"
 import ExpandPanel from "../expandpanel/expandpanel"
@@ -29,14 +29,14 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 
 	const filteredList: Array<filteredListInterface> = []
 
-	component.registry.getBuilderNamespaces().map((namespace: string) => {
+	component.registry.getBuilderNamespaces().forEach((namespace: string) => {
 		const filteredListItem = {} as filteredListInterface
 		filteredListItem.namespace = namespace
 		filteredListItem.names = []
 
 		component.registry
 			.getBuilderComponents(namespace)
-			.map((name: string) => {
+			.forEach((name: string) => {
 				const definition = component.registry.getPropertiesDefinition(
 					namespace,
 					name
@@ -51,14 +51,14 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 	})
 
 	return (
-		<Fragment>
+		<>
 			<ToolbarTitle title="Components" />
 			<div
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
 				style={{
 					overflow: "auto",
-					flex: "1",
+					flex: 1,
 				}}
 			>
 				{filteredList.map((element, index) => (
@@ -83,7 +83,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 					</ExpandPanel>
 				))}
 			</div>
-		</Fragment>
+		</>
 	)
 }
 

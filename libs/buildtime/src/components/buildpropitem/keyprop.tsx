@@ -6,7 +6,7 @@ import {
 	inputProps,
 	inputLabelProps,
 } from "./proprendererdefinition"
-import { definition, hooks, util } from "@uesio/ui"
+import { hooks, util } from "@uesio/ui"
 
 const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 	const { path, descriptor } = props
@@ -14,15 +14,10 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 	const key = pathArray.pop()
 	const uesio = hooks.useUesio(props)
 
-	const getValue = (): definition.Definition => key
-
-	const setValue = (value: string): void =>
-		uesio.view.changeDefinitionKey(path, value)
-
 	// Fall back to text component
 	return (
 		<TextField
-			value={getValue()}
+			value={key}
 			label={descriptor.label}
 			size="small"
 			fullWidth={true}
@@ -30,7 +25,9 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 			InputProps={inputProps}
 			InputLabelProps={inputLabelProps}
 			variant="outlined"
-			onChange={(event): void => setValue(event.target.value)}
+			onChange={(event): void =>
+				uesio.view.changeDefinitionKey(path, event.target.value)
+			}
 		/>
 	)
 }

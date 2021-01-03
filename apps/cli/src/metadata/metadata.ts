@@ -13,32 +13,39 @@ interface Metadata {
 	create(): Promise<void>
 }
 
+type metadataType =
+	| "app"
+	| "workspace"
+	| "bundle"
+	| "site"
+	| "domain"
+	| "dependency"
+
+type metadataTypes = "apps" | "workspaces"
+
 type MetadataMap = {
-	[key: string]: Metadata
+	[key in metadataType]: Metadata
 }
 
 const metadataMap: MetadataMap = {
-	app: App as Metadata,
-	workspace: Workspace as Metadata,
-	bundle: Bundle as Metadata,
-	site: Site as Metadata,
-	domain: SiteDomain as Metadata,
-	dependency: BundleDependency as Metadata,
+	app: App,
+	workspace: Workspace,
+	bundle: Bundle,
+	site: Site,
+	domain: SiteDomain,
+	dependency: BundleDependency,
 }
 
-const metadataMapPlural: MetadataMap = {
-	apps: App as Metadata,
-	workspaces: Workspace as Metadata,
+const metadataMapPlural: { [key in metadataTypes]: Metadata } = {
+	apps: App,
+	workspaces: Workspace,
 }
 
-const getMetadataByType = (type: string): Metadata => {
-	return metadataMap[type]
-}
-const getMetadataByTypePlural = (type: string): Metadata => {
-	return metadataMapPlural[type]
-}
-const getMetadataMap = (): MetadataMap => {
-	return metadataMap
-}
+const getMetadataByType = (type: metadataType): Metadata => metadataMap[type]
+
+const getMetadataByTypePlural = (type: metadataTypes): Metadata =>
+	metadataMapPlural[type]
+
+const getMetadataMap = (): MetadataMap => metadataMap
 
 export { Metadata, getMetadataMap, getMetadataByType, getMetadataByTypePlural }

@@ -40,7 +40,7 @@ const generateReferenceFieldDisplayValue = (
 
 const Reference: FunctionComponent<RendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const { fieldMetadata, hideLabel, mode, fieldId, record, context } = props
 
 	const referencedCollection = uesio.wire.useCollection(
@@ -83,10 +83,7 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 				{...props}
 				value={value}
 				setValue={(value: string) => {
-					if (!foreignFieldId) {
-						return
-					}
-					record.update(foreignFieldId, value)
+					foreignFieldId && record.update(foreignFieldId, value)
 				}}
 				getItems={async (
 					searchText: string,
@@ -124,8 +121,8 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 					})
 					callback(
 						result.wires[0].data?.map((record) => ({
-							value: record[nameField] + "",
-							id: record[idField] + "",
+							value: `${record[nameField]}`,
+							id: `${record[idField]}`,
 						})) || []
 					)
 				}}

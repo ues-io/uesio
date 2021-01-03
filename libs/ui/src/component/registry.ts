@@ -1,13 +1,19 @@
+import { FunctionComponent, ComponentType } from "react"
 import { BaseProps, BasePropsPlus } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash.topath"
 import NotFound from "../components/notfound"
-import { FC } from "react"
 import { ComponentSignalDescriptor } from "../definition/signal"
 
-const registry: Record<string, Record<string, FC<BaseProps>>> = {}
-const builderRegistry: Record<string, Record<string, FC<BaseProps>>> = {}
+const registry: Record<
+	string,
+	Record<string, FunctionComponent<BaseProps>>
+> = {}
+const builderRegistry: Record<
+	string,
+	Record<string, FunctionComponent<BaseProps>>
+> = {}
 const definitionRegistry: Record<
 	string,
 	Record<string, BuildPropertiesDefinition>
@@ -32,17 +38,22 @@ const addToRegistry = <T>(
 const register = (
 	namespace: string,
 	name: string,
-	componentType: React.FunctionComponent<BaseProps>,
+	componentType: FunctionComponent<BaseProps>,
 	signals?: Record<string, ComponentSignalDescriptor>
 ) => {
-	addToRegistry<FC<BaseProps>>(registry, namespace, name, componentType)
+	addToRegistry<FunctionComponent<BaseProps>>(
+		registry,
+		namespace,
+		name,
+		componentType
+	)
 	signals && addToRegistry(componentSignalsRegistry, namespace, name, signals)
 }
 
 const registerBuilder = (
 	namespace: string,
 	name: string,
-	componentType: React.FunctionComponent<BaseProps>,
+	componentType: FunctionComponent<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
 	addToRegistry(builderRegistry, namespace, name, componentType)
@@ -60,10 +71,7 @@ const getLoader = (namespace: string, name: string, buildMode: boolean) =>
 		? getBuildtimeLoader(namespace, name)
 		: getRuntimeLoader(namespace, name)
 
-const get = (
-	namespace: string,
-	name: string
-): React.ComponentType<BasePropsPlus> =>
+const get = (namespace: string, name: string): ComponentType<BasePropsPlus> =>
 	getLoader(namespace, name, false) || NotFound
 
 const getSignal = (namespace: string, name: string, signal: string) =>

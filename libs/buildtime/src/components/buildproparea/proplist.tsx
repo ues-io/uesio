@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import BuildPropItem from "../buildpropitem/buildpropitem"
 import { definition, builder } from "@uesio/ui"
 
@@ -12,7 +12,7 @@ const PropList: FunctionComponent<Props> = ({
 	context,
 	properties,
 }) => (
-	<Fragment>
+	<>
 		{properties.map((descriptor, index) => (
 			<BuildPropItem
 				key={index}
@@ -23,7 +23,7 @@ const PropList: FunctionComponent<Props> = ({
 				context={context}
 			/>
 		))}
-	</Fragment>
+	</>
 )
 
 export default PropList

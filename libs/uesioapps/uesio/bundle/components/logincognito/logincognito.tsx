@@ -75,22 +75,71 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 		ClientId: clientId, // Your client id here
 	})
 
-const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
-	const classes = useLoginStyles(props)
+const LoginButton: FunctionComponent<LoginButtonProps> = ({
+	setMode,
+	text,
+}) => {
+	const classes = useLoginStyles()
 	return (
 		<button
-			onClick={() => props.setMode("login")}
+			onClick={() => setMode("login")}
 			className={classes.loginButton}
 		>
 			<LoginIcon image="uesio.amazonsmall" />
-			<LoginText text={props.text} />
+			<LoginText text={text} />
 		</button>
+	)
+}
+
+const signUp = (
+	pool: CognitoUserPool,
+	setMessage: (message: string) => void,
+	setMode: (message: string) => void
+) => (
+	firstname: string,
+	lastname: string,
+	username: string,
+	email: string,
+	password: string
+): void => {
+	const attributeList = [
+		new CognitoUserAttribute({
+			Name: "email",
+			Value: email,
+		}),
+		new CognitoUserAttribute({
+			Name: "family_name",
+			Value: lastname,
+		}),
+		new CognitoUserAttribute({
+			Name: "given_name",
+			Value: firstname,
+		}),
+	]
+
+	pool.signUp(
+		username,
+		password,
+		attributeList,
+		[],
+		(err: Error, result: unknown) => {
+			if (err) {
+				setMessage(err.message || JSON.stringify(err))
+				return
+			}
+			if (!result) {
+				setMessage("No result!")
+				return
+			}
+			setMessage("")
+			setMode("confirm")
+		}
 	)
 }
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useLoginStyles(props)
+	const classes = useLoginStyles()
 	const clientIdKey = props.definition.clientId
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
@@ -130,58 +179,20 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	async function confirm(verificationCode: string): Promise<void> {
 		const cognitoUser = getUser(signupUsername, pool)
 		console.log("confirm?", verificationCode)
-		cognitoUser.confirmRegistration(verificationCode, true, function (
-			err,
-			result
-		) {
-			if (err) {
-				setMessage(err.message || JSON.stringify(err))
-				return
+		cognitoUser.confirmRegistration(
+			verificationCode,
+			true,
+			(err, result) => {
+				if (err) {
+					setMessage(err.message || JSON.stringify(err))
+					return
+				}
+				if (result === "SUCCESS") {
+					setMessage("")
+					logIn(signupUsername, signupPassword)
+				}
 			}
-			if (result === "SUCCESS") {
-				setMessage("")
-				logIn(signupUsername, signupPassword)
-			}
-		})
-	}
-
-	async function signUp(
-		firstname: string,
-		lastname: string,
-		username: string,
-		email: string,
-		password: string
-	): Promise<void> {
-		const attributeList = [
-			new CognitoUserAttribute({
-				Name: "email",
-				Value: email,
-			}),
-			new CognitoUserAttribute({
-				Name: "family_name",
-				Value: lastname,
-			}),
-			new CognitoUserAttribute({
-				Name: "given_name",
-				Value: firstname,
-			}),
-		]
-
-		pool.signUp(username, password, attributeList, [], function (
-			err,
-			result
-		) {
-			if (err) {
-				setMessage(err.message || JSON.stringify(err))
-				return
-			}
-			if (!result) {
-				setMessage("No result!")
-				return
-			}
-			setMessage("")
-			setMode("confirm")
-		})
+		)
 	}
 
 	const AlertComponent = component.registry.get("material", "alert")
@@ -220,7 +231,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					setSignupUsername={setSignupUsername}
 					signupPassword={signupPassword}
 					setSignupPassword={setSignupPassword}
-					signUp={signUp}
+					signUp={signUp(pool, setMessage, setMode)}
 				/>
 			)}
 			{mode === "confirm" && (

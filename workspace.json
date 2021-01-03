@@ -351,13 +351,13 @@
           "options": {
             "commands": [
               "mkdir -p dist/vendor",
-              "wget -qO dist/vendor/react.development.js https://unpkg.com/react@16/umd/react.development.js &> /dev/null",
-              "wget -qO dist/vendor/react.production.min.js https://unpkg.com/react@16/umd/react.production.min.js &> /dev/null",
-              "wget -qO dist/vendor/react-dom.development.js https://unpkg.com/react-dom@16/umd/react-dom.development.js &> /dev/null",
-              "wget -qO dist/vendor/react-dom.production.min.js https://unpkg.com/react-dom@16/umd/react-dom.production.min.js &> /dev/null",
-              "wget -qO dist/vendor/redux.js https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.4/redux.js &> /dev/null",
-              "wget -qO dist/vendor/react-redux.js https://cdnjs.cloudflare.com/ajax/libs/react-redux/7.1.3/react-redux.js &> /dev/null",
-              "wget -qO dist/vendor/material-ui.development.js https://unpkg.com/@material-ui/core@latest/umd/material-ui.development.js &> /dev/null",
+              "npm run get-module-version --moduleName=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} wget -O dist/vendor/react.development.js {} &",
+              "npm run get-module-version --moduleName=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} wget -O dist/vendor/react.production.min.js {} &",
+              "npm run get-module-version --moduleName=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} wget -O dist/vendor/react-dom.development.js {} &",
+              "npm run get-module-version --moduleName=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.production.min.js\" | xargs -I{} wget -O dist/vendor/react-dom.production.min.js {} &",
+              "npm run get-module-version --moduleName=redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/redux/{}/redux.js\" | xargs -I{} wget -O dist/vendor/redux.js {} &",
+              "npm run get-module-version --moduleName=react-redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/react-redux/{}/react-redux.js\" | xargs -I{} wget -O dist/vendor/react-redux.js {} &",
+              "npm run get-module-version --moduleName=@material-ui/core | xargs -I{} echo \"https://unpkg.com/@material-ui/core@{}/umd/material-ui.development.js\" | xargs -I{} wget -O dist/vendor/material-ui.development.js {} &",
               "echo Done!"
             ],
             "parallel": false

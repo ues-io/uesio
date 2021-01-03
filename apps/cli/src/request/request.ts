@@ -1,3 +1,5 @@
+import { Archiver } from "archiver"
+import { ReadStream } from "fs"
 import * as https from "https"
 import fetch, { Response, RequestInit } from "node-fetch"
 
@@ -5,16 +7,14 @@ const agent = new https.Agent({
 	rejectUnauthorized: false,
 })
 
-const makeFullURL = (url: string): string => {
-	return `https://uesio-dev.com:3000/${url}`
-}
+const makeFullURL = (url: string): string => `https://uesio-dev.com:3000/${url}`
 
 const get = (
 	url: string,
 	cookie?: string,
 	init?: RequestInit | undefined
-): Promise<Response> => {
-	return fetch(makeFullURL(url), {
+): Promise<Response> =>
+	fetch(makeFullURL(url), {
 		...init,
 		agent,
 		headers: {
@@ -24,7 +24,6 @@ const get = (
 			}),
 		},
 	})
-}
 
 const post = (
 	url: string,
@@ -32,13 +31,14 @@ const post = (
 		| string
 		| ArrayBuffer
 		| ArrayBufferView
-		| NodeJS.ReadableStream
 		| URLSearchParams
+		| Archiver
+		| ReadStream
 		| undefined,
 	cookie?: string,
 	init?: RequestInit | undefined
-): Promise<Response> => {
-	return fetch(makeFullURL(url), {
+): Promise<Response> =>
+	fetch(makeFullURL(url), {
 		...init,
 		agent,
 		method: "post",
@@ -51,6 +51,5 @@ const post = (
 		},
 		body,
 	})
-}
 
 export { get, post }

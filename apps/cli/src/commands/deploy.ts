@@ -24,7 +24,7 @@ export default class Deploy extends Command {
 		})
 
 		// good practice to catch warnings (ie stat failures and other non-blocking errors)
-		archive.on("warning", function (err) {
+		archive.on("warning", (err) => {
 			if (err.code === "ENOENT") {
 				// log warning
 			} else {
@@ -34,7 +34,7 @@ export default class Deploy extends Command {
 		})
 
 		// good practice to catch this error explicitly
-		archive.on("error", function (err) {
+		archive.on("error", (err) => {
 			throw err
 		})
 
