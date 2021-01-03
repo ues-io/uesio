@@ -4,7 +4,6 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -62,12 +61,16 @@ func PlatformLoad(group metadata.CollectionableGroup, conditions []reqs.LoadRequ
 
 // PlatformLoadOne function
 func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
-	collection := item.GetCollection()
+	collection := &LoadOneCollection{
+		Collection: item.GetCollection(),
+		Item:       item,
+	}
 
 	err := PlatformLoad(collection, conditions, session)
 	if err != nil {
 		return err
 	}
+
 	length := collection.Len()
 
 	if length == 0 {
@@ -77,7 +80,7 @@ func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadReq
 		return errors.New("Duplicate item found from platform load: " + collection.GetName())
 	}
 
-	return copier.Copy(item, collection.GetItem(0))
+	return nil
 }
 
 // PlatformDelete function

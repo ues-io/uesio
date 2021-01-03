@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -26,7 +25,6 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 
 	err := yaml.NewEncoder(w).Encode(v)
 	if err != nil {
-		fmt.Println("Happed her")
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
