@@ -52,8 +52,6 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	editorDidMount,
 	editorDecoration,
 }) => {
-	console.log("editorDecoration", editorDecoration)
-
 	// force the LazyMonaco component to unmount if hasYamlChanged is true
 	/*	{...(hasYamlChanged && yamlDocContent
 						? { key: md5(yamlDocContent) }
@@ -64,7 +62,6 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorDecoration.previousPlainYaml,
 			editorDecoration.currentPlainYaml
 		)
-		console.log("diff", diff)
 		return (
 			<Suspense
 				key={md5(editorDecoration.currentPlainYaml)}
