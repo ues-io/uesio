@@ -32,6 +32,3 @@ definition:
                       - signal: "route/NAVIGATE"
                         path: "login"
                         namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:

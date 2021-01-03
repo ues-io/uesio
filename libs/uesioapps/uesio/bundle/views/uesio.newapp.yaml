@@ -69,7 +69,3 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "home"
                                     namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

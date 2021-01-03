@@ -120,10 +120,10 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 						],
 					})
 					callback(
-						result.wires[0].data.map((record) => ({
+						result.wires[0].data?.map((record) => ({
 							value: `${record[nameField]}`,
 							id: `${record[idField]}`,
-						}))
+						})) || []
 					)
 				}}
 			/>

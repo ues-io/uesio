@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // BundleCollection slice
 type BundleCollection []Bundle
 
@@ -9,33 +11,28 @@ func (bc *BundleCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BundleCollection) GetFields() []string {
-	return []string{"id", "major", "minor", "patch", "namespace", "description"}
-}
-
-// UnMarshal function
-func (bc *BundleCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(bc, data)
-}
-
-// Marshal function
-func (bc *BundleCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(bc)
+func (bc *BundleCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(bc)
 }
 
 // GetItem function
-func (bc *BundleCollection) GetItem(index int) CollectionableItem {
+func (bc *BundleCollection) GetItem(index int) LoadableItem {
 	actual := *bc
 	return &actual[index]
 }
 
 // AddItem function
-func (bc *BundleCollection) AddItem(item CollectionableItem) {
+func (bc *BundleCollection) AddItem(item LoadableItem) {
 	*bc = append(*bc, *item.(*Bundle))
 }
 
+// NewItem function
+func (bc *BundleCollection) NewItem() LoadableItem {
+	return &Bundle{}
+}
+
 // Loop function
-func (bc *BundleCollection) Loop(iter func(item CollectionableItem) error) error {
+func (bc *BundleCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {

@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // UserCollection slice
 type UserCollection []User
 
@@ -9,33 +11,28 @@ func (uc *UserCollection) GetName() string {
 }
 
 // GetFields function
-func (uc *UserCollection) GetFields() []string {
-	return []string{"id", "firstname", "lastname", "profile"}
-}
-
-// UnMarshal function
-func (uc *UserCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(uc, data)
-}
-
-// Marshal function
-func (uc *UserCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(uc)
+func (uc *UserCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(uc)
 }
 
 // GetItem function
-func (uc *UserCollection) GetItem(index int) CollectionableItem {
+func (uc *UserCollection) GetItem(index int) LoadableItem {
 	actual := *uc
 	return &actual[index]
 }
 
 // AddItem function
-func (uc *UserCollection) AddItem(item CollectionableItem) {
+func (uc *UserCollection) AddItem(item LoadableItem) {
 	*uc = append(*uc, *item.(*User))
 }
 
+// NewItem function
+func (uc *UserCollection) NewItem() LoadableItem {
+	return &User{}
+}
+
 // Loop function
-func (uc *UserCollection) Loop(iter func(item CollectionableItem) error) error {
+func (uc *UserCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *uc {
 		err := iter(uc.GetItem(index))
 		if err != nil {

@@ -11,12 +11,17 @@ func (dsc *DataSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (dsc *DataSourceCollection) GetFields() []string {
-	return []string{"id", "name", "type", "region", "url", "database", "username", "password"}
+func (dsc *DataSourceCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(dsc)
 }
 
 // NewItem function
-func (dsc *DataSourceCollection) NewItem(key string) (BundleableItem, error) {
+func (dsc *DataSourceCollection) NewItem() LoadableItem {
+	return &DataSource{}
+}
+
+// NewBundleableItem function
+func (dsc *DataSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewDataSource(key)
 }
 
@@ -26,28 +31,18 @@ func (dsc *DataSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) 
 }
 
 // AddItem function
-func (dsc *DataSourceCollection) AddItem(item CollectionableItem) {
+func (dsc *DataSourceCollection) AddItem(item LoadableItem) {
 	*dsc = append(*dsc, *item.(*DataSource))
 }
 
-// UnMarshal function
-func (dsc *DataSourceCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(dsc, data)
-}
-
-// Marshal function
-func (dsc *DataSourceCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(dsc)
-}
-
 // GetItem function
-func (dsc *DataSourceCollection) GetItem(index int) CollectionableItem {
+func (dsc *DataSourceCollection) GetItem(index int) LoadableItem {
 	actual := *dsc
 	return &actual[index]
 }
 
 // Loop function
-func (dsc *DataSourceCollection) Loop(iter func(item CollectionableItem) error) error {
+func (dsc *DataSourceCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *dsc {
 		err := iter(dsc.GetItem(index))
 		if err != nil {

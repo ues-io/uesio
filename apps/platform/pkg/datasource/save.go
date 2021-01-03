@@ -29,7 +29,10 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 				LoadAllFields: true,
 			},
 		}
-		collections.AddCollection(collectionKey)
+		err := collections.AddCollection(collectionKey)
+		if err != nil {
+			return nil, err
+		}
 
 		if request.Options != nil && request.Options.Lookups != nil {
 			for _, lookup := range request.Options.Lookups {
@@ -39,11 +42,14 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 						lookup.MatchField: FieldsMap{},
 					}
 				}
-				collections.AddField(collectionKey, lookup.RefField, subFields)
+				err := collections.AddField(collectionKey, lookup.RefField, subFields)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
-		err := collections.Load(&metadataResponse, collatedMetadata, session)
+		err = collections.Load(&metadataResponse, collatedMetadata, session)
 		if err != nil {
 			return nil, err
 		}

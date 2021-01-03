@@ -95,6 +95,16 @@ func (fs *FileSource) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (fs *FileSource) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(fs, fieldName, value)
+}
+
+// GetField function
+func (fs *FileSource) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(fs, fieldName)
+}
+
 // GetNamespace function
 func (fs *FileSource) GetNamespace() string {
 	return fs.Namespace

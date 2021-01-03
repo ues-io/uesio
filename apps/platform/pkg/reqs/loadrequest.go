@@ -1,7 +1,5 @@
 package reqs
 
-import "errors"
-
 // LoadRequest struct
 type LoadRequest struct {
 	Collection string                 `json:"collection"`
@@ -19,17 +17,6 @@ func (lr *LoadRequest) GetCollection() string {
 // GetWire function
 func (lr *LoadRequest) GetWire() string {
 	return lr.Wire
-}
-
-// GetRequestByWireName function
-func GetRequestByWireName(requests []LoadRequest, wireName string) (*LoadRequest, error) {
-	// Look through the previous wires to find the one to look up on.
-	for _, wire := range requests {
-		if wire.Wire == wireName {
-			return &wire, nil
-		}
-	}
-	return nil, errors.New("Could not find lookup wire")
 }
 
 // LoadRequestField struct

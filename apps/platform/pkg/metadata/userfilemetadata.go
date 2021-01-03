@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 //Represents the "userfile" entry created to track files (Invisible to the user)
 
 // UserFileMetadata struct
@@ -29,37 +27,12 @@ func (ufm *UserFileMetadata) GetCollection() CollectionableGroup {
 	return &ufmc
 }
 
-// GetConditions function
-func (ufm *UserFileMetadata) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: ufm.Name,
-		},
-	}, nil
+// SetField function
+func (ufm *UserFileMetadata) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(ufm, fieldName, value)
 }
 
-// GetNamespace function
-func (ufm *UserFileMetadata) GetNamespace() string {
-	return ""
-}
-
-// SetNamespace function
-func (ufm *UserFileMetadata) SetNamespace(namespace string) {
-	//u.Namespace = namespace
-}
-
-// SetWorkspace function
-func (ufm *UserFileMetadata) SetWorkspace(workspace string) {
-
-}
-
-// GetKey function
-func (ufm *UserFileMetadata) GetKey() string {
-	return ufm.Name
-}
-
-// GetPermChecker function
-func (ufm *UserFileMetadata) GetPermChecker() *PermissionSet {
-	return nil
+// GetField function
+func (ufm *UserFileMetadata) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(ufm, fieldName)
 }

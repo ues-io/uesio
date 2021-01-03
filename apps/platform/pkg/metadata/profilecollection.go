@@ -11,12 +11,17 @@ func (pc *ProfileCollection) GetName() string {
 }
 
 // GetFields function
-func (pc *ProfileCollection) GetFields() []string {
-	return []string{"id"}
+func (pc *ProfileCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(pc)
 }
 
 // NewItem function
-func (pc *ProfileCollection) NewItem(key string) (BundleableItem, error) {
+func (pc *ProfileCollection) NewItem() LoadableItem {
+	return &Profile{}
+}
+
+// NewBundleableItem function
+func (pc *ProfileCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewProfile(key)
 }
 
@@ -26,27 +31,18 @@ func (pc *ProfileCollection) GetKeyPrefix(conditions reqs.BundleConditions) stri
 }
 
 // AddItem function
-func (pc *ProfileCollection) AddItem(item CollectionableItem) {
-}
-
-// UnMarshal function
-func (pc *ProfileCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(pc, data)
-}
-
-// Marshal function
-func (pc *ProfileCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(pc)
+func (pc *ProfileCollection) AddItem(item LoadableItem) {
+	*pc = append(*pc, *item.(*Profile))
 }
 
 // GetItem function
-func (pc *ProfileCollection) GetItem(index int) CollectionableItem {
+func (pc *ProfileCollection) GetItem(index int) LoadableItem {
 	actual := *pc
 	return &actual[index]
 }
 
 // Loop function
-func (pc *ProfileCollection) Loop(iter func(item CollectionableItem) error) error {
+func (pc *ProfileCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index))
 		if err != nil {

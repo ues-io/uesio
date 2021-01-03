@@ -64,6 +64,16 @@ func (p *Profile) GetPermChecker() *PermissionSet {
 	return nil
 }
 
+// SetField function
+func (p *Profile) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(p, fieldName, value)
+}
+
+// GetField function
+func (p *Profile) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(p, fieldName)
+}
+
 // GetNamespace function
 func (p *Profile) GetNamespace() string {
 	return p.Namespace

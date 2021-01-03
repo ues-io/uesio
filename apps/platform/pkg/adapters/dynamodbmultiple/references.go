@@ -15,7 +15,7 @@ func followUpReferenceFieldLoad(
 	ctx context.Context,
 	client *dynamodb.DynamoDB,
 	metadata *adapters.MetadataCache,
-	dataPayload []map[string]interface{},
+	op adapters.LoadOp,
 	originalCollection *adapters.CollectionMetadata,
 	referenceFields adapters.ReferenceRegistry,
 ) error {
@@ -116,7 +116,10 @@ func followUpReferenceFieldLoad(
 			idToDataMapping[testid] = wireDataParsed
 		}
 
-		adapters.MergeReferenceData(dataPayload, referenceFields, idToDataMapping, collectionMetadata)
+		err = adapters.MergeReferenceData(op, referenceFields, idToDataMapping, collectionMetadata)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

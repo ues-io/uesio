@@ -1,6 +1,7 @@
 package adapters
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -92,13 +93,13 @@ func GetReferenceFieldsAndIDs(
 
 // MergeReferenceData func
 func MergeReferenceData(
-	dataPayload []map[string]interface{},
+	op LoadOp,
 	referenceFields ReferenceRegistry,
 	idToDataMapping map[string]map[string]interface{},
 	collectionMetadata *CollectionMetadata,
 ) error {
 	//Merge in data from reference records into the data payload
-	for _, data := range dataPayload {
+	return op.Collection.Loop(func(item metadata.LoadableItem) error {
 		//For each reference field
 		for _, reference := range referenceFields {
 			referenceField := reference.Metadata
@@ -108,8 +109,8 @@ func MergeReferenceData(
 			}
 			//We directly use the Uesio name here because we are dealing with a transformed
 			//payload already
-			fk, ok := data[referenceField.ForeignKeyField]
-			if !ok {
+			fk, err := item.GetField(referenceField.ForeignKeyField)
+			if err != nil {
 				//No value for that reference field to map against
 				continue
 			}
@@ -141,8 +142,11 @@ func MergeReferenceData(
 				return err
 			}
 
-			data[referenceUIFieldName] = referenceValue
+			err = item.SetField(referenceUIFieldName, referenceValue)
+			if err != nil {
+				return err
+			}
 		}
-	}
-	return nil
+		return nil
+	})
 }

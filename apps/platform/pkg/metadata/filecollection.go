@@ -13,12 +13,17 @@ func (fc *FileCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FileCollection) GetFields() []string {
-	return []string{"id", "name", "workspaceid", "content"}
+func (fc *FileCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FileCollection) NewItem(key string) (BundleableItem, error) {
+func (fc *FileCollection) NewItem() LoadableItem {
+	return &File{}
+}
+
+// NewBundleableItem function
+func (fc *FileCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewFile(key)
 }
 
@@ -28,28 +33,18 @@ func (fc *FileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string 
 }
 
 // AddItem function
-func (fc *FileCollection) AddItem(item CollectionableItem) {
+func (fc *FileCollection) AddItem(item LoadableItem) {
 	*fc = append(*fc, *item.(*File))
 }
 
-// UnMarshal function
-func (fc *FileCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(fc, data)
-}
-
-// Marshal function
-func (fc *FileCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(fc)
-}
-
 // GetItem function
-func (fc *FileCollection) GetItem(index int) CollectionableItem {
+func (fc *FileCollection) GetItem(index int) LoadableItem {
 	actual := *fc
 	return &actual[index]
 }
 
 // Loop function
-func (fc *FileCollection) Loop(iter func(item CollectionableItem) error) error {
+func (fc *FileCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {

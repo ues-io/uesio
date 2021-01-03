@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/jinzhu/copier"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
@@ -31,17 +31,11 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
-// PlatformLoad function
-func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.LoadRequest, session *sess.Session) error {
+// platformLoads function
+func platformLoads(ops []adapters.LoadOp, session *sess.Session) error {
 
-	if len(collections) != len(requests) {
-		return errors.New("Bad thing happened - we need the same number of collections as requests")
-	}
-
-	loadResponse, err := Load(
-		LoadRequestBatch{
-			Wires: requests,
-		},
+	_, err := Load(
+		ops,
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
 		session.RemoveWorkspaceContext(),
 	)
@@ -49,39 +43,34 @@ func PlatformLoad(collections []metadata.CollectionableGroup, requests []reqs.Lo
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
 
-	if len(loadResponse.Wires) != len(collections) {
-		return errors.New("Bad thing happened - we need the same number of responses as collections")
-	}
-
-	for index, collection := range collections {
-		// Turn the result map into a struct
-		if err := collection.UnMarshal(loadResponse.Wires[index].Data); err != nil {
-			return errors.New("Error in decoding: " + err.Error())
-		}
-	}
-
 	return nil
+}
+
+// PlatformLoad function
+func PlatformLoad(group metadata.CollectionableGroup, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+	return platformLoads([]adapters.LoadOp{
+		{
+			WireName:       group.GetName() + "Wire",
+			CollectionName: "uesio." + group.GetName(),
+			Collection:     group,
+			Conditions:     conditions,
+			Fields:         group.GetFields(),
+		},
+	}, session)
 }
 
 // PlatformLoadOne function
 func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
-	collection := item.GetCollection()
-	collections := []metadata.CollectionableGroup{
-		collection,
+	collection := &LoadOneCollection{
+		Collection: item.GetCollection(),
+		Item:       item,
 	}
 
-	err := PlatformLoad(collections, []reqs.LoadRequest{
-		reqs.NewPlatformLoadRequest(
-			"itemWire",
-			collection.GetName(),
-			collection.GetFields(),
-			conditions,
-		),
-	}, session)
-
+	err := PlatformLoad(collection, conditions, session)
 	if err != nil {
 		return err
 	}
+
 	length := collection.Len()
 
 	if length == 0 {
@@ -91,7 +80,7 @@ func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadReq
 		return errors.New("Duplicate item found from platform load: " + collection.GetName())
 	}
 
-	return copier.Copy(item, collection.GetItem(0))
+	return nil
 }
 
 // PlatformDelete function
@@ -121,18 +110,27 @@ func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.Sav
 		collection := psr.Collection
 		collectionName := collection.GetName()
 
-		// Turn the user struct into a map string interface
-		data, err := collection.Marshal()
-		if err != nil {
-			return nil, err
-		}
-
 		changeRequests := map[string]reqs.ChangeRequest{}
 
-		for index, item := range data {
-			changeRequests[strconv.Itoa(index)] = reqs.ChangeRequest{
-				FieldChanges: item,
+		index := 0
+
+		err := collection.Loop(func(item metadata.LoadableItem) error {
+			fieldChanges := map[string]interface{}{}
+			for _, field := range collection.GetFields() {
+				fieldValue, err := item.GetField(field.ID)
+				if err != nil {
+					return err
+				}
+				fieldChanges[field.ID] = fieldValue
 			}
+			changeRequests[strconv.Itoa(index)] = reqs.ChangeRequest{
+				FieldChanges: fieldChanges,
+			}
+			index++
+			return nil
+		})
+		if err != nil {
+			return nil, err
 		}
 
 		requests = append(requests, reqs.SaveRequest{

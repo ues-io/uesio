@@ -9,29 +9,26 @@ import (
 // GetConditionValue function
 func GetConditionValue(
 	condition reqs.LoadRequestCondition,
-	wire reqs.LoadRequest,
+	op LoadOp,
 	metadata *MetadataCache,
-	requests []reqs.LoadRequest,
-	responses []reqs.LoadResponse,
+	ops []LoadOp,
 ) (interface{}, error) {
 	var conditionValue interface{}
 	if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
-		lookupResponse, err := reqs.GetResponseByWireName(responses, condition.LookupWire)
-		if err != nil {
-			return nil, err
+		// Look through the previous wires to find the one to look up on.
+		var lookupOp LoadOp
+		for _, op := range ops {
+			if op.WireName == condition.LookupWire {
+				lookupOp = op
+			}
 		}
 
-		lookupRequest, err := reqs.GetRequestByWireName(requests, condition.LookupWire)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(lookupResponse.Data) != 1 {
+		if lookupOp.Collection.Len() != 1 {
 			return nil, errors.New("Must lookup on wires with only one record")
 		}
 
-		lookupCollectionMetadata, err := metadata.GetCollection(lookupRequest.GetCollection())
+		lookupCollectionMetadata, err := metadata.GetCollection(lookupOp.CollectionName)
 		if err != nil {
 			return nil, err
 		}
@@ -46,7 +43,11 @@ func GetConditionValue(
 			return nil, err
 		}
 
-		conditionValue = lookupResponse.Data[0][lookupFieldName]
+		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldName)
+		if err != nil {
+			return nil, err
+		}
+
 	} else {
 		conditionValue = condition.Value
 	}

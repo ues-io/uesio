@@ -55,12 +55,3 @@ definition:
               xs: 0
               md: 6
               lg: 7
-dependencies:
-  configvalues:
-    uesio.googleClientId:
-    uesio.facebookAppId:
-    uesio.cognitoPoolId:
-    uesio.cognitoClientId:
-  componentpacks:
-    material.main:
-    uesio.app:

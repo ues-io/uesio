@@ -20,6 +20,7 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Content   string `yaml:"-" uesio:"uesio.content"`
@@ -68,6 +69,16 @@ func (f *File) GetPermChecker() *PermissionSet {
 			key: true,
 		},
 	}
+}
+
+// SetField function
+func (f *File) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(f, fieldName, value)
+}
+
+// GetField function
+func (f *File) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(f, fieldName)
 }
 
 // GetNamespace function

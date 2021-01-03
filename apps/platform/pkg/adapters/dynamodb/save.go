@@ -112,6 +112,9 @@ func processOneDelete(delete reqs.DeleteRequest, collectionMetadata *adapters.Co
 	}
 
 	keyMarshal, err := dynamodbattribute.MarshalMap(key)
+	if err != nil {
+		return err
+	}
 
 	input := &dynamodb.DeleteItemInput{
 		Key:       keyMarshal,
@@ -135,7 +138,13 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	}
 
 	updatesMarshal, err := dynamodbattribute.MarshalMap(updates)
+	if err != nil {
+		return err
+	}
 	keyMarshal, err := dynamodbattribute.MarshalMap(key)
+	if err != nil {
+		return err
+	}
 
 	expr, err := getExpressionUpdate(updatesMarshal)
 	if err != nil {
@@ -192,6 +201,9 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	dynamoDBInsert[SystemCollectionID] = collectionName
 
 	itemDb, err := dynamodbattribute.MarshalMap(dynamoDBInsert)
+	if err != nil {
+		return "", err
+	}
 
 	input := &dynamodb.PutItemInput{
 		Item:      itemDb,
@@ -262,18 +274,18 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *a
 }
 
 func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
-	lookupRequests, err := adapters.GetLookupRequests(request, metadata)
+	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err
 	}
 
-	if lookupRequests != nil && len(lookupRequests) > 0 {
-		lookupResponses, err := a.Load(lookupRequests, metadata, credentials)
+	if len(lookupOps) > 0 {
+		err := a.Load(lookupOps, metadata, credentials)
 		if err != nil {
 			return err
 		}
 
-		err = adapters.MergeLookupResponses(request, lookupResponses, metadata)
+		err = adapters.MergeLookupResponses(request, lookupOps, metadata)
 		if err != nil {
 			return err
 		}
