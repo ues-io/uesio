@@ -39,10 +39,16 @@ class Wire {
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
-	dispatchRecordUpdate = (recordId: string, record: PlainWireRecord) => {
+	dispatchRecordUpdate = async (
+		recordId: string,
+		record: PlainWireRecord
+	) => {
 		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
-		getStore().dispatch(
+		if (!idField) {
+			console.log("dispatchRecordUpdate", idField)
+			return
+		}
+		const res = getStore().dispatch(
 			updateRecord({
 				entity: this.getFullId(),
 				recordId,
@@ -50,6 +56,7 @@ class Wire {
 				idField,
 			})
 		)
+		return await Promise.resolve(res)
 	}
 
 	dispatchRecordSet = (recordId: string, record: PlainWireRecord) => {
@@ -70,8 +77,12 @@ class Wire {
 		return this
 	}
 
-	save = async (context: Context) =>
-		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
+	save = async (context: Context) => {
+		const res = await getStore().dispatch(
+			saveWiresOp({ context, wires: [this.getId()] })
+		)
+		return res
+	}
 }
 
 export default Wire

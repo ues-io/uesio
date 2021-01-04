@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, signal, context } from "@uesio/ui"
+import { hooks, material, styles, wire, context, signal } from "@uesio/ui"
 import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
@@ -26,7 +26,7 @@ async function handleChange(
 	context: context.Context
 ) {
 	const collection = wire.getCollection()
-	const collectionName = collection.getId()
+	const collectionName = collection.getFullName()
 
 	const idField = collection.getIdField()
 	if (!idField) return
@@ -43,43 +43,53 @@ async function handleChange(
 		}
 
 		const file = selectorFiles[0]
-		record.update(nameNameField, file.name)
-		const result = await wire.save(context)
+		await record.update(nameNameField, file.name)
+		await wire.save(context)
 
-		//TO-DO This is not cool at all
-		const recordId = ""
+		const recordUpd = context.getRecord()
 
-		for (const [key, value] of Object.entries(
-			result?.payload[0].wires[0].changeResults
-		)) {
-			console.log(`${key}: ${value}`)
+		if (recordUpd) {
+			const recordId = recordUpd.getFieldValue(idField.getId()) as string
+			console.log("recordId", recordId)
+
+			if (recordId) {
+				console.log("context", context)
+				console.log("file", file)
+				console.log("file.name", file.name)
+				console.log("fileCollection", fileCollection)
+				console.log("collectionName", collectionName)
+				console.log("recordId", recordId)
+				console.log("fieldId", fieldId)
+
+				await uesio.file.uploadFile(
+					context,
+					file,
+					file.name,
+					fileCollection,
+					collectionName,
+					recordId,
+					fieldId
+				)
+
+				//location.reload()
+
+				//TO-DO insted of navigate we might want to keep a reference to the other wire and refresh?
+				//I am using two wires in the view(uesio.files) one to create files, and another to display the list of files all pointing to the same collection(files)
+
+				const navigateSig = {
+					signal: "route/NAVIGATE",
+					path:
+						`app/` +
+						workspace?.app +
+						`/workspace/` +
+						workspace?.name +
+						`/files`,
+					namespace: "uesio",
+				} as signal.SignalDefinition
+
+				await uesio.signal.run(navigateSig, context)
+			}
 		}
-
-		await uesio.file.uploadFile(
-			context,
-			file,
-			file.name,
-			fileCollection,
-			collectionName,
-			recordId,
-			fieldId
-		)
-
-		//TO-DO insted of navigate we might want to keep a reference to the other wire and refresh?
-		//I am using two wires in the view(uesio.files) one to create files, and another to display the list of files all pointing to the same collection(files)
-
-		const navigateSig = {
-			signal: "route/NAVIGATE",
-			path:
-				`app/` +
-				workspace?.app +
-				`/workspace/` +
-				workspace?.name +
-				`/files`,
-			namespace: "uesio",
-		} as signal.SignalDefinition
-
-		await uesio.signal.run(navigateSig, context)
 	}
 }
 
