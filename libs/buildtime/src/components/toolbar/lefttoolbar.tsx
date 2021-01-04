@@ -5,6 +5,8 @@ import { hooks, definition } from "@uesio/ui"
 
 const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const yamDoc = uesio.view.useYAML()
+	console.log("yamDoc?.toString()", yamDoc?.toString())
 	const selectedPanel = uesio.builder.useLeftPanel()
 	const builderView = uesio.builder.useView()
 	const selectedNode = uesio.builder.useSelectedNode()
