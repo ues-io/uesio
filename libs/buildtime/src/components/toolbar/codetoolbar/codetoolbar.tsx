@@ -30,12 +30,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
+	const hasYamlChanged = previousYaml !== currentYaml
 
-	// check if diff between previous state and new state
-	const hasYamlChanged =
-		currentYaml !== undefined && previousYaml !== currentYaml
-
-	console.log("hasYamlChanged", hasYamlChanged)
 	return (
 		<>
 			<ToolbarTitle
@@ -197,13 +193,12 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						}
 					})
 
-					// decoration in the editor gutter
+					// decoration of changes in the editor gutter
 					if (hasYamlChanged && previousYaml && currentYaml) {
 						const diff: Change[] = diffLines(
 							previousYaml,
 							currentYaml
 						)
-						console.log("diff", diff)
 						if (
 							diff?.[0]?.count &&
 							diff?.[1]?.count &&
