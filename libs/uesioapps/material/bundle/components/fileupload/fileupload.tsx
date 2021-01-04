@@ -44,9 +44,16 @@ async function handleChange(
 
 		const file = selectorFiles[0]
 		record.update(nameNameField, file.name)
-		await wire.save(context)
-		//TO-DO get the ID from the DataBase for the new file just created in the wire.save()
-		const recordId = record.getFieldValue(idField.getId()) as string
+		const result = await wire.save(context)
+
+		//TO-DO This is not cool at all
+		const recordId = ""
+
+		for (const [key, value] of Object.entries(
+			result?.payload[0].wires[0].changeResults
+		)) {
+			console.log(`${key}: ${value}`)
+		}
 
 		await uesio.file.uploadFile(
 			context,
