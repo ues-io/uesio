@@ -5,8 +5,9 @@ import { hooks, definition } from "@uesio/ui"
 
 const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const yamDoc = uesio.view.useYAML()
-	console.log("yamDoc?.toString()", yamDoc?.toString())
+	const viewDef = uesio.view.useDefinition()
+	// @ts-ignore
+	const wirePath = Object.keys((viewDef as unknown)?.wires)?.[0]
 	const selectedPanel = uesio.builder.useLeftPanel()
 	const builderView = uesio.builder.useView()
 	const selectedNode = uesio.builder.useSelectedNode()
@@ -25,7 +26,7 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			{(selectedPanel || selectedNode) && (
 				<LeftBuildbar
 					selectedPanel={selectedPanel}
-					selectedNode={selectedNode}
+					selectedNode={wirePath || selectedNode}
 					path=""
 					context={props.context}
 				/>
