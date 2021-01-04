@@ -19,7 +19,7 @@ function getNeededScripts(
 	const dependencyScripts: string[] = []
 
 	if (componentDeps) {
-		Object.keys(componentDeps).map((key) => {
+		Object.keys(componentDeps).forEach((key) => {
 			const [namespace, name] = parseKey(key)
 			const fileUrl = uesio.component.getPackURL(namespace, name, false)
 			dependencyScripts.push(fileUrl)

@@ -5,7 +5,7 @@ interface IconProps {
 	image: string
 }
 
-const useStyles = material.makeStyles(() =>
+const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
 		loginButtonIcon: {
 			marginRight: "10px",
@@ -21,6 +21,7 @@ const useStyles = material.makeStyles(() =>
 					image: props.image,
 					color: "white",
 				},
+				theme,
 				new context.Context()
 			),
 			backgroundPosition: "bottom",

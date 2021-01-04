@@ -12,7 +12,7 @@ const useStyles = material.makeStyles(() =>
 )
 
 const Hello: FunctionComponent<HelloProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = useStyles()
 	return (
 		<div className={classes.root}>
 			{props.definition.greeting || "Hello! World. Again."}

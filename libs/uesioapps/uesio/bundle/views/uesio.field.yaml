@@ -59,6 +59,8 @@ definition:
         uesio.workspaceid:
         uesio.foreignKeyField:
         uesio.referencedCollection:
+        uesio.autopopulate:
+        uesio.selectList:
       conditions:
         - field: uesio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -132,7 +134,8 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color:
+                                      intention: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -192,10 +195,10 @@ definition:
                                       fieldId: uesio.label
                                   - material.field:
                                       fieldId: uesio.propertyname
-                                  - material.field:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.collection
-                                  - material.field:
-                                      fieldId: uesio.workspaceid
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
                                   - material.container:
                                       padding: 0
                                       uesio.display:
@@ -211,7 +214,22 @@ definition:
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
 
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: "TIMESTAMP"
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.autopopulate
+
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: "SELECT"
+                                      components:
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.selectList
+                                            metadataType: "SELECTLIST"
+                                            label: "Select List"

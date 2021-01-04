@@ -18,7 +18,7 @@ import {
 	EditorDidMount,
 } from "react-monaco-editor"
 
-// eslint-disable-next-line prefer-const
+// eslint-disable-next-line prefer-const, @typescript-eslint/no-unused-vars
 __webpack_public_path__ = window.monacoPublicPath
 
 const LaziestMonaco = lazy(
@@ -60,7 +60,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorWillMount={(monaco): void => {
 				editorWillMount?.(monaco)
 			}}
-			editorDidMount={async (editor, monaco): Promise<void> => {
+			editorDidMount={(editor, monaco): void => {
 				editorDidMount?.(editor, monaco)
 			}}
 		/>

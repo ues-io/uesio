@@ -1,5 +1,5 @@
 import { definition, component, hooks } from "@uesio/ui"
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import clsx from "clsx"
 import { makeStyles, createStyles } from "@material-ui/core"
 import SlotItem from "./slotitem"
@@ -55,8 +55,8 @@ const useStyles = makeStyles((theme) =>
 				alignSelf: "stretch",
 			},
 			"&$placeHolderNoMargin": {
-				marginTop: "0",
-				marginLeft: "0",
+				marginTop: 0,
+				marginLeft: 0,
 			},
 		},
 		placeHolderNoMargin: {},
@@ -64,12 +64,11 @@ const useStyles = makeStyles((theme) =>
 )
 
 const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
-	const { definition, path, context } = props
-	const items = definition?.items || ([] as definition.DefinitionList)
-	const accepts = definition.accepts
-	const direction =
-		definition.direction === "horizontal" ? "horizontal" : "vertical"
-
+	const {
+		definition: { items = [], accepts, direction },
+		path,
+		context,
+	} = props
 	const uesio = hooks.useUesio(props)
 
 	const dragNode = uesio.builder.useDragNode()
@@ -78,10 +77,10 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	const isExpanded = buildView === "expandedview"
 
-	const size = items?.length || 0
+	const size = items.length
 
 	// Temporary Hack
-	if (definition.direction === "manual") {
+	if (direction === "manual") {
 		return <component.SlotRuntime {...props} />
 	}
 
@@ -137,7 +136,9 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					index={index}
 					definition={itemDef}
 					isExpanded={isExpanded}
-					direction={direction}
+					direction={
+						direction === "horizontal" ? "horizontal" : "vertical"
+					}
 					size={size}
 					context={context}
 					accepts={accepts}

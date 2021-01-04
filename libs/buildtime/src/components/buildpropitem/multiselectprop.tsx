@@ -8,10 +8,11 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 
-const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
-	const descriptor = props.descriptor as builder.MultiSelectProp
-	const { definition, setValue } = props
-
+const MultiSelectProp: FunctionComponent<PropRendererProps> = ({
+	definition,
+	setValue,
+	descriptor,
+}) => {
 	const value = (definition?.[descriptor.name] || []) as string[]
 
 	return (
@@ -31,7 +32,7 @@ const MultiSelectProp: FunctionComponent<PropRendererProps> = (props) => {
 			fullWidth={true}
 			onChange={(event): void => setValue(event.target.value)}
 		>
-			{descriptor.options.map((option) => (
+			{(descriptor as builder.MultiSelectProp).options.map((option) => (
 				<MenuItem key={option.value} value={option.value}>
 					<Checkbox checked={value.indexOf(option.value) > -1} />
 					<ListItemText primary={option.label} />

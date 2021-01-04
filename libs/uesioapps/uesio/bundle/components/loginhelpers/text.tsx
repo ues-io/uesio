@@ -8,14 +8,14 @@ interface TextProps {
 const useStyles = material.makeStyles(() =>
 	material.createStyles({
 		loginButtonText: {
-			padding: "10px 10px 10px 0px",
+			padding: "10px 10px 10px 0",
 			fontWeight: 500,
 		},
 	})
 )
 
 const LoginText: FunctionComponent<TextProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = useStyles()
 	return <span className={classes.loginButtonText}>{props.text}</span>
 }
 

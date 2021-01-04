@@ -2,10 +2,10 @@ import { definition, builder } from "@uesio/ui"
 
 type ErrorDefinition = {
 	message: string
-	sub_message: string
+	subMessage: string
 	url: string
 	color: string
-	font_color: string
+	fontColor: string
 }
 
 interface ErrorProps extends definition.BaseProps {
@@ -15,10 +15,10 @@ interface ErrorProps extends definition.BaseProps {
 const ErrorPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		message: "404 :(",
-		sub_message: "Page not found, take me back to:",
+		subMessage: "Page not found, take me back to:",
 		url: "https://uesio-dev.com:3000/",
 		color: "#2D72D9",
-		font_color: "#FFFFFF",
+		fontColor: "#FFFFFF",
 	}),
 
 	title: "Error",

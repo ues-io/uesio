@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
@@ -46,14 +47,12 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 		ForeignKeyField:      f.ForeignKeyField,
 		Required:             f.Required,
 		Validate:             GetValidateMetadata(f.Validate),
+		AutoPopulate:         f.AutoPopulate,
 	}
 }
 
 // GetValidateMetadata function
-func GetValidateMetadata(v *metadata.Validate) *adapters.ValidationMetadata {
-	if v == nil {
-		return nil
-	}
+func GetValidateMetadata(v metadata.Validate) *adapters.ValidationMetadata {
 	return &adapters.ValidationMetadata{
 		Type:  v.Type,
 		Regex: v.Regex,
@@ -83,8 +82,8 @@ func GetSelectListOptionsMetadata(options []metadata.SelectListOption) []adapter
 // LoadCollectionMetadata function
 func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, session *sess.Session) (*adapters.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
-	collectionMetadata, ok := metadataCache.Collections[key]
-	if !ok {
+	collectionMetadata, err := metadataCache.GetCollection(key)
+	if err != nil {
 		collection, err := metadata.NewCollection(key)
 		if err != nil {
 			return nil, err
@@ -114,7 +113,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.Co
 
 	for _, field := range fields {
 		fieldMetadata := GetFieldMetadata(&field)
-		collectionMetadata.Fields[field.Namespace+"."+field.Name] = fieldMetadata
+		collectionMetadata.Fields[fieldMetadata.GetFullName()] = fieldMetadata
 	}
 	return nil
 }
@@ -141,7 +140,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 		}
 		err = bundles.Load(field, session)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
 		}
 		fieldMetadata = GetFieldMetadata(field)
 		collectionMetadata.Fields[key] = fieldMetadata

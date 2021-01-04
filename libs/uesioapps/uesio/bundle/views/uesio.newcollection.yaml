@@ -37,6 +37,7 @@ definition:
         uesio.collectionname:
         uesio.namefield:
         uesio.idfield:
+        uesio.created:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -79,7 +80,8 @@ definition:
                 - material.card:
                     media:
                       background:
-                        color: "orange"
+                        color:
+                          intention: "primary"
                       height: 10px
                     margin: 1
                     components:
@@ -91,6 +93,8 @@ definition:
                                 components:
                                   - material.field:
                                       fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.created
                                   - uesio.metadatafield:
                                       fieldId: uesio.datasource
                                       metadataType: "DATASOURCE"
@@ -120,7 +124,3 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
                                     namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

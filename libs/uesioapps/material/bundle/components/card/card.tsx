@@ -14,6 +14,7 @@ const useStyles = material.makeStyles((theme) =>
 			height: props.definition.media?.height,
 			...styles.getBackgroundStyles(
 				props.definition.media?.background,
+				theme,
 				props.context
 			),
 		}),

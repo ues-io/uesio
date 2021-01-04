@@ -94,7 +94,8 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color:
+                                      intention: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -159,7 +160,3 @@ definition:
                                       label: "Collection"
                                   - material.field:
                                       fieldId: uesio.content
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

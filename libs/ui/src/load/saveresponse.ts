@@ -1,4 +1,4 @@
-import { PlainWireRecordMap } from "../wire/wirerecord"
+import { PlainWireRecord } from "../bands/wirerecord/types"
 
 type SaveResponse = {
 	wire: string
@@ -12,7 +12,7 @@ type ChangeResults = {
 }
 
 type ChangeResult = {
-	data: PlainWireRecordMap
+	data: Record<string, PlainWireRecord>
 	error: string
 }
 

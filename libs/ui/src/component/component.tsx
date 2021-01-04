@@ -10,19 +10,13 @@ type DisplayCondition = {
 	value: string
 }
 
-function shouldDisplayCondition(
-	condition: DisplayCondition,
-	context: Context
-): boolean {
+function shouldDisplayCondition(condition: DisplayCondition, context: Context) {
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
-	if (value === condition.value) {
-		return true
-	}
-	return false
+	return value === condition.value
 }
 
-function shouldDisplay(context: Context, definition?: DefinitionMap): boolean {
+function shouldDisplay(context: Context, definition?: DefinitionMap) {
 	const displayLogic = definition?.["uesio.display"] as DisplayCondition[]
 	if (displayLogic && displayLogic.length) {
 		for (const condition of displayLogic) {
@@ -34,10 +28,7 @@ function shouldDisplay(context: Context, definition?: DefinitionMap): boolean {
 	return true
 }
 
-function additionalContext(
-	context: Context,
-	definition?: DefinitionMap
-): Context {
+function additionalContext(context: Context, definition?: DefinitionMap) {
 	const additionalContext = definition?.["uesio.context"] as ContextFrame
 	if (additionalContext) {
 		const workspace = additionalContext.workspace

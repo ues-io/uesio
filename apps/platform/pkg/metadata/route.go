@@ -21,6 +21,7 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
+	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `uesio:"uesio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Path      string            `yaml:"path" uesio:"uesio.path"`
@@ -70,6 +71,16 @@ func (r *Route) GetPermChecker() *PermissionSet {
 			key: true,
 		},
 	}
+}
+
+// SetField function
+func (r *Route) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(r, fieldName, value)
+}
+
+// GetField function
+func (r *Route) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(r, fieldName)
 }
 
 // GetNamespace function

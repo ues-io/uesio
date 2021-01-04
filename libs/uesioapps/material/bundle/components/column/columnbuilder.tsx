@@ -4,14 +4,14 @@ import { ColumnProps, ColumnDefinition } from "./columndefinition"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: () => ({
+		root: {
 			padding: theme.spacing(1),
-		}),
+		},
 	})
 )
 
 const ColumnBuilder: FunctionComponent<ColumnProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as ColumnDefinition
 	if (definition.field) {

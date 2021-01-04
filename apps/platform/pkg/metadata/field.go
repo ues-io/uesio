@@ -21,25 +21,27 @@ func NewField(collectionKey, fieldKey string) (*Field, error) {
 
 //Validate struct
 type Validate struct {
-	Type  string `yaml:"type,omitempty"`
-	Regex string `yaml:"regex,omitempty"`
+	Type  string `yaml:"type,omitempty" uesio:"Type"`
+	Regex string `yaml:"regex,omitempty" uesio:"Regex"`
 }
 
 // Field struct
 type Field struct {
-	Name                 string    `yaml:"name" uesio:"uesio.name"`
-	CollectionRef        string    `yaml:"collection" uesio:"uesio.collection"`
-	Namespace            string    `yaml:"-" uesio:"-"`
-	Type                 string    `yaml:"type" uesio:"uesio.type"`
-	Label                string    `yaml:"label" uesio:"uesio.label"`
-	PropertyName         string    `yaml:"propertyName" uesio:"uesio.propertyname"`
-	ReadOnly             bool      `yaml:"readOnly,omitempty" uesio:"uesio.readonly"`
-	ReferencedCollection string    `yaml:"referencedCollection,omitempty" uesio:"uesio.referencedCollection"`
-	SelectList           string    `yaml:"selectList,omitempty" uesio:"uesio.selectlist"`
-	ForeignKeyField      string    `yaml:"foreignKeyField,omitempty" uesio:"uesio.foreignKeyField"`
-	Workspace            string    `yaml:"-" uesio:"uesio.workspaceid"`
-	Required             bool      `yaml:"required,omitempty" uesio:"uesio.required"`
-	Validate             *Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`
+	ID                   string   `yaml:"-" uesio:"uesio.id"`
+	Name                 string   `yaml:"name" uesio:"uesio.name"`
+	CollectionRef        string   `yaml:"collection" uesio:"uesio.collection"`
+	Namespace            string   `yaml:"-" uesio:"-"`
+	Type                 string   `yaml:"type" uesio:"uesio.type"`
+	Label                string   `yaml:"label" uesio:"uesio.label"`
+	PropertyName         string   `yaml:"propertyName" uesio:"uesio.propertyname"`
+	ReadOnly             bool     `yaml:"readOnly,omitempty" uesio:"uesio.readonly"`
+	ReferencedCollection string   `yaml:"referencedCollection,omitempty" uesio:"uesio.referencedCollection"`
+	SelectList           string   `yaml:"selectList,omitempty" uesio:"uesio.selectlist"`
+	ForeignKeyField      string   `yaml:"foreignKeyField,omitempty" uesio:"uesio.foreignKeyField"`
+	Workspace            string   `yaml:"-" uesio:"uesio.workspaceid"`
+	Required             bool     `yaml:"required,omitempty" uesio:"uesio.required"`
+	Validate             Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`
+	AutoPopulate         string   `yaml:"autopopulate" uesio:"uesio.autopopulate"`
 }
 
 // GetFieldTypes function
@@ -56,6 +58,7 @@ func GetFieldTypes() map[string]bool {
 		"ARRAY":     true,
 		"DATE":      true,
 		"MAP":       true,
+		"TIMESTAMP": true,
 	}
 }
 
@@ -98,6 +101,16 @@ func (f *Field) GetKey() string {
 // GetPermChecker function
 func (f *Field) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (f *Field) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(f, fieldName, value)
+}
+
+// GetField function
+func (f *Field) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(f, fieldName)
 }
 
 // GetNamespace function

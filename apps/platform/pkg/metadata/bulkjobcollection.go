@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // BulkJobCollection slice
 type BulkJobCollection []BulkJob
 
@@ -9,33 +11,28 @@ func (bjc *BulkJobCollection) GetName() string {
 }
 
 // GetFields function
-func (bjc *BulkJobCollection) GetFields() []string {
-	return []string{"id", "site", "spec"}
-}
-
-// UnMarshal function
-func (bjc *BulkJobCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(bjc, data)
-}
-
-// Marshal function
-func (bjc *BulkJobCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(bjc)
+func (bjc *BulkJobCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(bjc)
 }
 
 // GetItem function
-func (bjc *BulkJobCollection) GetItem(index int) CollectionableItem {
+func (bjc *BulkJobCollection) GetItem(index int) LoadableItem {
 	actual := *bjc
 	return &actual[index]
 }
 
 // AddItem function
-func (bjc *BulkJobCollection) AddItem(item CollectionableItem) {
+func (bjc *BulkJobCollection) AddItem(item LoadableItem) {
 	*bjc = append(*bjc, *item.(*BulkJob))
 }
 
+// NewItem function
+func (bjc *BulkJobCollection) NewItem() LoadableItem {
+	return &BulkJob{}
+}
+
 // Loop function
-func (bjc *BulkJobCollection) Loop(iter func(item CollectionableItem) error) error {
+func (bjc *BulkJobCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *bjc {
 		err := iter(bjc.GetItem(index))
 		if err != nil {

@@ -67,7 +67,8 @@ definition:
                 - material.card:
                     media:
                       background:
-                        color: "orange"
+                        color:
+                          intention: "primary"
                       height: 10px
                     margin: 1
                     components:
@@ -110,7 +111,3 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
                                     namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

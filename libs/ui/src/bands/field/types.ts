@@ -13,6 +13,7 @@ type FieldType =
 	| "IMAGE"
 	| "FILE"
 	| "MAP"
+	| "TIMESTAMP"
 
 type SelectOption = {
 	label: string

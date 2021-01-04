@@ -169,7 +169,8 @@ definition:
                             - material.card:
                                 media:
                                   background:
-                                    color: "green"
+                                    color:
+                                      intention: "primary"
                                   height: 10px
                                 margin: 1
                                 components:
@@ -209,7 +210,3 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

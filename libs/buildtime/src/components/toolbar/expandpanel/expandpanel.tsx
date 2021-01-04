@@ -76,19 +76,17 @@ const useDetailStyles = makeStyles(() =>
 	})
 )
 
-const ExpandPanel: FunctionComponent<Props> = (props) => {
-	const {
-		children,
-		action,
-		actionColor,
-		title,
-		defaultExpanded,
-		actionOnClick,
-	} = props
-
-	const summaryClasses = useSummaryStyles(props)
-	const expansionClasses = useExpansionStyles(props)
-	const detailClasses = useDetailStyles(props)
+const ExpandPanel: FunctionComponent<Props> = ({
+	children,
+	action,
+	actionColor,
+	title,
+	defaultExpanded,
+	actionOnClick,
+}) => {
+	const summaryClasses = useSummaryStyles()
+	const expansionClasses = useExpansionStyles()
+	const detailClasses = useDetailStyles()
 
 	return (
 		<Accordion
@@ -102,8 +100,8 @@ const ExpandPanel: FunctionComponent<Props> = (props) => {
 				expandIcon={<ExpandMoreIcon style={{ fontSize: "1.25rem" }} />}
 				IconButtonProps={{ size: "small" }}
 			>
-				<div style={{ flex: "1" }}>{title}</div>
-				<div style={{ flex: "0" }}>
+				<div style={{ flex: 1 }}>{title}</div>
+				<div style={{ flex: 0 }}>
 					{action && (
 						<SmallIconButton
 							onClick={(event: SyntheticEvent): void => {

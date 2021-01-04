@@ -1,7 +1,5 @@
-import { FC } from "react"
+import { FunctionComponent } from "react"
 
-const Wire: FC = () => {
-	return null
-}
+const Wire: FunctionComponent = () => null
 
 export default Wire

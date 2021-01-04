@@ -105,7 +105,8 @@ definition:
                 - material.card:
                     media:
                       background:
-                        color: "purple"
+                        color:
+                          intention: "primary"
                       height: 10px
                     margin: 1
                     components:
@@ -141,7 +142,3 @@ definition:
                           - signal: wire/SAVE
                             wires:
                               - "files"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

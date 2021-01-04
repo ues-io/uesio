@@ -15,15 +15,13 @@ const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 		? (def?.[slot] as signal.SignalDefinition[])
 		: undefined
 
-	const clickHandler = signals && uesio.signal.getHandler(signals)
-
 	if (!action || !signals) {
 		return null
 	}
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={clickHandler}
+			onClick={uesio.signal.getHandler(signals)}
 			icon={SignalsIcon}
 		/>
 	)

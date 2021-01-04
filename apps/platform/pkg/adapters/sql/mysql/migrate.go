@@ -15,10 +15,10 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 	fmt.Println("Migrating MYSQL")
 
 	db, err := connect()
-	defer db.Close()
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	for _, collectionMetadata := range metadata.Collections {
 

@@ -1,15 +1,6 @@
 import get from "lodash.get"
-import { Wire } from "./wire"
-
-type FieldValue = string | number | boolean | undefined | null | PlainWireRecord
-
-type PlainWireRecord = {
-	[key: string]: FieldValue
-}
-
-type PlainWireRecordMap = {
-	[key: string]: PlainWireRecord
-}
+import Wire from "../wire/class"
+import { FieldValue, PlainWireRecord } from "./types"
 
 class WireRecord {
 	constructor(source: PlainWireRecord, id: string, wire: Wire) {
@@ -39,4 +30,4 @@ class WireRecord {
 	}
 }
 
-export { WireRecord, PlainWireRecord, PlainWireRecordMap, FieldValue }
+export default WireRecord

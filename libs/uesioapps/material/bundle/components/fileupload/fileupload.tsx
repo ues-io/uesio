@@ -9,9 +9,9 @@ const useStyles = material.makeStyles((theme) =>
 			lineHeight: 0,
 			...styles.getMarginStyles(props.definition?.margin, theme),
 		}),
-		input: (/*props: FileUploadProps*/) => ({
+		input: {
 			display: "none",
-		}),
+		},
 	})
 )
 
@@ -21,8 +21,7 @@ async function handleChange(
 	record: wire.WireRecord,
 	wire: wire.Wire,
 	uesio: hooks.Uesio,
-	fileCollection: string,
-	signals: signal.SignalDefinition[]
+	fileCollection: string
 ) {
 	const collection = wire.getCollection()
 	const collectionName = collection.getId()
@@ -42,7 +41,7 @@ async function handleChange(
 
 		const file = selectorFiles[0]
 
-		const fileId = await uesio.file.uploadFile(
+		await uesio.file.uploadFile(
 			context,
 			file,
 			file.name,
@@ -92,8 +91,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 							record,
 							wire,
 							uesio,
-							definition.fileCollection,
-							definition.signals
+							definition.fileCollection
 						)
 					}
 				/>

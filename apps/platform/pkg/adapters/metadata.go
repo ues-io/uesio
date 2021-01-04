@@ -101,6 +101,7 @@ type FieldMetadata struct {
 	ForeignKeyField      string                     `json:"foreignKeyField"`
 	Required             bool                       `json:"required"`
 	Validate             *ValidationMetadata        `json:"validate"`
+	AutoPopulate         string                     `json:"autopopulate"`
 }
 
 // GetFullName function

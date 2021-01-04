@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reqs"
@@ -17,10 +18,20 @@ type validationFunc func(change reqs.ChangeRequest) error
 
 func validateRequired(field *adapters.FieldMetadata) validationFunc {
 	return func(change reqs.ChangeRequest) error {
-		key := field.GetFullName()
-		val := change[key]
-		if val == nil || val == "" {
+		val, ok := change.FieldChanges[field.GetFullName()]
+		if (change.IsNew && !ok) || val == "" {
 			return errors.New("Field: " + field.Label + " is required")
+		}
+		return nil
+	}
+}
+
+func populateTimestamps(field *adapters.FieldMetadata, timestamp int64) validationFunc {
+	return func(change reqs.ChangeRequest) error {
+		// Only populate fields marked with CREATE on insert
+		// Always populate the fields marked with UPDATE
+		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
+			change.FieldChanges[field.GetFullName()] = timestamp
 		}
 		return nil
 	}
@@ -28,8 +39,8 @@ func validateRequired(field *adapters.FieldMetadata) validationFunc {
 
 func validateEmail(field *adapters.FieldMetadata) validationFunc {
 	return func(change reqs.ChangeRequest) error {
-		key := field.GetFullName()
-		if val, ok := change[key]; ok {
+		val, ok := change.FieldChanges[field.GetFullName()]
+		if ok {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
 				return errors.New(field.Label + " is not a valid email address")
 			}
@@ -46,8 +57,8 @@ func validateRegex(field *adapters.FieldMetadata) validationFunc {
 		}
 	}
 	return func(change reqs.ChangeRequest) error {
-		key := field.GetFullName()
-		if !matchRegex(change, key, regex) {
+		val, ok := change.FieldChanges[field.GetFullName()]
+		if ok && !regex.MatchString(fmt.Sprintf("%v", val)) {
 			return errors.New("Field: " + field.Label + " don't match regex: " + field.Validate.Regex)
 		}
 		return nil
@@ -71,15 +82,6 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func matchRegex(change reqs.ChangeRequest, key string, regex *regexp.Regexp) bool {
-
-	if val, ok := change[key]; ok {
-		return regex.MatchString(fmt.Sprintf("%v", val))
-	}
-
-	return false
-}
-
 func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func(reqs.ChangeRequest) error {
 
 	validations := []validationFunc{}
@@ -92,6 +94,10 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 		}
 		if field.Validate != nil && field.Validate.Type == "REGEX" {
 			validations = append(validations, validateRegex(field))
+		}
+		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
+			timestamp := time.Now().Unix()
+			validations = append(validations, populateTimestamps(field, timestamp))
 		}
 	}
 
@@ -106,16 +112,28 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 	}
 }
 
-//FieldValidation function
-func FieldValidation(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+//PopulateAndValidate function
+func PopulateAndValidate(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 
 	var listErrors []string
 	validationFunc := getValidationFunction(collectionMetadata)
-	for _, change := range request.Changes {
+	idField, err := collectionMetadata.GetIDField()
+	if err != nil {
+		return err
+	}
+	for index, change := range request.Changes {
+		idValue, ok := change.FieldChanges[idField.GetFullName()]
+		if !ok || idValue.(string) == "" {
+			change.IsNew = true
+		} else {
+			change.IDValue = idValue
+		}
 		err := validationFunc(change)
 		if err != nil {
 			listErrors = append(listErrors, err.Error())
 		}
+		// Put the changes back into the map
+		request.Changes[index] = change
 	}
 
 	if len(listErrors) != 0 {

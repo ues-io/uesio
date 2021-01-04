@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 // Site struct
 type Site struct {
 	ID         string `uesio:"uesio.id"`
@@ -33,32 +31,12 @@ func (s *Site) GetCollection() CollectionableGroup {
 	return &sc
 }
 
-// GetConditions function
-func (s *Site) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: s.Name,
-		},
-	}, nil
+// SetField function
+func (s *Site) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(s, fieldName, value)
 }
 
-// GetNamespace function
-func (s *Site) GetNamespace() string {
-	return ""
-}
-
-// SetNamespace function
-func (s *Site) SetNamespace(namespace string) {
-	//u.Namespace = namespace
-}
-
-// SetWorkspace function
-func (s *Site) SetWorkspace(workspace string) {
-
-}
-
-// GetKey function
-func (s *Site) GetKey() string {
-	return s.ID
+// GetField function
+func (s *Site) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(s, fieldName)
 }

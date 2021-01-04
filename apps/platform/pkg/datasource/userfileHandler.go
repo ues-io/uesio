@@ -19,10 +19,16 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 	metadataResponse := adapters.MetadataCache{}
 	// Keep a running tally of all requested collections
 	collections := MetadataRequest{}
-	collections.AddCollection(collectionName)
-	collections.AddField(collectionName, fieldID, nil)
+	err := collections.AddCollection(collectionName)
+	if err != nil {
+		return nil, err
+	}
+	err = collections.AddField(collectionName, fieldID, nil)
+	if err != nil {
+		return nil, err
+	}
 
-	err := collections.Load(&metadataResponse, collatedMetadata, session)
+	err = collections.Load(&metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, err
 	}
@@ -37,13 +43,15 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *sess.Session) error {
 
 	changes := map[string]reqs.ChangeRequest{}
-	changeRequest := map[string]interface{}{}
+	changeRequest := reqs.ChangeRequest{
+		FieldChanges: map[string]interface{}{},
+	}
 	meta, err := getCollectionMetadata(details.CollectionID, details.FieldID, session)
 	if err != nil {
 		return err
 	}
-	changeRequest[details.FieldID] = id
-	changeRequest[meta.IDField] = details.RecordID
+	changeRequest.FieldChanges[details.FieldID] = id
+	changeRequest.FieldChanges[meta.IDField] = details.RecordID
 	changes["0"] = changeRequest
 
 	saveRequestBatch := &SaveRequestBatch{
@@ -136,32 +144,21 @@ func CreateUserFileMetadataEntry(details reqs.FileDetails, session *sess.Session
 
 	return newID.(string), nil
 }
+
 func getUserfiles(collectionID string, recordIds []string, session *sess.Session) (*metadata.UserFileMetadataCollection, error) {
 	ufmc := metadata.UserFileMetadataCollection{}
-	err := PlatformLoad(
-		[]metadata.CollectionableGroup{
-			&ufmc,
+	err := PlatformLoad(&ufmc, []reqs.LoadRequestCondition{
+		{
+			Field:    "uesio.recordid",
+			Value:    recordIds,
+			Operator: "IN",
 		},
-		[]reqs.LoadRequest{
-			reqs.NewPlatformLoadRequest(
-				"itemWire",
-				ufmc.GetName(),
-				ufmc.GetFields(),
-				[]reqs.LoadRequestCondition{
-					{
-						Field:    "uesio.recordid",
-						Value:    recordIds,
-						Operator: "IN",
-					},
-					{
-						Field:    "uesio.collectionid",
-						Value:    collectionID,
-						Operator: "=",
-					},
-				},
-			),
+		{
+			Field:    "uesio.collectionid",
+			Value:    collectionID,
+			Operator: "=",
 		},
-		session,
+	}, session,
 	)
 	if err != nil {
 		return &ufmc, err

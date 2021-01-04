@@ -46,6 +46,10 @@ definition:
           - material.column:
               field: crm.description
           - material.column:
+              field: crm.created
+          - material.column:
+              field: crm.updated
+          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -72,7 +76,5 @@ definition:
         crm.id: null
         crm.name: null
         crm.externalid: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null
+        crm.created: null
+        crm.updated: null

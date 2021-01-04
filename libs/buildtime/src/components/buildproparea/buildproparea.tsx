@@ -12,7 +12,7 @@ const useStyles = makeStyles(() =>
 	createStyles({
 		wrapper: {
 			overflow: "auto",
-			flex: "1",
+			flex: 1,
 		},
 		propList: {
 			padding: "10px 6px 0px 6px",
@@ -21,10 +21,13 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const BuildPropArea: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
-	const { buildPropsDef, path, definition, context } = props
-
+const BuildPropArea: FunctionComponent<Props> = ({
+	buildPropsDef,
+	path,
+	definition,
+	context,
+}) => {
+	const classes = useStyles()
 	return (
 		<div className={classes.wrapper}>
 			{buildPropsDef?.properties && (
@@ -37,18 +40,16 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					/>
 				</div>
 			)}
-			{buildPropsDef.sections.map(
-				(section: builder.PropertySection, index: number) => (
-					<BuildSection
-						key={index}
-						path={path}
-						definition={definition}
-						section={section}
-						index={index}
-						context={context}
-					/>
-				)
-			)}
+			{buildPropsDef.sections.map((section, index) => (
+				<BuildSection
+					key={index}
+					path={path}
+					definition={definition}
+					section={section}
+					index={index}
+					context={context}
+				/>
+			))}
 		</div>
 	)
 }

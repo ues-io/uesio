@@ -1,6 +1,4 @@
 import { Dispatcher } from "../store/store"
-import RuntimeState from "../store/types/runtimestate"
-import { Platform } from "../platform/platform"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
 import { useComponentState } from "../bands/component/selectors"
@@ -17,14 +15,13 @@ class ComponentAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	getPackURL = (namespace: string, name: string, buildMode: boolean) =>
-		this.dispatcher(
-			(dispatch, getState: () => RuntimeState, platform: Platform) =>
-				platform.getComponentPackURL(
-					this.uesio.getContext(),
-					namespace,
-					name,
-					buildMode
-				)
+		this.dispatcher((dispatch, getState, platform) =>
+			platform.getComponentPackURL(
+				this.uesio.getContext(),
+				namespace,
+				name,
+				buildMode
+			)
 		)
 
 	useState = (

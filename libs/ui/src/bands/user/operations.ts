@@ -1,9 +1,7 @@
 import { AnyAction } from "redux"
 import { LoginResponse } from "../../auth/auth"
 import { Context } from "../../context/context"
-import { Platform } from "../../platform/platform"
-import { Dispatcher } from "../../store/store"
-import RuntimeState from "../../store/types/runtimestate"
+import { Dispatcher, ThunkFunc } from "../../store/store"
 import { set as setUser } from "."
 import routeOps from "../../bands/route/operations"
 
@@ -25,11 +23,11 @@ async function responseRedirect(
 	return context
 }
 
-const login = (context: Context, type: string, token: string) => async (
-	dispatch: Dispatcher<AnyAction>,
-	getState: () => RuntimeState,
-	platform: Platform
-) => {
+const login = (
+	context: Context,
+	type: string,
+	token: string
+): ThunkFunc => async (dispatch, getState, platform) => {
 	const response = await platform.login({
 		type,
 		token,
@@ -38,10 +36,10 @@ const login = (context: Context, type: string, token: string) => async (
 	return responseRedirect(response, dispatch, context)
 }
 
-const logout = (context: Context) => async (
-	dispatch: Dispatcher<AnyAction>,
-	getState: () => RuntimeState,
-	platform: Platform
+const logout = (context: Context): ThunkFunc => async (
+	dispatch,
+	getState,
+	platform
 ) => {
 	const response = await platform.logout()
 	dispatch(setUser(response.user))

@@ -12,7 +12,7 @@ const useStyles = material.makeStyles((theme) =>
 
 const Dialog: FunctionComponent<DialogProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const { definition, path, context } = props
 
 	const initialState: DialogState = {

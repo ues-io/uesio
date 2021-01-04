@@ -4,8 +4,8 @@ import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectWire } from "../bands/wire/selectors"
-import { Wire } from "../wire/wire"
 import { selectors } from "../bands/view/adapter"
+import Wire from "../bands/wire/class"
 
 type ContextFrame = {
 	wire?: string

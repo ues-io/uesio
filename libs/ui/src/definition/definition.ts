@@ -1,3 +1,4 @@
+import { CSSProperties } from "react"
 import { Context } from "../context/context"
 import yaml from "yaml"
 
@@ -5,7 +6,7 @@ export type YamlDoc = yaml.Document
 
 export type BaseProps = {
 	definition?: DefinitionMap
-	style?: React.CSSProperties
+	style?: CSSProperties
 	index?: number
 	path: string
 	componentType?: string

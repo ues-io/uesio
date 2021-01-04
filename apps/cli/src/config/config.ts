@@ -25,12 +25,11 @@ type BundleInfo = {
 const homedir = os.homedir()
 const saveFile = path.join(homedir, ".uesio")
 
-const fileExists = async (file: string): Promise<boolean> => {
-	return fs
+const fileExists = async (file: string): Promise<boolean> =>
+	fs
 		.access(file)
 		.then(() => true)
 		.catch(() => false)
-}
 
 const getConfig = async (): Promise<Config | null> => {
 	const hasSessFile = await fileExists(saveFile)
@@ -51,33 +50,25 @@ const getConfigValue = async (key: ConfigKey): Promise<string | null> => {
 	return config?.[key] || null
 }
 
-const setConfigValue = async (key: ConfigKey, value: string): Promise<void> => {
-	return setConfig({ ...(await getConfig()), [key]: value })
-}
+const setConfigValue = async (key: ConfigKey, value: string): Promise<void> =>
+	setConfig({ ...(await getConfig()), [key]: value })
 
-const getSessionId = async (): Promise<string | null> => {
-	return getConfigValue(SESSION_ID_KEY)
-}
+const getSessionId = async (): Promise<string | null> =>
+	getConfigValue(SESSION_ID_KEY)
 
-const setSessionId = async (value: string): Promise<void> => {
-	return setConfigValue(SESSION_ID_KEY, value)
-}
+const setSessionId = async (value: string): Promise<void> =>
+	setConfigValue(SESSION_ID_KEY, value)
 
-const getWorkspaceId = async (): Promise<string | null> => {
-	return getConfigValue(WORKSPACE_ID_KEY)
-}
+const getWorkspaceId = async (): Promise<string | null> =>
+	getConfigValue(WORKSPACE_ID_KEY)
 
-const setWorkspaceId = async (value: string): Promise<void> => {
-	return setConfigValue(WORKSPACE_ID_KEY, value)
-}
+const setWorkspaceId = async (value: string): Promise<void> =>
+	setConfigValue(WORKSPACE_ID_KEY, value)
 
-const getAppId = async (): Promise<string | null> => {
-	return getConfigValue(APP_ID_KEY)
-}
+const getAppId = async (): Promise<string | null> => getConfigValue(APP_ID_KEY)
 
-const setAppId = async (value: string): Promise<void> => {
-	return setConfigValue(APP_ID_KEY, value)
-}
+const setAppId = async (value: string): Promise<void> =>
+	setConfigValue(APP_ID_KEY, value)
 
 const getBundleInfo = async (): Promise<BundleInfo> => {
 	const bundleInfoText = await fs.readFile(

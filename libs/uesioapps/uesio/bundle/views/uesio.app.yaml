@@ -161,7 +161,9 @@ definition:
                       - material.card:
                           media:
                             background:
-                              color: "#581845"
+                              color:
+                                intention: "secondary"
+                                key: "light"
                             height: 10px
                           components:
                             - material.griditem:
@@ -199,7 +201,9 @@ definition:
                       - material.card:
                           media:
                             background:
-                              color: "#581845"
+                              color:
+                                intention: "secondary"
+                                key: "dark"
                             height: 10px
                           components:
                             - material.griditem:
@@ -236,7 +240,8 @@ definition:
                       - material.card:
                           media:
                             background:
-                              color: "#581845"
+                              color:
+                                intention: "secondary"
                             height: 10px
                           components:
                             - material.griditem:
@@ -250,7 +255,3 @@ definition:
                             - signal: "route/NAVIGATE"
                               path: "app/$Param{appname}/site/${uesio.name}"
                               namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

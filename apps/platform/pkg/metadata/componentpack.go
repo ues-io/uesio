@@ -4,9 +4,14 @@ import "github.com/thecloudmasters/uesio/pkg/reqs"
 
 // ComponentPack struct
 type ComponentPack struct {
-	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"namespace" uesio:"-"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+	Name       string                            `yaml:"name" uesio:"uesio.name"`
+	Namespace  string                            `yaml:"namespace" uesio:"-"`
+	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`
+	Components map[string]*ComponentDependencies `yaml:"components" uesio:"uesio.components"`
+}
+
+type ComponentDependencies struct {
+	ConfigValues []string `yaml:"configvalues"`
 }
 
 // GetCollectionName function
@@ -44,6 +49,16 @@ func (cp *ComponentPack) GetKey() string {
 // GetPermChecker function
 func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(cp, fieldName, value)
+}
+
+// GetField function
+func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(cp, fieldName)
 }
 
 // GetNamespace function

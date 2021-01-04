@@ -22,9 +22,9 @@ type Props = {
 const useStyles = makeStyles((theme) =>
 	createStyles({
 		card: (props: Props) => ({
-			margin: "0 0px 4px 0px",
+			margin: "0 0 4px 0",
 			border: props.selected
-				? "1px solid " + theme.palette.primary.light
+				? `1px solid ${theme.palette.primary.light}`
 				: "1px solid #eee",
 			textTransform: "uppercase",
 			fontSize: "9pt",
@@ -36,11 +36,11 @@ const useStyles = makeStyles((theme) =>
 		},
 		content: {
 			margin: "8px",
-			flex: "1",
+			flex: 1,
 		},
 		icon: {
 			width: "40px",
-			flex: "0",
+			flex: 0,
 			margin: "0 0 0 8px",
 			color: material.colors.grey[400],
 		},
@@ -66,7 +66,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 	} = props
 
 	const classes = useStyles(props)
-	const ref = useRef<HTMLDivElement>(null)
+	const ref = useRef<HTMLDivElement | null>(null)
 	const innerArea = (
 		<div className={classes.wrapper}>
 			{Icon && (

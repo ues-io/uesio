@@ -16,12 +16,17 @@ func (fc *FieldCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FieldCollection) GetFields() []string {
-	return []string{"id", "name", "label", "collection", "propertyname", "type", "selectlist", "foreignKeyField", "referencedCollection", "readonly", "required", "validate"}
+func (fc *FieldCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem(key string) (BundleableItem, error) {
+func (fc *FieldCollection) NewItem() LoadableItem {
+	return &Field{}
+}
+
+// NewBundleableItem function
+func (fc *FieldCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 4 {
 		return nil, errors.New("Invalid Field Key: " + key)
@@ -43,53 +48,18 @@ func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item CollectionableItem) {
+func (fc *FieldCollection) AddItem(item LoadableItem) {
 	*fc = append(*fc, *item.(*Field))
 }
 
-// UnMarshal function
-func (fc *FieldCollection) UnMarshal(data []map[string]interface{}) error {
-	err := StandardDecoder(fc, data)
-	if err != nil {
-		return err
-	}
-	err = fc.Validate()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// Marshal function
-func (fc *FieldCollection) Marshal() ([]map[string]interface{}, error) {
-	err := fc.Validate()
-	if err != nil {
-		return nil, err
-	}
-	return StandardEncoder(fc)
-}
-
-// Validate function
-func (fc *FieldCollection) Validate() error {
-	// Validate required fields and types
-	for _, field := range *fc {
-		// make sure field type is valid
-		_, ok := GetFieldTypes()[field.Type]
-		if !ok {
-			return errors.New("Invalid Field Type: " + field.Type)
-		}
-	}
-	return nil
-}
-
 // GetItem function
-func (fc *FieldCollection) GetItem(index int) CollectionableItem {
+func (fc *FieldCollection) GetItem(index int) LoadableItem {
 	actual := *fc
 	return &actual[index]
 }
 
 // Loop function
-func (fc *FieldCollection) Loop(iter func(item CollectionableItem) error) error {
+func (fc *FieldCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {
