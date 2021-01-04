@@ -5,6 +5,7 @@ import { makeStyles, createStyles } from "@material-ui/core"
 const useStyles = makeStyles(() =>
 	createStyles({
 		content: {
+			overflow: "hidden",
 			flexGrow: 1,
 			position: "relative",
 			padding: "40px 8px",
