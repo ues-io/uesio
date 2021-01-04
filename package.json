@@ -45,7 +45,12 @@
   "/apps/cli/npm-shrinkwrap.json",
   "/apps/cli/oclif.manifest.json"
  ],
- "dependencies": {},
+ "dependencies": {
+  "@types/diff": "^5.0.0",
+  "@types/md5": "^2.2.1",
+  "diff": "^5.0.0",
+  "md5": "^2.3.0"
+ },
  "devDependencies": {
   "@material-ui/core": "^4.11.2",
   "@material-ui/icons": "^4.11.2",
