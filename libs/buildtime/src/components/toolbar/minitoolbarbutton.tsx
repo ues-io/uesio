@@ -96,6 +96,4 @@ const MiniToolbarButton: FunctionComponent<Props> = ({
 	)
 }
 
-MiniToolbarButton.displayName = "MiniToolbarButton"
-
 export default memo(MiniToolbarButton)

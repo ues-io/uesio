@@ -67,6 +67,4 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	</Suspense>
 )
 
-LazyMonaco.displayName = "LazyMonaco"
-
 export default LazyMonaco

@@ -137,6 +137,4 @@ const TableBody: FunctionComponent<Props> = (props) => {
 	)
 }
 
-TableBody.displayName = "TableBody"
-
 export default TableBody
