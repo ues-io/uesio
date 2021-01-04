@@ -3,8 +3,15 @@ components:
   colorpicker:
   loginmock:
   loginfacebook:
+    configvalues:
+      - uesio.facebookAppId
   logingoogle:
+    configvalues:
+      - uesio.googleClientId
   logincognito:
+    configvalues:
+      - uesio.cognitoPoolId
+      - uesio.cognitoClientId
   metadatafield:
   codefield:
   bulkjob:

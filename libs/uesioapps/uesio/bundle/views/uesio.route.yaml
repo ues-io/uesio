@@ -177,8 +177,3 @@ definition:
                                       fieldId: uesio.theme
                                       metadataType: "THEME"
                                       label: "Theme"
-
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

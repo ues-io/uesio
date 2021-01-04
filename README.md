@@ -6,15 +6,17 @@ Uesio is a **low-code** application development platform.
 
 # Code style
 
-Our code styling is embeded in various [eslint](https://eslint.org/) rules.
+As much as possible, our code style is embeded in dedicated [eslint](https://eslint.org/) rules.
 
 We use the repo called [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint) for having `eslint` working along with TypeScript. This repo is an alternaltive to the [TSLint](https://github.com/palantir/tslint) project which is no longer supported.
 
 [Prettier](https://prettier.io/) is used for **formatting** our source code.
 
-Frontend-side are favoured the concepts coming from functional programming and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/). We cherry-picked some lint rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript) and the [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react).
+As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-[Uesio Specific Redux Docs](./docs/redux/README.md)
+Redux-wise we do follow some code style with some exceptions. More details on that [here](#redux-architecture).
+
+Generally speaking, in the frontend-side are favoured the concepts coming from functional programming and the concept of [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/).
 
 # Tech Stack
 
@@ -28,6 +30,7 @@ Frontend-side are favoured the concepts coming from functional programming and [
 
 ## Frontend
 
+- [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
 - [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
 - [webpack](https://webpack.js.org/). Merge code source into one single static file.
 - [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
@@ -37,7 +40,11 @@ Frontend-side are favoured the concepts coming from functional programming and [
 - [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
 - [Material-UI](https://material-ui.com/). UI framework for React applications.
 
-# Monorepo architecture
+# <a id="redux-architecture"></a> Redux architecture
+
+See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
+
+# <a id="monorepo-architecture"></a> Monorepo architecture
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
@@ -58,11 +65,18 @@ nx g @nrwl/workspace:library NEW_LIB
 
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
+- ```
+  brew install wget
+  ```
+- Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
+- Install the latest version of Node.js _via_ `nvm` :
 
-- Install [nvm](https://github.com/nvm-sh/nvm) (Node.js and npm)
+```
+  nvm install node
+```
+
 - Install [Go](https://golang.org/dl/)
 - Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
-
 - git clone repo (ssh method is prefered)
 - Download and install the npm module dependencies :
 
@@ -70,6 +84,9 @@ nx g @nrwl/workspace:library NEW_LIB
   npm install
 ```
 
+- Do follow the instructions for setting up SSL [here](#set-up-ssl).
+- Do follow the instructions for environment variables [here](#environment-variables).
+- Do follow the instructions for setting up DNS [here](#set-up-local-dns).
 - Build the monorepo :
 
 ```
@@ -123,6 +140,56 @@ nx g @nrwl/workspace:library NEW_LIB
 }
 ```
 
+# npm dependencies
+
+As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
+
+All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+
+Most of commmands you might run related to npm modules.
+
+- Install a new dependency :
+
+```
+npm install lodash.isempty -D
+```
+
+- Update minor changes (no breaking changes) of an existing dependency :
+
+```
+npm update react -D
+```
+
+- Major update and latest (with breaking changes) of an existing dependency :
+
+```
+npm install react@latest -D
+```
+
+- List all dependencies of the monorepo and the related version :
+
+```
+ npm list --depth=0
+```
+
+- Remove a dependency :
+
+```
+ npm uninstall lodash.isempty -D
+```
+
+- List dependencies having newer versions :
+
+```
+ npm outdated
+```
+
+- Update minor changes (no breaking changes) all dependencies :
+
+```
+ npm update
+```
+
 # Build
 
 The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
@@ -165,6 +232,8 @@ npm run watch-all
 // For killing all of them, do run `killall node`
 ```
 
+As a side note, the npm script, `dev` does include this `watch-all` npm script.
+
 # Uesio apps deployment
 
 **Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
@@ -189,7 +258,7 @@ An **app bundle** is a screenshot or version of a specific uesio app.
 
 The **continous integration** process is done through the cloud service offered by GitHub, namely **GitHub Actions**. The configuration is held in the file called `nx-affected.yml`.
 
-# Set up SSL
+# <a id="set-up-ssl"></a> Set up SSL
 
 ```
 npm run setup-ssl
@@ -201,7 +270,7 @@ In windows, double-click certificate.crt in the File Explorer. Click "Install Ce
 
 In mac, double-click certificate.crt in Finder. Right-click on the uesio-dev.com certificate and select "Get Info". Expand the "Trust" section and set it to "Always Trust".
 
-# Set up your local DNS
+# <a id="set-up-local-dns"></a> Set up your local DNS
 
 On Mac modify the `/etc/hosts` file to include the following lines
 
@@ -213,7 +282,9 @@ On Mac modify the `/etc/hosts` file to include the following lines
 
 Mac users can also use a service called dnsmasq for managing local DNS, but that has not been documented yet.
 
-# Environment Variables
+# <a id="environment-variables"></a> Environment Variables
+
+Do define the following environment variables in `~/.zshenv`.
 
 | Environment Variable         | Description                                                                                |
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
@@ -260,7 +331,10 @@ https://uesio-dev.com:3000
 2. ```
    npm install -g firebase-tools
    ```
-3. Select the project your created before, while interacting with the firebase cli.
+3. ```
+   cd PATH_TO_UESIO // go to the uesio project folder
+   ```
+4. Select the project your created before, while interacting with the firebase cli.
 
 ```
    firebase init firestore

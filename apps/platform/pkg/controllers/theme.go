@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -9,39 +8,15 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
-	"gopkg.in/yaml.v3"
 )
 
 //ThemeResponse struct
 type ThemeResponse struct {
-	ID         string           `json:"id"`
-	Name       string           `json:"name"`
-	Namespace  string           `json:"namespace"`
-	Definition *ThemeDefinition `json:"definition"`
-	Workspace  string           `json:"workspace"`
-}
-
-//ThemeDefinition struct
-type ThemeDefinition struct {
-	Error     string `json:"error"`
-	Info      string `json:"info"`
-	Primary   string `json:"primary"`
-	Secondary string `json:"secondary"`
-	Success   string `json:"success"`
-	Warning   string `json:"warning"`
-}
-
-// GetThemeDefinitionData function
-func GetThemeDefinitionData(definition *yaml.Node) *ThemeDefinition {
-
-	td := &ThemeDefinition{}
-	err := definition.Decode(td)
-
-	if err != nil {
-		fmt.Printf("Error parsing YAML file: %s\n", err)
-	}
-
-	return td
+	ID         string                    `json:"id"`
+	Name       string                    `json:"name"`
+	Namespace  string                    `json:"namespace"`
+	Definition *metadata.ThemeDefinition `json:"definition"`
+	Workspace  string                    `json:"workspace"`
 }
 
 //ThemeAPI function
@@ -70,7 +45,7 @@ func ThemeAPI(w http.ResponseWriter, r *http.Request) {
 		ID:         theme.ID,
 		Name:       theme.Name,
 		Namespace:  theme.Namespace,
-		Definition: GetThemeDefinitionData(&theme.Definition),
+		Definition: &theme.Definition,
 		Workspace:  theme.Workspace,
 	})
 }

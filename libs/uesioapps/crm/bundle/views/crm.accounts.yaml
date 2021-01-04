@@ -78,7 +78,3 @@ definition:
         crm.externalid: null
         crm.created: null
         crm.updated: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null

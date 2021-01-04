@@ -1,14 +1,14 @@
-import { WireConditionState } from "../../wire/wirecondition"
-import { PlainWireRecordMap } from "../../wire/wirerecord"
+import { PlainWireRecord } from "../wirerecord/types"
+import { WireConditionState } from "./conditions/conditions"
 
 type PlainWire = {
 	name: string
 	conditions: WireConditionState[]
-	data: PlainWireRecordMap
+	data: Record<string, PlainWireRecord>
 	view: string
-	original: PlainWireRecordMap
-	changes: PlainWireRecordMap
-	deletes: PlainWireRecordMap
+	original: Record<string, PlainWireRecord>
+	changes: Record<string, PlainWireRecord>
+	deletes: Record<string, PlainWireRecord>
 	error?: string
 }
 

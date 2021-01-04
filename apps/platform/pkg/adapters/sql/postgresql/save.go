@@ -17,11 +17,10 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 	response := []reqs.SaveResponse{}
 
 	db, err := connect()
-	defer db.Close()
-
 	if err != nil {
 		return nil, errors.New("Failed to connect to PostgreSQL:" + err.Error())
 	}
+	defer db.Close()
 
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 

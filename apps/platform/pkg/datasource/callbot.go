@@ -14,10 +14,12 @@ type CallBotAPI struct {
 }
 
 // Save function
-func (cba *CallBotAPI) Save(collection string, changes []reqs.ChangeRequest) (*SaveResponseBatch, error) {
+func (cba *CallBotAPI) Save(collection string, changes []map[string]interface{}) (*SaveResponseBatch, error) {
 	changeRequestMap := map[string]reqs.ChangeRequest{}
 	for index, req := range changes {
-		changeRequestMap[strconv.Itoa(index)] = req
+		changeRequestMap[strconv.Itoa(index)] = reqs.ChangeRequest{
+			FieldChanges: req,
+		}
 	}
 	return Save(SaveRequestBatch{
 		Wires: []reqs.SaveRequest{

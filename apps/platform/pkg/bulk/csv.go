@@ -19,7 +19,10 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 	mappings := []metadata.FieldMapping{}
 	// Keep a running tally of all requested collections
 	collections := datasource.MetadataRequest{}
-	collections.AddCollection(spec.Collection)
+	err := collections.AddCollection(spec.Collection)
+	if err != nil {
+		return nil, nil, err
+	}
 	for _, columnName := range columnNames {
 		mapping, ok := spec.Mappings[columnName]
 		if !ok {
@@ -28,10 +31,13 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 			}
 		}
 		mappings = append(mappings, mapping)
-		collections.AddField(spec.Collection, mapping.FieldName, nil)
+		err := collections.AddField(spec.Collection, mapping.FieldName, nil)
+		if err != nil {
+			return nil, nil, err
+		}
 	}
 
-	err := collections.Load(&metadataResponse, collatedMetadata, session)
+	err = collections.Load(&metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, nil, err
 	}

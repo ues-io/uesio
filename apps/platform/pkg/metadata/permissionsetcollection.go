@@ -11,12 +11,17 @@ func (pc *PermissionSetCollection) GetName() string {
 }
 
 // GetFields function
-func (pc *PermissionSetCollection) GetFields() []string {
-	return []string{"id"}
+func (pc *PermissionSetCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(pc)
 }
 
 // NewItem function
-func (pc *PermissionSetCollection) NewItem(key string) (BundleableItem, error) {
+func (pc *PermissionSetCollection) NewItem() LoadableItem {
+	return &PermissionSet{}
+}
+
+// NewBundleableItem function
+func (pc *PermissionSetCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewPermissionSet(key)
 }
 
@@ -26,27 +31,18 @@ func (pc *PermissionSetCollection) GetKeyPrefix(conditions reqs.BundleConditions
 }
 
 // AddItem function
-func (pc *PermissionSetCollection) AddItem(item CollectionableItem) {
-}
-
-// UnMarshal function
-func (pc *PermissionSetCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(pc, data)
-}
-
-// Marshal function
-func (pc *PermissionSetCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(pc)
+func (pc *PermissionSetCollection) AddItem(item LoadableItem) {
+	*pc = append(*pc, *item.(*PermissionSet))
 }
 
 // GetItem function
-func (pc *PermissionSetCollection) GetItem(index int) CollectionableItem {
+func (pc *PermissionSetCollection) GetItem(index int) LoadableItem {
 	actual := *pc
 	return &actual[index]
 }
 
 // Loop function
-func (pc *PermissionSetCollection) Loop(iter func(item CollectionableItem) error) error {
+func (pc *PermissionSetCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index))
 		if err != nil {

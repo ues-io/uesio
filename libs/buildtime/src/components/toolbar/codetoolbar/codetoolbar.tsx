@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment, useRef } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition } from "@uesio/ui"
@@ -11,7 +11,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 
 	return (
-		<Fragment>
+		<>
 			<ToolbarTitle
 				title="Code"
 				icon={CloseIcon}
@@ -168,7 +168,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					})
 				}}
 			/>
-		</Fragment>
+		</>
 	)
 }
 

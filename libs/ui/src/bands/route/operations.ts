@@ -6,8 +6,7 @@ import { clearAvailableMetadata } from "../builder"
 import loadViewOp from "../view/operations/load"
 
 const redirect = (context: Context, path: string) => async () => {
-	const mergedPath = context.merge(path)
-	window.location.href = mergedPath
+	window.location.href = context.merge(path)
 	return context
 }
 

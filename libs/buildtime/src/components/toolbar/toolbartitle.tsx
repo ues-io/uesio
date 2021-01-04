@@ -37,25 +37,30 @@ const useStyles = makeStyles((theme: Theme) =>
 			lineHeight: "1.4",
 		},
 		iconWrapper: {
-			flex: "0",
+			flex: 0,
 			marginTop: "3px",
 		},
 	})
 )
 
-const ToolbarTitle: FunctionComponent<Props> = (props) => {
+const ToolbarTitle: FunctionComponent<Props> = ({
+	title,
+	icon,
+	iconColor,
+	iconOnClick,
+}) => {
 	const classes = useStyles()
 	return (
 		<div className={classes.wrapper}>
 			<div className={classes.textWrapper}>
-				<Typography className={classes.title}>{props.title}</Typography>
+				<Typography className={classes.title}>{title}</Typography>
 			</div>
 			<div className={classes.iconWrapper}>
-				{props.icon && (
+				{icon && (
 					<SmallIconButton
-						icon={props.icon}
-						color={props.iconColor}
-						onClick={props.iconOnClick}
+						icon={icon}
+						color={iconColor}
+						onClick={iconOnClick}
 					/>
 				)}
 			</div>

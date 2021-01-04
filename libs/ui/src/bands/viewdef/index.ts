@@ -17,7 +17,6 @@ import {
 	YAML_OPTIONS,
 } from "../../yamlutils/yamlutils"
 import get from "lodash.get"
-import { deleteProperty } from "../../util/util"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
 import { getParentPath } from "../../component/path"
@@ -128,7 +127,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 					(item: Definition, itemIndex: number) =>
 						parseInt(index, 10) !== itemIndex
 			  )
-			: deleteProperty(parent, index)
+			: delete parent[index]
 		if (state.definition) {
 			setWith(state, ["definition"].concat(pathArray), newParent)
 		}
@@ -262,9 +261,9 @@ const changeDefKey = (
 				pathArray,
 				state.yaml.contents
 			) as Collection
-			const keyNode = parent?.items.find((item) => {
-				return item.key.value === oldKey
-			})
+			const keyNode = parent?.items.find(
+				(item) => item.key.value === oldKey
+			)
 
 			keyNode.key.value = newKey
 		}

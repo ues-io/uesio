@@ -109,7 +109,7 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 	}
 
 	for _, key := range keys {
-		retrievedItem, err := group.NewItem(key)
+		retrievedItem, err := group.NewBundleableItem(key)
 		if err != nil {
 			return err
 		}
@@ -129,21 +129,21 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 
 // GetFileStream function
 func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
-	stream, err := getStream(file.GetNamespace(), version, "files", file.FileName)
+	stream, err := getStream(file.Namespace, version, "files", file.FileName)
 	file.MimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
 	return stream, err
 }
 
 // GetBotStream function
 func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, err := getStream(bot.GetNamespace(), version, "bots", bot.FileName)
+	stream, err := getStream(bot.Namespace, version, "bots", bot.FileName)
 	return stream, err
 }
 
 // GetComponentPackStream function
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	name := componentPack.Name
-	namespace := componentPack.GetNamespace()
+	namespace := componentPack.Namespace
 	fileName := namespace + "." + name + ".bundle.js"
 	if buildMode {
 		fileName = namespace + "." + name + ".builder.bundle.js"

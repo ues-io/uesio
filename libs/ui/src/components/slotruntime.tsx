@@ -12,7 +12,7 @@ type SlotProps = {
 } & BaseProps
 
 const SlotRuntime: FunctionComponent<SlotProps> = (props) => {
-	const items = props.definition.items as DefinitionList
+	const items = props.definition.items
 	const listPath = props.path
 	return (
 		<>

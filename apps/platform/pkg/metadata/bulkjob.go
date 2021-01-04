@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 // BulkJob struct
 type BulkJob struct {
 	ID   string  `uesio:"uesio.id"`
@@ -19,8 +17,8 @@ type JobSpec struct {
 
 // FieldMapping struct
 type FieldMapping struct {
-	FieldName  string `json:"fieldname"`
-	MatchField string `json:"matchfield"`
+	FieldName  string `json:"fieldname" uesio:"FieldName"`
+	MatchField string `json:"matchfield" uesio:"MatchField"`
 }
 
 // GetCollectionName function
@@ -34,32 +32,12 @@ func (bj *BulkJob) GetCollection() CollectionableGroup {
 	return &bjc
 }
 
-// GetConditions function
-func (bj *BulkJob) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: bj.ID,
-		},
-	}, nil
+// SetField function
+func (bj *BulkJob) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(bj, fieldName, value)
 }
 
-// GetKey function
-func (bj *BulkJob) GetKey() string {
-	return bj.ID
-}
-
-// GetNamespace function
-func (bj *BulkJob) GetNamespace() string {
-	return ""
-}
-
-// SetNamespace function
-func (bj *BulkJob) SetNamespace(namespace string) {
-
-}
-
-// SetWorkspace function
-func (bj *BulkJob) SetWorkspace(workspace string) {
-
+// GetField function
+func (bj *BulkJob) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(bj, fieldName)
 }

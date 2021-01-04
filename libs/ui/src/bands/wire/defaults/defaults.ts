@@ -1,8 +1,8 @@
 import { Dictionary } from "@reduxjs/toolkit"
-import { getFullWireId } from "../bands/wire/selectors"
-import { PlainWire } from "../bands/wire/types"
-import { Context } from "../context/context"
-import { LoadResponseRecord } from "../load/loadresponse"
+import { LoadResponseRecord } from "../../../load/loadresponse"
+import { Context } from "../../../context/context"
+import { PlainWire } from "../types"
+import { getFullWireId } from "../selectors"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"

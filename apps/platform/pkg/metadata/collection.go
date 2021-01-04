@@ -20,6 +20,7 @@ func NewCollection(key string) (*Collection, error) {
 
 // Collection struct
 type Collection struct {
+	ID             string `yaml:"-" uesio:"uesio.id"`
 	Name           string `yaml:"name" uesio:"uesio.name"`
 	Namespace      string `yaml:"-" uesio:"-"`
 	DataSourceRef  string `yaml:"dataSource" uesio:"uesio.datasource"`
@@ -66,6 +67,16 @@ func (c *Collection) GetKey() string {
 // GetPermChecker function
 func (c *Collection) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (c *Collection) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(c, fieldName, value)
+}
+
+// GetField function
+func (c *Collection) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(c, fieldName)
 }
 
 // GetNamespace function

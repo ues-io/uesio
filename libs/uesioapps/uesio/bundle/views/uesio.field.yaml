@@ -60,6 +60,7 @@ definition:
         uesio.foreignKeyField:
         uesio.referencedCollection:
         uesio.autopopulate:
+        uesio.selectList:
       conditions:
         - field: uesio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -194,8 +195,10 @@ definition:
                                       fieldId: uesio.label
                                   - material.field:
                                       fieldId: uesio.propertyname
-                                  - material.field:
+                                  - uesio.metadatafield:
                                       fieldId: uesio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
                                   - material.container:
                                       padding: 0
                                       uesio.display:
@@ -210,6 +213,7 @@ definition:
                                             fieldId: uesio.referencedCollection
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
+
                                   - material.container:
                                       padding: 0
                                       uesio.display:
@@ -219,7 +223,13 @@ definition:
                                         - material.field:
                                             fieldId: uesio.autopopulate
 
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:
+                                  - material.container:
+                                      padding: 0
+                                      uesio.display:
+                                        - field: uesio.type
+                                          value: "SELECT"
+                                      components:
+                                        - uesio.metadatafield:
+                                            fieldId: uesio.selectList
+                                            metadataType: "SELECTLIST"
+                                            label: "Select List"

@@ -21,8 +21,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 	const view = context.getView()
-	const workspaceName = view?.params?.["workspacename"]
-	const appName = view?.params?.["appname"]
+	const workspaceName = view?.params?.workspacename
+	const appName = view?.params?.appname
 
 	if (!wire || !record || !workspaceName || !appName) {
 		return null

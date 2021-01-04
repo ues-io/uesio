@@ -123,6 +123,3 @@ definition:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
                         namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:

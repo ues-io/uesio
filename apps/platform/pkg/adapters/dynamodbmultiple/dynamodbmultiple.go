@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -57,64 +56,6 @@ func getExpressionUpdate(requestedFields map[string]*dynamodb.AttributeValue) (e
 
 	return expr, err
 
-}
-
-// This functions maps DBname into UIname
-func manageResponse(result *dynamodb.ScanOutput, requestedFields adapters.FieldsMap, referenceCollection adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
-	wireData := make([]map[string]interface{}, 0)
-
-	for _, lmap := range result.Items {
-
-		wireDataParsed := make(map[string]interface{})
-
-		// Map properties from firestore to uesio fields
-		for _, fieldMetadata := range requestedFields {
-
-			var i interface{}
-
-			fieldID, err := adapters.GetUIFieldName(fieldMetadata)
-			if err != nil {
-				return nil, err
-			}
-
-			dynamoFieldName, err := getDBFieldName(fieldMetadata)
-			if err != nil {
-				return nil, err
-			}
-
-			value, ok := lmap[dynamoFieldName]
-			if !ok {
-				continue
-			}
-			dynamodbattribute.Unmarshal(value, &i)
-			wireDataParsed[fieldID] = i
-
-		}
-
-		for _, reference := range referenceCollection {
-			fieldMetadata := reference.Metadata
-			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
-			if err != nil {
-				return nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
-			}
-			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
-			if err != nil {
-				return nil, err
-			}
-
-			foreignKeyValue, ok := wireDataParsed[foreignKeyName]
-			if !ok {
-				//No foreign key value
-				continue
-			}
-
-			reference.AddID(foreignKeyValue)
-		}
-
-		wireData = append(wireData, wireDataParsed)
-	}
-
-	return wireData, nil
 }
 
 func describeTableDynamoDB(tableName string, client *dynamodb.DynamoDB) (bool, error) {

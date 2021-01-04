@@ -59,9 +59,8 @@ const unWrapDefinition = (
 }
 
 // Return the string representation of a path array.
-const fromPath = (pathArray: string[]) => {
-	return pathArray.map((part: string) => `["${part}"]`).join("")
-}
+const fromPath = (pathArray: string[]) =>
+	pathArray.map((part: string) => `["${part}"]`).join("")
 
 const getParentPath = (path: string) => {
 	const pathArray = toPath(path)

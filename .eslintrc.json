@@ -6,6 +6,9 @@
     "sourceType": "module",
     "project": "./tsconfig.*?.json"
   },
+  "env": {
+    "browser": true
+  },
   "ignorePatterns": ["**/*"],
   "plugins": ["@typescript-eslint", "@nrwl/nx", "react"],
   "extends": [
@@ -16,6 +19,11 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "array-callback-return": "error",
+    "dot-notation": "error",
+    "prefer-arrow-callback": "error",
+    "arrow-body-style": "error",
+    "no-undef": "error",
     "no-nested-ternary": "error",
     "no-unneeded-ternary": "error",
     "object-shorthand": "error",

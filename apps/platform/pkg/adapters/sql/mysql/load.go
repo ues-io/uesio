@@ -10,25 +10,93 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
 
-func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.FieldsMap, referenceFields adapters.ReferenceRegistry, collectionMetadata *adapters.CollectionMetadata) ([]map[string]interface{}, error) {
-
-	rows, err := loadQuery.RunWith(db).Query()
-
+func loadOne(
+	ctx context.Context,
+	db *sql.DB,
+	op adapters.LoadOp,
+	metadata *adapters.MetadataCache,
+	ops []adapters.LoadOp,
+) error {
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
-		return nil, errors.New("Failed to load rows in MySQL:" + err.Error())
+		return err
 	}
 
-	defer rows.Close()
+	nameFieldMetadata, err := collectionMetadata.GetNameField()
+	if err != nil {
+		return err
+	}
+
+	nameFieldDB, err := sqlshared.GetDBFieldName(nameFieldMetadata)
+	if err != nil {
+		return err
+	}
+
+	fieldMap, referenceFields, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	if err != nil {
+		return err
+	}
+
+	requestedFieldArr := []string{}
+
+	for _, fieldMetadata := range fieldMap {
+		firestoreFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+		requestedFieldArr = append(requestedFieldArr, firestoreFieldName)
+	}
+
+	collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
+	if err != nil {
+		return err
+	}
+
+	psql := sq.StatementBuilder
+
+	loadQuery := psql.Select(requestedFieldArr...).From(collectionName)
+
+	for _, condition := range op.Conditions {
+
+		if condition.Type == "SEARCH" {
+			searchToken := condition.Value.(string)
+			colValeStr := ""
+			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
+			loadQuery = loadQuery.Where(nameFieldDB+" LIKE ? ", colValeStr)
+			continue
+		}
+
+		fieldMetadata, err := collectionMetadata.GetField(condition.Field)
+		if err != nil {
+			return err
+		}
+		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+
+		conditionValue, err := adapters.GetConditionValue(condition, op, metadata, ops)
+		if err != nil {
+			return err
+		}
+
+		loadQuery = loadQuery.Where(fieldName+" = ? ", fmt.Sprintf("%v", conditionValue))
+
+	}
+
+	rows, err := loadQuery.RunWith(db).Query()
+	if err != nil {
+		return errors.New("Failed to load rows in MySQL:" + err.Error())
+	}
 
 	cols, err := rows.Columns()
 	if err != nil {
-		return nil, errors.New("Failed to load columns in MySQL:" + err.Error())
+		return errors.New("Failed to load columns in MySQL:" + err.Error())
 	}
 
 	colIndexes := map[string]int{}
@@ -37,28 +105,28 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 		colIndexes[col] = i
 	}
 
-	allgeneric := make([]map[string]interface{}, 0)
 	colvals := make([]sql.RawBytes, len(cols))
 	scanArgs := make([]interface{}, len(colvals))
 
 	for rows.Next() {
-		colassoc := make(map[string]interface{}, len(cols))
+		item := op.Collection.NewItem()
+
 		for i := range colvals {
 			scanArgs[i] = &colvals[i]
 		}
 		if err := rows.Scan(scanArgs...); err != nil {
-			return nil, errors.New("Failed to scan values in MySQL:" + err.Error())
+			return errors.New("Failed to scan values in MySQL:" + err.Error())
 		}
 		// Map properties from firestore to uesio fields
-		for fieldID, fieldMetadata := range requestedFields {
+		for fieldID, fieldMetadata := range fieldMap {
 
 			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
 			index, ok := colIndexes[sqlFieldName]
 			if !ok {
-				return nil, errors.New("Column not found: " + sqlFieldName)
+				return errors.New("Column not found: " + sqlFieldName)
 			}
 
 			if fieldMetadata.Type == "MAP" {
@@ -68,12 +136,18 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 					err = json.Unmarshal(colvals[index], &anyJSON)
 
 					if err != nil {
-						return nil, errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+						return errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+					}
+					err := item.SetField(fieldID, anyJSON)
+					if err != nil {
+						return err
 					}
 
-					colassoc[fieldID] = anyJSON
 				} else {
-					colassoc[fieldID] = nil
+					err := item.SetField(fieldID, nil)
+					if err != nil {
+						return err
+					}
 				}
 
 				continue
@@ -85,28 +159,33 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 				layout := "2006-01-02"
 				t, _ := time.Parse(layout, input)
 
-				colassoc[fieldID] = t.Format("2006-01-02")
+				err := item.SetField(fieldID, t.Format("2006-01-02"))
+				if err != nil {
+					return err
+				}
 
 				continue
 			}
 
-			colassoc[fieldID] = string(colvals[index])
-		}
+			err = item.SetField(fieldID, string(colvals[index]))
+			if err != nil {
+				return err
+			}
 
-		allgeneric = append(allgeneric, colassoc)
+		}
 
 		for _, reference := range referenceFields {
 			fieldMetadata := reference.Metadata
 			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
 			if err != nil {
-				return nil, errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
+				return errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
 			}
 			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			foreignKeyValue, ok := colassoc[foreignKeyName]
-			if !ok {
+			foreignKeyValue, err := item.GetField(foreignKeyName)
+			if err != nil {
 				//No foreign key value
 				continue
 			}
@@ -114,127 +193,41 @@ func queryDb(db *sql.DB, loadQuery sq.SelectBuilder, requestedFields adapters.Fi
 			reference.AddID(foreignKeyValue)
 		}
 
+		op.Collection.AddItem(item)
+
 	}
 	rows.Close()
-
-	return allgeneric, nil
-
-}
-
-func loadOne(ctx context.Context, db *sql.DB, wire reqs.LoadRequest, metadata *adapters.MetadataCache, requests []reqs.LoadRequest, responses []reqs.LoadResponse) (*reqs.LoadResponse, error) {
-	data := []map[string]interface{}{}
-	collectionMetadata, err := metadata.GetCollection(wire.Collection)
-	if err != nil {
-		return nil, err
-	}
-
-	nameFieldMetadata, err := collectionMetadata.GetNameField()
-	if err != nil {
-		return nil, err
-	}
-
-	nameFieldDB, err := sqlshared.GetDBFieldName(nameFieldMetadata)
-	if err != nil {
-		return nil, err
-	}
-
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(wire.Fields, collectionMetadata, metadata)
-	if err != nil {
-		return nil, err
-	}
-
-	requestedFieldArr := []string{}
-
-	for _, fieldMetadata := range fieldMap {
-		firestoreFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
-		if err != nil {
-			return nil, err
-		}
-		requestedFieldArr = append(requestedFieldArr, firestoreFieldName)
-	}
-
-	collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
-	if err != nil {
-		return nil, err
-	}
-
-	psql := sq.StatementBuilder
-
-	loadQuery := psql.Select(requestedFieldArr...).From(collectionName)
-
-	if wire.Conditions != nil {
-
-		for _, condition := range wire.Conditions {
-
-			if condition.Type == "SEARCH" {
-				searchToken := condition.Value.(string)
-				colValeStr := ""
-				colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-				loadQuery = loadQuery.Where(nameFieldDB+" LIKE ? ", colValeStr)
-				continue
-			}
-
-			fieldMetadata, err := collectionMetadata.GetField(condition.Field)
-			if err != nil {
-				return nil, err
-			}
-			fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
-			if err != nil {
-				return nil, err
-			}
-
-			conditionValue, err := adapters.GetConditionValue(condition, wire, metadata, requests, responses)
-			if err != nil {
-				return nil, err
-			}
-
-			loadQuery = loadQuery.Where(fieldName+" = ? ", fmt.Sprintf("%v", conditionValue))
-
-		}
-	}
-
-	data, err = queryDb(db, loadQuery, fieldMap, referenceFields, collectionMetadata)
-	if err != nil {
-		return nil, err
-	}
 
 	//At this point idsToLookFor has a mapping for reference field
 	//names to actual id values we will need to grab from the referenced collection
 	if len(referenceFields) != 0 {
 		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, db, metadata, data, collectionMetadata, referenceFields)
+		err = followUpReferenceFieldLoad(ctx, db, metadata, op, collectionMetadata, referenceFields)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return &reqs.LoadResponse{
-		Wire:       wire.Wire,
-		Collection: wire.Collection,
-		Data:       data,
-	}, nil
+	return nil
 }
 
 // Load function
-func (a *Adapter) Load(requests []reqs.LoadRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.LoadResponse, error) {
+func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
 
 	ctx := context.Background()
-	responses := []reqs.LoadResponse{}
 
 	db, err := connect()
-	defer db.Close()
 	if err != nil {
-		return nil, errors.New("Failed to connect MySQL:" + err.Error())
+		return errors.New("Failed to connect MySQL:" + err.Error())
 	}
+	defer db.Close()
 
-	for _, wire := range requests {
-		response, err := loadOne(ctx, db, wire, metadata, requests, responses)
+	for _, op := range ops {
+		err := loadOne(ctx, db, op, metadata, ops)
 		if err != nil {
-			return nil, err
+			return err
 		}
-
-		responses = append(responses, *response)
 	}
 
-	return responses, nil
+	return nil
 }

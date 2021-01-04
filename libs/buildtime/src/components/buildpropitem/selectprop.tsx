@@ -19,9 +19,7 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 }) => (
 	<TextField
 		select={true}
-		SelectProps={{
-			native: true,
-		}}
+		SelectProps={{ native: true }}
 		variant="outlined"
 		InputProps={inputProps}
 		InputLabelProps={inputLabelProps}
