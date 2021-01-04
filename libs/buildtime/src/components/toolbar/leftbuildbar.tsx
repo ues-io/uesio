@@ -22,10 +22,15 @@ const TOOLBAR_TO_COMPONENT = {
 const MINI_TOOLBAR_WIDTH = 50
 
 const LeftBuildbar: FunctionComponent<Props> = (props) => {
-	const { context, selectedNode, selectedPanel: selected } = props
-	const path = selectedNode
+	const {
+		context,
+		selectedNode,
+		selectedPanel: selected,
+		path: wirePath,
+	} = props
+	//	const path = selectedNode
 	const uesio = hooks.useUesio(props)
-
+	console.log("selectedNode", selectedNode)
 	const currentToolbarPanel =
 		TOOLBAR_TO_COMPONENT[selected as "wires" | "components"]
 
@@ -33,7 +38,7 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 	// For Example:
 	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
 	// This: ["components"]["0"]["myns.mycomp"]
-	const trimmedPath = component.path.trimPathToComponent(path)
+	const trimmedPath = component.path.trimPathToComponent(wirePath)
 
 	const propDef = component.registry.getPropertiesDefinitionFromPath(
 		trimmedPath

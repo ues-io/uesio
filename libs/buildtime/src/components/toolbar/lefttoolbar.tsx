@@ -26,8 +26,8 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			{(selectedPanel || selectedNode) && (
 				<LeftBuildbar
 					selectedPanel={selectedPanel}
-					selectedNode={wirePath || selectedNode}
-					path=""
+					selectedNode={selectedNode}
+					path={(wirePath && `[wires][${wirePath}]`) || ""}
 					context={props.context}
 				/>
 			)}
