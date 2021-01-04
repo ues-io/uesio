@@ -26,28 +26,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const yamlDoc = uesio.view.useYAML()
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 
-	const yamlDocContent = yamlDoc?.toString()
-	const previousYaml = useRef<string | undefined>(yamlDocContent)
-	const [hasYamlChanged, setHasYamlChanged] = useState<boolean>(false)
-
-	// code responsible for tracking change upon drag'n dropping in the builder
-	useEffect(() => {
-		if (
-			previousYaml.current !== undefined &&
-			yamlDocContent !== undefined &&
-			yamlDocContent !== previousYaml.current
-		) {
-			setHasYamlChanged(true)
-		} else {
-			setHasYamlChanged(false)
-		}
-	}, [yamlDocContent])
-
-	useEffect(() => {
-		// update ref for the next re-rendering
-		previousYaml.current = yamlDocContent
-	}, [hasYamlChanged])
-
 	return (
 		<>
 			<ToolbarTitle
@@ -58,9 +36,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			<LazyMonaco
 				editorDecoration={{
 					gutterClass: classes.gutter,
-					doForceUpdate: hasYamlChanged,
-					previousPlainYaml: previousYaml.current || "",
-					currentPlainYaml: yamlDocContent || "",
+					doForceUpdate: true,
+					previousPlainYaml: currentAST.current?.toString() || "",
+					currentPlainYaml: yamlDoc?.toString() || "",
 				}}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
