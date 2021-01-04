@@ -1,10 +1,12 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
+import md5 from "md5"
+import { diffLines, Change } from "diff"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -24,8 +26,16 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
-	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const currentYaml = yamlDoc?.toString()
 
+	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const previousYaml = currentAST.current?.toString()
+
+	// check if diff between previous state and new state
+	const hasYamlChanged =
+		currentYaml !== undefined && previousYaml !== currentYaml
+
+	console.log("hasYamlChanged", hasYamlChanged)
 	return (
 		<>
 			<ToolbarTitle
@@ -34,12 +44,10 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				editorDecoration={{
-					gutterClass: classes.gutter,
-					doForceUpdate: true,
-					previousPlainYaml: currentAST.current?.toString() || "",
-					currentPlainYaml: yamlDoc?.toString() || "",
-				}}
+				// force the LazyMonaco component to unmount and create a new component if hasYamlChanged is true
+				{...(hasYamlChanged && currentYaml
+					? { key: md5(currentYaml) }
+					: {})}
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
@@ -146,7 +154,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					*/
 					}
 				}
-				editorDidMount={(editor /*, monaco*/): void => {
+				editorDidMount={(editor, monaco): void => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
@@ -188,6 +196,41 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							}
 						}
 					})
+
+					// decoration in the editor gutter
+					if (hasYamlChanged && previousYaml && currentYaml) {
+						const diff: Change[] = diffLines(
+							previousYaml,
+							currentYaml
+						)
+						console.log("diff", diff)
+						if (
+							diff?.[0]?.count &&
+							diff?.[1]?.count &&
+							diff?.[1]?.added
+						) {
+							const startOffset = diff[0].count + 1
+							const endOffset = startOffset + diff[1].count - 1
+							editor.deltaDecorations(
+								[],
+								[
+									{
+										range: new monaco.Range(
+											startOffset,
+											1,
+											endOffset,
+											1
+										),
+										options: {
+											isWholeLine: true,
+											linesDecorationsClassName:
+												classes.gutter,
+										},
+									},
+								]
+							)
+						}
+					}
 				}}
 			/>
 		</>

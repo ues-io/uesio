@@ -11,8 +11,6 @@ declare global {
 
 import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
-import { diffLines, Change } from "diff"
-import md5 from "md5"
 
 import {
 	ChangeHandler,
@@ -36,12 +34,6 @@ interface Props {
 	onChange?: ChangeHandler
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
-	editorDecoration?: {
-		gutterClass: string
-		doForceUpdate: boolean
-		previousPlainYaml: string
-		currentPlainYaml: string
-	}
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -50,97 +42,29 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
-	editorDecoration,
-}) => {
-	console.log("editorDecoration", editorDecoration)
-	// force the LazyMonaco component to unmount if hasYamlChanged is true
-	/*	{...(hasYamlChanged && yamlDocContent
-						? { key: md5(yamlDocContent) }
-						: {})}
-	*/
-	if (editorDecoration?.doForceUpdate) {
-		const diff: Change[] = diffLines(
-			editorDecoration.previousPlainYaml,
-			editorDecoration.currentPlainYaml
-		)
-		return (
-			<Suspense
-				key={md5(editorDecoration.currentPlainYaml)}
-				fallback={createElement(LinearProgress)}
-			>
-				<LaziestMonaco
-					value={value}
-					language={language || "yaml"}
-					options={{
-						automaticLayout: true,
-						minimap: {
-							enabled: false,
-						},
-						//quickSuggestions: true,
-					}}
-					onChange={(newValue, event): void => {
-						onChange?.(newValue, event)
-					}}
-					editorWillMount={(monaco): void => {
-						editorWillMount?.(monaco)
-					}}
-					editorDidMount={(editor, monaco): void => {
-						editorDidMount?.(editor, monaco)
-						if (
-							diff?.[0]?.count &&
-							diff?.[1]?.count &&
-							diff?.[1]?.added
-						) {
-							const startOffset = diff[0].count + 1
-							const endOffset = startOffset + diff[1].count - 1
-							editor.deltaDecorations(
-								[],
-								[
-									{
-										range: new monaco.Range(
-											startOffset,
-											1,
-											endOffset,
-											1
-										),
-										options: {
-											isWholeLine: true,
-											linesDecorationsClassName:
-												editorDecoration.gutterClass,
-										},
-									},
-								]
-							)
-						}
-					}}
-				/>
-			</Suspense>
-		)
-	}
-	return (
-		<Suspense fallback={createElement(LinearProgress)}>
-			<LaziestMonaco
-				value={value}
-				language={language || "yaml"}
-				options={{
-					automaticLayout: true,
-					minimap: {
-						enabled: false,
-					},
-					//quickSuggestions: true,
-				}}
-				onChange={(newValue, event): void => {
-					onChange?.(newValue, event)
-				}}
-				editorWillMount={(monaco): void => {
-					editorWillMount?.(monaco)
-				}}
-				editorDidMount={(editor, monaco): void => {
-					editorDidMount?.(editor, monaco)
-				}}
-			/>
-		</Suspense>
-	)
-}
+}) => (
+	<Suspense fallback={createElement(LinearProgress)}>
+		<LaziestMonaco
+			value={value}
+			language={language || "yaml"}
+			options={{
+				automaticLayout: true,
+				minimap: {
+					enabled: false,
+				},
+				//quickSuggestions: true,
+			}}
+			onChange={(newValue, event): void => {
+				onChange?.(newValue, event)
+			}}
+			editorWillMount={(monaco): void => {
+				editorWillMount?.(monaco)
+			}}
+			editorDidMount={(editor, monaco): void => {
+				editorDidMount?.(editor, monaco)
+			}}
+		/>
+	</Suspense>
+)
 
 export default LazyMonaco
