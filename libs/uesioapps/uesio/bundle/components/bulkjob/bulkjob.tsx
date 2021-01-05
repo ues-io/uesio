@@ -68,8 +68,6 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 	if (!idField) return null
 
 	const jobId = record.getFieldValue(idField.getId()) as string
-	const onChange = (e: ChangeEvent<HTMLInputElement>) =>
-		handleChange(e.target.files, uesio, jobId)
 
 	return (
 		<div className={classes.root}>
@@ -79,7 +77,9 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 					className={classes.input}
 					id={id}
 					name={id}
-					onChange={onChange}
+					onChange={(e: ChangeEvent<HTMLInputElement>) =>
+						handleChange(e.target.files, uesio, jobId)
+					}
 				/>
 				<material.Button
 					color="primary"
