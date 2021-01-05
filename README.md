@@ -16,7 +16,7 @@ As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriop
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred.
+Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. Except some third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), all React components are functional components.
 
 # Tech Stack
 
@@ -44,7 +44,7 @@ Generally speaking, frontend-side, functional programming style and [unidirectio
 
 See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
-# <a id="monorepo-architecture"></a> Monorepo architecture
+# <a id="monorepo-structure"></a> Monorepo structure
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
