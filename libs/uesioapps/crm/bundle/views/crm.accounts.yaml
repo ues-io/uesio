@@ -78,12 +78,3 @@ definition:
         crm.externalid: null
         crm.created: null
         crm.updated: null
-    thomastest:
-      collection: crm.accounts
-      fields:
-        crm.description: null
-        crm.id: null
-        crm.name: null
-        crm.externalid: null
-        crm.created: null
-        crm.updated: null
