@@ -8,7 +8,6 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const selectedPanel = uesio.builder.useLeftPanel()
 	const builderView = uesio.builder.useView()
 	const selectedNode = uesio.builder.useSelectedNode()
-<<<<<<< HEAD
 	const onChange = (toolbarId: string): void => {
 		if (toolbarId === "compactview" || toolbarId === "expandedview") {
 			uesio.builder.setView(toolbarId)
@@ -18,8 +17,6 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			selectedPanel === toolbarId && !selectedNode ? "" : toolbarId
 		)
 	}
-=======
->>>>>>> Call builder action.
 	return (
 		<>
 			<LeftNavbar viewMode={builderView} onChange={onChange} />

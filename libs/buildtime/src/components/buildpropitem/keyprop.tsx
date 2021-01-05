@@ -10,9 +10,9 @@ import { hooks, util } from "@uesio/ui"
 
 const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 	const { path, descriptor } = props
-	const uesio = hooks.useUesio(props)
 	const pathArray = util.toPath(path)
 	const key = pathArray.pop()
+	const uesio = hooks.useUesio(props)
 
 	return (
 		<TextField
