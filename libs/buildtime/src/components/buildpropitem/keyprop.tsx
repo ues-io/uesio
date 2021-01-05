@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext } from "react"
+import React, { FunctionComponent } from "react"
 import { TextField } from "@material-ui/core"
 import {
 	PropRendererProps,
@@ -7,17 +7,13 @@ import {
 	inputLabelProps,
 } from "./proprendererdefinition"
 import { hooks, util } from "@uesio/ui"
-import { SelectWireContext } from "../toolbar/SelectWireContext"
 
 const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
-	const selectedWireContext = useContext(SelectWireContext)
 	const { path, descriptor } = props
+	const uesio = hooks.useUesio(props)
 	const pathArray = util.toPath(path)
 	const key = pathArray.pop()
-	const uesio = hooks.useUesio(props)
 
-	console.log("selectedWireContext", selectedWireContext)
-	// Fall back to text component
 	return (
 		<TextField
 			value={key}
@@ -28,9 +24,11 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 			InputProps={inputProps}
 			InputLabelProps={inputLabelProps}
 			variant="outlined"
-			onChange={(event): void =>
-				uesio.view.changeDefinitionKey(path, event.target.value)
-			}
+			onChange={(event): void => {
+				const inputValue = event.target.value
+				uesio.builder.setSelectedNode?.(`["wires"]["${inputValue}"]`)
+				uesio.view.changeDefinitionKey(path, inputValue)
+			}}
 		/>
 	)
 }
