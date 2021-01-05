@@ -78,9 +78,9 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					control={
 						<Checkbox
 							checked={selected}
-							onChange={(event): void => {
+							onChange={(event): void =>
 								setValue(event.target.checked)
-							}}
+							}
 						/>
 					}
 					label={descriptor.label}
