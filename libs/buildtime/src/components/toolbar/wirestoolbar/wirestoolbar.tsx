@@ -35,7 +35,7 @@ const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(definition || {}).map((key: string, index) => {
 					const wirePath = `${path}["${key}"]`
-					const onClick = () =>
+					const onClick = (): void =>
 						uesio.builder.setSelectedNode(wirePath)
 					return (
 						<PropNodeTag
