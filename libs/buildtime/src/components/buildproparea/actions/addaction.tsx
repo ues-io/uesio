@@ -11,27 +11,25 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 	if (!action) {
 		return null
 	}
+
+	const onClickHandler = (): void => {
+		const { path, registry } = component
+		const componentKey = action.componentKey
+		const [namespace, name] = path.parseKey(componentKey)
+
+		const propDef = registry.getPropertiesDefinition(namespace, name)
+
+		if (propDef) {
+			uesio.view.addDefinition(`${props.path}["${action.slot}"]`, {
+				[componentKey]: propDef.defaultDefinition(),
+			})
+		}
+	}
+
 	return (
 		<ActionButton
 			title={action.label}
-			onClick={(): void => {
-				const componentKey = action.componentKey
-				const [namespace, name] = component.path.parseKey(componentKey)
-
-				const propDef = component.registry.getPropertiesDefinition(
-					namespace,
-					name
-				)
-
-				if (propDef) {
-					uesio.view.addDefinition(
-						`${props.path}["${action.slot}"]`,
-						{
-							[componentKey]: propDef.defaultDefinition(),
-						}
-					)
-				}
-			}}
+			onClick={onClickHandler}
 			icon={AddIcon}
 		/>
 	)

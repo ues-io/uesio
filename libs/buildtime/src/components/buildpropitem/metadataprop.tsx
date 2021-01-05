@@ -64,9 +64,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 				{namespaces ? (
 					<SelectProp
 						{...props}
-						setValue={(value: string) => {
-							setValue(value + ".")
-						}}
+						setValue={(value: string) => setValue(`${value}.`)}
 						getValue={() => namespace}
 						descriptor={{
 							...descriptor,
@@ -93,9 +91,9 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 				{metadata ? (
 					<SelectProp
 						{...props}
-						setValue={(value: string) => {
-							setValue(namespace + "." + value)
-						}}
+						setValue={(value: string) =>
+							setValue(`${namespace}.${value}`)
+						}
 						getValue={() => name}
 						descriptor={{
 							...descriptor,

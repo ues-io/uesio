@@ -19,18 +19,15 @@ const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = (props) => {
 			{crumbs?.map?.((crumbDef, index) => {
 				const text = props.context.merge(crumbDef.text)
 				const href = props.context.merge(crumbDef.href)
-				const absHref =
-					href && !href.startsWith("/") ? `/${href}` : href
+				const url = href && !href.startsWith("/") ? `/${href}` : href
 				if (crumbDef.href) {
+					const onClick = (event: SyntheticEvent): void => {
+						event.preventDefault()
+						crumbDef.signals &&
+							uesio.signal.getHandler(crumbDef.signals)()
+					}
 					return (
-						<material.Link
-							href={absHref}
-							onClick={(event: SyntheticEvent): void => {
-								event.preventDefault()
-								crumbDef.signals &&
-									uesio.signal.getHandler(crumbDef.signals)()
-							}}
-						>
+						<material.Link href={url} onClick={onClick}>
 							{text}
 						</material.Link>
 					)
