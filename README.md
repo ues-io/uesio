@@ -16,7 +16,7 @@ As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriop
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. Except some third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), all React components are functional components.
+Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are functional components. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), are not functional components.
 
 # Tech Stack
 
