@@ -106,6 +106,4 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	return null
 }
 
-Field.displayName = "Field"
-
 export default Field

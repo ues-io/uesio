@@ -14,9 +14,9 @@ We use the repo called [typescript-eslint](https://github.com/typescript-eslint/
 
 As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriopt Style Guide](https://github.com/airbnb/javascript), [Airbnb React/JSX Style Guide](https://github.com/airbnb/javascript/tree/master/react) and the [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react).
 
-Redux-wise we do follow some code style with some exceptions. More details on that [here](#redux-architecture).
+Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-Generally speaking, in the frontend-side are favoured the concepts coming from functional programming and the concept of [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/).
+Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred.
 
 # Tech Stack
 
@@ -63,6 +63,23 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Set up dev environment
 
+> This set up has been successfully tested with the following environments :
+>
+> ```
+> go --version
+> go version go1.15.6 darwin/amd64
+> ```
+>
+> ```
+> npm -v
+> 6.14.4
+> ```
+>
+> ```
+> node -v
+> v12.16.3
+> ```
+
 - Install [homebrew](https://brew.sh/) (for macOS user)
 - Install git
 - ```
@@ -76,7 +93,7 @@ nx g @nrwl/workspace:library NEW_LIB
 ```
 
 - Install [Go](https://golang.org/dl/)
-- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`.
+- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
 - git clone repo (ssh method is prefered)
 - Download and install the npm module dependencies :
 
@@ -109,15 +126,6 @@ nx g @nrwl/workspace:library NEW_LIB
   ```
   npm install -g nx
   ```
-- _Optional_. Mock data for the CRM uesio app :
-
-  ```
-   cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run upsert -f data/contacts.csv -c crm.contacts
-
-   // or
-   npm run dev:mock:crm
-  ```
-
 - _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
@@ -138,56 +146,6 @@ nx g @nrwl/workspace:library NEW_LIB
     }
   ]
 }
-```
-
-# npm dependencies
-
-As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
-
-All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
-
-Most of commmands you might run related to npm modules.
-
-- Install a new dependency :
-
-```
-npm install lodash.isempty -D
-```
-
-- Update minor changes (no breaking changes) of an existing dependency :
-
-```
-npm update react -D
-```
-
-- Major update and latest (with breaking changes) of an existing dependency :
-
-```
-npm install react@latest -D
-```
-
-- List all dependencies of the monorepo and the related version :
-
-```
- npm list --depth=0
-```
-
-- Remove a dependency :
-
-```
- npm uninstall lodash.isempty -D
-```
-
-- List dependencies having newer versions :
-
-```
- npm outdated
-```
-
-- Update minor changes (no breaking changes) all dependencies :
-
-```
- npm update
 ```
 
 # Build
@@ -232,7 +190,7 @@ npm run watch-all
 // For killing all of them, do run `killall node`
 ```
 
-As a side note, the npm script, `dev` does include this `watch-all` npm script.
+As a side note, the `dev` npm script does include this `watch-all` npm script.
 
 # Uesio apps deployment
 
@@ -326,27 +284,27 @@ https://uesio-dev.com:3000
 
 # <a id="local-firestore"></a> Local Development with the Firestore Emulator
 
-1. Create a project in the [firebase console](https://console.firebase.google.com/).
-
-2. ```
+0. First off, the firebase emulator is written in Java, so you need to install the [JRE](https://java.com/en/download).
+1. ```
    npm install -g firebase-tools
    ```
-3. ```
+2. ```
    cd PATH_TO_UESIO // go to the uesio project folder
    ```
-4. Select the project your created before, while interacting with the firebase cli.
-
-```
-   firebase init firestore
-```
-
+3. ```
+   firebase login
+   ```
 4. ```
+   firebase init firestore
+   ```
+5. In the firebase cli, select `Don't set up a default project`, and hit enter in the further questions.
+6. ```
    firebase emulators:start
    ```
-5. In a browser visit
+7. In a browser visit
 
 ```
-   http://localhost:4000/firestore/
+  http://localhost:4000/firestore/
 ```
 
 # Local Development with a database in Docker
@@ -355,45 +313,45 @@ https://uesio-dev.com:3000
 1. Create a **docker container** based on a remote docker **image** - _e_._g_. `mysql`. - and tag a `CONTAINER_NAME` - _e_._g_. `mysql-container-uesio`.
 
 ```
-docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
+  docker run --name mysql-container-uesio -p 3306:3306 -e MYSQL_ROOT_PASSWORD=tcm -d mysql
 ```
 
 2. Check if your container is up and running. You have information about the container **id** and **name**.
 
 ```
-docker ps
+  docker ps
 ```
 
 3. Get in the container and create a database.
 
 ```
-docker exec -it CONTAINER_NAME /bin/bash
+  docker exec -it CONTAINER_NAME /bin/bash
 ```
 
 ```
-./usr/bin/mysql --user=root --password=tcm
+  ./usr/bin/mysql --user=root --password=tcm
 ```
 
 ```
-CREATE DATABASE `test-cf94a`;
+  CREATE DATABASE `test-cf94a`;
 ```
 
 4. _Optional_. Stop the container (which is as a normal process) when no need to have it running.
 
 ```
-docker stop CONTAINER_NAME
+  docker stop CONTAINER_NAME
 ```
 
 5. _Optional_. Start an existing container
 
 ```
-docker start CONTAINER_NAME
+  docker start CONTAINER_NAME
 ```
 
 6. _Optional_. Remove the docker container when no longer needed.
 
 ```
-docker rm -f CONTAINER_NAME
+  docker rm -f CONTAINER_NAME
 ```
 
 # Connecting to a real Firestore instance
@@ -407,3 +365,53 @@ docker rm -f CONTAINER_NAME
 6. `firebase emulators:start`
 7. Try to run seeds
 8. If seeds were successful - enjoy your cloud based firestore instance.
+
+# npm dependencies
+
+As mentioned in the [monorepo](#monorepo-architecture) section, a single `package.json` file describes the npm dependencies for the whole monorepo.
+
+All npm modules we used are installed as `development` dependency since uesio is not intended to be realeased as standalone npm module.
+
+Most of commmands you might run related to npm modules.
+
+- Install a new dependency :
+
+```
+  npm install lodash.isempty -D
+```
+
+- Update minor changes (no breaking changes) of an existing dependency :
+
+```
+  npm update react -D
+```
+
+- Major update and latest (with breaking changes) of an existing dependency :
+
+```
+  npm install react@latest -D
+```
+
+- List all dependencies of the monorepo and the related version :
+
+```
+  npm list --depth=0
+```
+
+- Remove a dependency :
+
+```
+  npm uninstall lodash.isempty -D
+```
+
+- List dependencies having newer versions :
+
+```
+  npm outdated
+```
+
+- Update minor changes (no breaking changes) all dependencies :
+
+```
+  npm update
+```

@@ -104,8 +104,6 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = ({
 	)
 }
 
-AutoCompleteField.displayName = "AutoCompleteField"
-
 export { SelectedItem }
 
 export default AutoCompleteField

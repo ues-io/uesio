@@ -26,7 +26,7 @@ const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
 				iconColor={theme.palette.primary.main}
 				iconOnClick={(): void => {
 					uesio.view.addDefinitionPair(
-						'["wires"]',
+						path,
 						null,
 						"newwire" + (Math.floor(Math.random() * 60) + 1)
 					)
@@ -34,7 +34,7 @@ const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
 			/>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(definition || {}).map((key: string, index) => {
-					const wirePath = path + `["${key}"]`
+					const wirePath = `${path}["${key}"]`
 					return (
 						<PropNodeTag
 							title={key}

@@ -18,7 +18,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 	getValue,
 	setValue,
 }) => {
-	const selected = (getValue() as boolean) || false
+	const selected = !!getValue()
 
 	switch ((descriptor as builder.BooleanProp).displaytype) {
 		case "switch":
@@ -27,9 +27,9 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					control={
 						<Switch
 							checked={selected}
-							onChange={(event): void => {
+							onChange={(event): void =>
 								setValue(event.target.checked)
-							}}
+							}
 						/>
 					}
 					label={descriptor.label}
@@ -60,9 +60,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 					label={descriptor.label}
 					fullWidth={true}
 					onChange={(event): void =>
-						event.target.value === "true"
-							? setValue(true)
-							: setValue(false)
+						setValue(event.target.value === "true")
 					}
 				>
 					{optionslist.map((option) => (

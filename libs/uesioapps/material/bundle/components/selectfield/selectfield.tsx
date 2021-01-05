@@ -64,6 +64,4 @@ const SelectField: FunctionComponent<Props> = (props) => {
 	)
 }
 
-SelectField.displayName = "SelectField"
-
 export default SelectField

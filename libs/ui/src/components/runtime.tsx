@@ -71,6 +71,4 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	)
 }
 
-Runtime.displayName = "Runtime"
-
 export default Runtime

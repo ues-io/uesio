@@ -131,6 +131,4 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 	}
 }
 
-Reference.displayName = "Reference"
-
 export default Reference

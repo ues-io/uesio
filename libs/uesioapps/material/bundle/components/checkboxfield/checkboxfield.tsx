@@ -38,6 +38,4 @@ const CheckBoxField: FunctionComponent<Props> = ({
 	)
 }
 
-CheckBoxField.displayName = "CheckBoxField"
-
 export default CheckBoxField

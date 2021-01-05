@@ -4,11 +4,11 @@ import { DeckProps, DeckDefinition } from "./deckdefinition"
 import Deck from "./deck"
 
 const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
+	const { path, context } = props
 	const uesio = hooks.useUesio(props)
-	const definition = uesio.view.useDefinition(props.path) as DeckDefinition
+	const definition = uesio.view.useDefinition(path) as DeckDefinition
 	const buildView = uesio.builder.useView()
 	const isExpanded = buildView === "expandedview"
-	const { path, context } = props
 
 	return (
 		<>

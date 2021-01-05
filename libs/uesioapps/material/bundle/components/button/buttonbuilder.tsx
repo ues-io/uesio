@@ -25,8 +25,6 @@ const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 	)
 }
 
-ButtonBuilder.displayName = "ButtonBuilder"
-
 export default memo(ButtonBuilder, (oldProps, newProps) => {
 	const sameDefinition = oldProps.definition === newProps.definition
 	const sameIndex = oldProps.index === newProps.index

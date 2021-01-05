@@ -25,6 +25,4 @@ const TableHeader: FunctionComponent<Props> = (props) => (
 	</material.TableHead>
 )
 
-TableHeader.displayName = "TableHeader"
-
 export default TableHeader
