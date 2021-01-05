@@ -43,7 +43,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const onDragStart = (e: React.DragEvent) => {
 		const target = e.target as HTMLDivElement
-		if (target && target?.dataset.type) {
+		if (target && target.dataset.type) {
 			uesio.builder.setDragNode(target.dataset.type)
 		}
 	}
