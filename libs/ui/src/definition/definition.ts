@@ -23,13 +23,7 @@ export type DefinitionMap = {
 
 export type DefinitionList = DefinitionMap[]
 
-export type DefinitionValue =
-	| string
-	| number
-	| boolean
-	| null
-	| undefined
-	| unknown
+export type DefinitionValue = string | number | boolean | null | undefined
 
 export type Definition =
 	| DefinitionValue
