@@ -1,8 +1,6 @@
 package metadata
 
 import (
-	"errors"
-
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
@@ -15,12 +13,17 @@ func (bc *BotCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BotCollection) GetFields() []string {
-	return []string{"id", "name", "workspaceid", "collection", "type", "dialect", "content"}
+func (bc *BotCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(bc)
 }
 
 // NewItem function
-func (bc *BotCollection) NewItem(key string) (BundleableItem, error) {
+func (bc *BotCollection) NewItem() LoadableItem {
+	return &Bot{}
+}
+
+// NewBundleableItem function
+func (bc *BotCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewBot(key)
 }
 
@@ -38,53 +41,18 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item CollectionableItem) {
+func (bc *BotCollection) AddItem(item LoadableItem) {
 	*bc = append(*bc, *item.(*Bot))
 }
 
-// UnMarshal function
-func (bc *BotCollection) UnMarshal(data []map[string]interface{}) error {
-	err := StandardDecoder(bc, data)
-	if err != nil {
-		return err
-	}
-	err = bc.Validate()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// Marshal function
-func (bc *BotCollection) Marshal() ([]map[string]interface{}, error) {
-	err := bc.Validate()
-	if err != nil {
-		return nil, err
-	}
-	return StandardEncoder(bc)
-}
-
-// Validate function
-func (bc *BotCollection) Validate() error {
-	// Validate required bots and types
-	for _, bot := range *bc {
-		// make sure bot type is valid
-		_, ok := GetBotTypes()[bot.Type]
-		if !ok {
-			return errors.New("Invalid Bot Type: " + bot.Type)
-		}
-	}
-	return nil
-}
-
 // GetItem function
-func (bc *BotCollection) GetItem(index int) CollectionableItem {
+func (bc *BotCollection) GetItem(index int) LoadableItem {
 	actual := *bc
 	return &actual[index]
 }
 
 // Loop function
-func (bc *BotCollection) Loop(iter func(item CollectionableItem) error) error {
+func (bc *BotCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {

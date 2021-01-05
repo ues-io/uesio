@@ -11,12 +11,17 @@ func (ufcc *UserFileCollectionCollection) GetName() string {
 }
 
 // GetFields function
-func (ufcc *UserFileCollectionCollection) GetFields() []string {
-	return []string{"name", "filesource", "bucket"}
+func (ufcc *UserFileCollectionCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(ufcc)
 }
 
 // NewItem function
-func (ufcc *UserFileCollectionCollection) NewItem(key string) (BundleableItem, error) {
+func (ufcc *UserFileCollectionCollection) NewItem() LoadableItem {
+	return &UserFileCollection{}
+}
+
+// NewBundleableItem function
+func (ufcc *UserFileCollectionCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewUserFileCollection(key)
 }
 
@@ -26,27 +31,18 @@ func (ufcc *UserFileCollectionCollection) GetKeyPrefix(conditions reqs.BundleCon
 }
 
 // AddItem function
-func (ufcc *UserFileCollectionCollection) AddItem(item CollectionableItem) {
-}
-
-// UnMarshal function
-func (ufcc *UserFileCollectionCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(ufcc, data)
-}
-
-// Marshal function
-func (ufcc *UserFileCollectionCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(ufcc)
+func (ufcc *UserFileCollectionCollection) AddItem(item LoadableItem) {
+	*ufcc = append(*ufcc, *item.(*UserFileCollection))
 }
 
 // GetItem function
-func (ufcc *UserFileCollectionCollection) GetItem(index int) CollectionableItem {
+func (ufcc *UserFileCollectionCollection) GetItem(index int) LoadableItem {
 	actual := *ufcc
 	return &actual[index]
 }
 
 // Loop function
-func (ufcc *UserFileCollectionCollection) Loop(iter func(item CollectionableItem) error) error {
+func (ufcc *UserFileCollectionCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *ufcc {
 		err := iter(ufcc.GetItem(index))
 		if err != nil {

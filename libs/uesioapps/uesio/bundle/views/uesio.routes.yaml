@@ -147,6 +147,3 @@ definition:
                           - signal: wire/SAVE
                             wires:
                               - "routes"
-dependencies:
-  componentpacks:
-    material.main:

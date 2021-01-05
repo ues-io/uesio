@@ -17,6 +17,18 @@ type ConfigValue struct {
 	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
+// NewConfigValue function
+func NewConfigValue(key string) (*ConfigValue, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for ConfigValue: " + key)
+	}
+	return &ConfigValue{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
+}
+
 // GetCollectionName function
 func (cv *ConfigValue) GetCollectionName() string {
 	return cv.GetBundleGroup().GetName()
@@ -52,6 +64,16 @@ func (cv *ConfigValue) GetKey() string {
 // GetPermChecker function
 func (cv *ConfigValue) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (cv *ConfigValue) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(cv, fieldName, value)
+}
+
+// GetField function
+func (cv *ConfigValue) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(cv, fieldName)
 }
 
 // GetNamespace function
@@ -94,6 +116,9 @@ func MergeConfigValue(template string, site *Site) (string, error) {
 	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
 		return GetConfigValue(key, site)
 	})
+	if err != nil {
+		return "", err
+	}
 
 	value, err := templating.Execute(configTemplate, nil)
 	if err != nil {

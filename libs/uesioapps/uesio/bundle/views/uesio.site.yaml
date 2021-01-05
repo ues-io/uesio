@@ -168,7 +168,3 @@ definition:
                           components:
                             - material.typography:
                                 text: "$Record{uesio.type} ${uesio.domain}"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

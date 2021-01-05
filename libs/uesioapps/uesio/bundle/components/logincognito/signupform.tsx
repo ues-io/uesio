@@ -14,7 +14,7 @@ type SignupFormProps = {
 		username: string,
 		email: string,
 		password: string
-	) => Promise<void>
+	) => void
 }
 
 const SignupForm: FunctionComponent<SignupFormProps> = (props) => {

@@ -3,7 +3,7 @@ import { PlainCollectionMap } from "../bands/collection/types"
 type LoadResponse = {
 	wire: string
 	collection: string
-	data: LoadResponseRecord[]
+	data?: LoadResponseRecord[]
 }
 
 type LoadResponseRecord = {

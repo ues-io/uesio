@@ -16,12 +16,17 @@ func (cpc *ComponentPackCollection) GetName() string {
 }
 
 // GetFields function
-func (cpc *ComponentPackCollection) GetFields() []string {
-	return []string{"id", "name", "workspaceid"}
+func (cpc *ComponentPackCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(cpc)
 }
 
 // NewItem function
-func (cpc *ComponentPackCollection) NewItem(key string) (BundleableItem, error) {
+func (cpc *ComponentPackCollection) NewItem() LoadableItem {
+	return &ComponentPack{}
+}
+
+// NewBundleableItem function
+func (cpc *ComponentPackCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
@@ -38,28 +43,18 @@ func (cpc *ComponentPackCollection) GetKeyPrefix(conditions reqs.BundleCondition
 }
 
 // AddItem function
-func (cpc *ComponentPackCollection) AddItem(item CollectionableItem) {
+func (cpc *ComponentPackCollection) AddItem(item LoadableItem) {
 	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 
-// UnMarshal function
-func (cpc *ComponentPackCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(cpc, data)
-}
-
-// Marshal function
-func (cpc *ComponentPackCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(cpc)
-}
-
 // GetItem function
-func (cpc *ComponentPackCollection) GetItem(index int) CollectionableItem {
+func (cpc *ComponentPackCollection) GetItem(index int) LoadableItem {
 	actual := *cpc
 	return &actual[index]
 }
 
 // Loop function
-func (cpc *ComponentPackCollection) Loop(iter func(item CollectionableItem) error) error {
+func (cpc *ComponentPackCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *cpc {
 		err := iter(cpc.GetItem(index))
 		if err != nil {

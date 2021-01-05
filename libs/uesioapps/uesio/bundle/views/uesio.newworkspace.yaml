@@ -77,6 +77,3 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}"
                                     namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:

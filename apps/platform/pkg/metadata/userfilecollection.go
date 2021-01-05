@@ -28,6 +28,7 @@ type UserFileCollection struct {
 	FileSource string
 	Bucket     string `yaml:"bucket"`
 	PathFormat string `yaml:"pathFormat"`
+	Workspace  string
 }
 
 // GetFileSource function
@@ -86,6 +87,16 @@ func (ufc *UserFileCollection) GetBundleGroup() BundleableGroup {
 	return &ufcc
 }
 
+// SetField function
+func (ufc *UserFileCollection) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(ufc, fieldName, value)
+}
+
+// GetField function
+func (ufc *UserFileCollection) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(ufc, fieldName)
+}
+
 // GetNamespace function
 func (ufc *UserFileCollection) GetNamespace() string {
 	return ufc.Namespace
@@ -98,7 +109,7 @@ func (ufc *UserFileCollection) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ufc *UserFileCollection) SetWorkspace(workspace string) {
-
+	ufc.Workspace = workspace
 }
 
 // GetKey function

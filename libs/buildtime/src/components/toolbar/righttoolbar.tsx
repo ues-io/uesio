@@ -1,4 +1,4 @@
-import React, { FunctionComponent, Fragment } from "react"
+import React, { FunctionComponent } from "react"
 import RightNavbar from "./rightnavbar"
 import RightBuildbar from "./rightbuildbar"
 import { hooks, definition } from "@uesio/ui"
@@ -8,7 +8,7 @@ const RightToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const selectedPanel = uesio.builder.useRightPanel()
 
 	return (
-		<Fragment>
+		<>
 			{selectedPanel && (
 				<RightBuildbar {...props} selectedPanel={selectedPanel} />
 			)}
@@ -20,7 +20,7 @@ const RightToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					)
 				}}
 			/>
-		</Fragment>
+		</>
 	)
 }
 

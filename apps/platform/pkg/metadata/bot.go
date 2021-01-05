@@ -48,6 +48,7 @@ func newTriggerBot(keyArray []string) (*Bot, error) {
 
 // Bot struct
 type Bot struct {
+	ID            string `uesio:"uesio.id"`
 	Name          string `yaml:"name" uesio:"uesio.name"`
 	CollectionRef string `yaml:"collection,omitempty" uesio:"uesio.collection"`
 	Namespace     string `yaml:"-" uesio:"-"`
@@ -131,6 +132,16 @@ func (b *Bot) GetKey() string {
 // GetPermChecker function
 func (b *Bot) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (b *Bot) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(b, fieldName, value)
+}
+
+// GetField function
+func (b *Bot) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(b, fieldName)
 }
 
 // GetNamespace function

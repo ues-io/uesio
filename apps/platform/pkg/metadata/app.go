@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 // App struct
 type App struct {
 	ID             string `uesio:"uesio.id"`
@@ -19,38 +17,18 @@ func (a *App) GetCollectionName() string {
 	return a.GetCollection().GetName()
 }
 
-// GetKey function
-func (a *App) GetKey() string {
-	return a.Name
-}
-
 // GetCollection function
 func (a *App) GetCollection() CollectionableGroup {
 	var ac AppCollection
 	return &ac
 }
 
-// GetConditions function
-func (a *App) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: a.Name,
-		},
-	}, nil
+// SetField function
+func (a *App) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(a, fieldName, value)
 }
 
-// SetNamespace function
-func (a *App) SetNamespace(namespace string) {
-
-}
-
-// GetNamespace function
-func (a *App) GetNamespace() string {
-	return ""
-}
-
-// SetWorkspace function
-func (a *App) SetWorkspace(workspace string) {
-
+// GetField function
+func (a *App) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(a, fieldName)
 }

@@ -55,13 +55,11 @@ const getBackgroundStyles = (
 	definition: BackgroundDefinition,
 	theme: Theme,
 	context: Context
-): CreateCSSProperties => {
-	return {
-		backgroundColor: getColor(definition?.color, theme, context),
-		backgroundImage: getBackgroundImage(definition, theme, context),
-		backgroundSize: "cover",
-	}
-}
+): CreateCSSProperties => ({
+	backgroundColor: getColor(definition?.color, theme, context),
+	backgroundImage: getBackgroundImage(definition, theme, context),
+	backgroundSize: "cover",
+})
 
 const getMarginStyles = (
 	definition: MarginDefinition,

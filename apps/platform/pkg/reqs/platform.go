@@ -1,6 +1,7 @@
 package reqs
 
 // NewPlatformLoadRequest function
+/*
 func NewPlatformLoadRequest(wireName, collectionName string, fields []string, conditions []LoadRequestCondition) LoadRequest {
 	fieldRequests := []LoadRequestField{}
 	for _, field := range fields {
@@ -16,3 +17,4 @@ func NewPlatformLoadRequest(wireName, collectionName string, fields []string, co
 		Conditions: conditions,
 	}
 }
+*/

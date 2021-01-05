@@ -24,12 +24,7 @@ const save = async (
 	return response.json()
 }
 
-const createChange = (data: PlainWireRecord[]): PlainWireRecordMap => {
-	return Object.fromEntries(
-		data.map((item) => {
-			return [shortid.generate(), item]
-		})
-	)
-}
+const createChange = (data: PlainWireRecord[]): PlainWireRecordMap =>
+	Object.fromEntries(data.map((item) => [shortid.generate(), item]))
 
 export { save, createChange }

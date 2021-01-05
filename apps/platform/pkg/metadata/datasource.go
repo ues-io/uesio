@@ -21,6 +21,7 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	TypeRef   string `yaml:"type" uesio:"uesio.type"`
@@ -104,6 +105,16 @@ func (ds *DataSource) GetKey() string {
 // GetPermChecker function
 func (ds *DataSource) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (ds *DataSource) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(ds, fieldName, value)
+}
+
+// GetField function
+func (ds *DataSource) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(ds, fieldName)
 }
 
 // GetNamespace function

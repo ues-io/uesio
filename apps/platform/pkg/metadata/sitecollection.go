@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // SiteCollection slice
 type SiteCollection []Site
 
@@ -9,33 +11,28 @@ func (sc *SiteCollection) GetName() string {
 }
 
 // GetFields function
-func (sc *SiteCollection) GetFields() []string {
-	return []string{"id", "appref", "name", "versionref", "bundleid"}
-}
-
-// UnMarshal function
-func (sc *SiteCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(sc, data)
-}
-
-// Marshal function
-func (sc *SiteCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(sc)
+func (sc *SiteCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(sc)
 }
 
 // GetItem function
-func (sc *SiteCollection) GetItem(index int) CollectionableItem {
+func (sc *SiteCollection) GetItem(index int) LoadableItem {
 	actual := *sc
 	return &actual[index]
 }
 
 // AddItem function
-func (sc *SiteCollection) AddItem(item CollectionableItem) {
+func (sc *SiteCollection) AddItem(item LoadableItem) {
 	*sc = append(*sc, *item.(*Site))
 }
 
+// NewItem function
+func (sc *SiteCollection) NewItem() LoadableItem {
+	return &Site{}
+}
+
 // Loop function
-func (sc *SiteCollection) Loop(iter func(item CollectionableItem) error) error {
+func (sc *SiteCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index))
 		if err != nil {

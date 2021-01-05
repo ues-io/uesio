@@ -141,8 +141,8 @@ interface Flags {
 	develop: boolean
 	stats: boolean
 }
-const getLoaderPath = (loaderName: string): string => {
-	return path.resolve(
+const getLoaderPath = (loaderName: string): string =>
+	path.resolve(
 		__dirname,
 		"..",
 		"..",
@@ -154,7 +154,7 @@ const getLoaderPath = (loaderName: string): string => {
 		"node_modules",
 		loaderName
 	)
-}
+
 const getWebpackConfig = (
 	entries: EntryFileMap,
 	flags: Flags
@@ -168,6 +168,9 @@ const getWebpackConfig = (
 	return {
 		// Configuration Object
 		resolve: {
+			alias: {
+				"@uesio/constants": path.resolve(__dirname, '../../../../libs/constants/src/index') 
+			  },
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
 		},
@@ -239,8 +242,10 @@ const getWebpackComplete = (
 		if (stats.hasErrors()) {
 			info.errors.forEach((message) => console.error(message))
 
-			// force the build process to fail upon compilation error
-			process.exit(1)
+			// force the build process to fail upon compilation error, except for the watcher on dev mode
+			if (!dev) {
+				process.exit(1)
+			}
 		}
 		if (stats.hasWarnings()) {
 			info.warnings.forEach((message) => console.warn(message))

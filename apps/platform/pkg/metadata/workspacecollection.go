@@ -1,5 +1,7 @@
 package metadata
 
+import "github.com/thecloudmasters/uesio/pkg/reqs"
+
 // WorkspaceCollection slice
 type WorkspaceCollection []Workspace
 
@@ -9,33 +11,28 @@ func (wc *WorkspaceCollection) GetName() string {
 }
 
 // GetFields function
-func (wc *WorkspaceCollection) GetFields() []string {
-	return []string{"id", "name", "appid"}
-}
-
-// UnMarshal function
-func (wc *WorkspaceCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(wc, data)
-}
-
-// Marshal function
-func (wc *WorkspaceCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(wc)
+func (wc *WorkspaceCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(wc)
 }
 
 // GetItem function
-func (wc *WorkspaceCollection) GetItem(index int) CollectionableItem {
+func (wc *WorkspaceCollection) GetItem(index int) LoadableItem {
 	actual := *wc
 	return &actual[index]
 }
 
 // AddItem function
-func (wc *WorkspaceCollection) AddItem(item CollectionableItem) {
+func (wc *WorkspaceCollection) AddItem(item LoadableItem) {
 	*wc = append(*wc, *item.(*Workspace))
 }
 
+// NewItem function
+func (wc *WorkspaceCollection) NewItem() LoadableItem {
+	return &Workspace{}
+}
+
 // Loop function
-func (wc *WorkspaceCollection) Loop(iter func(item CollectionableItem) error) error {
+func (wc *WorkspaceCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *wc {
 		err := iter(wc.GetItem(index))
 		if err != nil {

@@ -19,9 +19,16 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 }))
 
-const TextField: FunctionComponent<Props> = (props) => {
-	const { hideLabel, type, mode, label, value, variant, setValue } = props
-	const classes = useStyles(props)
+const TextField: FunctionComponent<Props> = ({
+	hideLabel,
+	type,
+	mode,
+	label,
+	value,
+	variant,
+	setValue,
+}) => {
+	const classes = useStyles()
 	return (
 		<material.TextField
 			className={classes.root}
@@ -41,14 +48,12 @@ const TextField: FunctionComponent<Props> = (props) => {
 			type={type}
 			multiline={type === "LONGTEXT"}
 			value={value}
-			onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+			onChange={(event: ChangeEvent<HTMLInputElement>): void =>
 				setValue(event.target.value)
-			}}
+			}
 			{...(!hideLabel && { label })}
 		/>
 	)
 }
-
-TextField.displayName = "TextField"
 
 export default TextField

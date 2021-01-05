@@ -2,6 +2,17 @@ import React, { FunctionComponent } from "react"
 import { definition, material } from "@uesio/ui"
 import clsx from "clsx"
 
+const COLORS = [
+	"#003f5c",
+	"#2f4b7c",
+	"#665191",
+	"#a05195",
+	"#d45087",
+	"#f95d6a",
+	"#ff7c43",
+	"#ffa600",
+]
+
 type ColorPickerDefinition = {
 	fieldId: string
 }
@@ -28,34 +39,25 @@ const useStyles = material.makeStyles(() => ({
 	},
 }))
 
-const colors = [
-	"#003f5c",
-	"#2f4b7c",
-	"#665191",
-	"#a05195",
-	"#d45087",
-	"#f95d6a",
-	"#ff7c43",
-	"#ffa600",
-]
-
-const ColorPicker: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
-	const record = props.context.getRecord()
-	const wire = props.context.getWire()
+const ColorPicker: FunctionComponent<Props> = ({
+	context,
+	definition: { fieldId },
+}) => {
+	const classes = useStyles()
+	const record = context.getRecord()
+	const wire = context.getWire()
 	if (!wire || !record) return null
 
 	const collection = wire.getCollection()
-	const fieldId = props.definition.fieldId
 	const fieldMetadata = collection.getField(fieldId)
 
-	const mode = props.context.getFieldMode() || "READ"
+	const mode = context.getFieldMode() || "READ"
 
 	if (!fieldMetadata) return null
 
 	return (
 		<div className={classes.root}>
-			{colors.map((color) => {
+			{COLORS.map((color) => {
 				const isSelected = record.getFieldValue(fieldId) === color
 				const isReadMode = mode === "READ"
 				if ((isReadMode && isSelected) || !isReadMode) {

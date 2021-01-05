@@ -117,6 +117,3 @@ definition:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
                         namespace: "uesio"
-dependencies:
-  componentpacks:
-    material.main:

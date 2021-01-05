@@ -141,7 +141,3 @@ definition:
                     field: uesio.bulkjobid
                 - material.column:
                     field: uesio.status
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

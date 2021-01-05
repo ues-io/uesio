@@ -1,10 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
-
 // User struct
 type User struct {
-	ID             string `uesio:"-"`
+	ID             string `uesio:"uesio.id"`
 	FirstName      string `uesio:"uesio.firstname"`
 	LastName       string `uesio:"uesio.lastname"`
 	Profile        string `uesio:"uesio.profile"`
@@ -24,32 +22,12 @@ func (u *User) GetCollection() CollectionableGroup {
 	return &uc
 }
 
-// GetConditions function
-func (u *User) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: u.ID,
-		},
-	}, nil
+// SetField function
+func (u *User) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(u, fieldName, value)
 }
 
-// GetKey function
-func (u *User) GetKey() string {
-	return u.ID
-}
-
-// GetNamespace function
-func (u *User) GetNamespace() string {
-	return ""
-}
-
-// SetNamespace function
-func (u *User) SetNamespace(namespace string) {
-
-}
-
-// SetWorkspace function
-func (u *User) SetWorkspace(workspace string) {
-
+// GetField function
+func (u *User) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(u, fieldName)
 }

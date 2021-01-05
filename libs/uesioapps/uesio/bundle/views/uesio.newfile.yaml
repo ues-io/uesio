@@ -90,7 +90,3 @@ definition:
                                         - signal: wire/SAVE
                                           wires:
                                             - "files"
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

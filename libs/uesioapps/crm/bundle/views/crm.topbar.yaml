@@ -83,7 +83,3 @@ definition:
                                   - 1
         justify: space-between
   wires: null
-dependencies:
-  componentpacks:
-    material.main: null
-    sample.main: null

@@ -29,8 +29,9 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 			return nil, err
 		}
 
-		err = group.Loop(func(item metadata.CollectionableItem) error {
-			key := item.GetKey()
+		err = group.Loop(func(item metadata.LoadableItem) error {
+
+			key := item.(metadata.BundleableItem).GetKey()
 
 			// Special handling for bots
 			if metadataType == "bots" {

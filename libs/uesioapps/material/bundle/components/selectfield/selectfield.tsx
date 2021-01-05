@@ -20,7 +20,7 @@ type Props = {
 } & definition.BaseProps
 
 const SelectField: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
+	const classes = useStyles()
 	const { hideLabel, mode, options, value, setValue, label } = props
 
 	if (mode === "READ") {
@@ -63,7 +63,5 @@ const SelectField: FunctionComponent<Props> = (props) => {
 		</material.TextField>
 	)
 }
-
-SelectField.displayName = "SelectField"
 
 export default SelectField

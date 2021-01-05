@@ -5,12 +5,23 @@ import { material } from "@uesio/ui"
 const ACTIVE_COLOR = "#eee"
 const SELECTED_COLOR = "#aaa"
 
-const getColor = (props: Props): string =>
-	props.isSelected ? SELECTED_COLOR : ACTIVE_COLOR
+interface Props {
+	onClick?: (event: MouseEvent) => void
+	onMouseEnter?: (event: MouseEvent) => void
+	onMouseLeave?: (event: MouseEvent) => void
+	setDragging?: (event: MouseEvent) => void
+	isSelected?: boolean
+	isActive?: boolean
+	title?: string
+	isExpanded: boolean
+}
+
+const getColor = ({ isSelected }: Props): string =>
+	isSelected ? SELECTED_COLOR : ACTIVE_COLOR
 const getOutline = (props: Props): string =>
-	props.isActive || props.isSelected ? "1px solid " + getColor(props) : "none"
-const getBackgroundColor = (props: Props): string =>
-	props.isSelected ? "white" : "transparent"
+	props.isActive || props.isSelected ? `1px solid ${getColor(props)}` : "none"
+const getBackgroundColor = ({ isSelected }: Props): string =>
+	isSelected ? "white" : "transparent"
 
 const useStyles = material.makeStyles((theme) => ({
 	mask: {
@@ -50,11 +61,11 @@ const useStyles = material.makeStyles((theme) => ({
 		outline: getOutline,
 		position: "absolute",
 		top: "-24px",
-		left: "0px",
+		left: 0,
 		fontSize: "9pt",
 		textTransform: "uppercase",
 		color: "#333",
-		padding: "8px 8px 0px 10px",
+		padding: "8px 8px 0 10px",
 		opacity: 0.95,
 		fontWeight: "bold",
 		backgroundColor: getBackgroundColor,
@@ -66,7 +77,7 @@ const useStyles = material.makeStyles((theme) => ({
 			content: "''",
 			position: "absolute",
 			bottom: "-7px",
-			left: "0",
+			left: 0,
 		},
 	},
 	headerExpanded: {
@@ -77,17 +88,6 @@ const useStyles = material.makeStyles((theme) => ({
 		fontSize: "9pt",
 	},
 }))
-
-interface Props {
-	onClick?: (event: MouseEvent) => void
-	onMouseEnter?: (event: MouseEvent) => void
-	onMouseLeave?: (event: MouseEvent) => void
-	setDragging?: (event: MouseEvent) => void
-	isSelected?: boolean
-	isActive?: boolean
-	title?: string
-	isExpanded: boolean
-}
 
 const BuildBorder: FunctionComponent<Props> = (props) => {
 	const {

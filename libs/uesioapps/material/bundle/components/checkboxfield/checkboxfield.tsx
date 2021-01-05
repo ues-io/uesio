@@ -17,9 +17,14 @@ type Props = {
 	mode?: field.FieldMode
 } & definition.BaseProps
 
-const CheckBoxField: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
-	const { hideLabel, mode, value, setValue, label } = props
+const CheckBoxField: FunctionComponent<Props> = ({
+	hideLabel,
+	mode,
+	value,
+	setValue,
+	label,
+}) => {
+	const classes = useStyles()
 
 	return (
 		<material.Checkbox
@@ -32,7 +37,5 @@ const CheckBoxField: FunctionComponent<Props> = (props) => {
 		/>
 	)
 }
-
-CheckBoxField.displayName = "CheckBoxField"
 
 export default CheckBoxField

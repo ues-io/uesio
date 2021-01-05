@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/reqs"
+)
 
 // SelectListOption struct
 type SelectListOption struct {
@@ -13,7 +15,7 @@ type SelectList struct {
 	ID        string             `yaml:"-" uesio:"uesio.id"`
 	Name      string             `yaml:"name" uesio:"uesio.name"`
 	Namespace string             `yaml:"-" uesio:"-"`
-	Options   []SelectListOption `yaml:"options" uesio:"-"`
+	Options   []SelectListOption `yaml:"options" uesio:"uesio.options"`
 	Workspace string             `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
@@ -52,6 +54,16 @@ func (sl *SelectList) GetKey() string {
 // GetPermChecker function
 func (sl *SelectList) GetPermChecker() *PermissionSet {
 	return nil
+}
+
+// SetField function
+func (sl *SelectList) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(sl, fieldName, value)
+}
+
+// GetField function
+func (sl *SelectList) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(sl, fieldName)
 }
 
 // GetNamespace function

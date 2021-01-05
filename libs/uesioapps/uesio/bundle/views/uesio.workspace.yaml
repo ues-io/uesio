@@ -210,7 +210,3 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-dependencies:
-  componentpacks:
-    material.main:
-    uesio.app:

@@ -60,13 +60,11 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorWillMount={(monaco): void => {
 				editorWillMount?.(monaco)
 			}}
-			editorDidMount={async (editor, monaco): Promise<void> => {
+			editorDidMount={(editor, monaco): void => {
 				editorDidMount?.(editor, monaco)
 			}}
 		/>
 	</Suspense>
 )
-
-LazyMonaco.displayName = "LazyMonaco"
 
 export default LazyMonaco

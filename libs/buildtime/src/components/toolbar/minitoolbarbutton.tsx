@@ -5,7 +5,6 @@ import {
 	Theme,
 	createStyles,
 	IconButton,
-	useTheme,
 	Tooltip,
 	PopperPlacementType,
 	SvgIconProps,
@@ -26,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		button: {
 			margin: theme.spacing(1),
-			marginBottom: "0px",
+			marginBottom: 0,
 			padding: "8px",
 		},
 		save: {
@@ -47,8 +46,7 @@ const MiniToolbarButton: FunctionComponent<Props> = ({
 	id,
 	icon: Icon,
 }) => {
-	const theme = useTheme()
-	const classes = useStyles(theme)
+	const classes = useStyles()
 
 	// Special handling for tooltips so that they
 	// Go away when clicked.
@@ -89,7 +87,7 @@ const MiniToolbarButton: FunctionComponent<Props> = ({
 				size="small"
 				onClick={(): void => {
 					setOpen(false)
-					onClick && onClick(id)
+					onClick?.(id)
 				}}
 			>
 				<Icon style={{ fontSize: 16 }} />
@@ -97,7 +95,5 @@ const MiniToolbarButton: FunctionComponent<Props> = ({
 		</Tooltip>
 	)
 }
-
-MiniToolbarButton.displayName = "MiniToolbarButton"
 
 export default memo(MiniToolbarButton)

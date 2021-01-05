@@ -1,9 +1,5 @@
 package metadata
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
-
 // BundleDependency struct
 type BundleDependency struct {
 	ID            string `uesio:"uesio.id"`
@@ -23,32 +19,12 @@ func (b *BundleDependency) GetCollection() CollectionableGroup {
 	return &bc
 }
 
-// GetConditions function
-func (b *BundleDependency) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: b.ID,
-		},
-	}, nil
+// SetField function
+func (b *BundleDependency) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(b, fieldName, value)
 }
 
-// GetKey function
-func (b *BundleDependency) GetKey() string {
-	return b.ID
-}
-
-// GetNamespace function
-func (b *BundleDependency) GetNamespace() string {
-	return ""
-}
-
-// SetNamespace function
-func (b *BundleDependency) SetNamespace(namespace string) {
-
-}
-
-// SetWorkspace function
-func (b *BundleDependency) SetWorkspace(workspace string) {
-
+// GetField function
+func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(b, fieldName)
 }

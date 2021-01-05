@@ -13,12 +13,17 @@ func (rc *RouteCollection) GetName() string {
 }
 
 // GetFields function
-func (rc *RouteCollection) GetFields() []string {
-	return []string{"id", "name", "path", "workspaceid", "view", "theme"}
+func (rc *RouteCollection) GetFields() []reqs.LoadRequestField {
+	return StandardGetFields(rc)
 }
 
 // NewItem function
-func (rc *RouteCollection) NewItem(key string) (BundleableItem, error) {
+func (rc *RouteCollection) NewItem() LoadableItem {
+	return &Route{}
+}
+
+// NewBundleableItem function
+func (rc *RouteCollection) NewBundleableItem(key string) (BundleableItem, error) {
 	return NewRoute(key)
 }
 
@@ -28,28 +33,18 @@ func (rc *RouteCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (rc *RouteCollection) AddItem(item CollectionableItem) {
+func (rc *RouteCollection) AddItem(item LoadableItem) {
 	*rc = append(*rc, *item.(*Route))
 }
 
-// UnMarshal function
-func (rc *RouteCollection) UnMarshal(data []map[string]interface{}) error {
-	return StandardDecoder(rc, data)
-}
-
-// Marshal function
-func (rc *RouteCollection) Marshal() ([]map[string]interface{}, error) {
-	return StandardEncoder(rc)
-}
-
 // GetItem function
-func (rc *RouteCollection) GetItem(index int) CollectionableItem {
+func (rc *RouteCollection) GetItem(index int) LoadableItem {
 	actual := *rc
 	return &actual[index]
 }
 
 // Loop function
-func (rc *RouteCollection) Loop(iter func(item CollectionableItem) error) error {
+func (rc *RouteCollection) Loop(iter func(item LoadableItem) error) error {
 	for index := range *rc {
 		err := iter(rc.GetItem(index))
 		if err != nil {

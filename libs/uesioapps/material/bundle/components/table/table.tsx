@@ -53,8 +53,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	)
 }
 
-Table.displayName = "Table"
-
 export { TableProps }
 
 export default Table

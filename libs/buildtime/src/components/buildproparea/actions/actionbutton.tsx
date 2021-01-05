@@ -22,17 +22,22 @@ const useStyles = makeStyles(() =>
 	})
 )
 
-const ActionButton: FunctionComponent<Props> = (props) => {
+const ActionButton: FunctionComponent<Props> = ({
+	title,
+	onClick,
+	icon,
+	disabled,
+}) => {
 	const theme = useTheme()
-	const classes = useStyles(props)
+	const classes = useStyles()
 
 	return (
 		<SmallIconButton
-			title={props.title}
-			onClick={props.onClick}
-			icon={props.icon}
+			title={title}
+			onClick={onClick}
+			icon={icon}
 			color={theme.palette.primary.main}
-			disabled={props.disabled}
+			disabled={disabled}
 			className={classes.root}
 		/>
 	)
