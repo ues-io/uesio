@@ -1,13 +1,11 @@
 import React, { FunctionComponent } from "react"
+import { SelectWireContext } from "./SelectWireContext"
 import LeftNavbar from "./leftnavbar"
 import LeftBuildbar from "./leftbuildbar"
 import { hooks, definition } from "@uesio/ui"
 
 const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const viewDef = uesio.view.useDefinition()
-	// @ts-ignore
-	const wirePath = Object.keys((viewDef as unknown)?.wires)?.[0]
 	const selectedPanel = uesio.builder.useLeftPanel()
 	const builderView = uesio.builder.useView()
 	const selectedNode = uesio.builder.useSelectedNode()
@@ -24,12 +22,14 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 		<>
 			<LeftNavbar viewMode={builderView} onChange={onChange} />
 			{(selectedPanel || selectedNode) && (
-				<LeftBuildbar
-					selectedPanel={selectedPanel}
-					selectedNode={selectedNode}
-					path={(wirePath && `[wires][${wirePath}]`) || ""}
-					context={props.context}
-				/>
+				<SelectWireContext.Provider value="hello from the context">
+					<LeftBuildbar
+						selectedPanel={selectedPanel}
+						selectedNode={selectedNode}
+						path=""
+						context={props.context}
+					/>
+				</SelectWireContext.Provider>
 			)}
 		</>
 	)
