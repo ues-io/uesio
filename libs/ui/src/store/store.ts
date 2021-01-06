@@ -18,6 +18,7 @@ import view from "../bands/view"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
+import { metadata } from "@uesio/constants"
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
 type ThunkFunc = ThunkAction<Promise<Context>, RootState, Platform, AnyAction>
@@ -35,7 +36,7 @@ type InitialState = {
 
 let platform: Platform
 let store: ReturnType<typeof create>
-
+console.log("METADATA", metadata.METADATA)
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 	const newStore = configureStore({

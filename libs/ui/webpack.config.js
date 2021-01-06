@@ -10,6 +10,12 @@ module.exports = {
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
 		extensions: [".ts", ".tsx", ".js"],
+		alias: {
+			'@uesio/constants': path.resolve(
+				__dirname,
+				'../../libs/constants/src/index.ts'
+			),
+		},
 	},
 
 	module: {
