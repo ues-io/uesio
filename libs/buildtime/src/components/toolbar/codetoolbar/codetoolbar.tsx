@@ -38,12 +38,16 @@ const getAllHighlightedNodes = (substring: string) =>
 
 const toggleClass = (
 	nodes: NodeListOf<Element>,
-	highlightClass: string,
+	highlightSubstring: string,
 	noHighlightClass: string
 ): void => {
+	const highlightPattern = new RegExp(
+		`/([^\\s]+${highlightSubstring}[^\\s]+)`,
+		"gi"
+	)
 	nodes.forEach((node) => {
 		console.log("node", node)
-		node?.className?.replace?.(highlightClass, noHighlightClass)
+		node?.className?.replace?.(highlightPattern, noHighlightClass)
 	})
 }
 
@@ -66,7 +70,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 
 				toggleClass(
 					nodes,
-					classes[WITH_LINE_HIGHLIGHT_CLASS],
+					WITH_LINE_HIGHLIGHT_CLASS,
 					classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
 				)
 			}, 1000)
