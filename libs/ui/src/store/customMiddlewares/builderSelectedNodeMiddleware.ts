@@ -1,14 +1,12 @@
-import { Middleware } from "redux"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { AnyAction } from "redux"
 import toPath from "lodash.topath"
 import { changeDefinitionKey } from "../../../src/bands/viewdef"
 import { setSelectedNode } from "../../../src/bands/builder"
-import { BuilderState } from "../../../src/bands/builder/types"
 
-const builderSelectedeNodeMiddleware: Middleware<
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	{},
-	{ builder: BuilderState }
-> = (store) => (next) => (action) => {
+const builderSelectedeNodeMiddleware = (store: any) => (
+	next: (action: AnyAction) => void
+) => (action: AnyAction) => {
 	const actionType = action.type
 	const currentSelectedNode = store.getState()?.builder?.selectedNode
 	const newName = action?.payload?.key
