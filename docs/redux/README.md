@@ -116,7 +116,7 @@ When actions need to be synchronized with each other, the middleware comes into 
 
 From this snippet we can see that a middleware is a function decorating another middleware and so on recursively.
 
-In our stack we do have some custom middleware for capturing actions and dipatching another action once the first one has hit the reducer.
+In our stack we do have some custom middlewares for listening to specific actions and dispatch another action, once the first one has hit the reducer.
 
 ## Redux-thunk middleware
 
