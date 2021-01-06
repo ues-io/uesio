@@ -7,9 +7,11 @@ type ConfirmFormProps = {
 	confirm: (verificationCode: string) => Promise<void>
 }
 
-const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
-	const classes = useLoginStyles(props)
-
+const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
+	setMode,
+	confirm,
+}) => {
+	const classes = useLoginStyles()
 	const [verificationCode, setVerificationCode] = useState("")
 
 	return (
@@ -26,7 +28,7 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 				}
 			/>
 			<material.Button
-				onClick={() => props.setMode("")}
+				onClick={() => setMode("")}
 				className={classes.button}
 			>
 				Back to Signup
@@ -36,7 +38,7 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.confirm(verificationCode)
+					confirm(verificationCode)
 				}}
 			>
 				Confirm

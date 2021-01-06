@@ -32,21 +32,19 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 		uesio.view.moveDefinition(indexPath, toPath)
 	}
 
+	const onClickBackward = () => index && moveToIndex(index - 1)
+	const onClickForward = () => index !== null && moveToIndex(index + 1)
 	return (
 		<>
 			<ActionButton
 				title="Move Backward"
-				onClick={(): void => {
-					index && moveToIndex(index - 1)
-				}}
+				onClick={onClickBackward}
 				icon={UpIcon}
 				disabled={!enableBackward}
 			/>
 			<ActionButton
 				title="Move Forward"
-				onClick={(): void => {
-					index !== null && moveToIndex(index + 1)
-				}}
+				onClick={onClickForward}
 				icon={DownIcon}
 				disabled={!enableForward}
 			/>

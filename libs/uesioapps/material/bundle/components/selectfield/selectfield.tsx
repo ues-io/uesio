@@ -49,9 +49,9 @@ const SelectField: FunctionComponent<Props> = (props) => {
 				shrink: true,
 			}}
 			value={value}
-			onChange={(event: ChangeEvent<HTMLInputElement>): void => {
+			onChange={(event: ChangeEvent<HTMLInputElement>): void =>
 				setValue(event.target.value)
-			}}
+			}
 			size="small"
 			{...(!hideLabel && { label })}
 		>
