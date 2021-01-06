@@ -14,6 +14,7 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 	const key = pathArray.pop()
 	const uesio = hooks.useUesio(props)
 
+	// Fall back to text component
 	return (
 		<TextField
 			value={key}
