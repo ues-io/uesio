@@ -42,6 +42,7 @@ const toggleClass = (
 	noHighlightClass: string
 ): void => {
 	nodes.forEach((node) => {
+		console.log("node", node)
 		node.classList.remove(highlightClass)
 		node.classList.add(noHighlightClass)
 	})
