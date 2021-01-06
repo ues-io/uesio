@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) =>
 	createStyles({
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
-				"ocean" ||
+				"yellow" ||
 				styles.getColor(
 					{ intention: "secondary" },
 					theme,
@@ -43,8 +43,7 @@ const toggleClass = (
 ): void => {
 	nodes.forEach((node) => {
 		console.log("node", node)
-		node?.classList?.remove?.(highlightClass)
-		node?.classList?.add?.(noHighlightClass)
+		node?.classList?.replace?.(highlightClass, noHighlightClass)
 	})
 }
 
