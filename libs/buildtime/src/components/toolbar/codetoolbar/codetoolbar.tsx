@@ -9,6 +9,7 @@ import md5 from "md5"
 import { diffLines, Change } from "diff"
 
 const LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
+const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -22,7 +23,13 @@ const useStyles = makeStyles((theme) =>
 				),
 			// width: "5px !important",
 			// marginLeft: "10px",
+			opacity: 1,
 		}),
+		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
+			backgroundColor: "white",
+			opacity: 0,
+			transition: "all 1s ease-out",
+		},
 	})
 )
 
@@ -43,10 +50,10 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			)
 			console.log("nodes", nodes)
 
-			/*			nodes.forEach(
-				(node) => (node.style.cssText = "border: 4px solid green; ")
-			)
-			*/
+			nodes.forEach((node) => {
+				node.classList.remove(classes[LINE_HIGHLIGHT_CLASS])
+				node.classList.add(classes[WITHOUT_LINE_HIGHLIGHT_CLASS])
+			})
 		}
 	})
 
