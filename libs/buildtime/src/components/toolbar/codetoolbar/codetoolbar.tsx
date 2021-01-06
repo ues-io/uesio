@@ -42,7 +42,7 @@ const toggleClass = (
 	noHighlightClass: string
 ): void => {
 	const highlightPattern = new RegExp(
-		`/([^\\s]+${highlightSubstring}[^\\s]+)`,
+		`([^\\s]*${highlightSubstring}[^\\s]*)`,
 		"gi"
 	)
 	nodes.forEach((node) => {
