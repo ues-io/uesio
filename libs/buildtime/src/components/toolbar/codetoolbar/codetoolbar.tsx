@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) =>
 	createStyles({
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
-				"purple" ||
+				"ocean" ||
 				styles.getColor(
 					{ intention: "secondary" },
 					theme,
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
 		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
 			backgroundColor: "white",
 			opacity: 0,
-			transition: "all 1s ease-out",
+			transition: "all 1000ms ease-out",
 		},
 	})
 )
