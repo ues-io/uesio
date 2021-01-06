@@ -2,7 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import toPath from "lodash.topath"
-import { AnyAction } from "redux"
+import { changeDefinitionKey } from "../../../src/bands/viewdef"
+import { setSelectedNode } from "../../../src/bands/builder"
+import { AnyAction, Middleware } from "redux"
 
 const builderActiveNodeMiddleware = (store: any) => (
 	next: (action: AnyAction) => void
@@ -15,18 +17,16 @@ const builderActiveNodeMiddleware = (store: any) => (
 	// dispatch to reducer
 	next(action)
 	// state has now been updated
+
 	if (
 		currentSelectedNode &&
 		newName &&
-		actionType === "viewdef/changeDefinitionKey" &&
+		actionType === `${changeDefinitionKey}` &&
 		nodeType &&
 		typeof nodeType === "string"
 	) {
 		// the selected node needs to be updated, since the name has changed
-		store.dispatch({
-			type: "builder/setSelectedNode",
-			payload: `["${nodeType}"]["${newName}"]`,
-		})
+		store.dispatch(setSelectedNode(`["${nodeType}"]["${newName}"]`))
 	}
 }
 
