@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, context, signal } from "@uesio/ui"
+import { hooks, material, styles, wire, signal } from "@uesio/ui"
 import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
@@ -22,8 +22,7 @@ async function handleChange(
 	record: wire.WireRecord,
 	wire: wire.Wire,
 	uesio: hooks.Uesio,
-	fileCollection: string,
-	context: context.Context
+	fileCollection: string
 ) {
 	const collection = wire.getCollection()
 	const collectionName = collection.getFullName()
@@ -35,7 +34,8 @@ async function handleChange(
 	const nameNameField = nameField?.getId()
 	if (!nameNameField) return
 
-	const workspace = context.getWorkspace()
+	const context = uesio.getContext()
+	//const workspace = context.getWorkspace()
 
 	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
@@ -43,6 +43,9 @@ async function handleChange(
 		}
 
 		const file = selectorFiles[0]
+		const appName = context.getView()?.params?.appname
+		const workspaceName = context.getView()?.params?.workspacename
+
 		await record.update(nameNameField, file.name)
 		await wire.save(context)
 
@@ -80,9 +83,9 @@ async function handleChange(
 					signal: "route/NAVIGATE",
 					path:
 						`app/` +
-						workspace?.app +
+						appName +
 						`/workspace/` +
-						workspace?.name +
+						workspaceName +
 						`/files`,
 					namespace: "uesio",
 				} as signal.SignalDefinition
@@ -118,8 +121,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 							record,
 							wire,
 							uesio,
-							definition.fileCollection,
-							context
+							definition.fileCollection
 						)
 					}
 				/>

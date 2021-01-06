@@ -111,10 +111,6 @@ definition:
                           mode: READ
                           components:
                             - material.fileupload:
-                                uesio.context:
-                                  workspace:
-                                    name: $Param{workspacename}
-                                    app: $Param{appname}
                                 id: "fileuploadid"
                                 fieldId: uesio.content
                                 fileCollection: uesio.workspacemetadatafiles
