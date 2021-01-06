@@ -68,12 +68,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	useEffect(() => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
 			setTimeout(() => {
-				// remove line highlight in the editor
-				const nodes = getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS)
-				console.log("highlighted with wait", nodes)
-
 				toggleClass(
-					nodes,
+					getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS),
 					WITH_LINE_HIGHLIGHT_CLASS,
 					classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
 				)
