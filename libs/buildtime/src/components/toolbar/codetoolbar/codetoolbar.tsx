@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) =>
 	createStyles({
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
-				"magenta" ||
+				"purple" ||
 				styles.getColor(
 					{ intention: "secondary" },
 					theme,
@@ -64,12 +64,11 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				const nodes = getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS)
 				console.log("highlighted with wait", nodes)
 
-				nodes.forEach((node) => {
-					node.className.replace(
-						classes[WITH_LINE_HIGHLIGHT_CLASS],
-						classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
-					)
-				})
+				toggleClass(
+					nodes,
+					classes[WITH_LINE_HIGHLIGHT_CLASS],
+					classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
+				)
 			}, 1000)
 		}
 	})
