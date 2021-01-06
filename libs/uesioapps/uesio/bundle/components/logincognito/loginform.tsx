@@ -8,9 +8,12 @@ type LoginFormProps = {
 	logIn: (username: string, password: string) => Promise<void>
 }
 
-const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
-	const classes = useLoginStyles(props)
-
+const LoginForm: FunctionComponent<LoginFormProps> = ({
+	setMode,
+	setMessage,
+	logIn,
+}) => {
+	const classes = useLoginStyles()
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
@@ -39,8 +42,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 			/>
 			<material.Button
 				onClick={() => {
-					props.setMode("")
-					props.setMessage("")
+					setMode("")
+					setMessage("")
 				}}
 				className={classes.button}
 			>
@@ -51,7 +54,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.logIn(username, password)
+					logIn(username, password)
 				}}
 			>
 				Sign In
@@ -78,8 +81,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 					variant="body2"
 					className={classes.textbutton}
 					onClick={() => {
-						props.setMode("signup")
-						props.setMessage("")
+						setMode("signup")
+						setMessage("")
 					}}
 				>
 					Create account

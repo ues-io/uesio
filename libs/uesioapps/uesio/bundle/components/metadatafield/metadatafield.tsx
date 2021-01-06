@@ -122,7 +122,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						}))
 					)}
 					setValue={(value: string) => {
-						record.update(fieldId, value ? value + "." : "")
+						record.update(fieldId, value ? `${value}.` : "")
 					}}
 				/>
 			</material.Grid>
@@ -133,7 +133,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 					value={name}
 					options={options}
 					setValue={(value: string) => {
-						record.update(fieldId, namespace + "." + value)
+						record.update(fieldId, `${namespace}.${value}`)
 					}}
 				/>
 			</material.Grid>

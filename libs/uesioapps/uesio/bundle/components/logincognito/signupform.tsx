@@ -17,8 +17,15 @@ type SignupFormProps = {
 	) => void
 }
 
-const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
-	const classes = useLoginStyles(props)
+const SignupForm: FunctionComponent<SignupFormProps> = ({
+	signUp,
+	setMode,
+	setSignupUsername,
+	setSignupPassword,
+	signupUsername,
+	signupPassword,
+}) => {
+	const classes = useLoginStyles()
 	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
 	const [lastname, setLastName] = useState("")
@@ -52,7 +59,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				size="small"
 				className={classes.textfield}
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					props.setSignupUsername(e.target.value)
+					setSignupUsername(e.target.value)
 				}
 			/>
 			<material.TextField
@@ -73,11 +80,11 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				size="small"
 				className={classes.textfield}
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					props.setSignupPassword(e.target.value)
+					setSignupPassword(e.target.value)
 				}
 			/>
 			<material.Button
-				onClick={() => props.setMode("")}
+				onClick={() => setMode("")}
 				className={classes.button}
 			>
 				Cancel
@@ -87,12 +94,12 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.signUp(
+					signUp(
 						firstname,
 						lastname,
-						props.signupUsername,
+						signupUsername,
 						email,
-						props.signupPassword
+						signupPassword
 					)
 				}}
 			>

@@ -7,7 +7,7 @@ import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import CheckBox from "@material-ui/icons/CheckBox"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def } = props
+	const { section, definition: def, path } = props
 	const collectionKey = def?.collection as string | undefined
 
 	if (!collectionKey) {
@@ -60,6 +60,16 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					Object.keys(fields).map((fieldId, index) => {
 						const fieldDef = fieldsDef?.[fieldId]
 						const selected = fieldDef !== undefined
+						const onClick = (): void =>
+							selected
+								? uesio.view.removeDefinition(
+										`${path}["fields"]["${fieldId}"]`
+								  )
+								: uesio.view.addDefinitionPair(
+										`${path}["fields"]`,
+										null,
+										fieldId
+								  )
 						return (
 							<PropNodeTag
 								draggable={component.dragdrop.createFieldBankKey(
@@ -76,19 +86,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 										: undefined
 								}
 								key={index}
-								onClick={(): void => {
-									if (selected) {
-										uesio.view.removeDefinition(
-											`${props.path}["fields"]["${fieldId}"]`
-										)
-									} else {
-										uesio.view.addDefinitionPair(
-											`${props.path}["fields"]`,
-											null,
-											fieldId
-										)
-									}
-								}}
+								onClick={onClick}
 								selected={selected}
 							/>
 						)
