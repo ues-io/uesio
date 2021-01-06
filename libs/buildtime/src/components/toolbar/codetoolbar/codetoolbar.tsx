@@ -57,28 +57,20 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
 
-	const lazyMonacoRef = useRef<HTMLElement>()
-
 	useEffect(() => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
-			// remove line highlight in the editor
-			const highlighted = lazyMonacoRef?.current?.querySelectorAll(
-				`[class*="${WITH_LINE_HIGHLIGHT_CLASS}"]`
-			)
-			console.log("highlighted", highlighted)
+			setTimeout(() => {
+				// remove line highlight in the editor
+				const nodes = getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS)
+				console.log("highlighted with wait", nodes)
 
-			/*
-			const nodes1 = getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS)
-			console.log("in useEffect", nodes1)
-
-		
-						toggleClass(
-							nodes,
-							WITH_LINE_HIGHLIGHT_CLASS,
-							WITHOUT_LINE_HIGHLIGHT_CLASS
-						)
-
-						*/
+				nodes.forEach((node) => {
+					node.className.replace(
+						`/${WITH_LINE_HIGHLIGHT_CLASS}/`,
+						classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
+					)
+				})
+			}, 1000)
 		}
 	})
 
@@ -90,8 +82,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				// @ts-ignore
-				ref={lazyMonacoRef}
 				// force the LazyMonaco component to unmount and create a new component if hasYamlChanged is true
 				{...(hasYamlChanged && currentYaml
 					? { key: md5(currentYaml) }
