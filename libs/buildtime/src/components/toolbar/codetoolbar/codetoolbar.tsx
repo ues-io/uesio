@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) =>
 			// width: "5px !important",
 			// marginLeft: "10px",
 			opacity: 1,
+			transition: "all 200ms ease-in",
 		}),
 		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
 			backgroundColor: "grey",
@@ -46,7 +47,7 @@ const toggleClass = (
 		"gi"
 	)
 	nodes.forEach((node) => {
-		console.log("node", node)
+		console.log("node", node.className)
 		node?.className?.replace?.(highlightPattern, noHighlightClass)
 	})
 }
