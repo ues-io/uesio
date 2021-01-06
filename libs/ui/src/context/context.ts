@@ -72,7 +72,7 @@ class Context {
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
 	getWireDef = (wirename: string) =>
-		this.getViewDef()?.definition?.wires[wirename]
+		this.getViewDef()?.definition?.wires?.[wirename]
 
 	getRoute = () => this.stack.find((frame) => frame?.route)?.route
 
