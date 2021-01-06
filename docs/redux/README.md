@@ -102,8 +102,24 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using `async/await` for the sake of readability.
 
-## Redux middleware
+## Custom middlewares
 
-A Redux middleware is in charge of dealing with asynchronous actions. Indeed the reducer expects as parameter a plain javascript object and not a promise.
+When actions need to be synchronized with each other, the middleware comes into play. A middleware is curried function like so:
+
+```
+(store) => (next) => (action) => {
+    // body of the middleware here
+
+    // next(action)
+}
+```
+
+From this snippet we can see that a middleware is a function decorating another middleware and so on recursively.
+
+In our stack we do have some customized middleware for capturing actions and dipatching another action once the first one has hit the reducer.
+
+## Redux-thunk middleware
+
+The Redux-thunk middleware is in charge of dealing with asynchronous actions. Indeed the reducer expects as parameter a plain `JavaScript object` and not a `Promise`.
 
 There are plenty of different middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
