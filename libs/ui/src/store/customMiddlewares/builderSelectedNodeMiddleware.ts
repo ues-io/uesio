@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyAction } from "redux"
 import toPath from "lodash.topath"
 import { changeDefinitionKey } from "../../../src/bands/viewdef"
 import { setSelectedNode } from "../../../src/bands/builder"
 
+// due to circular dependency upon import of RootState, type as any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const builderSelectedeNodeMiddleware = (store: any) => (
 	next: (action: AnyAction) => void
 ) => (action: AnyAction) => {
@@ -14,7 +15,7 @@ const builderSelectedeNodeMiddleware = (store: any) => (
 
 	// dispatch to reducer
 	next(action)
-	// state has now been updated
+	// from here on, the store has been updated
 
 	if (
 		currentSelectedNode &&
