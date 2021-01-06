@@ -110,16 +110,16 @@ When actions need to be synchronized with each other, the middleware comes into 
 (store) => (next) => (action) => {
     // body of the middleware here
 
-    // next(action)
+    // next(action) for handing the action over to the next middleware
 }
 ```
 
 From this snippet we can see that a middleware is a function decorating another middleware and so on recursively.
 
-In our stack we do have some custom middlewares for listening to specific actions and dispatch another action, once the first one has hit the reducer.
+In our stack we do have some custom middlewares for listening to specific actions and accordingly respond to them.
 
 ## Redux-thunk middleware
 
 The Redux-thunk middleware is in charge of dealing with asynchronous actions. Indeed the reducer expects as parameter a plain `JavaScript object` and not a `Promise`.
 
-There are plenty of different middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
+There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
