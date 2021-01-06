@@ -47,11 +47,12 @@ const toggleClass = (
 		"gi"
 	)
 	nodes.forEach((node) => {
-		console.log("node", node.className)
-		node.className = node.className.replace(
-			highlightClassPattern,
-			noHighlightClass
-		)
+		if (node?.className?.replace) {
+			node.className = node?.className.replace(
+				highlightClassPattern,
+				noHighlightClass
+			)
+		}
 	})
 }
 
