@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) =>
 	createStyles({
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
-				"orange" ||
+				"magenta" ||
 				styles.getColor(
 					{ intention: "secondary" },
 					theme,
@@ -24,12 +24,12 @@ const useStyles = makeStyles((theme) =>
 			// width: "5px !important",
 			// marginLeft: "10px",
 			opacity: 1,
-			transition: "all 200ms ease-in",
+			transition: "all 500ms ease-in",
 		}),
 		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
 			backgroundColor: "grey",
-			opacity: 0,
-			transition: "all 1000ms ease-out",
+			opacity: 0.2,
+			transition: "all 2000ms ease-out",
 		},
 	})
 )
@@ -42,13 +42,16 @@ const toggleClass = (
 	highlightSubstring: string,
 	noHighlightClass: string
 ): void => {
-	const highlightPattern = new RegExp(
+	const highlightClassPattern = new RegExp(
 		`([^\\s]*${highlightSubstring}[^\\s]*)`,
 		"gi"
 	)
 	nodes.forEach((node) => {
 		console.log("node", node.className)
-		node?.className?.replace?.(highlightPattern, noHighlightClass)
+		node.className = node.className.replace(
+			highlightClassPattern,
+			noHighlightClass
+		)
 	})
 }
 
