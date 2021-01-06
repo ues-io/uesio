@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef, useEffect } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -8,12 +8,12 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
-const LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
+const WITH_LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
 const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
-		[LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
+		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
 				"violet" ||
 				styles.getColor(
@@ -33,6 +33,20 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
+const getAllHighlightedNodes = (substring: string) =>
+	document.querySelectorAll(`[class*="${substring}"]`)
+
+const toggleClass = (
+	nodes: NodeListOf<Element>,
+	highlightClass: string,
+	noHighlightClass: string
+): void => {
+	nodes.forEach((node) => {
+		node.classList.remove(highlightClass)
+		node.classList.add(noHighlightClass)
+	})
+}
+
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -42,20 +56,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
-
-	useEffect(() => {
-		if (hasYamlChanged) {
-			const nodes = document.querySelectorAll(
-				`[class*="${LINE_HIGHLIGHT_CLASS}"]`
-			)
-			console.log("nodes", nodes)
-
-			nodes.forEach((node) => {
-				node.classList.remove(classes[LINE_HIGHLIGHT_CLASS])
-				node.classList.add(classes[WITHOUT_LINE_HIGHLIGHT_CLASS])
-			})
-		}
-	})
 
 	return (
 		<>
@@ -218,7 +218,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						}
 					})
 
-					// decoration of changes in the editor gutter
+					// highlight changes in the editor
 					if (hasYamlChanged && previousYaml && currentYaml) {
 						const diff: Change[] = diffLines(
 							previousYaml,
@@ -244,12 +244,33 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										options: {
 											isWholeLine: true,
 											className:
-												classes[LINE_HIGHLIGHT_CLASS],
+												classes[
+													WITH_LINE_HIGHLIGHT_CLASS
+												],
 										},
 									},
 								]
 							)
 						}
+					}
+
+					// remove line highlight in the editor
+					if (hasYamlChanged && previousYaml && currentYaml) {
+						console.log(
+							"nodes",
+							document.querySelectorAll(
+								`[class*="monaco-line-highlight"]`
+							)
+						)
+						const nodes = getAllHighlightedNodes(
+							WITH_LINE_HIGHLIGHT_CLASS
+						)
+						console.log("nodes", nodes)
+						toggleClass(
+							nodes,
+							WITH_LINE_HIGHLIGHT_CLASS,
+							WITHOUT_LINE_HIGHLIGHT_CLASS
+						)
 					}
 				}}
 			/>
