@@ -7,7 +7,7 @@ import { setSelectedNode } from "../../../src/bands/builder"
 const builderSelectedeNodeMiddleware = (store: any) => (
 	next: (action: AnyAction) => void
 ) => (action: AnyAction) => {
-	const actionType = action.type
+	const actionType = action?.type
 	const currentSelectedNode = store.getState()?.builder?.selectedNode
 	const newName = action?.payload?.key
 	const [nodeType] = toPath(action?.payload?.path) // nodeType is for example wires
