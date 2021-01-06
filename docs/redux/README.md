@@ -4,7 +4,8 @@
 
 We introduced [Redux Toolkit](https://redux-toolkit.js.org/) in our stack upon a code refactoring.
 
-Redux alone requires a lot of **boilerplate** such as manual coding of the **action type** and **action creators**, having **separate files** for reducer and action as well as the **cloning data structures** in the reducers.
+Redux alone requires a lot of **boilerplate** such as prefixing the **action type**, the manual coding of the **action creators**, having **separate files** for reducer and action as well as the **cloning data structures** in the reducers.
+
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
 ## Structure
@@ -104,7 +105,7 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 ## Custom middlewares
 
-When actions need to be synchronized with each other, the middleware comes into play. A middleware is curried function like so:
+When **actions** need to be **synchronized** with each other, the middleware comes into play. A middleware is curried function like so:
 
 ```
 (store) => (next) => (action) => {
@@ -116,10 +117,10 @@ When actions need to be synchronized with each other, the middleware comes into 
 
 From this snippet we can see that a middleware is a function decorating another middleware and so on recursively.
 
-In our stack we do have some custom middlewares for listening to specific actions and accordingly respond to them.
+In our stack, we do have some custom middlewares for listening to specific actions and accordingly respond to them.
 
 ## Redux-thunk middleware
 
-The Redux-thunk middleware is in charge of dealing with asynchronous actions. Indeed the reducer expects as parameter a plain `JavaScript object` and not a `Promise`.
+Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. Indeed the second argument of the reducer - the action - have to be a plain `JavaScript object` and not a `Promise`.
 
 There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
