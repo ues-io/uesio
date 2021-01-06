@@ -11,13 +11,15 @@ import { diffLines, Change } from "diff"
 const useStyles = makeStyles((theme) =>
 	createStyles({
 		gutter: (props: definition.BaseProps) => ({
-			backgroundColor: styles.getColor(
-				{ intention: "primary" },
-				theme,
-				props.context
-			),
-			width: "5px !important",
-			marginLeft: "10px",
+			backgroundColor:
+				"violet" ||
+				styles.getColor(
+					{ intention: "secondary" },
+					theme,
+					props.context
+				),
+			// width: "5px !important",
+			// marginLeft: "10px",
 		}),
 	})
 )
@@ -218,8 +220,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										),
 										options: {
 											isWholeLine: true,
-											linesDecorationsClassName:
-												classes.gutter,
+											className: classes.gutter,
 										},
 									},
 								]
