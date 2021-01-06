@@ -4,10 +4,11 @@ import { changeDefinitionKey } from "../../../src/bands/viewdef"
 import { setSelectedNode } from "../../../src/bands/builder"
 import { BuilderState } from "../../../src/bands/builder/types"
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const builderActiveNodeMiddleware: Middleware<{}, { builder: BuilderState }> = (
-	store
-) => (next) => (action) => {
+const builderSelectedeNodeMiddleware: Middleware<
+	// eslint-disable-next-line @typescript-eslint/ban-types
+	{},
+	{ builder: BuilderState }
+> = (store) => (next) => (action) => {
 	const actionType = action.type
 	const currentSelectedNode = store.getState()?.builder?.selectedNode
 	const newName = action?.payload?.key
@@ -29,4 +30,4 @@ const builderActiveNodeMiddleware: Middleware<{}, { builder: BuilderState }> = (
 	}
 }
 
-export default builderActiveNodeMiddleware
+export default builderSelectedeNodeMiddleware

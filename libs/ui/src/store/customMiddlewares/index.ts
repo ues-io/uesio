@@ -1,1 +1,1 @@
-export { default as builderActiveNodeMiddleware } from "./builderActiveNodeMiddleware"
+export { default as builderSelectedeNodeMiddleware } from "./builderSelectedNodeMiddleware"
