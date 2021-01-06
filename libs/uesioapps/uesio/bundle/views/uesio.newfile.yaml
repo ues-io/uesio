@@ -78,10 +78,6 @@ definition:
                                   - material.field:
                                       fieldId: uesio.name
                                   - material.fileupload:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{appname}
                                       id: "fileuploadid"
                                       fieldId: uesio.content
                                       fileCollection: uesio.workspacemetadatafiles
