@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -56,6 +56,21 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
+
+	useEffect(() => {
+		// remove line highlight in the editor
+		if (hasYamlChanged && previousYaml && currentYaml) {
+			const nodes1 = getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS)
+			console.log("nodes1", nodes1)
+
+			/*
+						toggleClass(
+							nodes,
+							WITH_LINE_HIGHLIGHT_CLASS,
+							WITHOUT_LINE_HIGHLIGHT_CLASS
+						)*/
+		}
+	})
 
 	return (
 		<>
@@ -252,25 +267,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 								]
 							)
 						}
-					}
-
-					// remove line highlight in the editor
-					if (hasYamlChanged && previousYaml && currentYaml) {
-						console.log(
-							"nodes",
-							document.querySelectorAll(
-								`[class*="monaco-line-highlight"]`
-							)
-						)
-						const nodes = getAllHighlightedNodes(
-							WITH_LINE_HIGHLIGHT_CLASS
-						)
-						console.log("nodes", nodes)
-						toggleClass(
-							nodes,
-							WITH_LINE_HIGHLIGHT_CLASS,
-							WITHOUT_LINE_HIGHLIGHT_CLASS
-						)
 					}
 				}}
 			/>
