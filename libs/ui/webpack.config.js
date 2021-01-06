@@ -1,11 +1,12 @@
 //const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-var path = require("path");
-
+const path = require("path");
+const production = process.env.NODE_ENV === "production"
+const sourceMaps = production ? {} : { devtool: "source-map" }
 module.exports = {
-	mode: "production",
+	mode: production ? "production" : "development",
 
 	// Enable sourcemaps for debugging webpack's output.
-	devtool: "source-map",
+	...sourceMaps,
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.

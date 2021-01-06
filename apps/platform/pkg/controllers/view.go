@@ -164,9 +164,76 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 
 	ExecuteIndexTemplate(w, route, true, session)
 }
+func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
+	// Here do something different if we are in the page builder
+	bundle := session.GetSite().GetAppBundle()
+	namespaces := make([]string, len(bundle.Dependencies))
+	i := 0
+	for dependencyName := range bundle.Dependencies {
+		namespaces[i] = dependencyName
+		i++
+	}
+
+	cPackDeps := map[string]bool{}
+	configDependencies := map[string]string{}
+
+	for _, namespace := range namespaces {
+		//namespace, name, err := metadata.ParseKey(key)
+		var packs metadata.ComponentPackCollection
+		err := bundles.LoadAll(&packs, namespace, nil, session)
+		if err != nil {
+			return nil, err
+		}
+		for _, pack := range packs {
+			for _, componentInfo := range pack.Components {
+				cPackDeps[pack.GetKey()] = true
+				if componentInfo != nil {
+					for _, key := range componentInfo.ConfigValues {
+						_, ok := configDependencies[key]
+						if !ok {
+							value, err := getConfigValueDependencyFromComponent(key, session)
+							if err != nil {
+								return nil, err
+							}
+							configDependencies[key] = value
+						}
+					}
+				}
+			}
+		}
+	}
+
+	dependenciesResponse := ViewDependencies{
+		ComponentPacks: cPackDeps,
+		ConfigValues:   configDependencies,
+	}
+
+	return &dependenciesResponse, nil
+}
+
+func getConfigValueDependencyFromComponent(key string, session *sess.Session) (string, error) {
+	site := session.GetSite()
+	configValue, err := metadata.NewConfigValue(key)
+	if err != nil {
+		return "", err
+	}
+	err = bundles.Load(configValue, session)
+	if err != nil {
+		return "", err
+	}
+	value, err := metadata.GetConfigValue(key, site)
+	if err != nil {
+		return "", err
+	}
+	return value, nil
+}
 
 func getViewDependencies(view *metadata.View, session *sess.Session) (*ViewDependencies, error) {
-	site := session.GetSite()
+	workspace := session.GetWorkspaceID()
+	if workspace != "" {
+		return getBuilderDependencies(session)
+	}
+
 	// Process Configuration Value Dependencies
 	componentsUsed, err := view.GetComponents()
 	if err != nil {
@@ -202,15 +269,7 @@ func getViewDependencies(view *metadata.View, session *sess.Session) (*ViewDepen
 					for _, key := range componentInfo.ConfigValues {
 						_, ok := configDependencies[key]
 						if !ok {
-							configValue, err := metadata.NewConfigValue(key)
-							if err != nil {
-								return nil, err
-							}
-							err = bundles.Load(configValue, session)
-							if err != nil {
-								return nil, err
-							}
-							value, err := metadata.GetConfigValue(key, site)
+							value, err := getConfigValueDependencyFromComponent(key, session)
 							if err != nil {
 								return nil, err
 							}

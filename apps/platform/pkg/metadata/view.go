@@ -17,9 +17,6 @@ type View struct {
 	Workspace  string    `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
-// Dependency struct
-type Dependency map[string]interface{}
-
 // GetCollectionName function
 func (v *View) GetCollectionName() string {
 	return v.GetBundleGroup().GetName()
