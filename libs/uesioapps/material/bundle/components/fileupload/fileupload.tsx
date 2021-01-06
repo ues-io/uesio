@@ -35,7 +35,6 @@ async function handleChange(
 	if (!nameNameField) return
 
 	const context = uesio.getContext()
-	//const workspace = context.getWorkspace()
 
 	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
@@ -48,22 +47,14 @@ async function handleChange(
 
 		await record.update(nameNameField, file.name)
 		await wire.save(context)
+		//TO-DO show error if record Save fail
 
 		const recordUpd = context.getRecord()
 
 		if (recordUpd) {
 			const recordId = recordUpd.getFieldValue(idField.getId()) as string
-			console.log("recordId", recordId)
 
 			if (recordId) {
-				console.log("context", context)
-				console.log("file", file)
-				console.log("file.name", file.name)
-				console.log("fileCollection", fileCollection)
-				console.log("collectionName", collectionName)
-				console.log("recordId", recordId)
-				console.log("fieldId", fieldId)
-
 				await uesio.file.uploadFile(
 					context,
 					file,
@@ -74,10 +65,7 @@ async function handleChange(
 					fieldId
 				)
 
-				//location.reload()
-
 				//TO-DO insted of navigate we might want to keep a reference to the other wire and refresh?
-				//I am using two wires in the view(uesio.files) one to create files, and another to display the list of files all pointing to the same collection(files)
 
 				const navigateSig = {
 					signal: "route/NAVIGATE",
