@@ -24,11 +24,9 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 			InputProps={inputProps}
 			InputLabelProps={inputLabelProps}
 			variant="outlined"
-			onChange={(event): void => {
-				const inputValue = event.target.value
-				uesio.view.changeDefinitionKey(path, inputValue)
-				uesio.builder.setSelectedNode(`["wires"]["${inputValue}"]`)
-			}}
+			onChange={(event): void =>
+				uesio.view.changeDefinitionKey(path, event.target.value)
+			}
 		/>
 	)
 }

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyAction } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch } from "react-redux"
@@ -36,6 +38,32 @@ type InitialState = {
 let platform: Platform
 let store: ReturnType<typeof create>
 
+const builderActiveNodeMiddleware = (store: any) => (
+	next: (action: AnyAction) => void
+) => (action: AnyAction) => {
+	const actionType = action.type
+	const currentSelectedNode = store.getState()?.builder?.selectedNode
+	const newName = action?.payload?.key
+
+	next(action)
+
+	if (
+		currentSelectedNode &&
+		newName &&
+		actionType === "viewdef/changeDefinitionKey"
+	) {
+		console.log("after actionType", actionType)
+		console.log("after currentSelectedNode", currentSelectedNode)
+		console.log("after newName", newName)
+
+		// redux store has now been updated, so the new selected node needs to be updated
+		store.dispatch({
+			type: "builder/setSelectedNode",
+			payload: `["wires"]["${newName}"]`,
+		})
+	}
+}
+
 const create = (plat: Platform, initialState: InitialState) => {
 	platform = plat
 	const newStore = configureStore({
@@ -54,7 +82,10 @@ const create = (plat: Platform, initialState: InitialState) => {
 		},
 		devTools: true,
 		preloadedState: initialState,
-		middleware: [thunk.withExtraArgument(plat)],
+		middleware: [
+			thunk.withExtraArgument(plat),
+			builderActiveNodeMiddleware,
+		],
 	})
 	store = newStore
 	return newStore
