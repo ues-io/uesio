@@ -20,6 +20,7 @@ import view from "../bands/view"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
+import toPath from "lodash.topath"
 
 type Dispatcher<T extends AnyAction> = ThunkDispatch<RootState, Platform, T>
 type ThunkFunc = ThunkAction<Promise<Context>, RootState, Platform, AnyAction>
@@ -44,13 +45,16 @@ const builderActiveNodeMiddleware = (store: any) => (
 	const actionType = action.type
 	const currentSelectedNode = store.getState()?.builder?.selectedNode
 	const newName = action?.payload?.key
+	const [nodeType] = toPath(action?.payload?.path) // nodeType is for example wires
 
 	next(action)
 
 	if (
 		currentSelectedNode &&
 		newName &&
-		actionType === "viewdef/changeDefinitionKey"
+		actionType === "viewdef/changeDefinitionKey" &&
+		nodeType &&
+		typeof nodeType === "string"
 	) {
 		// redux store has now been updated, so the new selected node needs to be updated
 		store.dispatch({
