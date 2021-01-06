@@ -47,8 +47,9 @@ const builderActiveNodeMiddleware = (store: any) => (
 	const newName = action?.payload?.key
 	const [nodeType] = toPath(action?.payload?.path) // nodeType is for example wires
 
+	// dispatch to reducer
 	next(action)
-
+	// state has now been updated
 	if (
 		currentSelectedNode &&
 		newName &&
@@ -56,10 +57,10 @@ const builderActiveNodeMiddleware = (store: any) => (
 		nodeType &&
 		typeof nodeType === "string"
 	) {
-		// redux store has now been updated, so the new selected node needs to be updated
+		// the selected node needs to be updated, since the name has changed
 		store.dispatch({
 			type: "builder/setSelectedNode",
-			payload: `["wires"]["${newName}"]`,
+			payload: `["${nodeType}"]["${newName}"]`,
 		})
 	}
 }
