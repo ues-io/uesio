@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useRef, useEffect } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -8,9 +8,11 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
+const LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
+
 const useStyles = makeStyles((theme) =>
 	createStyles({
-		gutter: (props: definition.BaseProps) => ({
+		[LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
 				"violet" ||
 				styles.getColor(
@@ -33,6 +35,20 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
+
+	useEffect(() => {
+		if (hasYamlChanged) {
+			const nodes = document.querySelectorAll(
+				`[class*="${LINE_HIGHLIGHT_CLASS}"]`
+			)
+			console.log("nodes", nodes)
+
+			/*			nodes.forEach(
+				(node) => (node.style.cssText = "border: 4px solid green; ")
+			)
+			*/
+		}
+	})
 
 	return (
 		<>
@@ -220,7 +236,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										),
 										options: {
 											isWholeLine: true,
-											className: classes.gutter,
+											className:
+												classes[LINE_HIGHLIGHT_CLASS],
 										},
 									},
 								]
