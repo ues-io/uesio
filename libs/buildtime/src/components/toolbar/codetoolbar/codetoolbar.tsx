@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) =>
 	createStyles({
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
-				"violet" ||
+				"magenta" ||
 				styles.getColor(
 					{ intention: "secondary" },
 					theme,
@@ -66,7 +66,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 
 				nodes.forEach((node) => {
 					node.className.replace(
-						`/${WITH_LINE_HIGHLIGHT_CLASS}/`,
+						classes[WITH_LINE_HIGHLIGHT_CLASS],
 						classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
 					)
 				})
