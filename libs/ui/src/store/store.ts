@@ -52,10 +52,6 @@ const builderActiveNodeMiddleware = (store: any) => (
 		newName &&
 		actionType === "viewdef/changeDefinitionKey"
 	) {
-		console.log("after actionType", actionType)
-		console.log("after currentSelectedNode", currentSelectedNode)
-		console.log("after newName", newName)
-
 		// redux store has now been updated, so the new selected node needs to be updated
 		store.dispatch({
 			type: "builder/setSelectedNode",
