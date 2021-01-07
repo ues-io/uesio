@@ -28,21 +28,16 @@ const useStyles = makeStyles((theme) =>
 			opacity: 1,
 			transition: "all 500ms ease-in",
 		}),*/
-		"@keyframes lineshighlight": (props: definition.BaseProps) => ({
+		"@keyframes lineshighlight": {
 			from: {
 				opacity: 1,
-				backgroundColor: styles.getColor(
-					{ intention: "secondary" },
-					theme,
-					props.context
-				),
 			},
 			to: {
 				opacity: 0,
 			},
-		}),
+		},
 		[HIGHLIGHT_LINES_ANIMATION]: {
-			background: "red",
+			backgroundColor: "yellow",
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})
