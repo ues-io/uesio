@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { FunctionComponent, useEffect, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
@@ -9,6 +10,7 @@ import md5 from "md5"
 import { diffLines, Change } from "diff"
 
 const ANIMATION_DURATION = 3000
+const LAZY_MONACO_ELEMENT_ID = "lazy-monaco-editor"
 const WITH_LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
 const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
 
@@ -62,6 +64,14 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
+const customScrollToElement = (element: HTMLElement, parent: HTMLElement) => {
+	const topPos = element.offsetTop
+	const container = parent
+	if (topPos && container?.scrollTop) {
+		container.scrollTop = topPos - 10
+	}
+}
+
 const getAllHighlightedNodes = (substring: string) =>
 	document.querySelectorAll(`[class*="${substring}"]`)
 
@@ -98,10 +108,11 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
 			setTimeout(() => {
 				const highlightedNodes = getAllHighlightedNodes("tomyy")
-				highlightedNodes?.[0]?.scrollIntoView({
-					behavior: "smooth",
-					block: "center",
-				})
+				highlightedNodes?.[0] &&
+					customScrollToElement(
+						highlightedNodes[0],
+						document.querySelector(".react-monaco-editor-container")
+					)
 			}, 0)
 		}
 	})
@@ -133,6 +144,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				{...(hasYamlChanged && currentYaml
 					? { key: md5(currentYaml) }
 					: {})}
+				// id used for the scroll to
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
