@@ -10,11 +10,11 @@ import md5 from "md5"
 import { diffLines, Change } from "diff"
 
 const ANIMATION_DURATION = 3000
-const WITH_LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
-const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
+const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
 	createStyles({
+		/*
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
 			backgroundColor:
 				"magenta" ||
@@ -27,27 +27,8 @@ const useStyles = makeStyles((theme) =>
 			// marginLeft: "10px",
 			opacity: 1,
 			transition: "all 500ms ease-in",
-		}),
-		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
-			backgroundColor: "grey",
-			opacity: 0,
-			transition: "all 2000ms ease-out",
-		},
-		uesiotomy: {
-			animation: "$toma 2000s ease-in-out",
-		},
-		"@keyframes toma": {
-			"0%": {
-				opacity: 1,
-				color: "white",
-				transform: "translateY(5rem)",
-			},
-			"100%": {
-				opacity: 1,
-				color: "magenta",
-			},
-		},
-		"@keyframes slideDown": {
+		}),*/
+		"@keyframes lineshighlight": {
 			from: {
 				opacity: 1,
 				color: "mageta",
@@ -56,9 +37,9 @@ const useStyles = makeStyles((theme) =>
 				opacity: 0,
 			},
 		},
-		tomyy: {
+		[HIGHLIGHT_LINES_ANIMATION]: {
 			background: "red",
-			animation: `$slideDown ${ANIMATION_DURATION}ms ease-in-out`,
+			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})
 )
@@ -108,7 +89,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	useEffect(() => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
 			setTimeout(() => {
-				const highlightedNodes = getAllHighlightedNodes("tomyy")
+				const highlightedNodes = getAllHighlightedNodes(
+					HIGHLIGHT_LINES_ANIMATION
+				)
 				highlightedNodes?.[0]?.scrollTo?.()
 			}, 0)
 		}
@@ -317,11 +300,10 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										),
 										options: {
 											isWholeLine: true,
-											className: classes.tomyy,
-											/*
-											classes[
-													WITH_LINE_HIGHLIGHT_CLASS
-												],*/
+											className:
+												classes[
+													HIGHLIGHT_LINES_ANIMATION
+												],
 										},
 									},
 								]
