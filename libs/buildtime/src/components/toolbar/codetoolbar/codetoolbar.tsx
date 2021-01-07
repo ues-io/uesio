@@ -10,7 +10,6 @@ import md5 from "md5"
 import { diffLines, Change } from "diff"
 
 const ANIMATION_DURATION = 3000
-const LAZY_MONACO_ELEMENT_ID = "lazy-monaco-editor"
 const WITH_LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
 const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
 
@@ -64,9 +63,11 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-const customScrollToElement = (element: HTMLElement, parent: HTMLElement) => {
+const customScrollToElement = (
+	element: HTMLElement,
+	container: HTMLElement
+) => {
 	const topPos = element.offsetTop
-	const container = parent
 	if (topPos && container?.scrollTop) {
 		container.scrollTop = topPos - 10
 	}
