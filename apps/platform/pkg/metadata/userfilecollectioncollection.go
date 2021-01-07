@@ -21,7 +21,12 @@ func (ufcc *UserFileCollectionCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (ufcc *UserFileCollectionCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (ufcc *UserFileCollectionCollection) NewBundleableItem() BundleableItem {
+	return &UserFileCollection{}
+}
+
+// NewBundleableItem function
+func (ufcc *UserFileCollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewUserFileCollection(key)
 }
 

@@ -26,7 +26,12 @@ func (tc *ThemeCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (tc *ThemeCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (tc *ThemeCollection) NewBundleableItem() BundleableItem {
+	return &Theme{}
+}
+
+// NewBundleableItem function
+func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Theme Key: " + key)

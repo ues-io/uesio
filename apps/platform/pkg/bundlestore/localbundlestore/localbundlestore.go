@@ -109,7 +109,7 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 	}
 
 	for _, key := range keys {
-		retrievedItem, err := group.NewBundleableItem(key)
+		retrievedItem, err := group.NewBundleableItemWithKey(key)
 		if err != nil {
 			return err
 		}

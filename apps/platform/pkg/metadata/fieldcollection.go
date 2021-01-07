@@ -26,7 +26,12 @@ func (fc *FieldCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (fc *FieldCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (fc *FieldCollection) NewBundleableItem() BundleableItem {
+	return &Field{}
+}
+
+// NewBundleableItem function
+func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 4 {
 		return nil, errors.New("Invalid Field Key: " + key)

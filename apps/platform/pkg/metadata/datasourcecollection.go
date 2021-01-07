@@ -21,7 +21,12 @@ func (dsc *DataSourceCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (dsc *DataSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (dsc *DataSourceCollection) NewBundleableItem() BundleableItem {
+	return &DataSource{}
+}
+
+// NewBundleableItem function
+func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewDataSource(key)
 }
 
