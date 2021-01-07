@@ -165,42 +165,30 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	ExecuteIndexTemplate(w, route, true, session)
 }
 func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
-	// Here do something different if we are in the page builder
-	bundle := session.GetSite().GetAppBundle()
-	namespaces := make([]string, len(bundle.Dependencies))
-	i := 0
-	for dependencyName := range bundle.Dependencies {
-		namespaces[i] = dependencyName
-		i++
-	}
-
 	cPackDeps := map[string]bool{}
 	configDependencies := map[string]string{}
-
-	for _, namespace := range namespaces {
-		//namespace, name, err := metadata.ParseKey(key)
-		var packs metadata.ComponentPackCollection
-		err := bundles.LoadAll(&packs, namespace, nil, session)
-		if err != nil {
-			return nil, err
-		}
-		for _, pack := range packs {
-			for _, componentInfo := range pack.Components {
-				cPackDeps[pack.GetKey()] = true
-				if componentInfo != nil {
-					for _, key := range componentInfo.ConfigValues {
-						_, ok := configDependencies[key]
-						if !ok {
-							value, err := getConfigValueDependencyFromComponent(key, session)
-							if err != nil {
-								return nil, err
-							}
-							configDependencies[key] = value
+	var packs metadata.ComponentPackCollection
+	err := bundles.LoadAllFromAny(&packs, nil, session)
+	if err != nil {
+		return nil, err
+	}
+	for _, pack := range packs {
+		cPackDeps[pack.GetKey()] = true
+		for _, componentInfo := range pack.Components {
+			if componentInfo != nil {
+				for _, key := range componentInfo.ConfigValues {
+					_, ok := configDependencies[key]
+					if !ok {
+						value, err := getConfigValueDependencyFromComponent(key, session)
+						if err != nil {
+							return nil, err
 						}
+						configDependencies[key] = value
 					}
 				}
 			}
 		}
+
 	}
 
 	dependenciesResponse := ViewDependencies{
