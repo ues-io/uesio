@@ -11,14 +11,18 @@ const builderSelectedeNodeMiddleware = (store: any) => (
 	const actionType = action?.type
 	const currentSelectedNode = store.getState()?.builder?.selectedNode
 	const newName = action?.payload?.key
+	const currentPath = action?.payload?.path
 	const [nodeType] = toPath(action?.payload?.path) // nodeType is for example wires
+
+	console.log("action?.payload?.path", action?.payload?.path)
+	console.log("currentSelectedNode", currentSelectedNode)
 
 	// dispatch to reducer
 	next(action)
 	// from here on, the store has been updated
 
 	if (
-		currentSelectedNode &&
+		currentSelectedNode === currentPath &&
 		newName &&
 		actionType === `${changeDefinitionKey}` &&
 		nodeType &&
