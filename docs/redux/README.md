@@ -108,6 +108,14 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using `async/await` for the sake of readability.
 
+## A single action handled by multiple reducers
+
+he Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are isolated from each other.
+
+However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one signle action can be dipatch to reducer belonging to different slice. This where the concept of extra reducers comes in. We for example made use of it the `builder` slice.
+
+We follow the redux style guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
+
 ## Redux middleware
 
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain `JavaScript object` and not a `Promise`. This is where Redux-thunk comes into play.
