@@ -2,9 +2,15 @@
 
 ## Redux Toolkit
 
-We introduced [Redux Toolkit](https://redux-toolkit.js.org/) in our stack upon a code refactoring.
+[Redux Toolkit](https://redux-toolkit.js.org/) has beend introduced in our stack at a refactoring stage.
 
-Redux alone requires a lot of **boilerplate** such as manual coding of the **action type** and **action creators**, having **separate files** for reducer and action as well as the **cloning data structures** in the reducers.
+Redux alone requires a lot of **boilerplate** such as :
+
+- manually taking care of namespacing the **action type**
+- manual coding of **action creators**
+- having **separate files** for reducer and action
+- **cloning data structures** in the reducers
+
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
 ## Structure
