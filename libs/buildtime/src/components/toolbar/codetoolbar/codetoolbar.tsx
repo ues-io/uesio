@@ -4,7 +4,7 @@ import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
-import { makeStyles, createStyles } from "@material-ui/core"
+import { makeStyles, createStyles, withTheme } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
@@ -30,6 +30,37 @@ const useStyles = makeStyles((theme) =>
 			backgroundColor: "grey",
 			opacity: 0,
 			transition: "all 2000ms ease-out",
+		},
+		uesiotomy: {
+			animation: "$toma 2000s ease-in-out",
+		},
+		"@keyframes toma": {
+			"0%": {
+				opacity: 1,
+				color: "white",
+				transform: "translateY(5rem)",
+			},
+			"100%": {
+				opacity: 1,
+				color: "magenta",
+			},
+			/*
+			"100%": {
+				opacity: 0,
+				transform: "translateY(0)",
+				color: "grey",
+			},*/
+		},
+		"@keyframes slideDown": {
+			from: { top: "0px" },
+			to: { top: "200px" },
+		},
+		tomyy: {
+			position: "relative",
+			width: "200px",
+			height: "200px",
+			background: "red",
+			animation: "$slideDown 5s infinite",
 		},
 	})
 )
@@ -69,6 +100,18 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	useEffect(() => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
 			setTimeout(() => {
+				const highlightedNodes = getAllHighlightedNodes("tomyy")
+				highlightedNodes?.[0]?.scrollIntoView({
+					block: "center",
+				})
+			}, 200)
+		}
+	})
+
+	/*
+	useEffect(() => {
+		if (hasYamlChanged && previousYaml && currentYaml) {
+			setTimeout(() => {
 				toggleClass(
 					getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS),
 					WITH_LINE_HIGHLIGHT_CLASS,
@@ -76,7 +119,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				)
 			}, 1000)
 		}
-	})
+	})*/
 
 	console.log("CodeToolbar rendering")
 
@@ -267,16 +310,17 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										),
 										options: {
 											isWholeLine: true,
-											className:
-												classes[
+											className: classes.tomyy,
+											/*
+											classes[
 													WITH_LINE_HIGHLIGHT_CLASS
-												],
+												],*/
 										},
 									},
 								]
 							)
 
-							// remove decoration
+							// we have to remove the decoration otherwise css kicks in while interacting with the editor
 							setTimeout(
 								() => editor.deltaDecorations(decorations, []),
 								2000
