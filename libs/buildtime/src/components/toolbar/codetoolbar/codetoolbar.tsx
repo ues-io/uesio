@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) =>
 			width: "200px",
 			height: "200px",
 			background: "red",
-			animation: "$slideDown 5s infinite",
+			animation: "$slideDown 5s",
 		},
 	})
 )
