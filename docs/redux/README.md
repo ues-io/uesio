@@ -9,7 +9,7 @@ Redux alone requires a lot of **boilerplate** such as :
 - manually taking care of namespacing the **action type**
 - manual coding of **action creators**
 - having **separate files** for reducer and action
-- **cloning data structures** in the reducers
+- **cloning data structures** in the reducer
 
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
@@ -110,9 +110,9 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 ## A single action handled by multiple reducers
 
-he Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are isolated from each other.
+The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are isolated from each other.
 
-However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one signle action can be dipatch to reducer belonging to different slice. This where the concept of extra reducers comes in. We for example made use of it the `builder` slice.
+However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to reducers part of different slices. This is the idea behind the extra reducer concept. In the `builder` slice you will find such a use case.
 
 We follow the redux style guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
 
