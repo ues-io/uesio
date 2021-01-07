@@ -117,7 +117,7 @@ When **actions** need to be **synchronized** with each other, the middleware com
 
 From this snippet we can see that a middleware is a function decorating another middleware and so on recursively.
 
-In our stack, we do have some custom middlewares for listening to specific actions and accordingly respond to them.
+Another way of seeing when middlewares can be used, is to understand how the Redux state is structured. The Redux state is split into different **slices**, such as `viewdef`, `builder`, `route`, etc., in our stack. These slices are isolated from each other. So, for example `viewdef` slice does not have access to the state of the `builder` slice. Middlewares have access to the **entire Redux state**.
 
 ## Redux-thunk middleware
 
