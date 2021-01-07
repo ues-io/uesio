@@ -109,11 +109,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 		if (hasYamlChanged && previousYaml && currentYaml) {
 			setTimeout(() => {
 				const highlightedNodes = getAllHighlightedNodes("tomyy")
-				highlightedNodes?.[0] &&
-					customScrollToElement(
-						highlightedNodes[0],
-						document.querySelector(".react-monaco-editor-container")
-					)
+				highlightedNodes?.[0]?.scrollTo?.()
 			}, 0)
 		}
 	})
