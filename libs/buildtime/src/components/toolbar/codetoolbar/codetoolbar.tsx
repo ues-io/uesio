@@ -8,6 +8,7 @@ import { makeStyles, createStyles, withTheme } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
+const ANIMATION_DURATION = 3000
 const WITH_LINE_HIGHLIGHT_CLASS = "monaco-line-highlight"
 const WITHOUT_LINE_HIGHLIGHT_CLASS = "monaco-no-line-highlight"
 
@@ -44,23 +45,19 @@ const useStyles = makeStyles((theme) =>
 				opacity: 1,
 				color: "magenta",
 			},
-			/*
-			"100%": {
-				opacity: 0,
-				transform: "translateY(0)",
-				color: "grey",
-			},*/
 		},
 		"@keyframes slideDown": {
-			from: { top: "0px" },
-			to: { top: "200px" },
+			from: {
+				opacity: 1,
+				color: "mageta",
+			},
+			to: {
+				opacity: 0,
+			},
 		},
 		tomyy: {
-			position: "relative",
-			width: "200px",
-			height: "200px",
 			background: "red",
-			animation: "$slideDown 5s",
+			animation: `$slideDown ${ANIMATION_DURATION}ms`,
 		},
 	})
 )
@@ -102,9 +99,10 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			setTimeout(() => {
 				const highlightedNodes = getAllHighlightedNodes("tomyy")
 				highlightedNodes?.[0]?.scrollIntoView({
+					behavior: "smooth",
 					block: "center",
 				})
-			}, 200)
+			}, 0)
 		}
 	})
 
@@ -323,7 +321,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							// we have to remove the decoration otherwise css kicks in while interacting with the editor
 							setTimeout(
 								() => editor.deltaDecorations(decorations, []),
-								2000
+								ANIMATION_DURATION
 							)
 						}
 					}
