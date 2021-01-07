@@ -26,7 +26,12 @@ func (slc *SelectListCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (slc *SelectListCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (slc *SelectListCollection) NewBundleableItem() BundleableItem {
+	return &SelectList{}
+}
+
+// NewBundleableItem function
+func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid SelectList Key: " + key)

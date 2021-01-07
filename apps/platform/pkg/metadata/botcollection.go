@@ -23,7 +23,12 @@ func (bc *BotCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (bc *BotCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (bc *BotCollection) NewBundleableItem() BundleableItem {
+	return &Bot{}
+}
+
+// NewBundleableItemWithKey function
+func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewBot(key)
 }
 

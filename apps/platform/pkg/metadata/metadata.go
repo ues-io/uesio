@@ -41,7 +41,8 @@ type CollectionableItem interface {
 type BundleableGroup interface {
 	CollectionableGroup
 	GetKeyPrefix(reqs.BundleConditions) string
-	NewBundleableItem(key string) (BundleableItem, error)
+	NewBundleableItem() BundleableItem
+	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
 
 // BundleableItem interface

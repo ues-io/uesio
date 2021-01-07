@@ -21,7 +21,12 @@ func (pc *ProfileCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (pc *ProfileCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (pc *ProfileCollection) NewBundleableItem() BundleableItem {
+	return &Profile{}
+}
+
+// NewBundleableItem function
+func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewProfile(key)
 }
 

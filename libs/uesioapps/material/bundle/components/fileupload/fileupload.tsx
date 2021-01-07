@@ -24,13 +24,12 @@ async function handleChange(
 	fileCollection: string
 ) {
 	const collection = wire.getCollection()
-	const collectionName = collection.getId()
+	const collectionName = collection.getFullName()
 
 	const idField = collection.getIdField()
 	if (!idField) return
 
 	const context = uesio.getContext()
-	const workspace = context.getWorkspace()
 
 	const recordId = record.getFieldValue(idField.getId()) as string
 
@@ -40,6 +39,8 @@ async function handleChange(
 		}
 
 		const file = selectorFiles[0]
+		const appName = context.getView()?.params?.appname
+		const workspaceName = context.getView()?.params?.workspacename
 
 		await uesio.file.uploadFile(
 			context,
@@ -53,12 +54,7 @@ async function handleChange(
 
 		const navigateSig = {
 			signal: "route/NAVIGATE",
-			path:
-				`app/` +
-				workspace?.app +
-				`/workspace/` +
-				workspace?.name +
-				`/files`,
+			path: `app/` + appName + `/workspace/` + workspaceName + `/files`,
 			namespace: "uesio",
 		} as signal.SignalDefinition
 

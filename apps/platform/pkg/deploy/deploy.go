@@ -112,7 +112,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			continue
 		}
 
-		collectionItem, err := collection.NewBundleableItem(strings.TrimSuffix(base, extension))
+		collectionItem, err := collection.NewBundleableItemWithKey(strings.TrimSuffix(base, extension))
 		if err != nil {
 			return err
 		}
