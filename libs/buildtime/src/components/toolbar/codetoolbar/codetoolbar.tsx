@@ -12,7 +12,7 @@ import { diffLines, Change } from "diff"
 const ANIMATION_DURATION = 3000
 const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
 	createStyles({
 		/*
 		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
@@ -28,15 +28,19 @@ const useStyles = makeStyles(() =>
 			opacity: 1,
 			transition: "all 500ms ease-in",
 		}),*/
-		"@keyframes lineshighlight": {
+		"@keyframes lineshighlight": (props: definition.BaseProps) => ({
 			from: {
 				opacity: 1,
-				color: "mageta",
+				backgroundColor: styles.getColor(
+					{ intention: "secondary" },
+					theme,
+					props.context
+				),
 			},
 			to: {
 				opacity: 0,
 			},
-		},
+		}),
 		[HIGHLIGHT_LINES_ANIMATION]: {
 			background: "red",
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
