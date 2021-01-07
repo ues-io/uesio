@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) =>
 		},
 		tomyy: {
 			background: "red",
-			animation: `$slideDown ${ANIMATION_DURATION}ms`,
+			animation: `$slideDown ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})
 )
