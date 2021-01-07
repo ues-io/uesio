@@ -23,7 +23,12 @@ func (rc *RouteCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (rc *RouteCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (rc *RouteCollection) NewBundleableItem() BundleableItem {
+	return &Route{}
+}
+
+// NewBundleableItem function
+func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewRoute(key)
 }
 

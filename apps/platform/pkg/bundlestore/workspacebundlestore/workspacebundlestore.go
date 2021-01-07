@@ -57,15 +57,10 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 		})
 	}
 
-	err := datasource.PlatformLoad(group, loadConditions, session)
-	if err != nil {
-		return err
-	}
-
-	return group.Loop(func(item metadata.LoadableItem) error {
-		item.(metadata.BundleableItem).SetNamespace(namespace)
-		return nil
-	})
+	return datasource.PlatformLoad(&WorkspaceLoadCollection{
+		Collection: group,
+		Namespace:  namespace,
+	}, loadConditions, session)
 
 }
 

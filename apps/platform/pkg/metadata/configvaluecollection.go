@@ -23,7 +23,12 @@ func (cvc *ConfigValueCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (cvc *ConfigValueCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (bc *ConfigValueCollection) NewBundleableItem() BundleableItem {
+	return &ConfigValue{}
+}
+
+// NewBundleableItem function
+func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewConfigValue(key)
 }
 

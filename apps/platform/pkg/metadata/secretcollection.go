@@ -26,7 +26,12 @@ func (sc *SecretCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (sc *SecretCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (sc *SecretCollection) NewBundleableItem() BundleableItem {
+	return &Secret{}
+}
+
+// NewBundleableItem function
+func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Secret Key: " + key)
