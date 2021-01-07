@@ -133,18 +133,13 @@ definition:
                     margin: 1
                     components:
                       - material.file:
-                          uesio.context:
-                            workspace:
-                              name: $Param{workspacename}
-                              app: $Param{appname}
-                          preview: false
                           fieldId: uesio.content
-                          mimeType: ${["uesio.fileinfo"]["uesio.mimetype"]}
-                          width: 100
+                          fileCollection: uesio.platform
                           height: 100
-                          margin:
-                            - 0
-                            - 2
+                          width: 100
+                          id: fileupid
+                          editable: false
+                          displayAs: "preview"
                       - material.typography:
                           text: "Name:"
                           variant: button
