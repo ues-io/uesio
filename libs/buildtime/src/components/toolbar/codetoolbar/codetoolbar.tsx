@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) =>
 		}),
 		[WITHOUT_LINE_HIGHLIGHT_CLASS]: {
 			backgroundColor: "grey",
-			opacity: 0.2,
+			opacity: 0,
 			transition: "all 2000ms ease-out",
 		},
 	})
@@ -77,6 +77,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			}, 1000)
 		}
 	})
+
+	console.log("CodeToolbar rendering")
 
 	return (
 		<>
@@ -197,6 +199,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					}
 				}
 				editorDidMount={(editor, monaco): void => {
+					console.log("codeToolbar has mount")
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
@@ -252,7 +255,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						) {
 							const startOffset = diff[0].count + 1
 							const endOffset = startOffset + diff[1].count - 1
-							editor.deltaDecorations(
+							const decorations = editor.deltaDecorations(
 								[],
 								[
 									{
@@ -271,6 +274,12 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 										},
 									},
 								]
+							)
+
+							// remove decoration
+							setTimeout(
+								() => editor.deltaDecorations(decorations, []),
+								2000
 							)
 						}
 					}
