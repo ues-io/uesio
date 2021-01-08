@@ -5,7 +5,7 @@ import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
-import { makeStyles, createStyles, withTheme } from "@material-ui/core"
+import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
@@ -14,20 +14,6 @@ const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
-		/*
-		[WITH_LINE_HIGHLIGHT_CLASS]: (props: definition.BaseProps) => ({
-			backgroundColor:
-				"magenta" ||
-				styles.getColor(
-					{ intention: "secondary" },
-					theme,
-					props.context
-				),
-			// width: "5px !important",
-			// marginLeft: "10px",
-			opacity: 1,
-			transition: "all 500ms ease-in",
-		}),*/
 		"@keyframes lineshighlight": {
 			from: {
 				opacity: 1,
@@ -37,7 +23,8 @@ const useStyles = makeStyles((theme) =>
 			},
 		},
 		[HIGHLIGHT_LINES_ANIMATION]: {
-			backgroundColor: "pink",
+			backgroundColor: (props: definition.BaseProps) =>
+				styles.getColor({ intention: "primary" }, theme, props.context),
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})
