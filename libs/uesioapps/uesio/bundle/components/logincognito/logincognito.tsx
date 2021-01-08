@@ -31,22 +31,13 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useLoginStyles = material.makeStyles((theme) =>
+const useLoginStyles = material.makeStyles(() =>
 	material.createStyles({
 		loginButton: getButtonStyles(),
 		formwrapper: {
 			width: "300px",
 			margin: "40px auto",
 			textAlign: "center",
-		},
-		button: {
-			margin: theme.spacing(2, 1),
-		},
-		textfield: {
-			margin: theme.spacing(1, 0),
-		},
-		textbutton: {
-			verticalAlign: "initial",
 		},
 		errormsg: {
 			marginBottom: "10px",
