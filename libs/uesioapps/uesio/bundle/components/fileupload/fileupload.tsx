@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, signal } from "@uesio/ui"
-import Icon from "../icon/icon"
+import { hooks, material, styles, wire, signal, component } from "@uesio/ui"
+//import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -93,6 +93,8 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	if (!wire || !record) {
 		return null
 	}
+
+	const Icon = component.registry.get("material", "icon")
 
 	return (
 		<div className={classes.root}>

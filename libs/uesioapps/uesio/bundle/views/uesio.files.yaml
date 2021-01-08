@@ -110,7 +110,7 @@ definition:
                           wire: filesCreate
                           mode: READ
                           components:
-                            - material.fileupload:
+                            - uesio.fileupload:
                                 id: "fileuploadid"
                                 fieldId: uesio.content
                                 fileCollection: uesio.workspacemetadatafiles
