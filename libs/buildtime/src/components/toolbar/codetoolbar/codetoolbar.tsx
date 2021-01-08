@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) =>
 		},
 		[HIGHLIGHT_LINES_ANIMATION]: {
 			backgroundColor: (props: definition.BaseProps) =>
-				styles.getColor({ intention: "primary" }, theme, props.context),
+				styles.getColor({ intention: "info" }, theme, props.context),
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})
@@ -264,8 +264,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					// highlight changes in the editor
 					if (hasYamlChanged && previousYaml && currentYaml) {
 						const diff: Change[] = diffLines(
-							previousYaml,
-							currentYaml
+							currentYaml,
+							previousYaml
 						)
 						if (
 							diff?.[0]?.count &&
