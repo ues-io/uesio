@@ -1,10 +1,16 @@
 import { material } from "@uesio/ui"
-import React, { FunctionComponent, useState, ChangeEvent } from "react"
+import React, {
+	FunctionComponent,
+	useState,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type LoginFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
-	setMessage: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
+	setMessage: Dispatch<SetStateAction<string>>
 	logIn: (username: string, password: string) => Promise<void>
 }
 

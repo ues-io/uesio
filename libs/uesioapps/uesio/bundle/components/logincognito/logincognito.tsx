@@ -1,4 +1,9 @@
-import React, { useState, FunctionComponent } from "react"
+import React, {
+	useState,
+	FunctionComponent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { definition, material, hooks, component } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
@@ -50,7 +55,7 @@ const useLoginStyles = material.makeStyles((theme) =>
 )
 
 type LoginButtonProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
 	text: string
 }
 
