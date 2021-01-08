@@ -264,8 +264,8 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					// highlight changes in the editor
 					if (hasYamlChanged && previousYaml && currentYaml) {
 						const diff: Change[] = diffLines(
-							currentYaml,
-							previousYaml
+							previousYaml,
+							currentYaml
 						)
 						if (
 							diff?.[0]?.count &&
