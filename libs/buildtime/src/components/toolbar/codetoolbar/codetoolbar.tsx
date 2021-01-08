@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme) =>
 				opacity: 0,
 			},
 		},
-		[HIGHLIGHT_LINES_ANIMATION]: (props: definition.BaseProps) => ({
-			backgroundColor: "blue",
+		[HIGHLIGHT_LINES_ANIMATION]: {
+			backgroundColor: "pink",
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
-		}),
+		},
 	})
 )
 
