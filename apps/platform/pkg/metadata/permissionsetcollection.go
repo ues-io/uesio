@@ -21,7 +21,12 @@ func (pc *PermissionSetCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (pc *PermissionSetCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (pc *PermissionSetCollection) NewBundleableItem() BundleableItem {
+	return &PermissionSet{}
+}
+
+// NewBundleableItem function
+func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewPermissionSet(key)
 }
 

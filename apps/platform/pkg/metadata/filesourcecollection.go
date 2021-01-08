@@ -21,7 +21,12 @@ func (fsc *FileSourceCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (fsc *FileSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (fsc *FileSourceCollection) NewBundleableItem() BundleableItem {
+	return &FileSource{}
+}
+
+// NewBundleableItem function
+func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewFileSource(key)
 }
 

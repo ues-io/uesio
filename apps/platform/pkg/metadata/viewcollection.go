@@ -26,7 +26,12 @@ func (vc *ViewCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (vc *ViewCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (vc *ViewCollection) NewBundleableItem() BundleableItem {
+	return &View{}
+}
+
+// NewBundleableItem function
+func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid View Key: " + key)

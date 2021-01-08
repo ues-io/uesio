@@ -26,7 +26,12 @@ func (cpc *ComponentPackCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (cpc *ComponentPackCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (cpc *ComponentPackCollection) NewBundleableItem() BundleableItem {
+	return &ComponentPack{}
+}
+
+// NewBundleableItem function
+func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)

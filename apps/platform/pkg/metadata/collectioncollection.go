@@ -16,7 +16,12 @@ func (cc *CollectionCollection) GetFields() []reqs.LoadRequestField {
 }
 
 // NewBundleableItem function
-func (cc *CollectionCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (cc *CollectionCollection) NewBundleableItem() BundleableItem {
+	return &Collection{}
+}
+
+// NewBundleableItem function
+func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewCollection(key)
 }
 

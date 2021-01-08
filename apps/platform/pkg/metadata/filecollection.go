@@ -23,7 +23,12 @@ func (fc *FileCollection) NewItem() LoadableItem {
 }
 
 // NewBundleableItem function
-func (fc *FileCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (fc *FileCollection) NewBundleableItem() BundleableItem {
+	return &File{}
+}
+
+// NewBundleableItem function
+func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewFile(key)
 }
 
