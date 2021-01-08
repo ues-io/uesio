@@ -55,9 +55,8 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	return (
 		<ExpandPanel defaultExpanded={false} title={section.title}>
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
-				{fields &&
-					collectionKey &&
-					Object.keys(fields).map((fieldId, index) => {
+				{collectionKey &&
+					Object.keys(fields || {}).map((fieldId, index) => {
 						const fieldDef = fieldsDef?.[fieldId]
 						const selected = fieldDef !== undefined
 						const onClick = (): void =>
