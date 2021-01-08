@@ -148,5 +148,6 @@ definition:
                                       margin:
                                         - 0
                                         - 2
+                                      displayAs: fullPreview
                                       editable: true
-                                      displayAs: "file"
+                                      accepts: all

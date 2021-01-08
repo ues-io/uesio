@@ -1,9 +1,10 @@
-import React, { FunctionComponent, useState } from "react"
+import React, { FunctionComponent, useState, useEffect } from "react"
 
 import { FileProps } from "./filedefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
-import Edit from "@material-ui/icons/Edit"
 import Icon from "../icon/icon"
+import Button from "./button"
+import EditWrapper from "./editwrapper"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -30,14 +31,17 @@ const useStyles = material.makeStyles((theme) =>
 
 async function fetchFileInfo(
 	fileUrl: RequestInfo,
-	setMime: React.Dispatch<React.SetStateAction<string>>
+	setMime: React.Dispatch<React.SetStateAction<string>>,
+	mime: string
 ) {
-	const response = await fetch(fileUrl)
-	const blob = await response.blob()
-	setMime(blob.type)
+	if (!mime) {
+		const response = await fetch(fileUrl)
+		const blob = await response.blob()
+		setMime(blob.type)
+	}
 }
 
-async function handleChange(
+async function HandleChange(
 	selectorFiles: FileList | null,
 	fieldId: string,
 	record: wire.WireRecord,
@@ -76,7 +80,7 @@ async function handleChange(
 const File: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
-		definition: { fieldId, id, fileCollection, displayAs },
+		definition: { fieldId, displayAs, height, width, editable },
 	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -89,7 +93,10 @@ const File: FunctionComponent<FileProps> = (props) => {
 	const userFileId = record.getFieldValue(fieldId) as string
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
 	const [mime, setMime] = useState("")
-	fetchFileInfo(fileUrl, setMime)
+
+	useEffect(() => {
+		fetchFileInfo(fileUrl, setMime, mime)
+	})
 
 	const iconJsx = (
 		<Icon
@@ -104,86 +111,22 @@ const File: FunctionComponent<FileProps> = (props) => {
 
 	if (displayAs === "button") {
 		return (
-			<div className={classes.root}>
-				<label htmlFor={id}>
-					<input
-						type="file"
-						className={classes.input}
-						id={id}
-						name={id}
-						onChange={(e) =>
-							handleChange(
-								e.target.files,
-								fieldId,
-								record,
-								wire,
-								uesio,
-								fileCollection
-							)
-						}
-					/>
-					<material.Button
-						color="primary"
-						variant="contained"
-						component="span"
-					>
-						<Icon
-							definition={{
-								type: "librayadd",
-								size: "small",
-							}}
-							path={props.path}
-							context={props.context}
-						/>
-					</material.Button>
-				</label>
-			</div>
+			<Button
+				definition={props.definition}
+				path={props.path}
+				context={context}
+			/>
 		)
 	}
 
+	//no file url EQ empty unless Button
 	if (!fileUrl) {
 		return (
-			<div className={classes.root}>
-				<material.Badge
-					overlap="circle"
-					anchorOrigin={{
-						vertical: "bottom",
-						horizontal: "right",
-					}}
-					badgeContent={
-						<div>
-							<label htmlFor={id}>
-								<input
-									type="file"
-									accept="image/*"
-									className={classes.input}
-									id={id}
-									name={id}
-									onChange={(e) =>
-										handleChange(
-											e.target.files,
-											fieldId,
-											record,
-											wire,
-											uesio,
-											fileCollection
-										)
-									}
-								/>
-								<material.Avatar
-									className={classes.smallavatar}
-								>
-									<Edit />
-								</material.Avatar>
-							</label>
-						</div>
-					}
-				>
-					<material.Avatar className={classes.avatar}>
-						{iconJsx}
-					</material.Avatar>
-				</material.Badge>
-			</div>
+			<EditWrapper
+				definition={props.definition}
+				path={props.path}
+				context={context}
+			/>
 		)
 	}
 
@@ -191,66 +134,44 @@ const File: FunctionComponent<FileProps> = (props) => {
 		const arrMime = mime.split("/", 2)
 		const [mimeType, mimeSubType] = arrMime
 
+		const imgPreview = (
+			<material.Avatar className={classes.avatar} src={fileUrl} />
+		)
+
+		const imgFullPreview = (
+			<img src={fileUrl} height={height} width={width} />
+		)
+
 		switch (mimeType) {
 			case "image":
-				if (displayAs === "preview") {
+				if (displayAs === "preview" && !editable) {
+					return <div className={classes.root}>{imgPreview}</div>
+				} else if (displayAs === "fullPreview" && !editable) {
+					return <div className={classes.root}>{imgFullPreview}</div>
+				} else if (displayAs === "preview" && editable) {
 					return (
-						<div className={classes.root}>
-							<material.Avatar
-								className={classes.avatar}
-								src={fileUrl}
-							/>
-						</div>
+						<EditWrapper
+							definition={props.definition}
+							path={props.path}
+							context={context}
+						>
+							{imgPreview}
+						</EditWrapper>
 					)
-				} else if (displayAs === "file") {
+				} else if (displayAs === "fullPreview" && editable) {
 					return (
-						<div className={classes.root}>
-							<material.Badge
-								overlap="circle"
-								anchorOrigin={{
-									vertical: "bottom",
-									horizontal: "right",
-								}}
-								badgeContent={
-									<div>
-										<label htmlFor={id}>
-											<input
-												type="file"
-												accept="image/*"
-												className={classes.input}
-												id={id}
-												name={id}
-												onChange={(e) =>
-													handleChange(
-														e.target.files,
-														fieldId,
-														record,
-														wire,
-														uesio,
-														fileCollection
-													)
-												}
-											/>
-											<material.Avatar
-												className={classes.smallavatar}
-											>
-												<Edit />
-											</material.Avatar>
-										</label>
-									</div>
-								}
-							>
-								<material.Avatar
-									className={classes.avatar}
-									src={fileUrl}
-								/>
-							</material.Badge>
-						</div>
+						<EditWrapper
+							definition={props.definition}
+							path={props.path}
+							context={context}
+						>
+							{imgFullPreview}
+						</EditWrapper>
 					)
 				}
 				break
 			case "application":
-				if (displayAs === "preview") {
+				if (displayAs === "preview" && !editable) {
 					return (
 						<div className={classes.root}>
 							<material.Avatar className={classes.avatar}>
@@ -258,11 +179,41 @@ const File: FunctionComponent<FileProps> = (props) => {
 							</material.Avatar>
 						</div>
 					)
-				}
-
-				if (mimeSubType === "pdf") {
-					return <iframe src={fileUrl} width="100%" height="500px" />
-				} else {
+				} else if (
+					displayAs === "fullPreview" &&
+					mimeSubType === "pdf" &&
+					!editable
+				) {
+					return (
+						<div className={classes.root}>
+							(
+							<iframe src={fileUrl} width="100%" height="500px" />
+							)
+						</div>
+					)
+				} else if (displayAs === "preview" && editable) {
+					return (
+						<EditWrapper
+							definition={props.definition}
+							path={props.path}
+							context={context}
+						/>
+					)
+				} else if (
+					displayAs === "fullPreview" &&
+					mimeSubType === "pdf" &&
+					editable
+				) {
+					return (
+						<EditWrapper
+							definition={props.definition}
+							path={props.path}
+							context={context}
+						>
+							<iframe src={fileUrl} width="100%" height="500px" />
+						</EditWrapper>
+					)
+				} else if (mimeSubType !== "pdf") {
 					return (
 						<material.Button
 							variant="contained"
@@ -281,5 +232,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 
 	return null
 }
+
+export { HandleChange }
 
 export default File

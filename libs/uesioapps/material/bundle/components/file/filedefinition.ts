@@ -4,7 +4,9 @@ type FileDefinition = {
 	id: string
 	fieldId: string
 	fileCollection: string
-	displayAs: "button" | "file" | "preview"
+	editable: boolean
+	displayAs: "button" | "preview" | "fullPreview"
+	accepts: "images" | "all"
 	margin?: styles.MarginDefinition
 	width?: number
 	height?: number
@@ -31,14 +33,16 @@ const FilePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "File Collection",
 		},
 		{
+			name: "editable",
+			type: "BOOLEAN",
+			label: "Editable",
+			displaytype: "switch",
+		},
+		{
 			name: "displayAs",
 			type: "SELECT",
 			label: "Display As",
 			options: [
-				{
-					value: "file",
-					label: "File",
-				},
 				{
 					value: "button",
 					label: "Button",
@@ -46,6 +50,25 @@ const FilePropertyDefinition: builder.BuildPropertiesDefinition = {
 				{
 					value: "preview",
 					label: "Preview",
+				},
+				{
+					value: "fullPreview",
+					label: "Full preview",
+				},
+			],
+		},
+		{
+			name: "accepts",
+			type: "SELECT",
+			label: "Accepts",
+			options: [
+				{
+					value: "images",
+					label: "Images",
+				},
+				{
+					value: "all",
+					label: "All",
 				},
 			],
 		},

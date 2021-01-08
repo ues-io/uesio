@@ -21,8 +21,9 @@ definition:
                                   - 0
                                   - 2
                                 editable: true
-                                displayAs: file
+                                displayAs: preview
                                 width: 150
+                                accepts: images
                             - material.typography:
                                 text: ${crm.name}
                                 textTransform: uppercase

@@ -139,7 +139,8 @@ definition:
                           width: 100
                           id: fileupid
                           editable: false
-                          displayAs: "preview"
+                          displayAs: preview
+                          accepts: all
                       - material.typography:
                           text: "Name:"
                           variant: button
