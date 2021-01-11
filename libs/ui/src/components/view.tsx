@@ -78,12 +78,9 @@ const View: FunctionComponent<Props> = (props) => {
 
 	useEffect(() => {
 		if (!view) {
-			const [namespace, name] = parseKey(viewDefId)
 			uesio.getDispatcher()(
 				loadViewOp({
 					context: viewContext,
-					namespace,
-					name,
 					path,
 					params,
 				})

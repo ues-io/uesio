@@ -82,25 +82,18 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &RouteMergeData{
-			ViewName:      "notfound",
-			ViewNamespace: "uesio",
+			View:  "uesio.notfound",
+			Theme: "uesio.default",
 		})
 		return
 	}
 
-	viewNamespace, viewName, err := metadata.ParseKey(route.ViewRef)
-	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-
 	respondJSON(w, r, &RouteMergeData{
-		ViewName:      viewName,
-		ViewNamespace: viewNamespace,
-		Params:        route.Params,
-		Namespace:     route.Namespace,
-		Path:          path,
-		Workspace:     GetWorkspaceMergeData(workspace),
+		View:      route.ViewRef,
+		Params:    route.Params,
+		Namespace: route.Namespace,
+		Path:      path,
+		Workspace: GetWorkspaceMergeData(workspace),
 	})
 
 }
@@ -110,6 +103,7 @@ func getNotFoundRoute(path string) *metadata.Route {
 		ViewRef:   "uesio.notfound",
 		Namespace: "uesio",
 		Path:      path,
+		ThemeRef:  "uesio.default",
 	}
 }
 
