@@ -4,24 +4,37 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // LoadOp type
 type LoadOp struct {
-	CollectionName string                      `json:"collection"`
-	WireName       string                      `json:"wire"`
-	Collection     metadata.LoadableGroup      `json:"data"`
-	Conditions     []reqs.LoadRequestCondition `json:"-"`
-	Fields         []reqs.LoadRequestField     `json:"-"`
-	Type           string                      `json:"-"`
+	CollectionName string                 `json:"collection"`
+	WireName       string                 `json:"wire"`
+	Collection     LoadableGroup          `json:"data"`
+	Conditions     []LoadRequestCondition `json:"-"`
+	Fields         []LoadRequestField     `json:"-"`
+	Type           string                 `json:"-"`
+}
+
+// LoadableGroup interface
+type LoadableGroup interface {
+	GetItem(index int) LoadableItem
+	Loop(iter func(item LoadableItem) error) error
+	Len() int
+	AddItem(LoadableItem)
+	NewItem() LoadableItem
+}
+
+// LoadableItem interface
+type LoadableItem interface {
+	SetField(string, interface{}) error
+	GetField(string) (interface{}, error)
 }
 
 // Adapter interface
 type Adapter interface {
 	Load([]LoadOp, *MetadataCache, *creds.AdapterCredentials) error
-	Save([]reqs.SaveRequest, *MetadataCache, *creds.AdapterCredentials) ([]reqs.SaveResponse, error)
+	Save([]SaveRequest, *MetadataCache, *creds.AdapterCredentials) ([]SaveResponse, error)
 	Migrate(*MetadataCache, *creds.AdapterCredentials) error
 }
 
@@ -82,7 +95,7 @@ func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
 }
 
 // GetFieldsMap function returns a map of field DB names to field UI names to be used in a load request
-func GetFieldsMap(fields []reqs.LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, error) {
+func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, error) {
 	fieldIDMap := FieldsMap{}
 	referenceFields := ReferenceRegistry{}
 	for _, field := range fields {
@@ -106,9 +119,9 @@ func GetFieldsMap(fields []reqs.LoadRequestField, collectionMetadata *Collection
 			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
 		}
 
-		subFields := append(field.Fields, reqs.LoadRequestField{
+		subFields := append(field.Fields, LoadRequestField{
 			ID: referencedCollectionMetadata.IDField,
-		}, reqs.LoadRequestField{
+		}, LoadRequestField{
 			ID: referencedCollectionMetadata.NameField,
 		})
 

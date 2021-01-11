@@ -3,7 +3,7 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewPermissionSet function
@@ -44,8 +44,8 @@ func (ps *PermissionSet) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ps *PermissionSet) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (ps *PermissionSet) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: ps.Name,

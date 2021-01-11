@@ -4,10 +4,11 @@ import (
 	"errors"
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -22,7 +23,7 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 		return err
 	}
 	// Add the workspace id as a condition
-	conditions = append(conditions, reqs.LoadRequestCondition{
+	conditions = append(conditions, adapters.LoadRequestCondition{
 		Field: "uesio.workspaceid",
 		Value: session.GetWorkspaceID(),
 	})
@@ -41,9 +42,9 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 }
 
 // GetItems function
-func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
 	// Add the workspace id as a condition
-	loadConditions := []reqs.LoadRequestCondition{
+	loadConditions := []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.workspaceid",
 			Value: session.GetWorkspaceID(),
@@ -51,7 +52,7 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 	}
 
 	for field, value := range conditions {
-		loadConditions = append(loadConditions, reqs.LoadRequestCondition{
+		loadConditions = append(loadConditions, adapters.LoadRequestCondition{
 			Field: field,
 			Value: value,
 		})
@@ -91,7 +92,7 @@ func (b *WorkspaceBundleStore) GetBotStream(version string, bot *metadata.Bot, s
 }
 
 // StoreItems function
-func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
+func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
@@ -100,7 +101,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	var by metadata.BundleDef
 	by.Name = namespace
 	bdc, err := datasource.BundleDependencyLoad(
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
 				Value:    namespace + "_" + version,
@@ -136,7 +137,7 @@ func getAppForNamespace(namespace string, session *sess.Session) (*metadata.App,
 
 	err := datasource.PlatformLoadOne(
 		&app,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: namespace,

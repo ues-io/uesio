@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // BulkJobCollection slice
 type BulkJobCollection []BulkJob
@@ -11,28 +13,28 @@ func (bjc *BulkJobCollection) GetName() string {
 }
 
 // GetFields function
-func (bjc *BulkJobCollection) GetFields() []reqs.LoadRequestField {
+func (bjc *BulkJobCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bjc)
 }
 
 // GetItem function
-func (bjc *BulkJobCollection) GetItem(index int) LoadableItem {
+func (bjc *BulkJobCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *bjc
 	return &actual[index]
 }
 
 // AddItem function
-func (bjc *BulkJobCollection) AddItem(item LoadableItem) {
+func (bjc *BulkJobCollection) AddItem(item adapters.LoadableItem) {
 	*bjc = append(*bjc, *item.(*BulkJob))
 }
 
 // NewItem function
-func (bjc *BulkJobCollection) NewItem() LoadableItem {
+func (bjc *BulkJobCollection) NewItem() adapters.LoadableItem {
 	return &BulkJob{}
 }
 
 // Loop function
-func (bjc *BulkJobCollection) Loop(iter func(item LoadableItem) error) error {
+func (bjc *BulkJobCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bjc {
 		err := iter(bjc.GetItem(index))
 		if err != nil {

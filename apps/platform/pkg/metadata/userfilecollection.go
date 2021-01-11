@@ -3,7 +3,7 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -72,8 +72,8 @@ func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ufc *UserFileCollection) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (ufc *UserFileCollection) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: ufc.Name,

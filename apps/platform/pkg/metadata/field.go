@@ -3,7 +3,7 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewField function
@@ -74,8 +74,8 @@ func (f *Field) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (f *Field) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (f *Field) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: f.Name,
