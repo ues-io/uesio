@@ -10,8 +10,7 @@ import { MetadataListStore } from "../bands/builder/types"
 import { Theme } from "../bands/theme/types"
 
 type RouteResponse = {
-	viewname: string
-	viewnamespace: string
+	view: string
 	params: {
 		[key: string]: string
 	}

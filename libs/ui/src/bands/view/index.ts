@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { parseKey } from "../../component/path"
 
 import viewAdapter from "./adapter"
 
@@ -11,9 +12,16 @@ const viewSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(loadViewOp.fulfilled, viewAdapter.upsertOne)
 		builder.addCase(loadViewOp.pending, (state, { meta: { arg } }) => {
+			const context = arg.context
+			const viewDefId = context.getViewDefId()
+			if (!viewDefId) {
+				return
+			}
+			const [namespace, name] = parseKey(viewDefId)
+
 			viewAdapter.upsertOne(state, {
-				namespace: arg.namespace,
-				name: arg.name,
+				namespace,
+				name,
 				path: arg.path,
 				params: arg.params,
 				loaded: false,

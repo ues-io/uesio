@@ -22,21 +22,18 @@ const navigate = (
 		namespace,
 		mergedPath
 	)
-	const viewName = routeResponse.viewname
-	const viewNamespace = routeResponse.viewnamespace
+	const view = routeResponse.view
 
 	// Pre-load the view for faster appearances and no white flash
 	await dispatch(
 		loadViewOp({
 			context: new Context([
 				{
-					view: `${viewNamespace}.${viewName}()`,
-					viewDef: `${viewNamespace}.${viewName}`,
+					view: `${view}()`,
+					viewDef: view,
 					workspace: context.getWorkspace(),
 				},
 			]),
-			namespace: viewNamespace,
-			name: viewName,
 			path: "",
 			params: routeResponse.params,
 		})
@@ -46,8 +43,7 @@ const navigate = (
 		dispatch(clearAvailableMetadata())
 		dispatch(
 			setRoute({
-				name: viewName,
-				namespace: viewNamespace,
+				view,
 				params: routeResponse.params,
 				workspace: routeResponse.workspace,
 			})
