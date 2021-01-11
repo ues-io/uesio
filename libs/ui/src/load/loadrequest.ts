@@ -7,6 +7,12 @@ type LoadRequest = {
 	collection: string
 	fields: LoadRequestField[]
 	conditions: WireConditionState[]
+	orders: OrderDescription[]
+}
+
+type OrderDescription = {
+	field: string
+	desc: boolean
 }
 
 type LoadRequestField = {

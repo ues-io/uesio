@@ -16,6 +16,7 @@ type LoadOp struct {
 	Conditions     []reqs.LoadRequestCondition `json:"-"`
 	Fields         []reqs.LoadRequestField     `json:"-"`
 	Type           string                      `json:"-"`
+	Orders         []reqs.LoadRequestOrder     `json:"-"`
 }
 
 // Adapter interface

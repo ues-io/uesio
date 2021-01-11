@@ -7,6 +7,7 @@ type LoadRequest struct {
 	Type       string                 `json:"type"`
 	Fields     []LoadRequestField     `json:"fields"`
 	Conditions []LoadRequestCondition `json:"conditions"`
+	Orders     []LoadRequestOrder     `json:"orders"`
 }
 
 // GetCollection function
@@ -34,4 +35,10 @@ type LoadRequestCondition struct {
 	Operator    string      `json:"operator"`
 	LookupWire  string      `json:"lookupWire"`
 	LookupField string      `json:"lookupField"`
+}
+
+// LoadRequestOrder struct
+type LoadRequestOrder struct {
+	Field string `json:"field"`
+	Desc  bool   `json:"desc"`
 }

@@ -12,6 +12,7 @@ type WireDefinition = {
 	conditions: WireConditionDefinition[]
 	defaults: WireDefault[]
 	type: wire.WireType
+	orders: WireOrderDescription[]
 }
 
 type WireFieldDefinitionMap = {
@@ -21,6 +22,11 @@ type WireFieldDefinitionMap = {
 type WireFieldDefinition = {
 	id: string
 	fields: WireFieldDefinitionMap
+}
+
+type WireOrderDescription = {
+	field: string
+	desc: boolean
 }
 
 export {
