@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // UserFileMetadataCollection slice
 type UserFileMetadataCollection []UserFileMetadata
@@ -11,28 +13,28 @@ func (ufmc *UserFileMetadataCollection) GetName() string {
 }
 
 // GetFields function
-func (ufmc *UserFileMetadataCollection) GetFields() []reqs.LoadRequestField {
+func (ufmc *UserFileMetadataCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(ufmc)
 }
 
 // AddItem function
-func (ufmc *UserFileMetadataCollection) AddItem(item LoadableItem) {
+func (ufmc *UserFileMetadataCollection) AddItem(item adapters.LoadableItem) {
 	*ufmc = append(*ufmc, *item.(*UserFileMetadata))
 }
 
 // NewItem function
-func (ufmc *UserFileMetadataCollection) NewItem() LoadableItem {
+func (ufmc *UserFileMetadataCollection) NewItem() adapters.LoadableItem {
 	return &UserFileMetadata{}
 }
 
 // GetItem function
-func (ufmc *UserFileMetadataCollection) GetItem(index int) LoadableItem {
+func (ufmc *UserFileMetadataCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *ufmc
 	return &actual[index]
 }
 
 // Loop function
-func (ufmc *UserFileMetadataCollection) Loop(iter func(item LoadableItem) error) error {
+func (ufmc *UserFileMetadataCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *ufmc {
 		err := iter(ufmc.GetItem(index))
 		if err != nil {

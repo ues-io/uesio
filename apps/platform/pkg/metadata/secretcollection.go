@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // SecretCollection slice
@@ -16,12 +16,12 @@ func (sc *SecretCollection) GetName() string {
 }
 
 // GetFields function
-func (sc *SecretCollection) GetFields() []reqs.LoadRequestField {
+func (sc *SecretCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(sc)
 }
 
 // NewItem function
-func (sc *SecretCollection) NewItem() LoadableItem {
+func (sc *SecretCollection) NewItem() adapters.LoadableItem {
 	return &Secret{}
 }
 
@@ -43,23 +43,23 @@ func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem
 }
 
 // GetKeyPrefix function
-func (sc *SecretCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (sc *SecretCollection) GetKeyPrefix(conditions BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (sc *SecretCollection) AddItem(item LoadableItem) {
+func (sc *SecretCollection) AddItem(item adapters.LoadableItem) {
 	*sc = append(*sc, *item.(*Secret))
 }
 
 // GetItem function
-func (sc *SecretCollection) GetItem(index int) LoadableItem {
+func (sc *SecretCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *sc
 	return &actual[index]
 }
 
 // Loop function
-func (sc *SecretCollection) Loop(iter func(item LoadableItem) error) error {
+func (sc *SecretCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index))
 		if err != nil {

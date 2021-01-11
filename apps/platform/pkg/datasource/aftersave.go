@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -32,14 +32,14 @@ func (as *AfterSaveAPI) GetErrorString() string {
 
 // Save function
 func (as *AfterSaveAPI) Save(collection string, changes []map[string]interface{}) (*SaveResponseBatch, error) {
-	changeRequestMap := map[string]reqs.ChangeRequest{}
+	changeRequestMap := map[string]adapters.ChangeRequest{}
 	for index, req := range changes {
-		changeRequestMap[strconv.Itoa(index)] = reqs.ChangeRequest{
+		changeRequestMap[strconv.Itoa(index)] = adapters.ChangeRequest{
 			FieldChanges: req,
 		}
 	}
 	return Save(SaveRequestBatch{
-		Wires: []reqs.SaveRequest{
+		Wires: []adapters.SaveRequest{
 			{
 				Collection: collection,
 				Wire:       "apiaftersave",

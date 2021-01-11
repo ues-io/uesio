@@ -2,12 +2,11 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // ChangesAPI type
 type ChangesAPI struct {
-	changes  map[string]reqs.ChangeRequest
+	changes  map[string]adapters.ChangeRequest
 	metadata *adapters.CollectionMetadata
 }
 

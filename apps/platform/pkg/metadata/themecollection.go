@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ThemeCollection slice
@@ -16,12 +16,12 @@ func (tc *ThemeCollection) GetName() string {
 }
 
 // GetFields function
-func (tc *ThemeCollection) GetFields() []reqs.LoadRequestField {
+func (tc *ThemeCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(tc)
 }
 
 // NewItem function
-func (tc *ThemeCollection) NewItem() LoadableItem {
+func (tc *ThemeCollection) NewItem() adapters.LoadableItem {
 	return &Theme{}
 }
 
@@ -43,23 +43,23 @@ func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyPrefix function
-func (tc *ThemeCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (tc *ThemeCollection) GetKeyPrefix(conditions BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (tc *ThemeCollection) AddItem(item LoadableItem) {
+func (tc *ThemeCollection) AddItem(item adapters.LoadableItem) {
 	*tc = append(*tc, *item.(*Theme))
 }
 
 // GetItem function
-func (tc *ThemeCollection) GetItem(index int) LoadableItem {
+func (tc *ThemeCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *tc
 	return &actual[index]
 }
 
 // Loop function
-func (tc *ThemeCollection) Loop(iter func(item LoadableItem) error) error {
+func (tc *ThemeCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index))
 		if err != nil {

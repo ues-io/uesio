@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ViewCollection slice
@@ -16,12 +16,12 @@ func (vc *ViewCollection) GetName() string {
 }
 
 // GetFields function
-func (vc *ViewCollection) GetFields() []reqs.LoadRequestField {
+func (vc *ViewCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(vc)
 }
 
 // NewItem function
-func (vc *ViewCollection) NewItem() LoadableItem {
+func (vc *ViewCollection) NewItem() adapters.LoadableItem {
 	return &View{}
 }
 
@@ -43,23 +43,23 @@ func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 }
 
 // GetKeyPrefix function
-func (vc *ViewCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (vc *ViewCollection) GetKeyPrefix(conditions BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (vc *ViewCollection) AddItem(item LoadableItem) {
+func (vc *ViewCollection) AddItem(item adapters.LoadableItem) {
 	*vc = append(*vc, *item.(*View))
 }
 
 // GetItem function
-func (vc *ViewCollection) GetItem(index int) LoadableItem {
+func (vc *ViewCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *vc
 	return &actual[index]
 }
 
 // Loop function
-func (vc *ViewCollection) Loop(iter func(item LoadableItem) error) error {
+func (vc *ViewCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *vc {
 		err := iter(vc.GetItem(index))
 		if err != nil {

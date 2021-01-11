@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // CollectionCollection slice
 type CollectionCollection []Collection
@@ -11,7 +13,7 @@ func (cc *CollectionCollection) GetName() string {
 }
 
 // GetFields function
-func (cc *CollectionCollection) GetFields() []reqs.LoadRequestField {
+func (cc *CollectionCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(cc)
 }
 
@@ -26,28 +28,28 @@ func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (Bundleable
 }
 
 // GetKeyPrefix function
-func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (cc *CollectionCollection) GetKeyPrefix(conditions BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item LoadableItem) {
+func (cc *CollectionCollection) AddItem(item adapters.LoadableItem) {
 	*cc = append(*cc, *item.(*Collection))
 }
 
 // NewItem function
-func (cc *CollectionCollection) NewItem() LoadableItem {
+func (cc *CollectionCollection) NewItem() adapters.LoadableItem {
 	return &Collection{}
 }
 
 // GetItem function
-func (cc *CollectionCollection) GetItem(index int) LoadableItem {
+func (cc *CollectionCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *cc
 	return &actual[index]
 }
 
 // Loop function
-func (cc *CollectionCollection) Loop(iter func(item LoadableItem) error) error {
+func (cc *CollectionCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index))
 		if err != nil {

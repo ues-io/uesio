@@ -14,7 +14,7 @@ import (
 )
 
 func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Session) (*metadata.Route, error) {
-	var route metadata.Route
+	var route *metadata.Route
 	var routes metadata.RouteCollection
 
 	err := bundles.LoadAll(&routes, namespace, nil, session)
@@ -45,12 +45,12 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 
 	for _, item := range routes {
 		if item.Path == pathTemplate {
-			route = item
+			route = &item
 			break
 		}
 	}
 
-	if &route == nil {
+	if route == nil {
 		return nil, errors.New("No Route Found in Cache")
 	}
 
@@ -58,7 +58,7 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	route.Params = routematch.Vars
 	route.Path = path
 
-	return &route, nil
+	return route, nil
 }
 
 // RouteAPI is good

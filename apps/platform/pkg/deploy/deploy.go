@@ -9,16 +9,14 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-
-	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
@@ -38,7 +36,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 	dep := map[string]metadata.BundleableGroup{}
 
-	fileStreams := []reqs.ReadItemStream{}
+	fileStreams := []bundlestore.ReadItemStream{}
 	fileNameMap := map[string]string{}
 
 	// Read all the files from zip archive
@@ -86,7 +84,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
-			fileStreams = append(fileStreams, reqs.ReadItemStream{
+			fileStreams = append(fileStreams, bundlestore.ReadItemStream{
 				Type:     metadataType,
 				FileName: base,
 				Data:     f,
@@ -146,8 +144,8 @@ func Deploy(body []byte, session *sess.Session) error {
 			_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 				{
 					Collection: collection,
-					Options: &reqs.SaveOptions{
-						Upsert: &reqs.UpsertOptions{},
+					Options: &adapters.SaveOptions{
+						Upsert: &adapters.UpsertOptions{},
 					},
 				},
 			}, session)
@@ -185,7 +183,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			recordID = bot.CollectionRef + "_" + bot.Type + "_" + bot.Name
 		}
 
-		fileDetails := reqs.FileDetails{
+		fileDetails := datasource.FileDetails{
 			Name:             fileStream.FileName,
 			CollectionID:     "uesio." + fileStream.Type,
 			RecordID:         session.GetWorkspaceID() + "_" + recordID,

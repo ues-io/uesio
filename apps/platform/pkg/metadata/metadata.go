@@ -4,35 +4,23 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reflecttools"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
-// LoadableGroup interface
-type LoadableGroup interface {
-	GetItem(index int) LoadableItem
-	Loop(iter func(item LoadableItem) error) error
-	Len() int
-	AddItem(LoadableItem)
-	NewItem() LoadableItem
-}
-
-// LoadableItem interface
-type LoadableItem interface {
-	SetField(string, interface{}) error
-	GetField(string) (interface{}, error)
-}
+// BundleConditions type
+type BundleConditions map[string]string
 
 // CollectionableGroup interface
 type CollectionableGroup interface {
-	LoadableGroup
+	adapters.LoadableGroup
 	GetName() string
-	GetFields() []reqs.LoadRequestField
+	GetFields() []adapters.LoadRequestField
 }
 
 // CollectionableItem interface
 type CollectionableItem interface {
-	LoadableItem
+	adapters.LoadableItem
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
 }
@@ -40,7 +28,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	GetKeyPrefix(reqs.BundleConditions) string
+	GetKeyPrefix(BundleConditions) string
 	NewBundleableItem() BundleableItem
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
@@ -51,7 +39,7 @@ type BundleableItem interface {
 	GetBundleGroup() BundleableGroup
 	GetPermChecker() *PermissionSet
 	GetKey() string
-	GetConditions() ([]reqs.LoadRequestCondition, error)
+	GetConditions() ([]adapters.LoadRequestCondition, error)
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)
@@ -67,14 +55,14 @@ func ParseKey(key string) (string, string, error) {
 }
 
 // StandardGetFields function
-func StandardGetFields(group CollectionableGroup) []reqs.LoadRequestField {
-	fieldRequests := []reqs.LoadRequestField{}
+func StandardGetFields(group CollectionableGroup) []adapters.LoadRequestField {
+	fieldRequests := []adapters.LoadRequestField{}
 	names, err := reflecttools.GetFieldNames(group.NewItem())
 	if err != nil {
 		return fieldRequests
 	}
 	for _, name := range names {
-		fieldRequests = append(fieldRequests, reqs.LoadRequestField{
+		fieldRequests = append(fieldRequests, adapters.LoadRequestField{
 			ID: name,
 		})
 	}

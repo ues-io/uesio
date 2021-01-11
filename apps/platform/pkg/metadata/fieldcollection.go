@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // FieldCollection slice
@@ -16,12 +16,12 @@ func (fc *FieldCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FieldCollection) GetFields() []reqs.LoadRequestField {
+func (fc *FieldCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem() LoadableItem {
+func (fc *FieldCollection) NewItem() adapters.LoadableItem {
 	return &Field{}
 }
 
@@ -44,7 +44,7 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 }
 
 // GetKeyPrefix function
-func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (fc *FieldCollection) GetKeyPrefix(conditions BundleConditions) string {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	if hasCollection {
 		return collectionKey + "."
@@ -53,18 +53,18 @@ func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item LoadableItem) {
+func (fc *FieldCollection) AddItem(item adapters.LoadableItem) {
 	*fc = append(*fc, *item.(*Field))
 }
 
 // GetItem function
-func (fc *FieldCollection) GetItem(index int) LoadableItem {
+func (fc *FieldCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *fc
 	return &actual[index]
 }
 
 // Loop function
-func (fc *FieldCollection) Loop(iter func(item LoadableItem) error) error {
+func (fc *FieldCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {
