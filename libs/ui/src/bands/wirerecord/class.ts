@@ -17,13 +17,10 @@ class WireRecord {
 	getWire = () => this.wire
 	getFieldValue = (fieldName: string) => get(this.source, fieldName)
 
-	update = async (fieldId: string, value: FieldValue) => {
-		const res = await this.wire.dispatchRecordUpdate(this.id, {
+	update = (fieldId: string, value: FieldValue) =>
+		this.wire.dispatchRecordUpdate(this.id, {
 			[fieldId]: value,
 		})
-
-		return res
-	}
 
 	set = (fieldId: string, value: FieldValue) => {
 		this.wire.dispatchRecordSet(this.id, {

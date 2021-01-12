@@ -45,7 +45,7 @@ async function handleChange(
 		const appName = context.getView()?.params?.appname
 		const workspaceName = context.getView()?.params?.workspacename
 
-		await record.update(nameNameField, file.name)
+		record.update(nameNameField, file.name)
 		await wire.save(context)
 		//TO-DO show error if record Save fail
 

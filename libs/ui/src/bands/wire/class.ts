@@ -77,12 +77,8 @@ class Wire {
 		return this
 	}
 
-	save = async (context: Context) => {
-		const res = await getStore().dispatch(
-			saveWiresOp({ context, wires: [this.getId()] })
-		)
-		return res
-	}
+	save = (context: Context) =>
+		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
 }
 
 export default Wire
