@@ -12,7 +12,7 @@ type WireDefinition = {
 	conditions: WireConditionDefinition[]
 	defaults: WireDefault[]
 	type: wire.WireType
-	orders: WireOrderDescription[]
+	order: WireOrderDescription[]
 }
 
 type WireFieldDefinitionMap = {

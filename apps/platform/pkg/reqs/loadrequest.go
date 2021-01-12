@@ -7,7 +7,7 @@ type LoadRequest struct {
 	Type       string                 `json:"type"`
 	Fields     []LoadRequestField     `json:"fields"`
 	Conditions []LoadRequestCondition `json:"conditions"`
-	Orders     []LoadRequestOrder     `json:"orders"`
+	Order      []LoadRequestOrder     `json:"order"`
 }
 
 // GetCollection function

@@ -54,7 +54,7 @@ export default createAsyncThunk<
 					getInitializedConditions(wiredef.conditions),
 					context
 				),
-				orders: wiredef.orders,
+				order: wiredef.order,
 			}
 		}),
 	}

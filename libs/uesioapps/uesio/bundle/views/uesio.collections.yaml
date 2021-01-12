@@ -38,6 +38,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+      order:
+        - field: uesio.name
+          desc: true
   # Components are how we describe the layout of our view
   components:
     - uesio.view:

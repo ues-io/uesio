@@ -36,7 +36,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 			Collection:     &loadresponse.Collection{},
 			Conditions:     wire.Conditions,
 			Fields:         wire.Fields,
-			Orders:         wire.Orders,
+			Order:          wire.Order,
 		}
 	}
 

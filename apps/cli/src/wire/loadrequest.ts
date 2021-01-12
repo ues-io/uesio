@@ -7,7 +7,7 @@ type LoadRequest = {
 	collection: string
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
-	orders: OrderDescription[]
+	order: OrderDescription[]
 }
 
 type LoadRequestField = {

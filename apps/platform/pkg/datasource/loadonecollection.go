@@ -5,6 +5,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
+//LoadOneCollection type
 type LoadOneCollection struct {
 	Collection metadata.CollectionableGroup
 	Item       metadata.LoadableItem
