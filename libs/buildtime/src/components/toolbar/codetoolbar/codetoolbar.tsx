@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
 import { hooks, util, definition, styles } from "@uesio/ui"
@@ -43,25 +42,6 @@ const customScrollToElement = (
 const getAllHighlightedNodes = (substring: string) =>
 	document.querySelectorAll(`[class*="${substring}"]`)
 
-const toggleClass = (
-	nodes: NodeListOf<Element>,
-	highlightSubstring: string,
-	noHighlightClass: string
-): void => {
-	const highlightClassPattern = new RegExp(
-		`([^\\s]*${highlightSubstring}[^\\s]*)`,
-		"gi"
-	)
-	nodes.forEach((node) => {
-		if (node?.className?.replace) {
-			node.className = node?.className.replace(
-				highlightClassPattern,
-				noHighlightClass
-			)
-		}
-	})
-}
-
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -71,30 +51,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
-
-	useEffect(() => {
-		if (hasYamlChanged && previousYaml && currentYaml) {
-			setTimeout(() => {
-				const highlightedNodes = getAllHighlightedNodes(
-					HIGHLIGHT_LINES_ANIMATION
-				)
-				highlightedNodes?.[0]?.scrollTo?.()
-			}, 0)
-		}
-	})
-
-	/*
-	useEffect(() => {
-		if (hasYamlChanged && previousYaml && currentYaml) {
-			setTimeout(() => {
-				toggleClass(
-					getAllHighlightedNodes(WITH_LINE_HIGHLIGHT_CLASS),
-					WITH_LINE_HIGHLIGHT_CLASS,
-					classes[WITHOUT_LINE_HIGHLIGHT_CLASS]
-				)
-			}, 1000)
-		}
-	})*/
 
 	console.log("CodeToolbar rendering")
 
@@ -303,6 +259,18 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 									},
 								]
 							)
+
+							// scroll to changes
+							setTimeout(() => {
+								const highlightedNodes = getAllHighlightedNodes(
+									HIGHLIGHT_LINES_ANIMATION
+								)
+								console.log(
+									"highlightedNodes",
+									highlightedNodes
+								)
+								highlightedNodes?.[0]?.scrollTo?.(), 100
+							})
 
 							// we have to remove the decoration otherwise css kicks in while interacting with the editor
 							setTimeout(
