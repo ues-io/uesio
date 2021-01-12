@@ -14,6 +14,7 @@ type LoadOp struct {
 	Conditions     []LoadRequestCondition `json:"-"`
 	Fields         []LoadRequestField     `json:"-"`
 	Type           string                 `json:"-"`
+	Order          []LoadRequestOrder     `json:"-"`
 }
 
 // LoadableGroup interface
