@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewBot function
@@ -97,8 +97,8 @@ func (b *Bot) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (b *Bot) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (b *Bot) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: b.Name,

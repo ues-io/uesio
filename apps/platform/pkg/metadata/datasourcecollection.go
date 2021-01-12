@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // DataSourceCollection slice
 type DataSourceCollection []DataSource
@@ -11,12 +13,12 @@ func (dsc *DataSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (dsc *DataSourceCollection) GetFields() []reqs.LoadRequestField {
+func (dsc *DataSourceCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(dsc)
 }
 
 // NewItem function
-func (dsc *DataSourceCollection) NewItem() LoadableItem {
+func (dsc *DataSourceCollection) NewItem() adapters.LoadableItem {
 	return &DataSource{}
 }
 
@@ -31,23 +33,23 @@ func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 }
 
 // GetKeyPrefix function
-func (dsc *DataSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (dsc *DataSourceCollection) GetKeyPrefix(conditions BundleConditions) string {
 	return ""
 }
 
 // AddItem function
-func (dsc *DataSourceCollection) AddItem(item LoadableItem) {
+func (dsc *DataSourceCollection) AddItem(item adapters.LoadableItem) {
 	*dsc = append(*dsc, *item.(*DataSource))
 }
 
 // GetItem function
-func (dsc *DataSourceCollection) GetItem(index int) LoadableItem {
+func (dsc *DataSourceCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *dsc
 	return &actual[index]
 }
 
 // Loop function
-func (dsc *DataSourceCollection) Loop(iter func(item LoadableItem) error) error {
+func (dsc *DataSourceCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *dsc {
 		err := iter(dsc.GetItem(index))
 		if err != nil {

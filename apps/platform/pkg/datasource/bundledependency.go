@@ -3,10 +3,10 @@ package datasource
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -55,7 +55,7 @@ func clearCache(namespace string, workspaceID string) {
 }
 
 // BundleDependencyLoad function
-func BundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
+func BundleDependencyLoad(conditions []adapters.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
 	bdc := metadata.BundleDependencyCollection{}
 	err := PlatformLoad(&bdc, conditions, session)
 	return bdc, err
@@ -63,7 +63,7 @@ func BundleDependencyLoad(conditions []reqs.LoadRequestCondition, session *sess.
 
 func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*metadata.BundleDependency, error) {
 	bdc, err := BundleDependencyLoad(
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
 				Value:    workspaceID,
@@ -89,8 +89,8 @@ func getBundleDependencyByName(workspaceID string, bundleName string, session *s
 // RemoveDependency func
 func RemoveDependency(workspaceID string, bundleName string, session *sess.Session) error {
 
-	deleteReq := map[string]reqs.DeleteRequest{}
-	deletePrimary := reqs.DeleteRequest{}
+	deleteReq := map[string]adapters.DeleteRequest{}
+	deletePrimary := adapters.DeleteRequest{}
 	dependency, err := getBundleDependencyByName(workspaceID, bundleName, session)
 	if err != nil {
 		return err

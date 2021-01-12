@@ -6,8 +6,7 @@ type WorkspaceState = {
 }
 
 type RouteState = {
-	viewname: string
-	viewnamespace: string
+	view: string
 	params?: ViewParams
 	namespace: string
 	path: string

@@ -1,8 +1,6 @@
 package metadata
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapters"
 
 // SelectListOption struct
 type SelectListOption struct {
@@ -31,8 +29,8 @@ func (sl *SelectList) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (sl *SelectList) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (sl *SelectList) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: sl.Name,

@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // BotCollection slice
@@ -13,12 +13,12 @@ func (bc *BotCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BotCollection) GetFields() []reqs.LoadRequestField {
+func (bc *BotCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bc)
 }
 
 // NewItem function
-func (bc *BotCollection) NewItem() LoadableItem {
+func (bc *BotCollection) NewItem() adapters.LoadableItem {
 	return &Bot{}
 }
 
@@ -33,7 +33,7 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 }
 
 // GetKeyPrefix function
-func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+func (bc *BotCollection) GetKeyPrefix(conditions BundleConditions) string {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
 	if hasCollection && hasType {
@@ -46,18 +46,18 @@ func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item LoadableItem) {
+func (bc *BotCollection) AddItem(item adapters.LoadableItem) {
 	*bc = append(*bc, *item.(*Bot))
 }
 
 // GetItem function
-func (bc *BotCollection) GetItem(index int) LoadableItem {
+func (bc *BotCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *bc
 	return &actual[index]
 }
 
 // Loop function
-func (bc *BotCollection) Loop(iter func(item LoadableItem) error) error {
+func (bc *BotCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {

@@ -3,10 +3,9 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-
 	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -21,7 +20,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	grouping := vars["grouping"]
 
-	conditions := reqs.BundleConditions{}
+	conditions := metadata.BundleConditions{}
 
 	// Special handling for fields for now
 	if metadatatype == "fields" {
@@ -44,7 +43,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap := map[string]bool{}
 
-	collection.Loop(func(item metadata.LoadableItem) error {
+	collection.Loop(func(item adapters.LoadableItem) error {
 		var key string
 		// Special handling for fields for now
 		if metadatatype == "fields" {

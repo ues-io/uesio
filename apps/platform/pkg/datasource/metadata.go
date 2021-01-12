@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -104,7 +103,7 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var fields metadata.FieldCollection
 
-	err := bundles.LoadAllFromAny(&fields, reqs.BundleConditions{
+	err := bundles.LoadAllFromAny(&fields, metadata.BundleConditions{
 		"uesio.collection": collectionKey,
 	}, session)
 	if err != nil {

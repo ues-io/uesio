@@ -4,11 +4,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // NewBatch func
@@ -19,7 +18,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
 		&job,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: jobID,

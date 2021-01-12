@@ -5,16 +5,15 @@ import (
 
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // Save function
-func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
 
-	response := []reqs.SaveResponse{}
+	response := []adapters.SaveResponse{}
 
 	db, err := connect()
 	if err != nil {
@@ -53,7 +52,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 			return nil, err
 		}
 
-		response = append(response, reqs.SaveResponse{
+		response = append(response, adapters.SaveResponse{
 			Wire:          request.Wire,
 			ChangeResults: changeResults,
 			DeleteResults: deleteResults,

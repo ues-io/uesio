@@ -1,4 +1,4 @@
-package reqs
+package adapters
 
 // LoadRequest struct
 type LoadRequest struct {

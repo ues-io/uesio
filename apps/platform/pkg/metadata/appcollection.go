@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // AppCollection slice
 type AppCollection []App
@@ -11,28 +13,28 @@ func (ac *AppCollection) GetName() string {
 }
 
 // GetFields function
-func (ac *AppCollection) GetFields() []reqs.LoadRequestField {
+func (ac *AppCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(ac)
 }
 
 // GetItem function
-func (ac *AppCollection) GetItem(index int) LoadableItem {
+func (ac *AppCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *ac
 	return &actual[index]
 }
 
 // AddItem function
-func (ac *AppCollection) AddItem(item LoadableItem) {
+func (ac *AppCollection) AddItem(item adapters.LoadableItem) {
 	*ac = append(*ac, *item.(*App))
 }
 
 // NewItem function
-func (ac *AppCollection) NewItem() LoadableItem {
+func (ac *AppCollection) NewItem() adapters.LoadableItem {
 	return &App{}
 }
 
 // Loop function
-func (ac *AppCollection) Loop(iter func(item LoadableItem) error) error {
+func (ac *AppCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *ac {
 		err := iter(ac.GetItem(index))
 		if err != nil {

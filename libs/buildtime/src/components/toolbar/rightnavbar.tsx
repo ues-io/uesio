@@ -7,7 +7,7 @@ import ViewDetailIcon from "@material-ui/icons/ListAlt"
 import CodeIcon from "@material-ui/icons/Code"
 
 import { Divider } from "@material-ui/core"
-import { hooks, definition } from "@uesio/ui"
+import { hooks, definition, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	onChange: (toolbarId: string) => void
@@ -53,10 +53,12 @@ const RightNavbar: FunctionComponent<Props> = (props) => {
 						return
 					}
 
+					const [, viewName] = component.path.parseKey(route.view)
+
 					uesio.signal.run(
 						{
 							signal: "route/REDIRECT",
-							path: `/app/${workspace.app}/workspace/${workspace.name}/view/${route.viewname}`,
+							path: `/app/${workspace.app}/workspace/${workspace.name}/view/${viewName}`,
 						},
 						props.context
 					)

@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -34,7 +33,7 @@ func getStream(namespace string, version string, objectname string, filename str
 		return nil, err
 	}
 	reader := bufio.NewReader(file)
-	return reqs.ItemResponse{
+	return bundlestore.ItemResponse{
 		Reader: reader,
 		Closer: file,
 	}, nil
@@ -95,7 +94,7 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 }
 
 // GetItems function
-func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
+func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
 	bundleGroupName := group.GetName()
 	keys, ok := bundles.GetFileListFromCache(namespace, version, bundleGroupName)
 	var err error
@@ -152,7 +151,7 @@ func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool
 }
 
 // StoreItems function
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
+func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
 	for _, itemStream := range itemStreams {
 		err := storeItem(namespace, version, itemStream)
 		if err != nil {
@@ -162,7 +161,7 @@ func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStre
 	return nil
 }
 
-func storeItem(namespace string, version string, itemStream reqs.ItemStream) error {
+func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 	directory := filepath.Dir(fullFilePath)
 

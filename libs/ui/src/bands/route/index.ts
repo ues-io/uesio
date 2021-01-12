@@ -3,8 +3,7 @@ import { ViewParams } from "../view/types"
 import { RouteState, WorkspaceState } from "./types"
 
 type RoutePayload = {
-	name: string
-	namespace: string
+	view: string
 	params: ViewParams
 	workspace?: WorkspaceState
 }
@@ -15,8 +14,7 @@ const routeSlice = createSlice({
 	reducers: {
 		set: (state, { payload }: PayloadAction<RoutePayload>) => ({
 			...state,
-			viewname: payload.name,
-			viewnamespace: payload.namespace,
+			view: payload.view,
 			params: payload.params,
 			workspace: payload.workspace,
 			namespace: "",
