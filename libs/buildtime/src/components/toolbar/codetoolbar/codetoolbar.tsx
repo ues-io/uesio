@@ -272,12 +272,16 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							diff?.[1]?.count &&
 							diff?.[1]?.added
 						) {
-							const insertedLineOffset = diff?.[1]?.value.trim()
-							const conflict = !insertedLineOffset.startsWith("-")
+							// Small adjustment when the first line of the change is by coincidence matching the first line of the next block
+							const firstLineDifference = diff?.[1]?.value.trim()
+							const shouldStartOneLineAbove = !firstLineDifference.startsWith(
+								"-"
+							)
 
-							console.log("diff", diff)
 							const startOffset =
-								diff[0].count + 1 - (conflict ? 1 : 0)
+								diff[0].count +
+								1 -
+								(shouldStartOneLineAbove ? 1 : 0)
 							const endOffset = startOffset + diff[1].count - 1
 							const decorations = editor.deltaDecorations(
 								[],
