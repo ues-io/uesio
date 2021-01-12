@@ -278,8 +278,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 							console.log("diff", diff)
 							const startOffset =
 								diff[0].count + 1 - (conflict ? 1 : 0)
-							const endOffset =
-								startOffset + diff[1].count - (conflict ? 0 : 1)
+							const endOffset = startOffset + diff[1].count - 1
 							const decorations = editor.deltaDecorations(
 								[],
 								[
