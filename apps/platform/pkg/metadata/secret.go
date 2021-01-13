@@ -9,6 +9,7 @@ import (
 
 // Secret struct
 type Secret struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`

@@ -21,7 +21,8 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	Name      string `uesio:"name"`
+	ID        string `yaml:"-" uesio:"uesio.id"`
+	Name      string `uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	TypeRef   string `yaml:"type,omitempty" uesio:"-"`
 	Database  string `uesio:"-"`

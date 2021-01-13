@@ -41,7 +41,7 @@ type Field struct {
 	Workspace            string   `yaml:"-" uesio:"uesio.workspaceid"`
 	Required             bool     `yaml:"required,omitempty" uesio:"uesio.required"`
 	Validate             Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`
-	AutoPopulate         string   `yaml:"autopopulate" uesio:"uesio.autopopulate"`
+	AutoPopulate         string   `yaml:"autopopulate,omitempty" uesio:"uesio.autopopulate"`
 }
 
 // GetFieldTypes function
