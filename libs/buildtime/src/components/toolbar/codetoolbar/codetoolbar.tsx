@@ -8,6 +8,8 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
 
+const MARKER_FOR_DIFF_START = "##START##"
+const MARKER_FOR_DIFF_END = "##END##"
 const ANIMATION_DURATION = 3000
 const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
@@ -30,6 +32,22 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
+const makeMapLineNumberToLine = (text: string) => {
+	const lines = text.split("\r")
+	return lines.reduce(
+		(memo: { [key: string]: string }, line: string, index) => ({
+			...memo,
+			[index + 1]: line,
+		}),
+		{}
+	)
+}
+
+const difference = (yamlJsonOld: unknown, lastAddedDefinition: unknown) => {
+	console.log("yamlJsonOld", yamlJsonOld)
+	console.log("lastAddedDefinition", lastAddedDefinition)
+}
+
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -39,6 +57,24 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
+	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
+
+	const payload = {
+		entity: "crm.accounts",
+		path: '["components"]',
+		definition: {
+			"sample.error": {
+				message: "404 :(",
+				subMessage: "Page not found, take me back to:",
+				url: "https://uesio-dev.com:3000/",
+				color: "#2D72D9",
+				fontColor: "#FFFFFF",
+			},
+		},
+		index: 5,
+	}
+
+	console.log(difference(currentAST.current?.toJSON(), lastAddedDefinition))
 
 	console.log("CodeToolbar rendering")
 

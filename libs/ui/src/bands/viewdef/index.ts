@@ -20,7 +20,7 @@ import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
 import { getParentPath } from "../../component/path"
-import { PlainViewDef } from "./types"
+import { PlainViewDef, AddDefinitionPayload } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
@@ -42,12 +42,6 @@ type SetDefinitionPayload = {
 type MoveDefinitionPayload = {
 	fromPath: string
 	toPath: string
-} & EntityPayload
-
-type AddDefinitionPayload = {
-	path: string
-	definition: Definition
-	index?: number
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -215,6 +209,7 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 		const newNode = yaml.createNode(definition, true)
 		if (newNode) {
 			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
+			state.lastAddedDefinition = payload
 		}
 	}
 }

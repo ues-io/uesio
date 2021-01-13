@@ -1,5 +1,6 @@
-import { DefinitionMap, YamlDoc } from "../../definition/definition"
+import { DefinitionMap, YamlDoc, Definition } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
+import { EntityPayload } from "../utils"
 
 type ConfigValueDependencies = {
 	[key: string]: string
@@ -18,6 +19,12 @@ type Dependencies = {
 	componentpacks: ComponentPackDependencies
 }
 
+type AddDefinitionPayload = {
+	path: string
+	definition: Definition
+	index?: number
+} & EntityPayload
+
 type PlainViewDef = {
 	name: string
 	namespace: string
@@ -25,6 +32,7 @@ type PlainViewDef = {
 	yaml?: YamlDoc
 	dependencies?: Dependencies
 	originalYaml?: YamlDoc
+	lastAddedDefinition?: AddDefinitionPayload
 }
 
 type PlainViewDefMap = {
@@ -36,4 +44,4 @@ type ViewDefinition = {
 	wires: WireDefinitionMap
 }
 
-export { PlainViewDef, PlainViewDefMap, Dependencies }
+export { AddDefinitionPayload, PlainViewDef, PlainViewDefMap, Dependencies }
