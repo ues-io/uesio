@@ -33,9 +33,9 @@ const useStyles = makeStyles((theme) =>
 )
 
 const makeMapLineNumberToLine = (text: string) => {
-	const lines = text.split("\r")
+	const lines = text.split(/\r?\n/)
 	return lines.reduce(
-		(memo: { [key: string]: string }, line: string, index) => ({
+		(memo: { [key: number]: string }, line: string, index) => ({
 			...memo,
 			[index + 1]: line,
 		}),
@@ -59,23 +59,12 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const hasYamlChanged = previousYaml !== currentYaml
 	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
 
-	const payload = {
-		entity: "crm.accounts",
-		path: '["components"]',
-		definition: {
-			"sample.error": {
-				message: "404 :(",
-				subMessage: "Page not found, take me back to:",
-				url: "https://uesio-dev.com:3000/",
-				color: "#2D72D9",
-				fontColor: "#FFFFFF",
-			},
-		},
-		index: 5,
-	}
+	//	console.log(difference(currentAST.current?.toJSON(), lastAddedDefinition))
 
-	console.log(difference(currentAST.current?.toJSON(), lastAddedDefinition))
-
+	console.log(
+		"makeMapLineNumberToLine",
+		previousYaml && makeMapLineNumberToLine(previousYaml)
+	)
 	console.log("CodeToolbar rendering")
 
 	return (
