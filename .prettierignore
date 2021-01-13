@@ -3,4 +3,4 @@
 /dist
 /coverage
 **/componentpacks
-/apps/platform/platform
+/apps/platform/platform/platform.js
