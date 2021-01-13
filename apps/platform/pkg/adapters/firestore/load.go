@@ -147,6 +147,8 @@ func loadOne(
 	//At this point idsToLookFor has a mapping for reference field
 	//names to actual id values we will need to grab from the referenced collection
 
+	op.Collection.Sort(op.Order, collectionMetadata)
+
 	if len(referenceFields) != 0 {
 		//Attach extra data needed for reference fields
 		err = followUpReferenceFieldLoad(ctx, client, metadata, op, collectionMetadata, referenceFields)

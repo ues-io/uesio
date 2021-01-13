@@ -48,3 +48,8 @@ func (bbc *BulkBatchCollection) Loop(iter func(item adapters.LoadableItem) error
 func (bbc *BulkBatchCollection) Len() int {
 	return len(*bbc)
 }
+
+// Sort function
+func (bbc *BulkBatchCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

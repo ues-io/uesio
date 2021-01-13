@@ -63,3 +63,8 @@ func (ufcc *UserFileCollectionCollection) Loop(iter func(item adapters.LoadableI
 func (ufcc *UserFileCollectionCollection) Len() int {
 	return len(*ufcc)
 }
+
+// Sort function
+func (ufcc *UserFileCollectionCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

@@ -48,3 +48,8 @@ func (bjc *BulkJobCollection) Loop(iter func(item adapters.LoadableItem) error) 
 func (bjc *BulkJobCollection) Len() int {
 	return len(*bjc)
 }
+
+// Sort function
+func (bjc *BulkJobCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

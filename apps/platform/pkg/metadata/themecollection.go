@@ -73,3 +73,8 @@ func (tc *ThemeCollection) Loop(iter func(item adapters.LoadableItem) error) err
 func (tc *ThemeCollection) Len() int {
 	return len(*tc)
 }
+
+// Sort function
+func (tc *ThemeCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

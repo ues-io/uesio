@@ -24,6 +24,7 @@ type LoadableGroup interface {
 	Len() int
 	AddItem(LoadableItem)
 	NewItem() LoadableItem
+	Sort([]LoadRequestOrder, *CollectionMetadata)
 }
 
 // LoadableItem interface

@@ -46,3 +46,8 @@ func (c *WorkspaceLoadCollection) GetFields() []adapters.LoadRequestField {
 func (c *WorkspaceLoadCollection) GetName() string {
 	return c.Collection.GetName()
 }
+
+// Sort function
+func (c *WorkspaceLoadCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

@@ -88,6 +88,14 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 			return nil, err
 		}
 
+		//Set default order by: id - asc
+		if op.Order == nil {
+			idField, _ := collectionMetadata.GetIDField()
+			idFieldName := idField.GetFullName()
+			def := adapters.LoadRequestOrder{Field: idFieldName, Desc: false}
+			op.Order = append(op.Order, def)
+		}
+
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Type == "QUERY" || op.Type == "" {

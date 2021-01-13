@@ -63,3 +63,8 @@ func (pc *ProfileCollection) Loop(iter func(item adapters.LoadableItem) error) e
 func (pc *ProfileCollection) Len() int {
 	return len(*pc)
 }
+
+// Sort function
+func (pc *ProfileCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

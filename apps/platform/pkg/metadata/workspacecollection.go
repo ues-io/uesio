@@ -48,3 +48,8 @@ func (wc *WorkspaceCollection) Loop(iter func(item adapters.LoadableItem) error)
 func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
 }
+
+// Sort function
+func (wc *WorkspaceCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

@@ -63,3 +63,8 @@ func (cvc *ConfigValueCollection) Loop(iter func(item adapters.LoadableItem) err
 func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
 }
+
+// Sort function
+func (cvc *ConfigValueCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

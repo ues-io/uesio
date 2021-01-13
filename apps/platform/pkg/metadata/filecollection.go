@@ -63,3 +63,8 @@ func (fc *FileCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (fc *FileCollection) Len() int {
 	return len(*fc)
 }
+
+// Sort function
+func (fc *FileCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

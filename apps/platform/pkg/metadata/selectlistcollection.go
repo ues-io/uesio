@@ -73,3 +73,8 @@ func (slc *SelectListCollection) Loop(iter func(item adapters.LoadableItem) erro
 func (slc *SelectListCollection) Len() int {
 	return len(*slc)
 }
+
+// Sort function
+func (slc *SelectListCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

@@ -48,3 +48,8 @@ func (sc *SiteCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (sc *SiteCollection) Len() int {
 	return len(*sc)
 }
+
+// Sort function
+func (sc *SiteCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

@@ -24,6 +24,31 @@ func (c *Collection) NewItem() LoadableItem {
 	return &Item{}
 }
 
+// Sort function
+func (c *Collection) Sort(order []LoadRequestOrder, collectionMetadata *CollectionMetadata) {
+
+	//Generate order function dynamically
+
+	var functions []lessFunc
+
+	for _, singleOrder := range order {
+		fieldMetadata, _ := collectionMetadata.GetField(singleOrder.Field)
+		fieldID, _ := GetUIFieldName(fieldMetadata)
+
+		functions = append(functions, func(c1, c2 *Item) bool {
+			vi, _ := c1.GetField(fieldID)
+			vj, _ := c2.GetField(fieldID)
+			if singleOrder.Desc {
+				return vi.(string) > vj.(string)
+			}
+			return vi.(string) < vj.(string)
+		})
+	}
+
+	OrderedBy(functions...).Sort(c.Data)
+
+}
+
 // Loop function
 func (c *Collection) Loop(iter func(item LoadableItem) error) error {
 	for index := range c.Data {

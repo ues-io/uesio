@@ -63,3 +63,8 @@ func (dsc *DataSourceCollection) Loop(iter func(item adapters.LoadableItem) erro
 func (dsc *DataSourceCollection) Len() int {
 	return len(*dsc)
 }
+
+// Sort function
+func (dsc *DataSourceCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

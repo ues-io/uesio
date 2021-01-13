@@ -48,3 +48,8 @@ func (uc *UserCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (uc *UserCollection) Len() int {
 	return len(*uc)
 }
+
+// Sort function
+func (uc *UserCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

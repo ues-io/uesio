@@ -47,3 +47,8 @@ func (c *LoadOneCollection) GetFields() []adapters.LoadRequestField {
 func (c *LoadOneCollection) GetName() string {
 	return c.Collection.GetName()
 }
+
+// Sort function
+func (c *LoadOneCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

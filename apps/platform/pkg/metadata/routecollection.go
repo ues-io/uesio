@@ -63,3 +63,8 @@ func (rc *RouteCollection) Loop(iter func(item adapters.LoadableItem) error) err
 func (rc *RouteCollection) Len() int {
 	return len(*rc)
 }
+
+// Sort function
+func (rc *RouteCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

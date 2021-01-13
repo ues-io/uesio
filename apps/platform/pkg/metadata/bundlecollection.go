@@ -48,3 +48,8 @@ func (bc *BundleCollection) Loop(iter func(item adapters.LoadableItem) error) er
 func (bc *BundleCollection) Len() int {
 	return len(*bc)
 }
+
+// Sort function
+func (bc *BundleCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

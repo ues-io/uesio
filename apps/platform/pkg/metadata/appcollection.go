@@ -48,3 +48,8 @@ func (ac *AppCollection) Loop(iter func(item adapters.LoadableItem) error) error
 func (ac *AppCollection) Len() int {
 	return len(*ac)
 }
+
+// Sort function
+func (ac *AppCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

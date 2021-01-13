@@ -73,3 +73,8 @@ func (cpc *ComponentPackCollection) Loop(iter func(item adapters.LoadableItem) e
 func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
 }
+
+// Sort function
+func (cpc *ComponentPackCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

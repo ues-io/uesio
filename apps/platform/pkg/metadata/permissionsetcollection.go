@@ -63,3 +63,8 @@ func (pc *PermissionSetCollection) Loop(iter func(item adapters.LoadableItem) er
 func (pc *PermissionSetCollection) Len() int {
 	return len(*pc)
 }
+
+// Sort function
+func (pc *PermissionSetCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

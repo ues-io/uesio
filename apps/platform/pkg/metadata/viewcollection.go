@@ -73,3 +73,8 @@ func (vc *ViewCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (vc *ViewCollection) Len() int {
 	return len(*vc)
 }
+
+// Sort function
+func (vc *ViewCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}

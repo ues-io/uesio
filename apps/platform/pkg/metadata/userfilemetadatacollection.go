@@ -48,3 +48,8 @@ func (ufmc *UserFileMetadataCollection) Loop(iter func(item adapters.LoadableIte
 func (ufmc *UserFileMetadataCollection) Len() int {
 	return len(*ufmc)
 }
+
+// Sort function
+func (ufmc *UserFileMetadataCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
+	println("Sort")
+}
