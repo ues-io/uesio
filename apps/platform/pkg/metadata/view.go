@@ -49,6 +49,11 @@ func (v *View) GetKey() string {
 	return v.Namespace + "." + v.Name
 }
 
+// GetPath function
+func (v *View) GetPath() string {
+	return v.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (v *View) GetPermChecker() *PermissionSet {
 	key := v.GetKey()

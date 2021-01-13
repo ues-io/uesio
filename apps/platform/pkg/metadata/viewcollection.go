@@ -42,9 +42,9 @@ func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 	}, nil
 }
 
-// GetKeyPrefix function
-func (vc *ViewCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (vc *ViewCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

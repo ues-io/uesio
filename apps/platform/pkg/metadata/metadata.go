@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"os"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -28,7 +29,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	GetKeyPrefix(BundleConditions) string
+	GetKeyFromPath(string, BundleConditions) (string, error)
 	NewBundleableItem() BundleableItem
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
@@ -39,6 +40,7 @@ type BundleableItem interface {
 	GetBundleGroup() BundleableGroup
 	GetPermChecker() *PermissionSet
 	GetKey() string
+	GetPath() string
 	GetConditions() ([]adapters.LoadRequestCondition, error)
 	SetNamespace(string)
 	GetNamespace() string
@@ -52,6 +54,22 @@ func ParseKey(key string) (string, string, error) {
 		return "", "", errors.New("Invalid Key: " + key)
 	}
 	return keyArray[0], keyArray[1], nil
+}
+
+func StandardKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	if len(conditions) > 0 {
+		return "", errors.New("Conditions not allowed for this type")
+	}
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
+		// Ignore this file
+		return "", nil
+	}
+	return strings.TrimSuffix(path, ".yaml"), nil
+}
+
+func StandardPathFromKey(key string) string {
+	return key + ".yaml"
 }
 
 // StandardGetFields function

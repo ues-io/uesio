@@ -32,9 +32,9 @@ func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	return NewRoute(key)
 }
 
-// GetKeyPrefix function
-func (rc *RouteCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (rc *RouteCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

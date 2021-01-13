@@ -49,6 +49,11 @@ func (sl *SelectList) GetKey() string {
 	return sl.Namespace + "." + sl.Name
 }
 
+// GetPath function
+func (sl *SelectList) GetPath() string {
+	return sl.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (sl *SelectList) GetPermChecker() *PermissionSet {
 	return nil

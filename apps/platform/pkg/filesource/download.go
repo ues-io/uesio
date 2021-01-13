@@ -27,7 +27,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *metadat
 	if err != nil {
 		return nil, nil, err
 	}
-	path, err := ufc.GetPath(userFile, site.Name, session.GetWorkspaceID())
+	path, err := ufc.GetFilePath(userFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return nil, nil, err
 	}

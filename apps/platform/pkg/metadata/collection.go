@@ -64,6 +64,11 @@ func (c *Collection) GetKey() string {
 	return c.Namespace + "." + c.Name
 }
 
+// GetPath function
+func (c *Collection) GetPath() string {
+	return c.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (c *Collection) GetPermChecker() *PermissionSet {
 	return nil

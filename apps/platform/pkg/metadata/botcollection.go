@@ -1,6 +1,11 @@
 package metadata
 
 import (
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
@@ -32,17 +37,42 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 	return NewBot(key)
 }
 
-// GetKeyPrefix function
-func (bc *BotCollection) GetKeyPrefix(conditions BundleConditions) string {
+// GetKeyFromPath function
+func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
-	if hasCollection && hasType {
-		return collectionKey + "." + botTypeKey + "."
+	parts := strings.Split(path, string(os.PathSeparator))
+	partLength := len(parts)
+	if partLength < 1 {
+		return "", nil
 	}
-	if hasType && botTypeKey == "listener" {
-		return "listener."
+	botType := parts[0]
+	if botType == "" {
+		return "", nil
 	}
-	return ""
+
+	if botType == "listener" {
+		if partLength != 3 || parts[2] != "bot.yaml" {
+			return "", nil
+		}
+		if hasType && botType != botTypeKey {
+			return "", nil
+		}
+		return filepath.Join(botType, parts[1]), nil
+	}
+	if botType == "beforesave" || botType == "aftersave" {
+		if partLength != 4 || parts[3] != "bot.yaml" {
+			return "", nil
+		}
+		if hasType && botType != botTypeKey {
+			return "", nil
+		}
+		if hasCollection && parts[1] != collectionKey {
+			return "", nil
+		}
+		return filepath.Join(botType, parts[1], parts[2]), nil
+	}
+	return "", errors.New("Bad bundle conditions for bot: " + path)
 }
 
 // AddItem function

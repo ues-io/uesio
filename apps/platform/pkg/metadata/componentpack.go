@@ -46,6 +46,11 @@ func (cp *ComponentPack) GetKey() string {
 	return cp.Namespace + "." + cp.Name
 }
 
+// GetPath function
+func (cp *ComponentPack) GetPath() string {
+	return cp.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 	return nil

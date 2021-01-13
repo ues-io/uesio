@@ -42,9 +42,9 @@ func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (Bundleabl
 	}, nil
 }
 
-// GetKeyPrefix function
-func (slc *SelectListCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (slc *SelectListCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

@@ -61,6 +61,11 @@ func (f *File) GetKey() string {
 	return f.Namespace + "." + f.Name
 }
 
+// GetPath function
+func (f *File) GetPath() string {
+	return f.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (f *File) GetPermChecker() *PermissionSet {
 	key := f.GetKey()

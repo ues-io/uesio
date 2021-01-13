@@ -42,9 +42,9 @@ func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	}, nil
 }
 
-// GetKeyPrefix function
-func (tc *ThemeCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

@@ -32,9 +32,9 @@ func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 	return NewFileSource(key)
 }
 
-// GetKeyPrefix function
-func (fsc *FileSourceCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (fsc *FileSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

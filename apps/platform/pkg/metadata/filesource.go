@@ -21,7 +21,8 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	Name      string `uesio:"name"`
+	ID        string `yaml:"-" uesio:"uesio.id"`
+	Name      string `uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	TypeRef   string `yaml:"type,omitempty" uesio:"-"`
 	Database  string `uesio:"-"`
@@ -88,6 +89,11 @@ func (fs *FileSource) GetCredentials(site *Site) (*creds.FileAdapterCredentials,
 // GetKey function
 func (fs *FileSource) GetKey() string {
 	return fs.Namespace + "." + fs.Name
+}
+
+// GetPath function
+func (fs *FileSource) GetPath() string {
+	return fs.GetKey() + ".yaml"
 }
 
 // GetPermChecker function
