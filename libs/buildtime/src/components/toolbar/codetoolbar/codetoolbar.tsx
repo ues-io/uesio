@@ -30,19 +30,6 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-const customScrollToElement = (
-	element: HTMLElement,
-	container: HTMLElement
-) => {
-	const topPos = element.offsetTop
-	if (topPos && container?.scrollTop) {
-		container.scrollTop = topPos - 10
-	}
-}
-
-const getAllHighlightedNodes = (substring: string) =>
-	document.querySelectorAll(`[class*="${substring}"]`)
-
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -261,7 +248,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 								]
 							)
 
-							editor.revealLine(endOffset + 10)
+							editor.revealLineInCenter(endOffset)
 
 							// we have to remove the decoration otherwise css kicks in while interacting with the editor
 							setTimeout(
