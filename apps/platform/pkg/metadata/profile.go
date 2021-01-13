@@ -59,6 +59,11 @@ func (p *Profile) GetKey() string {
 	return p.Namespace + "." + p.Name
 }
 
+// GetPath function
+func (p *Profile) GetPath() string {
+	return p.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (p *Profile) GetPermChecker() *PermissionSet {
 	return nil

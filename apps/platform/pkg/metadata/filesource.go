@@ -90,6 +90,11 @@ func (fs *FileSource) GetKey() string {
 	return fs.Namespace + "." + fs.Name
 }
 
+// GetPath function
+func (fs *FileSource) GetPath() string {
+	return fs.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (fs *FileSource) GetPermChecker() *PermissionSet {
 	return nil

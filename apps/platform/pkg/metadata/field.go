@@ -98,6 +98,11 @@ func (f *Field) GetKey() string {
 	return f.CollectionRef + "." + f.Namespace + "." + f.Name
 }
 
+// GetPath function
+func (f *Field) GetPath() string {
+	return f.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (f *Field) GetPermChecker() *PermissionSet {
 	return nil

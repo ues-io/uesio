@@ -32,9 +32,9 @@ func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 	return NewFile(key)
 }
 
-// GetKeyPrefix function
-func (fc *FileCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (fc *FileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

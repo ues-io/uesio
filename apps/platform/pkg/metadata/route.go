@@ -63,6 +63,11 @@ func (r *Route) GetKey() string {
 	return r.Namespace + "." + r.Name
 }
 
+// GetPath function
+func (r *Route) GetPath() string {
+	return r.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (r *Route) GetPermChecker() *PermissionSet {
 	key := r.GetKey()

@@ -23,7 +23,7 @@ func Delete(userFileID string, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	path, err := ufc.GetPath(userFile, site.Name, session.GetWorkspaceID())
+	path, err := ufc.GetFilePath(userFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return errors.New("No filesource found")
 	}

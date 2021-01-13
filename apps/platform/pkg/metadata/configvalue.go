@@ -61,6 +61,11 @@ func (cv *ConfigValue) GetKey() string {
 	return cv.Namespace + "." + cv.Name
 }
 
+// GetPath function
+func (cv *ConfigValue) GetPath() string {
+	return cv.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (cv *ConfigValue) GetPermChecker() *PermissionSet {
 	return nil

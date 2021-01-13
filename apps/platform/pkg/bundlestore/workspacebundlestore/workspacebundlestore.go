@@ -83,11 +83,10 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 
 // GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, userFile, err := filesource.Download(bot.Content, session)
+	stream, _, err := filesource.Download(bot.Content, session)
 	if err != nil {
 		return nil, err
 	}
-	bot.FileName = userFile.Name
 	return stream, nil
 }
 

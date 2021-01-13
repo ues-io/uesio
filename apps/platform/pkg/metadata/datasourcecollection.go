@@ -32,9 +32,9 @@ func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (Bundleabl
 	return NewDataSource(key)
 }
 
-// GetKeyPrefix function
-func (dsc *DataSourceCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (dsc *DataSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

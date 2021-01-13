@@ -48,6 +48,11 @@ func (s *Secret) GetKey() string {
 	return s.Namespace + "." + s.Name
 }
 
+// GetPath function
+func (s *Secret) GetPath() string {
+	return s.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (s *Secret) GetPermChecker() *PermissionSet {
 	return nil
