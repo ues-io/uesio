@@ -1,6 +1,6 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import "github.com/thecloudmasters/uesio/pkg/adapters"
 
 // ComponentPack struct
 type ComponentPack struct {
@@ -26,8 +26,8 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (cp *ComponentPack) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (cp *ComponentPack) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: cp.Name,
@@ -44,6 +44,11 @@ func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (cp *ComponentPack) GetKey() string {
 	return cp.Namespace + "." + cp.Name
+}
+
+// GetPath function
+func (cp *ComponentPack) GetPath() string {
+	return cp.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

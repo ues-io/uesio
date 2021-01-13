@@ -13,7 +13,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -34,35 +33,10 @@ func getStream(namespace string, version string, objectname string, filename str
 		return nil, err
 	}
 	reader := bufio.NewReader(file)
-	return reqs.ItemResponse{
+	return bundlestore.ItemResponse{
 		Reader: reader,
 		Closer: file,
 	}, nil
-}
-
-// ListItems function
-func listItems(namespace, version, objectname, prefix string, session *sess.Session) ([]string, error) {
-	dirPath := filepath.Join(getBasePath(namespace, version), objectname)
-	d, err := os.Open(dirPath)
-	if err != nil {
-		return []string{}, nil
-	}
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
-	if err != nil {
-		return []string{}, nil
-	}
-	keys := []string{}
-	for _, fileName := range names {
-		if prefix != "" && !strings.HasPrefix(fileName, prefix) {
-			continue
-		}
-		if !strings.HasSuffix(fileName, ".yaml") {
-			continue
-		}
-		keys = append(keys, strings.TrimSuffix(fileName, ".yaml"))
-	}
-	return keys, nil
 }
 
 // GetItem function
@@ -85,7 +59,7 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 		return copier.Copy(item, cachedItem)
 	}
 
-	stream, err := getStream(namespace, version, collectionName, key+".yaml")
+	stream, err := getStream(namespace, version, collectionName, item.GetPath())
 	if err != nil {
 		return err
 	}
@@ -95,17 +69,32 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 }
 
 // GetItems function
-func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
-	bundleGroupName := group.GetName()
-	keys, ok := bundles.GetFileListFromCache(namespace, version, bundleGroupName)
-	var err error
-	if !ok {
-		prefix := group.GetKeyPrefix(conditions)
-		keys, err = listItems(namespace, version, bundleGroupName, prefix, session)
+func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
+
+	// TODO: Think about caching this, but remember conditions
+	basePath := filepath.Join(getBasePath(namespace, version), group.GetName(), "") + string(os.PathSeparator)
+	keys := []string{}
+	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			// Ignore walking errors
+			return nil
+		}
+		if path == basePath {
+			return nil
+		}
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
 		if err != nil {
 			return err
 		}
-		bundles.AddFileListToCache(namespace, version, bundleGroupName, keys)
+		if key == "" {
+			return nil
+		}
+		keys = append(keys, key)
+
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
 	for _, key := range keys {
@@ -136,7 +125,7 @@ func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, se
 
 // GetBotStream function
 func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, err := getStream(bot.Namespace, version, "bots", bot.FileName)
+	stream, err := getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
 	return stream, err
 }
 
@@ -152,7 +141,7 @@ func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool
 }
 
 // StoreItems function
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
+func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
 	for _, itemStream := range itemStreams {
 		err := storeItem(namespace, version, itemStream)
 		if err != nil {
@@ -162,7 +151,7 @@ func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStre
 	return nil
 }
 
-func storeItem(namespace string, version string, itemStream reqs.ItemStream) error {
+func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
 	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
 	directory := filepath.Dir(fullFilePath)
 

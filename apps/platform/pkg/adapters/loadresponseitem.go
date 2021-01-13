@@ -1,4 +1,4 @@
-package loadresponse
+package adapters
 
 // Item struct
 type Item map[string]interface{}

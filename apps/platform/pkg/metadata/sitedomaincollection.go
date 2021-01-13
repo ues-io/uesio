@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // SiteDomainCollection slice
 type SiteDomainCollection []SiteDomain
@@ -11,28 +13,28 @@ func (sdc *SiteDomainCollection) GetName() string {
 }
 
 // GetFields function
-func (sdc *SiteDomainCollection) GetFields() []reqs.LoadRequestField {
+func (sdc *SiteDomainCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(sdc)
 }
 
 // GetItem function
-func (sdc *SiteDomainCollection) GetItem(index int) LoadableItem {
+func (sdc *SiteDomainCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *sdc
 	return &actual[index]
 }
 
 // AddItem function
-func (sdc *SiteDomainCollection) AddItem(item LoadableItem) {
+func (sdc *SiteDomainCollection) AddItem(item adapters.LoadableItem) {
 	*sdc = append(*sdc, *item.(*SiteDomain))
 }
 
 // NewItem function
-func (sdc *SiteDomainCollection) NewItem() LoadableItem {
+func (sdc *SiteDomainCollection) NewItem() adapters.LoadableItem {
 	return &SiteDomain{}
 }
 
 // Loop function
-func (sdc *SiteDomainCollection) Loop(iter func(item LoadableItem) error) error {
+func (sdc *SiteDomainCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *sdc {
 		err := iter(sdc.GetItem(index))
 		if err != nil {

@@ -1,13 +1,8 @@
 package adapters
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
-
 // ReferenceRequest type
 type ReferenceRequest struct {
-	Fields   []reqs.LoadRequestField
+	Fields   []LoadRequestField
 	Metadata *FieldMetadata
 	IDs      map[string]bool
 }
@@ -28,7 +23,7 @@ func (rr *ReferenceRequest) AddID(value interface{}) {
 type ReferenceRegistry map[string]*ReferenceRequest
 
 // Add function
-func (rr *ReferenceRegistry) Add(fieldMetadata *FieldMetadata, fields []reqs.LoadRequestField) error {
+func (rr *ReferenceRegistry) Add(fieldMetadata *FieldMetadata, fields []LoadRequestField) error {
 	fieldName, err := GetUIFieldName(fieldMetadata)
 	if err != nil {
 		return err
@@ -99,7 +94,7 @@ func MergeReferenceData(
 	collectionMetadata *CollectionMetadata,
 ) error {
 	//Merge in data from reference records into the data payload
-	return op.Collection.Loop(func(item metadata.LoadableItem) error {
+	return op.Collection.Loop(func(item LoadableItem) error {
 		//For each reference field
 		for _, reference := range referenceFields {
 			referenceField := reference.Metadata

@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -66,7 +66,7 @@ func getBundleMetadataByID(id string, session *sess.Session) (*metadata.Bundle, 
 	b := metadata.Bundle{}
 	err := PlatformLoadOne(
 		&b,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: id,

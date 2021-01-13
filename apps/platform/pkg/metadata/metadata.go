@@ -2,37 +2,26 @@ package metadata
 
 import (
 	"errors"
+	"os"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reflecttools"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
-// LoadableGroup interface
-type LoadableGroup interface {
-	GetItem(index int) LoadableItem
-	Loop(iter func(item LoadableItem) error) error
-	Len() int
-	AddItem(LoadableItem)
-	NewItem() LoadableItem
-}
-
-// LoadableItem interface
-type LoadableItem interface {
-	SetField(string, interface{}) error
-	GetField(string) (interface{}, error)
-}
+// BundleConditions type
+type BundleConditions map[string]string
 
 // CollectionableGroup interface
 type CollectionableGroup interface {
-	LoadableGroup
+	adapters.LoadableGroup
 	GetName() string
-	GetFields() []reqs.LoadRequestField
+	GetFields() []adapters.LoadRequestField
 }
 
 // CollectionableItem interface
 type CollectionableItem interface {
-	LoadableItem
+	adapters.LoadableItem
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
 }
@@ -40,7 +29,7 @@ type CollectionableItem interface {
 // BundleableGroup interface
 type BundleableGroup interface {
 	CollectionableGroup
-	GetKeyPrefix(reqs.BundleConditions) string
+	GetKeyFromPath(string, BundleConditions) (string, error)
 	NewBundleableItem() BundleableItem
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
@@ -51,7 +40,8 @@ type BundleableItem interface {
 	GetBundleGroup() BundleableGroup
 	GetPermChecker() *PermissionSet
 	GetKey() string
-	GetConditions() ([]reqs.LoadRequestCondition, error)
+	GetPath() string
+	GetConditions() ([]adapters.LoadRequestCondition, error)
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)
@@ -66,15 +56,31 @@ func ParseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
+func StandardKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	if len(conditions) > 0 {
+		return "", errors.New("Conditions not allowed for this type")
+	}
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
+		// Ignore this file
+		return "", nil
+	}
+	return strings.TrimSuffix(path, ".yaml"), nil
+}
+
+func StandardPathFromKey(key string) string {
+	return key + ".yaml"
+}
+
 // StandardGetFields function
-func StandardGetFields(group CollectionableGroup) []reqs.LoadRequestField {
-	fieldRequests := []reqs.LoadRequestField{}
+func StandardGetFields(group CollectionableGroup) []adapters.LoadRequestField {
+	fieldRequests := []adapters.LoadRequestField{}
 	names, err := reflecttools.GetFieldNames(group.NewItem())
 	if err != nil {
 		return fieldRequests
 	}
 	for _, name := range names {
-		fieldRequests = append(fieldRequests, reqs.LoadRequestField{
+		fieldRequests = append(fieldRequests, adapters.LoadRequestField{
 			ID: name,
 		})
 	}

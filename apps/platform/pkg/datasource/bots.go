@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -52,10 +51,10 @@ func hydrateBot(bot *metadata.Bot, session *sess.Session) error {
 }
 
 // RunBeforeSaveBots function
-func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+func RunBeforeSaveBots(request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
 
-	err := bundles.LoadAllFromAny(&robots, reqs.BundleConditions{
+	err := bundles.LoadAllFromAny(&robots, metadata.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "BEFORESAVE",
 	}, session)
@@ -96,10 +95,10 @@ func RunBeforeSaveBots(request *reqs.SaveRequest, collectionMetadata *adapters.C
 }
 
 // RunAfterSaveBots function
-func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+func RunAfterSaveBots(response *adapters.SaveResponse, request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 	var robots metadata.BotCollection
 
-	err := bundles.LoadAllFromAny(&robots, reqs.BundleConditions{
+	err := bundles.LoadAllFromAny(&robots, metadata.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "AFTERSAVE",
 	}, session)
@@ -142,12 +141,9 @@ func RunAfterSaveBots(response *reqs.SaveResponse, request *reqs.SaveRequest, co
 
 // CallBot function
 func CallBot(namespace, name string, params map[string]string, session *sess.Session) error {
-	robot, err := metadata.NewBot("listener." + namespace + "." + name)
-	if err != nil {
-		return err
-	}
+	robot := metadata.NewListenerBot(namespace, name)
 
-	err = bundles.Load(robot, session)
+	err := bundles.Load(robot, session)
 	if err != nil {
 		return err
 	}

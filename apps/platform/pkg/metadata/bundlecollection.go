@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // BundleCollection slice
 type BundleCollection []Bundle
@@ -11,28 +13,28 @@ func (bc *BundleCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BundleCollection) GetFields() []reqs.LoadRequestField {
+func (bc *BundleCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bc)
 }
 
 // GetItem function
-func (bc *BundleCollection) GetItem(index int) LoadableItem {
+func (bc *BundleCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *bc
 	return &actual[index]
 }
 
 // AddItem function
-func (bc *BundleCollection) AddItem(item LoadableItem) {
+func (bc *BundleCollection) AddItem(item adapters.LoadableItem) {
 	*bc = append(*bc, *item.(*Bundle))
 }
 
 // NewItem function
-func (bc *BundleCollection) NewItem() LoadableItem {
+func (bc *BundleCollection) NewItem() adapters.LoadableItem {
 	return &Bundle{}
 }
 
 // Loop function
-func (bc *BundleCollection) Loop(iter func(item LoadableItem) error) error {
+func (bc *BundleCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {

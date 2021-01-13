@@ -3,7 +3,7 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewProfile function
@@ -20,6 +20,7 @@ func NewProfile(key string) (*Profile, error) {
 
 // Profile struct
 type Profile struct {
+	ID                string          `yaml:"-" uesio:"uesio.id"`
 	Name              string          `yaml:"name" uesio:"uesio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"-"`
@@ -39,8 +40,8 @@ func (p *Profile) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (p *Profile) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (p *Profile) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: p.Name,
@@ -57,6 +58,11 @@ func (p *Profile) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (p *Profile) GetKey() string {
 	return p.Namespace + "." + p.Name
+}
+
+// GetPath function
+func (p *Profile) GetPath() string {
+	return p.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

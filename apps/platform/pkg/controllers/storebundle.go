@@ -33,7 +33,7 @@ func StoreBundle(w http.ResponseWriter, r *http.Request) {
 	}
 	items, err := retrieve.Retrieve(session)
 	if err != nil {
-		http.Error(w, "Failed to read workspace contents", http.StatusInternalServerError)
+		http.Error(w, "Failed to read workspace contents: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	err = datasource.SaveBundleMetadata(workspaceApp, version, description, session)

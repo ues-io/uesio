@@ -3,7 +3,7 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewField function
@@ -41,7 +41,7 @@ type Field struct {
 	Workspace            string   `yaml:"-" uesio:"uesio.workspaceid"`
 	Required             bool     `yaml:"required,omitempty" uesio:"uesio.required"`
 	Validate             Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`
-	AutoPopulate         string   `yaml:"autopopulate" uesio:"uesio.autopopulate"`
+	AutoPopulate         string   `yaml:"autopopulate,omitempty" uesio:"uesio.autopopulate"`
 }
 
 // GetFieldTypes function
@@ -74,8 +74,8 @@ func (f *Field) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (f *Field) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (f *Field) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: f.Name,
@@ -96,6 +96,11 @@ func (f *Field) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (f *Field) GetKey() string {
 	return f.CollectionRef + "." + f.Namespace + "." + f.Name
+}
+
+// GetPath function
+func (f *Field) GetPath() string {
+	return f.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

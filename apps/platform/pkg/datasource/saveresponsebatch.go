@@ -1,10 +1,8 @@
 package datasource
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapters"
 
 // SaveResponseBatch struct
 type SaveResponseBatch struct {
-	Wires []reqs.SaveResponse `json:"wires"`
+	Wires []adapters.SaveResponse `json:"wires"`
 }
