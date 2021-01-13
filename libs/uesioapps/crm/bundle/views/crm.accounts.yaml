@@ -72,6 +72,8 @@ definition:
     accounts:
       collection: crm.accounts
       order:
+        - field: crm.externalid
+          desc: false
         - field: crm.name
           desc: true
       fields:

@@ -32,8 +32,17 @@ func (c *Collection) Sort(order []LoadRequestOrder, collectionMetadata *Collecti
 	var functions []lessFunc
 
 	for _, singleOrder := range order {
-		fieldMetadata, _ := collectionMetadata.GetField(singleOrder.Field)
-		fieldID, _ := GetUIFieldName(fieldMetadata)
+		fieldMetadata, err := collectionMetadata.GetField(singleOrder.Field)
+
+		if err != nil {
+			continue
+		}
+
+		fieldID, err := GetUIFieldName(fieldMetadata)
+
+		if err != nil {
+			continue
+		}
 
 		functions = append(functions, func(c1, c2 *Item) bool {
 			vi, _ := c1.GetField(fieldID)
@@ -45,7 +54,9 @@ func (c *Collection) Sort(order []LoadRequestOrder, collectionMetadata *Collecti
 		})
 	}
 
-	OrderedBy(functions...).Sort(c.Data)
+	if len(c.Data) > 0 && len(functions) > 0 {
+		OrderedBy(functions...).Sort(c.Data)
+	}
 
 }
 

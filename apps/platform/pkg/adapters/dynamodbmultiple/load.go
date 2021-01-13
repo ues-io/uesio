@@ -173,6 +173,8 @@ func loadOne(
 		return errors.New("DynamoDB failed manage response:" + err.Error())
 	}
 
+	op.Collection.Sort(op.Order, collectionMetadata)
+
 	//At this point idsToLookFor has a mapping for reference field
 	//names to actual id values we will need to grab from the referenced collection
 	if len(referenceCollection) != 0 {
