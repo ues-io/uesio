@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) =>
 const makeMapLineNumberToLine = (text: string) => {
 	const lines = text.split(/\r?\n/)
 	return lines.reduce(
-		(memo: { [key: number]: string }, line: string, index) => ({
+		(memo: { [key: string]: string }, line: string, index) => ({
 			...memo,
 			[index + 1]: line,
 		}),
