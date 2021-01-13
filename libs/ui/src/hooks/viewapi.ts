@@ -4,10 +4,7 @@ import yaml from "yaml"
 
 import { batch } from "react-redux"
 import { Uesio } from "./hooks"
-import toPath from "lodash.topath"
-import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
-import { setSelectedNode } from "../bands/builder"
 import {
 	setYaml,
 	removeDefinition,

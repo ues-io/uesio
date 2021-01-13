@@ -24,8 +24,8 @@ const useStyles = makeStyles(() =>
 )
 
 interface Props extends definition.BaseProps {
-	propDef: builder.BuildPropertiesDefinition | null
-	definition: definition.DefinitionMap
+	propDef?: builder.BuildPropertiesDefinition | null
+	definition?: definition.DefinitionMap
 }
 
 const PropertiesPanel: FunctionComponent<Props> = (props) => {
@@ -40,7 +40,7 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 				<ToolbarTitle
 					title={propDef.title}
 					icon={CloseIcon}
-					iconOnClick={(): void => uesio.builder.setSelectedNode("")}
+					iconOnClick={(): void => uesio.builder.setPanelClosed()}
 				/>
 				<BuildPropArea
 					index={0}
@@ -58,6 +58,13 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 				/>
 			</>
 		)
+	}
+	else if (!propDef && !definition) {
+		return (<ToolbarTitle
+				title="Nothing selected"
+				icon={CloseIcon}
+				iconOnClick={(): void => uesio.builder.setPanelClosed()}
+		        />)
 	}
 	return (
 		<div className={classes.notFound}>

@@ -2,7 +2,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getParentPath } from "../../component/path"
 import { changeDefinitionKey, removeDefinition } from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
-
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -12,6 +11,13 @@ const builderSlice = createSlice({
 		},
 		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
 			state.selectedNode = payload
+			if(payload && !state.leftPanel) {
+				state.leftPanel = 'components'
+			}
+		},
+		setPanelClosed: (state) => {
+			state.selectedNode = '';
+			state.leftPanel = '';
 		},
 		toggleBuildMode: (state) => {
 			state.buildMode = !state.buildMode
@@ -86,5 +92,6 @@ export const {
 	setAvailableNamespaces,
 	clearAvailableMetadata,
 	setMetadataList,
+	setPanelClosed,
 } = builderSlice.actions
 export default builderSlice.reducer

@@ -17,7 +17,6 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			selectedPanel === toolbarId && !selectedNode ? "" : toolbarId
 		)
 	}
-	debugger;
 	return (
 		<>
 			<LeftNavbar viewMode={builderView} onChange={onChange} />
