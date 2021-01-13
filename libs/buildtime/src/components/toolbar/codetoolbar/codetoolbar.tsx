@@ -261,17 +261,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 								]
 							)
 
-							// scroll to changes
-							setTimeout(() => {
-								const highlightedNodes = getAllHighlightedNodes(
-									HIGHLIGHT_LINES_ANIMATION
-								)
-								console.log(
-									"highlightedNodes",
-									highlightedNodes
-								)
-								highlightedNodes?.[0]?.scrollTo?.(), 100
-							})
+							editor.revealLine(endOffset + 10)
 
 							// we have to remove the decoration otherwise css kicks in while interacting with the editor
 							setTimeout(
