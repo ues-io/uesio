@@ -1,4 +1,4 @@
-package reqs
+package adapters
 
 // SaveResponse struct
 type SaveResponse struct {

@@ -2,60 +2,69 @@ package metadata
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewBot function
 func NewBot(key string) (*Bot, error) {
-	keyArray := strings.Split(key, ".")
+	keyArray := strings.Split(key, string(os.PathSeparator))
 	keySize := len(keyArray)
-	if keySize != 5 && keySize != 3 {
+	if keySize != 3 && keySize != 2 {
 		return nil, errors.New("Invalid Bot Key: " + key)
 	}
-	if keySize == 5 {
-		return newTriggerBot(keyArray)
-	}
-
-	return newListenerBot(keyArray)
-}
-
-func newListenerBot(keyArray []string) (*Bot, error) {
 	botType, err := getBotTypeTypeKeyPart(keyArray[0])
 	if err != nil {
 		return nil, err
 	}
-	return &Bot{
-		Type:      botType,
-		Namespace: keyArray[1],
-		Name:      keyArray[2],
-	}, nil
+	if keySize == 3 && botType == "AFTERSAVE" || botType == "BEFORESAVE" {
+		namespace, name, err := ParseKey(keyArray[2])
+		if err != nil {
+			return nil, err
+		}
+		return NewTriggerBot(botType, keyArray[1], namespace, name), nil
+	}
+
+	if keySize == 2 && botType == "LISTENER" {
+		namespace, name, err := ParseKey(keyArray[1])
+		if err != nil {
+			return nil, err
+		}
+		return NewListenerBot(namespace, name), nil
+	}
+
+	return nil, errors.New("Invalid Bot Key: " + key)
 }
 
-func newTriggerBot(keyArray []string) (*Bot, error) {
-	botType, err := getBotTypeTypeKeyPart(keyArray[2])
-	if err != nil {
-		return nil, err
-	}
+func NewListenerBot(namespace, name string) *Bot {
 	return &Bot{
-		CollectionRef: keyArray[0] + "." + keyArray[1],
+		Type:      "LISTENER",
+		Namespace: namespace,
+		Name:      name,
+	}
+}
+
+func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
+	return &Bot{
+		CollectionRef: collectionKey,
 		Type:          botType,
-		Namespace:     keyArray[3],
-		Name:          keyArray[4],
-	}, nil
+		Namespace:     namespace,
+		Name:          name,
+	}
 }
 
 // Bot struct
 type Bot struct {
-	ID            string `uesio:"uesio.id"`
+	ID            string `yaml:"-" uesio:"uesio.id"`
 	Name          string `yaml:"name" uesio:"uesio.name"`
 	CollectionRef string `yaml:"collection,omitempty" uesio:"uesio.collection"`
 	Namespace     string `yaml:"-" uesio:"-"`
 	Type          string `yaml:"type" uesio:"uesio.type"`
 	Dialect       string `yaml:"dialect" uesio:"uesio.dialect"`
 	Content       string `yaml:"-" uesio:"uesio.content"`
-	FileName      string `yaml:"fileName" uesio:"-"`
 	FileContents  string `yaml:"-" uesio:"-"`
 	Workspace     string `yaml:"-" uesio:"uesio.workspaceid"`
 }
@@ -85,6 +94,10 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 	return "", errors.New("Bad Type Key for Bot: " + typeKey)
 }
 
+func (b *Bot) GetBotFilePath() string {
+	return filepath.Join(b.GetKey(), "bot.js")
+}
+
 // GetCollectionName function
 func (b *Bot) GetCollectionName() string {
 	return b.GetBundleGroup().GetName()
@@ -97,8 +110,8 @@ func (b *Bot) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (b *Bot) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (b *Bot) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: b.Name,
@@ -124,9 +137,13 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
 	if b.Type == "LISTENER" {
-		return botType + "." + b.Namespace + "." + b.Name
+		return filepath.Join(botType, b.Namespace+"."+b.Name)
 	}
-	return b.CollectionRef + "." + botType + "." + b.Namespace + "." + b.Name
+	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)
+}
+
+func (b *Bot) GetPath() string {
+	return filepath.Join(b.GetKey(), "bot.yaml")
 }
 
 // GetPermChecker function

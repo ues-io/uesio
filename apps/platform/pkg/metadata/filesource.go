@@ -3,8 +3,8 @@ package metadata
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // NewFileSource function
@@ -21,7 +21,8 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	Name      string `uesio:"name"`
+	ID        string `yaml:"-" uesio:"uesio.id"`
+	Name      string `uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	TypeRef   string `yaml:"type,omitempty" uesio:"-"`
 	Database  string `uesio:"-"`
@@ -47,8 +48,8 @@ func (fs *FileSource) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (fs *FileSource) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (fs *FileSource) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: fs.Name,
@@ -88,6 +89,11 @@ func (fs *FileSource) GetCredentials(site *Site) (*creds.FileAdapterCredentials,
 // GetKey function
 func (fs *FileSource) GetKey() string {
 	return fs.Namespace + "." + fs.Name
+}
+
+// GetPath function
+func (fs *FileSource) GetPath() string {
+	return fs.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

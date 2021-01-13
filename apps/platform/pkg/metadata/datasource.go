@@ -3,8 +3,8 @@ package metadata
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // NewDataSource function
@@ -50,8 +50,8 @@ func (ds *DataSource) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ds *DataSource) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (ds *DataSource) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: ds.Name,
@@ -100,6 +100,11 @@ func (ds *DataSource) GetCredentials(site *Site) (*creds.AdapterCredentials, err
 // GetKey function
 func (ds *DataSource) GetKey() string {
 	return ds.Namespace + "." + ds.Name
+}
+
+// GetPath function
+func (ds *DataSource) GetPath() string {
+	return ds.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

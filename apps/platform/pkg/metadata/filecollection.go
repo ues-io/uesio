@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // FileCollection slice
@@ -13,12 +13,12 @@ func (fc *FileCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FileCollection) GetFields() []reqs.LoadRequestField {
+func (fc *FileCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FileCollection) NewItem() LoadableItem {
+func (fc *FileCollection) NewItem() adapters.LoadableItem {
 	return &File{}
 }
 
@@ -32,24 +32,24 @@ func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, 
 	return NewFile(key)
 }
 
-// GetKeyPrefix function
-func (fc *FileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (fc *FileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (fc *FileCollection) AddItem(item LoadableItem) {
+func (fc *FileCollection) AddItem(item adapters.LoadableItem) {
 	*fc = append(*fc, *item.(*File))
 }
 
 // GetItem function
-func (fc *FileCollection) GetItem(index int) LoadableItem {
+func (fc *FileCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *fc
 	return &actual[index]
 }
 
 // Loop function
-func (fc *FileCollection) Loop(iter func(item LoadableItem) error) error {
+func (fc *FileCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {

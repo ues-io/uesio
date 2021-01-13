@@ -4,13 +4,12 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/site"
-
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
 // AuthenticationType interface
@@ -163,7 +162,7 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 	var user metadata.User
 	err := datasource.PlatformLoadOne(
 		&user,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.federationType",
 				Value: claims.AuthType,

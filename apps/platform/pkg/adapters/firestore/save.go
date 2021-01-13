@@ -7,7 +7,6 @@ import (
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"cloud.google.com/go/firestore"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -32,7 +31,7 @@ func getSearchIndex(values []string) map[string]bool {
 	return index
 }
 
-func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) ([]firestore.Update, error) {
+func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) ([]firestore.Update, error) {
 	updates := []firestore.Update{}
 	searchableValues := []string{}
 	for fieldID, value := range change.FieldChanges {
@@ -77,7 +76,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return updates, nil
 }
 
-func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
+func getInsertsForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
 	for fieldID, value := range change.FieldChanges {
@@ -112,7 +111,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return inserts, nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) error {
+func processUpdate(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) error {
 	// it's an update!
 	updates, err := getUpdatesForChange(change, collectionMetadata)
 	if err != nil {
@@ -125,7 +124,7 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	return nil
 }
 
-func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef, idTemplate *template.Template) (string, error) {
+func processInsert(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef, idTemplate *template.Template) (string, error) {
 	// it's an insert!
 	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
@@ -162,8 +161,8 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	return doc.ID, nil
 }
 
-func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) (map[string]reqs.ChangeResult, error) {
-	changeResults := map[string]reqs.ChangeResult{}
+func processChanges(changes map[string]adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) (map[string]adapters.ChangeResult, error) {
+	changeResults := map[string]adapters.ChangeResult{}
 
 	idTemplate, err := templating.New(collectionMetadata.IDFormat)
 	if err != nil {
@@ -172,7 +171,7 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 
 	for changeID, change := range changes {
 
-		changeResult := reqs.NewChangeResult(change)
+		changeResult := adapters.NewChangeResult(change)
 
 		if !change.IsNew && change.IDValue != nil {
 			err := processUpdate(change, collectionMetadata, batch, collection)
@@ -195,10 +194,10 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	return changeResults, nil
 }
 
-func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) (map[string]reqs.ChangeResult, error) {
-	deleteResults := map[string]reqs.ChangeResult{}
+func processDeletes(deletes map[string]adapters.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, batch *firestore.WriteBatch, collection *firestore.CollectionRef) (map[string]adapters.ChangeResult, error) {
+	deleteResults := map[string]adapters.ChangeResult{}
 	for deleteID, delete := range deletes {
-		deleteResult := reqs.ChangeResult{}
+		deleteResult := adapters.ChangeResult{}
 		deleteResult.Data = map[string]interface{}{}
 
 		firestoreID, ok := delete[collectionMetadata.IDField].(string)
@@ -215,7 +214,7 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *a
 	return deleteResults, nil
 }
 
-func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
 
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
@@ -238,10 +237,10 @@ func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.Met
 }
 
 // Save function
-func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
 
 	ctx := context.Background()
-	response := []reqs.SaveResponse{}
+	response := []adapters.SaveResponse{}
 
 	// Get a Firestore client.
 	client, err := getClient(credentials)
@@ -286,7 +285,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 			return nil, err
 		}
 
-		response = append(response, reqs.SaveResponse{
+		response = append(response, adapters.SaveResponse{
 			Wire:          request.Wire,
 			ChangeResults: changeResults,
 			DeleteResults: deleteResults,

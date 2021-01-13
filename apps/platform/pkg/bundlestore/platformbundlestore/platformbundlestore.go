@@ -3,8 +3,8 @@ package platformbundlestore
 import (
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,7 +18,7 @@ func (b *PlatformBundleStore) GetItem(item metadata.BundleableItem, version stri
 }
 
 // GetItems function
-func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error {
+func (b *PlatformBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
 	return nil
 }
 
@@ -38,7 +38,7 @@ func (b *PlatformBundleStore) GetBotStream(version string, bot *metadata.Bot, se
 }
 
 // StoreItems function
-func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemStreams []reqs.ItemStream) error {
+func (b *PlatformBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
 	return nil
 }
 

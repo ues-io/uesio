@@ -4,12 +4,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/localcache"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getAppLicense(app, appToCheck string) (*metadata.AppLicense, error) {
@@ -111,7 +109,7 @@ func getBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 }
 
 // LoadAllFromAny function
-func LoadAllFromAny(group metadata.BundleableGroup, conditions reqs.BundleConditions, session *sess.Session) error {
+func LoadAllFromAny(group metadata.BundleableGroup, conditions metadata.BundleConditions, session *sess.Session) error {
 	// Get all avaliable namespaces
 	namespaces := session.GetContextNamespaces()
 	for namespace := range namespaces {
@@ -124,7 +122,7 @@ func LoadAllFromAny(group metadata.BundleableGroup, conditions reqs.BundleCondit
 }
 
 // LoadAll function
-func LoadAll(group metadata.BundleableGroup, namespace string, conditions reqs.BundleConditions, session *sess.Session) error {
+func LoadAll(group metadata.BundleableGroup, namespace string, conditions metadata.BundleConditions, session *sess.Session) error {
 	version, bs, err := getBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return err

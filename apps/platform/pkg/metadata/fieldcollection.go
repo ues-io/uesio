@@ -2,9 +2,10 @@ package metadata
 
 import (
 	"errors"
+	"os"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // FieldCollection slice
@@ -16,12 +17,12 @@ func (fc *FieldCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FieldCollection) GetFields() []reqs.LoadRequestField {
+func (fc *FieldCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem() LoadableItem {
+func (fc *FieldCollection) NewItem() adapters.LoadableItem {
 	return &Field{}
 }
 
@@ -43,28 +44,36 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	}, nil
 }
 
-// GetKeyPrefix function
-func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+// GetKeyFromPath function
+func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
-	if hasCollection {
-		return collectionKey + "."
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 1 {
+		// Ignore this file
+		return "", nil
 	}
-	return ""
+	if hasCollection {
+		if strings.HasPrefix(parts[0], collectionKey+".") && strings.HasSuffix(parts[0], ".yaml") {
+			return strings.TrimSuffix(path, ".yaml"), nil
+		}
+		return "", nil
+	}
+	return strings.TrimSuffix(path, ".yaml"), nil
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item LoadableItem) {
+func (fc *FieldCollection) AddItem(item adapters.LoadableItem) {
 	*fc = append(*fc, *item.(*Field))
 }
 
 // GetItem function
-func (fc *FieldCollection) GetItem(index int) LoadableItem {
+func (fc *FieldCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *fc
 	return &actual[index]
 }
 
 // Loop function
-func (fc *FieldCollection) Loop(iter func(item LoadableItem) error) error {
+func (fc *FieldCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {

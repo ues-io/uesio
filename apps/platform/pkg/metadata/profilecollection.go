@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // ProfileCollection slice
 type ProfileCollection []Profile
@@ -11,12 +13,12 @@ func (pc *ProfileCollection) GetName() string {
 }
 
 // GetFields function
-func (pc *ProfileCollection) GetFields() []reqs.LoadRequestField {
+func (pc *ProfileCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(pc)
 }
 
 // NewItem function
-func (pc *ProfileCollection) NewItem() LoadableItem {
+func (pc *ProfileCollection) NewItem() adapters.LoadableItem {
 	return &Profile{}
 }
 
@@ -30,24 +32,24 @@ func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableIte
 	return NewProfile(key)
 }
 
-// GetKeyPrefix function
-func (pc *ProfileCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (pc *ProfileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (pc *ProfileCollection) AddItem(item LoadableItem) {
+func (pc *ProfileCollection) AddItem(item adapters.LoadableItem) {
 	*pc = append(*pc, *item.(*Profile))
 }
 
 // GetItem function
-func (pc *ProfileCollection) GetItem(index int) LoadableItem {
+func (pc *ProfileCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *pc
 	return &actual[index]
 }
 
 // Loop function
-func (pc *ProfileCollection) Loop(iter func(item LoadableItem) error) error {
+func (pc *ProfileCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index))
 		if err != nil {

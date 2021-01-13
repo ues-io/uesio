@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // RouteCollection slice
@@ -13,12 +13,12 @@ func (rc *RouteCollection) GetName() string {
 }
 
 // GetFields function
-func (rc *RouteCollection) GetFields() []reqs.LoadRequestField {
+func (rc *RouteCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(rc)
 }
 
 // NewItem function
-func (rc *RouteCollection) NewItem() LoadableItem {
+func (rc *RouteCollection) NewItem() adapters.LoadableItem {
 	return &Route{}
 }
 
@@ -32,24 +32,24 @@ func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	return NewRoute(key)
 }
 
-// GetKeyPrefix function
-func (rc *RouteCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (rc *RouteCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (rc *RouteCollection) AddItem(item LoadableItem) {
+func (rc *RouteCollection) AddItem(item adapters.LoadableItem) {
 	*rc = append(*rc, *item.(*Route))
 }
 
 // GetItem function
-func (rc *RouteCollection) GetItem(index int) LoadableItem {
+func (rc *RouteCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *rc
 	return &actual[index]
 }
 
 // Loop function
-func (rc *RouteCollection) Loop(iter func(item LoadableItem) error) error {
+func (rc *RouteCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *rc {
 		err := iter(rc.GetItem(index))
 		if err != nil {

@@ -5,7 +5,6 @@ import (
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
@@ -42,16 +41,16 @@ func NewPermissionError(message string) *PermissionError {
 // BundleStore interface
 type BundleStore interface {
 	GetItem(item metadata.BundleableItem, version string, session *sess.Session) error
-	GetItems(group metadata.BundleableGroup, namespace, version string, conditions reqs.BundleConditions, session *sess.Session) error
+	GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error
 	GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error)
-	StoreItems(namespace, version string, itemStreams []reqs.ItemStream) error
+	StoreItems(namespace, version string, itemStreams []ItemStream) error
 	GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error)
 }
 
 // StoreWorkspaceAsBundle function
-func StoreWorkspaceAsBundle(appName string, version string, itemStreams []reqs.ItemStream, session *sess.Session) error {
+func StoreWorkspaceAsBundle(appName string, version string, itemStreams []ItemStream, session *sess.Session) error {
 	bundleStoreInstance, err := GetBundleStore(appName, session)
 	if err != nil {
 		return err

@@ -3,13 +3,14 @@ package metadata
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 // ConfigValue struct
 type ConfigValue struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
@@ -41,8 +42,8 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (cv *ConfigValue) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (cv *ConfigValue) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: cv.Name,
@@ -59,6 +60,11 @@ func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (cv *ConfigValue) GetKey() string {
 	return cv.Namespace + "." + cv.Name
+}
+
+// GetPath function
+func (cv *ConfigValue) GetPath() string {
+	return cv.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

@@ -2,13 +2,11 @@ package adapters
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // GetConditionValue function
 func GetConditionValue(
-	condition reqs.LoadRequestCondition,
+	condition LoadRequestCondition,
 	op LoadOp,
 	metadata *MetadataCache,
 	ops []LoadOp,

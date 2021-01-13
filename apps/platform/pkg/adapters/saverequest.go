@@ -1,4 +1,4 @@
-package reqs
+package adapters
 
 import "encoding/json"
 

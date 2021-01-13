@@ -5,19 +5,18 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
 
 // Retrieve func
-func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
+func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 
-	itemStreams := []reqs.ItemStream{}
+	itemStreams := []bundlestore.ItemStream{}
 
 	for _, metadataType := range metadata.GetMetadataTypes() {
 		group, err := metadata.GetBundleableGroupFromType(metadataType)
@@ -29,9 +28,9 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 			return nil, err
 		}
 
-		err = group.Loop(func(item metadata.LoadableItem) error {
+		err = group.Loop(func(item adapters.LoadableItem) error {
 
-			key := item.(metadata.BundleableItem).GetKey()
+			path := item.(metadata.BundleableItem).GetPath()
 
 			// Special handling for bots
 			if metadataType == "bots" {
@@ -42,8 +41,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 					return err
 				}
 
-				itemStream := reqs.ItemStream{
-					FileName: bot.FileName,
+				itemStream := bundlestore.ItemStream{
+					FileName: bot.GetBotFilePath(),
 					Type:     metadataType,
 				}
 
@@ -65,7 +64,7 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 					return err
 				}
 
-				itemStream := reqs.ItemStream{
+				itemStream := bundlestore.ItemStream{
 					FileName: file.FileName,
 					Type:     metadataType,
 				}
@@ -78,8 +77,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 				itemStreams = append(itemStreams, itemStream)
 			}
 
-			itemStream := reqs.ItemStream{
-				FileName: key + ".yaml",
+			itemStream := bundlestore.ItemStream{
+				FileName: path,
 				Type:     metadataType,
 			}
 
@@ -109,8 +108,8 @@ func Retrieve(session *sess.Session) ([]reqs.ItemStream, error) {
 
 }
 
-func generateBundleYaml(session *sess.Session) (*reqs.ItemStream, error) {
-	itemStream := reqs.ItemStream{
+func generateBundleYaml(session *sess.Session) (*bundlestore.ItemStream, error) {
+	itemStream := bundlestore.ItemStream{
 		FileName: "bundle.yaml",
 		Type:     "",
 	}
@@ -151,10 +150,6 @@ func Zip(writer io.Writer, session *sess.Session) error {
 	}
 
 	// Make sure to check the error on Close.
-	err = zipWriter.Close()
-	if err != nil {
-		return err
-	}
+	return zipWriter.Close()
 
-	return nil
 }

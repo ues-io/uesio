@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ComponentPackCollection slice
@@ -16,12 +16,12 @@ func (cpc *ComponentPackCollection) GetName() string {
 }
 
 // GetFields function
-func (cpc *ComponentPackCollection) GetFields() []reqs.LoadRequestField {
+func (cpc *ComponentPackCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(cpc)
 }
 
 // NewItem function
-func (cpc *ComponentPackCollection) NewItem() LoadableItem {
+func (cpc *ComponentPackCollection) NewItem() adapters.LoadableItem {
 	return &ComponentPack{}
 }
 
@@ -42,24 +42,24 @@ func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (Bundle
 	}, nil
 }
 
-// GetKeyPrefix function
-func (cpc *ComponentPackCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (cpc *ComponentPackCollection) AddItem(item LoadableItem) {
+func (cpc *ComponentPackCollection) AddItem(item adapters.LoadableItem) {
 	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 
 // GetItem function
-func (cpc *ComponentPackCollection) GetItem(index int) LoadableItem {
+func (cpc *ComponentPackCollection) GetItem(index int) adapters.LoadableItem {
 	actual := *cpc
 	return &actual[index]
 }
 
 // Loop function
-func (cpc *ComponentPackCollection) Loop(iter func(item LoadableItem) error) error {
+func (cpc *ComponentPackCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *cpc {
 		err := iter(cpc.GetItem(index))
 		if err != nil {

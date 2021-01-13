@@ -2,4 +2,3 @@ name: viewcreated
 collection: uesio.views
 dialect: "JAVASCRIPT"
 type: "BEFORESAVE"
-fileName: viewcreated.js
