@@ -4,3 +4,4 @@
 /coverage
 **/componentpacks
 /apps/platform/platform/platform.js
+package-lock.json
