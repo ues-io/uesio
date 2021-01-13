@@ -3,7 +3,7 @@ import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer = require("inquirer")
 import { save, createChange } from "../wire/save"
-import {getApp} from "../config/config";
+import { getApp } from "../config/config"
 
 class SiteDomain {
 	static getCollectionName(): string {
@@ -48,7 +48,7 @@ class SiteDomain {
 				name: "type",
 				message: "Domain Type (domain/subdomain)",
 				type: "input",
-			}
+			},
 		])
 		const app = await getApp()
 
@@ -56,7 +56,7 @@ class SiteDomain {
 			this,
 			createChange([
 				{
-					"uesio.site": responses.siteName + '_' + app,
+					"uesio.site": responses.siteName + "_" + app,
 					"uesio.domain": responses.domain,
 					"uesio.type": responses.type,
 				},

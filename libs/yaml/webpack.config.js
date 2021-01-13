@@ -1,10 +1,12 @@
-var path = require("path");
-
+var path = require("path")
+const sourceMaps = { devtool: "source-map" }
+const inDevMode = process.env.NODE_ENV
+	? process.env.NODE_ENV === "development"
+	: true
 module.exports = {
-	mode: "production",
-
+	mode: inDevMode ? "development" : "production",
 	// Enable sourcemaps for debugging webpack's output.
-	devtool: "source-map",
+	...(inDevMode ? sourceMaps : {}),
 
 	resolve: {
 		extensions: [".js"],
@@ -20,7 +22,7 @@ module.exports = {
 		library: "[name]",
 		libraryTarget: "umd",
 		filename: "[name].js",
-    sourceMapFilename: "[name].js.map",
-    path: path.join(__dirname, "../../dist/yaml")
+		sourceMapFilename: "[name].js.map",
+		path: path.join(__dirname, "../../dist/yaml"),
 	},
 }

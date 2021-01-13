@@ -1,8 +1,8 @@
 [
-  {
-    "name":       "studio",
-    "bundleid":   "uesio_v0.0.1",
-    "appref":     "uesio",
-    "versionref": "v0.0.1"
-  }
+	{
+		"name": "studio",
+		"bundleid": "uesio_v0.0.1",
+		"appref": "uesio",
+		"versionref": "v0.0.1"
+	}
 ]
