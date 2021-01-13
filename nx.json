@@ -1,67 +1,67 @@
 {
-  "npmScope": "uesio",
-  "affected": {
-    "defaultBase": "master"
-  },
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    "tsconfig.base.json": "*",
-    "tslint.json": "*",
-    ".eslintrc.json": "*",
-    "nx.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["lint", "build", "test", "e2e"]
-      }
-    }
-  },
-  "projects": {
-    "platform": {
-      "tags": []
-    },
-    "ui": {
-      "tags": []
-    },
-    "buildtime": {
-      "tags": []
-    },
-    "lazymonaco": {
-      "tags": []
-    },
-    "yaml": {
-      "tags": []
-    },
-    "uesioapps-sample": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-uesio": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-crm": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-material": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "vendor": {
-      "tags": []
-    },
-    "cli": {
-      "tags": []
-    },
-    "constants": {
-      "tags": []
-    }
-  }
+	"npmScope": "uesio",
+	"affected": {
+		"defaultBase": "master"
+	},
+	"implicitDependencies": {
+		"workspace.json": "*",
+		"package.json": {
+			"dependencies": "*",
+			"devDependencies": "*"
+		},
+		"tsconfig.base.json": "*",
+		"tslint.json": "*",
+		".eslintrc.json": "*",
+		"nx.json": "*"
+	},
+	"tasksRunnerOptions": {
+		"default": {
+			"runner": "@nrwl/workspace/tasks-runners/default",
+			"options": {
+				"cacheableOperations": ["lint", "build", "test", "e2e"]
+			}
+		}
+	},
+	"projects": {
+		"platform": {
+			"tags": []
+		},
+		"ui": {
+			"tags": []
+		},
+		"buildtime": {
+			"tags": []
+		},
+		"lazymonaco": {
+			"tags": []
+		},
+		"yaml": {
+			"tags": []
+		},
+		"uesioapps-sample": {
+			"tags": [],
+			"implicitDependencies": ["cli"]
+		},
+		"uesioapps-uesio": {
+			"tags": [],
+			"implicitDependencies": ["cli"]
+		},
+		"uesioapps-crm": {
+			"tags": [],
+			"implicitDependencies": ["cli"]
+		},
+		"uesioapps-material": {
+			"tags": [],
+			"implicitDependencies": ["cli"]
+		},
+		"vendor": {
+			"tags": []
+		},
+		"cli": {
+			"tags": []
+		},
+		"constants": {
+			"tags": []
+		}
+	}
 }

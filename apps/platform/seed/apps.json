@@ -1,22 +1,22 @@
 [
-  {
-    "name": "uesio",
-    "description": "The Uesio Configuration App",
-    "color": "#2f4b7c"
-  },
-  {
-    "name": "crm",
-    "description": "A Sample CRM App",
-    "color": "#a05195"
-  },
-  {
-    "name": "sample",
-    "description": "A Sample App for Testing",
-    "color": "#f95d6a"
-  },
-  {
-    "name": "material",
-    "description": "Material UI Components",
-    "color": "#ffa600"
-  }
+	{
+		"name": "uesio",
+		"description": "The Uesio Configuration App",
+		"color": "#2f4b7c"
+	},
+	{
+		"name": "crm",
+		"description": "A Sample CRM App",
+		"color": "#a05195"
+	},
+	{
+		"name": "sample",
+		"description": "A Sample App for Testing",
+		"color": "#f95d6a"
+	},
+	{
+		"name": "material",
+		"description": "Material UI Components",
+		"color": "#ffa600"
+	}
 ]

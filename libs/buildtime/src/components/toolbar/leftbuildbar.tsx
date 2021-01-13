@@ -16,7 +16,7 @@ const TOOLBAR_TO_COMPONENT = {
 	},
 	components: {
 		component: ComponentsToolbar,
-	}
+	},
 }
 
 const MINI_TOOLBAR_WIDTH = 50
@@ -33,15 +33,15 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 	// For Example:
 	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
 	// This: ["components"]["0"]["myns.mycomp"]
-	const trimmedPath = path && component.path.trimPathToComponent(path) || ''
+	const trimmedPath = (path && component.path.trimPathToComponent(path)) || ""
 
-	const propDef = trimmedPath ? component.registry.getPropertiesDefinitionFromPath(
-		trimmedPath
-	): undefined
+	const propDef = trimmedPath
+		? component.registry.getPropertiesDefinitionFromPath(trimmedPath)
+		: undefined
 
-	const definition = trimmedPath ? uesio.view.useDefinition(
-		trimmedPath
-	) as definition.DefinitionMap: undefined
+	const definition = trimmedPath
+		? (uesio.view.useDefinition(trimmedPath) as definition.DefinitionMap)
+		: undefined
 
 	return (
 		<MiniToolbar
@@ -61,13 +61,12 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 				}}
 			>
 				<PropertiesPanel
-				path={trimmedPath}
-				index={0}
-				context={context}
-				definition={definition }
-				propDef={propDef}
+					path={trimmedPath}
+					index={0}
+					context={context}
+					definition={definition}
+					propDef={propDef}
 				/>
-
 			</material.Paper>
 			<material.Paper
 				style={{

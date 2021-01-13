@@ -11,13 +11,13 @@ const builderSlice = createSlice({
 		},
 		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
 			state.selectedNode = payload
-			if(payload && !state.leftPanel) {
-				state.leftPanel = 'components'
+			if (payload && !state.leftPanel) {
+				state.leftPanel = "components"
 			}
 		},
 		setPanelClosed: (state) => {
-			state.selectedNode = '';
-			state.leftPanel = '';
+			state.selectedNode = ""
+			state.leftPanel = ""
 		},
 		toggleBuildMode: (state) => {
 			state.buildMode = !state.buildMode
@@ -75,7 +75,7 @@ const builderSlice = createSlice({
 			}"]`
 		})
 		builder.addCase(removeDefinition, (state) => {
-			state.selectedNode = ''
+			state.selectedNode = ""
 		})
 	},
 })

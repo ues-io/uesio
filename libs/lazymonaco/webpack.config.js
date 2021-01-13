@@ -4,8 +4,10 @@ const path = require("path")
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin")
 const MONACO_DIR = path.resolve(__dirname, "../../node_modules/monaco-editor")
-const sourceMaps = {devtool: "source-map"}
-const inDevMode = process.env.NODE_ENV ? process.env.NODE_ENV === "development" : true
+const sourceMaps = { devtool: "source-map" }
+const inDevMode = process.env.NODE_ENV
+	? process.env.NODE_ENV === "development"
+	: true
 module.exports = {
 	mode: inDevMode ? "development" : "production",
 	// Enable sourcemaps for debugging webpack's output.

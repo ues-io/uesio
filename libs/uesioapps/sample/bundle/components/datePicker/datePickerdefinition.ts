@@ -13,7 +13,7 @@ const DatePickerPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		label: "Date picker inline",
 		color: "primary",
-		variant: "standard"
+		variant: "standard",
 	}),
 	title: "Date picker",
 	sections: [],

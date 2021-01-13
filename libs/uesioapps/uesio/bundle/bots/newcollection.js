@@ -5,14 +5,16 @@ function newcollection(bot) {
 	var workspace = bot.params.get("workspace")
 	var workspaceId = app + "_" + workspace
 
-	bot.save("uesio.collections", [{
-		"uesio.name": collection,
-		"uesio.datasource": datasource,
-		"uesio.collectionname": collection,
-		"uesio.workspaceid": workspaceId,
-		"uesio.idfield": app + ".id",
-		"uesio.namefield": app + ".name"
-	}])
+	bot.save("uesio.collections", [
+		{
+			"uesio.name": collection,
+			"uesio.datasource": datasource,
+			"uesio.collectionname": collection,
+			"uesio.workspaceid": workspaceId,
+			"uesio.idfield": app + ".id",
+			"uesio.namefield": app + ".name",
+		},
+	])
 	bot.save("uesio.fields", [
 		{
 			"uesio.collection": app + "." + collection,

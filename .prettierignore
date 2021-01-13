@@ -2,3 +2,5 @@
 
 /dist
 /coverage
+**/componentpacks
+/apps/platform/platform

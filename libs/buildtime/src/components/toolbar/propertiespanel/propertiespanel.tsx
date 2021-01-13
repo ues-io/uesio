@@ -58,13 +58,14 @@ const PropertiesPanel: FunctionComponent<Props> = (props) => {
 				/>
 			</>
 		)
-	}
-	else if (!propDef && !definition) {
-		return (<ToolbarTitle
+	} else if (!propDef && !definition) {
+		return (
+			<ToolbarTitle
 				title="Nothing selected"
 				icon={CloseIcon}
 				iconOnClick={(): void => uesio.builder.setPanelClosed()}
-		        />)
+			/>
+		)
 	}
 	return (
 		<div className={classes.notFound}>
