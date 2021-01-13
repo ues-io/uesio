@@ -114,11 +114,6 @@ class ViewAPI {
 						path: usePath,
 					})
 				)
-				// When a definition is removed, select its parent
-				const pathArray = toPath(usePath)
-				pathArray.pop()
-				const newPath = trimPathToComponent(pathArray)
-				this.dispatcher(setSelectedNode(newPath))
 			})
 		}
 	}

@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import WiresToolbar from "./wirestoolbar/wirestoolbar"
+import EmptyStateToolbar from "./emptystatetoolbar/emptystatetoolbar"
 import ComponentsToolbar from "./componentstoolbar/componentstoolbar"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
 import { definition, material, component, hooks } from "@uesio/ui"
@@ -17,29 +18,33 @@ const TOOLBAR_TO_COMPONENT = {
 	components: {
 		component: ComponentsToolbar,
 	},
+	emptyState: {
+		component: EmptyStateToolbar
+	}
 }
 
 const MINI_TOOLBAR_WIDTH = 50
 
 const LeftBuildbar: FunctionComponent<Props> = (props) => {
-	const { context, selectedNode, selectedPanel: selected } = props
+	const { context, selectedNode } = props
 	const path = selectedNode
 	const uesio = hooks.useUesio(props)
-
+	const selected = path ? props.selectedPanel : "emptyState"
+	debugger;
 	const currentToolbarPanel =
-		TOOLBAR_TO_COMPONENT[selected as "wires" | "components"]
+		TOOLBAR_TO_COMPONENT[selected as "wires" | "components" | "emptyState"]
 
 	// Trim the path to the closest namespaced component
 	// For Example:
 	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
 	// This: ["components"]["0"]["myns.mycomp"]
-	const trimmedPath = component.path.trimPathToComponent(path)
+	const trimmedPath = path && component.path.trimPathToComponent(path) || ''
 
-	const propDef = component.registry.getPropertiesDefinitionFromPath(
+	const propDef = trimmedPath && component.registry.getPropertiesDefinitionFromPath(
 		trimmedPath
 	)
 
-	const definition = uesio.view.useDefinition(
+	const definition = trimmedPath && uesio.view.useDefinition(
 		trimmedPath
 	) as definition.DefinitionMap
 
@@ -59,14 +64,14 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 					overflow: "hidden",
 					margin: "8px 0",
 				}}
-			>
-				<PropertiesPanel
-					path={trimmedPath}
-					index={0}
-					context={context}
-					definition={definition}
-					propDef={propDef}
-				/>
+			> {(definition && propDef) ? (<PropertiesPanel
+				path={trimmedPath}
+				index={0}
+				context={context}
+				definition={definition}
+				propDef={propDef}
+			/>) : (<div>Empty stuff</div>)}
+
 			</material.Paper>
 			<material.Paper
 				style={{

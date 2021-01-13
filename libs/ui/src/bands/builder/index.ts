@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getParentPath } from "../../component/path"
-import { changeDefinitionKey } from "../viewdef"
+import { changeDefinitionKey, removeDefinition } from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
 
 const builderSlice = createSlice({
@@ -67,6 +67,9 @@ const builderSlice = createSlice({
 			state.selectedNode = `${getParentPath(payload.path)}["${
 				payload.key
 			}"]`
+		})
+		builder.addCase(removeDefinition, (state) => {
+			state.selectedNode = ''
 		})
 	},
 })

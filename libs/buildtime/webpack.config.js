@@ -2,7 +2,7 @@
 var path = require("path");
 
 module.exports = {
-	mode: "production",
+	mode: process.env.NODE_ENV ? process.env.NODE_ENV : "development",
 
 	// Enable sourcemaps for debugging webpack's output.
 	devtool: "source-map",
