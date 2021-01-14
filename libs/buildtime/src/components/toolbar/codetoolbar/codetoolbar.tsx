@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) =>
 
 // AddDefinitionPayload
 const definitionPropertiesAmount = (addedDefinition: unknown) => {
-	const keys = Object.keys(addedDefinition?.definition)
+	const keys = Object.keys(addedDefinition?.definition || {})
 	const componentName = keys?.[0]
 	return componentName
 		? Object.keys(addedDefinition.definition[componentName]).length
