@@ -81,8 +81,9 @@ const diff = (
 	const pathArray = toPath(path)
 	const children = get(previousYaml, pathArray) || []
 
-	// step 1. insert the new definition in the children
+	// step 1. insert the new definition in the children, change previousYaml in place
 	children.splice(index, 0, definition)
+	console.log("previousYaml", previousYaml)
 	// step 2.
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
 	// step 3.
