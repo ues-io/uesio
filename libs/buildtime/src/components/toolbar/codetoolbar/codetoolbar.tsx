@@ -7,7 +7,6 @@ import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
-import { diffLines, Change } from "diff"
 import toPath from "lodash.topath"
 import get from "lodash.get"
 
@@ -103,14 +102,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
 	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
-	if (hasYamlChanged) {
-		console.log(
-			"difference",
-			currentAST.current &&
-				lastAddedDefinition &&
-				diff(currentAST.current, lastAddedDefinition)
-		)
-	}
 	console.log("CodeToolbar rendering")
 
 	return (
@@ -277,56 +268,43 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					})
 
 					// highlight changes in the editor
-					if (hasYamlChanged && previousYaml && currentYaml) {
-						const diff: Change[] = diffLines(
-							previousYaml,
-							currentYaml
+					if (
+						hasYamlChanged &&
+						currentAST.current &&
+						lastAddedDefinition
+					) {
+						const rangeDiff = diff(
+							currentAST.current,
+							lastAddedDefinition
 						)
-						if (
-							diff?.[0]?.count &&
-							diff?.[1]?.count &&
-							diff?.[1]?.added
-						) {
-							// Small adjustment when the first line of the change is by coincidence matching the first line of the next block
-							const firstLineDifference = diff?.[1]?.value.trim()
-							const shouldStartOneLineAbove = !firstLineDifference.startsWith(
-								"-"
-							)
 
-							const startOffset =
-								diff[0].count +
-								1 -
-								(shouldStartOneLineAbove ? 1 : 0)
-							const endOffset = startOffset + diff[1].count - 1
-							const decorations = editor.deltaDecorations(
-								[],
-								[
-									{
-										range: new monaco.Range(
-											startOffset,
-											1,
-											endOffset,
-											1
-										),
-										options: {
-											isWholeLine: true,
-											className:
-												classes[
-													HIGHLIGHT_LINES_ANIMATION
-												],
-										},
+						const decorations = editor.deltaDecorations(
+							[],
+							[
+								{
+									range: new monaco.Range(
+										rangeDiff[0],
+										1,
+										rangeDiff[1],
+										1
+									),
+									options: {
+										isWholeLine: true,
+										className:
+											classes[HIGHLIGHT_LINES_ANIMATION],
 									},
-								]
-							)
+								},
+							]
+						)
 
-							editor.revealLineInCenter(endOffset)
+						// scroll to the changes
+						editor.revealLineInCenter(rangeDiff[1])
 
-							// we have to remove the decoration otherwise css kicks in while interacting with the editor
-							setTimeout(
-								() => editor.deltaDecorations(decorations, []),
-								ANIMATION_DURATION
-							)
-						}
+						// we have to remove the decoration otherwise css kicks in while interacting with the editor
+						setTimeout(
+							() => editor.deltaDecorations(decorations, []),
+							ANIMATION_DURATION
+						)
 					}
 				}}
 			/>
