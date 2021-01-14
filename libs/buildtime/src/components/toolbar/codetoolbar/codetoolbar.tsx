@@ -52,7 +52,7 @@ const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
 // AddDefinitionPayload
-const definitionPropertiesAmount = (addedDefinition: unknown) => {
+const addedDefinitionHeight = (addedDefinition: unknown) => {
 	const yamlDoc = util.yaml.parse(
 		JSON.stringify(addedDefinition?.definition || {})
 	)
@@ -95,8 +95,7 @@ const diff = (
 	// step 4.
 	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START) + 1
 	// step 5.
-	const endOffset =
-		startOffset + definitionPropertiesAmount(lastAddedDefinition)
+	const endOffset = startOffset + addedDefinitionHeight(lastAddedDefinition)
 	// step 6.
 	return [startOffset, endOffset]
 }
