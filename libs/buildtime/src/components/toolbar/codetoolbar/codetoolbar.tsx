@@ -39,17 +39,6 @@ const definitionHeight = (definition: AddDefinitionPayload) =>
 	Object.keys(definition).length
 */
 
-const makeMapLineNumberToLine = (text: string) => {
-	const lines = text.split(/\r?\n/)
-	return lines.reduce(
-		(memo: { [key: string]: string }, line: string, index) => ({
-			...memo,
-			[index + 1]: line,
-		}),
-		{}
-	)
-}
-
 const splitTextByLines = (text: string) => text.split(/\r?\n/)
 
 const lookForLine = (lines: string[], wordToLookFor: string) =>
@@ -79,9 +68,6 @@ const difference = (
 		},
 	}
 
-	//	setWith(state, ["definition"].concat(pathArray), definition)
-	//	const yaml = utilexorts.yaml.parse()
-
 	const { path, definition, index } = withMarker
 	const pathArray = toPath(path)
 	const currentArray = get(previousYaml, pathArray) || []
@@ -89,8 +75,23 @@ const difference = (
 	// insert the new definition in the currentArray
 	currentArray.splice(index, 0, definition)
 
-	const newYaml = util.yaml.parse(JSON.stringify(previousYaml))
-	console.log("newYaml", newYaml.toString())
+	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
+	const newYamlStringified = newYamlDoc.toString()
+	const startOffset =
+		lookForLine(
+			splitTextByLines(newYamlStringified),
+			MARKER_FOR_DIFF_START
+		) + 1
+	console.log(
+		"withMarker.definition[keys[0] + MARKER_FOR_DIFF_START]",
+		withMarker.definition[keys[0] + MARKER_FOR_DIFF_START]
+	)
+	const endOffset =
+		startOffset +
+		Object.keys(withMarker.definition[keys[0] + MARKER_FOR_DIFF_START])
+			.length
+
+	return [startOffset, endOffset]
 }
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
