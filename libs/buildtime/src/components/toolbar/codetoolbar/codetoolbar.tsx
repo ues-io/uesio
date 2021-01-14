@@ -9,6 +9,7 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import toPath from "lodash.topath"
 import get from "lodash.get"
+import { POINT_CONVERSION_COMPRESSED } from "constants"
 
 const MARKER_FOR_DIFF_START = "##START##"
 const MARKER_FOR_DIFF_END = "##END##"
@@ -47,6 +48,16 @@ const addMarkerAtFirstKey = (addedDefinition: unknown) => {
 	return withMarker
 }
 
+const addMarkerAtFirstKeyEnd = (slot: unknown) => {
+	const keys = Object.keys(slot || {})
+	const withMarker = {
+		[`${keys?.[0] || ""}${MARKER_FOR_DIFF_END}`]: {
+			...(keys?.[0] ? slot[keys[0]] : {}),
+		},
+	}
+	return withMarker
+}
+
 // AddDefinitionPayload
 const definitionPropertiesAmount = (addedDefinition: unknown) => {
 	const keys = Object.keys(addedDefinition?.definition || {})
@@ -63,7 +74,7 @@ const lookForLine = (lines: string[], wordToLookFor: string) =>
 
 // home-made diff algorithm since unix-like diff method did not work for our use case
 const diff = (
-	previousYamlDoc: yaml.Document,
+	previousYamlDocInJon: yaml.Document,
 	lastAddedDefinition: unknown
 ): [number, number] => {
 	// algorithm
@@ -76,34 +87,40 @@ const diff = (
 	// 4. get the line of the marker in the stringified YAML document
 	// 5. compute the height of the lasAddedDefinition
 	// 6. return lines range of the changes (start with index 1 and not 0 for the monaco editor)
-	const previousYaml = previousYamlDoc.toJSON()
+
 	// step 0.
 	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarkerStart
 	const pathArray = toPath(path)
-	const children = get(previousYaml, pathArray)
+	const children = get(previousYamlDocInJon, pathArray)
+
+	// step 1. insert the new definition in the children, with mutation of previousYaml
+	children.splice(index, 0, definition)
 
 	// step 0bis
 	const isAddedDefinitionLastChildren =
 		children && children.length - 1 === index
 	const nextChild =
-		!isAddedDefinitionLastChildren && children ? children[index + 1] : []
-	console.log("nextChildren", nextChild)
+		(!isAddedDefinitionLastChildren && children && children[index + 1]) ||
+		null
 
-	console.log("previousYaml", previousYaml)
+	if (nextChild) {
+		// mutation of previousYaml with marker for the end
+		children[index + 1] = addMarkerAtFirstKeyEnd(nextChild)
+	}
+	console.log("previousYamlDocInJon", previousYamlDocInJon)
 
-	// step 1. insert the new definition in the children, change previousYaml in place
-	children.splice(index, 0, definition)
 	// step 2.
-	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
+	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYamlDocInJon))
 	// step 3.
 	const newYamlDocStringified = newYamlDoc.toString()
 	const splittedByLines = splitTextByLines(newYamlDocStringified)
 	// step 4.
 	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START) + 1
 	// step 5.
-	const endOffset =
-		startOffset + definitionPropertiesAmount(lastAddedDefinition)
+	const endOffset = nextChild
+		? lookForLine(splittedByLines, MARKER_FOR_DIFF_END)
+		: children.length
 	// step 6.
 	return [startOffset, endOffset]
 }
@@ -116,6 +133,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	const previousYaml = currentAST.current?.toString()
+	const previousYamlInJson = currentAST.current?.toJSON()
 	const hasYamlChanged = previousYaml !== currentYaml
 	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
 	console.log("CodeToolbar rendering")
@@ -286,11 +304,11 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					// highlight changes in the editor
 					if (
 						hasYamlChanged &&
-						currentAST.current &&
+						previousYamlInJson &&
 						lastAddedDefinition
 					) {
 						const rangeDiff = diff(
-							currentAST.current,
+							previousYamlInJson,
 							lastAddedDefinition
 						)
 
