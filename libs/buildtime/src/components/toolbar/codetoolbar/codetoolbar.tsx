@@ -70,6 +70,7 @@ const diff = (
 	// 0. add a marker to last added definition (drag'n drop into the canvas) and to next item
 	// 0bis add marker to next item
 	// 1. insert the marked definition to the previous YAML definition in JSON formatted
+
 	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
 	// 4. get the line of the marker in the stringified YAML document
@@ -80,7 +81,13 @@ const diff = (
 	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarkerStart
 	const pathArray = toPath(path)
-	const children = get(previousYaml, pathArray) || []
+	const children = get(previousYaml, pathArray)
+
+	// step 0bis
+	const isAddedDefinitionLastChildren = children.length - 1 === index
+	const nextChild =
+		!isAddedDefinitionLastChildren && children ? children[index + 1] : []
+	console.log("nextChildren", nextChild)
 
 	// step 1. insert the new definition in the children, change previousYaml in place
 	children.splice(index, 0, definition)
