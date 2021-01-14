@@ -141,12 +141,9 @@ func RunAfterSaveBots(response *adapters.SaveResponse, request *adapters.SaveReq
 
 // CallBot function
 func CallBot(namespace, name string, params map[string]string, session *sess.Session) error {
-	robot, err := metadata.NewBot("listener." + namespace + "." + name)
-	if err != nil {
-		return err
-	}
+	robot := metadata.NewListenerBot(namespace, name)
 
-	err = bundles.Load(robot, session)
+	err := bundles.Load(robot, session)
 	if err != nil {
 		return err
 	}

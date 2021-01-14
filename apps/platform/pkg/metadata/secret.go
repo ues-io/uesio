@@ -9,6 +9,7 @@ import (
 
 // Secret struct
 type Secret struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
@@ -46,6 +47,11 @@ func (s *Secret) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (s *Secret) GetKey() string {
 	return s.Namespace + "." + s.Name
+}
+
+// GetPath function
+func (s *Secret) GetPath() string {
+	return s.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

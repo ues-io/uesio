@@ -42,9 +42,9 @@ func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem
 	}, nil
 }
 
-// GetKeyPrefix function
-func (sc *SecretCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

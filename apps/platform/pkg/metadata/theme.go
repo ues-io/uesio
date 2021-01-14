@@ -56,6 +56,11 @@ func (t *Theme) GetKey() string {
 	return t.Namespace + "." + t.Name
 }
 
+// GetPath function
+func (t *Theme) GetPath() string {
+	return t.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (t *Theme) GetPermChecker() *PermissionSet {
 	return nil

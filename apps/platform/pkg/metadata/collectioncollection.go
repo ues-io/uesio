@@ -27,9 +27,9 @@ func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (Bundleable
 	return NewCollection(key)
 }
 
-// GetKeyPrefix function
-func (cc *CollectionCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cc *CollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

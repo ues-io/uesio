@@ -42,7 +42,7 @@ func (ufc *UserFileCollection) GetBucket(site *Site) (string, error) {
 }
 
 // GetPath function
-func (ufc *UserFileCollection) GetPath(userFile *UserFileMetadata, siteID, workspaceID string) (string, error) {
+func (ufc *UserFileCollection) GetFilePath(userFile *UserFileMetadata, siteID, workspaceID string) (string, error) {
 	template, err := templating.New(ufc.PathFormat)
 	if err != nil {
 		return "", err
@@ -115,6 +115,11 @@ func (ufc *UserFileCollection) SetWorkspace(workspace string) {
 // GetKey function
 func (ufc *UserFileCollection) GetKey() string {
 	return ufc.Namespace + "." + ufc.Name
+}
+
+// GetPath function
+func (ufc *UserFileCollection) GetPath() string {
+	return ufc.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

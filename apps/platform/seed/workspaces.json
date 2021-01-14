@@ -1,20 +1,20 @@
 [
-  {
-    "name": "dev",
-    "app": {
-      "name": "crm"
-    }
-  },
-  {
-    "name": "test",
-    "app": {
-      "name": "crm"
-    }
-  },
-  {
-    "name": "dev",
-    "app": {
-      "name": "sample"
-    }
-  }
+	{
+		"name": "dev",
+		"app": {
+			"name": "crm"
+		}
+	},
+	{
+		"name": "test",
+		"app": {
+			"name": "crm"
+		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"name": "sample"
+		}
+	}
 ]

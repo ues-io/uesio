@@ -1,32 +1,32 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "jsx": "react",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictNullChecks": true,
-    "esModuleInterop": true,
-    "allowJs": false,
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es6",
-    "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@uesio/ui": ["libs/ui/src/index.ts"],
-      "@uesio/buildtime": ["libs/buildtime/src/index.ts"],
-      "@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"],
-      "@uesio/constants": ["libs/constants/src/index.ts"]
-    }
-  },
-  "exclude": ["node_modules", "tmp"]
+	"compileOnSave": false,
+	"compilerOptions": {
+		"jsx": "react",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"esModuleInterop": true,
+		"allowJs": false,
+		"rootDir": ".",
+		"sourceMap": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"importHelpers": true,
+		"target": "es6",
+		"module": "esnext",
+		"typeRoots": ["node_modules/@types"],
+		"lib": ["es2019", "dom"],
+		"skipLibCheck": true,
+		"skipDefaultLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@uesio/ui": ["libs/ui/src/index.ts"],
+			"@uesio/buildtime": ["libs/buildtime/src/index.ts"],
+			"@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"],
+			"@uesio/constants": ["libs/constants/src/index.ts"]
+		}
+	},
+	"exclude": ["node_modules", "tmp"]
 }

@@ -32,9 +32,9 @@ func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (Bundlea
 	return NewPermissionSet(key)
 }
 
-// GetKeyPrefix function
-func (pc *PermissionSetCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (pc *PermissionSetCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

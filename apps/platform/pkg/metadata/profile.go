@@ -20,6 +20,7 @@ func NewProfile(key string) (*Profile, error) {
 
 // Profile struct
 type Profile struct {
+	ID                string          `yaml:"-" uesio:"uesio.id"`
 	Name              string          `yaml:"name" uesio:"uesio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"-"`
@@ -57,6 +58,11 @@ func (p *Profile) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (p *Profile) GetKey() string {
 	return p.Namespace + "." + p.Name
+}
+
+// GetPath function
+func (p *Profile) GetPath() string {
+	return p.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

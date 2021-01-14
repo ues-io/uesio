@@ -20,6 +20,7 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
+	ID             string          `yaml:"-" uesio:"uesio.id"`
 	Name           string          `yaml:"name" uesio:"uesio.name"`
 	Namespace      string          `yaml:"-" uesio:"-"`
 	NamedRefs      map[string]bool `yaml:"named" uesio:"-"`
@@ -62,6 +63,11 @@ func (ps *PermissionSet) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (ps *PermissionSet) GetKey() string {
 	return ps.Namespace + "." + ps.Name
+}
+
+// GetPath function
+func (ps *PermissionSet) GetPath() string {
+	return ps.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

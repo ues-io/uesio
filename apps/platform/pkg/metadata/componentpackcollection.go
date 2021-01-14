@@ -42,9 +42,9 @@ func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (Bundle
 	}, nil
 }
 
-// GetKeyPrefix function
-func (cpc *ComponentPackCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

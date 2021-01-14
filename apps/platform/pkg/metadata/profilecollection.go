@@ -32,9 +32,9 @@ func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableIte
 	return NewProfile(key)
 }
 
-// GetKeyPrefix function
-func (pc *ProfileCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (pc *ProfileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

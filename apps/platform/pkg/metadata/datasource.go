@@ -102,6 +102,11 @@ func (ds *DataSource) GetKey() string {
 	return ds.Namespace + "." + ds.Name
 }
 
+// GetPath function
+func (ds *DataSource) GetPath() string {
+	return ds.GetKey() + ".yaml"
+}
+
 // GetPermChecker function
 func (ds *DataSource) GetPermChecker() *PermissionSet {
 	return nil

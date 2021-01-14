@@ -32,9 +32,9 @@ func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (Bundleab
 	return NewConfigValue(key)
 }
 
-// GetKeyPrefix function
-func (cvc *ConfigValueCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

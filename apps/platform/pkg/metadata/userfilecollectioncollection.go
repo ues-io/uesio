@@ -32,9 +32,9 @@ func (ufcc *UserFileCollectionCollection) NewBundleableItemWithKey(key string) (
 	return NewUserFileCollection(key)
 }
 
-// GetKeyPrefix function
-func (ufcc *UserFileCollectionCollection) GetKeyPrefix(conditions BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (ufcc *UserFileCollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function

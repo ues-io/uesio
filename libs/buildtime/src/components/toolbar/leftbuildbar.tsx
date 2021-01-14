@@ -33,15 +33,15 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 	// For Example:
 	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
 	// This: ["components"]["0"]["myns.mycomp"]
-	const trimmedPath = component.path.trimPathToComponent(path)
+	const trimmedPath = (path && component.path.trimPathToComponent(path)) || ""
 
-	const propDef = component.registry.getPropertiesDefinitionFromPath(
-		trimmedPath
-	)
+	const propDef = trimmedPath
+		? component.registry.getPropertiesDefinitionFromPath(trimmedPath)
+		: undefined
 
-	const definition = uesio.view.useDefinition(
-		trimmedPath
-	) as definition.DefinitionMap
+	const definition = trimmedPath
+		? (uesio.view.useDefinition(trimmedPath) as definition.DefinitionMap)
+		: undefined
 
 	return (
 		<MiniToolbar

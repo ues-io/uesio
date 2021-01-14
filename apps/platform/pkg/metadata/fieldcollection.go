@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"os"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -43,13 +44,21 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	}, nil
 }
 
-// GetKeyPrefix function
-func (fc *FieldCollection) GetKeyPrefix(conditions BundleConditions) string {
+// GetKeyFromPath function
+func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
-	if hasCollection {
-		return collectionKey + "."
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 1 {
+		// Ignore this file
+		return "", nil
 	}
-	return ""
+	if hasCollection {
+		if strings.HasPrefix(parts[0], collectionKey+".") && strings.HasSuffix(parts[0], ".yaml") {
+			return strings.TrimSuffix(path, ".yaml"), nil
+		}
+		return "", nil
+	}
+	return strings.TrimSuffix(path, ".yaml"), nil
 }
 
 // AddItem function

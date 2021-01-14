@@ -30,7 +30,7 @@ func Upload(fileBody io.Reader, details datasource.FileDetails, session *sess.Se
 	if err != nil {
 		return "", errors.New("error Fetching newly created userfile: " + id + " : " + err.Error())
 	}
-	path, err := ufc.GetPath(newUserFile, site.Name, session.GetWorkspaceID())
+	path, err := ufc.GetFilePath(newUserFile, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return "", errors.New("error generating path for userfile: " + err.Error())
 	}

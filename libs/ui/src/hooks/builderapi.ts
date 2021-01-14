@@ -16,6 +16,7 @@ import { SignalDefinition } from "../definition/signal"
 import { metadata } from "@uesio/constants"
 import {
 	setActiveNode,
+	setPanelClosed,
 	setDragNode,
 	setDropNode,
 	setLeftPanel,
@@ -56,7 +57,9 @@ class BuilderAPI {
 	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))
 	}
-
+	setPanelClosed = () => {
+		this.dispatcher(setPanelClosed())
+	}
 	setSelectedNode = (path: string) => {
 		this.dispatcher(setSelectedNode(path))
 	}

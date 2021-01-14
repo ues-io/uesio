@@ -10,6 +10,7 @@ import (
 
 // ConfigValue struct
 type ConfigValue struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
@@ -59,6 +60,11 @@ func (cv *ConfigValue) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (cv *ConfigValue) GetKey() string {
 	return cv.Namespace + "." + cv.Name
+}
+
+// GetPath function
+func (cv *ConfigValue) GetPath() string {
+	return cv.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

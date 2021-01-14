@@ -30,7 +30,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 
 		err = group.Loop(func(item adapters.LoadableItem) error {
 
-			key := item.(metadata.BundleableItem).GetKey()
+			path := item.(metadata.BundleableItem).GetPath()
 
 			// Special handling for bots
 			if metadataType == "bots" {
@@ -42,7 +42,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 				}
 
 				itemStream := bundlestore.ItemStream{
-					FileName: bot.FileName,
+					FileName: bot.GetBotFilePath(),
 					Type:     metadataType,
 				}
 
@@ -78,7 +78,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 			}
 
 			itemStream := bundlestore.ItemStream{
-				FileName: key + ".yaml",
+				FileName: path,
 				Type:     metadataType,
 			}
 
@@ -150,10 +150,6 @@ func Zip(writer io.Writer, session *sess.Session) error {
 	}
 
 	// Make sure to check the error on Close.
-	err = zipWriter.Close()
-	if err != nil {
-		return err
-	}
+	return zipWriter.Close()
 
-	return nil
 }
