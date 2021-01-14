@@ -1,6 +1,7 @@
 import { CSSProperties } from "react"
-import { Context } from "../context/context"
 import yaml from "yaml"
+import { Context } from "../context/context"
+import { EntityPayload } from "../bands/utils"
 
 export type YamlDoc = yaml.Document
 
@@ -31,3 +32,9 @@ export type Definition =
 	| string[]
 	| number[]
 	| DefinitionMap[]
+
+export type AddDefinitionPayload = {
+	path: string
+	definition: Definition
+	index?: number
+} & EntityPayload

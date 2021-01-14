@@ -6,6 +6,7 @@ import {
 	DefinitionList,
 	DefinitionMap,
 	YamlDoc,
+	AddDefinitionPayload,
 } from "../../definition/definition"
 import yaml from "yaml"
 import {
@@ -21,7 +22,7 @@ import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
 import { getParentPath } from "../../component/path"
-import { PlainViewDef, AddDefinitionPayload } from "./types"
+import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"

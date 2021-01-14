@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
@@ -33,13 +32,19 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
-const addMarkerAtFirstKey = (addedDefinition: unknown) => {
+const addMarkerAtFirstKey = (
+	addedDefinition: definition.AddDefinitionPayload
+) => {
 	const keys = Object.keys(addedDefinition?.definition || {})
 	const withMarker = {
 		...addedDefinition,
 		definition: {
 			[`${keys?.[0] || ""}${MARKER_FOR_DIFF_START}`]: {
-				...(keys?.[0] ? addedDefinition?.definition[keys[0]] : {}),
+				...(keys.length > 0
+					? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					  // @ts-ignore next-line
+					  addedDefinition?.definition?.[keys[0]]
+					: {}),
 			},
 		},
 	}
@@ -51,8 +56,9 @@ const splitTextByLines = (text: string) => text.split(/\r?\n/)
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
-// AddDefinitionPayload
-const addedDefinitionHeight = (addedDefinition: unknown) => {
+const addedDefinitionHeight = (
+	addedDefinition: definition.AddDefinitionPayload
+) => {
 	const yamlDoc = util.yaml.parse(
 		JSON.stringify(addedDefinition?.definition || {})
 	)
@@ -61,8 +67,8 @@ const addedDefinitionHeight = (addedDefinition: unknown) => {
 
 // home-made diff algorithm since unix-like diff approach did not work for our use case
 const diff = (
-	previousYamlDocInJon: yaml.Document,
-	lastAddedDefinition: unknown
+	previousYamlDocInJson: definition.DefinitionMap,
+	lastAddedDefinition: definition.AddDefinitionPayload
 ): [number, number] => {
 	// algorithm
 	// 0. add a marker to last added definition (drag'n drop into the canvas)
@@ -77,13 +83,13 @@ const diff = (
 	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarkerStart
 	const pathArray = toPath(path)
-	const children = get(previousYamlDocInJon, pathArray) || []
+	const children = get(previousYamlDocInJson, pathArray) || []
 
 	// step 1. insert the new definition in the children, with mutation of previousYaml
 	children.splice(index, 0, definition)
 
 	// step 2.
-	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYamlDocInJon))
+	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYamlDocInJson))
 	// step 3.
 	const newYamlDocStringified = newYamlDoc.toString()
 	const splittedByLines = splitTextByLines(newYamlDocStringified)
