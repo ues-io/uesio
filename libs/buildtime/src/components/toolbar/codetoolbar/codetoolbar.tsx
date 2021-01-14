@@ -46,19 +46,23 @@ const addMarkerAtFirstKey = (addedDefinition: unknown) => {
 	return withMarker
 }
 
-// AddDefinitionPayload
-const definitionPropertiesAmount = (addedDefinition: unknown) => {
-	const keys = Object.keys(addedDefinition?.definition || {})
-	const componentName = keys?.[0]
-	return componentName
-		? Object.keys(addedDefinition.definition[componentName]).length
-		: 0
-}
-
 const splitTextByLines = (text: string) => text.split(/\r?\n/)
 
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
+
+// AddDefinitionPayload
+const definitionPropertiesAmount = (addedDefinition: unknown) => {
+	const yamlDoc = util.yaml.parse(
+		JSON.stringify(addedDefinition?.definition || {})
+	)
+
+	if (yamlDoc && yamlDoc.toString()) {
+		console.log("legnth", splitTextByLines(yamlDoc.toString()).length)
+	}
+
+	return splitTextByLines(yamlDoc.toString())
+}
 
 // home-made diff algorithm since unix-like diff approach did not work for our use case
 const diff = (
