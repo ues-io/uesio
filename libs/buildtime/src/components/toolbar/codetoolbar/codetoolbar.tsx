@@ -86,11 +86,11 @@ const diff = (
 	// step 2.
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
 	// step 3.
-	const newYamlStringified = newYamlDoc.toString()
+	const newYamlDocStringified = newYamlDoc.toString()
 	// step 4.
 	const startOffset =
 		lookForLine(
-			splitTextByLines(newYamlStringified),
+			splitTextByLines(newYamlDocStringified),
 			MARKER_FOR_DIFF_START
 		) + 1
 	// step 5.
