@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) =>
 const addMarkerAtFirstKey = (
 	addedDefinition: definition.AddDefinitionPayload
 ) => {
-	const keys = Object.keys(addedDefinition?.definition || {})
+	const keys = Object.keys(addedDefinition.definition || {})
 	const withMarker = {
 		...addedDefinition,
 		definition: {
@@ -43,7 +43,7 @@ const addMarkerAtFirstKey = (
 				...(keys.length > 0
 					? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 					  // @ts-ignore next-line
-					  addedDefinition?.definition?.[keys[0]]
+					  addedDefinition.definition?.[keys[0]]
 					: {}),
 			},
 		},
