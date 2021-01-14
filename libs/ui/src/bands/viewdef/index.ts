@@ -15,6 +15,7 @@ import {
 	removeNodeAtPath,
 	setNodeAtPath,
 	YAML_OPTIONS,
+	parse,
 } from "../../yamlutils/yamlutils"
 import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
@@ -83,10 +84,7 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	}
 
 	if (state.yaml === state.originalYaml) {
-		state.originalYaml = yaml.parseDocument(
-			state.originalYaml.toString(),
-			YAML_OPTIONS
-		)
+		state.originalYaml = parse(state.originalYaml.toString())
 	}
 
 	// We actually don't want components using useYaml to rerender
@@ -102,7 +100,7 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
-		state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+		state.yaml = parse(state.yaml.toString())
 		const newNode = definition ? yaml.createNode(definition) : null
 		setNodeAtPath(path, state.yaml.contents, newNode)
 	}
@@ -127,7 +125,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 		}
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
-			state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+			state.yaml = parse(state.yaml.toString())
 			removeNodeAtPath(pathArray.concat([index]), state.yaml.contents)
 		}
 	}
@@ -171,7 +169,7 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
-			state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+			state.yaml = parse(state.yaml.toString())
 			const fromYamlParent = getNodeAtPath(
 				fromPathArr,
 				state.yaml.contents
@@ -195,17 +193,17 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
-	const { path, definition } = payload
+	const { path, definition, index } = payload
 	const pathArray = toPath(path)
 	const currentArray = get(state.definition, path) || []
 
-	const newIndex = payload.index || currentArray.length
+	const newIndex = index || currentArray.length
 	currentArray.splice(newIndex, 0, definition)
 	setWith(state, ["definition"].concat(pathArray), currentArray)
 
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
-		state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+		state.yaml = parse(state.yaml.toString())
 		const newNode = yaml.createNode(definition, true)
 		if (newNode) {
 			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
@@ -222,7 +220,7 @@ const addDefPair = (state: PlainViewDef, payload: AddDefinitionPairPayload) => {
 
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
-		state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+		state.yaml = parse(state.yaml.toString())
 		const newNode = yaml.createNode(definition, true)
 		addNodePairAtPath(path, state.yaml.contents, newNode, key)
 	}
@@ -251,7 +249,7 @@ const changeDefKey = (
 		setWith(state, ["definition"].concat(pathArray), newParent)
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
-			state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
+			state.yaml = parse(state.yaml.toString())
 			const parent = getNodeAtPath(
 				pathArray,
 				state.yaml.contents
@@ -344,7 +342,7 @@ const viewDefSlice = createSlice({
 		builder.addCase(
 			loadOp.fulfilled,
 			(state, { payload }: PayloadAction<string>) => {
-				const yamlDoc = yaml.parseDocument(payload, YAML_OPTIONS)
+				const yamlDoc = parse(payload)
 				const defDoc = new yaml.Document(YAML_OPTIONS)
 				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
 				const dependenciesDoc = getNodeAtPath(
