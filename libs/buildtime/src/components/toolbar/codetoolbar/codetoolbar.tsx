@@ -34,6 +34,19 @@ const useStyles = makeStyles((theme) =>
 	})
 )
 
+const addMarkerAtFirstKey = (addedDefinition: unknown) => {
+	const keys = Object.keys(addedDefinition?.definition || {})
+	const withMarker = {
+		...addedDefinition,
+		definition: {
+			[`${keys?.[0] || ""}${MARKER_FOR_DIFF_START}`]: {
+				...(keys?.[0] ? addedDefinition?.definition[keys[0]] : {}),
+			},
+		},
+	}
+	return withMarker
+}
+
 // AddDefinitionPayload
 const definitionPropertiesAmount = (addedDefinition: unknown) => {
 	const keys = Object.keys(addedDefinition?.definition || {})
@@ -48,30 +61,17 @@ const splitTextByLines = (text: string) => text.split(/\r?\n/)
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
-const difference = (
-	previousYamlDoc: yaml.Document,
-	lastAddedDefinition: unknown
-) => {
-	const previousYaml = previousYamlDoc.toJSON()
-
+// home-made diff algorithm since the diff unix-like method did not work
+const diff = (previousYamlDoc: yaml.Document, lastAddedDefinition: unknown) => {
 	// algo
 	// 0. add a marker to the lastAddDefinition object
-	// 1. insert the marked lastAddDefiniion to the yamlJsonOld
-	// 2. transform to yaml
-	// 3. get the line of the marker in the yaml form
+	// 1. insert the marked lastAddDefiniion to the previous yaml in JSON formatted
+	// 2. transform the prevjous yaml in JSON formatted into yaml format
+	// 3. get the line of the marker in yaml formatted
 	// 4. compute the height of the lasAddedDefinition
-	// 5. gather all the previous steps to form the range lines of the changes in the editor
-
-	const keys = Object.keys(lastAddedDefinition?.definition)
-	const withMarker = {
-		...lastAddedDefinition,
-		definition: {
-			[keys[0] + MARKER_FOR_DIFF_START]: {
-				...lastAddedDefinition?.definition[keys[0]],
-			},
-		},
-	}
-
+	// 5. return range lines of the changes (start with index 1 and not 0 for the monaco editor)
+	const previousYaml = previousYamlDoc.toJSON()
+	const withMarker = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarker
 	const pathArray = toPath(path)
 	const currentArray = get(previousYaml, pathArray) || []
@@ -86,10 +86,7 @@ const difference = (
 			splitTextByLines(newYamlStringified),
 			MARKER_FOR_DIFF_START
 		) + 1
-	console.log(
-		"withMarker.definition[keys[0] + MARKER_FOR_DIFF_START]",
-		withMarker.definition[keys[0] + MARKER_FOR_DIFF_START]
-	)
+
 	const endOffset =
 		startOffset + definitionPropertiesAmount(lastAddedDefinition)
 
@@ -111,7 +108,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			"difference",
 			currentAST.current &&
 				lastAddedDefinition &&
-				difference(currentAST.current, lastAddedDefinition)
+				diff(currentAST.current, lastAddedDefinition)
 		)
 	}
 	console.log("CodeToolbar rendering")
