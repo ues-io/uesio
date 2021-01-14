@@ -56,12 +56,7 @@ const addedDefinitionHeight = (addedDefinition: unknown) => {
 	const yamlDoc = util.yaml.parse(
 		JSON.stringify(addedDefinition?.definition || {})
 	)
-
-	if (yamlDoc && yamlDoc.toString()) {
-		console.log("legnth", splitTextByLines(yamlDoc.toString()).length)
-	}
-
-	return splitTextByLines(yamlDoc.toString())
+	return splitTextByLines(yamlDoc.toString()).length
 }
 
 // home-made diff algorithm since unix-like diff approach did not work for our use case
@@ -93,11 +88,12 @@ const diff = (
 	const newYamlDocStringified = newYamlDoc.toString()
 	const splittedByLines = splitTextByLines(newYamlDocStringified)
 	// step 4.
-	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START) + 1
+	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START)
 	// step 5.
 	const endOffset = startOffset + addedDefinitionHeight(lastAddedDefinition)
 	// step 6.
-	return [startOffset, endOffset]
+
+	return [startOffset + 1, endOffset - 1]
 }
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
