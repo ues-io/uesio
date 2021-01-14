@@ -72,7 +72,7 @@ const diff = (
 ): [number, number] => {
 	// algorithm
 	// 0. add a marker to last added definition (drag'n drop into the canvas)
-	// 1. insert the marked definition to the previous YAML definition in JSON formatted
+	// 1. insert the marked definition into the previous YAML definition in JSON formatted
 	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
 	// 4. get the line of the marker in the stringified YAML document
@@ -85,7 +85,7 @@ const diff = (
 	const pathArray = toPath(path)
 	const children = get(previousYamlDocInJson, pathArray) || []
 
-	// step 1. insert the new definition in the children, with mutation of previousYaml
+	// step 1. insert the new definition in the children, by mutating previousYamlDocInJson
 	children.splice(index, 0, definition)
 
 	// step 2.
@@ -309,7 +309,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 						// scroll to the changes
 						editor.revealLineInCenter(rangeDiff[1])
 
-						// we have to remove the decoration otherwise css kicks in while interacting with the editor
+						// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
 						setTimeout(
 							() => editor.deltaDecorations(decorations, []),
 							ANIMATION_DURATION
