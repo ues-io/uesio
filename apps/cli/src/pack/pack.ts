@@ -169,8 +169,11 @@ const getWebpackConfig = (
 		// Configuration Object
 		resolve: {
 			alias: {
-				"@uesio/constants": path.resolve(__dirname, '../../../../libs/constants/src/index') 
-			  },
+				"@uesio/constants": path.resolve(
+					__dirname,
+					"../../../../libs/constants/src/index"
+				),
+			},
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
 		},

@@ -1,8 +1,8 @@
 const MODE = {
-	READ: 'READ',
-	EDIT: 'EDIT',
-};
+	READ: "READ",
+	EDIT: "EDIT",
+}
 
-type FieldMode = keyof typeof MODE;
+type FieldMode = keyof typeof MODE
 
-export { MODE, FieldMode };
+export { MODE, FieldMode }

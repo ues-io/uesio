@@ -1,66 +1,66 @@
 {
-  "root": true,
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "project": "./tsconfig.*?.json"
-  },
-  "env": {
-    "browser": true
-  },
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@typescript-eslint", "@nrwl/nx", "react"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "prettier/@typescript-eslint"
-  ],
-  "rules": {
-    "array-callback-return": "error",
-    "dot-notation": "error",
-    "prefer-arrow-callback": "error",
-    "arrow-body-style": "error",
-    "no-undef": "error",
-    "no-nested-ternary": "error",
-    "no-unneeded-ternary": "error",
-    "object-shorthand": "error",
-    "no-duplicate-imports": "error",
-    "eqeqeq": "error",
-    "radix": "error",
-    "no-new-wrappers": "error",
-    "react/self-closing-comp": [
-      "error",
-      {
-        "component": true,
-        "html": true
-      }
-    ],
-    "react/jsx-closing-bracket-location": "error",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        "selector": "variable",
-        "format": ["camelCase", "PascalCase", "UPPER_CASE"]
-      }
-    ],
-    "@typescript-eslint/explicit-member-accessibility": "off",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-parameter-properties": "off",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/no-unused-vars": "error",
-    "@nrwl/nx/enforce-module-boundaries": [
-      "error",
-      {
-        "enforceBuildableLibDependency": true,
-        "allow": [],
-        "depConstraints": [
-          { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
-        ]
-      }
-    ]
-  }
+	"root": true,
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"sourceType": "module",
+		"project": "./tsconfig.*?.json"
+	},
+	"env": {
+		"browser": true
+	},
+	"ignorePatterns": ["**/*"],
+	"plugins": ["@typescript-eslint", "@nrwl/nx", "react"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended",
+		"prettier",
+		"prettier/@typescript-eslint"
+	],
+	"rules": {
+		"array-callback-return": "error",
+		"dot-notation": "error",
+		"prefer-arrow-callback": "error",
+		"arrow-body-style": "error",
+		"no-undef": "error",
+		"no-nested-ternary": "error",
+		"no-unneeded-ternary": "error",
+		"object-shorthand": "error",
+		"no-duplicate-imports": "error",
+		"eqeqeq": "error",
+		"radix": "error",
+		"no-new-wrappers": "error",
+		"react/self-closing-comp": [
+			"error",
+			{
+				"component": true,
+				"html": true
+			}
+		],
+		"react/jsx-closing-bracket-location": "error",
+		"@typescript-eslint/naming-convention": [
+			"error",
+			{
+				"selector": "variable",
+				"format": ["camelCase", "PascalCase", "UPPER_CASE"]
+			}
+		],
+		"@typescript-eslint/explicit-member-accessibility": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/no-parameter-properties": "off",
+		"@typescript-eslint/no-explicit-any": "error",
+		"@typescript-eslint/no-unused-vars": "error",
+		"@nrwl/nx/enforce-module-boundaries": [
+			"error",
+			{
+				"enforceBuildableLibDependency": true,
+				"allow": [],
+				"depConstraints": [
+					{ "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
+				]
+			}
+		]
+	}
 }

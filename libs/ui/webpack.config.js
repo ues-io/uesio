@@ -1,12 +1,13 @@
 //const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
-const path = require("path");
-const production = process.env.NODE_ENV === "production"
-const sourceMaps = production ? {} : { devtool: "source-map" }
+const path = require("path")
+const sourceMaps = { devtool: "source-map" }
+const inDevMode = process.env.NODE_ENV
+	? process.env.NODE_ENV === "development"
+	: true
 module.exports = {
-	mode: production ? "production" : "development",
-
+	mode: inDevMode ? "development" : "production",
 	// Enable sourcemaps for debugging webpack's output.
-	...sourceMaps,
+	...(inDevMode ? sourceMaps : {}),
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
@@ -43,9 +44,9 @@ module.exports = {
 		library: "[name]",
 		libraryTarget: "umd",
 		filename: "[name].js",
-    sourceMapFilename: "[name].js.map",
-    path: path.join(__dirname, "../../dist/ui")
-  },
+		sourceMapFilename: "[name].js.map",
+		path: path.join(__dirname, "../../dist/ui"),
+	},
 
 	/*
 	plugins: [
