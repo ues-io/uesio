@@ -1,15 +1,18 @@
+// @ts-nocheck
 import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
-import { hooks, util, definition, styles } from "@uesio/ui"
+import { hooks, util, definition, styles, util } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
+import setWith from "lodash.setwith"
+import toPath from "lodash.topath"
+import get from "lodash.get"
 
 const MARKER_FOR_DIFF_START = "##START##"
-const MARKER_FOR_DIFF_END = "##END##"
 const ANIMATION_DURATION = 3000
 const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
@@ -31,6 +34,10 @@ const useStyles = makeStyles((theme) =>
 		},
 	})
 )
+/*
+const definitionHeight = (definition: AddDefinitionPayload) =>
+	Object.keys(definition).length
+*/
 
 const makeMapLineNumberToLine = (text: string) => {
 	const lines = text.split(/\r?\n/)
@@ -43,9 +50,47 @@ const makeMapLineNumberToLine = (text: string) => {
 	)
 }
 
-const difference = (yamlJsonOld: unknown, lastAddedDefinition: unknown) => {
-	console.log("yamlJsonOld", yamlJsonOld)
-	console.log("lastAddedDefinition", lastAddedDefinition)
+const splitTextByLines = (text: string) => text.split(/\r?\n/)
+
+const lookForLine = (lines: string[], wordToLookFor: string) =>
+	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
+
+const difference = (
+	previousYamlDoc: yaml.Document,
+	lastAddedDefinition: unknown
+) => {
+	const previousYaml = previousYamlDoc.toJSON()
+
+	// algo
+	// 0. add a marker to the lastAddDefinition object
+	// 1. insert the marked lastAddDefiniion to the yamlJsonOld
+	// 2. transform to yaml
+	// 3. get the line of the marker in the yaml form
+	// 4. compute the height of the lasAddedDefinition
+	// 5. gather all the previous steps to form the range lines of the changes in the editor
+
+	const keys = Object.keys(lastAddedDefinition?.definition)
+	const withMarker = {
+		...lastAddedDefinition,
+		definition: {
+			[keys[0] + MARKER_FOR_DIFF_START]: {
+				...lastAddedDefinition?.definition[keys[0]],
+			},
+		},
+	}
+
+	//	setWith(state, ["definition"].concat(pathArray), definition)
+	//	const yaml = utilexorts.yaml.parse()
+
+	const { path, definition, index } = withMarker
+	const pathArray = toPath(path)
+	const currentArray = get(previousYaml, pathArray) || []
+
+	// insert the new definition in the currentArray
+	currentArray.splice(index, 0, definition)
+
+	const newYaml = util.yaml.parse(JSON.stringify(previousYaml))
+	console.log("newYaml", newYaml.toString())
 }
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
@@ -58,13 +103,14 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const previousYaml = currentAST.current?.toString()
 	const hasYamlChanged = previousYaml !== currentYaml
 	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
-
-	//	console.log(difference(currentAST.current?.toJSON(), lastAddedDefinition))
-
-	console.log(
-		"makeMapLineNumberToLine",
-		previousYaml && makeMapLineNumberToLine(previousYaml)
-	)
+	if (hasYamlChanged) {
+		console.log(
+			"difference",
+			currentAST.current &&
+				lastAddedDefinition &&
+				difference(currentAST.current, lastAddedDefinition)
+		)
+	}
 	console.log("CodeToolbar rendering")
 
 	return (
