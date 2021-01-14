@@ -64,7 +64,7 @@ func (fsc *FileSourceCollection) Len() int {
 	return len(*fsc)
 }
 
-// Sort function
-func (fsc *FileSourceCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (fsc *FileSourceCollection) GetItems() interface{} {
+	return fsc
 }

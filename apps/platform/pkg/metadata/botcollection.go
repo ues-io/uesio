@@ -72,7 +72,7 @@ func (bc *BotCollection) Len() int {
 	return len(*bc)
 }
 
-// Sort function
-func (bc *BotCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (bc *BotCollection) GetItems() interface{} {
+	return bc
 }

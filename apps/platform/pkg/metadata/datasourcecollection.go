@@ -64,7 +64,7 @@ func (dsc *DataSourceCollection) Len() int {
 	return len(*dsc)
 }
 
-// Sort function
-func (dsc *DataSourceCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (dsc *DataSourceCollection) GetItems() interface{} {
+	return dsc
 }

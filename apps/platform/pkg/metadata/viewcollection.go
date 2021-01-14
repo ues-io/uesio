@@ -74,7 +74,7 @@ func (vc *ViewCollection) Len() int {
 	return len(*vc)
 }
 
-// Sort function
-func (vc *ViewCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (vc *ViewCollection) GetItems() interface{} {
+	return vc
 }

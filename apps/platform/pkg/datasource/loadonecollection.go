@@ -48,7 +48,7 @@ func (c *LoadOneCollection) GetName() string {
 	return c.Collection.GetName()
 }
 
-// Sort function
-func (c *LoadOneCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (c *LoadOneCollection) GetItems() interface{} {
+	return c
 }

@@ -49,7 +49,7 @@ func (ufmc *UserFileMetadataCollection) Len() int {
 	return len(*ufmc)
 }
 
-// Sort function
-func (ufmc *UserFileMetadataCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (ufmc *UserFileMetadataCollection) GetItems() interface{} {
+	return ufmc
 }

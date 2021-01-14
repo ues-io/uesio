@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 
@@ -173,7 +174,11 @@ func loadOne(
 		return errors.New("DynamoDB failed manage response:" + err.Error())
 	}
 
-	op.Collection.Sort(op.Order, collectionMetadata)
+	collSlice := op.Collection.GetItems()
+	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+	if ok {
+		sort.Slice(collSlice, locLessFunc)
+	}
 
 	//At this point idsToLookFor has a mapping for reference field
 	//names to actual id values we will need to grab from the referenced collection

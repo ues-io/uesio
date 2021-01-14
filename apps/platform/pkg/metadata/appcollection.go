@@ -49,7 +49,7 @@ func (ac *AppCollection) Len() int {
 	return len(*ac)
 }
 
-// Sort function
-func (ac *AppCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (ac *AppCollection) GetItems() interface{} {
+	return ac
 }

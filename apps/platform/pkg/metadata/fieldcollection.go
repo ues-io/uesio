@@ -79,7 +79,7 @@ func (fc *FieldCollection) Len() int {
 	return len(*fc)
 }
 
-// Sort function
-func (fc *FieldCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (fc *FieldCollection) GetItems() interface{} {
+	return fc
 }

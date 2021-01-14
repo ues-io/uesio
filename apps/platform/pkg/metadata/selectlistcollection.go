@@ -74,7 +74,7 @@ func (slc *SelectListCollection) Len() int {
 	return len(*slc)
 }
 
-// Sort function
-func (slc *SelectListCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (slc *SelectListCollection) GetItems() interface{} {
+	return slc
 }

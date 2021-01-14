@@ -49,7 +49,7 @@ func (uc *UserCollection) Len() int {
 	return len(*uc)
 }
 
-// Sort function
-func (uc *UserCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (uc *UserCollection) GetItems() interface{} {
+	return uc
 }

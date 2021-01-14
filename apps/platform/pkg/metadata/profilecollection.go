@@ -64,7 +64,7 @@ func (pc *ProfileCollection) Len() int {
 	return len(*pc)
 }
 
-// Sort function
-func (pc *ProfileCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (pc *ProfileCollection) GetItems() interface{} {
+	return pc
 }

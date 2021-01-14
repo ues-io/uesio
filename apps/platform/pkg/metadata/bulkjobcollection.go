@@ -49,7 +49,7 @@ func (bjc *BulkJobCollection) Len() int {
 	return len(*bjc)
 }
 
-// Sort function
-func (bjc *BulkJobCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (bjc *BulkJobCollection) GetItems() interface{} {
+	return bjc
 }

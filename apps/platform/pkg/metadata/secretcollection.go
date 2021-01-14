@@ -74,7 +74,7 @@ func (sc *SecretCollection) Len() int {
 	return len(*sc)
 }
 
-// Sort function
-func (sc *SecretCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (sc *SecretCollection) GetItems() interface{} {
+	return sc
 }

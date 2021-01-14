@@ -49,7 +49,7 @@ func (bc *BundleCollection) Len() int {
 	return len(*bc)
 }
 
-// Sort function
-func (bc *BundleCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (bc *BundleCollection) GetItems() interface{} {
+	return bc
 }

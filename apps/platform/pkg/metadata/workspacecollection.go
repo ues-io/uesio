@@ -49,7 +49,7 @@ func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
 }
 
-// Sort function
-func (wc *WorkspaceCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (wc *WorkspaceCollection) GetItems() interface{} {
+	return wc
 }

@@ -49,7 +49,7 @@ func (bbc *BulkBatchCollection) Len() int {
 	return len(*bbc)
 }
 
-// Sort function
-func (bbc *BulkBatchCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (bbc *BulkBatchCollection) GetItems() interface{} {
+	return bbc
 }

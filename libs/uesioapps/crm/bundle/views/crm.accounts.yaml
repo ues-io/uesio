@@ -72,10 +72,10 @@ definition:
     accounts:
       collection: crm.accounts
       order:
-        - field: crm.externalid
+        - field: crm.created
           desc: false
         - field: crm.name
-          desc: true
+          desc: false
       fields:
         crm.description: null
         crm.id: null

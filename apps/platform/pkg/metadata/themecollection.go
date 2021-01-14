@@ -74,7 +74,7 @@ func (tc *ThemeCollection) Len() int {
 	return len(*tc)
 }
 
-// Sort function
-func (tc *ThemeCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (tc *ThemeCollection) GetItems() interface{} {
+	return tc
 }

@@ -64,7 +64,7 @@ func (fc *FileCollection) Len() int {
 	return len(*fc)
 }
 
-// Sort function
-func (fc *FileCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (fc *FileCollection) GetItems() interface{} {
+	return fc
 }

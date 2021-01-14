@@ -64,7 +64,7 @@ func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
 }
 
-// Sort function
-func (cvc *ConfigValueCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (cvc *ConfigValueCollection) GetItems() interface{} {
+	return cvc
 }

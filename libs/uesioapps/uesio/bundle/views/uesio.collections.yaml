@@ -33,14 +33,12 @@ definition:
       fields:
         uesio.id:
         uesio.name:
+        uesio.updated:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
-      order:
-        - field: uesio.name
-          desc: true
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -116,6 +114,8 @@ definition:
                       - material.typography:
                           text: "${uesio.name}"
                           textTransform: "capitalize"
+                      - material.field:
+                          fieldId: uesio.updated
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"

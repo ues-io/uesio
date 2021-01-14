@@ -74,7 +74,7 @@ func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
 }
 
-// Sort function
-func (cpc *ComponentPackCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (cpc *ComponentPackCollection) GetItems() interface{} {
+	return cpc
 }

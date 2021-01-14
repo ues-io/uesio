@@ -3,6 +3,7 @@ package firestore
 import (
 	"context"
 	"errors"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -144,11 +145,15 @@ func loadOne(
 		}
 		op.Collection.AddItem(item)
 	}
+
+	collSlice := op.Collection.GetItems()
+	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+	if ok {
+		sort.Slice(collSlice, locLessFunc)
+	}
+
 	//At this point idsToLookFor has a mapping for reference field
 	//names to actual id values we will need to grab from the referenced collection
-
-	op.Collection.Sort(op.Order, collectionMetadata)
-
 	if len(referenceFields) != 0 {
 		//Attach extra data needed for reference fields
 		err = followUpReferenceFieldLoad(ctx, client, metadata, op, collectionMetadata, referenceFields)

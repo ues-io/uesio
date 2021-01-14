@@ -49,7 +49,7 @@ func (sdc *SiteDomainCollection) Len() int {
 	return len(*sdc)
 }
 
-// Sort function
-func (sdc *SiteDomainCollection) Sort(order []adapters.LoadRequestOrder, collectionMetadata *adapters.CollectionMetadata) {
-	println("Sort")
+// GetItems function
+func (sdc *SiteDomainCollection) GetItems() interface{} {
+	return sdc
 }
