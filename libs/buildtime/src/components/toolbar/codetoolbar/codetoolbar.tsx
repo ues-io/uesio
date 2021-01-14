@@ -67,7 +67,8 @@ const diff = (
 	lastAddedDefinition: unknown
 ): [number, number] => {
 	// algorithm
-	// 0. add a marker to last added definition (drag'n drop into the canvas)
+	// 0. add a marker to last added definition (drag'n drop into the canvas) and to next item
+	// 0bis add marker to next item
 	// 1. insert the marked definition to the previous YAML definition in JSON formatted
 	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
@@ -76,8 +77,8 @@ const diff = (
 	// 6. return lines range of the changes (start with index 1 and not 0 for the monaco editor)
 	const previousYaml = previousYamlDoc.toJSON()
 	// step 0.
-	const withMarker = addMarkerAtFirstKey(lastAddedDefinition)
-	const { path, definition, index } = withMarker
+	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
+	const { path, definition, index } = withMarkerStart
 	const pathArray = toPath(path)
 	const children = get(previousYaml, pathArray) || []
 
