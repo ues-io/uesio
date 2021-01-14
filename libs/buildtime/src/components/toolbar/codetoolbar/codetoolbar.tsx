@@ -2,13 +2,12 @@
 import React, { FunctionComponent, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
-import { hooks, util, definition, styles, util } from "@uesio/ui"
+import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
 import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import { diffLines, Change } from "diff"
-import setWith from "lodash.setwith"
 import toPath from "lodash.topath"
 import get from "lodash.get"
 
@@ -34,10 +33,15 @@ const useStyles = makeStyles((theme) =>
 		},
 	})
 )
-/*
-const definitionHeight = (definition: AddDefinitionPayload) =>
-	Object.keys(definition).length
-*/
+
+// AddDefinitionPayload
+const definitionPropertiesAmount = (addedDefinition: unknown) => {
+	const keys = Object.keys(addedDefinition?.definition)
+	const componentName = keys?.[0]
+	return componentName
+		? Object.keys(addedDefinition.definition[componentName]).length
+		: 0
+}
 
 const splitTextByLines = (text: string) => text.split(/\r?\n/)
 
@@ -87,9 +91,7 @@ const difference = (
 		withMarker.definition[keys[0] + MARKER_FOR_DIFF_START]
 	)
 	const endOffset =
-		startOffset +
-		Object.keys(withMarker.definition[keys[0] + MARKER_FOR_DIFF_START])
-			.length
+		startOffset + definitionPropertiesAmount(lastAddedDefinition)
 
 	return [startOffset, endOffset]
 }
