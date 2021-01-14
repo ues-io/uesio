@@ -9,10 +9,8 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import md5 from "md5"
 import toPath from "lodash.topath"
 import get from "lodash.get"
-import { POINT_CONVERSION_COMPRESSED } from "constants"
 
 const MARKER_FOR_DIFF_START = "##START##"
-const MARKER_FOR_DIFF_END = "##END##"
 const ANIMATION_DURATION = 3000
 const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
@@ -48,16 +46,6 @@ const addMarkerAtFirstKey = (addedDefinition: unknown) => {
 	return withMarker
 }
 
-const addMarkerAtFirstKeyEnd = (slot: unknown) => {
-	const keys = Object.keys(slot || {})
-	const withMarker = {
-		[`${keys?.[0] || ""}${MARKER_FOR_DIFF_END}`]: {
-			...(keys?.[0] ? slot[keys[0]] : {}),
-		},
-	}
-	return withMarker
-}
-
 // AddDefinitionPayload
 const definitionPropertiesAmount = (addedDefinition: unknown) => {
 	const keys = Object.keys(addedDefinition?.definition || {})
@@ -72,16 +60,14 @@ const splitTextByLines = (text: string) => text.split(/\r?\n/)
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
-// home-made diff algorithm since unix-like diff method did not work for our use case
+// home-made diff algorithm since unix-like diff approach did not work for our use case
 const diff = (
 	previousYamlDocInJon: yaml.Document,
 	lastAddedDefinition: unknown
 ): [number, number] => {
 	// algorithm
-	// 0. add a marker to last added definition (drag'n drop into the canvas) and to next item
-	// 0bis add marker to next item
+	// 0. add a marker to last added definition (drag'n drop into the canvas)
 	// 1. insert the marked definition to the previous YAML definition in JSON formatted
-
 	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
 	// 4. get the line of the marker in the stringified YAML document
@@ -92,23 +78,10 @@ const diff = (
 	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarkerStart
 	const pathArray = toPath(path)
-	const children = get(previousYamlDocInJon, pathArray)
+	const children = get(previousYamlDocInJon, pathArray) || []
 
 	// step 1. insert the new definition in the children, with mutation of previousYaml
 	children.splice(index, 0, definition)
-
-	// step 0bis
-	const isAddedDefinitionLastChildren =
-		children && children.length - 1 === index
-	const nextChild =
-		(!isAddedDefinitionLastChildren && children && children[index + 1]) ||
-		null
-
-	if (nextChild) {
-		// mutation of previousYaml with marker for the end
-		children[index + 1] = addMarkerAtFirstKeyEnd(nextChild)
-	}
-	console.log("previousYamlDocInJon", previousYamlDocInJon)
 
 	// step 2.
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYamlDocInJon))
@@ -118,9 +91,8 @@ const diff = (
 	// step 4.
 	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START) + 1
 	// step 5.
-	const endOffset = nextChild
-		? lookForLine(splittedByLines, MARKER_FOR_DIFF_END)
-		: children.length
+	const endOffset =
+		startOffset + definitionPropertiesAmount(lastAddedDefinition)
 	// step 6.
 	return [startOffset, endOffset]
 }
