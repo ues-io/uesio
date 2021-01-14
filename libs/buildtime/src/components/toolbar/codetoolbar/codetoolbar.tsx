@@ -113,7 +113,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const previousYamlInJson = currentAST.current?.toJSON()
 	const hasYamlChanged = previousYaml !== currentYaml
 	const lastAddedDefinition = uesio.view.useLastAddedDefinition()
-	console.log("CodeToolbar rendering")
 
 	return (
 		<>
@@ -235,7 +234,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					}
 				}
 				editorDidMount={(editor, monaco): void => {
-					console.log("codeToolbar has mount")
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
