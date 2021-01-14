@@ -74,10 +74,10 @@ const diff = (previousYamlDoc: yaml.Document, lastAddedDefinition: unknown) => {
 	const withMarker = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarker
 	const pathArray = toPath(path)
-	const currentArray = get(previousYaml, pathArray) || []
+	const children = get(previousYaml, pathArray) || []
 
-	// insert the new definition in the currentArray
-	currentArray.splice(index, 0, definition)
+	// insert the new definition in the children
+	children.splice(index, 0, definition)
 
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
 	const newYamlStringified = newYamlDoc.toString()
