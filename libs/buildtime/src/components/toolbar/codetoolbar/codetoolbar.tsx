@@ -67,9 +67,9 @@ const diff = (
 	lastAddedDefinition: unknown
 ): [number, number] => {
 	// algorithm
-	// 0. add a marker to last added definition JS object (drag'n drop into the canvas)
+	// 0. add a marker to last added definition (drag'n drop into the canvas)
 	// 1. insert the marked definition to the previous YAML definition in JSON formatted
-	// 2. create a new YAML document with new definition
+	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
 	// 4. get the line of the marker in the stringified YAML document
 	// 5. compute the height of the lasAddedDefinition
