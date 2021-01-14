@@ -11,6 +11,7 @@ import toPath from "lodash.topath"
 import get from "lodash.get"
 
 const MARKER_FOR_DIFF_START = "##START##"
+const MARKER_FOR_DIFF_END = "##END##"
 const ANIMATION_DURATION = 3000
 const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
@@ -60,35 +61,42 @@ const splitTextByLines = (text: string) => text.split(/\r?\n/)
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
-// home-made diff algorithm since the diff unix-like method did not work
-const diff = (previousYamlDoc: yaml.Document, lastAddedDefinition: unknown) => {
-	// algo
-	// 0. add a marker to the lastAddDefinition object
-	// 1. insert the marked lastAddDefiniion to the previous yaml in JSON formatted
-	// 2. transform the prevjous yaml in JSON formatted into yaml format
-	// 3. get the line of the marker in yaml formatted
-	// 4. compute the height of the lasAddedDefinition
-	// 5. return range lines of the changes (start with index 1 and not 0 for the monaco editor)
+// home-made diff algorithm since unix-like diff method did not work for our use case
+const diff = (
+	previousYamlDoc: yaml.Document,
+	lastAddedDefinition: unknown
+): [number, number] => {
+	// algorithm
+	// 0. add a marker to last added definition JS object (drag'n drop into the canvas)
+	// 1. insert the marked definition to the previous YAML definition in JSON formatted
+	// 2. create a new YAML document with new definition
+	// 3. transform the YAML document into a string
+	// 4. get the line of the marker in the stringified YAML document
+	// 5. compute the height of the lasAddedDefinition
+	// 6. return lines range of the changes (start with index 1 and not 0 for the monaco editor)
 	const previousYaml = previousYamlDoc.toJSON()
+	// step 0.
 	const withMarker = addMarkerAtFirstKey(lastAddedDefinition)
 	const { path, definition, index } = withMarker
 	const pathArray = toPath(path)
 	const children = get(previousYaml, pathArray) || []
 
-	// insert the new definition in the children
+	// step 1. insert the new definition in the children
 	children.splice(index, 0, definition)
-
+	// step 2.
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYaml))
+	// step 3.
 	const newYamlStringified = newYamlDoc.toString()
+	// step 4.
 	const startOffset =
 		lookForLine(
 			splitTextByLines(newYamlStringified),
 			MARKER_FOR_DIFF_START
 		) + 1
-
+	// step 5.
 	const endOffset =
 		startOffset + definitionPropertiesAmount(lastAddedDefinition)
-
+	// step 6.
 	return [startOffset, endOffset]
 }
 
