@@ -28,6 +28,7 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 		const suffix = component.path.getPathSuffix(path)
 		const newSelectedPath = `${toPath}["${suffix}"]`
 		uesio.builder.setActiveNode(newSelectedPath)
+		//TODO:: JAS HERE
 		uesio.view.moveDefinition(indexPath, toPath)
 	}
 

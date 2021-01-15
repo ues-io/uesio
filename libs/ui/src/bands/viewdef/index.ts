@@ -24,6 +24,7 @@ import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
+import {getPropertiesDefinition} from "../../component/registry";
 
 type YamlUpdatePayload = {
 	path: string
@@ -41,8 +42,7 @@ type SetDefinitionPayload = {
 
 type MoveDefinitionPayload = {
 	fromPath: string
-	toPath: string
-} & EntityPayload
+} & AddDefinitionPayload
 
 type AddDefinitionPayload = {
 	path: string
@@ -141,64 +141,12 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const { fromPath, toPath: destPath } = payload
-	// Traverse paths simultaneously until paths diverge.
-	const fromPathArr = toPath(fromPath)
-	const toPathArr = toPath(destPath)
-	const fromIndex = fromPathArr.pop()
-	const toIndex = toPathArr.pop()
-
-	if (fromIndex && toIndex) {
-		const fromParent = get(state.definition, fromPathArr)
-		const toParent = get(state.definition, toPathArr)
-
-		move(
-			fromParent,
-			toParent,
-			parseInt(fromIndex, 10),
-			parseInt(toIndex, 10)
-		)
-
-		const destParentPath = getParentPath(destPath)
-		const fromParentPath = getParentPath(fromPath)
-
-		// Now set both parents so they can trigger redux
-		// Set the definition JS Object
-		if (
-			!fromParentPath.startsWith(destParentPath) ||
-			toParent === fromParent
-		) {
-			setWith(state, ["definition"].concat(fromPathArr), fromParent)
-		}
-		if (toParent !== fromParent) {
-			if (!destParentPath.startsWith(fromParentPath)) {
-				setWith(state, ["definition"].concat(toPathArr), toParent)
-			}
-		}
-
-		if (state.yaml) {
-			// create a new document so components using useYaml will rerender
-			state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
-			const fromYamlParent = getNodeAtPath(
-				fromPathArr,
-				state.yaml.contents
-			)
-			const toYamlParent = getNodeAtPath(toPathArr, state.yaml.contents)
-
-			const item = getNodeAtPath(
-				[fromIndex],
-				fromYamlParent
-			) as yaml.AST.BlockMap
-			removeNodeAtPath([fromIndex], fromYamlParent)
-			// This is kind of a hack. But the yaml library doesn't have an
-			// "add at index" method.
-			;(toYamlParent as Collection).items.splice(
-				parseInt(toIndex, 10),
-				0,
-				item
-			)
-		}
-	}
+	addDef(state, payload)
+	// Use path (toPath) and fromPath to calculate the path you need to remove once you've added
+	// the path you need to add. So if we add a path Before where we were, we need
+	// to make sure we don't trim the wrong element (that occurs too early.)
+	const pathToRemove = payload.fromPath
+	removeDef(state, {...payload, path: pathToRemove})
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
