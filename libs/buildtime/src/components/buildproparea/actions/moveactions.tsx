@@ -27,7 +27,6 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 		// Selection Handling
 		const suffix = component.path.getPathSuffix(path)
 		const newSelectedPath = `${toPath}["${suffix}"]`
-		uesio.builder.setSelectedNode(newSelectedPath)
 		uesio.builder.setActiveNode(newSelectedPath)
 		uesio.view.moveDefinition(indexPath, toPath)
 	}

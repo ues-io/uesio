@@ -1,7 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getParentPath } from "../../component/path"
-import { changeDefinitionKey, removeDefinition } from "../viewdef"
+import {
+	changeDefinitionKey,
+	removeDefinition,
+	addDefinition,
+	// moveDefinition,
+} from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
+import { DefinitionMap } from "../../definition/definition"
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -77,6 +83,21 @@ const builderSlice = createSlice({
 		builder.addCase(removeDefinition, (state) => {
 			state.selectedNode = ""
 		})
+		builder.addCase(addDefinition, (state, { payload }) => {
+			if (!payload.bankDrop || payload.index === undefined) {
+				// Added a not dragged component
+				// (added button to buttonset for example)
+				// in which case we do not want to shift the
+				// selected node
+				return
+			}
+			const def = <DefinitionMap>payload.definition
+			const key = Object.keys(def)[0]
+			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
+		})
+		// builder.addCase(moveDefinition, (state, { payload }) => {
+		// 	// state.selectedNode = payload.toPath
+		// })
 	},
 })
 

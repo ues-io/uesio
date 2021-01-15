@@ -76,12 +76,14 @@ const handleBankDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
+	//TODO:: JAS HERE
 	uesio.view.addDefinition(
 		dropNode,
 		{
 			[`${propDef.namespace}.${propDef.name}`]: propDef.defaultDefinition(),
 		},
-		dropIndex
+		dropIndex,
+		true
 	)
 }
 
@@ -95,6 +97,7 @@ const handleFieldDrop = (
 	const dropPropDef = component.registry.getPropertiesDefinitionFromPath(
 		dropNode
 	)
+	//TODO:: JAS HERE
 	const handler = dropPropDef?.handleFieldDrop
 	if (handler) {
 		return handler(dragNode, dropNode, dropIndex, propDef, uesio)
@@ -110,12 +113,7 @@ const handleExistingDrop = (
 ): void => {
 	const fromPath = component.path.getParentPath(dragNode)
 	const toPath = `${dropNode}["${dropIndex}"]`
-
 	// Selection Handling
-	const suffix = component.path.getPathSuffix(dragNode)
-	const newSelectedPath = `${toPath}["${suffix}"]`
-	uesio.builder.setSelectedNode(newSelectedPath)
-	uesio.builder.setActiveNode(newSelectedPath)
 	uesio.view.moveDefinition(fromPath, toPath)
 }
 

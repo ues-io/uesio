@@ -59,7 +59,12 @@ class ViewAPI {
 		}
 	}
 
-	addDefinition(path: string, definition: Definition, index?: number) {
+	addDefinition(
+		path: string,
+		definition: Definition,
+		index?: number,
+		bankDrop = false
+	) {
 		const viewDefId = this.uesio.getViewDefId()
 		if (viewDefId) {
 			this.dispatcher(
@@ -68,6 +73,7 @@ class ViewAPI {
 					path,
 					definition,
 					index,
+					bankDrop,
 				})
 			)
 		}

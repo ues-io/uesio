@@ -48,6 +48,7 @@ type AddDefinitionPayload = {
 	path: string
 	definition: Definition
 	index?: number
+	bankDrop: boolean
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -205,10 +206,10 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const pathArray = toPath(path)
 	const currentArray = get(state.definition, path) || []
 
-	const newIndex = payload.index || currentArray.length
+	const newIndex =
+		payload.index === undefined ? currentArray.length : payload.index
 	currentArray.splice(newIndex, 0, definition)
 	setWith(state, ["definition"].concat(pathArray), currentArray)
-
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)
