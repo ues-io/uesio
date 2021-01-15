@@ -1,6 +1,0 @@
-name: fileinfo
-collection: uesio.files
-type: REFERENCE
-label: File Info
-referencedCollection: uesio.userfiles
-foreignKeyField: uesio.content

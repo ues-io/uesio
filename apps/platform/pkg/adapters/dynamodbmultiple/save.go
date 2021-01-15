@@ -5,7 +5,6 @@ import (
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -15,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getDeletesForChange(delete reqs.DeleteRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
+func getDeletesForChange(delete adapters.DeleteRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	dynamoDBDeleteKey := make(map[string]interface{})
 	for fieldID, value := range delete {
 
@@ -38,7 +37,7 @@ func getDeletesForChange(delete reqs.DeleteRequest, collectionMetadata *adapters
 	return dynamoDBDeleteKey, nil
 }
 
-func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, map[string]interface{}, error) {
+func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, map[string]interface{}, error) {
 	dynamoDBUpdate := make(map[string]interface{})
 	dynamoDBUpdateKey := make(map[string]interface{})
 
@@ -70,7 +69,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return dynamoDBUpdate, dynamoDBUpdateKey, nil
 }
 
-func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, newID string) (map[string]interface{}, error) {
+func getInsertsForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, newID string) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 
 	for fieldID, value := range change.FieldChanges {
@@ -100,7 +99,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return inserts, nil
 }
 
-func processOneDelete(delete reqs.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, DynamoDBID string, collectionName string, client *dynamodb.DynamoDB) error {
+func processOneDelete(delete adapters.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, DynamoDBID string, collectionName string, client *dynamodb.DynamoDB) error {
 	key, err := getDeletesForChange(delete, collectionMetadata)
 	if err != nil {
 		return err
@@ -125,7 +124,7 @@ func processOneDelete(delete reqs.DeleteRequest, collectionMetadata *adapters.Co
 	return nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) error {
+func processUpdate(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) error {
 	// it's an update!
 	updates, key, err := getUpdatesForChange(change, collectionMetadata)
 	if err != nil {
@@ -164,7 +163,7 @@ func processUpdate(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 	return nil
 }
 
-func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB, idTemplate *template.Template) (string, error) {
+func processInsert(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB, idTemplate *template.Template) (string, error) {
 	// it's an insert!
 	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
@@ -211,8 +210,8 @@ func processInsert(change reqs.ChangeRequest, collectionMetadata *adapters.Colle
 
 }
 
-func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) (map[string]reqs.ChangeResult, error) {
-	changeResults := map[string]reqs.ChangeResult{}
+func processChanges(changes map[string]adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) (map[string]adapters.ChangeResult, error) {
+	changeResults := map[string]adapters.ChangeResult{}
 
 	idTemplate, err := templating.New(collectionMetadata.IDFormat)
 	if err != nil {
@@ -220,7 +219,7 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	}
 
 	for changeID, change := range changes {
-		changeResult := reqs.NewChangeResult(change)
+		changeResult := adapters.NewChangeResult(change)
 
 		if !change.IsNew && change.IDValue != nil {
 			err := processUpdate(change, collectionMetadata, collectionName, client)
@@ -243,10 +242,10 @@ func processChanges(changes map[string]reqs.ChangeRequest, collectionMetadata *a
 	return changeResults, nil
 }
 
-func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) (map[string]reqs.ChangeResult, error) {
-	deleteResults := map[string]reqs.ChangeResult{}
+func processDeletes(deletes map[string]adapters.DeleteRequest, collectionMetadata *adapters.CollectionMetadata, collectionName string, client *dynamodb.DynamoDB) (map[string]adapters.ChangeResult, error) {
+	deleteResults := map[string]adapters.ChangeResult{}
 	for deleteID, delete := range deletes {
-		deleteResult := reqs.ChangeResult{}
+		deleteResult := adapters.ChangeResult{}
 		deleteResult.Data = map[string]interface{}{}
 
 		DynamoDBID, ok := delete[collectionMetadata.IDField].(string)
@@ -265,7 +264,7 @@ func processDeletes(deletes map[string]reqs.DeleteRequest, collectionMetadata *a
 	return deleteResults, nil
 }
 
-func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err
@@ -287,9 +286,9 @@ func (a *Adapter) handleLookups(request reqs.SaveRequest, metadata *adapters.Met
 }
 
 // Save function
-func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]reqs.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
 
-	response := []reqs.SaveResponse{}
+	response := []adapters.SaveResponse{}
 	client := getDynamoDB(credentials)
 
 	for _, request := range requests {
@@ -319,7 +318,7 @@ func (a *Adapter) Save(requests []reqs.SaveRequest, metadata *adapters.MetadataC
 			return nil, err
 		}
 
-		response = append(response, reqs.SaveResponse{
+		response = append(response, adapters.SaveResponse{
 			Wire:          request.Wire,
 			ChangeResults: changeResults,
 			DeleteResults: deleteResults,

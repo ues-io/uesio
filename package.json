@@ -29,6 +29,8 @@
   "format:check": "nx format:check",
   "format:write": "nx format:write",
   "help": "nx help",
+  "prettier-check": "prettier --check .",
+  "prettier-format": "prettier --write .",
   "lint": "nx workspace-lint && nx lint",
   "lint-all": "nx run-many --target=lint --all",
   "nx": "nx",

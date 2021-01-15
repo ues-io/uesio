@@ -7,7 +7,6 @@ import (
 	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 
 	"github.com/Masterminds/squirrel"
 	guuid "github.com/google/uuid"
@@ -15,7 +14,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, string, string, error) {
+func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, string, string, error) {
 	postgresSQLUpdate := map[string]interface{}{}
 	postgresSQLId, _ := change.FieldChanges[collectionMetadata.IDField].(string)
 	idFieldName := ""
@@ -66,7 +65,7 @@ func getUpdatesForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return postgresSQLUpdate, postgresSQLId, idFieldName, nil
 }
 
-func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
+func getInsertsForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
 	searchableValues := []string{}
 	for fieldID, value := range change.FieldChanges {
@@ -105,7 +104,7 @@ func getInsertsForChange(change reqs.ChangeRequest, collectionMetadata *adapters
 	return inserts, nil
 }
 
-func processUpdate(change reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) error {
+func processUpdate(change adapters.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) error {
 	// it's an update!
 	updates, postgresSQLId, idFieldName, err := getUpdatesForChange(change, collectionMetadata)
 	if err != nil {
@@ -120,7 +119,7 @@ func processUpdate(change reqs.ChangeRequest, collectionName string, collectionM
 	return nil
 }
 
-func processInsert(change reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB, idTemplate *template.Template) (string, error) {
+func processInsert(change adapters.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB, idTemplate *template.Template) (string, error) {
 	// it's an insert!
 	newID, err := templating.Execute(idTemplate, change.FieldChanges)
 	if err != nil {
@@ -165,8 +164,8 @@ func processInsert(change reqs.ChangeRequest, collectionName string, collectionM
 }
 
 //ProcessChanges function
-func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
-	changeResults := map[string]reqs.ChangeResult{}
+func ProcessChanges(changes map[string]adapters.ChangeRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]adapters.ChangeResult, error) {
+	changeResults := map[string]adapters.ChangeResult{}
 
 	idTemplate, err := templating.New(collectionMetadata.IDFormat)
 	if err != nil {
@@ -174,7 +173,7 @@ func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string
 	}
 
 	for changeID, change := range changes {
-		changeResult := reqs.NewChangeResult(change)
+		changeResult := adapters.NewChangeResult(change)
 
 		if !change.IsNew && change.IDValue != nil {
 			err := processUpdate(change, collectionName, collectionMetadata, psql, db)
@@ -198,10 +197,10 @@ func ProcessChanges(changes map[string]reqs.ChangeRequest, collectionName string
 }
 
 //ProcessDeletes function
-func ProcessDeletes(deletes map[string]reqs.DeleteRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]reqs.ChangeResult, error) {
-	deleteResults := map[string]reqs.ChangeResult{}
+func ProcessDeletes(deletes map[string]adapters.DeleteRequest, collectionName string, collectionMetadata *adapters.CollectionMetadata, psql squirrel.StatementBuilderType, db *sql.DB) (map[string]adapters.ChangeResult, error) {
+	deleteResults := map[string]adapters.ChangeResult{}
 	for deleteID, delete := range deletes {
-		deleteResult := reqs.ChangeResult{}
+		deleteResult := adapters.ChangeResult{}
 		deleteResult.Data = map[string]interface{}{}
 
 		postgresID, ok := delete[collectionMetadata.IDField].(string)
@@ -233,7 +232,7 @@ func ProcessDeletes(deletes map[string]reqs.DeleteRequest, collectionName string
 }
 
 //HandleLookups function
-func HandleLookups(a adapters.Adapter, request reqs.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func HandleLookups(a adapters.Adapter, request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err

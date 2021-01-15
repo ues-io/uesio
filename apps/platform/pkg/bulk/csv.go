@@ -5,7 +5,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -37,7 +36,7 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 		}
 	}
 
-	err = collections.Load(&metadataResponse, collatedMetadata, session)
+	err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -45,15 +44,15 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 	return mappings, &metadataResponse, nil
 }
 
-func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.CollectionMetadata) ([]reqs.Lookup, error) {
-	lookups := []reqs.Lookup{}
+func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.CollectionMetadata) ([]adapters.Lookup, error) {
+	lookups := []adapters.Lookup{}
 	for _, mapping := range mappings {
 		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
 		if err != nil {
 			return nil, err
 		}
 		if fieldMetadata.Type == "REFERENCE" {
-			lookups = append(lookups, reqs.Lookup{
+			lookups = append(lookups, adapters.Lookup{
 				RefField:   mapping.FieldName,
 				MatchField: mapping.MatchField,
 			})
@@ -65,7 +64,7 @@ func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.C
 func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Session) (*datasource.SaveRequestBatch, error) {
 
 	r := csv.NewReader(body)
-	changes := map[string]reqs.ChangeRequest{}
+	changes := map[string]adapters.ChangeRequest{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -93,7 +92,7 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 			return nil, err
 		}
 
-		changeRequest := reqs.ChangeRequest{
+		changeRequest := adapters.ChangeRequest{
 			FieldChanges: map[string]interface{}{},
 		}
 
@@ -137,13 +136,13 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 		return nil, err
 	}
 	return &datasource.SaveRequestBatch{
-		Wires: []reqs.SaveRequest{
+		Wires: []adapters.SaveRequest{
 			{
 				Collection: spec.Collection,
 				Wire:       "bulkupload",
 				Changes:    changes,
-				Options: &reqs.SaveOptions{
-					Upsert: &reqs.UpsertOptions{
+				Options: &adapters.SaveOptions{
+					Upsert: &adapters.UpsertOptions{
 						MatchField:    spec.UpsertKey,
 						MatchTemplate: "${" + spec.UpsertKey + "}",
 					},

@@ -7,14 +7,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // UploadUserFile function
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
 	session := middlewares.GetSession(r)
-	details, err := reqs.ConvertQueryToFileDetails(r.URL.Query())
+	details, err := filesource.ConvertQueryToFileDetails(r.URL.Query())
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return

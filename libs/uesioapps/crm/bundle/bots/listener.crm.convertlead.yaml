@@ -1,4 +1,0 @@
-name: convertlead
-type: LISTENER
-dialect: JAVASCRIPT
-fileName: convertlead.js

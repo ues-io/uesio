@@ -66,7 +66,7 @@ const ColorPicker: FunctionComponent<Props> = ({
 							className={clsx(classes.color, {
 								[classes.selected]: isSelected,
 							})}
-							onClick={(): void => record.update(fieldId, color)}
+							onClick={() => record.update(fieldId, color)}
 							style={{ backgroundColor: color }}
 						/>
 					)

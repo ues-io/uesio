@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/spf13/cobra"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -95,8 +95,8 @@ func seed(cmd *cobra.Command, args []string) {
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &apps,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
 			},
 		},
 	}, session)
@@ -108,8 +108,8 @@ func seed(cmd *cobra.Command, args []string) {
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &sites,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
 			},
 		},
 	}, session)
@@ -122,8 +122,8 @@ func seed(cmd *cobra.Command, args []string) {
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &siteDomains,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
 			},
 		},
 	}, session)
@@ -135,8 +135,8 @@ func seed(cmd *cobra.Command, args []string) {
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &bundles,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
 			},
 		},
 	}, session)
@@ -148,9 +148,9 @@ func seed(cmd *cobra.Command, args []string) {
 	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
 		{
 			Collection: &workspaces,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-				Lookups: []reqs.Lookup{
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+				Lookups: []adapters.Lookup{
 					{
 						RefField: "uesio.app",
 					},

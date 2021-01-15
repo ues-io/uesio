@@ -10,13 +10,11 @@ export default createAsyncThunk<
 	PlainView,
 	{
 		context: Context
-		namespace: string
-		name: string
 		path: string
 		params: ViewParams | undefined
 	},
 	UesioThunkAPI
->("view/load", async ({ context, namespace, name, path }, api) => {
+>("view/load", async ({ context, path }, api) => {
 	// First check to see if we have the viewDef
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Def Context Provided")
@@ -43,8 +41,8 @@ export default createAsyncThunk<
 	}
 
 	return {
-		namespace,
-		name,
+		namespace: viewDef.namespace,
+		name: viewDef.name,
 		path,
 		loaded: true,
 	}

@@ -3,12 +3,13 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 )
 
 // Secret struct
 type Secret struct {
+	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
 	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
@@ -28,8 +29,8 @@ func (s *Secret) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (s *Secret) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (s *Secret) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: s.Name,
@@ -46,6 +47,11 @@ func (s *Secret) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (s *Secret) GetKey() string {
 	return s.Namespace + "." + s.Name
+}
+
+// GetPath function
+func (s *Secret) GetPath() string {
+	return s.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

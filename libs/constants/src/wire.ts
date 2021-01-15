@@ -1,3 +1,3 @@
-type WireType = 'CREATE' | 'QUERY' | 'EMPTY';
+type WireType = "CREATE" | "QUERY" | "EMPTY"
 
-export { WireType };
+export { WireType }

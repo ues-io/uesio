@@ -1,0 +1,4 @@
+name: onchange
+collection: crm.accounts
+type: BEFORESAVE
+dialect: JAVASCRIPT

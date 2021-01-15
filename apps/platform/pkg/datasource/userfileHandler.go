@@ -6,12 +6,10 @@ import (
 	"mime"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getCollectionMetadata(collectionName string, fieldID string, session *sess.Session) (*adapters.CollectionMetadata, error) {
@@ -28,7 +26,7 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 		return nil, err
 	}
 
-	err = collections.Load(&metadataResponse, collatedMetadata, session)
+	err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, err
 	}
@@ -40,10 +38,10 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 }
 
 //UpdateRecordFieldWithFileID function
-func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *sess.Session) error {
+func UpdateRecordFieldWithFileID(id string, details FileDetails, session *sess.Session) error {
 
-	changes := map[string]reqs.ChangeRequest{}
-	changeRequest := reqs.ChangeRequest{
+	changes := map[string]adapters.ChangeRequest{}
+	changeRequest := adapters.ChangeRequest{
 		FieldChanges: map[string]interface{}{},
 	}
 	meta, err := getCollectionMetadata(details.CollectionID, details.FieldID, session)
@@ -55,7 +53,7 @@ func UpdateRecordFieldWithFileID(id string, details reqs.FileDetails, session *s
 	changes["0"] = changeRequest
 
 	saveRequestBatch := &SaveRequestBatch{
-		Wires: []reqs.SaveRequest{
+		Wires: []adapters.SaveRequest{
 			{
 				Collection: details.CollectionID,
 				Wire:       "filefieldupdate",
@@ -75,7 +73,7 @@ func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMe
 	var userfile metadata.UserFileMetadata
 	err := PlatformLoadOne(
 		&userfile,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: userFileID,
@@ -90,7 +88,7 @@ func GetUserFile(userFileID string, session *sess.Session) (*metadata.UserFileMe
 	return &userfile, nil
 }
 
-func getFieldIDPart(details reqs.FileDetails) string {
+func getFieldIDPart(details FileDetails) string {
 	fieldID := details.FieldID
 	if fieldID == "" {
 		return "attachment_" + details.Name
@@ -99,7 +97,7 @@ func getFieldIDPart(details reqs.FileDetails) string {
 }
 
 // CreateUserFileMetadataEntry func
-func CreateUserFileMetadataEntry(details reqs.FileDetails, session *sess.Session) (string, error) {
+func CreateUserFileMetadataEntry(details FileDetails, session *sess.Session) (string, error) {
 	site := session.GetSite()
 
 	workspaceID := session.GetWorkspaceID()
@@ -123,8 +121,8 @@ func CreateUserFileMetadataEntry(details reqs.FileDetails, session *sess.Session
 	response, err := PlatformSave([]PlatformSaveRequest{
 		{
 			Collection: &ufmc,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
 			},
 		},
 	}, session)
@@ -147,7 +145,7 @@ func CreateUserFileMetadataEntry(details reqs.FileDetails, session *sess.Session
 
 func getUserfiles(collectionID string, recordIds []string, session *sess.Session) (*metadata.UserFileMetadataCollection, error) {
 	ufmc := metadata.UserFileMetadataCollection{}
-	err := PlatformLoad(&ufmc, []reqs.LoadRequestCondition{
+	err := PlatformLoad(&ufmc, []adapters.LoadRequestCondition{
 		{
 			Field:    "uesio.recordid",
 			Value:    recordIds,
@@ -168,8 +166,8 @@ func getUserfiles(collectionID string, recordIds []string, session *sess.Session
 
 // DeleteUserFileRecord function
 func DeleteUserFileRecord(userFile *metadata.UserFileMetadata, session *sess.Session) error {
-	deleteReq := map[string]reqs.DeleteRequest{}
-	deletePrimary := reqs.DeleteRequest{}
+	deleteReq := map[string]adapters.DeleteRequest{}
+	deletePrimary := adapters.DeleteRequest{}
 	deletePrimary["uesio.id"] = userFile.ID
 	deleteReq[userFile.ID] = deletePrimary
 	return PlatformDelete("userfiles", deleteReq, session)
@@ -224,7 +222,7 @@ func DeleteUserFiles(idsToDeleteFilesFor map[string]map[string]bool, session *se
 			if err != nil {
 				return err
 			}
-			path, err := ufc.GetPath(&userFile, site.Name, session.GetWorkspaceID())
+			path, err := ufc.GetFilePath(&userFile, site.Name, session.GetWorkspaceID())
 			if err != nil {
 				return errors.New("No filesource found")
 			}

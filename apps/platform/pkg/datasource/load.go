@@ -10,11 +10,12 @@ import (
 )
 
 func getMetadataForLoad(
-	op adapters.LoadOp,
+	op *adapters.LoadOp,
 	metadataResponse *adapters.MetadataCache,
 	collatedMetadata map[string]*adapters.MetadataCache,
 	ops []adapters.LoadOp,
-	session *sess.Session) error {
+	session *sess.Session,
+) error {
 	collectionKey := op.CollectionName
 
 	// Keep a running tally of all requested collections
@@ -64,7 +65,7 @@ func getMetadataForLoad(
 
 	}
 
-	return collections.Load(metadataResponse, collatedMetadata, session)
+	return collections.Load(op, metadataResponse, collatedMetadata, session)
 
 }
 
@@ -76,8 +77,9 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 	metadataResponse := adapters.MetadataCache{}
 
 	// Loop over the ops and batch per data source
-	for _, op := range ops {
-		err := getMetadataForLoad(op, &metadataResponse, collatedMetadata, ops, session)
+	for i := range ops {
+		op := ops[i]
+		err := getMetadataForLoad(&op, &metadataResponse, collatedMetadata, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -129,6 +131,61 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 		err = adapter.Load(batch, collatedMetadata[dsKey], credentials)
 		if err != nil {
 			return nil, err
+		}
+
+		// Now do our supplemental reference loads
+		for i := range batch {
+			op := batch[i]
+			for colKey, referencedCol := range op.ReferencedCollections {
+				datasource, err := metadata.NewDataSource(referencedCol.Metadata.DataSource)
+				if err != nil {
+					return nil, err
+				}
+
+				err = bundles.Load(datasource, session)
+				if err != nil {
+					return nil, err
+				}
+
+				// Now figure out which data source adapter to use
+				// and make the requests
+				// It would be better to make this requests in parallel
+				// instead of in series
+				adapterType := datasource.GetAdapterType()
+				adapter, err := adapters.GetAdapter(adapterType)
+				if err != nil {
+					return nil, err
+				}
+				credentials, err := datasource.GetCredentials(site)
+				if err != nil {
+					return nil, err
+				}
+
+				err = op.Collection.Loop(func(item adapters.LoadableItem) error {
+					for _, reference := range referencedCol.ReferenceFields {
+						value, err := item.GetField(reference.ForeignKeyField)
+						if err != nil {
+							return err
+						}
+						referencedCol.AddID(value)
+					}
+
+					return nil
+				})
+				if err != nil {
+					return nil, err
+				}
+
+				err = adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
+					return adapter.Load([]adapters.LoadOp{*op}, metadata, credentials)
+				}, &op, collatedMetadata[referencedCol.Metadata.DataSource], adapters.ReferenceRegistry{
+					colKey: referencedCol,
+				})
+				if err != nil {
+					return nil, err
+				}
+			}
+
 		}
 
 	}

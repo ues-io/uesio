@@ -3,10 +3,10 @@ package site
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -15,7 +15,7 @@ func GetSite(siteid string, session *sess.Session) (*metadata.Site, error) {
 	var s metadata.Site
 	err := datasource.PlatformLoadOne(
 		&s,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: siteid,
@@ -34,7 +34,7 @@ func getDomain(domainType, domain string, session *sess.Session) (*metadata.Site
 	var sd metadata.SiteDomain
 	err := datasource.PlatformLoadOne(
 		&sd,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.domain",
 				Value: domain,
