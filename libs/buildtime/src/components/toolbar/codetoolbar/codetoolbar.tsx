@@ -1,14 +1,101 @@
-import React, { FunctionComponent, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef } from "react"
 import ToolbarTitle from "../toolbartitle"
 import LazyMonaco from "@uesio/lazymonaco"
-import { hooks, util, definition } from "@uesio/ui"
+import { hooks, util, definition, styles } from "@uesio/ui"
 import yaml from "yaml"
 import CloseIcon from "@material-ui/icons/Close"
+import { makeStyles, createStyles } from "@material-ui/core"
+
+import { monaco } from "react-monaco-editor"
+
+const ANIMATION_DURATION = 3000
+
+const useStyles = makeStyles((theme) =>
+	createStyles({
+		"@keyframes lineshighlight": {
+			from: {
+				opacity: 1,
+			},
+			to: {
+				opacity: 0,
+			},
+		},
+		highlightLines: {
+			backgroundColor: (props: definition.BaseProps) =>
+				styles.getColor({ intention: "info" }, theme, props.context) ||
+				"pink",
+			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
+		},
+	})
+)
 
 const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
+	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
+	const currentYaml = yamlDoc?.toString() || ""
+
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const previousYaml = currentAST.current?.toString()
+	currentAST.current = util.yaml.parse(currentYaml)
+
+	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
+		undefined
+	)
+	const monacoRef = useRef<typeof monaco | undefined>(undefined)
+	const decorationsRef = useRef<string[] | undefined>(undefined)
+
+	const e = editorRef.current
+	const m = monacoRef.current
+
+	useEffect(() => {
+		if (e && m && previousYaml && currentYaml) {
+			// Create an off-dom diff editor
+			const diffEditor = m.editor.createDiffEditor(
+				document.createElement("div")
+			)
+
+			diffEditor.setModel({
+				original: m.editor.createModel(previousYaml, "text/plain"),
+				modified: m.editor.createModel(currentYaml, "text/plain"),
+			})
+
+			diffEditor.onDidUpdateDiff(() => {
+				const changes = diffEditor.getLineChanges()
+				if (changes?.length) {
+					decorationsRef.current = e.deltaDecorations(
+						decorationsRef.current || [],
+						changes.map((change) => ({
+							range: new m.Range(
+								change.modifiedStartLineNumber,
+								change.charChanges?.length === 0
+									? change.charChanges[0].modifiedStartColumn
+									: 1,
+								change.modifiedEndLineNumber,
+								change.charChanges?.length === 0
+									? change.charChanges[0].modifiedEndColumn
+									: 1
+							),
+							options: {
+								isWholeLine: true,
+								className: classes.highlightLines,
+							},
+						}))
+					)
+
+					// scroll to the changes
+					e.revealLineInCenter(changes[0].modifiedStartLineNumber)
+
+					// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
+					setTimeout(() => {
+						decorationsRef.current =
+							decorationsRef.current &&
+							e.deltaDecorations(decorationsRef.current, [])
+					}, ANIMATION_DURATION)
+				}
+			})
+		}
+	})
 
 	return (
 		<>
@@ -18,7 +105,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
-				value={yamlDoc && yamlDoc.toString()}
+				value={currentYaml}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
 					if (newAST.errors.length > 0) {
@@ -124,7 +211,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 					*/
 					}
 				}
-				editorDidMount={(editor /*, monaco*/): void => {
+				editorDidMount={(editor, monaco): void => {
+					editorRef.current = editor
+					monacoRef.current = monaco
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())

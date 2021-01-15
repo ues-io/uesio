@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
-import { Context } from "../context/context"
 import yaml from "yaml"
+import { Context } from "../context/context"
 
 export type YamlDoc = yaml.Document
 

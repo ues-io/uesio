@@ -65,9 +65,16 @@ func HandleReferences(
 	metadata *MetadataCache,
 	referencedCollections ReferenceRegistry,
 ) error {
+	if op.Collection.Len() == 0 {
+		return nil
+	}
 	for collectionName, ref := range referencedCollections {
 
-		ids := make([]string, len(ref.IDs))
+		idCount := len(ref.IDs)
+		if idCount == 0 {
+			continue
+		}
+		ids := make([]string, idCount)
 		fieldIDIndex := 0
 		for k := range ref.IDs {
 			ids[fieldIDIndex] = k
