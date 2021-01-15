@@ -129,7 +129,6 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				{...(hasYamlChanged && currentYaml
 					? { key: md5(currentYaml) }
 					: {})}
-				// id used for the scroll to
 				value={yamlDoc && yamlDoc.toString()}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
