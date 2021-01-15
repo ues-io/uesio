@@ -26,7 +26,7 @@ func getCollectionMetadata(collectionName string, fieldID string, session *sess.
 		return nil, err
 	}
 
-	err = collections.Load(&metadataResponse, collatedMetadata, session)
+	err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return nil, err
 	}

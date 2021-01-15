@@ -86,7 +86,7 @@ func (mr *MetadataRequest) GetSelectListKey(collectionName, fieldName, selectLis
 }
 
 // Load function
-func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collatedMetadata map[string]*adapters.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.MetadataCache, collatedMetadata map[string]*adapters.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
 	// Implement the old way to make sure it still works
@@ -139,6 +139,53 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 				additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
 			}
 
+			if fieldMetadata.Type == "FILE" && op != nil {
+				fileDataSuffix := "__FILEDATA"
+				userfilesCollection := "uesio.userfiles"
+				fakeRefMetadata := &adapters.FieldMetadata{
+					Name:                 fieldMetadata.Name + fileDataSuffix,
+					Namespace:            fieldMetadata.Namespace,
+					Createable:           false,
+					Accessible:           true,
+					Updateable:           false,
+					Type:                 "REFERENCE",
+					Label:                fieldMetadata.Label + " File Info",
+					ReferencedCollection: userfilesCollection,
+					ForeignKeyField:      fieldMetadata.GetFullName(),
+				}
+				metadata.SetField(fakeRefMetadata)
+
+				err = additionalRequests.AddField(userfilesCollection, "uesio.mimetype", nil)
+				if err != nil {
+					return err
+				}
+
+				mimeField := []adapters.LoadRequestField{
+					{
+						ID: "uesio.mimetype",
+					},
+				}
+
+				// If the reference is to the same data source, we can just add the field
+				// and be done with it. If it's to a different data source, we'll need to
+				// do a whole new approach to reference fields.
+				if metadata.DataSource == "uesio.platform" {
+					op.Fields = append(op.Fields, adapters.LoadRequestField{
+						ID:     fieldMetadata.GetFullName() + fileDataSuffix,
+						Fields: mimeField,
+					})
+				} else {
+					referencedMeta, err := LoadCollectionMetadata(userfilesCollection, metadataResponse, session)
+					if err != nil {
+						return err
+					}
+					op.ReferencedCollections = adapters.ReferenceRegistry{}
+					refCol := op.ReferencedCollections.Get(referencedMeta)
+					refCol.AddReference(fakeRefMetadata)
+					refCol.AddFields(mimeField)
+				}
+			}
+
 		}
 		// Collate the metadata so we have a dictonary of it based on data source
 		CollateMetadata(collectionKey, metadata, collatedMetadata)
@@ -153,7 +200,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapters.MetadataCache, collat
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(metadataResponse, collatedMetadata, session)
+		return additionalRequests.Load(op, metadataResponse, collatedMetadata, session)
 	}
 	return nil
 }

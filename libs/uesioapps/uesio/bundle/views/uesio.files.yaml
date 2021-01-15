@@ -34,9 +34,11 @@ definition:
         uesio.id:
         uesio.name:
         uesio.content:
-        uesio.fileinfo:
+        uesio.workspace:
           fields:
-            uesio.mimetype:
+            uesio.app:
+              fields:
+                uesio.color:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP

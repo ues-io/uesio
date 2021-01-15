@@ -48,7 +48,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			}
 		}
 
-		err = collections.Load(&metadataResponse, collatedMetadata, session)
+		err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
 		if err != nil {
 			return nil, err
 		}

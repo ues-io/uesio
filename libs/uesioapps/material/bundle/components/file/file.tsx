@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useEffect } from "react"
+import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
 import { hooks, material, styles, wire } from "@uesio/ui"
@@ -28,18 +28,6 @@ const useStyles = material.makeStyles((theme) =>
 		}),
 	})
 )
-
-async function fetchFileInfo(
-	fileUrl: RequestInfo,
-	setMime: React.Dispatch<React.SetStateAction<string>>,
-	mime: string
-) {
-	if (!mime) {
-		const response = await fetch(fileUrl)
-		const blob = await response.blob()
-		setMime(blob.type)
-	}
-}
 
 async function HandleChange(
 	selectorFiles: FileList | null,
@@ -92,11 +80,10 @@ const File: FunctionComponent<FileProps> = (props) => {
 
 	const userFileId = record.getFieldValue(fieldId) as string
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
-	const [mime, setMime] = useState("")
-
-	useEffect(() => {
-		fetchFileInfo(fileUrl, setMime, mime)
-	})
+	const fileMetadata = record.getFieldValue(
+		fieldId + "__FILEDATA"
+	) as wire.PlainWireRecord
+	const mime = fileMetadata?.["uesio.mimetype"] as string | undefined
 
 	const iconJsx = (
 		<Icon
