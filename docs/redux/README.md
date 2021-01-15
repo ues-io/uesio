@@ -6,10 +6,10 @@
 
 Redux alone requires a lot of **boilerplate** such as :
 
-- manually taking care of namespacing the **action type**
-- manual coding of **action creators**
-- having **separated files** for reducer and action
-- **cloning data structures** in the reducer
+-   manually taking care of namespacing the **action type**
+-   manual coding of **action creators**
+-   having **separated files** for reducer and action
+-   **cloning data structures** in the reducer
 
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
