@@ -75,7 +75,7 @@ const diff = (
 	// 2. create a new YAML document with new added definition
 	// 3. transform the YAML document into a string
 	// 4. get the line of the marker in the stringified YAML document
-	// 5. compute the height of the lasAddedDefinition
+	// 5. compute the height of the lastAddedDefinition
 	// 6. return lines range of the changes (start with index 1 and not 0 for the monaco editor)
 
 	// step 0.
