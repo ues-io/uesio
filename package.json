@@ -71,7 +71,6 @@
   "@types/lodash.setwith": "^4.3.6",
   "@types/lodash.topath": "^4.5.6",
   "@types/material-ui": "^0.21.8",
-  "@types/md5": "^2.2.1",
   "@types/module-alias": "^2.0.0",
   "@types/node": "^14.14.16",
   "@types/node-fetch": "^2.5.7",
