@@ -11,9 +11,7 @@ const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 	const action = props.action as builder.RunSignalsAction
 
 	const slot = action?.slot || "signals"
-	const signals = slot
-		? (def?.[slot] as signal.SignalDefinition[])
-		: undefined
+	const signals = def?.[slot] as signal.SignalDefinition[]
 
 	if (!action || !signals) {
 		return null

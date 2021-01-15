@@ -13,9 +13,6 @@ const useStyles = material.makeStyles((theme) =>
 			lineHeight: 0,
 			...styles.getMarginStyles(props.definition?.margin, theme),
 		}),
-		input: {
-			display: "none",
-		},
 		avatar: (props: FileProps) => ({
 			width: props.definition?.width ? props.definition.width : 200,
 			height: props.definition?.height ? props.definition.height : 200,

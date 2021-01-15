@@ -1,9 +1,15 @@
 import { material } from "@uesio/ui"
-import React, { FunctionComponent, useState, ChangeEvent } from "react"
+import React, {
+	FunctionComponent,
+	useState,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type ConfirmFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
 	confirm: (verificationCode: string) => Promise<void>
 }
 
