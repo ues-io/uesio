@@ -20,7 +20,5 @@ components:
   checkboxfield:
   textfield:
   autocompletefield:
-  imageupload:
-  fileupload:
   dialog:
   file:

@@ -22,9 +22,17 @@ func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.A
 		}
 
 		addTable, err := describeTableDynamoDB(collectionName, client)
+		if err != nil {
+			return err
+		}
+
+		idField, err := collectionMetadata.GetIDField()
+		if err != nil {
+			return err
+		}
 
 		if addTable {
-			idFieldName, _ := getDBFieldName(collectionMetadata.Fields[collectionMetadata.IDField])
+			idFieldName, _ := getDBFieldName(idField)
 			err = createTableDynamoDB(collectionName, idFieldName, client)
 			if err != nil {
 				return err

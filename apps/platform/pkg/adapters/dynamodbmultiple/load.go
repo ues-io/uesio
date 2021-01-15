@@ -17,7 +17,7 @@ import (
 func loadOne(
 	ctx context.Context,
 	client *dynamodb.DynamoDB,
-	op adapters.LoadOp,
+	op *adapters.LoadOp,
 	metadata *adapters.MetadataCache,
 	ops []adapters.LoadOp,
 ) error {
@@ -42,7 +42,7 @@ func loadOne(
 		return err
 	}
 
-	requestedFields, referenceCollection, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	requestedFields, referencedCollections, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -82,10 +82,20 @@ func loadOne(
 			return err
 		}
 
-		if i == 0 {
-			filt = expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue)))
+		if condition.Operator == "IN" {
+			for i, id := range conditionValue.([]string) {
+				if i == 0 {
+					filt = expression.Name(fieldName).Equal(expression.Value(id))
+				} else {
+					filt = filt.Or(expression.Name(fieldName).Equal(expression.Value(id)))
+				}
+			}
 		} else {
-			filt = filt.And(expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue))))
+			if i == 0 {
+				filt = expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue)))
+			} else {
+				filt = filt.And(expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue))))
+			}
 		}
 
 	}
@@ -126,11 +136,6 @@ func loadOne(
 
 			var i interface{}
 
-			fieldID, err := adapters.GetUIFieldName(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
 			dynamoFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
 				return err
@@ -140,50 +145,31 @@ func loadOne(
 			if !ok {
 				continue
 			}
-			dynamodbattribute.Unmarshal(value, &i)
-			err = item.SetField(fieldID, i)
-			if err != nil {
-				return err
-			}
-		}
-
-		for _, reference := range referenceCollection {
-			fieldMetadata := reference.Metadata
-			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
-			if err != nil {
-				return errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
-			}
-			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
+			err = dynamodbattribute.Unmarshal(value, &i)
 			if err != nil {
 				return err
 			}
 
-			foreignKeyValue, err := item.GetField(foreignKeyName)
+			err = item.SetField(fieldMetadata.GetFullName(), i)
 			if err != nil {
-				//No foreign key value
-				continue
+				return err
 			}
 
-			reference.AddID(foreignKeyValue)
+			if fieldMetadata.IsForeignKey {
+				// Handle foreign key value
+				reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
+				if ok {
+					reference.AddID(i)
+				}
+			}
 		}
+
 		op.Collection.AddItem(item)
 	}
 
-	if err != nil {
-		return errors.New("DynamoDB failed manage response:" + err.Error())
-	}
-
-	//At this point idsToLookFor has a mapping for reference field
-	//names to actual id values we will need to grab from the referenced collection
-	if len(referenceCollection) != 0 {
-		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, client, metadata, op, collectionMetadata, referenceCollection)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
+		return loadOne(ctx, client, op, metadata, nil)
+	}, op, metadata, referencedCollections)
 }
 
 // Load function
@@ -192,8 +178,9 @@ func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, 
 	ctx := context.Background()
 	client := getDynamoDB(credentials)
 
-	for _, op := range ops {
-		err := loadOne(ctx, client, op, metadata, ops)
+	for i := range ops {
+		op := ops[i]
+		err := loadOne(ctx, client, &op, metadata, ops)
 		if err != nil {
 			return err
 		}

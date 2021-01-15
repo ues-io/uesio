@@ -153,6 +153,9 @@ func (b *Bot) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (b *Bot) SetField(fieldName string, value interface{}) error {
+	if fieldName == "uesio.content__FILEDATA" {
+		return nil
+	}
 	return StandardFieldSet(b, fieldName, value)
 }
 

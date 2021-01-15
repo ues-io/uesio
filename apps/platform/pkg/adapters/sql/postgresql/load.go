@@ -28,7 +28,7 @@ func GetBytes(key interface{}) ([]byte, error) {
 func loadOne(
 	ctx context.Context,
 	db *sql.DB,
-	op adapters.LoadOp,
+	op *adapters.LoadOp,
 	metadata *adapters.MetadataCache,
 	ops []adapters.LoadOp,
 ) error {
@@ -47,7 +47,7 @@ func loadOne(
 		return err
 	}
 
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -185,25 +185,14 @@ func loadOne(
 			if err != nil {
 				return err
 			}
-		}
 
-		for _, reference := range referenceFields {
-			fieldMetadata := reference.Metadata
-			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
-			if err != nil {
-				return errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
+			if fieldMetadata.IsForeignKey {
+				// Handle foreign key value
+				reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
+				if ok {
+					reference.AddID(*colvals[index].(*interface{}))
+				}
 			}
-			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
-			if err != nil {
-				return err
-			}
-			foreignKeyValue, err := item.GetField(foreignKeyName)
-			if err != nil {
-				//No foreign key value
-				continue
-			}
-
-			reference.AddID(foreignKeyValue)
 		}
 
 		op.Collection.AddItem(item)
@@ -211,17 +200,9 @@ func loadOne(
 	}
 	rows.Close()
 
-	//At this point idsToLookFor has a mapping for reference field
-	//names to actual id values we will need to grab from the referenced collection
-	if len(referenceFields) != 0 {
-		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, db, metadata, op, collectionMetadata, referenceFields)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
+		return loadOne(ctx, db, op, metadata, nil)
+	}, op, metadata, referencedCollections)
 }
 
 // Load function
@@ -235,8 +216,9 @@ func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, 
 	}
 	defer db.Close()
 
-	for _, op := range ops {
-		err := loadOne(ctx, db, op, metadata, ops)
+	for i := range ops {
+		op := ops[i]
+		err := loadOne(ctx, db, &op, metadata, ops)
 		if err != nil {
 			return err
 		}

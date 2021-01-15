@@ -1,4 +1,0 @@
-name: newfile
-path: app/{appname}/workspace/{workspacename}/newfile
-view: uesio.newfile
-theme: uesio.default
