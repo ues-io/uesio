@@ -79,12 +79,12 @@ const diff = (
 	// 6. return lines range of the changes (start with index 1 and not 0 for the monaco editor)
 
 	// step 0.
-	const withMarkerStart = addMarkerAtFirstKey(lastAddedDefinition)
-	const { path, definition, index } = withMarkerStart
+	const withStartMarker = addMarkerAtFirstKey(lastAddedDefinition)
+	const { path, definition, index } = withStartMarker
 	const pathArray = toPath(path)
 	const children = get(previousYamlDocInJson, pathArray) || []
 
-	// step 1. insert the new definition in the children, by mutating children
+	// step 1. insert the new definition into the children, by mutating children
 	children.splice(index, 0, definition)
 
 	// step 2.
