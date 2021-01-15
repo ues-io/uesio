@@ -98,7 +98,6 @@ const diff = (
 	const endOffset =
 		startOffset + addedDefinitionLinesAmount(lastAddedDefinition)
 	// step 6.
-
 	return [startOffset + 1, endOffset - 1]
 }
 
