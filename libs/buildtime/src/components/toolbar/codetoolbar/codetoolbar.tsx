@@ -89,14 +89,18 @@ const diff = (
 
 	// step 2.
 	const newYamlDoc = util.yaml.parse(JSON.stringify(previousYamlDocInJson))
+
 	// step 3.
 	const newYamlDocStringified = newYamlDoc.toString()
 	const splittedByLines = splitTextByLines(newYamlDocStringified)
+
 	// step 4.
 	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START)
+
 	// step 5.
 	const endOffset =
 		startOffset + addedDefinitionLinesAmount(lastAddedDefinition)
+
 	// step 6.
 	return [startOffset + 1, endOffset - 1]
 }
