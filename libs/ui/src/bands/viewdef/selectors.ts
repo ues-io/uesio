@@ -35,12 +35,6 @@ const useViewYAML = (viewDefId: string) =>
 		return viewDef?.yaml
 	})
 
-const useViewLastAddedDefinition = (viewDefId: string) =>
-	useSelector((state: RootState) => {
-		const viewDef = selectors.selectById(state, viewDefId)
-		return viewDef?.lastAddedDefinition
-	})
-
 const useViewConfigValue = (viewDefId: string, key: string) =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
@@ -51,7 +45,6 @@ export {
 	useBuilderHasChanges,
 	useViewDef,
 	useViewYAML,
-	useViewLastAddedDefinition,
 	useViewDefinition,
 	useViewConfigValue,
 }

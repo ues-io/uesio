@@ -21,7 +21,6 @@ import {
 	useViewConfigValue,
 	useViewDefinition,
 	useViewYAML,
-	useViewLastAddedDefinition,
 } from "../bands/viewdef/selectors"
 
 const VIEW_BAND = "view"
@@ -48,11 +47,6 @@ class ViewAPI {
 	useYAML() {
 		const viewDefId = this.uesio.getViewDefId()
 		return viewDefId ? useViewYAML(viewDefId) : undefined
-	}
-
-	useLastAddedDefinition() {
-		const viewDefId = this.uesio.getViewDefId()
-		return viewDefId ? useViewLastAddedDefinition(viewDefId) : undefined
 	}
 
 	setDefinition(path: string, definition: Definition) {

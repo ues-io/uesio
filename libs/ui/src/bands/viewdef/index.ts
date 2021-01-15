@@ -6,7 +6,6 @@ import {
 	DefinitionList,
 	DefinitionMap,
 	YamlDoc,
-	AddDefinitionPayload,
 } from "../../definition/definition"
 import yaml from "yaml"
 import {
@@ -44,6 +43,12 @@ type SetDefinitionPayload = {
 type MoveDefinitionPayload = {
 	fromPath: string
 	toPath: string
+} & EntityPayload
+
+type AddDefinitionPayload = {
+	path: string
+	definition: Definition
+	index?: number
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -208,7 +213,6 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 		const newNode = yaml.createNode(definition, true)
 		if (newNode) {
 			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
-			state.lastAddedDefinition = payload
 		}
 	}
 }

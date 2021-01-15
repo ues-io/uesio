@@ -1,8 +1,4 @@
-import {
-	DefinitionMap,
-	YamlDoc,
-	AddDefinitionPayload,
-} from "../../definition/definition"
+import { DefinitionMap, YamlDoc } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
 
 type ConfigValueDependencies = {
@@ -29,7 +25,6 @@ type PlainViewDef = {
 	yaml?: YamlDoc
 	dependencies?: Dependencies
 	originalYaml?: YamlDoc
-	lastAddedDefinition?: AddDefinitionPayload
 }
 
 type PlainViewDefMap = {
