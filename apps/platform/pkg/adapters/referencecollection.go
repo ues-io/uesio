@@ -18,6 +18,10 @@ func (c *ReferenceCollection) GetItem(index int) LoadableItem {
 	return c.NewCollection.GetItem(index)
 }
 
+func (c *ReferenceCollection) GetItems() interface{} {
+	return c.NewCollection.GetItems()
+}
+
 // AddItem function
 func (c *ReferenceCollection) AddItem(refItem LoadableItem) {
 
