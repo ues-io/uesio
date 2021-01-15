@@ -48,6 +48,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			value={value}
 			language={language || "yaml"}
 			options={{
+				smoothScrolling: true,
 				automaticLayout: true,
 				minimap: {
 					enabled: false,
