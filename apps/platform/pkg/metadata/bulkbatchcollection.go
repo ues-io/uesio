@@ -48,3 +48,8 @@ func (bbc *BulkBatchCollection) Loop(iter func(item adapters.LoadableItem) error
 func (bbc *BulkBatchCollection) Len() int {
 	return len(*bbc)
 }
+
+// GetItems function
+func (bbc *BulkBatchCollection) GetItems() interface{} {
+	return bbc
+}

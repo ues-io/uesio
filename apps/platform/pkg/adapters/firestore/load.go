@@ -3,6 +3,7 @@ package firestore
 import (
 	"context"
 	"errors"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -102,6 +103,12 @@ func loadOne(
 		if err != nil {
 			return err
 		}
+	}
+
+	collSlice := op.Collection.GetItems()
+	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+	if ok {
+		sort.Slice(collSlice, locLessFunc)
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {

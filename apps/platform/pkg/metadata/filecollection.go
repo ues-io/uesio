@@ -63,3 +63,8 @@ func (fc *FileCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (fc *FileCollection) Len() int {
 	return len(*fc)
 }
+
+// GetItems function
+func (fc *FileCollection) GetItems() interface{} {
+	return fc
+}

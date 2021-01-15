@@ -87,3 +87,8 @@ func (fc *FieldCollection) Loop(iter func(item adapters.LoadableItem) error) err
 func (fc *FieldCollection) Len() int {
 	return len(*fc)
 }
+
+// GetItems function
+func (fc *FieldCollection) GetItems() interface{} {
+	return fc
+}

@@ -73,3 +73,8 @@ func (sc *SecretCollection) Loop(iter func(item adapters.LoadableItem) error) er
 func (sc *SecretCollection) Len() int {
 	return len(*sc)
 }
+
+// GetItems function
+func (sc *SecretCollection) GetItems() interface{} {
+	return sc
+}

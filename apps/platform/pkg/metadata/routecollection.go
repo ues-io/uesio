@@ -63,3 +63,8 @@ func (rc *RouteCollection) Loop(iter func(item adapters.LoadableItem) error) err
 func (rc *RouteCollection) Len() int {
 	return len(*rc)
 }
+
+// GetItems function
+func (rc *RouteCollection) GetItems() interface{} {
+	return rc
+}

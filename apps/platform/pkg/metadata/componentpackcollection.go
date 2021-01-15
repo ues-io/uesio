@@ -73,3 +73,8 @@ func (cpc *ComponentPackCollection) Loop(iter func(item adapters.LoadableItem) e
 func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
 }
+
+// GetItems function
+func (cpc *ComponentPackCollection) GetItems() interface{} {
+	return cpc
+}

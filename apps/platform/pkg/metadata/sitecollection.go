@@ -48,3 +48,8 @@ func (sc *SiteCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (sc *SiteCollection) Len() int {
 	return len(*sc)
 }
+
+// GetItems function
+func (sc *SiteCollection) GetItems() interface{} {
+	return sc
+}

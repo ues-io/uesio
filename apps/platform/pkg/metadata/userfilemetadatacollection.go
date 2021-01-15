@@ -48,3 +48,8 @@ func (ufmc *UserFileMetadataCollection) Loop(iter func(item adapters.LoadableIte
 func (ufmc *UserFileMetadataCollection) Len() int {
 	return len(*ufmc)
 }
+
+// GetItems function
+func (ufmc *UserFileMetadataCollection) GetItems() interface{} {
+	return ufmc
+}

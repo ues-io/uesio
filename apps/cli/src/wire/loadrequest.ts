@@ -7,6 +7,7 @@ type LoadRequest = {
 	collection: string
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
+	order: OrderDescription[]
 }
 
 type LoadRequestField = {
@@ -32,6 +33,11 @@ type LoadRequestValueCondition = {
 
 type LoadRequestBatch = {
 	wires: LoadRequest[]
+}
+
+type OrderDescription = {
+	field: string
+	desc: boolean
 }
 
 export { LoadRequest, LoadRequestField, LoadRequestBatch, LoadRequestCondition }

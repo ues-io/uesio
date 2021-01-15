@@ -73,3 +73,8 @@ func (tc *ThemeCollection) Loop(iter func(item adapters.LoadableItem) error) err
 func (tc *ThemeCollection) Len() int {
 	return len(*tc)
 }
+
+// GetItems function
+func (tc *ThemeCollection) GetItems() interface{} {
+	return tc
+}

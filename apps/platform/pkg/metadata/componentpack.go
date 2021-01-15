@@ -4,6 +4,7 @@ import "github.com/thecloudmasters/uesio/pkg/adapters"
 
 // ComponentPack struct
 type ComponentPack struct {
+	ID         string                            `yaml:"-" uesio:"uesio.id"`
 	Name       string                            `yaml:"name" uesio:"uesio.name"`
 	Namespace  string                            `yaml:"namespace" uesio:"-"`
 	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`

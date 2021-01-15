@@ -48,3 +48,8 @@ func (uc *UserCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (uc *UserCollection) Len() int {
 	return len(*uc)
 }
+
+// GetItems function
+func (uc *UserCollection) GetItems() interface{} {
+	return uc
+}

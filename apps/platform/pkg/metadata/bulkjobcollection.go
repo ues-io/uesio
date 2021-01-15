@@ -48,3 +48,8 @@ func (bjc *BulkJobCollection) Loop(iter func(item adapters.LoadableItem) error) 
 func (bjc *BulkJobCollection) Len() int {
 	return len(*bjc)
 }
+
+// GetItems function
+func (bjc *BulkJobCollection) GetItems() interface{} {
+	return bjc
+}
