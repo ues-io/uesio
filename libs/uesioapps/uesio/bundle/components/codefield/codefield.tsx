@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useState } from "react"
+import React, {
+	FunctionComponent,
+	useState,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { definition, material, collection, wire, component } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -49,8 +54,8 @@ function getChangeHandler(
 	language: CodeFieldLanguage,
 	record: wire.WireRecord,
 	fieldId: string,
-	setMessage: React.Dispatch<React.SetStateAction<string>>,
-	setStringValue: React.Dispatch<React.SetStateAction<string>>
+	setMessage: Dispatch<SetStateAction<string>>,
+	setStringValue: Dispatch<SetStateAction<string>>
 ) {
 	switch (fieldType) {
 		case "MAP":
@@ -79,7 +84,7 @@ function getValue(
 	fieldType: collection.FieldType,
 	language: CodeFieldLanguage,
 	value: wire.FieldValue,
-	setMessage: React.Dispatch<React.SetStateAction<string>>
+	setMessage: Dispatch<SetStateAction<string>>
 ): string {
 	switch (fieldType) {
 		case "MAP":

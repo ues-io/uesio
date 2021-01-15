@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, signal } from "@uesio/ui"
+import { hooks, material, styles, wire, signal, component } from "@uesio/ui"
+//import Icon from "../icon/icon"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -29,11 +30,13 @@ async function handleChange(
 	const idField = collection.getIdField()
 	if (!idField) return
 
+	const nameField = collection.getNameField()
+	const nameNameField = nameField?.getId()
+	if (!nameNameField) return
+
 	const context = uesio.getContext()
 
-	const recordId = record.getFieldValue(idField.getId()) as string
-
-	if (selectorFiles && recordId) {
+	if (selectorFiles) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
 		}
@@ -42,23 +45,42 @@ async function handleChange(
 		const appName = context.getView()?.params?.appname
 		const workspaceName = context.getView()?.params?.workspacename
 
-		await uesio.file.uploadFile(
-			context,
-			file,
-			file.name,
-			fileCollection,
-			collectionName,
-			recordId,
-			fieldId
-		)
+		record.update(nameNameField, file.name)
+		await wire.save(context)
+		//TO-DO show error if record Save fail
 
-		const navigateSig = {
-			signal: "route/NAVIGATE",
-			path: `app/` + appName + `/workspace/` + workspaceName + `/files`,
-			namespace: "uesio",
-		} as signal.SignalDefinition
+		const recordUpd = context.getRecord()
 
-		await uesio.signal.run(navigateSig, context)
+		if (recordUpd) {
+			const recordId = recordUpd.getFieldValue(idField.getId()) as string
+
+			if (recordId) {
+				await uesio.file.uploadFile(
+					context,
+					file,
+					file.name,
+					fileCollection,
+					collectionName,
+					recordId,
+					fieldId
+				)
+
+				//TO-DO insted of navigate we might want to keep a reference to the other wire and refresh?
+
+				const navigateSig = {
+					signal: "route/NAVIGATE",
+					path:
+						`app/` +
+						appName +
+						`/workspace/` +
+						workspaceName +
+						`/files`,
+					namespace: "uesio",
+				} as signal.SignalDefinition
+
+				await uesio.signal.run(navigateSig, context)
+			}
+		}
 	}
 }
 
@@ -71,6 +93,8 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	if (!wire || !record) {
 		return null
 	}
+
+	const Icon = component.registry.get("material", "icon")
 
 	return (
 		<div className={classes.root}>
@@ -95,12 +119,15 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 					color="primary"
 					variant="contained"
 					component="span"
-					onClick={
-						definition?.signals &&
-						uesio.signal.getHandler(definition.signals)
-					}
 				>
-					Upload New File
+					<Icon
+						definition={{
+							type: "librayadd",
+							size: "small",
+						}}
+						path={props.path}
+						context={props.context}
+					/>
 				</material.Button>
 			</label>
 		</div>

@@ -34,9 +34,6 @@ definition:
         uesio.id:
         uesio.name:
         uesio.content:
-        uesio.fileinfo:
-          fields:
-            uesio.mimetype:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -140,15 +137,14 @@ definition:
                                                           - signal: component/material.dialog/TOGGLE_MODE
                                                             target: "fileDialog"
                                   - material.file:
-                                      uesio.context:
-                                        workspace:
-                                          name: $Param{workspacename}
-                                          app: $Param{appname}
-                                      preview: true
                                       fieldId: uesio.content
-                                      mimeType: ${["uesio.fileinfo"]["uesio.mimetype"]}
-                                      width: 600
-                                      height: 600
+                                      fileCollection: uesio.platform
+                                      height: 200
+                                      width: 200
+                                      id: fileupid
                                       margin:
                                         - 0
                                         - 2
+                                      displayAs: fullPreview
+                                      editable: true
+                                      accepts: all

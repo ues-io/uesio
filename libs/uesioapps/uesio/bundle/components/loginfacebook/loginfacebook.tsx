@@ -17,7 +17,7 @@ interface LoginProps extends definition.BaseProps {
 
 const useStyles = material.makeStyles(() =>
 	material.createStyles({
-		FacebookLoginButton: getButtonStyles(),
+		facebookLoginButton: getButtonStyles(),
 	})
 )
 
@@ -52,7 +52,7 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 				callback={responseFacebook}
 				icon={<LoginIcon image="uesio.facebooksmall" />}
 				textButton={buttonText}
-				cssClass={classes.FacebookLoginButton}
+				cssClass={classes.facebookLoginButton}
 			/>
 		</LoginWrapper>
 	)

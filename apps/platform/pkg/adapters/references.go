@@ -2,146 +2,103 @@ package adapters
 
 // ReferenceRequest type
 type ReferenceRequest struct {
-	Fields   []LoadRequestField
-	Metadata *FieldMetadata
-	IDs      map[string]bool
+	Fields          []LoadRequestField
+	Metadata        *CollectionMetadata
+	ReferenceFields FieldsMap
+	IDs             map[string]bool
 }
 
 // AddID function
 func (rr *ReferenceRequest) AddID(value interface{}) {
-	if rr.IDs == nil {
-		//Initialize mapping
-		rr.IDs = map[string]bool{}
-	}
 	foreignKeyValueAsString, ok := value.(string)
 	if ok {
 		rr.IDs[foreignKeyValueAsString] = true
 	}
 }
 
+// AddFields function
+func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
+	rr.Fields = append(rr.Fields, fields...)
+}
+
+// AddReference function
+func (rr *ReferenceRequest) AddReference(reference *FieldMetadata) {
+	rr.ReferenceFields[reference.GetFullName()] = reference
+}
+
 // ReferenceRegistry type
 type ReferenceRegistry map[string]*ReferenceRequest
 
 // Add function
-func (rr *ReferenceRegistry) Add(fieldMetadata *FieldMetadata, fields []LoadRequestField) error {
-	fieldName, err := GetUIFieldName(fieldMetadata)
-	if err != nil {
-		return err
+func (rr *ReferenceRegistry) Add(collectionMetadata *CollectionMetadata) {
+	(*rr)[collectionMetadata.GetFullName()] = &ReferenceRequest{
+		Metadata:        collectionMetadata,
+		ReferenceFields: FieldsMap{},
+		IDs:             map[string]bool{},
+		Fields: []LoadRequestField{
+			{
+				ID: collectionMetadata.IDField,
+			},
+			{
+				ID: collectionMetadata.NameField,
+			},
+		},
+	}
+}
+
+// Get function
+func (rr *ReferenceRegistry) Get(collectionMetadata *CollectionMetadata) *ReferenceRequest {
+	request, ok := (*rr)[collectionMetadata.GetFullName()]
+	if !ok {
+		rr.Add(collectionMetadata)
+		return (*rr)[collectionMetadata.GetFullName()]
 	}
 
-	(*rr)[fieldName] = &ReferenceRequest{
-		Metadata: fieldMetadata,
-		Fields:   fields,
+	return request
+}
+
+type Loader func(*LoadOp, *MetadataCache) error
+
+func HandleReferences(
+	loader Loader,
+	op *LoadOp,
+	metadata *MetadataCache,
+	referencedCollections ReferenceRegistry,
+) error {
+	for collectionName, ref := range referencedCollections {
+
+		ids := make([]string, len(ref.IDs))
+		fieldIDIndex := 0
+		for k := range ref.IDs {
+			ids[fieldIDIndex] = k
+			fieldIDIndex++
+		}
+		collectionMetadata, err := metadata.GetCollection(collectionName)
+		if err != nil {
+			return err
+		}
+		refOp := &LoadOp{
+			Fields:   ref.Fields,
+			WireName: "ReferenceLoad",
+			Collection: &ReferenceCollection{
+				Collection:           op.Collection,
+				ReferencedCollection: ref,
+				CollectionMetadata:   collectionMetadata,
+				NewCollection:        &Collection{},
+			},
+			CollectionName: collectionName,
+			Conditions: []LoadRequestCondition{
+				{
+					Field:    collectionMetadata.IDField,
+					Operator: "IN",
+					Value:    ids,
+				},
+			},
+		}
+		err = loader(refOp, metadata)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
-}
-
-// ReferenceIDRegistry type
-type ReferenceIDRegistry map[string]map[string]bool
-
-// AddValueWithKey function
-func (rr *ReferenceIDRegistry) AddValueWithKey(key string, value interface{}) {
-	mapping, ok := (*rr)[key]
-	if !ok {
-		//Initialize mapping
-		mapping = map[string]bool{}
-		(*rr)[key] = mapping
-	}
-
-	foreignKeyValueAsString, ok := value.(string)
-	if ok {
-		mapping[foreignKeyValueAsString] = true
-	}
-}
-
-// GetKeys function
-func (rr *ReferenceIDRegistry) GetKeys(key string) []string {
-	keyMap := (*rr)[key]
-	fieldIDIndex := 0
-	fieldIDs := make([]string, len(keyMap))
-	for k := range keyMap {
-		fieldIDs[fieldIDIndex] = k
-		fieldIDIndex++
-	}
-	return fieldIDs
-}
-
-// GetReferenceFieldsAndIDs func
-func GetReferenceFieldsAndIDs(
-	referenceFields ReferenceRegistry,
-) (ReferenceIDRegistry, ReferenceIDRegistry, error) {
-	//A mapping of our different collections to their fields we will need from those collections
-	referencedCollectionsFields := ReferenceIDRegistry{}
-	//a mapping of all needed primary keys for the collections we care about
-	referencedCollectionsIDs := ReferenceIDRegistry{}
-	for _, reference := range referenceFields {
-		fieldMetadata := reference.Metadata
-		for _, field := range reference.Fields {
-			referencedCollectionsFields.AddValueWithKey(fieldMetadata.ReferencedCollection, field.ID)
-		}
-		for foreignKeyValue := range reference.IDs {
-			referencedCollectionsIDs.AddValueWithKey(fieldMetadata.ReferencedCollection, foreignKeyValue)
-		}
-	}
-	return referencedCollectionsFields, referencedCollectionsIDs, nil
-}
-
-// MergeReferenceData func
-func MergeReferenceData(
-	op LoadOp,
-	referenceFields ReferenceRegistry,
-	idToDataMapping map[string]map[string]interface{},
-	collectionMetadata *CollectionMetadata,
-) error {
-	//Merge in data from reference records into the data payload
-	return op.Collection.Loop(func(item LoadableItem) error {
-		//For each reference field
-		for _, reference := range referenceFields {
-			referenceField := reference.Metadata
-			if referenceField.ReferencedCollection != collectionMetadata.GetFullName() {
-				//Reference field cares about a different collection
-				continue
-			}
-			//We directly use the Uesio name here because we are dealing with a transformed
-			//payload already
-			fk, err := item.GetField(referenceField.ForeignKeyField)
-			if err != nil {
-				//No value for that reference field to map against
-				continue
-			}
-			fkAsString, ok := fk.(string)
-			if !ok {
-				//Was unable to convert foreign key to a string!
-				//Something has gone sideways!
-				continue
-			}
-			referenceDoc, ok := idToDataMapping[fkAsString]
-			if !ok {
-				//We found no reference doc corresponding to the foreign key
-				continue
-			}
-
-			referenceValue := map[string]interface{}{}
-
-			for _, field := range reference.Fields {
-				displayValue, ok := referenceDoc[field.ID]
-				if !ok {
-					//referenced doc had no entry for the name
-					continue
-				}
-				referenceValue[field.ID] = displayValue
-			}
-
-			referenceUIFieldName, err := GetUIFieldName(referenceField)
-			if err != nil {
-				return err
-			}
-
-			err = item.SetField(referenceUIFieldName, referenceValue)
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	})
 }
