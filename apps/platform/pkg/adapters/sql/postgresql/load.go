@@ -98,6 +98,26 @@ func loadOne(
 		loadQuery = loadQuery.Where(fieldName+" = ? ", fmt.Sprintf("%v", conditionValue))
 
 	}
+	for _, order := range op.Order {
+
+		fieldMetadata, err := collectionMetadata.GetField(order.Field)
+		if err != nil {
+			return err
+		}
+		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+
+		if order.Desc {
+
+			loadQuery = loadQuery.OrderBy(fieldName + " desc")
+			continue
+		}
+
+		loadQuery = loadQuery.OrderBy(fieldName + " asc")
+
+	}
 
 	rows, err := loadQuery.RunWith(db).Query()
 	if err != nil {
