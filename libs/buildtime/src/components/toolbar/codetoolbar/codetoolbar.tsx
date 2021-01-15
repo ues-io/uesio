@@ -11,7 +11,6 @@ import get from "lodash.get"
 
 const MARKER_FOR_DIFF_START = "##START##"
 const ANIMATION_DURATION = 3000
-const HIGHLIGHT_LINES_ANIMATION = "monaco-line-highlight"
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) =>
 				opacity: 0,
 			},
 		},
-		[HIGHLIGHT_LINES_ANIMATION]: {
+		highlightLines: {
 			backgroundColor: (props: definition.BaseProps) =>
 				styles.getColor({ intention: "info" }, theme, props.context) ||
 				"pink",
@@ -56,7 +55,7 @@ const splitTextByLines = (text: string) => text.split(/\r?\n/)
 const lookForLine = (lines: string[], wordToLookFor: string) =>
 	lines.findIndex((line) => line.indexOf(wordToLookFor) !== -1)
 
-const addedDefinitionHeight = (
+const addedDefinitionLinesAmount = (
 	addedDefinition: definition.AddDefinitionPayload
 ) => {
 	const yamlDoc = util.yaml.parse(
@@ -85,7 +84,7 @@ const diff = (
 	const pathArray = toPath(path)
 	const children = get(previousYamlDocInJson, pathArray) || []
 
-	// step 1. insert the new definition in the children, by mutating previousYamlDocInJson
+	// step 1. insert the new definition in the children, by mutating children
 	children.splice(index, 0, definition)
 
 	// step 2.
@@ -96,7 +95,8 @@ const diff = (
 	// step 4.
 	const startOffset = lookForLine(splittedByLines, MARKER_FOR_DIFF_START)
 	// step 5.
-	const endOffset = startOffset + addedDefinitionHeight(lastAddedDefinition)
+	const endOffset =
+		startOffset + addedDefinitionLinesAmount(lastAddedDefinition)
 	// step 6.
 
 	return [startOffset + 1, endOffset - 1]
@@ -299,8 +299,7 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 									),
 									options: {
 										isWholeLine: true,
-										className:
-											classes[HIGHLIGHT_LINES_ANIMATION],
+										className: classes.highlightLines,
 									},
 								},
 							]
