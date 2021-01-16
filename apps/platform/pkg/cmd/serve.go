@@ -87,7 +87,6 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/bulk/job", controllers.BulkJob).Methods("POST")
 	workspaceAPI(wr, "/bulk/job/{job}/batch", controllers.BulkBatch).Methods("POST")
 
-	workspaceAPI(wr, "/views/save", controllers.SaveViews).Methods("POST")
 	workspaceAPI(wr, "/views/{namespace}/{name}/preview", controllers.ViewPreview(false)).Methods("GET")
 	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controllers.ViewPreview(true)).Methods("GET")
 

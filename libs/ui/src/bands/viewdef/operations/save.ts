@@ -1,17 +1,22 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { SaveViewRequest, SaveViewResponse } from "../../../platform/platform"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
+import { SaveResponseBatch } from "../../../load/saveresponse"
+import { PlainWireRecord } from "../../wirerecord/types"
 
 export default createAsyncThunk<
-	SaveViewResponse,
+	SaveResponseBatch,
 	{
 		context: Context
 	},
 	UesioThunkAPI
 >("viewdef/save", async ({ context }, api) => {
-	const saveRequest: SaveViewRequest = {}
+	const changes: Record<string, PlainWireRecord> = {}
 	const state = api.getState().viewdef?.entities
+	const workspace = context.getWorkspace()
+
+	if (!workspace) throw new Error("No Workspace in context")
+
 	// Loop over view defs
 	if (state) {
 		for (const defKey of Object.keys(state)) {
@@ -20,9 +25,21 @@ export default createAsyncThunk<
 				continue
 			}
 			if (defState?.yaml) {
-				saveRequest[defKey] = defState.yaml.toString()
+				changes[defKey] = {
+					"uesio.definition": defState.yaml.toString(),
+					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
+				}
 			}
 		}
 	}
-	return api.extra.saveViews(context, saveRequest)
+	return api.extra.saveData(context, {
+		wires: [
+			{
+				wire: "saveview",
+				collection: "uesio.views",
+				changes,
+				deletes: {},
+			},
+		],
+	})
 })

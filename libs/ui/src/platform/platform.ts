@@ -18,14 +18,6 @@ type RouteResponse = {
 	workspace?: WorkspaceState
 }
 
-type SaveViewRequest = {
-	[key: string]: string
-}
-
-type SaveViewResponse = {
-	success: boolean
-}
-
 type BotParams = {
 	[key: string]: string
 }
@@ -37,10 +29,6 @@ type BotResponse = {
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
 	getTheme(context: Context, namespace: string, name: string): Promise<Theme>
-	saveViews(
-		context: Context,
-		views: SaveViewRequest
-	): Promise<SaveViewResponse>
 	getRoute(
 		context: Context,
 		namespace: string,
@@ -90,11 +78,4 @@ interface Platform {
 	logout(): Promise<LoginResponse>
 }
 
-export {
-	Platform,
-	SaveViewRequest,
-	SaveViewResponse,
-	RouteResponse,
-	BotResponse,
-	BotParams,
-}
+export { Platform, RouteResponse, BotResponse, BotParams }
