@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
 
@@ -159,6 +160,12 @@ func loadOne(
 		}
 
 		op.Collection.AddItem(item)
+	}
+
+	collSlice := op.Collection.GetItems()
+	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+	if ok {
+		sort.Slice(collSlice, locLessFunc)
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
