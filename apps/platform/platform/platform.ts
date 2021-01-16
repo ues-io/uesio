@@ -45,15 +45,6 @@ const postJSON = (url: string, body?: object) => {
 			return response.json()
 		},
 
-		saveViews: async (context: any, saveRequest: object) => {
-			const prefix = getPrefix(context.getWorkspace())
-			const response = await postJSON(`${prefix}/views/save`, saveRequest)
-			if (response.status != 200) {
-				throw new Error("Save Failed")
-			}
-			return response.json()
-		},
-
 		getRoute: async (context: any, namespace: string, route: string) => {
 			const prefix = getPrefix(context.getWorkspace())
 			const response = await fetch(
