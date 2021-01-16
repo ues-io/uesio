@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reflecttools"
@@ -64,7 +65,12 @@ func (f *File) GetKey() string {
 
 // GetPath function
 func (f *File) GetPath() string {
-	return f.GetKey() + ".yaml"
+	return filepath.Join(f.GetKey(), "file.yaml")
+}
+
+// GetFilePath function
+func (f *File) GetFilePath() string {
+	return filepath.Join(f.GetKey(), "file", f.FileName)
 }
 
 // GetPermChecker function

@@ -65,7 +65,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 				}
 
 				itemStream := bundlestore.ItemStream{
-					FileName: file.FileName,
+					FileName: file.GetFilePath(),
 					Type:     metadataType,
 				}
 
