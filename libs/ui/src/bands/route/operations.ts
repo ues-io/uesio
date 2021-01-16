@@ -1,8 +1,6 @@
-import { batch } from "react-redux"
 import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute } from "."
-import { clearAvailableMetadata } from "../builder"
 import loadViewOp from "../view/operations/load"
 
 const redirect = (context: Context, path: string) => async () => {
@@ -39,16 +37,14 @@ const navigate = (
 		})
 	)
 
-	batch(() => {
-		dispatch(clearAvailableMetadata())
-		dispatch(
-			setRoute({
-				view,
-				params: routeResponse.params,
-				workspace: routeResponse.workspace,
-			})
-		)
-	})
+	dispatch(
+		setRoute({
+			view,
+			params: routeResponse.params,
+			workspace: routeResponse.workspace,
+		})
+	)
+
 	if (!noPushState) {
 		const workspace = context.getWorkspace()
 		const prefix =

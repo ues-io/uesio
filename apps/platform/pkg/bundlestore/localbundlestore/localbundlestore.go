@@ -117,7 +117,7 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 
 // GetFileStream function
 func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
-	return getStream(file.Namespace, version, "files", file.FileName)
+	return getStream(file.Namespace, version, "files", file.GetFilePath())
 }
 
 // GetBotStream function

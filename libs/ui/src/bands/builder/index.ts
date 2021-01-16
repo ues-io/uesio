@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getParentPath } from "../../component/path"
 import { changeDefinitionKey, removeDefinition } from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
+import { set as setRoute } from "../route"
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -43,10 +44,6 @@ const builderSlice = createSlice({
 		) => {
 			state.namespaces = payload
 		},
-		clearAvailableMetadata: (state) => {
-			state.namespaces = null
-			state.metadata = null
-		},
 		setMetadataList: (
 			state,
 			{
@@ -77,6 +74,10 @@ const builderSlice = createSlice({
 		builder.addCase(removeDefinition, (state) => {
 			state.selectedNode = ""
 		})
+		builder.addCase(setRoute, (state) => {
+			state.namespaces = null
+			state.metadata = null
+		})
 	},
 })
 
@@ -90,7 +91,6 @@ export const {
 	setRightPanel,
 	setView,
 	setAvailableNamespaces,
-	clearAvailableMetadata,
 	setMetadataList,
 	setPanelClosed,
 } = builderSlice.actions
