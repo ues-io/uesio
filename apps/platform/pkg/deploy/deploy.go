@@ -90,7 +90,7 @@ func Deploy(body []byte, session *sess.Session) error {
 			}
 			err = readZipFile(zipFile, collectionItem)
 			if err != nil {
-				return err
+				return errors.New("Reading File: " + key + " : " + err.Error())
 			}
 
 			// Special handling for files

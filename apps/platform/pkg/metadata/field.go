@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
@@ -95,7 +96,7 @@ func (f *Field) GetBundleGroup() BundleableGroup {
 
 // GetKey function
 func (f *Field) GetKey() string {
-	return f.CollectionRef + "." + f.Namespace + "." + f.Name
+	return filepath.Join(f.CollectionRef, f.Namespace+"."+f.Name)
 }
 
 // GetPath function

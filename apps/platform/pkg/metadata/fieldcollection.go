@@ -3,6 +3,7 @@ package metadata
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -33,14 +34,18 @@ func (fc *FieldCollection) NewBundleableItem() BundleableItem {
 
 // NewBundleableItem function
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 4 {
+	keyArray := strings.Split(key, string(os.PathSeparator))
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Field Key: " + key)
+	}
+	namespace, name, err := ParseKey(keyArray[1])
+	if err != nil {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
 	return &Field{
-		CollectionRef: keyArray[0] + "." + keyArray[1],
-		Namespace:     keyArray[2],
-		Name:          keyArray[3],
+		CollectionRef: keyArray[0],
+		Namespace:     namespace,
+		Name:          name,
 	}, nil
 }
 
@@ -48,17 +53,16 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 1 {
+	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 	if hasCollection {
-		if strings.HasPrefix(parts[0], collectionKey+".") && strings.HasSuffix(parts[0], ".yaml") {
-			return strings.TrimSuffix(path, ".yaml"), nil
+		if parts[0] != collectionKey {
+			return "", nil
 		}
-		return "", nil
 	}
-	return strings.TrimSuffix(path, ".yaml"), nil
+	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
 }
 
 // AddItem function
