@@ -127,13 +127,12 @@ func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, sessi
 
 // GetComponentPackStream function
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	name := componentPack.Name
-	namespace := componentPack.Namespace
-	fileName := namespace + "." + name + ".bundle.js"
+
+	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
-		fileName = namespace + "." + name + ".builder.bundle.js"
+		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
 	}
-	return getStream(namespace, version, "componentpacks", fileName)
+	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
 }
 
 // StoreItems function
