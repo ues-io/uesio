@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { getParentPath } from "../../component/path"
-import { changeDefinitionKey, removeDefinition } from "../viewdef"
+import {
+	addDefinition,
+	changeDefinitionKey,
+	removeDefinition,
+	setDefinition,
+	cancel,
+} from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
 import { set as setRoute } from "../route"
 const builderSlice = createSlice({
@@ -67,16 +73,27 @@ const builderSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			state.selectedNode = `${getParentPath(payload.path)}["${
-				payload.key
-			}"]`
+			const parentPath = getParentPath(payload.path)
+			const keyPath = `${parentPath}["${payload.key}"]`
+			state.selectedNode = keyPath
+			state.lastModifiedNode = parentPath
 		})
 		builder.addCase(removeDefinition, (state) => {
 			state.selectedNode = ""
+			state.lastModifiedNode = ""
 		})
 		builder.addCase(setRoute, (state) => {
 			state.namespaces = null
 			state.metadata = null
+		})
+		builder.addCase(addDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+		})
+		builder.addCase(setDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path
+		})
+		builder.addCase(cancel, (state) => {
+			state.lastModifiedNode = ""
 		})
 	},
 })
