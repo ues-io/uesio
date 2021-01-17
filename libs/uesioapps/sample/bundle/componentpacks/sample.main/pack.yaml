@@ -1,0 +1,6 @@
+name: main
+components:
+  hello:
+  error:
+  progressgauge:
+  datePicker:

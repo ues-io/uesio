@@ -57,4 +57,4 @@ firebase.json
 firebase-debug.log
 .firebaserc
 __debug_bin
-*/componentpacks
+*/componentpacks/*.js
