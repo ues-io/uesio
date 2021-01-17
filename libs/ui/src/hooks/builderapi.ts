@@ -1,14 +1,15 @@
 import {
 	useBuilderMode,
-	useBuilderDragNode,
-	useBuilderDropNode,
+	useDragNode,
+	useDropNode,
 	useBuilderView,
-	useBuilderRightPanel,
-	useBuilderLeftPanel,
-	useBuilderMetadataList,
-	useBuilderAvailableNamespaces,
-	useBuilderNodeState,
-	useBuilderSelectedNode,
+	useRightPanel,
+	useLeftPanel,
+	useMetadataList,
+	useAvailableNamespaces,
+	useNodeState,
+	useSelectedNode,
+	useLastModifiedNode,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
@@ -41,18 +42,19 @@ class BuilderAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
-	useNodeState = useBuilderNodeState
-	useSelectedNode = useBuilderSelectedNode
+	useNodeState = useNodeState
+	useSelectedNode = useSelectedNode
+	useLastModifiedNode = useLastModifiedNode
 	useMode = useBuilderMode
-	useDragNode = useBuilderDragNode
-	useDropNode = useBuilderDropNode
-	useLeftPanel = useBuilderLeftPanel
-	useRightPanel = useBuilderRightPanel
+	useDragNode = useDragNode
+	useDropNode = useDropNode
+	useLeftPanel = useLeftPanel
+	useRightPanel = useRightPanel
 	useView = useBuilderView
 	useHasChanges = useBuilderHasChanges
 
-	useMetadataList = useBuilderMetadataList
-	useAvailableNamespaces = useBuilderAvailableNamespaces
+	useMetadataList = useMetadataList
+	useAvailableNamespaces = useAvailableNamespaces
 
 	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))

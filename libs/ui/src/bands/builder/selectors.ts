@@ -17,7 +17,7 @@ const isMatch = (componentPath: string, testPath?: string) => {
 	return false
 }
 
-const useBuilderNodeState = (path: string) =>
+const useNodeState = (path: string) =>
 	useSelector(({ builder }: RootState) => {
 		if (builder) {
 			if (isMatch(path, builder.selectedNode)) {
@@ -30,19 +30,22 @@ const useBuilderNodeState = (path: string) =>
 		return ""
 	})
 
-const useBuilderSelectedNode = () =>
+const useLastModifiedNode = () =>
+	useSelector(({ builder }: RootState) => builder?.lastModifiedNode || "")
+
+const useSelectedNode = () =>
 	useSelector(({ builder }: RootState) => builder?.selectedNode || "")
 
-const useBuilderDragNode = () =>
+const useDragNode = () =>
 	useSelector(({ builder }: RootState) => builder?.draggingNode || "")
 
-const useBuilderDropNode = () =>
+const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
-const useBuilderLeftPanel = () =>
+const useLeftPanel = () =>
 	useSelector(({ builder }: RootState) => builder?.leftPanel || "")
 
-const useBuilderRightPanel = () =>
+const useRightPanel = () =>
 	useSelector(({ builder }: RootState) => builder?.rightPanel || "")
 
 const useBuilderView = () =>
@@ -53,7 +56,7 @@ const useBuilderMode = () =>
 		builder ? !!builder.buildMode : false
 	)
 
-const useBuilderMetadataList = (
+const useMetadataList = (
 	metadataType: metadata.MetadataType,
 	namespace: string,
 	grouping?: string
@@ -70,18 +73,19 @@ const useBuilderMetadataList = (
 					builder?.metadata?.[metadataType]?.[namespace] || null
 		  )
 
-const useBuilderAvailableNamespaces = () =>
+const useAvailableNamespaces = () =>
 	useSelector(({ builder }: RootState) => builder?.namespaces || null)
 
 export {
-	useBuilderNodeState,
-	useBuilderSelectedNode,
+	useNodeState,
+	useSelectedNode,
+	useLastModifiedNode,
 	useBuilderMode,
-	useBuilderDragNode,
-	useBuilderDropNode,
-	useBuilderLeftPanel,
-	useBuilderRightPanel,
+	useDragNode,
+	useDropNode,
+	useLeftPanel,
+	useRightPanel,
 	useBuilderView,
-	useBuilderMetadataList,
-	useBuilderAvailableNamespaces,
+	useMetadataList,
+	useAvailableNamespaces,
 }

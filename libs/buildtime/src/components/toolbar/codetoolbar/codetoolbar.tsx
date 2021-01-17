@@ -34,9 +34,9 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const yamlDoc = uesio.view.useYAML()
 	const currentYaml = yamlDoc?.toString() || ""
+	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
-	const previousYaml = currentAST.current?.toString()
 	currentAST.current = util.yaml.parse(currentYaml)
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
@@ -49,51 +49,47 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const m = monacoRef.current
 
 	useEffect(() => {
-		if (e && m && previousYaml && currentYaml) {
-			// Create an off-dom diff editor
-			const diffEditor = m.editor.createDiffEditor(
-				document.createElement("div")
+		if (e && m && currentAST.current && lastModifiedNode) {
+			const node = util.yaml.getNodeAtPath(
+				lastModifiedNode,
+				currentAST.current.contents
+			)
+			const model = e.getModel()
+			if (!node || !model) return
+			const range = node.range
+			if (!range || !range.length) return
+
+			const startLine = model.getPositionAt(range[0]).lineNumber
+			let endLine = model.getPositionAt(range[1]).lineNumber
+
+			// Technically the yaml node for maps ends on the next line
+			// but we don't want to highlight that line.
+			if (node.constructor.name === "YAMLMap" && endLine > startLine) {
+				endLine--
+			}
+
+			decorationsRef.current = e.deltaDecorations(
+				decorationsRef.current || [],
+				[
+					{
+						range: new m.Range(startLine, 1, endLine, 1),
+						options: {
+							isWholeLine: true,
+							className: classes.highlightLines,
+						},
+					},
+				]
 			)
 
-			diffEditor.setModel({
-				original: m.editor.createModel(previousYaml, "text/plain"),
-				modified: m.editor.createModel(currentYaml, "text/plain"),
-			})
+			// scroll to the changes
+			e.revealLineInCenter(startLine)
 
-			diffEditor.onDidUpdateDiff(() => {
-				const changes = diffEditor.getLineChanges()
-				if (changes?.length) {
-					decorationsRef.current = e.deltaDecorations(
-						decorationsRef.current || [],
-						changes.map((change) => ({
-							range: new m.Range(
-								change.modifiedStartLineNumber,
-								change.charChanges?.length === 0
-									? change.charChanges[0].modifiedStartColumn
-									: 1,
-								change.modifiedEndLineNumber,
-								change.charChanges?.length === 0
-									? change.charChanges[0].modifiedEndColumn
-									: 1
-							),
-							options: {
-								isWholeLine: true,
-								className: classes.highlightLines,
-							},
-						}))
-					)
-
-					// scroll to the changes
-					e.revealLineInCenter(changes[0].modifiedStartLineNumber)
-
-					// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
-					setTimeout(() => {
-						decorationsRef.current =
-							decorationsRef.current &&
-							e.deltaDecorations(decorationsRef.current, [])
-					}, ANIMATION_DURATION)
-				}
-			})
+			// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
+			setTimeout(() => {
+				decorationsRef.current =
+					decorationsRef.current &&
+					e.deltaDecorations(decorationsRef.current, [])
+			}, ANIMATION_DURATION)
 		}
 	})
 
