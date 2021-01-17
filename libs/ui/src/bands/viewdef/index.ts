@@ -19,12 +19,11 @@ import {
 import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
-import { getParentPath } from "../../component/path"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
-import {getPropertiesDefinition} from "../../component/registry";
+import convertToPath from "lodash.topath"
 
 type YamlUpdatePayload = {
 	path: string
@@ -41,8 +40,9 @@ type SetDefinitionPayload = {
 } & EntityPayload
 
 type MoveDefinitionPayload = {
-	fromPath: string
-} & AddDefinitionPayload
+	fromPath: string,
+	toPath: string
+} & Omit<AddDefinitionPayload, 'path'>
 
 type AddDefinitionPayload = {
 	path: string
@@ -61,16 +61,6 @@ type ChangeDefinitionKeyPayload = {
 	path: string
 	key: string
 } & EntityPayload
-
-const move = (
-	fromList: DefinitionList,
-	toList: DefinitionList,
-	fromIndex: number,
-	toIndex: number
-) => {
-	const [removed] = fromList.splice(fromIndex, 1)
-	toList.splice(toIndex, 0, removed)
-}
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
@@ -141,12 +131,15 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	addDef(state, payload)
+	const toPath = payload.toPath
+	const toPathArr = convertToPath(toPath)
+	toPathArr.splice(-2)
+	addDef(state, {...payload, path: `["${toPathArr.join(`"]["`)}"]`})
 	// Use path (toPath) and fromPath to calculate the path you need to remove once you've added
 	// the path you need to add. So if we add a path Before where we were, we need
 	// to make sure we don't trim the wrong element (that occurs too early.)
-	const pathToRemove = payload.fromPath
-	removeDef(state, {...payload, path: pathToRemove})
+	// const pathToRemove = payload.fromPath
+	// removeDef(state, {...payload, path: pathToRemove})
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {

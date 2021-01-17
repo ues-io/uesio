@@ -24,12 +24,10 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const moveToIndex = (index: number) => {
 		const toPath = `${parentPath}["${index}"]`
 
-		// Selection Handling
 		const suffix = component.path.getPathSuffix(path)
 		const newSelectedPath = `${toPath}["${suffix}"]`
-		uesio.builder.setActiveNode(newSelectedPath)
-		//TODO:: JAS HERE
-		uesio.view.moveDefinition(indexPath, toPath)
+		debugger;
+		uesio.view.moveDefinition(path, newSelectedPath)
 	}
 
 	const onClickBackward = () => index && moveToIndex(index - 1)

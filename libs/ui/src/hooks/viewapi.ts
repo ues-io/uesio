@@ -19,6 +19,8 @@ import {
 	useViewDefinition,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
+import convertToPath from "lodash.topath"
+import get from "lodash.get"
 
 const VIEW_BAND = "view"
 
@@ -123,12 +125,21 @@ class ViewAPI {
 
 	moveDefinition(fromPath: string, toPath: string) {
 		const viewDefId = this.uesio.getViewDefId()
-		if (viewDefId) {
+		const viewDef = this.uesio.getViewDef()
+		const pathArray = convertToPath(toPath)
+		const index = parseInt(pathArray[pathArray.length - 2], 10)
+		if (viewDefId && viewDef && viewDef.definition) {
+			const fromPathArray = convertToPath(fromPath)
+			fromPathArray.splice(-1)
+			const def = get(viewDef.definition, fromPathArray)
 			this.dispatcher(
 				moveDefinition({
 					entity: viewDefId,
 					fromPath,
+					definition: def,
 					toPath,
+					index,
+					bankDrop: false
 				})
 			)
 		}

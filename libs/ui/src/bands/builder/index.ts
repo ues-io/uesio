@@ -93,11 +93,7 @@ const builderSlice = createSlice({
 			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
 		})
 		builder.addCase(moveDefinition, (state, { payload }) => {
-			const previousSelected = state.selectedNode
-			const previousPath = convertToPath(previousSelected)
-			const key = previousPath[previousPath.length - 1]
-			const movingTo = calculateNewPathAheadOfTime(payload.fromPath, payload.path)
-			state.selectedNode = `${movingTo}["${key}"]`
+			state.selectedNode = calculateNewPathAheadOfTime(payload.fromPath, payload.toPath)
 		})
 	},
 })
