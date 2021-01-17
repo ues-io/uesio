@@ -1,5 +1,5 @@
 import { hooks, component, builder } from "@uesio/ui"
-import convertToPath from 'lodash.topath'
+import convertToPath from "lodash.topath"
 const isExistingComponent = (dragNode: string): boolean =>
 	!component.dragdrop.isComponentBankKey(dragNode) &&
 	!component.dragdrop.isFieldBankKey(dragNode)
@@ -96,7 +96,6 @@ const handleFieldDrop = (
 	const dropPropDef = component.registry.getPropertiesDefinitionFromPath(
 		dropNode
 	)
-	//TODO:: JAS HERE
 	const handler = dropPropDef?.handleFieldDrop
 	if (handler) {
 		return handler(dragNode, dropNode, dropIndex, propDef, uesio)

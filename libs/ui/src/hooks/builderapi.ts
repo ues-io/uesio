@@ -55,7 +55,7 @@ class BuilderAPI {
 	useAvailableNamespaces = useBuilderAvailableNamespaces
 
 	setActiveNode = (path: string) => {
-		// this.dispatcher(setActiveNode(path))
+		this.dispatcher(setActiveNode(path))
 	}
 	setPanelClosed = () => {
 		this.dispatcher(setPanelClosed())

@@ -26,7 +26,6 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 
 		const suffix = component.path.getPathSuffix(path)
 		const newSelectedPath = `${toPath}["${suffix}"]`
-		debugger;
 		uesio.view.moveDefinition(path, newSelectedPath)
 	}
 

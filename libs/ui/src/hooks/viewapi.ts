@@ -139,7 +139,7 @@ class ViewAPI {
 					definition: def,
 					toPath,
 					index,
-					bankDrop: false
+					bankDrop: false,
 				})
 			)
 		}

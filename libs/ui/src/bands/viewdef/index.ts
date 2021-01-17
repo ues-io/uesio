@@ -1,12 +1,7 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import setWith from "lodash.setwith"
 import toPath from "lodash.topath"
-import {
-	Definition,
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
+import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import yaml from "yaml"
 import {
 	addNodeAtPath,
@@ -23,7 +18,7 @@ import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
-import convertToPath from "lodash.topath"
+import { calculateNewPathAheadOfTime } from "../../component/path"
 
 type YamlUpdatePayload = {
 	path: string
@@ -40,9 +35,9 @@ type SetDefinitionPayload = {
 } & EntityPayload
 
 type MoveDefinitionPayload = {
-	fromPath: string,
+	fromPath: string
 	toPath: string
-} & Omit<AddDefinitionPayload, 'path'>
+} & Omit<AddDefinitionPayload, "path">
 
 type AddDefinitionPayload = {
 	path: string
@@ -131,26 +126,28 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const toPath = payload.toPath
-	const toPathArr = convertToPath(toPath)
+	removeDef(state, { ...payload, path: payload.fromPath })
+	const toPathStr = calculateNewPathAheadOfTime(
+		payload.fromPath,
+		payload.toPath
+	)
+	const toPathArr = toPath(toPathStr)
 	toPathArr.splice(-2)
-	addDef(state, {...payload, path: `["${toPathArr.join(`"]["`)}"]`})
-	// Use path (toPath) and fromPath to calculate the path you need to remove once you've added
-	// the path you need to add. So if we add a path Before where we were, we need
-	// to make sure we don't trim the wrong element (that occurs too early.)
-	// const pathToRemove = payload.fromPath
-	// removeDef(state, {...payload, path: pathToRemove})
+	addDef(state, { ...payload, path: `["${toPathArr.join(`"]["`)}"]` })
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path) || []
-
+	let currentArray = get(state.definition, path)
 	const newIndex =
 		payload.index === undefined ? currentArray.length : payload.index
-	currentArray.splice(newIndex, 0, definition)
-	setWith(state, ["definition"].concat(pathArray), currentArray)
+	if (!currentArray) {
+		currentArray = [definition]
+		setWith(state, ["definition"].concat(pathArray), currentArray)
+	} else {
+		currentArray.splice(newIndex, 0, definition)
+	}
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = yaml.parseDocument(state.yaml.toString(), YAML_OPTIONS)

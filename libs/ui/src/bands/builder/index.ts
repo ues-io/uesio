@@ -1,9 +1,16 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit"
-import {getParentPath} from "../../component/path"
-import {addDefinition, changeDefinitionKey, moveDefinition, removeDefinition,} from "../viewdef"
-import {BuilderState, MetadataListResponse, MetadataListStore} from "./types"
-import {DefinitionMap} from "../../definition/definition"
-import convertToPath from 'lodash.topath'
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import {
+	getParentPath,
+	calculateNewPathAheadOfTime,
+} from "../../component/path"
+import {
+	addDefinition,
+	changeDefinitionKey,
+	moveDefinition,
+	removeDefinition,
+} from "../viewdef"
+import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
+import { DefinitionMap } from "../../definition/definition"
 
 const builderSlice = createSlice({
 	name: "builder",
@@ -93,65 +100,13 @@ const builderSlice = createSlice({
 			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
 		})
 		builder.addCase(moveDefinition, (state, { payload }) => {
-			state.selectedNode = calculateNewPathAheadOfTime(payload.fromPath, payload.toPath)
+			state.selectedNode = calculateNewPathAheadOfTime(
+				payload.fromPath,
+				payload.toPath
+			)
 		})
 	},
 })
-function isInt(str: string) {
-	let i = 0;
-	if(str.length === 0) return false
-	while(i < str.length) {
-		if(str[i] > '9' || str[i] < '0') return false;
-		i++
-	}
-	return true
-}
-function calculateNewPathAheadOfTime(fromPathStr: string, toPathStr: string) {
-	//"components", "0", "material.container", "components", "0"
-	const fromPath = convertToPath(fromPathStr)
-	// "components", "0", "material.container", "components", "1", "material.deck", "components", "0"
-	const toPath = convertToPath(toPathStr)
-
-	let index = 0;
-	let foundDifferenceBeforeEnd = false;
-	while((fromPath.length > index) && (toPath.length > index)) {
-		if (fromPath[index] !== toPath[index]) {
-			if(!isInt(fromPath[index]) || !isInt(toPath[index])) {
-				return toPathStr
-			}
-			foundDifferenceBeforeEnd = true;
-			break; // Found a difference in int indexes
-		}
-		index++
-	}
-	console.log(fromPathStr, toPathStr)
-	if(!foundDifferenceBeforeEnd) {
-		return toPathStr
-	}
-	//If we got here we shifted indexes between from and to path - so we need to handle edge cases
-	const fromIndex = parseInt(fromPath[index], 10)
-	const toIndex = parseInt(toPath[index], 10)
-
-	if(toIndex < fromIndex) {
-		// No problem - we moved before where we were - so our calculated
-		// path is still correct
-		return toPathStr
-	}
-
-	if((toPath.length - 1) === index) {
-		// The level we moved out of is our own top most level - so the
-		// index is actually correct
-		debugger;
-		return toPathStr
-	}
-	debugger;
-	// Otherwise we moved into a deeper level than we were before, and
-	// after where we were so we need to decrement where we think we are going
-	// to account for a parent generation entry no longer being in that space
-	toPath[index] = (toIndex - 1)+""
-	//Covert it back to the stringified path
-	return `["${toPath.join('"]["')}"]`
-}
 
 export const {
 	setActiveNode,
