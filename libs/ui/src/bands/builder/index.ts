@@ -93,9 +93,6 @@ const builderSlice = createSlice({
 			state.namespaces = null
 			state.metadata = null
 		})
-		builder.addCase(addDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
-		})
 		builder.addCase(setDefinition, (state, { payload }) => {
 			state.lastModifiedNode = payload.path
 		})
@@ -103,6 +100,7 @@ const builderSlice = createSlice({
 			state.lastModifiedNode = ""
 		})
 		builder.addCase(addDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
 			if (!payload.bankDrop || payload.index === undefined) {
 				// Added a not dragged component
 				// (added button to buttonset for example)
