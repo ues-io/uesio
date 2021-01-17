@@ -77,21 +77,14 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 		defaultSiteProfile = "uesio.standard"
 	}
 
-	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &metadata.UserCollection{
-				{
-					FirstName:      claims.FirstName,
-					LastName:       claims.LastName,
-					FederationType: claims.AuthType,
-					FederationID:   claims.Subject,
-					Profile:        defaultSiteProfile,
-					Site:           site.Name,
-				},
-			},
-		},
-	}, session)
-	return err
+	return datasource.PlatformSaveOne(&metadata.User{
+		FirstName:      claims.FirstName,
+		LastName:       claims.LastName,
+		FederationType: claims.AuthType,
+		FederationID:   claims.Subject,
+		Profile:        defaultSiteProfile,
+		Site:           site.Name,
+	}, nil, session)
 }
 
 // CheckProvisionWhitelist function

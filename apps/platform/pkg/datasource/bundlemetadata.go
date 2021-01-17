@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -37,45 +36,11 @@ func SaveBundleMetadata(namespace string, version string, description string, se
 	if err != nil {
 		return err
 	}
-	bundles := metadata.BundleCollection{
-		metadata.Bundle{
-			Namespace:   namespace,
-			Major:       strconv.Itoa(versionParts[0]),
-			Minor:       strconv.Itoa(versionParts[1]),
-			Patch:       strconv.Itoa(versionParts[2]),
-			Description: description,
-		},
-	}
-
-	_, err = PlatformSave([]PlatformSaveRequest{
-		{
-			Collection: &bundles,
-		},
-	}, session)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-//TODO::
-//func deleteBundle(namespace string, version string, site *metadata.Site, sess *session.Session) error {
-//
-//}
-func getBundleMetadataByID(id string, session *sess.Session) (*metadata.Bundle, error) {
-	b := metadata.Bundle{}
-	err := PlatformLoadOne(
-		&b,
-		[]adapters.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: id,
-			},
-		},
-		session,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return &b, nil
+	return PlatformSaveOne(&metadata.Bundle{
+		Namespace:   namespace,
+		Major:       strconv.Itoa(versionParts[0]),
+		Minor:       strconv.Itoa(versionParts[1]),
+		Patch:       strconv.Itoa(versionParts[2]),
+		Description: description,
+	}, nil, session)
 }

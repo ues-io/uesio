@@ -44,8 +44,7 @@ func (pc *PermissionSetCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (pc *PermissionSetCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *pc
-	return &actual[index]
+	return &(*pc)[index]
 }
 
 // Loop function

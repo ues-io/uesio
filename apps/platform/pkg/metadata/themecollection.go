@@ -54,8 +54,7 @@ func (tc *ThemeCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (tc *ThemeCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *tc
-	return &actual[index]
+	return &(*tc)[index]
 }
 
 // Loop function

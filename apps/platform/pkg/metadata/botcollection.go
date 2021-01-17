@@ -82,8 +82,7 @@ func (bc *BotCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (bc *BotCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *bc
-	return &actual[index]
+	return &(*bc)[index]
 }
 
 // Loop function

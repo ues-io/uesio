@@ -44,8 +44,7 @@ func (pc *ProfileCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (pc *ProfileCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *pc
-	return &actual[index]
+	return &(*pc)[index]
 }
 
 // Loop function

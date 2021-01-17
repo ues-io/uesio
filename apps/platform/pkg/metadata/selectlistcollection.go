@@ -54,8 +54,7 @@ func (slc *SelectListCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (slc *SelectListCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *slc
-	return &actual[index]
+	return &(*slc)[index]
 }
 
 // Loop function

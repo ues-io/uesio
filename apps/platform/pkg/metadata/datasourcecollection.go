@@ -44,8 +44,7 @@ func (dsc *DataSourceCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (dsc *DataSourceCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *dsc
-	return &actual[index]
+	return &(*dsc)[index]
 }
 
 // Loop function

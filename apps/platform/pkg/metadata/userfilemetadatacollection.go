@@ -29,8 +29,7 @@ func (ufmc *UserFileMetadataCollection) NewItem() adapters.LoadableItem {
 
 // GetItem function
 func (ufmc *UserFileMetadataCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *ufmc
-	return &actual[index]
+	return &(*ufmc)[index]
 }
 
 // Loop function

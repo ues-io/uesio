@@ -19,8 +19,7 @@ func (sc *SiteCollection) GetFields() []adapters.LoadRequestField {
 
 // GetItem function
 func (sc *SiteCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *sc
-	return &actual[index]
+	return &(*sc)[index]
 }
 
 // AddItem function

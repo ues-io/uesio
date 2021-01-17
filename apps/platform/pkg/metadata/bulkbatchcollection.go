@@ -19,8 +19,7 @@ func (bbc *BulkBatchCollection) GetFields() []adapters.LoadRequestField {
 
 // GetItem function
 func (bbc *BulkBatchCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *bbc
-	return &actual[index]
+	return &(*bbc)[index]
 }
 
 // AddItem function

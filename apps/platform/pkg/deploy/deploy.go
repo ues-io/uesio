@@ -127,12 +127,10 @@ func Deploy(body []byte, session *sess.Session) error {
 
 		length := collection.Len()
 		if length > 0 {
-			_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-				{
-					Collection: collection,
-					Options: &adapters.SaveOptions{
-						Upsert: &adapters.UpsertOptions{},
-					},
+			err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+				Collection: collection,
+				Options: &adapters.SaveOptions{
+					Upsert: &adapters.UpsertOptions{},
 				},
 			}, session)
 			if err != nil {

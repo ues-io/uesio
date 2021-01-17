@@ -98,7 +98,9 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error) {
 	var by metadata.BundleDef
 	by.Name = namespace
-	bdc, err := datasource.BundleDependencyLoad(
+	bdc := metadata.BundleDependencyCollection{}
+	err := datasource.PlatformLoad(
+		&bdc,
 		[]adapters.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",

@@ -54,21 +54,3 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 
 	respondFile(w, r, userFile.MimeType, fileStream)
 }
-
-// DeleteUserFile function
-func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text")
-	session := middlewares.GetSession(r)
-	userFileID := r.URL.Query().Get("userfileid")
-	if userFileID == "" {
-		w.Write([]byte("No userfileid in the request URL query"))
-		return
-	}
-
-	err := filesource.Delete(userFileID, session)
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.Write([]byte("ok"))
-}

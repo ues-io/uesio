@@ -54,8 +54,7 @@ func (vc *ViewCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (vc *ViewCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *vc
-	return &actual[index]
+	return &(*vc)[index]
 }
 
 // Loop function

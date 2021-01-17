@@ -56,8 +56,7 @@ func (fc *FileCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (fc *FileCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *fc
-	return &actual[index]
+	return &(*fc)[index]
 }
 
 // Loop function
