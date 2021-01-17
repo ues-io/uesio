@@ -48,3 +48,8 @@ func (wc *WorkspaceCollection) Loop(iter func(item adapters.LoadableItem) error)
 func (wc *WorkspaceCollection) Len() int {
 	return len(*wc)
 }
+
+// GetItems function
+func (wc *WorkspaceCollection) GetItems() interface{} {
+	return wc
+}

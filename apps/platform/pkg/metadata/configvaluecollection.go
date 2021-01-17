@@ -63,3 +63,8 @@ func (cvc *ConfigValueCollection) Loop(iter func(item adapters.LoadableItem) err
 func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
 }
+
+// GetItems function
+func (cvc *ConfigValueCollection) GetItems() interface{} {
+	return cvc
+}

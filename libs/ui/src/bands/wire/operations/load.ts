@@ -1,4 +1,4 @@
-import { createAsyncThunk, Dictionary } from "@reduxjs/toolkit"
+import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
@@ -54,13 +54,14 @@ export default createAsyncThunk<
 					getInitializedConditions(wiredef.conditions),
 					context
 				),
+				order: wiredef.order,
 			}
 		}),
 	}
 	const response = await api.extra.loadData(context, batch)
 
 	// Add the local ids
-	const wiresResponse: Dictionary<PlainWire> = {}
+	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
@@ -111,11 +112,6 @@ export default createAsyncThunk<
 			}
 		}
 	}
-	const wiresArray: PlainWire[] = []
-	for (const wireKey in wiresResponse) {
-		const wire = wiresResponse[wireKey]
-		if (wire) wiresArray.push(wire)
-	}
 
-	return [wiresArray, response.collections]
+	return [Object.values(wiresResponse), response.collections]
 })

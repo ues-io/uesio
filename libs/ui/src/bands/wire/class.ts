@@ -70,7 +70,7 @@ class Wire {
 		return this
 	}
 
-	save = async (context: Context) =>
+	save = (context: Context) =>
 		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
 }
 

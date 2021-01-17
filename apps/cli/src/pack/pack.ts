@@ -35,11 +35,13 @@ const getEntryFile = async (
 			const hasSignals = await fileExists(
 				path.resolve(`./bundle/components/${name}/signals.ts`)
 			)
-			imports.push(`import ${name} from "../components/${name}/${name}";`)
+			imports.push(
+				`import ${name} from "../../components/${name}/${name}";`
+			)
 
 			if (hasSignals) {
 				imports.push(
-					`import ${name}signals from "../components/${name}/signals";`
+					`import ${name}signals from "../../components/${name}/signals";`
 				)
 			}
 			registrations.push(
@@ -75,12 +77,12 @@ const getBuilderEntryFile = async (
 			)
 
 			builderImports.push(
-				`import ${builderName} from "../components/${name}/${builderName}";`
+				`import ${builderName} from "../../components/${name}/${builderName}";`
 			)
 
 			if (hasDef) {
 				defImports.push(
-					`import ${propDefName} from "../components/${name}/${propDefName}";`
+					`import ${propDefName} from "../../components/${name}/${propDefName}";`
 				)
 			}
 
@@ -106,31 +108,29 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 
 	const files = await fs.readdir(path.resolve(packDir)).catch(() => [])
 
-	const packs = files.filter((filename) => filename.endsWith(".yaml"))
-
-	for (const filename of packs) {
+	for (const dirname of files) {
 		const contents = await fs.readFile(
-			path.resolve(packDir, filename),
+			path.resolve(packDir, dirname, "pack.yaml"),
 			"utf8"
 		)
 		const yamlContents = yaml.parse(contents)
 		const packName = yamlContents.name as string
 		const components = yamlContents.components
 		const fullPackName = `${appName}.${packName}`
-		entries[fullPackName] = path.resolve(
-			`./bundle/componentpacks/${fullPackName}.entry.ts`
+		entries[fullPackName + "/runtime"] = path.resolve(
+			`./bundle/componentpacks/${fullPackName}/runtime.entry.ts`
 		)
-		entries[fullPackName + ".builder"] = path.resolve(
-			`./bundle/componentpacks/${fullPackName}.builder.entry.ts`
+		entries[fullPackName + "/builder"] = path.resolve(
+			`./bundle/componentpacks/${fullPackName}/builder.entry.ts`
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${fullPackName}.entry.ts`),
+			path.resolve(packDir, `${fullPackName}/runtime.entry.ts`),
 			await getEntryFile(appName, components)
 		)
 
 		await fs.writeFile(
-			path.resolve(packDir, `${fullPackName}.builder.entry.ts`),
+			path.resolve(packDir, `${fullPackName}/builder.entry.ts`),
 			await getBuilderEntryFile(appName, components)
 		)
 	}

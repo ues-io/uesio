@@ -12,16 +12,18 @@ definition:
                     items:
                       - material.griditem:
                           components:
-                            - material.imageupload:
+                            - material.file:
                                 fieldId: crm.profilepic
                                 fileCollection: uesio.platform
                                 height: 150
-                                id: imageUploadId
+                                id: fileupid
                                 margin:
                                   - 0
                                   - 2
-                                preview: true
+                                editable: true
+                                displayAs: preview
                                 width: 150
+                                accepts: images
                             - material.typography:
                                 text: ${crm.name}
                                 textTransform: uppercase

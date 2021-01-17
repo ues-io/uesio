@@ -46,3 +46,8 @@ func (c *WorkspaceLoadCollection) GetFields() []adapters.LoadRequestField {
 func (c *WorkspaceLoadCollection) GetName() string {
 	return c.Collection.GetName()
 }
+
+// GetItems function
+func (c *WorkspaceLoadCollection) GetItems() interface{} {
+	return c
+}

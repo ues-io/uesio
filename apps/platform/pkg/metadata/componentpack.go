@@ -1,9 +1,14 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/adapters"
+import (
+	"path/filepath"
+
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // ComponentPack struct
 type ComponentPack struct {
+	ID         string                            `yaml:"-" uesio:"uesio.id"`
 	Name       string                            `yaml:"name" uesio:"uesio.name"`
 	Namespace  string                            `yaml:"namespace" uesio:"-"`
 	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`
@@ -48,7 +53,7 @@ func (cp *ComponentPack) GetKey() string {
 
 // GetPath function
 func (cp *ComponentPack) GetPath() string {
-	return cp.GetKey() + ".yaml"
+	return filepath.Join(cp.GetKey(), "pack.yaml")
 }
 
 // GetPermChecker function

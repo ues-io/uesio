@@ -48,3 +48,8 @@ func (bc *BundleDependencyCollection) Loop(iter func(item adapters.LoadableItem)
 func (bc *BundleDependencyCollection) Len() int {
 	return len(*bc)
 }
+
+// GetItems function
+func (bc *BundleDependencyCollection) GetItems() interface{} {
+	return bc
+}

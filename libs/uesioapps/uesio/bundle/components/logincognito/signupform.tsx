@@ -1,12 +1,18 @@
 import { material } from "@uesio/ui"
-import React, { useState, ChangeEvent, FunctionComponent } from "react"
+import React, {
+	useState,
+	ChangeEvent,
+	FunctionComponent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type SignupFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
-	setSignupUsername: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
+	setSignupUsername: Dispatch<SetStateAction<string>>
 	signupUsername: string
-	setSignupPassword: React.Dispatch<React.SetStateAction<string>>
+	setSignupPassword: Dispatch<SetStateAction<string>>
 	signupPassword: string
 	signUp: (
 		firstname: string,

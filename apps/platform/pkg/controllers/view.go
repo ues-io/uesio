@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -25,84 +23,6 @@ type ViewResponse struct {
 type ViewDependencies struct {
 	ComponentPacks map[string]bool   `yaml:"componentpacks,omitempty"`
 	ConfigValues   map[string]string `yaml:"configvalues,omitempty"`
-}
-
-// ViewSaveResponse struct
-type ViewSaveResponse struct {
-	Success bool
-}
-
-// SaveViewRequest type
-type SaveViewRequest map[string]string
-
-// SaveViews is way good - so good
-func SaveViews(w http.ResponseWriter, r *http.Request) {
-
-	session := middlewares.GetSession(r)
-
-	decoder := json.NewDecoder(r.Body)
-	var saveViewRequest SaveViewRequest
-	err := decoder.Decode(&saveViewRequest)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
-
-	views := metadata.ViewCollection{}
-
-	for viewKey, viewDef := range saveViewRequest {
-		viewNamespace, viewName, err := metadata.ParseKey(viewKey)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		var defNode yaml.Node
-		err = yaml.Unmarshal([]byte(viewDef), &defNode)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		existingView := metadata.View{
-			Name:      viewName,
-			Namespace: viewNamespace,
-		}
-		// Get the View ID
-		err = bundles.Load(&existingView, session)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		views = append(views, metadata.View{
-			Name:       viewName,
-			Workspace:  existingView.Workspace,
-			Definition: defNode,
-			ID:         existingView.ID,
-		})
-
-	}
-
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &views,
-		},
-	}, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	respondJSON(w, r, &ViewSaveResponse{
-		Success: true,
-	})
 }
 
 // ViewPreview is also good

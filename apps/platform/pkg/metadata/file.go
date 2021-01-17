@@ -2,8 +2,10 @@ package metadata
 
 import (
 	"errors"
+	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/reflecttools"
 )
 
 // NewFile function
@@ -20,13 +22,13 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
-	ID        string `yaml:"-" uesio:"uesio.id"`
-	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"-" uesio:"-"`
-	Content   string `yaml:"-" uesio:"uesio.content"`
-	FileName  string `yaml:"fileName" uesio:"-"`
-	MimeType  string `yaml:"contentType" uesio:"-"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
+	Name      string            `yaml:"name" uesio:"uesio.name"`
+	Namespace string            `yaml:"-" uesio:"-"`
+	Content   string            `yaml:"-" uesio:"uesio.content"`
+	FileName  string            `yaml:"fileName" uesio:"-"`
+	Workspace string            `yaml:"-" uesio:"uesio.workspaceid"`
+	Meta      *UserFileMetadata `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -63,7 +65,12 @@ func (f *File) GetKey() string {
 
 // GetPath function
 func (f *File) GetPath() string {
-	return f.GetKey() + ".yaml"
+	return filepath.Join(f.GetKey(), "file.yaml")
+}
+
+// GetFilePath function
+func (f *File) GetFilePath() string {
+	return filepath.Join(f.GetKey(), "file", f.FileName)
 }
 
 // GetPermChecker function
@@ -78,6 +85,15 @@ func (f *File) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (f *File) SetField(fieldName string, value interface{}) error {
+	if fieldName == "uesio.content__FILEDATA" {
+		fileInfo := UserFileMetadata{}
+		err := reflecttools.Set(&fileInfo, value)
+		if err != nil {
+			return err
+		}
+		f.Meta = &fileInfo
+		return nil
+	}
 	return StandardFieldSet(f, fieldName, value)
 }
 

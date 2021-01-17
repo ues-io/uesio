@@ -6,11 +6,15 @@ import {
 import {
 	addDefinition,
 	changeDefinitionKey,
-	moveDefinition,
 	removeDefinition,
+	moveDefinition,
+	setDefinition,
+	cancel,
 } from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
 import { DefinitionMap } from "../../definition/definition"
+
+import { set as setRoute } from "../route"
 
 const builderSlice = createSlice({
 	name: "builder",
@@ -53,10 +57,6 @@ const builderSlice = createSlice({
 		) => {
 			state.namespaces = payload
 		},
-		clearAvailableMetadata: (state) => {
-			state.namespaces = null
-			state.metadata = null
-		},
 		setMetadataList: (
 			state,
 			{
@@ -80,12 +80,27 @@ const builderSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			state.selectedNode = `${getParentPath(payload.path)}["${
-				payload.key
-			}"]`
+			const parentPath = getParentPath(payload.path)
+			const keyPath = `${parentPath}["${payload.key}"]`
+			state.selectedNode = keyPath
+			state.lastModifiedNode = parentPath
 		})
 		builder.addCase(removeDefinition, (state) => {
 			state.selectedNode = ""
+			state.lastModifiedNode = ""
+		})
+		builder.addCase(setRoute, (state) => {
+			state.namespaces = null
+			state.metadata = null
+		})
+		builder.addCase(addDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+		})
+		builder.addCase(setDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path
+		})
+		builder.addCase(cancel, (state) => {
+			state.lastModifiedNode = ""
 		})
 		builder.addCase(addDefinition, (state, { payload }) => {
 			if (!payload.bankDrop || payload.index === undefined) {
@@ -118,7 +133,6 @@ export const {
 	setRightPanel,
 	setView,
 	setAvailableNamespaces,
-	clearAvailableMetadata,
 	setMetadataList,
 	setPanelClosed,
 } = builderSlice.actions

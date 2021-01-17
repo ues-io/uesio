@@ -7,7 +7,7 @@ import (
 // GetConditionValue function
 func GetConditionValue(
 	condition LoadRequestCondition,
-	op LoadOp,
+	op *LoadOp,
 	metadata *MetadataCache,
 	ops []LoadOp,
 ) (interface{}, error) {
@@ -36,12 +36,7 @@ func GetConditionValue(
 			return nil, err
 		}
 
-		lookupFieldName, err := GetUIFieldName(lookupFieldMetadata)
-		if err != nil {
-			return nil, err
-		}
-
-		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldName)
+		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldMetadata.GetFullName())
 		if err != nil {
 			return nil, err
 		}

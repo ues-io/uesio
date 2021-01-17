@@ -48,3 +48,8 @@ func (sdc *SiteDomainCollection) Loop(iter func(item adapters.LoadableItem) erro
 func (sdc *SiteDomainCollection) Len() int {
 	return len(*sdc)
 }
+
+// GetItems function
+func (sdc *SiteDomainCollection) GetItems() interface{} {
+	return sdc
+}

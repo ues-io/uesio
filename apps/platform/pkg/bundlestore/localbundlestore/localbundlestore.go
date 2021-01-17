@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"io"
-	"mime"
 	"os"
 	"path/filepath"
 	"strings"
@@ -118,26 +117,22 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 
 // GetFileStream function
 func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
-	stream, err := getStream(file.Namespace, version, "files", file.FileName)
-	file.MimeType = mime.TypeByExtension(filepath.Ext(file.FileName))
-	return stream, err
+	return getStream(file.Namespace, version, "files", file.GetFilePath())
 }
 
 // GetBotStream function
 func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, err := getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
-	return stream, err
+	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
 // GetComponentPackStream function
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	name := componentPack.Name
-	namespace := componentPack.Namespace
-	fileName := namespace + "." + name + ".bundle.js"
+
+	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
-		fileName = namespace + "." + name + ".builder.bundle.js"
+		fileName = filepath.Join(componentPack.GetKey(), "builder.bundle.js")
 	}
-	return getStream(namespace, version, "componentpacks", fileName)
+	return getStream(componentPack.Namespace, version, "componentpacks", fileName)
 }
 
 // StoreItems function

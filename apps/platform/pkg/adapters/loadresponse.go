@@ -24,6 +24,11 @@ func (c *Collection) NewItem() LoadableItem {
 	return &Item{}
 }
 
+// GetItems function
+func (c *Collection) GetItems() interface{} {
+	return c.Data
+}
+
 // Loop function
 func (c *Collection) Loop(iter func(item LoadableItem) error) error {
 	for index := range c.Data {

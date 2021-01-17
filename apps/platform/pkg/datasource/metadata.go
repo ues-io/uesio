@@ -111,8 +111,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.Co
 	}
 
 	for _, field := range fields {
-		fieldMetadata := GetFieldMetadata(&field)
-		collectionMetadata.Fields[fieldMetadata.GetFullName()] = fieldMetadata
+		collectionMetadata.SetField(GetFieldMetadata(&field))
 	}
 	return nil
 }
@@ -131,8 +130,8 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 // LoadFieldMetadata function
 func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) (*adapters.FieldMetadata, error) {
 	// Check to see if the field is already in our metadata cache
-	fieldMetadata, ok := collectionMetadata.Fields[key]
-	if !ok {
+	fieldMetadata, err := collectionMetadata.GetField(key)
+	if err != nil {
 		field, err := metadata.NewField(collectionKey, key)
 		if err != nil {
 			return nil, err
@@ -142,7 +141,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
 		}
 		fieldMetadata = GetFieldMetadata(field)
-		collectionMetadata.Fields[key] = fieldMetadata
+		collectionMetadata.SetField(fieldMetadata)
 	}
 	return fieldMetadata, nil
 }
@@ -170,17 +169,17 @@ func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, s
 		selectListMetadata = GetSelectListMetadata(&selectList)
 	}
 
-	collectionMetadata, ok := metadataCache.Collections[collectionKey]
-	if !ok {
+	collectionMetadata, err := metadataCache.GetCollection(collectionKey)
+	if err != nil {
 		return errors.New("Collection not Found for Select List: " + collectionKey)
 	}
 
-	_, ok = collectionMetadata.Fields[fieldKey]
-	if !ok {
+	fieldMetadata, err := collectionMetadata.GetField(fieldKey)
+	if err != nil {
 		return errors.New("Field not Found for Select List: " + fieldKey)
 	}
 
-	metadataCache.Collections[collectionKey].Fields[fieldKey].SelectListOptions = (*selectListMetadata).Options
+	fieldMetadata.SelectListOptions = (*selectListMetadata).Options
 
 	return nil
 }

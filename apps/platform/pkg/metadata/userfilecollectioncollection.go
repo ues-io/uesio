@@ -63,3 +63,8 @@ func (ufcc *UserFileCollectionCollection) Loop(iter func(item adapters.LoadableI
 func (ufcc *UserFileCollectionCollection) Len() int {
 	return len(*ufcc)
 }
+
+// GetItems function
+func (ufcc *UserFileCollectionCollection) GetItems() interface{} {
+	return ufcc
+}

@@ -63,3 +63,8 @@ func (pc *ProfileCollection) Loop(iter func(item adapters.LoadableItem) error) e
 func (pc *ProfileCollection) Len() int {
 	return len(*pc)
 }
+
+// GetItems function
+func (pc *ProfileCollection) GetItems() interface{} {
+	return pc
+}

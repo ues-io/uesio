@@ -73,3 +73,8 @@ func (vc *ViewCollection) Loop(iter func(item adapters.LoadableItem) error) erro
 func (vc *ViewCollection) Len() int {
 	return len(*vc)
 }
+
+// GetItems function
+func (vc *ViewCollection) GetItems() interface{} {
+	return vc
+}

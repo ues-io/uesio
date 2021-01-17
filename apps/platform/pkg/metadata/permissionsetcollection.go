@@ -63,3 +63,8 @@ func (pc *PermissionSetCollection) Loop(iter func(item adapters.LoadableItem) er
 func (pc *PermissionSetCollection) Len() int {
 	return len(*pc)
 }
+
+// GetItems function
+func (pc *PermissionSetCollection) GetItems() interface{} {
+	return pc
+}

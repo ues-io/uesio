@@ -101,3 +101,8 @@ func (bc *BotCollection) Loop(iter func(item adapters.LoadableItem) error) error
 func (bc *BotCollection) Len() int {
 	return len(*bc)
 }
+
+// GetItems function
+func (bc *BotCollection) GetItems() interface{} {
+	return bc
+}

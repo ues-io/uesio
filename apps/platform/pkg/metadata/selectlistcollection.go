@@ -73,3 +73,8 @@ func (slc *SelectListCollection) Loop(iter func(item adapters.LoadableItem) erro
 func (slc *SelectListCollection) Len() int {
 	return len(*slc)
 }
+
+// GetItems function
+func (slc *SelectListCollection) GetItems() interface{} {
+	return slc
+}

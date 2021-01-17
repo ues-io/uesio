@@ -59,7 +59,7 @@ func getReferenceLookupOp(request SaveRequest, lookup Lookup, collectionMetadata
 	}, nil
 }
 
-// GetLookupRequests function
+// GetLookupOps function
 func GetLookupOps(request SaveRequest, metadata *MetadataCache) ([]LoadOp, error) {
 	options := request.Options
 	lookupRequests := []LoadOp{}

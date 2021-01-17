@@ -71,7 +71,6 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File
 	if err != nil {
 		return nil, err
 	}
-	file.MimeType = userFile.MimeType
 	file.FileName = userFile.Name
 	return stream, nil
 }

@@ -1,8 +1,6 @@
 import { Dispatcher } from "../store/store"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
-
-import { batch } from "react-redux"
 import { Uesio } from "./hooks"
 import { AnyAction } from "redux"
 import {
@@ -112,14 +110,12 @@ class ViewAPI {
 		const viewDefId = this.uesio.getViewDefId()
 		const usePath = path || this.uesio.getPath()
 		if (viewDefId) {
-			batch(() => {
-				this.dispatcher(
-					removeDefinition({
-						entity: viewDefId,
-						path: usePath,
-					})
-				)
-			})
+			this.dispatcher(
+				removeDefinition({
+					entity: viewDefId,
+					path: usePath,
+				})
+			)
 		}
 	}
 

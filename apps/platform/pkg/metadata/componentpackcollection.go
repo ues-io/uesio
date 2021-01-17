@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"errors"
+	"os"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -44,7 +45,15 @@ func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (Bundle
 
 // GetKeyFromPath function
 func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+	if len(conditions) > 0 {
+		return "", errors.New("Conditions not allowed for component packs")
+	}
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 2 || parts[1] != "pack.yaml" {
+		// Ignore this file
+		return "", nil
+	}
+	return parts[0], nil
 }
 
 // AddItem function
@@ -72,4 +81,9 @@ func (cpc *ComponentPackCollection) Loop(iter func(item adapters.LoadableItem) e
 // Len function
 func (cpc *ComponentPackCollection) Len() int {
 	return len(*cpc)
+}
+
+// GetItems function
+func (cpc *ComponentPackCollection) GetItems() interface{} {
+	return cpc
 }

@@ -1,0 +1,6 @@
+name: workspace
+collection: uesio.userfiles
+type: REFERENCE
+label: Site
+referencedCollection: uesio.sites
+foreignKeyField: uesio.siteid

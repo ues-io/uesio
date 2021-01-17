@@ -63,3 +63,8 @@ func (dsc *DataSourceCollection) Loop(iter func(item adapters.LoadableItem) erro
 func (dsc *DataSourceCollection) Len() int {
 	return len(*dsc)
 }
+
+// GetItems function
+func (dsc *DataSourceCollection) GetItems() interface{} {
+	return dsc
+}

@@ -5,6 +5,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
+//LoadOneCollection type
 type LoadOneCollection struct {
 	Collection metadata.CollectionableGroup
 	Item       adapters.LoadableItem
@@ -45,4 +46,9 @@ func (c *LoadOneCollection) GetFields() []adapters.LoadRequestField {
 // GetName function
 func (c *LoadOneCollection) GetName() string {
 	return c.Collection.GetName()
+}
+
+// GetItems function
+func (c *LoadOneCollection) GetItems() interface{} {
+	return c
 }

@@ -48,3 +48,8 @@ func (ac *AppCollection) Loop(iter func(item adapters.LoadableItem) error) error
 func (ac *AppCollection) Len() int {
 	return len(*ac)
 }
+
+// GetItems function
+func (ac *AppCollection) GetItems() interface{} {
+	return ac
+}
