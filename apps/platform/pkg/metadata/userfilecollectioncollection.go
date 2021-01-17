@@ -44,8 +44,7 @@ func (ufcc *UserFileCollectionCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (ufcc *UserFileCollectionCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *ufcc
-	return &actual[index]
+	return &(*ufcc)[index]
 }
 
 // Loop function

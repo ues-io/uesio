@@ -63,8 +63,7 @@ func (cpc *ComponentPackCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (cpc *ComponentPackCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *cpc
-	return &actual[index]
+	return &(*cpc)[index]
 }
 
 // Loop function

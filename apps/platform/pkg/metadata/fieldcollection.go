@@ -72,8 +72,7 @@ func (fc *FieldCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (fc *FieldCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *fc
-	return &actual[index]
+	return &(*fc)[index]
 }
 
 // Loop function

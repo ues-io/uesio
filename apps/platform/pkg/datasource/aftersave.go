@@ -15,6 +15,17 @@ type AfterSaveAPI struct {
 	session *sess.Session
 }
 
+func NewAfterSaveAPI(request *adapters.SaveRequest, response *adapters.SaveResponse, metadata *adapters.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
+	return &AfterSaveAPI{
+		Results: &ResultsAPI{
+			results:  response.ChangeResults,
+			changes:  request.Changes,
+			metadata: metadata,
+		},
+		session: session,
+	}
+}
+
 // AddError function
 func (as *AfterSaveAPI) AddError(message string) {
 	as.errors = append(as.errors, message)

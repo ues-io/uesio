@@ -62,13 +62,7 @@ func RunBeforeSaveBots(request *adapters.SaveRequest, collectionMetadata *adapte
 		return err
 	}
 
-	botAPI := &BeforeSaveAPI{
-		Changes: &ChangesAPI{
-			changes:  request.Changes,
-			metadata: collectionMetadata,
-		},
-		session: session,
-	}
+	botAPI := NewBeforeSaveAPI(request, collectionMetadata, session)
 
 	for _, bot := range robots {
 		err := hydrateBot(&bot, session)
@@ -106,14 +100,7 @@ func RunAfterSaveBots(response *adapters.SaveResponse, request *adapters.SaveReq
 		return err
 	}
 
-	botAPI := &AfterSaveAPI{
-		Results: &ResultsAPI{
-			results:  response.ChangeResults,
-			changes:  request.Changes,
-			metadata: collectionMetadata,
-		},
-		session: session,
-	}
+	botAPI := NewAfterSaveAPI(request, response, collectionMetadata, session)
 
 	for _, bot := range robots {
 		err := hydrateBot(&bot, session)

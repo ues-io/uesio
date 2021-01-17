@@ -106,15 +106,6 @@ const postJSON = (url: string, body?: object) => {
 			)}`
 		},
 
-		deleteUserFile: async (context: any, userfileid: string) => {
-			const prefix = getPrefix(context.getWorkspace())
-			const url = `${prefix}/userfiles/delete?userfileid=${encodeURIComponent(
-				userfileid
-			)}`
-			const response = await fetch(url, { method: "POST" })
-			return response.text()
-		},
-
 		uploadFile: async (
 			context: any,
 			fileData: any,

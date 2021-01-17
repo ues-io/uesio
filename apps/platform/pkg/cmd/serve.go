@@ -59,7 +59,6 @@ func serve(cmd *cobra.Command, args []string) {
 	sr := r.PathPrefix("/site").Subrouter()
 
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controllers.UploadUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/delete", controllers.DeleteUserFile, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controllers.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controllers.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controllers.Save, "POST")

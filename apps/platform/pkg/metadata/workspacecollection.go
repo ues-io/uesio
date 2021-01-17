@@ -19,8 +19,7 @@ func (wc *WorkspaceCollection) GetFields() []adapters.LoadRequestField {
 
 // GetItem function
 func (wc *WorkspaceCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *wc
-	return &actual[index]
+	return &(*wc)[index]
 }
 
 // AddItem function

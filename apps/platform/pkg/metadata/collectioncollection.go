@@ -44,8 +44,7 @@ func (cc *CollectionCollection) NewItem() adapters.LoadableItem {
 
 // GetItem function
 func (cc *CollectionCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *cc
-	return &actual[index]
+	return &(*cc)[index]
 }
 
 // Loop function

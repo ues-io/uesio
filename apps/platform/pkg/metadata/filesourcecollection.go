@@ -44,8 +44,7 @@ func (fsc *FileSourceCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (fsc *FileSourceCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *fsc
-	return &actual[index]
+	return &(*fsc)[index]
 }
 
 // Loop function

@@ -54,8 +54,7 @@ func (sc *SecretCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (sc *SecretCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *sc
-	return &actual[index]
+	return &(*sc)[index]
 }
 
 // Loop function

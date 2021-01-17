@@ -30,6 +30,8 @@ type Collection struct {
 	CollectionName string `yaml:"collectionName" uesio:"uesio.collectionname"`
 	ReadOnly       bool   `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace      string `yaml:"-" uesio:"uesio.workspaceid"`
+	Updated        int64  `yaml:"-" uesio:"uesio.updated"`
+	Created        int64  `yaml:"-" uesio:"uesio.created"`
 }
 
 // GetCollectionName function

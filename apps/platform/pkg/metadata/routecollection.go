@@ -44,8 +44,7 @@ func (rc *RouteCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (rc *RouteCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *rc
-	return &actual[index]
+	return &(*rc)[index]
 }
 
 // Loop function

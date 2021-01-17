@@ -14,7 +14,17 @@ import (
 func AddDependency(workspaceID string, bundleName string, bundleVersion string, session *sess.Session) error {
 	//Just verify the bundle exists
 	//Assumes structure of bundle IDs (may prove to be a mistake)
-	bm, err := getBundleMetadataByID(bundleName+"_"+bundleVersion, session)
+	bm := metadata.Bundle{}
+	err := PlatformLoadOne(
+		&bm,
+		[]adapters.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: bundleName + "_" + bundleVersion,
+			},
+		},
+		session,
+	)
 	if err != nil {
 		return err
 	}
@@ -34,15 +44,7 @@ func AddDependency(workspaceID string, bundleName string, bundleVersion string, 
 		}
 	}
 
-	bundleDeps := metadata.BundleDependencyCollection{
-		dep,
-	}
-
-	_, err = PlatformSave([]PlatformSaveRequest{
-		{
-			Collection: &bundleDeps,
-		},
-	}, session)
+	err = PlatformSaveOne(&dep, nil, session)
 	if err != nil {
 		return err
 	}
@@ -54,15 +56,10 @@ func clearCache(namespace string, workspaceID string) {
 	localcache.RemoveCacheEntry("workspace-dependency", namespace+":"+workspaceID)
 }
 
-// BundleDependencyLoad function
-func BundleDependencyLoad(conditions []adapters.LoadRequestCondition, session *sess.Session) (metadata.BundleDependencyCollection, error) {
-	bdc := metadata.BundleDependencyCollection{}
-	err := PlatformLoad(&bdc, conditions, session)
-	return bdc, err
-}
-
 func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*metadata.BundleDependency, error) {
-	bdc, err := BundleDependencyLoad(
+	bdc := metadata.BundleDependencyCollection{}
+	err := PlatformLoad(
+		&bdc,
 		[]adapters.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",

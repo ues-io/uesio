@@ -50,7 +50,6 @@ interface Platform {
 	): Promise<BotResponse>
 	getFileURL(context: Context, namespace: string, name: string): string
 	getUserFileURL(context: Context, userfileid: string): string
-	deleteUserFile(context: Context, userfileid: string): Promise<string>
 	uploadFile(
 		context: Context,
 		fileData: File,

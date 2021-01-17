@@ -44,8 +44,7 @@ func (cvc *ConfigValueCollection) AddItem(item adapters.LoadableItem) {
 
 // GetItem function
 func (cvc *ConfigValueCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *cvc
-	return &actual[index]
+	return &(*cvc)[index]
 }
 
 // Loop function

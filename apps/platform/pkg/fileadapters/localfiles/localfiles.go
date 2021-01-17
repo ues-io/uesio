@@ -13,6 +13,18 @@ import (
 type FileAdapter struct {
 }
 
+func removeEmptyDir(path string) {
+	if path == "" {
+		return
+	}
+	err := os.Remove(path)
+	if err != nil {
+		// The dir had contents, so fail
+		return
+	}
+	removeEmptyDir(filepath.Dir(path))
+}
+
 // Delete function
 func (a *FileAdapter) Delete(bucket, path string, credentials *creds.FileAdapterCredentials) error {
 	fullFilePath := filepath.Join("userfiles", bucket, path)
@@ -20,6 +32,8 @@ func (a *FileAdapter) Delete(bucket, path string, credentials *creds.FileAdapter
 	if err != nil {
 		return errors.New("Error Reading File: " + err.Error())
 	}
+	// Now remove subfolders if they're empty
+	removeEmptyDir(filepath.Dir(fullFilePath))
 	return nil
 }
 

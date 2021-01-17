@@ -92,12 +92,10 @@ func seed(cmd *cobra.Command, args []string) {
 
 	session := sess.GetHeadlessSession()
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &apps,
-			Options: &adapters.SaveOptions{
-				Upsert: &adapters.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &apps,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -105,12 +103,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &sites,
-			Options: &adapters.SaveOptions{
-				Upsert: &adapters.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &sites,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 
@@ -119,12 +115,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &siteDomains,
-			Options: &adapters.SaveOptions{
-				Upsert: &adapters.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &siteDomains,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -132,12 +126,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &bundles,
-			Options: &adapters.SaveOptions{
-				Upsert: &adapters.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &bundles,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -145,15 +137,13 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &workspaces,
-			Options: &adapters.SaveOptions{
-				Upsert: &adapters.UpsertOptions{},
-				Lookups: []adapters.Lookup{
-					{
-						RefField: "uesio.app",
-					},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &workspaces,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
+			Lookups: []adapters.Lookup{
+				{
+					RefField: "uesio.app",
 				},
 			},
 		},

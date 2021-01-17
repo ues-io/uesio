@@ -19,8 +19,7 @@ func (bjc *BulkJobCollection) GetFields() []adapters.LoadRequestField {
 
 // GetItem function
 func (bjc *BulkJobCollection) GetItem(index int) adapters.LoadableItem {
-	actual := *bjc
-	return &actual[index]
+	return &(*bjc)[index]
 }
 
 // AddItem function

@@ -50,25 +50,15 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	batches := metadata.BulkBatchCollection{
-		metadata.BulkBatch{
-			Status:    "started",
-			BulkJobID: jobID,
-		},
+	batch := metadata.BulkBatch{
+		Status:    "started",
+		BulkJobID: jobID,
 	}
 
-	responses, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &batches,
-		},
-	}, session)
+	err = datasource.PlatformSaveOne(&batch, nil, session)
 	if err != nil {
 		return "", err
 	}
 
-	response := responses[0]
-	result := response.ChangeResults["0"]
-	newID := result.Data["uesio.id"].(string)
-
-	return newID, nil
+	return batch.ID, nil
 }
