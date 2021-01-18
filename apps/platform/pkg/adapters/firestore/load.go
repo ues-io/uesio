@@ -115,7 +115,7 @@ func loadOne(
 
 	collSlice := op.Collection.GetItems()
 	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
-	if ok {
+	if ok && op.Limit == 0 {
 		sort.Slice(collSlice, locLessFunc)
 	}
 
