@@ -17,7 +17,6 @@ import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
 import { DefinitionMap } from "../../definition/definition"
 
 import { set as setRoute } from "../route"
-import {component} from "@uesio/ui";
 
 const builderSlice = createSlice({
 	name: "builder",
@@ -124,7 +123,6 @@ const builderSlice = createSlice({
 			const pathArr = toPath(updatedPath)
 			pathArr.splice(-1) //We just want the index, not the key level
 			state.lastModifiedNode = fromPath(pathArr)
-
 		})
 	},
 })

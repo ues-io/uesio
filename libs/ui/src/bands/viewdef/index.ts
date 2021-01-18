@@ -138,8 +138,7 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
 	const currentArray = get(state.definition, path)
-	const newIndex =
-		index === undefined ? currentArray.length : payload.index
+	const newIndex = index === undefined ? currentArray.length : payload.index
 	if (!currentArray) {
 		setWith(state, ["definition"].concat(pathArray), [definition])
 	} else {
