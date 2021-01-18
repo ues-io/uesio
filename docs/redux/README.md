@@ -45,10 +45,6 @@ Signals that will be registered with the signals api to be run from views and co
 
 In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` - which is a class - deviates on that.
 
-## Data normalization in the Redux store
-
-We use the util function [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) for having normalized data in the redux store.
-
 ## Platform API injection
 
 The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the config argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
@@ -125,3 +121,64 @@ We follow the redux style guide [on that matter](https://redux.js.org/style-guid
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain `JavaScript object` and not a `Promise`. This is where Redux-thunk comes into play.
 
 There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
+
+## Data normalization in the Redux store
+
+We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) for having **normalized data** in the redux store.
+
+For example, let the following data structure be some data in the Redux store.
+
+```
+[
+    {
+        "id": 343,
+        "title": "Learn CSS Grid",
+        "content": "In this post we will discuss about the..."
+    },
+    {
+        "id": 344,
+        "title": "Flexboxes are so handy",
+        "content": "A flexbox is a container whose elements..."
+    }
+]
+```
+
+By using the mentioned utility, the data structure become as follows :
+
+```
+{
+    ids: [ 343, 344 ],
+    entities: {
+        "343": {
+            "title": "Learn CSS Grid",
+            "content": "In this post we will discuss about the..."
+        },
+        "344": {
+            "title": "Flexboxes are so handy",
+            "content": "A flexbox is a container whose elements..."
+        }
+    }
+}
+```
+
+This conversion make data access much more efficient in the reducer. Let's have an example for deleting a record in the redux store.
+
+```
+const reducer = (state, action) => {
+    if (action.type === "delete") {
+        // here you need to iterate through the collection
+        return state.filter( (post) => post.id !== action.payload.id )
+    }
+    ...
+}
+
+with the utility - assumuing that immer is applied in the reducer - which is [our case]() :
+
+const reducer = (state, action) => {
+    if (action.type === "delete") {
+        // here there is NO need to iterate through the collection
+        delete state.entities[action.payload.id]
+    }
+    ...
+}
+```
