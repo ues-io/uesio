@@ -185,3 +185,5 @@ const reducer = (state, action) => {
     ...
 }
 ```
+
+Another argument favoring normalized data is to have a single source of truth. So if some change occur, the change does not need to be done at different places.
