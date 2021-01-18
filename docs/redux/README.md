@@ -2,7 +2,7 @@
 
 ## Redux Toolkit
 
-[Redux Toolkit](https://redux-toolkit.js.org/) has beend introduced in our stack at a refactoring stage.
+[Redux Toolkit](https://redux-toolkit.js.org/) has been introduced in our stack at a refactoring stage.
 
 Redux alone requires a lot of **boilerplate** such as :
 
@@ -111,15 +111,15 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 ## A single action handled by multiple reducers
 
-The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are isolated from each other.
+The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are **isolated** from each other.
 
-However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to reducers part of different slices. This is the idea behind the extra reducer concept. In the `builder` slice you will find such a use case.
+However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to **reducers part of different slices**. In the `builder` slice you will find such use cases.
 
 We follow the redux style guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
 
 ## Redux middleware
 
-Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain `JavaScript object` and not a `Promise`. This is where Redux-thunk comes into play.
+Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain JavaScript `object` and not a `Promise`. This is where Redux-thunk comes into play.
 
 There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
 
@@ -162,7 +162,7 @@ By using the mentioned utility, the data structure become as follows :
 }
 ```
 
-This conversion makes **data access** much more **efficient** in the reducer. Let's have an example for deleting a record in the Redux store.
+This conversion makes **data access** much more **efficient** in the reducers - and thereby also in the selectors -. Let's have an example for deleting a record in the Redux store.
 
 ```
 const reducer = (state, action) => {
@@ -174,7 +174,7 @@ const reducer = (state, action) => {
 }
 ```
 
-With the utility - assumuing that [immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
+With the utility - assumuing that [Immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
 
 ```
 const reducer = (state, action) => {
@@ -186,4 +186,4 @@ const reducer = (state, action) => {
 }
 ```
 
-Another argument favoring normalized data is to have a single source of truth. So if some change occur, the change does not need to be done at [different places](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape#normalizing-state-shape).
+Another argument favoring normalized data is to have a single source of truth. So if some change occur in the Redux store, the change does not need to be done at [different places](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape#normalizing-state-shape).
