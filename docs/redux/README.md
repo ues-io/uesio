@@ -124,7 +124,7 @@ There are plenty of different asynchronous middlewares for Redux. The most famou
 
 ## Data normalization in the Redux store
 
-We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) for having **normalized data** in the redux store.
+We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) from Redux Toolkit for having **normalized data** in the redux store.
 
 For example, let the following data structure be some data in the Redux store.
 
