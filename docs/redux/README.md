@@ -162,7 +162,7 @@ By using the mentioned utility, the data structure become as follows :
 }
 ```
 
-This conversion makes **data access** much more **efficient** in the reducers - and thereby also in the selectors -. Let's have an example for deleting a record in the Redux store.
+This conversion makes **data access** much more **efficient** in the reducers - and thereby also in the selectors -. As an example, deleting a record in the Redux store.
 
 ```
 const reducer = (state, action) => {
