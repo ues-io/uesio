@@ -14,7 +14,52 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFieldIDPart(details datasource.FileDetails) string {
+// FileDetails struct
+type FileDetails struct {
+	ContentLength    uint64
+	Name             string
+	CollectionID     string
+	RecordID         string
+	FieldID          string
+	FileCollectionID string
+}
+
+// NewFileDetails function
+func NewFileDetails(query url.Values) (*FileDetails, error) {
+
+	name := query.Get("name")
+	if name == "" {
+		return nil, errors.New("No name specified")
+	}
+
+	fileCollection := query.Get("filecollection")
+	if fileCollection == "" {
+		return nil, errors.New("No filecollection specified")
+	}
+
+	collectionID := query.Get("collectionid")
+	if collectionID == "" {
+		return nil, errors.New("No collectionid specified")
+	}
+
+	recordID := query.Get("recordid")
+	if recordID == "" {
+		return nil, errors.New("No recordid specified")
+	}
+
+	//Not required. If not specified is treated as an attachment
+	fieldID := query.Get("fieldid")
+
+	return &FileDetails{
+		Name:             name,
+		FileCollectionID: fileCollection,
+		CollectionID:     collectionID,
+		RecordID:         recordID,
+		FieldID:          fieldID,
+	}, nil
+}
+
+func getFieldIDPart(details FileDetails) string {
 	fieldID := details.FieldID
 	if fieldID == "" {
 		return "attachment_" + details.Name
@@ -23,10 +68,10 @@ func getFieldIDPart(details datasource.FileDetails) string {
 }
 
 // Upload function
-func Upload(fileBody io.Reader, details datasource.FileDetails, session *sess.Session) (string, error) {
+func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (string, error) {
 	site := session.GetSite()
 	workspaceID := session.GetWorkspaceID()
-	ufc, fs, err := datasource.GetFileSourceAndCollection(details.FileCollectionID, session)
+	ufc, fs, err := fileadapters.GetFileSourceAndCollection(details.FileCollectionID, session)
 	if err != nil {
 		return "", err
 	}
@@ -73,45 +118,30 @@ func Upload(fileBody io.Reader, details datasource.FileDetails, session *sess.Se
 		return "", err
 	}
 	if details.FieldID != "" {
-		err = datasource.UpdateRecordFieldWithFileID(ufm.ID, details, session)
+		meta, err := datasource.LoadCollectionMetadata(details.CollectionID, &adapters.MetadataCache{}, session)
 		if err != nil {
 			return "", err
 		}
+
+		_, err = datasource.Save(datasource.SaveRequestBatch{
+			Wires: []adapters.SaveRequest{
+				{
+					Collection: details.CollectionID,
+					Wire:       "filefieldupdate",
+					Changes: map[string]adapters.ChangeRequest{
+						"0": {
+							FieldChanges: map[string]interface{}{
+								details.FieldID: ufm.ID,
+								meta.IDField:    details.RecordID,
+							},
+						},
+					},
+				},
+			},
+		}, session)
+		if err != nil {
+			return "", errors.New("Failed to update field for the given file: " + err.Error())
+		}
 	}
 	return ufm.ID, nil
-}
-
-// ConvertQueryToFileDetails function
-func ConvertQueryToFileDetails(query url.Values) (*datasource.FileDetails, error) {
-
-	name := query.Get("name")
-	if name == "" {
-		return nil, errors.New("No name specified")
-	}
-
-	fileCollection := query.Get("filecollection")
-	if fileCollection == "" {
-		return nil, errors.New("No filecollection specified")
-	}
-
-	collectionID := query.Get("collectionid")
-	if collectionID == "" {
-		return nil, errors.New("No collectionid specified")
-	}
-
-	recordID := query.Get("recordid")
-	if recordID == "" {
-		return nil, errors.New("No recordid specified")
-	}
-
-	//Not required. If not specified is treated as an attachment
-	fieldID := query.Get("fieldid")
-
-	return &datasource.FileDetails{
-		Name:             name,
-		FileCollectionID: fileCollection,
-		CollectionID:     collectionID,
-		RecordID:         recordID,
-		FieldID:          fieldID,
-	}, nil
 }

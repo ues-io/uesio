@@ -47,6 +47,7 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 		Required:             f.Required,
 		Validate:             GetValidateMetadata(f.Validate),
 		AutoPopulate:         f.AutoPopulate,
+		OnDelete:             f.OnDelete,
 	}
 }
 
@@ -118,6 +119,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.Co
 
 // LoadFieldsMetadata function
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+	// TODO: Batch this
 	for _, key := range keys {
 		_, err := LoadFieldMetadata(key, collectionKey, collectionMetadata, session)
 		if err != nil {

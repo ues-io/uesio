@@ -1,4 +1,5 @@
 function addcontact(bot) {
+	/*
 	bot.results.get().forEach(function (result) {
 		if (result.isNew()) {
 			var accountId = result.get("crm.id")
@@ -12,4 +13,5 @@ function addcontact(bot) {
 			])
 		}
 	})
+	*/
 }

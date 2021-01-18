@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,16 +14,19 @@ import (
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
 	session := middlewares.GetSession(r)
-	details, err := filesource.ConvertQueryToFileDetails(r.URL.Query())
+	details, err := filesource.NewFileDetails(r.URL.Query())
 	if err != nil {
-		w.Write([]byte(err.Error()))
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	//Attach file length to the details
 	contentLenHeader := r.Header.Get("Content-Length")
 	contentLen, err := strconv.ParseUint(contentLenHeader, 10, 64)
 	if err != nil {
-		w.Write([]byte("Must attach header 'Content-Length' with file upload"))
+		err := errors.New("Must attach header 'Content-Length' with file upload")
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	details.ContentLength = contentLen
@@ -33,7 +37,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Write([]byte(newID))
+	respondString(w, r, newID)
 }
 
 // DownloadUserFile function
@@ -41,14 +45,16 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middlewares.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
-		w.Header().Set("content-type", "text")
-		w.Write([]byte("No userfileid in the request URL query"))
+		err := errors.New("No userfileid in the request URL query")
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fileStream, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
-		w.Header().Set("content-type", "text")
-		w.Write([]byte("Unable to load file"))
+		err := errors.New("Unable to load file")
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -147,15 +147,13 @@ func Deploy(body []byte, session *sess.Session) error {
 			continue
 		}
 
-		fileDetails := datasource.FileDetails{
+		_, err := filesource.Upload(fileStream.Data, filesource.FileDetails{
 			Name:             fileStream.FileName,
 			CollectionID:     "uesio." + fileStream.Type,
 			RecordID:         session.GetWorkspaceID() + "_" + recordID,
 			FieldID:          "uesio.content",
 			FileCollectionID: "uesio.workspacemetadatafiles",
-		}
-
-		_, err := filesource.Upload(fileStream.Data, fileDetails, session.RemoveWorkspaceContext())
+		}, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err
 		}

@@ -103,18 +103,17 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 			}
 		} else {
 			// Automagially add the id field and the name field whether they were requested or not.
-			err = LoadFieldsMetadata([]string{metadata.IDField, metadata.NameField}, collectionKey, metadata, session)
+			fieldsToLoad := []string{metadata.IDField, metadata.NameField}
+			for fieldKey := range collection {
+				fieldsToLoad = append(fieldsToLoad, fieldKey)
+			}
+			err = LoadFieldsMetadata(fieldsToLoad, collectionKey, metadata, session)
 			if err != nil {
 				return err
 			}
 		}
 
-		for fieldKey, subFields := range collection {
-			// TODO: Bulkify this request so we don't do a network call per field
-			fieldMetadata, err := LoadFieldMetadata(fieldKey, collectionKey, metadata, session)
-			if err != nil {
-				return err
-			}
+		for fieldKey, fieldMetadata := range metadata.Fields {
 
 			if fieldMetadata.Type == "REFERENCE" {
 				err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
@@ -122,7 +121,7 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 					return err
 				}
 
-				for fieldKey, subsubFields := range subFields {
+				for fieldKey, subsubFields := range collection[fieldKey] {
 					err := additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
 					if err != nil {
 						return err
@@ -139,7 +138,7 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 				additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
 			}
 
-			if fieldMetadata.Type == "FILE" && op != nil {
+			if fieldMetadata.Type == "FILE" {
 				fileDataSuffix := "__FILEDATA"
 				userfilesCollection := "uesio.userfiles"
 				fakeRefMetadata := &adapters.FieldMetadata{
@@ -152,6 +151,7 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 					Label:                fieldMetadata.Label + " File Info",
 					ReferencedCollection: userfilesCollection,
 					ForeignKeyField:      fieldMetadata.GetFullName(),
+					OnDelete:             "CASCADE",
 				}
 				metadata.SetField(fakeRefMetadata)
 
@@ -166,23 +166,26 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 					},
 				}
 
+				referencedMeta, err := LoadCollectionMetadata(userfilesCollection, metadataResponse, session)
+				if err != nil {
+					return err
+				}
+
 				// If the reference is to the same data source, we can just add the field
 				// and be done with it. If it's to a different data source, we'll need to
 				// do a whole new approach to reference fields.
-				if metadata.DataSource == "uesio.platform" {
-					op.Fields = append(op.Fields, adapters.LoadRequestField{
-						ID:     fieldMetadata.GetFullName() + fileDataSuffix,
-						Fields: mimeField,
-					})
-				} else {
-					referencedMeta, err := LoadCollectionMetadata(userfilesCollection, metadataResponse, session)
-					if err != nil {
-						return err
+				if op != nil {
+					if metadata.DataSource == "uesio.platform" {
+						op.Fields = append(op.Fields, adapters.LoadRequestField{
+							ID:     fieldMetadata.GetFullName() + fileDataSuffix,
+							Fields: mimeField,
+						})
+					} else {
+						op.ReferencedCollections = adapters.ReferenceRegistry{}
+						refCol := op.ReferencedCollections.Get(referencedMeta)
+						refCol.AddReference(fakeRefMetadata)
+						refCol.AddFields(mimeField)
 					}
-					op.ReferencedCollections = adapters.ReferenceRegistry{}
-					refCol := op.ReferencedCollections.Get(referencedMeta)
-					refCol.AddReference(fakeRefMetadata)
-					refCol.AddFields(mimeField)
 				}
 			}
 
