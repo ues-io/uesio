@@ -20,7 +20,6 @@ import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
 import { calculateNewPathAheadOfTime, fromPath } from "../../component/path"
-import convertToPath from "lodash.topath"
 
 type YamlUpdatePayload = {
 	path: string

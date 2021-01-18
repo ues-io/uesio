@@ -17,8 +17,6 @@ import {
 	useViewDefinition,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
-import convertToPath from "lodash.topath"
-import get from "lodash.get"
 
 const VIEW_BAND = "view"
 
