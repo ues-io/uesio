@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -116,7 +117,7 @@ func loadOne(
 
 	limit := int64(op.Limit)
 	if limit == 0 {
-		limit = 100
+		limit = math.MaxInt64
 	}
 
 	params := &dynamodb.ScanInput{
@@ -176,7 +177,8 @@ func loadOne(
 
 	collSlice := op.Collection.GetItems()
 	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
-	if ok {
+	//no limit then order
+	if ok && limit == 0 {
 		sort.Slice(collSlice, locLessFunc)
 	}
 
