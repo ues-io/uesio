@@ -1,12 +1,7 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import setWith from "lodash.setwith"
 import toPath from "lodash.topath"
-import {
-	Definition,
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
+import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import yaml from "yaml"
 import {
 	addNodeAtPath,
@@ -20,11 +15,11 @@ import {
 import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { Collection } from "yaml/types"
-import { getParentPath } from "../../component/path"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
+import { calculateNewPathAheadOfTime, fromPath } from "../../component/path"
 
 type YamlUpdatePayload = {
 	path: string
@@ -49,6 +44,7 @@ type AddDefinitionPayload = {
 	path: string
 	definition: Definition
 	index?: number
+	bankDrop: boolean
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -61,16 +57,6 @@ type ChangeDefinitionKeyPayload = {
 	path: string
 	key: string
 } & EntityPayload
-
-const move = (
-	fromList: DefinitionList,
-	toList: DefinitionList,
-	fromIndex: number,
-	toIndex: number
-) => {
-	const [removed] = fromList.splice(fromIndex, 1)
-	toList.splice(toIndex, 0, removed)
-}
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
@@ -138,75 +124,44 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const { fromPath, toPath: destPath } = payload
-	// Traverse paths simultaneously until paths diverge.
-	const fromPathArr = toPath(fromPath)
-	const toPathArr = toPath(destPath)
-	const fromIndex = fromPathArr.pop()
-	const toIndex = toPathArr.pop()
-
-	if (fromIndex && toIndex) {
-		const fromParent = get(state.definition, fromPathArr)
-		const toParent = get(state.definition, toPathArr)
-
-		move(
-			fromParent,
-			toParent,
-			parseInt(fromIndex, 10),
-			parseInt(toIndex, 10)
-		)
-
-		const destParentPath = getParentPath(destPath)
-		const fromParentPath = getParentPath(fromPath)
-
-		// Now set both parents so they can trigger redux
-		// Set the definition JS Object
-		if (
-			!fromParentPath.startsWith(destParentPath) ||
-			toParent === fromParent
-		) {
-			setWith(state, ["definition"].concat(fromPathArr), fromParent)
-		}
-		if (toParent !== fromParent) {
-			if (!destParentPath.startsWith(fromParentPath)) {
-				setWith(state, ["definition"].concat(toPathArr), toParent)
-			}
-		}
-
-		if (state.yaml) {
-			// create a new document so components using useYaml will rerender
-			state.yaml = parse(state.yaml.toString())
-			const fromYamlParent = getNodeAtPath(
-				fromPathArr,
-				state.yaml.contents
-			)
-			const toYamlParent = getNodeAtPath(toPathArr, state.yaml.contents)
-
-			const item = getNodeAtPath(
-				[fromIndex],
-				fromYamlParent
-			) as yaml.AST.BlockMap
-			removeNodeAtPath([fromIndex], fromYamlParent)
-			// This is kind of a hack. But the yaml library doesn't have an
-			// "add at index" method.
-			;(toYamlParent as Collection).items.splice(
-				parseInt(toIndex, 10),
-				0,
-				item
-			)
-		}
-	}
+	const fromPathStr = payload.fromPath
+	const fromPathArray = toPath(fromPathStr)
+	fromPathArray.splice(-1)
+	//Grab current definition
+	const definition = get(state.definition, fromPathArray)
+	//Remove the original
+	removeDef(state, { ...payload, path: fromPathStr })
+	const toPathStr = payload.toPath
+	const pathArray = toPath(toPathStr)
+	const index = parseInt(pathArray[pathArray.length - 2], 10)
+	const updatedPathStr = calculateNewPathAheadOfTime(
+		payload.fromPath,
+		payload.toPath
+	)
+	const updatePathArr = toPath(updatedPathStr)
+	updatePathArr.splice(-2)
+	//Add back in the intended spot
+	addDef(state, {
+		...payload,
+		definition,
+		index,
+		bankDrop: false,
+		path: fromPath(updatePathArr),
+	})
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path) || []
-
-	const newIndex = index || currentArray.length
-	currentArray.splice(newIndex, 0, definition)
-	setWith(state, ["definition"].concat(pathArray), currentArray)
-
+	const currentArray = get(state.definition, path)
+	let newIndex: number
+	if (!currentArray) {
+		newIndex = 0
+		setWith(state, ["definition"].concat(pathArray), [definition])
+	} else {
+		newIndex = index === undefined ? currentArray.length : index
+		currentArray.splice(newIndex, 0, definition)
+	}
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = parse(state.yaml.toString())
