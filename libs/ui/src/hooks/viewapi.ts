@@ -121,21 +121,13 @@ class ViewAPI {
 
 	moveDefinition(fromPath: string, toPath: string) {
 		const viewDefId = this.uesio.getViewDefId()
-		const viewDef = this.uesio.getViewDef()
-		const pathArray = convertToPath(toPath)
-		const index = parseInt(pathArray[pathArray.length - 2], 10)
-		if (viewDefId && viewDef && viewDef.definition) {
-			const fromPathArray = convertToPath(fromPath)
-			fromPathArray.splice(-1)
-			const def = get(viewDef.definition, fromPathArray)
+
+		if (viewDefId) {
 			this.dispatcher(
 				moveDefinition({
 					entity: viewDefId,
 					fromPath,
-					definition: def,
 					toPath,
-					index,
-					bankDrop: false,
 				})
 			)
 		}

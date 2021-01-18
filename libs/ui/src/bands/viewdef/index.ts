@@ -20,6 +20,7 @@ import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
 import { calculateNewPathAheadOfTime, fromPath } from "../../component/path"
+import convertToPath from "lodash.topath"
 
 type YamlUpdatePayload = {
 	path: string
@@ -38,7 +39,7 @@ type SetDefinitionPayload = {
 type MoveDefinitionPayload = {
 	fromPath: string
 	toPath: string
-} & Omit<AddDefinitionPayload, "path">
+} & EntityPayload
 
 type AddDefinitionPayload = {
 	path: string
@@ -124,24 +125,42 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	removeDef(state, { ...payload, path: payload.fromPath })
-	const toPathStr = calculateNewPathAheadOfTime(
+	const fromPathStr = payload.fromPath
+	const fromPathArray = toPath(fromPathStr)
+	fromPathArray.splice(-1)
+	//Grab current definition
+	const definition = get(state.definition, fromPathArray)
+	//Remove the original
+	removeDef(state, { ...payload, path: fromPathStr })
+	const toPathStr = payload.toPath
+	const pathArray = toPath(toPathStr)
+	const index = parseInt(pathArray[pathArray.length - 2], 10)
+	const updatedPathStr = calculateNewPathAheadOfTime(
 		payload.fromPath,
 		payload.toPath
 	)
-	const toPathArr = toPath(toPathStr)
-	toPathArr.splice(-2)
-	addDef(state, { ...payload, path: fromPath(toPathArr) })
+	const updatePathArr = toPath(updatedPathStr)
+	updatePathArr.splice(-2)
+	//Add back in the intended spot
+	addDef(state, {
+		...payload,
+		definition,
+		index,
+		bankDrop: false,
+		path: fromPath(updatePathArr),
+	})
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
 	const currentArray = get(state.definition, path)
-	const newIndex = index === undefined ? currentArray.length : payload.index
+	let newIndex: number
 	if (!currentArray) {
+		newIndex = 0
 		setWith(state, ["definition"].concat(pathArray), [definition])
 	} else {
+		newIndex = index === undefined ? currentArray.length : index
 		currentArray.splice(newIndex, 0, definition)
 	}
 	if (state.yaml && definition) {
