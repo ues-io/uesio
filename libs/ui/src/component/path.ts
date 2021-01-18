@@ -59,8 +59,12 @@ const unWrapDefinition = (
 }
 
 // Return the string representation of a path array.
-const fromPath = (pathArray: string[]) =>
-	pathArray.map((part: string) => `["${part}"]`).join("")
+const fromPath = (pathArray: string[]) => {
+	if (!pathArray.length) {
+		return ""
+	}
+	return `["${pathArray.join(`"]["`)}"]`
+}
 
 const getParentPath = (path: string) => {
 	const pathArray = toPath(path)
@@ -128,7 +132,7 @@ const calculateNewPathAheadOfTime = (
 	// to account for a parent generation entry no longer being in that space
 	toPathArray[index] = toIndex - 1 + ""
 	//Covert it back to the stringified path
-	return `["${toPathArray.join('"]["')}"]`
+	return fromPath(toPathArray)
 }
 
 const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))

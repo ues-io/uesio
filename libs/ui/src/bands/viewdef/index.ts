@@ -19,7 +19,7 @@ import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
-import { calculateNewPathAheadOfTime } from "../../component/path"
+import { calculateNewPathAheadOfTime, fromPath } from "../../component/path"
 
 type YamlUpdatePayload = {
 	path: string
@@ -131,7 +131,7 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 	)
 	const toPathArr = toPath(toPathStr)
 	toPathArr.splice(-2)
-	addDef(state, { ...payload, path: `["${toPathArr.join(`"]["`)}"]` })
+	addDef(state, { ...payload, path: fromPath(toPathArr) })
 }
 
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
