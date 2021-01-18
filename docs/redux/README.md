@@ -10,6 +10,7 @@ Redux alone requires a lot of **boilerplate** such as :
 -   manual coding of **action creators**
 -   having **separated files** for reducer and action
 -   **cloning data structures** in the reducer
+-   external libraries for having **normalizaed data** such as [Normalizr](https://github.com/paularmstrong/normalizr)
 
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
@@ -124,21 +125,21 @@ There are plenty of different asynchronous middlewares for Redux. The most famou
 
 ## Data normalization in the Redux store
 
-We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) from Redux Toolkit for having **normalized data** in the redux store.
+We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) from Redux Toolkit for having **normalized data** in the Redux store.
 
-For example, let the following data structure be some data in the Redux store.
+For example, let the following data structure in the Redux store.
 
 ```
 [
     {
-        "id": 343,
-        "title": "Learn CSS Grid",
-        "content": "In this post we will discuss about the..."
+        id: 343,
+        title: "Learn CSS Grid",
+        content: "In this post we will discuss about the..."
     },
     {
-        "id": 344,
-        "title": "Flexboxes are so handy",
-        "content": "A flexbox is a container whose elements..."
+        id: 344,
+        title: "Flexboxes are so handy",
+        content: "A flexbox is a container whose elements..."
     }
 ]
 ```
@@ -149,19 +150,19 @@ By using the mentioned utility, the data structure become as follows :
 {
     ids: [ 343, 344 ],
     entities: {
-        "343": {
-            "title": "Learn CSS Grid",
-            "content": "In this post we will discuss about the..."
+        343: {
+            title: "Learn CSS Grid",
+            content: "In this post we will discuss about the..."
         },
-        "344": {
-            "title": "Flexboxes are so handy",
-            "content": "A flexbox is a container whose elements..."
+        344: {
+            title: "Flexboxes are so handy",
+            content: "A flexbox is a container whose elements..."
         }
     }
 }
 ```
 
-This conversion make data access much more efficient in the reducer. Let's have an example for deleting a record in the redux store.
+This conversion makes **data access** much more **efficient** in the reducer. Let's have an example for deleting a record in the Redux store.
 
 ```
 const reducer = (state, action) => {
@@ -173,7 +174,7 @@ const reducer = (state, action) => {
 }
 ```
 
-with the utility - assumuing that [immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
+With the utility - assumuing that [immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
 
 ```
 const reducer = (state, action) => {
