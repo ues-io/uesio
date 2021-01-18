@@ -171,9 +171,11 @@ const reducer = (state, action) => {
     }
     ...
 }
+```
 
-with the utility - assumuing that immer is applied in the reducer - which is [our case](#reducers-with-immer) :
+with the utility - assumuing that [immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
 
+```
 const reducer = (state, action) => {
     if (action.type === "delete") {
         // here there is NO need to iterate through the collection
