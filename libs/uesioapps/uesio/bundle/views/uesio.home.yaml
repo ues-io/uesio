@@ -12,8 +12,8 @@ definition:
       order:
         - field: uesio.name
           desc: false
-        - field: uesio.description
-          desc: false
+      limit: 2
+      offset: 1
   # Components are how we describe the layout of our view
   components:
     - uesio.view:

@@ -8,6 +8,8 @@ type LoadRequest struct {
 	Fields     []LoadRequestField     `json:"fields"`
 	Conditions []LoadRequestCondition `json:"conditions"`
 	Order      []LoadRequestOrder     `json:"order"`
+	Limit      int                    `json:"limit"`
+	Offset     int                    `json:"offset"`
 }
 
 // GetCollection function

@@ -15,6 +15,8 @@ type LoadOp struct {
 	Fields                []LoadRequestField     `json:"-"`
 	Type                  string                 `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
+	Limit                 int                    `json:"-"`
+	Offset                int                    `json:"-"`
 	ReferencedCollections ReferenceRegistry
 }
 

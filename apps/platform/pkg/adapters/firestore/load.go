@@ -86,6 +86,14 @@ func loadOne(
 		}
 	}
 
+	// if op.Offset != 0 {
+	// 	query = query.OrderBy("uesio:name", firestore.Asc).StartAt(op.Offset)
+	// }
+
+	if op.Limit != 0 {
+		query = query.Limit(op.Limit)
+	}
+
 	// Maps
 	// ReferenceField -> id values needed
 	iter := query.Documents(ctx)
