@@ -5,6 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -27,7 +28,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *metadat
 		return nil, nil, err
 	}
 
-	adapter, bucket, credentials, err := datasource.GetAdapterForUserFile(&userFile, session)
+	adapter, bucket, credentials, err := fileadapters.GetAdapterForUserFile(&userFile, session)
 	if err != nil {
 		return nil, nil, err
 	}

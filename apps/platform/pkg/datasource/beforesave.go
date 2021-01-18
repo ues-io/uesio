@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -65,7 +66,7 @@ func (bs *BeforeSaveAPI) DeleteFiles(ids []string) error {
 
 	for i := range ufmc {
 		ufm := ufmc[i]
-		adapter, bucket, credentials, err := GetAdapterForUserFile(&ufm, bs.session)
+		adapter, bucket, credentials, err := fileadapters.GetAdapterForUserFile(&ufm, bs.session)
 		if err != nil {
 			return err
 		}

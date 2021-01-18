@@ -1,0 +1,5 @@
+name: ondelete
+collection: uesio.collections
+type: TEXT
+label: On Delete
+propertyName: ondelete
