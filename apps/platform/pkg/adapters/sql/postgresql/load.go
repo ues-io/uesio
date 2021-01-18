@@ -119,6 +119,16 @@ func loadOne(
 
 	}
 
+	if op.Limit != 0 {
+		limit := uint64(op.Limit)
+		loadQuery = loadQuery.Limit(limit)
+	}
+
+	if op.Offset != 0 {
+		offset := uint64(op.Offset)
+		loadQuery = loadQuery.Offset(offset)
+	}
+
 	rows, err := loadQuery.RunWith(db).Query()
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error())

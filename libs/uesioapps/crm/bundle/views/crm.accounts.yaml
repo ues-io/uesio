@@ -72,10 +72,12 @@ definition:
     accounts:
       collection: crm.accounts
       order:
-        - field: crm.created
-          desc: false
         - field: crm.name
           desc: false
+        - field: crm.created
+          desc: false
+      limit: 3
+      offset: 1
       fields:
         crm.description: null
         crm.id: null

@@ -114,12 +114,18 @@ func loadOne(
 		return errors.New("DynamoDB failed to generate expression:" + err.Error())
 	}
 
+	limit := int64(op.Limit)
+	if limit == 0 {
+		limit = 100
+	}
+
 	params := &dynamodb.ScanInput{
 		TableName:                 aws.String(collectionName),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		FilterExpression:          expr.Filter(),
 		ProjectionExpression:      expr.Projection(),
+		Limit:                     &limit,
 	}
 
 	result, err := client.Scan(params)
