@@ -186,4 +186,4 @@ const reducer = (state, action) => {
 }
 ```
 
-Another argument favoring normalized data is to have a single source of truth. So if some change occur, the change does not need to be done at different places.
+Another argument favoring normalized data is to have a single source of truth. So if some change occur, the change does not need to be done at [different places](https://redux.js.org/recipes/structuring-reducers/normalizing-state-shape#normalizing-state-shape).
