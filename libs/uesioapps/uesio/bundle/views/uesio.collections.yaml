@@ -33,6 +33,7 @@ definition:
       fields:
         uesio.id:
         uesio.name:
+        uesio.updated:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -113,6 +114,8 @@ definition:
                       - material.typography:
                           text: "${uesio.name}"
                           textTransform: "capitalize"
+                      - material.field:
+                          fieldId: uesio.updated
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"

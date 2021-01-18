@@ -10,6 +10,7 @@ type BuilderState = {
 	buildMode: boolean
 	draggingNode?: string
 	droppingNode?: string
+	lastModifiedNode?: string
 	buildView?: string
 	rightPanel?: string
 	leftPanel?: string

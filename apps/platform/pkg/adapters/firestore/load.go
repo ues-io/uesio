@@ -3,6 +3,7 @@ package firestore
 import (
 	"context"
 	"errors"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -15,7 +16,7 @@ import (
 func loadOne(
 	ctx context.Context,
 	client *firestore.Client,
-	op adapters.LoadOp,
+	op *adapters.LoadOp,
 	metadata *adapters.MetadataCache,
 	ops []adapters.LoadOp,
 ) error {
@@ -33,7 +34,7 @@ func loadOne(
 	collection := client.Collection(collectionName)
 	var query firestore.Query
 
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -98,63 +99,63 @@ func loadOne(
 			return errors.New("Failed to iterate:" + err.Error())
 		}
 
-		item := op.Collection.NewItem()
-
-		// Map properties from firestore to uesio fields
-		for fieldID, fieldMetadata := range fieldMap {
-
-			firestoreFieldName, err := getDBFieldName(fieldMetadata)
-			if err != nil {
-				return err
-			}
-			fieldData, err := doc.DataAtPath([]string{firestoreFieldName})
-			if err != nil {
-				continue
-			}
-			err = item.SetField(fieldID, fieldData)
-			if err != nil {
-				return err
-			}
-		}
-
-		// Process reference Fields
-		for _, reference := range referenceFields {
-
-			fieldMetadata := reference.Metadata
-			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
-			if err != nil {
-				return errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
-			}
-			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
-			if err != nil {
-				return err
-			}
-			foreignKeyValue, err := item.GetField(foreignKeyName)
-			if err != nil {
-				//No foreign key value
-				continue
-			}
-
-			reference.AddID(foreignKeyValue)
-		}
-
-		err = item.SetField(collectionMetadata.IDField, doc.Ref.ID)
-		if err != nil {
-			return err
-		}
-		op.Collection.AddItem(item)
-	}
-	//At this point idsToLookFor has a mapping for reference field
-	//names to actual id values we will need to grab from the referenced collection
-
-	if len(referenceFields) != 0 {
-		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, client, metadata, op, collectionMetadata, referenceFields)
+		err = hydrateItem(doc, op, collectionMetadata, fieldMap, referencedCollections)
 		if err != nil {
 			return err
 		}
 	}
 
+	collSlice := op.Collection.GetItems()
+	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+	if ok {
+		sort.Slice(collSlice, locLessFunc)
+	}
+
+	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
+		return loadOne(ctx, client, op, metadata, nil)
+	}, op, metadata, referencedCollections)
+}
+
+func hydrateItem(
+	doc *firestore.DocumentSnapshot,
+	op *adapters.LoadOp,
+	collectionMetadata *adapters.CollectionMetadata,
+	fieldMap adapters.FieldsMap,
+	referencedCollections adapters.ReferenceRegistry,
+) error {
+
+	item := op.Collection.NewItem()
+
+	// Map properties from firestore to uesio fields
+	for fieldID, fieldMetadata := range fieldMap {
+
+		firestoreFieldName, err := getDBFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+		fieldData, err := doc.DataAtPath([]string{firestoreFieldName})
+		if err != nil {
+			continue
+		}
+		err = item.SetField(fieldID, fieldData)
+		if err != nil {
+			return err
+		}
+
+		if fieldMetadata.IsForeignKey {
+			// Handle foreign key value
+			reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
+			if ok {
+				reference.AddID(fieldData)
+			}
+		}
+	}
+
+	err := item.SetField(collectionMetadata.IDField, doc.Ref.ID)
+	if err != nil {
+		return err
+	}
+	op.Collection.AddItem(item)
 	return nil
 }
 
@@ -169,8 +170,9 @@ func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, 
 		return errors.New("Failed to create or retrieve client:" + err.Error())
 	}
 
-	for _, op := range ops {
-		err := loadOne(ctx, client, op, metadata, ops)
+	for i := range ops {
+		op := ops[i]
+		err := loadOne(ctx, client, &op, metadata, ops)
 		if err != nil {
 			return err
 		}

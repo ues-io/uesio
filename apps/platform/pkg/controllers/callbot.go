@@ -39,7 +39,7 @@ func CallBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &ViewSaveResponse{
+	respondJSON(w, r, &BotResponse{
 		Success: true,
 	})
 }

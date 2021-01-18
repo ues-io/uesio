@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -25,84 +23,6 @@ type ViewResponse struct {
 type ViewDependencies struct {
 	ComponentPacks map[string]bool   `yaml:"componentpacks,omitempty"`
 	ConfigValues   map[string]string `yaml:"configvalues,omitempty"`
-}
-
-// ViewSaveResponse struct
-type ViewSaveResponse struct {
-	Success bool
-}
-
-// SaveViewRequest type
-type SaveViewRequest map[string]string
-
-// SaveViews is way good - so good
-func SaveViews(w http.ResponseWriter, r *http.Request) {
-
-	session := middlewares.GetSession(r)
-
-	decoder := json.NewDecoder(r.Body)
-	var saveViewRequest SaveViewRequest
-	err := decoder.Decode(&saveViewRequest)
-	if err != nil {
-		msg := "Invalid request format: " + err.Error()
-		logger.LogWithTrace(r, msg, logger.ERROR)
-		http.Error(w, msg, http.StatusBadRequest)
-		return
-	}
-
-	views := metadata.ViewCollection{}
-
-	for viewKey, viewDef := range saveViewRequest {
-		viewNamespace, viewName, err := metadata.ParseKey(viewKey)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		var defNode yaml.Node
-		err = yaml.Unmarshal([]byte(viewDef), &defNode)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		existingView := metadata.View{
-			Name:      viewName,
-			Namespace: viewNamespace,
-		}
-		// Get the View ID
-		err = bundles.Load(&existingView, session)
-		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		views = append(views, metadata.View{
-			Name:       viewName,
-			Workspace:  existingView.Workspace,
-			Definition: defNode,
-			ID:         existingView.ID,
-		})
-
-	}
-
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &views,
-		},
-	}, session)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	respondJSON(w, r, &ViewSaveResponse{
-		Success: true,
-	})
 }
 
 // ViewPreview is also good
@@ -164,9 +84,64 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 
 	ExecuteIndexTemplate(w, route, true, session)
 }
+func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
+	cPackDeps := map[string]bool{}
+	configDependencies := map[string]string{}
+	var packs metadata.ComponentPackCollection
+	err := bundles.LoadAllFromAny(&packs, nil, session)
+	if err != nil {
+		return nil, err
+	}
+	for _, pack := range packs {
+		cPackDeps[pack.GetKey()] = true
+		for _, componentInfo := range pack.Components {
+			if componentInfo != nil {
+				for _, key := range componentInfo.ConfigValues {
+					_, ok := configDependencies[key]
+					if !ok {
+						value, err := getConfigValueDependencyFromComponent(key, session)
+						if err != nil {
+							return nil, err
+						}
+						configDependencies[key] = value
+					}
+				}
+			}
+		}
+
+	}
+
+	dependenciesResponse := ViewDependencies{
+		ComponentPacks: cPackDeps,
+		ConfigValues:   configDependencies,
+	}
+
+	return &dependenciesResponse, nil
+}
+
+func getConfigValueDependencyFromComponent(key string, session *sess.Session) (string, error) {
+	site := session.GetSite()
+	configValue, err := metadata.NewConfigValue(key)
+	if err != nil {
+		return "", err
+	}
+	err = bundles.Load(configValue, session)
+	if err != nil {
+		return "", err
+	}
+	value, err := metadata.GetConfigValue(key, site)
+	if err != nil {
+		return "", err
+	}
+	return value, nil
+}
 
 func getViewDependencies(view *metadata.View, session *sess.Session) (*ViewDependencies, error) {
-	site := session.GetSite()
+	workspace := session.GetWorkspaceID()
+	if workspace != "" {
+		return getBuilderDependencies(session)
+	}
+
 	// Process Configuration Value Dependencies
 	componentsUsed, err := view.GetComponents()
 	if err != nil {
@@ -202,15 +177,7 @@ func getViewDependencies(view *metadata.View, session *sess.Session) (*ViewDepen
 					for _, key := range componentInfo.ConfigValues {
 						_, ok := configDependencies[key]
 						if !ok {
-							configValue, err := metadata.NewConfigValue(key)
-							if err != nil {
-								return nil, err
-							}
-							err = bundles.Load(configValue, session)
-							if err != nil {
-								return nil, err
-							}
-							value, err := metadata.GetConfigValue(key, site)
+							value, err := getConfigValueDependencyFromComponent(key, session)
 							if err != nil {
 								return nil, err
 							}

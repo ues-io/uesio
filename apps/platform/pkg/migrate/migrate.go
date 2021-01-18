@@ -32,7 +32,10 @@ func Migrate(session *sess.Session) error {
 	metadataRequest := datasource.MetadataRequest{}
 	for _, collection := range collections {
 		collectionKey := collection.Namespace + "." + collection.Name
-		metadataRequest.AddCollection(collectionKey)
+		err := metadataRequest.AddCollection(collectionKey)
+		if err != nil {
+			return err
+		}
 
 		for _, field := range fields {
 
@@ -41,11 +44,14 @@ func Migrate(session *sess.Session) error {
 			}
 
 			fieldKey := field.Namespace + "." + field.Name
-			metadataRequest.AddField(collectionKey, fieldKey, nil)
+			err := metadataRequest.AddField(collectionKey, fieldKey, nil)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
-	err = metadataRequest.Load(&metadataResponse, collatedMetadata, session)
+	err = metadataRequest.Load(nil, &metadataResponse, collatedMetadata, session)
 	if err != nil {
 		return err
 	}

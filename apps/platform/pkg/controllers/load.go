@@ -6,7 +6,6 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/loadresponse"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 )
@@ -33,9 +32,11 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		ops[i] = adapters.LoadOp{
 			WireName:       wire.Wire,
 			CollectionName: wire.Collection,
-			Collection:     &loadresponse.Collection{},
+			Collection:     &adapters.Collection{},
 			Conditions:     wire.Conditions,
 			Fields:         wire.Fields,
+			Order:          wire.Order,
+			Type:           wire.Type,
 		}
 	}
 

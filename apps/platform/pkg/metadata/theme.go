@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,8 +36,8 @@ func (t *Theme) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (t *Theme) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (t *Theme) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: t.Name,
@@ -54,6 +54,11 @@ func (t *Theme) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (t *Theme) GetKey() string {
 	return t.Namespace + "." + t.Name
+}
+
+// GetPath function
+func (t *Theme) GetPath() string {
+	return t.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

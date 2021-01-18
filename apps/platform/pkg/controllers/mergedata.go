@@ -15,13 +15,12 @@ import (
 
 // RouteMergeData stuff to merge
 type RouteMergeData struct {
-	ViewName      string              `json:"viewname"`
-	ViewNamespace string              `json:"viewnamespace"`
-	Params        map[string]string   `json:"params"`
-	Namespace     string              `json:"namespace"`
-	Path          string              `json:"path"`
-	Workspace     *WorkspaceMergeData `json:"workspace"`
-	Theme         string              `json:"theme"`
+	View      string              `json:"view"`
+	Params    map[string]string   `json:"params"`
+	Namespace string              `json:"namespace"`
+	Path      string              `json:"path"`
+	Workspace *WorkspaceMergeData `json:"workspace"`
+	Theme     string              `json:"theme"`
 }
 
 // UserMergeData stuff to merge
@@ -106,21 +105,14 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	viewNamespace, viewName, err := metadata.ParseKey(route.ViewRef)
-	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-
 	mergeData := MergeData{
 		Route: &RouteMergeData{
-			ViewName:      viewName,
-			ViewNamespace: viewNamespace,
-			Params:        route.Params,
-			Namespace:     route.Namespace,
-			Path:          route.Path,
-			Workspace:     GetWorkspaceMergeData(workspace),
-			Theme:         route.ThemeRef,
+			View:      route.ViewRef,
+			Params:    route.Params,
+			Namespace: route.Namespace,
+			Path:      route.Path,
+			Workspace: GetWorkspaceMergeData(workspace),
+			Theme:     route.ThemeRef,
 		},
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
@@ -133,5 +125,6 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *metadata.Route, buildMod
 		},
 	}
 
-	indexTemplate.Execute(w, mergeData)
+	// Not checking this error for now.
+	_ = indexTemplate.Execute(w, mergeData)
 }

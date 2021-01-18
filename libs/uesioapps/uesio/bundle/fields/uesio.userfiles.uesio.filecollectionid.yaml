@@ -1,6 +1,0 @@
-name: filecollectionid
-collection: uesio.userfiles
-type: "TEXT"
-label: "File Collection Id"
-propertyName: "filecollectionid"
-readOnly: true

@@ -1,15 +1,23 @@
 import { material } from "@uesio/ui"
-import React, { FunctionComponent, useState, ChangeEvent } from "react"
+import React, {
+	FunctionComponent,
+	useState,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type ConfirmFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
 	confirm: (verificationCode: string) => Promise<void>
 }
 
-const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
-	const classes = useLoginStyles(props)
-
+const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
+	setMode,
+	confirm,
+}) => {
+	const classes = useLoginStyles()
 	const [verificationCode, setVerificationCode] = useState("")
 
 	return (
@@ -26,7 +34,7 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 				}
 			/>
 			<material.Button
-				onClick={() => props.setMode("")}
+				onClick={() => setMode("")}
 				className={classes.button}
 			>
 				Back to Signup
@@ -36,7 +44,7 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.confirm(verificationCode)
+					confirm(verificationCode)
 				}}
 			>
 				Confirm

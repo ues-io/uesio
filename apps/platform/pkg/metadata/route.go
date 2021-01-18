@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewRoute function
@@ -43,8 +43,8 @@ func (r *Route) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (r *Route) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (r *Route) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: r.Name,
@@ -61,6 +61,11 @@ func (r *Route) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (r *Route) GetKey() string {
 	return r.Namespace + "." + r.Name
+}
+
+// GetPath function
+func (r *Route) GetPath() string {
+	return r.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

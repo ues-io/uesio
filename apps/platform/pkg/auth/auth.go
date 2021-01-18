@@ -4,13 +4,12 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/site"
-
-	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 )
 
 // AuthenticationType interface
@@ -78,21 +77,14 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 		defaultSiteProfile = "uesio.standard"
 	}
 
-	_, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &metadata.UserCollection{
-				{
-					FirstName:      claims.FirstName,
-					LastName:       claims.LastName,
-					FederationType: claims.AuthType,
-					FederationID:   claims.Subject,
-					Profile:        defaultSiteProfile,
-					Site:           site.Name,
-				},
-			},
-		},
-	}, session)
-	return err
+	return datasource.PlatformSaveOne(&metadata.User{
+		FirstName:      claims.FirstName,
+		LastName:       claims.LastName,
+		FederationType: claims.AuthType,
+		FederationID:   claims.Subject,
+		Profile:        defaultSiteProfile,
+		Site:           site.Name,
+	}, nil, session)
 }
 
 // CheckProvisionWhitelist function
@@ -163,7 +155,7 @@ func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User,
 	var user metadata.User
 	err := datasource.PlatformLoadOne(
 		&user,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.federationType",
 				Value: claims.AuthType,

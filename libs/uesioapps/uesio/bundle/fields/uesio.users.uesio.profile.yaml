@@ -1,5 +1,0 @@
-name: profile
-collection: uesio.users
-type: "TEXT"
-label: "Profile"
-propertyName: "profile"

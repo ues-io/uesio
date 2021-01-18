@@ -71,6 +71,11 @@ definition:
   wires:
     accounts:
       collection: crm.accounts
+      order:
+        - field: crm.created
+          desc: false
+        - field: crm.name
+          desc: false
       fields:
         crm.description: null
         crm.id: null

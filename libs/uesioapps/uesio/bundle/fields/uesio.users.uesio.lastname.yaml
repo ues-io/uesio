@@ -1,5 +1,0 @@
-name: lastname
-collection: uesio.users
-type: "TEXT"
-label: "Last Name"
-propertyName: "last_name"

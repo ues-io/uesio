@@ -1,12 +1,18 @@
 import { material } from "@uesio/ui"
-import React, { useState, ChangeEvent, FunctionComponent } from "react"
+import React, {
+	useState,
+	ChangeEvent,
+	FunctionComponent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type SignupFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
-	setSignupUsername: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
+	setSignupUsername: Dispatch<SetStateAction<string>>
 	signupUsername: string
-	setSignupPassword: React.Dispatch<React.SetStateAction<string>>
+	setSignupPassword: Dispatch<SetStateAction<string>>
 	signupPassword: string
 	signUp: (
 		firstname: string,
@@ -17,8 +23,15 @@ type SignupFormProps = {
 	) => void
 }
 
-const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
-	const classes = useLoginStyles(props)
+const SignupForm: FunctionComponent<SignupFormProps> = ({
+	signUp,
+	setMode,
+	setSignupUsername,
+	setSignupPassword,
+	signupUsername,
+	signupPassword,
+}) => {
+	const classes = useLoginStyles()
 	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
 	const [lastname, setLastName] = useState("")
@@ -52,7 +65,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				size="small"
 				className={classes.textfield}
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					props.setSignupUsername(e.target.value)
+					setSignupUsername(e.target.value)
 				}
 			/>
 			<material.TextField
@@ -73,11 +86,11 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				size="small"
 				className={classes.textfield}
 				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					props.setSignupPassword(e.target.value)
+					setSignupPassword(e.target.value)
 				}
 			/>
 			<material.Button
-				onClick={() => props.setMode("")}
+				onClick={() => setMode("")}
 				className={classes.button}
 			>
 				Cancel
@@ -87,12 +100,12 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.signUp(
+					signUp(
 						firstname,
 						lastname,
-						props.signupUsername,
+						signupUsername,
 						email,
-						props.signupPassword
+						signupPassword
 					)
 				}}
 			>

@@ -2,9 +2,11 @@ package metadata
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // FieldCollection slice
@@ -16,50 +18,65 @@ func (fc *FieldCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FieldCollection) GetFields() []reqs.LoadRequestField {
+func (fc *FieldCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem() LoadableItem {
+func (fc *FieldCollection) NewItem() adapters.LoadableItem {
 	return &Field{}
 }
 
 // NewBundleableItem function
-func (fc *FieldCollection) NewBundleableItem(key string) (BundleableItem, error) {
-	keyArray := strings.Split(key, ".")
-	if len(keyArray) != 4 {
+func (fc *FieldCollection) NewBundleableItem() BundleableItem {
+	return &Field{}
+}
+
+// NewBundleableItem function
+func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
+	keyArray := strings.Split(key, string(os.PathSeparator))
+	if len(keyArray) != 2 {
+		return nil, errors.New("Invalid Field Key: " + key)
+	}
+	namespace, name, err := ParseKey(keyArray[1])
+	if err != nil {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
 	return &Field{
-		CollectionRef: keyArray[0] + "." + keyArray[1],
-		Namespace:     keyArray[2],
-		Name:          keyArray[3],
+		CollectionRef: keyArray[0],
+		Namespace:     namespace,
+		Name:          name,
 	}, nil
 }
 
-// GetKeyPrefix function
-func (fc *FieldCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+// GetKeyFromPath function
+func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
-	if hasCollection {
-		return collectionKey + "."
+	parts := strings.Split(path, string(os.PathSeparator))
+	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
+		// Ignore this file
+		return "", nil
 	}
-	return ""
+	if hasCollection {
+		if parts[0] != collectionKey {
+			return "", nil
+		}
+	}
+	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item LoadableItem) {
+func (fc *FieldCollection) AddItem(item adapters.LoadableItem) {
 	*fc = append(*fc, *item.(*Field))
 }
 
 // GetItem function
-func (fc *FieldCollection) GetItem(index int) LoadableItem {
-	actual := *fc
-	return &actual[index]
+func (fc *FieldCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*fc)[index]
 }
 
 // Loop function
-func (fc *FieldCollection) Loop(iter func(item LoadableItem) error) error {
+func (fc *FieldCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {
@@ -72,4 +89,9 @@ func (fc *FieldCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (fc *FieldCollection) Len() int {
 	return len(*fc)
+}
+
+// GetItems function
+func (fc *FieldCollection) GetItems() interface{} {
+	return fc
 }

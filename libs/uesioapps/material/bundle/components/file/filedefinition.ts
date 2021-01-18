@@ -1,12 +1,16 @@
-import { definition, builder, styles } from "@uesio/ui"
+import { definition, builder, styles, signal } from "@uesio/ui"
 
 type FileDefinition = {
+	id: string
 	fieldId: string
-	preview: boolean
+	fileCollection: string
+	editable: boolean
+	displayAs: "button" | "preview" | "fullPreview"
+	accepts: "images" | "all"
 	margin?: styles.MarginDefinition
 	width?: number
 	height?: number
-	mimeType: string
+	signals?: signal.SignalDefinition[]
 }
 
 interface FileProps extends definition.BaseProps {
@@ -29,10 +33,44 @@ const FilePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "File Collection",
 		},
 		{
-			name: "preview",
+			name: "editable",
 			type: "BOOLEAN",
-			label: "Preview",
+			label: "Editable",
 			displaytype: "switch",
+		},
+		{
+			name: "displayAs",
+			type: "SELECT",
+			label: "Display As",
+			options: [
+				{
+					value: "button",
+					label: "Button",
+				},
+				{
+					value: "preview",
+					label: "Preview",
+				},
+				{
+					value: "fullPreview",
+					label: "Full preview",
+				},
+			],
+		},
+		{
+			name: "accepts",
+			type: "SELECT",
+			label: "Accepts",
+			options: [
+				{
+					value: "images",
+					label: "Images",
+				},
+				{
+					value: "all",
+					label: "All",
+				},
+			],
 		},
 		{
 			name: "width",

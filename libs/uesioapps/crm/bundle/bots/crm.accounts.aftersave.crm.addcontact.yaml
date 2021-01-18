@@ -1,5 +1,0 @@
-name: addcontact
-collection: crm.accounts
-type: AFTERSAVE
-dialect: JAVASCRIPT
-fileName: addcontact.js

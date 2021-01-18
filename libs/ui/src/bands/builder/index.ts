@@ -1,6 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { getParentPath } from "../../component/path"
+import {
+	addDefinition,
+	changeDefinitionKey,
+	removeDefinition,
+	setDefinition,
+	cancel,
+} from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
-
+import { set as setRoute } from "../route"
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -10,6 +18,13 @@ const builderSlice = createSlice({
 		},
 		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
 			state.selectedNode = payload
+			if (payload && !state.leftPanel) {
+				state.leftPanel = "components"
+			}
+		},
+		setPanelClosed: (state) => {
+			state.selectedNode = ""
+			state.leftPanel = ""
 		},
 		toggleBuildMode: (state) => {
 			state.buildMode = !state.buildMode
@@ -35,10 +50,6 @@ const builderSlice = createSlice({
 		) => {
 			state.namespaces = payload
 		},
-		clearAvailableMetadata: (state) => {
-			state.namespaces = null
-			state.metadata = null
-		},
 		setMetadataList: (
 			state,
 			{
@@ -60,6 +71,31 @@ const builderSlice = createSlice({
 			},
 		}),
 	},
+	extraReducers: (builder) => {
+		builder.addCase(changeDefinitionKey, (state, { payload }) => {
+			const parentPath = getParentPath(payload.path)
+			const keyPath = `${parentPath}["${payload.key}"]`
+			state.selectedNode = keyPath
+			state.lastModifiedNode = parentPath
+		})
+		builder.addCase(removeDefinition, (state) => {
+			state.selectedNode = ""
+			state.lastModifiedNode = ""
+		})
+		builder.addCase(setRoute, (state) => {
+			state.namespaces = null
+			state.metadata = null
+		})
+		builder.addCase(addDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+		})
+		builder.addCase(setDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path
+		})
+		builder.addCase(cancel, (state) => {
+			state.lastModifiedNode = ""
+		})
+	},
 })
 
 export const {
@@ -72,7 +108,7 @@ export const {
 	setRightPanel,
 	setView,
 	setAvailableNamespaces,
-	clearAvailableMetadata,
 	setMetadataList,
+	setPanelClosed,
 } = builderSlice.actions
 export default builderSlice.reducer

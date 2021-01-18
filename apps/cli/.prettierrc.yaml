@@ -2,6 +2,6 @@ tabWidth: 4
 semi: false
 useTabs: true
 overrides:
-  - files: '*.yaml'
+  - files: "*.yaml"
     options:
       tabWidth: 2

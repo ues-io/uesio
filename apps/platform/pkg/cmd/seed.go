@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 
 	"github.com/spf13/cobra"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -92,12 +92,10 @@ func seed(cmd *cobra.Command, args []string) {
 
 	session := sess.GetHeadlessSession()
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &apps,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &apps,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -105,12 +103,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &sites,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &sites,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 
@@ -119,12 +115,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &siteDomains,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &siteDomains,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -132,12 +126,10 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &bundles,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-			},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &bundles,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
 		},
 	}, session)
 	if err != nil {
@@ -145,15 +137,13 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	_, err = datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &workspaces,
-			Options: &reqs.SaveOptions{
-				Upsert: &reqs.UpsertOptions{},
-				Lookups: []reqs.Lookup{
-					{
-						RefField: "uesio.app",
-					},
+	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &workspaces,
+		Options: &adapters.SaveOptions{
+			Upsert: &adapters.UpsertOptions{},
+			Lookups: []adapters.Lookup{
+				{
+					RefField: "uesio.app",
 				},
 			},
 		},

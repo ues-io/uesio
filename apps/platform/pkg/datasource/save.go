@@ -4,7 +4,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -49,7 +48,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			}
 		}
 
-		err = collections.Load(&metadataResponse, collatedMetadata, session)
+		err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
 		if err != nil {
 			return nil, err
 		}
@@ -103,12 +102,18 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
+
+		cascadeDeletes, err := getCascadeDeletes(batch.Wires, collatedMetadata[dsKey].Collections, &metadataResponse, adapter, credentials)
+		if err != nil {
+			return nil, err
+		}
+
 		adapterResponses, err := adapter.Save(batch.Wires, collatedMetadata[dsKey], credentials)
 		if err != nil {
 			return nil, err
 		}
 
-		err = cleanUpFiles(batch.Wires, session)
+		err = performCascadeDeletes(cascadeDeletes, session)
 		if err != nil {
 			return nil, err
 		}
@@ -133,23 +138,4 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 	}
 
 	return &response, nil
-}
-
-func cleanUpFiles(wires []reqs.SaveRequest, session *sess.Session) error {
-	// Get mapping of Collection id -> record id -> true
-	idsToDeleteFilesFor := map[string]map[string]bool{}
-	for _, saveReq := range wires {
-		for _, deletion := range saveReq.Deletes {
-			for _, primaryKeyValue := range deletion {
-				pkString := primaryKeyValue.(string)
-				currentCollectionIds, ok := idsToDeleteFilesFor[saveReq.Collection]
-				if !ok {
-					currentCollectionIds = map[string]bool{}
-					idsToDeleteFilesFor[saveReq.Collection] = currentCollectionIds
-				}
-				currentCollectionIds[pkString] = true
-			}
-		}
-	}
-	return DeleteUserFiles(idsToDeleteFilesFor, session)
 }

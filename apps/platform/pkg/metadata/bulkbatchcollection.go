@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // BulkBatchCollection slice
 type BulkBatchCollection []BulkBatch
@@ -11,28 +13,27 @@ func (bbc *BulkBatchCollection) GetName() string {
 }
 
 // GetFields function
-func (bbc *BulkBatchCollection) GetFields() []reqs.LoadRequestField {
+func (bbc *BulkBatchCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bbc)
 }
 
 // GetItem function
-func (bbc *BulkBatchCollection) GetItem(index int) LoadableItem {
-	actual := *bbc
-	return &actual[index]
+func (bbc *BulkBatchCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*bbc)[index]
 }
 
 // AddItem function
-func (bbc *BulkBatchCollection) AddItem(item LoadableItem) {
+func (bbc *BulkBatchCollection) AddItem(item adapters.LoadableItem) {
 	*bbc = append(*bbc, *item.(*BulkBatch))
 }
 
 // NewItem function
-func (bbc *BulkBatchCollection) NewItem() LoadableItem {
+func (bbc *BulkBatchCollection) NewItem() adapters.LoadableItem {
 	return &BulkBatch{}
 }
 
 // Loop function
-func (bbc *BulkBatchCollection) Loop(iter func(item LoadableItem) error) error {
+func (bbc *BulkBatchCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bbc {
 		err := iter(bbc.GetItem(index))
 		if err != nil {
@@ -45,4 +46,9 @@ func (bbc *BulkBatchCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (bbc *BulkBatchCollection) Len() int {
 	return len(*bbc)
+}
+
+// GetItems function
+func (bbc *BulkBatchCollection) GetItems() interface{} {
+	return bbc
 }

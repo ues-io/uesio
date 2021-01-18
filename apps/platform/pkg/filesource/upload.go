@@ -3,37 +3,104 @@ package filesource
 import (
 	"errors"
 	"io"
+	"mime"
+	"net/url"
+	"path/filepath"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// Upload function
-func Upload(fileBody io.Reader, details reqs.FileDetails, session *sess.Session) (string, error) {
-	site := session.GetSite()
-	ufc, fs, err := datasource.GetFileSourceAndCollection(details.FileCollectionID, session)
-	if err != nil {
-		return "", err
+// FileDetails struct
+type FileDetails struct {
+	ContentLength    uint64
+	Name             string
+	CollectionID     string
+	RecordID         string
+	FieldID          string
+	FileCollectionID string
+}
+
+// NewFileDetails function
+func NewFileDetails(query url.Values) (*FileDetails, error) {
+
+	name := query.Get("name")
+	if name == "" {
+		return nil, errors.New("No name specified")
 	}
-	bucket, err := ufc.GetBucket(site)
+
+	fileCollection := query.Get("filecollection")
+	if fileCollection == "" {
+		return nil, errors.New("No filecollection specified")
+	}
+
+	collectionID := query.Get("collectionid")
+	if collectionID == "" {
+		return nil, errors.New("No collectionid specified")
+	}
+
+	recordID := query.Get("recordid")
+	if recordID == "" {
+		return nil, errors.New("No recordid specified")
+	}
+
+	//Not required. If not specified is treated as an attachment
+	fieldID := query.Get("fieldid")
+
+	return &FileDetails{
+		Name:             name,
+		FileCollectionID: fileCollection,
+		CollectionID:     collectionID,
+		RecordID:         recordID,
+		FieldID:          fieldID,
+	}, nil
+}
+
+func getFieldIDPart(details FileDetails) string {
+	fieldID := details.FieldID
+	if fieldID == "" {
+		return "attachment_" + details.Name
+	}
+	return "field_" + fieldID
+}
+
+// Upload function
+func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (string, error) {
+	site := session.GetSite()
+	workspaceID := session.GetWorkspaceID()
+	ufc, fs, err := fileadapters.GetFileSourceAndCollection(details.FileCollectionID, session)
 	if err != nil {
 		return "", err
 	}
 
-	id, err := datasource.CreateUserFileMetadataEntry(details, session)
-	if err != nil {
-		return "", errors.New("Error creating metadata entry for file")
+	ufm := metadata.UserFileMetadata{
+		CollectionID:     details.CollectionID,
+		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
+		FieldID:          getFieldIDPart(details),
+		FileCollectionID: details.FileCollectionID,
+		Name:             details.Name,
+		RecordID:         details.RecordID,
+		SiteID:           site.Name,
+		WorkspaceID:      workspaceID,
 	}
-	newUserFile, err := datasource.GetUserFile(id, session)
-	if err != nil {
-		return "", errors.New("error Fetching newly created userfile: " + id + " : " + err.Error())
-	}
-	path, err := ufc.GetPath(newUserFile, site.Name, session.GetWorkspaceID())
+
+	path, err := ufc.GetFilePath(&ufm, site.Name, session.GetWorkspaceID())
 	if err != nil {
 		return "", errors.New("error generating path for userfile: " + err.Error())
 	}
+
+	ufm.Path = path
+
+	err = datasource.PlatformSaveOne(&ufm, &adapters.SaveOptions{
+		Upsert: &adapters.UpsertOptions{},
+	}, session)
+	if err != nil {
+		return "", err
+	}
+
 	fileAdapter, err := fileadapters.GetFileAdapter(fs.GetAdapterType())
 	if err != nil {
 		return "", err
@@ -42,15 +109,39 @@ func Upload(fileBody io.Reader, details reqs.FileDetails, session *sess.Session)
 	if err != nil {
 		return "", err
 	}
+	bucket, err := ufc.GetBucket(site)
+	if err != nil {
+		return "", err
+	}
 	err = fileAdapter.Upload(fileBody, bucket, path, credentials)
 	if err != nil {
 		return "", err
 	}
 	if details.FieldID != "" {
-		err = datasource.UpdateRecordFieldWithFileID(id, details, session)
+		meta, err := datasource.LoadCollectionMetadata(details.CollectionID, &adapters.MetadataCache{}, session)
 		if err != nil {
 			return "", err
 		}
+
+		_, err = datasource.Save(datasource.SaveRequestBatch{
+			Wires: []adapters.SaveRequest{
+				{
+					Collection: details.CollectionID,
+					Wire:       "filefieldupdate",
+					Changes: map[string]adapters.ChangeRequest{
+						"0": {
+							FieldChanges: map[string]interface{}{
+								details.FieldID: ufm.ID,
+								meta.IDField:    details.RecordID,
+							},
+						},
+					},
+				},
+			},
+		}, session)
+		if err != nil {
+			return "", errors.New("Failed to update field for the given file: " + err.Error())
+		}
 	}
-	return id, nil
+	return ufm.ID, nil
 }

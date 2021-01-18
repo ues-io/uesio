@@ -5,16 +5,14 @@ import (
 	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // PlatformSaveRequest struct
 type PlatformSaveRequest struct {
 	Collection metadata.CollectionableGroup
-	Options    *reqs.SaveOptions
+	Options    *adapters.SaveOptions
 }
 
 // RecordNotFoundError struct
@@ -31,8 +29,8 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
-// platformLoads function
-func platformLoads(ops []adapters.LoadOp, session *sess.Session) error {
+// PlatformLoads function
+func PlatformLoads(ops []adapters.LoadOp, session *sess.Session) error {
 
 	_, err := Load(
 		ops,
@@ -47,8 +45,8 @@ func platformLoads(ops []adapters.LoadOp, session *sess.Session) error {
 }
 
 // PlatformLoad function
-func PlatformLoad(group metadata.CollectionableGroup, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
-	return platformLoads([]adapters.LoadOp{
+func PlatformLoad(group metadata.CollectionableGroup, conditions []adapters.LoadRequestCondition, session *sess.Session) error {
+	return PlatformLoads([]adapters.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",
 			CollectionName: "uesio." + group.GetName(),
@@ -60,7 +58,7 @@ func PlatformLoad(group metadata.CollectionableGroup, conditions []reqs.LoadRequ
 }
 
 // PlatformLoadOne function
-func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadRequestCondition, session *sess.Session) error {
+func PlatformLoadOne(item metadata.CollectionableItem, conditions []adapters.LoadRequestCondition, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Collection: item.GetCollection(),
 		Item:       item,
@@ -84,8 +82,8 @@ func PlatformLoadOne(item metadata.CollectionableItem, conditions []reqs.LoadReq
 }
 
 // PlatformDelete function
-func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, session *sess.Session) error {
-	requests := []reqs.SaveRequest{{
+func PlatformDelete(collectionID string, request map[string]adapters.DeleteRequest, session *sess.Session) error {
+	requests := []adapters.SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: "uesio." + collectionID,
 		Deletes:    request,
@@ -101,20 +99,20 @@ func PlatformDelete(collectionID string, request map[string]reqs.DeleteRequest, 
 	return err
 }
 
-// PlatformSave function
-func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.SaveResponse, error) {
+// PlatformSaves function
+func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 
-	requests := []reqs.SaveRequest{}
+	requests := []adapters.SaveRequest{}
 
 	for _, psr := range psrs {
 		collection := psr.Collection
 		collectionName := collection.GetName()
 
-		changeRequests := map[string]reqs.ChangeRequest{}
+		changeRequests := map[string]adapters.ChangeRequest{}
 
 		index := 0
 
-		err := collection.Loop(func(item metadata.LoadableItem) error {
+		err := collection.Loop(func(item adapters.LoadableItem) error {
 			fieldChanges := map[string]interface{}{}
 			for _, field := range collection.GetFields() {
 				fieldValue, err := item.GetField(field.ID)
@@ -123,17 +121,17 @@ func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.Sav
 				}
 				fieldChanges[field.ID] = fieldValue
 			}
-			changeRequests[strconv.Itoa(index)] = reqs.ChangeRequest{
+			changeRequests[strconv.Itoa(index)] = adapters.ChangeRequest{
 				FieldChanges: fieldChanges,
 			}
 			index++
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		requests = append(requests, reqs.SaveRequest{
+		requests = append(requests, adapters.SaveRequest{
 			Collection: "uesio." + collectionName,
 			Wire:       "AnyKey",
 			Changes:    changeRequests,
@@ -149,8 +147,49 @@ func PlatformSave(psrs []PlatformSaveRequest, session *sess.Session) ([]reqs.Sav
 		session.RemoveWorkspaceContext(),
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return saveResponse.Wires, nil
+	for i, psr := range psrs {
+		collection := psr.Collection
+		wire := saveResponse.Wires[i]
+		for j := range wire.ChangeResults {
+			num, err := strconv.Atoi(j)
+			if err != nil {
+				return err
+			}
+			result, ok := wire.ChangeResults[j]
+			if !ok {
+				continue
+			}
+
+			item := collection.GetItem(num)
+			for fieldName, value := range result.Data {
+				err := item.SetField(fieldName, value)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// PlatformSave function
+func PlatformSave(psr PlatformSaveRequest, session *sess.Session) error {
+	return PlatformSaves([]PlatformSaveRequest{
+		psr,
+	}, session)
+}
+
+func PlatformSaveOne(item metadata.CollectionableItem, options *adapters.SaveOptions, session *sess.Session) error {
+	collection := &LoadOneCollection{
+		Collection: item.GetCollection(),
+		Item:       item,
+	}
+	return PlatformSave(PlatformSaveRequest{
+		Collection: collection,
+		Options:    options,
+	}, session)
 }

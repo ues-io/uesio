@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // SecretCollection slice
@@ -16,17 +16,22 @@ func (sc *SecretCollection) GetName() string {
 }
 
 // GetFields function
-func (sc *SecretCollection) GetFields() []reqs.LoadRequestField {
+func (sc *SecretCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(sc)
 }
 
 // NewItem function
-func (sc *SecretCollection) NewItem() LoadableItem {
+func (sc *SecretCollection) NewItem() adapters.LoadableItem {
 	return &Secret{}
 }
 
 // NewBundleableItem function
-func (sc *SecretCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (sc *SecretCollection) NewBundleableItem() BundleableItem {
+	return &Secret{}
+}
+
+// NewBundleableItem function
+func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Secret Key: " + key)
@@ -37,24 +42,23 @@ func (sc *SecretCollection) NewBundleableItem(key string) (BundleableItem, error
 	}, nil
 }
 
-// GetKeyPrefix function
-func (sc *SecretCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (sc *SecretCollection) AddItem(item LoadableItem) {
+func (sc *SecretCollection) AddItem(item adapters.LoadableItem) {
 	*sc = append(*sc, *item.(*Secret))
 }
 
 // GetItem function
-func (sc *SecretCollection) GetItem(index int) LoadableItem {
-	actual := *sc
-	return &actual[index]
+func (sc *SecretCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*sc)[index]
 }
 
 // Loop function
-func (sc *SecretCollection) Loop(iter func(item LoadableItem) error) error {
+func (sc *SecretCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index))
 		if err != nil {
@@ -67,4 +71,9 @@ func (sc *SecretCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (sc *SecretCollection) Len() int {
 	return len(*sc)
+}
+
+// GetItems function
+func (sc *SecretCollection) GetItems() interface{} {
+	return sc
 }

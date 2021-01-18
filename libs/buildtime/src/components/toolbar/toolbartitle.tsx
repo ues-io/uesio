@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 			backgroundColor: theme.palette.primary.light,
 		},
 		textWrapper: {
-			flex: "1",
+			flex: 1,
 			margin: "4px 0",
 			color: theme.palette.primary.dark,
 			textTransform: "uppercase",

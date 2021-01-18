@@ -23,8 +23,8 @@ const Buildtime: FunctionComponent<definition.BaseProps> = ({
 	if (!route) return null
 
 	const addView = context.addFrame({
-		view: `${route.viewnamespace}.${route.viewname}(${path})`,
-		viewDef: `${route.viewnamespace}.${route.viewname}`,
+		view: `${route.view}(${path})`,
+		viewDef: route.view,
 	})
 
 	return (

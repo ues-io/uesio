@@ -2,9 +2,15 @@
 
 ## Redux Toolkit
 
-We introduced [Redux Toolkit](https://redux-toolkit.js.org/) in our stack upon a code refactoring.
+[Redux Toolkit](https://redux-toolkit.js.org/) has beend introduced in our stack at a refactoring stage.
 
-Redux alone requires a lot of **boilerplate** such as manual coding of the **action type** and **action creators**, having **separate files** for reducer and action as well as the **cloning data structures** in the reducers.
+Redux alone requires a lot of **boilerplate** such as :
+
+-   manually taking care of namespacing the **action type**
+-   manual coding of **action creators**
+-   having **separated files** for reducer and action
+-   **cloning data structures** in the reducer
+
 This is where Redux Toolkit - a utility library for Redux - kicks in.
 
 ## Structure
@@ -102,8 +108,16 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using `async/await` for the sake of readability.
 
+## A single action handled by multiple reducers
+
+The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are isolated from each other.
+
+However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to reducers part of different slices. This is the idea behind the extra reducer concept. In the `builder` slice you will find such a use case.
+
+We follow the redux style guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
+
 ## Redux middleware
 
-A Redux middleware is in charge of dealing with asynchronous actions. Indeed the reducer expects as parameter a plain javascript object and not a promise.
+Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain `JavaScript object` and not a `Promise`. This is where Redux-thunk comes into play.
 
-There are plenty of different middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
+There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.

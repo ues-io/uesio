@@ -21,9 +21,6 @@ const getUserFileURL = (
 	return cacheBuster ? url + "&cb=" + Date.now() : url
 }
 
-const deleteUserFile = (context: Context, userfileid: string) =>
-	getPlatform().deleteUserFile(context, userfileid)
-
 const uploadFile = (
 	context: Context,
 	fileData: File,
@@ -53,15 +50,7 @@ class FileAPI {
 	getURL = getURL
 	getURLFromFullName = getURLFromFullName
 	getUserFileURL = getUserFileURL
-	deleteUserFile = deleteUserFile
 	uploadFile = uploadFile
 }
 
-export {
-	FileAPI,
-	getURL,
-	getURLFromFullName,
-	uploadFile,
-	getUserFileURL,
-	deleteUserFile,
-}
+export { FileAPI, getURL, getURLFromFullName, uploadFile, getUserFileURL }

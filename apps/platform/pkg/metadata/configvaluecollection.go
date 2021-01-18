@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ConfigValueCollection slice
@@ -13,38 +13,42 @@ func (cvc *ConfigValueCollection) GetName() string {
 }
 
 // GetFields function
-func (cvc *ConfigValueCollection) GetFields() []reqs.LoadRequestField {
+func (cvc *ConfigValueCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(cvc)
 }
 
 // NewItem function
-func (cvc *ConfigValueCollection) NewItem() LoadableItem {
+func (cvc *ConfigValueCollection) NewItem() adapters.LoadableItem {
 	return &ConfigValue{}
 }
 
 // NewBundleableItem function
-func (cvc *ConfigValueCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (bc *ConfigValueCollection) NewBundleableItem() BundleableItem {
+	return &ConfigValue{}
+}
+
+// NewBundleableItem function
+func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewConfigValue(key)
 }
 
-// GetKeyPrefix function
-func (cvc *ConfigValueCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (cvc *ConfigValueCollection) AddItem(item LoadableItem) {
+func (cvc *ConfigValueCollection) AddItem(item adapters.LoadableItem) {
 	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 
 // GetItem function
-func (cvc *ConfigValueCollection) GetItem(index int) LoadableItem {
-	actual := *cvc
-	return &actual[index]
+func (cvc *ConfigValueCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*cvc)[index]
 }
 
 // Loop function
-func (cvc *ConfigValueCollection) Loop(iter func(item LoadableItem) error) error {
+func (cvc *ConfigValueCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *cvc {
 		err := iter(cvc.GetItem(index))
 		if err != nil {
@@ -57,4 +61,9 @@ func (cvc *ConfigValueCollection) Loop(iter func(item LoadableItem) error) error
 // Len function
 func (cvc *ConfigValueCollection) Len() int {
 	return len(*cvc)
+}
+
+// GetItems function
+func (cvc *ConfigValueCollection) GetItems() interface{} {
+	return cvc
 }

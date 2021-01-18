@@ -59,7 +59,6 @@ func serve(cmd *cobra.Command, args []string) {
 	sr := r.PathPrefix("/site").Subrouter()
 
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controllers.UploadUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/delete", controllers.DeleteUserFile, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controllers.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controllers.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controllers.Save, "POST")
@@ -87,7 +86,6 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/bulk/job", controllers.BulkJob).Methods("POST")
 	workspaceAPI(wr, "/bulk/job/{job}/batch", controllers.BulkBatch).Methods("POST")
 
-	workspaceAPI(wr, "/views/save", controllers.SaveViews).Methods("POST")
 	workspaceAPI(wr, "/views/{namespace}/{name}/preview", controllers.ViewPreview(false)).Methods("GET")
 	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controllers.ViewPreview(true)).Methods("GET")
 

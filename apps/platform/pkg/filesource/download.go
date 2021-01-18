@@ -3,6 +3,7 @@ package filesource
 import (
 	"io"
 
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -11,40 +12,32 @@ import (
 
 // Download function
 func Download(userFileID string, session *sess.Session) (io.ReadCloser, *metadata.UserFileMetadata, error) {
-	site := session.GetSite()
-	userFile, err := datasource.GetUserFile(userFileID, session)
+
+	userFile := metadata.UserFileMetadata{}
+	err := datasource.PlatformLoadOne(
+		&userFile,
+		[]adapters.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: userFileID,
+			},
+		},
+		session,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	ufc, fs, err := datasource.GetFileSourceAndCollection(userFile.FileCollectionID, session)
-
+	adapter, bucket, credentials, err := fileadapters.GetAdapterForUserFile(&userFile, session)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	bucket, err := ufc.GetBucket(site)
-	if err != nil {
-		return nil, nil, err
-	}
-	path, err := ufc.GetPath(userFile, site.Name, session.GetWorkspaceID())
+	content, err := adapter.Download(bucket, userFile.Path, credentials)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	fileAdapter, err := fileadapters.GetFileAdapter(fs.GetAdapterType())
-	if err != nil {
-		return nil, nil, err
-	}
-	credentials, err := fs.GetCredentials(site)
-	if err != nil {
-		return nil, nil, err
-	}
-	content, err := fileAdapter.Download(bucket, path, credentials)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return content, userFile, nil
+	return content, &userFile, nil
 
 }

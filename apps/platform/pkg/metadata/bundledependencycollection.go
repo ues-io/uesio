@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // BundleDependencyCollection slice
 type BundleDependencyCollection []BundleDependency
@@ -11,28 +13,27 @@ func (bc *BundleDependencyCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BundleDependencyCollection) GetFields() []reqs.LoadRequestField {
+func (bc *BundleDependencyCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bc)
 }
 
 // GetItem function
-func (bc *BundleDependencyCollection) GetItem(index int) LoadableItem {
-	actual := *bc
-	return &actual[index]
+func (bc *BundleDependencyCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*bc)[index]
 }
 
 // AddItem function
-func (bc *BundleDependencyCollection) AddItem(item LoadableItem) {
+func (bc *BundleDependencyCollection) AddItem(item adapters.LoadableItem) {
 	*bc = append(*bc, *item.(*BundleDependency))
 }
 
 // NewItem function
-func (bc *BundleDependencyCollection) NewItem() LoadableItem {
+func (bc *BundleDependencyCollection) NewItem() adapters.LoadableItem {
 	return &BundleDependency{}
 }
 
 // Loop function
-func (bc *BundleDependencyCollection) Loop(iter func(item LoadableItem) error) error {
+func (bc *BundleDependencyCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {
@@ -45,4 +46,9 @@ func (bc *BundleDependencyCollection) Loop(iter func(item LoadableItem) error) e
 // Len function
 func (bc *BundleDependencyCollection) Len() int {
 	return len(*bc)
+}
+
+// GetItems function
+func (bc *BundleDependencyCollection) GetItems() interface{} {
+	return bc
 }

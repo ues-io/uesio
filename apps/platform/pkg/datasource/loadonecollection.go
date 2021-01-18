@@ -1,34 +1,35 @@
 package datasource
 
 import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
+//LoadOneCollection type
 type LoadOneCollection struct {
 	Collection metadata.CollectionableGroup
-	Item       metadata.LoadableItem
+	Item       adapters.LoadableItem
 	Length     int
 }
 
 // GetItem function
-func (c *LoadOneCollection) GetItem(index int) metadata.LoadableItem {
+func (c *LoadOneCollection) GetItem(index int) adapters.LoadableItem {
 	return c.Item
 }
 
 // AddItem function
-func (c *LoadOneCollection) AddItem(item metadata.LoadableItem) {
+func (c *LoadOneCollection) AddItem(item adapters.LoadableItem) {
 	// Do nothing
 }
 
 // NewItem function
-func (c *LoadOneCollection) NewItem() metadata.LoadableItem {
+func (c *LoadOneCollection) NewItem() adapters.LoadableItem {
 	c.Length++
 	return c.Item
 }
 
 // Loop function
-func (c *LoadOneCollection) Loop(iter func(item metadata.LoadableItem) error) error {
+func (c *LoadOneCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	return iter(c.GetItem(0))
 }
 
@@ -38,11 +39,16 @@ func (c *LoadOneCollection) Len() int {
 }
 
 // GetFields function
-func (c *LoadOneCollection) GetFields() []reqs.LoadRequestField {
+func (c *LoadOneCollection) GetFields() []adapters.LoadRequestField {
 	return c.Collection.GetFields()
 }
 
 // GetName function
 func (c *LoadOneCollection) GetName() string {
 	return c.Collection.GetName()
+}
+
+// GetItems function
+func (c *LoadOneCollection) GetItems() interface{} {
+	return c
 }

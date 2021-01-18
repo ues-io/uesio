@@ -8,12 +8,12 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -115,7 +115,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		var workspace metadata.Workspace
 		err := datasource.PlatformLoadOne(
 			&workspace,
-			[]reqs.LoadRequestCondition{
+			[]adapters.LoadRequestCondition{
 				{
 					Field: "uesio.id",
 					Value: appName + "_" + workspaceName,

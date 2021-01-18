@@ -14,7 +14,7 @@ import (
 )
 
 func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Session) (*metadata.Route, error) {
-	var route metadata.Route
+	var route *metadata.Route
 	var routes metadata.RouteCollection
 
 	err := bundles.LoadAll(&routes, namespace, nil, session)
@@ -45,12 +45,12 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 
 	for _, item := range routes {
 		if item.Path == pathTemplate {
-			route = item
+			route = &item
 			break
 		}
 	}
 
-	if &route == nil {
+	if route == nil {
 		return nil, errors.New("No Route Found in Cache")
 	}
 
@@ -58,7 +58,7 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	route.Params = routematch.Vars
 	route.Path = path
 
-	return &route, nil
+	return route, nil
 }
 
 // RouteAPI is good
@@ -82,25 +82,18 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &RouteMergeData{
-			ViewName:      "notfound",
-			ViewNamespace: "uesio",
+			View:  "uesio.notfound",
+			Theme: "uesio.default",
 		})
 		return
 	}
 
-	viewNamespace, viewName, err := metadata.ParseKey(route.ViewRef)
-	if err != nil {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-
 	respondJSON(w, r, &RouteMergeData{
-		ViewName:      viewName,
-		ViewNamespace: viewNamespace,
-		Params:        route.Params,
-		Namespace:     route.Namespace,
-		Path:          path,
-		Workspace:     GetWorkspaceMergeData(workspace),
+		View:      route.ViewRef,
+		Params:    route.Params,
+		Namespace: route.Namespace,
+		Path:      path,
+		Workspace: GetWorkspaceMergeData(workspace),
 	})
 
 }
@@ -110,6 +103,7 @@ func getNotFoundRoute(path string) *metadata.Route {
 		ViewRef:   "uesio.notfound",
 		Namespace: "uesio",
 		Path:      path,
+		ThemeRef:  "uesio.default",
 	}
 }
 

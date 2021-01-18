@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // DataSourceCollection slice
 type DataSourceCollection []DataSource
@@ -11,38 +13,42 @@ func (dsc *DataSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (dsc *DataSourceCollection) GetFields() []reqs.LoadRequestField {
+func (dsc *DataSourceCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(dsc)
 }
 
 // NewItem function
-func (dsc *DataSourceCollection) NewItem() LoadableItem {
+func (dsc *DataSourceCollection) NewItem() adapters.LoadableItem {
 	return &DataSource{}
 }
 
 // NewBundleableItem function
-func (dsc *DataSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (dsc *DataSourceCollection) NewBundleableItem() BundleableItem {
+	return &DataSource{}
+}
+
+// NewBundleableItem function
+func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewDataSource(key)
 }
 
-// GetKeyPrefix function
-func (dsc *DataSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (dsc *DataSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (dsc *DataSourceCollection) AddItem(item LoadableItem) {
+func (dsc *DataSourceCollection) AddItem(item adapters.LoadableItem) {
 	*dsc = append(*dsc, *item.(*DataSource))
 }
 
 // GetItem function
-func (dsc *DataSourceCollection) GetItem(index int) LoadableItem {
-	actual := *dsc
-	return &actual[index]
+func (dsc *DataSourceCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*dsc)[index]
 }
 
 // Loop function
-func (dsc *DataSourceCollection) Loop(iter func(item LoadableItem) error) error {
+func (dsc *DataSourceCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *dsc {
 		err := iter(dsc.GetItem(index))
 		if err != nil {
@@ -55,4 +61,9 @@ func (dsc *DataSourceCollection) Loop(iter func(item LoadableItem) error) error 
 // Len function
 func (dsc *DataSourceCollection) Len() int {
 	return len(*dsc)
+}
+
+// GetItems function
+func (dsc *DataSourceCollection) GetItems() interface{} {
+	return dsc
 }

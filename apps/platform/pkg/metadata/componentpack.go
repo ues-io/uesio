@@ -1,9 +1,14 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"path/filepath"
+
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // ComponentPack struct
 type ComponentPack struct {
+	ID         string                            `yaml:"-" uesio:"uesio.id"`
 	Name       string                            `yaml:"name" uesio:"uesio.name"`
 	Namespace  string                            `yaml:"namespace" uesio:"-"`
 	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`
@@ -26,8 +31,8 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (cp *ComponentPack) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (cp *ComponentPack) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: cp.Name,
@@ -44,6 +49,11 @@ func (cp *ComponentPack) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (cp *ComponentPack) GetKey() string {
 	return cp.Namespace + "." + cp.Name
+}
+
+// GetPath function
+func (cp *ComponentPack) GetPath() string {
+	return filepath.Join(cp.GetKey(), "pack.yaml")
 }
 
 // GetPermChecker function

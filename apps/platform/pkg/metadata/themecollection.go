@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ThemeCollection slice
@@ -16,17 +16,22 @@ func (tc *ThemeCollection) GetName() string {
 }
 
 // GetFields function
-func (tc *ThemeCollection) GetFields() []reqs.LoadRequestField {
+func (tc *ThemeCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(tc)
 }
 
 // NewItem function
-func (tc *ThemeCollection) NewItem() LoadableItem {
+func (tc *ThemeCollection) NewItem() adapters.LoadableItem {
 	return &Theme{}
 }
 
 // NewBundleableItem function
-func (tc *ThemeCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (tc *ThemeCollection) NewBundleableItem() BundleableItem {
+	return &Theme{}
+}
+
+// NewBundleableItem function
+func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Theme Key: " + key)
@@ -37,24 +42,23 @@ func (tc *ThemeCollection) NewBundleableItem(key string) (BundleableItem, error)
 	}, nil
 }
 
-// GetKeyPrefix function
-func (tc *ThemeCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (tc *ThemeCollection) AddItem(item LoadableItem) {
+func (tc *ThemeCollection) AddItem(item adapters.LoadableItem) {
 	*tc = append(*tc, *item.(*Theme))
 }
 
 // GetItem function
-func (tc *ThemeCollection) GetItem(index int) LoadableItem {
-	actual := *tc
-	return &actual[index]
+func (tc *ThemeCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*tc)[index]
 }
 
 // Loop function
-func (tc *ThemeCollection) Loop(iter func(item LoadableItem) error) error {
+func (tc *ThemeCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index))
 		if err != nil {
@@ -67,4 +71,9 @@ func (tc *ThemeCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (tc *ThemeCollection) Len() int {
 	return len(*tc)
+}
+
+// GetItems function
+func (tc *ThemeCollection) GetItems() interface{} {
+	return tc
 }

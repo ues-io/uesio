@@ -9,6 +9,11 @@ definition:
         uesio.name:
         uesio.description:
         uesio.color:
+      order:
+        - field: uesio.name
+          desc: false
+        - field: uesio.description
+          desc: false
   # Components are how we describe the layout of our view
   components:
     - uesio.view:

@@ -10,21 +10,12 @@ import { MetadataListStore } from "../bands/builder/types"
 import { Theme } from "../bands/theme/types"
 
 type RouteResponse = {
-	viewname: string
-	viewnamespace: string
+	view: string
 	params: {
 		[key: string]: string
 	}
 	path: string
 	workspace?: WorkspaceState
-}
-
-type SaveViewRequest = {
-	[key: string]: string
-}
-
-type SaveViewResponse = {
-	success: boolean
 }
 
 type BotParams = {
@@ -38,10 +29,6 @@ type BotResponse = {
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
 	getTheme(context: Context, namespace: string, name: string): Promise<Theme>
-	saveViews(
-		context: Context,
-		views: SaveViewRequest
-	): Promise<SaveViewResponse>
 	getRoute(
 		context: Context,
 		namespace: string,
@@ -63,7 +50,6 @@ interface Platform {
 	): Promise<BotResponse>
 	getFileURL(context: Context, namespace: string, name: string): string
 	getUserFileURL(context: Context, userfileid: string): string
-	deleteUserFile(context: Context, userfileid: string): Promise<string>
 	uploadFile(
 		context: Context,
 		fileData: File,
@@ -91,11 +77,4 @@ interface Platform {
 	logout(): Promise<LoginResponse>
 }
 
-export {
-	Platform,
-	SaveViewRequest,
-	SaveViewResponse,
-	RouteResponse,
-	BotResponse,
-	BotParams,
-}
+export { Platform, RouteResponse, BotResponse, BotParams }

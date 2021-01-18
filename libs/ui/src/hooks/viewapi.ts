@@ -1,13 +1,8 @@
 import { Dispatcher } from "../store/store"
 import { Definition } from "../definition/definition"
 import yaml from "yaml"
-
-import { batch } from "react-redux"
 import { Uesio } from "./hooks"
-import toPath from "lodash.topath"
-import { trimPathToComponent } from "../component/path"
 import { AnyAction } from "redux"
-import { setSelectedNode } from "../bands/builder"
 import {
 	setYaml,
 	removeDefinition,
@@ -107,19 +102,12 @@ class ViewAPI {
 		const viewDefId = this.uesio.getViewDefId()
 		const usePath = path || this.uesio.getPath()
 		if (viewDefId) {
-			batch(() => {
-				this.dispatcher(
-					removeDefinition({
-						entity: viewDefId,
-						path: usePath,
-					})
-				)
-				// When a definition is removed, select its parent
-				const pathArray = toPath(usePath)
-				pathArray.pop()
-				const newPath = trimPathToComponent(pathArray)
-				this.dispatcher(setSelectedNode(newPath))
-			})
+			this.dispatcher(
+				removeDefinition({
+					entity: viewDefId,
+					path: usePath,
+				})
+			)
 		}
 	}
 

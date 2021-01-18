@@ -65,10 +65,13 @@ const useStyles = makeStyles((theme) =>
 
 const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const {
-		definition: { items = [], accepts, direction },
+		definition: { accepts, direction },
 		path,
 		context,
 	} = props
+
+	const items = props.definition.items || []
+
 	const uesio = hooks.useUesio(props)
 
 	const dragNode = uesio.builder.useDragNode()

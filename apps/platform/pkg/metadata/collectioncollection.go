@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // CollectionCollection slice
 type CollectionCollection []Collection
@@ -11,38 +13,42 @@ func (cc *CollectionCollection) GetName() string {
 }
 
 // GetFields function
-func (cc *CollectionCollection) GetFields() []reqs.LoadRequestField {
+func (cc *CollectionCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(cc)
 }
 
 // NewBundleableItem function
-func (cc *CollectionCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (cc *CollectionCollection) NewBundleableItem() BundleableItem {
+	return &Collection{}
+}
+
+// NewBundleableItem function
+func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewCollection(key)
 }
 
-// GetKeyPrefix function
-func (cc *CollectionCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (cc *CollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item LoadableItem) {
+func (cc *CollectionCollection) AddItem(item adapters.LoadableItem) {
 	*cc = append(*cc, *item.(*Collection))
 }
 
 // NewItem function
-func (cc *CollectionCollection) NewItem() LoadableItem {
+func (cc *CollectionCollection) NewItem() adapters.LoadableItem {
 	return &Collection{}
 }
 
 // GetItem function
-func (cc *CollectionCollection) GetItem(index int) LoadableItem {
-	actual := *cc
-	return &actual[index]
+func (cc *CollectionCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*cc)[index]
 }
 
 // Loop function
-func (cc *CollectionCollection) Loop(iter func(item LoadableItem) error) error {
+func (cc *CollectionCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index))
 		if err != nil {
@@ -55,4 +61,9 @@ func (cc *CollectionCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (cc *CollectionCollection) Len() int {
 	return len(*cc)
+}
+
+// GetItems function
+func (cc *CollectionCollection) GetItems() interface{} {
+	return cc
 }

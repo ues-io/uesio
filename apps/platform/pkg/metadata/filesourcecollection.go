@@ -1,6 +1,8 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/reqs"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapters"
+)
 
 // FileSourceCollection slice
 type FileSourceCollection []FileSource
@@ -11,38 +13,42 @@ func (fsc *FileSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (fsc *FileSourceCollection) GetFields() []reqs.LoadRequestField {
+func (fsc *FileSourceCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(fsc)
 }
 
 // NewItem function
-func (fsc *FileSourceCollection) NewItem() LoadableItem {
+func (fsc *FileSourceCollection) NewItem() adapters.LoadableItem {
 	return &FileSource{}
 }
 
 // NewBundleableItem function
-func (fsc *FileSourceCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (fsc *FileSourceCollection) NewBundleableItem() BundleableItem {
+	return &FileSource{}
+}
+
+// NewBundleableItem function
+func (fsc *FileSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewFileSource(key)
 }
 
-// GetKeyPrefix function
-func (fsc *FileSourceCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
-	return ""
+// GetKeyFromPath function
+func (fsc *FileSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	return StandardKeyFromPath(path, conditions)
 }
 
 // AddItem function
-func (fsc *FileSourceCollection) AddItem(item LoadableItem) {
+func (fsc *FileSourceCollection) AddItem(item adapters.LoadableItem) {
 	*fsc = append(*fsc, *item.(*FileSource))
 }
 
 // GetItem function
-func (fsc *FileSourceCollection) GetItem(index int) LoadableItem {
-	actual := *fsc
-	return &actual[index]
+func (fsc *FileSourceCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*fsc)[index]
 }
 
 // Loop function
-func (fsc *FileSourceCollection) Loop(iter func(item LoadableItem) error) error {
+func (fsc *FileSourceCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *fsc {
 		err := iter(fsc.GetItem(index))
 		if err != nil {
@@ -55,4 +61,9 @@ func (fsc *FileSourceCollection) Loop(iter func(item LoadableItem) error) error 
 // Len function
 func (fsc *FileSourceCollection) Len() int {
 	return len(*fsc)
+}
+
+// GetItems function
+func (fsc *FileSourceCollection) GetItems() interface{} {
+	return fsc
 }

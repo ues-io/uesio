@@ -13,7 +13,7 @@ const RunMode: FunctionComponent<BaseProps> = (props) => {
 		<View
 			{...props}
 			definition={{
-				view: `${route.viewnamespace}.${route.viewname}`,
+				view: route.view,
 				params: route.params,
 			}}
 		/>

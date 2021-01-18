@@ -16,35 +16,35 @@ As regards the frontend, we cherry-picked some rules from the [Airbnb JavaScriop
 
 Redux-wise we do follow the [redux style guide](https://redux.js.org/style-guide/style-guide) with some exceptions. More details on that [here](#redux-architecture).
 
-Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred.
+Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are functional components. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), are not functional components.
 
 # Tech Stack
 
 ## Backend
 
-- [Cobra](https://github.com/spf13/cobra). CLI for Go application.
-- [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
-- [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
-- [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
-- [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
+-   [Cobra](https://github.com/spf13/cobra). CLI for Go application.
+-   [gorilla/mux](https://github.com/gorilla/mux). Web framework in Go.
+-   [Package template](https://golang.org/pkg/text/template/). Template for rendering HTML by the Go web server.
+-   [squirrel](https://github.com/Masterminds/squirrel). Go library for generating SQL query.
+-   [goja](https://github.com/dop251/goja). JavaScript engine implemented in Go.
 
 ## Frontend
 
-- [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
-- [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
-- [webpack](https://webpack.js.org/). Merge code source into one single static file.
-- [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
-- [React](https://reactjs.org/). Library for making UI elements.
-- [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
-- [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
-- [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
-- [Material-UI](https://material-ui.com/). UI framework for React applications.
+-   [Node.js](https://www.nodejs.org/). For package management, building process, for development and for our home-made cli application.
+-   [TypeScript](https://www.typescriptlang.org/). Wrapper around JavaScript.
+-   [webpack](https://webpack.js.org/). Merge code source into one single static file.
+-   [ts-loader](https://github.com/TypeStrong/ts-loader). Compilation TypeScript down to JavaScript as a webpack plugin.
+-   [React](https://reactjs.org/). Library for making UI elements.
+-   [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
+-   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
+-   [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
+-   [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # <a id="redux-architecture"></a> Redux architecture
 
 See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
-# <a id="monorepo-architecture"></a> Monorepo architecture
+# <a id="monorepo-structure"></a> Monorepo structure
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
@@ -80,53 +80,53 @@ nx g @nrwl/workspace:library NEW_LIB
 > v12.16.3
 > ```
 
-- Install [homebrew](https://brew.sh/) (for macOS user)
-- Install git
-- ```
-  brew install wget
-  ```
-- Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
-- Install the latest version of Node.js _via_ `nvm` :
+-   Install [homebrew](https://brew.sh/) (for macOS user)
+-   Install git
+-   ```
+    brew install wget
+    ```
+-   Install [nvm](https://github.com/nvm-sh/nvm) (for installing Node.js and npm)
+-   Install the latest version of Node.js _via_ `nvm` :
 
 ```
   nvm install node
 ```
 
-- Install [Go](https://golang.org/dl/)
-- Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
-- git clone repo (ssh method is prefered)
-- Download and install the npm module dependencies :
+-   Install [Go](https://golang.org/dl/)
+-   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
+-   git clone repo (ssh method is prefered)
+-   Download and install the npm module dependencies :
 
 ```
   npm install
 ```
 
-- Do follow the instructions for setting up SSL [here](#set-up-ssl).
-- Do follow the instructions for environment variables [here](#environment-variables).
-- Do follow the instructions for setting up DNS [here](#set-up-local-dns).
-- Build the monorepo :
+-   Do follow the instructions for setting up SSL [here](#set-up-ssl).
+-   Do follow the instructions for environment variables [here](#environment-variables).
+-   Do follow the instructions for setting up DNS [here](#set-up-local-dns).
+-   Build the monorepo :
 
 ```
   npm run build-all
 ```
 
-- Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+-   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 
 ---
 
-- _Optional_. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
-- _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
-  ```
-  npm run dev
-  ```
-- _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
-- _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
-- _Optional_. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
-- _Optional_. Install the `nx` cli globally.
-  ```
-  npm install -g nx
-  ```
-- _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
+-   _Optional_. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
+-   _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
+    ```
+    npm run dev
+    ```
+-   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
+-   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+-   _Optional_. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
+-   _Optional_. Install the `nx` cli globally.
+    ```
+    npm install -g nx
+    ```
+-   _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
 {
@@ -374,43 +374,43 @@ All npm modules we used are installed as `development` dependency since uesio is
 
 Most of commmands you might run related to npm modules.
 
-- Install a new dependency :
+-   Install a new dependency :
 
 ```
   npm install lodash.isempty -D
 ```
 
-- Update minor changes (no breaking changes) of an existing dependency :
+-   Update minor changes (no breaking changes) of an existing dependency :
 
 ```
   npm update react -D
 ```
 
-- Major update and latest (with breaking changes) of an existing dependency :
+-   Major update and latest (with breaking changes) of an existing dependency :
 
 ```
   npm install react@latest -D
 ```
 
-- List all dependencies of the monorepo and the related version :
+-   List all dependencies of the monorepo and the related version :
 
 ```
   npm list --depth=0
 ```
 
-- Remove a dependency :
+-   Remove a dependency :
 
 ```
   npm uninstall lodash.isempty -D
 ```
 
-- List dependencies having newer versions :
+-   List dependencies having newer versions :
 
 ```
   npm outdated
 ```
 
-- Update minor changes (no breaking changes) all dependencies :
+-   Update minor changes (no breaking changes) all dependencies :
 
 ```
   npm update

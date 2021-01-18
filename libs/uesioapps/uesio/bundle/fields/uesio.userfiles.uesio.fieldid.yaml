@@ -1,6 +1,0 @@
-name: fieldid
-collection: uesio.userfiles
-type: "TEXT"
-label: "Field Id"
-propertyName: "fieldid"
-readOnly: true

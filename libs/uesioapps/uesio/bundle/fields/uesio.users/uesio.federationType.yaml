@@ -1,0 +1,5 @@
+name: federationType
+collection: uesio.users
+type: "TEXT"
+label: "Federation Type"
+propertyName: "federation_type"

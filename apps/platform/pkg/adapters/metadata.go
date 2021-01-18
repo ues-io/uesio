@@ -64,6 +64,10 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 	return fieldMetadata, nil
 }
 
+func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
+	cm.Fields[metadata.GetFullName()] = metadata
+}
+
 // GetNameField function
 func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {
 	return cm.GetField(cm.NameField)
@@ -102,6 +106,8 @@ type FieldMetadata struct {
 	Required             bool                       `json:"required"`
 	Validate             *ValidationMetadata        `json:"validate"`
 	AutoPopulate         string                     `json:"autopopulate"`
+	OnDelete             string                     `json:"ondelete"`
+	IsForeignKey         bool
 }
 
 // GetFullName function

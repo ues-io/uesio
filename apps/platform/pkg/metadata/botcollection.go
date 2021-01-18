@@ -1,7 +1,12 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // BotCollection slice
@@ -13,46 +18,75 @@ func (bc *BotCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BotCollection) GetFields() []reqs.LoadRequestField {
+func (bc *BotCollection) GetFields() []adapters.LoadRequestField {
 	return StandardGetFields(bc)
 }
 
 // NewItem function
-func (bc *BotCollection) NewItem() LoadableItem {
+func (bc *BotCollection) NewItem() adapters.LoadableItem {
 	return &Bot{}
 }
 
 // NewBundleableItem function
-func (bc *BotCollection) NewBundleableItem(key string) (BundleableItem, error) {
+func (bc *BotCollection) NewBundleableItem() BundleableItem {
+	return &Bot{}
+}
+
+// NewBundleableItemWithKey function
+func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	return NewBot(key)
 }
 
-// GetKeyPrefix function
-func (bc *BotCollection) GetKeyPrefix(conditions reqs.BundleConditions) string {
+// GetKeyFromPath function
+func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	collectionKey, hasCollection := conditions["uesio.collection"]
 	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
-	if hasCollection && hasType {
-		return collectionKey + "." + botTypeKey + "."
+	parts := strings.Split(path, string(os.PathSeparator))
+	partLength := len(parts)
+	if partLength < 1 {
+		return "", nil
 	}
-	if hasType && botTypeKey == "listener" {
-		return "listener."
+	botType := parts[0]
+	if botType == "" {
+		return "", nil
 	}
-	return ""
+
+	if botType == "listener" {
+		if partLength != 3 || parts[2] != "bot.yaml" {
+			return "", nil
+		}
+		if hasType && botType != botTypeKey {
+			return "", nil
+		}
+		return filepath.Join(botType, parts[1]), nil
+	}
+	if botType == "beforesave" || botType == "aftersave" {
+		if partLength != 4 || parts[3] != "bot.yaml" {
+			return "", nil
+		}
+		if hasType && botType != botTypeKey {
+			return "", nil
+		}
+		if hasCollection && parts[1] != collectionKey {
+			return "", nil
+		}
+		return filepath.Join(botType, parts[1], parts[2]), nil
+	}
+	return "", errors.New("Bad bundle conditions for bot: " + path)
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item LoadableItem) {
+func (bc *BotCollection) AddItem(item adapters.LoadableItem) {
 	*bc = append(*bc, *item.(*Bot))
 }
 
 // GetItem function
-func (bc *BotCollection) GetItem(index int) LoadableItem {
-	actual := *bc
-	return &actual[index]
+func (bc *BotCollection) GetItem(index int) adapters.LoadableItem {
+	return &(*bc)[index]
 }
 
 // Loop function
-func (bc *BotCollection) Loop(iter func(item LoadableItem) error) error {
+func (bc *BotCollection) Loop(iter func(item adapters.LoadableItem) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {
@@ -65,4 +99,9 @@ func (bc *BotCollection) Loop(iter func(item LoadableItem) error) error {
 // Len function
 func (bc *BotCollection) Len() int {
 	return len(*bc)
+}
+
+// GetItems function
+func (bc *BotCollection) GetItems() interface{} {
+	return bc
 }

@@ -4,11 +4,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // NewBatch func
@@ -19,7 +18,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
 		&job,
-		[]reqs.LoadRequestCondition{
+		[]adapters.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: jobID,
@@ -51,25 +50,15 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	batches := metadata.BulkBatchCollection{
-		metadata.BulkBatch{
-			Status:    "started",
-			BulkJobID: jobID,
-		},
+	batch := metadata.BulkBatch{
+		Status:    "started",
+		BulkJobID: jobID,
 	}
 
-	responses, err := datasource.PlatformSave([]datasource.PlatformSaveRequest{
-		{
-			Collection: &batches,
-		},
-	}, session)
+	err = datasource.PlatformSaveOne(&batch, nil, session)
 	if err != nil {
 		return "", err
 	}
 
-	response := responses[0]
-	result := response.ChangeResults["0"]
-	newID := result.Data["uesio.id"].(string)
-
-	return newID, nil
+	return batch.ID, nil
 }

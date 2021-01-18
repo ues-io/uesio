@@ -2,14 +2,12 @@ package adapters
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/reqs"
 )
 
 // GetConditionValue function
 func GetConditionValue(
-	condition reqs.LoadRequestCondition,
-	op LoadOp,
+	condition LoadRequestCondition,
+	op *LoadOp,
 	metadata *MetadataCache,
 	ops []LoadOp,
 ) (interface{}, error) {
@@ -38,12 +36,7 @@ func GetConditionValue(
 			return nil, err
 		}
 
-		lookupFieldName, err := GetUIFieldName(lookupFieldMetadata)
-		if err != nil {
-			return nil, err
-		}
-
-		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldName)
+		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldMetadata.GetFullName())
 		if err != nil {
 			return nil, err
 		}

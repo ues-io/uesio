@@ -1,0 +1,6 @@
+name: collectionid
+collection: uesio.userfiles
+type: "TEXT"
+label: "Collection Id"
+propertyName: "collectionid"
+readOnly: true

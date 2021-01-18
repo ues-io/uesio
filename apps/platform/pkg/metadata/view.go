@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/reqs"
+	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"gopkg.in/yaml.v3"
 )
 
@@ -16,9 +16,6 @@ type View struct {
 	Definition yaml.Node `yaml:"definition" uesio:"uesio.definition"`
 	Workspace  string    `yaml:"-" uesio:"uesio.workspaceid"`
 }
-
-// Dependency struct
-type Dependency map[string]interface{}
 
 // GetCollectionName function
 func (v *View) GetCollectionName() string {
@@ -32,8 +29,8 @@ func (v *View) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (v *View) GetConditions() ([]reqs.LoadRequestCondition, error) {
-	return []reqs.LoadRequestCondition{
+func (v *View) GetConditions() ([]adapters.LoadRequestCondition, error) {
+	return []adapters.LoadRequestCondition{
 		{
 			Field: "uesio.name",
 			Value: v.Name,
@@ -50,6 +47,11 @@ func (v *View) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (v *View) GetKey() string {
 	return v.Namespace + "." + v.Name
+}
+
+// GetPath function
+func (v *View) GetPath() string {
+	return v.GetKey() + ".yaml"
 }
 
 // GetPermChecker function

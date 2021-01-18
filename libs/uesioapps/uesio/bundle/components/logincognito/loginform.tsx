@@ -1,16 +1,25 @@
 import { material } from "@uesio/ui"
-import React, { FunctionComponent, useState, ChangeEvent } from "react"
+import React, {
+	FunctionComponent,
+	useState,
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+} from "react"
 import { useLoginStyles } from "./logincognito"
 
 type LoginFormProps = {
-	setMode: React.Dispatch<React.SetStateAction<string>>
-	setMessage: React.Dispatch<React.SetStateAction<string>>
+	setMode: Dispatch<SetStateAction<string>>
+	setMessage: Dispatch<SetStateAction<string>>
 	logIn: (username: string, password: string) => Promise<void>
 }
 
-const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
-	const classes = useLoginStyles(props)
-
+const LoginForm: FunctionComponent<LoginFormProps> = ({
+	setMode,
+	setMessage,
+	logIn,
+}) => {
+	const classes = useLoginStyles()
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
@@ -39,8 +48,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 			/>
 			<material.Button
 				onClick={() => {
-					props.setMode("")
-					props.setMessage("")
+					setMode("")
+					setMessage("")
 				}}
 				className={classes.button}
 			>
@@ -51,7 +60,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				color="primary"
 				className={classes.button}
 				onClick={() => {
-					props.logIn(username, password)
+					logIn(username, password)
 				}}
 			>
 				Sign In
@@ -78,8 +87,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 					variant="body2"
 					className={classes.textbutton}
 					onClick={() => {
-						props.setMode("signup")
-						props.setMessage("")
+						setMode("signup")
+						setMessage("")
 					}}
 				>
 					Create account

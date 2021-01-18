@@ -1,8 +1,6 @@
-import { batch } from "react-redux"
 import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
 import { set as setRoute } from "."
-import { clearAvailableMetadata } from "../builder"
 import loadViewOp from "../view/operations/load"
 
 const redirect = (context: Context, path: string) => async () => {
@@ -22,37 +20,31 @@ const navigate = (
 		namespace,
 		mergedPath
 	)
-	const viewName = routeResponse.viewname
-	const viewNamespace = routeResponse.viewnamespace
+	const view = routeResponse.view
 
 	// Pre-load the view for faster appearances and no white flash
 	await dispatch(
 		loadViewOp({
 			context: new Context([
 				{
-					view: `${viewNamespace}.${viewName}()`,
-					viewDef: `${viewNamespace}.${viewName}`,
+					view: `${view}()`,
+					viewDef: view,
 					workspace: context.getWorkspace(),
 				},
 			]),
-			namespace: viewNamespace,
-			name: viewName,
 			path: "",
 			params: routeResponse.params,
 		})
 	)
 
-	batch(() => {
-		dispatch(clearAvailableMetadata())
-		dispatch(
-			setRoute({
-				name: viewName,
-				namespace: viewNamespace,
-				params: routeResponse.params,
-				workspace: routeResponse.workspace,
-			})
-		)
-	})
+	dispatch(
+		setRoute({
+			view,
+			params: routeResponse.params,
+			workspace: routeResponse.workspace,
+		})
+	)
+
 	if (!noPushState) {
 		const workspace = context.getWorkspace()
 		const prefix =

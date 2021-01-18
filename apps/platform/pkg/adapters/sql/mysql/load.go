@@ -18,7 +18,7 @@ import (
 func loadOne(
 	ctx context.Context,
 	db *sql.DB,
-	op adapters.LoadOp,
+	op *adapters.LoadOp,
 	metadata *adapters.MetadataCache,
 	ops []adapters.LoadOp,
 ) error {
@@ -37,7 +37,7 @@ func loadOne(
 		return err
 	}
 
-	fieldMap, referenceFields, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, err := adapters.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -86,6 +86,27 @@ func loadOne(
 		}
 
 		loadQuery = loadQuery.Where(fieldName+" = ? ", fmt.Sprintf("%v", conditionValue))
+
+	}
+
+	for _, order := range op.Order {
+
+		fieldMetadata, err := collectionMetadata.GetField(order.Field)
+		if err != nil {
+			return err
+		}
+		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+
+		if order.Desc {
+
+			loadQuery = loadQuery.OrderBy(fieldName + " desc")
+			continue
+		}
+
+		loadQuery = loadQuery.OrderBy(fieldName + " asc")
 
 	}
 
@@ -172,25 +193,14 @@ func loadOne(
 				return err
 			}
 
-		}
-
-		for _, reference := range referenceFields {
-			fieldMetadata := reference.Metadata
-			foreignKeyMetadata, err := collectionMetadata.GetField(fieldMetadata.ForeignKeyField)
-			if err != nil {
-				return errors.New("foreign key: " + fieldMetadata.ForeignKeyField + " configured for: " + fieldMetadata.Name + " does not exist in collection: " + collectionMetadata.Name)
-			}
-			foreignKeyName, err := adapters.GetUIFieldName(foreignKeyMetadata)
-			if err != nil {
-				return err
-			}
-			foreignKeyValue, err := item.GetField(foreignKeyName)
-			if err != nil {
-				//No foreign key value
-				continue
+			if fieldMetadata.IsForeignKey {
+				// Handle foreign key value
+				reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
+				if ok {
+					reference.AddID(string(colvals[index]))
+				}
 			}
 
-			reference.AddID(foreignKeyValue)
 		}
 
 		op.Collection.AddItem(item)
@@ -198,17 +208,9 @@ func loadOne(
 	}
 	rows.Close()
 
-	//At this point idsToLookFor has a mapping for reference field
-	//names to actual id values we will need to grab from the referenced collection
-	if len(referenceFields) != 0 {
-		//Attach extra data needed for reference fields
-		err = followUpReferenceFieldLoad(ctx, db, metadata, op, collectionMetadata, referenceFields)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
+		return loadOne(ctx, db, op, metadata, nil)
+	}, op, metadata, referencedCollections)
 }
 
 // Load function
@@ -222,8 +224,9 @@ func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, 
 	}
 	defer db.Close()
 
-	for _, op := range ops {
-		err := loadOne(ctx, db, op, metadata, ops)
+	for i := range ops {
+		op := ops[i]
+		err := loadOne(ctx, db, &op, metadata, ops)
 		if err != nil {
 			return err
 		}
