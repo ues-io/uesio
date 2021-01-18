@@ -3,3 +3,4 @@ collection: crm.opportunities
 type: TEXT
 label: Name
 propertyName: name
+required: true
