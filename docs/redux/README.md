@@ -49,7 +49,7 @@ In contrast to the [redux style guide](https://redux.js.org/style-guide/style-gu
 
 The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the config argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
 
-## Reducers with Immer
+## <a id="reducers-with-immer"></a>Reducers with Immer
 
 Redux [enforces](https://redux.js.org/understanding/thinking-in-redux/glossary#reducer) the reducers to be pure functions.
 
@@ -172,7 +172,7 @@ const reducer = (state, action) => {
     ...
 }
 
-with the utility - assumuing that immer is applied in the reducer - which is [our case]() :
+with the utility - assumuing that immer is applied in the reducer - which is [our case](#reducers-with-immer) :
 
 const reducer = (state, action) => {
     if (action.type === "delete") {
