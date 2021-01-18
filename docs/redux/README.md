@@ -47,6 +47,8 @@ In contrast to the [redux style guide](https://redux.js.org/style-guide/style-gu
 
 ## Data normalization in the Redux store
 
+We use the util function [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) for having normalized data in the redux store.
+
 ## Platform API injection
 
 The platform API is injected into the redux-thunk so we can easily access it upon thunk creation, while using the utility function [createAsyncThunk](https://redux-toolkit.js.org/usage/usage-with-typescript#createasyncthunk) of Redux Toolkit. This is done through the `middleware` attribute, like so `middleware: [thunk.withExtraArgument(plat)]` of the config argument passed to [configureStore](https://redux-toolkit.js.org/api/configureStore).
