@@ -41,9 +41,11 @@ Any selectors that read items from within this slice
 
 Signals that will be registered with the signals api to be run from views and components
 
-## Redux store data structure
+## Data structure in the Redux store
 
 In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` - which is a class - deviates on that.
+
+## Data normalization in the Redux store
 
 ## Platform API injection
 
