@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import {
 	getParentPath,
+	toPath,
+	fromPath,
 	calculateNewPathAheadOfTime,
 } from "../../component/path"
 import {
@@ -15,6 +17,7 @@ import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
 import { DefinitionMap } from "../../definition/definition"
 
 import { set as setRoute } from "../route"
+import {component} from "@uesio/ui";
 
 const builderSlice = createSlice({
 	name: "builder",
@@ -113,10 +116,15 @@ const builderSlice = createSlice({
 			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
 		})
 		builder.addCase(moveDefinition, (state, { payload }) => {
-			state.selectedNode = calculateNewPathAheadOfTime(
+			const updatedPath = calculateNewPathAheadOfTime(
 				payload.fromPath,
 				payload.toPath
 			)
+			state.selectedNode = updatedPath
+			const pathArr = toPath(updatedPath)
+			pathArr.splice(-1) //We just want the index, not the key level
+			state.lastModifiedNode = fromPath(pathArr)
+
 		})
 	},
 })

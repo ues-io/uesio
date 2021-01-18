@@ -137,12 +137,11 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
-	let currentArray = get(state.definition, path)
+	const currentArray = get(state.definition, path)
 	const newIndex =
 		index === undefined ? currentArray.length : payload.index
 	if (!currentArray) {
-		currentArray = [definition]
-		setWith(state, ["definition"].concat(pathArray), currentArray)
+		setWith(state, ["definition"].concat(pathArray), [definition])
 	} else {
 		currentArray.splice(newIndex, 0, definition)
 	}

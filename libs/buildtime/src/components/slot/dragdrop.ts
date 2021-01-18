@@ -1,5 +1,5 @@
 import { hooks, component, builder } from "@uesio/ui"
-import convertToPath from "lodash.topath"
+
 const isExistingComponent = (dragNode: string): boolean =>
 	!component.dragdrop.isComponentBankKey(dragNode) &&
 	!component.dragdrop.isFieldBankKey(dragNode)
@@ -109,7 +109,7 @@ const handleExistingDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
-	const pathArray = convertToPath(dragNode)
+	const pathArray = component.path.toPath(dragNode)
 	const key = pathArray[pathArray.length - 1]
 	const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
 	// Selection Handling

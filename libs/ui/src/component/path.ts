@@ -163,6 +163,7 @@ export {
 	trimPathToComponent,
 	unWrapDefinition,
 	fromPath,
+	toPath,
 	getParentPath,
 	getGrandParentPath,
 	getAncestorPath,
