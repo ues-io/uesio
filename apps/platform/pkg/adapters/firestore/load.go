@@ -54,6 +54,13 @@ func loadOne(
 	}
 	query = collection.Select(fieldIDs...)
 
+	//Check if we can use firebase for order/limit/offset
+	useFirebase := true
+	if len(op.Order) > 0 && len(op.Conditions) > 0 {
+		useFirebase = false
+		//TO-DO display a warning (this query may not be optimized for this data adapter)
+	}
+
 	for _, condition := range op.Conditions {
 
 		if condition.Type == "SEARCH" {
@@ -86,12 +93,35 @@ func loadOne(
 		}
 	}
 
-	// if op.Offset != 0 {
-	// 	query = query.OrderBy("uesio:name", firestore.Asc).StartAt(op.Offset)
-	// }
+	if useFirebase {
+		for _, order := range op.Order {
 
-	if op.Limit != 0 {
-		query = query.Limit(op.Limit)
+			fieldMetadata, err := collectionMetadata.GetField(order.Field)
+			if err != nil {
+				return err
+			}
+			fieldName, err := getDBFieldName(fieldMetadata)
+			if err != nil {
+				return err
+			}
+
+			lorder := firestore.Asc
+
+			if order.Desc {
+				lorder = firestore.Desc
+			}
+
+			query = query.OrderBy(fieldName, lorder)
+
+		}
+
+		if op.Offset != 0 {
+			query = query.Offset(op.Offset)
+		}
+
+		if op.Limit != 0 {
+			query = query.Limit(op.Limit)
+		}
 	}
 
 	// Maps
@@ -113,10 +143,31 @@ func loadOne(
 		}
 	}
 
-	collSlice := op.Collection.GetItems()
-	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
-	if ok && op.Limit == 0 {
-		sort.Slice(collSlice, locLessFunc)
+	if !useFirebase {
+		collSlice := op.Collection.GetItems()
+		locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+		if ok {
+			sort.Slice(collSlice, locLessFunc)
+		}
+
+		//limit and offset
+		if op.Limit != 0 && op.Offset != 0 {
+
+			var start = op.Offset
+			var end = op.Offset + op.Limit
+
+			err = op.Collection.Slice(start, end)
+			if err != nil {
+				return err
+			}
+		} else {
+			//just limit or offset
+			err = op.Collection.Slice(op.Offset, op.Limit)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {

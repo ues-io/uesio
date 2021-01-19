@@ -52,3 +52,8 @@ func (bjc *BulkJobCollection) Len() int {
 func (bjc *BulkJobCollection) GetItems() interface{} {
 	return bjc
 }
+
+// Slice function
+func (bjc *BulkJobCollection) Slice(start int, end int) error {
+	return nil
+}

@@ -77,3 +77,8 @@ func (slc *SelectListCollection) Len() int {
 func (slc *SelectListCollection) GetItems() interface{} {
 	return slc
 }
+
+// Slice function
+func (slc *SelectListCollection) Slice(start int, end int) error {
+	return nil
+}

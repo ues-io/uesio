@@ -95,3 +95,8 @@ func (fc *FieldCollection) Len() int {
 func (fc *FieldCollection) GetItems() interface{} {
 	return fc
 }
+
+// Slice function
+func (fc *FieldCollection) Slice(start int, end int) error {
+	return nil
+}

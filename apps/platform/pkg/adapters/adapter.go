@@ -28,6 +28,7 @@ type LoadableGroup interface {
 	AddItem(LoadableItem)
 	NewItem() LoadableItem
 	GetItems() interface{}
+	Slice(start int, end int) error
 }
 
 // LoadableItem interface

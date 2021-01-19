@@ -86,3 +86,8 @@ func (cpc *ComponentPackCollection) Len() int {
 func (cpc *ComponentPackCollection) GetItems() interface{} {
 	return cpc
 }
+
+// Slice function
+func (cpc *ComponentPackCollection) Slice(start int, end int) error {
+	return nil
+}

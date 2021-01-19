@@ -52,3 +52,8 @@ func (c *LoadOneCollection) GetName() string {
 func (c *LoadOneCollection) GetItems() interface{} {
 	return c
 }
+
+// Slice function
+func (c *LoadOneCollection) Slice(start int, end int) error {
+	return nil
+}

@@ -52,3 +52,8 @@ func (ac *AppCollection) Len() int {
 func (ac *AppCollection) GetItems() interface{} {
 	return ac
 }
+
+// Slice function
+func (ac *AppCollection) Slice(start int, end int) error {
+	return nil
+}

@@ -52,3 +52,8 @@ func (bc *BundleDependencyCollection) Len() int {
 func (bc *BundleDependencyCollection) GetItems() interface{} {
 	return bc
 }
+
+// Slice function
+func (bc *BundleDependencyCollection) Slice(start int, end int) error {
+	return nil
+}

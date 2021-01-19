@@ -51,3 +51,8 @@ func (c *WorkspaceLoadCollection) GetName() string {
 func (c *WorkspaceLoadCollection) GetItems() interface{} {
 	return c
 }
+
+// Slice function
+func (c *WorkspaceLoadCollection) Slice(start int, end int) error {
+	return nil
+}

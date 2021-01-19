@@ -67,3 +67,8 @@ func (cc *CollectionCollection) Len() int {
 func (cc *CollectionCollection) GetItems() interface{} {
 	return cc
 }
+
+// Slice function
+func (cc *CollectionCollection) Slice(start int, end int) error {
+	return nil
+}

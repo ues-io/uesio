@@ -77,3 +77,8 @@ func (sc *SecretCollection) Len() int {
 func (sc *SecretCollection) GetItems() interface{} {
 	return sc
 }
+
+// Slice function
+func (sc *SecretCollection) Slice(start int, end int) error {
+	return nil
+}

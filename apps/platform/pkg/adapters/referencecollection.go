@@ -18,8 +18,14 @@ func (c *ReferenceCollection) GetItem(index int) LoadableItem {
 	return c.NewCollection.GetItem(index)
 }
 
+//GetItems function
 func (c *ReferenceCollection) GetItems() interface{} {
 	return c.NewCollection.GetItems()
+}
+
+// Slice function
+func (c *ReferenceCollection) Slice(start int, end int) error {
+	return nil
 }
 
 // AddItem function

@@ -67,3 +67,8 @@ func (rc *RouteCollection) Len() int {
 func (rc *RouteCollection) GetItems() interface{} {
 	return rc
 }
+
+// Slice function
+func (rc *RouteCollection) Slice(start int, end int) error {
+	return nil
+}

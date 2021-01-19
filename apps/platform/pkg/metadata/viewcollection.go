@@ -77,3 +77,8 @@ func (vc *ViewCollection) Len() int {
 func (vc *ViewCollection) GetItems() interface{} {
 	return vc
 }
+
+// Slice function
+func (vc *ViewCollection) Slice(start int, end int) error {
+	return nil
+}
