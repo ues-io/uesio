@@ -13,13 +13,13 @@ type Props = {
 const useStyles = makeStyles(() =>
 	createStyles({
 		drawer: {
-			width: ({ width }: Props): string => `${width}px`,
+			width: ({ width }: Props) => `${width}px`,
 			flexShrink: 0,
 		},
 		drawerPaper: {
-			width: ({ width }: Props): string => `${width}px`,
-			left: ({ left }: Props): string => (left ? left + "px" : ""),
-			right: ({ right }: Props): string => (right ? right + "px" : ""),
+			width: ({ width }: Props) => `${width}px`,
+			left: ({ left }: Props) => (left ? `${left}px` : ""),
+			right: ({ right }: Props) => (right ? `${right}px` : ""),
 			backgroundColor: "transparent",
 			borderLeft: "0px solid transparent",
 			borderRight: "0px solid transparent",
