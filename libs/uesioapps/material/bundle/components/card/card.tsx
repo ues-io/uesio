@@ -44,20 +44,21 @@ const Card: FunctionComponent<CardProps> = (props) => {
 			/>
 		</material.CardContent>
 	)
-	const cardActionList = definition?.actions?.map?.((cardaction, index) => (
-		<CardAction
-			definition={{
-				icon: cardaction.icon,
-				size: cardaction.size,
-				signals: cardaction.signals,
-				helptext: cardaction.helptext,
-				helptextposition: cardaction.helptextposition,
-			}}
-			path={path}
-			context={context}
-			key={index}
-		/>
-	))
+	const cardActionList =
+		definition?.actions?.map?.((cardaction, index) => (
+			<CardAction
+				definition={{
+					icon: cardaction.icon,
+					size: cardaction.size,
+					signals: cardaction.signals,
+					helptext: cardaction.helptext,
+					helptextposition: cardaction.helptextposition,
+				}}
+				path={path}
+				context={context}
+				key={index}
+			/>
+		)) || null
 
 	//Actions + Signals
 	if (definition?.actions && definition?.signals) {
