@@ -16,7 +16,7 @@ This is where Redux Toolkit - a utility library for Redux - kicks in.
 
 ## Structure
 
-As much as possible we try to use the [Redux Toolkit](https://redux-toolkit.js.org/) and follow the best practices in the [redux style guide](https://redux.js.org/style-guide/style-guide). Any deviation from this should be clearly documented.
+As much as possible we try to use the [Redux Toolkit](https://redux-toolkit.js.org/) and follow the best practices in the [Redux Style Guide](https://redux.js.org/style-guide/style-guide). Any deviation from this should be clearly documented.
 
 We follow the [Ducks pattern](https://www.freecodecamp.org/news/scaling-your-redux-app-with-ducks-6115955638be/) for the most part, but add a few more concepts.
 
@@ -44,7 +44,7 @@ Signals that will be registered with the signals api to be run from views and co
 
 ## Data structure in the Redux store
 
-In contrast to the [redux style guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` - which is a class - deviates on that.
+In contrast to the [Redux Style Guide](https://redux.js.org/style-guide/style-guide/#use-plain-javascript-objects-for-state), not only plain JavaScript objects are stored in the redux store. The data structure `yaml.Document` - which is a class - deviates on that.
 
 ## Platform API injection
 
@@ -107,7 +107,7 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 ## Promise vs async/await
 
-We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using `async/await` for the sake of readability.
+We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
 ## A single action handled by multiple reducers
 
@@ -115,15 +115,17 @@ The Redux state is split into different **slices**, such as, in our stack, `view
 
 However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to **reducers part of different slices**. In the `builder` slice you will find such use cases.
 
-We follow the redux style guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
+We follow the Redux Style Guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
 
 ## Redux middleware
 
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain JavaScript `object` and not a `Promise`. This is where Redux-thunk comes into play.
 
-There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide#using-middleware-to-enable-async-logic) does recommend using that one.
+There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using that one.
 
 ## Data normalization in the Redux store
+
+Normalizing the Redux store is recommended in the [Redux Style Guide](https://redux.js.org/style-guide/style-guide#normalize-complex-nestedrelational-state).
 
 We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) from Redux Toolkit for having **normalized data** in the Redux store.
 
