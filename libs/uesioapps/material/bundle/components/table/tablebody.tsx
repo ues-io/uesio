@@ -86,6 +86,7 @@ const TableRow: FunctionComponent<RowProps> = (props) => {
 				if (!column.components) {
 					return (
 						<FieldCell
+							key={index}
 							column={column}
 							context={context.addFrame({
 								record: record.getId(),
