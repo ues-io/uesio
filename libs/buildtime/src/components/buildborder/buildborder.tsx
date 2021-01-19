@@ -16,18 +16,18 @@ interface Props {
 	isExpanded: boolean
 }
 
-const getColor = ({ isSelected }: Props): string =>
+const getColor = ({ isSelected }: Props) =>
 	isSelected ? SELECTED_COLOR : ACTIVE_COLOR
-const getOutline = (props: Props): string =>
+const getOutline = (props: Props) =>
 	props.isActive || props.isSelected ? `1px solid ${getColor(props)}` : "none"
-const getBackgroundColor = ({ isSelected }: Props): string =>
+const getBackgroundColor = ({ isSelected }: Props) =>
 	isSelected ? "white" : "transparent"
 
 const useStyles = material.makeStyles((theme) => ({
 	mask: {
 		outline: getOutline,
-		boxShadow: (props: Props): string =>
-			props.isSelected ? theme.shadows[3] : theme.shadows[0],
+		boxShadow: ({ isSelected }: Props) =>
+			isSelected ? theme.shadows[3] : theme.shadows[0],
 		backgroundColor: getBackgroundColor,
 		/*
 		"&:hover": {
@@ -38,14 +38,13 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 	maskExpanded: {
 		backgroundColor: getBackgroundColor,
-		outline: (props: Props): string =>
-			props.isSelected ? getOutline(props) : "",
-		border: (props: Props): string =>
-			props.isSelected
+		outline: (props: Props) => (props.isSelected ? getOutline(props) : ""),
+		border: ({ isSelected, isActive }: Props) =>
+			isSelected
 				? "1px solid transparent"
-				: `1px solid ${props.isActive ? SELECTED_COLOR : ACTIVE_COLOR}`,
-		boxShadow: (props: Props): string =>
-			props.isSelected ? theme.shadows[3] : theme.shadows[0],
+				: `1px solid ${isActive ? SELECTED_COLOR : ACTIVE_COLOR}`,
+		boxShadow: ({ isSelected }: Props) =>
+			isSelected ? theme.shadows[3] : theme.shadows[0],
 	},
 	/*
 	isSelected: {
@@ -56,8 +55,8 @@ const useStyles = material.makeStyles((theme) => ({
 	},
 	*/
 	header: {
-		boxShadow: (props: Props): string =>
-			props.isSelected ? theme.shadows[3] : theme.shadows[0],
+		boxShadow: ({ isSelected }: Props) =>
+			isSelected ? theme.shadows[3] : theme.shadows[0],
 		outline: getOutline,
 		position: "absolute",
 		top: "-24px",
