@@ -2,7 +2,7 @@ import { definition, builder, styles } from "@uesio/ui"
 
 type IconDefinition = {
 	type: string
-	size?: "inherit" | "default" | "large" | "small" | undefined
+	size?: "inherit" | "default" | "large" | "small"
 	float?: styles.FloatDefinition
 	margin?: styles.MarginDefinition
 }

@@ -36,7 +36,7 @@ const post = (
 		| ReadStream
 		| undefined,
 	cookie?: string,
-	init?: RequestInit | undefined
+	init?: RequestInit
 ): Promise<Response> =>
 	fetch(makeFullURL(url), {
 		...init,
