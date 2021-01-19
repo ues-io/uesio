@@ -167,6 +167,23 @@ func loadOne(
 	if ok {
 		sort.Slice(collSlice, locLessFunc)
 	}
+	//limit and offset
+	if op.Limit != 0 && op.Offset != 0 {
+
+		var start = op.Offset
+		var end = op.Offset + op.Limit
+
+		err = op.Collection.Slice(start, end)
+		if err != nil {
+			return err
+		}
+	} else {
+		//just limit or offset
+		err = op.Collection.Slice(op.Offset, op.Limit)
+		if err != nil {
+			return err
+		}
+	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
 		return loadOne(ctx, client, op, metadata, nil)
