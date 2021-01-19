@@ -7,7 +7,7 @@ type Props = {
 	open?: boolean
 	left?: number
 	right?: number
-	variant?: "permanent" | "persistent" | "temporary"
+	variant?: "permanent" | "persistent" | "temporary" | undefined
 }
 
 const useStyles = makeStyles(() =>
