@@ -20,6 +20,7 @@ const SlotRuntime: FunctionComponent<SlotProps> = (props) => {
 				const [componentType, unWrappedDef] = unWrapDefinition(itemDef)
 				return (
 					<Component
+						key={index}
 						componentType={componentType}
 						definition={unWrappedDef}
 						index={index}
