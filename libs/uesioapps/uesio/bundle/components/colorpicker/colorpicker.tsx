@@ -63,6 +63,7 @@ const ColorPicker: FunctionComponent<Props> = ({
 				if ((isReadMode && isSelected) || !isReadMode) {
 					return (
 						<div
+							key={color}
 							className={clsx(classes.color, {
 								[classes.selected]: isSelected,
 							})}
