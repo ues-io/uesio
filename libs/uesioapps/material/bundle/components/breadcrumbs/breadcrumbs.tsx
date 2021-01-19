@@ -27,7 +27,7 @@ const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = (props) => {
 							uesio.signal.getHandler(crumbDef.signals)()
 					}
 					return (
-						<material.Link href={url} onClick={onClick}>
+						<material.Link key={index} href={url} onClick={onClick}>
 							{text}
 						</material.Link>
 					)
