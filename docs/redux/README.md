@@ -127,7 +127,7 @@ There are plenty of different asynchronous middlewares for Redux. The most famou
 
 We use the utility [createEntityAdapter](https://redux-toolkit.js.org/api/createEntityAdapter) from Redux Toolkit for having **normalized data** in the Redux store.
 
-For example, let the following data structure be in the Redux store.
+For example, let the following data structure be a slice of the Redux store.
 
 ```
 [
@@ -151,10 +151,12 @@ By using the mentioned utility, the data structure become as follows :
     ids: [ 343, 344 ],
     entities: {
         343: {
+            id: 343,
             title: "Learn CSS Grid",
             content: "In this post we will discuss about the..."
         },
         344: {
+            id: 344,
             title: "Flexboxes are so handy",
             content: "A flexbox is a container whose elements..."
         }
@@ -163,6 +165,8 @@ By using the mentioned utility, the data structure become as follows :
 ```
 
 This conversion makes **data access** much more **efficient** in the reducers - and thereby also in the selectors -. As an example, deleting a record in the Redux store.
+
+Here, with no normalized data, it is expensive to remove a specific record, since we must iterate through the entire collection.
 
 ```
 const reducer = (state, action) => {
@@ -174,7 +178,7 @@ const reducer = (state, action) => {
 }
 ```
 
-With the utility - assumuing that [Immer](https://github.com/immerjs/immer) is applied in the reducer - which is [our case](#reducers-with-immer) :
+With the utility - in conjunction with [Immer](https://github.com/immerjs/immer), see [here](#reducers-with-immer) - there is no need to iterate through the entire collection.
 
 ```
 const reducer = (state, action) => {
