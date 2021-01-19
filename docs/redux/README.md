@@ -90,7 +90,7 @@ As a side note, even if the two thunks in the snippet above are equivalent, pay 
 
 The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
 
-Redux does recommend of using the [built-in generic type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) for the action creator generating a thunk.
+Redux does recommend of using the built-in [generic type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) for the action creator generating a thunk.
 By doing that, there is no need to individually type the arguments of the thunk. See the snippet below.
 
 ```diff
