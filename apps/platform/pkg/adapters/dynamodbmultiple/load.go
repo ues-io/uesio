@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 	"sort"
 
 	"github.com/thecloudmasters/uesio/pkg/creds"
@@ -115,18 +114,12 @@ func loadOne(
 		return errors.New("DynamoDB failed to generate expression:" + err.Error())
 	}
 
-	limit := int64(op.Limit)
-	if limit == 0 {
-		limit = math.MaxInt64
-	}
-
 	params := &dynamodb.ScanInput{
 		TableName:                 aws.String(collectionName),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		FilterExpression:          expr.Filter(),
 		ProjectionExpression:      expr.Projection(),
-		Limit:                     &limit,
 	}
 
 	result, err := client.Scan(params)
@@ -177,9 +170,26 @@ func loadOne(
 
 	collSlice := op.Collection.GetItems()
 	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
-	//no limit then order
-	if ok && limit == 0 {
+
+	if ok {
 		sort.Slice(collSlice, locLessFunc)
+	}
+	//limit and offset
+	if op.Limit != 0 && op.Offset != 0 {
+
+		var start = op.Offset
+		var end = op.Offset + op.Limit
+
+		err = op.Collection.Slice(start, end)
+		if err != nil {
+			return err
+		}
+	} else {
+		//just limit or offset
+		err = op.Collection.Slice(op.Offset, op.Limit)
+		if err != nil {
+			return err
+		}
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
