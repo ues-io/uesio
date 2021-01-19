@@ -5,8 +5,8 @@ import ActionButton from "./actionbutton"
 import RefreshIcon from "@material-ui/icons/Refresh"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
-	const { path, action } = props
 	const uesio = hooks.useUesio(props)
+	const { path, action } = props
 	const wireName = component.path.getKeyAtPath(path)
 
 	if (!action || !wireName) {
