@@ -7,14 +7,14 @@ import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
 import { BaseProps } from "../definition/definition"
 
-import { ThemeState } from "../bands/theme/types"
+import { Theme } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
 
-const makePaletteTheme = (theme: ThemeState) =>
-	Object.entries(theme?.routeTheme?.definition || {}).reduce(
+const makePaletteTheme = (theme: Theme) =>
+	Object.entries(theme?.definition || {}).reduce(
 		(acc, [label, color]) => ({
 			...acc,
 			[label]: { main: color },
@@ -30,7 +30,11 @@ const makeTheme = (themePalette: PaletteOptions) =>
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
 	const route = useRoute()
-	const theme = useTheme()
+	const themeState = useTheme()
+	const themeId = route?.theme
+	const theme = themeId
+		? themeState.entities?.[themeId]?.routeTheme
+		: undefined
 
 	if (!route) return null
 
@@ -52,7 +56,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		)
 		const [namespace, name] = parseKey(route.theme)
 
-		if (namespace && name && !theme.routeTheme) {
+		if (namespace && name && !theme) {
 			dispatcher(
 				fetchTheme({
 					namespace,
@@ -64,7 +68,8 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
-	if (theme.isFetching || !theme.routeTheme) return null
+	//if (theme.isFetching || !theme.routeTheme) return null
+	if (!theme) return null
 
 	return (
 		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>

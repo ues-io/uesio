@@ -8,7 +8,7 @@ import {
 import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
-import themeAdapter from "./adapter"
+import themeAdapter, { getThemeId } from "./adapter"
 import { createEntityReducer, EntityPayload } from "../../bands/utils"
 
 const fetchTheme = createAsyncThunk<
@@ -30,13 +30,37 @@ const fetchTheme = createAsyncThunk<
 
 const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
-	payload: Theme
+	{ payload }: PayloadAction<Theme>
 ) => {
-	const entityState = state.entities[payload.id]
+	const themeId = getThemeId(payload)
+	console.log("themeId reducer", themeId)
+
+	const entityState = state.entities[themeId]
 	if (entityState) {
 		entityState.routeTheme = payload
 		entityState.isFetching = false
+	} else {
+		state.entities = {
+			[themeId]: {
+				routeTheme: payload,
+				isFetching: false,
+			},
+		}
 	}
+}
+
+const fetchingThemeReducer = (
+	state: EntityState<ThemeState>,
+	{ payload }: PayloadAction<Theme>
+) => {
+	console.log("state", JSON.stringify(state, undefined, 2))
+	console.log("fetchTheme", JSON.stringify(fetchTheme, undefined, 2))
+	console.log("payload", payload)
+	/*
+	const themeId = `${payload?.workspace || payload.namespace}.${payload.name}`
+
+	state.entities[themeId].isFetching = true
+	*/
 }
 
 const themeSlice = createSlice({
@@ -45,10 +69,7 @@ const themeSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(fetchTheme.fulfilled, fetchedThemeReducer)
-		builder.addCase(fetchTheme.pending, (state) => ({
-			...state,
-			isFetching: true,
-		}))
+		//	builder.addCase(fetchTheme.pending, fetchingThemeReducer)
 	},
 })
 

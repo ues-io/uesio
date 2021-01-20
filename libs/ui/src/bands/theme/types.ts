@@ -10,10 +10,10 @@ interface Palette {
 }
 
 interface Theme {
-	id: string
+	id?: string
 	name: string
 	namespace: string
-	workspace: string
+	workspace?: string
 	definition?: Palette
 }
 
