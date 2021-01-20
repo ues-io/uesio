@@ -4,13 +4,13 @@
 
 [Redux Toolkit](https://redux-toolkit.js.org/) has been introduced in our stack at a refactoring stage.
 
-Redux alone requires a lot of **boilerplate** and do **lack of features**. Just to mention a few :
+Redux alone requires a lot of **boilerplate** and does **lack of features**. Just to mention a few :
 
 -   manually taking care of namespacing the **action type**
 -   manual coding of **action creators**
 -   having **separated files** for reducer and action
 -   **cloning data structures** in the reducer
--   file structure for supporting the Ducks pattern is left up to developer
+-   file structure for supporting the **Ducks pattern** is left up to developer
 -   no easy solution for [sharing state](https://redux.js.org/faq/reducers#how-do-i-share-state-between-two-reducers-do-i-have-to-use-combinereducers) between different reducers
 -   rely on external libraries for having **normalizaed data** such as [Normalizr](https://github.com/paularmstrong/normalizr)
 
