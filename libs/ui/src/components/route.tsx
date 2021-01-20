@@ -41,12 +41,13 @@ const getThemeId = (route: RouteState) => {
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
 	const route = useRoute()
+	if (!route) return null
+
 	const themeState = useTheme()
 	const themeId = getThemeId(route)
 	const theme = themeId
 		? themeState.entities?.[themeId]?.routeTheme
 		: undefined
-	if (!route) return null
 
 	const routeContext = props.context.addFrame({
 		route,
