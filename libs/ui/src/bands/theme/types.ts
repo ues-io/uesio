@@ -1,3 +1,5 @@
+import { WorkspaceState } from "../route/types"
+
 const themefetchActionType = "theme/fetch"
 
 interface Palette {
@@ -13,7 +15,7 @@ interface Theme {
 	id?: string
 	name: string
 	namespace: string
-	workspace?: string
+	workspace?: WorkspaceState
 	definition?: Palette
 }
 

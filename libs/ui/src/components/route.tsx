@@ -31,8 +31,8 @@ const makeTheme = (themePalette: PaletteOptions) =>
 const getThemeId = (route: RouteState) => {
 	if (route?.workspace) {
 		const { app, name } = route.workspace
-		// split up prefix and theme name
-		const [, themeName] = route?.theme?.split(".")
+		// split up application prefix and theme name
+		const [, themeName] = parseKey(route.theme)
 		return `${app}_${name}.${themeName}`
 	}
 	return route?.theme
@@ -72,6 +72,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				fetchTheme({
 					namespace,
 					name,
+					workspace: route.workspace,
 					context: routeContext,
 				})
 			)

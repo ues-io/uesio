@@ -17,6 +17,7 @@ const fetchTheme = createAsyncThunk<
 		namespace: string
 		name: string
 		context: Context
+		workspace: Theme["workspace"]
 	},
 	UesioThunkAPI
 >(themefetchActionType, async ({ namespace, name, context }, api) =>
@@ -51,11 +52,11 @@ const fetchedThemeReducer = (
 
 const fetchingThemeReducer = (
 	state: EntityState<ThemeState>,
-	{ payload }: PayloadAction<Theme>
+	{ meta: { arg } }: PayloadAction<Theme>
 ) => {
 	console.log("state", JSON.stringify(state, undefined, 2))
-	console.log("fetchTheme", JSON.stringify(fetchTheme, undefined, 2))
-	console.log("payload", payload)
+	console.log("action", arg)
+
 	/*
 	const themeId = `${payload?.workspace || payload.namespace}.${payload.name}`
 
@@ -69,7 +70,7 @@ const themeSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(fetchTheme.fulfilled, fetchedThemeReducer)
-		//	builder.addCase(fetchTheme.pending, fetchingThemeReducer)
+		builder.addCase(fetchTheme.pending, fetchingThemeReducer)
 	},
 })
 
