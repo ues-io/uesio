@@ -10,15 +10,15 @@ interface Palette {
 }
 
 interface Theme {
-	id?: string
-	name?: string
-	namespace?: string
-	workspace?: string
+	id: string
+	name: string
+	namespace: string
+	workspace: string
 	definition?: Palette
 }
 
 interface ThemeState {
-	routeTheme?: Theme
+	routeTheme: Theme
 	isFetching: boolean
 }
 

@@ -1,7 +1,15 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+// @ts-nocheck
+import {
+	createAsyncThunk,
+	createSlice,
+	EntityState,
+	PayloadAction,
+} from "@reduxjs/toolkit"
 import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
+import themeAdapter from "./adapter"
+import { createEntityReducer, EntityPayload } from "../../bands/utils"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -15,23 +23,28 @@ const fetchTheme = createAsyncThunk<
 	api.extra.getTheme(context, namespace, name)
 )
 
-const initialState: ThemeState = {
+/*|| {
 	routeTheme: undefined,
 	isFetching: false,
+}*/
+
+const fetchedThemeReducer = (
+	state: EntityState<ThemeState>,
+	payload: Theme
+) => {
+	const entityState = state.entities[payload.id]
+	if (entityState) {
+		entityState.routeTheme = payload
+		entityState.isFetching = false
+	}
 }
 
 const themeSlice = createSlice({
 	name: "theme",
-	initialState,
+	initialState: themeAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(
-			fetchTheme.fulfilled,
-			(state, { payload }: PayloadAction<Theme>) => ({
-				routeTheme: payload,
-				isFetching: false,
-			})
-		)
+		builder.addCase(fetchTheme.fulfilled, fetchedThemeReducer)
 		builder.addCase(fetchTheme.pending, (state) => ({
 			...state,
 			isFetching: true,
