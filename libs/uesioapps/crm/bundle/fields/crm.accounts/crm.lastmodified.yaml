@@ -1,0 +1,6 @@
+name: lastmodified
+collection: crm.accounts
+type: USER
+label: Last modified by
+propertyName: lastmodified
+autopopulate: UPDATE

@@ -22,3 +22,5 @@ options:
     value: "MAP"
   - label: "Timestamp"
     value: "TIMESTAMP"
+  - label: "User"
+    value: "USER"

@@ -42,7 +42,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	const mode = context.getFieldMode() || "READ"
 	const type = fieldMetadata.getType()
 
-	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {
+	if (["TEXT", "LONGTEXT", "DATE", "NUMBER", "USER"].indexOf(type) !== -1) {
 		return (
 			<TextField
 				{...props}

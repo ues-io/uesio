@@ -1,0 +1,6 @@
+name: owner
+collection: crm.accounts
+type: USER
+label: Owner
+propertyName: owner
+autopopulate: CREATE

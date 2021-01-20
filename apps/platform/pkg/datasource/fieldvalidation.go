@@ -36,6 +36,17 @@ func populateTimestamps(field *adapters.FieldMetadata, timestamp int64) validati
 	}
 }
 
+func populateUsers(field *adapters.FieldMetadata, user string) validationFunc {
+	return func(change adapters.ChangeRequest) error {
+		// Only populate fields marked with CREATE on insert
+		// Always populate the fields marked with UPDATE
+		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
+			change.FieldChanges[field.GetFullName()] = user
+		}
+		return nil
+	}
+}
+
 func validateEmail(field *adapters.FieldMetadata) validationFunc {
 	return func(change adapters.ChangeRequest) error {
 		val, ok := change.FieldChanges[field.GetFullName()]
@@ -81,7 +92,7 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func(adapters.ChangeRequest) error {
+func getValidationFunction(collectionMetadata *adapters.CollectionMetadata, session *sess.Session) func(adapters.ChangeRequest) error {
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
@@ -94,9 +105,13 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 		if field.Validate != nil && field.Validate.Type == "REGEX" {
 			validations = append(validations, validateRegex(field))
 		}
-		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
+		if field.Type == "TIMESTAMP" && (field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE") {
 			timestamp := time.Now().Unix()
 			validations = append(validations, populateTimestamps(field, timestamp))
+		}
+		if field.Type == "USER" && (field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE") {
+			user := session.GetUserInfo()
+			validations = append(validations, populateUsers(field, user.FirstName))
 		}
 	}
 
@@ -115,7 +130,7 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 func PopulateAndValidate(request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
 
 	var listErrors []string
-	validationFunc := getValidationFunction(collectionMetadata)
+	validationFunc := getValidationFunction(collectionMetadata, session)
 	idField, err := collectionMetadata.GetIDField()
 	if err != nil {
 		return err

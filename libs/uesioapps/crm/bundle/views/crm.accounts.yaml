@@ -46,6 +46,10 @@ definition:
           - material.column:
               field: crm.description
           - material.column:
+              field: crm.owner
+          - material.column:
+              field: crm.lastmodified
+          - material.column:
               field: crm.created
           - material.column:
               field: crm.updated
@@ -77,9 +81,11 @@ definition:
         - field: crm.name
           desc: false
       fields:
-        crm.description: null
-        crm.id: null
-        crm.name: null
-        crm.externalid: null
-        crm.created: null
-        crm.updated: null
+        crm.description:
+        crm.id:
+        crm.name:
+        crm.externalid:
+        crm.created:
+        crm.updated:
+        crm.owner:
+        crm.lastmodified:
