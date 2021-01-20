@@ -4,6 +4,7 @@ import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
+import { RouteState } from "../../src/bands/route/types"
 
 import { BaseProps } from "../definition/definition"
 
@@ -27,15 +28,24 @@ const makeTheme = (themePalette: PaletteOptions) =>
 		palette: { ...themePalette },
 	})
 
+const getThemeId = (route: RouteState) => {
+	if (route?.workspace) {
+		const { app, name } = route.workspace
+		// split up prefix and theme name
+		const [, themeName] = route?.theme?.split(".")
+		return `${app}_${name}.${themeName}`
+	}
+	return route?.theme
+}
+
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
 	const route = useRoute()
 	const themeState = useTheme()
-	const themeId = route?.theme
+	const themeId = getThemeId(route)
 	const theme = themeId
 		? themeState.entities?.[themeId]?.routeTheme
 		: undefined
-
 	if (!route) return null
 
 	const routeContext = props.context.addFrame({
