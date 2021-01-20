@@ -33,7 +33,11 @@ const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ payload }: PayloadAction<Theme>
 ) => {
-	const themeId = getThemeId(payload)
+	console.log("payload reducer", payload)
+	const themeId = getThemeId({
+		...payload,
+		theme: payload.namespace + "." + payload.name,
+	})
 	console.log("themeId reducer", themeId)
 
 	const entityState = state.entities[themeId]
