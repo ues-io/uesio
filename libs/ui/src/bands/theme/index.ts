@@ -59,7 +59,7 @@ const fetchingThemeReducer = (
 		entityState.isFetching = true
 	} else {
 		// the current theme is placed at the first position
-		state.ids = [themeId, ...state.ids]
+		state.ids.unshift(themeId)
 		state.entities = {
 			[themeId]: {
 				themeId,
