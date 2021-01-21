@@ -16,8 +16,7 @@ type CardActionDefinition = {
 		| "top-end"
 		| "top-start"
 		| "top"
-		| undefined
-	size?: "inherit" | "default" | "large" | "small" | undefined
+	size?: "inherit" | "default" | "large" | "small"
 	signals?: signal.SignalDefinition[]
 }
 
