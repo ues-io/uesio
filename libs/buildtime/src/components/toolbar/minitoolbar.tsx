@@ -2,24 +2,24 @@ import React, { FunctionComponent } from "react"
 import { Drawer, makeStyles, createStyles } from "@material-ui/core"
 
 type Props = {
-	anchor: "bottom" | "left" | "right" | "top" | undefined
+	anchor?: "bottom" | "left" | "right" | "top"
 	width: number
 	open?: boolean
 	left?: number
 	right?: number
-	variant?: "permanent" | "persistent" | "temporary" | undefined
+	variant?: "permanent" | "persistent" | "temporary"
 }
 
 const useStyles = makeStyles(() =>
 	createStyles({
 		drawer: {
-			width: (props: Props): string => props.width + "px",
+			width: ({ width }: Props) => `${width}px`,
 			flexShrink: 0,
 		},
 		drawerPaper: {
-			width: (props: Props): string => props.width + "px",
-			left: ({ left }: Props): string => (left ? left + "px" : ""),
-			right: ({ right }: Props): string => (right ? right + "px" : ""),
+			width: ({ width }: Props) => `${width}px`,
+			left: ({ left }: Props) => (left ? `${left}px` : ""),
+			right: ({ right }: Props) => (right ? `${right}px` : ""),
 			backgroundColor: "transparent",
 			borderLeft: "0px solid transparent",
 			borderRight: "0px solid transparent",

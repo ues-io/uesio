@@ -12,7 +12,7 @@ const makeFullURL = (url: string): string => `https://uesio-dev.com:3000/${url}`
 const get = (
 	url: string,
 	cookie?: string,
-	init?: RequestInit | undefined
+	init?: RequestInit
 ): Promise<Response> =>
 	fetch(makeFullURL(url), {
 		...init,
@@ -36,7 +36,7 @@ const post = (
 		| ReadStream
 		| undefined,
 	cookie?: string,
-	init?: RequestInit | undefined
+	init?: RequestInit
 ): Promise<Response> =>
 	fetch(makeFullURL(url), {
 		...init,
