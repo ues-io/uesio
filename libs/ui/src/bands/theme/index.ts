@@ -33,12 +33,23 @@ const fetchedThemeReducer = (
 	})
 	const entityState = state.entities?.[themeId]
 
+	if (entityState) {
+		entityState.routeTheme = payload
+		entityState.isFetching = false
+		entityState.isCurrentTheme = true
+	} else {
+		state.entities = {
+			[themeId]: {
+				routeTheme: payload,
+				isFetching: false,
+				isCurrentTheme: true,
+			},
+		}
+	}
+
 	if (state.ids.indexOf(themeId) === -1) {
 		state.ids.push(themeId)
 	}
-	entityState.routeTheme = payload
-	entityState.isFetching = false
-	entityState.isCurrentTheme = true
 }
 
 const fetchingThemeReducer = (
