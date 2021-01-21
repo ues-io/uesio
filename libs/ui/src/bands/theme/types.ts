@@ -13,8 +13,8 @@ interface Palette {
 
 interface Theme {
 	id?: string
-	name: string
-	namespace: string
+	name?: string
+	namespace?: string
 	workspace?: string
 	definition?: Palette
 }
