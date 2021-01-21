@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -46,13 +47,19 @@ func PlatformLoads(ops []adapters.LoadOp, session *sess.Session) error {
 
 // PlatformLoad function
 func PlatformLoad(group metadata.CollectionableGroup, conditions []adapters.LoadRequestCondition, session *sess.Session) error {
+	fields := []adapters.LoadRequestField{}
+	for _, field := range group.GetFields() {
+		fields = append(fields, adapters.LoadRequestField{
+			ID: field,
+		})
+	}
 	return PlatformLoads([]adapters.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",
 			CollectionName: "uesio." + group.GetName(),
 			Collection:     group,
 			Conditions:     conditions,
-			Fields:         group.GetFields(),
+			Fields:         fields,
 		},
 	}, session)
 }
@@ -112,14 +119,14 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 
 		index := 0
 
-		err := collection.Loop(func(item adapters.LoadableItem) error {
+		err := collection.Loop(func(item loadable.Item) error {
 			fieldChanges := map[string]interface{}{}
 			for _, field := range collection.GetFields() {
-				fieldValue, err := item.GetField(field.ID)
+				fieldValue, err := item.GetField(field)
 				if err != nil {
 					return err
 				}
-				fieldChanges[field.ID] = fieldValue
+				fieldChanges[field] = fieldValue
 			}
 			changeRequests[strconv.Itoa(index)] = adapters.ChangeRequest{
 				FieldChanges: fieldChanges,

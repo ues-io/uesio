@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // BotCollection slice
@@ -18,12 +18,12 @@ func (bc *BotCollection) GetName() string {
 }
 
 // GetFields function
-func (bc *BotCollection) GetFields() []adapters.LoadRequestField {
+func (bc *BotCollection) GetFields() []string {
 	return StandardGetFields(bc)
 }
 
 // NewItem function
-func (bc *BotCollection) NewItem() adapters.LoadableItem {
+func (bc *BotCollection) NewItem() loadable.Item {
 	return &Bot{}
 }
 
@@ -76,17 +76,17 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 }
 
 // AddItem function
-func (bc *BotCollection) AddItem(item adapters.LoadableItem) {
+func (bc *BotCollection) AddItem(item loadable.Item) {
 	*bc = append(*bc, *item.(*Bot))
 }
 
 // GetItem function
-func (bc *BotCollection) GetItem(index int) adapters.LoadableItem {
+func (bc *BotCollection) GetItem(index int) loadable.Item {
 	return &(*bc)[index]
 }
 
 // Loop function
-func (bc *BotCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (bc *BotCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *bc {
 		err := iter(bc.GetItem(index))
 		if err != nil {

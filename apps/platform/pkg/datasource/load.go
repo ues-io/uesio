@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -136,7 +137,7 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := datasource.GetCredentials(site)
+		credentials, err := adapters.GetCredentials(datasource, site)
 		if err != nil {
 			return nil, err
 		}
@@ -169,12 +170,12 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 				if err != nil {
 					return nil, err
 				}
-				credentials, err := datasource.GetCredentials(site)
+				credentials, err := adapters.GetCredentials(datasource, site)
 				if err != nil {
 					return nil, err
 				}
 
-				err = op.Collection.Loop(func(item adapters.LoadableItem) error {
+				err = op.Collection.Loop(func(item loadable.Item) error {
 					for _, reference := range referencedCol.ReferenceFields {
 						value, err := item.GetField(reference.ForeignKeyField)
 						if err != nil {

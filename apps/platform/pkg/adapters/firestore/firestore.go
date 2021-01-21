@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/option"
@@ -21,7 +20,7 @@ var clientPool = map[string]*firestore.Client{}
 
 const searchIndexField = "system:searchindex"
 
-func getNewClient(ctx context.Context, credentials *creds.AdapterCredentials) (*firestore.Client, error) {
+func getNewClient(ctx context.Context, credentials *adapters.Credentials) (*firestore.Client, error) {
 	if os.Getenv("FIRESTORE_EMULATOR_HOST") != "" {
 		return firestore.NewClient(
 			ctx,
@@ -35,7 +34,7 @@ func getNewClient(ctx context.Context, credentials *creds.AdapterCredentials) (*
 	)
 }
 
-func getClient(credentials *creds.AdapterCredentials) (*firestore.Client, error) {
+func getClient(credentials *adapters.Credentials) (*firestore.Client, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	client, ok := clientPool[hash]

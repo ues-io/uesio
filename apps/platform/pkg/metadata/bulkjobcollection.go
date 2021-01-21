@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // BulkJobCollection slice
@@ -13,27 +13,27 @@ func (bjc *BulkJobCollection) GetName() string {
 }
 
 // GetFields function
-func (bjc *BulkJobCollection) GetFields() []adapters.LoadRequestField {
+func (bjc *BulkJobCollection) GetFields() []string {
 	return StandardGetFields(bjc)
 }
 
 // GetItem function
-func (bjc *BulkJobCollection) GetItem(index int) adapters.LoadableItem {
+func (bjc *BulkJobCollection) GetItem(index int) loadable.Item {
 	return &(*bjc)[index]
 }
 
 // AddItem function
-func (bjc *BulkJobCollection) AddItem(item adapters.LoadableItem) {
+func (bjc *BulkJobCollection) AddItem(item loadable.Item) {
 	*bjc = append(*bjc, *item.(*BulkJob))
 }
 
 // NewItem function
-func (bjc *BulkJobCollection) NewItem() adapters.LoadableItem {
+func (bjc *BulkJobCollection) NewItem() loadable.Item {
 	return &BulkJob{}
 }
 
 // Loop function
-func (bjc *BulkJobCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (bjc *BulkJobCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *bjc {
 		err := iter(bjc.GetItem(index))
 		if err != nil {

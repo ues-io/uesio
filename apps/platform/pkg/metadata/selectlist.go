@@ -1,7 +1,5 @@
 package metadata
 
-import "github.com/thecloudmasters/uesio/pkg/adapters"
-
 // SelectListOption struct
 type SelectListOption struct {
 	Label string `uesio:"label"`
@@ -29,13 +27,10 @@ func (sl *SelectList) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (sl *SelectList) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: sl.Name,
-		},
-	}, nil
+func (sl *SelectList) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": sl.Name,
+	}
 }
 
 // GetBundleGroup function

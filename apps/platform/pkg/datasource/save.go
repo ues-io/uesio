@@ -98,7 +98,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := datasource.GetCredentials(site)
+		credentials, err := adapters.GetCredentials(datasource, site)
 		if err != nil {
 			return nil, err
 		}

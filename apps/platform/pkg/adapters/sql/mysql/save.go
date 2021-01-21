@@ -4,14 +4,13 @@ import (
 	"errors"
 
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // Save function
-func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) ([]adapters.SaveResponse, error) {
 
 	response := []adapters.SaveResponse{}
 

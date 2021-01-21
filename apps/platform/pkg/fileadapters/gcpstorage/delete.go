@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 )
 
-func (a *FileAdapter) Delete(bucket string, path string, credentials *creds.FileAdapterCredentials) error {
+func (a *FileAdapter) Delete(bucket string, path string, credentials *fileadapters.Credentials) error {
 	client, err := getClient(credentials)
 	if err != nil {
 		return errors.New("invalid FileAdapterCredentials specified")

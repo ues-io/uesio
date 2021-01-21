@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // ViewCollection slice
@@ -16,12 +16,12 @@ func (vc *ViewCollection) GetName() string {
 }
 
 // GetFields function
-func (vc *ViewCollection) GetFields() []adapters.LoadRequestField {
+func (vc *ViewCollection) GetFields() []string {
 	return StandardGetFields(vc)
 }
 
 // NewItem function
-func (vc *ViewCollection) NewItem() adapters.LoadableItem {
+func (vc *ViewCollection) NewItem() loadable.Item {
 	return &View{}
 }
 
@@ -48,17 +48,17 @@ func (vc *ViewCollection) GetKeyFromPath(path string, conditions BundleCondition
 }
 
 // AddItem function
-func (vc *ViewCollection) AddItem(item adapters.LoadableItem) {
+func (vc *ViewCollection) AddItem(item loadable.Item) {
 	*vc = append(*vc, *item.(*View))
 }
 
 // GetItem function
-func (vc *ViewCollection) GetItem(index int) adapters.LoadableItem {
+func (vc *ViewCollection) GetItem(index int) loadable.Item {
 	return &(*vc)[index]
 }
 
 // Loop function
-func (vc *ViewCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (vc *ViewCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *vc {
 		err := iter(vc.GetItem(index))
 		if err != nil {

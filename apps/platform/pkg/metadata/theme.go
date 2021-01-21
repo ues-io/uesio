@@ -1,7 +1,6 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"gopkg.in/yaml.v3"
 )
 
@@ -36,13 +35,10 @@ func (t *Theme) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (t *Theme) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: t.Name,
-		},
-	}, nil
+func (t *Theme) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": t.Name,
+	}
 }
 
 // GetBundleGroup function

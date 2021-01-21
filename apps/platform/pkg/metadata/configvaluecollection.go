@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // ConfigValueCollection slice
@@ -13,12 +13,12 @@ func (cvc *ConfigValueCollection) GetName() string {
 }
 
 // GetFields function
-func (cvc *ConfigValueCollection) GetFields() []adapters.LoadRequestField {
+func (cvc *ConfigValueCollection) GetFields() []string {
 	return StandardGetFields(cvc)
 }
 
 // NewItem function
-func (cvc *ConfigValueCollection) NewItem() adapters.LoadableItem {
+func (cvc *ConfigValueCollection) NewItem() loadable.Item {
 	return &ConfigValue{}
 }
 
@@ -38,17 +38,17 @@ func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleC
 }
 
 // AddItem function
-func (cvc *ConfigValueCollection) AddItem(item adapters.LoadableItem) {
+func (cvc *ConfigValueCollection) AddItem(item loadable.Item) {
 	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 
 // GetItem function
-func (cvc *ConfigValueCollection) GetItem(index int) adapters.LoadableItem {
+func (cvc *ConfigValueCollection) GetItem(index int) loadable.Item {
 	return &(*cvc)[index]
 }
 
 // Loop function
-func (cvc *ConfigValueCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (cvc *ConfigValueCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *cvc {
 		err := iter(cvc.GetItem(index))
 		if err != nil {

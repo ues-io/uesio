@@ -4,7 +4,6 @@ import (
 	"errors"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/reflecttools"
 )
 
@@ -43,13 +42,10 @@ func (f *File) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (f *File) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: f.Name,
-		},
-	}, nil
+func (f *File) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": f.Name,
+	}
 }
 
 // GetBundleGroup function

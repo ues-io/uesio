@@ -1,12 +1,5 @@
 package metadata
 
-import (
-	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/secretstore"
-)
-
 // Secret struct
 type Secret struct {
 	ID        string `yaml:"-" uesio:"uesio.id"`
@@ -29,13 +22,10 @@ func (s *Secret) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (s *Secret) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: s.Name,
-		},
-	}, nil
+func (s *Secret) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": s.Name,
+	}
 }
 
 // GetBundleGroup function
@@ -82,25 +72,4 @@ func (s *Secret) SetNamespace(namespace string) {
 // SetWorkspace function
 func (s *Secret) SetWorkspace(workspace string) {
 	s.Workspace = workspace
-}
-
-// GetSecret key
-func GetSecret(key string, site *Site) (string, error) {
-	if key == "" {
-		return "", nil
-	}
-
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return "", errors.New("Failed Parsing Secret Key: " + key + " : " + err.Error())
-	}
-
-	// Only use the environment secretstore for now
-	store, err := secretstore.GetSecretStore("environment")
-	if err != nil {
-		return "", err
-	}
-
-	return store.Get(namespace, name, site.Name)
-
 }

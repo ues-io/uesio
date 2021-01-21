@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // SelectListCollection slice
@@ -16,12 +16,12 @@ func (slc *SelectListCollection) GetName() string {
 }
 
 // GetFields function
-func (slc *SelectListCollection) GetFields() []adapters.LoadRequestField {
+func (slc *SelectListCollection) GetFields() []string {
 	return StandardGetFields(slc)
 }
 
 // NewItem function
-func (slc *SelectListCollection) NewItem() adapters.LoadableItem {
+func (slc *SelectListCollection) NewItem() loadable.Item {
 	return &SelectList{}
 }
 
@@ -48,17 +48,17 @@ func (slc *SelectListCollection) GetKeyFromPath(path string, conditions BundleCo
 }
 
 // AddItem function
-func (slc *SelectListCollection) AddItem(item adapters.LoadableItem) {
+func (slc *SelectListCollection) AddItem(item loadable.Item) {
 	*slc = append(*slc, *item.(*SelectList))
 }
 
 // GetItem function
-func (slc *SelectListCollection) GetItem(index int) adapters.LoadableItem {
+func (slc *SelectListCollection) GetItem(index int) loadable.Item {
 	return &(*slc)[index]
 }
 
 // Loop function
-func (slc *SelectListCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (slc *SelectListCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *slc {
 		err := iter(slc.GetItem(index))
 		if err != nil {

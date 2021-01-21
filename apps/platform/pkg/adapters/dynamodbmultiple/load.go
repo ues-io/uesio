@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -188,7 +186,7 @@ func loadOne(
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 
 	ctx := context.Background()
 	client := getDynamoDB(credentials)

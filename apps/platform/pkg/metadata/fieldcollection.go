@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // FieldCollection slice
@@ -18,12 +18,12 @@ func (fc *FieldCollection) GetName() string {
 }
 
 // GetFields function
-func (fc *FieldCollection) GetFields() []adapters.LoadRequestField {
+func (fc *FieldCollection) GetFields() []string {
 	return StandardGetFields(fc)
 }
 
 // NewItem function
-func (fc *FieldCollection) NewItem() adapters.LoadableItem {
+func (fc *FieldCollection) NewItem() loadable.Item {
 	return &Field{}
 }
 
@@ -66,17 +66,17 @@ func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditio
 }
 
 // AddItem function
-func (fc *FieldCollection) AddItem(item adapters.LoadableItem) {
+func (fc *FieldCollection) AddItem(item loadable.Item) {
 	*fc = append(*fc, *item.(*Field))
 }
 
 // GetItem function
-func (fc *FieldCollection) GetItem(index int) adapters.LoadableItem {
+func (fc *FieldCollection) GetItem(index int) loadable.Item {
 	return &(*fc)[index]
 }
 
 // Loop function
-func (fc *FieldCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (fc *FieldCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *fc {
 		err := iter(fc.GetItem(index))
 		if err != nil {

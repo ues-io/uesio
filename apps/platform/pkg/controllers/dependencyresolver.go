@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
 )
 
@@ -43,7 +43,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap := map[string]bool{}
 
-	collection.Loop(func(item adapters.LoadableItem) error {
+	collection.Loop(func(item loadable.Item) error {
 		var key string
 		// Special handling for fields for now
 		if metadatatype == "fields" {

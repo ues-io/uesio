@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // CollectionCollection slice
@@ -13,7 +13,7 @@ func (cc *CollectionCollection) GetName() string {
 }
 
 // GetFields function
-func (cc *CollectionCollection) GetFields() []adapters.LoadRequestField {
+func (cc *CollectionCollection) GetFields() []string {
 	return StandardGetFields(cc)
 }
 
@@ -33,22 +33,22 @@ func (cc *CollectionCollection) GetKeyFromPath(path string, conditions BundleCon
 }
 
 // AddItem function
-func (cc *CollectionCollection) AddItem(item adapters.LoadableItem) {
+func (cc *CollectionCollection) AddItem(item loadable.Item) {
 	*cc = append(*cc, *item.(*Collection))
 }
 
 // NewItem function
-func (cc *CollectionCollection) NewItem() adapters.LoadableItem {
+func (cc *CollectionCollection) NewItem() loadable.Item {
 	return &Collection{}
 }
 
 // GetItem function
-func (cc *CollectionCollection) GetItem(index int) adapters.LoadableItem {
+func (cc *CollectionCollection) GetItem(index int) loadable.Item {
 	return &(*cc)[index]
 }
 
 // Loop function
-func (cc *CollectionCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (cc *CollectionCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *cc {
 		err := iter(cc.GetItem(index))
 		if err != nil {

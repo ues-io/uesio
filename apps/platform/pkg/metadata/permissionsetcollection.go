@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // PermissionSetCollection slice
@@ -13,12 +13,12 @@ func (pc *PermissionSetCollection) GetName() string {
 }
 
 // GetFields function
-func (pc *PermissionSetCollection) GetFields() []adapters.LoadRequestField {
+func (pc *PermissionSetCollection) GetFields() []string {
 	return StandardGetFields(pc)
 }
 
 // NewItem function
-func (pc *PermissionSetCollection) NewItem() adapters.LoadableItem {
+func (pc *PermissionSetCollection) NewItem() loadable.Item {
 	return &PermissionSet{}
 }
 
@@ -38,17 +38,17 @@ func (pc *PermissionSetCollection) GetKeyFromPath(path string, conditions Bundle
 }
 
 // AddItem function
-func (pc *PermissionSetCollection) AddItem(item adapters.LoadableItem) {
+func (pc *PermissionSetCollection) AddItem(item loadable.Item) {
 	*pc = append(*pc, *item.(*PermissionSet))
 }
 
 // GetItem function
-func (pc *PermissionSetCollection) GetItem(index int) adapters.LoadableItem {
+func (pc *PermissionSetCollection) GetItem(index int) loadable.Item {
 	return &(*pc)[index]
 }
 
 // Loop function
-func (pc *PermissionSetCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (pc *PermissionSetCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index))
 		if err != nil {

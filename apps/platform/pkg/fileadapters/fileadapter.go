@@ -1,21 +1,23 @@
 package fileadapters
 
 import (
+	"crypto/md5"
 	"errors"
 	"io"
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // FileAdapter interface
 type FileAdapter interface {
-	Upload(fileData io.Reader, bucket string, path string, creds *creds.FileAdapterCredentials) error
-	Download(bucket, path string, credentials *creds.FileAdapterCredentials) (io.ReadCloser, error)
-	Delete(bucket, path string, credentials *creds.FileAdapterCredentials) error
+	Upload(fileData io.Reader, bucket string, path string, creds *Credentials) error
+	Download(bucket, path string, credentials *Credentials) (io.ReadCloser, error)
+	Delete(bucket, path string, credentials *Credentials) error
 }
 
 var adapterMap = map[string]FileAdapter{}
@@ -61,14 +63,15 @@ func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) 
 	return ufc, fs, nil
 }
 
-func GetAdapterForUserFile(userFile *metadata.UserFileMetadata, session *sess.Session) (FileAdapter, string, *creds.FileAdapterCredentials, error) {
+func GetAdapterForUserFile(userFile *metadata.UserFileMetadata, session *sess.Session) (FileAdapter, string, *Credentials, error) {
 	site := session.GetSite()
 
 	ufc, fs, err := GetFileSourceAndCollection(userFile.FileCollectionID, session)
 	if err != nil {
 		return nil, "", nil, err
 	}
-	bucket, err := ufc.GetBucket(site)
+
+	bucket, err := configstore.GetValue(ufc.Bucket, site)
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -77,10 +80,47 @@ func GetAdapterForUserFile(userFile *metadata.UserFileMetadata, session *sess.Se
 	if err != nil {
 		return nil, "", nil, err
 	}
-	credentials, err := fs.GetCredentials(site)
+	credentials, err := GetCredentials(fs, site)
 	if err != nil {
 		return nil, "", nil, err
 	}
 
 	return fileAdapter, bucket, credentials, nil
+}
+
+// Credentials struct
+type Credentials struct {
+	Database string
+	Username string
+	Password string
+}
+
+// GetHash function
+func (c *Credentials) GetHash() string {
+	data := []byte(c.Database + ":" + c.Username + ":" + c.Password)
+	sum := md5.Sum(data)
+	return string(sum[:])
+}
+
+// GetCredentials function
+//TODO:: Dig into what this should be
+func GetCredentials(fs *metadata.FileSource, site *metadata.Site) (*Credentials, error) {
+	database, err := configstore.Merge(fs.Database, site)
+	if err != nil {
+		return nil, err
+	}
+	username, err := secretstore.GetSecret(fs.Username, site)
+	if err != nil {
+		return nil, err
+	}
+	password, err := secretstore.GetSecret(fs.Password, site)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Credentials{
+		Database: database,
+		Username: username,
+		Password: password,
+	}, nil
 }

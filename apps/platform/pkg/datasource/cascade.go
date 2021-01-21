@@ -2,7 +2,7 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -11,7 +11,7 @@ func getCascadeDeletes(
 	collections map[string]*adapters.CollectionMetadata,
 	metadata *adapters.MetadataCache,
 	adapter adapters.Adapter,
-	credentials *creds.AdapterCredentials,
+	credentials *adapters.Credentials,
 ) (map[string]map[string]adapters.DeleteRequest, error) {
 	cascadeDeleteFKs := map[string]map[string]adapters.DeleteRequest{}
 
@@ -74,7 +74,7 @@ func getCascadeDeletes(
 						return nil, err
 					}
 
-					err = collection.Loop(func(item adapters.LoadableItem) error {
+					err = collection.Loop(func(item loadable.Item) error {
 						fkString, err := item.GetField(field.ForeignKeyField)
 						if err != nil {
 							return err

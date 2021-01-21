@@ -2,8 +2,6 @@ package metadata
 
 import (
 	"path/filepath"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // ComponentPack struct
@@ -31,13 +29,10 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (cp *ComponentPack) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: cp.Name,
-		},
-	}, nil
+func (cp *ComponentPack) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": cp.Name,
+	}
 }
 
 // GetBundleGroup function

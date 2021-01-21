@@ -4,17 +4,18 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/copier"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 type ReferenceCollection struct {
-	Collection           LoadableGroup
+	Collection           loadable.Group
 	ReferencedCollection *ReferenceRequest
 	CollectionMetadata   *CollectionMetadata
-	NewCollection        LoadableGroup
+	NewCollection        loadable.Group
 }
 
 // GetItem function
-func (c *ReferenceCollection) GetItem(index int) LoadableItem {
+func (c *ReferenceCollection) GetItem(index int) loadable.Item {
 	return c.NewCollection.GetItem(index)
 }
 
@@ -28,7 +29,7 @@ func (c *ReferenceCollection) Slice(start int, end int) {
 }
 
 // AddItem function
-func (c *ReferenceCollection) AddItem(refItem LoadableItem) {
+func (c *ReferenceCollection) AddItem(refItem loadable.Item) {
 
 	refFK, err := refItem.GetField(c.ReferencedCollection.Metadata.IDField)
 	if err != nil {
@@ -46,7 +47,7 @@ func (c *ReferenceCollection) AddItem(refItem LoadableItem) {
 		return
 	}
 
-	err = c.Collection.Loop(func(item LoadableItem) error {
+	err = c.Collection.Loop(func(item loadable.Item) error {
 
 		for _, reference := range c.ReferencedCollection.ReferenceFields {
 			fk, err := item.GetField(reference.ForeignKeyField)
@@ -91,12 +92,12 @@ func (c *ReferenceCollection) AddItem(refItem LoadableItem) {
 }
 
 // NewItem function
-func (c *ReferenceCollection) NewItem() LoadableItem {
+func (c *ReferenceCollection) NewItem() loadable.Item {
 	return &Item{}
 }
 
 // Loop function
-func (c *ReferenceCollection) Loop(iter func(item LoadableItem) error) error {
+func (c *ReferenceCollection) Loop(iter func(item loadable.Item) error) error {
 	return c.NewCollection.Loop(iter)
 }
 

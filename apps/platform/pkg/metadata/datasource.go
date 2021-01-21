@@ -2,9 +2,6 @@ package metadata
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // NewDataSource function
@@ -50,51 +47,16 @@ func (ds *DataSource) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ds *DataSource) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: ds.Name,
-		},
-	}, nil
+func (ds *DataSource) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": ds.Name,
+	}
 }
 
 // GetBundleGroup function
 func (ds *DataSource) GetBundleGroup() BundleableGroup {
 	var dsc DataSourceCollection
 	return &dsc
-}
-
-// GetCredentials function
-func (ds *DataSource) GetCredentials(site *Site) (*creds.AdapterCredentials, error) {
-	database, err := MergeConfigValue(ds.Database, site)
-	if err != nil {
-		return nil, err
-	}
-	username, err := GetSecret(ds.Username, site)
-	if err != nil {
-		return nil, err
-	}
-	url, err := MergeConfigValue(ds.URL, site)
-	if err != nil {
-		return nil, err
-	}
-	region, err := MergeConfigValue(ds.Region, site)
-	if err != nil {
-		return nil, err
-	}
-	password, err := GetSecret(ds.Password, site)
-	if err != nil {
-		return nil, err
-	}
-
-	return &creds.AdapterCredentials{
-		Database: database,
-		Username: username,
-		Password: password,
-		URL:      url,
-		Region:   region,
-	}, nil
 }
 
 // GetKey function

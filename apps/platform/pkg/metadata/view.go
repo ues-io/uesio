@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"gopkg.in/yaml.v3"
 )
 
@@ -29,13 +28,10 @@ func (v *View) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (v *View) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: v.Name,
-		},
-	}, nil
+func (v *View) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": v.Name,
+	}
 }
 
 // GetBundleGroup function

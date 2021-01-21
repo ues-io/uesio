@@ -2,9 +2,6 @@ package metadata
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // NewFileSource function
@@ -48,42 +45,16 @@ func (fs *FileSource) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (fs *FileSource) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: fs.Name,
-		},
-	}, nil
+func (fs *FileSource) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": fs.Name,
+	}
 }
 
 // GetBundleGroup function
 func (fs *FileSource) GetBundleGroup() BundleableGroup {
 	var fsc FileSourceCollection
 	return &fsc
-}
-
-// GetCredentials function
-//TODO:: Dig into what this should be
-func (fs *FileSource) GetCredentials(site *Site) (*creds.FileAdapterCredentials, error) {
-	database, err := MergeConfigValue(fs.Database, site)
-	if err != nil {
-		return nil, err
-	}
-	username, err := GetSecret(fs.Username, site)
-	if err != nil {
-		return nil, err
-	}
-	password, err := GetSecret(fs.Password, site)
-	if err != nil {
-		return nil, err
-	}
-
-	return &creds.FileAdapterCredentials{
-		Database: database,
-		Username: username,
-		Password: password,
-	}, nil
 }
 
 // GetKey function

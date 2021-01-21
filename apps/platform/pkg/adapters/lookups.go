@@ -3,6 +3,7 @@ package adapters
 import (
 	"errors"
 
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -88,9 +89,9 @@ func GetLookupOps(request SaveRequest, metadata *MetadataCache) ([]LoadOp, error
 	return lookupRequests, nil
 }
 
-func getLookupResultMap(op *LoadOp, keyField string) (map[string]LoadableItem, error) {
-	lookupResult := map[string]LoadableItem{}
-	err := op.Collection.Loop(func(item LoadableItem) error {
+func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, error) {
+	lookupResult := map[string]loadable.Item{}
+	err := op.Collection.Loop(func(item loadable.Item) error {
 		keyVal, err := item.GetField(keyField)
 		if err == nil {
 			keyString, ok := keyVal.(string)

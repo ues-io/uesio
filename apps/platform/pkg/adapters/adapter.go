@@ -3,14 +3,14 @@ package adapters
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // LoadOp type
 type LoadOp struct {
 	CollectionName        string                 `json:"collection"`
 	WireName              string                 `json:"wire"`
-	Collection            LoadableGroup          `json:"data"`
+	Collection            loadable.Group         `json:"data"`
 	Conditions            []LoadRequestCondition `json:"-"`
 	Fields                []LoadRequestField     `json:"-"`
 	Type                  string                 `json:"-"`
@@ -20,28 +20,11 @@ type LoadOp struct {
 	ReferencedCollections ReferenceRegistry
 }
 
-// LoadableGroup interface
-type LoadableGroup interface {
-	GetItem(index int) LoadableItem
-	Loop(iter func(item LoadableItem) error) error
-	Len() int
-	AddItem(LoadableItem)
-	NewItem() LoadableItem
-	GetItems() interface{}
-	Slice(start int, end int)
-}
-
-// LoadableItem interface
-type LoadableItem interface {
-	SetField(string, interface{}) error
-	GetField(string) (interface{}, error)
-}
-
 // Adapter interface
 type Adapter interface {
-	Load([]LoadOp, *MetadataCache, *creds.AdapterCredentials) error
-	Save([]SaveRequest, *MetadataCache, *creds.AdapterCredentials) ([]SaveResponse, error)
-	Migrate(*MetadataCache, *creds.AdapterCredentials) error
+	Load([]LoadOp, *MetadataCache, *Credentials) error
+	Save([]SaveRequest, *MetadataCache, *Credentials) ([]SaveResponse, error)
+	Migrate(*MetadataCache, *Credentials) error
 }
 
 var adapterMap = map[string]Adapter{}

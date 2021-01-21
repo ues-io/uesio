@@ -5,8 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewBot function
@@ -110,21 +108,12 @@ func (b *Bot) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (b *Bot) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: b.Name,
-		},
-		{
-			Field: "uesio.collection",
-			Value: b.CollectionRef,
-		},
-		{
-			Field: "uesio.type",
-			Value: b.Type,
-		},
-	}, nil
+func (b *Bot) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name":       b.Name,
+		"uesio.collection": b.CollectionRef,
+		"uesio.type":       b.Type,
+	}
 }
 
 // GetBundleGroup function

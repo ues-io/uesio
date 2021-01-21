@@ -1,8 +1,8 @@
 package workspacebundlestore
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 type WorkspaceLoadCollection struct {
@@ -11,24 +11,24 @@ type WorkspaceLoadCollection struct {
 }
 
 // GetItem function
-func (c *WorkspaceLoadCollection) GetItem(index int) adapters.LoadableItem {
+func (c *WorkspaceLoadCollection) GetItem(index int) loadable.Item {
 	return c.Collection.GetItem(index)
 }
 
 // AddItem function
-func (c *WorkspaceLoadCollection) AddItem(item adapters.LoadableItem) {
+func (c *WorkspaceLoadCollection) AddItem(item loadable.Item) {
 	c.Collection.AddItem(item)
 }
 
 // NewItem function
-func (c *WorkspaceLoadCollection) NewItem() adapters.LoadableItem {
+func (c *WorkspaceLoadCollection) NewItem() loadable.Item {
 	item := c.Collection.NewBundleableItem()
 	item.SetNamespace(c.Namespace)
 	return item
 }
 
 // Loop function
-func (c *WorkspaceLoadCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (c *WorkspaceLoadCollection) Loop(iter func(item loadable.Item) error) error {
 	return c.Collection.Loop(iter)
 }
 
@@ -38,7 +38,7 @@ func (c *WorkspaceLoadCollection) Len() int {
 }
 
 // GetFields function
-func (c *WorkspaceLoadCollection) GetFields() []adapters.LoadRequestField {
+func (c *WorkspaceLoadCollection) GetFields() []string {
 	return c.Collection.GetFields()
 }
 
