@@ -92,58 +92,39 @@ func seed(cmd *cobra.Command, args []string) {
 
 	session := sess.GetHeadlessSession()
 
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &apps,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
+		{
+			Collection: &apps,
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &sites,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &sites,
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+			},
 		},
-	}, session)
-
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &siteDomains,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &siteDomains,
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &bundles,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &bundles,
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &workspaces,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
-			Lookups: []adapters.Lookup{
-				{
-					RefField: "uesio.app",
+		{
+			Collection: &workspaces,
+			Options: &adapters.SaveOptions{
+				Upsert: &adapters.UpsertOptions{},
+				Lookups: []adapters.Lookup{
+					{
+						RefField: "uesio.app",
+					},
 				},
 			},
 		},
