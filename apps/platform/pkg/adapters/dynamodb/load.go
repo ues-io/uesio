@@ -167,20 +167,11 @@ func loadOne(
 	if ok {
 		sort.Slice(collSlice, locLessFunc)
 	}
-	//limit and offset
-	if op.Limit != 0 && op.Offset != 0 {
-		start, end, err := adapters.GetSliceIndexes(op.Offset, op.Offset+op.Limit, op.Collection.Len())
+	if op.Limit != 0 || op.Offset != 0 {
+		err := adapters.ApplyLimitAndOffset(op)
 		if err != nil {
 			return err
 		}
-		op.Collection.Slice(start, end)
-	} else if op.Limit != 0 || op.Offset != 0 {
-		//just limit or offset
-		start, end, err := adapters.GetSliceIndexes(op.Offset, op.Limit, op.Collection.Len())
-		if err != nil {
-			return err
-		}
-		op.Collection.Slice(start, end)
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {

@@ -2,12 +2,21 @@ package adapters
 
 import "errors"
 
-// GetSliceIndexes function
-func GetSliceIndexes(start int, end int, collectionLen int) (int, int, error) {
+// ApplyLimitAndOffset function
+func ApplyLimitAndOffset(op *LoadOp) error {
+
+	start := op.Offset
+	end := op.Offset + op.Limit
+	collectionLen := op.Collection.Len()
+
+	//we just have offset then the limit is collectionLen
+	if op.Limit == 0 {
+		end = collectionLen
+	}
 
 	//no negative numbers
 	if start < 0 || end < 0 {
-		return 0, 0, errors.New("Slice error: no negative numbers")
+		return errors.New("Slice error: no negative numbers")
 	}
 
 	//the end is biger than the Collection or 0, then end is the last element.
@@ -17,10 +26,12 @@ func GetSliceIndexes(start int, end int, collectionLen int) (int, int, error) {
 
 	//out of the range
 	if start >= collectionLen {
-		return 0, 0, errors.New("Slice error: out of range")
+		return errors.New("Slice error: out of range")
 	}
 
-	return start, end, nil
+	op.Collection.Slice(start, end)
+
+	return nil
 
 }
 
