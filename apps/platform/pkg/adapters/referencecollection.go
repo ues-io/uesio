@@ -24,8 +24,7 @@ func (c *ReferenceCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (c *ReferenceCollection) Slice(start int, end int) error {
-	return nil
+func (c *ReferenceCollection) Slice(start int, end int) {
 }
 
 // AddItem function

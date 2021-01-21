@@ -79,6 +79,6 @@ func (vc *ViewCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (vc *ViewCollection) Slice(start int, end int) error {
-	return nil
+func (vc *ViewCollection) Slice(start int, end int) {
+
 }

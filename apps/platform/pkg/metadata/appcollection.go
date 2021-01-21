@@ -54,6 +54,6 @@ func (ac *AppCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (ac *AppCollection) Slice(start int, end int) error {
-	return nil
+func (ac *AppCollection) Slice(start int, end int) {
+
 }

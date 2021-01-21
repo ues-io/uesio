@@ -1,5 +1,29 @@
 package adapters
 
+import "errors"
+
+// GetSliceIndexes function
+func GetSliceIndexes(start int, end int, collectionLen int) (int, int, error) {
+
+	//no negative numbers
+	if start < 0 || end < 0 {
+		return 0, 0, errors.New("Slice error: no negative numbers")
+	}
+
+	//the end is biger than the Collection or 0, then end is the last element.
+	if end > collectionLen || end == 0 {
+		end = collectionLen
+	}
+
+	//out of the range
+	if start >= collectionLen {
+		return 0, 0, errors.New("Slice error: out of range")
+	}
+
+	return start, end, nil
+
+}
+
 // LessFunc function
 func LessFunc(data interface{}, order []LoadRequestOrder) (func(i int, j int) bool, bool) {
 

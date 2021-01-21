@@ -81,6 +81,6 @@ func (fc *FileCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (fc *FileCollection) Slice(start int, end int) error {
-	return nil
+func (fc *FileCollection) Slice(start int, end int) {
+
 }

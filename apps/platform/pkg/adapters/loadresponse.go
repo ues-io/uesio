@@ -2,7 +2,6 @@ package adapters
 
 import (
 	"encoding/json"
-	"errors"
 )
 
 // Collection struct
@@ -52,23 +51,6 @@ func (c *Collection) MarshalJSON() ([]byte, error) {
 }
 
 // Slice function
-func (c *Collection) Slice(start int, end int) error {
-
-	//no negative numbers
-	if start < 0 || end < 0 {
-		return errors.New("Slice error: no negative numbers")
-	}
-
-	//the end is biger than the Collection or 0, then end is the last element.
-	if end > len(c.Data) || end == 0 {
-		end = len(c.Data)
-	}
-
-	//out of the range
-	if start >= len(c.Data) {
-		return errors.New("Slice error: out of range")
-	}
-
+func (c *Collection) Slice(start int, end int) {
 	c.Data = c.Data[start:end]
-	return nil
 }

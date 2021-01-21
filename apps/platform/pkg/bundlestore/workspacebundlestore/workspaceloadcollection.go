@@ -53,6 +53,5 @@ func (c *WorkspaceLoadCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (c *WorkspaceLoadCollection) Slice(start int, end int) error {
-	return nil
+func (c *WorkspaceLoadCollection) Slice(start int, end int) {
 }

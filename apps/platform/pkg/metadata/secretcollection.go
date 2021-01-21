@@ -79,6 +79,6 @@ func (sc *SecretCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (sc *SecretCollection) Slice(start int, end int) error {
-	return nil
+func (sc *SecretCollection) Slice(start int, end int) {
+
 }

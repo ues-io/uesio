@@ -54,6 +54,6 @@ func (c *LoadOneCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (c *LoadOneCollection) Slice(start int, end int) error {
-	return nil
+func (c *LoadOneCollection) Slice(start int, end int) {
+
 }

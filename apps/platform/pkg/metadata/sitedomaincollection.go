@@ -54,6 +54,6 @@ func (sdc *SiteDomainCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (sdc *SiteDomainCollection) Slice(start int, end int) error {
-	return nil
+func (sdc *SiteDomainCollection) Slice(start int, end int) {
+
 }

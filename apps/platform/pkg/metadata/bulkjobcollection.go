@@ -54,6 +54,6 @@ func (bjc *BulkJobCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (bjc *BulkJobCollection) Slice(start int, end int) error {
-	return nil
+func (bjc *BulkJobCollection) Slice(start int, end int) {
+
 }

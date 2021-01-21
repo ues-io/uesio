@@ -76,8 +76,6 @@ definition:
           desc: false
         - field: crm.created
           desc: false
-      limit: 3
-      offset: 1
       fields:
         crm.description: null
         crm.id: null

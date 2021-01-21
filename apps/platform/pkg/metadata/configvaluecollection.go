@@ -69,6 +69,6 @@ func (cvc *ConfigValueCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (cvc *ConfigValueCollection) Slice(start int, end int) error {
-	return nil
+func (cvc *ConfigValueCollection) Slice(start int, end int) {
+
 }

@@ -107,6 +107,6 @@ func (bc *BotCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (bc *BotCollection) Slice(start int, end int) error {
-	return nil
+func (bc *BotCollection) Slice(start int, end int) {
+
 }

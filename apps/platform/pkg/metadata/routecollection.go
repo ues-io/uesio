@@ -69,6 +69,6 @@ func (rc *RouteCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (rc *RouteCollection) Slice(start int, end int) error {
-	return nil
+func (rc *RouteCollection) Slice(start int, end int) {
+
 }

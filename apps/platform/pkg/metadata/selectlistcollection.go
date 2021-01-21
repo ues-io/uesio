@@ -79,6 +79,6 @@ func (slc *SelectListCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (slc *SelectListCollection) Slice(start int, end int) error {
-	return nil
+func (slc *SelectListCollection) Slice(start int, end int) {
+
 }

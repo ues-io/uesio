@@ -69,6 +69,6 @@ func (fsc *FileSourceCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (fsc *FileSourceCollection) Slice(start int, end int) error {
-	return nil
+func (fsc *FileSourceCollection) Slice(start int, end int) {
+
 }

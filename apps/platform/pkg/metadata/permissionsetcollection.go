@@ -69,6 +69,6 @@ func (pc *PermissionSetCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (pc *PermissionSetCollection) Slice(start int, end int) error {
-	return nil
+func (pc *PermissionSetCollection) Slice(start int, end int) {
+
 }

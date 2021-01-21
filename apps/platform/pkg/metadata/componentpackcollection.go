@@ -88,6 +88,6 @@ func (cpc *ComponentPackCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (cpc *ComponentPackCollection) Slice(start int, end int) error {
-	return nil
+func (cpc *ComponentPackCollection) Slice(start int, end int) {
+
 }

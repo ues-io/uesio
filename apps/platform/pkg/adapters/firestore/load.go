@@ -55,9 +55,9 @@ func loadOne(
 	query = collection.Select(fieldIDs...)
 
 	//Check if we can use firebase for order/limit/offset
-	useFirebase := true
+	useNativeOrdering := true
 	if len(op.Order) > 0 && len(op.Conditions) > 0 {
-		useFirebase = false
+		useNativeOrdering = false
 		//TO-DO display a warning (this query may not be optimized for this data adapter)
 	}
 
@@ -93,7 +93,7 @@ func loadOne(
 		}
 	}
 
-	if useFirebase {
+	if useNativeOrdering {
 		for _, order := range op.Order {
 
 			fieldMetadata, err := collectionMetadata.GetField(order.Field)
@@ -143,7 +143,7 @@ func loadOne(
 		}
 	}
 
-	if !useFirebase {
+	if !useNativeOrdering {
 		collSlice := op.Collection.GetItems()
 		locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
 		if ok {
@@ -152,20 +152,18 @@ func loadOne(
 
 		//limit and offset
 		if op.Limit != 0 && op.Offset != 0 {
-
-			var start = op.Offset
-			var end = op.Offset + op.Limit
-
-			err = op.Collection.Slice(start, end)
+			start, end, err := adapters.GetSliceIndexes(op.Offset, op.Offset+op.Limit, op.Collection.Len())
 			if err != nil {
 				return err
 			}
-		} else {
+			op.Collection.Slice(start, end)
+		} else if op.Limit != 0 || op.Offset != 0 {
 			//just limit or offset
-			err = op.Collection.Slice(op.Offset, op.Limit)
+			start, end, err := adapters.GetSliceIndexes(op.Offset, op.Limit, op.Collection.Len())
 			if err != nil {
 				return err
 			}
+			op.Collection.Slice(start, end)
 		}
 
 	}

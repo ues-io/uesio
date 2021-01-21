@@ -54,6 +54,6 @@ func (sc *SiteCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (sc *SiteCollection) Slice(start int, end int) error {
-	return nil
+func (sc *SiteCollection) Slice(start int, end int) {
+
 }

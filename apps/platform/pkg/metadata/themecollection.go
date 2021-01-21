@@ -79,6 +79,6 @@ func (tc *ThemeCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (tc *ThemeCollection) Slice(start int, end int) error {
-	return nil
+func (tc *ThemeCollection) Slice(start int, end int) {
+
 }

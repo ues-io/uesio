@@ -54,6 +54,6 @@ func (bbc *BulkBatchCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (bbc *BulkBatchCollection) Slice(start int, end int) error {
-	return nil
+func (bbc *BulkBatchCollection) Slice(start int, end int) {
+
 }

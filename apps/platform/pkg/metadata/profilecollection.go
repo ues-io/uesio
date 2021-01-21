@@ -69,6 +69,6 @@ func (pc *ProfileCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (pc *ProfileCollection) Slice(start int, end int) error {
-	return nil
+func (pc *ProfileCollection) Slice(start int, end int) {
+
 }

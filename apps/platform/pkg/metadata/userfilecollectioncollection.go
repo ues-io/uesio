@@ -69,6 +69,6 @@ func (ufcc *UserFileCollectionCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (ufcc *UserFileCollectionCollection) Slice(start int, end int) error {
-	return nil
+func (ufcc *UserFileCollectionCollection) Slice(start int, end int) {
+
 }

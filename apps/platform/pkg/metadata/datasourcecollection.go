@@ -69,6 +69,6 @@ func (dsc *DataSourceCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (dsc *DataSourceCollection) Slice(start int, end int) error {
-	return nil
+func (dsc *DataSourceCollection) Slice(start int, end int) {
+
 }

@@ -97,6 +97,6 @@ func (fc *FieldCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (fc *FieldCollection) Slice(start int, end int) error {
-	return nil
+func (fc *FieldCollection) Slice(start int, end int) {
+
 }

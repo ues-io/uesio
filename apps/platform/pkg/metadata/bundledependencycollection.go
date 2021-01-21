@@ -54,6 +54,6 @@ func (bc *BundleDependencyCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (bc *BundleDependencyCollection) Slice(start int, end int) error {
-	return nil
+func (bc *BundleDependencyCollection) Slice(start int, end int) {
+
 }

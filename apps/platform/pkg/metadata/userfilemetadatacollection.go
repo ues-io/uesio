@@ -54,6 +54,6 @@ func (ufmc *UserFileMetadataCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (ufmc *UserFileMetadataCollection) Slice(start int, end int) error {
-	return nil
+func (ufmc *UserFileMetadataCollection) Slice(start int, end int) {
+
 }

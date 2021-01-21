@@ -69,6 +69,6 @@ func (cc *CollectionCollection) GetItems() interface{} {
 }
 
 // Slice function
-func (cc *CollectionCollection) Slice(start int, end int) error {
-	return nil
+func (cc *CollectionCollection) Slice(start int, end int) {
+
 }
