@@ -58,8 +58,6 @@ const fetchingThemeReducer = (
 	if (entityState) {
 		entityState.isFetching = true
 	} else {
-		// the current theme is placed at the first position
-		state.ids.unshift(themeId)
 		state.entities = {
 			[themeId]: {
 				themeId,
@@ -67,6 +65,8 @@ const fetchingThemeReducer = (
 			},
 		}
 	}
+	// the current theme is placed at the first position
+	state.ids.unshift(themeId)
 }
 
 const themeSlice = createSlice({
