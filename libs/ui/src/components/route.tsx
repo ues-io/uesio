@@ -13,7 +13,6 @@ import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
-import { RouteState } from "../bands/route/types"
 
 const makePaletteTheme = (theme: Theme) =>
 	Object.entries(theme?.definition || {}).reduce(

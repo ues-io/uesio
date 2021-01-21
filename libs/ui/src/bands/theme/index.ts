@@ -36,7 +36,7 @@ const fetchedThemeReducer = (
 	console.log("payload reducer", payload)
 	const themeId = getThemeId({
 		...payload,
-		theme: payload.namespace + "." + payload.name,
+		theme: `${payload.namespace}.${payload.name}`,
 	})
 	console.log("themeId reducer", themeId)
 
