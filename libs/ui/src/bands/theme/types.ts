@@ -15,12 +15,13 @@ interface Theme {
 	id?: string
 	name: string
 	namespace: string
-	workspace?: WorkspaceState
+	workspace?: string
 	definition?: Palette
 }
 
 interface ThemeState {
 	routeTheme: Theme
+	routeWorkspace?: WorkspaceState
 	isFetching: boolean
 	isCurrentTheme: boolean
 }

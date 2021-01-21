@@ -60,7 +60,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				fetchTheme({
 					namespace,
 					name,
-					workspace: route.workspace,
+					routeWorkspace: route.workspace,
 					context: routeContext,
 				})
 			)

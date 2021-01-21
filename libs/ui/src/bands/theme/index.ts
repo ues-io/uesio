@@ -9,14 +9,15 @@ import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
 import themeAdapter, { getThemeId } from "./adapter"
+import setWith from "lodash.setwith"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
 	{
 		namespace: string
 		name: string
+		routeWorkspace: ThemeState["routeWorkspace"]
 		context: Context
-		workspace: Theme["workspace"]
 	},
 	UesioThunkAPI
 >(themefetchActionType, async ({ namespace, name, context }, api) =>
@@ -32,6 +33,12 @@ const fetchedThemeReducer = (
 		theme: `${payload.namespace}.${payload.name}`,
 	})
 	const entityState = state.entities?.[themeId]
+
+	// set all entities properties isCurrentTheme to false
+	state.entities = state.entities.reduce((acc, entity) => {
+		entity.isCurrentTheme = false
+		return [...acc, entity]
+	}, [])
 
 	if (entityState) {
 		entityState.routeTheme = payload
