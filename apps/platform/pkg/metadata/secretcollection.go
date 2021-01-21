@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // SecretCollection slice
@@ -16,12 +16,12 @@ func (sc *SecretCollection) GetName() string {
 }
 
 // GetFields function
-func (sc *SecretCollection) GetFields() []adapters.LoadRequestField {
+func (sc *SecretCollection) GetFields() []string {
 	return StandardGetFields(sc)
 }
 
 // NewItem function
-func (sc *SecretCollection) NewItem() adapters.LoadableItem {
+func (sc *SecretCollection) NewItem() loadable.Item {
 	return &Secret{}
 }
 
@@ -48,17 +48,17 @@ func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditi
 }
 
 // AddItem function
-func (sc *SecretCollection) AddItem(item adapters.LoadableItem) {
+func (sc *SecretCollection) AddItem(item loadable.Item) {
 	*sc = append(*sc, *item.(*Secret))
 }
 
 // GetItem function
-func (sc *SecretCollection) GetItem(index int) adapters.LoadableItem {
+func (sc *SecretCollection) GetItem(index int) loadable.Item {
 	return &(*sc)[index]
 }
 
 // Loop function
-func (sc *SecretCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (sc *SecretCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *sc {
 		err := iter(sc.GetItem(index))
 		if err != nil {

@@ -2,8 +2,6 @@ package metadata
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewPermissionSet function
@@ -45,13 +43,10 @@ func (ps *PermissionSet) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ps *PermissionSet) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: ps.Name,
-		},
-	}, nil
+func (ps *PermissionSet) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": ps.Name,
+	}
 }
 
 // GetBundleGroup function

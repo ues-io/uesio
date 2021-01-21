@@ -6,11 +6,10 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // Migrate function
-func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) Migrate(metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 
 	fmt.Println("Migrating MYSQL")
 

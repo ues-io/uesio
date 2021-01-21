@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttools"
 )
 
@@ -14,14 +14,14 @@ type BundleConditions map[string]string
 
 // CollectionableGroup interface
 type CollectionableGroup interface {
-	adapters.LoadableGroup
+	loadable.Group
 	GetName() string
-	GetFields() []adapters.LoadRequestField
+	GetFields() []string
 }
 
 // CollectionableItem interface
 type CollectionableItem interface {
-	adapters.LoadableItem
+	loadable.Item
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
 }
@@ -41,7 +41,7 @@ type BundleableItem interface {
 	GetPermChecker() *PermissionSet
 	GetKey() string
 	GetPath() string
-	GetConditions() ([]adapters.LoadRequestCondition, error)
+	GetConditions() map[string]string
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)
@@ -73,18 +73,12 @@ func StandardPathFromKey(key string) string {
 }
 
 // StandardGetFields function
-func StandardGetFields(group CollectionableGroup) []adapters.LoadRequestField {
-	fieldRequests := []adapters.LoadRequestField{}
+func StandardGetFields(group CollectionableGroup) []string {
 	names, err := reflecttools.GetFieldNames(group.NewItem())
 	if err != nil {
-		return fieldRequests
+		return []string{}
 	}
-	for _, name := range names {
-		fieldRequests = append(fieldRequests, adapters.LoadRequestField{
-			ID: name,
-		})
-	}
-	return fieldRequests
+	return names
 }
 
 // StandardFieldGet function

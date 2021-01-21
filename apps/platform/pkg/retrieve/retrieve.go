@@ -5,10 +5,10 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
@@ -28,7 +28,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 			return nil, err
 		}
 
-		err = group.Loop(func(item adapters.LoadableItem) error {
+		err = group.Loop(func(item loadable.Item) error {
 
 			path := item.(metadata.BundleableItem).GetPath()
 

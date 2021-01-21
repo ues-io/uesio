@@ -3,8 +3,6 @@ package metadata
 import (
 	"errors"
 	"path/filepath"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewField function
@@ -76,17 +74,11 @@ func (f *Field) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (f *Field) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: f.Name,
-		},
-		{
-			Field: "uesio.collection",
-			Value: f.CollectionRef,
-		},
-	}, nil
+func (f *Field) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name":       f.Name,
+		"uesio.collection": f.CollectionRef,
+	}
 }
 
 // GetBundleGroup function

@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // FileSourceCollection slice
@@ -13,12 +13,12 @@ func (fsc *FileSourceCollection) GetName() string {
 }
 
 // GetFields function
-func (fsc *FileSourceCollection) GetFields() []adapters.LoadRequestField {
+func (fsc *FileSourceCollection) GetFields() []string {
 	return StandardGetFields(fsc)
 }
 
 // NewItem function
-func (fsc *FileSourceCollection) NewItem() adapters.LoadableItem {
+func (fsc *FileSourceCollection) NewItem() loadable.Item {
 	return &FileSource{}
 }
 
@@ -38,17 +38,17 @@ func (fsc *FileSourceCollection) GetKeyFromPath(path string, conditions BundleCo
 }
 
 // AddItem function
-func (fsc *FileSourceCollection) AddItem(item adapters.LoadableItem) {
+func (fsc *FileSourceCollection) AddItem(item loadable.Item) {
 	*fsc = append(*fsc, *item.(*FileSource))
 }
 
 // GetItem function
-func (fsc *FileSourceCollection) GetItem(index int) adapters.LoadableItem {
+func (fsc *FileSourceCollection) GetItem(index int) loadable.Item {
 	return &(*fsc)[index]
 }
 
 // Loop function
-func (fsc *FileSourceCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (fsc *FileSourceCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *fsc {
 		err := iter(fsc.GetItem(index))
 		if err != nil {

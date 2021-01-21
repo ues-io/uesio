@@ -6,8 +6,6 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"cloud.google.com/go/firestore"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/templating"
@@ -214,7 +212,7 @@ func processDeletes(deletes map[string]adapters.DeleteRequest, collectionMetadat
 	return deleteResults, nil
 }
 
-func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
@@ -237,7 +235,7 @@ func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters
 }
 
 // Save function
-func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) ([]adapters.SaveResponse, error) {
 
 	ctx := context.Background()
 	response := []adapters.SaveResponse{}

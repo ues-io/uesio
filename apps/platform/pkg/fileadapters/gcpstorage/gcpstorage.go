@@ -5,9 +5,8 @@ import (
 	"errors"
 	"os"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"cloud.google.com/go/storage"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"google.golang.org/api/option"
 )
 
@@ -18,7 +17,7 @@ type FileAdapter struct {
 // TODO: Figure out a way to clean up and close unused clients
 var clientPool = map[string]*storage.Client{}
 
-func getNewClient(ctx context.Context, credentials *creds.FileAdapterCredentials) (*storage.Client, error) {
+func getNewClient(ctx context.Context, credentials *fileadapters.Credentials) (*storage.Client, error) {
 	projectID := getProjectID()
 	if projectID == "" {
 		projectID = "test"
@@ -33,7 +32,7 @@ func getProjectID() string {
 	return os.Getenv("GOOGLE_CLOUD_PROJECT")
 }
 
-func getClient(credentials *creds.FileAdapterCredentials) (*storage.Client, error) {
+func getClient(credentials *fileadapters.Credentials) (*storage.Client, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	client, ok := clientPool[hash]

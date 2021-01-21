@@ -5,6 +5,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/middlewares"
@@ -129,7 +130,7 @@ func getConfigValueDependencyFromComponent(key string, session *sess.Session) (s
 	if err != nil {
 		return "", err
 	}
-	value, err := metadata.GetConfigValue(key, site)
+	value, err := configstore.GetValue(key, site)
 	if err != nil {
 		return "", err
 	}

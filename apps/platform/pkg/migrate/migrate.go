@@ -79,7 +79,7 @@ func Migrate(session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		credentials, err := ds.GetCredentials(site)
+		credentials, err := adapters.GetCredentials(ds, site)
 		if err != nil {
 			return err
 		}

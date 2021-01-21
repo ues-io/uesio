@@ -9,8 +9,6 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	sqlshared "github.com/thecloudmasters/uesio/pkg/adapters/sql"
 )
@@ -222,7 +220,7 @@ func loadOne(
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 
 	ctx := context.Background()
 

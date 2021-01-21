@@ -3,7 +3,6 @@ package metadata
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -34,11 +33,6 @@ type UserFileCollection struct {
 // GetFileSource function
 func (ufc *UserFileCollection) GetFileSource() string {
 	return ufc.FileSource
-}
-
-// GetBucket function
-func (ufc *UserFileCollection) GetBucket(site *Site) (string, error) {
-	return GetConfigValue(ufc.Bucket, site)
 }
 
 // GetPath function
@@ -72,13 +66,10 @@ func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (ufc *UserFileCollection) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: ufc.Name,
-		},
-	}, nil
+func (ufc *UserFileCollection) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": ufc.Name,
+	}
 }
 
 // GetBundleGroup function

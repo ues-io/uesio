@@ -2,8 +2,6 @@ package metadata
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
 )
 
 // NewCollection function
@@ -46,13 +44,10 @@ func (c *Collection) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (c *Collection) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: c.Name,
-		},
-	}, nil
+func (c *Collection) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": c.Name,
+	}
 }
 
 // GetBundleGroup function

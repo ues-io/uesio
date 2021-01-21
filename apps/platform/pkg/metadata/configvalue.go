@@ -2,10 +2,6 @@ package metadata
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 // ConfigValue struct
@@ -42,13 +38,10 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 }
 
 // GetConditions function
-func (cv *ConfigValue) GetConditions() ([]adapters.LoadRequestCondition, error) {
-	return []adapters.LoadRequestCondition{
-		{
-			Field: "uesio.name",
-			Value: cv.Name,
-		},
-	}, nil
+func (cv *ConfigValue) GetConditions() map[string]string {
+	return map[string]string{
+		"uesio.name": cv.Name,
+	}
 }
 
 // GetBundleGroup function
@@ -95,40 +88,4 @@ func (cv *ConfigValue) SetNamespace(namespace string) {
 // SetWorkspace function
 func (cv *ConfigValue) SetWorkspace(workspace string) {
 	cv.Workspace = workspace
-}
-
-// GetConfigValue key
-func GetConfigValue(key string, site *Site) (string, error) {
-	if key == "" {
-		return "", nil
-	}
-
-	namespace, name, err := ParseKey(key)
-	if err != nil {
-		return "", errors.New("Failed Parsing Config Value: " + key + " : " + err.Error())
-	}
-
-	// Only use the environment configstore for now
-	store, err := configstore.GetConfigStore("environment")
-	if err != nil {
-		return "", err
-	}
-
-	return store.Get(namespace, name, site.Name)
-}
-
-// MergeConfigValue function
-func MergeConfigValue(template string, site *Site) (string, error) {
-	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
-		return GetConfigValue(key, site)
-	})
-	if err != nil {
-		return "", err
-	}
-
-	value, err := templating.Execute(configTemplate, nil)
-	if err != nil {
-		return "", err
-	}
-	return value, nil
 }

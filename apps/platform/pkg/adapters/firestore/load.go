@@ -6,8 +6,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"cloud.google.com/go/firestore"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
 	"google.golang.org/api/iterator"
@@ -208,7 +206,7 @@ func hydrateItem(
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) Load(ops []adapters.LoadOp, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 
 	ctx := context.Background()
 

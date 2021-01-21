@@ -2,6 +2,8 @@ package adapters
 
 import (
 	"encoding/json"
+
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // Collection struct
@@ -10,17 +12,17 @@ type Collection struct {
 }
 
 // GetItem function
-func (c *Collection) GetItem(index int) LoadableItem {
+func (c *Collection) GetItem(index int) loadable.Item {
 	return &c.Data[index]
 }
 
 // AddItem function
-func (c *Collection) AddItem(item LoadableItem) {
+func (c *Collection) AddItem(item loadable.Item) {
 	c.Data = append(c.Data, *item.(*Item))
 }
 
 // NewItem function
-func (c *Collection) NewItem() LoadableItem {
+func (c *Collection) NewItem() loadable.Item {
 	return &Item{}
 }
 
@@ -30,7 +32,7 @@ func (c *Collection) GetItems() interface{} {
 }
 
 // Loop function
-func (c *Collection) Loop(iter func(item LoadableItem) error) error {
+func (c *Collection) Loop(iter func(item loadable.Item) error) error {
 	for index := range c.Data {
 		err := iter(c.GetItem(index))
 		if err != nil {

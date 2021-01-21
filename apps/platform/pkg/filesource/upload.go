@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 	"github.com/thecloudmasters/uesio/pkg/metadata"
@@ -105,11 +106,11 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (str
 	if err != nil {
 		return "", err
 	}
-	credentials, err := fs.GetCredentials(site)
+	credentials, err := fileadapters.GetCredentials(fs, site)
 	if err != nil {
 		return "", err
 	}
-	bucket, err := ufc.GetBucket(site)
+	bucket, err := configstore.GetValue(ufc.Bucket, site)
 	if err != nil {
 		return "", err
 	}

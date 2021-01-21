@@ -4,8 +4,6 @@ import (
 	"errors"
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
@@ -264,7 +262,7 @@ func processDeletes(deletes map[string]adapters.DeleteRequest, collectionMetadat
 	return deleteResults, nil
 }
 
-func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err
@@ -286,7 +284,7 @@ func (a *Adapter) handleLookups(request adapters.SaveRequest, metadata *adapters
 }
 
 // Save function
-func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) ([]adapters.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) ([]adapters.SaveResponse, error) {
 
 	response := []adapters.SaveResponse{}
 	client := getDynamoDB(credentials)

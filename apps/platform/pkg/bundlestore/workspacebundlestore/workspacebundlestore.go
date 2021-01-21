@@ -18,27 +18,22 @@ type WorkspaceBundleStore struct {
 
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version string, session *sess.Session) error {
-	conditions, err := item.GetConditions()
-	if err != nil {
-		return err
-	}
+	conditionsMap := item.GetConditions()
 	// Add the workspace id as a condition
-	conditions = append(conditions, adapters.LoadRequestCondition{
-		Field: "uesio.workspaceid",
-		Value: session.GetWorkspaceID(),
-	})
-	err = datasource.PlatformLoadOne(
-		item,
-		conditions,
-		session,
-	)
-	if err != nil {
-		return err
+	conditionsMap["uesio.workspaceid"] = session.GetWorkspaceID()
+
+	conditions := []adapters.LoadRequestCondition{}
+
+	for field, value := range conditionsMap {
+		conditions = append(conditions, adapters.LoadRequestCondition{
+			Field: field,
+			Value: value,
+		})
 	}
 
 	item.SetNamespace(session.GetWorkspaceApp())
 
-	return nil
+	return datasource.PlatformLoadOne(item, conditions, session)
 }
 
 // GetItems function

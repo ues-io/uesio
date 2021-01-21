@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // WorkspaceCollection slice
@@ -13,27 +13,27 @@ func (wc *WorkspaceCollection) GetName() string {
 }
 
 // GetFields function
-func (wc *WorkspaceCollection) GetFields() []adapters.LoadRequestField {
+func (wc *WorkspaceCollection) GetFields() []string {
 	return StandardGetFields(wc)
 }
 
 // GetItem function
-func (wc *WorkspaceCollection) GetItem(index int) adapters.LoadableItem {
+func (wc *WorkspaceCollection) GetItem(index int) loadable.Item {
 	return &(*wc)[index]
 }
 
 // AddItem function
-func (wc *WorkspaceCollection) AddItem(item adapters.LoadableItem) {
+func (wc *WorkspaceCollection) AddItem(item loadable.Item) {
 	*wc = append(*wc, *item.(*Workspace))
 }
 
 // NewItem function
-func (wc *WorkspaceCollection) NewItem() adapters.LoadableItem {
+func (wc *WorkspaceCollection) NewItem() loadable.Item {
 	return &Workspace{}
 }
 
 // Loop function
-func (wc *WorkspaceCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (wc *WorkspaceCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *wc {
 		err := iter(wc.GetItem(index))
 		if err != nil {

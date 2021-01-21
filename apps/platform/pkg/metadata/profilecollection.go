@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // ProfileCollection slice
@@ -13,12 +13,12 @@ func (pc *ProfileCollection) GetName() string {
 }
 
 // GetFields function
-func (pc *ProfileCollection) GetFields() []adapters.LoadRequestField {
+func (pc *ProfileCollection) GetFields() []string {
 	return StandardGetFields(pc)
 }
 
 // NewItem function
-func (pc *ProfileCollection) NewItem() adapters.LoadableItem {
+func (pc *ProfileCollection) NewItem() loadable.Item {
 	return &Profile{}
 }
 
@@ -38,17 +38,17 @@ func (pc *ProfileCollection) GetKeyFromPath(path string, conditions BundleCondit
 }
 
 // AddItem function
-func (pc *ProfileCollection) AddItem(item adapters.LoadableItem) {
+func (pc *ProfileCollection) AddItem(item loadable.Item) {
 	*pc = append(*pc, *item.(*Profile))
 }
 
 // GetItem function
-func (pc *ProfileCollection) GetItem(index int) adapters.LoadableItem {
+func (pc *ProfileCollection) GetItem(index int) loadable.Item {
 	return &(*pc)[index]
 }
 
 // Loop function
-func (pc *ProfileCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (pc *ProfileCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *pc {
 		err := iter(pc.GetItem(index))
 		if err != nil {

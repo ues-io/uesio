@@ -1,7 +1,7 @@
 package metadata
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // RouteCollection slice
@@ -13,12 +13,12 @@ func (rc *RouteCollection) GetName() string {
 }
 
 // GetFields function
-func (rc *RouteCollection) GetFields() []adapters.LoadRequestField {
+func (rc *RouteCollection) GetFields() []string {
 	return StandardGetFields(rc)
 }
 
 // NewItem function
-func (rc *RouteCollection) NewItem() adapters.LoadableItem {
+func (rc *RouteCollection) NewItem() loadable.Item {
 	return &Route{}
 }
 
@@ -38,17 +38,17 @@ func (rc *RouteCollection) GetKeyFromPath(path string, conditions BundleConditio
 }
 
 // AddItem function
-func (rc *RouteCollection) AddItem(item adapters.LoadableItem) {
+func (rc *RouteCollection) AddItem(item loadable.Item) {
 	*rc = append(*rc, *item.(*Route))
 }
 
 // GetItem function
-func (rc *RouteCollection) GetItem(index int) adapters.LoadableItem {
+func (rc *RouteCollection) GetItem(index int) loadable.Item {
 	return &(*rc)[index]
 }
 
 // Loop function
-func (rc *RouteCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (rc *RouteCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *rc {
 		err := iter(rc.GetItem(index))
 		if err != nil {

@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // ComponentPackCollection slice
@@ -17,12 +17,12 @@ func (cpc *ComponentPackCollection) GetName() string {
 }
 
 // GetFields function
-func (cpc *ComponentPackCollection) GetFields() []adapters.LoadRequestField {
+func (cpc *ComponentPackCollection) GetFields() []string {
 	return StandardGetFields(cpc)
 }
 
 // NewItem function
-func (cpc *ComponentPackCollection) NewItem() adapters.LoadableItem {
+func (cpc *ComponentPackCollection) NewItem() loadable.Item {
 	return &ComponentPack{}
 }
 
@@ -57,17 +57,17 @@ func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions Bundl
 }
 
 // AddItem function
-func (cpc *ComponentPackCollection) AddItem(item adapters.LoadableItem) {
+func (cpc *ComponentPackCollection) AddItem(item loadable.Item) {
 	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 
 // GetItem function
-func (cpc *ComponentPackCollection) GetItem(index int) adapters.LoadableItem {
+func (cpc *ComponentPackCollection) GetItem(index int) loadable.Item {
 	return &(*cpc)[index]
 }
 
 // Loop function
-func (cpc *ComponentPackCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (cpc *ComponentPackCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *cpc {
 		err := iter(cpc.GetItem(index))
 		if err != nil {

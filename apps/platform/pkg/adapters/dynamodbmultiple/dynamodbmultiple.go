@@ -10,14 +10,13 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // Adapter struct
 type Adapter struct {
 }
 
-func getDynamoDB(dbcreds *creds.AdapterCredentials) *dynamodb.DynamoDB {
+func getDynamoDB(dbcreds *adapters.Credentials) *dynamodb.DynamoDB {
 
 	sess, _ := session.NewSession(&aws.Config{
 		Region:      aws.String(dbcreds.Region),

@@ -6,8 +6,6 @@ import (
 	"errors"
 	"text/template"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
-
 	"github.com/Masterminds/squirrel"
 	guuid "github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapters"
@@ -19,7 +17,6 @@ func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adap
 	postgresSQLId, _ := change.FieldChanges[collectionMetadata.IDField].(string)
 	idFieldName := ""
 
-	searchableValues := []string{}
 	for fieldID, value := range change.FieldChanges {
 		if fieldID == collectionMetadata.IDField {
 			// We don't need to add the id field to the update
@@ -31,9 +28,6 @@ func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adap
 			continue
 		}
 
-		if fieldID == collectionMetadata.NameField {
-			searchableValues = append(searchableValues, value.(string))
-		}
 		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
 			return nil, "", "", err
@@ -67,15 +61,10 @@ func getUpdatesForChange(change adapters.ChangeRequest, collectionMetadata *adap
 
 func getInsertsForChange(change adapters.ChangeRequest, collectionMetadata *adapters.CollectionMetadata) (map[string]interface{}, error) {
 	inserts := map[string]interface{}{}
-	searchableValues := []string{}
 	for fieldID, value := range change.FieldChanges {
 		fieldMetadata, err := collectionMetadata.GetField(fieldID)
 		if err != nil {
 			return nil, err
-		}
-
-		if fieldID == collectionMetadata.NameField {
-			searchableValues = append(searchableValues, value.(string))
 		}
 
 		if fieldMetadata.Type == "REFERENCE" {
@@ -159,7 +148,10 @@ func processInsert(change adapters.ChangeRequest, collectionName string, collect
 		return "", errors.New("Failed to insert in SQL Adapter:" + err.Error())
 	}
 
-	result.Scan(newID)
+	err = result.Scan(newID)
+	if err != nil {
+		return "", errors.New("Failed to insert in SQL Adapter:" + err.Error())
+	}
 	return newID, nil
 }
 
@@ -219,7 +211,10 @@ func ProcessDeletes(deletes map[string]adapters.DeleteRequest, collectionName st
 			if err != nil {
 				return nil, errors.New("Failed to delete in SQL Adapter:" + err.Error())
 			}
-			result.Scan(deleteResult.Data[collectionMetadata.IDField])
+			err = result.Scan(deleteResult.Data[collectionMetadata.IDField])
+			if err != nil {
+				return nil, errors.New("Failed to delete in SQL Adapter:" + err.Error())
+			}
 
 		} else {
 			return nil, errors.New("No id provided for delete")
@@ -232,7 +227,7 @@ func ProcessDeletes(deletes map[string]adapters.DeleteRequest, collectionName st
 }
 
 //HandleLookups function
-func HandleLookups(a adapters.Adapter, request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *creds.AdapterCredentials) error {
+func HandleLookups(a adapters.Adapter, request adapters.SaveRequest, metadata *adapters.MetadataCache, credentials *adapters.Credentials) error {
 	lookupOps, err := adapters.GetLookupOps(request, metadata)
 	if err != nil {
 		return err

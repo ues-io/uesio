@@ -5,10 +5,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/fileadapters"
 )
 
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *creds.FileAdapterCredentials) error {
+func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *fileadapters.Credentials) error {
 	client, err := getClient(credentials)
 	if err != nil {
 		return errors.New("Invalid FileAdapterCredentials specified")

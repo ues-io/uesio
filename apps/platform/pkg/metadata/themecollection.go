@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
 )
 
 // ThemeCollection slice
@@ -16,12 +16,12 @@ func (tc *ThemeCollection) GetName() string {
 }
 
 // GetFields function
-func (tc *ThemeCollection) GetFields() []adapters.LoadRequestField {
+func (tc *ThemeCollection) GetFields() []string {
 	return StandardGetFields(tc)
 }
 
 // NewItem function
-func (tc *ThemeCollection) NewItem() adapters.LoadableItem {
+func (tc *ThemeCollection) NewItem() loadable.Item {
 	return &Theme{}
 }
 
@@ -48,17 +48,17 @@ func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditio
 }
 
 // AddItem function
-func (tc *ThemeCollection) AddItem(item adapters.LoadableItem) {
+func (tc *ThemeCollection) AddItem(item loadable.Item) {
 	*tc = append(*tc, *item.(*Theme))
 }
 
 // GetItem function
-func (tc *ThemeCollection) GetItem(index int) adapters.LoadableItem {
+func (tc *ThemeCollection) GetItem(index int) loadable.Item {
 	return &(*tc)[index]
 }
 
 // Loop function
-func (tc *ThemeCollection) Loop(iter func(item adapters.LoadableItem) error) error {
+func (tc *ThemeCollection) Loop(iter func(item loadable.Item) error) error {
 	for index := range *tc {
 		err := iter(tc.GetItem(index))
 		if err != nil {
