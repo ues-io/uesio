@@ -58,7 +58,8 @@ const fetchingThemeReducer = (
 	if (entityState) {
 		entityState.isFetching = true
 	} else {
-		state.ids.push(themeId)
+		// the current theme is placed at the first position
+		state.ids = [themeId, ...state.ids]
 		state.entities = {
 			[themeId]: {
 				themeId,
