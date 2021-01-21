@@ -35,7 +35,9 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 
 	const themeState = useTheme()
 	const themeId = getThemeId(route)
+	console.log("route route", route)
 	console.log("themeId route", themeId)
+	console.log("themeState route", themeState)
 	const theme = themeId
 		? themeState.entities?.[themeId]?.routeTheme
 		: undefined

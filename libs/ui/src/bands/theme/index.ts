@@ -24,22 +24,14 @@ const fetchTheme = createAsyncThunk<
 	api.extra.getTheme(context, namespace, name)
 )
 
-/*|| {
-	routeTheme: undefined,
-	isFetching: false,
-}*/
-
 const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ payload }: PayloadAction<Theme>
 ) => {
-	console.log("payload fetchedThemeReducer", payload)
 	const themeId = getThemeId({
 		...payload,
 		theme: `${payload.namespace}.${payload.name}`,
 	})
-	console.log("themeId fetchedThemeReducer", themeId)
-
 	const entityState = state.entities?.[themeId]
 	if (entityState) {
 		entityState.routeTheme = payload
@@ -68,6 +60,7 @@ const fetchingThemeReducer = (
 	} else {
 		state.entities = {
 			[themeId]: {
+				themeId,
 				isFetching: true,
 			},
 		}
