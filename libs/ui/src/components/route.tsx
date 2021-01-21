@@ -72,7 +72,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 
 	// Quit rendering early if we don't have our theme yet.
 	//if (theme.isFetching || !theme.routeTheme) return null
-	if (!theme) return null
+	if (themeState.entities?.[themeId]?.isFetching || !theme) return null
 
 	return (
 		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>

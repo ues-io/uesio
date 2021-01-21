@@ -33,14 +33,14 @@ const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ payload }: PayloadAction<Theme>
 ) => {
-	console.log("payload reducer", payload)
+	console.log("payload fetchedThemeReducer", payload)
 	const themeId = getThemeId({
 		...payload,
 		theme: `${payload.namespace}.${payload.name}`,
 	})
-	console.log("themeId reducer", themeId)
+	console.log("themeId fetchedThemeReducer", themeId)
 
-	const entityState = state.entities[themeId]
+	const entityState = state.entities?.[themeId]
 	if (entityState) {
 		entityState.routeTheme = payload
 		entityState.isFetching = false
@@ -58,14 +58,20 @@ const fetchingThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ meta: { arg } }: PayloadAction<Theme>
 ) => {
-	console.log("state", JSON.stringify(state, undefined, 2))
-	console.log("action", arg)
-
-	/*
-	const themeId = `${payload?.workspace || payload.namespace}.${payload.name}`
-
-	state.entities[themeId].isFetching = true
-	*/
+	const themeId = getThemeId({
+		...arg,
+		theme: `${arg.namespace}.${arg.name}`,
+	})
+	const entityState = state.entities?.[themeId]
+	if (entityState) {
+		entityState.isFetching = true
+	} else {
+		state.entities = {
+			[themeId]: {
+				isFetching: true,
+			},
+		}
+	}
 }
 
 const themeSlice = createSlice({
