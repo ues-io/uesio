@@ -3,7 +3,6 @@ import { fetchTheme } from "../bands/theme"
 import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
-import { getThemeId } from "../bands/theme/adapter"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
 import { BaseProps } from "../definition/definition"
@@ -34,16 +33,10 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!route) return null
 
 	const themeState = useTheme()
-	const themeId = getThemeId(route)
-	console.log("route route", route)
-	console.log("themeId route", themeId)
-	console.log("themeState route", themeState)
-	const theme = themeId
-		? // subsequent rendering, grap from the Reddux store
-		  themeState?.ids?.[0] &&
-		  themeState.entities?.[themeState.ids[0]]?.routeTheme
-		: // first rendering, save innto the Redux tore
-		  themeState.entities?.[themeId]?.routeTheme
+	const theme = themeState?.ids?.[0]
+		? themeState.entities?.[themeState.ids[0]]?.routeTheme
+		: undefined
+
 	const routeContext = props.context.addFrame({
 		route,
 		workspace: route.workspace,
@@ -75,8 +68,12 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
-	//if (theme.isFetching || !theme.routeTheme) return null
-	if (themeState.entities?.[themeId]?.isFetching || !theme) return null
+	if (
+		(themeState?.ids?.[0] &&
+			themeState.entities?.[themeState.ids[0]]?.isFetching) ||
+		!theme
+	)
+		return null
 
 	return (
 		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>
