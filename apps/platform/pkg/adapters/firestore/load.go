@@ -54,13 +54,6 @@ func loadOne(
 	}
 	query = collection.Select(fieldIDs...)
 
-	//Check if we can use firebase for order/limit/offset
-	useNativeOrdering := true
-	if len(op.Order) > 0 && len(op.Conditions) > 0 {
-		useNativeOrdering = false
-		//TO-DO display a warning (this query may not be optimized for this data adapter)
-	}
-
 	for _, condition := range op.Conditions {
 
 		if condition.Type == "SEARCH" {
@@ -91,6 +84,13 @@ func loadOne(
 		} else {
 			query = query.Where(fieldName, "==", conditionValue)
 		}
+	}
+
+	//Check if we can use firebase for order/limit/offset
+	useNativeOrdering := true
+	if len(op.Order) > 0 && len(op.Conditions) > 0 {
+		useNativeOrdering = false
+		//TO-DO display a warning (this query may not be optimized for this data adapter)
 	}
 
 	if useNativeOrdering {
