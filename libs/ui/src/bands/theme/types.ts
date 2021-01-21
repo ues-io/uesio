@@ -1,4 +1,4 @@
-import { WorkspaceState, RouteState } from "../route/types"
+import { RouteState } from "../route/types"
 
 const themefetchActionType = "theme/fetch"
 
