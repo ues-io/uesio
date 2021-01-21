@@ -1,32 +1,31 @@
-// @ts-nocheck
-import {
-	createAsyncThunk,
-	createSlice,
-	EntityState,
-	PayloadAction,
-} from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice, EntityState } from "@reduxjs/toolkit"
 import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
 import themeAdapter from "./adapter"
 
-const fetchTheme = createAsyncThunk<
-	Theme,
-	{
-		namespace: string
-		name: string
-		route: ThemeState["route"]
-		context: Context
-	},
-	UesioThunkAPI
->(themefetchActionType, async ({ namespace, name, context }, api) =>
-	api.extra.getTheme(context, namespace, name)
+type thunkArg = {
+	namespace: string
+	name: string
+	route: ThemeState["route"]
+	context: Context
+}
+const fetchTheme = createAsyncThunk<Theme, thunkArg, UesioThunkAPI>(
+	themefetchActionType,
+	async ({ namespace, name, context }, api) =>
+		api.extra.getTheme(context, namespace, name)
 )
 
 const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
-	{ meta: { arg }, payload }
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	asyncThunk: any
 ) => {
+	const {
+		meta: { arg },
+		payload,
+	} = asyncThunk
+
 	// set all entities' property "isCurrentTheme" to false
 	state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
@@ -49,8 +48,12 @@ const fetchedThemeReducer = (
 
 const fetchingThemeReducer = (
 	state: EntityState<ThemeState>,
-	{ meta: { arg } }: PayloadAction<Theme>
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	asyncThunk: any
 ) => {
+	const {
+		meta: { arg },
+	} = asyncThunk
 	themeAdapter.upsertOne(state, {
 		...arg,
 		isFetching: true,
