@@ -9,7 +9,6 @@ import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
 import themeAdapter, { getThemeId } from "./adapter"
-import { createEntityReducer, EntityPayload } from "../../bands/utils"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -33,19 +32,13 @@ const fetchedThemeReducer = (
 		theme: `${payload.namespace}.${payload.name}`,
 	})
 	const entityState = state.entities?.[themeId]
-	if (entityState) {
-		entityState.routeTheme = payload
-		entityState.isFetching = false
-		entityState.isCurrentTheme = true
-	} else {
-		state.entities = {
-			[themeId]: {
-				routeTheme: payload,
-				isFetching: false,
-				isCurrentTheme: true,
-			},
-		}
+
+	if (state.ids.indexOf(themeId) === -1) {
+		state.ids.push(themeId)
 	}
+	entityState.routeTheme = payload
+	entityState.isFetching = false
+	entityState.isCurrentTheme = true
 }
 
 const fetchingThemeReducer = (
@@ -57,10 +50,13 @@ const fetchingThemeReducer = (
 		theme: `${arg.namespace}.${arg.name}`,
 	})
 	const entityState = state.entities?.[themeId]
+
+	// update existing theme
 	if (entityState) {
 		entityState.isFetching = true
-	} else {
-		state.ids.push(themeId)
+	}
+	// add a new theme
+	else {
 		state.entities = {
 			[themeId]: {
 				themeId,
