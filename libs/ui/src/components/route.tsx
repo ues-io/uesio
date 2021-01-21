@@ -68,10 +68,10 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
-	if (theme?.isFetching || !theme?.routeTheme) return null
+	if (theme?.isFetching || !theme?.theme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(makePaletteTheme(theme.routeTheme))}>
+		<ThemeProvider theme={makeTheme(makePaletteTheme(theme.theme))}>
 			<CssBaseline />
 			<ComponentInternal
 				componentType="uesio.runtime"

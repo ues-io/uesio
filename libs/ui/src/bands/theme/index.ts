@@ -44,13 +44,13 @@ const fetchedThemeReducer = (
 	)
 */
 	if (entityState) {
-		entityState.routeTheme = payload
+		entityState.theme = payload
 		entityState.isFetching = false
 		entityState.isCurrentTheme = true
 	} else {
 		state.entities = {
 			[themeId]: {
-				routeTheme: payload,
+				theme: payload,
 				isFetching: false,
 				isCurrentTheme: true,
 			},

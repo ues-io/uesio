@@ -21,7 +21,7 @@ interface Theme {
 
 interface ThemeState {
 	route: NonNullable<RouteState>
-	routeTheme: Theme
+	theme: Theme
 	isFetching: boolean
 	isCurrentTheme: boolean
 }
