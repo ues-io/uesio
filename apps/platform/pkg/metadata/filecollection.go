@@ -79,3 +79,8 @@ func (fc *FileCollection) Len() int {
 func (fc *FileCollection) GetItems() interface{} {
 	return fc
 }
+
+// Slice function
+func (fc *FileCollection) Slice(start int, end int) {
+
+}

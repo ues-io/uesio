@@ -86,6 +86,44 @@ func loadOne(
 		}
 	}
 
+	//Check if we can use firebase for order/limit/offset
+	useNativeOrdering := true
+	if len(op.Order) > 0 && len(op.Conditions) > 0 {
+		useNativeOrdering = false
+		//TO-DO display a warning (this query may not be optimized for this data adapter)
+	}
+
+	if useNativeOrdering {
+		for _, order := range op.Order {
+
+			fieldMetadata, err := collectionMetadata.GetField(order.Field)
+			if err != nil {
+				return err
+			}
+			fieldName, err := getDBFieldName(fieldMetadata)
+			if err != nil {
+				return err
+			}
+
+			lorder := firestore.Asc
+
+			if order.Desc {
+				lorder = firestore.Desc
+			}
+
+			query = query.OrderBy(fieldName, lorder)
+
+		}
+
+		if op.Offset != 0 {
+			query = query.Offset(op.Offset)
+		}
+
+		if op.Limit != 0 {
+			query = query.Limit(op.Limit)
+		}
+	}
+
 	// Maps
 	// ReferenceField -> id values needed
 	iter := query.Documents(ctx)
@@ -105,10 +143,20 @@ func loadOne(
 		}
 	}
 
-	collSlice := op.Collection.GetItems()
-	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
-	if ok {
-		sort.Slice(collSlice, locLessFunc)
+	if !useNativeOrdering {
+		collSlice := op.Collection.GetItems()
+		locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+		if ok {
+			sort.Slice(collSlice, locLessFunc)
+		}
+
+		if op.Limit != 0 || op.Offset != 0 {
+			err := adapters.ApplyLimitAndOffset(op)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {

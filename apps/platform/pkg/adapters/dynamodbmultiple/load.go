@@ -170,8 +170,16 @@ func loadOne(
 
 	collSlice := op.Collection.GetItems()
 	locLessFunc, ok := adapters.LessFunc(collSlice, op.Order)
+
 	if ok {
 		sort.Slice(collSlice, locLessFunc)
+	}
+
+	if op.Limit != 0 || op.Offset != 0 {
+		err := adapters.ApplyLimitAndOffset(op)
+		if err != nil {
+			return err
+		}
 	}
 
 	return adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {

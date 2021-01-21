@@ -37,6 +37,8 @@ func Load(w http.ResponseWriter, r *http.Request) {
 			Fields:         wire.Fields,
 			Order:          wire.Order,
 			Type:           wire.Type,
+			Limit:          wire.Limit,
+			Offset:         wire.Offset,
 		}
 	}
 

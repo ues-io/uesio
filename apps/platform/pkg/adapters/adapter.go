@@ -15,6 +15,8 @@ type LoadOp struct {
 	Fields                []LoadRequestField     `json:"-"`
 	Type                  string                 `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
+	Limit                 int                    `json:"-"`
+	Offset                int                    `json:"-"`
 	ReferencedCollections ReferenceRegistry
 }
 
@@ -26,6 +28,7 @@ type LoadableGroup interface {
 	AddItem(LoadableItem)
 	NewItem() LoadableItem
 	GetItems() interface{}
+	Slice(start int, end int)
 }
 
 // LoadableItem interface

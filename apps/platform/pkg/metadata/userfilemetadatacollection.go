@@ -52,3 +52,8 @@ func (ufmc *UserFileMetadataCollection) Len() int {
 func (ufmc *UserFileMetadataCollection) GetItems() interface{} {
 	return ufmc
 }
+
+// Slice function
+func (ufmc *UserFileMetadataCollection) Slice(start int, end int) {
+
+}

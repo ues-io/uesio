@@ -67,3 +67,8 @@ func (cvc *ConfigValueCollection) Len() int {
 func (cvc *ConfigValueCollection) GetItems() interface{} {
 	return cvc
 }
+
+// Slice function
+func (cvc *ConfigValueCollection) Slice(start int, end int) {
+
+}

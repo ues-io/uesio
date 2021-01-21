@@ -52,3 +52,8 @@ func (sc *SiteCollection) Len() int {
 func (sc *SiteCollection) GetItems() interface{} {
 	return sc
 }
+
+// Slice function
+func (sc *SiteCollection) Slice(start int, end int) {
+
+}

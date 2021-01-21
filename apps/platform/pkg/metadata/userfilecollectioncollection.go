@@ -67,3 +67,8 @@ func (ufcc *UserFileCollectionCollection) Len() int {
 func (ufcc *UserFileCollectionCollection) GetItems() interface{} {
 	return ufcc
 }
+
+// Slice function
+func (ufcc *UserFileCollectionCollection) Slice(start int, end int) {
+
+}

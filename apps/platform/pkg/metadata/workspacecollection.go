@@ -52,3 +52,8 @@ func (wc *WorkspaceCollection) Len() int {
 func (wc *WorkspaceCollection) GetItems() interface{} {
 	return wc
 }
+
+// Slice function
+func (wc *WorkspaceCollection) Slice(start int, end int) {
+
+}

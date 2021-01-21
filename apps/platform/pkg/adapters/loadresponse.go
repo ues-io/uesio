@@ -49,3 +49,8 @@ func (c *Collection) Len() int {
 func (c *Collection) MarshalJSON() ([]byte, error) {
 	return json.Marshal(c.Data)
 }
+
+// Slice function
+func (c *Collection) Slice(start int, end int) {
+	c.Data = c.Data[start:end]
+}

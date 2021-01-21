@@ -105,3 +105,8 @@ func (bc *BotCollection) Len() int {
 func (bc *BotCollection) GetItems() interface{} {
 	return bc
 }
+
+// Slice function
+func (bc *BotCollection) Slice(start int, end int) {
+
+}

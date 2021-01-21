@@ -77,3 +77,8 @@ func (tc *ThemeCollection) Len() int {
 func (tc *ThemeCollection) GetItems() interface{} {
 	return tc
 }
+
+// Slice function
+func (tc *ThemeCollection) Slice(start int, end int) {
+
+}
