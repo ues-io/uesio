@@ -9,7 +9,6 @@ import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
 import themeAdapter, { getThemeId } from "./adapter"
-import setWith from "lodash.setwith"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -35,10 +34,16 @@ const fetchedThemeReducer = (
 	const entityState = state.entities?.[themeId]
 
 	// set all entities properties isCurrentTheme to false
-	state.entities = state.entities.reduce((acc, entity) => {
-		entity.isCurrentTheme = false
-		return [...acc, entity]
-	}, [])
+	state.entities = Object.entries(state.entities).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[key]: {
+				...value,
+				isCurrentTheme: false,
+			},
+		}),
+		{}
+	)
 
 	if (entityState) {
 		entityState.routeTheme = payload
