@@ -11,6 +11,7 @@ const getThemeId = (themeState: ThemeState) => {
 			return `${themeState.route.workspace}.${themeName}`
 		}
 
+		// here themeState.route.workspace is an object
 		const { app, name } = themeState.route.workspace
 		return `${app}_${name}.${themeName}`
 	}
