@@ -252,9 +252,9 @@ func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.Metad
 		return response, nil
 	}
 
-	batch := client.Batch()
-
 	for _, request := range requests {
+
+		batch := client.Batch()
 
 		collectionMetadata, err := metadata.GetCollection(request.Collection)
 		if err != nil {
@@ -290,11 +290,11 @@ func (a *Adapter) Save(requests []adapters.SaveRequest, metadata *adapters.Metad
 			ChangeResults: changeResults,
 			DeleteResults: deleteResults,
 		})
-	}
 
-	_, err = batch.Commit(ctx)
-	if err != nil {
-		return nil, err
+		_, err = batch.Commit(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return response, nil

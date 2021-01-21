@@ -123,20 +123,22 @@ func Deploy(body []byte, session *sess.Session) error {
 		defer f.Close()
 	}
 
+	saves := []datasource.PlatformSaveRequest{}
 	for _, collection := range dep {
-
 		length := collection.Len()
 		if length > 0 {
-			err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: collection,
 				Options: &adapters.SaveOptions{
 					Upsert: &adapters.UpsertOptions{},
 				},
-			}, session)
-			if err != nil {
-				return err
-			}
+			})
 		}
+	}
+
+	err = datasource.PlatformSaves(saves, session)
+	if err != nil {
+		return err
 	}
 
 	// Read the filestreams
