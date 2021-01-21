@@ -26,13 +26,13 @@ const fetchedThemeReducer = (
 		payload,
 	} = asyncThunk
 
-	// set all entities' property "isCurrentTheme" to false
+	// set all entities' property "isActiveTheme" to false
 	state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
 			...acc,
 			[key]: {
 				...value,
-				isCurrentTheme: false,
+				isActiveTheme: false,
 			},
 		}),
 		{}
@@ -42,7 +42,7 @@ const fetchedThemeReducer = (
 		...arg,
 		theme: payload,
 		isFetching: false,
-		isCurrentTheme: true,
+		isActiveTheme: true,
 	})
 }
 
