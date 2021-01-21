@@ -34,7 +34,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 
 	const themeState = useTheme()
 	const theme = themeState?.ids?.[0]
-		? themeState.entities?.[themeState.ids[0]]?.routeTheme
+		? themeState.entities?.[themeState.ids[0]]
 		: undefined
 
 	const routeContext = props.context.addFrame({
@@ -68,15 +68,10 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
-	if (
-		(themeState?.ids?.[0] &&
-			themeState.entities?.[themeState.ids[0]]?.isFetching) ||
-		!theme
-	)
-		return null
+	if (theme?.isFetching || !theme?.routeTheme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>
+		<ThemeProvider theme={makeTheme(makePaletteTheme(theme.routeTheme))}>
 			<CssBaseline />
 			<ComponentInternal
 				componentType="uesio.runtime"
