@@ -20,10 +20,10 @@ interface Theme {
 }
 
 interface ThemeState {
-	route: NonNullable<RouteState>
 	theme: Theme
 	isFetching: boolean
 	isCurrentTheme: boolean
+	route: NonNullable<RouteState>
 }
 
 export { themefetchActionType, Palette, Theme, ThemeState }
