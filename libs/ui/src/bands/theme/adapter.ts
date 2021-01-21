@@ -1,21 +1,20 @@
 import { createEntityAdapter } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
-import { ThemeState, Theme } from "./types"
+import { ThemeState } from "./types"
 import { parseKey } from "../../component/path"
-import { RouteState } from "../route/types"
 
 const getThemeId = (themeState: ThemeState) => {
-	if (themeState?.routeWorkspace) {
+	if (themeState?.route?.workspace) {
 		// split up application prefix and theme name
-		const [, themeName] = parseKey(themeState.theme)
-		if (typeof themeState?.routeWorkspace === "string") {
-			return `${themeState?.routeWorkspace}.${themeName}`
+		const [, themeName] = parseKey(themeState.route.theme)
+		if (typeof themeState.route.workspace === "string") {
+			return `${themeState.route.workspace}.${themeName}`
 		}
 
-		const { app, name } = themeState?.routeWorkspace
+		const { app, name } = themeState.route.workspace
 		return `${app}_${name}.${themeName}`
 	}
-	return themeState.theme
+	return themeState.route.theme
 }
 
 const themeAdapter = createEntityAdapter<ThemeState>({

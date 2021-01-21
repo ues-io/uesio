@@ -58,10 +58,9 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		if (namespace && name && !theme) {
 			dispatcher(
 				fetchTheme({
-					theme: route.theme,
 					namespace,
 					name,
-					routeWorkspace: route.workspace,
+					route,
 					context: routeContext,
 				})
 			)

@@ -13,10 +13,9 @@ import themeAdapter, { getThemeId } from "./adapter"
 const fetchTheme = createAsyncThunk<
 	Theme,
 	{
-		theme: string
 		namespace: string
 		name: string
-		routeWorkspace: ThemeState["routeWorkspace"]
+		route: ThemeState["route"]
 		context: Context
 	},
 	UesioThunkAPI
@@ -26,14 +25,12 @@ const fetchTheme = createAsyncThunk<
 
 const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
-	{ payload }: PayloadAction<Theme>
+	{ meta: { arg }, payload }
 ) => {
 	const themeId = getThemeId({
-		...payload,
-		theme: `${payload.namespace}.${payload.name}`,
+		...arg,
 	})
 	const entityState = state.entities?.[themeId]
-
 	// set all entities properties isCurrentTheme to false
 	/*	state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
@@ -69,25 +66,10 @@ const fetchingThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ meta: { arg } }: PayloadAction<Theme>
 ) => {
-	const themeId = getThemeId({
+	themeAdapter.upsertOne(state, {
 		...arg,
-		theme: `${arg.namespace}.${arg.name}`,
+		isFetching: true,
 	})
-	const entityState = state.entities?.[themeId]
-
-	// update existing theme
-	if (entityState) {
-		entityState.isFetching = true
-	}
-	// add a new theme
-	else {
-		state.entities = {
-			[themeId]: {
-				themeId,
-				isFetching: true,
-			},
-		}
-	}
 }
 
 const themeSlice = createSlice({

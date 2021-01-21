@@ -20,9 +20,8 @@ interface Theme {
 }
 
 interface ThemeState {
-	theme: NonNullable<RouteState>["theme"]
+	route: NonNullable<RouteState>
 	routeTheme: Theme
-	routeWorkspace?: WorkspaceState
 	isFetching: boolean
 	isCurrentTheme: boolean
 }
