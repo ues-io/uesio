@@ -22,6 +22,7 @@ interface Theme {
 interface ThemeState {
 	routeTheme: Theme
 	isFetching: boolean
+	isCurrentTheme: boolean
 }
 
 export { themefetchActionType, Palette, Theme, ThemeState }

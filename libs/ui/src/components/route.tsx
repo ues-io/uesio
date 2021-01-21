@@ -33,9 +33,9 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!route) return null
 
 	const themeState = useTheme()
-	const theme = themeState?.ids?.[0]
-		? themeState.entities?.[themeState.ids[0]]
-		: undefined
+	const theme = Object.values(themeState.entities)?.find?.(
+		(theme) => theme?.isCurrentTheme
+	)
 
 	const routeContext = props.context.addFrame({
 		route,

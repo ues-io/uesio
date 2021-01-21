@@ -36,11 +36,13 @@ const fetchedThemeReducer = (
 	if (entityState) {
 		entityState.routeTheme = payload
 		entityState.isFetching = false
+		entityState.isCurrentTheme = true
 	} else {
 		state.entities = {
 			[themeId]: {
 				routeTheme: payload,
 				isFetching: false,
+				isCurrentTheme: true,
 			},
 		}
 	}
@@ -58,6 +60,7 @@ const fetchingThemeReducer = (
 	if (entityState) {
 		entityState.isFetching = true
 	} else {
+		state.ids.push(themeId)
 		state.entities = {
 			[themeId]: {
 				themeId,
@@ -65,8 +68,6 @@ const fetchingThemeReducer = (
 			},
 		}
 	}
-	// the current theme is placed at the first position
-	state.ids.unshift(themeId)
 }
 
 const themeSlice = createSlice({
