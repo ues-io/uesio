@@ -4,25 +4,22 @@ import { ThemeState, Theme } from "./types"
 import { parseKey } from "../../component/path"
 import { RouteState } from "../route/types"
 
-const getThemeId = (
-	route: (Theme & { theme: string }) | NonNullable<RouteState>
-) => {
-	if (route?.workspace) {
+const getThemeId = (themeState: ThemeState) => {
+	if (themeState?.routeWorkspace) {
 		// split up application prefix and theme name
-		const [, themeName] = parseKey(route.theme)
-		if (typeof route.workspace === "string") {
-			return `${route.workspace}.${themeName}`
+		const [, themeName] = parseKey(themeState.theme)
+		if (typeof themeState?.routeWorkspace === "string") {
+			return `${themeState?.routeWorkspace}.${themeName}`
 		}
 
-		const { app, name } = route.workspace
+		const { app, name } = themeState?.routeWorkspace
 		return `${app}_${name}.${themeName}`
 	}
-	return route.theme
+	return themeState.theme
 }
 
 const themeAdapter = createEntityAdapter<ThemeState>({
-	selectId: (theme) =>
-		getThemeId(theme.routeTheme as Theme & { theme: string }),
+	selectId: (theme) => getThemeId(theme),
 })
 
 const selectors = themeAdapter.getSelectors((state: RootState) => state.theme)

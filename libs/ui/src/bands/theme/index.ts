@@ -13,6 +13,7 @@ import themeAdapter, { getThemeId } from "./adapter"
 const fetchTheme = createAsyncThunk<
 	Theme,
 	{
+		theme: string
 		namespace: string
 		name: string
 		routeWorkspace: ThemeState["routeWorkspace"]
@@ -34,7 +35,7 @@ const fetchedThemeReducer = (
 	const entityState = state.entities?.[themeId]
 
 	// set all entities properties isCurrentTheme to false
-	state.entities = Object.entries(state.entities).reduce(
+	/*	state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
 			...acc,
 			[key]: {
@@ -44,7 +45,7 @@ const fetchedThemeReducer = (
 		}),
 		{}
 	)
-
+*/
 	if (entityState) {
 		entityState.routeTheme = payload
 		entityState.isFetching = false

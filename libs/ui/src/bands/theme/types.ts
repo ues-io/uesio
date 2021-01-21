@@ -1,4 +1,4 @@
-import { WorkspaceState } from "../route/types"
+import { WorkspaceState, RouteState } from "../route/types"
 
 const themefetchActionType = "theme/fetch"
 
@@ -20,6 +20,7 @@ interface Theme {
 }
 
 interface ThemeState {
+	theme: NonNullable<RouteState>["theme"]
 	routeTheme: Theme
 	routeWorkspace?: WorkspaceState
 	isFetching: boolean
