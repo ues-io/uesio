@@ -58,6 +58,7 @@ const fetchingThemeReducer = (
 	if (entityState) {
 		entityState.isFetching = true
 	} else {
+		state.ids.push(themeId)
 		state.entities = {
 			[themeId]: {
 				themeId,

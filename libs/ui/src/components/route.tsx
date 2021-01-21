@@ -39,9 +39,11 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	console.log("themeId route", themeId)
 	console.log("themeState route", themeState)
 	const theme = themeId
-		? themeState.entities?.[themeId]?.routeTheme
-		: undefined
-
+		? // subsequent rendering, grap from the Reddux store
+		  themeState?.ids?.[0] &&
+		  themeState.entities?.[themeState.ids[0]]?.routeTheme
+		: // first rendering, save innto the Redux tore
+		  themeState.entities?.[themeId]?.routeTheme
 	const routeContext = props.context.addFrame({
 		route,
 		workspace: route.workspace,
