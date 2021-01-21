@@ -8,7 +8,7 @@ import {
 import { Theme, themefetchActionType, ThemeState } from "./types"
 import { Context } from "../../context/context"
 import { UesioThunkAPI } from "../utils"
-import themeAdapter, { getThemeId } from "./adapter"
+import themeAdapter from "./adapter"
 
 const fetchTheme = createAsyncThunk<
 	Theme,
@@ -27,13 +27,8 @@ const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ meta: { arg }, payload }
 ) => {
-	/*
-	const themeId = getThemeId({
-		...arg,
-	})
-	const entityState = state.entities?.[themeId]
-	// set all entities properties isCurrentTheme to false
-		state.entities = Object.entries(state.entities).reduce(
+	// set all entities' property "isCurrentTheme" to false
+	state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
 			...acc,
 			[key]: {
@@ -43,7 +38,7 @@ const fetchedThemeReducer = (
 		}),
 		{}
 	)
-*/
+
 	themeAdapter.upsertOne(state, {
 		...arg,
 		theme: payload,

@@ -23,6 +23,6 @@ const themeAdapter = createEntityAdapter<ThemeState>({
 
 const selectors = themeAdapter.getSelectors((state: RootState) => state.theme)
 
-export { selectors, getThemeId }
+export { selectors }
 
 export default themeAdapter
