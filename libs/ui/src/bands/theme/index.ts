@@ -27,12 +27,13 @@ const fetchedThemeReducer = (
 	state: EntityState<ThemeState>,
 	{ meta: { arg }, payload }
 ) => {
+	/*
 	const themeId = getThemeId({
 		...arg,
 	})
 	const entityState = state.entities?.[themeId]
 	// set all entities properties isCurrentTheme to false
-	/*	state.entities = Object.entries(state.entities).reduce(
+		state.entities = Object.entries(state.entities).reduce(
 		(acc, [key, value]) => ({
 			...acc,
 			[key]: {
@@ -43,23 +44,12 @@ const fetchedThemeReducer = (
 		{}
 	)
 */
-	if (entityState) {
-		entityState.theme = payload
-		entityState.isFetching = false
-		entityState.isCurrentTheme = true
-	} else {
-		state.entities = {
-			[themeId]: {
-				theme: payload,
-				isFetching: false,
-				isCurrentTheme: true,
-			},
-		}
-	}
-
-	if (state.ids.indexOf(themeId) === -1) {
-		state.ids.push(themeId)
-	}
+	themeAdapter.upsertOne(state, {
+		...arg,
+		theme: payload,
+		isFetching: false,
+		isCurrentTheme: true,
+	})
 }
 
 const fetchingThemeReducer = (
