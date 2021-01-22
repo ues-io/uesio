@@ -8,13 +8,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
@@ -33,7 +33,7 @@ func Deploy(body []byte, session *sess.Session) error {
 		return errors.New("No Workspace provided for deployment")
 	}
 
-	dep := map[string]metadata.BundleableGroup{}
+	dep := map[string]meta.BundleableGroup{}
 
 	fileStreams := []bundlestore.ReadItemStream{}
 	// Maps a filename to a recordID
@@ -62,7 +62,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 		collection, ok := dep[metadataType]
 		if !ok {
-			collection, err = metadata.GetBundleableGroupFromType(metadataType)
+			collection, err = meta.GetBundleableGroupFromType(metadataType)
 			if err != nil {
 				// Most likely found a folder that we don't have a metadata type for
 				logger.Log("Found bad metadata type: "+metadataType, logger.INFO)
@@ -95,13 +95,13 @@ func Deploy(body []byte, session *sess.Session) error {
 
 			// Special handling for files
 			if metadataType == "files" {
-				file := collectionItem.(*metadata.File)
+				file := collectionItem.(*meta.File)
 				fileNameMap[metadataType+":"+file.GetFilePath()] = file.Name
 			}
 
 			// Special handling for bots
 			if metadataType == "bots" {
-				bot := collectionItem.(*metadata.Bot)
+				bot := collectionItem.(*meta.Bot)
 				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = bot.CollectionRef + "_" + bot.Type + "_" + bot.Name
 			}
 
@@ -123,20 +123,22 @@ func Deploy(body []byte, session *sess.Session) error {
 		defer f.Close()
 	}
 
+	saves := []datasource.PlatformSaveRequest{}
 	for _, collection := range dep {
-
 		length := collection.Len()
 		if length > 0 {
-			err = datasource.PlatformSave(datasource.PlatformSaveRequest{
+			saves = append(saves, datasource.PlatformSaveRequest{
 				Collection: collection,
-				Options: &adapters.SaveOptions{
-					Upsert: &adapters.UpsertOptions{},
+				Options: &adapt.SaveOptions{
+					Upsert: &adapt.UpsertOptions{},
 				},
-			}, session)
-			if err != nil {
-				return err
-			}
+			})
 		}
+	}
+
+	err = datasource.PlatformSaves(saves, session)
+	if err != nil {
+		return err
 	}
 
 	// Read the filestreams
@@ -160,7 +162,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	}
 
 	// Clear out the bundle definition cache
-	bundles.ClearAppBundleCache(session)
+	bundle.ClearAppBundleCache(session)
 
 	return nil
 
@@ -168,7 +170,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 func addDependencies(workspace string, zipFile *zip.File, session *sess.Session) error {
 	//Break down bundle.yaml into dependency records
-	by := metadata.BundleDef{}
+	by := meta.BundleDef{}
 	readCloser, err := zipFile.Open()
 	if err != nil {
 		return err
@@ -191,7 +193,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 	return nil
 }
 
-func readZipFile(zf *zip.File, item metadata.BundleableItem) error {
+func readZipFile(zf *zip.File, item meta.BundleableItem) error {
 	f, err := zf.Open()
 	if err != nil {
 		return err

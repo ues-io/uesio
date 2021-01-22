@@ -3,20 +3,20 @@ package filesource
 import (
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Download function
-func Download(userFileID string, session *sess.Session) (io.ReadCloser, *metadata.UserFileMetadata, error) {
+func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.UserFileMetadata, error) {
 
-	userFile := metadata.UserFileMetadata{}
+	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		&userFile,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: userFileID,
@@ -28,7 +28,7 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *metadat
 		return nil, nil, err
 	}
 
-	adapter, bucket, credentials, err := fileadapters.GetAdapterForUserFile(&userFile, session)
+	adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&userFile, session)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -1,12 +1,10 @@
 package datasource
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // DeletesAPI type
 type DeletesAPI struct {
-	deletes map[string]adapters.DeleteRequest
+	deletes map[string]adapt.DeleteRequest
 }
 
 // Get function

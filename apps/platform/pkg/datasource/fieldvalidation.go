@@ -7,16 +7,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
-type validationFunc func(change adapters.ChangeRequest) error
+type validationFunc func(change adapt.ChangeRequest) error
 
-func validateRequired(field *adapters.FieldMetadata) validationFunc {
-	return func(change adapters.ChangeRequest) error {
+func validateRequired(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeRequest) error {
 		val, ok := change.FieldChanges[field.GetFullName()]
 		if (change.IsNew && !ok) || val == "" {
 			return errors.New("Field: " + field.Label + " is required")
@@ -25,8 +25,8 @@ func validateRequired(field *adapters.FieldMetadata) validationFunc {
 	}
 }
 
-func populateTimestamps(field *adapters.FieldMetadata, timestamp int64) validationFunc {
-	return func(change adapters.ChangeRequest) error {
+func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
+	return func(change adapt.ChangeRequest) error {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
 		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
@@ -36,8 +36,8 @@ func populateTimestamps(field *adapters.FieldMetadata, timestamp int64) validati
 	}
 }
 
-func validateEmail(field *adapters.FieldMetadata) validationFunc {
-	return func(change adapters.ChangeRequest) error {
+func validateEmail(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeRequest) error {
 		val, ok := change.FieldChanges[field.GetFullName()]
 		if ok {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
@@ -48,14 +48,14 @@ func validateEmail(field *adapters.FieldMetadata) validationFunc {
 	}
 }
 
-func validateRegex(field *adapters.FieldMetadata) validationFunc {
+func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, ok := isValidRegex(field.Validate.Regex)
 	if !ok {
-		return func(adapters.ChangeRequest) error {
+		return func(adapt.ChangeRequest) error {
 			return errors.New("Regex for the field: " + field.Label + " is not valid")
 		}
 	}
-	return func(change adapters.ChangeRequest) error {
+	return func(change adapt.ChangeRequest) error {
 		val, ok := change.FieldChanges[field.GetFullName()]
 		if ok && !regex.MatchString(fmt.Sprintf("%v", val)) {
 			return errors.New("Field: " + field.Label + " don't match regex: " + field.Validate.Regex)
@@ -81,7 +81,7 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func(adapters.ChangeRequest) error {
+func getValidationFunction(collectionMetadata *adapt.CollectionMetadata) func(adapt.ChangeRequest) error {
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
@@ -100,7 +100,7 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 		}
 	}
 
-	return func(change adapters.ChangeRequest) error {
+	return func(change adapt.ChangeRequest) error {
 		for _, validation := range validations {
 			err := validation(change)
 			if err != nil {
@@ -112,7 +112,7 @@ func getValidationFunction(collectionMetadata *adapters.CollectionMetadata) func
 }
 
 //PopulateAndValidate function
-func PopulateAndValidate(request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+func PopulateAndValidate(request *adapt.SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 
 	var listErrors []string
 	validationFunc := getValidationFunction(collectionMetadata)

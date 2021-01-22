@@ -1,19 +1,19 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/creds"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getCascadeDeletes(
-	wires []adapters.SaveRequest,
-	collections map[string]*adapters.CollectionMetadata,
-	metadata *adapters.MetadataCache,
-	adapter adapters.Adapter,
-	credentials *creds.AdapterCredentials,
-) (map[string]map[string]adapters.DeleteRequest, error) {
-	cascadeDeleteFKs := map[string]map[string]adapters.DeleteRequest{}
+	wires []adapt.SaveRequest,
+	collections map[string]*adapt.CollectionMetadata,
+	metadata *adapt.MetadataCache,
+	adapter adapt.Adapter,
+	credentials *adapt.Credentials,
+) (map[string]map[string]adapt.DeleteRequest, error) {
+	cascadeDeleteFKs := map[string]map[string]adapt.DeleteRequest{}
 
 	for _, collectionMetadata := range collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -47,20 +47,20 @@ func getCascadeDeletes(
 						continue
 					}
 
-					collection := adapters.Collection{}
-					err := adapter.Load([]adapters.LoadOp{
+					collection := adapt.Collection{}
+					err := adapter.Load([]adapt.LoadOp{
 						{
 							CollectionName: collectionKey,
 							WireName:       "CascadeLoad",
 							Collection:     &collection,
-							Conditions: []adapters.LoadRequestCondition{
+							Conditions: []adapt.LoadRequestCondition{
 								{
 									Field:    collectionMetadata.IDField,
 									Operator: "IN",
 									Value:    ids,
 								},
 							},
-							Fields: []adapters.LoadRequestField{
+							Fields: []adapt.LoadRequestField{
 								{
 									ID: collectionMetadata.IDField,
 								},
@@ -74,17 +74,17 @@ func getCascadeDeletes(
 						return nil, err
 					}
 
-					err = collection.Loop(func(item adapters.LoadableItem) error {
+					err = collection.Loop(func(item loadable.Item) error {
 						fkString, err := item.GetField(field.ForeignKeyField)
 						if err != nil {
 							return err
 						}
 						currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
 						if !ok {
-							currentCollectionIds = map[string]adapters.DeleteRequest{}
+							currentCollectionIds = map[string]adapt.DeleteRequest{}
 							cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 						}
-						currentCollectionIds[fkString.(string)] = adapters.DeleteRequest{
+						currentCollectionIds[fkString.(string)] = adapt.DeleteRequest{
 							referencedCollectionMetadata.IDField: fkString.(string),
 						}
 						return nil
@@ -99,14 +99,14 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(deletes map[string]map[string]adapters.DeleteRequest, session *sess.Session) error {
+func performCascadeDeletes(deletes map[string]map[string]adapt.DeleteRequest, session *sess.Session) error {
 	if len(deletes) == 0 {
 		return nil
 	}
-	saves := []adapters.SaveRequest{}
+	saves := []adapt.SaveRequest{}
 	for collectionKey, ids := range deletes {
 
-		saves = append(saves, adapters.SaveRequest{
+		saves = append(saves, adapt.SaveRequest{
 			Collection: collectionKey,
 			Wire:       "CascadeDelete",
 			Deletes:    ids,

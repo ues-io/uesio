@@ -1,14 +1,12 @@
 package datasource
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // ResultAPI type
 type ResultAPI struct {
-	result   adapters.ChangeResult
-	change   adapters.ChangeRequest
-	metadata *adapters.CollectionMetadata
+	result   adapt.ChangeResult
+	change   adapt.ChangeRequest
+	metadata *adapt.CollectionMetadata
 }
 
 // Get function

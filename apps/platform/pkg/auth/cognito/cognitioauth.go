@@ -3,7 +3,7 @@ package cognito
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 // Auth struct
@@ -11,12 +11,12 @@ type Auth struct {
 }
 
 // Verify function
-func (a *Auth) Verify(token string, site *metadata.Site) error {
+func (a *Auth) Verify(token string, site *meta.Site) error {
 	return nil
 }
 
 // Decode function
-func (a *Auth) Decode(token string, site *metadata.Site) (*auth.AuthenticationClaims, error) {
+func (a *Auth) Decode(token string, site *meta.Site) (*auth.AuthenticationClaims, error) {
 	// TODO: Actually verify the token
 	parser := jwt.Parser{}
 	tokenObj, _, err := parser.ParseUnverified(token, jwt.MapClaims{})

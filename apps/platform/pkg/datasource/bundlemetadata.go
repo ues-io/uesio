@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -36,7 +36,7 @@ func SaveBundleMetadata(namespace string, version string, description string, se
 	if err != nil {
 		return err
 	}
-	return PlatformSaveOne(&metadata.Bundle{
+	return PlatformSaveOne(&meta.Bundle{
 		Namespace:   namespace,
 		Major:       strconv.Itoa(versionParts[0]),
 		Minor:       strconv.Itoa(versionParts[1]),

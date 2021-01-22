@@ -3,11 +3,11 @@ package auth
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 // Login func
-func Login(loginType, token string, site *metadata.Site) (*metadata.User, error) {
+func Login(loginType, token string, site *meta.Site) (*meta.User, error) {
 	// 2. Get the authentication type
 	authType, err := getAuthType(loginType)
 	if err != nil {

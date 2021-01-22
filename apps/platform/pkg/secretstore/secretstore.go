@@ -1,6 +1,10 @@
 package secretstore
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/meta"
+)
 
 // SecretStore interface
 type SecretStore interface {
@@ -22,4 +26,25 @@ func GetSecretStore(secretStoreType string) (SecretStore, error) {
 // RegisterSecretStore function
 func RegisterSecretStore(name string, store SecretStore) {
 	secretStoreMap[name] = store
+}
+
+// GetSecret key
+func GetSecret(key string, site *meta.Site) (string, error) {
+	if key == "" {
+		return "", nil
+	}
+
+	namespace, name, err := meta.ParseKey(key)
+	if err != nil {
+		return "", errors.New("Failed Parsing Secret Key: " + key + " : " + err.Error())
+	}
+
+	// Only use the environment secretstore for now
+	store, err := GetSecretStore("environment")
+	if err != nil {
+		return "", err
+	}
+
+	return store.Get(namespace, name, site.Name)
+
 }

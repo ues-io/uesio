@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -15,7 +15,7 @@ type AfterSaveAPI struct {
 	session *sess.Session
 }
 
-func NewAfterSaveAPI(request *adapters.SaveRequest, response *adapters.SaveResponse, metadata *adapters.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(request *adapt.SaveRequest, response *adapt.SaveResponse, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Results: &ResultsAPI{
 			results:  response.ChangeResults,
@@ -43,14 +43,14 @@ func (as *AfterSaveAPI) GetErrorString() string {
 
 // Save function
 func (as *AfterSaveAPI) Save(collection string, changes []map[string]interface{}) (*SaveResponseBatch, error) {
-	changeRequestMap := map[string]adapters.ChangeRequest{}
+	changeRequestMap := map[string]adapt.ChangeRequest{}
 	for index, req := range changes {
-		changeRequestMap[strconv.Itoa(index)] = adapters.ChangeRequest{
+		changeRequestMap[strconv.Itoa(index)] = adapt.ChangeRequest{
 			FieldChanges: req,
 		}
 	}
 	return Save(SaveRequestBatch{
-		Wires: []adapters.SaveRequest{
+		Wires: []adapt.SaveRequest{
 			{
 				Collection: collection,
 				Wire:       "apiaftersave",

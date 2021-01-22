@@ -81,7 +81,8 @@ const handleBankDrop = (
 		{
 			[`${propDef.namespace}.${propDef.name}`]: propDef.defaultDefinition(),
 		},
-		dropIndex
+		dropIndex,
+		true
 	)
 }
 
@@ -108,15 +109,11 @@ const handleExistingDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
-	const fromPath = component.path.getParentPath(dragNode)
-	const toPath = `${dropNode}["${dropIndex}"]`
-
+	const pathArray = component.path.toPath(dragNode)
+	const key = pathArray[pathArray.length - 1]
+	const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
 	// Selection Handling
-	const suffix = component.path.getPathSuffix(dragNode)
-	const newSelectedPath = `${toPath}["${suffix}"]`
-	uesio.builder.setSelectedNode(newSelectedPath)
-	uesio.builder.setActiveNode(newSelectedPath)
-	uesio.view.moveDefinition(fromPath, toPath)
+	uesio.view.moveDefinition(dragNode, toPath)
 }
 
 const getDropIndex = (

@@ -55,6 +55,8 @@ export default createAsyncThunk<
 					context
 				),
 				order: wiredef.order,
+				limit: wiredef.limit,
+				offset: wiredef.offset,
 			}
 		}),
 	}

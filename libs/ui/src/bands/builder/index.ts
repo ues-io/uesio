@@ -1,14 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { getParentPath } from "../../component/path"
+import {
+	getParentPath,
+	toPath,
+	fromPath,
+	calculateNewPathAheadOfTime,
+} from "../../component/path"
 import {
 	addDefinition,
 	changeDefinitionKey,
 	removeDefinition,
+	moveDefinition,
 	setDefinition,
 	cancel,
 } from "../viewdef"
 import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
+import { DefinitionMap } from "../../definition/definition"
+
 import { set as setRoute } from "../route"
+
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -86,14 +95,34 @@ const builderSlice = createSlice({
 			state.namespaces = null
 			state.metadata = null
 		})
-		builder.addCase(addDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
-		})
 		builder.addCase(setDefinition, (state, { payload }) => {
 			state.lastModifiedNode = payload.path
 		})
 		builder.addCase(cancel, (state) => {
 			state.lastModifiedNode = ""
+		})
+		builder.addCase(addDefinition, (state, { payload }) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+			if (!payload.bankDrop || payload.index === undefined) {
+				// Added a not dragged component
+				// (added button to buttonset for example)
+				// in which case we do not want to shift the
+				// selected node
+				return
+			}
+			const def = <DefinitionMap>payload.definition
+			const key = Object.keys(def)[0]
+			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
+		})
+		builder.addCase(moveDefinition, (state, { payload }) => {
+			const updatedPath = calculateNewPathAheadOfTime(
+				payload.fromPath,
+				payload.toPath
+			)
+			state.selectedNode = updatedPath
+			const pathArr = toPath(updatedPath)
+			pathArr.splice(-1) //We just want the index, not the key level
+			state.lastModifiedNode = fromPath(pathArr)
 		})
 	},
 })
