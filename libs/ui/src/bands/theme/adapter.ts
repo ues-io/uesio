@@ -3,7 +3,7 @@ import { RootState } from "../../store/store"
 import { ThemeState } from "./types"
 import { parseKey } from "../../component/path"
 
-const getThemeId = (themeState: ThemeState) => {
+const makeThemeId = (themeState: ThemeState) => {
 	if (themeState?.route?.workspace) {
 		// split up application prefix and theme name
 		const [, themeName] = parseKey(themeState.route.theme)
@@ -19,7 +19,7 @@ const getThemeId = (themeState: ThemeState) => {
 }
 
 const themeAdapter = createEntityAdapter<ThemeState>({
-	selectId: (theme) => getThemeId(theme),
+	selectId: (theme) => makeThemeId(theme),
 })
 
 const selectors = themeAdapter.getSelectors((state: RootState) => state.theme)

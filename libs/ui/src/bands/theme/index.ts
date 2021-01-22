@@ -10,6 +10,7 @@ type thunkArg = {
 	route: ThemeState["route"]
 	context: Context
 }
+
 const fetchTheme = createAsyncThunk<Theme, thunkArg, UesioThunkAPI>(
 	themefetchActionType,
 	async ({ namespace, name, context }, api) =>
