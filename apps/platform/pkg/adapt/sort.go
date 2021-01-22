@@ -51,6 +51,10 @@ func LessFunc(data interface{}, order []LoadRequestOrder) (func(i int, j int) bo
 			vi, _ := dataCast[i].GetField(singleOrder.Field)
 			vj, _ := dataCast[j].GetField(singleOrder.Field)
 
+			if vi == nil || vj == nil {
+				continue
+			}
+
 			switch vi.(type) {
 			case string:
 				if vi.(string) == vj.(string) {
