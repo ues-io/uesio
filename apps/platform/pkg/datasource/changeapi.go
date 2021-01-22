@@ -1,13 +1,11 @@
 package datasource
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // ChangeAPI type
 type ChangeAPI struct {
-	change   adapters.ChangeRequest
-	metadata *adapters.CollectionMetadata
+	change   adapt.ChangeRequest
+	metadata *adapt.CollectionMetadata
 	errors   []string
 }
 

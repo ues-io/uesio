@@ -3,18 +3,18 @@ package datasource
 import (
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func getMetadataForLoad(
-	op *adapters.LoadOp,
-	metadataResponse *adapters.MetadataCache,
-	collatedMetadata map[string]*adapters.MetadataCache,
-	ops []adapters.LoadOp,
+	op *adapt.LoadOp,
+	metadataResponse *adapt.MetadataCache,
+	collatedMetadata map[string]*adapt.MetadataCache,
+	ops []adapt.LoadOp,
 	session *sess.Session,
 ) error {
 	collectionKey := op.CollectionName
@@ -71,11 +71,11 @@ func getMetadataForLoad(
 }
 
 // Load function
-func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache, error) {
+func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
 	site := session.GetSite()
-	collated := map[string][]adapters.LoadOp{}
-	collatedMetadata := map[string]*adapters.MetadataCache{}
-	metadataResponse := adapters.MetadataCache{}
+	collated := map[string][]adapt.LoadOp{}
+	collatedMetadata := map[string]*adapt.MetadataCache{}
+	metadataResponse := adapt.MetadataCache{}
 
 	// Loop over the ops and batch per data source
 	for i := range ops {
@@ -98,7 +98,7 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 				return nil, err
 			}
 			idFieldName := idField.GetFullName()
-			op.Order = append(op.Order, adapters.LoadRequestOrder{
+			op.Order = append(op.Order, adapt.LoadRequestOrder{
 				Field: idFieldName,
 				Desc:  false,
 			})
@@ -108,7 +108,7 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 		batch := collated[dsKey]
 		if op.Type == "QUERY" || op.Type == "" {
 			if batch == nil {
-				batch = []adapters.LoadOp{}
+				batch = []adapt.LoadOp{}
 			}
 			batch = append(batch, op)
 		}
@@ -118,12 +118,12 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := metadata.NewDataSource(dsKey)
+		datasource, err := meta.NewDataSource(dsKey)
 		if err != nil {
 			return nil, err
 		}
 
-		err = bundles.Load(datasource, session)
+		err = bundle.Load(datasource, session)
 		if err != nil {
 			return nil, err
 		}
@@ -133,11 +133,11 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 		// It would be better to make this requests in parallel
 		// instead of in series
 		adapterType := datasource.GetAdapterType()
-		adapter, err := adapters.GetAdapter(adapterType)
+		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := adapters.GetCredentials(datasource, site)
+		credentials, err := adapt.GetCredentials(datasource, site)
 		if err != nil {
 			return nil, err
 		}
@@ -151,12 +151,12 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 		for i := range batch {
 			op := batch[i]
 			for colKey, referencedCol := range op.ReferencedCollections {
-				datasource, err := metadata.NewDataSource(referencedCol.Metadata.DataSource)
+				datasource, err := meta.NewDataSource(referencedCol.Metadata.DataSource)
 				if err != nil {
 					return nil, err
 				}
 
-				err = bundles.Load(datasource, session)
+				err = bundle.Load(datasource, session)
 				if err != nil {
 					return nil, err
 				}
@@ -166,11 +166,11 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 				// It would be better to make this requests in parallel
 				// instead of in series
 				adapterType := datasource.GetAdapterType()
-				adapter, err := adapters.GetAdapter(adapterType)
+				adapter, err := adapt.GetAdapter(adapterType)
 				if err != nil {
 					return nil, err
 				}
-				credentials, err := adapters.GetCredentials(datasource, site)
+				credentials, err := adapt.GetCredentials(datasource, site)
 				if err != nil {
 					return nil, err
 				}
@@ -190,9 +190,9 @@ func Load(ops []adapters.LoadOp, session *sess.Session) (*adapters.MetadataCache
 					return nil, err
 				}
 
-				err = adapters.HandleReferences(func(op *adapters.LoadOp, metadata *adapters.MetadataCache) error {
-					return adapter.Load([]adapters.LoadOp{*op}, metadata, credentials)
-				}, &op, collatedMetadata[referencedCol.Metadata.DataSource], adapters.ReferenceRegistry{
+				err = adapt.HandleReferences(func(op *adapt.LoadOp, metadata *adapt.MetadataCache) error {
+					return adapter.Load([]adapt.LoadOp{*op}, metadata, credentials)
+				}, &op, collatedMetadata[referencedCol.Metadata.DataSource], adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})
 				if err != nil {

@@ -1,13 +1,13 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 //LoadOneCollection type
 type LoadOneCollection struct {
-	Collection metadata.CollectionableGroup
+	Collection meta.CollectionableGroup
 	Item       loadable.Item
 	Length     int
 }

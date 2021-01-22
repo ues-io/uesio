@@ -3,7 +3,7 @@ package configstore
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -30,12 +30,12 @@ func RegisterConfigStore(name string, store ConfigStore) {
 }
 
 // Get key
-func GetValue(key string, site *metadata.Site) (string, error) {
+func GetValue(key string, site *meta.Site) (string, error) {
 	if key == "" {
 		return "", nil
 	}
 
-	namespace, name, err := metadata.ParseKey(key)
+	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return "", errors.New("Failed Parsing Config Value: " + key + " : " + err.Error())
 	}
@@ -50,7 +50,7 @@ func GetValue(key string, site *metadata.Site) (string, error) {
 }
 
 // Merge function
-func Merge(template string, site *metadata.Site) (string, error) {
+func Merge(template string, site *meta.Site) (string, error) {
 	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
 		return GetValue(key, site)
 	})

@@ -4,16 +4,16 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // PlatformSaveRequest struct
 type PlatformSaveRequest struct {
-	Collection metadata.CollectionableGroup
-	Options    *adapters.SaveOptions
+	Collection meta.CollectionableGroup
+	Options    *adapt.SaveOptions
 }
 
 // RecordNotFoundError struct
@@ -31,7 +31,7 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 }
 
 // PlatformLoads function
-func PlatformLoads(ops []adapters.LoadOp, session *sess.Session) error {
+func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 
 	_, err := Load(
 		ops,
@@ -46,14 +46,14 @@ func PlatformLoads(ops []adapters.LoadOp, session *sess.Session) error {
 }
 
 // PlatformLoad function
-func PlatformLoad(group metadata.CollectionableGroup, conditions []adapters.LoadRequestCondition, session *sess.Session) error {
-	fields := []adapters.LoadRequestField{}
+func PlatformLoad(group meta.CollectionableGroup, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
+	fields := []adapt.LoadRequestField{}
 	for _, field := range group.GetFields() {
-		fields = append(fields, adapters.LoadRequestField{
+		fields = append(fields, adapt.LoadRequestField{
 			ID: field,
 		})
 	}
-	return PlatformLoads([]adapters.LoadOp{
+	return PlatformLoads([]adapt.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",
 			CollectionName: "uesio." + group.GetName(),
@@ -65,7 +65,7 @@ func PlatformLoad(group metadata.CollectionableGroup, conditions []adapters.Load
 }
 
 // PlatformLoadOne function
-func PlatformLoadOne(item metadata.CollectionableItem, conditions []adapters.LoadRequestCondition, session *sess.Session) error {
+func PlatformLoadOne(item meta.CollectionableItem, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Collection: item.GetCollection(),
 		Item:       item,
@@ -89,8 +89,8 @@ func PlatformLoadOne(item metadata.CollectionableItem, conditions []adapters.Loa
 }
 
 // PlatformDelete function
-func PlatformDelete(collectionID string, request map[string]adapters.DeleteRequest, session *sess.Session) error {
-	requests := []adapters.SaveRequest{{
+func PlatformDelete(collectionID string, request map[string]adapt.DeleteRequest, session *sess.Session) error {
+	requests := []adapt.SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: "uesio." + collectionID,
 		Deletes:    request,
@@ -109,13 +109,13 @@ func PlatformDelete(collectionID string, request map[string]adapters.DeleteReque
 // PlatformSaves function
 func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 
-	requests := []adapters.SaveRequest{}
+	requests := []adapt.SaveRequest{}
 
 	for _, psr := range psrs {
 		collection := psr.Collection
 		collectionName := collection.GetName()
 
-		changeRequests := map[string]adapters.ChangeRequest{}
+		changeRequests := map[string]adapt.ChangeRequest{}
 
 		index := 0
 
@@ -128,7 +128,7 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 				}
 				fieldChanges[field] = fieldValue
 			}
-			changeRequests[strconv.Itoa(index)] = adapters.ChangeRequest{
+			changeRequests[strconv.Itoa(index)] = adapt.ChangeRequest{
 				FieldChanges: fieldChanges,
 			}
 			index++
@@ -138,7 +138,7 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		requests = append(requests, adapters.SaveRequest{
+		requests = append(requests, adapt.SaveRequest{
 			Collection: "uesio." + collectionName,
 			Wire:       "AnyKey",
 			Changes:    changeRequests,
@@ -190,7 +190,7 @@ func PlatformSave(psr PlatformSaveRequest, session *sess.Session) error {
 	}, session)
 }
 
-func PlatformSaveOne(item metadata.CollectionableItem, options *adapters.SaveOptions, session *sess.Session) error {
+func PlatformSaveOne(item meta.CollectionableItem, options *adapt.SaveOptions, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Collection: item.GetCollection(),
 		Item:       item,

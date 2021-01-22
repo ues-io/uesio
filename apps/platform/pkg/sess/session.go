@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/icza/session"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Session {
+func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 
 	// Get the site's default profile
 	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
@@ -17,7 +17,7 @@ func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Ses
 	}
 
 	if user == nil {
-		user = &metadata.User{
+		user = &meta.User{
 			FirstName: "Guest",
 			LastName:  "User",
 			Profile:   defaultSitePublicProfile,
@@ -36,7 +36,7 @@ func createBrowserSession(user *metadata.User, site *metadata.Site) *session.Ses
 
 // GetHeadlessSession TODO:: JAS Ask ben what makes the most sense here
 func GetHeadlessSession() *Session {
-	user := &metadata.User{
+	user := &meta.User{
 		FirstName: "Guest",
 		LastName:  "User",
 		Profile:   "uesio.public",
@@ -49,12 +49,12 @@ func GetHeadlessSession() *Session {
 			"Site":      "studio",
 		},
 	})
-	site := &metadata.Site{
+	site := &meta.Site{
 		Name:       "studio",
 		VersionRef: "v0.0.1",
 		AppRef:     "uesio",
 	}
-	site.SetAppBundle(&metadata.BundleDef{
+	site.SetAppBundle(&meta.BundleDef{
 		Name: "uesio",
 	})
 	return &Session{
@@ -62,7 +62,7 @@ func GetHeadlessSession() *Session {
 		site:           site,
 	}
 }
-func create(browserSession *session.Session, site *metadata.Site) *Session {
+func create(browserSession *session.Session, site *meta.Site) *Session {
 	return &Session{
 		browserSession: browserSession,
 		site:           site,
@@ -70,20 +70,20 @@ func create(browserSession *session.Session, site *metadata.Site) *Session {
 }
 
 // Login function
-func Login(w http.ResponseWriter, user *metadata.User, site *metadata.Site) *Session {
+func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
 	s := New(user, site)
 	session.Add(*s.browserSession, w)
 	return s
 }
 
 // New function
-func New(user *metadata.User, site *metadata.Site) *Session {
+func New(user *meta.User, site *meta.Site) *Session {
 	browserSession := createBrowserSession(user, site)
 	return create(browserSession, site)
 }
 
 // NewPublic function
-func NewPublic(site *metadata.Site) *Session {
+func NewPublic(site *meta.Site) *Session {
 	return New(nil, site)
 }
 
@@ -96,7 +96,7 @@ func Logout(w http.ResponseWriter, s *Session) *Session {
 }
 
 // GetSessionFromRequest function
-func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *metadata.Site) (*Session, error) {
+func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Site) (*Session, error) {
 	browserSession := session.Get(r)
 	if browserSession == nil {
 		newSession := createBrowserSession(nil, site)
@@ -119,38 +119,38 @@ func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *metadat
 // Session struct
 type Session struct {
 	browserSession *session.Session
-	site           *metadata.Site
-	workspace      *metadata.Workspace
-	permissions    *metadata.PermissionSet
+	site           *meta.Site
+	workspace      *meta.Workspace
+	permissions    *meta.PermissionSet
 }
 
 // SetSite function
-func (s *Session) SetSite(site *metadata.Site) {
+func (s *Session) SetSite(site *meta.Site) {
 	s.site = site
 }
 
 // GetSite function
-func (s *Session) GetSite() *metadata.Site {
+func (s *Session) GetSite() *meta.Site {
 	return s.site
 }
 
 // SetWorkspace function
-func (s *Session) SetWorkspace(workspace *metadata.Workspace) {
+func (s *Session) SetWorkspace(workspace *meta.Workspace) {
 	s.workspace = workspace
 }
 
 // GetWorkspace function
-func (s *Session) GetWorkspace() *metadata.Workspace {
+func (s *Session) GetWorkspace() *meta.Workspace {
 	return s.workspace
 }
 
 // SetPermissions function
-func (s *Session) SetPermissions(permissions *metadata.PermissionSet) {
+func (s *Session) SetPermissions(permissions *meta.PermissionSet) {
 	s.permissions = permissions
 }
 
 // GetPermissions function
-func (s *Session) GetPermissions() *metadata.PermissionSet {
+func (s *Session) GetPermissions() *meta.PermissionSet {
 	return s.permissions
 }
 
@@ -176,8 +176,8 @@ func (s *Session) getBrowserSessionAttribute(key string) string {
 }
 
 // GetUserInfo function
-func (s *Session) GetUserInfo() *metadata.User {
-	return &metadata.User{
+func (s *Session) GetUserInfo() *meta.User {
+	return &meta.User{
 		FirstName: s.getBrowserSessionAttribute("FirstName"),
 		LastName:  s.getBrowserSessionAttribute("LastName"),
 		Profile:   s.getBrowserSessionAttribute("Profile"),
@@ -231,7 +231,7 @@ func (s *Session) GetContextNamespaces() map[string]bool {
 }
 
 // GetContextAppBundle returns the appbundle in context
-func (s *Session) GetContextAppBundle() *metadata.BundleDef {
+func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	if s.workspace != nil {
 		return s.workspace.GetAppBundle()
 	}
@@ -255,7 +255,7 @@ func (s *Session) GetContextVersionName() string {
 }
 
 // GetContextPermissions returns the permissions in context
-func (s *Session) GetContextPermissions() *metadata.PermissionSet {
+func (s *Session) GetContextPermissions() *meta.PermissionSet {
 	if s.workspace != nil {
 		return s.workspace.Permissions
 	}

@@ -4,21 +4,21 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
 
-	var job metadata.BulkJob
+	var job meta.BulkJob
 
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
 		&job,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: jobID,
@@ -50,7 +50,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		return "", err
 	}
 
-	batch := metadata.BulkBatch{
+	batch := meta.BulkBatch{
 		Status:    "started",
 		BulkJobID: jobID,
 	}

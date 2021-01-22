@@ -4,11 +4,11 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -17,15 +17,15 @@ type WorkspaceBundleStore struct {
 }
 
 // GetItem function
-func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version string, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	conditionsMap := item.GetConditions()
 	// Add the workspace id as a condition
 	conditionsMap["uesio.workspaceid"] = session.GetWorkspaceID()
 
-	conditions := []adapters.LoadRequestCondition{}
+	conditions := []adapt.LoadRequestCondition{}
 
 	for field, value := range conditionsMap {
-		conditions = append(conditions, adapters.LoadRequestCondition{
+		conditions = append(conditions, adapt.LoadRequestCondition{
 			Field: field,
 			Value: value,
 		})
@@ -37,9 +37,9 @@ func (b *WorkspaceBundleStore) GetItem(item metadata.BundleableItem, version str
 }
 
 // GetItems function
-func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// Add the workspace id as a condition
-	loadConditions := []adapters.LoadRequestCondition{
+	loadConditions := []adapt.LoadRequestCondition{
 		{
 			Field: "uesio.workspaceid",
 			Value: session.GetWorkspaceID(),
@@ -47,7 +47,7 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 	}
 
 	for field, value := range conditions {
-		loadConditions = append(loadConditions, adapters.LoadRequestCondition{
+		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 			Field: field,
 			Value: value,
 		})
@@ -61,7 +61,7 @@ func (b *WorkspaceBundleStore) GetItems(group metadata.BundleableGroup, namespac
 }
 
 // GetFileStream function
-func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	stream, userFile, err := filesource.Download(file.Content, session)
 	if err != nil {
 		return nil, err
@@ -71,12 +71,12 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *metadata.File
 }
 
 // GetComponentPackStream function
-func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	return nil, nil
 }
 
 // GetBotStream function
-func (b *WorkspaceBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
+func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	stream, _, err := filesource.Download(bot.Content, session)
 	if err != nil {
 		return nil, err
@@ -90,13 +90,13 @@ func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, item
 }
 
 // GetBundleDef function
-func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error) {
-	var by metadata.BundleDef
+func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+	var by meta.BundleDef
 	by.Name = namespace
-	bdc := metadata.BundleDependencyCollection{}
+	bdc := meta.BundleDependencyCollection{}
 	err := datasource.PlatformLoad(
 		&bdc,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
 				Value:    namespace + "_" + version,
@@ -109,11 +109,11 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		return nil, err
 	}
 	if len(bdc) != 0 {
-		by.Dependencies = map[string]metadata.BundleDefDep{}
+		by.Dependencies = map[string]meta.BundleDefDep{}
 	}
 	for _, bd := range bdc {
 		// TODO: Possibly recurse here to get sub dependencies
-		by.Dependencies[bd.BundleName] = metadata.BundleDefDep{
+		by.Dependencies[bd.BundleName] = meta.BundleDefDep{
 			Version: bd.BundleVersion,
 		}
 	}
@@ -127,12 +127,12 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	return &by, nil
 }
 
-func getAppForNamespace(namespace string, session *sess.Session) (*metadata.App, error) {
-	var app metadata.App
+func getAppForNamespace(namespace string, session *sess.Session) (*meta.App, error) {
+	var app meta.App
 
 	err := datasource.PlatformLoadOne(
 		&app,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: namespace,

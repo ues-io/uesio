@@ -3,10 +3,10 @@ package datasource
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 
-	"github.com/thecloudmasters/uesio/pkg/metadata"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -14,10 +14,10 @@ import (
 func AddDependency(workspaceID string, bundleName string, bundleVersion string, session *sess.Session) error {
 	//Just verify the bundle exists
 	//Assumes structure of bundle IDs (may prove to be a mistake)
-	bm := metadata.Bundle{}
+	bm := meta.Bundle{}
 	err := PlatformLoadOne(
 		&bm,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: bundleName + "_" + bundleVersion,
@@ -31,13 +31,13 @@ func AddDependency(workspaceID string, bundleName string, bundleVersion string, 
 	if bm.Namespace == session.GetWorkspaceApp() {
 		return errors.New("cannot depend on self")
 	}
-	dep := metadata.BundleDependency{}
+	dep := meta.BundleDependency{}
 	existingDep, err := getBundleDependencyByName(workspaceID, bundleName, session)
 	if err == nil {
 		dep = *existingDep
 		dep.BundleVersion = bundleVersion
 	} else {
-		dep = metadata.BundleDependency{
+		dep = meta.BundleDependency{
 			WorkspaceID:   workspaceID,
 			BundleName:    bundleName,
 			BundleVersion: bundleVersion,
@@ -56,11 +56,11 @@ func clearCache(namespace string, workspaceID string) {
 	localcache.RemoveCacheEntry("workspace-dependency", namespace+":"+workspaceID)
 }
 
-func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*metadata.BundleDependency, error) {
-	bdc := metadata.BundleDependencyCollection{}
+func getBundleDependencyByName(workspaceID string, bundleName string, session *sess.Session) (*meta.BundleDependency, error) {
+	bdc := meta.BundleDependencyCollection{}
 	err := PlatformLoad(
 		&bdc,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
 				Value:    workspaceID,
@@ -86,8 +86,8 @@ func getBundleDependencyByName(workspaceID string, bundleName string, session *s
 // RemoveDependency func
 func RemoveDependency(workspaceID string, bundleName string, session *sess.Session) error {
 
-	deleteReq := map[string]adapters.DeleteRequest{}
-	deletePrimary := adapters.DeleteRequest{}
+	deleteReq := map[string]adapt.DeleteRequest{}
+	deletePrimary := adapt.DeleteRequest{}
 	dependency, err := getBundleDependencyByName(workspaceID, bundleName, session)
 	if err != nil {
 		return err

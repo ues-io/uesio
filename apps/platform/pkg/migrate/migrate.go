@@ -1,10 +1,10 @@
 package migrate
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -13,18 +13,18 @@ func Migrate(session *sess.Session) error {
 
 	site := session.GetSite()
 
-	collatedMetadata := map[string]*adapters.MetadataCache{}
-	metadataResponse := adapters.MetadataCache{}
-	var collections metadata.CollectionCollection
+	collatedMetadata := map[string]*adapt.MetadataCache{}
+	metadataResponse := adapt.MetadataCache{}
+	var collections meta.CollectionCollection
 	namespace := session.GetWorkspaceApp()
 	// Loop over all collections in the workspace/site and batch by data source
-	err := bundles.LoadAll(&collections, namespace, nil, session)
+	err := bundle.LoadAll(&collections, namespace, nil, session)
 	if err != nil {
 		return err
 	}
 
-	var fields metadata.FieldCollection
-	err = bundles.LoadAll(&fields, namespace, nil, session)
+	var fields meta.FieldCollection
+	err = bundle.LoadAll(&fields, namespace, nil, session)
 	if err != nil {
 		return err
 	}
@@ -60,12 +60,12 @@ func Migrate(session *sess.Session) error {
 	// 3. Get metadata for each datasource and collection
 	for dsKey := range collatedMetadata {
 
-		ds, err := metadata.NewDataSource(dsKey)
+		ds, err := meta.NewDataSource(dsKey)
 		if err != nil {
 			return err
 		}
 
-		err = bundles.Load(ds, session)
+		err = bundle.Load(ds, session)
 		if err != nil {
 			return err
 		}
@@ -75,11 +75,11 @@ func Migrate(session *sess.Session) error {
 		// It would be better to make this requests in parallel
 		// instead of in series
 		adapterType := ds.GetAdapterType()
-		adapter, err := adapters.GetAdapter(adapterType)
+		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return err
 		}
-		credentials, err := adapters.GetCredentials(ds, site)
+		credentials, err := adapt.GetCredentials(ds, site)
 		if err != nil {
 			return err
 		}

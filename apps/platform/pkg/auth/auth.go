@@ -4,18 +4,18 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/site"
 )
 
 // AuthenticationType interface
 type AuthenticationType interface {
-	Verify(string, *metadata.Site) error
-	Decode(string, *metadata.Site) (*AuthenticationClaims, error)
+	Verify(string, *meta.Site) error
+	Decode(string, *meta.Site) (*AuthenticationClaims, error)
 }
 
 var authTypeMap = map[string]AuthenticationType{}
@@ -43,7 +43,7 @@ type AuthenticationClaims struct {
 }
 
 // GetSiteFromHost function
-func GetSiteFromHost(host string) (*metadata.Site, error) {
+func GetSiteFromHost(host string) (*meta.Site, error) {
 	var domainType, domain string
 	stringParts := strings.Split(host, ".")
 	if len(stringParts) == 3 {
@@ -65,7 +65,7 @@ func GetSiteFromHost(host string) (*metadata.Site, error) {
 }
 
 // CreateUser function
-func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
+func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
@@ -77,7 +77,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 		defaultSiteProfile = "uesio.standard"
 	}
 
-	return datasource.PlatformSaveOne(&metadata.User{
+	return datasource.PlatformSaveOne(&meta.User{
 		FirstName:      claims.FirstName,
 		LastName:       claims.LastName,
 		FederationType: claims.AuthType,
@@ -88,7 +88,7 @@ func CreateUser(claims *AuthenticationClaims, site *metadata.Site) error {
 }
 
 // CheckProvisionWhitelist function
-func CheckProvisionWhitelist(claims *AuthenticationClaims, site *metadata.Site) error {
+func CheckProvisionWhitelist(claims *AuthenticationClaims, site *meta.Site) error {
 
 	email := claims.Email
 	emailSplit := strings.Split(email, "@")
@@ -121,7 +121,7 @@ func CheckProvisionWhitelist(claims *AuthenticationClaims, site *metadata.Site) 
 }
 
 // ProvisionUser function
-func ProvisionUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User, error) {
+func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
 
 	err := CheckProvisionWhitelist(claims, site)
 	if err != nil {
@@ -146,16 +146,16 @@ func ProvisionUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata
 }
 
 // GetUser function
-func GetUser(claims *AuthenticationClaims, site *metadata.Site) (*metadata.User, error) {
+func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
 
-	var user metadata.User
+	var user meta.User
 	err := datasource.PlatformLoadOne(
 		&user,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.federationType",
 				Value: claims.AuthType,

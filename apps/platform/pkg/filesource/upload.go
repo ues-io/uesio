@@ -7,11 +7,11 @@ import (
 	"net/url"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -72,12 +72,12 @@ func getFieldIDPart(details FileDetails) string {
 func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (string, error) {
 	site := session.GetSite()
 	workspaceID := session.GetWorkspaceID()
-	ufc, fs, err := fileadapters.GetFileSourceAndCollection(details.FileCollectionID, session)
+	ufc, fs, err := fileadapt.GetFileSourceAndCollection(details.FileCollectionID, session)
 	if err != nil {
 		return "", err
 	}
 
-	ufm := metadata.UserFileMetadata{
+	ufm := meta.UserFileMetadata{
 		CollectionID:     details.CollectionID,
 		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
 		FieldID:          getFieldIDPart(details),
@@ -95,18 +95,18 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (str
 
 	ufm.Path = path
 
-	err = datasource.PlatformSaveOne(&ufm, &adapters.SaveOptions{
-		Upsert: &adapters.UpsertOptions{},
+	err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
+		Upsert: &adapt.UpsertOptions{},
 	}, session)
 	if err != nil {
 		return "", err
 	}
 
-	fileAdapter, err := fileadapters.GetFileAdapter(fs.GetAdapterType())
+	fileAdapter, err := fileadapt.GetFileAdapter(fs.GetAdapterType())
 	if err != nil {
 		return "", err
 	}
-	credentials, err := fileadapters.GetCredentials(fs, site)
+	credentials, err := fileadapt.GetCredentials(fs, site)
 	if err != nil {
 		return "", err
 	}
@@ -119,17 +119,17 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (str
 		return "", err
 	}
 	if details.FieldID != "" {
-		meta, err := datasource.LoadCollectionMetadata(details.CollectionID, &adapters.MetadataCache{}, session)
+		meta, err := datasource.LoadCollectionMetadata(details.CollectionID, &adapt.MetadataCache{}, session)
 		if err != nil {
 			return "", err
 		}
 
 		_, err = datasource.Save(datasource.SaveRequestBatch{
-			Wires: []adapters.SaveRequest{
+			Wires: []adapt.SaveRequest{
 				{
 					Collection: details.CollectionID,
 					Wire:       "filefieldupdate",
-					Changes: map[string]adapters.ChangeRequest{
+					Changes: map[string]adapt.ChangeRequest{
 						"0": {
 							FieldChanges: map[string]interface{}{
 								details.FieldID: ufm.ID,

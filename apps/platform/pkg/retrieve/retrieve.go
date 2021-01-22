@@ -5,10 +5,10 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"gopkg.in/yaml.v3"
 )
@@ -18,25 +18,25 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 
 	itemStreams := []bundlestore.ItemStream{}
 
-	for _, metadataType := range metadata.GetMetadataTypes() {
-		group, err := metadata.GetBundleableGroupFromType(metadataType)
+	for _, metadataType := range meta.GetMetadataTypes() {
+		group, err := meta.GetBundleableGroupFromType(metadataType)
 		if err != nil {
 			return nil, err
 		}
-		err = bundles.LoadAll(group, session.GetWorkspaceApp(), nil, session)
+		err = bundle.LoadAll(group, session.GetWorkspaceApp(), nil, session)
 		if err != nil {
 			return nil, err
 		}
 
 		err = group.Loop(func(item loadable.Item) error {
 
-			path := item.(metadata.BundleableItem).GetPath()
+			path := item.(meta.BundleableItem).GetPath()
 
 			// Special handling for bots
 			if metadataType == "bots" {
-				bot := item.(*metadata.Bot)
+				bot := item.(*meta.Bot)
 
-				stream, err := bundles.GetBotStream(bot, session)
+				stream, err := bundle.GetBotStream(bot, session)
 				if err != nil {
 					return err
 				}
@@ -57,9 +57,9 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 
 			// Special handling for files
 			if metadataType == "files" {
-				file := item.(*metadata.File)
+				file := item.(*meta.File)
 
-				stream, err := bundles.GetFileStream(file, session)
+				stream, err := bundle.GetFileStream(file, session)
 				if err != nil {
 					return err
 				}
