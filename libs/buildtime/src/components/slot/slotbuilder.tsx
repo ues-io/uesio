@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) =>
 		vertical: {
 			display: "block",
 		},
-		contentView: {
+		structureView: {
 			padding: "8px",
 		},
 		isDragging: {},
@@ -78,7 +78,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const dropNode = uesio.builder.useDropNode()
 	const buildView = uesio.builder.useView()
 
-	const isContentView = buildView === "contentview"
+	const isStructureView = buildView === "structureview"
 
 	const size = items.length
 
@@ -112,7 +112,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		classes.root,
 		direction === "horizontal" ? classes.horizontal : classes.vertical,
 		{
-			[classes.contentView]: isContentView,
+			[classes.structureView]: isStructureView,
 			[classes.isDragging]: dragNode,
 		}
 	)
@@ -138,7 +138,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					path={path}
 					index={index}
 					definition={itemDef}
-					isContentView={isContentView}
+					isStructureView={isStructureView}
 					direction={
 						direction === "horizontal" ? "horizontal" : "vertical"
 					}

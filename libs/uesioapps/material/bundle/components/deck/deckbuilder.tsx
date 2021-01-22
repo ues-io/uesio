@@ -8,11 +8,11 @@ const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(path) as DeckDefinition
 	const buildView = uesio.builder.useView()
-	const isContentView = buildView === "contentview"
+	const isStructureView = buildView === "structureview"
 
 	return (
 		<>
-			{isContentView && (
+			{isStructureView && (
 				<div
 					style={{
 						border: "1px dashed #ccc",

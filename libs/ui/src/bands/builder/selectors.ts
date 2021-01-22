@@ -49,7 +49,7 @@ const useRightPanel = () =>
 	useSelector(({ builder }: RootState) => builder?.rightPanel || "")
 
 const useBuilderView = () =>
-	useSelector(({ builder }: RootState) => builder?.buildView || "")
+	useSelector(({ builder }: RootState) => builder.buildView)
 
 const useBuilderMode = () =>
 	useSelector(({ builder }: RootState) =>
