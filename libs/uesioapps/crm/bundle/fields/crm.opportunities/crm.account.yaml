@@ -4,4 +4,4 @@ type: REFERENCE
 label: Account
 propertyName: account
 referencedCollection: crm.accounts
-foreignKeyField: crm.account
+foreignKeyField: crm.accountid

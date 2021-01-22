@@ -9,6 +9,8 @@ views:
   crm.contactDetails: true
   crm.opportunities: true
   crm.opportunityDetails: true
+  crm.leads: true
+  crm.leadDetails: true
 routes:
   crm.home: true
   crm.accounts: true
@@ -17,5 +19,7 @@ routes:
   crm.contactDetails: true
   crm.opportunities: true
   crm.opportunityDetails: true
+  crm.leads: true
+  crm.leadDetails: true
 files:
   crm.logo: true

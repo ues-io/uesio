@@ -48,6 +48,10 @@ definition:
           - material.column:
               field: crm.account
           - material.column:
+              field: crm.updated
+          - material.column:
+              field: crm.created
+          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -70,13 +74,16 @@ definition:
     opportunities:
       collection: crm.opportunities
       fields:
-        crm.name: null
-        crm.id: null
-        crm.status: null
-        crm.attachment: null
-        crm.description: null
-        crm.account: null
+        crm.name:
+        crm.id:
+        crm.status:
+        crm.attachment:
+        crm.description:
+        crm.account:
+        crm.accountid:
+        crm.updated:
+        crm.created:
 dependencies:
   componentpacks:
-    material.main: null
-    sample.main: null
+    material.main:
+    sample.main:

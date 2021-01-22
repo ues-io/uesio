@@ -20,9 +20,21 @@ definition:
                     xs: 3
                     components:
                       - material.card:
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: lead/${crm.id}
+                              namespace: "crm"
                           components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${crm.firstname}"
+                                textTransform: "capitalize"
                             - material.field:
-                                fieldId: crm.firstname
+                                fieldId: crm.updated
           - material.griditem:
               components:
                 - material.typography:
@@ -36,9 +48,21 @@ definition:
                     xs: 3
                     components:
                       - material.card:
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: account/${crm.id}
+                              namespace: "crm"
                           components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${crm.name}"
+                                textTransform: "capitalize"
                             - material.field:
-                                fieldId: crm.name
+                                fieldId: crm.updated
           - material.griditem:
               components:
                 - material.typography:
@@ -52,9 +76,21 @@ definition:
                     xs: 3
                     components:
                       - material.card:
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: contact/${crm.id}
+                              namespace: "crm"
                           components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${crm.firstname}"
+                                textTransform: "capitalize"
                             - material.field:
-                                fieldId: crm.firstname
+                                fieldId: crm.updated
           - material.griditem:
               components:
                 - material.typography:
@@ -68,28 +104,64 @@ definition:
                     xs: 3
                     components:
                       - material.card:
+                          signals:
+                            - signal: route/NAVIGATE
+                              path: opportunity/${crm.id}
+                              namespace: "crm"
                           components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${crm.name}"
+                                textTransform: "capitalize"
                             - material.field:
-                                fieldId: crm.name
+                                fieldId: crm.updated
 
   wires:
     accounts:
       collection: crm.accounts
       fields:
-        crm.name: null
+        crm.id:
+        crm.name:
+        crm.updated:
+      limit: 4
+      order:
+        - field: crm.updated
+          desc: true
     contacts:
       collection: crm.contacts
       fields:
-        crm.firstname: null
+        crm.id:
+        crm.firstname:
+        crm.updated:
+      limit: 4
+      order:
+        - field: crm.updated
+          desc: true
     leads:
       collection: crm.leads
       fields:
-        crm.firstname: null
+        crm.id:
+        crm.firstname:
+        crm.updated:
+      limit: 4
+      order:
+        - field: crm.updated
+          desc: true
     opportunities:
       collection: crm.opportunities
       fields:
-        crm.name: null
+        crm.id:
+        crm.name:
+        crm.updated:
+      limit: 4
+      order:
+        - field: crm.updated
+          desc: true
 dependencies:
   componentpacks:
-    material.main: null
-    sample.main: null
+    material.main:
+    sample.main:
