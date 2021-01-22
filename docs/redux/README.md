@@ -111,6 +111,34 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
+> As a reminder, if you call an `async` function and you do use the value returned by that function, then you need to **resolve** that returned valule. Indeed, an `async` function returns a `Promise`. The snippet right below illustrates this.
+
+```
+// getUsers does tap some API
+const getUsers = async (
+  page: number,
+  nationality: string,
+  amountOfRows: number
+): Promise<{ results: IUser[] }> => {
+  const response = await fetch(
+    `https://randomuser.me/api/?nat=${nationality}&page=${page}&results=${amountOfRows}`
+  );
+  const parsedReponse = await response.json();
+  return parsedReponse;
+};
+
+// fetchUsers returns a thunk
+const fetchUsers = (
+  page: number,
+  nationality: string,
+  amountOfRows: number
+) => async (dispatch: Dispatch) => {
+  dispatch(actions.makeUserFetching(true));
+
+  const usersResponse = await getUsers(page, nationality, amountOfRows);
+  dispatch(actions.makeUserFetch(usersResponse?.results || []));
+```
+
 ## A single action handled by multiple reducers
 
 The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are **isolated** from each other.
