@@ -7,5 +7,9 @@
 	},
 	"files": ["./platform/platform.ts"],
 	"include": ["./platform/platform.ts"],
+	"baseUrl": ".",
+	"paths": {
+		"@uesio/constants": "../../libs/constants/src"
+	},
 	"exclude": []
 }

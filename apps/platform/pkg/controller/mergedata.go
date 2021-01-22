@@ -46,7 +46,8 @@ type WorkspaceMergeData struct {
 
 // BuilderMergeData stuff to merge
 type BuilderMergeData struct {
-	BuildMode bool `json:"buildMode"`
+	BuildMode bool   `json:"buildMode"`
+	BuildView string `json:"buildView"`
 }
 
 // MergeData stuff to merge
@@ -122,6 +123,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 		},
 		Builder: &BuilderMergeData{
 			BuildMode: buildMode,
+			BuildView: "structureview",
 		},
 	}
 

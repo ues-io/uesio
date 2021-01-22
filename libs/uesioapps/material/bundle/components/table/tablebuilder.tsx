@@ -8,11 +8,11 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(props.path) as TableDefinition
 	const buildView = uesio.builder.useView()
-	const isExpanded = buildView === "expandedview"
+	const isStructureView = buildView === "structureview"
 
 	return (
 		<>
-			{isExpanded && (
+			{isStructureView && (
 				<div
 					style={{
 						border: "1px dashed #ccc",

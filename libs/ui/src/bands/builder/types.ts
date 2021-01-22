@@ -11,7 +11,7 @@ type BuilderState = {
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	buildView?: string
+	buildView: string
 	rightPanel?: string
 	leftPanel?: string
 	metadata: MetadataListStore
