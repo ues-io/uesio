@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/jinzhu/copier"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -39,7 +39,7 @@ func getStream(namespace string, version string, objectname string, filename str
 }
 
 // GetItem function
-func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string, session *sess.Session) error {
+func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	collectionName := item.GetCollectionName()
@@ -51,7 +51,7 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
 	}
 
-	cachedItem, ok := bundles.GetItemFromCache(namespace, version, collectionName, key)
+	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
 
 	if ok {
 		// We got a cache hit
@@ -68,7 +68,7 @@ func (b *LocalBundleStore) GetItem(item metadata.BundleableItem, version string,
 }
 
 // GetItems function
-func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, version string, conditions metadata.BundleConditions, session *sess.Session) error {
+func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), group.GetName(), "") + string(os.PathSeparator)
@@ -116,17 +116,17 @@ func (b *LocalBundleStore) GetItems(group metadata.BundleableGroup, namespace, v
 }
 
 // GetFileStream function
-func (b *LocalBundleStore) GetFileStream(version string, file *metadata.File, session *sess.Session) (io.ReadCloser, error) {
+func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath())
 }
 
 // GetBotStream function
-func (b *LocalBundleStore) GetBotStream(version string, bot *metadata.Bot, session *sess.Session) (io.ReadCloser, error) {
+func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
 // GetComponentPackStream function
-func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *metadata.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 
 	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
@@ -169,8 +169,8 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 }
 
 // GetBundleDef function
-func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*metadata.BundleDef, error) {
-	var by metadata.BundleDef
+func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml")
 	if err != nil {
 		return nil, err

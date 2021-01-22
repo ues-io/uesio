@@ -15,6 +15,4 @@ const call = (
 	return context
 }
 
-export default {
-	call,
-}
+export default { call }

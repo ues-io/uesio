@@ -1,9 +1,9 @@
 package datasource
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -13,8 +13,8 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 	site := session.GetSite()
 
 	collated := map[string]SaveRequestBatch{}
-	collatedMetadata := map[string]*adapters.MetadataCache{}
-	metadataResponse := adapters.MetadataCache{}
+	collatedMetadata := map[string]*adapt.MetadataCache{}
+	metadataResponse := adapt.MetadataCache{}
 	response := SaveResponseBatch{}
 
 	// Loop over the requests and batch per data source
@@ -79,12 +79,12 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := metadata.NewDataSource(dsKey)
+		datasource, err := meta.NewDataSource(dsKey)
 		if err != nil {
 			return nil, err
 		}
 
-		err = bundles.Load(datasource, session)
+		err = bundle.Load(datasource, session)
 		if err != nil {
 			return nil, err
 		}
@@ -94,11 +94,11 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		// It would be better to make this requests in parallel
 		// instead of in series
 		adapterType := datasource.GetAdapterType()
-		adapter, err := adapters.GetAdapter(adapterType)
+		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := datasource.GetCredentials(site)
+		credentials, err := adapt.GetCredentials(datasource, site)
 		if err != nil {
 			return nil, err
 		}

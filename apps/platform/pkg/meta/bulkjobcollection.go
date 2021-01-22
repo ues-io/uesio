@@ -1,0 +1,59 @@
+package meta
+
+import (
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
+
+// BulkJobCollection slice
+type BulkJobCollection []BulkJob
+
+// GetName function
+func (bjc *BulkJobCollection) GetName() string {
+	return "bulkjobs"
+}
+
+// GetFields function
+func (bjc *BulkJobCollection) GetFields() []string {
+	return StandardGetFields(bjc)
+}
+
+// GetItem function
+func (bjc *BulkJobCollection) GetItem(index int) loadable.Item {
+	return &(*bjc)[index]
+}
+
+// AddItem function
+func (bjc *BulkJobCollection) AddItem(item loadable.Item) {
+	*bjc = append(*bjc, *item.(*BulkJob))
+}
+
+// NewItem function
+func (bjc *BulkJobCollection) NewItem() loadable.Item {
+	return &BulkJob{}
+}
+
+// Loop function
+func (bjc *BulkJobCollection) Loop(iter func(item loadable.Item) error) error {
+	for index := range *bjc {
+		err := iter(bjc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (bjc *BulkJobCollection) Len() int {
+	return len(*bjc)
+}
+
+// GetItems function
+func (bjc *BulkJobCollection) GetItems() interface{} {
+	return bjc
+}
+
+// Slice function
+func (bjc *BulkJobCollection) Slice(start int, end int) {
+
+}

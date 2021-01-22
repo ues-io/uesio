@@ -1,0 +1,59 @@
+package meta
+
+import (
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
+
+// SiteCollection slice
+type SiteCollection []Site
+
+// GetName function
+func (sc *SiteCollection) GetName() string {
+	return "sites"
+}
+
+// GetFields function
+func (sc *SiteCollection) GetFields() []string {
+	return StandardGetFields(sc)
+}
+
+// GetItem function
+func (sc *SiteCollection) GetItem(index int) loadable.Item {
+	return &(*sc)[index]
+}
+
+// AddItem function
+func (sc *SiteCollection) AddItem(item loadable.Item) {
+	*sc = append(*sc, *item.(*Site))
+}
+
+// NewItem function
+func (sc *SiteCollection) NewItem() loadable.Item {
+	return &Site{}
+}
+
+// Loop function
+func (sc *SiteCollection) Loop(iter func(item loadable.Item) error) error {
+	for index := range *sc {
+		err := iter(sc.GetItem(index))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Len function
+func (sc *SiteCollection) Len() int {
+	return len(*sc)
+}
+
+// GetItems function
+func (sc *SiteCollection) GetItems() interface{} {
+	return sc
+}
+
+// Slice function
+func (sc *SiteCollection) Slice(start int, end int) {
+
+}

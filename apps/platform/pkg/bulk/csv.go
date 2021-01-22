@@ -5,17 +5,16 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Session) ([]metadata.FieldMapping, *adapters.MetadataCache, error) {
-	collatedMetadata := map[string]*adapters.MetadataCache{}
-	metadataResponse := adapters.MetadataCache{}
-	mappings := []metadata.FieldMapping{}
+func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session) ([]meta.FieldMapping, *adapt.MetadataCache, error) {
+	collatedMetadata := map[string]*adapt.MetadataCache{}
+	metadataResponse := adapt.MetadataCache{}
+	mappings := []meta.FieldMapping{}
 	// Keep a running tally of all requested collections
 	collections := datasource.MetadataRequest{}
 	err := collections.AddCollection(spec.Collection)
@@ -25,7 +24,7 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 	for _, columnName := range columnNames {
 		mapping, ok := spec.Mappings[columnName]
 		if !ok {
-			mapping = metadata.FieldMapping{
+			mapping = meta.FieldMapping{
 				FieldName: columnName,
 			}
 		}
@@ -44,15 +43,15 @@ func getMappings(columnNames []string, spec *metadata.JobSpec, session *sess.Ses
 	return mappings, &metadataResponse, nil
 }
 
-func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.CollectionMetadata) ([]adapters.Lookup, error) {
-	lookups := []adapters.Lookup{}
+func getLookups(mappings []meta.FieldMapping, collectionMetadata *adapt.CollectionMetadata) ([]adapt.Lookup, error) {
+	lookups := []adapt.Lookup{}
 	for _, mapping := range mappings {
 		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
 		if err != nil {
 			return nil, err
 		}
 		if fieldMetadata.Type == "REFERENCE" {
-			lookups = append(lookups, adapters.Lookup{
+			lookups = append(lookups, adapt.Lookup{
 				RefField:   mapping.FieldName,
 				MatchField: mapping.MatchField,
 			})
@@ -61,10 +60,10 @@ func getLookups(mappings []metadata.FieldMapping, collectionMetadata *adapters.C
 	return lookups, nil
 }
 
-func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Session) (*datasource.SaveRequestBatch, error) {
+func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (*datasource.SaveRequestBatch, error) {
 
 	r := csv.NewReader(body)
-	changes := map[string]adapters.ChangeRequest{}
+	changes := map[string]adapt.ChangeRequest{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -92,7 +91,7 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 			return nil, err
 		}
 
-		changeRequest := adapters.ChangeRequest{
+		changeRequest := adapt.ChangeRequest{
 			FieldChanges: map[string]interface{}{},
 		}
 
@@ -136,13 +135,13 @@ func processCSV(body io.ReadCloser, spec *metadata.JobSpec, session *sess.Sessio
 		return nil, err
 	}
 	return &datasource.SaveRequestBatch{
-		Wires: []adapters.SaveRequest{
+		Wires: []adapt.SaveRequest{
 			{
 				Collection: spec.Collection,
 				Wire:       "bulkupload",
 				Changes:    changes,
-				Options: &adapters.SaveOptions{
-					Upsert: &adapters.UpsertOptions{
+				Options: &adapt.SaveOptions{
+					Upsert: &adapt.UpsertOptions{
 						MatchField:    spec.UpsertKey,
 						MatchTemplate: "${" + spec.UpsertKey + "}",
 					},

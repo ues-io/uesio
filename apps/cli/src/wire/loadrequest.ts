@@ -8,6 +8,8 @@ type LoadRequest = {
 	fields: LoadRequestField[]
 	conditions: LoadRequestCondition[]
 	order: OrderDescription[]
+	limit: number
+	offset: number
 }
 
 type LoadRequestField = {

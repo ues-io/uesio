@@ -1,10 +1,8 @@
 package datasource
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-)
+import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // LoadRequestBatch struct
 type LoadRequestBatch struct {
-	Wires []adapters.LoadRequest `json:"wires"`
+	Wires []adapt.LoadRequest `json:"wires"`
 }

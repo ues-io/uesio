@@ -4,17 +4,17 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // BotDialect interface
 type BotDialect interface {
-	BeforeSave(bot *metadata.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
-	AfterSave(bot *metadata.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
-	CallBot(bot *metadata.Bot, botAPI *CallBotAPI, session *sess.Session) error
+	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
+	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
+	CallBot(bot *meta.Bot, botAPI *CallBotAPI, session *sess.Session) error
 }
 
 var botDialectMap = map[string]BotDialect{}
@@ -26,7 +26,7 @@ func RegisterBotDialect(name string, dialect BotDialect) {
 
 // GetBotDialect function
 func getBotDialect(botDialectName string) (BotDialect, error) {
-	dialectKey, ok := metadata.GetBotDialects()[botDialectName]
+	dialectKey, ok := meta.GetBotDialects()[botDialectName]
 	if !ok {
 		return nil, errors.New("Invalid bot dialect name: " + botDialectName)
 	}
@@ -37,8 +37,8 @@ func getBotDialect(botDialectName string) (BotDialect, error) {
 	return dialect, nil
 }
 
-func hydrateBot(bot *metadata.Bot, session *sess.Session) error {
-	stream, err := bundles.GetBotStream(bot, session)
+func hydrateBot(bot *meta.Bot, session *sess.Session) error {
+	stream, err := bundle.GetBotStream(bot, session)
 	if err != nil {
 		return err
 	}
@@ -51,10 +51,10 @@ func hydrateBot(bot *metadata.Bot, session *sess.Session) error {
 }
 
 // RunBeforeSaveBots function
-func RunBeforeSaveBots(request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
-	var robots metadata.BotCollection
+func RunBeforeSaveBots(request *adapt.SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+	var robots meta.BotCollection
 
-	err := bundles.LoadAllFromAny(&robots, metadata.BundleConditions{
+	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "BEFORESAVE",
 	}, session)
@@ -89,10 +89,10 @@ func RunBeforeSaveBots(request *adapters.SaveRequest, collectionMetadata *adapte
 }
 
 // RunAfterSaveBots function
-func RunAfterSaveBots(response *adapters.SaveResponse, request *adapters.SaveRequest, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
-	var robots metadata.BotCollection
+func RunAfterSaveBots(response *adapt.SaveResponse, request *adapt.SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+	var robots meta.BotCollection
 
-	err := bundles.LoadAllFromAny(&robots, metadata.BundleConditions{
+	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"uesio.collection": collectionMetadata.GetFullName(),
 		"uesio.type":       "AFTERSAVE",
 	}, session)
@@ -128,9 +128,9 @@ func RunAfterSaveBots(response *adapters.SaveResponse, request *adapters.SaveReq
 
 // CallBot function
 func CallBot(namespace, name string, params map[string]string, session *sess.Session) error {
-	robot := metadata.NewListenerBot(namespace, name)
+	robot := meta.NewListenerBot(namespace, name)
 
-	err := bundles.Load(robot, session)
+	err := bundle.Load(robot, session)
 	if err != nil {
 		return err
 	}

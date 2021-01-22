@@ -7,13 +7,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/thecloudmasters/uesio/pkg/sess"
-
 	"github.com/spf13/cobra"
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 func init() {
@@ -51,7 +50,7 @@ func seed(cmd *cobra.Command, args []string) {
 	logger.Log("Running seed command!", logger.INFO)
 
 	// Read files from seed folder
-	var apps metadata.AppCollection
+	var apps meta.AppCollection
 	err := GetSeedDataFile(&apps, "apps.json")
 	if err != nil {
 		logger.LogError(err)
@@ -59,7 +58,7 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	// Read files from seed folder
-	var bundles metadata.BundleCollection
+	var bundles meta.BundleCollection
 	err = GetSeedDataFile(&bundles, "bundles.json")
 	if err != nil {
 		logger.LogError(err)
@@ -67,7 +66,7 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	// Read files from seed folder
-	var workspaces metadata.WorkspaceCollection
+	var workspaces meta.WorkspaceCollection
 	err = GetSeedDataFile(&workspaces, "workspaces.json")
 	if err != nil {
 		logger.LogError(err)
@@ -75,7 +74,7 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	// Read files from seed folder
-	var sites metadata.SiteCollection
+	var sites meta.SiteCollection
 	err = GetSeedDataFile(&sites, "sites.json")
 	if err != nil {
 		logger.LogError(err)
@@ -83,7 +82,7 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	// Read files from seed folder
-	var siteDomains metadata.SiteDomainCollection
+	var siteDomains meta.SiteDomainCollection
 	err = GetSeedDataFile(&siteDomains, "domains.json")
 	if err != nil {
 		logger.LogError(err)
@@ -92,58 +91,39 @@ func seed(cmd *cobra.Command, args []string) {
 
 	session := sess.GetHeadlessSession()
 
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &apps,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
+		{
+			Collection: &apps,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &sites,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &sites,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
 		},
-	}, session)
-
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &siteDomains,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &siteDomains,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &bundles,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
+		{
+			Collection: &bundles,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
 		},
-	}, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &workspaces,
-		Options: &adapters.SaveOptions{
-			Upsert: &adapters.UpsertOptions{},
-			Lookups: []adapters.Lookup{
-				{
-					RefField: "uesio.app",
+		{
+			Collection: &workspaces,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+				Lookups: []adapt.Lookup{
+					{
+						RefField: "uesio.app",
+					},
 				},
 			},
 		},

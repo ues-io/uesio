@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -86,7 +86,7 @@ func (mr *MetadataRequest) GetSelectListKey(collectionName, fieldName, selectLis
 }
 
 // Load function
-func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.MetadataCache, collatedMetadata map[string]*adapters.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.MetadataCache, collatedMetadata map[string]*adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
 	// Implement the old way to make sure it still works
@@ -141,7 +141,7 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 			if fieldMetadata.Type == "FILE" {
 				fileDataSuffix := "__FILEDATA"
 				userfilesCollection := "uesio.userfiles"
-				fakeRefMetadata := &adapters.FieldMetadata{
+				fakeRefMetadata := &adapt.FieldMetadata{
 					Name:                 fieldMetadata.Name + fileDataSuffix,
 					Namespace:            fieldMetadata.Namespace,
 					Createable:           false,
@@ -160,7 +160,7 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 					return err
 				}
 
-				mimeField := []adapters.LoadRequestField{
+				mimeField := []adapt.LoadRequestField{
 					{
 						ID: "uesio.mimetype",
 					},
@@ -176,12 +176,12 @@ func (mr *MetadataRequest) Load(op *adapters.LoadOp, metadataResponse *adapters.
 				// do a whole new approach to reference fields.
 				if op != nil {
 					if metadata.DataSource == "uesio.platform" {
-						op.Fields = append(op.Fields, adapters.LoadRequestField{
+						op.Fields = append(op.Fields, adapt.LoadRequestField{
 							ID:     fieldMetadata.GetFullName() + fileDataSuffix,
 							Fields: mimeField,
 						})
 					} else {
-						op.ReferencedCollections = adapters.ReferenceRegistry{}
+						op.ReferencedCollections = adapt.ReferenceRegistry{}
 						refCol := op.ReferencedCollections.Get(referencedMeta)
 						refCol.AddReference(fakeRefMetadata)
 						refCol.AddFields(mimeField)
