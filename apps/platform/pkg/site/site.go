@@ -3,19 +3,19 @@ package site
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GetSite key
-func GetSite(siteid string, session *sess.Session) (*metadata.Site, error) {
-	var s metadata.Site
+func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
+	var s meta.Site
 	err := datasource.PlatformLoadOne(
 		&s,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
 				Value: siteid,
@@ -30,11 +30,11 @@ func GetSite(siteid string, session *sess.Session) (*metadata.Site, error) {
 }
 
 // GetDomain key
-func getDomain(domainType, domain string, session *sess.Session) (*metadata.SiteDomain, error) {
-	var sd metadata.SiteDomain
+func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
+	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOne(
 		&sd,
-		[]adapters.LoadRequestCondition{
+		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.domain",
 				Value: domain,
@@ -53,10 +53,10 @@ func getDomain(domainType, domain string, session *sess.Session) (*metadata.Site
 }
 
 // GetSiteFromDomain function
-func GetSiteFromDomain(domainType, domain string) (*metadata.Site, error) {
+func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	entry, ok := localcache.GetCacheEntry("domain-site", domainType+":"+domain)
 	if ok {
-		return entry.(*metadata.Site), nil
+		return entry.(*meta.Site), nil
 	}
 	headlessSession := sess.GetHeadlessSession()
 	siteDomain, err := getDomain(domainType, domain, headlessSession)

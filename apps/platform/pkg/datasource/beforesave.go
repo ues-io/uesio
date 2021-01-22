@@ -3,9 +3,9 @@ package datasource
 import (
 	"strings"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/fileadapters"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -17,7 +17,7 @@ type BeforeSaveAPI struct {
 	session *sess.Session
 }
 
-func NewBeforeSaveAPI(request *adapters.SaveRequest, metadata *adapters.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
+func NewBeforeSaveAPI(request *adapt.SaveRequest, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Changes: &ChangesAPI{
 			changes:  request.Changes,
@@ -51,8 +51,8 @@ func (bs *BeforeSaveAPI) DeleteFiles(ids []string) error {
 		return nil
 	}
 	// Load all the userfile records
-	ufmc := metadata.UserFileMetadataCollection{}
-	err := PlatformLoad(&ufmc, []adapters.LoadRequestCondition{
+	ufmc := meta.UserFileMetadataCollection{}
+	err := PlatformLoad(&ufmc, []adapt.LoadRequestCondition{
 		{
 			Field:    "uesio.id",
 			Value:    ids,
@@ -66,7 +66,7 @@ func (bs *BeforeSaveAPI) DeleteFiles(ids []string) error {
 
 	for i := range ufmc {
 		ufm := ufmc[i]
-		adapter, bucket, credentials, err := fileadapters.GetAdapterForUserFile(&ufm, bs.session)
+		adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&ufm, bs.session)
 		if err != nil {
 			return err
 		}

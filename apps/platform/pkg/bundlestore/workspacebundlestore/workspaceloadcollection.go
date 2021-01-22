@@ -1,12 +1,12 @@
 package workspacebundlestore
 
 import (
-	"github.com/thecloudmasters/uesio/pkg/metadata"
-	"github.com/thecloudmasters/uesio/pkg/metadata/loadable"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 type WorkspaceLoadCollection struct {
-	Collection metadata.BundleableGroup
+	Collection meta.BundleableGroup
 	Namespace  string
 }
 

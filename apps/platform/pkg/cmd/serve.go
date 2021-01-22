@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
-	"github.com/thecloudmasters/uesio/pkg/controllers"
+	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"github.com/thecloudmasters/uesio/pkg/middlewares"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
 func init() {
@@ -24,9 +24,9 @@ func init() {
 
 func makeAPI(r *mux.Router, path string, f http.HandlerFunc, useWorkspace bool) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
-	router.Use(middlewares.Authenticate)
+	router.Use(middleware.Authenticate)
 	if useWorkspace {
-		router.Use(middlewares.AuthenticateWorkspace)
+		router.Use(middleware.AuthenticateWorkspace)
 	}
 	return router.Path("").HandlerFunc(f)
 }
@@ -47,52 +47,52 @@ func serve(cmd *cobra.Command, args []string) {
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
 
-	r.HandleFunc("/fonts/{filename}", controllers.Fonts).Methods("GET")
-	r.HandleFunc("/static/loader", controllers.ServeStatic(filepath.Join("platform", "platform.js"))).Methods("GET")
-	r.HandleFunc("/static/{filename:.*}", controllers.Vendor).Methods("GET")
-	r.HandleFunc("/favicon.ico", controllers.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods("GET")
-	r.HandleFunc("/health", controllers.Health).Methods("GET")
+	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods("GET")
+	r.HandleFunc("/static/loader", controller.ServeStatic(filepath.Join("platform", "platform.js"))).Methods("GET")
+	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods("GET")
+	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods("GET")
+	r.HandleFunc("/health", controller.Health).Methods("GET")
 
 	// The workspace router
 	wr := r.PathPrefix("/workspace/{app}/{workspace}").Subrouter()
 	// The site router
 	sr := r.PathPrefix("/site").Subrouter()
 
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controllers.UploadUserFile, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controllers.DownloadUserFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/wires/load", controllers.Load, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/wires/save", controllers.Save, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controllers.CallBot, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controllers.ServeFile, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controllers.ServeRoute, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controllers.ViewAPI, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/themes/{namespace}/{name}", controllers.ThemeAPI, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/routes/{namespace}/{route:.*}", controllers.RouteAPI, "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controllers.ServeComponentPack(true), "GET")
-	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controllers.ServeComponentPack(false), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/userfiles/upload", controller.UploadUserFile, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controller.CallBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controller.ServeFile, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controller.ServeRoute, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controller.ViewAPI, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/themes/{namespace}/{name}", controller.ThemeAPI, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/routes/{namespace}/{route:.*}", controller.RouteAPI, "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controller.ServeComponentPack(true), "GET")
+	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controller.ServeComponentPack(false), "GET")
 
-	workspaceAPI(wr, "/metadata/adddependency/{bundlename}/{bundleversion}", controllers.AddDependency).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/removedependency/{bundlename}", controllers.RemoveDependency).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/adddependency/{bundlename}/{bundleversion}", controller.AddDependency).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/removedependency/{bundlename}", controller.RemoveDependency).Methods("POST", "GET")
 
-	workspaceAPI(wr, "/metadata/deploy", controllers.Deploy).Methods("POST")
-	workspaceAPI(wr, "/metadata/retrieve", controllers.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/storebundle", controllers.StoreBundle).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/migrate", controllers.Migrate).Methods("POST")
+	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
+	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/storebundle", controller.StoreBundle).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/migrate", controller.Migrate).Methods("POST")
 
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controllers.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controllers.MetadataList).Methods("GET")
-	workspaceAPI(wr, "/metadata/namespaces", controllers.NamespaceList).Methods("GET")
+	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
+	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
+	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 
-	workspaceAPI(wr, "/bulk/job", controllers.BulkJob).Methods("POST")
-	workspaceAPI(wr, "/bulk/job/{job}/batch", controllers.BulkBatch).Methods("POST")
+	workspaceAPI(wr, "/bulk/job", controller.BulkJob).Methods("POST")
+	workspaceAPI(wr, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
 
-	workspaceAPI(wr, "/views/{namespace}/{name}/preview", controllers.ViewPreview(false)).Methods("GET")
-	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controllers.ViewPreview(true)).Methods("GET")
+	workspaceAPI(wr, "/views/{namespace}/{name}/preview", controller.ViewPreview(false)).Methods("GET")
+	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controller.ViewPreview(true)).Methods("GET")
 
-	siteAPI(sr, "/auth/login", controllers.Login).Methods("POST")
-	siteAPI(sr, "/auth/logout", controllers.Logout).Methods("POST")
-	siteAPI(sr, "/auth/check", controllers.AuthCheck).Methods("GET")
-	siteAPI(r, "/{route:.*}", controllers.ServeLocalRoute).Methods("GET")
+	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
+	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
+	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")
+	siteAPI(r, "/{route:.*}", controller.ServeLocalRoute).Methods("GET")
 
 	port := os.Getenv("PORT")
 	if port == "" {

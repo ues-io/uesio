@@ -3,7 +3,7 @@ package secretstore
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 // SecretStore interface
@@ -29,12 +29,12 @@ func RegisterSecretStore(name string, store SecretStore) {
 }
 
 // GetSecret key
-func GetSecret(key string, site *metadata.Site) (string, error) {
+func GetSecret(key string, site *meta.Site) (string, error) {
 	if key == "" {
 		return "", nil
 	}
 
-	namespace, name, err := metadata.ParseKey(key)
+	namespace, name, err := meta.ParseKey(key)
 	if err != nil {
 		return "", errors.New("Failed Parsing Secret Key: " + key + " : " + err.Error())
 	}

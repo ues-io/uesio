@@ -4,17 +4,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/thecloudmasters/uesio/pkg/adapters"
-	"github.com/thecloudmasters/uesio/pkg/bundles"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // GetCollectionMetadata function
-func GetCollectionMetadata(e *metadata.Collection) *adapters.CollectionMetadata {
-	fieldMetadata := map[string]*adapters.FieldMetadata{}
+func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
+	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
-	return &adapters.CollectionMetadata{
+	return &adapt.CollectionMetadata{
 		Name:           e.Name,
 		Namespace:      e.Namespace,
 		IDField:        e.IDField,
@@ -31,8 +31,8 @@ func GetCollectionMetadata(e *metadata.Collection) *adapters.CollectionMetadata 
 }
 
 // GetFieldMetadata function
-func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
-	return &adapters.FieldMetadata{
+func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
+	return &adapt.FieldMetadata{
 		Name:                 f.Name,
 		Namespace:            f.Namespace,
 		Createable:           !f.ReadOnly,
@@ -52,26 +52,26 @@ func GetFieldMetadata(f *metadata.Field) *adapters.FieldMetadata {
 }
 
 // GetValidateMetadata function
-func GetValidateMetadata(v metadata.Validate) *adapters.ValidationMetadata {
-	return &adapters.ValidationMetadata{
+func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
+	return &adapt.ValidationMetadata{
 		Type:  v.Type,
 		Regex: v.Regex,
 	}
 }
 
 // GetSelectListMetadata function
-func GetSelectListMetadata(sl *metadata.SelectList) *adapters.SelectListMetadata {
-	return &adapters.SelectListMetadata{
+func GetSelectListMetadata(sl *meta.SelectList) *adapt.SelectListMetadata {
+	return &adapt.SelectListMetadata{
 		Name:    sl.Name,
 		Options: GetSelectListOptionsMetadata(sl.Options),
 	}
 }
 
 // GetSelectListOptionsMetadata function
-func GetSelectListOptionsMetadata(options []metadata.SelectListOption) []adapters.SelectListOptionMetadata {
-	optionsMetadata := []adapters.SelectListOptionMetadata{}
+func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.SelectListOptionMetadata {
+	optionsMetadata := []adapt.SelectListOptionMetadata{}
 	for _, option := range options {
-		optionsMetadata = append(optionsMetadata, adapters.SelectListOptionMetadata{
+		optionsMetadata = append(optionsMetadata, adapt.SelectListOptionMetadata{
 			Label: option.Label,
 			Value: option.Value,
 		})
@@ -80,16 +80,16 @@ func GetSelectListOptionsMetadata(options []metadata.SelectListOption) []adapter
 }
 
 // LoadCollectionMetadata function
-func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, session *sess.Session) (*adapters.CollectionMetadata, error) {
+func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
 	if err != nil {
-		collection, err := metadata.NewCollection(key)
+		collection, err := meta.NewCollection(key)
 		if err != nil {
 			return nil, err
 		}
 
-		err = bundles.Load(collection, session)
+		err = bundle.Load(collection, session)
 		if err != nil {
 			return nil, err
 		}
@@ -101,10 +101,10 @@ func LoadCollectionMetadata(key string, metadataCache *adapters.MetadataCache, s
 }
 
 // LoadAllFieldsMetadata function
-func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
-	var fields metadata.FieldCollection
+func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+	var fields meta.FieldCollection
 
-	err := bundles.LoadAllFromAny(&fields, metadata.BundleConditions{
+	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
 		"uesio.collection": collectionKey,
 	}, session)
 	if err != nil {
@@ -118,7 +118,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapters.Co
 }
 
 // LoadFieldsMetadata function
-func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) error {
+func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 	// TODO: Batch this
 	for _, key := range keys {
 		_, err := LoadFieldMetadata(key, collectionKey, collectionMetadata, session)
@@ -130,15 +130,15 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 }
 
 // LoadFieldMetadata function
-func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapters.CollectionMetadata, session *sess.Session) (*adapters.FieldMetadata, error) {
+func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.FieldMetadata, error) {
 	// Check to see if the field is already in our metadata cache
 	fieldMetadata, err := collectionMetadata.GetField(key)
 	if err != nil {
-		field, err := metadata.NewField(collectionKey, key)
+		field, err := meta.NewField(collectionKey, key)
 		if err != nil {
 			return nil, err
 		}
-		err = bundles.Load(field, session)
+		err = bundle.Load(field, session)
 		if err != nil {
 			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
 		}
@@ -149,22 +149,22 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 }
 
 // LoadSelectListMetadata function
-func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, session *sess.Session) error {
+func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) error {
 
 	collectionKey, fieldKey, selectListKey := ParseSelectListKey(key)
 
 	selectListMetadata, ok := metadataCache.SelectLists[selectListKey]
 
 	if !ok {
-		namespace, name, err := metadata.ParseKey(selectListKey)
+		namespace, name, err := meta.ParseKey(selectListKey)
 		if err != nil {
 			return errors.New("Field Key: " + selectListKey + ":" + err.Error())
 		}
-		selectList := metadata.SelectList{
+		selectList := meta.SelectList{
 			Name:      name,
 			Namespace: namespace,
 		}
-		err = bundles.Load(&selectList, session)
+		err = bundle.Load(&selectList, session)
 		if err != nil {
 			return err
 		}
@@ -187,11 +187,11 @@ func LoadSelectListMetadata(key string, metadataCache *adapters.MetadataCache, s
 }
 
 // CollateMetadata function
-func CollateMetadata(collectionKey string, collectionMetadata *adapters.CollectionMetadata, collatedMetadata map[string]*adapters.MetadataCache) {
+func CollateMetadata(collectionKey string, collectionMetadata *adapt.CollectionMetadata, collatedMetadata map[string]*adapt.MetadataCache) {
 	dsKey := collectionMetadata.DataSource
 	_, ok := collatedMetadata[dsKey]
 	if !ok {
-		collatedMetadata[dsKey] = &adapters.MetadataCache{}
+		collatedMetadata[dsKey] = &adapt.MetadataCache{}
 	}
 	_, ok = collatedMetadata[dsKey].Collections[collectionKey]
 	if !ok {

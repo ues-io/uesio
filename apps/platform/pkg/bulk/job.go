@@ -2,16 +2,16 @@ package bulk
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/metadata"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // NewJob func
-func NewJob(spec *metadata.JobSpec, session *sess.Session) (string, error) {
+func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 
 	site := session.GetSite()
 
-	job := metadata.BulkJob{
+	job := meta.BulkJob{
 		Spec: *spec,
 		Site: site.Name,
 	}
