@@ -1,6 +1,8 @@
 package datasource
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -75,20 +77,27 @@ func getCascadeDeletes(
 					}
 
 					err = collection.Loop(func(item loadable.Item) error {
-						fkString, err := item.GetField(field.ForeignKeyField)
+						fk, err := item.GetField(field.ForeignKeyField)
 						if err != nil {
 							return err
+						}
+						if fk == nil {
+							return nil
+						}
+						fkString, ok := fk.(string)
+						if !ok {
+							return errors.New("Delete id must be a string")
 						}
 						currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
 						if !ok {
 							currentCollectionIds = map[string]adapt.DeleteRequest{}
 							cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 						}
-						if fkString != nil {
-							currentCollectionIds[fkString.(string)] = adapt.DeleteRequest{
-								referencedCollectionMetadata.IDField: fkString.(string),
-							}
+
+						currentCollectionIds[fkString] = adapt.DeleteRequest{
+							referencedCollectionMetadata.IDField: fkString,
 						}
+
 						return nil
 					})
 					if err != nil {
