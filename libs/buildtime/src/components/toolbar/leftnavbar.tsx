@@ -31,21 +31,21 @@ const LeftNavbar: FunctionComponent<Props> = (props) => (
 			tooltipPlacement="right"
 		/>
 		<Divider style={{ margin: "8px 8px 0 8px" }} />
-		{props.viewMode === "expandedview" && (
+		{props.viewMode === "contentview" && (
 			<MiniToolbarButton
-				id="compactview"
+				id="structureview"
 				icon={BorderClearIcon}
 				onClick={props.onChange}
-				title="Switch To Compact View"
+				title="Switch To Structure View"
 				tooltipPlacement="right"
 			/>
 		)}
-		{props.viewMode !== "expandedview" && (
+		{props.viewMode !== "contentview" && (
 			<MiniToolbarButton
-				id="expandedview"
+				id="contentview"
 				icon={BorderOuterIcon}
 				onClick={props.onChange}
-				title="Switch To Expanded View"
+				title="Switch To Content View"
 				tooltipPlacement="right"
 			/>
 		)}

@@ -13,7 +13,7 @@ interface Props {
 	isSelected?: boolean
 	isActive?: boolean
 	title?: string
-	isExpanded: boolean
+	isContentView: boolean
 }
 
 const getColor = ({ isSelected }: Props) =>
@@ -36,7 +36,7 @@ const useStyles = material.makeStyles((theme) => ({
 		"&:hover::after": titleTag,
 		*/
 	},
-	maskExpanded: {
+	maskContentView: {
 		backgroundColor: getBackgroundColor,
 		outline: (props: Props) => (props.isSelected ? getOutline(props) : ""),
 		border: ({ isSelected, isActive }: Props) =>
@@ -79,7 +79,7 @@ const useStyles = material.makeStyles((theme) => ({
 			left: 0,
 		},
 	},
-	headerExpanded: {
+	headerContentView: {
 		color: "#333",
 		fontWeight: "bold",
 		padding: "8px 8px 4px 10px",
@@ -96,16 +96,18 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 		isSelected,
 		setDragging,
 		isActive,
-		isExpanded,
+		isContentView,
 		children,
 		title,
 	} = props
 	const classes = useStyles(props)
 	const wrapperClass = clsx({
-		[classes.maskExpanded]: isExpanded,
-		[classes.mask]: (isActive || isSelected) && !isExpanded,
+		[classes.maskContentView]: isContentView,
+		[classes.mask]: (isActive || isSelected) && !isContentView,
 	})
-	const headerClass = isExpanded ? classes.headerExpanded : classes.header
+	const headerClass = isContentView
+		? classes.headerContentView
+		: classes.header
 	return (
 		<div
 			className={wrapperClass}
@@ -115,7 +117,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			{(isSelected || isExpanded) && (
+			{(isSelected || isContentView) && (
 				<div onMouseDown={setDragging} className={headerClass}>
 					{title}
 				</div>

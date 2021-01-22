@@ -9,7 +9,7 @@ const LeftToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 	const builderView = uesio.builder.useView()
 	const selectedNode = uesio.builder.useSelectedNode()
 	const onChange = (toolbarId: string): void => {
-		if (toolbarId === "compactview" || toolbarId === "expandedview") {
+		if (toolbarId === "structureview" || toolbarId === "contentview") {
 			uesio.builder.setView(toolbarId)
 			return
 		}
