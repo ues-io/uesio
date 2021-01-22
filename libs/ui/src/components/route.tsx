@@ -33,7 +33,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!route) return null
 
 	const themeState = useTheme()
-	const theme = Object.values(themeState.entities)?.find?.(
+	const activeTheme = Object.values(themeState.entities)?.find?.(
 		(entity) => entity?.isActiveTheme
 	)
 
@@ -55,7 +55,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		)
 		const [namespace, name] = parseKey(route.theme)
 
-		if (namespace && name && !theme) {
+		if (namespace && name && !activeTheme) {
 			dispatcher(
 				fetchTheme({
 					namespace,
@@ -68,10 +68,10 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	}, [])
 
 	// Quit rendering early if we don't have our theme yet.
-	if (theme?.isFetching || !theme?.theme) return null
+	if (activeTheme?.isFetching || !activeTheme?.theme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(makePaletteTheme(theme.theme))}>
+		<ThemeProvider theme={makeTheme(makePaletteTheme(activeTheme.theme))}>
 			<CssBaseline />
 			<ComponentInternal
 				componentType="uesio.runtime"
