@@ -20,8 +20,9 @@ class PlatformAPI {
 		)
 
 	loadData = (context: Context, request: LoadRequestBatch) =>
-		this.dispatcher(async (dispatch, getState, platform) =>
-			platform.loadData(context, request)
+		this.dispatcher(
+			async (dispatch, getState, platform) =>
+				await platform.loadData(context, request)
 		)
 }
 
