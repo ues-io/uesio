@@ -13,5 +13,5 @@ export default createAsyncThunk<
 	const viewDefId = context.getViewDefId()
 	if (!viewDefId) throw new Error("No View Definition in Context")
 	const [namespace, name] = parseKey(viewDefId)
-	return api.extra.getView(context, namespace, name)
+	return await api.extra.getView(context, namespace, name)
 })
