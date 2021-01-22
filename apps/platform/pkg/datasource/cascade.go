@@ -84,8 +84,10 @@ func getCascadeDeletes(
 							currentCollectionIds = map[string]adapt.DeleteRequest{}
 							cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 						}
-						currentCollectionIds[fkString.(string)] = adapt.DeleteRequest{
-							referencedCollectionMetadata.IDField: fkString.(string),
+						if fkString != nil {
+							currentCollectionIds[fkString.(string)] = adapt.DeleteRequest{
+								referencedCollectionMetadata.IDField: fkString.(string),
+							}
 						}
 						return nil
 					})
