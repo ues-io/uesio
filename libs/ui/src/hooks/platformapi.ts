@@ -15,15 +15,13 @@ class PlatformAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	login = (request: LoginRequest) =>
-		this.dispatcher(
-			async (dispatch, getState, platform) =>
-				await platform.login(request)
+		this.dispatcher(async (dispatch, getState, platform) =>
+			platform.login(request)
 		)
 
 	loadData = (context: Context, request: LoadRequestBatch) =>
-		this.dispatcher(
-			async (dispatch, getState, platform) =>
-				await platform.loadData(context, request)
+		this.dispatcher(async (dispatch, getState, platform) =>
+			platform.loadData(context, request)
 		)
 }
 
