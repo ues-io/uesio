@@ -114,29 +114,25 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 > As a reminder, if you call an `async` function and you do use the value returned by that function, then you need to **resolve** that returned valule. Indeed, an `async` function returns a `Promise`. The snippet right below illustrates this.
 
 ```
-// getUsers does tap some API
-const getUsers = async (
-  page: number,
-  nationality: string,
-  amountOfRows: number
-): Promise<{ results: IUser[] }> => {
-  const response = await fetch(
-    `https://randomuser.me/api/?nat=${nationality}&page=${page}&results=${amountOfRows}`
-  );
-  const parsedReponse = await response.json();
-  return parsedReponse;
+// platformLogin does tap some API
+const platformLogin = async(requestBody: LoginRequest): Promise<LoginResponse> => {
+	const response = await postJSON("/site/auth/login", requestBody)
+	return response.json()
 };
 
-// fetchUsers returns a thunk
-const fetchUsers = (
-  page: number,
-  nationality: string,
-  amountOfRows: number
-) => async (dispatch: Dispatch) => {
-  dispatch(actions.makeUserFetching(true));
-
-  const usersResponse = await getUsers(page, nationality, amountOfRows);
-  dispatch(actions.makeUserFetch(usersResponse?.results || []));
+// login returns a thunk
+const login = (
+	context: Context,
+	type: string,
+	token: string
+): ThunkFunc => async (dispatch, getState, platform) => {
+	const response = await platformLogin({
+		type,
+		token,
+	})
+	dispatch(setUser(response.user))
+	return responseRedirect(response, dispatch, context)
+}
 ```
 
 ## A single action handled by multiple reducers
