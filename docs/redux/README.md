@@ -115,7 +115,7 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 ```
 // platformLogin does tap some API
-const platformLogin = async(requestBody: LoginRequest): Promise<LoginResponse> => {
+const platformLogin = async (requestBody: LoginRequest): Promise<LoginResponse> => {
 	const response = await postJSON("/site/auth/login", requestBody)
 	return response.json()
 };
