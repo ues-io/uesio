@@ -14,7 +14,7 @@ type thunkArg = {
 const fetchTheme = createAsyncThunk<Theme, thunkArg, UesioThunkAPI>(
 	themefetchActionType,
 	async ({ namespace, name, context }, api) =>
-		await api.extra.getTheme(context, namespace, name)
+		api.extra.getTheme(context, namespace, name)
 )
 
 const fetchedThemeReducer = (
