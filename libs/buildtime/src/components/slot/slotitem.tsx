@@ -206,7 +206,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 				onMouseLeave={(): void => {
 					isActive && uesio.builder.setActiveNode("")
 				}}
-				startDragging={(): void => {
+				setDragging={(): void => {
 					if (isContentView) {
 						return
 					}
