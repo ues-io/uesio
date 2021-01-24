@@ -20,7 +20,7 @@ interface filteredListInterface {
 
 const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-
+	const contentView = uesio.builder.useView() === "contentview"
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
 
@@ -65,17 +65,21 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 						key={index}
 					>
 						<div>
-							{element.names.map((value, indexTag) => (
-								<PropNodeTag
-									draggable={component.dragdrop.createComponentBankKey(
-										element.namespace,
-										value
-									)}
-									title={value}
-									icon={DragIndicator}
-									key={indexTag}
-								/>
-							))}
+							{element.names.map((value, indexTag) =>
+								contentView ? (
+									<PropNodeTag title={value} key={indexTag} />
+								) : (
+									<PropNodeTag
+										draggable={component.dragdrop.createComponentBankKey(
+											element.namespace,
+											value
+										)}
+										title={value}
+										icon={DragIndicator}
+										key={indexTag}
+									/>
+								)
+							)}
 						</div>
 					</ExpandPanel>
 				))}
