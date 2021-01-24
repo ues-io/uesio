@@ -4,6 +4,10 @@ import ToolbarTitle from "../toolbartitle"
 import ExpandPanel from "../expandpanel/expandpanel"
 import PropNodeTag from "../../buildpropitem/propnodetag"
 import DragIndicator from "@material-ui/icons/DragIndicator"
+import {
+	getOnDragStartToolbar,
+	getOnDragStopToolbar,
+} from "../../../utils/draganddrop"
 
 interface Props extends definition.BaseProps {
 	selectedNode: string
@@ -16,16 +20,9 @@ interface filteredListInterface {
 
 const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const onDragStart = (e: React.DragEvent) => {
-		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type) {
-			uesio.builder.setDragNode(target.dataset.type)
-		}
-	}
-	const onDragEnd = () => {
-		uesio.builder.setDragNode("")
-		uesio.builder.setDropNode("")
-	}
+
+	const onDragStart = getOnDragStartToolbar(uesio)
+	const onDragEnd = getOnDragStopToolbar(uesio)
 
 	const filteredList: Array<filteredListInterface> = []
 

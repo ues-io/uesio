@@ -7,9 +7,10 @@ const SELECTED_COLOR = "#aaa"
 
 interface Props {
 	onClick?: (event: MouseEvent) => void
+	onDragStart?: (event: MouseEvent) => void
 	onMouseEnter?: (event: MouseEvent) => void
 	onMouseLeave?: (event: MouseEvent) => void
-	setDragging?: (event: MouseEvent) => void
+	startDragging?: (event: MouseEvent) => void
 	isSelected?: boolean
 	isActive?: boolean
 	title?: string
@@ -94,7 +95,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 		onMouseEnter,
 		onMouseLeave,
 		isSelected,
-		setDragging,
+		startDragging,
 		isActive,
 		isStructureView,
 		children,
@@ -118,7 +119,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 			onMouseLeave={onMouseLeave}
 		>
 			{(isSelected || isStructureView) && (
-				<div onMouseDown={setDragging} className={headerClass}>
+				<div onMouseDown={startDragging} className={headerClass}>
 					{title}
 				</div>
 			)}
