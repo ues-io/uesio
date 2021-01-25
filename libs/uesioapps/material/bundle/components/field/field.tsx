@@ -6,6 +6,9 @@ import TextField from "../textfield/textfield"
 import SelectField from "../selectfield/selectfield"
 import CheckBoxField from "../checkboxfield/checkboxfield"
 
+//TO-DO create our wrapper for material list
+import { material, collection } from "@uesio/ui"
+
 function toLocalISOString(d: Date) {
 	const off = d.getTimezoneOffset()
 	return new Date(
@@ -102,6 +105,24 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				hideLabel={hideLabel}
 			/>
 		)
+	} else if (type === "ARRAY") {
+		const options = record.getFieldValue(
+			fieldId
+		) as collection.SelectOption[]
+		if (options) {
+			return (
+				<material.List>
+					{options.map((value) => (
+						<material.ListItem>
+							<material.ListItemText
+								primary={value.label}
+								secondary={value.value}
+							/>
+						</material.ListItem>
+					))}
+				</material.List>
+			)
+		}
 	}
 	return null
 }
