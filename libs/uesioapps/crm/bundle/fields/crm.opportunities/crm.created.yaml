@@ -1,0 +1,6 @@
+name: created
+collection: crm.opportunities
+type: TIMESTAMP
+label: Created
+propertyName: created
+autopopulate: CREATE

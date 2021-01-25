@@ -1,4 +1,4 @@
-name: contactDetails
+name: opportunityDetails
 definition:
   components:
     - uesio.view:
@@ -13,7 +13,7 @@ definition:
                       - material.griditem:
                           components:
                             - material.typography:
-                                text: ${crm.firstname}
+                                text: ${crm.name}
                                 textTransform: uppercase
                                 variant: h5
                       - material.griditem:
@@ -24,7 +24,7 @@ definition:
                                       color: primary
                                       signals:
                                         - signal: component/material.deck/TOGGLE_MODE
-                                          target: oneaccountDeck
+                                          target: oneOpportunityDeck
                                       text: Edit
                                       variant: outlined
                                   - material.button:
@@ -32,31 +32,25 @@ definition:
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - contacts
+                                            - opportunities
                                       text: Save
                                       variant: outlined
                                   - material.button:
                                       color: primary
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: contacts
+                                          wire: opportunities
                                       text: Cancel
                                       variant: outlined
                     justify: space-between
                 - material.field:
-                    fieldId: crm.id
+                    fieldId: crm.name
                 - material.field:
-                    fieldId: crm.firstname
+                    fieldId: crm.description
                 - material.field:
-                    fieldId: crm.lastname
-                - material.field:
-                    fieldId: crm.gender
-                - material.field:
-                    fieldId: crm.deceased
+                    fieldId: crm.status
                 - material.field:
                     fieldId: crm.account
-                - material.field:
-                    fieldId: crm.birthdate
                 - material.field:
                     fieldId: crm.updated
                 - material.field:
@@ -66,26 +60,29 @@ definition:
                 background: null
                 color: "#FF5733"
                 height: 10px
-        id: oneaccountDeck
+        id: oneOpportunityDeck
         margin: 0
         mode: READ
-        wire: contacts
+        wire: opportunities
         xs: 12
   wires:
-    contacts:
-      collection: crm.contacts
+    opportunities:
+      collection: crm.opportunities
       conditions:
         - field: crm.id
-          param: contactid
+          param: opportunityid
           valueSource: PARAM
       fields:
-        crm.account: null
-        crm.accountid: null
-        crm.birthdate: null
-        crm.deceased: null
-        crm.firstname: null
-        crm.gender: null
-        crm.id: null
-        crm.lastname: null
+        crm.id:
+        crm.name:
+        crm.account:
+        crm.description:
+        crm.status:
+        crm.accountid:
         crm.updated:
         crm.created:
+
+dependencies:
+  componentpacks:
+    material.main: null
+    sample.main: null
