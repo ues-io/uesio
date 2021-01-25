@@ -29,8 +29,8 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	return (
 		<LoginWrapper align={props.definition.align}>
 			<button
-				onClick={async (): Promise<void> => {
-					await uesio.signal.run(
+				onClick={(): void => {
+					uesio.signal.run(
 						{
 							signal: "user/LOGIN",
 							type: "mock",
