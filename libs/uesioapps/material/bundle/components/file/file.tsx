@@ -170,9 +170,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 				) {
 					return (
 						<div className={classes.root}>
-							(
 							<iframe src={fileUrl} width="100%" height="500px" />
-							)
 						</div>
 					)
 				} else if (displayAs === "preview" && editable) {
