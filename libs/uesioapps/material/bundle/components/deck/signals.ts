@@ -16,4 +16,4 @@ const sigHandler = {
 	},
 }
 
-export { sigHandler }
+export default sigHandler
