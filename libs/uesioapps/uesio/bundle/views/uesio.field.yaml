@@ -60,7 +60,7 @@ definition:
         uesio.foreignKeyField:
         uesio.referencedCollection:
         uesio.autopopulate:
-        uesio.selectList:
+        uesio.selectlist:
       conditions:
         - field: uesio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -230,6 +230,6 @@ definition:
                                           value: "SELECT"
                                       components:
                                         - uesio.metadatafield:
-                                            fieldId: uesio.selectList
+                                            fieldId: uesio.selectlist
                                             metadataType: "SELECTLIST"
                                             label: "Select List"

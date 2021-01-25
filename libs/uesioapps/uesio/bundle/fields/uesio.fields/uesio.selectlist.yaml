@@ -1,5 +1,5 @@
 name: selectlist
 collection: uesio.fields
-type: text
+type: TEXT
 label: Select List
 propertyName: selectlist
