@@ -54,10 +54,11 @@ func LessFunc(data interface{}, order []LoadRequestOrder) (func(i int, j int) bo
 			if vi == nil && vj == nil {
 				continue
 			}
-			if singleOrder.Desc && vi == nil {
-				return true
-			}
-			if !singleOrder.Desc && vj == nil {
+
+			if vi == nil || vj == nil {
+				if singleOrder.Desc {
+					return false
+				}
 				return true
 			}
 
