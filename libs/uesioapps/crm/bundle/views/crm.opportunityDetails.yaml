@@ -55,18 +55,6 @@ definition:
                     fieldId: crm.updated
                 - material.field:
                     fieldId: crm.created
-                - material.file:
-                    fieldId: crm.attachment
-                    fileCollection: uesio.platform
-                    height: 150
-                    id: fileupid
-                    margin:
-                      - 0
-                      - 2
-                    editable: true
-                    displayAs: fullPreview
-                    width: 150
-                    accepts: all
               margin: 1
               media:
                 background: null
@@ -90,7 +78,6 @@ definition:
         crm.account:
         crm.description:
         crm.status:
-        crm.attachment:
         crm.accountid:
         crm.updated:
         crm.created:

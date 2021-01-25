@@ -77,7 +77,6 @@ definition:
         crm.name:
         crm.id:
         crm.status:
-        crm.attachment:
         crm.description:
         crm.account:
         crm.accountid:

@@ -1,5 +1,0 @@
-name: attachment
-collection: crm.opportunities
-type: FILE
-label: Attachment
-propertyName: attachment
