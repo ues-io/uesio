@@ -26,7 +26,7 @@ const useStyles = material.makeStyles((theme) =>
 	})
 )
 
-async function HandleChange(
+async function handleChange(
 	selectorFiles: FileList | null,
 	fieldId: string,
 	record: wire.WireRecord,
@@ -217,6 +217,6 @@ const File: FunctionComponent<FileProps> = (props) => {
 	return null
 }
 
-export { HandleChange }
+export { handleChange }
 
 export default File
