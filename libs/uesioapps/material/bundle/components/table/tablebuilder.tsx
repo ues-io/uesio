@@ -12,7 +12,7 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 
 	return (
 		<>
-			{isStructureView && (
+			{isStructureView ? (
 				<div
 					style={{
 						border: "1px dashed #ccc",
@@ -30,8 +30,9 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 						direction="horizontal"
 					/>
 				</div>
+			) : (
+				<Table {...props} definition={definition} />
 			)}
-			<Table {...props} definition={definition} />
 		</>
 	)
 }
