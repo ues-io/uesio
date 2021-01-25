@@ -3,7 +3,7 @@ import { ThunkFunc } from "../../store/store"
 import { set as setRoute } from "."
 import loadViewOp from "../view/operations/load"
 
-const redirect = (context: Context, path: string) => async () => {
+const redirect = (context: Context, path: string) => () => {
 	window.location.href = context.merge(path)
 	return context
 }

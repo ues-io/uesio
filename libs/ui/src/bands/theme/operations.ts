@@ -11,7 +11,7 @@ const fetchTheme = createAsyncThunk<
 		context: Context
 	},
 	UesioThunkAPI
->("theme/fetch", async ({ namespace, name, context }, api) =>
+>("theme/fetch", ({ namespace, name, context }, api) =>
 	api.extra.getTheme(context, namespace, name)
 )
 
