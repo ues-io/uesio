@@ -1,0 +1,6 @@
+name: created
+collection: uesio.selectlists
+type: TIMESTAMP
+label: Created
+propertyName: created
+autopopulate: CREATE

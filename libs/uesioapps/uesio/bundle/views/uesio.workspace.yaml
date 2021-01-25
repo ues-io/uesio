@@ -86,6 +86,17 @@ definition:
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
+                                            text: Select Lists
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
+                                                namespace: "uesio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
                                             text: Components
                                             variant: text
                                             fullWidth: true
