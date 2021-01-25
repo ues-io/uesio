@@ -96,6 +96,8 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const fullPath = `${path}["${componentType}"]`
 
 	const uesio = hooks.useUesio(props)
+	const viewMode = uesio.builder.useView()
+	const isContentView = viewMode === "contentview"
 	const nodeState = uesio.builder.useNodeState(fullPath)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
@@ -205,6 +207,12 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 					isActive && uesio.builder.setActiveNode("")
 				}}
 				setDragging={(): void => {
+					if (isContentView) {
+						return
+					}
+					// TODO: Do some kind of check here to ensure we aren't dragging the last button
+					// in a button set or the last field in a table, etc.
+					// Or modify them to not have 0 height when empty of fields/buttons
 					if (dragNode !== fullPath) {
 						uesio.builder.setDragNode(fullPath)
 					}

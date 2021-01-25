@@ -12,7 +12,7 @@ const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
 
 	return (
 		<>
-			{isStructureView && (
+			{isStructureView ? (
 				<div
 					style={{
 						border: "1px dashed #ccc",
@@ -29,8 +29,9 @@ const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
 						context={context.addFrame({ noMerge: true })}
 					/>
 				</div>
+			) : (
+				<Deck {...props} definition={definition} />
 			)}
-			<Deck {...props} definition={definition} />
 		</>
 	)
 }

@@ -5,6 +5,10 @@ import { hooks, material, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import CheckBox from "@material-ui/icons/CheckBox"
+import {
+	getOnDragStartToolbar,
+	getOnDragStopToolbar,
+} from "../../utils/draganddrop"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, definition: def, path } = props
@@ -41,16 +45,8 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	const fieldsDef = def?.fields as definition.DefinitionMap
 
-	const onDragStart = (e: React.DragEvent) => {
-		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type) {
-			uesio.builder.setDragNode(target.dataset.type)
-		}
-	}
-	const onDragEnd = () => {
-		uesio.builder.setDragNode("")
-		uesio.builder.setDropNode("")
-	}
+	const onDragStart = getOnDragStartToolbar(uesio)
+	const onDragEnd = getOnDragStopToolbar(uesio)
 
 	return (
 		<ExpandPanel defaultExpanded={false} title={section.title}>
