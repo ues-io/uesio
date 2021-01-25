@@ -6,7 +6,7 @@
 
 Redux alone requires a lot of **boilerplate** and does **lack of features**. Just to mention a few :
 
--   manual coding and namespacing the **action type**
+-   manual coding and namespacing of the **action type**
 -   manual coding of **action creators**
 -   having **separated files** for reducer and action
 -   **cloning data structures** in the reducer
