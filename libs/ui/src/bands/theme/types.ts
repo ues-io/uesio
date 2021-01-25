@@ -1,7 +1,3 @@
-import { RouteState } from "../route/types"
-
-const themefetchActionType = "theme/fetch"
-
 interface Palette {
 	primary?: string
 	secondary?: string
@@ -11,19 +7,10 @@ interface Palette {
 	success?: string
 }
 
-interface Theme {
-	id?: string
-	name?: string
-	namespace?: string
-	workspace?: string
+interface ThemeState {
+	name: string
+	namespace: string
 	definition?: Palette
 }
 
-interface ThemeState {
-	theme: Theme
-	isFetching: boolean
-	isActiveTheme: boolean
-	route: NonNullable<RouteState>
-}
-
-export { themefetchActionType, Palette, Theme, ThemeState }
+export { Palette, ThemeState }

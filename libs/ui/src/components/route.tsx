@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react"
-import { fetchTheme } from "../bands/theme"
+import themeOps from "../bands/theme/operations"
 import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
@@ -7,13 +7,13 @@ import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
 import { BaseProps } from "../definition/definition"
 
-import { Theme } from "../bands/theme/types"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
+import { ThemeState } from "../bands/theme/types"
 
-const makePaletteTheme = (theme: Theme) =>
+const makePaletteTheme = (theme: ThemeState) =>
 	Object.entries(theme?.definition || {}).reduce(
 		(acc, [label, color]) => ({
 			...acc,
@@ -30,12 +30,8 @@ const makeTheme = (themePalette: PaletteOptions) =>
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
 	const route = useRoute()
+	const theme = useTheme(route?.theme || "")
 	if (!route) return null
-
-	const themeState = useTheme()
-	const activeTheme = Object.values(themeState.entities)?.find?.(
-		(entity) => entity?.isActiveTheme
-	)
 
 	const routeContext = props.context.addFrame({
 		route,
@@ -55,23 +51,22 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		)
 		const [namespace, name] = parseKey(route.theme)
 
-		if (namespace && name && !activeTheme) {
+		if (namespace && name && !theme) {
 			dispatcher(
-				fetchTheme({
+				themeOps.fetchTheme({
 					namespace,
 					name,
-					route,
 					context: routeContext,
 				})
 			)
 		}
-	}, [])
+	}, [theme])
 
 	// Quit rendering early if we don't have our theme yet.
-	if (activeTheme?.isFetching || !activeTheme?.theme) return null
+	if (!theme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(makePaletteTheme(activeTheme.theme))}>
+		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>
 			<CssBaseline />
 			<ComponentInternal
 				componentType="uesio.runtime"
