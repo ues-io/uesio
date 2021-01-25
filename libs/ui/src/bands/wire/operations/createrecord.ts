@@ -4,7 +4,7 @@ import shortid from "shortid"
 import { createRecord } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
-export default (context: Context, wirename: string): ThunkFunc => async (
+export default (context: Context, wirename: string): ThunkFunc => (
 	dispatch,
 	getState
 ) => {
