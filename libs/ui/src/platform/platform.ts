@@ -5,18 +5,9 @@ import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { metadata } from "@uesio/constants"
-import { WorkspaceState } from "../bands/route/types"
 import { MetadataListStore } from "../bands/builder/types"
-import { Theme } from "../bands/theme/types"
-
-type RouteResponse = {
-	view: string
-	params: {
-		[key: string]: string
-	}
-	path: string
-	workspace?: WorkspaceState
-}
+import { ThemeState } from "../bands/theme/types"
+import { RouteState } from "../bands/route/types"
 
 type BotParams = {
 	[key: string]: string
@@ -28,12 +19,16 @@ type BotResponse = {
 
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
-	getTheme(context: Context, namespace: string, name: string): Promise<Theme>
+	getTheme(
+		context: Context,
+		namespace: string,
+		name: string
+	): Promise<ThemeState>
 	getRoute(
 		context: Context,
 		namespace: string,
 		route: string
-	): Promise<RouteResponse>
+	): Promise<RouteState>
 	loadData(
 		context: Context,
 		batch: LoadRequestBatch
@@ -77,4 +72,4 @@ interface Platform {
 	logout(): Promise<LoginResponse>
 }
 
-export { Platform, RouteResponse, BotResponse, BotParams }
+export { Platform, BotResponse, BotParams }

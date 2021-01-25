@@ -12,11 +12,9 @@ import (
 
 //ThemeResponse struct
 type ThemeResponse struct {
-	ID         string                `json:"id"`
 	Name       string                `json:"name"`
 	Namespace  string                `json:"namespace"`
 	Definition *meta.ThemeDefinition `json:"definition"`
-	Workspace  string                `json:"workspace"`
 }
 
 //ThemeAPI function
@@ -42,10 +40,8 @@ func ThemeAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, r, &ThemeResponse{
-		ID:         theme.ID,
 		Name:       theme.Name,
 		Namespace:  theme.Namespace,
 		Definition: &theme.Definition,
-		Workspace:  theme.Workspace,
 	})
 }

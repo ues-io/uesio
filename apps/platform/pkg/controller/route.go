@@ -92,6 +92,7 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 		View:      route.ViewRef,
 		Params:    route.Params,
 		Namespace: route.Namespace,
+		Theme:     route.ThemeRef,
 		Path:      path,
 		Workspace: GetWorkspaceMergeData(workspace),
 	})

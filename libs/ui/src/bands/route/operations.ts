@@ -20,6 +20,8 @@ const navigate = (
 		namespace,
 		mergedPath
 	)
+
+	if (!routeResponse) return context
 	const view = routeResponse.view
 
 	// Pre-load the view for faster appearances and no white flash
@@ -37,13 +39,7 @@ const navigate = (
 		})
 	)
 
-	dispatch(
-		setRoute({
-			view,
-			params: routeResponse.params,
-			workspace: routeResponse.workspace,
-		})
-	)
+	dispatch(setRoute(routeResponse))
 
 	if (!noPushState) {
 		const workspace = context.getWorkspace()
