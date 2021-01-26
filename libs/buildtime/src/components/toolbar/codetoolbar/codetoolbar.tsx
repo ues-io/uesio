@@ -102,6 +102,14 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 			/>
 			<LazyMonaco
 				value={currentYaml}
+				options={{
+					smoothScrolling: true,
+					automaticLayout: true,
+					minimap: {
+						enabled: false,
+					},
+					//quickSuggestions: true,
+				}}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
 					if (newAST.errors.length > 0) {
