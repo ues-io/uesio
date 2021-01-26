@@ -112,8 +112,8 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 ```
 // platformLogin does return a promise
 const platformLogin = async (requestBody: LoginRequest): Promise<LoginResponse> => {
-	const response = await postJSON("/site/auth/login", requestBody)
-	return response.json()
+    const response = await postJSON("/site/auth/login", requestBody)
+    return response.json()
 };
 
 // calling the platformLogin somewhere else, required to resolve it
@@ -132,13 +132,13 @@ Refrain using an `async` function when no async event happens. See the example b
 + export default (context: Context, wirename: string) => (
 	dispatch: Dispatcher<AnyAction>
 ) => {
-	const viewId = context.getViewId()
-	if (viewId) dispatch({ type: 'wire/empty', payload: { entity:`${viewId}/${wirename}` }})
-	return context
+    const viewId = context.getViewId()
+    if (viewId) dispatch({ type: 'wire/empty', payload: { entity:`${viewId}/${wirename}` }})
+    return context
 }
 ```
 
-Refrain using `async` when the resolved promise is **not used** in the function's body. See the snippet below.
+Refrain using `async` if you anyway do not use the resolved promise in the function's body. See the snippet below.
 
 ```diff
 - <button onClick={async (): Promise<void> => {
