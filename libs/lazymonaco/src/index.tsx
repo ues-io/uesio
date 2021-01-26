@@ -59,7 +59,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorDidMount={(editor, monaco): void => {
 				editorDidMount?.(editor, monaco)
 			}}
-			{...(options || {})}
+			{...(options ? { options } : {})}
 		/>
 	</Suspense>
 )
