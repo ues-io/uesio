@@ -26,7 +26,7 @@ const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
 						listName="components"
 						path={path}
 						accepts={["uesio.standalone"]}
-						context={context.addFrame({ noMerge: true })}
+						context={context.addFrame({ noMerge: isStructureView })}
 					/>
 				</div>
 			) : (

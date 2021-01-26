@@ -26,7 +26,7 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 						listName="columns"
 						path={path}
 						accepts={["uesio.field", "material.column"]}
-						context={context.addFrame({ noMerge: true })}
+						context={context.addFrame({ noMerge: isStructureView })}
 						direction="horizontal"
 					/>
 				</div>
