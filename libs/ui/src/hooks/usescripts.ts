@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react"
-// Hook
-const cachedScripts: ScriptMap = {}
+import { useState, useEffect, useRef } from "react"
+
 interface ScriptMap {
 	[key: string]: ScriptCache
 }
@@ -34,11 +33,12 @@ const getLoadedScripts = (cache: ScriptMap) =>
 	)
 
 const useScripts = (sources: string[]): ScriptResult => {
+	const cachedScripts = useRef<ScriptMap>({})
 	// Keeping track of script loaded and error state
 	const [state, setState] = useState({
 		loaded: false,
 		error: false,
-		scripts: getLoadedScripts(cachedScripts),
+		scripts: getLoadedScripts(cachedScripts.current),
 	})
 
 	useEffect(
@@ -50,21 +50,21 @@ const useScripts = (sources: string[]): ScriptResult => {
 			// Script event listener callbacks for load and error
 			const onScriptLoad = function (this: HTMLScriptElement): void {
 				const src = this.src
-				const cachedScriptKey = Object.keys(cachedScripts).find(
+				const cachedScriptKey = Object.keys(cachedScripts.current).find(
 					(key) => {
-						const item = cachedScripts[key]
+						const item = cachedScripts.current[key]
 						return item.fullKey === src
 					}
 				)
 
 				if (cachedScriptKey) {
-					const cachedScript = cachedScripts[cachedScriptKey]
+					const cachedScript = cachedScripts.current[cachedScriptKey]
 					cachedScript.loaded = true
 					if (areAllLoaded(scriptsToLoad)) {
 						setState({
 							loaded: true,
 							error: false,
-							scripts: getLoadedScripts(cachedScripts),
+							scripts: getLoadedScripts(cachedScripts.current),
 						})
 					}
 				}
@@ -73,18 +73,18 @@ const useScripts = (sources: string[]): ScriptResult => {
 			const onScriptError = function (this: HTMLScriptElement): void {
 				const src = this.src
 				// Remove from cachedScripts we can try loading again
-				delete cachedScripts[src]
+				delete cachedScripts.current[src]
 
 				setState({
 					loaded: true,
 					error: true,
-					scripts: getLoadedScripts(cachedScripts),
+					scripts: getLoadedScripts(cachedScripts.current),
 				})
 			}
 			// If cachedScripts array already includes src that means another instance ...
 			// ... of this hook already loaded this script, so no need to load again.
 			sources.forEach((src: string) => {
-				if (!cachedScripts[src]) {
+				if (!cachedScripts.current[src]) {
 					// Create script
 					const script = document.createElement("script")
 					script.src = src
@@ -97,7 +97,7 @@ const useScripts = (sources: string[]): ScriptResult => {
 					}
 
 					scriptsToLoad[src] = scriptCacheItem
-					cachedScripts[src] = scriptCacheItem
+					cachedScripts.current[src] = scriptCacheItem
 
 					script.addEventListener("load", onScriptLoad)
 					script.addEventListener("error", onScriptError)
