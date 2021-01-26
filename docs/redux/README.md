@@ -115,6 +115,8 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are **isolated** from each other.
 
+Refrain using `async` function when no async event happen. See the above example.
+
 However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to **reducers part of different slices**. In the `builder` slice you will find such use cases.
 
 We follow the Redux Style Guide [on that matter](https://redux.js.org/style-guide/style-guide#allow-many-reducers-to-respond-to-the-same-action).
