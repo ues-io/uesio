@@ -133,7 +133,7 @@ Refrain using an `async` function when no async event happens. See the example b
 	dispatch: Dispatcher<AnyAction>
 ) => {
 	const viewId = context.getViewId()
-	if (viewId) dispatch( { type: 'wire/empty', payload: { entity:`${viewId}/${wirename}` }})
+	if (viewId) dispatch({ type: 'wire/empty', payload: { entity:`${viewId}/${wirename}` }})
 	return context
 }
 ```
