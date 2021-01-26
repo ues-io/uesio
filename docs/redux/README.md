@@ -111,11 +111,24 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
+> As a reminder, if you call an `async` function and you do use the value returned by that function, then you need to **resolve** that returned valule. Indeed, an `async` function returns a `Promise`. The snippet right below illustrates this.
+
+Refrain using `async` function when no async event happens. See the above example where an action is **dipatched** to the reducer **synchronously**.
+
+```diff
+- export default (context: Context, wirename: string) => async (
++ export default (context: Context, wirename: string) => (
+	dispatch: Dispatcher<AnyAction>
+) => {
+	const viewId = context.getViewId()
+	if (viewId) dispatch( { type: 'wire/empty', payload : `${viewId}/${wirename}` } ))
+	return context
+}
+```
+
 ## A single action handled by multiple reducers
 
 The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are **isolated** from each other.
-
-Refrain using `async` function when no async event happen. See the above example.
 
 However, through the concept of [extra reducer](https://redux-toolkit.js.org/api/createSlice#extrareducers) of Redux Toolkit, one single action can be dipatched to **reducers part of different slices**. In the `builder` slice you will find such use cases.
 
