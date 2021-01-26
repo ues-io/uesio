@@ -4,9 +4,7 @@ import unmarkForDeleteOp from "./unmarkfordelete"
 import { Dispatcher } from "../../..//store/store"
 import { AnyAction } from "@reduxjs/toolkit"
 
-export default (context: Context) => async (
-	dispatch: Dispatcher<AnyAction>
-) => {
+export default (context: Context) => (dispatch: Dispatcher<AnyAction>) => {
 	const record = context.getRecord()
 	const wire = context.getWire()
 

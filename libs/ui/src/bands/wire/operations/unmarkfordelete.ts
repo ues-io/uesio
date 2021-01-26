@@ -3,9 +3,7 @@ import { unmarkForDelete } from ".."
 import { Dispatcher } from "../../..//store/store"
 import { AnyAction } from "@reduxjs/toolkit"
 
-export default (context: Context) => async (
-	dispatch: Dispatcher<AnyAction>
-) => {
+export default (context: Context) => (dispatch: Dispatcher<AnyAction>) => {
 	const recordId = context.getRecord()?.getId()
 	const wire = context.getWire()
 

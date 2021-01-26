@@ -11,10 +11,10 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 export default {
-	dispatcher: (
-		signal: ComponentSignal,
-		context: Context
-	): ThunkFunc => async (dispatch, getState) => {
+	dispatcher: (signal: ComponentSignal, context: Context): ThunkFunc => (
+		dispatch,
+		getState
+	) => {
 		const { target, signal: signalName } = signal
 		const [band, scope, type] = signalName.split("/")
 		if (band !== "component" || !scope || !type || !target) return context

@@ -30,10 +30,8 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 
 	if (!facebookAppId) return null
 
-	const responseFacebook = async (
-		response: ReactFacebookLoginInfo
-	): Promise<void> => {
-		await uesio.signal.run(
+	const responseFacebook = (response: ReactFacebookLoginInfo): void => {
+		uesio.signal.run(
 			{
 				signal: "user/LOGIN",
 				type: "facebook",
