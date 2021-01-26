@@ -117,10 +117,8 @@ class BuilderAPI {
 	getAvailableNamespaces = (context: Context) =>
 		this.dispatcher(builderOps.getAvailableNamespaces(context))
 
-	getSignalProperties = (signal: SignalDefinition) => {
-		console.log(signal)
-		return []
-	}
+	getSignalProperties = (signal: SignalDefinition) =>
+		this.uesio.signal.getProperties(signal)
 }
 
 export { BuilderAPI }

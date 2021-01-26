@@ -5,6 +5,7 @@
 **/componentpacks
 #exclude files that are partially or fully machine generated
 /apps/platform/platform/platform.js
+/apps/platform/userfiles
 /.vscode
 package-lock.json
 package.json
