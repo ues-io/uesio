@@ -111,9 +111,31 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
-> As a reminder, in a `async` function, even if you resolve a `Promise` using `await` and returns that resolved value, that function still returns a `Promise`.
+> As a reminder, in a `async` function, even if you resolve a `Promise` using `await` and returns that resolved value, that function still returns a `Promise`. The following example illustrates that.
 
-Refrain using `async` function when no async event happens. See the example below where an action is **dipatched** to the reducer **synchronously**.
+```
+// platformLogin does return a promise
+const platformLogin = async (requestBody: LoginRequest): Promise<LoginResponse> => {
+	const response = await postJSON("/site/auth/login", requestBody)
+	return response.json()
+};
+
+// calling the platformLogin somewhere else, needs a resolution
+const login = (
+	context: Context,
+	type: string,
+	token: string
+): ThunkFunc => async (dispatch, getState, platform) => {
+	const response = await platformLogin({
+		type,
+		token,
+	})
+	dispatch(setUser(response.user))
+	return responseRedirect(response, dispatch, context)
+}
+```
+
+Refrain using `async` function when no async event happens. See the example below where an action is **dipatched** in a **synchronous** manner to the reducer.
 
 ```diff
 - export default (context: Context, wirename: string) => async (
