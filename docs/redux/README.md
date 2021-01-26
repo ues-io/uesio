@@ -126,7 +126,7 @@ Refrain using `async` function when no async event happens. See the above exampl
 }
 ```
 
-Refrain using `async` function when the resolved promise is not used in its body. See the above example.
+Refrain using `async` function when the resolved promise is **not used** in its body. See the above example.
 
 ```diff
 - <button onClick={async (): Promise<void> => {
