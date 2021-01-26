@@ -113,7 +113,7 @@ We do favour `async/await` in thunks over `Promise` for avoiding the so-called c
 
 > As a reminder, in a `async` function, even if you resolve a `Promise` using `await` and returns that resolved value, that function still returns a `Promise`.
 
-Refrain using `async` function when no async event happens. See the above example where an action is **dipatched** to the reducer **synchronously**.
+Refrain using `async` function when no async event happens. See the example below where an action is **dipatched** to the reducer **synchronously**.
 
 ```diff
 - export default (context: Context, wirename: string) => async (
@@ -126,7 +126,7 @@ Refrain using `async` function when no async event happens. See the above exampl
 }
 ```
 
-Refrain using `async` function when the resolved promise is **not used** in its body. See the above example.
+Refrain using `async` function when the resolved promise is **not used** in its body. See the snippet below.
 
 ```diff
 - <button onClick={async (): Promise<void> => {
