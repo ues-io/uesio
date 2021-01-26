@@ -86,23 +86,31 @@ const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
 		: {
 				float: definition,
 		  }
-
 const getColor = (
 	definition: ColorDefinition,
 	theme: Theme,
 	context: Context
 ): undefined | string => {
 	if (!definition) return undefined
-	if (typeof definition === "string") return context.merge(definition)
-	if (definition.value) return context.merge(definition.value)
-	if (definition.intention) {
+	let result = ""
+	if (typeof definition === "string") {
+		result = context.merge(definition)
+	} else if (definition.value) {
+		result = context.merge(definition.value)
+	} else if (definition.intention) {
 		const intention = theme.palette?.[definition.intention]
-		return intention[definition.key || "main"]
-	}
-	if (definition.hue) {
+		result = intention[definition.key || "main"]
+	} else if (definition.hue) {
 		const hue = colors?.[definition.hue] as Color
-		return hue[definition.shade || 500]
+		result = hue[definition.shade || 500]
 	}
+	if (result && isValidColor(result)) return result
+}
+// https://stackoverflow.com/questions/48484767/javascript-check-if-string-is-valid-css-color
+function isValidColor(potientialColor: string): boolean {
+	const style = new Option().style
+	style.color = potientialColor
+	return !!style.color
 }
 
 export {
