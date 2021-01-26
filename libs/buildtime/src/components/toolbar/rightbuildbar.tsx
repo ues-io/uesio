@@ -35,7 +35,6 @@ const RightBuildbar: FunctionComponent<Props> = ({
 					style={{
 						overflow: "hidden",
 						margin: "8px 0",
-						height: "100%",
 					}}
 				>
 					<current.component path="" context={context} />

@@ -36,6 +36,7 @@ interface Props {
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
 	options?: monaco.editor.IEditorOptions
+	height?: string
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -45,9 +46,11 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	editorWillMount,
 	editorDidMount,
 	options,
+	height,
 }) => (
 	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
+			height={height}
 			value={value}
 			language={language || "yaml"}
 			onChange={(newValue, event): void => {

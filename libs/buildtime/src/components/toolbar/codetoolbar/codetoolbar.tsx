@@ -101,13 +101,15 @@ const CodeToolbar: FunctionComponent<definition.BaseProps> = (props) => {
 				iconOnClick={(): void => uesio.builder.setRightPanel("")}
 			/>
 			<LazyMonaco
+				height="calc(100vh - 45px)"
 				value={currentYaml}
 				options={{
-					smoothScrolling: true,
 					automaticLayout: true,
 					minimap: {
 						enabled: false,
 					},
+					scrollBeyondLastLine: false,
+					smoothScrolling: true,
 					//quickSuggestions: true,
 				}}
 				onChange={(newValue, event): void => {

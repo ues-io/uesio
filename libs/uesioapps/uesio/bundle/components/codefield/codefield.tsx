@@ -141,6 +141,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 						getValue(fieldType, language, value, setMessage)
 					}
 					options={{
+						scrollBeyondLastLine: false,
 						automaticLayout: true,
 						minimap: {
 							enabled: false,
