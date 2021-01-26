@@ -88,10 +88,6 @@ async (dispatch) => {
 }
 ```
 
-As a side note, even if the two thunks in the snippet above are equivalent, pay attention to the **retuned value**. The first thunk written with a promise returns `void` while the second one, written in `async/await` manner, returns a `Promise`.
-
-The thunk will be called by the middleware. In our stack we do use [redux-thunk](https://github.com/reduxjs/redux-thunk).
-
 Redux does recommend of using the built-in [generic type](https://redux.js.org/recipes/usage-with-typescript#usage-with-redux-thunk) for the action creator generating a thunk.
 By doing that, there is no need to individually type the arguments of the thunk. See the snippet below.
 
@@ -120,22 +116,16 @@ const platformLogin = async (requestBody: LoginRequest): Promise<LoginResponse> 
 	return response.json()
 };
 
-// calling the platformLogin somewhere else, needs a resolution
-const login = (
-	context: Context,
-	type: string,
-	token: string
-): ThunkFunc => async (dispatch, getState, platform) => {
-	const response = await platformLogin({
-		type,
-		token,
-	})
-	dispatch(setUser(response.user))
-	return responseRedirect(response, dispatch, context)
-}
+// calling the platformLogin somewhere else, required to resolve it
+const login = (context: Context, type: string, token: string): ThunkFunc =>
+    async ( dispatch, getState, platform ) => {
+	    const response = await platformLogin({type, token})
+	    dispatch(setUser(response.user))
+	    return responseRedirect(response, dispatch, context)
+    }
 ```
 
-Refrain using `async` function when no async event happens. See the example below where an action is **dipatched** in a **synchronous** manner to the reducer.
+Refrain using an `async` function when no async event happens. See the example below where an action is **dipatched** in a **synchronous** manner to the reducer.
 
 ```diff
 - export default (context: Context, wirename: string) => async (
@@ -148,7 +138,7 @@ Refrain using `async` function when no async event happens. See the example belo
 }
 ```
 
-Refrain using `async` function when the resolved promise is **not used** in its body. See the snippet below.
+Refrain using `async` when the resolved promise is **not used** in the function's body. See the snippet below.
 
 ```diff
 - <button onClick={async (): Promise<void> => {
@@ -182,6 +172,8 @@ We follow the Redux Style Guide [on that matter](https://redux.js.org/style-guid
 ## Redux middleware
 
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain JavaScript `object` and not a `Promise`. This is where Redux-thunk comes into play.
+
+> What redux-thunk actually does, is nothing but calling a thunk - which is a function.
 
 There are plenty of different asynchronous middlewares for Redux. The most famous ones are [redux-saga](https://github.com/redux-saga/redux-saga), [redux-observable](https://github.com/redux-observable/redux-observable/) and [redux-thunk](https://github.com/reduxjs/redux-thunk). We do use redux-thunk which is the [most popular](https://www.npmtrends.com/redux-saga-vs-redux-thunk-vs-redux-observable) one. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using that one.
 
