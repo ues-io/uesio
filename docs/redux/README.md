@@ -111,7 +111,7 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
-> As a reminder, if you call an `async` function and you do use the value returned by that function, then you need to **resolve** that returned valule. Indeed, an `async` function returns a `Promise`. The snippet right below illustrates this.
+> As a reminder, in a `async` function, even if you resolve a `Promise` using `await` and returns that resolved value, that function still returns a `Promise`.
 
 Refrain using `async` function when no async event happens. See the above example where an action is **dipatched** to the reducer **synchronously**.
 
@@ -121,8 +121,31 @@ Refrain using `async` function when no async event happens. See the above exampl
 	dispatch: Dispatcher<AnyAction>
 ) => {
 	const viewId = context.getViewId()
-	if (viewId) dispatch( { type: 'wire/empty', payload : `${viewId}/${wirename}` } ))
+	if (viewId) dispatch( { type: 'wire/empty', payload: { entity:`${viewId}/${wirename}` }})
 	return context
+}
+```
+
+Refrain using `async` function when the resolved promise is not used in its body. See the above example.
+
+```diff
+- <button onClick={async (): Promise<void> => {
+-   await uesio.signal.run(
++ <button onClick={(): void => {
++   uesio.signal.run(
+        {
+            signal: "user/LOGIN",
+            type: "mock",
+            token: "mockToken",
+        },
+        props.context
+        )
+    }}
+    className={classes.loginButton}
+>
+    <LoginIcon image="uesio.logosmall" />
+    <LoginText text={buttonText} />
+</button>text
 }
 ```
 
