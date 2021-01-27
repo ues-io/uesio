@@ -1,6 +1,7 @@
 import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { metadata } from "@uesio/constants"
+import { definition } from "@uesio/ui"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -59,6 +60,8 @@ type PropDescriptor =
 	| KeyProp
 	| WireProp
 	| WiresProp
+	| ConditionProp
+	| NamespaceProp
 	| ComponentTargetProp
 
 type BasePropDescriptor = {
@@ -66,6 +69,19 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
+}
+
+interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
+	filter?: (def: definition.Definition, id: string) => boolean
+}
+
+interface ConditionProp extends DefinitionBasedPropDescriptor {
+	type: "CONDITION"
+	wire?: string
+}
+
+interface NamespaceProp extends BasePropDescriptor {
+	type: "NAMESPACE"
 }
 
 interface TextProp extends BasePropDescriptor {
@@ -102,7 +118,7 @@ interface KeyProp extends BasePropDescriptor {
 	type: "KEY"
 }
 
-interface WireProp extends BasePropDescriptor {
+interface WireProp extends DefinitionBasedPropDescriptor {
 	type: "WIRE"
 }
 

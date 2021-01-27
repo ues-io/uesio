@@ -1,5 +1,5 @@
 import { Context } from "../../context/context"
-import { SignalDefinition } from "../../definition/signal"
+import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import operations from "./operations"
 
 // The key for the entire band
@@ -11,13 +11,18 @@ interface LoginSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-export default {
+const signals: { [key: string]: SignalDescriptor } = {
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
 			operations.login(context, signal.type, signal.token),
+		label: "TODO: Login",
+		properties: () => [],
 	},
 	[`${USER_BAND}/LOGOUT`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			operations.logout(context),
+		label: "Logout",
+		properties: () => [],
 	},
 }
+export default signals

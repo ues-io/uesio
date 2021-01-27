@@ -8,6 +8,8 @@ import WiresProp from "./wiresprop"
 import MetadataProp from "./metadataprop"
 import NumberProp from "./numberprop"
 import BooleanProp from "./booleanprop"
+import ConditionProp from "./conditionprop"
+import NamespaceProp from "./namespaceprop"
 
 interface Props extends definition.BaseProps {
 	descriptor: builder.PropDescriptor
@@ -23,6 +25,10 @@ function getPropHandler(type?: string) {
 			return KeyProp
 		case "WIRE":
 			return WireProp
+		case "CONDITION":
+			return ConditionProp
+		case "NAMESPACE":
+			return NamespaceProp
 		case "WIRES":
 			return WiresProp
 		case "NUMBER":

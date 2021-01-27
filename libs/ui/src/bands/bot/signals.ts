@@ -1,5 +1,5 @@
 import { Context } from "../../context/context"
-import { SignalDefinition } from "../../definition/signal"
+import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { BotParams } from "../../platform/platform"
 import operations from "./operations"
 
@@ -11,9 +11,12 @@ interface CallSignal extends SignalDefinition {
 	params: BotParams
 }
 
-export default {
+const signals: { [key: string]: SignalDescriptor } = {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher: (signal: CallSignal, context: Context) =>
 			operations.call(context, signal.bot, signal.params),
+		label: "TODO: Bot Call",
+		properties: () => [],
 	},
 }
+export default signals
