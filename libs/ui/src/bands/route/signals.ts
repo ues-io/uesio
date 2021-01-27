@@ -16,7 +16,7 @@ interface NavigateSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals: { [key: string]: SignalDescriptor } = {
+const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
 			operations.redirect(context, signal.path),
@@ -52,7 +52,7 @@ const signals: { [key: string]: SignalDescriptor } = {
 			{
 				type: "BOOLEAN",
 				name: "noPushState",
-				label: "Do not populate brower history",
+				label: "Do not populate browser history",
 			},
 		],
 	},

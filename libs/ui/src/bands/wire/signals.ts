@@ -45,7 +45,7 @@ interface SaveWiresSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals: { [key: string]: SignalDescriptor } = {
+const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle Delete Status",
 		dispatcher: (signal: SignalDefinition, context: Context) =>

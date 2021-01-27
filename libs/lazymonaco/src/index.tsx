@@ -16,6 +16,7 @@ import {
 	ChangeHandler,
 	EditorWillMount,
 	EditorDidMount,
+	monaco,
 } from "react-monaco-editor"
 
 // eslint-disable-next-line prefer-const, @typescript-eslint/no-unused-vars
@@ -34,6 +35,8 @@ interface Props {
 	onChange?: ChangeHandler
 	editorWillMount?: EditorWillMount
 	editorDidMount?: EditorDidMount
+	options?: monaco.editor.IEditorOptions
+	height?: string
 }
 
 const LazyMonaco: FunctionComponent<Props> = ({
@@ -42,19 +45,14 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	onChange,
 	editorWillMount,
 	editorDidMount,
+	options,
+	height,
 }) => (
 	<Suspense fallback={createElement(LinearProgress)}>
 		<LaziestMonaco
+			height={height}
 			value={value}
 			language={language || "yaml"}
-			options={{
-				smoothScrolling: true,
-				automaticLayout: true,
-				minimap: {
-					enabled: false,
-				},
-				//quickSuggestions: true,
-			}}
 			onChange={(newValue, event): void => {
 				onChange?.(newValue, event)
 			}}
@@ -64,6 +62,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			editorDidMount={(editor, monaco): void => {
 				editorDidMount?.(editor, monaco)
 			}}
+			{...(options ? { options } : {})}
 		/>
 	</Suspense>
 )

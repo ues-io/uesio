@@ -11,12 +11,23 @@ interface LoginSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-const signals: { [key: string]: SignalDescriptor } = {
+const signals: Record<string, SignalDescriptor> = {
 	[`${USER_BAND}/LOGIN`]: {
 		dispatcher: (signal: LoginSignal, context: Context) =>
 			operations.login(context, signal.type, signal.token),
-		label: "TODO: Login",
-		properties: () => [],
+		label: "Login",
+		properties: () => [
+			{
+				name: "type",
+				label: "Type",
+				type: "TEXT",
+			},
+			{
+				name: "token",
+				label: "Token",
+				type: "TEXT",
+			},
+		],
 	},
 	[`${USER_BAND}/LOGOUT`]: {
 		dispatcher: (signal: SignalDefinition, context: Context) =>

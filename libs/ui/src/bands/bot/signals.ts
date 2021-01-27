@@ -11,7 +11,7 @@ interface CallSignal extends SignalDefinition {
 	params: BotParams
 }
 
-const signals: { [key: string]: SignalDescriptor } = {
+const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher: (signal: CallSignal, context: Context) =>
 			operations.call(context, signal.bot, signal.params),
