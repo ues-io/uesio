@@ -74,7 +74,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 				metadataType,
 				namespace
 			)
-			return
 		}
 	})
 

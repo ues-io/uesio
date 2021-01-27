@@ -54,7 +54,6 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 				namespace,
 				grouping
 			)
-			return
 		}
 	})
 
