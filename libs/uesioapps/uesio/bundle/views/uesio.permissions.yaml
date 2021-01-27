@@ -28,12 +28,21 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: workspacename
-    permissions:
-      collection: uesio.permissions
+    permissionsets:
+      collection: uesio.permissionsets
       fields:
         uesio.id:
         uesio.name:
-        uesio.updated:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    profiles:
+      collection: uesio.profiles
+      fields:
+        uesio.id:
+        uesio.name:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -72,10 +81,10 @@ definition:
                 - material.griditem:
                     components:
                       - material.typography:
-                          text: permissions
+                          text: Permission Sets
                           variant: h5
                       - material.typography:
-                          text: Gotta catch 'em all!
+                          text: A permission set is a collection of settings and permissions that give users access to various tools and functions.
                           variant: body2
                 - material.griditem:
                     components:
@@ -84,10 +93,10 @@ definition:
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
-                                text: "Create New Collection"
+                                text: "Create New Permission Set"
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newcollection"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newpermissionset"
                                     namespace: "uesio"
           - material.deck:
               xs: 12
@@ -95,8 +104,8 @@ definition:
               md: 4
               lg: 3
               margin: 0
-              id: permissionsDeck
-              wire: permissions
+              id: permissionsetsDeck
+              wire: permissionsets
               components:
                 - material.card:
                     media:
@@ -114,9 +123,59 @@ definition:
                       - material.typography:
                           text: "${uesio.name}"
                           textTransform: "capitalize"
-                      - material.field:
-                          fieldId: uesio.updated
                     signals:
                       - signal: "route/NAVIGATE"
-                        path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${uesio.name}"
+                        path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${uesio.name}"
+                        namespace: "uesio"
+          - material.grid:
+              justify: space-between
+              items:
+                - material.griditem:
+                    components:
+                      - material.typography:
+                          text: Profiles
+                          variant: h5
+                      - material.typography:
+                          text: Profiles are a group of settings and permissions which define what a user can access.
+                          variant: body2
+                - material.griditem:
+                    components:
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Create New Profile"
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newprofile"
+                                    namespace: "uesio"
+          - material.deck:
+              xs: 12
+              sm: 6
+              md: 4
+              lg: 3
+              margin: 0
+              id: profilesDeck
+              wire: profiles
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color:
+                          intention: "primary"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.griditem:
+                          components:
+                            - material.icon:
+                                type: "open"
+                                float: right
+                      - material.typography:
+                          text: "${uesio.name}"
+                          textTransform: "capitalize"
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "app/$Param{appname}/workspace/$Param{workspacename}/profile/${uesio.name}"
                         namespace: "uesio"
