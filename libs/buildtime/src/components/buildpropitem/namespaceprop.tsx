@@ -9,13 +9,11 @@ interface NamespaceRendererProps extends PropRendererProps {
 const NamespaceProp: FunctionComponent<NamespaceRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const namespaces = uesio.builder.useAvailableNamespaces(props.context)
-	let options: { label: string; value: string }[] = []
-	if (namespaces) {
-		options = Object.keys(namespaces).map((entry) => ({
-			label: entry,
-			value: entry,
-		}))
-	}
+	const options = Object.keys(namespaces || {}).map((entry) => ({
+		label: entry,
+		value: entry,
+	}))
+
 	return (
 		<SelectProp
 			{...props}

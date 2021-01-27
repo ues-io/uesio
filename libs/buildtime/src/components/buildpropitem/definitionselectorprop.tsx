@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { hooks, definition } from "@uesio/ui"
 import SelectProp from "./selectprop"
+
 type DefinitionSelectorProps = PropRendererProps & {
 	definitionPath: string
 	filter?: (def: definition.Definition, index: string | number) => boolean
@@ -24,7 +25,7 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 		props.definitionPath
 	) as definition.DefinitionMap
 
-	let entries = (definitions && Object.keys(definitions)) || []
+	let entries = Object.keys(definitions || {})
 	if (props.filter) {
 		const filter = props.filter
 		entries = entries.filter((key) => filter(definitions[key], key))

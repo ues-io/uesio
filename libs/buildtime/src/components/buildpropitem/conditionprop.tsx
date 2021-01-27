@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import DefinitionSelectorProp from "./definitionselectorprop"
 import { wire } from "@uesio/ui"
+
 const ConditionPropComponent: FunctionComponent<PropRendererProps> = (
 	props
 ) => {

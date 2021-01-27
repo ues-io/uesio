@@ -9,7 +9,7 @@ const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 	return (
 		<DefinitionSelectorProp
 			{...props}
-			definitionPath={'["wires"]'}
+			definitionPath='["wires"]'
 			filter={props.descriptor.filter}
 		/>
 	)

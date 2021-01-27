@@ -19,7 +19,6 @@ const BotProp: FunctionComponent<BotPropRendererProps> = (props) => {
 	useEffect(() => {
 		if (!metadata) {
 			uesio.builder.getMetadataList(context, "BOT", namespace, botType)
-			return
 		}
 	})
 
