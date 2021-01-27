@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react"
+import React, { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { context, hooks } from "@uesio/ui"
 import SelectProp from "./selectprop"
@@ -8,13 +8,7 @@ interface NamespaceRendererProps extends PropRendererProps {
 }
 const NamespaceProp: FunctionComponent<NamespaceRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const namespaces = uesio.builder.useAvailableNamespaces()
-	useEffect(() => {
-		if (!namespaces) {
-			uesio.builder.getAvailableNamespaces(props.context)
-			return
-		}
-	})
+	const namespaces = uesio.builder.useAvailableNamespaces(props.context)
 	let options: { label: string; value: string }[] = []
 	if (namespaces) {
 		options = Object.keys(namespaces).map((entry) => ({
