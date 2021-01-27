@@ -15,8 +15,21 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher: (signal: CallSignal, context: Context) =>
 			operations.call(context, signal.bot, signal.params),
-		label: "TODO: Bot Call",
-		properties: () => [],
+		label: "Call Bot",
+		properties: (signal: SignalDefinition) => [
+			{
+				type: "NAMESPACE",
+				name: "namespace",
+				label: "Namespace",
+			},
+			{
+				type: "BOT",
+				namespace: <string>signal.namespace,
+				botType: "LISTENER",
+				name: "bot",
+				label: "Bot",
+			},
+		],
 	},
 }
 export default signals

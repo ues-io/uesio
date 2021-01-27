@@ -10,6 +10,7 @@ import NumberProp from "./numberprop"
 import BooleanProp from "./booleanprop"
 import ConditionProp from "./conditionprop"
 import NamespaceProp from "./namespaceprop"
+import BotProp from "./botprop"
 
 interface Props extends definition.BaseProps {
 	descriptor: builder.PropDescriptor
@@ -25,6 +26,8 @@ function getPropHandler(type?: string) {
 			return KeyProp
 		case "WIRE":
 			return WireProp
+		case "BOT":
+			return BotProp
 		case "CONDITION":
 			return ConditionProp
 		case "NAMESPACE":

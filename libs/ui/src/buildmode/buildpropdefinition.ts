@@ -59,6 +59,7 @@ type PropDescriptor =
 	| MultiSelectProp
 	| KeyProp
 	| WireProp
+	| BotProp
 	| WiresProp
 	| ConditionProp
 	| NamespaceProp
@@ -99,6 +100,11 @@ interface MetadataProp extends BasePropDescriptor {
 	groupingProperty?: string
 }
 
+interface BotProp extends BasePropDescriptor {
+	type: "BOT"
+	botType: "LISTENER"
+	namespace?: string
+}
 interface SelectProp extends BasePropDescriptor {
 	type: "SELECT"
 	options: PropertySelectOption[]
@@ -183,6 +189,7 @@ export {
 	MetadataProp,
 	SelectProp,
 	BooleanProp,
+	BotProp,
 	MultiSelectProp,
 	KeyProp,
 	WireProp,
