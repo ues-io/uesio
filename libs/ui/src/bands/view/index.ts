@@ -6,7 +6,7 @@ import viewAdapter from "./adapter"
 import loadViewOp from "./operations/load"
 
 const viewSlice = createSlice({
-	name: "view",
+	name: "viewdef",
 	initialState: viewAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
