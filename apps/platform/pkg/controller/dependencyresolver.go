@@ -25,6 +25,8 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	// Special handling for fields for now
 	if metadatatype == "fields" {
 		conditions["uesio.collection"] = grouping
+	} else if metadatatype == "bots" {
+		conditions["uesio.type"] = grouping
 	}
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)

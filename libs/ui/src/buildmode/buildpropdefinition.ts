@@ -1,6 +1,7 @@
 import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { metadata } from "@uesio/constants"
+import { definition } from "@uesio/ui"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -58,7 +59,10 @@ type PropDescriptor =
 	| MultiSelectProp
 	| KeyProp
 	| WireProp
+	| BotProp
 	| WiresProp
+	| ConditionProp
+	| NamespaceProp
 	| ComponentTargetProp
 
 type BasePropDescriptor = {
@@ -66,6 +70,19 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
+}
+
+interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
+	filter?: (def: definition.Definition, id: string) => boolean
+}
+
+interface ConditionProp extends DefinitionBasedPropDescriptor {
+	type: "CONDITION"
+	wire?: string
+}
+
+interface NamespaceProp extends BasePropDescriptor {
+	type: "NAMESPACE"
 }
 
 interface TextProp extends BasePropDescriptor {
@@ -83,6 +100,11 @@ interface MetadataProp extends BasePropDescriptor {
 	groupingProperty?: string
 }
 
+interface BotProp extends BasePropDescriptor {
+	type: "BOT"
+	botType: "LISTENER"
+	namespace?: string
+}
 interface SelectProp extends BasePropDescriptor {
 	type: "SELECT"
 	options: PropertySelectOption[]
@@ -102,7 +124,7 @@ interface KeyProp extends BasePropDescriptor {
 	type: "KEY"
 }
 
-interface WireProp extends BasePropDescriptor {
+interface WireProp extends DefinitionBasedPropDescriptor {
 	type: "WIRE"
 }
 
@@ -167,6 +189,7 @@ export {
 	MetadataProp,
 	SelectProp,
 	BooleanProp,
+	BotProp,
 	MultiSelectProp,
 	KeyProp,
 	WireProp,

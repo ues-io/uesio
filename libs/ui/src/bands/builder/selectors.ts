@@ -73,7 +73,7 @@ const useMetadataList = (
 					builder?.metadata?.[metadataType]?.[namespace] || null
 		  )
 
-const useAvailableNamespaces = () =>
+const useNamespaces = () =>
 	useSelector(({ builder }: RootState) => builder?.namespaces || null)
 
 export {
@@ -87,5 +87,5 @@ export {
 	useRightPanel,
 	useBuilderView,
 	useMetadataList,
-	useAvailableNamespaces,
+	useNamespaces,
 }

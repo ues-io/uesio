@@ -13,6 +13,8 @@ const sigHandler = {
 			})
 			return ctx
 		},
+		label: "Toggle Mode",
+		properties: () => [],
 	},
 }
 
