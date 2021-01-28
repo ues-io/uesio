@@ -8,25 +8,25 @@ import EditWrapper from "./editwrapper"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: (props: FileProps) => ({
+		root: ({ definition }: FileProps) => ({
 			display: "block",
 			lineHeight: 0,
-			...styles.getMarginStyles(props.definition?.margin, theme),
+			...styles.getMarginStyles(definition?.margin, theme),
 		}),
-		avatar: (props: FileProps) => ({
-			width: props.definition?.width ? props.definition.width : 200,
-			height: props.definition?.height ? props.definition.height : 200,
+		avatar: ({ definition }: FileProps) => ({
+			width: definition?.width ? definition.width : 200,
+			height: definition?.height ? definition.height : 200,
 		}),
-		smallavatar: (props: FileProps) => ({
-			width: props.definition?.width ? props.definition.width / 4 : 50,
-			height: props.definition?.height ? props.definition.height / 4 : 50,
+		smallavatar: ({ definition }: FileProps) => ({
+			width: definition?.width ? definition.width / 4 : 50,
+			height: definition?.height ? definition.height / 4 : 50,
 			border: `2px solid ${theme.palette.background.paper}`,
 			cursor: "pointer",
 		}),
 	})
 )
 
-async function HandleChange(
+async function handleChange(
 	selectorFiles: FileList | null,
 	fieldId: string,
 	record: wire.WireRecord,
@@ -220,6 +220,6 @@ const File: FunctionComponent<FileProps> = (props) => {
 	return null
 }
 
-export { HandleChange }
+export { handleChange }
 
 export default File
