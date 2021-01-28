@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
@@ -34,10 +32,12 @@ const useStyles = material.makeStyles((theme) =>
 const getAccept = (accepts: string) =>
 	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
 
-const onChangeFileDecorator = (
+const onChangeFileDecorator = <T extends Parameters<typeof handleChange>>(
 	context: context.Context,
 	uesio: hooks.Uesio
-) => (onChange: Function) => (...args: any) => {
+) => (onChange: (...args: T) => ReturnType<typeof handleChange>) => (
+	...args: T
+) => {
 	onChange(...args).then(() => {
 		const wire = context.getWire()
 		if (wire) {
