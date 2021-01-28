@@ -82,9 +82,6 @@ const File: FunctionComponent<FileProps> = (props) => {
 	) as wire.PlainWireRecord
 	const mime = fileMetadata?.["uesio.mimetype"] as string | undefined
 
-	console.log("fileMetadata", fileMetadata)
-	console.log("mime", mime)
-
 	const iconJsx = (
 		<Icon
 			definition={{

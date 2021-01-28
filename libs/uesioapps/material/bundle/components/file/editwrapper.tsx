@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
@@ -46,6 +48,13 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 		return null
 	}
 
+	const onChangeDecorator = (onChange: Function) => (...args: any) => {
+		onChange(...args).then(() => {
+			const wireNames = ["accounts"]
+			uesio.wire.reloadWires(context, wireNames)
+		})
+	}
+
 	const iconJsx = (
 		<Icon
 			definition={{
@@ -75,7 +84,7 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 								id={id}
 								name={id}
 								onChange={(e) =>
-									handleChange(
+									onChangeDecorator(handleChange)(
 										e.target.files,
 										fieldId,
 										record,
