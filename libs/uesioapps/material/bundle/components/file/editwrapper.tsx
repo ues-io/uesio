@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
-import { hooks, material, styles } from "@uesio/ui"
+import { hooks, material, styles, context } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 import Icon from "../icon/icon"
 import { handleChange } from "./file"
@@ -34,6 +34,20 @@ const useStyles = material.makeStyles((theme) =>
 const getAccept = (accepts: string) =>
 	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
 
+const onChangeDecorator = (context: context.Context, uesio: hooks.Uesio) => (
+	onChange: Function
+) => (...args: any) => {
+	onChange(...args).then(() => {
+		if (context) {
+			const wire = context.getWire()
+			if (wire) {
+				const wireName = wire.getId()
+				uesio.wire.reloadWires(context, [wireName])
+			}
+		}
+	})
+}
+
 const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
@@ -46,13 +60,6 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	const wire = context.getWire()
 	if (!wire || !record || !displayAs) {
 		return null
-	}
-
-	const onChangeDecorator = (onChange: Function) => (...args: any) => {
-		onChange(...args).then(() => {
-			const wireNames = ["accounts"]
-			uesio.wire.reloadWires(context, wireNames)
-		})
 	}
 
 	const iconJsx = (
@@ -84,7 +91,10 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 								id={id}
 								name={id}
 								onChange={(e) =>
-									onChangeDecorator(handleChange)(
+									onChangeDecorator(
+										context,
+										uesio
+									)(handleChange)(
 										e.target.files,
 										fieldId,
 										record,
