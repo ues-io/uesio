@@ -107,7 +107,9 @@ By doing that, there is no need to individually type the arguments of the thunk.
 
 We do favour `async/await` in thunks over `Promise` for avoiding the so-called callback hell. [Redux Style Guide](https://redux.js.org/style-guide/style-guide#use-thunks-for-async-logic) does recommend using `async/await` for the sake of readability.
 
+<span style="background-color:blue">
 > As a reminder, in a `async` function, even if you resolve a `Promise` using `await` and returns that resolved value, that function still returns a `Promise`. The following example illustrates that.
+</span>
 
 ```
 // platformLogin does return a promise
@@ -151,14 +153,13 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
             token: "mockToken",
         },
         props.context
-        )
-    }}
+    )
+ }}
     className={classes.loginButton}
 >
     <LoginIcon image="uesio.logosmall" />
     <LoginText text={buttonText} />
-</button>text
-}
+</button>
 ```
 
 ## A single action handled by multiple reducers
