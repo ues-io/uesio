@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useEffect } from "react"
-import { definition, material, hooks } from "@uesio/ui"
+import React, { FunctionComponent } from "react"
+import { definition, material, hooks, wire } from "@uesio/ui"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -41,30 +41,31 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
-	const [checked, setChecked] = React.useState(new Map())
 
-	console.log("checked", checked)
+	const value = (record.getFieldValue(fieldId) as wire.PlainWireRecord) || {}
 
-	useEffect(() => {
-		if (!checked) {
-			const value = record.getFieldValue(fieldId) as Map<string, boolean>
-			setChecked(value)
-		}
-	})
+	console.log("value", value)
 
 	let disabled = false
 	if (mode === "READ") {
 		disabled = true
 	}
 
-	console.log(fieldId, label, collection, mode)
 	const data = wire.getData()
 
 	const handleToggle = (listRecord: string) => () => {
-		//TO-DO check the state before set true or false
-
-		setChecked(checked.set(listRecord, true))
-		record.update(fieldId, checked)
+		const hasProperty = Object.prototype.hasOwnProperty.call(
+			value,
+			listRecord
+		)
+		if (!hasProperty) {
+			const updValue = { ...value, [listRecord]: true }
+			record.update(fieldId, updValue)
+		} else {
+			const currentValue = value[listRecord]
+			const updValue = { ...value, [listRecord]: !currentValue }
+			record.update(fieldId, updValue)
+		}
 	}
 
 	return (
@@ -73,8 +74,6 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 			dense
 		>
 			{data.map((record) => (
-				//let recordName  = record.getFieldValue(nameNameField) as string
-
 				<material.ListItem divider>
 					<material.ListItemText
 						id={record.getId()}
@@ -87,7 +86,13 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 							onChange={handleToggle(
 								record.getFieldValue(nameNameField) as string
 							)}
-							checked={checked.get("crm.accounts")}
+							checked={
+								(value[
+									record.getFieldValue(
+										nameNameField
+									) as string
+								] as boolean) || false
+							}
 							inputProps={{
 								"aria-labelledby": record.getId(),
 							}}
