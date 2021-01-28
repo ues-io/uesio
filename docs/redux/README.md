@@ -151,14 +151,13 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
             token: "mockToken",
         },
         props.context
-        )
-    }}
+    )
+ }}
     className={classes.loginButton}
 >
     <LoginIcon image="uesio.logosmall" />
     <LoginText text={buttonText} />
-</button>text
-}
+</button>
 ```
 
 ## A single action handled by multiple reducers
