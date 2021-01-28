@@ -34,16 +34,15 @@ const useStyles = material.makeStyles((theme) =>
 const getAccept = (accepts: string) =>
 	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
 
-const onChangeDecorator = (context: context.Context, uesio: hooks.Uesio) => (
-	onChange: Function
-) => (...args: any) => {
+const onChangeFileDecorator = (
+	context: context.Context,
+	uesio: hooks.Uesio
+) => (onChange: Function) => (...args: any) => {
 	onChange(...args).then(() => {
-		if (context) {
-			const wire = context.getWire()
-			if (wire) {
-				const wireName = wire.getId()
-				uesio.wire.reloadWires(context, [wireName])
-			}
+		const wire = context.getWire()
+		if (wire) {
+			const wireName = wire.getId()
+			uesio.wire.reloadWires(context, [wireName])
 		}
 	})
 }
@@ -91,7 +90,7 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 								id={id}
 								name={id}
 								onChange={(e) =>
-									onChangeDecorator(
+									onChangeFileDecorator(
 										context,
 										uesio
 									)(handleChange)(
