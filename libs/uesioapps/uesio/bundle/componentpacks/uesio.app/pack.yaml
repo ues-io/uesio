@@ -16,3 +16,4 @@ components:
   codefield:
   bulkjob:
   fileupload:
+  permissionpicker:

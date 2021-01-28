@@ -33,6 +33,15 @@ definition:
       fields:
         uesio.id:
         uesio.name:
+        uesio.workspace:
+        uesio.workspaceid:
+        uesio.allowallfiles:
+        uesio.allowallroutes:
+        uesio.allowallviews:
+        uesio.filerefs:
+        uesio.namedrefs:
+        uesio.routerefs:
+        uesio.viewrefs:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -41,6 +50,43 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: permissionsetname
+    routes:
+      collection: uesio.routes
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.path:
+        uesio.view:
+        uesio.theme:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    views:
+      collection: uesio.views
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.definition:
+        uesio.workspaceid:
+        uesio.workspace:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    files:
+      collection: uesio.files
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.content:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -52,7 +98,7 @@ definition:
               margin: 0
               id: permissionsetsDeck
               wire: permissionsets
-              mode: READ
+              mode: EDIT
               components:
                 - material.breadcrumbs:
                     crumbs:
@@ -146,4 +192,20 @@ definition:
                                   - material.field:
                                       fieldId: uesio.name
                                   - material.field:
-                                      fieldId: uesio.id
+                                      fieldId: uesio.allowallfiles
+                                  - material.field:
+                                      fieldId: uesio.allowallroutes
+                                  - material.field:
+                                      fieldId: uesio.allowallviews
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.filerefs
+                                      wireName: files
+                                      label: "Files"
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.routerefs
+                                      wireName: routes
+                                      label: "Routes"
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.viewrefs
+                                      wireName: views
+                                      label: "Views"
