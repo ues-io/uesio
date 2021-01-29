@@ -124,15 +124,15 @@ const TableBody: FunctionComponent<Props> = (props) => {
 	const wire = props.wire
 	const data = wire.getData()
 	const currentRecordsSize = data.length
-	const previousRecordsSize = useRef(data.length)
+	const previousRecordsSize = useRef(currentRecordsSize)
 	const lastRowRef = useRef<HTMLTableRowElement | null>(null)
 
-	// this logic serves for focusing on the just created row
+	// this logic serves for focusing on the right now created row
 	useEffect(() => {
 		if (currentRecordsSize > previousRecordsSize.current) {
 			const node = lastRowRef?.current?.querySelector?.("input")
 			node?.focus?.()
-			// update the previous amount of record for the next re-rendering
+			// update the previous amount of records for the next re-rendering
 			previousRecordsSize.current = currentRecordsSize
 		}
 	}, [currentRecordsSize])
