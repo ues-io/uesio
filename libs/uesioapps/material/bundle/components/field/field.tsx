@@ -7,7 +7,7 @@ import SelectField from "../selectfield/selectfield"
 import CheckBoxField from "../checkboxfield/checkboxfield"
 
 //TO-DO create our wrapper for material list
-import { material, collection } from "@uesio/ui"
+import { material, wire } from "@uesio/ui"
 
 function toLocalISOString(d: Date) {
 	const off = d.getTimezoneOffset()
@@ -106,9 +106,9 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			/>
 		)
 	} else if (type === "ARRAY") {
-		const options = record.getFieldValue(
-			fieldId
-		) as collection.SelectOption[]
+		const options = (record.getFieldValue(fieldId) as unknown) as Array<
+			wire.PlainWireRecord
+		>
 		if (options) {
 			return (
 				<material.List>

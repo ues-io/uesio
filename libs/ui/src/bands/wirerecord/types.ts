@@ -1,13 +1,4 @@
-import { SelectOption } from "../field/types"
-
-type FieldValue =
-	| string
-	| number
-	| boolean
-	| undefined
-	| null
-	| PlainWireRecord
-	| SelectOption[]
+type FieldValue = string | number | boolean | undefined | null | PlainWireRecord
 
 type PlainWireRecord = {
 	[key: string]: FieldValue
