@@ -122,7 +122,7 @@ const TableBody: FunctionComponent<Props> = (props) => {
 	const data = wire.getData()
 	const currentRecordsSize = data.length
 	const previousRecordsSize = useRef(data.length)
-	const lastRowRef = useRef<HTMLElement>()
+	const lastRowRef = useRef<HTMLTableRowElement | null>(null)
 
 	// this logic serves for focusing on the just created row
 	useEffect(() => {
