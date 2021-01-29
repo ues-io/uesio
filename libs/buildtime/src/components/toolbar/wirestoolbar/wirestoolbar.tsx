@@ -10,7 +10,7 @@ interface Props extends definition.BaseProps {
 	selectedNode: string
 }
 
-const WiresToolbar: FunctionComponent<Props> = (props: Props) => {
+const WiresToolbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const theme = material.useTheme()
 	const path = '["wires"]'
