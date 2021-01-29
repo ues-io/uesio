@@ -79,7 +79,9 @@ const TableRow: FunctionComponent<RowProps> = forwardRef((props, ref) => {
 		? { backgroundColor: "#ffcdd2" }
 		: {}
 	return (
-		<material.TableRow {...(ref ? { ref } : {})} style={style}>
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		<material.TableRow style={style} {...(ref ? { ref } : {})}>
 			{columns.map((columnDef, index) => {
 				const column = columnDef["material.column"] as ColumnDefinition
 
