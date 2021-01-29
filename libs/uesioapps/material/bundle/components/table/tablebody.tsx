@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import React, { FunctionComponent, useEffect, useRef } from "react"
 
 import {
 	material,
@@ -120,19 +120,40 @@ const TableRow: FunctionComponent<RowProps> = (props) => {
 const TableBody: FunctionComponent<Props> = (props) => {
 	const wire = props.wire
 	const data = wire.getData()
+	const currentRecordsSize = data.length
+	const previousRecordsSize = useRef(data.length)
+	const lastRowRef = useRef<HTMLElement | null>(null)
+
+	// this logic serves for focusing on the just created row
+	useEffect(() => {
+		// update the previous amount of record for the next re-rendering
+		if (currentRecordsSize > previousRecordsSize.current) {
+			const node = lastRowRef?.current?.querySelector?.("input")
+			node?.focus?.()
+			console.log("true", node)
+			previousRecordsSize.current = currentRecordsSize
+		}
+	}, [currentRecordsSize])
 
 	return (
 		<material.TableBody>
-			{data.map((record) => (
-				<TableRow
+			{data.map((record, index, array) => (
+				<div
 					key={record.getId()}
-					wire={wire}
-					path={props.path}
-					columns={props.columns}
-					context={props.context}
-					mode={props.state.mode}
-					record={record}
-				/>
+					{...(index === array.length - 1 &&
+					currentRecordsSize > previousRecordsSize.current
+						? { ref: lastRowRef }
+						: {})}
+				>
+					<TableRow
+						wire={wire}
+						path={props.path}
+						columns={props.columns}
+						context={props.context}
+						mode={props.state.mode}
+						record={record}
+					/>
+				</div>
 			))}
 		</material.TableBody>
 	)
