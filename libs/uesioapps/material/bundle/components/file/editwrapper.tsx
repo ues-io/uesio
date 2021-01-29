@@ -32,7 +32,7 @@ const useStyles = material.makeStyles((theme) =>
 const getAccept = (accepts: string) =>
 	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
 
-const onChangeFileDecorator = <T extends Parameters<typeof handleChange>>(
+const onChangeDecorator = <T extends Parameters<typeof handleChange>>(
 	context: context.Context,
 	uesio: hooks.Uesio
 ) => (onChange: (...args: T) => ReturnType<typeof handleChange>) => (
@@ -90,7 +90,7 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 								id={id}
 								name={id}
 								onChange={(e) =>
-									onChangeFileDecorator(
+									onChangeDecorator(
 										context,
 										uesio
 									)(handleChange)(
