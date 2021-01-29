@@ -66,6 +66,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
 		definition: { fieldId, displayAs, height, width, editable },
+		path,
 	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -88,8 +89,8 @@ const File: FunctionComponent<FileProps> = (props) => {
 				type: "file",
 				size: "large",
 			}}
-			path={props.path}
-			context={props.context}
+			path={path}
+			context={context}
 		/>
 	)
 
@@ -97,7 +98,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 		return (
 			<Button
 				definition={props.definition}
-				path={props.path}
+				path={path}
 				context={context}
 			/>
 		)
@@ -108,7 +109,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 		return (
 			<EditWrapper
 				definition={props.definition}
-				path={props.path}
+				path={path}
 				context={context}
 			/>
 		)
@@ -136,7 +137,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 					return (
 						<EditWrapper
 							definition={props.definition}
-							path={props.path}
+							path={path}
 							context={context}
 						>
 							{imgPreview}
@@ -146,7 +147,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 					return (
 						<EditWrapper
 							definition={props.definition}
-							path={props.path}
+							path={path}
 							context={context}
 						>
 							{imgFullPreview}
@@ -179,7 +180,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 					return (
 						<EditWrapper
 							definition={props.definition}
-							path={props.path}
+							path={path}
 							context={context}
 						/>
 					)
@@ -191,7 +192,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 					return (
 						<EditWrapper
 							definition={props.definition}
-							path={props.path}
+							path={path}
 							context={context}
 						>
 							<iframe src={fileUrl} width="100%" height="500px" />
