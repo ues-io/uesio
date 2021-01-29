@@ -73,15 +73,16 @@ const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
 	)
 }
 
-const TableRow: FunctionComponent<RowProps> = forwardRef((props, ref) => {
+const TableRow: FunctionComponent<RowProps> = forwardRef<
+	HTMLTableRowElement,
+	RowProps
+>((props, ref) => {
 	const { path, wire, columns, context, mode, record } = props
 	const style = wire.isMarkedForDeletion(record.getId())
 		? { backgroundColor: "#ffcdd2" }
 		: {}
 	return (
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		<material.TableRow style={style} {...(ref ? { ref } : {})}>
+		<material.TableRow style={style} ref={ref}>
 			{columns.map((columnDef, index) => {
 				const column = columnDef["material.column"] as ColumnDefinition
 
