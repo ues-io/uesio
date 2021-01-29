@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from "react"
+import React, { FunctionComponent, useEffect, useRef, forwardRef } from "react"
 
 import {
 	material,
@@ -73,13 +73,13 @@ const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
 	)
 }
 
-const TableRow: FunctionComponent<RowProps> = (props) => {
+const TableRow: FunctionComponent<RowProps> = forwardRef((props, ref) => {
 	const { path, wire, columns, context, mode, record } = props
 	const style = wire.isMarkedForDeletion(record.getId())
 		? { backgroundColor: "#ffcdd2" }
 		: {}
 	return (
-		<material.TableRow style={style}>
+		<material.TableRow {...(ref ? { ref } : {})} style={style}>
 			{columns.map((columnDef, index) => {
 				const column = columnDef["material.column"] as ColumnDefinition
 
@@ -115,22 +115,21 @@ const TableRow: FunctionComponent<RowProps> = (props) => {
 			})}
 		</material.TableRow>
 	)
-}
+})
 
 const TableBody: FunctionComponent<Props> = (props) => {
 	const wire = props.wire
 	const data = wire.getData()
 	const currentRecordsSize = data.length
 	const previousRecordsSize = useRef(data.length)
-	const lastRowRef = useRef<HTMLElement | null>(null)
+	const lastRowRef = useRef<HTMLElement>()
 
 	// this logic serves for focusing on the just created row
 	useEffect(() => {
-		// update the previous amount of record for the next re-rendering
 		if (currentRecordsSize > previousRecordsSize.current) {
 			const node = lastRowRef?.current?.querySelector?.("input")
 			node?.focus?.()
-			console.log("true", node)
+			// update the previous amount of record for the next re-rendering
 			previousRecordsSize.current = currentRecordsSize
 		}
 	}, [currentRecordsSize])
@@ -138,22 +137,19 @@ const TableBody: FunctionComponent<Props> = (props) => {
 	return (
 		<material.TableBody>
 			{data.map((record, index, array) => (
-				<div
+				<TableRow
 					key={record.getId()}
+					wire={wire}
+					path={props.path}
+					columns={props.columns}
+					context={props.context}
+					mode={props.state.mode}
+					record={record}
 					{...(index === array.length - 1 &&
 					currentRecordsSize > previousRecordsSize.current
 						? { ref: lastRowRef }
 						: {})}
-				>
-					<TableRow
-						wire={wire}
-						path={props.path}
-						columns={props.columns}
-						context={props.context}
-						mode={props.state.mode}
-						record={record}
-					/>
-				</div>
+				/>
 			))}
 		</material.TableBody>
 	)
