@@ -93,7 +93,7 @@ definition:
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
-                                text: "Create New Permission Set"
+                                text: "New Permission Set"
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newpermissionset"
@@ -145,7 +145,7 @@ definition:
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
-                                text: "Create New Profile"
+                                text: "New Profile"
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newprofile"

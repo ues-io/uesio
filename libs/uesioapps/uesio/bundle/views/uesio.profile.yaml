@@ -33,6 +33,7 @@ definition:
       fields:
         uesio.id:
         uesio.name:
+        uesio.permissionsetsrefs:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -41,6 +42,18 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: profilename
+    permissionsets:
+      collection: uesio.permissionsets
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspace:
+        uesio.workspaceid:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -141,9 +154,11 @@ definition:
                                                             wires:
                                                               - "profiles"
                                                           - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/profiles"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
-                                  - material.field:
-                                      fieldId: uesio.id
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.permissionsetsrefs
+                                      wireName: permissionsets
+                                      label: "Permission sets"

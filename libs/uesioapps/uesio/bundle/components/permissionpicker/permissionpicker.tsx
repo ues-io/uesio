@@ -41,10 +41,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
-
 	const value = (record.getFieldValue(fieldId) as wire.PlainWireRecord) || {}
-
-	console.log("value", value)
 
 	let disabled = false
 	if (mode === "READ") {
