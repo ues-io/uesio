@@ -41,7 +41,7 @@ const FieldCell: FunctionComponent<CellProps> = ({
 	path,
 	index,
 	context,
-}: CellProps) => (
+}) => (
 	<material.TableCell key={field}>
 		<component.Component
 			componentType="material.field"
@@ -56,8 +56,12 @@ const FieldCell: FunctionComponent<CellProps> = ({
 	</material.TableCell>
 )
 
-const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
-	const { column, path, index, context } = props
+const SlotCell: FunctionComponent<CellProps> = ({
+	column,
+	path,
+	index,
+	context,
+}) => {
 	const fieldId = column.field
 	return (
 		<material.TableCell key={fieldId}>
@@ -76,8 +80,7 @@ const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
 const TableRow: FunctionComponent<RowProps> = forwardRef<
 	HTMLTableRowElement,
 	RowProps
->((props, ref) => {
-	const { path, wire, columns, context, mode, record } = props
+>(({ path, wire, columns, context, mode, record }, ref) => {
 	const style = wire.isMarkedForDeletion(record.getId())
 		? { backgroundColor: "#ffcdd2" }
 		: {}
@@ -130,7 +133,7 @@ const TableBody: FunctionComponent<Props> = ({
 	const data = wire.getData()
 	const lastRowRef = useRef<HTMLTableRowElement | null>(null)
 
-	// this logic serves for focusing on the right now created
+	// this logic is about focusing on the right now created row
 	const newlyCreatedRow =
 		data.length > 0 && JSON.stringify(data[data.length - 1].source) === "{}"
 
