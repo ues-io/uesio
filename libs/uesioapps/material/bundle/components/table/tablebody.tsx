@@ -120,12 +120,17 @@ const TableRow: FunctionComponent<RowProps> = forwardRef<
 	)
 })
 
-const TableBody: FunctionComponent<Props> = (props) => {
-	const wire = props.wire
+const TableBody: FunctionComponent<Props> = ({
+	wire,
+	path,
+	columns,
+	context,
+	state,
+}) => {
 	const data = wire.getData()
 	const lastRowRef = useRef<HTMLTableRowElement | null>(null)
 
-	// this logic serves for focusing on the right created row
+	// this logic serves for focusing on the right now created
 	const newlyCreatedRow =
 		data.length > 0 && JSON.stringify(data[data.length - 1].source) === "{}"
 
@@ -142,10 +147,10 @@ const TableBody: FunctionComponent<Props> = (props) => {
 				<TableRow
 					key={record.getId()}
 					wire={wire}
-					path={props.path}
-					columns={props.columns}
-					context={props.context}
-					mode={props.state.mode}
+					path={path}
+					columns={columns}
+					context={context}
+					mode={state.mode}
 					record={record}
 					{...(index === array.length - 1 && newlyCreatedRow
 						? { ref: lastRowRef }
