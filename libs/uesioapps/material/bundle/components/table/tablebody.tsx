@@ -123,19 +123,18 @@ const TableRow: FunctionComponent<RowProps> = forwardRef<
 const TableBody: FunctionComponent<Props> = (props) => {
 	const wire = props.wire
 	const data = wire.getData()
-	const currentRecordsSize = data.length
-	const previousRecordsSize = useRef(currentRecordsSize)
 	const lastRowRef = useRef<HTMLTableRowElement | null>(null)
 
-	// this logic serves for focusing on the right now created row
+	// this logic serves for focusing on the right created row
+	const newlyCreatedRow =
+		data.length > 0 && JSON.stringify(data[data.length - 1].source) === "{}"
+
 	useEffect(() => {
-		if (currentRecordsSize > previousRecordsSize.current) {
+		if (newlyCreatedRow) {
 			const node = lastRowRef?.current?.querySelector?.("input")
 			node?.focus?.()
-			// update the previous amount of records for the next re-rendering
-			previousRecordsSize.current = currentRecordsSize
 		}
-	}, [currentRecordsSize])
+	})
 
 	return (
 		<material.TableBody>
@@ -148,8 +147,7 @@ const TableBody: FunctionComponent<Props> = (props) => {
 					context={props.context}
 					mode={props.state.mode}
 					record={record}
-					{...(index === array.length - 1 &&
-					currentRecordsSize > previousRecordsSize.current
+					{...(index === array.length - 1 && newlyCreatedRow
 						? { ref: lastRowRef }
 						: {})}
 				/>
