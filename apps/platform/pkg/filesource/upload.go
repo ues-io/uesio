@@ -119,7 +119,35 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (str
 		return "", err
 	}
 	if details.FieldID != "" {
-		meta, err := datasource.LoadCollectionMetadata(details.CollectionID, &adapt.MetadataCache{}, session)
+		// Keep a running tally of all requested collections
+		collections := datasource.MetadataRequest{}
+		err := collections.AddField(details.CollectionID, details.FieldID, nil)
+		if err != nil {
+			return "", err
+		}
+
+		metadataResponse := adapt.MetadataCache{}
+
+		err = collections.Load(nil, &metadataResponse, session)
+		if err != nil {
+			return "", err
+		}
+
+		collectionMetadata, err := metadataResponse.GetCollection(details.CollectionID)
+		if err != nil {
+			return "", err
+		}
+
+		fieldMetadata, err := collectionMetadata.GetField(details.FieldID)
+		if err != nil {
+			return "", err
+		}
+
+		if fieldMetadata.Type != "FILE" {
+			return "", errors.New("Can only attach files to FILE fields")
+		}
+
+		refMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
 		if err != nil {
 			return "", err
 		}
@@ -132,8 +160,10 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (str
 					Changes: map[string]adapt.ChangeRequest{
 						"0": {
 							FieldChanges: map[string]interface{}{
-								details.FieldID: ufm.ID,
-								meta.IDField:    details.RecordID,
+								details.FieldID: map[string]interface{}{
+									refMetadata.IDField: ufm.ID,
+								},
+								collectionMetadata.IDField: details.RecordID,
 							},
 						},
 					},

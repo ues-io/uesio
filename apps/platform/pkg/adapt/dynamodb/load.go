@@ -41,7 +41,12 @@ func loadOne(
 		return err
 	}
 
-	requestedFields, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	if err != nil {
+		return err
+	}
+
+	fieldIDs, err := fieldMap.GetUniqueDBFieldNames(getDBFieldName)
 	if err != nil {
 		return err
 	}
@@ -50,13 +55,8 @@ func loadOne(
 	var filt expression.ConditionBuilder
 	searchQuery := false
 
-	for _, fieldMetadata := range requestedFields {
-		dynamoFieldName, err := getDBFieldName(fieldMetadata)
-		if err != nil {
-			return err
-		}
-		var NewName = expression.Name(dynamoFieldName)
-		projBuild = expression.AddNames(projBuild, NewName)
+	for _, name := range fieldIDs {
+		projBuild = expression.AddNames(projBuild, expression.Name(name))
 	}
 
 	for i, condition := range op.Conditions {
@@ -121,43 +121,27 @@ func loadOne(
 	}
 
 	for _, lmap := range result.Items {
-
-		item := op.Collection.NewItem()
-
-		// Map properties from firestore to uesio fields
-		for _, fieldMetadata := range requestedFields {
-
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 			var i interface{}
 
 			dynamoFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
-				return err
+				return nil, err
 			}
 
 			value, ok := lmap[dynamoFieldName]
 			if !ok {
-				continue
+				return nil, nil
 			}
 			err = dynamodbattribute.Unmarshal(value, &i)
 			if err != nil {
-				return err
+				return nil, err
 			}
-
-			err = item.SetField(fieldMetadata.GetFullName(), i)
-			if err != nil {
-				return err
-			}
-
-			if fieldMetadata.IsForeignKey {
-				// Handle foreign key value
-				reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
-				if ok {
-					reference.AddID(i)
-				}
-			}
+			return i, nil
+		})
+		if err != nil {
+			return err
 		}
-
-		op.Collection.AddItem(item)
 	}
 
 	collSlice := op.Collection.GetItems()
@@ -172,28 +156,32 @@ func loadOne(
 		}
 	}
 
-	return adapt.HandleReferences(func(op *adapt.LoadOp, metadata *adapt.MetadataCache) error {
-		return loadOne(ctx, client, op, metadata, nil)
-	}, op, metadata, referencedCollections)
+	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+		return loadMany(ctx, client, ops, metadata)
+	}, referencedCollections)
 }
 
 // Load function
 func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
-
+	if len(ops) == 0 {
+		return nil
+	}
 	ctx := context.Background()
 	client := getDynamoDB(credentials)
+	return loadMany(ctx, client, ops, metadata)
+}
 
-	if SystemSetUp != nil {
-		return SystemSetUp
-	}
-
+func loadMany(
+	ctx context.Context,
+	client *dynamodb.DynamoDB,
+	ops []adapt.LoadOp,
+	metadata *adapt.MetadataCache,
+) error {
 	for i := range ops {
-		op := ops[i]
-		err := loadOne(ctx, client, &op, metadata, ops)
+		err := loadOne(ctx, client, &ops[i], metadata, ops)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
