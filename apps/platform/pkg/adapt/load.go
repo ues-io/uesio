@@ -71,6 +71,10 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 
 		refReq := referencedCollections.Get(fieldMetadata.ReferencedCollection)
 		refReq.Metadata = referencedCollectionMetadata
+
+		if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+			continue
+		}
 		refReq.AddFields(field.Fields)
 		refReq.AddReference(fieldMetadata)
 	}
@@ -94,6 +98,13 @@ func HydrateItem(
 		}
 
 		if IsReference(fieldMetadata.Type) {
+			if fieldData == nil {
+				err = item.SetField(fieldID, fieldData)
+				if err != nil {
+					return err
+				}
+				continue
+			}
 			// Handle foreign key value
 			reference, ok := (*references)[fieldMetadata.ReferencedCollection]
 			if !ok {

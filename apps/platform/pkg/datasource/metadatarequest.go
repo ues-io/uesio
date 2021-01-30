@@ -118,6 +118,7 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 			if fieldMetadata.Type == "FILE" {
 				userfilesCollection := "uesio.userfiles"
 				fieldMetadata.ReferencedCollection = userfilesCollection
+				fieldMetadata.OnDelete = "CASCADE"
 				// If the reference to a different data source, we'll
 				// need to do a whole new approach to reference fields.
 				if op != nil && metadata.DataSource != "uesio.platform" {

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
-import { hooks, material, styles, context } from "@uesio/ui"
+import { hooks, material, styles } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 import Icon from "../icon/icon"
 import { handleChange } from "./file"
@@ -31,21 +31,6 @@ const useStyles = material.makeStyles((theme) =>
 
 const getAccept = (accepts: string) =>
 	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
-
-const onChangeDecorator = <T extends Parameters<typeof handleChange>>(
-	context: context.Context,
-	uesio: hooks.Uesio
-) => (onChange: (...args: T) => ReturnType<typeof handleChange>) => (
-	...args: T
-) => {
-	onChange(...args).then(() => {
-		const wire = context.getWire()
-		if (wire) {
-			const wireName = wire.getId()
-			uesio.wire.reloadWires(context, [wireName])
-		}
-	})
-}
 
 const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	const {
@@ -90,10 +75,7 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 								id={id}
 								name={id}
 								onChange={(e) =>
-									onChangeDecorator(
-										context,
-										uesio
-									)(handleChange)(
+									handleChange(
 										e.target.files,
 										fieldId,
 										record,

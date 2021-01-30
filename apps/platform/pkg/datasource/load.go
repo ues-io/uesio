@@ -186,7 +186,10 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 							return err
 						}
 
-						refItem := refInterface.(adapt.Item)
+						refItem, ok := refInterface.(adapt.Item)
+						if !ok {
+							return nil
+						}
 
 						value, err := refItem.GetField(referencedCol.Metadata.IDField)
 						if err != nil {

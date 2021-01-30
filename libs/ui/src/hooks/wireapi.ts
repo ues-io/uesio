@@ -33,8 +33,8 @@ class WireAPI {
 		return new Wire(plainWire).attachCollection(plainCollection)
 	}
 
-	reloadWires(context: Context, wireNames: string[]) {
-		this.uesio.getDispatcher()(
+	loadWires(context: Context, wireNames: string[]) {
+		return this.uesio.getDispatcher()(
 			loadWiresOp({
 				context,
 				wires: wireNames,

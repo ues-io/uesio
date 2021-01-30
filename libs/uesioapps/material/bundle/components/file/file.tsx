@@ -75,23 +75,9 @@ const File: FunctionComponent<FileProps> = (props) => {
 		return null
 	}
 
-	const userFileId = record.getFieldValue(fieldId) as string
-	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
-	const fileMetadata = record.getFieldValue(
-		fieldId + "__FILEDATA"
-	) as wire.PlainWireRecord
-	const mime = fileMetadata?.["uesio.mimetype"] as string | undefined
-
-	const iconJsx = (
-		<Icon
-			definition={{
-				type: "file",
-				size: "large",
-			}}
-			path={props.path}
-			context={props.context}
-		/>
-	)
+	const userFile = record.getFieldValue(fieldId) as
+		| wire.PlainWireRecord
+		| undefined
 
 	if (displayAs === "button") {
 		return (
@@ -104,7 +90,7 @@ const File: FunctionComponent<FileProps> = (props) => {
 	}
 
 	//no file url EQ empty unless Button
-	if (!fileUrl) {
+	if (!userFile) {
 		return (
 			<EditWrapper
 				definition={props.definition}
@@ -113,6 +99,21 @@ const File: FunctionComponent<FileProps> = (props) => {
 			/>
 		)
 	}
+
+	const userFileId = userFile["uesio.id"] as string
+	const mime = userFile["uesio.mimetype"] as string
+	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
+
+	const iconJsx = (
+		<Icon
+			definition={{
+				type: "file",
+				size: "large",
+			}}
+			path={props.path}
+			context={props.context}
+		/>
+	)
 
 	if (mime) {
 		const arrMime = mime.split("/", 2)
