@@ -4,29 +4,34 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getUpsertLookupOp(request SaveRequest, matchField string, collectionMetadata *CollectionMetadata) *LoadOp {
-	return &LoadOp{
-		CollectionName: request.Collection,
-		WireName:       request.Wire,
-		Fields: []LoadRequestField{
-			{
-				ID: collectionMetadata.IDField,
-			},
-			{
-				ID: matchField,
-			},
-		},
-		Collection: &Collection{},
-		// TODO: This is incomplete. We need to set the load
-		// request conditions from the match fields
-		Conditions: []LoadRequestCondition{},
+func HandleLookups(
+	loader Loader,
+	request *SaveRequest,
+	metadata *MetadataCache,
+) error {
+	lookupOps, err := getLookupOps(request, metadata)
+	if err != nil {
+		return err
 	}
+
+	if len(lookupOps) == 0 {
+		return nil
+	}
+
+	err = loader(lookupOps)
+	if err != nil {
+		return err
+	}
+
+	return mergeLookupResponses(request, lookupOps, metadata)
+
 }
 
-func getReferenceLookupOp(request SaveRequest, lookup Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
+func getReferenceLookupOp(request *SaveRequest, lookup Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
 	fieldMetadata, err := collectionMetadata.GetField(lookup.RefField)
 	if err != nil {
 		return nil, err
@@ -60,23 +65,37 @@ func getReferenceLookupOp(request SaveRequest, lookup Lookup, collectionMetadata
 	}, nil
 }
 
-// GetLookupOps function
-func GetLookupOps(request SaveRequest, metadata *MetadataCache) ([]LoadOp, error) {
+func getLookupOps(request *SaveRequest, metadata *MetadataCache) ([]LoadOp, error) {
 	options := request.Options
+	if options == nil {
+		return nil, nil
+	}
 	lookupRequests := []LoadOp{}
 	collectionMetadata, err := metadata.GetCollection(request.Collection)
 	if err != nil {
 		return nil, err
 	}
 
-	if options == nil {
-		return nil, nil
-	}
-
 	if options.Upsert != nil {
 		// If we have a match field option, use that, otherwise, use the name field
 		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.NameField)
-		lookupRequests = append(lookupRequests, *getUpsertLookupOp(request, upsertKey, collectionMetadata))
+
+		lookupRequests = append(lookupRequests, LoadOp{
+			CollectionName: request.Collection,
+			WireName:       request.Wire,
+			Fields: []LoadRequestField{
+				{
+					ID: collectionMetadata.IDField,
+				},
+				{
+					ID: upsertKey,
+				},
+			},
+			Collection: &Collection{},
+			// TODO: This is incomplete. We need to set the load
+			// request conditions from the match fields
+			Conditions: []LoadRequestCondition{},
+		})
 	}
 	for _, lookup := range request.Options.Lookups {
 		referenceLookup, err := getReferenceLookupOp(request, lookup, collectionMetadata, metadata)
@@ -177,26 +196,29 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes map[string]
 
 	for _, change := range changes {
 
-		keyRef := change.FieldChanges[lookupField].(map[string]interface{})
-		keyVal := keyRef[matchField].(string)
-		match, ok := lookupResult[keyVal]
+		keyVal, err := reflecttool.GetField(change.FieldChanges[lookupField], matchField)
+		if err != nil {
+			return err
+		}
+		match, ok := lookupResult[keyVal.(string)]
 
 		if ok {
 			idValue, err := match.GetField(refCollectionMetadata.IDField)
 			if err != nil {
 				return err
 			}
-			change.FieldChanges[fieldMetadata.ForeignKeyField] = idValue
+			change.FieldChanges[fieldMetadata.GetFullName()] = map[string]interface{}{
+				refCollectionMetadata.IDField: idValue,
+			}
 		} else {
-			change.FieldChanges[fieldMetadata.ForeignKeyField] = nil
+			change.FieldChanges[fieldMetadata.GetFullName()] = nil
 		}
 
 	}
 	return nil
 }
 
-// MergeLookupResponses function
-func MergeLookupResponses(request SaveRequest, responses []LoadOp, metadata *MetadataCache) error {
+func mergeLookupResponses(request *SaveRequest, responses []LoadOp, metadata *MetadataCache) error {
 
 	collectionMetadata, err := metadata.GetCollection(request.Collection)
 	if err != nil {

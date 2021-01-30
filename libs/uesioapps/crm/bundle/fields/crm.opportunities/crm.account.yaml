@@ -2,6 +2,5 @@ name: account
 collection: crm.opportunities
 type: REFERENCE
 label: Account
-propertyName: account
+propertyName: accountid
 referencedCollection: crm.accounts
-foreignKeyField: crm.accountid

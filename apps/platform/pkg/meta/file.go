@@ -3,8 +3,6 @@ package meta
 import (
 	"errors"
 	"path/filepath"
-
-	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
 
 // NewFile function
@@ -24,10 +22,9 @@ type File struct {
 	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `yaml:"name" uesio:"uesio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
-	Content   string            `yaml:"-" uesio:"uesio.content"`
 	FileName  string            `yaml:"fileName" uesio:"-"`
 	Workspace string            `yaml:"-" uesio:"uesio.workspaceid"`
-	Meta      *UserFileMetadata `yaml:"-" uesio:"-"`
+	Content   *UserFileMetadata `yaml:"-" uesio:"uesio.content"`
 }
 
 // GetCollectionName function
@@ -81,15 +78,6 @@ func (f *File) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (f *File) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio.content__FILEDATA" {
-		fileInfo := UserFileMetadata{}
-		err := reflecttool.Set(&fileInfo, value)
-		if err != nil {
-			return err
-		}
-		f.Meta = &fileInfo
-		return nil
-	}
 	return StandardFieldSet(f, fieldName, value)
 }
 

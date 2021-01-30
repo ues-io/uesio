@@ -43,7 +43,6 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		PropertyName:         f.PropertyName,
 		ReferencedCollection: f.ReferencedCollection,
 		SelectListName:       f.SelectList,
-		ForeignKeyField:      f.ForeignKeyField,
 		Required:             f.Required,
 		Validate:             GetValidateMetadata(f.Validate),
 		AutoPopulate:         f.AutoPopulate,

@@ -84,7 +84,8 @@ definition:
       fields:
         crm.account:
           fields:
-            crm.description: null
+            crm.name:
+            crm.description:
         crm.accountid: null
         crm.birthdate: null
         crm.deceased: null

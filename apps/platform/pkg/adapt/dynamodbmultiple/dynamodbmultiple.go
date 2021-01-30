@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -39,22 +38,6 @@ func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata) (string, 
 		return "", errors.New("Could not get DB Collection Name: Missing important collection metadata: " + collectionMetadata.Name)
 	}
 	return collectionMetadata.Namespace + "." + collectionMetadata.CollectionName, nil
-}
-
-func getExpressionUpdate(requestedFields map[string]*dynamodb.AttributeValue) (expression.Expression, error) {
-
-	update := expression.UpdateBuilder{}
-
-	for name, value := range requestedFields {
-		update = update.Set(expression.Name(name), expression.Value(value))
-	}
-
-	expr, err := expression.NewBuilder().
-		WithUpdate(update).
-		Build()
-
-	return expr, err
-
 }
 
 func describeTableDynamoDB(tableName string, client *dynamodb.DynamoDB) (bool, error) {

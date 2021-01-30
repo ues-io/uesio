@@ -67,7 +67,7 @@ func getCascadeDeletes(
 									ID: collectionMetadata.IDField,
 								},
 								{
-									ID: field.ForeignKeyField,
+									ID: field.GetFullName(),
 								},
 							},
 						},
@@ -77,7 +77,7 @@ func getCascadeDeletes(
 					}
 
 					err = collection.Loop(func(item loadable.Item) error {
-						fk, err := item.GetField(field.ForeignKeyField)
+						fk, err := item.GetField(field.GetFullName())
 						if err != nil {
 							return err
 						}
