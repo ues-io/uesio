@@ -17,6 +17,16 @@ func New(templateString string) (*template.Template, error) {
 		if !ok {
 			return nil, errors.New("missing key " + key)
 		}
+		switch v := val.(type) {
+		case map[string]interface{}:
+			if len(v) != 1 {
+				return nil, errors.New("bad change map for ref field " + key)
+			}
+			for i := range v {
+				return v[i], nil
+			}
+			return nil, errors.New("no items in map " + key)
+		}
 		return val, nil
 	})
 }

@@ -95,7 +95,7 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *WorkspaceMergeData {
 	}
 	return &WorkspaceMergeData{
 		Name: workspace.Name,
-		App:  workspace.AppRef,
+		App:  workspace.GetAppID(),
 	}
 }
 

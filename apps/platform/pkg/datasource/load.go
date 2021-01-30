@@ -13,7 +13,6 @@ import (
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
-	collatedMetadata map[string]*adapt.MetadataCache,
 	ops []adapt.LoadOp,
 	session *sess.Session,
 ) error {
@@ -66,7 +65,7 @@ func getMetadataForLoad(
 
 	}
 
-	return collections.Load(op, metadataResponse, collatedMetadata, session)
+	return collections.Load(op, metadataResponse, session)
 
 }
 
@@ -74,13 +73,12 @@ func getMetadataForLoad(
 func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
 	site := session.GetSite()
 	collated := map[string][]adapt.LoadOp{}
-	collatedMetadata := map[string]*adapt.MetadataCache{}
 	metadataResponse := adapt.MetadataCache{}
 
 	// Loop over the ops and batch per data source
 	for i := range ops {
 		op := ops[i]
-		err := getMetadataForLoad(&op, &metadataResponse, collatedMetadata, ops, session)
+		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -142,7 +140,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 			return nil, err
 		}
 
-		err = adapter.Load(batch, collatedMetadata[dsKey], credentials)
+		err = adapter.Load(batch, &metadataResponse, credentials)
 		if err != nil {
 			return nil, err
 		}
@@ -151,6 +149,12 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 		for i := range batch {
 			op := batch[i]
 			for colKey, referencedCol := range op.ReferencedCollections {
+				refMetadata, err := metadataResponse.GetCollection(colKey)
+				if err != nil {
+					return nil, err
+				}
+				referencedCol.Metadata = refMetadata
+
 				datasource, err := meta.NewDataSource(referencedCol.Metadata.DataSource)
 				if err != nil {
 					return nil, err
@@ -177,22 +181,28 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 
 				err = op.Collection.Loop(func(item loadable.Item) error {
 					for _, reference := range referencedCol.ReferenceFields {
-						value, err := item.GetField(reference.ForeignKeyField)
+						refInterface, err := item.GetField(reference.GetFullName())
 						if err != nil {
 							return err
 						}
-						referencedCol.AddID(value)
-					}
 
+						refItem := refInterface.(adapt.Item)
+
+						value, err := refItem.GetField(referencedCol.Metadata.IDField)
+						if err != nil {
+							return err
+						}
+						referencedCol.AddID(value, item)
+					}
 					return nil
 				})
 				if err != nil {
 					return nil, err
 				}
 
-				err = adapt.HandleReferences(func(op *adapt.LoadOp, metadata *adapt.MetadataCache) error {
-					return adapter.Load([]adapt.LoadOp{*op}, metadata, credentials)
-				}, &op, collatedMetadata[referencedCol.Metadata.DataSource], adapt.ReferenceRegistry{
+				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+					return adapter.Load(ops, &metadataResponse, credentials)
+				}, adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})
 				if err != nil {

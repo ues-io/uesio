@@ -75,7 +75,7 @@ func RouteAPI(w http.ResponseWriter, r *http.Request) {
 	prefix := "/site/routes/" + namespace + "/"
 
 	if workspace != nil {
-		prefix = "/workspace/" + workspace.AppRef + "/" + workspace.Name + "/routes/" + namespace + "/"
+		prefix = "/workspace/" + workspace.GetAppID() + "/" + workspace.Name + "/routes/" + namespace + "/"
 	}
 
 	route, err := getRoute(r, namespace, path, prefix, session)

@@ -56,15 +56,15 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 
 // Bot struct
 type Bot struct {
-	ID            string `yaml:"-" uesio:"uesio.id"`
-	Name          string `yaml:"name" uesio:"uesio.name"`
-	CollectionRef string `yaml:"collection,omitempty" uesio:"uesio.collection"`
-	Namespace     string `yaml:"-" uesio:"-"`
-	Type          string `yaml:"type" uesio:"uesio.type"`
-	Dialect       string `yaml:"dialect" uesio:"uesio.dialect"`
-	Content       string `yaml:"-" uesio:"uesio.content"`
-	FileContents  string `yaml:"-" uesio:"-"`
-	Workspace     string `yaml:"-" uesio:"uesio.workspaceid"`
+	ID            string            `yaml:"-" uesio:"uesio.id"`
+	Name          string            `yaml:"name" uesio:"uesio.name"`
+	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio.collection"`
+	Namespace     string            `yaml:"-" uesio:"-"`
+	Type          string            `yaml:"type" uesio:"uesio.type"`
+	Dialect       string            `yaml:"dialect" uesio:"uesio.dialect"`
+	Content       *UserFileMetadata `yaml:"-" uesio:"uesio.content"`
+	FileContents  string            `yaml:"-" uesio:"-"`
+	Workspace     string            `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetBotTypes function
@@ -142,9 +142,6 @@ func (b *Bot) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (b *Bot) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio.content__FILEDATA" {
-		return nil
-	}
 	return StandardFieldSet(b, fieldName, value)
 }
 
