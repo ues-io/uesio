@@ -18,16 +18,14 @@ type ComponentSignalDispatcher = (
 ) => Context
 
 type SignalDescriptor = {
-	label?: string
-	public?: boolean
-	properties?: (signal: SignalDefinition) => PropDescriptor[]
+	label: string
+	properties: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: SignalDispatcher
 }
 
 type ComponentSignalDescriptor = {
-	label?: string
-	public?: boolean
-	properties?: (signal: SignalDefinition) => PropDescriptor[]
+	label: string
+	properties: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher
 }
 

@@ -6,6 +6,7 @@ const METADATA = {
 	SECRET: "secrets",
 	THEME: "themes",
 	SELECTLIST: "selectlists",
+	BOT: "bots",
 }
 
 type MetadataType = keyof typeof METADATA

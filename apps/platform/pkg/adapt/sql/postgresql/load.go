@@ -11,7 +11,6 @@ import (
 	sq "github.com/Masterminds/squirrel"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	sqlshared "github.com/thecloudmasters/uesio/pkg/adapt/sql"
 )
 
 //GetBytes interface to bytes function
@@ -41,7 +40,7 @@ func loadOne(
 		return err
 	}
 
-	nameFieldDB, err := sqlshared.GetDBFieldName(nameFieldMetadata)
+	nameFieldDB, err := getDBFieldName(nameFieldMetadata)
 	if err != nil {
 		return err
 	}
@@ -51,24 +50,19 @@ func loadOne(
 		return err
 	}
 
-	requestedFieldArr := []string{}
-
-	for _, fieldMetadata := range fieldMap {
-		firestoreFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
-		if err != nil {
-			return err
-		}
-		requestedFieldArr = append(requestedFieldArr, firestoreFieldName)
+	fieldIDs, err := fieldMap.GetUniqueDBFieldNames(getDBFieldName)
+	if err != nil {
+		return err
 	}
 
-	collectionName, err := sqlshared.GetDBCollectionName(collectionMetadata)
+	collectionName, err := getDBCollectionName(collectionMetadata)
 	if err != nil {
 		return err
 	}
 
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
-	loadQuery := psql.Select(requestedFieldArr...).From("public." + collectionName)
+	loadQuery := psql.Select(fieldIDs...).From("public." + collectionName)
 
 	for _, condition := range op.Conditions {
 
@@ -84,7 +78,7 @@ func loadOne(
 		if err != nil {
 			return err
 		}
-		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		fieldName, err := getDBFieldName(fieldMetadata)
 		if err != nil {
 			return err
 		}
@@ -103,7 +97,7 @@ func loadOne(
 		if err != nil {
 			return err
 		}
-		fieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		fieldName, err := getDBFieldName(fieldMetadata)
 		if err != nil {
 			return err
 		}
@@ -145,95 +139,67 @@ func loadOne(
 	colvals := make([]interface{}, len(cols))
 
 	for rows.Next() {
-		item := op.Collection.NewItem()
 		for i := range colvals {
 			colvals[i] = new(interface{})
 		}
 		if err := rows.Scan(colvals...); err != nil {
 			return errors.New("Failed to scan values in PostgreSQL:" + err.Error())
 		}
-		// Map properties from firestore to uesio fields
-		for fieldID, fieldMetadata := range fieldMap {
 
-			sqlFieldName, err := sqlshared.GetDBFieldName(fieldMetadata)
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+
+			sqlFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
-				return err
+				return nil, err
 			}
 			index, ok := colIndexes[sqlFieldName]
 			if !ok {
-				return errors.New("Column not found: " + sqlFieldName)
+				return nil, errors.New("Column not found: " + sqlFieldName)
 			}
 
 			if fieldMetadata.Type == "MAP" {
-
 				var aux = *colvals[index].(*interface{})
-
 				if aux != nil {
-
 					res, ok := aux.([]byte)
 					if !ok {
-						return errors.New("Casting to byte Error")
+						return nil, errors.New("Casting to byte Error")
 					}
-
 					var anyJSON map[string]interface{}
 					err = json.Unmarshal(res, &anyJSON)
-
 					if err != nil {
-						return errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
+						return nil, errors.New("Postgresql map Unmarshal error: " + sqlFieldName)
 					}
-
-					err = item.SetField(fieldID, anyJSON)
-					if err != nil {
-						return err
-					}
-				} else {
-					err = item.SetField(fieldID, nil)
-					if err != nil {
-						return err
-					}
+					return anyJSON, nil
 				}
-
-				continue
+				return nil, nil
 			}
 
 			if fieldMetadata.Type == "DATE" {
-
 				var aux = *colvals[index].(*interface{})
 				var date = aux.(time.Time)
-				err = item.SetField(fieldID, date.Format("2006-01-02"))
-				if err != nil {
-					return err
-				}
-
-				continue
+				return date.Format("2006-01-02"), nil
 			}
 
-			err = item.SetField(fieldID, *colvals[index].(*interface{}))
-			if err != nil {
-				return err
-			}
-
-			if fieldMetadata.IsForeignKey {
-				// Handle foreign key value
-				reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
-				if ok {
-					reference.AddID(*colvals[index].(*interface{}))
-				}
-			}
+			return *colvals[index].(*interface{}), nil
+		})
+		if err != nil {
+			return err
 		}
-
-		op.Collection.AddItem(item)
 
 	}
 	rows.Close()
 
-	return adapt.HandleReferences(func(op *adapt.LoadOp, metadata *adapt.MetadataCache) error {
-		return loadOne(ctx, db, op, metadata, nil)
-	}, op, metadata, referencedCollections)
+	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+		return loadMany(ctx, db, ops, metadata)
+	}, referencedCollections)
 }
 
 // Load function
 func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
+
+	if len(ops) == 0 {
+		return nil
+	}
 
 	ctx := context.Background()
 
@@ -243,13 +209,20 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 	}
 	defer db.Close()
 
+	return loadMany(ctx, db, ops, metadata)
+}
+
+func loadMany(
+	ctx context.Context,
+	db *sql.DB,
+	ops []adapt.LoadOp,
+	metadata *adapt.MetadataCache,
+) error {
 	for i := range ops {
-		op := ops[i]
-		err := loadOne(ctx, db, &op, metadata, ops)
+		err := loadOne(ctx, db, &ops[i], metadata, ops)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }

@@ -36,7 +36,6 @@ type Field struct {
 	ReadOnly             bool     `yaml:"readOnly,omitempty" uesio:"uesio.readonly"`
 	ReferencedCollection string   `yaml:"referencedCollection,omitempty" uesio:"uesio.referencedCollection"`
 	SelectList           string   `yaml:"selectList,omitempty" uesio:"uesio.selectlist"`
-	ForeignKeyField      string   `yaml:"foreignKeyField,omitempty" uesio:"uesio.foreignKeyField"`
 	Workspace            string   `yaml:"-" uesio:"uesio.workspaceid"`
 	Required             bool     `yaml:"required,omitempty" uesio:"uesio.required"`
 	Validate             Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`

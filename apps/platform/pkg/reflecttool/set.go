@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"runtime/debug"
 )
 
 // SetField sets the provided obj field with provided value. obj param has
@@ -79,7 +80,7 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 	// Verify that from's type is a map so we don't have a panic
 	fromKind := from.Kind()
 	if fromKind != reflect.Map {
-		return fmt.Errorf("Cannot set kind: %s to struct", fromKind)
+		return fmt.Errorf("Cannot set kind: %s to struct to a %s struct", fromKind, structType)
 	}
 	for _, key := range from.MapKeys() {
 		fieldName, err := getFieldName(structType, key.String())
@@ -94,8 +95,19 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 	return nil
 }
 
+func setPointer(to reflect.Value, from reflect.Value) error {
+	if from.IsNil() {
+		to.Set(from)
+		return nil
+	}
+	value := reflect.New(to.Type().Elem())
+	to.Set(value)
+	return setFieldReflect(value.Elem(), from)
+}
+
 func setPrimative(to reflect.Value, from reflect.Value) error {
 	if to.Type() != from.Type() {
+		debug.PrintStack()
 		invalidTypeError := errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
 		return invalidTypeError
 	}
@@ -124,6 +136,8 @@ func setFieldReflect(to reflect.Value, from reflect.Value) error {
 		return setMap(to, from)
 	case reflect.Struct:
 		return setStruct(to, from)
+	case reflect.Ptr:
+		return setPointer(to, from)
 	}
 	return setPrimative(to, from)
 }

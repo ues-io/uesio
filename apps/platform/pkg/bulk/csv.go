@@ -12,7 +12,7 @@ import (
 )
 
 func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session) ([]meta.FieldMapping, *adapt.MetadataCache, error) {
-	collatedMetadata := map[string]*adapt.MetadataCache{}
+
 	metadataResponse := adapt.MetadataCache{}
 	mappings := []meta.FieldMapping{}
 	// Keep a running tally of all requested collections
@@ -35,7 +35,7 @@ func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session
 		}
 	}
 
-	err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
+	err = collections.Load(nil, &metadataResponse, session)
 	if err != nil {
 		return nil, nil, err
 	}

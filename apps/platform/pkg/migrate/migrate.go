@@ -51,9 +51,14 @@ func Migrate(session *sess.Session) error {
 		}
 	}
 
-	err = metadataRequest.Load(nil, &metadataResponse, collatedMetadata, session)
+	err = metadataRequest.Load(nil, &metadataResponse, session)
 	if err != nil {
 		return err
+	}
+
+	// collate the metadata
+	for collectionKey, collectionMetadata := range metadataResponse.Collections {
+		datasource.CollateMetadata(collectionKey, collectionMetadata, collatedMetadata)
 	}
 
 	// Then migrate for each datasource

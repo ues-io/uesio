@@ -11,7 +11,7 @@ import { useLoginStyles } from "./logincognito"
 type LoginFormProps = {
 	setMode: Dispatch<SetStateAction<string>>
 	setMessage: Dispatch<SetStateAction<string>>
-	logIn: (username: string, password: string) => Promise<void>
+	logIn: (username: string, password: string) => void
 }
 
 const LoginForm: FunctionComponent<LoginFormProps> = ({
@@ -59,9 +59,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 				variant="contained"
 				color="primary"
 				className={classes.button}
-				onClick={() => {
-					logIn(username, password)
-				}}
+				onClick={() => logIn(username, password)}
 			>
 				Sign In
 			</material.Button>

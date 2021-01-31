@@ -37,19 +37,11 @@ func loadOne(
 		return err
 	}
 
-	fieldIDs := []string{}
-
-	for _, fieldMetadata := range fieldMap {
-		firestoreFieldName, err := getDBFieldName(fieldMetadata)
-		if err != nil {
-			return err
-		}
-		fieldIDs = append(fieldIDs, firestoreFieldName)
+	fieldIDs, err := fieldMap.GetUniqueDBFieldNames(getDBFieldName)
+	if err != nil {
+		return err
 	}
 
-	if len(fieldIDs) == 0 {
-		return errors.New("No fields selected")
-	}
 	query = collection.Select(fieldIDs...)
 
 	for _, condition := range op.Conditions {
@@ -122,8 +114,6 @@ func loadOne(
 		}
 	}
 
-	// Maps
-	// ReferenceField -> id values needed
 	iter := query.Documents(ctx)
 	defer iter.Stop()
 	for {
@@ -135,7 +125,13 @@ func loadOne(
 			return errors.New("Failed to iterate:" + err.Error())
 		}
 
-		err = hydrateItem(doc, op, collectionMetadata, fieldMap, referencedCollections)
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, doc.Ref.ID, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+			firestoreFieldName, err := getDBFieldName(fieldMetadata)
+			if err != nil {
+				return nil, err
+			}
+			return doc.DataAtPath([]string{firestoreFieldName})
+		})
 		if err != nil {
 			return err
 		}
@@ -157,56 +153,17 @@ func loadOne(
 
 	}
 
-	return adapt.HandleReferences(func(op *adapt.LoadOp, metadata *adapt.MetadataCache) error {
-		return loadOne(ctx, client, op, metadata, nil)
-	}, op, metadata, referencedCollections)
-}
-
-func hydrateItem(
-	doc *firestore.DocumentSnapshot,
-	op *adapt.LoadOp,
-	collectionMetadata *adapt.CollectionMetadata,
-	fieldMap adapt.FieldsMap,
-	referencedCollections adapt.ReferenceRegistry,
-) error {
-
-	item := op.Collection.NewItem()
-
-	// Map properties from firestore to uesio fields
-	for fieldID, fieldMetadata := range fieldMap {
-
-		firestoreFieldName, err := getDBFieldName(fieldMetadata)
-		if err != nil {
-			return err
-		}
-		fieldData, err := doc.DataAtPath([]string{firestoreFieldName})
-		if err != nil {
-			continue
-		}
-		err = item.SetField(fieldID, fieldData)
-		if err != nil {
-			return err
-		}
-
-		if fieldMetadata.IsForeignKey {
-			// Handle foreign key value
-			reference, ok := referencedCollections[fieldMetadata.ReferencedCollection]
-			if ok {
-				reference.AddID(fieldData)
-			}
-		}
-	}
-
-	err := item.SetField(collectionMetadata.IDField, doc.Ref.ID)
-	if err != nil {
-		return err
-	}
-	op.Collection.AddItem(item)
-	return nil
+	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+		return loadMany(ctx, client, ops, metadata)
+	}, referencedCollections)
 }
 
 // Load function
 func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
+
+	if len(ops) == 0 {
+		return nil
+	}
 
 	ctx := context.Background()
 
@@ -216,13 +173,20 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 		return errors.New("Failed to create or retrieve client:" + err.Error())
 	}
 
+	return loadMany(ctx, client, ops, metadata)
+}
+
+func loadMany(
+	ctx context.Context,
+	client *firestore.Client,
+	ops []adapt.LoadOp,
+	metadata *adapt.MetadataCache,
+) error {
 	for i := range ops {
-		op := ops[i]
-		err := loadOne(ctx, client, &op, metadata, ops)
+		err := loadOne(ctx, client, &ops[i], metadata, ops)
 		if err != nil {
 			return err
 		}
 	}
-
 	return nil
 }

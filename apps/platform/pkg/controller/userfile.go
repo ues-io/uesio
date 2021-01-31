@@ -31,13 +31,13 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	details.ContentLength = contentLen
 
-	newID, err := filesource.Upload(r.Body, *details, session)
+	ufm, err := filesource.Upload(r.Body, *details, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondString(w, r, newID)
+	respondJSON(w, r, ufm)
 }
 
 // DownloadUserFile function

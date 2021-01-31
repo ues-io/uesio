@@ -13,7 +13,6 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 	site := session.GetSite()
 
 	collated := map[string]SaveRequestBatch{}
-	collatedMetadata := map[string]*adapt.MetadataCache{}
 	metadataResponse := adapt.MetadataCache{}
 	response := SaveResponseBatch{}
 
@@ -48,7 +47,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			}
 		}
 
-		err = collections.Load(nil, &metadataResponse, collatedMetadata, session)
+		err = collections.Load(nil, &metadataResponse, session)
 		if err != nil {
 			return nil, err
 		}
@@ -103,12 +102,12 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 			return nil, err
 		}
 
-		cascadeDeletes, err := getCascadeDeletes(batch.Wires, collatedMetadata[dsKey].Collections, &metadataResponse, adapter, credentials)
+		cascadeDeletes, err := getCascadeDeletes(batch.Wires, metadataResponse.Collections, &metadataResponse, adapter, credentials)
 		if err != nil {
 			return nil, err
 		}
 
-		adapterResponses, err := adapter.Save(batch.Wires, collatedMetadata[dsKey], credentials)
+		adapterResponses, err := adapter.Save(batch.Wires, &metadataResponse, credentials)
 		if err != nil {
 			return nil, err
 		}

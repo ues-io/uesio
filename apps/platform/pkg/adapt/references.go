@@ -1,18 +1,26 @@
 package adapt
 
+import (
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
+
 // ReferenceRequest type
 type ReferenceRequest struct {
 	Fields          []LoadRequestField
 	Metadata        *CollectionMetadata
 	ReferenceFields FieldsMap
-	IDs             map[string]bool
+	IDs             map[string][]loadable.Item
 }
 
 // AddID function
-func (rr *ReferenceRequest) AddID(value interface{}) {
+func (rr *ReferenceRequest) AddID(value interface{}, item loadable.Item) {
 	foreignKeyValueAsString, ok := value.(string)
 	if ok {
-		rr.IDs[foreignKeyValueAsString] = true
+		items, ok := rr.IDs[foreignKeyValueAsString]
+		if !ok {
+			rr.IDs[foreignKeyValueAsString] = []loadable.Item{}
+		}
+		rr.IDs[foreignKeyValueAsString] = append(items, item)
 	}
 }
 
@@ -30,46 +38,37 @@ func (rr *ReferenceRequest) AddReference(reference *FieldMetadata) {
 type ReferenceRegistry map[string]*ReferenceRequest
 
 // Add function
-func (rr *ReferenceRegistry) Add(collectionMetadata *CollectionMetadata) {
-	(*rr)[collectionMetadata.GetFullName()] = &ReferenceRequest{
-		Metadata:        collectionMetadata,
+func (rr *ReferenceRegistry) Add(collectionKey string) {
+	(*rr)[collectionKey] = &ReferenceRequest{
 		ReferenceFields: FieldsMap{},
-		IDs:             map[string]bool{},
-		Fields: []LoadRequestField{
-			{
-				ID: collectionMetadata.IDField,
-			},
-			{
-				ID: collectionMetadata.NameField,
-			},
-		},
+		IDs:             map[string][]loadable.Item{},
+		Fields:          []LoadRequestField{},
 	}
 }
 
 // Get function
-func (rr *ReferenceRegistry) Get(collectionMetadata *CollectionMetadata) *ReferenceRequest {
-	request, ok := (*rr)[collectionMetadata.GetFullName()]
+func (rr *ReferenceRegistry) Get(collectionKey string) *ReferenceRequest {
+	request, ok := (*rr)[collectionKey]
 	if !ok {
-		rr.Add(collectionMetadata)
-		return (*rr)[collectionMetadata.GetFullName()]
+		rr.Add(collectionKey)
+		return (*rr)[collectionKey]
 	}
 
 	return request
 }
 
-type Loader func(*LoadOp, *MetadataCache) error
+type Loader func([]LoadOp) error
+
+func IsReference(fieldType string) bool {
+	return fieldType == "REFERENCE" || fieldType == "FILE"
+}
 
 func HandleReferences(
 	loader Loader,
-	op *LoadOp,
-	metadata *MetadataCache,
 	referencedCollections ReferenceRegistry,
 ) error {
-	if op.Collection.Len() == 0 {
-		return nil
-	}
+	ops := []LoadOp{}
 	for collectionName, ref := range referencedCollections {
-
 		idCount := len(ref.IDs)
 		if idCount == 0 {
 			continue
@@ -80,18 +79,18 @@ func HandleReferences(
 			ids[fieldIDIndex] = k
 			fieldIDIndex++
 		}
-		collectionMetadata, err := metadata.GetCollection(collectionName)
-		if err != nil {
-			return err
-		}
-		refOp := &LoadOp{
+		collectionMetadata := ref.Metadata
+		ref.AddFields([]LoadRequestField{
+			{
+				ID: collectionMetadata.IDField,
+			},
+		})
+		ops = append(ops, LoadOp{
 			Fields:   ref.Fields,
 			WireName: "ReferenceLoad",
 			Collection: &ReferenceCollection{
-				Collection:           op.Collection,
 				ReferencedCollection: ref,
 				CollectionMetadata:   collectionMetadata,
-				NewCollection:        &Collection{},
 			},
 			CollectionName: collectionName,
 			Conditions: []LoadRequestCondition{
@@ -101,11 +100,7 @@ func HandleReferences(
 					Value:    ids,
 				},
 			},
-		}
-		err = loader(refOp, metadata)
-		if err != nil {
-			return err
-		}
+		})
 	}
-	return nil
+	return loader(ops)
 }

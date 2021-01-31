@@ -10,7 +10,7 @@ import { useLoginStyles } from "./logincognito"
 
 type ConfirmFormProps = {
 	setMode: Dispatch<SetStateAction<string>>
-	confirm: (verificationCode: string) => Promise<void>
+	confirm: (verificationCode: string) => void
 }
 
 const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
@@ -43,9 +43,7 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
 				variant="contained"
 				color="primary"
 				className={classes.button}
-				onClick={() => {
-					confirm(verificationCode)
-				}}
+				onClick={() => confirm(verificationCode)}
 			>
 				Confirm
 			</material.Button>

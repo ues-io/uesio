@@ -13,7 +13,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const metadataType = descriptor.metadataType
 	const value = getValue() as string
 
-	const namespaces = uesio.builder.useAvailableNamespaces()
+	const namespaces = uesio.builder.useAvailableNamespaces(context)
 
 	let grouping = ""
 
@@ -43,10 +43,6 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	)
 
 	useEffect(() => {
-		if (!namespaces) {
-			uesio.builder.getAvailableNamespaces(context)
-			return
-		}
 		if (!metadata && namespace) {
 			uesio.builder.getMetadataList(
 				context,
@@ -54,7 +50,6 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 				namespace,
 				grouping
 			)
-			return
 		}
 	})
 

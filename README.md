@@ -1,6 +1,6 @@
 # About Uesio
 
-![Uesio Logo](./libs/uesioapps/uesio/bundle/files/logo.png)
+![Uesio Logo](./libs/uesioapps/uesio/bundle/files/uesio.logo/file/logo.png)
 
 Uesio is a **low-code** application development platform.
 
@@ -18,7 +18,7 @@ Redux-wise we do follow the [Redux Style Guide](https://redux.js.org/style-guide
 
 Generally speaking, frontend-side, functional programming style and [unidirectional data flow](https://facebook.github.io/flux/docs/in-depth-overview/) is preferred. All our React components are **functional components**. Some components coming from third-party libraries like [react-monaco-edtor](https://github.com/react-monaco-editor/react-monaco-editor), are not functional components.
 
-As regards the package naming in Go, we do follow this [guideline](https://blog.golang.org/package-names).
+As regards the **package naming** in Go, we do follow this [guideline](https://blog.golang.org/package-names).
 
 # Tech Stack
 

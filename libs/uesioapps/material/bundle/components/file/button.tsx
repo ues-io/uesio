@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react"
 import { FileProps } from "./filedefinition"
 import { hooks, material, styles } from "@uesio/ui"
 import Icon from "../icon/icon"
-import { HandleChange } from "./file"
+import { handleChange } from "./file"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -39,7 +39,7 @@ const Button: FunctionComponent<FileProps> = (props) => {
 					id={id}
 					name={id}
 					onChange={(e) =>
-						HandleChange(
+						handleChange(
 							e.target.files,
 							fieldId,
 							record,

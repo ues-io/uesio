@@ -62,7 +62,7 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 
 // GetFileStream function
 func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	stream, userFile, err := filesource.Download(file.Content, session)
+	stream, userFile, err := filesource.Download(file.Content.ID, session)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 
 // GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, _, err := filesource.Download(bot.Content, session)
+	stream, _, err := filesource.Download(bot.Content.ID, session)
 	if err != nil {
 		return nil, err
 	}

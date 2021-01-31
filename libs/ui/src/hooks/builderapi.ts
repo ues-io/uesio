@@ -6,12 +6,13 @@ import {
 	useRightPanel,
 	useLeftPanel,
 	useMetadataList,
-	useAvailableNamespaces,
+	useNamespaces,
 	useNodeState,
 	useSelectedNode,
 	useLastModifiedNode,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
+import { useEffect } from "react"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
 import { metadata } from "@uesio/constants"
@@ -54,7 +55,6 @@ class BuilderAPI {
 	useHasChanges = useBuilderHasChanges
 
 	useMetadataList = useMetadataList
-	useAvailableNamespaces = useAvailableNamespaces
 
 	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))
@@ -117,10 +117,17 @@ class BuilderAPI {
 	getAvailableNamespaces = (context: Context) =>
 		this.dispatcher(builderOps.getAvailableNamespaces(context))
 
-	getSignalProperties = (signal: SignalDefinition) => {
-		console.log(signal)
-		return []
+	useAvailableNamespaces = (context: Context) => {
+		const namespaces = useNamespaces()
+		useEffect(() => {
+			if (!namespaces) {
+				this.getAvailableNamespaces(context)
+			}
+		})
+		return namespaces
 	}
+	getSignalProperties = (signal: SignalDefinition) =>
+		this.uesio.signal.getProperties(signal)
 }
 
 export { BuilderAPI }
