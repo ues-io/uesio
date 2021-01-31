@@ -4,16 +4,16 @@ package meta
 
 // UserFileMetadata struct
 type UserFileMetadata struct {
-	ID               string `uesio:"uesio.id"`
-	CollectionID     string `uesio:"uesio.collectionid"`
-	MimeType         string `uesio:"uesio.mimetype"`
-	FieldID          string `uesio:"uesio.fieldid"`
-	FileCollectionID string `uesio:"uesio.filecollectionid"`
-	Name             string `uesio:"uesio.name"`
-	Path             string `uesio:"uesio.path"`
-	RecordID         string `uesio:"uesio.recordid"`
-	WorkspaceID      string `uesio:"uesio.workspaceid"`
-	SiteID           string `uesio:"uesio.siteid"`
+	ID               string `uesio:"uesio.id" json:"uesio.id"`
+	CollectionID     string `uesio:"uesio.collectionid" json:"-"`
+	MimeType         string `uesio:"uesio.mimetype" json:"uesio.mimetype"`
+	FieldID          string `uesio:"uesio.fieldid" json:"-"`
+	FileCollectionID string `uesio:"uesio.filecollectionid" json:"-"`
+	Name             string `uesio:"uesio.name" json:"-"`
+	Path             string `uesio:"uesio.path" json:"-"`
+	RecordID         string `uesio:"uesio.recordid" json:"-"`
+	WorkspaceID      string `uesio:"uesio.workspaceid" json:"-"`
+	SiteID           string `uesio:"uesio.siteid" json:"-"`
 }
 
 // GetCollectionName function

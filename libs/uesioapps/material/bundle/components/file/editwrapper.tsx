@@ -4,49 +4,39 @@ import { FileProps } from "./filedefinition"
 import { hooks, material, styles } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 import Icon from "../icon/icon"
-import { HandleChange } from "./file"
+import { handleChange } from "./file"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: (props: FileProps) => ({
+		root: ({ definition }: FileProps) => ({
 			display: "block",
 			lineHeight: 0,
-			...styles.getMarginStyles(props.definition?.margin, theme),
+			...styles.getMarginStyles(definition?.margin, theme),
 		}),
 		input: {
 			display: "none",
 		},
-		avatar: (props: FileProps) => ({
-			width: props.definition?.width ? props.definition.width : 200,
-			height: props.definition?.height ? props.definition.height : 200,
+		avatar: ({ definition }: FileProps) => ({
+			width: definition?.width ? definition.width : 200,
+			height: definition?.height ? definition.height : 200,
 		}),
-		smallavatar: (props: FileProps) => ({
-			width: props.definition?.width ? props.definition.width / 4 : 50,
-			height: props.definition?.height ? props.definition.height / 4 : 50,
+		smallavatar: ({ definition }: FileProps) => ({
+			width: definition?.width ? definition.width / 4 : 50,
+			height: definition?.height ? definition.height / 4 : 50,
 			border: `2px solid ${theme.palette.background.paper}`,
 			cursor: "pointer",
 		}),
 	})
 )
 
-function GetAccept(accepts: string) {
-	const all = "image/*,.pdf,.doc,.docx"
-	switch (accepts) {
-		case "all":
-			return all
-			break
-		case "images":
-			return "image/*"
-			break
-		default:
-			return all
-	}
-}
+const getAccept = (accepts: string) =>
+	accepts === "images" ? "image/*" : "image/*,.pdf,.doc,.docx"
 
 const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
 		definition: { fieldId, id, fileCollection, displayAs, accepts },
+		children,
 	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -55,7 +45,6 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	if (!wire || !record || !displayAs) {
 		return null
 	}
-	const accept = GetAccept(accepts)
 
 	const iconJsx = (
 		<Icon
@@ -81,12 +70,12 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 						<label htmlFor={id}>
 							<input
 								type="file"
-								accept={accept}
+								accept={getAccept(accepts)}
 								className={classes.input}
 								id={id}
 								name={id}
 								onChange={(e) =>
-									HandleChange(
+									handleChange(
 										e.target.files,
 										fieldId,
 										record,
@@ -103,8 +92,8 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 					</div>
 				}
 			>
-				{props.children ? (
-					props.children
+				{children ? (
+					children
 				) : (
 					<material.Avatar className={classes.avatar}>
 						{iconJsx}
