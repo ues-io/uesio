@@ -119,6 +119,10 @@ definition:
                                             variant: text
                                             fullWidth: true
                                             margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                                namespace: "uesio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:

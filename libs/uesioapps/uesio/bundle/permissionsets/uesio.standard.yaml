@@ -38,6 +38,11 @@ views:
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.permissions: true
+  uesio.permissionset: true
+  uesio.newpermissionset: true
+  uesio.profile: true
+  uesio.newprofile: true
 routes:
   uesio.login: true
   uesio.field: true
@@ -73,6 +78,11 @@ routes:
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.permissions: true
+  uesio.permissionset: true
+  uesio.newpermissionset: true
+  uesio.profile: true
+  uesio.newprofile: true
 files:
   uesio.logo: true
   uesio.logosmall: true

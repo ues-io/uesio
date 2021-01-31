@@ -27,13 +27,17 @@ const CheckBoxField: FunctionComponent<Props> = ({
 	const classes = useStyles()
 
 	return (
-		<material.Checkbox
-			color="primary"
-			className={classes.root}
-			checked={!!value}
-			disabled={mode === "READ"}
-			onChange={(event): void => setValue(event.target.checked)}
-			{...(!hideLabel && { label })}
+		<material.FormControlLabel
+			control={
+				<material.Checkbox
+					color="primary"
+					className={classes.root}
+					checked={!!value}
+					disabled={mode === "READ"}
+					onChange={(event): void => setValue(event.target.checked)}
+				/>
+			}
+			label={!hideLabel && label}
 		/>
 	)
 }

@@ -1,0 +1,164 @@
+name: profile
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    profiles:
+      collection: uesio.profiles
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.permissionsetsrefs:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: profilename
+    permissionsets:
+      collection: uesio.permissionsets
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspace:
+        uesio.workspaceid:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: uesio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: profilesDeck
+              wire: profiles
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: uesio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: uesio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: uesio
+                      - text: profiles
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/permissions
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/permissions
+                            namespace: uesio
+                      - text: $Param{profilename}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: "Profile"
+                                                  variant: h5
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: component/material.deck/TOGGLE_MODE
+                                                            target: "profilesDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "profiles"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: wire/CANCEL
+                                                            wire: "profiles"
+                                                          - signal: wire/CANCEL
+                                                            wire: "fields"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "profiles"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                                            namespace: "uesio"
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.permissionsetsrefs
+                                      wireName: permissionsets
+                                      label: "Permission sets"

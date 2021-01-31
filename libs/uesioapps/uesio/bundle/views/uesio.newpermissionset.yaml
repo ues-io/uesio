@@ -1,0 +1,161 @@
+name: newpermissionset
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: uesio.workspaces
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appid:
+        uesio.app:
+      conditions:
+        - field: uesio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.name
+          valueSource: PARAM
+          param: workspacename
+    permissionsets:
+      collection: uesio.permissionsets
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.workspace:
+        uesio.workspaceid:
+        uesio.allowallfiles:
+        uesio.allowallroutes:
+        uesio.allowallviews:
+        uesio.filerefs:
+        uesio.namedrefs:
+        uesio.routerefs:
+        uesio.viewrefs:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      type: CREATE
+      defaults:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    routes:
+      collection: uesio.routes
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.path:
+        uesio.view:
+        uesio.theme:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    views:
+      collection: uesio.views
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.definition:
+        uesio.workspaceid:
+        uesio.workspace:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    files:
+      collection: uesio.files
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.content:
+      conditions:
+        - field: uesio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: uesio.topbar
+    - material.container:
+        components:
+          - material.typography:
+              text: Create a New Permission Set
+              variant: h5
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: permissionsetsDeck
+              wire: permissionsets
+              mode: EDIT
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color:
+                          intention: "primary"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          spacing: 4
+                          items:
+                            - material.griditem:
+                                xs: 3
+                                components:
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.allowallfiles
+                                  - material.field:
+                                      fieldId: uesio.allowallroutes
+                                  - material.field:
+                                      fieldId: uesio.allowallviews
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.filerefs
+                                      wireName: files
+                                      label: "Files"
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.routerefs
+                                      wireName: routes
+                                      label: "Routes"
+                                  - uesio.permissionpicker:
+                                      fieldId: uesio.viewrefs
+                                      wireName: views
+                                      label: "Views"
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "contained"
+                                text: "Save"
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - "permissionsets"
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${uesio.name}"
+                                    namespace: "uesio"
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Cancel"
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                    namespace: "uesio"
