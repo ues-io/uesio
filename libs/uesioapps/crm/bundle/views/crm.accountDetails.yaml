@@ -61,6 +61,10 @@ definition:
                     fieldId: crm.name
                 - material.field:
                     fieldId: crm.description
+                - material.field:
+                    fieldId: crm.created
+                - material.field:
+                    fieldId: crm.updated
               margin: 1
               media:
                 background: null
@@ -79,7 +83,11 @@ definition:
           param: accountid
           valueSource: PARAM
       fields:
-        crm.id: null
-        crm.name: null
-        crm.profilepic: null
-        crm.description: null
+        crm.id:
+        crm.name:
+        crm.profilepic:
+          fields:
+            uesio.mimetype:
+        crm.description:
+        crm.created:
+        crm.updated:

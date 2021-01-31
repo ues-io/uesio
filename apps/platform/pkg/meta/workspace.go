@@ -5,10 +5,16 @@ type Workspace struct {
 	ID          string         `uesio:"uesio.id"`
 	Name        string         `uesio:"uesio.name"`
 	Namespace   string         `uesio:"-"`
-	AppRef      string         `uesio:"uesio.appid"`
-	App         App            `uesio:"uesio.app"`
+	App         *App           `uesio:"uesio.app"`
 	Permissions *PermissionSet `uesio:"-"`
 	bundleDef   *BundleDef
+}
+
+func (w *Workspace) GetAppID() string {
+	if w.App == nil {
+		return ""
+	}
+	return w.App.ID
 }
 
 // SetAppBundle function

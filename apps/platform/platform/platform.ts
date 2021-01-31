@@ -132,7 +132,7 @@ const postJSON = (url: string, body?: object) => {
 				body: fileData,
 			})
 
-			return response.text()
+			return response.json()
 		},
 
 		getComponentPackURL: (

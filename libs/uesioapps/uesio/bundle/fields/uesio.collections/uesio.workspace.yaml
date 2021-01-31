@@ -2,5 +2,5 @@ name: workspace
 collection: uesio.collections
 type: REFERENCE
 label: App
+propertyName: workspaceid
 referencedCollection: uesio.workspaces
-foreignKeyField: uesio.workspaceid

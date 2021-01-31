@@ -57,6 +57,10 @@ definition:
                     fieldId: crm.account
                 - material.field:
                     fieldId: crm.birthdate
+                - material.field:
+                    fieldId: crm.updated
+                - material.field:
+                    fieldId: crm.created
               margin: 1
               media:
                 background: null
@@ -83,3 +87,5 @@ definition:
         crm.gender: null
         crm.id: null
         crm.lastname: null
+        crm.updated:
+        crm.created:

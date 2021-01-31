@@ -39,7 +39,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const fieldMetadata = collection.getField(fieldId)
 	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldValue(fieldId) as string
-	const namespaces = uesio.builder.useAvailableNamespaces()
+	const namespaces = uesio.builder.useAvailableNamespaces(uesio.getContext())
 	const [namespace, name] = component.path.parseKey(value)
 	const metadata = uesio.builder.useMetadataList(metadataType, namespace)
 
@@ -55,10 +55,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		  (record.getFieldValue("uesio.collection") as string)
 
 	useEffect(() => {
-		if (!namespaces) {
-			uesio.builder.getAvailableNamespaces(uesio.getContext())
-			return
-		}
 		if (!metadata && namespace && metadataType === "FIELD") {
 			uesio.builder.getMetadataList(
 				uesio.getContext(),
@@ -74,7 +70,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 				metadataType,
 				namespace
 			)
-			return
 		}
 	})
 

@@ -1,0 +1,4 @@
+name: newpermissionset
+path: app/{appname}/workspace/{workspacename}/newpermissionset
+view: uesio.newpermissionset
+theme: uesio.default

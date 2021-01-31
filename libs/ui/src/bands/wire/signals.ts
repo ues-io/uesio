@@ -11,7 +11,10 @@ import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
 import { AnyAction } from "redux"
-import { SignalDefinition } from "../../definition/signal"
+import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
+import { WireDefinition } from "../../definition/wire"
+import { WireConditionDefinition } from "./conditions/conditions"
+import { Definition } from "../../definition/definition"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -42,28 +45,27 @@ interface SaveWiresSignal extends SignalDefinition {
 }
 
 // "Signal Handlers" for all of the signals in the band
-export default {
+const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/TOGGLE_DELETE_STATUS`]: {
 		label: "Toggle Delete Status",
-		public: true,
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			toggleDeleteOp(context),
+		properties: () => [],
 	},
 	[`${WIRE_BAND}/MARK_FOR_DELETE`]: {
 		label: "Mark For Delete",
-		public: true,
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			markForDeleteOp(context),
+		properties: () => [],
 	},
 	[`${WIRE_BAND}/UNMARK_FOR_DELETE`]: {
 		label: "Unmark For Delete",
-		public: true,
 		dispatcher: (signal: SignalDefinition, context: Context) =>
 			unMarkForDeleteOp(context),
+		properties: () => [],
 	},
 	[`${WIRE_BAND}/CREATE_RECORD`]: {
 		label: "Create Record",
-		public: true,
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wire",
@@ -75,8 +77,7 @@ export default {
 			createRecordOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
-		label: "Cancel",
-		public: true,
+		label: "Cancel Wire Changes",
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wire",
@@ -88,8 +89,7 @@ export default {
 			cancelWireOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/EMPTY`]: {
-		label: "Empty",
-		public: true,
+		label: "Empty Wire",
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wire",
@@ -101,23 +101,63 @@ export default {
 			emptyWireOp(context, signal.wire),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
+		label: "Toggle Wire Condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
 			toggleConditionOp(context, signal.wire, signal.condition),
+		properties: (signal: SignalDefinition): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				filter: (def: Definition) =>
+					Boolean(
+						def &&
+							(<WireDefinition>def).conditions &&
+							(<WireDefinition>def).conditions.length
+					),
+				label: "Wire",
+			},
+			{
+				name: "conditionId",
+				type: "CONDITION",
+				filter: (def: Definition) =>
+					Boolean(def && (<WireConditionDefinition>def).id),
+				wire: <string>signal.wire,
+				label: "condition",
+			},
+		],
 	},
 	[`${WIRE_BAND}/LOAD`]: {
+		label: "Load Wire(s)",
 		dispatcher: (signal: LoadWiresSignal, context: Context) => async (
 			dispatch: Dispatcher<AnyAction>
 		) => {
 			await dispatch(loadWiresOp({ context, wires: signal.wires }))
 			return context
 		},
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
 	},
 	[`${WIRE_BAND}/SAVE`]: {
+		label: "Save Wire(s)",
 		dispatcher: (signal: SaveWiresSignal, context: Context) => async (
 			dispatch: Dispatcher<AnyAction>
 		) => {
 			await dispatch(saveWiresOp({ context, wires: signal.wires }))
 			return context
 		},
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
 	},
 }
+
+export default signals

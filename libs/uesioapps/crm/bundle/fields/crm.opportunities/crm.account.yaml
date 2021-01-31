@@ -1,0 +1,6 @@
+name: account
+collection: crm.opportunities
+type: REFERENCE
+label: Account
+propertyName: accountid
+referencedCollection: crm.accounts

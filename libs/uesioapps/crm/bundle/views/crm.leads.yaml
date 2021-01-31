@@ -44,6 +44,10 @@ definition:
           - material.column:
               field: crm.lastname
           - material.column:
+              field: crm.updated
+          - material.column:
+              field: crm.created
+          - material.column:
               components:
                 - material.button:
                     color: primary
@@ -76,3 +80,5 @@ definition:
         crm.firstname: null
         crm.id: null
         crm.lastname: null
+        crm.updated:
+        crm.created:

@@ -39,7 +39,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				namespace,
 				collectionKey
 			)
-			return
 		}
 	})
 

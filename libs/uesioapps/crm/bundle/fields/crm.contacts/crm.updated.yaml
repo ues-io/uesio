@@ -1,0 +1,6 @@
+name: updated
+collection: crm.contacts
+type: TIMESTAMP
+label: Updated
+propertyName: updated
+autopopulate: UPDATE

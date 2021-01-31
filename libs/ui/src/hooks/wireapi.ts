@@ -3,6 +3,8 @@ import { useCollection } from "../bands/collection/selectors"
 import { useWire } from "../bands/wire/selectors"
 import Wire from "../bands/wire/class"
 import Collection from "../bands/collection/class"
+import loadWiresOp from "../bands/wire/operations/load"
+import { Context } from "../context/context"
 
 // This is the wire api exposed on the uesio object returned
 // to components using the useUesio hook.
@@ -29,6 +31,15 @@ class WireAPI {
 		const plainCollection = useCollection(collectionName)
 		if (!plainCollection) return undefined
 		return new Wire(plainWire).attachCollection(plainCollection)
+	}
+
+	loadWires(context: Context, wireNames: string[]) {
+		return this.uesio.getDispatcher()(
+			loadWiresOp({
+				context,
+				wires: wireNames,
+			})
+		)
 	}
 }
 

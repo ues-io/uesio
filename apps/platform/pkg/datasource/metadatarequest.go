@@ -86,7 +86,7 @@ func (mr *MetadataRequest) GetSelectListKey(collectionName, fieldName, selectLis
 }
 
 // Load function
-func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.MetadataCache, collatedMetadata map[string]*adapt.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
 	// Implement the old way to make sure it still works
@@ -115,7 +115,29 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 
 		for fieldKey, fieldMetadata := range metadata.Fields {
 
-			if fieldMetadata.Type == "REFERENCE" {
+			if fieldMetadata.Type == "FILE" {
+				userfilesCollection := "uesio.userfiles"
+				fieldMetadata.ReferencedCollection = userfilesCollection
+				fieldMetadata.OnDelete = "CASCADE"
+				// If the reference to a different data source, we'll
+				// need to do a whole new approach to reference fields.
+				if op != nil && metadata.DataSource != "uesio.platform" {
+					err = additionalRequests.AddField(userfilesCollection, "uesio.mimetype", nil)
+					if err != nil {
+						return err
+					}
+					op.ReferencedCollections = adapt.ReferenceRegistry{}
+					refCol := op.ReferencedCollections.Get(userfilesCollection)
+					refCol.AddReference(fieldMetadata)
+					refCol.AddFields([]adapt.LoadRequestField{
+						{
+							ID: "uesio.mimetype",
+						},
+					})
+				}
+			}
+
+			if adapt.IsReference(fieldMetadata.Type) {
 				err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
 				if err != nil {
 					return err
@@ -127,71 +149,13 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 						return err
 					}
 				}
-
-				_, err = LoadFieldMetadata(fieldMetadata.ForeignKeyField, collectionKey, metadata, session)
-				if err != nil {
-					return err
-				}
 			}
 
 			if fieldMetadata.Type == "SELECT" {
 				additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
 			}
 
-			if fieldMetadata.Type == "FILE" {
-				fileDataSuffix := "__FILEDATA"
-				userfilesCollection := "uesio.userfiles"
-				fakeRefMetadata := &adapt.FieldMetadata{
-					Name:                 fieldMetadata.Name + fileDataSuffix,
-					Namespace:            fieldMetadata.Namespace,
-					Createable:           false,
-					Accessible:           true,
-					Updateable:           false,
-					Type:                 "REFERENCE",
-					Label:                fieldMetadata.Label + " File Info",
-					ReferencedCollection: userfilesCollection,
-					ForeignKeyField:      fieldMetadata.GetFullName(),
-					OnDelete:             "CASCADE",
-				}
-				metadata.SetField(fakeRefMetadata)
-
-				err = additionalRequests.AddField(userfilesCollection, "uesio.mimetype", nil)
-				if err != nil {
-					return err
-				}
-
-				mimeField := []adapt.LoadRequestField{
-					{
-						ID: "uesio.mimetype",
-					},
-				}
-
-				referencedMeta, err := LoadCollectionMetadata(userfilesCollection, metadataResponse, session)
-				if err != nil {
-					return err
-				}
-
-				// If the reference is to the same data source, we can just add the field
-				// and be done with it. If it's to a different data source, we'll need to
-				// do a whole new approach to reference fields.
-				if op != nil {
-					if metadata.DataSource == "uesio.platform" {
-						op.Fields = append(op.Fields, adapt.LoadRequestField{
-							ID:     fieldMetadata.GetFullName() + fileDataSuffix,
-							Fields: mimeField,
-						})
-					} else {
-						op.ReferencedCollections = adapt.ReferenceRegistry{}
-						refCol := op.ReferencedCollections.Get(referencedMeta)
-						refCol.AddReference(fakeRefMetadata)
-						refCol.AddFields(mimeField)
-					}
-				}
-			}
-
 		}
-		// Collate the metadata so we have a dictonary of it based on data source
-		CollateMetadata(collectionKey, metadata, collatedMetadata)
 	}
 
 	for selectListKey := range mr.SelectLists {
@@ -203,7 +167,7 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(op, metadataResponse, collatedMetadata, session)
+		return additionalRequests.Load(op, metadataResponse, session)
 	}
 	return nil
 }

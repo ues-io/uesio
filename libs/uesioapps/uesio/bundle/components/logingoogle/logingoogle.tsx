@@ -32,10 +32,8 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 
 	if (!clientIdValue) return null
 
-	const responseGoogle = async (
-		response: GoogleLoginResponse
-	): Promise<void> => {
-		await uesio.signal.run(
+	const responseGoogle = (response: GoogleLoginResponse): void => {
+		uesio.signal.run(
 			{
 				signal: "user/LOGIN",
 				type: "google",
@@ -46,7 +44,7 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	//To-Do: show an error
-	const responseGoogleFail = async (error: Error): Promise<void> => {
+	const responseGoogleFail = (error: Error): void => {
 		console.log("Login Failed", error)
 	}
 

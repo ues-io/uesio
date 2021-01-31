@@ -102,12 +102,10 @@ type FieldMetadata struct {
 	SelectListOptions    []SelectListOptionMetadata `json:"options"`
 	SelectListName       string                     `json:"-"`
 	ReferencedCollection string                     `json:"referencedCollection"`
-	ForeignKeyField      string                     `json:"foreignKeyField"`
 	Required             bool                       `json:"required"`
 	Validate             *ValidationMetadata        `json:"validate"`
 	AutoPopulate         string                     `json:"autopopulate"`
 	OnDelete             string                     `json:"ondelete"`
-	IsForeignKey         bool
 }
 
 // GetFullName function

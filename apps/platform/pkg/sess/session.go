@@ -165,7 +165,7 @@ func (s *Session) GetWorkspaceID() string {
 // GetWorkspaceApp function
 func (s *Session) GetWorkspaceApp() string {
 	if s.workspace != nil {
-		return s.workspace.AppRef
+		return s.workspace.GetAppID()
 	}
 	return ""
 }
@@ -241,7 +241,7 @@ func (s *Session) GetContextAppBundle() *meta.BundleDef {
 // GetContextAppName returns the appname in context
 func (s *Session) GetContextAppName() string {
 	if s.workspace != nil {
-		return s.workspace.AppRef
+		return s.workspace.GetAppID()
 	}
 	return s.site.AppRef
 }

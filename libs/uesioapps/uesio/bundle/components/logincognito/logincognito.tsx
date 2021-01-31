@@ -158,14 +158,14 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	if (!poolId || !clientId) return null
 	const pool = getPool(poolId, clientId)
 
-	async function logIn(username: string, password: string): Promise<void> {
+	function logIn(username: string, password: string): void {
 		const authenticationDetails = getAuthDetails(username, password)
 		const cognitoUser = getUser(username, pool)
 		cognitoUser.authenticateUser(authenticationDetails, {
-			onSuccess: async (result) => {
+			onSuccess: (result) => {
 				setMessage("")
 				const accessToken = result.getIdToken().getJwtToken()
-				await uesio.signal.run(
+				uesio.signal.run(
 					{
 						signal: "user/LOGIN",
 						type: "cognito",
@@ -181,7 +181,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 		})
 	}
 
-	async function confirm(verificationCode: string): Promise<void> {
+	function confirm(verificationCode: string): void {
 		const cognitoUser = getUser(signupUsername, pool)
 		console.log("confirm?", verificationCode)
 		cognitoUser.confirmRegistration(

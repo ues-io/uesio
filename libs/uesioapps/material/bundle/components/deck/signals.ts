@@ -3,10 +3,7 @@ import { DeckState } from "./deckdefinition"
 
 const sigHandler = {
 	TOGGLE_MODE: {
-		dispatcher: (
-			signal: signal.SignalDefinition,
-			ctx: context.Context
-		) => async (
+		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
 			setState: (state: DeckState) => void,
 			getState: () => DeckState
 		) => {
@@ -16,6 +13,8 @@ const sigHandler = {
 			})
 			return ctx
 		},
+		label: "Toggle Mode",
+		properties: () => [],
 	},
 }
 

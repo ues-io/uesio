@@ -9,6 +9,7 @@ import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
 import componentSignal from "../bands/component/signals"
 import { AnyAction } from "@reduxjs/toolkit"
+import { PropDescriptor } from "../buildmode/buildpropdefinition"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -48,6 +49,29 @@ class SignalAPI {
 		const descriptor = registry[signal.signal] || componentSignal
 		return this.dispatcher(descriptor.dispatcher(signal, context))
 	}
+
+	getProperties = (signal: SignalDefinition) => {
+		const descriptor = registry[signal.signal] || componentSignal
+		let props = defaultSignalProps()
+		if (descriptor.properties) {
+			props = props.concat(descriptor.properties(signal))
+		}
+		return props
+	}
 }
 
+function defaultSignalProps(): PropDescriptor[] {
+	const signalIds = Object.keys(registry)
+	return [
+		{
+			name: "signal",
+			label: "Signal",
+			type: "SELECT",
+			options: signalIds.map((signal) => ({
+				value: signal,
+				label: registry[signal].label || signal,
+			})),
+		},
+	]
+}
 export { SignalAPI }

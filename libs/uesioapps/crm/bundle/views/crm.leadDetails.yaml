@@ -1,0 +1,76 @@
+name: leadDetails
+definition:
+  components:
+    - uesio.view:
+        view: crm.topbar
+    - material.deck:
+        components:
+          - material.card:
+              components:
+                - material.grid:
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: ${crm.firstname}
+                                textTransform: uppercase
+                                variant: h5
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: primary
+                                      signals:
+                                        - signal: component/material.deck/TOGGLE_MODE
+                                          target: oneleadDeck
+                                      text: Edit
+                                      variant: outlined
+                                  - material.button:
+                                      color: primary
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - leads
+                                      text: Save
+                                      variant: outlined
+                                  - material.button:
+                                      color: primary
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: leads
+                                      text: Cancel
+                                      variant: outlined
+                    justify: space-between
+                - material.field:
+                    fieldId: crm.firstname
+                - material.field:
+                    fieldId: crm.lastname
+                - material.field:
+                    fieldId: crm.updated
+                - material.field:
+                    fieldId: crm.created
+              margin: 1
+              media:
+                background: null
+                color: "#FF5733"
+                height: 10px
+        id: oneleadDeck
+        margin: 0
+        mode: READ
+        wire: leads
+        xs: 12
+  wires:
+    leads:
+      collection: crm.leads
+      conditions:
+        - field: crm.id
+          param: leadid
+          valueSource: PARAM
+      fields:
+        crm.firstname: null
+        crm.id: null
+        crm.lastname: null
+        crm.updated:
+        crm.created:

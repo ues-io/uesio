@@ -1,0 +1,5 @@
+name: namedrefs
+collection: uesio.permissionsets
+type: MAP
+label: Named refs
+propertyName: namedrefs
