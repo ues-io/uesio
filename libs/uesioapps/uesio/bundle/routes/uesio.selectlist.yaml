@@ -1,0 +1,4 @@
+name: selectlist
+path: app/{appname}/workspace/{workspacename}/selectlist/{selectlistname}
+view: uesio.selectlist
+theme: uesio.default

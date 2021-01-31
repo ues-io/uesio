@@ -38,6 +38,8 @@ views:
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.selectlists: true
+  uesio.selectlist: true
   uesio.permissions: true
   uesio.permissionset: true
   uesio.newpermissionset: true
@@ -78,6 +80,8 @@ routes:
   uesio.themes: true
   uesio.theme: true
   uesio.newtheme: true
+  uesio.selectlists: true
+  uesio.selectlist: true
   uesio.permissions: true
   uesio.permissionset: true
   uesio.newpermissionset: true

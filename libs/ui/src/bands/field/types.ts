@@ -14,6 +14,7 @@ type FieldType =
 	| "FILE"
 	| "MAP"
 	| "TIMESTAMP"
+	| "LIST"
 
 type SelectOption = {
 	label: string
