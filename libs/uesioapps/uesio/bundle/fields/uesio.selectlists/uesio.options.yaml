@@ -1,5 +1,5 @@
 name: options
 collection: uesio.selectlists
-type: ARRAY
+type: LIST
 label: Options
 propertyName: options

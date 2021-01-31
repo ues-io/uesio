@@ -54,7 +54,7 @@ func GetFieldTypes() map[string]bool {
 		"REFERENCE": true,
 		"FILE":      true,
 		"IMAGE":     true,
-		"ARRAY":     true,
+		"LIST":     true,
 		"DATE":      true,
 		"MAP":       true,
 		"TIMESTAMP": true,
