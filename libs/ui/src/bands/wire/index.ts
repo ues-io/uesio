@@ -64,10 +64,7 @@ const wireSlice = createSlice({
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { idField, record, recordId }) => {
-				state.data[recordId] = {
-					...state.data[recordId],
-					...record,
-				}
+				state.data[recordId] = record
 				state.original[recordId] = {
 					...state.original[recordId],
 					...{
