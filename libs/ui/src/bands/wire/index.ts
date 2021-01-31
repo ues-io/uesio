@@ -65,6 +65,7 @@ const wireSlice = createSlice({
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { idField, record, recordId }) => {
 				state.data[recordId] = record
+
 				state.original[recordId] = {
 					...state.original[recordId],
 					...{
@@ -76,8 +77,8 @@ const wireSlice = createSlice({
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
 			(state, { record, recordId }) => {
-				state.data = { ...state.data, [recordId]: record || {} }
-				state.changes = { ...state.changes, [recordId]: record || {} }
+				state.data[recordId] = record || {}
+				state.changes[recordId] = record || {}
 			}
 		),
 		cancel: createEntityReducer<EntityPayload, PlainWire>((state) => {
