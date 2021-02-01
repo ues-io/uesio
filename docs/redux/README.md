@@ -201,8 +201,6 @@ So now, you can do [thunk composition](https://github.com/reduxjs/redux/issues/1
 dispatch(fetchUser(1092)).then( (user) => console.log( user, "has been fetched and already stored in the Redux store"))
 ```
 
-The [extra reducer](#extra-reducer) works like so under the hood.
-
 ## Redux middleware
 
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain JavaScript `object` and not a `Promise`. This is where Redux-thunk comes into play.
