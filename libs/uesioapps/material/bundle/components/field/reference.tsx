@@ -43,7 +43,7 @@ const Reference: FunctionComponent<RendererProps> = (props) => {
 	const classes = useStyles()
 	const { fieldMetadata, hideLabel, mode, fieldId, record, context } = props
 
-	const referencedCollection = uesio.wire.useCollection(
+	const referencedCollection = uesio.collection.useCollection(
 		fieldMetadata.source.referencedCollection || ""
 	)
 

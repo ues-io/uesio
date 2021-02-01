@@ -2,7 +2,6 @@ import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
 import { useWire } from "../bands/wire/selectors"
 import Wire from "../bands/wire/class"
-import Collection from "../bands/collection/class"
 import loadWiresOp from "../bands/wire/operations/load"
 import { Context } from "../context/context"
 
@@ -14,13 +13,6 @@ class WireAPI {
 	}
 
 	uesio: Uesio
-
-	//TODO:: This is not a great place for this IMO
-	useCollection(collectionName?: string) {
-		const plainCollection = useCollection(collectionName)
-		if (!plainCollection) return undefined
-		return new Collection(plainCollection)
-	}
 
 	// Wraps our store's useWire result (POJO) in a nice Wire class
 	// with convenience methods to make the api easier to consume for end users.
