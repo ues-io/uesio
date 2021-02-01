@@ -198,7 +198,7 @@ const fetchUser = (userId) => async (dispatch) => {
 So now, you can do [thunk composition](https://github.com/reduxjs/redux/issues/1676) like so :
 
 ```
-dispatch(fetchUser(1092)).then( (user) => console.log( user, "has been fetched and already stored in the Redux store"))
+dispatch(fetchUser(1092)).then( (user) => console.log( user, "has been fetched and is already stored in the Redux store"))
 ```
 
 As an aside, value of `return dispatch(makeUser(userParsed))` is the **plain object** returned the by action creator :
