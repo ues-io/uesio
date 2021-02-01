@@ -201,6 +201,15 @@ So now, you can do [thunk composition](https://github.com/reduxjs/redux/issues/1
 dispatch(fetchUser(1092)).then( (user) => console.log( user, "has been fetched and already stored in the Redux store"))
 ```
 
+As an aside, value of `return dispatch(makeUser(userParsed))` is the **plain object** returned the by action creator :
+
+```
+const makeUserFetch = (users) => ({
+  type: FETCH_USERS,
+  payload: users,
+});
+```
+
 ## Redux middleware
 
 Redux-thunk is a middleware specialized in dealing with **asynchronous actions**. In order to update the Redux state, the reducer expects as payload a plain JavaScript `object` and not a `Promise`. This is where Redux-thunk comes into play.
