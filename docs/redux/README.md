@@ -160,7 +160,7 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
 </button>
 ```
 
-## A single action handled by multiple reducers
+## <a id="extra-reducer"></a>A single action handled by multiple reducers
 
 The Redux state is split into different **slices**, such as, in our stack, `viewdef`, `builder`, `route`, etc. These slices are **isolated** from each other.
 
@@ -200,6 +200,8 @@ So now, you can do [thunk composition](https://github.com/reduxjs/redux-thunk#co
 ```
 dispatch(fetchUser(1092)).then( (user) => console.log( user, "is now in the Redux store"))
 ```
+
+The [extra reducer](#extra-reducer) works like so under the hood.
 
 ## Redux middleware
 
