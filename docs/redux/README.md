@@ -198,7 +198,7 @@ const fetchUser = (userId) => async (dispatch) => {
 So now, you can do [thunk composition](https://github.com/reduxjs/redux-thunk#composition) like so :
 
 ```
-fetchUser(1092).then( (user) => console.log("the user in the Redux store"))
+dispatch(fetchUser(1092)).then( (user) => console.log( user, "is now in the Redux store"))
 ```
 
 ## Redux middleware
