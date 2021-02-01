@@ -41,7 +41,7 @@ const FieldCell: FunctionComponent<CellProps> = ({
 	path,
 	index,
 	context,
-}: CellProps) => (
+}) => (
 	<material.TableCell key={field}>
 		<component.Component
 			componentType="material.field"
@@ -56,8 +56,12 @@ const FieldCell: FunctionComponent<CellProps> = ({
 	</material.TableCell>
 )
 
-const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
-	const { column, path, index, context } = props
+const SlotCell: FunctionComponent<CellProps> = ({
+	column,
+	path,
+	index,
+	context,
+}) => {
 	const fieldId = column.field
 	return (
 		<material.TableCell key={fieldId}>
@@ -73,8 +77,14 @@ const SlotCell: FunctionComponent<CellProps> = (props: CellProps) => {
 	)
 }
 
-const TableRow: FunctionComponent<RowProps> = (props) => {
-	const { path, wire, columns, context, mode, record } = props
+const TableRow: FunctionComponent<RowProps> = ({
+	path,
+	wire,
+	columns,
+	context,
+	mode,
+	record,
+}) => {
 	const style = wire.isMarkedForDeletion(record.getId())
 		? { backgroundColor: "#ffcdd2" }
 		: {}
@@ -117,25 +127,26 @@ const TableRow: FunctionComponent<RowProps> = (props) => {
 	)
 }
 
-const TableBody: FunctionComponent<Props> = (props) => {
-	const wire = props.wire
-	const data = wire.getData()
-
-	return (
-		<material.TableBody>
-			{data.map((record) => (
-				<TableRow
-					key={record.getId()}
-					wire={wire}
-					path={props.path}
-					columns={props.columns}
-					context={props.context}
-					mode={props.state.mode}
-					record={record}
-				/>
-			))}
-		</material.TableBody>
-	)
-}
+const TableBody: FunctionComponent<Props> = ({
+	wire,
+	path,
+	columns,
+	context,
+	state: { mode },
+}) => (
+	<material.TableBody>
+		{wire.getData().map((record) => (
+			<TableRow
+				key={record.getId()}
+				wire={wire}
+				path={path}
+				columns={columns}
+				context={context}
+				mode={mode}
+				record={record}
+			/>
+		))}
+	</material.TableBody>
+)
 
 export default TableBody
