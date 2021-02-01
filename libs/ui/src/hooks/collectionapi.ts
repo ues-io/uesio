@@ -11,8 +11,7 @@ class CollectionAPI {
 
 	useCollection(collectionName?: string) {
 		const plainCollection = useCollection(collectionName)
-		if (!plainCollection) return undefined
-		return new Collection(plainCollection)
+		return plainCollection ? new Collection(plainCollection) : undefined
 	}
 }
 
