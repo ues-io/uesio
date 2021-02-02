@@ -154,7 +154,7 @@ Refrain using `async` if you anyway do not use the resolved promise in the funct
     )
  }}
     className={classes.loginButton}
->
+ >
     <LoginIcon image="uesio.logosmall" />
     <LoginText text={buttonText} />
 </button>
@@ -198,13 +198,13 @@ const fetchUser = (userId) => async (dispatch) => {
 So now, you can do [thunk composition](https://github.com/reduxjs/redux/issues/1676) like so :
 
 ```
-dispatch(fetchUser(1092)).then( (user) => console.log( user, "has been fetched and is already stored in the Redux store"))
+dispatch(fetchUser(1092)).then((user) => console.log( user, "has been fetched and is already stored in the Redux store"));
 ```
 
-As an aside, value of `return dispatch(makeUser(userParsed))` is the **plain object** returned the by action creator :
+As an aside, value of `return dispatch(makeUser(userParsed))` is the **plain object** returned the by the `makeUser` action creator :
 
 ```
-const makeUserFetch = (users) => ({
+const makeUser = (users) => ({
   type: FETCH_USERS,
   payload: users,
 });
