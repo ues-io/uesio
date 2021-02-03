@@ -14,7 +14,7 @@ func (bc *BundleDependencyCollection) GetName() string {
 
 // GetFields function
 func (bc *BundleDependencyCollection) GetFields() []string {
-	return StandardGetFields(bc)
+	return StandardGetFields(&BundleDependency{})
 }
 
 // GetItem function

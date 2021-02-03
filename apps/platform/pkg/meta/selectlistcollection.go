@@ -17,7 +17,7 @@ func (slc *SelectListCollection) GetName() string {
 
 // GetFields function
 func (slc *SelectListCollection) GetFields() []string {
-	return StandardGetFields(slc)
+	return StandardGetFields(&SelectList{})
 }
 
 // NewItem function

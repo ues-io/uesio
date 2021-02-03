@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -126,7 +125,7 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 	return lookupResult, nil
 }
 
-func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, options *UpsertOptions, collectionMetadata *CollectionMetadata) error {
+func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
 	lookupResult, err := getLookupResultMap(op, matchField)
@@ -136,7 +135,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, opt
 
 	matchTemplate := getStringWithDefault(options.MatchTemplate, collectionMetadata.IDFormat)
 
-	template, err := templating.New(matchTemplate)
+	template, err := NewFieldChanges(matchTemplate, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -149,7 +148,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, opt
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
-			return errors.New("Could not get key for upsert change")
+			return errors.New("Could not get key for upsert change: " + err.Error() + " : " + keyVal)
 		}
 		match, ok := lookupResult[keyVal]
 
@@ -196,12 +195,9 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes map[string]
 
 	for _, change := range changes {
 
-		keyVal, err := reflecttool.GetField(change.FieldChanges[lookupField], matchField)
-		if err != nil {
-			return err
-		}
-		match, ok := lookupResult[keyVal.(string)]
-
+		keyRef := change.FieldChanges[lookupField].(map[string]interface{})
+		keyVal := keyRef[matchField].(string)
+		match, ok := lookupResult[keyVal]
 		if ok {
 			idValue, err := match.GetField(refCollectionMetadata.IDField)
 			if err != nil {
@@ -248,7 +244,7 @@ func mergeLookupResponses(request *SaveRequest, responses []LoadOp, metadata *Me
 	}
 
 	if upsertResponse != nil {
-		err := mergeUpsertLookupResponse(upsertResponse, request.Changes, request.Options.Upsert, collectionMetadata)
+		err := mergeUpsertLookupResponse(upsertResponse, request.Changes, request.Options.Upsert, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}

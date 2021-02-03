@@ -14,7 +14,7 @@ func (ufmc *UserFileMetadataCollection) GetName() string {
 
 // GetFields function
 func (ufmc *UserFileMetadataCollection) GetFields() []string {
-	return StandardGetFields(ufmc)
+	return StandardGetFields(&UserFileMetadata{})
 }
 
 // AddItem function

@@ -14,7 +14,7 @@ func (ufcc *UserFileCollectionCollection) GetName() string {
 
 // GetFields function
 func (ufcc *UserFileCollectionCollection) GetFields() []string {
-	return StandardGetFields(ufcc)
+	return StandardGetFields(&UserFileCollection{})
 }
 
 // NewItem function

@@ -14,7 +14,7 @@ func (fsc *FileSourceCollection) GetName() string {
 
 // GetFields function
 func (fsc *FileSourceCollection) GetFields() []string {
-	return StandardGetFields(fsc)
+	return StandardGetFields(&FileSource{})
 }
 
 // NewItem function

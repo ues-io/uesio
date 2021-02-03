@@ -10,22 +10,14 @@ import (
 // TemplateFunc type
 type TemplateFunc func(map[string]interface{}, string) (interface{}, error)
 
-// New function
-func New(templateString string) (*template.Template, error) {
+const defaultTemplateKey = "__default__"
+
+// NewRequireKey function returns a template that requires keys and throws an error if they don't exist
+func NewRequiredKey(templateString string) (*template.Template, error) {
 	return NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
 		val, ok := m[key]
 		if !ok {
 			return nil, errors.New("missing key " + key)
-		}
-		switch v := val.(type) {
-		case map[string]interface{}:
-			if len(v) != 1 {
-				return nil, errors.New("bad change map for ref field " + key)
-			}
-			for i := range v {
-				return v[i], nil
-			}
-			return nil, errors.New("no items in map " + key)
 		}
 		return val, nil
 	})
@@ -33,17 +25,30 @@ func New(templateString string) (*template.Template, error) {
 
 // NewWithFunc function
 func NewWithFunc(templateString string, templateFunc TemplateFunc) (*template.Template, error) {
-	if templateString != "" {
-		// This basically transforms a string such as ${uesio.name} to {{ index . "uesio.name" }}
-		// The second format is understood by Go's built-in templating language.
-		templateText := strings.ReplaceAll(templateString, "${", "{{ lookup . \"")
-		templateText = strings.ReplaceAll(templateText, "}", "\" }}")
-		return template.New("newidtemplate").Funcs(template.FuncMap{
-			"lookup": templateFunc,
-		}).Parse(templateText)
+	return NewWithFuncs(templateString, templateFunc, nil)
+}
+
+// NewWithFuncs function
+func NewWithFuncs(templateString string, defaultTemplateFunc TemplateFunc, templateFuncs map[string]TemplateFunc) (*template.Template, error) {
+	if templateString == "" {
+		return nil, nil
+	}
+	// Default template
+	// This basically transforms a string such as ${uesio.name} to {{ index . "uesio.name" }}
+	// The second format is understood by Go's built-in templating language.
+	templateFuncMap := template.FuncMap{
+		defaultTemplateKey: defaultTemplateFunc,
 	}
 
-	return nil, nil
+	replaceStrings := []string{"${", "{{ " + defaultTemplateKey + " . \"", "}", "\" }}"}
+	for key := range templateFuncs {
+		replaceStrings = append(replaceStrings, "$"+key+"{", "{{ "+key+" . \"")
+		templateFuncMap[key] = templateFuncs[key]
+	}
+	templateText := strings.NewReplacer(replaceStrings...).Replace(templateString)
+
+	return template.New("").Funcs(templateFuncMap).Parse(templateText)
+
 }
 
 // Execute function

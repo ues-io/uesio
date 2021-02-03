@@ -17,7 +17,7 @@ func (sc *SecretCollection) GetName() string {
 
 // GetFields function
 func (sc *SecretCollection) GetFields() []string {
-	return StandardGetFields(sc)
+	return StandardGetFields(&Secret{})
 }
 
 // NewItem function

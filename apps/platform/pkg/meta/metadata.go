@@ -73,8 +73,8 @@ func StandardPathFromKey(key string) string {
 }
 
 // StandardGetFields function
-func StandardGetFields(group CollectionableGroup) []string {
-	names, err := reflecttool.GetFieldNames(group.NewItem())
+func StandardGetFields(item CollectionableItem) []string {
+	names, err := reflecttool.GetFieldNames(item)
 	if err != nil {
 		return []string{}
 	}

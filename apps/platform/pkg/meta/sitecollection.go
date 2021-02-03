@@ -14,7 +14,7 @@ func (sc *SiteCollection) GetName() string {
 
 // GetFields function
 func (sc *SiteCollection) GetFields() []string {
-	return StandardGetFields(sc)
+	return StandardGetFields(&Site{})
 }
 
 // GetItem function

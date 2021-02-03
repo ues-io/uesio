@@ -14,7 +14,7 @@ func (uc *UserCollection) GetName() string {
 
 // GetFields function
 func (uc *UserCollection) GetFields() []string {
-	return StandardGetFields(uc)
+	return StandardGetFields(&User{})
 }
 
 // GetItem function

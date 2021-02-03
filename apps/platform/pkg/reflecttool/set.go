@@ -79,6 +79,14 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 	structType := to.Type()
 	// Verify that from's type is a map so we don't have a panic
 	fromKind := from.Kind()
+	if fromKind == reflect.Ptr {
+		from = from.Elem()
+		fromKind = from.Kind()
+	}
+	if fromKind == reflect.Struct {
+		to.Set(from)
+		return nil
+	}
 	if fromKind != reflect.Map {
 		return fmt.Errorf("Cannot set kind: %s to struct to a %s struct", fromKind, structType)
 	}

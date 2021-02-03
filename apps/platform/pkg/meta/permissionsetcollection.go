@@ -14,7 +14,7 @@ func (pc *PermissionSetCollection) GetName() string {
 
 // GetFields function
 func (pc *PermissionSetCollection) GetFields() []string {
-	return StandardGetFields(pc)
+	return StandardGetFields(&PermissionSet{})
 }
 
 // NewItem function

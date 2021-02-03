@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -44,7 +45,7 @@ func ProcessDeletes(request *SaveRequest, metadata *MetadataCache, deleteFunc De
 	return deleteResults, nil
 }
 
-func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata) (interface{}, error) {
+func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata, metadata *MetadataCache) (interface{}, error) {
 	if value == nil {
 		return nil, nil
 	}
@@ -53,15 +54,21 @@ func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata) (interfac
 	if !ok {
 		return nil, nil
 	}
-	var refValue interface{}
-	for i := range valueMap {
-		refValue, ok = valueMap[i]
-		if !ok {
-			return nil, nil
-		}
-		break
+
+	referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	if err != nil {
+		return nil, err
 	}
-	return refValue, nil
+	refIDField, err := referencedCollectionMetadata.GetIDField()
+	if err != nil {
+		return nil, err
+	}
+
+	fk, ok := valueMap[refIDField.GetFullName()]
+	if !ok {
+		return nil, errors.New("bad change map for ref field " + fieldMetadata.GetFullName() + " -> " + refIDField.GetFullName())
+	}
+	return fk, nil
 }
 
 func ProcessChanges(
@@ -81,7 +88,7 @@ func ProcessChanges(
 		return nil, err
 	}
 
-	idTemplate, err := templating.New(collectionMetadata.IDFormat)
+	idTemplate, err := NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
 	if err != nil {
 		return nil, err
 	}
@@ -165,4 +172,24 @@ func ProcessChanges(
 	}
 	return changeResults, nil
 
+}
+
+// NewFieldChanges function returns a template that can merge field changes
+func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
+	return templating.NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
+		fieldMetadata, err := collectionMetadata.GetField(key)
+		if err != nil {
+			return nil, err
+		}
+		val, ok := m[key]
+		if !ok {
+			return nil, errors.New("missing key " + key)
+		}
+
+		if IsReference(fieldMetadata.Type) {
+			return SetReferenceData(val, fieldMetadata, metadata)
+		}
+
+		return val, nil
+	})
 }

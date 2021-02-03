@@ -9,21 +9,24 @@ import (
 
 type ReferenceCollection struct {
 	ReferencedCollection *ReferenceRequest
+	Collection           loadable.Group
 	CollectionMetadata   *CollectionMetadata
+	NewCollection        Collection
 }
 
 // GetItem function
 func (c *ReferenceCollection) GetItem(index int) loadable.Item {
-	return nil
+	return c.NewCollection.GetItem(index)
 }
 
 //GetItems function
 func (c *ReferenceCollection) GetItems() interface{} {
-	return nil
+	return c.NewCollection.GetItems()
 }
 
 // Slice function
 func (c *ReferenceCollection) Slice(start int, end int) {
+	c.NewCollection.Slice(start, end)
 }
 
 // AddItem function
@@ -45,12 +48,12 @@ func (c *ReferenceCollection) AddItem(refItem loadable.Item) {
 		return
 	}
 
-	matchItems, ok := c.ReferencedCollection.IDs[refFKAsString]
+	matchIndexes, ok := c.ReferencedCollection.IDs[refFKAsString]
 	if !ok {
 		return
 	}
 
-	for _, item := range matchItems {
+	for _, index := range matchIndexes {
 		for _, reference := range c.ReferencedCollection.ReferenceFields {
 			referenceValue := Item{}
 
@@ -60,6 +63,7 @@ func (c *ReferenceCollection) AddItem(refItem loadable.Item) {
 				return
 			}
 
+			item := c.Collection.GetItem(index)
 			err = item.SetField(reference.GetFullName(), referenceValue)
 			if err != nil {
 				fmt.Println("GOT ERROR IN REFERENCE: " + err.Error())
@@ -68,6 +72,7 @@ func (c *ReferenceCollection) AddItem(refItem loadable.Item) {
 		}
 	}
 
+	c.NewCollection.AddItem(refItem)
 }
 
 // NewItem function
@@ -77,10 +82,10 @@ func (c *ReferenceCollection) NewItem() loadable.Item {
 
 // Loop function
 func (c *ReferenceCollection) Loop(iter func(item loadable.Item) error) error {
-	return nil
+	return c.NewCollection.Loop(iter)
 }
 
 // Len function
 func (c *ReferenceCollection) Len() int {
-	return 0
+	return c.NewCollection.Len()
 }

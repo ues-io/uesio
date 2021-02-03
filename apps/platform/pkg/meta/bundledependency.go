@@ -1,11 +1,29 @@
 package meta
 
+import "fmt"
+
 // BundleDependency struct
 type BundleDependency struct {
-	ID            string `uesio:"uesio.id"`
-	WorkspaceID   string `uesio:"uesio.workspaceid"`
-	BundleName    string `uesio:"uesio.bundlename"`
-	BundleVersion string `uesio:"uesio.bundleversion"`
+	ID          string  `uesio:"uesio.id"`
+	WorkspaceID string  `uesio:"uesio.workspaceid"`
+	Bundle      *Bundle `uesio:"uesio.bundle"`
+}
+
+// GetCollectionName function
+func (b *BundleDependency) GetVersionString() string {
+	bundle := b.Bundle
+	if bundle == nil {
+		return ""
+	}
+	return fmt.Sprintf("v%s.%s.%s", bundle.Major, bundle.Minor, bundle.Patch)
+}
+
+// GetCollectionName function
+func (b *BundleDependency) GetBundleName() string {
+	if b.Bundle == nil {
+		return ""
+	}
+	return b.Bundle.Namespace
 }
 
 // GetCollectionName function

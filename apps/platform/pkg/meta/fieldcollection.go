@@ -19,7 +19,7 @@ func (fc *FieldCollection) GetName() string {
 
 // GetFields function
 func (fc *FieldCollection) GetFields() []string {
-	return StandardGetFields(fc)
+	return StandardGetFields(&Field{})
 }
 
 // NewItem function

@@ -96,7 +96,7 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 					return jsonValue, nil
 				}
 				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata)
+					return adapt.SetReferenceData(value, fieldMetadata, metadata)
 				}
 				return value, nil
 			},

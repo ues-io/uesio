@@ -14,7 +14,7 @@ func (rc *RouteCollection) GetName() string {
 
 // GetFields function
 func (rc *RouteCollection) GetFields() []string {
-	return StandardGetFields(rc)
+	return StandardGetFields(&Route{})
 }
 
 // NewItem function

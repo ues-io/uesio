@@ -14,7 +14,7 @@ func (bbc *BulkBatchCollection) GetName() string {
 
 // GetFields function
 func (bbc *BulkBatchCollection) GetFields() []string {
-	return StandardGetFields(bbc)
+	return StandardGetFields(&BulkBatch{})
 }
 
 // GetItem function

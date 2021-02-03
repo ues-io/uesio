@@ -126,8 +126,8 @@ func loadOne(
 		return errors.New("DynamoDB failed to make Query API call:" + err.Error())
 	}
 
-	for _, lmap := range result.Items {
-		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+	for index, lmap := range result.Items {
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", index, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 			var i interface{}
 
 			dynamoFieldName, err := getDBFieldName(fieldMetadata)
@@ -150,6 +150,13 @@ func loadOne(
 		}
 	}
 
+	err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+		return loadMany(ctx, client, ops, metadata)
+	}, op.Collection, referencedCollections)
+	if err != nil {
+		return err
+	}
+
 	collSlice := op.Collection.GetItems()
 	locLessFunc, ok := adapt.LessFunc(collSlice, op.Order)
 
@@ -164,9 +171,7 @@ func loadOne(
 		}
 	}
 
-	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-		return loadMany(ctx, client, ops, metadata)
-	}, referencedCollections)
+	return nil
 }
 
 // Load function

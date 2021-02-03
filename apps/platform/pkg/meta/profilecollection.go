@@ -14,7 +14,7 @@ func (pc *ProfileCollection) GetName() string {
 
 // GetFields function
 func (pc *ProfileCollection) GetFields() []string {
-	return StandardGetFields(pc)
+	return StandardGetFields(&Profile{})
 }
 
 // NewItem function

@@ -71,9 +71,6 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controller.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controller.ServeComponentPack(false), "GET")
 
-	workspaceAPI(wr, "/metadata/adddependency/{bundlename}/{bundleversion}", controller.AddDependency).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/removedependency/{bundlename}", controller.RemoveDependency).Methods("POST", "GET")
-
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
 	workspaceAPI(wr, "/metadata/storebundle", controller.StoreBundle).Methods("POST", "GET")
