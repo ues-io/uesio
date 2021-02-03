@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme) =>
 		structureView: {
 			padding: "8px",
 		},
+		contentView: {
+			display: "contents",
+		},
 		isDragging: {},
 		placeHolder: {
 			backgroundColor: "#f4f4f4",
@@ -79,6 +82,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const buildView = uesio.builder.useView()
 
 	const isStructureView = buildView === "structureview"
+	const isContentView = buildView === "contentview"
 
 	const size = items.length
 
@@ -114,6 +118,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		{
 			[classes.structureView]: isStructureView,
 			[classes.isDragging]: dragNode,
+			[classes.contentView]: isContentView,
 		}
 	)
 
@@ -125,7 +130,6 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 			addPlaceholder &&
 			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,
 	})
-
 	return (
 		<div
 			onDragOver={onDragOver}
@@ -138,7 +142,6 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					path={path}
 					index={index}
 					definition={itemDef}
-					isStructureView={isStructureView}
 					direction={
 						direction === "horizontal" ? "horizontal" : "vertical"
 					}
