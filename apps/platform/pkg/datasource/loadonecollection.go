@@ -17,11 +17,6 @@ func (c *LoadOneCollection) GetItem(index int) loadable.Item {
 	return c.Item
 }
 
-// AddItem function
-func (c *LoadOneCollection) AddItem(item loadable.Item) {
-	// Do nothing
-}
-
 // NewItem function
 func (c *LoadOneCollection) NewItem() loadable.Item {
 	c.Length++

@@ -19,27 +19,23 @@ func (pc *PermissionSetCollection) GetFields() []string {
 
 // NewItem function
 func (pc *PermissionSetCollection) NewItem() loadable.Item {
-	return &PermissionSet{}
+	*pc = append(*pc, PermissionSet{})
+	return &(*pc)[len(*pc)-1]
 }
 
-// NewBundleableItem function
-func (pc *PermissionSetCollection) NewBundleableItem() BundleableItem {
-	return &PermissionSet{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (pc *PermissionSetCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewPermissionSet(key)
+	p, err := NewPermissionSet(key)
+	if err != nil {
+		return nil, err
+	}
+	*pc = append(*pc, *p)
+	return &(*pc)[len(*pc)-1], nil
 }
 
 // GetKeyFromPath function
 func (pc *PermissionSetCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (pc *PermissionSetCollection) AddItem(item loadable.Item) {
-	*pc = append(*pc, *item.(*PermissionSet))
 }
 
 // GetItem function

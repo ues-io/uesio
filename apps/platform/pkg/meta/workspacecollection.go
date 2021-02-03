@@ -22,14 +22,10 @@ func (wc *WorkspaceCollection) GetItem(index int) loadable.Item {
 	return &(*wc)[index]
 }
 
-// AddItem function
-func (wc *WorkspaceCollection) AddItem(item loadable.Item) {
-	*wc = append(*wc, *item.(*Workspace))
-}
-
 // NewItem function
 func (wc *WorkspaceCollection) NewItem() loadable.Item {
-	return &Workspace{}
+	*wc = append(*wc, Workspace{})
+	return &(*wc)[len(*wc)-1]
 }
 
 // Loop function

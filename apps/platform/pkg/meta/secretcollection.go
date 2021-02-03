@@ -22,34 +22,26 @@ func (sc *SecretCollection) GetFields() []string {
 
 // NewItem function
 func (sc *SecretCollection) NewItem() loadable.Item {
-	return &Secret{}
+	*sc = append(*sc, Secret{})
+	return &(*sc)[len(*sc)-1]
 }
 
-// NewBundleableItem function
-func (sc *SecretCollection) NewBundleableItem() BundleableItem {
-	return &Secret{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (sc *SecretCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Secret Key: " + key)
 	}
-	return &Secret{
+	*sc = append(*sc, Secret{
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
-	}, nil
+	})
+	return &(*sc)[len(*sc)-1], nil
 }
 
 // GetKeyFromPath function
 func (sc *SecretCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (sc *SecretCollection) AddItem(item loadable.Item) {
-	*sc = append(*sc, *item.(*Secret))
 }
 
 // GetItem function

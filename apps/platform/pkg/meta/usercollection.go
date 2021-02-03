@@ -22,14 +22,10 @@ func (uc *UserCollection) GetItem(index int) loadable.Item {
 	return &(*uc)[index]
 }
 
-// AddItem function
-func (uc *UserCollection) AddItem(item loadable.Item) {
-	*uc = append(*uc, *item.(*User))
-}
-
 // NewItem function
 func (uc *UserCollection) NewItem() loadable.Item {
-	return &User{}
+	*uc = append(*uc, User{})
+	return &(*uc)[len(*uc)-1]
 }
 
 // Loop function

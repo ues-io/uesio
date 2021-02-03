@@ -16,14 +16,10 @@ func (c *Collection) GetItem(index int) loadable.Item {
 	return &c.Data[index]
 }
 
-// AddItem function
-func (c *Collection) AddItem(item loadable.Item) {
-	c.Data = append(c.Data, *item.(*Item))
-}
-
 // NewItem function
 func (c *Collection) NewItem() loadable.Item {
-	return &Item{}
+	c.Data = append(c.Data, Item{})
+	return &c.Data[len(c.Data)-1]
 }
 
 // GetItems function

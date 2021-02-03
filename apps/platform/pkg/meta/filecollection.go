@@ -23,17 +23,18 @@ func (fc *FileCollection) GetFields() []string {
 
 // NewItem function
 func (fc *FileCollection) NewItem() loadable.Item {
-	return &File{}
+	*fc = append(*fc, File{})
+	return &(*fc)[len(*fc)-1]
 }
 
-// NewBundleableItem function
-func (fc *FileCollection) NewBundleableItem() BundleableItem {
-	return &File{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (fc *FileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewFile(key)
+	f, err := NewFile(key)
+	if err != nil {
+		return nil, err
+	}
+	*fc = append(*fc, *f)
+	return &(*fc)[len(*fc)-1], nil
 }
 
 // GetKeyFromPath function
@@ -47,11 +48,6 @@ func (fc *FileCollection) GetKeyFromPath(path string, conditions BundleCondition
 		return "", nil
 	}
 	return parts[0], nil
-}
-
-// AddItem function
-func (fc *FileCollection) AddItem(item loadable.Item) {
-	*fc = append(*fc, *item.(*File))
 }
 
 // GetItem function

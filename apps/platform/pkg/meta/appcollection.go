@@ -22,14 +22,10 @@ func (ac *AppCollection) GetItem(index int) loadable.Item {
 	return &(*ac)[index]
 }
 
-// AddItem function
-func (ac *AppCollection) AddItem(item loadable.Item) {
-	*ac = append(*ac, *item.(*App))
-}
-
 // NewItem function
 func (ac *AppCollection) NewItem() loadable.Item {
-	return &App{}
+	*ac = append(*ac, App{})
+	return &(*ac)[len(*ac)-1]
 }
 
 // Loop function

@@ -22,34 +22,26 @@ func (vc *ViewCollection) GetFields() []string {
 
 // NewItem function
 func (vc *ViewCollection) NewItem() loadable.Item {
-	return &View{}
+	*vc = append(*vc, View{})
+	return &(*vc)[len(*vc)-1]
 }
 
-// NewBundleableItem function
-func (vc *ViewCollection) NewBundleableItem() BundleableItem {
-	return &View{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (vc *ViewCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid View Key: " + key)
 	}
-	return &View{
+	*vc = append(*vc, View{
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
-	}, nil
+	})
+	return &(*vc)[len(*vc)-1], nil
 }
 
 // GetKeyFromPath function
 func (vc *ViewCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (vc *ViewCollection) AddItem(item loadable.Item) {
-	*vc = append(*vc, *item.(*View))
 }
 
 // GetItem function

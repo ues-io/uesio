@@ -19,27 +19,23 @@ func (dsc *DataSourceCollection) GetFields() []string {
 
 // NewItem function
 func (dsc *DataSourceCollection) NewItem() loadable.Item {
-	return &DataSource{}
+	*dsc = append(*dsc, DataSource{})
+	return &(*dsc)[len(*dsc)-1]
 }
 
-// NewBundleableItem function
-func (dsc *DataSourceCollection) NewBundleableItem() BundleableItem {
-	return &DataSource{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (dsc *DataSourceCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewDataSource(key)
+	ds, err := NewDataSource(key)
+	if err != nil {
+		return nil, err
+	}
+	*dsc = append(*dsc, *ds)
+	return &(*dsc)[len(*dsc)-1], nil
 }
 
 // GetKeyFromPath function
 func (dsc *DataSourceCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (dsc *DataSourceCollection) AddItem(item loadable.Item) {
-	*dsc = append(*dsc, *item.(*DataSource))
 }
 
 // GetItem function

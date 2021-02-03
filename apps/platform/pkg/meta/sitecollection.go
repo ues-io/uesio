@@ -22,14 +22,10 @@ func (sc *SiteCollection) GetItem(index int) loadable.Item {
 	return &(*sc)[index]
 }
 
-// AddItem function
-func (sc *SiteCollection) AddItem(item loadable.Item) {
-	*sc = append(*sc, *item.(*Site))
-}
-
 // NewItem function
 func (sc *SiteCollection) NewItem() loadable.Item {
-	return &Site{}
+	*sc = append(*sc, Site{})
+	return &(*sc)[len(*sc)-1]
 }
 
 // Loop function

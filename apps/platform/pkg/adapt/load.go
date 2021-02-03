@@ -140,6 +140,5 @@ func HydrateItem(
 		}
 	}
 
-	op.Collection.AddItem(item)
 	return nil
 }
