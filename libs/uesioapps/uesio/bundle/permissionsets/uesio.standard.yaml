@@ -45,6 +45,7 @@ views:
   uesio.newpermissionset: true
   uesio.profile: true
   uesio.newprofile: true
+  uesio.installedbundle: true
 routes:
   uesio.login: true
   uesio.field: true
@@ -87,6 +88,7 @@ routes:
   uesio.newpermissionset: true
   uesio.profile: true
   uesio.newprofile: true
+  uesio.installedbundle: true
 files:
   uesio.logo: true
   uesio.logosmall: true

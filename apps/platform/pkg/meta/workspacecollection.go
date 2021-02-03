@@ -14,7 +14,7 @@ func (wc *WorkspaceCollection) GetName() string {
 
 // GetFields function
 func (wc *WorkspaceCollection) GetFields() []string {
-	return StandardGetFields(wc)
+	return StandardGetFields(&Workspace{})
 }
 
 // GetItem function

@@ -2,6 +2,7 @@ package datasource
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -57,7 +58,11 @@ func getMetadataForLoad(
 					lookupCollectionKey = op.CollectionName
 				}
 			}
-			err := collections.AddField(lookupCollectionKey, condition.LookupField, nil)
+			lookupFields := strings.Split(condition.LookupField, "->")
+			lookupField, rest := lookupFields[0], lookupFields[1:]
+			subFields := getAdditionalLookupFields(rest)
+
+			err := collections.AddField(lookupCollectionKey, lookupField, &subFields)
 			if err != nil {
 				return fmt.Errorf("lookup field: %v", err)
 			}
@@ -67,6 +72,16 @@ func getMetadataForLoad(
 
 	return collections.Load(op, metadataResponse, session)
 
+}
+
+func getAdditionalLookupFields(fields []string) FieldsMap {
+	if len(fields) == 0 {
+		return FieldsMap{}
+	}
+	first, rest := fields[0], fields[1:]
+	return FieldsMap{
+		first: getAdditionalLookupFields(rest),
+	}
 }
 
 // Load function
@@ -179,6 +194,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 					return nil, err
 				}
 
+				index := 0
 				err = op.Collection.Loop(func(item loadable.Item) error {
 					for _, reference := range referencedCol.ReferenceFields {
 						refInterface, err := item.GetField(reference.GetFullName())
@@ -195,8 +211,9 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 						if err != nil {
 							return err
 						}
-						referencedCol.AddID(value, item)
+						referencedCol.AddID(value, index)
 					}
+					index++
 					return nil
 				})
 				if err != nil {
@@ -205,7 +222,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 
 				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
 					return adapter.Load(ops, &metadataResponse, credentials)
-				}, adapt.ReferenceRegistry{
+				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})
 				if err != nil {

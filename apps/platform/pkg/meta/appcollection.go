@@ -14,7 +14,7 @@ func (ac *AppCollection) GetName() string {
 
 // GetFields function
 func (ac *AppCollection) GetFields() []string {
-	return StandardGetFields(ac)
+	return StandardGetFields(&App{})
 }
 
 // GetItem function

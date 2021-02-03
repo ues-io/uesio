@@ -14,7 +14,7 @@ func (bjc *BulkJobCollection) GetName() string {
 
 // GetFields function
 func (bjc *BulkJobCollection) GetFields() []string {
-	return StandardGetFields(bjc)
+	return StandardGetFields(&BulkJob{})
 }
 
 // GetItem function

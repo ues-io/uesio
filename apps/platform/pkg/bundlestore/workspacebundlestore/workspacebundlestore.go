@@ -94,8 +94,33 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
-	err := datasource.PlatformLoad(
+	err := datasource.PlatformLoadWithFields(
 		&bdc,
+		[]adapt.LoadRequestField{
+			{
+				ID: "uesio.id",
+			},
+			{
+				ID: "uesio.workspaceid",
+			},
+			{
+				ID: "uesio.bundle",
+				Fields: []adapt.LoadRequestField{
+					{
+						ID: "uesio.namespace",
+					},
+					{
+						ID: "uesio.major",
+					},
+					{
+						ID: "uesio.minor",
+					},
+					{
+						ID: "uesio.patch",
+					},
+				},
+			},
+		},
 		[]adapt.LoadRequestCondition{
 			{
 				Field:    "uesio.workspaceid",
@@ -111,10 +136,10 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	if len(bdc) != 0 {
 		by.Dependencies = map[string]meta.BundleDefDep{}
 	}
-	for _, bd := range bdc {
+	for i := range bdc {
 		// TODO: Possibly recurse here to get sub dependencies
-		by.Dependencies[bd.BundleName] = meta.BundleDefDep{
-			Version: bd.BundleVersion,
+		by.Dependencies[bdc[i].GetBundleName()] = meta.BundleDefDep{
+			Version: bdc[i].GetVersionString(),
 		}
 	}
 

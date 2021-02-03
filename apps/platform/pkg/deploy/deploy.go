@@ -180,17 +180,22 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 	if err != nil {
 		return err
 	}
-	if by.Dependencies != nil && len(by.Dependencies) != 0 {
-		for key := range by.Dependencies {
-			dep := by.Dependencies[key]
-			//TODO: Slow - probably should be batched
-			err = datasource.AddDependency(workspace, key, dep.Version, session)
-			if err != nil {
-				return err
-			}
-		}
+	deps := meta.BundleDependencyCollection{}
+	for key := range by.Dependencies {
+		dep := by.Dependencies[key]
+		deps = append(deps, meta.BundleDependency{
+			WorkspaceID: workspace,
+			Bundle: &meta.Bundle{
+				ID: key + "_" + dep.Version,
+			},
+		})
 	}
-	return nil
+	return datasource.PlatformSave(datasource.PlatformSaveRequest{
+		Collection: &deps,
+		Options: &adapt.SaveOptions{
+			Upsert: &adapt.UpsertOptions{},
+		},
+	}, session)
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

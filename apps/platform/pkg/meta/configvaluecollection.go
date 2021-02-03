@@ -14,7 +14,7 @@ func (cvc *ConfigValueCollection) GetName() string {
 
 // GetFields function
 func (cvc *ConfigValueCollection) GetFields() []string {
-	return StandardGetFields(cvc)
+	return StandardGetFields(&ConfigValue{})
 }
 
 // NewItem function

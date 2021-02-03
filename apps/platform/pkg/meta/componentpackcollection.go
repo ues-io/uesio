@@ -18,7 +18,7 @@ func (cpc *ComponentPackCollection) GetName() string {
 
 // GetFields function
 func (cpc *ComponentPackCollection) GetFields() []string {
-	return StandardGetFields(cpc)
+	return StandardGetFields(&ComponentPack{})
 }
 
 // NewItem function

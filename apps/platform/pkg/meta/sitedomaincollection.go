@@ -14,7 +14,7 @@ func (sdc *SiteDomainCollection) GetName() string {
 
 // GetFields function
 func (sdc *SiteDomainCollection) GetFields() []string {
-	return StandardGetFields(sdc)
+	return StandardGetFields(&SiteDomain{})
 }
 
 // GetItem function

@@ -87,6 +87,7 @@ func HydrateItem(
 	fieldMap *FieldsMap,
 	references *ReferenceRegistry,
 	itemID string,
+	index int,
 	dataFunc DataFunc,
 ) error {
 	item := op.Collection.NewItem()
@@ -121,7 +122,7 @@ func HydrateItem(
 					return err
 				}
 			} else {
-				reference.AddID(fieldData, item)
+				reference.AddID(fieldData, index)
 			}
 			continue
 		}

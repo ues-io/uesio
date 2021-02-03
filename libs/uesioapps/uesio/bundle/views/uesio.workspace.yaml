@@ -2,17 +2,6 @@ name: workspace
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: uesio.workspaces
       fields:
@@ -27,6 +16,19 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: workspacename
+    installedapps:
+      collection: uesio.bundledependencies
+      fields:
+        uesio.id:
+        uesio.bundle:
+          fields:
+            uesio.namespace:
+            uesio.major:
+            uesio.minor:
+            uesio.patch:
+      conditions:
+        - field: uesio.workspaceid
+          value: $Param{appname}_$Param{workspacename}
   # Components are how we describe the layout of our view
   components:
     - uesio.view:
@@ -225,3 +227,47 @@ definition:
                                                             namespace: "uesio"
                                   - material.field:
                                       fieldId: uesio.name
+                            - material.grid:
+                                justify: space-between
+                                alignitems: center
+                                items:
+                                  - material.griditem:
+                                      components:
+                                        - material.typography:
+                                            text: Installed Bundles
+                                            variant: h5
+                                  - material.griditem:
+                                      components:
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  color: "primary"
+                                                  variant: "outlined"
+                                                  text: "Browse Bundle Store"
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                      namespace: "uesio"
+                            - material.deck:
+                                xs: 3
+                                margin: 0
+                                id: installedDeck
+                                wire: installedapps
+                                mode: READ
+                                components:
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "primary"
+                                        height: 10px
+                                      margin: 1
+                                      components:
+                                        - material.typography:
+                                            text: ${["uesio.bundle"]["uesio.namespace"]}
+                                        - material.typography:
+                                            text: v${["uesio.bundle"]["uesio.major"]}.${["uesio.bundle"]["uesio.minor"]}.${["uesio.bundle"]["uesio.patch"]}
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${uesio.id}"
+                                          namespace: "uesio"

@@ -11,7 +11,6 @@ func GetConditionValue(
 	metadata *MetadataCache,
 	ops []LoadOp,
 ) (interface{}, error) {
-	var conditionValue interface{}
 	if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
 		// Look through the previous wires to find the one to look up on.
@@ -26,23 +25,9 @@ func GetConditionValue(
 			return nil, errors.New("Must lookup on wires with only one record")
 		}
 
-		lookupCollectionMetadata, err := metadata.GetCollection(lookupOp.CollectionName)
-		if err != nil {
-			return nil, err
-		}
+		return lookupOp.Collection.GetItem(0).GetField(condition.LookupField)
 
-		lookupFieldMetadata, err := lookupCollectionMetadata.GetField(condition.LookupField)
-		if err != nil {
-			return nil, err
-		}
-
-		conditionValue, err = lookupOp.Collection.GetItem(0).GetField(lookupFieldMetadata.GetFullName())
-		if err != nil {
-			return nil, err
-		}
-
-	} else {
-		conditionValue = condition.Value
 	}
-	return conditionValue, nil
+
+	return condition.Value, nil
 }

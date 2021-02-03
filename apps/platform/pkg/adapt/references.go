@@ -1,26 +1,24 @@
 package adapt
 
-import (
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
-)
+import "github.com/thecloudmasters/uesio/pkg/meta/loadable"
 
 // ReferenceRequest type
 type ReferenceRequest struct {
 	Fields          []LoadRequestField
 	Metadata        *CollectionMetadata
 	ReferenceFields FieldsMap
-	IDs             map[string][]loadable.Item
+	IDs             map[string][]int
 }
 
 // AddID function
-func (rr *ReferenceRequest) AddID(value interface{}, item loadable.Item) {
+func (rr *ReferenceRequest) AddID(value interface{}, index int) {
 	foreignKeyValueAsString, ok := value.(string)
 	if ok {
 		items, ok := rr.IDs[foreignKeyValueAsString]
 		if !ok {
-			rr.IDs[foreignKeyValueAsString] = []loadable.Item{}
+			rr.IDs[foreignKeyValueAsString] = []int{}
 		}
-		rr.IDs[foreignKeyValueAsString] = append(items, item)
+		rr.IDs[foreignKeyValueAsString] = append(items, index)
 	}
 }
 
@@ -41,7 +39,7 @@ type ReferenceRegistry map[string]*ReferenceRequest
 func (rr *ReferenceRegistry) Add(collectionKey string) {
 	(*rr)[collectionKey] = &ReferenceRequest{
 		ReferenceFields: FieldsMap{},
-		IDs:             map[string][]loadable.Item{},
+		IDs:             map[string][]int{},
 		Fields:          []LoadRequestField{},
 	}
 }
@@ -65,6 +63,7 @@ func IsReference(fieldType string) bool {
 
 func HandleReferences(
 	loader Loader,
+	collection loadable.Group,
 	referencedCollections ReferenceRegistry,
 ) error {
 	ops := []LoadOp{}
@@ -90,7 +89,9 @@ func HandleReferences(
 			WireName: "ReferenceLoad",
 			Collection: &ReferenceCollection{
 				ReferencedCollection: ref,
+				Collection:           collection,
 				CollectionMetadata:   collectionMetadata,
+				NewCollection:        Collection{},
 			},
 			CollectionName: collectionName,
 			Conditions: []LoadRequestCondition{

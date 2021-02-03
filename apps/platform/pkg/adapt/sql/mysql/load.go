@@ -129,6 +129,8 @@ func loadOne(
 	colvals := make([]sql.RawBytes, len(cols))
 	scanArgs := make([]interface{}, len(colvals))
 
+	index := 0
+
 	for rows.Next() {
 		for i := range colvals {
 			scanArgs[i] = &colvals[i]
@@ -137,7 +139,7 @@ func loadOne(
 			return errors.New("Failed to scan values in MySQL:" + err.Error())
 		}
 
-		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", index, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 
 			sqlFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
@@ -173,12 +175,13 @@ func loadOne(
 		if err != nil {
 			return err
 		}
+		index++
 	}
 	rows.Close()
 
 	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
 		return loadMany(ctx, db, ops, metadata)
-	}, referencedCollections)
+	}, op.Collection, referencedCollections)
 }
 
 // Load function

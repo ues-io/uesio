@@ -114,6 +114,7 @@ func loadOne(
 		}
 	}
 
+	index := 0
 	iter := query.Documents(ctx)
 	defer iter.Stop()
 	for {
@@ -125,7 +126,7 @@ func loadOne(
 			return errors.New("Failed to iterate:" + err.Error())
 		}
 
-		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, doc.Ref.ID, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, doc.Ref.ID, index, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 			firestoreFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
 				return nil, err
@@ -135,6 +136,14 @@ func loadOne(
 		if err != nil {
 			return err
 		}
+		index++
+	}
+
+	err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+		return loadMany(ctx, client, ops, metadata)
+	}, op.Collection, referencedCollections)
+	if err != nil {
+		return err
 	}
 
 	if !useNativeOrdering {
@@ -153,9 +162,7 @@ func loadOne(
 
 	}
 
-	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-		return loadMany(ctx, client, ops, metadata)
-	}, referencedCollections)
+	return nil
 }
 
 // Load function

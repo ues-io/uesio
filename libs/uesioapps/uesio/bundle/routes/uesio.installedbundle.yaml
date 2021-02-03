@@ -1,0 +1,4 @@
+name: installedbundle
+path: app/{appname}/workspace/{workspacename}/installed/{bundledep}
+view: uesio.installedbundle
+theme: uesio.default

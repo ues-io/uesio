@@ -14,7 +14,7 @@ func (dsc *DataSourceCollection) GetName() string {
 
 // GetFields function
 func (dsc *DataSourceCollection) GetFields() []string {
-	return StandardGetFields(dsc)
+	return StandardGetFields(&DataSource{})
 }
 
 // NewItem function

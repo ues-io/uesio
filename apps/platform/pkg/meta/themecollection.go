@@ -17,7 +17,7 @@ func (tc *ThemeCollection) GetName() string {
 
 // GetFields function
 func (tc *ThemeCollection) GetFields() []string {
-	return StandardGetFields(tc)
+	return StandardGetFields(&Theme{})
 }
 
 // NewItem function

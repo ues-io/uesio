@@ -19,22 +19,33 @@ func (bc *BotCollection) GetName() string {
 
 // GetFields function
 func (bc *BotCollection) GetFields() []string {
-	return StandardGetFields(bc)
+	return StandardGetFields(&Bot{})
 }
 
 // NewItem function
 func (bc *BotCollection) NewItem() loadable.Item {
-	return &Bot{}
+	// These are different from most of the New Item Funcions
+	// Because I'm testing an approach that does less memory allocations
+	*bc = append(*bc, Bot{})
+	return &(*bc)[len(*bc)-1]
 }
 
 // NewBundleableItem function
 func (bc *BotCollection) NewBundleableItem() BundleableItem {
-	return &Bot{}
+	// These are different from most of the New Item Funcions
+	// Because I'm testing an approach that does less memory allocations
+	*bc = append(*bc, Bot{})
+	return &(*bc)[len(*bc)-1]
 }
 
 // NewBundleableItemWithKey function
 func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewBot(key)
+	bot, err := NewBot(key)
+	if err != nil {
+		return nil, err
+	}
+	*bc = append(*bc, *bot)
+	return &(*bc)[len(*bc)-1], nil
 }
 
 // GetKeyFromPath function
@@ -77,7 +88,9 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 
 // AddItem function
 func (bc *BotCollection) AddItem(item loadable.Item) {
-	*bc = append(*bc, *item.(*Bot))
+	// These are different from most of the New Item Funcions
+	// Because I'm testing an approach that does less memory allocations
+	//*bc = append(*bc, *item.(*Bot))
 }
 
 // GetItem function

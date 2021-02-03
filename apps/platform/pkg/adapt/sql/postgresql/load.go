@@ -138,6 +138,8 @@ func loadOne(
 
 	colvals := make([]interface{}, len(cols))
 
+	index := 0
+
 	for rows.Next() {
 		for i := range colvals {
 			colvals[i] = new(interface{})
@@ -146,7 +148,7 @@ func loadOne(
 			return errors.New("Failed to scan values in PostgreSQL:" + err.Error())
 		}
 
-		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+		err = adapt.HydrateItem(op, collectionMetadata, &fieldMap, &referencedCollections, "", index, func(fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 
 			sqlFieldName, err := getDBFieldName(fieldMetadata)
 			if err != nil {
@@ -185,13 +187,14 @@ func loadOne(
 		if err != nil {
 			return err
 		}
+		index++
 
 	}
 	rows.Close()
 
 	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
 		return loadMany(ctx, db, ops, metadata)
-	}, referencedCollections)
+	}, op.Collection, referencedCollections)
 }
 
 // Load function

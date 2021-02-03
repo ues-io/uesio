@@ -17,7 +17,7 @@ func (vc *ViewCollection) GetName() string {
 
 // GetFields function
 func (vc *ViewCollection) GetFields() []string {
-	return StandardGetFields(vc)
+	return StandardGetFields(&View{})
 }
 
 // NewItem function

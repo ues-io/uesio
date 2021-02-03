@@ -30,6 +30,16 @@ func NewRecordNotFoundError(message string) *RecordNotFoundError {
 	}
 }
 
+func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
+	fields := []adapt.LoadRequestField{}
+	for _, field := range fieldStrings {
+		fields = append(fields, adapt.LoadRequestField{
+			ID: field,
+		})
+	}
+	return fields
+}
+
 // PlatformLoads function
 func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 
@@ -47,12 +57,11 @@ func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 
 // PlatformLoad function
 func PlatformLoad(group meta.CollectionableGroup, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
-	fields := []adapt.LoadRequestField{}
-	for _, field := range group.GetFields() {
-		fields = append(fields, adapt.LoadRequestField{
-			ID: field,
-		})
-	}
+	return PlatformLoadWithFields(group, GetLoadRequestFields(group.GetFields()), conditions, session)
+}
+
+// PlatformLoadWithFields function
+func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	return PlatformLoads([]adapt.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",

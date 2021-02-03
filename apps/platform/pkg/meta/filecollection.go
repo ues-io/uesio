@@ -18,7 +18,7 @@ func (fc *FileCollection) GetName() string {
 
 // GetFields function
 func (fc *FileCollection) GetFields() []string {
-	return StandardGetFields(fc)
+	return StandardGetFields(&File{})
 }
 
 // NewItem function

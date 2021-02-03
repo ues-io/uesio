@@ -14,7 +14,7 @@ func (cc *CollectionCollection) GetName() string {
 
 // GetFields function
 func (cc *CollectionCollection) GetFields() []string {
-	return StandardGetFields(cc)
+	return StandardGetFields(&Collection{})
 }
 
 // NewBundleableItem function

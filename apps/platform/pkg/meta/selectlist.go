@@ -13,6 +13,8 @@ type SelectList struct {
 	Namespace string             `yaml:"-" uesio:"-"`
 	Options   []SelectListOption `yaml:"options" uesio:"uesio.options"`
 	Workspace string             `yaml:"-" uesio:"uesio.workspaceid"`
+	Updated   int64              `yaml:"-" uesio:"uesio.updated"`
+	Created   int64              `yaml:"-" uesio:"uesio.created"`
 }
 
 // GetCollectionName function

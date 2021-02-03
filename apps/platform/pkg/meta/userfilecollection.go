@@ -37,7 +37,7 @@ func (ufc *UserFileCollection) GetFileSource() string {
 
 // GetPath function
 func (ufc *UserFileCollection) GetFilePath(userFile *UserFileMetadata, siteID, workspaceID string) (string, error) {
-	template, err := templating.New(ufc.PathFormat)
+	template, err := templating.NewRequiredKey(ufc.PathFormat)
 	if err != nil {
 		return "", err
 	}

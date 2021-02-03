@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 func reflectValue(obj interface{}) reflect.Value {
@@ -17,23 +18,31 @@ func reflectValue(obj interface{}) reflect.Value {
 // be a structure or pointer to structure.
 func GetField(obj interface{}, name string) (interface{}, error) {
 
-	objValue := reflectValue(obj)
-	objKind := objValue.Kind()
-	objType := objValue.Type()
-	if objKind != reflect.Struct && objKind != reflect.Ptr {
-		return nil, errors.New("Cannot use GetField on a non-struct interface")
+	// Split the field name into tokens
+	names := strings.Split(name, "->")
+
+	for _, name := range names {
+
+		objValue := reflectValue(obj)
+		objKind := objValue.Kind()
+		objType := objValue.Type()
+		if objKind != reflect.Struct && objKind != reflect.Ptr {
+			return nil, errors.New("Cannot use GetField on a non-struct interface")
+		}
+
+		fieldName, err := getFieldName(objType, name)
+		if err != nil {
+			return nil, err
+		}
+
+		obj, err = getFieldReflect(objValue.FieldByName(fieldName))
+		if err != nil {
+			return nil, fmt.Errorf("%v: %s", err, name)
+		}
 	}
 
-	fieldName, err := getFieldName(objType, name)
-	if err != nil {
-		return nil, err
-	}
+	return obj, nil
 
-	value, err := getFieldReflect(objValue.FieldByName(fieldName))
-	if err != nil {
-		return nil, fmt.Errorf("%v: %s", err, name)
-	}
-	return value, nil
 }
 
 func getSlice(from reflect.Value) (interface{}, error) {
@@ -69,6 +78,13 @@ func getStruct(from reflect.Value) (interface{}, error) {
 	return returnMap, nil
 }
 
+func getPointer(from reflect.Value) (interface{}, error) {
+	if from.IsNil() {
+		return nil, nil
+	}
+	return getFieldReflect(from.Elem())
+}
+
 func getFieldReflect(value reflect.Value) (interface{}, error) {
 
 	if !value.IsValid() {
@@ -80,6 +96,8 @@ func getFieldReflect(value reflect.Value) (interface{}, error) {
 		return getSlice(value)
 	case reflect.Struct:
 		return getStruct(value)
+	case reflect.Ptr:
+		return getPointer(value)
 	}
 
 	return value.Interface(), nil
