@@ -19,27 +19,23 @@ func (cvc *ConfigValueCollection) GetFields() []string {
 
 // NewItem function
 func (cvc *ConfigValueCollection) NewItem() loadable.Item {
-	return &ConfigValue{}
+	*cvc = append(*cvc, ConfigValue{})
+	return &(*cvc)[len(*cvc)-1]
 }
 
-// NewBundleableItem function
-func (bc *ConfigValueCollection) NewBundleableItem() BundleableItem {
-	return &ConfigValue{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (cvc *ConfigValueCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewConfigValue(key)
+	cv, err := NewConfigValue(key)
+	if err != nil {
+		return nil, err
+	}
+	*cvc = append(*cvc, *cv)
+	return &(*cvc)[len(*cvc)-1], nil
 }
 
 // GetKeyFromPath function
 func (cvc *ConfigValueCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (cvc *ConfigValueCollection) AddItem(item loadable.Item) {
-	*cvc = append(*cvc, *item.(*ConfigValue))
 }
 
 // GetItem function

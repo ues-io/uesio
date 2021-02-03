@@ -1,6 +1,9 @@
 package adapt
 
-import "github.com/thecloudmasters/uesio/pkg/meta/loadable"
+import (
+	"github.com/jinzhu/copier"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
 
 // ReferenceRequest type
 type ReferenceRequest struct {
@@ -85,14 +88,9 @@ func HandleReferences(
 			},
 		})
 		ops = append(ops, LoadOp{
-			Fields:   ref.Fields,
-			WireName: "ReferenceLoad",
-			Collection: &ReferenceCollection{
-				ReferencedCollection: ref,
-				Collection:           collection,
-				CollectionMetadata:   collectionMetadata,
-				NewCollection:        Collection{},
-			},
+			Fields:         ref.Fields,
+			WireName:       "ReferenceLoad",
+			Collection:     &Collection{},
 			CollectionName: collectionName,
 			Conditions: []LoadRequestCondition{
 				{
@@ -103,5 +101,58 @@ func HandleReferences(
 			},
 		})
 	}
-	return loader(ops)
+	err := loader(ops)
+	if err != nil {
+		return nil
+	}
+
+	for i := range ops {
+		op := ops[i]
+		referencedCollection := referencedCollections[op.CollectionName]
+		err := op.Collection.Loop(func(refItem loadable.Item) error {
+			refFK, err := refItem.GetField(referencedCollection.Metadata.IDField)
+			if err != nil {
+				return err
+			}
+
+			refFKAsString, ok := refFK.(string)
+			if !ok {
+				//Was unable to convert foreign key to a string!
+				//Something has gone sideways!
+				return err
+			}
+
+			if refFKAsString == "" {
+				return nil
+			}
+
+			matchIndexes, ok := referencedCollection.IDs[refFKAsString]
+			if !ok {
+				return nil
+			}
+
+			for _, index := range matchIndexes {
+				for _, reference := range referencedCollection.ReferenceFields {
+					referenceValue := Item{}
+
+					err = copier.Copy(&referenceValue, refItem)
+					if err != nil {
+						return err
+					}
+
+					item := collection.GetItem(index)
+					err = item.SetField(reference.GetFullName(), referenceValue)
+					if err != nil {
+						return err
+					}
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

@@ -19,27 +19,23 @@ func (rc *RouteCollection) GetFields() []string {
 
 // NewItem function
 func (rc *RouteCollection) NewItem() loadable.Item {
-	return &Route{}
+	*rc = append(*rc, Route{})
+	return &(*rc)[len(*rc)-1]
 }
 
-// NewBundleableItem function
-func (rc *RouteCollection) NewBundleableItem() BundleableItem {
-	return &Route{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (rc *RouteCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewRoute(key)
+	r, err := NewRoute(key)
+	if err != nil {
+		return nil, err
+	}
+	*rc = append(*rc, *r)
+	return &(*rc)[len(*rc)-1], nil
 }
 
 // GetKeyFromPath function
 func (rc *RouteCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (rc *RouteCollection) AddItem(item loadable.Item) {
-	*rc = append(*rc, *item.(*Route))
 }
 
 // GetItem function

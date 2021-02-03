@@ -22,34 +22,26 @@ func (tc *ThemeCollection) GetFields() []string {
 
 // NewItem function
 func (tc *ThemeCollection) NewItem() loadable.Item {
-	return &Theme{}
+	*tc = append(*tc, Theme{})
+	return &(*tc)[len(*tc)-1]
 }
 
-// NewBundleableItem function
-func (tc *ThemeCollection) NewBundleableItem() BundleableItem {
-	return &Theme{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (tc *ThemeCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid Theme Key: " + key)
 	}
-	return &Theme{
+	*tc = append(*tc, Theme{
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
-	}, nil
+	})
+	return &(*tc)[len(*tc)-1], nil
 }
 
 // GetKeyFromPath function
 func (tc *ThemeCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (tc *ThemeCollection) AddItem(item loadable.Item) {
-	*tc = append(*tc, *item.(*Theme))
 }
 
 // GetItem function

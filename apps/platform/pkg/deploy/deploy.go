@@ -106,7 +106,6 @@ func Deploy(body []byte, session *sess.Session) error {
 			}
 
 			collectionItem.SetWorkspace(workspace)
-			collection.AddItem(collectionItem)
 			continue
 		}
 

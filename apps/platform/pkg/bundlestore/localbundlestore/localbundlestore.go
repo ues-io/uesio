@@ -108,8 +108,6 @@ func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, versi
 			}
 			return err
 		}
-
-		group.AddItem(retrievedItem)
 	}
 
 	return nil

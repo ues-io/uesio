@@ -15,14 +15,9 @@ func (c *WorkspaceLoadCollection) GetItem(index int) loadable.Item {
 	return c.Collection.GetItem(index)
 }
 
-// AddItem function
-func (c *WorkspaceLoadCollection) AddItem(item loadable.Item) {
-	c.Collection.AddItem(item)
-}
-
 // NewItem function
 func (c *WorkspaceLoadCollection) NewItem() loadable.Item {
-	item := c.Collection.NewBundleableItem()
+	item := c.Collection.NewItem().(meta.BundleableItem)
 	item.SetNamespace(c.Namespace)
 	return item
 }

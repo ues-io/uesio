@@ -24,16 +24,6 @@ func (bc *BotCollection) GetFields() []string {
 
 // NewItem function
 func (bc *BotCollection) NewItem() loadable.Item {
-	// These are different from most of the New Item Funcions
-	// Because I'm testing an approach that does less memory allocations
-	*bc = append(*bc, Bot{})
-	return &(*bc)[len(*bc)-1]
-}
-
-// NewBundleableItem function
-func (bc *BotCollection) NewBundleableItem() BundleableItem {
-	// These are different from most of the New Item Funcions
-	// Because I'm testing an approach that does less memory allocations
 	*bc = append(*bc, Bot{})
 	return &(*bc)[len(*bc)-1]
 }
@@ -84,13 +74,6 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		return filepath.Join(botType, parts[1], parts[2]), nil
 	}
 	return "", errors.New("Bad bundle conditions for bot: " + path)
-}
-
-// AddItem function
-func (bc *BotCollection) AddItem(item loadable.Item) {
-	// These are different from most of the New Item Funcions
-	// Because I'm testing an approach that does less memory allocations
-	//*bc = append(*bc, *item.(*Bot))
 }
 
 // GetItem function

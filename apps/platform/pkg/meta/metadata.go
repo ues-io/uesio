@@ -30,7 +30,6 @@ type CollectionableItem interface {
 type BundleableGroup interface {
 	CollectionableGroup
 	GetKeyFromPath(string, BundleConditions) (string, error)
-	NewBundleableItem() BundleableItem
 	NewBundleableItemWithKey(key string) (BundleableItem, error)
 }
 

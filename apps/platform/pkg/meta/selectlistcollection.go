@@ -22,34 +22,26 @@ func (slc *SelectListCollection) GetFields() []string {
 
 // NewItem function
 func (slc *SelectListCollection) NewItem() loadable.Item {
-	return &SelectList{}
+	*slc = append(*slc, SelectList{})
+	return &(*slc)[len(*slc)-1]
 }
 
-// NewBundleableItem function
-func (slc *SelectListCollection) NewBundleableItem() BundleableItem {
-	return &SelectList{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (slc *SelectListCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid SelectList Key: " + key)
 	}
-	return &SelectList{
+	*slc = append(*slc, SelectList{
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
-	}, nil
+	})
+	return &(*slc)[len(*slc)-1], nil
 }
 
 // GetKeyFromPath function
 func (slc *SelectListCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (slc *SelectListCollection) AddItem(item loadable.Item) {
-	*slc = append(*slc, *item.(*SelectList))
 }
 
 // GetItem function

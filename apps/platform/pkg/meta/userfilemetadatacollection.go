@@ -17,14 +17,10 @@ func (ufmc *UserFileMetadataCollection) GetFields() []string {
 	return StandardGetFields(&UserFileMetadata{})
 }
 
-// AddItem function
-func (ufmc *UserFileMetadataCollection) AddItem(item loadable.Item) {
-	*ufmc = append(*ufmc, *item.(*UserFileMetadata))
-}
-
 // NewItem function
 func (ufmc *UserFileMetadataCollection) NewItem() loadable.Item {
-	return &UserFileMetadata{}
+	*ufmc = append(*ufmc, UserFileMetadata{})
+	return &(*ufmc)[len(*ufmc)-1]
 }
 
 // GetItem function

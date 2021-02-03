@@ -22,14 +22,10 @@ func (bc *BundleCollection) GetItem(index int) loadable.Item {
 	return &(*bc)[index]
 }
 
-// AddItem function
-func (bc *BundleCollection) AddItem(item loadable.Item) {
-	*bc = append(*bc, *item.(*Bundle))
-}
-
 // NewItem function
 func (bc *BundleCollection) NewItem() loadable.Item {
-	return &Bundle{}
+	*bc = append(*bc, Bundle{})
+	return &(*bc)[len(*bc)-1]
 }
 
 // Loop function

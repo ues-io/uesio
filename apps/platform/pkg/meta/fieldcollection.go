@@ -24,15 +24,11 @@ func (fc *FieldCollection) GetFields() []string {
 
 // NewItem function
 func (fc *FieldCollection) NewItem() loadable.Item {
-	return &Field{}
+	*fc = append(*fc, Field{})
+	return &(*fc)[len(*fc)-1]
 }
 
-// NewBundleableItem function
-func (fc *FieldCollection) NewBundleableItem() BundleableItem {
-	return &Field{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, string(os.PathSeparator))
 	if len(keyArray) != 2 {
@@ -42,11 +38,12 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 	if err != nil {
 		return nil, errors.New("Invalid Field Key: " + key)
 	}
-	return &Field{
+	*fc = append(*fc, Field{
 		CollectionRef: keyArray[0],
 		Namespace:     namespace,
 		Name:          name,
-	}, nil
+	})
+	return &(*fc)[len(*fc)-1], nil
 }
 
 // GetKeyFromPath function
@@ -63,11 +60,6 @@ func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditio
 		}
 	}
 	return filepath.Join(parts[0], strings.TrimSuffix(parts[1], ".yaml")), nil
-}
-
-// AddItem function
-func (fc *FieldCollection) AddItem(item loadable.Item) {
-	*fc = append(*fc, *item.(*Field))
 }
 
 // GetItem function

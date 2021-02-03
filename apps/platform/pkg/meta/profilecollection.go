@@ -19,27 +19,23 @@ func (pc *ProfileCollection) GetFields() []string {
 
 // NewItem function
 func (pc *ProfileCollection) NewItem() loadable.Item {
-	return &Profile{}
+	*pc = append(*pc, Profile{})
+	return &(*pc)[len(*pc)-1]
 }
 
-// NewBundleableItem function
-func (pc *ProfileCollection) NewBundleableItem() BundleableItem {
-	return &Profile{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (pc *ProfileCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewProfile(key)
+	p, err := NewProfile(key)
+	if err != nil {
+		return nil, err
+	}
+	*pc = append(*pc, *p)
+	return &(*pc)[len(*pc)-1], nil
 }
 
 // GetKeyFromPath function
 func (pc *ProfileCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (pc *ProfileCollection) AddItem(item loadable.Item) {
-	*pc = append(*pc, *item.(*Profile))
 }
 
 // GetItem function

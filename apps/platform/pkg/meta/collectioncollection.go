@@ -17,14 +17,14 @@ func (cc *CollectionCollection) GetFields() []string {
 	return StandardGetFields(&Collection{})
 }
 
-// NewBundleableItem function
-func (cc *CollectionCollection) NewBundleableItem() BundleableItem {
-	return &Collection{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (cc *CollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewCollection(key)
+	collection, err := NewCollection(key)
+	if err != nil {
+		return nil, err
+	}
+	*cc = append(*cc, *collection)
+	return &(*cc)[len(*cc)-1], nil
 }
 
 // GetKeyFromPath function
@@ -32,14 +32,10 @@ func (cc *CollectionCollection) GetKeyFromPath(path string, conditions BundleCon
 	return StandardKeyFromPath(path, conditions)
 }
 
-// AddItem function
-func (cc *CollectionCollection) AddItem(item loadable.Item) {
-	*cc = append(*cc, *item.(*Collection))
-}
-
 // NewItem function
 func (cc *CollectionCollection) NewItem() loadable.Item {
-	return &Collection{}
+	*cc = append(*cc, Collection{})
+	return &(*cc)[len(*cc)-1]
 }
 
 // GetItem function

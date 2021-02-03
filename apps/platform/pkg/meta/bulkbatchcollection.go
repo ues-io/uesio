@@ -22,14 +22,10 @@ func (bbc *BulkBatchCollection) GetItem(index int) loadable.Item {
 	return &(*bbc)[index]
 }
 
-// AddItem function
-func (bbc *BulkBatchCollection) AddItem(item loadable.Item) {
-	*bbc = append(*bbc, *item.(*BulkBatch))
-}
-
 // NewItem function
 func (bbc *BulkBatchCollection) NewItem() loadable.Item {
-	return &BulkBatch{}
+	*bbc = append(*bbc, BulkBatch{})
+	return &(*bbc)[len(*bbc)-1]
 }
 
 // Loop function

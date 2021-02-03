@@ -23,24 +23,21 @@ func (cpc *ComponentPackCollection) GetFields() []string {
 
 // NewItem function
 func (cpc *ComponentPackCollection) NewItem() loadable.Item {
-	return &ComponentPack{}
+	*cpc = append(*cpc, ComponentPack{})
+	return &(*cpc)[len(*cpc)-1]
 }
 
-// NewBundleableItem function
-func (cpc *ComponentPackCollection) NewBundleableItem() BundleableItem {
-	return &ComponentPack{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (cpc *ComponentPackCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 	keyArray := strings.Split(key, ".")
 	if len(keyArray) != 2 {
 		return nil, errors.New("Invalid ComponentPack Key: " + key)
 	}
-	return &ComponentPack{
+	*cpc = append(*cpc, ComponentPack{
 		Namespace: keyArray[0],
 		Name:      keyArray[1],
-	}, nil
+	})
+	return &(*cpc)[len(*cpc)-1], nil
 }
 
 // GetKeyFromPath function
@@ -54,11 +51,6 @@ func (cpc *ComponentPackCollection) GetKeyFromPath(path string, conditions Bundl
 		return "", nil
 	}
 	return parts[0], nil
-}
-
-// AddItem function
-func (cpc *ComponentPackCollection) AddItem(item loadable.Item) {
-	*cpc = append(*cpc, *item.(*ComponentPack))
 }
 
 // GetItem function

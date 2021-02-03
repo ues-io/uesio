@@ -19,27 +19,23 @@ func (ufcc *UserFileCollectionCollection) GetFields() []string {
 
 // NewItem function
 func (ufcc *UserFileCollectionCollection) NewItem() loadable.Item {
-	return &UserFileCollection{}
+	*ufcc = append(*ufcc, UserFileCollection{})
+	return &(*ufcc)[len(*ufcc)-1]
 }
 
-// NewBundleableItem function
-func (ufcc *UserFileCollectionCollection) NewBundleableItem() BundleableItem {
-	return &UserFileCollection{}
-}
-
-// NewBundleableItem function
+// NewBundleableItemWithKey function
 func (ufcc *UserFileCollectionCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	return NewUserFileCollection(key)
+	ufc, err := NewUserFileCollection(key)
+	if err != nil {
+		return nil, err
+	}
+	*ufcc = append(*ufcc, *ufc)
+	return &(*ufcc)[len(*ufcc)-1], nil
 }
 
 // GetKeyFromPath function
 func (ufcc *UserFileCollectionCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	return StandardKeyFromPath(path, conditions)
-}
-
-// AddItem function
-func (ufcc *UserFileCollectionCollection) AddItem(item loadable.Item) {
-	*ufcc = append(*ufcc, *item.(*UserFileCollection))
 }
 
 // GetItem function

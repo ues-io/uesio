@@ -22,14 +22,10 @@ func (bjc *BulkJobCollection) GetItem(index int) loadable.Item {
 	return &(*bjc)[index]
 }
 
-// AddItem function
-func (bjc *BulkJobCollection) AddItem(item loadable.Item) {
-	*bjc = append(*bjc, *item.(*BulkJob))
-}
-
 // NewItem function
 func (bjc *BulkJobCollection) NewItem() loadable.Item {
-	return &BulkJob{}
+	*bjc = append(*bjc, BulkJob{})
+	return &(*bjc)[len(*bjc)-1]
 }
 
 // Loop function
