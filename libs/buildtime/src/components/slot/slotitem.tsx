@@ -6,7 +6,6 @@ import { makeStyles, createStyles } from "@material-ui/core"
 import { handleDrop, getDropIndex, isDropAllowed, isNextSlot } from "./dragdrop"
 
 interface SlotItemProps extends definition.BaseProps {
-	isStructureView: boolean
 	direction: string
 	size: number
 	accepts: string[]
@@ -42,6 +41,9 @@ const useStyles = makeStyles(() =>
 			},
 		},
 		structureView: {},
+		contentView: {
+			display: "contents",
+		},
 		isLast: {},
 		isDragging: {
 			"&$vertical::before": {
@@ -84,7 +86,6 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		dropNode,
 		accepts,
 		dragNode,
-		isStructureView,
 		definition,
 		size = 0,
 		index = 0,
@@ -98,6 +99,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const viewMode = uesio.builder.useView()
 	const isContentView = viewMode === "contentview"
+	const isStructureView = viewMode === "structureview"
 	const nodeState = uesio.builder.useNodeState(fullPath)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
@@ -115,6 +117,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 			[classes.isDragging]: dragNode,
 			[classes.placeHolder]: addPlaceholder,
 			[classes.structureView]: isStructureView,
+			[classes.contentView]: isContentView,
 			[classes.isLast]: isLast,
 		}
 	)
