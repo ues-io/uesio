@@ -101,6 +101,11 @@ func (v *View) SetWorkspace(workspace string) {
 	v.Workspace = workspace
 }
 
+// Loop function
+func (v *View) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(v, iter)
+}
+
 func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")

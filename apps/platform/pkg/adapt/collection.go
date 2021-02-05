@@ -1,35 +1,31 @@
 package adapt
 
 import (
-	"encoding/json"
-
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
 // Collection struct
-type Collection struct {
-	Data []Item `json:"data"`
-}
+type Collection []Item
 
 // GetItem function
 func (c *Collection) GetItem(index int) loadable.Item {
-	return &c.Data[index]
+	return &(*c)[index]
 }
 
 // NewItem function
 func (c *Collection) NewItem() loadable.Item {
-	c.Data = append(c.Data, Item{})
-	return &c.Data[len(c.Data)-1]
+	*c = append(*c, Item{})
+	return &(*c)[len(*c)-1]
 }
 
 // GetItems function
 func (c *Collection) GetItems() interface{} {
-	return c.Data
+	return *c
 }
 
 // Loop function
 func (c *Collection) Loop(iter func(item loadable.Item) error) error {
-	for index := range c.Data {
+	for index := range *c {
 		err := iter(c.GetItem(index))
 		if err != nil {
 			return err
@@ -40,15 +36,10 @@ func (c *Collection) Loop(iter func(item loadable.Item) error) error {
 
 // Len function
 func (c *Collection) Len() int {
-	return len(c.Data)
-}
-
-// MarshalJSON custom functionality
-func (c *Collection) MarshalJSON() ([]byte, error) {
-	return json.Marshal(c.Data)
+	return len(*c)
 }
 
 // Slice function
 func (c *Collection) Slice(start int, end int) {
-	c.Data = c.Data[start:end]
+	*c = (*c)[start:end]
 }

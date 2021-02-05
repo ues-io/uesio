@@ -2,7 +2,46 @@ package adapt
 
 import (
 	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
+
+// LoadOp type
+type LoadOp struct {
+	CollectionName        string                 `json:"collection"`
+	WireName              string                 `json:"wire"`
+	Collection            loadable.Group         `json:"data"`
+	Conditions            []LoadRequestCondition `json:"-"`
+	Fields                []LoadRequestField     `json:"-"`
+	Type                  string                 `json:"-"`
+	Order                 []LoadRequestOrder     `json:"-"`
+	Limit                 int                    `json:"-"`
+	Offset                int                    `json:"-"`
+	ReferencedCollections ReferenceRegistry      `json:"-"`
+}
+
+// LoadRequestField struct
+type LoadRequestField struct {
+	ID     string             `json:"id"`
+	Fields []LoadRequestField `json:"fields"`
+}
+
+// LoadRequestCondition struct
+type LoadRequestCondition struct {
+	Field       string      `json:"field"`
+	Value       interface{} `json:"value"`
+	ValueSource string      `json:"valueSource"`
+	Type        string      `json:"type"`
+	Operator    string      `json:"operator"`
+	LookupWire  string      `json:"lookupWire"`
+	LookupField string      `json:"lookupField"`
+}
+
+// LoadRequestOrder struct
+type LoadRequestOrder struct {
+	Field string `json:"field"`
+	Desc  bool   `json:"desc"`
+}
 
 // FieldsMap type
 type FieldsMap map[string]*FieldMetadata

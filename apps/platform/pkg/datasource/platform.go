@@ -2,11 +2,9 @@ package datasource
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -98,98 +96,41 @@ func PlatformLoadOne(item meta.CollectionableItem, conditions []adapt.LoadReques
 }
 
 // PlatformDelete function
-func PlatformDelete(collectionID string, request map[string]adapt.DeleteRequest, session *sess.Session) error {
-	requests := []adapt.SaveRequest{{
+func PlatformDelete(collectionID string, request meta.CollectionableGroup, session *sess.Session) error {
+	requests := []SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: "uesio." + collectionID,
 		Deletes:    request,
 	}}
-	_, err := Save(
-		SaveRequestBatch{
-			Wires: requests,
-		},
+	return Save(
+		requests,
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
 		session.RemoveWorkspaceContext(),
 	)
-
-	return err
 }
 
 // PlatformSaves function
 func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 
-	requests := []adapt.SaveRequest{}
+	requests := []SaveRequest{}
 
 	for _, psr := range psrs {
 		collection := psr.Collection
 		collectionName := collection.GetName()
 
-		changeRequests := map[string]adapt.ChangeRequest{}
-
-		index := 0
-
-		err := collection.Loop(func(item loadable.Item) error {
-			fieldChanges := map[string]interface{}{}
-			for _, field := range collection.GetFields() {
-				fieldValue, err := item.GetField(field)
-				if err != nil {
-					return err
-				}
-				fieldChanges[field] = fieldValue
-			}
-			changeRequests[strconv.Itoa(index)] = adapt.ChangeRequest{
-				FieldChanges: fieldChanges,
-			}
-			index++
-			return nil
-		})
-		if err != nil {
-			return err
-		}
-
-		requests = append(requests, adapt.SaveRequest{
+		requests = append(requests, SaveRequest{
 			Collection: "uesio." + collectionName,
 			Wire:       "AnyKey",
-			Changes:    changeRequests,
+			Changes:    collection,
 			Options:    psr.Options,
 		})
 	}
 
-	saveResponse, err := Save(
-		SaveRequestBatch{
-			Wires: requests,
-		},
+	return Save(
+		requests,
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
 		session.RemoveWorkspaceContext(),
 	)
-	if err != nil {
-		return err
-	}
-
-	for i, psr := range psrs {
-		collection := psr.Collection
-		wire := saveResponse.Wires[i]
-		for j := range wire.ChangeResults {
-			num, err := strconv.Atoi(j)
-			if err != nil {
-				return err
-			}
-			result, ok := wire.ChangeResults[j]
-			if !ok {
-				continue
-			}
-
-			item := collection.GetItem(num)
-			for fieldName, value := range result.Data {
-				err := item.SetField(fieldName, value)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-
-	return nil
 }
 
 // PlatformSave function

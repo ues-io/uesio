@@ -1,7 +1,6 @@
 package datasource
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -10,16 +9,20 @@ import (
 
 // AfterSaveAPI type
 type AfterSaveAPI struct {
-	Results *ResultsAPI `bot:"results"`
+	Changes *ChangesAPI `bot:"results"`
+	Deletes *DeletesAPI `bot:"deletes"`
 	errors  []string
 	session *sess.Session
 }
 
-func NewAfterSaveAPI(request *adapt.SaveRequest, response *adapt.SaveResponse, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
-		Results: &ResultsAPI{
-			results:  response.ChangeResults,
+		Changes: &ChangesAPI{
 			changes:  request.Changes,
+			metadata: metadata,
+		},
+		Deletes: &DeletesAPI{
+			deletes:  request.Deletes,
 			metadata: metadata,
 		},
 		session: session,
@@ -42,20 +45,12 @@ func (as *AfterSaveAPI) GetErrorString() string {
 }
 
 // Save function
-func (as *AfterSaveAPI) Save(collection string, changes []map[string]interface{}) (*SaveResponseBatch, error) {
-	changeRequestMap := map[string]adapt.ChangeRequest{}
-	for index, req := range changes {
-		changeRequestMap[strconv.Itoa(index)] = adapt.ChangeRequest{
-			FieldChanges: req,
-		}
-	}
-	return Save(SaveRequestBatch{
-		Wires: []adapt.SaveRequest{
-			{
-				Collection: collection,
-				Wire:       "apiaftersave",
-				Changes:    changeRequestMap,
-			},
+func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
+	return Save([]SaveRequest{
+		{
+			Collection: collection,
+			Wire:       "apiaftersave",
+			Changes:    &changes,
 		},
 	}, as.session)
 }

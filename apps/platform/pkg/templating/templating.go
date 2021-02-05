@@ -7,9 +7,6 @@ import (
 	"text/template"
 )
 
-// TemplateFunc type
-type TemplateFunc func(map[string]interface{}, string) (interface{}, error)
-
 const defaultTemplateKey = "__default__"
 
 // NewRequireKey function returns a template that requires keys and throws an error if they don't exist
@@ -24,12 +21,12 @@ func NewRequiredKey(templateString string) (*template.Template, error) {
 }
 
 // NewWithFunc function
-func NewWithFunc(templateString string, templateFunc TemplateFunc) (*template.Template, error) {
+func NewWithFunc(templateString string, templateFunc interface{}) (*template.Template, error) {
 	return NewWithFuncs(templateString, templateFunc, nil)
 }
 
 // NewWithFuncs function
-func NewWithFuncs(templateString string, defaultTemplateFunc TemplateFunc, templateFuncs map[string]TemplateFunc) (*template.Template, error) {
+func NewWithFuncs(templateString string, defaultTemplateFunc interface{}, templateFuncs map[string]interface{}) (*template.Template, error) {
 	if templateString == "" {
 		return nil, nil
 	}
@@ -52,10 +49,10 @@ func NewWithFuncs(templateString string, defaultTemplateFunc TemplateFunc, templ
 }
 
 // Execute function
-func Execute(tmpl *template.Template, change map[string]interface{}) (string, error) {
+func Execute(tmpl *template.Template, data interface{}) (string, error) {
 	if tmpl != nil {
 		var tpl bytes.Buffer
-		err := tmpl.Execute(&tpl, change)
+		err := tmpl.Execute(&tpl, data)
 		if err != nil {
 			return "", err
 		}

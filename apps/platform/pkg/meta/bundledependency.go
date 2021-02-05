@@ -46,3 +46,8 @@ func (b *BundleDependency) SetField(fieldName string, value interface{}) error {
 func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
+
+// Loop function
+func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(b, iter)
+}

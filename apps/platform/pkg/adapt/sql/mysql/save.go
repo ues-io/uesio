@@ -12,14 +12,13 @@ import (
 )
 
 // Save function
-func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCache, credentials *adapt.Credentials) ([]adapt.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 
 	ctx := context.Background()
-	response := []adapt.SaveResponse{}
 
 	db, err := connect()
 	if err != nil {
-		return nil, errors.New("Failed to connect to MySQL:" + err.Error())
+		return errors.New("Failed to connect to MySQL:" + err.Error())
 	}
 	defer db.Close()
 
@@ -27,24 +26,24 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 
 	for _, request := range requests {
 
-		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		idFieldMetadata, err := collectionMetadata.GetIDField()
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		idFieldDBName, err := getDBFieldName(idFieldMetadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// Sometimes we only have the name of something instead of its real id
@@ -53,10 +52,10 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			return loadMany(ctx, db, ops, metadata)
 		}, &request, metadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		changeResults, err := adapt.ProcessChanges(
+		err = adapt.ProcessChanges(
 			&request,
 			metadata,
 			// Update Func
@@ -113,10 +112,10 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			},
 		)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		deleteResults, err := adapt.ProcessDeletes(&request, metadata, func(dbID string) error {
+		err = adapt.ProcessDeletes(&request, metadata, func(dbID interface{}) error {
 			result, err := psql.Delete(collectionName).RunWith(db).Where(sq.Eq{
 				idFieldDBName: dbID,
 			}).Query()
@@ -126,15 +125,9 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			return result.Scan(dbID)
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
-
-		response = append(response, adapt.SaveResponse{
-			Wire:          request.Wire,
-			ChangeResults: changeResults,
-			DeleteResults: deleteResults,
-		})
 	}
 
-	return response, nil
+	return nil
 }

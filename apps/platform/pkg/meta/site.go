@@ -40,3 +40,8 @@ func (s *Site) SetField(fieldName string, value interface{}) error {
 func (s *Site) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(s, fieldName)
 }
+
+// Loop function
+func (s *Site) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(s, iter)
+}

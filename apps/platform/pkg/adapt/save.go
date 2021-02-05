@@ -4,45 +4,76 @@ import (
 	"errors"
 	"text/template"
 
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
+
+type SaveOp struct {
+	CollectionName string
+	WireName       string
+	Changes        ChangeItems
+	Deletes        ChangeItems
+	Options        *SaveOptions
+	Error          string
+}
+
+type ChangeItems []ChangeItem
+
+type ChangeItem struct {
+	FieldChanges loadable.Item
+	IsNew        bool
+	IDValue      interface{}
+	Error        string
+}
+
+// Lookup struct
+type Lookup struct {
+	RefField   string // The name of the reference field to lookup
+	MatchField string // The name of the field to use to match based on provided data
+}
+
+// UpsertOptions struct
+type UpsertOptions struct {
+	MatchField    string // The field to pull from the database to determine a match
+	MatchTemplate string // The template to use against the provided change data to equal the match field
+}
+
+// SaveOptions struct
+type SaveOptions struct {
+	Upsert  *UpsertOptions
+	Lookups []Lookup
+}
 
 type SearchFieldFunc func([]string) (string, interface{})
 
 type DefaultIDFunc func() string
 
-type DeleteFunc func(string) error
+type DeleteFunc func(interface{}) error
 
 type ChangeFunc func(interface{}, map[string]interface{}) error
 
 type SetDataFunc func(value interface{}, fieldMetadata *FieldMetadata) (interface{}, error)
 
 // ProcessDeletes function
-func ProcessDeletes(request *SaveRequest, metadata *MetadataCache, deleteFunc DeleteFunc) (map[string]ChangeResult, error) {
-	collectionMetadata, err := metadata.GetCollection(request.Collection)
+func ProcessDeletes(request *SaveOp, metadata *MetadataCache, deleteFunc DeleteFunc) error {
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	idFieldName := collectionMetadata.IDField
-	deleteResults := map[string]ChangeResult{}
-	for deleteID, delete := range request.Deletes {
-		deleteResult := ChangeResult{}
-		deleteResult.Data = map[string]interface{}{}
 
-		dbID, ok := delete[idFieldName].(string)
-		if ok {
-			err := deleteFunc(dbID)
-			if err != nil {
-				return nil, err
-			}
-			deleteResult.Data[idFieldName] = dbID
-		} else {
-			return nil, errors.New("No id provided for delete")
+	for _, delete := range request.Deletes {
+		dbID, err := delete.FieldChanges.GetField(idFieldName)
+		if err != nil {
+			return err
 		}
 
-		deleteResults[deleteID] = deleteResult
+		err = deleteFunc(dbID)
+		if err != nil {
+			return err
+		}
 	}
-	return deleteResults, nil
+	return nil
 }
 
 func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata, metadata *MetadataCache) (interface{}, error) {
@@ -72,7 +103,7 @@ func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata, metadata 
 }
 
 func ProcessChanges(
-	request *SaveRequest,
+	request *SaveOp,
 	metadata *MetadataCache,
 	updateFunc ChangeFunc,
 	insertFunc ChangeFunc,
@@ -80,30 +111,27 @@ func ProcessChanges(
 	fieldNameFunc FieldNameFunc,
 	searchFieldFunc SearchFieldFunc,
 	defaultIDFunc DefaultIDFunc,
-) (map[string]ChangeResult, error) {
-	changeResults := map[string]ChangeResult{}
+) error {
 
-	collectionMetadata, err := metadata.GetCollection(request.Collection)
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	idTemplate, err := NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	for changeID, change := range request.Changes {
-
-		changeResult := NewChangeResult(change)
+	for _, change := range request.Changes {
 
 		changeMap := map[string]interface{}{}
 		searchableValues := []string{}
 
-		for fieldID, value := range change.FieldChanges {
+		err := change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
 			fieldMetadata, err := collectionMetadata.GetField(fieldID)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			if fieldID == collectionMetadata.NameField {
@@ -112,16 +140,19 @@ func ProcessChanges(
 
 			fieldName, err := fieldNameFunc(fieldMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			updateValue, err := setDataFunc(value, fieldMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			changeMap[fieldName] = updateValue
-
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 
 		if searchFieldFunc != nil && len(searchableValues) > 0 {
@@ -134,12 +165,12 @@ func ProcessChanges(
 		if !change.IsNew && change.IDValue != nil {
 			err := updateFunc(change.IDValue, changeMap)
 			if err != nil {
-				return nil, err
+				return err
 			}
 		} else {
 			newID, err := templating.Execute(idTemplate, change.FieldChanges)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			if newID == "" {
@@ -149,40 +180,41 @@ func ProcessChanges(
 			// Make sure to set the id field
 			idFieldMetadata, err := collectionMetadata.GetIDField()
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			idFieldName, err := fieldNameFunc(idFieldMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			changeMap[idFieldName] = newID
 
-			err = insertFunc(newID, changeMap)
+			err = change.FieldChanges.SetField(idFieldMetadata.GetFullName(), newID)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
-			changeResult.Data[collectionMetadata.IDField] = newID
+			err = insertFunc(newID, changeMap)
+			if err != nil {
+				return err
+			}
 		}
 
-		changeResults[changeID] = changeResult
-
 	}
-	return changeResults, nil
+	return nil
 
 }
 
 // NewFieldChanges function returns a template that can merge field changes
 func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
-	return templating.NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
+	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
 		fieldMetadata, err := collectionMetadata.GetField(key)
 		if err != nil {
 			return nil, err
 		}
-		val, ok := m[key]
-		if !ok {
+		val, err := item.GetField(key)
+		if err != nil {
 			return nil, errors.New("missing key " + key)
 		}
 

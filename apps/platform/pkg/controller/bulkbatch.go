@@ -22,7 +22,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	batchID, err := bulk.NewBatch(r.Body, jobID, session)
+	batch, err := bulk.NewBatch(r.Body, jobID, session)
 	if err != nil {
 		msg := "Failed Creating New Batch: " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
@@ -31,7 +31,7 @@ func BulkBatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, r, &BatchResponse{
-		ID: batchID,
+		ID: batch.ID,
 	})
 
 }

@@ -96,3 +96,8 @@ func (t *Theme) SetNamespace(namespace string) {
 func (t *Theme) SetWorkspace(workspace string) {
 	t.Workspace = workspace
 }
+
+// Loop function
+func (t *Theme) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(t, iter)
+}

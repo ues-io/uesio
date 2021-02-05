@@ -1,25 +1,78 @@
 package datasource
 
 import (
+	"encoding/json"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+// SaveRequest struct
+type SaveRequest struct {
+	Collection string             `json:"collection"`
+	Wire       string             `json:"wire"`
+	Changes    loadable.Group     `json:"changes"`
+	Deletes    loadable.Group     `json:"deletes"`
+	Options    *adapt.SaveOptions `json:"-"`
+}
+
+func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
+	data := make(map[string]json.RawMessage)
+	err := json.Unmarshal(b, &data)
+	if err != nil {
+		return err
+	}
+	for k, v := range data {
+		switch k {
+		case "collection":
+			s := ""
+			err := json.Unmarshal(v, &s)
+			if err != nil {
+				return err
+			}
+			sr.Collection = s
+		case "wire":
+			s := ""
+			err := json.Unmarshal(v, &s)
+			if err != nil {
+				return err
+			}
+			sr.Wire = s
+		case "changes":
+			c := adapt.CollectionMap{}
+			err := json.Unmarshal(v, &c)
+			if err != nil {
+				return err
+			}
+			sr.Changes = &c
+		case "deletes":
+			d := adapt.CollectionMap{}
+			err := json.Unmarshal(v, &d)
+			if err != nil {
+				return err
+			}
+			sr.Deletes = &d
+		}
+	}
+
+	return nil
+}
+
 // Save function
-func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch, error) {
+func Save(requests []SaveRequest, session *sess.Session) error {
 
 	site := session.GetSite()
 
-	collated := map[string]SaveRequestBatch{}
+	collated := map[string][]adapt.SaveOp{}
 	metadataResponse := adapt.MetadataCache{}
-	response := SaveResponseBatch{}
 
 	// Loop over the requests and batch per data source
-	for _, request := range requests.Wires {
+	for _, request := range requests {
 
-		collectionKey := request.GetCollection()
+		collectionKey := request.Collection
 
 		// Keep a running tally of all requested collections
 		collections := MetadataRequest{
@@ -29,7 +82,7 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		}
 		err := collections.AddCollection(collectionKey)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if request.Options != nil && request.Options.Lookups != nil {
@@ -42,37 +95,36 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 				}
 				err := collections.AddField(collectionKey, lookup.RefField, subFields)
 				if err != nil {
-					return nil, err
+					return err
 				}
 			}
 		}
 
 		err = collections.Load(nil, &metadataResponse, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// Get the datasource from the object name
 		collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		err = PopulateAndValidate(&request, collectionMetadata, session)
+		saveOp, err := PopulateAndValidate(&request, collectionMetadata, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		err = RunBeforeSaveBots(&request, collectionMetadata, session)
+		err = RunBeforeSaveBots(saveOp, collectionMetadata, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch.Wires = append(batch.Wires, request)
+		batch = append(batch, *saveOp)
 		collated[dsKey] = batch
-
 	}
 
 	// 3. Get metadata for each datasource and collection
@@ -80,12 +132,12 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 
 		datasource, err := meta.NewDataSource(dsKey)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		err = bundle.Load(datasource, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// Now figure out which data source adapter to use
@@ -95,46 +147,42 @@ func Save(requests SaveRequestBatch, session *sess.Session) (*SaveResponseBatch,
 		adapterType := datasource.GetAdapterType()
 		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		credentials, err := adapt.GetCredentials(datasource, site)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		cascadeDeletes, err := getCascadeDeletes(batch.Wires, metadataResponse.Collections, &metadataResponse, adapter, credentials)
+		cascadeDeletes, err := getCascadeDeletes(batch, metadataResponse.Collections, &metadataResponse, adapter, credentials)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		adapterResponses, err := adapter.Save(batch.Wires, &metadataResponse, credentials)
+		err = adapter.Save(batch, &metadataResponse, credentials)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		err = performCascadeDeletes(cascadeDeletes, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		for i, resp := range adapterResponses {
-
-			request := requests.Wires[i]
-			collectionKey := request.GetCollection()
-
+		for _, op := range batch {
+			collectionKey := op.CollectionName
 			collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
-			err = RunAfterSaveBots(&resp, &request, collectionMetadata, session)
+			err = RunAfterSaveBots(&op, collectionMetadata, session)
 			if err != nil {
-				return nil, err
+				return err
 			}
-			response.Wires = append(response.Wires, resp)
 		}
 
 	}
 
-	return &response, nil
+	return nil
 }

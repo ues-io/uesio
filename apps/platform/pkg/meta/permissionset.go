@@ -95,6 +95,11 @@ func (ps *PermissionSet) SetWorkspace(workspace string) {
 	ps.Workspace = workspace
 }
 
+// Loop function
+func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(ps, iter)
+}
+
 // HasPermission method
 func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 	if check == nil {

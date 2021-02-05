@@ -89,3 +89,8 @@ func (cv *ConfigValue) SetNamespace(namespace string) {
 func (cv *ConfigValue) SetWorkspace(workspace string) {
 	cv.Workspace = workspace
 }
+
+// Loop function
+func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(cv, iter)
+}

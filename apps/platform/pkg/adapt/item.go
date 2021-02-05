@@ -1,6 +1,7 @@
 package adapt
 
 import (
+	"errors"
 	"strings"
 )
 
@@ -18,7 +19,11 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 	// Split the field name into tokens
 	names := strings.Split(fieldName, "->")
 	if len(names) == 1 {
-		return (*i)[fieldName], nil
+		value, ok := (*i)[fieldName]
+		if !ok {
+			return nil, errors.New("Field not found: " + fieldName)
+		}
+		return value, nil
 	}
 
 	var value interface{}
@@ -29,9 +34,21 @@ func (i *Item) GetField(fieldName string) (interface{}, error) {
 		if !ok {
 			return nil, nil
 		}
-		value = dataMap[name]
+		value, ok = dataMap[name]
+		if !ok {
+			return nil, errors.New("Field not found: " + fieldName)
+		}
 	}
 
 	return value, nil
+}
 
+func (i *Item) Loop(iter func(string, interface{}) error) error {
+	for key, val := range *i {
+		err := iter(key, val)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

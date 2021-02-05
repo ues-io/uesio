@@ -4,7 +4,7 @@ import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // ChangesAPI type
 type ChangesAPI struct {
-	changes  map[string]adapt.ChangeRequest
+	changes  adapt.ChangeItems
 	metadata *adapt.CollectionMetadata
 }
 

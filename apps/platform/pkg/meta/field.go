@@ -125,3 +125,8 @@ func (f *Field) SetNamespace(namespace string) {
 func (f *Field) SetWorkspace(workspace string) {
 	f.Workspace = workspace
 }
+
+// Loop function
+func (f *Field) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(f, iter)
+}

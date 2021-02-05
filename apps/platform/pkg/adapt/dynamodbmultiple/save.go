@@ -8,37 +8,36 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
-	guuid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 // Save function
-func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCache, credentials *adapt.Credentials) ([]adapt.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 
 	ctx := context.Background()
-	response := []adapt.SaveResponse{}
 	client := getDynamoDB(credentials)
 
 	for _, request := range requests {
 
-		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		idFieldMetadata, err := collectionMetadata.GetIDField()
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		idFieldDBName, err := getDBFieldName(idFieldMetadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// Sometimes we only have the name of something instead of its real id
@@ -47,10 +46,10 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			return loadMany(ctx, client, ops, metadata)
 		}, &request, metadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		changeResults, err := adapt.ProcessChanges(
+		err = adapt.ProcessChanges(
 			&request,
 			metadata,
 			// Update Func
@@ -125,18 +124,18 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			},
 			// DefaultID Func
 			func() string {
-				return guuid.New().String()
+				return uuid.New().String()
 			},
 		)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		deleteResults, err := adapt.ProcessDeletes(&request, metadata, func(dbID string) error {
+		err = adapt.ProcessDeletes(&request, metadata, func(dbID interface{}) error {
 			_, err = client.DeleteItem(&dynamodb.DeleteItemInput{
 				Key: map[string]*dynamodb.AttributeValue{
 					idFieldDBName: {
-						S: aws.String(dbID),
+						S: aws.String(dbID.(string)),
 					},
 				},
 				TableName: aws.String(collectionName),
@@ -147,14 +146,9 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		response = append(response, adapt.SaveResponse{
-			Wire:          request.Wire,
-			ChangeResults: changeResults,
-			DeleteResults: deleteResults,
-		})
 	}
-	return response, nil
+	return nil
 }

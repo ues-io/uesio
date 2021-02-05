@@ -41,3 +41,8 @@ func (bj *BulkJob) SetField(fieldName string, value interface{}) error {
 func (bj *BulkJob) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(bj, fieldName)
 }
+
+// Loop function
+func (bj *BulkJob) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(bj, iter)
+}

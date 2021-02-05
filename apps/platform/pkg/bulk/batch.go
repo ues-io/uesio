@@ -11,7 +11,7 @@ import (
 )
 
 // NewBatch func
-func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, error) {
+func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.BulkBatch, error) {
 
 	var job meta.BulkJob
 
@@ -27,27 +27,27 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 		session,
 	)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	spec := job.Spec
 	fileFormat := spec.FileType
-	var saveRequestBatch *datasource.SaveRequestBatch
+	var saveRequest []datasource.SaveRequest
 
 	if fileFormat == "csv" {
-		saveRequestBatch, err = processCSV(body, &spec, session)
+		saveRequest, err = processCSV(body, &spec, session)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 	}
 
-	if saveRequestBatch == nil {
-		return "", errors.New("Cannot process that file type: " + fileFormat)
+	if saveRequest == nil {
+		return nil, errors.New("Cannot process that file type: " + fileFormat)
 	}
 
-	_, err = datasource.Save(*saveRequestBatch, session)
+	err = datasource.Save(saveRequest, session)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	batch := meta.BulkBatch{
@@ -57,8 +57,8 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (string, 
 
 	err = datasource.PlatformSaveOne(&batch, nil, session)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return batch.ID, nil
+	return &batch, nil
 }

@@ -90,6 +90,21 @@ func StandardFieldSet(item CollectionableItem, fieldName string, value interface
 	return reflecttool.SetField(item, fieldName, value)
 }
 
+// StandardItemLoop function
+func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
+	for _, fieldName := range StandardGetFields(item) {
+		val, err := item.GetField(fieldName)
+		if err != nil {
+			return err
+		}
+		err = iter(fieldName, val)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // BundleableFactory function type
 type BundleableFactory func() BundleableGroup
 

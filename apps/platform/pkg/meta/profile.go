@@ -90,6 +90,11 @@ func (p *Profile) SetWorkspace(workspace string) {
 	p.Workspace = workspace
 }
 
+// Loop function
+func (p *Profile) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(p, iter)
+}
+
 // HasPermission method
 func (p *Profile) HasPermission(check *PermissionSet) bool {
 	return p.FlattenPermissions().HasPermission(check)

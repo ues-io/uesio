@@ -117,3 +117,8 @@ func (ufc *UserFileCollection) GetPath() string {
 func (ufc *UserFileCollection) GetPermChecker() *PermissionSet {
 	return nil
 }
+
+// Loop function
+func (ufc *UserFileCollection) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(ufc, iter)
+}

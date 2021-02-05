@@ -139,7 +139,7 @@ const wireSlice = createSlice({
 				if (response.wires) {
 					response.wires.forEach((wire) => {
 						const wireId = viewId + "/" + wire.wire
-						Object.keys(wire.changeResults).forEach((tempId) => {
+						Object.keys(wire.changes).forEach((tempId) => {
 							const data = state.entities[wireId]?.data
 							if (!data) return
 							state.entities = Object.assign({}, state.entities, {
@@ -151,7 +151,7 @@ const wireSlice = createSlice({
 											[tempId]: Object.assign(
 												{},
 												data[tempId],
-												wire.changeResults[tempId].data
+												wire.changes[tempId]
 											),
 										}),
 										changes: {},
@@ -159,14 +159,14 @@ const wireSlice = createSlice({
 											[tempId]: Object.assign(
 												{},
 												data[tempId],
-												wire.changeResults[tempId].data
+												wire.changes[tempId]
 											),
 										}),
 									}
 								),
 							})
 						})
-						Object.keys(wire.deleteResults).forEach((tempId) => {
+						Object.keys(wire.deletes).forEach((tempId) => {
 							const newData: Record<string, PlainWireRecord> = {}
 							const newOriginal: Record<
 								string,

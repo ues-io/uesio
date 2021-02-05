@@ -73,3 +73,8 @@ func (s *Secret) SetNamespace(namespace string) {
 func (s *Secret) SetWorkspace(workspace string) {
 	s.Workspace = workspace
 }
+
+// Loop function
+func (s *Secret) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(s, iter)
+}
