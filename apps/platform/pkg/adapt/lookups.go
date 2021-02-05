@@ -9,7 +9,7 @@ import (
 
 func HandleLookups(
 	loader Loader,
-	request *SaveRequest,
+	request *SaveOp,
 	metadata *MetadataCache,
 ) error {
 	lookupOps, err := getLookupOps(request, metadata)
@@ -30,7 +30,7 @@ func HandleLookups(
 
 }
 
-func getReferenceLookupOp(request *SaveRequest, lookup Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
+func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
 	fieldMetadata, err := collectionMetadata.GetField(lookup.RefField)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func getReferenceLookupOp(request *SaveRequest, lookup Lookup, collectionMetadat
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
 	return &LoadOp{
 		CollectionName: fieldMetadata.ReferencedCollection,
-		WireName:       request.Wire,
+		WireName:       request.WireName,
 		Fields: []LoadRequestField{
 			{
 				ID: refCollectionMetadata.IDField,
@@ -64,13 +64,13 @@ func getReferenceLookupOp(request *SaveRequest, lookup Lookup, collectionMetadat
 	}, nil
 }
 
-func getLookupOps(request *SaveRequest, metadata *MetadataCache) ([]LoadOp, error) {
+func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 	options := request.Options
 	if options == nil {
 		return nil, nil
 	}
 	lookupRequests := []LoadOp{}
-	collectionMetadata, err := metadata.GetCollection(request.Collection)
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
 		return nil, err
 	}
@@ -80,8 +80,8 @@ func getLookupOps(request *SaveRequest, metadata *MetadataCache) ([]LoadOp, erro
 		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.NameField)
 
 		lookupRequests = append(lookupRequests, LoadOp{
-			CollectionName: request.Collection,
-			WireName:       request.Wire,
+			CollectionName: request.CollectionName,
+			WireName:       request.WireName,
 			Fields: []LoadRequestField{
 				{
 					ID: collectionMetadata.IDField,
@@ -125,7 +125,7 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 	return lookupResult, nil
 }
 
-func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeUpsertLookupResponse(op *LoadOp, changes ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
 	lookupResult, err := getLookupResultMap(op, matchField)
@@ -158,7 +158,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, opt
 			if err != nil {
 				return err
 			}
-			change.FieldChanges[collectionMetadata.IDField] = idValue
+			change.FieldChanges.SetField(collectionMetadata.IDField, idValue)
 			change.IsNew = false
 			change.IDValue = idValue
 			changes[index] = change
@@ -168,7 +168,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes map[string]ChangeRequest, opt
 	return nil
 }
 
-func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes map[string]ChangeRequest, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes ChangeItems, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	lookupField := lookup.RefField
 
@@ -195,7 +195,11 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes map[string]
 
 	for _, change := range changes {
 
-		keyRef := change.FieldChanges[lookupField].(map[string]interface{})
+		keyRefInterface, err := change.FieldChanges.GetField(lookupField)
+		if err != nil {
+			return err
+		}
+		keyRef := keyRefInterface.(map[string]interface{})
 		keyVal := keyRef[matchField].(string)
 		match, ok := lookupResult[keyVal]
 		if ok {
@@ -203,20 +207,27 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes map[string]
 			if err != nil {
 				return err
 			}
-			change.FieldChanges[fieldMetadata.GetFullName()] = map[string]interface{}{
+			err = change.FieldChanges.SetField(fieldMetadata.GetFullName(), map[string]interface{}{
 				refCollectionMetadata.IDField: idValue,
+			})
+			if err != nil {
+				return err
 			}
+
 		} else {
-			change.FieldChanges[fieldMetadata.GetFullName()] = nil
+			err := change.FieldChanges.SetField(fieldMetadata.GetFullName(), nil)
+			if err != nil {
+				return err
+			}
 		}
 
 	}
 	return nil
 }
 
-func mergeLookupResponses(request *SaveRequest, responses []LoadOp, metadata *MetadataCache) error {
+func mergeLookupResponses(request *SaveOp, responses []LoadOp, metadata *MetadataCache) error {
 
-	collectionMetadata, err := metadata.GetCollection(request.Collection)
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
 		return err
 	}

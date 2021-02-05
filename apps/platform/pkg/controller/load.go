@@ -10,11 +10,34 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
+// LoadRequest struct
+type LoadRequest struct {
+	Collection string                       `json:"collection"`
+	Wire       string                       `json:"wire"`
+	Type       string                       `json:"type"`
+	Fields     []adapt.LoadRequestField     `json:"fields"`
+	Conditions []adapt.LoadRequestCondition `json:"conditions"`
+	Order      []adapt.LoadRequestOrder     `json:"order"`
+	Limit      int                          `json:"limit"`
+	Offset     int                          `json:"offset"`
+}
+
+// LoadRequestBatch struct
+type LoadRequestBatch struct {
+	Wires []LoadRequest `json:"wires"`
+}
+
+// LoadResponseBatch struct
+type LoadResponseBatch struct {
+	Wires       []adapt.LoadOp                       `json:"wires"`
+	Collections map[string]*adapt.CollectionMetadata `json:"collections"`
+}
+
 // Load is good
 func Load(w http.ResponseWriter, r *http.Request) {
 
 	// 1. Parse the request object.
-	var loadRequestBatch datasource.LoadRequestBatch
+	var loadRequestBatch LoadRequestBatch
 	err := json.NewDecoder(r.Body).Decode(&loadRequestBatch)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
@@ -50,7 +73,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &datasource.LoadResponseBatch{
+	respondJSON(w, r, &LoadResponseBatch{
 		Wires:       ops,
 		Collections: metadata.Collections,
 	})

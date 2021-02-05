@@ -164,3 +164,8 @@ func (b *Bot) SetNamespace(namespace string) {
 func (b *Bot) SetWorkspace(workspace string) {
 	b.Workspace = workspace
 }
+
+// Loop function
+func (b *Bot) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(b, iter)
+}

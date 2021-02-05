@@ -95,3 +95,8 @@ func (c *Collection) SetNamespace(namespace string) {
 func (c *Collection) SetWorkspace(workspace string) {
 	c.Workspace = workspace
 }
+
+// Loop function
+func (c *Collection) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(c, iter)
+}

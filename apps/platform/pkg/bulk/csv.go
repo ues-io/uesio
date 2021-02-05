@@ -3,7 +3,6 @@ package bulk
 import (
 	"encoding/csv"
 	"io"
-	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -60,10 +59,10 @@ func getLookups(mappings []meta.FieldMapping, collectionMetadata *adapt.Collecti
 	return lookups, nil
 }
 
-func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (*datasource.SaveRequestBatch, error) {
+func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) ([]datasource.SaveRequest, error) {
 
 	r := csv.NewReader(body)
-	changes := map[string]adapt.ChangeRequest{}
+	changes := adapt.Collection{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -91,9 +90,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 			return nil, err
 		}
 
-		changeRequest := adapt.ChangeRequest{
-			FieldChanges: map[string]interface{}{},
-		}
+		changeRequest := adapt.Item{}
 
 		for index, mapping := range mappings {
 			fieldName := mapping.FieldName
@@ -102,7 +99,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 				return nil, err
 			}
 			if fieldMetadata.Type == "CHECKBOX" {
-				changeRequest.FieldChanges[mapping.FieldName] = record[index] == "true"
+				changeRequest[mapping.FieldName] = record[index] == "true"
 			} else if fieldMetadata.Type == "REFERENCE" {
 
 				refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
@@ -116,15 +113,15 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 					matchField = mapping.MatchField
 				}
 
-				changeRequest.FieldChanges[mapping.FieldName] = map[string]interface{}{
+				changeRequest[mapping.FieldName] = map[string]interface{}{
 					matchField: record[index],
 				}
 			} else {
-				changeRequest.FieldChanges[mapping.FieldName] = record[index]
+				changeRequest[mapping.FieldName] = record[index]
 			}
 		}
 
-		changes[strconv.Itoa(changeIndex)] = changeRequest
+		changes = append(changes, changeRequest)
 
 		changeIndex++
 
@@ -134,19 +131,17 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 	if err != nil {
 		return nil, err
 	}
-	return &datasource.SaveRequestBatch{
-		Wires: []adapt.SaveRequest{
-			{
-				Collection: spec.Collection,
-				Wire:       "bulkupload",
-				Changes:    changes,
-				Options: &adapt.SaveOptions{
-					Upsert: &adapt.UpsertOptions{
-						MatchField:    spec.UpsertKey,
-						MatchTemplate: "${" + spec.UpsertKey + "}",
-					},
-					Lookups: lookups,
+	return []datasource.SaveRequest{
+		{
+			Collection: spec.Collection,
+			Wire:       "bulkupload",
+			Changes:    &changes,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{
+					MatchField:    spec.UpsertKey,
+					MatchTemplate: "${" + spec.UpsertKey + "}",
 				},
+				Lookups: lookups,
 			},
 		},
 	}, nil

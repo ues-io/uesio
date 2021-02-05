@@ -28,33 +28,32 @@ func getSearchIndex(values []string) map[string]bool {
 }
 
 // Save function
-func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCache, credentials *adapt.Credentials) ([]adapt.SaveResponse, error) {
+func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 
 	ctx := context.Background()
-	response := []adapt.SaveResponse{}
 
 	// Get a Firestore client.
 	client, err := getClient(credentials)
 	if err != nil {
-		return nil, errors.New("Failed to create or retrieve client:" + err.Error())
+		return errors.New("Failed to create or retrieve client:" + err.Error())
 	}
 
 	if len(requests) <= 0 {
-		return response, nil
+		return nil
 	}
 
 	for _, request := range requests {
 
 		batch := client.Batch()
 
-		collectionMetadata, err := metadata.GetCollection(request.Collection)
+		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		collectionName, err := getDBCollectionName(collectionMetadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		collection := client.Collection(collectionName)
@@ -65,10 +64,10 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			return loadMany(ctx, client, ops, metadata)
 		}, &request, metadata)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		changeResults, err := adapt.ProcessChanges(
+		err = adapt.ProcessChanges(
 			&request,
 			metadata,
 			// Update Func
@@ -108,28 +107,22 @@ func (a *Adapter) Save(requests []adapt.SaveRequest, metadata *adapt.MetadataCac
 			},
 		)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		deleteResults, err := adapt.ProcessDeletes(&request, metadata, func(dbID string) error {
-			batch = batch.Delete(collection.Doc(dbID))
+		err = adapt.ProcessDeletes(&request, metadata, func(dbID interface{}) error {
+			batch = batch.Delete(collection.Doc(dbID.(string)))
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
-
-		response = append(response, adapt.SaveResponse{
-			Wire:          request.Wire,
-			ChangeResults: changeResults,
-			DeleteResults: deleteResults,
-		})
 
 		_, err = batch.Commit(ctx)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return response, nil
+	return nil
 }

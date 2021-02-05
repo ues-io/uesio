@@ -32,3 +32,8 @@ func (a *App) SetField(fieldName string, value interface{}) error {
 func (a *App) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(a, fieldName)
 }
+
+// Loop function
+func (a *App) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(a, iter)
+}

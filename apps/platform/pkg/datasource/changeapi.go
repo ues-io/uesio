@@ -1,22 +1,28 @@
 package datasource
 
-import "github.com/thecloudmasters/uesio/pkg/adapt"
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+)
 
 // ChangeAPI type
 type ChangeAPI struct {
-	change   adapt.ChangeRequest
+	change   adapt.ChangeItem
 	metadata *adapt.CollectionMetadata
 	errors   []string
 }
 
 // Get function
 func (c *ChangeAPI) Get(fieldName string) interface{} {
-	return c.change.FieldChanges[fieldName]
+	val, err := c.change.FieldChanges.GetField(fieldName)
+	if err != nil {
+		return nil
+	}
+	return val
 }
 
 // Set function
 func (c *ChangeAPI) Set(fieldName string, value interface{}) {
-	c.change.FieldChanges[fieldName] = value
+	_ = c.change.FieldChanges.SetField(fieldName, value)
 }
 
 // AddError function

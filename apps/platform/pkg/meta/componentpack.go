@@ -80,3 +80,8 @@ func (cp *ComponentPack) SetNamespace(namespace string) {
 func (cp *ComponentPack) SetWorkspace(workspace string) {
 	cp.Workspace = workspace
 }
+
+// Loop function
+func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(cp, iter)
+}

@@ -27,3 +27,8 @@ func (bb *BulkBatch) SetField(fieldName string, value interface{}) error {
 func (bb *BulkBatch) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(bb, fieldName)
 }
+
+// Loop function
+func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(bb, iter)
+}

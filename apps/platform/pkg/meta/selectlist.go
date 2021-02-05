@@ -80,3 +80,8 @@ func (sl *SelectList) SetNamespace(namespace string) {
 func (sl *SelectList) SetWorkspace(workspace string) {
 	sl.Workspace = workspace
 }
+
+// Loop function
+func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(sl, iter)
+}

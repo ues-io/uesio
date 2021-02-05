@@ -9,13 +9,13 @@ import (
 )
 
 func getCascadeDeletes(
-	wires []adapt.SaveRequest,
+	wires []adapt.SaveOp,
 	collections map[string]*adapt.CollectionMetadata,
 	metadata *adapt.MetadataCache,
 	adapter adapt.Adapter,
 	credentials *adapt.Credentials,
-) (map[string]map[string]adapt.DeleteRequest, error) {
-	cascadeDeleteFKs := map[string]map[string]adapt.DeleteRequest{}
+) (map[string]adapt.Collection, error) {
+	cascadeDeleteFKs := map[string]adapt.Collection{}
 
 	for _, collectionMetadata := range collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -34,15 +34,23 @@ func getCascadeDeletes(
 
 				// Get the ids that we need to delete
 				for _, wire := range wires {
-					if wire.Collection != collectionKey || len(wire.Deletes) == 0 {
+					if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
 						continue
 					}
 
 					ids := []string{}
 					for _, deletion := range wire.Deletes {
-						for _, primaryKeyValue := range deletion {
-							ids = append(ids, primaryKeyValue.(string))
+
+						idField, err := collectionMetadata.GetIDField()
+						if err != nil {
+							return nil, err
 						}
+
+						idValue, err := deletion.FieldChanges.GetField(idField.GetFullName())
+						if err != nil {
+							return nil, err
+						}
+						ids = append(ids, idValue.(string))
 					}
 
 					if len(ids) == 0 {
@@ -102,13 +110,13 @@ func getCascadeDeletes(
 						}
 						currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
 						if !ok {
-							currentCollectionIds = map[string]adapt.DeleteRequest{}
-							cascadeDeleteFKs[referencedCollection] = currentCollectionIds
+							currentCollectionIds = adapt.Collection{}
 						}
 
-						currentCollectionIds[fkString] = adapt.DeleteRequest{
+						currentCollectionIds = append(currentCollectionIds, adapt.Item{
 							referencedCollectionMetadata.IDField: fkString,
-						}
+						})
+						cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 
 						return nil
 					})
@@ -122,26 +130,18 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(deletes map[string]map[string]adapt.DeleteRequest, session *sess.Session) error {
+func performCascadeDeletes(deletes map[string]adapt.Collection, session *sess.Session) error {
 	if len(deletes) == 0 {
 		return nil
 	}
-	saves := []adapt.SaveRequest{}
+	saves := []SaveRequest{}
 	for collectionKey, ids := range deletes {
-
-		saves = append(saves, adapt.SaveRequest{
+		saves = append(saves, SaveRequest{
 			Collection: collectionKey,
 			Wire:       "CascadeDelete",
-			Deletes:    ids,
+			Deletes:    &ids,
 		})
 	}
 
-	_, err := Save(SaveRequestBatch{
-		Wires: saves,
-	}, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return Save(saves, session)
 }

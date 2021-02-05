@@ -2,28 +2,12 @@ package adapt
 
 import (
 	"errors"
-
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
-
-// LoadOp type
-type LoadOp struct {
-	CollectionName        string                 `json:"collection"`
-	WireName              string                 `json:"wire"`
-	Collection            loadable.Group         `json:"data"`
-	Conditions            []LoadRequestCondition `json:"-"`
-	Fields                []LoadRequestField     `json:"-"`
-	Type                  string                 `json:"-"`
-	Order                 []LoadRequestOrder     `json:"-"`
-	Limit                 int                    `json:"-"`
-	Offset                int                    `json:"-"`
-	ReferencedCollections ReferenceRegistry
-}
 
 // Adapter interface
 type Adapter interface {
 	Load([]LoadOp, *MetadataCache, *Credentials) error
-	Save([]SaveRequest, *MetadataCache, *Credentials) ([]SaveResponse, error)
+	Save([]SaveOp, *MetadataCache, *Credentials) error
 	Migrate(*MetadataCache, *Credentials) error
 }
 

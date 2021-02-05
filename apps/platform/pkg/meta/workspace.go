@@ -47,3 +47,8 @@ func (w *Workspace) SetField(fieldName string, value interface{}) error {
 func (w *Workspace) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(w, fieldName)
 }
+
+// Loop function
+func (w *Workspace) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(w, iter)
+}

@@ -100,3 +100,8 @@ func (f *File) SetNamespace(namespace string) {
 func (f *File) SetWorkspace(workspace string) {
 	f.Workspace = workspace
 }
+
+// Loop function
+func (f *File) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(f, iter)
+}

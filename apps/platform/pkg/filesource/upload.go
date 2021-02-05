@@ -152,20 +152,16 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (*me
 			return nil, err
 		}
 
-		_, err = datasource.Save(datasource.SaveRequestBatch{
-			Wires: []adapt.SaveRequest{
-				{
-					Collection: details.CollectionID,
-					Wire:       "filefieldupdate",
-					Changes: map[string]adapt.ChangeRequest{
-						"0": {
-							FieldChanges: map[string]interface{}{
-								details.FieldID: map[string]interface{}{
-									refMetadata.IDField: ufm.ID,
-								},
-								collectionMetadata.IDField: details.RecordID,
-							},
+		err = datasource.Save([]datasource.SaveRequest{
+			{
+				Collection: details.CollectionID,
+				Wire:       "filefieldupdate",
+				Changes: &adapt.Collection{
+					{
+						details.FieldID: map[string]interface{}{
+							refMetadata.IDField: ufm.ID,
 						},
+						collectionMetadata.IDField: details.RecordID,
 					},
 				},
 			},

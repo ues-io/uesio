@@ -97,3 +97,8 @@ func (r *Route) SetNamespace(namespace string) {
 func (r *Route) SetWorkspace(workspace string) {
 	r.Workspace = workspace
 }
+
+// Loop function
+func (r *Route) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(r, iter)
+}

@@ -31,3 +31,8 @@ func (u *User) SetField(fieldName string, value interface{}) error {
 func (u *User) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(u, fieldName)
 }
+
+// Loop function
+func (u *User) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(u, iter)
+}

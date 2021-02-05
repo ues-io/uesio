@@ -98,3 +98,8 @@ func (ds *DataSource) SetNamespace(namespace string) {
 func (ds *DataSource) SetWorkspace(workspace string) {
 	ds.Workspace = workspace
 }
+
+// Loop function
+func (ds *DataSource) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(ds, iter)
+}

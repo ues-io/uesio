@@ -36,3 +36,8 @@ func (ufm *UserFileMetadata) SetField(fieldName string, value interface{}) error
 func (ufm *UserFileMetadata) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(ufm, fieldName)
 }
+
+// Loop function
+func (ufm *UserFileMetadata) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(ufm, iter)
+}

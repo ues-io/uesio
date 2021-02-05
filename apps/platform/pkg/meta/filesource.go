@@ -96,3 +96,8 @@ func (fs *FileSource) SetNamespace(namespace string) {
 func (fs *FileSource) SetWorkspace(workspace string) {
 	fs.Workspace = workspace
 }
+
+// Loop function
+func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(fs, iter)
+}

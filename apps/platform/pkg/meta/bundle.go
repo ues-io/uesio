@@ -30,3 +30,8 @@ func (b *Bundle) SetField(fieldName string, value interface{}) error {
 func (b *Bundle) GetField(fieldName string) (interface{}, error) {
 	return StandardFieldGet(b, fieldName)
 }
+
+// Loop function
+func (b *Bundle) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(b, iter)
+}
