@@ -6,6 +6,7 @@ import { ViewAPI } from "./viewapi"
 import { FileAPI } from "./fileapi"
 import { ComponentAPI } from "./componentapi"
 import { PlatformAPI } from "./platformapi"
+import { CollectionAPI } from "./collectionapi"
 import { BaseProps } from "../definition/definition"
 import { ContextFrame, Context } from "../context/context"
 import { AnyAction } from "redux"
@@ -26,6 +27,7 @@ class Uesio {
 		this.file = new FileAPI(this)
 		this.component = new ComponentAPI(this)
 		this.platform = new PlatformAPI(this)
+		this.collection = new CollectionAPI(this)
 	}
 
 	// Public Apis
@@ -36,6 +38,7 @@ class Uesio {
 	file: FileAPI
 	component: ComponentAPI
 	platform: PlatformAPI
+	collection: CollectionAPI
 
 	_props: BaseProps
 	_dispatcher: Dispatcher<AnyAction>
