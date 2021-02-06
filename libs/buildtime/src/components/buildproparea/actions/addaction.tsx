@@ -16,7 +16,6 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 		const { path, registry } = component
 		const componentKey = action.componentKey
 		const [namespace, name] = path.parseKey(componentKey)
-
 		const propDef = registry.getPropertiesDefinition(namespace, name)
 
 		if (propDef) {
