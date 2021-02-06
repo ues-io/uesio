@@ -25,7 +25,7 @@ const FormBuilder: FunctionComponent<FormProps> = (props) => {
 						definition={definition}
 						listName="columns"
 						path={path}
-						accepts={["uesio.standalone"]}
+						accepts={["material.formcolumn"]}
 						context={context.addFrame({ noMerge: isStructureView })}
 					/>
 				</div>

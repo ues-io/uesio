@@ -28,24 +28,26 @@ const Form: FunctionComponent<FormProps> = (props) => {
 
 	const data = wire.getData()
 	return (
-		<material.Grid className={classes.root} container={true}>
+		<div className={classes.root}>
 			{data.map((record) => (
-				<material.Grid key={record.getId()} lg={true} item={true}>
-					<component.Slot
-						definition={definition}
-						listName="columns"
-						path={path}
-						accepts={["uesio.context"]}
-						direction="manual"
-						context={context.addFrame({
-							record: record.getId(),
-							wire: wire.getId(),
-							fieldMode: componentState.mode,
-						})}
-					/>
-				</material.Grid>
+				<form>
+					<material.Grid container key={record.getId()} spacing={3}>
+						<component.Slot
+							definition={definition}
+							listName="columns"
+							path={path}
+							accepts={["uesio.context"]}
+							direction="manual"
+							context={context.addFrame({
+								record: record.getId(),
+								wire: wire.getId(),
+								fieldMode: componentState.mode,
+							})}
+						/>
+					</material.Grid>
+				</form>
 			))}
-		</material.Grid>
+		</div>
 	)
 }
 
