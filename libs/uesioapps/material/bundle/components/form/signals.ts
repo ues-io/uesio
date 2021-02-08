@@ -1,4 +1,6 @@
 import signals from "../utils/signals"
-export default signals((state) => ({
+import { FormState } from "./formdefinition"
+
+export default signals<FormState>((state: FormState) => ({
 	mode: state.mode === "READ" ? "EDIT" : "READ",
 }))

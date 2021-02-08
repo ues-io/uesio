@@ -1,4 +1,6 @@
 import signals from "../utils/signals"
-export default signals((state) => ({
+import { DeckState } from "./deckdefinition"
+
+export default signals<DeckState>((state: DeckState) => ({
 	mode: state.mode === "READ" ? "EDIT" : "READ",
 }))

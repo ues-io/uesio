@@ -1,4 +1,6 @@
 import signals from "../utils/signals"
-export default signals((state) => ({
+import { TableState } from "./tabledefinition"
+
+export default signals<TableState>((state: TableState) => ({
 	mode: state.mode === "READ" ? "EDIT" : "READ",
 }))
