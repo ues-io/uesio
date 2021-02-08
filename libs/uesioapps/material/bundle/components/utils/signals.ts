@@ -1,8 +1,6 @@
 import { context, signal } from "@uesio/ui"
 
-type Payload<S> = (state: S) => S
-
-const sigHandler = <S>(payload: Payload<S>) => ({
+const sigHandler = <S>(payload: (state: S) => S) => ({
 	TOGGLE_MODE: {
 		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
 			setState: (state: S) => void,
