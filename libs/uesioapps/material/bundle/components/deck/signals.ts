@@ -1,2 +1,4 @@
 import signals from "../utils/signals"
-export { signals as default }
+export default signals((state) => ({
+	mode: state.mode === "READ" ? "EDIT" : "READ",
+}))
