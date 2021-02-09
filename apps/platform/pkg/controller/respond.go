@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -30,11 +29,6 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-}
-
-func respondString(w http.ResponseWriter, r *http.Request, s string) {
-	w.Header().Set("content-type", "text/plain")
-	fmt.Fprint(w, s)
 }
 
 func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream io.ReadCloser) {

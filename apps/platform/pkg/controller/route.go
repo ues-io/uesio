@@ -61,8 +61,8 @@ func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Ses
 	return route, nil
 }
 
-// RouteAPI is good
-func RouteAPI(w http.ResponseWriter, r *http.Request) {
+// Route is good
+func Route(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 

@@ -130,7 +130,7 @@ func getConfigValueDependencyFromComponent(key string, session *sess.Session) (s
 	if err != nil {
 		return "", err
 	}
-	value, err := configstore.GetValue(key, site)
+	value, err := configstore.GetValueFromKey(key, site)
 	if err != nil {
 		return "", err
 	}
@@ -198,8 +198,8 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	return &dependenciesResponse, nil
 }
 
-// ViewAPI is good
-func ViewAPI(w http.ResponseWriter, r *http.Request) {
+// View is good
+func View(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
@@ -224,6 +224,7 @@ func ViewAPI(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	respondYAML(w, r, &ViewResponse{

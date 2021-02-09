@@ -27,15 +27,17 @@ type ThunkFunc = ThunkAction<
 	AnyAction
 >
 
+type SiteState = {
+	name: string
+	app: string
+	version?: string
+}
+
 type InitialState = {
 	builder: BuilderState
 	route: RouteState
 	user: UserState
-	site: {
-		name: string
-		app: string
-		version: string
-	}
+	site: SiteState
 }
 
 let platform: Platform
@@ -78,6 +80,7 @@ export {
 	ThunkFunc,
 	RootState,
 	InitialState,
+	SiteState,
 	getDispatcher,
 	getPlatform,
 	getStore,
