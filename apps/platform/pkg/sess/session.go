@@ -121,6 +121,7 @@ type Session struct {
 	browserSession *session.Session
 	site           *meta.Site
 	workspace      *meta.Workspace
+	siteadmin      *meta.Site
 	permissions    *meta.PermissionSet
 }
 
@@ -132,6 +133,16 @@ func (s *Session) SetSite(site *meta.Site) {
 // GetSite function
 func (s *Session) GetSite() *meta.Site {
 	return s.site
+}
+
+// SetSiteAdmin function
+func (s *Session) SetSiteAdmin(site *meta.Site) {
+	s.siteadmin = site
+}
+
+// GetSiteAdmin function
+func (s *Session) GetSiteAdmin() *meta.Site {
+	return s.siteadmin
 }
 
 // SetWorkspace function
@@ -235,6 +246,9 @@ func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	if s.workspace != nil {
 		return s.workspace.GetAppBundle()
 	}
+	if s.siteadmin != nil {
+		return s.siteadmin.GetAppBundle()
+	}
 	return s.site.GetAppBundle()
 }
 
@@ -243,6 +257,9 @@ func (s *Session) GetContextAppName() string {
 	if s.workspace != nil {
 		return s.workspace.GetAppID()
 	}
+	if s.siteadmin != nil {
+		return s.siteadmin.AppRef
+	}
 	return s.site.AppRef
 }
 
@@ -250,6 +267,9 @@ func (s *Session) GetContextAppName() string {
 func (s *Session) GetContextVersionName() string {
 	if s.workspace != nil {
 		return s.workspace.Name
+	}
+	if s.siteadmin != nil {
+		return s.siteadmin.VersionRef
 	}
 	return s.site.VersionRef
 }

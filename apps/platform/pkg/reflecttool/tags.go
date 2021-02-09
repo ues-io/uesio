@@ -3,6 +3,7 @@ package reflecttool
 import (
 	"errors"
 	"reflect"
+	"sync"
 )
 
 func getFieldName(objType reflect.Type, uesioName string) (string, error) {
@@ -42,11 +43,15 @@ func getFieldNamesReflect(objType reflect.Type) ([]string, error) {
 	return names, nil
 }
 
+var lock sync.RWMutex
 var tagCache = map[reflect.Type]map[string]string{}
 
 func getTags(objType reflect.Type) (map[string]string, error) {
+	lock.RLock()
 	cached, ok := tagCache[objType]
+	lock.RUnlock()
 	if ok {
+
 		return cached, nil
 	}
 	fieldsCount := objType.NumField()
@@ -65,7 +70,9 @@ func getTags(objType reflect.Type) (map[string]string, error) {
 		}
 	}
 
+	lock.Lock()
 	tagCache[objType] = allTags
+	lock.Unlock()
 
 	return allTags, nil
 }

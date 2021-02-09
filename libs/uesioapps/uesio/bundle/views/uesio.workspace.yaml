@@ -271,3 +271,13 @@ definition:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${uesio.id}"
                                           namespace: "uesio"
+                            - material.grid:
+                                justify: space-between
+                                alignitems: center
+                                items:
+                                  - material.griditem:
+                                      components:
+                                        - material.typography:
+                                            text: Configuration
+                                            variant: h5
+                            - uesio.configsecrets:

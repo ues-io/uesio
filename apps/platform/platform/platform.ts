@@ -1,7 +1,15 @@
 import { metadata } from "@uesio/constants"
 
-const getPrefix = (workspace?: { app: string; name: string }) => {
-	return workspace ? `/workspace/${workspace.app}/${workspace.name}` : "/site"
+const getPrefix = (context: any) => {
+	const workspace = context.getWorkspace()
+	if (workspace) {
+		return `/workspace/${workspace.app}/${workspace.name}`
+	}
+	const siteadmin = context.getSiteAdmin()
+	if (siteadmin) {
+		return `/siteadmin/${siteadmin.app}/${siteadmin.name}`
+	}
+	return "/site"
 }
 
 const postJSON = (url: string, body?: object) => {
@@ -26,7 +34,7 @@ const postJSON = (url: string, body?: object) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
 		getView: async (context: any, namespace: string, name: string) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/views/${namespace}/${name}`)
 			if (response.status !== 200) {
 				throw new Error("View Not Found")
@@ -35,7 +43,7 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		getTheme: async (context: any, namespace: string, name: string) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await fetch(
 				`${prefix}/themes/${namespace}/${name}`
 			)
@@ -46,7 +54,7 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		getRoute: async (context: any, namespace: string, route: string) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await fetch(
 				`${prefix}/routes/${namespace}/${route}`
 			)
@@ -57,7 +65,7 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		loadData: async (context: any, requestBody: object) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/wires/load`, requestBody)
 			if (response.status != 200) {
 				const error = await response.text()
@@ -67,7 +75,7 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		saveData: async (context: any, requestBody: object) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/wires/save`, requestBody)
 			if (response.status != 200) {
 				const error = await response.text()
@@ -82,7 +90,7 @@ const postJSON = (url: string, body?: object) => {
 			name: string,
 			params: object
 		) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await postJSON(
 				`${prefix}/bots/call/${namespace}/${name}`,
 				params
@@ -95,12 +103,12 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		getFileURL: (context: any, namespace: string, name: string) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			return `${prefix}/files/${namespace}/${name}`
 		},
 
 		getUserFileURL: (context: any, userfileid: string) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid
 			)}`
@@ -115,7 +123,7 @@ const postJSON = (url: string, body?: object) => {
 			recordID: any,
 			fieldID: any
 		) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const url = `${prefix}/userfiles/upload`
 			const params = new URLSearchParams()
 			params.append("name", name)
@@ -141,7 +149,7 @@ const postJSON = (url: string, body?: object) => {
 			name: string,
 			buildMode: boolean
 		) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const buildModeSuffix = buildMode ? "/builder" : ""
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
@@ -154,7 +162,7 @@ const postJSON = (url: string, body?: object) => {
 			namespace: string,
 			grouping: string
 		) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const mdType = metadata.METADATA[metadataType]
 			const groupingUrl = grouping ? `/${grouping}` : ""
 			const response = await fetch(
@@ -164,8 +172,20 @@ const postJSON = (url: string, body?: object) => {
 		},
 
 		getAvailableNamespaces: async (context: any) => {
-			const prefix = getPrefix(context.getWorkspace())
+			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/metadata/namespaces`)
+			return response.json()
+		},
+
+		getConfigValues: async (context: any) => {
+			const prefix = getPrefix(context)
+			const response = await fetch(`${prefix}/configvalues`)
+			return response.json()
+		},
+
+		getSecrets: async (context: any) => {
+			const prefix = getPrefix(context)
+			const response = await fetch(`${prefix}/secrets`)
 			return response.json()
 		},
 

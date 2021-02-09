@@ -10,6 +10,8 @@ import { CollectionAPI } from "./collectionapi"
 import { BaseProps } from "../definition/definition"
 import { ContextFrame, Context } from "../context/context"
 import { AnyAction } from "redux"
+import { ConfigValueAPI } from "./configvalueapi"
+import { SecretAPI } from "./secretapi"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
@@ -28,6 +30,8 @@ class Uesio {
 		this.component = new ComponentAPI(this)
 		this.platform = new PlatformAPI(this)
 		this.collection = new CollectionAPI(this)
+		this.configvalue = new ConfigValueAPI(this)
+		this.secret = new SecretAPI(this)
 	}
 
 	// Public Apis
@@ -39,6 +43,8 @@ class Uesio {
 	component: ComponentAPI
 	platform: PlatformAPI
 	collection: CollectionAPI
+	configvalue: ConfigValueAPI
+	secret: SecretAPI
 
 	_props: BaseProps
 	_dispatcher: Dispatcher<AnyAction>

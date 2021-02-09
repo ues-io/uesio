@@ -17,6 +17,19 @@ type BotResponse = {
 	success: boolean
 }
 
+type ConfigValueResponse = {
+	name: string
+	namespace: string
+	value: string
+	managedby: string
+}
+
+type SecretResponse = {
+	name: string
+	namespace: string
+	managedby: string
+}
+
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
 	getTheme(
@@ -68,8 +81,18 @@ interface Platform {
 		grouping?: string
 	): Promise<MetadataListStore>
 	getAvailableNamespaces(context: Context): Promise<MetadataListStore>
+	getConfigValues(
+		context: Context,
+		app?: string,
+		site?: string
+	): Promise<ConfigValueResponse[]>
+	getSecrets(
+		context: Context,
+		app?: string,
+		site?: string
+	): Promise<SecretResponse[]>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
 }
 
-export { Platform, BotResponse, BotParams }
+export { Platform, BotResponse, BotParams, ConfigValueResponse, SecretResponse }

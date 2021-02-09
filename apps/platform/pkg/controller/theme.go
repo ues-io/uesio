@@ -17,8 +17,8 @@ type ThemeResponse struct {
 	Definition *meta.ThemeDefinition `json:"definition"`
 }
 
-//ThemeAPI function
-func ThemeAPI(w http.ResponseWriter, r *http.Request) {
+//Theme function
+func Theme(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 

@@ -120,29 +120,22 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	return nil, fmt.Errorf("Node not found of key: " + key)
 }
 
-func getComponentsUsed(node *yaml.Node) map[string]bool {
-
-	usedComps := map[string]bool{}
+func getComponentsUsed(node *yaml.Node, usedComps *map[string]bool) {
 	if node.Kind != yaml.SequenceNode {
-		return nil
+		return
 	}
 
 	for i := range node.Content {
 		comp := node.Content[i]
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
-			usedComps[compName] = true
+			(*usedComps)[compName] = true
 			for i := range comp.Content[1].Content {
 				prop := comp.Content[1].Content[i]
-				subComps := getComponentsUsed(prop)
-				for i := range subComps {
-					usedComps[i] = true
-				}
+				getComponentsUsed(prop, usedComps)
 			}
 		}
 	}
-
-	return usedComps
 }
 
 func isComponentLike(node *yaml.Node) bool {
@@ -158,7 +151,7 @@ func isComponentLike(node *yaml.Node) bool {
 	if len(nameParts) != 2 {
 		return false
 	}
-	if node.Content[1].Kind != yaml.MappingNode {
+	if node.Content[1].Kind != yaml.MappingNode && node.Content[1].Tag != "!!null" {
 		return false
 	}
 	return true
@@ -171,5 +164,9 @@ func (v *View) GetComponents() (map[string]bool, error) {
 		return nil, err
 	}
 
-	return getComponentsUsed(components), nil
+	usedComps := map[string]bool{}
+
+	getComponentsUsed(components, &usedComps)
+
+	return usedComps, nil
 }

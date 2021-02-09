@@ -81,6 +81,67 @@ func Authenticate(next http.Handler) http.Handler {
 	})
 }
 
+func AuthenticateSiteAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		appName := vars["app"]
+		siteName := vars["site"]
+
+		session := GetSession(r)
+		site := session.GetSite()
+		perms := session.GetPermissions()
+
+		// 1. Make sure we're in a site that can read/modify workspaces
+		if site.Name != "studio" {
+			err := errors.New("this site does not allow administering other sites")
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// 2. we should have a profile that allows modifying workspaces
+		if !perms.HasPermission(&meta.PermissionSet{
+			NamedRefs: map[string]bool{
+				"workspace_admin": true,
+			},
+		}) {
+			err := errors.New("your profile does not allow you to administer sites")
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Get the Workspace from the DB
+		var siteadmin meta.Site
+		err := datasource.PlatformLoadOne(
+			&siteadmin,
+			[]adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: siteName + "_" + appName,
+				},
+			},
+			session,
+		)
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		session.SetSiteAdmin(&siteadmin)
+
+		bundleDef, err := bundle.GetAppBundle(session)
+		if err != nil {
+			http.Error(w, "Failed to get app bundle from site:"+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		session.GetSiteAdmin().SetAppBundle(bundleDef)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 // AuthenticateWorkspace checks to see if the current user is logged in
 func AuthenticateWorkspace(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

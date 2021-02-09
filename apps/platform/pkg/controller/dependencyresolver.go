@@ -45,7 +45,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 
 	collectionKeyMap := map[string]bool{}
 
-	collection.Loop(func(item loadable.Item) error {
+	err = collection.Loop(func(item loadable.Item) error {
 		var key string
 		// Special handling for fields for now
 		if metadatatype == "fields" {
@@ -60,6 +60,11 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 		collectionKeyMap[key] = true
 		return nil
 	})
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	respondJSON(w, r, &collectionKeyMap)
 

@@ -1,5 +1,5 @@
 import { field } from "@uesio/constants"
-import { getStore } from "../store/store"
+import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
@@ -17,6 +17,7 @@ type ContextFrame = {
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
+	siteadmin?: SiteState
 }
 
 const getFromContext = (
@@ -77,6 +78,8 @@ class Context {
 	getRoute = () => this.stack.find((frame) => frame?.route)?.route
 
 	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
+
+	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
 

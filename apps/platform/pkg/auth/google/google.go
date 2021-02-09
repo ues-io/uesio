@@ -14,7 +14,7 @@ type Auth struct {
 // Verify function
 func (a *Auth) Verify(token string, site *meta.Site) error {
 	v := verifier.Verifier{}
-	aud, err := configstore.GetValue("uesio.googleClientId", site)
+	aud, err := configstore.GetValueFromKey("uesio.googleClientId", site)
 	if err != nil {
 		return err
 	}

@@ -110,7 +110,7 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (*me
 	if err != nil {
 		return nil, err
 	}
-	bucket, err := configstore.GetValue(ufc.Bucket, site)
+	bucket, err := configstore.GetValueFromKey(ufc.Bucket, site)
 	if err != nil {
 		return nil, err
 	}

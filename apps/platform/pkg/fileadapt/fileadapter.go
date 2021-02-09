@@ -71,7 +71,7 @@ func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Sessio
 		return nil, "", nil, err
 	}
 
-	bucket, err := configstore.GetValue(ufc.Bucket, site)
+	bucket, err := configstore.GetValueFromKey(ufc.Bucket, site)
 	if err != nil {
 		return nil, "", nil, err
 	}
