@@ -81,16 +81,18 @@ interface Platform {
 		grouping?: string
 	): Promise<MetadataListStore>
 	getAvailableNamespaces(context: Context): Promise<MetadataListStore>
-	getConfigValues(
+	getConfigValues(context: Context): Promise<ConfigValueResponse[]>
+	setConfigValue(
 		context: Context,
-		app?: string,
-		site?: string
-	): Promise<ConfigValueResponse[]>
-	getSecrets(
+		key: string,
+		value: string
+	): Promise<BotResponse>
+	getSecrets(context: Context): Promise<SecretResponse[]>
+	setSecret(
 		context: Context,
-		app?: string,
-		site?: string
-	): Promise<SecretResponse[]>
+		key: string,
+		value: string
+	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
 }

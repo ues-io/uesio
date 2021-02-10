@@ -1,0 +1,6 @@
+name: configstorevalues
+dataSource: uesio.platform
+idField: uesio.id
+idFormat: "${uesio.key}"
+nameField: uesio.key
+collectionName: configstorevalues

@@ -14,20 +14,27 @@ class SecretAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
-	useSecrets(context: Context, app?: string, site?: string) {
+	useSecrets(context: Context) {
 		const [secrets, setSecrets] = useState<SecretResponse[] | null>(null)
 		const loading = useRef(false)
 		useEffect(() => {
 			if (!secrets && !loading.current) {
 				loading.current = true
 				this.dispatcher((dispatch, getState, platform) =>
-					platform.getSecrets(context, app, site)
+					platform.getSecrets(context)
 				)
 					.then(setSecrets)
 					.finally(() => (loading.current = false))
 			}
 		})
-		return secrets
+		const reset = () => setSecrets(null)
+		return [secrets, reset] as [SecretResponse[] | null, () => void]
+	}
+
+	set(context: Context, key: string, value: string) {
+		return this.dispatcher((dispatch, getState, platform) =>
+			platform.setSecret(context, key, value)
+		)
 	}
 }
 

@@ -14,8 +14,8 @@ import (
 
 // AuthenticationType interface
 type AuthenticationType interface {
-	Verify(string, *meta.Site) error
-	Decode(string, *meta.Site) (*AuthenticationClaims, error)
+	Verify(string, *sess.Session) error
+	Decode(string, *sess.Session) (*AuthenticationClaims, error)
 }
 
 var authTypeMap = map[string]AuthenticationType{}

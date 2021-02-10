@@ -183,9 +183,25 @@ const postJSON = (url: string, body?: object) => {
 			return response.json()
 		},
 
+		setConfigValue: async (context: any, key: string, value: string) => {
+			const prefix = getPrefix(context)
+			const response = await postJSON(`${prefix}/configvalues/${key}`, {
+				value,
+			})
+			return response.json()
+		},
+
 		getSecrets: async (context: any) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/secrets`)
+			return response.json()
+		},
+
+		setSecret: async (context: any, key: string, value: string) => {
+			const prefix = getPrefix(context)
+			const response = await postJSON(`${prefix}/secrets/${key}`, {
+				value,
+			})
 			return response.json()
 		},
 

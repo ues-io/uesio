@@ -250,11 +250,9 @@ Do define the following environment variables in `~/.zshenv`.
 | ---------------------------- | ------------------------------------------------------------------------------------------ |
 | UESIO_USE_HTTPS              | Use ssl or not                                                                             |
 | GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    |
-| GOOGLE_AUTH_CLIENT_ID        | Client Id for Google Auth                                                                  |
 | GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  |
 |                              | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)         |
 | FIRESTORE_EMULATOR_HOST      | Emulator host and port                                                                     |
-| FACEBOOK_APP_ID              | Facebook APP ID                                                                            |
 | UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                |
 | UESIO_PLATFORM_BUCKET        | The Bucket in GCP file uploads will be populated to if using the useio.platform filesource |
 |                              | (Can be either empty, or "filesystem" if you want sessions to persist)                     |
@@ -262,9 +260,6 @@ Do define the following environment variables in `~/.zshenv`.
 | UESIO_LOCAL_FILES            | Set to "true" to have the uesio.platform filesource save files to the file system          |
 | COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |
-| AWS_ACCESS_KEY_ID            | AWS access key for DynamoDB                                                                |
-| AWS_SECRET_ACCESS_KEY        | AWS SECRET access key for DyanamoDB                                                        |
-| AWS_REGION                   | The region where the DyanamoDB is located                                                  |
 
 # Seed Local Database with Test Data
 

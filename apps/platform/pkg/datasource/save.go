@@ -64,8 +64,6 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 // Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 
-	site := session.GetSite()
-
 	collated := map[string][]adapt.SaveOp{}
 	metadataResponse := adapt.MetadataCache{}
 
@@ -149,7 +147,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		credentials, err := adapt.GetCredentials(datasource, site)
+		credentials, err := adapt.GetCredentials(datasource, session)
 		if err != nil {
 			return err
 		}

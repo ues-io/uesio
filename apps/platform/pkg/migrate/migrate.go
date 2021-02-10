@@ -11,8 +11,6 @@ import (
 // Migrate func
 func Migrate(session *sess.Session) error {
 
-	site := session.GetSite()
-
 	collatedMetadata := map[string]*adapt.MetadataCache{}
 	metadataResponse := adapt.MetadataCache{}
 	var collections meta.CollectionCollection
@@ -84,7 +82,7 @@ func Migrate(session *sess.Session) error {
 		if err != nil {
 			return err
 		}
-		credentials, err := adapt.GetCredentials(ds, site)
+		credentials, err := adapt.GetCredentials(ds, session)
 		if err != nil {
 			return err
 		}

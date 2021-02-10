@@ -1,0 +1,5 @@
+name: store
+collection: uesio.configvalues
+type: TEXT
+label: Store
+propertyName: store

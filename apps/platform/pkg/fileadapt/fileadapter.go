@@ -64,14 +64,13 @@ func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) 
 }
 
 func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Session) (FileAdapter, string, *Credentials, error) {
-	site := session.GetSite()
 
 	ufc, fs, err := GetFileSourceAndCollection(userFile.FileCollectionID, session)
 	if err != nil {
 		return nil, "", nil, err
 	}
 
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, site)
+	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -80,7 +79,7 @@ func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Sessio
 	if err != nil {
 		return nil, "", nil, err
 	}
-	credentials, err := GetCredentials(fs, site)
+	credentials, err := GetCredentials(fs, session)
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -104,16 +103,16 @@ func (c *Credentials) GetHash() string {
 
 // GetCredentials function
 //TODO:: Dig into what this should be
-func GetCredentials(fs *meta.FileSource, site *meta.Site) (*Credentials, error) {
-	database, err := configstore.Merge(fs.Database, site)
+func GetCredentials(fs *meta.FileSource, session *sess.Session) (*Credentials, error) {
+	database, err := configstore.Merge(fs.Database, session)
 	if err != nil {
 		return nil, err
 	}
-	username, err := secretstore.GetSecret(fs.Username, site)
+	username, err := secretstore.GetSecretFromKey(fs.Username, session)
 	if err != nil {
 		return nil, err
 	}
-	password, err := secretstore.GetSecret(fs.Password, site)
+	password, err := secretstore.GetSecretFromKey(fs.Password, session)
 	if err != nil {
 		return nil, err
 	}

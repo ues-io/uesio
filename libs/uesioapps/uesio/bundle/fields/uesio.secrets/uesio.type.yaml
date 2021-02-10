@@ -1,5 +1,0 @@
-name: type
-collection: uesio.secrets
-type: TEXT
-label: Type
-propertyName: type

@@ -86,7 +86,6 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 
 // Load function
 func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	site := session.GetSite()
 	collated := map[string][]adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
 
@@ -150,7 +149,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := adapt.GetCredentials(datasource, site)
+		credentials, err := adapt.GetCredentials(datasource, session)
 		if err != nil {
 			return nil, err
 		}
@@ -189,7 +188,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 				if err != nil {
 					return nil, err
 				}
-				credentials, err := adapt.GetCredentials(datasource, site)
+				credentials, err := adapt.GetCredentials(datasource, session)
 				if err != nil {
 					return nil, err
 				}

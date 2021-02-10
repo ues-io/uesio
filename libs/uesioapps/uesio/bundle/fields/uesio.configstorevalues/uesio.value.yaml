@@ -1,0 +1,5 @@
+name: value
+collection: uesio.configstorevalues
+type: "TEXT"
+label: Value
+propertyName: value

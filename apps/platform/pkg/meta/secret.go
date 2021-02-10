@@ -1,13 +1,27 @@
 package meta
 
+import "errors"
+
 // Secret struct
 type Secret struct {
 	ID        string `yaml:"-" uesio:"uesio.id"`
 	Name      string `yaml:"name" uesio:"uesio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
-	Type      string `yaml:"type,omitempty" uesio:"uesio.type"`
+	Store     string `yaml:"store,omitempty" uesio:"uesio.store"`
 	ManagedBy string `yaml:"managedBy" uesio:"uesio.managedby"`
 	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+}
+
+// NewSecret function
+func NewSecret(key string) (*Secret, error) {
+	namespace, name, err := ParseKey(key)
+	if err != nil {
+		return nil, errors.New("Bad Key for ConfigValue: " + key)
+	}
+	return &Secret{
+		Name:      name,
+		Namespace: namespace,
+	}, nil
 }
 
 // GetCollectionName function

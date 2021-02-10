@@ -106,11 +106,11 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (*me
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := fileadapt.GetCredentials(fs, site)
+	credentials, err := fileadapt.GetCredentials(fs, session)
 	if err != nil {
 		return nil, err
 	}
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, site)
+	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
 	if err != nil {
 		return nil, err
 	}
