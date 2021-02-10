@@ -21,14 +21,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/cmd"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
-	configenvironmentstore "github.com/thecloudmasters/uesio/pkg/configstore/environment"
+	cse "github.com/thecloudmasters/uesio/pkg/configstore/environment"
+	csp "github.com/thecloudmasters/uesio/pkg/configstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
-	secretenvironmentstore "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
+	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
+	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
 )
 
 func init() {
@@ -52,10 +54,12 @@ func init() {
 	fileadapt.RegisterFileAdapter("uesio.local", &localfiles.FileAdapter{})
 
 	// Config Stores
-	configstore.RegisterConfigStore("environment", &configenvironmentstore.ConfigStore{})
+	configstore.RegisterConfigStore("environment", &cse.ConfigStore{})
+	configstore.RegisterConfigStore("platform", &csp.ConfigStore{})
 
 	// Secret Stores
-	secretstore.RegisterSecretStore("environment", &secretenvironmentstore.SecretStore{})
+	secretstore.RegisterSecretStore("environment", &sse.SecretStore{})
+	secretstore.RegisterSecretStore("platform", &ssp.SecretStore{})
 
 	// Bundle Stores
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})

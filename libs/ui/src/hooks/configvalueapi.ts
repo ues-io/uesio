@@ -14,20 +14,27 @@ class ConfigValueAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
-	useConfigValues(context: Context, app?: string, site?: string) {
+	useConfigValues(context: Context) {
 		const [values, setValues] = useState<ConfigValueResponse[] | null>(null)
 		const loading = useRef(false)
 		useEffect(() => {
 			if (!values && !loading.current) {
 				loading.current = true
 				this.dispatcher((dispatch, getState, platform) =>
-					platform.getConfigValues(context, app, site)
+					platform.getConfigValues(context)
 				)
 					.then(setValues)
 					.finally(() => (loading.current = false))
 			}
 		})
-		return values
+		const reset = () => setValues(null)
+		return [values, reset] as [ConfigValueResponse[] | null, () => void]
+	}
+
+	set(context: Context, key: string, value: string) {
+		return this.dispatcher((dispatch, getState, platform) =>
+			platform.setConfigValue(context, key, value)
+		)
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Credentials struct
@@ -25,24 +26,24 @@ func (c *Credentials) GetHash() string {
 }
 
 // GetCredentials function
-func GetCredentials(ds *meta.DataSource, site *meta.Site) (*Credentials, error) {
-	database, err := configstore.Merge(ds.Database, site)
+func GetCredentials(ds *meta.DataSource, session *sess.Session) (*Credentials, error) {
+	database, err := configstore.Merge(ds.Database, session)
 	if err != nil {
 		return nil, err
 	}
-	username, err := secretstore.GetSecret(ds.Username, site)
+	username, err := secretstore.GetSecretFromKey(ds.Username, session)
 	if err != nil {
 		return nil, err
 	}
-	url, err := configstore.Merge(ds.URL, site)
+	url, err := configstore.Merge(ds.URL, session)
 	if err != nil {
 		return nil, err
 	}
-	region, err := configstore.Merge(ds.Region, site)
+	region, err := configstore.Merge(ds.Region, session)
 	if err != nil {
 		return nil, err
 	}
-	password, err := secretstore.GetSecret(ds.Password, site)
+	password, err := secretstore.GetSecretFromKey(ds.Password, session)
 	if err != nil {
 		return nil, err
 	}

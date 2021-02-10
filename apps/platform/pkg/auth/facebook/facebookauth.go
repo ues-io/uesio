@@ -3,7 +3,7 @@ package facebook
 import (
 	fb "github.com/huandu/facebook/v2"
 	"github.com/thecloudmasters/uesio/pkg/auth"
-	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Auth struct
@@ -11,13 +11,13 @@ type Auth struct {
 }
 
 // Verify function
-func (a *Auth) Verify(token string, site *meta.Site) error {
+func (a *Auth) Verify(token string, session *sess.Session) error {
 	// We verify in the Decode function since we call there the FB API.
 	return nil
 }
 
 // Decode function
-func (a *Auth) Decode(token string, site *meta.Site) (*auth.AuthenticationClaims, error) {
+func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
 
 	res, err := fb.Get("/me", fb.Params{
 		"fields":       "id,first_name,last_name,email",

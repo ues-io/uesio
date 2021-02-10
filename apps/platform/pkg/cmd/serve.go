@@ -94,10 +94,14 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controller.ViewPreview(true)).Methods("GET")
 
 	workspaceAPI(wr, "/configvalues", controller.ConfigValue).Methods("GET")
+	workspaceAPI(wr, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
 	workspaceAPI(wr, "/secrets", controller.Secret).Methods("GET")
+	workspaceAPI(wr, "/secrets/{key}", controller.SetSecret).Methods("POST")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValue).Methods("GET")
+	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
 	siteAdminAPI(sar, "/secrets", controller.Secret).Methods("GET")
+	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
 
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")

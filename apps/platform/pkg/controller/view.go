@@ -121,16 +121,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 }
 
 func getConfigValueDependencyFromComponent(key string, session *sess.Session) (string, error) {
-	site := session.GetSite()
-	configValue, err := meta.NewConfigValue(key)
-	if err != nil {
-		return "", err
-	}
-	err = bundle.Load(configValue, session)
-	if err != nil {
-		return "", err
-	}
-	value, err := configstore.GetValueFromKey(key, site)
+	value, err := configstore.GetValueFromKey(key, session)
 	if err != nil {
 		return "", err
 	}

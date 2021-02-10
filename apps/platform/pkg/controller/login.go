@@ -43,7 +43,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	s := middleware.GetSession(r)
 	site := s.GetSite()
 
-	user, err := auth.Login(loginRequest.Type, loginRequest.Token, site)
+	user, err := auth.Login(loginRequest.Type, loginRequest.Token, s)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

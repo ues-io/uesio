@@ -36,8 +36,10 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 			})
 		}
 	}
-	const configValues = uesio.configvalue.useConfigValues(props.context)
-	const secrets = uesio.secret.useSecrets(props.context)
+	const [configValues, resetConfigValues] = uesio.configvalue.useConfigValues(
+		props.context
+	)
+	const [secrets, resetSecrets] = uesio.secret.useSecrets(props.context)
 	const [state, setState] = React.useState({
 		selected: "",
 		value: "",
@@ -64,8 +66,10 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 		})
 	}
 
-	const handleSet = () => {
-		console.log("Settting", state)
+	const handleSet = async () => {
+		const api = state.isSecret ? uesio.secret : uesio.configvalue
+		await api.set(context, state.selected, state.value)
+		state.isSecret ? resetSecrets() : resetConfigValues()
 		handleClose()
 	}
 
@@ -89,15 +93,22 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 								primary={key}
 								secondary={value}
 							/>
-							<material.ListItemSecondaryAction>
-								<material.Button
-									onClick={() =>
-										handleClickOpen(key, value, false)
-									}
-								>
-									Set
-								</material.Button>
-							</material.ListItemSecondaryAction>
+							{(configValue.managedby !== "app" ||
+								configValue.namespace === appName) && (
+								<material.ListItemSecondaryAction>
+									<material.Button
+										onClick={() =>
+											handleClickOpen(key, value, false)
+										}
+									>
+										{`Set${
+											configValue.managedby === "app"
+												? " for App"
+												: ""
+										}`}
+									</material.Button>
+								</material.ListItemSecondaryAction>
+							)}
 						</material.ListItem>
 					)
 				})}
@@ -147,7 +158,7 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 				aria-describedby="alert-dialog-description"
 			>
 				<material.DialogTitle id="alert-dialog-title">
-					{"Set " + state.isSecret ? "Secret" : "Config Value"}
+					{"Set " + (state.isSecret ? "Secret" : "Config Value")}
 				</material.DialogTitle>
 				<material.DialogContent>
 					<material.DialogContentText>

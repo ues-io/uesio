@@ -1,2 +1,3 @@
 name: genericFileBucket
-managedBy: site
+managedBy: app
+store: environment
