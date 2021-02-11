@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 // FileAdapter struct
@@ -26,7 +26,7 @@ func removeEmptyDir(path string) {
 }
 
 // Delete function
-func (a *FileAdapter) Delete(bucket, path string, credentials *fileadapt.Credentials) error {
+func (a *FileAdapter) Delete(bucket, path string, credentials *adapt.Credentials) error {
 	fullFilePath := filepath.Join("userfiles", bucket, path)
 	err := os.Remove(fullFilePath)
 	if err != nil {
@@ -38,7 +38,7 @@ func (a *FileAdapter) Delete(bucket, path string, credentials *fileadapt.Credent
 }
 
 // Download function
-func (a *FileAdapter) Download(bucket, path string, credentials *fileadapt.Credentials) (io.ReadCloser, error) {
+func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
 	fullFilePath := filepath.Join("userfiles", bucket, path)
 	outFile, err := os.Open(fullFilePath)
 	if err != nil {
@@ -48,7 +48,7 @@ func (a *FileAdapter) Download(bucket, path string, credentials *fileadapt.Crede
 }
 
 // Upload function
-func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *fileadapt.Credentials) error {
+func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
 
 	fullFilePath := filepath.Join("userfiles", bucket, path)
 

@@ -102,11 +102,11 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (*me
 		return nil, err
 	}
 
-	fileAdapter, err := fileadapt.GetFileAdapter(fs.GetAdapterType())
+	fileAdapter, err := fileadapt.GetFileAdapter(fs.Type)
 	if err != nil {
 		return nil, err
 	}
-	credentials, err := fileadapt.GetCredentials(fs, session)
+	credentials, err := adapt.GetCredentials(fs.Credentials, session)
 	if err != nil {
 		return nil, err
 	}

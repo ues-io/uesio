@@ -144,12 +144,12 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 		// and make the requests
 		// It would be better to make this requests in parallel
 		// instead of in series
-		adapterType := datasource.GetAdapterType()
+		adapterType := datasource.Type
 		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return nil, err
 		}
-		credentials, err := adapt.GetCredentials(datasource, session)
+		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
 		if err != nil {
 			return nil, err
 		}
@@ -183,12 +183,12 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 				// and make the requests
 				// It would be better to make this requests in parallel
 				// instead of in series
-				adapterType := datasource.GetAdapterType()
+				adapterType := datasource.Type
 				adapter, err := adapt.GetAdapter(adapterType)
 				if err != nil {
 					return nil, err
 				}
-				credentials, err := adapt.GetCredentials(datasource, session)
+				credentials, err := adapt.GetCredentials(datasource.Credentials, session)
 				if err != nil {
 					return nil, err
 				}

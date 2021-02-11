@@ -123,6 +123,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	"routes":         func() BundleableGroup { return &RouteCollection{} },
 	"views":          func() BundleableGroup { return &ViewCollection{} },
 	"themes":         func() BundleableGroup { return &ThemeCollection{} },
+	"credentials":    func() BundleableGroup { return &CredentialCollection{} },
 }
 
 // GetBundleableGroupFromType function

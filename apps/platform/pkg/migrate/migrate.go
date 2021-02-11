@@ -77,12 +77,12 @@ func Migrate(session *sess.Session) error {
 		// and make the requests
 		// It would be better to make this requests in parallel
 		// instead of in series
-		adapterType := ds.GetAdapterType()
+		adapterType := ds.Type
 		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return err
 		}
-		credentials, err := adapt.GetCredentials(ds, session)
+		credentials, err := adapt.GetCredentials(ds.Credentials, session)
 		if err != nil {
 			return err
 		}

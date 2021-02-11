@@ -1,5 +1,0 @@
-name: region
-collection: uesio.datasources
-type: TEXT
-label: Region
-propertyName: region

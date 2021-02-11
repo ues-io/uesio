@@ -172,7 +172,10 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 		return nil
 	}
 	ctx := context.Background()
-	client := getDynamoDB(credentials)
+	client, err := getDynamoDB(credentials)
+	if err != nil {
+		return err
+	}
 	return loadMany(ctx, client, ops, metadata)
 }
 

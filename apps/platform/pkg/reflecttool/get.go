@@ -45,6 +45,10 @@ func GetField(obj interface{}, name string) (interface{}, error) {
 
 }
 
+func Get(obj interface{}) (interface{}, error) {
+	return getFieldReflect(reflectValue(obj))
+}
+
 func getSlice(from reflect.Value) (interface{}, error) {
 	returnSlice := []interface{}{}
 	for i := 0; i < from.Len(); i++ {
@@ -55,6 +59,21 @@ func getSlice(from reflect.Value) (interface{}, error) {
 		returnSlice = append(returnSlice, val)
 	}
 	return returnSlice, nil
+}
+
+func getMap(from reflect.Value) (interface{}, error) {
+	returnMap := map[string]interface{}{}
+	iter := from.MapRange()
+	for iter.Next() {
+		k := iter.Key()
+		v := iter.Value()
+		val, err := getFieldReflect(v)
+		if err != nil {
+			return nil, err
+		}
+		returnMap[k.String()] = val
+	}
+	return returnMap, nil
 }
 
 func getStruct(from reflect.Value) (interface{}, error) {
@@ -94,6 +113,8 @@ func getFieldReflect(value reflect.Value) (interface{}, error) {
 	switch value.Kind() {
 	case reflect.Slice:
 		return getSlice(value)
+	case reflect.Map:
+		return getMap(value)
 	case reflect.Struct:
 		return getStruct(value)
 	case reflect.Ptr:
