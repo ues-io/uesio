@@ -18,19 +18,12 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID        string `yaml:"-" uesio:"uesio.id"`
-	Name      string `uesio:"uesio.name"`
-	Namespace string `yaml:"-" uesio:"-"`
-	TypeRef   string `yaml:"type,omitempty" uesio:"-"`
-	Database  string `uesio:"-"`
-	Username  string `uesio:"-"`
-	Password  string `uesio:"-"`
-	Workspace string `uesio:"uesio.workspaceid"`
-}
-
-// GetAdapterType function
-func (fs *FileSource) GetAdapterType() string {
-	return fs.TypeRef
+	ID          string `yaml:"-" uesio:"uesio.id"`
+	Name        string `uesio:"uesio.name"`
+	Namespace   string `yaml:"-" uesio:"-"`
+	Type        string `yaml:"type,omitempty" uesio:"-"`
+	Credentials string `yaml:"credentials" uesio:"uesio.credentials"`
+	Workspace   string `uesio:"uesio.workspaceid"`
 }
 
 // GetCollectionName function

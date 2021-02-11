@@ -142,12 +142,12 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// and make the requests
 		// It would be better to make this requests in parallel
 		// instead of in series
-		adapterType := datasource.GetAdapterType()
+		adapterType := datasource.Type
 		adapter, err := adapt.GetAdapter(adapterType)
 		if err != nil {
 			return err
 		}
-		credentials, err := adapt.GetCredentials(datasource, session)
+		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
 		if err != nil {
 			return err
 		}

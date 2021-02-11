@@ -1,5 +1,0 @@
-name: url
-collection: uesio.datasources
-type: TEXT
-label: Url
-propertyName: url

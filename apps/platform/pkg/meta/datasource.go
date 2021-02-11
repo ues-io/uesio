@@ -18,21 +18,12 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID        string `yaml:"-" uesio:"uesio.id"`
-	Name      string `yaml:"name" uesio:"uesio.name"`
-	Namespace string `yaml:"-" uesio:"-"`
-	TypeRef   string `yaml:"type" uesio:"uesio.type"`
-	URL       string `yaml:"url,omitempty" uesio:"uesio.url"`
-	Region    string `yaml:"region,omitempty" uesio:"uesio.region"`
-	Database  string `yaml:"database,omitempty" uesio:"uesio.database"`
-	Username  string `yaml:"username,omitempty" uesio:"uesio.username"`
-	Password  string `yaml:"password,omitempty" uesio:"uesio.password"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
-}
-
-// GetAdapterType function
-func (ds *DataSource) GetAdapterType() string {
-	return ds.TypeRef
+	ID          string `yaml:"-" uesio:"uesio.id"`
+	Name        string `yaml:"name" uesio:"uesio.name"`
+	Namespace   string `yaml:"-" uesio:"-"`
+	Type        string `yaml:"type" uesio:"uesio.type"`
+	Credentials string `yaml:"credentials" uesio:"uesio.credentials"`
+	Workspace   string `yaml:"-" uesio:"uesio.workspaceid"`
 }
 
 // GetCollectionName function

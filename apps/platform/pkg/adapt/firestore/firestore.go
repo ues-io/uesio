@@ -20,16 +20,24 @@ var clientPool = map[string]*firestore.Client{}
 const searchIndexField = "system:searchindex"
 
 func getNewClient(ctx context.Context, credentials *adapt.Credentials) (*firestore.Client, error) {
+	projectID, ok := (*credentials)["project"]
+	if !ok {
+		return nil, errors.New("No project id provided in credentials")
+	}
 	if os.Getenv("FIRESTORE_EMULATOR_HOST") != "" {
 		return firestore.NewClient(
 			ctx,
-			credentials.Database,
+			projectID,
 		)
+	}
+	apiKey, ok := (*credentials)["apikey"]
+	if !ok {
+		return nil, errors.New("No api key provided in credentials")
 	}
 	return firestore.NewClient(
 		ctx,
-		credentials.Database,
-		option.WithCredentialsJSON([]byte(credentials.Password)),
+		projectID,
+		option.WithCredentialsJSON([]byte(apiKey)),
 	)
 }
 

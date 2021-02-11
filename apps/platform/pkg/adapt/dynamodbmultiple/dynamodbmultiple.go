@@ -15,15 +15,33 @@ import (
 type Adapter struct {
 }
 
-func getDynamoDB(dbcreds *adapt.Credentials) *dynamodb.DynamoDB {
+func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.DynamoDB, error) {
 
-	sess, _ := session.NewSession(&aws.Config{
-		Region:      aws.String(dbcreds.Region),
-		Credentials: credentials.NewStaticCredentials(dbcreds.Username, dbcreds.Password, ""),
+	region, ok := (*dbcreds)["region"]
+	if !ok {
+		return nil, errors.New("No region provided in credentials")
+	}
+
+	accessKeyID, ok := (*dbcreds)["accessKeyId"]
+	if !ok {
+		return nil, errors.New("No access key id provided in credentials")
+	}
+
+	secretAccessKey, ok := (*dbcreds)["secretAccessKey"]
+	if !ok {
+		return nil, errors.New("No access key id provided in credentials")
+	}
+
+	sess, err := session.NewSession(&aws.Config{
+		Region:      aws.String(region),
+		Credentials: credentials.NewStaticCredentials(accessKeyID, secretAccessKey, ""),
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	svc := dynamodb.New(sess)
-	return svc
+	return svc, nil
 }
 
 func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {

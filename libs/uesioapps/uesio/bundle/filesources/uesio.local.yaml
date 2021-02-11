@@ -1,4 +1,3 @@
 name: local
 type: uesio.local
-database: uesio.googleProjectId
-password: uesio.googleGCPAPIKey
+credentials: uesio.googlecloud

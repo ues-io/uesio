@@ -1,0 +1,5 @@
+name: name
+collection: uesio.credentials
+type: TEXT
+label: Name
+propertyName: name

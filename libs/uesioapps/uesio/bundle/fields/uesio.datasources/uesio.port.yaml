@@ -1,5 +1,0 @@
-name: port
-collection: uesio.datasources
-type: TEXT
-label: Port
-propertyName: port

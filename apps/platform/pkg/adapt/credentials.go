@@ -2,7 +2,9 @@ package adapt
 
 import (
 	"crypto/md5"
+	"strings"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
@@ -10,49 +12,53 @@ import (
 )
 
 // Credentials struct
-type Credentials struct {
-	Database string
-	Username string
-	Password string
-	URL      string
-	Region   string
-}
+type Credentials map[string]string
 
 // GetHash function
 func (c *Credentials) GetHash() string {
-	data := []byte(c.Database + ":" + c.Username + ":" + c.Password)
+	keys := []string{}
+	for k, v := range *c {
+		keys = append(keys, k+":"+v)
+	}
+	data := []byte(strings.Join(keys, ":"))
 	sum := md5.Sum(data)
 	return string(sum[:])
 }
 
 // GetCredentials function
-func GetCredentials(ds *meta.DataSource, session *sess.Session) (*Credentials, error) {
-	database, err := configstore.Merge(ds.Database, session)
-	if err != nil {
-		return nil, err
-	}
-	username, err := secretstore.GetSecretFromKey(ds.Username, session)
-	if err != nil {
-		return nil, err
-	}
-	url, err := configstore.Merge(ds.URL, session)
-	if err != nil {
-		return nil, err
-	}
-	region, err := configstore.Merge(ds.Region, session)
-	if err != nil {
-		return nil, err
-	}
-	password, err := secretstore.GetSecretFromKey(ds.Password, session)
+func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
+	credmap := Credentials{}
+
+	credential, err := meta.NewCredential(key)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Credentials{
-		Database: database,
-		Username: username,
-		Password: password,
-		URL:      url,
-		Region:   region,
-	}, nil
+	err = bundle.Load(credential, session)
+	if err != nil {
+		return nil, err
+	}
+
+	for key, entry := range credential.Entries {
+		var value string
+		if entry.Type == "secret" {
+			value, err = secretstore.GetSecretFromKey(entry.Value, session)
+			if err != nil {
+				return nil, err
+			}
+		} else if entry.Type == "configvalue" {
+			value, err = configstore.GetValueFromKey(entry.Value, session)
+			if err != nil {
+				return nil, err
+			}
+		} else if entry.Type == "merge" {
+			value, err = configstore.Merge(entry.Value, session)
+			if err != nil {
+				return nil, err
+			}
+		}
+		credmap[key] = value
+	}
+
+	return &credmap, nil
 }

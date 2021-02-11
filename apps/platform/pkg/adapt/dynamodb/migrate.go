@@ -10,7 +10,10 @@ import (
 func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 	fmt.Println("Migrating dynamoDB")
 
-	client := getDynamoDB(credentials)
+	client, err := getDynamoDB(credentials)
+	if err != nil {
+		return err
+	}
 
 	for _, collectionMetadata := range metadata.Collections {
 

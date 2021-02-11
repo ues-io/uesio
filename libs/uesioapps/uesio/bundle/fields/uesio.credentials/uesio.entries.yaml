@@ -1,0 +1,5 @@
+name: entries
+collection: uesio.credentials
+type: MAP
+label: Entries
+propertyName: entries

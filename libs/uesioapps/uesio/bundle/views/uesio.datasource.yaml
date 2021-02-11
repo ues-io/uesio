@@ -36,12 +36,7 @@ definition:
         uesio.workspaceid:
         uesio.workspace:
         uesio.type:
-        uesio.region:
-        uesio.url:
-        uesio.username:
-        uesio.password:
-        uesio.database:
-        uesio.port:
+        uesio.credentials:
       conditions:
         - field: uesio.workspaceid
           valueSource: LOOKUP
@@ -156,68 +151,7 @@ definition:
                                       fieldId: uesio.name
                                   - material.field:
                                       fieldId: uesio.type
-                                  - material.container:
-                                      padding: 0
-                                      uesio.display:
-                                        - field: uesio.type
-                                          value: uesio.dynamodb
-                                      components:
-                                        - material.field:
-                                            label: AWS Region
-                                            fieldId: uesio.region
-                                        - uesio.metadatafield:
-                                            label: AWS Access Key ID
-                                            metadataType: "SECRET"
-                                            fieldId: uesio.username
-                                        - uesio.metadatafield:
-                                            fieldId: uesio.password
-                                            metadataType: "SECRET"
-                                            label: AWS Secret Access Key
-
-                                  - material.container:
-                                      padding: 0
-                                      uesio.display:
-                                        - field: uesio.type
-                                          value: uesio.dynamodbmultiple
-                                      components:
-                                        - material.field:
-                                            label: AWS Region
-                                            fieldId: uesio.region
-                                        - uesio.metadatafield:
-                                            label: AWS Access Key ID
-                                            metadataType: "SECRET"
-                                            fieldId: uesio.username
-                                        - uesio.metadatafield:
-                                            fieldId: uesio.password
-                                            metadataType: "SECRET"
-                                            label: AWS Secret Access Key
-
-                                  - material.container:
-                                      padding: 0
-                                      uesio.display:
-                                        - field: uesio.type
-                                          value: uesio.postgresql
-                                      components:
-                                        - material.field:
-                                            fieldId: uesio.url
-                                        - material.field:
-                                            fieldId: uesio.port
-                                        - material.field:
-                                            fieldId: uesio.username
-                                        - material.field:
-                                            fieldId: uesio.password
-                                        - material.field:
-                                            fieldId: uesio.database
-
-                                  - material.container:
-                                      padding: 0
-                                      uesio.display:
-                                        - field: uesio.type
-                                          value: uesio.firestore
-                                      components:
-                                        - material.field:
-                                            label: Google Cloud Project ID
-                                            fieldId: uesio.username
-                                        - material.field:
-                                            label: Google Cloud API Key
-                                            fieldId: uesio.password
+                                  - uesio.metadatafield:
+                                      fieldId: uesio.credentials
+                                      metadataType: "CREDENTIALS"
+                                      label: "Credentials"

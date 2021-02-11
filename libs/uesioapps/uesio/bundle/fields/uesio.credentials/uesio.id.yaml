@@ -1,0 +1,6 @@
+name: id
+collection: uesio.credentials
+type: TEXT
+label: Credential ID
+propertyName: id
+readOnly: true
