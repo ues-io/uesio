@@ -1,6 +1,0 @@
-name: workspace
-collection: uesio.files
-type: REFERENCE
-label: Workspace
-propertyName: workspaceid
-referencedCollection: uesio.workspaces

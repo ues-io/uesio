@@ -1,0 +1,6 @@
+name: name
+collection: studio.collections
+type: TEXT
+label: Name
+propertyName: name
+required: true

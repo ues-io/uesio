@@ -1,0 +1,6 @@
+name: type
+collection: studio.bots
+type: SELECT
+label: Bot type
+propertyName: type
+selectList: studio.bottype

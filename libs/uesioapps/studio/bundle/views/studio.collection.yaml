@@ -1,0 +1,243 @@
+name: collection
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+      conditions:
+        - field: studio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    collections:
+      collection: studio.collections
+      fields:
+        studio.id:
+        studio.name:
+        studio.namefield:
+        studio.idfield:
+        studio.workspaceid:
+        studio.workspace:
+        studio.collectionname:
+        studio.datasource:
+        studio.updated:
+        studio.created:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+        - field: studio.name
+          value: $Param{collectionname}
+    fields:
+      collection: studio.fields
+      fields:
+        studio.id:
+        studio.name:
+        studio.type:
+        studio.label:
+        studio.propertyname:
+        studio.collection:
+        studio.workspaceid:
+        studio.foreignKeyField:
+        studio.referencedCollection:
+      conditions:
+        - field: studio.collection
+          value: $Param{appname}.$Param{collectionname}
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      defaults:
+        - field: studio.collection
+          valueSource: LOOKUP
+          lookupWire: collections
+          lookupTemplate: $Param{appname}.$Param{collectionname}
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: collectionDeck
+              wire: collections
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: studio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: studio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: studio
+                      - text: collections
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/collections
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/collections
+                            namespace: studio
+                      - text: $Param{collectionname}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${studio.name}
+                                                  textTransform: "uppercase"
+                                                  variant: h5
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: component/material.deck/TOGGLE_MODE
+                                                            target: "collectionDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "collections"
+                                                              - "fields"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: wire/CANCEL
+                                                            wire: "collections"
+                                                          - signal: wire/CANCEL
+                                                            wire: "fields"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "collections"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+                                                            namespace: "studio"
+                                  - material.field:
+                                      fieldId: studio.name
+                                  - material.field:
+                                      fieldId: studio.updated
+                                  - material.field:
+                                      fieldId: studio.created
+                                  - studio.metadatafield:
+                                      fieldId: studio.idfield
+                                      metadataType: "FIELD"
+                                      label: "ID Field"
+                                  - studio.metadatafield:
+                                      fieldId: studio.namefield
+                                      metadataType: "FIELD"
+                                      label: "Name Field"
+                                  - material.field:
+                                      fieldId: studio.collectionname
+                                  - studio.metadatafield:
+                                      fieldId: studio.datasource
+                                      metadataType: "DATASOURCE"
+                                      label: "Data Source"
+                - material.buttonset:
+                    buttons:
+                      - material.button:
+                          color: "primary"
+                          variant: "outlined"
+                          text: "New Field"
+                          signals:
+                            - signal: wire/CREATE_RECORD
+                              wire: "fields"
+                      - material.button:
+                          color: "primary"
+                          variant: "outlined"
+                          text: "Edit Mode"
+                          signals:
+                            - signal: component/material.table/TOGGLE_MODE
+                              target: "fieldsList"
+                - material.table:
+                    id: "fieldsList"
+                    wire: "fields"
+                    mode: "READ"
+                    columns:
+                      - material.column:
+                          field: studio.name
+                      - material.column:
+                          field: studio.type
+                      - material.column:
+                          field: studio.label
+                      - material.column:
+                          field: studio.propertyname
+                      - material.column:
+                          field: studio.collection
+                      - material.column:
+                          components:
+                            - material.button:
+                                color: primary
+                                variant: contained
+                                text: Edit
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}/fields/${studio.name}"
+                                    namespace: "studio"

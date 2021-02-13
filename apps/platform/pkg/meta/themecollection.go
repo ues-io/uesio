@@ -12,7 +12,7 @@ type ThemeCollection []Theme
 
 // GetName function
 func (tc *ThemeCollection) GetName() string {
-	return "themes"
+	return "studio.themes"
 }
 
 // GetFields function

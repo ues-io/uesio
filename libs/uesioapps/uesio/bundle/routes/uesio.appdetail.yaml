@@ -1,4 +1,0 @@
-name: appdetail
-path: app/{appname}
-view: uesio.app
-theme: uesio.default

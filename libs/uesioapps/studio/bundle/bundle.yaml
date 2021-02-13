@@ -1,0 +1,10 @@
+name: studio
+loginRoute: uesio.login
+homeRoute: studio.home
+defaultProfile: studio.standard
+publicProfile: uesio.public
+dependencies:
+  uesio:
+    version: "v0.0.1"
+  material:
+    version: "v0.0.1"

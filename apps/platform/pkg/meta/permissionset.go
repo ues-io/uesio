@@ -18,14 +18,14 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	ID             string          `yaml:"-" uesio:"uesio.id"`
-	Name           string          `yaml:"name" uesio:"uesio.name"`
+	ID             string          `yaml:"-" uesio:"studio.id"`
+	Name           string          `yaml:"name" uesio:"studio.name"`
 	Namespace      string          `yaml:"-" uesio:"-"`
 	NamedRefs      map[string]bool `yaml:"named" uesio:"-"`
 	ViewRefs       map[string]bool `yaml:"views" uesio:"-"`
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"-"`
 	FileRefs       map[string]bool `yaml:"files" uesio:"-"`
-	Workspace      string          `yaml:"-" uesio:"uesio.workspaceid"`
+	Workspace      string          `yaml:"-" uesio:"studio.workspaceid"`
 	AllowAllViews  bool            `yaml:"-" uesio:"-"`
 	AllowAllRoutes bool            `yaml:"-" uesio:"-"`
 	AllowAllFiles  bool            `yaml:"-" uesio:"-"`
@@ -45,7 +45,7 @@ func (ps *PermissionSet) GetCollection() CollectionableGroup {
 // GetConditions function
 func (ps *PermissionSet) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": ps.Name,
+		"studio.name": ps.Name,
 	}
 }
 

@@ -16,11 +16,11 @@ type ThemeDefinition struct {
 
 // Theme struct
 type Theme struct {
-	ID         string          `yaml:"-" uesio:"uesio.id"`
-	Name       string          `yaml:"name" uesio:"uesio.name"`
+	ID         string          `yaml:"-" uesio:"studio.id"`
+	Name       string          `yaml:"name" uesio:"studio.name"`
 	Namespace  string          `yaml:"-" uesio:"-"`
-	Definition ThemeDefinition `yaml:"definition" uesio:"uesio.definition"`
-	Workspace  string          `yaml:"-" uesio:"uesio.workspaceid"`
+	Definition ThemeDefinition `yaml:"definition" uesio:"studio.definition"`
+	Workspace  string          `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -37,7 +37,7 @@ func (t *Theme) GetCollection() CollectionableGroup {
 // GetConditions function
 func (t *Theme) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": t.Name,
+		"studio.name": t.Name,
 	}
 }
 
@@ -64,7 +64,7 @@ func (t *Theme) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio.definition" {
+	if fieldName == "studio.definition" {
 		return yaml.Unmarshal([]byte(value.(string)), &t.Definition)
 	}
 	return StandardFieldSet(t, fieldName, value)
@@ -72,7 +72,7 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "uesio.definition" {
+	if fieldName == "studio.definition" {
 		bytes, err := yaml.Marshal(t.Definition)
 		if err != nil {
 			return nil, err

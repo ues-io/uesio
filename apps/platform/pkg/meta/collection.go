@@ -18,18 +18,18 @@ func NewCollection(key string) (*Collection, error) {
 
 // Collection struct
 type Collection struct {
-	ID             string `yaml:"-" uesio:"uesio.id"`
-	Name           string `yaml:"name" uesio:"uesio.name"`
+	ID             string `yaml:"-" uesio:"studio.id"`
+	Name           string `yaml:"name" uesio:"studio.name"`
 	Namespace      string `yaml:"-" uesio:"-"`
-	DataSourceRef  string `yaml:"dataSource" uesio:"uesio.datasource"`
-	IDField        string `yaml:"idField" uesio:"uesio.idfield"`
-	IDFormat       string `yaml:"idFormat,omitempty" uesio:"uesio.idformat"`
-	NameField      string `yaml:"nameField" uesio:"uesio.namefield"`
-	CollectionName string `yaml:"collectionName" uesio:"uesio.collectionname"`
+	DataSourceRef  string `yaml:"dataSource" uesio:"studio.datasource"`
+	IDField        string `yaml:"idField" uesio:"studio.idfield"`
+	IDFormat       string `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
+	NameField      string `yaml:"nameField" uesio:"studio.namefield"`
+	CollectionName string `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly       bool   `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace      string `yaml:"-" uesio:"uesio.workspaceid"`
-	Updated        int64  `yaml:"-" uesio:"uesio.updated"`
-	Created        int64  `yaml:"-" uesio:"uesio.created"`
+	Workspace      string `yaml:"-" uesio:"studio.workspaceid"`
+	Updated        int64  `yaml:"-" uesio:"studio.updated"`
+	Created        int64  `yaml:"-" uesio:"studio.created"`
 }
 
 // GetCollectionName function
@@ -46,7 +46,7 @@ func (c *Collection) GetCollection() CollectionableGroup {
 // GetConditions function
 func (c *Collection) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": c.Name,
+		"studio.name": c.Name,
 	}
 }
 

@@ -1,0 +1,6 @@
+name: workspace
+collection: studio.permissionsets
+type: REFERENCE
+label: Workspace
+propertyName: workspaceid
+referencedCollection: studio.workspaces

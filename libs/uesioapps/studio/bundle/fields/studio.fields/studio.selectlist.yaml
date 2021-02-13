@@ -1,0 +1,5 @@
+name: selectlist
+collection: studio.fields
+type: TEXT
+label: Select List
+propertyName: selectlist

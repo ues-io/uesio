@@ -12,7 +12,7 @@ type SecretCollection []Secret
 
 // GetName function
 func (sc *SecretCollection) GetName() string {
-	return "secrets"
+	return "studio.secrets"
 }
 
 // GetFields function

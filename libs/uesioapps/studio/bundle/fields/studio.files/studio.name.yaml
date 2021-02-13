@@ -1,0 +1,5 @@
+name: name
+collection: studio.files
+type: TEXT
+label: Name
+propertyName: name

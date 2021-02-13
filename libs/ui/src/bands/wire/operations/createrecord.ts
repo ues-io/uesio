@@ -11,12 +11,14 @@ export default (context: Context, wirename: string): ThunkFunc => (
 	const viewId = context.getViewId()
 	if (!viewId) return context
 	const recordId = shortid.generate()
+	const state = getState()
 	dispatch(
 		createRecord({
 			recordId,
 			record: getDefaultRecord(
 				context,
-				getState().wire.entities,
+				state.wire.entities,
+				state.collection,
 				viewId,
 				wirename
 			),

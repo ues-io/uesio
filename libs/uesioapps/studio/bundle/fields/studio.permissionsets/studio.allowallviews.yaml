@@ -1,0 +1,5 @@
+name: allowallviews
+collection: studio.permissionsets
+type: CHECKBOX
+label: Allow all views
+propertyName: allowallviews

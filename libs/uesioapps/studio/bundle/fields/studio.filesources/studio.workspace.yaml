@@ -1,0 +1,6 @@
+name: workspace
+collection: studio.filesources
+type: REFERENCE
+label: Workspace
+propertyName: workspaceid
+referencedCollection: studio.workspaces

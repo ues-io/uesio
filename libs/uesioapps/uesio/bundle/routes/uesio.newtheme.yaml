@@ -1,4 +1,0 @@
-name: newtheme
-path: app/{appname}/workspace/{workspacename}/newtheme
-view: uesio.newtheme
-theme: uesio.default

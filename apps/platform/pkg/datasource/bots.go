@@ -55,8 +55,8 @@ func RunBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"uesio.collection": collectionMetadata.GetFullName(),
-		"uesio.type":       "BEFORESAVE",
+		"studio.collection": collectionMetadata.GetFullName(),
+		"studio.type":       "BEFORESAVE",
 	}, session)
 	if err != nil {
 		return err
@@ -93,8 +93,8 @@ func RunAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collectio
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"uesio.collection": collectionMetadata.GetFullName(),
-		"uesio.type":       "AFTERSAVE",
+		"studio.collection": collectionMetadata.GetFullName(),
+		"studio.type":       "AFTERSAVE",
 	}, session)
 	if err != nil {
 		return err

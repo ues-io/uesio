@@ -9,7 +9,7 @@ type BulkBatchCollection []BulkBatch
 
 // GetName function
 func (bbc *BulkBatchCollection) GetName() string {
-	return "bulkbatches"
+	return "uesio.bulkbatches"
 }
 
 // GetFields function

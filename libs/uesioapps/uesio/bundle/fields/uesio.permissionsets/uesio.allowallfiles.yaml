@@ -1,5 +1,0 @@
-name: allowallfiles
-collection: uesio.permissionsets
-type: CHECKBOX
-label: Allow all files
-propertyName: allowallfiles

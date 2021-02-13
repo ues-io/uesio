@@ -9,7 +9,7 @@ type CollectionCollection []Collection
 
 // GetName function
 func (cc *CollectionCollection) GetName() string {
-	return "collections"
+	return "studio.collections"
 }
 
 // GetFields function

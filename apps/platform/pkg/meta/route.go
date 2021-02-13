@@ -19,14 +19,14 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
-	ID        string            `yaml:"-" uesio:"uesio.id"`
-	Name      string            `uesio:"uesio.name"`
+	ID        string            `yaml:"-" uesio:"studio.id"`
+	Name      string            `uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
-	Path      string            `yaml:"path" uesio:"uesio.path"`
-	ViewRef   string            `yaml:"view" uesio:"uesio.view"`
+	Path      string            `yaml:"path" uesio:"studio.path"`
+	ViewRef   string            `yaml:"view" uesio:"studio.view"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"uesio.workspaceid"`
-	ThemeRef  string            `yaml:"theme" uesio:"uesio.theme"`
+	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	ThemeRef  string            `yaml:"theme" uesio:"studio.theme"`
 }
 
 // GetCollectionName function
@@ -43,7 +43,7 @@ func (r *Route) GetCollection() CollectionableGroup {
 // GetConditions function
 func (r *Route) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": r.Name,
+		"studio.name": r.Name,
 	}
 }
 

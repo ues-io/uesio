@@ -9,7 +9,7 @@ type FileSourceCollection []FileSource
 
 // GetName function
 func (fsc *FileSourceCollection) GetName() string {
-	return "FileSources"
+	return "studio.filesources"
 }
 
 // GetFields function

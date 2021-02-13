@@ -1,6 +1,0 @@
-name: type
-collection: uesio.bots
-type: SELECT
-label: Bot type
-propertyName: type
-selectList: uesio.bottype

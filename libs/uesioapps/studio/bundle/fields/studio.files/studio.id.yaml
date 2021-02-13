@@ -1,0 +1,6 @@
+name: id
+collection: studio.files
+type: TEXT
+label: File ID
+propertyName: id
+readOnly: true

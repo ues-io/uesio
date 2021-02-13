@@ -1,5 +1,0 @@
-name: required
-collection: uesio.fields
-type: BOOLEAN
-label: Required
-propertyName: required

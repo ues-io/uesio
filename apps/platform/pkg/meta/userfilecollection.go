@@ -68,7 +68,7 @@ func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
 // GetConditions function
 func (ufc *UserFileCollection) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": ufc.Name,
+		"studio.name": ufc.Name,
 	}
 }
 

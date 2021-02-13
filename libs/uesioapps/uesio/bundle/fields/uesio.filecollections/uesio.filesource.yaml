@@ -1,5 +1,0 @@
-name: filesource
-collection: uesio.filecollections
-type: TEXT
-label: File Source
-propertyName: filesource

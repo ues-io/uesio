@@ -1,5 +1,0 @@
-name: name
-collection: uesio.filecollections
-type: TEXT
-label: File Collection Name
-propertyName: name

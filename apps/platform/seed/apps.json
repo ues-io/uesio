@@ -1,8 +1,13 @@
 [
 	{
 		"name": "uesio",
-		"description": "The Uesio Configuration App",
+		"description": "Base Uesio Functionality",
 		"color": "#2f4b7c"
+	},
+	{
+		"name": "studio",
+		"description": "The Uesio Configuration App",
+		"color": "#ff7c43"
 	},
 	{
 		"name": "crm",

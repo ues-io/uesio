@@ -9,7 +9,7 @@ type ProfileCollection []Profile
 
 // GetName function
 func (pc *ProfileCollection) GetName() string {
-	return "profiles"
+	return "studio.profiles"
 }
 
 // GetFields function

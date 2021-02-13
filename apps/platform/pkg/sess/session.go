@@ -35,12 +35,7 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 }
 
 // GetHeadlessSession TODO:: JAS Ask ben what makes the most sense here
-func GetHeadlessSession() *Session {
-	user := &meta.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		Profile:   "uesio.public",
-	}
+func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
 	browserSession := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
 			"Profile":   user.Profile,
@@ -49,19 +44,24 @@ func GetHeadlessSession() *Session {
 			"Site":      "studio",
 		},
 	})
+	return &Session{
+		browserSession: &browserSession,
+		site:           site,
+	}
+}
+
+func GetHeadlessSite() *meta.Site {
 	site := &meta.Site{
-		Name:       "studio",
+		Name:       "uesio",
 		VersionRef: "v0.0.1",
 		AppRef:     "uesio",
 	}
 	site.SetAppBundle(&meta.BundleDef{
 		Name: "uesio",
 	})
-	return &Session{
-		browserSession: &browserSession,
-		site:           site,
-	}
+	return site
 }
+
 func create(browserSession *session.Session, site *meta.Site) *Session {
 	return &Session{
 		browserSession: browserSession,

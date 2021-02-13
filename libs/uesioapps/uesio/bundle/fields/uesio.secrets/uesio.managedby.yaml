@@ -1,5 +1,0 @@
-name: managedby
-collection: uesio.secrets
-type: TEXT
-label: Managed By
-propertyName: managedby

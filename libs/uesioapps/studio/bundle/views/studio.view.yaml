@@ -1,0 +1,160 @@
+name: view
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+      conditions:
+        - field: studio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    views:
+      collection: studio.views
+      fields:
+        studio.id:
+        studio.name:
+        studio.definition:
+        studio.workspaceid:
+        studio.workspace:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: viewname
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: viewDeck
+              wire: views
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: studio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: studio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: studio
+                      - text: views
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/views
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/views
+                            namespace: studio
+                      - text: $Param{viewname}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${studio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Preview"
+                                                        signals:
+                                                          - signal: "route/REDIRECT"
+                                                            path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${studio.name}/preview"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: "route/REDIRECT"
+                                                            path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${studio.name}/edit"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "views"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: wire/CANCEL
+                                                            wire: "views"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "views"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
+                                                            namespace: "studio"
+                                  - material.field:
+                                      fieldId: studio.name
+                                  - studio.codefield:
+                                      fieldId: studio.definition
+                                      height: 350px
+                                      language: "yaml"

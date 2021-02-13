@@ -1,0 +1,5 @@
+name: ondelete
+collection: studio.collections
+type: TEXT
+label: On Delete
+propertyName: ondelete

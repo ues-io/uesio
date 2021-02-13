@@ -1,0 +1,161 @@
+name: newpermissionset
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+      conditions:
+        - field: studio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    permissionsets:
+      collection: studio.permissionsets
+      fields:
+        studio.id:
+        studio.name:
+        studio.workspace:
+        studio.workspaceid:
+        studio.allowallfiles:
+        studio.allowallroutes:
+        studio.allowallviews:
+        studio.filerefs:
+        studio.namedrefs:
+        studio.routerefs:
+        studio.viewrefs:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      type: CREATE
+      defaults:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+    routes:
+      collection: studio.routes
+      fields:
+        studio.id:
+        studio.name:
+        studio.path:
+        studio.view:
+        studio.theme:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+    views:
+      collection: studio.views
+      fields:
+        studio.id:
+        studio.name:
+        studio.definition:
+        studio.workspaceid:
+        studio.workspace:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+    files:
+      collection: studio.files
+      fields:
+        studio.id:
+        studio.name:
+        studio.content:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.typography:
+              text: Create a New Permission Set
+              variant: h5
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: permissionsetsDeck
+              wire: permissionsets
+              mode: EDIT
+              components:
+                - material.card:
+                    media:
+                      background:
+                        color:
+                          intention: "primary"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          spacing: 4
+                          items:
+                            - material.griditem:
+                                xs: 3
+                                components:
+                                  - material.field:
+                                      fieldId: studio.name
+                                  - material.field:
+                                      fieldId: studio.allowallfiles
+                                  - material.field:
+                                      fieldId: studio.allowallroutes
+                                  - material.field:
+                                      fieldId: studio.allowallviews
+                                  - studio.permissionpicker:
+                                      fieldId: studio.filerefs
+                                      wireName: files
+                                      label: "Files"
+                                  - studio.permissionpicker:
+                                      fieldId: studio.routerefs
+                                      wireName: routes
+                                      label: "Routes"
+                                  - studio.permissionpicker:
+                                      fieldId: studio.viewrefs
+                                      wireName: views
+                                      label: "Views"
+                      - material.buttonset:
+                          buttons:
+                            - material.button:
+                                color: "primary"
+                                variant: "contained"
+                                text: "Save"
+                                signals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - "permissionsets"
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${studio.name}"
+                                    namespace: "studio"
+                            - material.button:
+                                color: "primary"
+                                variant: "outlined"
+                                text: "Cancel"
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                    namespace: "studio"

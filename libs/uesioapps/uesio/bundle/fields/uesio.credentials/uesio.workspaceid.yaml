@@ -1,5 +1,0 @@
-name: workspaceid
-collection: uesio.credentials
-type: TEXT
-label: Workspace ID
-propertyName: workspaceid

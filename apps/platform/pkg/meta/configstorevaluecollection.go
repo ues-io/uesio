@@ -9,7 +9,7 @@ type ConfigStoreValueCollection []ConfigStoreValue
 
 // GetName function
 func (cc *ConfigStoreValueCollection) GetName() string {
-	return "configstorevalues"
+	return "uesio.configstorevalues"
 }
 
 // GetFields function

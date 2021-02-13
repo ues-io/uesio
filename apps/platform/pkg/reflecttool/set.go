@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"runtime/debug"
 )
 
 // SetField sets the provided obj field with provided value. obj param has
@@ -115,9 +114,7 @@ func setPointer(to reflect.Value, from reflect.Value) error {
 
 func setPrimative(to reflect.Value, from reflect.Value) error {
 	if to.Type() != from.Type() {
-		debug.PrintStack()
-		invalidTypeError := errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
-		return invalidTypeError
+		return errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
 	}
 
 	to.Set(from)

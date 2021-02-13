@@ -1,0 +1,6 @@
+name: id
+collection: studio.secrets
+type: TEXT
+label: Secret ID
+propertyName: id
+readOnly: true

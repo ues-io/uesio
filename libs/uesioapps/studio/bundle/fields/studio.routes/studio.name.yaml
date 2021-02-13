@@ -1,0 +1,5 @@
+name: name
+collection: studio.routes
+type: TEXT
+label: Name
+propertyName: name

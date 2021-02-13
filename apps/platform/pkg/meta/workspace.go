@@ -2,10 +2,10 @@ package meta
 
 // Workspace struct
 type Workspace struct {
-	ID          string         `uesio:"uesio.id"`
-	Name        string         `uesio:"uesio.name"`
+	ID          string         `uesio:"studio.id"`
+	Name        string         `uesio:"studio.name"`
 	Namespace   string         `uesio:"-"`
-	App         *App           `uesio:"uesio.app"`
+	App         *App           `uesio:"studio.app"`
 	Permissions *PermissionSet `uesio:"-"`
 	bundleDef   *BundleDef
 }

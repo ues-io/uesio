@@ -1,0 +1,5 @@
+name: name
+collection: studio.configvalues
+type: TEXT
+label: Config Value name
+propertyName: name

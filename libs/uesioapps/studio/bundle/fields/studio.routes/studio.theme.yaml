@@ -1,0 +1,5 @@
+name: theme
+collection: studio.routes
+type: TEXT
+label: Theme
+propertyName: theme

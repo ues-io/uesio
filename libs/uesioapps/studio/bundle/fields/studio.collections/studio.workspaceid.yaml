@@ -1,0 +1,5 @@
+name: workspaceid
+collection: studio.collections
+type: TEXT
+label: Workspace ID
+propertyName: workspaceid

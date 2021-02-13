@@ -19,7 +19,11 @@ func (cs *ConfigStore) Get(key string) (string, error) {
 			Field: "uesio.id",
 			Value: key,
 		},
-	}, sess.GetHeadlessSession())
+	}, sess.GetHeadlessSession(&meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}, sess.GetHeadlessSite()))
 	if err != nil {
 		return "", nil
 	}
@@ -34,5 +38,9 @@ func (cs *ConfigStore) Set(key, value string) error {
 	}
 	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, sess.GetHeadlessSession())
+	}, sess.GetHeadlessSession(&meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}, sess.GetHeadlessSite()))
 }

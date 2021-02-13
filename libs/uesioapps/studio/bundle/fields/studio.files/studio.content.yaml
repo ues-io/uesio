@@ -1,0 +1,5 @@
+name: content
+collection: studio.files
+type: FILE
+label: Content
+propertyName: content

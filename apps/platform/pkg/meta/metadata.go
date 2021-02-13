@@ -55,6 +55,12 @@ func ParseKey(key string) (string, string, error) {
 	return keyArray[0], keyArray[1], nil
 }
 
+// GetNameKeyPart function
+func GetNameKeyPart(key string) string {
+	_, name, _ := ParseKey(key)
+	return name
+}
+
 func StandardKeyFromPath(path string, conditions BundleConditions) (string, error) {
 	if len(conditions) > 0 {
 		return "", errors.New("Conditions not allowed for this type")
@@ -109,21 +115,21 @@ func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) er
 type BundleableFactory func() BundleableGroup
 
 var bundleableGroupMap = map[string]BundleableFactory{
-	"secrets":        func() BundleableGroup { return &SecretCollection{} },
-	"profiles":       func() BundleableGroup { return &ProfileCollection{} },
-	"permissionsets": func() BundleableGroup { return &PermissionSetCollection{} },
-	"configvalues":   func() BundleableGroup { return &ConfigValueCollection{} },
-	"datasources":    func() BundleableGroup { return &DataSourceCollection{} },
-	"filesources":    func() BundleableGroup { return &FileSourceCollection{} },
-	"files":          func() BundleableGroup { return &FileCollection{} },
-	"fields":         func() BundleableGroup { return &FieldCollection{} },
-	"bots":           func() BundleableGroup { return &BotCollection{} },
-	"collections":    func() BundleableGroup { return &CollectionCollection{} },
-	"selectlists":    func() BundleableGroup { return &SelectListCollection{} },
-	"routes":         func() BundleableGroup { return &RouteCollection{} },
-	"views":          func() BundleableGroup { return &ViewCollection{} },
-	"themes":         func() BundleableGroup { return &ThemeCollection{} },
-	"credentials":    func() BundleableGroup { return &CredentialCollection{} },
+	GetNameKeyPart((&SecretCollection{}).GetName()):        func() BundleableGroup { return &SecretCollection{} },
+	GetNameKeyPart((&ProfileCollection{}).GetName()):       func() BundleableGroup { return &ProfileCollection{} },
+	GetNameKeyPart((&PermissionSetCollection{}).GetName()): func() BundleableGroup { return &PermissionSetCollection{} },
+	GetNameKeyPart((&ConfigValueCollection{}).GetName()):   func() BundleableGroup { return &ConfigValueCollection{} },
+	GetNameKeyPart((&DataSourceCollection{}).GetName()):    func() BundleableGroup { return &DataSourceCollection{} },
+	GetNameKeyPart((&FileSourceCollection{}).GetName()):    func() BundleableGroup { return &FileSourceCollection{} },
+	GetNameKeyPart((&FileCollection{}).GetName()):          func() BundleableGroup { return &FileCollection{} },
+	GetNameKeyPart((&FieldCollection{}).GetName()):         func() BundleableGroup { return &FieldCollection{} },
+	GetNameKeyPart((&BotCollection{}).GetName()):           func() BundleableGroup { return &BotCollection{} },
+	GetNameKeyPart((&CollectionCollection{}).GetName()):    func() BundleableGroup { return &CollectionCollection{} },
+	GetNameKeyPart((&SelectListCollection{}).GetName()):    func() BundleableGroup { return &SelectListCollection{} },
+	GetNameKeyPart((&RouteCollection{}).GetName()):         func() BundleableGroup { return &RouteCollection{} },
+	GetNameKeyPart((&ViewCollection{}).GetName()):          func() BundleableGroup { return &ViewCollection{} },
+	GetNameKeyPart((&ThemeCollection{}).GetName()):         func() BundleableGroup { return &ThemeCollection{} },
+	GetNameKeyPart((&CredentialCollection{}).GetName()):    func() BundleableGroup { return &CredentialCollection{} },
 }
 
 // GetBundleableGroupFromType function

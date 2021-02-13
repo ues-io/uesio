@@ -1,5 +1,0 @@
-name: allowallviews
-collection: uesio.permissionsets
-type: CHECKBOX
-label: Allow all views
-propertyName: allowallviews

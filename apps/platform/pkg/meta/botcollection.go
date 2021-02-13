@@ -14,7 +14,7 @@ type BotCollection []Bot
 
 // GetName function
 func (bc *BotCollection) GetName() string {
-	return "bots"
+	return "studio.bots"
 }
 
 // GetFields function
@@ -40,8 +40,8 @@ func (bc *BotCollection) NewBundleableItemWithKey(key string) (BundleableItem, e
 
 // GetKeyFromPath function
 func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["uesio.collection"]
-	botTypeKey, hasType := GetBotTypes()[conditions["uesio.type"]]
+	collectionKey, hasCollection := conditions["studio.collection"]
+	botTypeKey, hasType := GetBotTypes()[conditions["studio.type"]]
 	parts := strings.Split(path, string(os.PathSeparator))
 	partLength := len(parts)
 	if partLength < 1 {

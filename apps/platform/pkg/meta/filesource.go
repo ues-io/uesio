@@ -18,12 +18,12 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID          string `yaml:"-" uesio:"uesio.id"`
-	Name        string `uesio:"uesio.name"`
+	ID          string `yaml:"-" uesio:"studio.id"`
+	Name        string `uesio:"studio.name"`
 	Namespace   string `yaml:"-" uesio:"-"`
 	Type        string `yaml:"type,omitempty" uesio:"-"`
-	Credentials string `yaml:"credentials" uesio:"uesio.credentials"`
-	Workspace   string `uesio:"uesio.workspaceid"`
+	Credentials string `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   string `uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -40,7 +40,7 @@ func (fs *FileSource) GetCollection() CollectionableGroup {
 // GetConditions function
 func (fs *FileSource) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": fs.Name,
+		"studio.name": fs.Name,
 	}
 }
 

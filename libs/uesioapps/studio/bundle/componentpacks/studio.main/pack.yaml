@@ -1,0 +1,9 @@
+name: main
+components:
+  colorpicker:
+  metadatafield:
+  codefield:
+  bulkjob:
+  fileupload:
+  permissionpicker:
+  configsecrets:

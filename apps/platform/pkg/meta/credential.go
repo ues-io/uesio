@@ -17,18 +17,18 @@ func NewCredential(key string) (*Credential, error) {
 }
 
 type CredentialEntry struct {
-	Type  string `yaml:"type" uesio:"uesio.type"`
-	Value string `yaml:"value" uesio:"uesio.value"`
+	Type  string `yaml:"type" uesio:"studio.type"`
+	Value string `yaml:"value" uesio:"studio.value"`
 }
 
 // Credential struct
 type Credential struct {
-	ID        string                     `yaml:"-" uesio:"uesio.id"`
-	Name      string                     `yaml:"name" uesio:"uesio.name"`
+	ID        string                     `yaml:"-" uesio:"studio.id"`
+	Name      string                     `yaml:"name" uesio:"studio.name"`
 	Namespace string                     `yaml:"-" uesio:"-"`
-	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"uesio.entries"`
-	TypeRef   string                     `yaml:"type" uesio:"uesio.type"`
-	Workspace string                     `yaml:"-" uesio:"uesio.workspaceid"`
+	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
+	TypeRef   string                     `yaml:"type" uesio:"studio.type"`
+	Workspace string                     `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -45,7 +45,7 @@ func (c *Credential) GetCollection() CollectionableGroup {
 // GetConditions function
 func (c *Credential) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": c.Name,
+		"studio.name": c.Name,
 	}
 }
 

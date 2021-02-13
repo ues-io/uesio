@@ -1,0 +1,4 @@
+name: site
+path: app/{appname}/site/{sitename}
+view: studio.site
+theme: uesio.default

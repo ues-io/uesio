@@ -1,0 +1,5 @@
+name: readonly
+collection: studio.fields
+type: BOOLEAN
+label: ReadOnly
+propertyName: readonly

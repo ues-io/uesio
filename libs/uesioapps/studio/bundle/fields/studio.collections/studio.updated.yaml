@@ -1,0 +1,6 @@
+name: updated
+collection: studio.collections
+type: TIMESTAMP
+label: Updated
+propertyName: updated
+autopopulate: UPDATE

@@ -1,6 +1,0 @@
-name: workspaces
-dataSource: uesio.platform
-idField: uesio.id
-idFormat: "${uesio.app}_${uesio.name}"
-nameField: uesio.name
-collectionName: workspaces

@@ -1,6 +1,7 @@
 package filesource
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -27,6 +28,9 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	if err != nil {
 		return nil, nil, err
 	}
+
+	fmt.Println("USERFILE")
+	fmt.Println(userFile)
 
 	adapter, bucket, credentials, err := fileadapt.GetAdapterForUserFile(&userFile, session)
 	if err != nil {

@@ -9,7 +9,7 @@ type WorkspaceCollection []Workspace
 
 // GetName function
 func (wc *WorkspaceCollection) GetName() string {
-	return "workspaces"
+	return "studio.workspaces"
 }
 
 // GetFields function

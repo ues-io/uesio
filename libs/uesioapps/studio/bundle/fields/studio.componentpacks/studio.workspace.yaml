@@ -1,0 +1,6 @@
+name: workspace
+collection: studio.componentpacks
+type: REFERENCE
+label: App
+propertyName: workspaceid
+referencedCollection: studio.workspaces

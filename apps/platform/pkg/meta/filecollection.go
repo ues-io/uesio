@@ -13,7 +13,7 @@ type FileCollection []File
 
 // GetName function
 func (fc *FileCollection) GetName() string {
-	return "files"
+	return "studio.files"
 }
 
 // GetFields function

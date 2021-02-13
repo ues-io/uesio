@@ -6,11 +6,11 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID         string                            `yaml:"-" uesio:"uesio.id"`
-	Name       string                            `yaml:"name" uesio:"uesio.name"`
+	ID         string                            `yaml:"-" uesio:"studio.id"`
+	Name       string                            `yaml:"name" uesio:"studio.name"`
 	Namespace  string                            `yaml:"namespace" uesio:"-"`
-	Workspace  string                            `yaml:"-" uesio:"uesio.workspaceid"`
-	Components map[string]*ComponentDependencies `yaml:"components" uesio:"uesio.components"`
+	Workspace  string                            `yaml:"-" uesio:"studio.workspaceid"`
+	Components map[string]*ComponentDependencies `yaml:"components" uesio:"studio.components"`
 }
 
 type ComponentDependencies struct {
@@ -31,7 +31,7 @@ func (cp *ComponentPack) GetCollection() CollectionableGroup {
 // GetConditions function
 func (cp *ComponentPack) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": cp.Name,
+		"studio.name": cp.Name,
 	}
 }
 

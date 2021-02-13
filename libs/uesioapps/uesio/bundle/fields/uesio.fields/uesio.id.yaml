@@ -1,6 +1,0 @@
-name: id
-collection: uesio.fields
-type: TEXT
-label: Field ID
-propertyName: id
-readOnly: true

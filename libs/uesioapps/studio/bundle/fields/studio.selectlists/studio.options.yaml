@@ -1,0 +1,5 @@
+name: options
+collection: studio.selectlists
+type: LIST
+label: Options
+propertyName: options

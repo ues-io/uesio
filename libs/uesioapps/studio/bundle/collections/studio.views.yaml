@@ -1,0 +1,6 @@
+name: views
+dataSource: uesio.platform
+idField: studio.id
+idFormat: "${studio.workspaceid}_${studio.name}"
+nameField: studio.name
+collectionName: views

@@ -1,5 +1,0 @@
-name: path
-collection: uesio.routes
-type: TEXT
-label: Path
-propertyName: path

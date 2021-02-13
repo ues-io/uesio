@@ -58,7 +58,11 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if ok {
 		return entry.(*meta.Site), nil
 	}
-	headlessSession := sess.GetHeadlessSession()
+	headlessSession := sess.GetHeadlessSession(&meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}, sess.GetHeadlessSite())
 	siteDomain, err := getDomain(domainType, domain, headlessSession)
 	if err != nil {
 		return nil, err

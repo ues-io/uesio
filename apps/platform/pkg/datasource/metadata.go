@@ -104,7 +104,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	var fields meta.FieldCollection
 
 	err := bundle.LoadAllFromAny(&fields, meta.BundleConditions{
-		"uesio.collection": collectionKey,
+		"studio.collection": collectionKey,
 	}, session)
 	if err != nil {
 		return err

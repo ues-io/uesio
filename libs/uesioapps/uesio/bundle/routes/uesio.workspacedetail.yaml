@@ -1,4 +1,0 @@
-name: workspacedetail
-path: app/{appname}/workspace/{workspacename}
-view: uesio.workspace
-theme: uesio.default

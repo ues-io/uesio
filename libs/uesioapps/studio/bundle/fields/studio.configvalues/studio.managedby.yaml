@@ -1,0 +1,5 @@
+name: managedby
+collection: studio.configvalues
+type: TEXT
+label: Managed By
+propertyName: managedby

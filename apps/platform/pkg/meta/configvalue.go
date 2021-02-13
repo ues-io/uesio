@@ -6,12 +6,12 @@ import (
 
 // ConfigValue struct
 type ConfigValue struct {
-	ID        string `yaml:"-" uesio:"uesio.id"`
-	Name      string `yaml:"name" uesio:"uesio.name"`
+	ID        string `yaml:"-" uesio:"studio.id"`
+	Name      string `yaml:"name" uesio:"studio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
-	Store     string `yaml:"store,omitempty" uesio:"uesio.store"`
-	ManagedBy string `yaml:"managedBy" uesio:"uesio.managedby"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+	Store     string `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace string `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // NewConfigValue function
@@ -40,7 +40,7 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 // GetConditions function
 func (cv *ConfigValue) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": cv.Name,
+		"studio.name": cv.Name,
 	}
 }
 
