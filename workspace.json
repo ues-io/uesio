@@ -378,7 +378,7 @@
           "outputs": ["dist/vendor"],
           "options": {
             "commands": [
-              "mkdir -p dist/vendor",
+              "mkdir -p dist/vendor &",
               "npm run get-module-version --moduleName=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.development.js\" | xargs -I{} wget -O dist/vendor/react.development.js {} &",
               "npm run get-module-version --moduleName=react | xargs -I{} echo \"https://unpkg.com/react@{}/umd/react.production.min.js\" | xargs -I{} wget -O dist/vendor/react.production.min.js {} &",
               "npm run get-module-version --moduleName=react-dom | xargs -I{} echo \"https://unpkg.com/react-dom@{}/umd/react-dom.development.js\" | xargs -I{} wget -O dist/vendor/react-dom.development.js {} &",
