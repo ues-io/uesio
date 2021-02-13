@@ -9,7 +9,7 @@ type RouteCollection []Route
 
 // GetName function
 func (rc *RouteCollection) GetName() string {
-	return "routes"
+	return "studio.routes"
 }
 
 // GetFields function

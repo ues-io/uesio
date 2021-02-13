@@ -1,0 +1,152 @@
+name: file
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+      conditions:
+        - field: studio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    files:
+      collection: studio.files
+      fields:
+        studio.id:
+        studio.name:
+        studio.content:
+          fields:
+            uesio.mimetype:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+        - field: studio.name
+          valueSource: PARAM
+          param: filename
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: filesDeck
+              wire: files
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: studio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: studio
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                            namespace: studio
+                      - text: files
+                        href: app/$Param{appname}/workspace/$Param{workspacename}/files
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}/files
+                            namespace: studio
+                      - text: $Param{filename}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${studio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.dialog:
+                                                  id: "fileDialog"
+                                                  title: "Are you sure to delete this item?"
+                                                  content:
+                                                    - material.typography:
+                                                        text: "Are you sure you want to permanently delete this element. The information will be permanently delete"
+                                                  mode: "CLOSE"
+                                                  disagreeSignals:
+                                                    - signal: component/material.dialog/TOGGLE_MODE
+                                                      target: "fileDialog"
+                                                  agreeSignals:
+                                                    - signal: wire/MARK_FOR_DELETE
+                                                    - signal: wire/SAVE
+                                                      wires:
+                                                        - "files"
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
+                                                      namespace: "studio"
+                                                    - signal: component/material.dialog/TOGGLE_MODE
+                                                      target: "fileDialog"
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: component/material.dialog/TOGGLE_MODE
+                                                            target: "fileDialog"
+                                  - material.file:
+                                      fieldId: studio.content
+                                      fileCollection: uesio.platform
+                                      height: 200
+                                      width: 200
+                                      id: fileupid
+                                      margin:
+                                        - 0
+                                        - 2
+                                      displayAs: fullPreview
+                                      editable: true
+                                      accepts: all

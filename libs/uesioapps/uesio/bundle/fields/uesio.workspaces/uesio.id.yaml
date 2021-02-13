@@ -1,6 +1,0 @@
-name: id
-collection: uesio.workspaces
-type: TEXT
-label: Workspace ID
-propertyName: id
-readOnly: true

@@ -1,0 +1,5 @@
+name: entries
+collection: studio.credentials
+type: MAP
+label: Entries
+propertyName: entries

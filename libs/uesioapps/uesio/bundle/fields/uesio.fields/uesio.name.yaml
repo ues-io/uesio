@@ -1,5 +1,0 @@
-name: name
-collection: uesio.fields
-type: TEXT
-label: Name
-propertyName: name

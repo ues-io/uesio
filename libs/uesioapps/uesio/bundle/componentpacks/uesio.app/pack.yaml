@@ -1,6 +1,5 @@
 name: app
 components:
-  colorpicker:
   loginmock:
   loginfacebook:
     configvalues:
@@ -12,9 +11,3 @@ components:
     configvalues:
       - uesio.cognitoPoolId
       - uesio.cognitoClientId
-  metadatafield:
-  codefield:
-  bulkjob:
-  fileupload:
-  permissionpicker:
-  configsecrets:

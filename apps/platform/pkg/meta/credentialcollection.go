@@ -9,7 +9,7 @@ type CredentialCollection []Credential
 
 // GetName function
 func (cc *CredentialCollection) GetName() string {
-	return "credentials"
+	return "studio.credentials"
 }
 
 // GetFields function

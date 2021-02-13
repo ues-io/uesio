@@ -178,7 +178,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 			&workspace,
 			[]adapt.LoadRequestCondition{
 				{
-					Field: "uesio.id",
+					Field: "studio.id",
 					Value: appName + "_" + workspaceName,
 				},
 			},

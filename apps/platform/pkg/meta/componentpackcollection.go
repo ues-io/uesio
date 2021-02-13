@@ -13,7 +13,7 @@ type ComponentPackCollection []ComponentPack
 
 // GetName function
 func (cpc *ComponentPackCollection) GetName() string {
-	return "componentpacks"
+	return "studio.componentpacks"
 }
 
 // GetFields function

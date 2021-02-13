@@ -12,7 +12,7 @@ type ViewCollection []View
 
 // GetName function
 func (vc *ViewCollection) GetName() string {
-	return "views"
+	return "studio.views"
 }
 
 // GetFields function

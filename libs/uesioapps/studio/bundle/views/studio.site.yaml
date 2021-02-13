@@ -1,0 +1,180 @@
+name: site
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    sites:
+      collection: uesio.sites
+      fields:
+        uesio.id:
+        uesio.name:
+      conditions:
+        - field: uesio.appref
+          valueSource: PARAM
+          param: appname
+        - field: uesio.name
+          valueSource: PARAM
+          param: sitename
+    domains:
+      collection: uesio.sitedomains
+      fields:
+        uesio.id:
+        uesio.type:
+        uesio.domain:
+      conditions:
+        - field: uesio.site
+          valueSource: VALUE
+          value: $Param{sitename}_$Param{appname}
+    newdomain:
+      collection: uesio.sitedomains
+      fields:
+        uesio.id:
+        uesio.type:
+        uesio.domain:
+      type: CREATE
+      defaults:
+        - field: uesio.site
+          valueSource: VALUE
+          value: $Param{sitename}_$Param{appname}
+        - field: uesio.type
+          valueSource: VALUE
+          value: subdomain
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: siteDeck
+              wire: sites
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: studio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: studio
+                      - text: ${uesio.name}
+                - material.card:
+                    media:
+                      background:
+                        color:
+                          intention: "primary"
+                      height: 10px
+                    margin: 1
+                    components:
+                      - material.grid:
+                          justify: space-between
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                components:
+                                  - material.typography:
+                                      text: ${uesio.name}
+                                      variant: h5
+                                      textTransform: "uppercase"
+                      - material.field:
+                          fieldId: uesio.name
+                - material.grid:
+                    justify: space-between
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Domains
+                                variant: h5
+                            - material.typography:
+                                text: Add a domain to this site.
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.dialog:
+                                id: "createDomainDialog"
+                                title: "Create Domain"
+                                content:
+                                  - material.deck:
+                                      xs: 12
+                                      margin: 0
+                                      id: newDomainDeck
+                                      wire: newdomain
+                                      mode: EDIT
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.domain
+                                mode: "CLOSE"
+                                disagreeSignals:
+                                  - signal: wire/CANCEL
+                                    wire: newdomain
+                                  - signal: component/material.dialog/TOGGLE_MODE
+                                    target: "createDomainDialog"
+                                agreeSignals:
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - newdomain
+                                  - signal: component/material.dialog/TOGGLE_MODE
+                                    target: "createDomainDialog"
+                                  - signal: wire/EMPTY
+                                    wire: newdomain
+                                  - signal: wire/CREATE_RECORD
+                                    wire: newdomain
+                                  - signal: wire/LOAD
+                                    wires:
+                                      - domains
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Add a Domain"
+                                      signals:
+                                        - signal: component/material.dialog/TOGGLE_MODE
+                                          target: "createDomainDialog"
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    wire: domains
+                    id: domainsDeck
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color: "secondary"
+                            height: 10px
+                          components:
+                            - material.typography:
+                                text: "$Record{uesio.type} ${uesio.domain}"
+                - material.grid:
+                    justify: space-between
+                    alignitems: center
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Configuration
+                                variant: h5
+                - studio.configsecrets:

@@ -19,12 +19,12 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
-	ID        string            `yaml:"-" uesio:"uesio.id"`
-	Name      string            `yaml:"name" uesio:"uesio.name"`
+	ID        string            `yaml:"-" uesio:"studio.id"`
+	Name      string            `yaml:"name" uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"uesio.workspaceid"`
-	Content   *UserFileMetadata `yaml:"-" uesio:"uesio.content"`
+	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	Content   *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 }
 
 // GetCollectionName function
@@ -41,7 +41,7 @@ func (f *File) GetCollection() CollectionableGroup {
 // GetConditions function
 func (f *File) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": f.Name,
+		"studio.name": f.Name,
 	}
 }
 

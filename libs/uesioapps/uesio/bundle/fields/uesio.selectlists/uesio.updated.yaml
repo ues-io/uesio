@@ -1,6 +1,0 @@
-name: updated
-collection: uesio.selectlists
-type: TIMESTAMP
-label: Updated
-propertyName: updated
-autopopulate: UPDATE

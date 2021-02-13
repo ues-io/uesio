@@ -9,11 +9,11 @@ import (
 
 // View struct
 type View struct {
-	ID         string    `yaml:"-" uesio:"uesio.id"`
-	Name       string    `yaml:"name" uesio:"uesio.name"`
+	ID         string    `yaml:"-" uesio:"studio.id"`
+	Name       string    `yaml:"name" uesio:"studio.name"`
 	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"uesio.definition"`
-	Workspace  string    `yaml:"-" uesio:"uesio.workspaceid"`
+	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
+	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -30,7 +30,7 @@ func (v *View) GetCollection() CollectionableGroup {
 // GetConditions function
 func (v *View) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": v.Name,
+		"studio.name": v.Name,
 	}
 }
 
@@ -62,7 +62,7 @@ func (v *View) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (v *View) SetField(fieldName string, value interface{}) error {
-	if fieldName == "uesio.definition" {
+	if fieldName == "studio.definition" {
 		var definition yaml.Node
 		err := yaml.Unmarshal([]byte(value.(string)), &definition)
 		if err != nil {
@@ -76,7 +76,7 @@ func (v *View) SetField(fieldName string, value interface{}) error {
 
 // GetField function
 func (v *View) GetField(fieldName string) (interface{}, error) {
-	if fieldName == "uesio.definition" {
+	if fieldName == "studio.definition" {
 		bytes, err := yaml.Marshal(&v.Definition)
 		if err != nil {
 			return nil, err

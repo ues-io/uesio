@@ -4,9 +4,9 @@ import "fmt"
 
 // BundleDependency struct
 type BundleDependency struct {
-	ID          string  `uesio:"uesio.id"`
-	WorkspaceID string  `uesio:"uesio.workspaceid"`
-	Bundle      *Bundle `uesio:"uesio.bundle"`
+	ID          string  `uesio:"studio.id"`
+	WorkspaceID string  `uesio:"studio.workspaceid"`
+	Bundle      *Bundle `uesio:"studio.bundle"`
 }
 
 // GetCollectionName function

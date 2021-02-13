@@ -3,6 +3,8 @@ import { LoadResponseRecord } from "../../../load/loadresponse"
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
+import { FieldValue } from "../../wirerecord/types"
+import { PlainCollectionMap } from "../../collection/types"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -26,36 +28,56 @@ type ValueDefault = WireDefaultBase & {
 
 type WireDefault = ValueDefault | LookupDefault
 
+const getDefaultValue = (
+	context: Context,
+	wires: Dictionary<PlainWire>,
+	viewId: string,
+	item: WireDefault
+): FieldValue => {
+	if (item.valueSource === "LOOKUP") {
+		const lookupWire = wires[getFullWireId(viewId, item.lookupWire)]
+		if (!lookupWire) return
+
+		const firstRecord = Object.values(lookupWire.data)[0]
+		return item.lookupField
+			? firstRecord[item.lookupField]
+			: context.merge(item.lookupTemplate)
+	}
+	if (item.valueSource === "VALUE") {
+		return context.merge(item.value)
+	}
+}
+
 const getDefaultRecord = (
 	context: Context,
 	wires: Dictionary<PlainWire>,
+	collections: PlainCollectionMap,
 	viewId: string,
 	wireName: string
 ): LoadResponseRecord => {
 	const viewDef = context.getViewDef()
 	if (!viewDef) return {}
-	const defaults = viewDef.definition?.wires[wireName]?.defaults
-
+	const wire = viewDef.definition?.wires[wireName]
+	if (!wire) return {}
+	const defaults = wire.defaults
+	const collection = collections[wire.collection]
 	const defaultRecord: LoadResponseRecord = {}
 	defaults?.forEach((defaultItem) => {
-		if (defaultItem.valueSource === "LOOKUP") {
-			const lookupWire =
-				wires[getFullWireId(viewId, defaultItem.lookupWire)]
-			if (!lookupWire) return
-
-			const firstRecord = Object.values(lookupWire.data)[0]
-			const lookupValue = defaultItem.lookupField
-				? firstRecord[defaultItem.lookupField]
-				: context.merge(defaultItem.lookupTemplate)
-			if (lookupValue) {
-				defaultRecord[defaultItem.field] = lookupValue
+		const value = getDefaultValue(context, wires, viewId, defaultItem)
+		const fieldMetadata = collection.fields[defaultItem.field]
+		if (value && fieldMetadata) {
+			if (
+				fieldMetadata.type === "REFERENCE" &&
+				fieldMetadata.referencedCollection
+			) {
+				const referenceMeta =
+					collections[fieldMetadata.referencedCollection]
+				defaultRecord[defaultItem.field] = {
+					[referenceMeta.idField]: value,
+				}
+				return
 			}
-		}
-		if (defaultItem.valueSource === "VALUE") {
-			const value = context.merge(defaultItem.value)
-			if (value) {
-				defaultRecord[defaultItem.field] = value
-			}
+			defaultRecord[defaultItem.field] = value
 		}
 	})
 	return defaultRecord

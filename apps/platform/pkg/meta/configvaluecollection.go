@@ -9,7 +9,7 @@ type ConfigValueCollection []ConfigValue
 
 // GetName function
 func (cvc *ConfigValueCollection) GetName() string {
-	return "configvalues"
+	return "studio.configvalues"
 }
 
 // GetFields function

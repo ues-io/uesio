@@ -1,4 +1,0 @@
-name: permissions
-path: app/{appname}/workspace/{workspacename}/permissions
-view: uesio.permissions
-theme: uesio.default

@@ -25,7 +25,7 @@ export default class Work extends Command {
 		const workspaces = getMetadataByTypePlural("workspaces")
 		const response = await load(workspaces, [
 			{
-				field: "uesio.appid",
+				field: "studio.appid",
 				valuesource: "VALUE",
 				value: app,
 			},
@@ -40,7 +40,7 @@ export default class Work extends Command {
 		if (workspaceName) {
 			// Verify that the workspace specified is available
 			const found = workspaceList.some(
-				(item) => item["uesio.name"] === workspaceName
+				(item) => item["studio.name"] === workspaceName
 			)
 
 			if (!found) {
@@ -55,8 +55,8 @@ export default class Work extends Command {
 					message: "Select a Workspace",
 					type: "list",
 					choices: workspaceList.map((item) => ({
-						name: item["uesio.name"],
-						value: item["uesio.name"],
+						name: item["studio.name"],
+						value: item["studio.name"],
 					})),
 				},
 			])

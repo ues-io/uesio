@@ -18,12 +18,12 @@ func NewProfile(key string) (*Profile, error) {
 
 // Profile struct
 type Profile struct {
-	ID                string          `yaml:"-" uesio:"uesio.id"`
-	Name              string          `yaml:"name" uesio:"uesio.name"`
+	ID                string          `yaml:"-" uesio:"studio.id"`
+	Name              string          `yaml:"name" uesio:"studio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"-"`
 	PermissionSets    []PermissionSet `yaml:"-" uesio:"-"`
-	Workspace         string          `yaml:"-" uesio:"uesio.workspaceid"`
+	Workspace         string          `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -40,7 +40,7 @@ func (p *Profile) GetCollection() CollectionableGroup {
 // GetConditions function
 func (p *Profile) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": p.Name,
+		"studio.name": p.Name,
 	}
 }
 

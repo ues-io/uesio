@@ -1,5 +1,0 @@
-name: type
-collection: uesio.credentials
-type: TEXT
-label: Type
-propertyName: type

@@ -1,4 +1,0 @@
-name: profile
-path: app/{appname}/workspace/{workspacename}/profile/{profilename}
-view: uesio.profile
-theme: uesio.default

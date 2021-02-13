@@ -1,0 +1,5 @@
+name: name
+collection: studio.credentials
+type: TEXT
+label: Name
+propertyName: name

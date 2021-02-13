@@ -9,7 +9,7 @@ type UserFileCollectionCollection []UserFileCollection
 
 // GetName function
 func (ufcc *UserFileCollectionCollection) GetName() string {
-	return "filecollections"
+	return "studio.filecollections"
 }
 
 // GetFields function

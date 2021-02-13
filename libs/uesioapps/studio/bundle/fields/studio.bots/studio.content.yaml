@@ -1,0 +1,5 @@
+name: content
+collection: studio.bots
+type: FILE
+label: Content
+propertyName: content

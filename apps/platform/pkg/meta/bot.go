@@ -56,15 +56,15 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 
 // Bot struct
 type Bot struct {
-	ID            string            `yaml:"-" uesio:"uesio.id"`
-	Name          string            `yaml:"name" uesio:"uesio.name"`
-	CollectionRef string            `yaml:"collection,omitempty" uesio:"uesio.collection"`
+	ID            string            `yaml:"-" uesio:"studio.id"`
+	Name          string            `yaml:"name" uesio:"studio.name"`
+	CollectionRef string            `yaml:"collection,omitempty" uesio:"studio.collection"`
 	Namespace     string            `yaml:"-" uesio:"-"`
-	Type          string            `yaml:"type" uesio:"uesio.type"`
-	Dialect       string            `yaml:"dialect" uesio:"uesio.dialect"`
-	Content       *UserFileMetadata `yaml:"-" uesio:"uesio.content"`
+	Type          string            `yaml:"type" uesio:"studio.type"`
+	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
+	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     string            `yaml:"-" uesio:"uesio.workspaceid"`
+	Workspace     string            `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetBotTypes function
@@ -110,9 +110,9 @@ func (b *Bot) GetCollection() CollectionableGroup {
 // GetConditions function
 func (b *Bot) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name":       b.Name,
-		"uesio.collection": b.CollectionRef,
-		"uesio.type":       b.Type,
+		"studio.name":       b.Name,
+		"studio.collection": b.CollectionRef,
+		"studio.type":       b.Type,
 	}
 }
 

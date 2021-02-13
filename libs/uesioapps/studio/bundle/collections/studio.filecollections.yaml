@@ -1,0 +1,6 @@
+name: filecollections
+dataSource: uesio.platform
+idField: studio.id
+idFormat: "${studio.name}"
+nameField: studio.name
+collectionName: filecollections

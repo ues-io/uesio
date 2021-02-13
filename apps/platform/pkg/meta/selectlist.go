@@ -8,13 +8,13 @@ type SelectListOption struct {
 
 // SelectList struct
 type SelectList struct {
-	ID        string             `yaml:"-" uesio:"uesio.id"`
-	Name      string             `yaml:"name" uesio:"uesio.name"`
+	ID        string             `yaml:"-" uesio:"studio.id"`
+	Name      string             `yaml:"name" uesio:"studio.name"`
 	Namespace string             `yaml:"-" uesio:"-"`
-	Options   []SelectListOption `yaml:"options" uesio:"uesio.options"`
-	Workspace string             `yaml:"-" uesio:"uesio.workspaceid"`
-	Updated   int64              `yaml:"-" uesio:"uesio.updated"`
-	Created   int64              `yaml:"-" uesio:"uesio.created"`
+	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`
+	Workspace string             `yaml:"-" uesio:"studio.workspaceid"`
+	Updated   int64              `yaml:"-" uesio:"studio.updated"`
+	Created   int64              `yaml:"-" uesio:"studio.created"`
 }
 
 // GetCollectionName function
@@ -31,7 +31,7 @@ func (sl *SelectList) GetCollection() CollectionableGroup {
 // GetConditions function
 func (sl *SelectList) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": sl.Name,
+		"studio.name": sl.Name,
 	}
 }
 

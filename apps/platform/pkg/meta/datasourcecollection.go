@@ -9,7 +9,7 @@ type DataSourceCollection []DataSource
 
 // GetName function
 func (dsc *DataSourceCollection) GetName() string {
-	return "datasources"
+	return "studio.datasources"
 }
 
 // GetFields function

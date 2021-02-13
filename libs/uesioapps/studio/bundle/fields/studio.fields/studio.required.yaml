@@ -1,0 +1,5 @@
+name: required
+collection: studio.fields
+type: BOOLEAN
+label: Required
+propertyName: required

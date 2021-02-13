@@ -9,7 +9,7 @@ type UserCollection []User
 
 // GetName function
 func (uc *UserCollection) GetName() string {
-	return "users"
+	return "uesio.users"
 }
 
 // GetFields function

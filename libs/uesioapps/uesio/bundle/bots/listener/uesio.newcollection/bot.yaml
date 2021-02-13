@@ -1,4 +1,0 @@
-name: newcollection
-collection: uesio.collections
-dialect: "JAVASCRIPT"
-type: "LISTENER"

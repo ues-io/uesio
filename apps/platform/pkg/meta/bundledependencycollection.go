@@ -9,7 +9,7 @@ type BundleDependencyCollection []BundleDependency
 
 // GetName function
 func (bc *BundleDependencyCollection) GetName() string {
-	return "bundledependencies"
+	return "studio.bundledependencies"
 }
 
 // GetFields function

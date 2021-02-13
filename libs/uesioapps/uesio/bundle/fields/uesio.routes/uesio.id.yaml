@@ -1,6 +1,0 @@
-name: id
-collection: uesio.routes
-type: TEXT
-label: Route ID
-propertyName: id
-readOnly: true

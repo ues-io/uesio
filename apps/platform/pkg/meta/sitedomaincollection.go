@@ -9,7 +9,7 @@ type SiteDomainCollection []SiteDomain
 
 // GetName function
 func (sdc *SiteDomainCollection) GetName() string {
-	return "sitedomains"
+	return "uesio.sitedomains"
 }
 
 // GetFields function

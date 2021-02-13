@@ -1,6 +1,0 @@
-name: app
-collection: uesio.workspaces
-type: REFERENCE
-label: App
-propertyName: appid
-referencedCollection: uesio.apps

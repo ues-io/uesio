@@ -18,12 +18,12 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string `yaml:"-" uesio:"uesio.id"`
-	Name        string `yaml:"name" uesio:"uesio.name"`
+	ID          string `yaml:"-" uesio:"studio.id"`
+	Name        string `yaml:"name" uesio:"studio.name"`
 	Namespace   string `yaml:"-" uesio:"-"`
-	Type        string `yaml:"type" uesio:"uesio.type"`
-	Credentials string `yaml:"credentials" uesio:"uesio.credentials"`
-	Workspace   string `yaml:"-" uesio:"uesio.workspaceid"`
+	Type        string `yaml:"type" uesio:"studio.type"`
+	Credentials string `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   string `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // GetCollectionName function
@@ -40,7 +40,7 @@ func (ds *DataSource) GetCollection() CollectionableGroup {
 // GetConditions function
 func (ds *DataSource) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": ds.Name,
+		"studio.name": ds.Name,
 	}
 }
 

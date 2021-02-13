@@ -1,0 +1,5 @@
+name: collectionname
+collection: studio.collections
+type: TEXT
+label: Collection Name
+propertyName: collectionname

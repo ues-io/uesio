@@ -1,0 +1,4 @@
+name: theme
+path: app/{appname}/workspace/{workspacename}/theme/{themename}
+view: studio.theme
+theme: uesio.default

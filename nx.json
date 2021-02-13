@@ -42,6 +42,10 @@
       "tags": [],
       "implicitDependencies": ["cli"]
     },
+    "uesioapps-studio": {
+      "tags": [],
+      "implicitDependencies": ["cli"]
+    },
     "uesioapps-uesio": {
       "tags": [],
       "implicitDependencies": ["cli"]

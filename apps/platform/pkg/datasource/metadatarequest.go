@@ -73,7 +73,7 @@ func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListNa
 	if mr.SelectLists == nil {
 		mr.SelectLists = map[string]bool{}
 	}
-	selectListKey := mr.GetSelectListKey(collectionName, fieldName, selectListName)
+	selectListKey := GetSelectListKey(collectionName, fieldName, selectListName)
 	_, ok := mr.SelectLists[selectListKey]
 	if !ok {
 		mr.SelectLists[selectListKey] = true
@@ -81,7 +81,7 @@ func (mr *MetadataRequest) AddSelectList(collectionName, fieldName, selectListNa
 }
 
 // GetSelectListKey function
-func (mr *MetadataRequest) GetSelectListKey(collectionName, fieldName, selectListName string) string {
+func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 	return collectionName + ":" + fieldName + ":" + selectListName
 }
 
@@ -138,12 +138,22 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 			}
 
 			if adapt.IsReference(fieldMetadata.Type) {
-				err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+				// Only add to additional requests if we don't already have that metadata
+				refCollection, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
 				if err != nil {
-					return err
+					err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+					if err != nil {
+						return err
+					}
 				}
 
 				for fieldKey, subsubFields := range collection[fieldKey] {
+					if refCollection != nil {
+						_, err := refCollection.GetField(fieldKey)
+						if err == nil {
+							continue
+						}
+					}
 					err := additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
 					if err != nil {
 						return err
@@ -152,7 +162,9 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 			}
 
 			if fieldMetadata.Type == "SELECT" {
-				additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
+				if fieldMetadata.SelectListOptions == nil {
+					additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
+				}
 			}
 
 		}

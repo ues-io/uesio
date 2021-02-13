@@ -95,6 +95,7 @@ export default createAsyncThunk<
 					[localId]: getDefaultRecord(
 						context,
 						wiresResponse,
+						response.collections,
 						viewId,
 						wire.wire
 					),
@@ -104,6 +105,7 @@ export default createAsyncThunk<
 					[localId]: getDefaultRecord(
 						context,
 						wiresResponse,
+						response.collections,
 						viewId,
 						wire.wire
 					),

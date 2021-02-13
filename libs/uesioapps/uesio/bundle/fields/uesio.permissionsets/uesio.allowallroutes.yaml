@@ -1,5 +1,0 @@
-name: allowallroutes
-collection: uesio.permissionsets
-type: CHECKBOX
-label: Allow all routes
-propertyName: allowallroutes

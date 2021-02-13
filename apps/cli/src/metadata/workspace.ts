@@ -7,25 +7,25 @@ import { getApp } from "../config/config"
 
 class Workspace {
 	static getCollectionName(): string {
-		return "uesio.workspaces"
+		return "studio.workspaces"
 	}
 	static getFields(): LoadRequestField[] {
 		return [
 			{
-				id: "uesio.id",
+				id: "studio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 		]
 	}
 	static getColumns(): TableColumn[] {
 		return [
 			{
-				id: "uesio.id",
+				id: "studio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 		]
 	}
@@ -46,8 +46,8 @@ class Workspace {
 			this,
 			createChange([
 				{
-					"uesio.name": responses.name,
-					"uesio.appid": app,
+					"studio.name": responses.name,
+					"studio.appid": app,
 				},
 			])
 		)

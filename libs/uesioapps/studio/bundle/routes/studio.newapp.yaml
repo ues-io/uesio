@@ -1,0 +1,4 @@
+name: newapp
+path: newapp
+view: studio.newapp
+theme: uesio.default

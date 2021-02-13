@@ -1,6 +1,0 @@
-name: fields
-dataSource: uesio.platform
-idField: uesio.id
-idFormat: "${uesio.workspaceid}_${uesio.collection}_${uesio.name}"
-nameField: uesio.name
-collectionName: fields

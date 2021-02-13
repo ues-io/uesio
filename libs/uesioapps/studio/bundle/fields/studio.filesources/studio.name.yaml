@@ -1,0 +1,5 @@
+name: name
+collection: studio.filesources
+type: TEXT
+label: Name
+propertyName: name

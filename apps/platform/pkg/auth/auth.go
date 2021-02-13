@@ -74,7 +74,7 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
 	if defaultSiteProfile == "" {
-		defaultSiteProfile = "uesio.standard"
+		defaultSiteProfile = "uesio.public"
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{

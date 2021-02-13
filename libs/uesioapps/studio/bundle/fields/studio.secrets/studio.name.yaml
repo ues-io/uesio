@@ -1,0 +1,5 @@
+name: name
+collection: studio.secrets
+type: TEXT
+label: Secret name
+propertyName: name

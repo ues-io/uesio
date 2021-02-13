@@ -1,0 +1,5 @@
+name: pathformat
+collection: studio.filecollections
+type: TEXT
+label: Path Format
+propertyName: pathformat

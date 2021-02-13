@@ -1,4 +1,0 @@
-name: site
-path: app/{appname}/site/{sitename}
-view: uesio.site
-theme: uesio.default

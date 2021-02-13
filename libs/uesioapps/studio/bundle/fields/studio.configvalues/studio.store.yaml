@@ -1,0 +1,5 @@
+name: store
+collection: studio.configvalues
+type: TEXT
+label: Store
+propertyName: store

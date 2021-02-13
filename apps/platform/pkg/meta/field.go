@@ -26,21 +26,21 @@ type Validate struct {
 
 // Field struct
 type Field struct {
-	ID                   string   `yaml:"-" uesio:"uesio.id"`
-	Name                 string   `yaml:"name" uesio:"uesio.name"`
-	CollectionRef        string   `yaml:"collection" uesio:"uesio.collection"`
+	ID                   string   `yaml:"-" uesio:"studio.id"`
+	Name                 string   `yaml:"name" uesio:"studio.name"`
+	CollectionRef        string   `yaml:"collection" uesio:"studio.collection"`
 	Namespace            string   `yaml:"-" uesio:"-"`
-	Type                 string   `yaml:"type" uesio:"uesio.type"`
-	Label                string   `yaml:"label" uesio:"uesio.label"`
-	PropertyName         string   `yaml:"propertyName" uesio:"uesio.propertyname"`
-	ReadOnly             bool     `yaml:"readOnly,omitempty" uesio:"uesio.readonly"`
-	ReferencedCollection string   `yaml:"referencedCollection,omitempty" uesio:"uesio.referencedCollection"`
-	SelectList           string   `yaml:"selectList,omitempty" uesio:"uesio.selectlist"`
-	Workspace            string   `yaml:"-" uesio:"uesio.workspaceid"`
-	Required             bool     `yaml:"required,omitempty" uesio:"uesio.required"`
-	Validate             Validate `yaml:"validate,omitempty" uesio:"uesio.validate"`
-	AutoPopulate         string   `yaml:"autopopulate,omitempty" uesio:"uesio.autopopulate"`
-	OnDelete             string   `yaml:"ondelete,omitempty" uesio:"uesio.ondelete"`
+	Type                 string   `yaml:"type" uesio:"studio.type"`
+	Label                string   `yaml:"label" uesio:"studio.label"`
+	PropertyName         string   `yaml:"propertyName" uesio:"studio.propertyname"`
+	ReadOnly             bool     `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
+	ReferencedCollection string   `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
+	SelectList           string   `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
+	Workspace            string   `yaml:"-" uesio:"studio.workspaceid"`
+	Required             bool     `yaml:"required,omitempty" uesio:"studio.required"`
+	Validate             Validate `yaml:"validate,omitempty" uesio:"studio.validate"`
+	AutoPopulate         string   `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
+	OnDelete             string   `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 }
 
 // GetFieldTypes function
@@ -75,8 +75,8 @@ func (f *Field) GetCollection() CollectionableGroup {
 // GetConditions function
 func (f *Field) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name":       f.Name,
-		"uesio.collection": f.CollectionRef,
+		"studio.name":       f.Name,
+		"studio.collection": f.CollectionRef,
 	}
 }
 

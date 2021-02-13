@@ -1,0 +1,6 @@
+name: bundle
+collection: studio.bundledependencies
+type: REFERENCE
+label: Bundle
+propertyName: bundleid
+referencedCollection: uesio.bundles

@@ -1,4 +1,0 @@
-name: view
-path: app/{appname}/workspace/{workspacename}/view/{viewname}
-view: uesio.view
-theme: uesio.default

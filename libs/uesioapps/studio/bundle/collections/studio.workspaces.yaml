@@ -1,0 +1,6 @@
+name: workspaces
+dataSource: uesio.platform
+idField: studio.id
+idFormat: "${studio.app}_${studio.name}"
+nameField: studio.name
+collectionName: workspaces

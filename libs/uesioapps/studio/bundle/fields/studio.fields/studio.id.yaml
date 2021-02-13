@@ -1,0 +1,6 @@
+name: id
+collection: studio.fields
+type: TEXT
+label: Field ID
+propertyName: id
+readOnly: true

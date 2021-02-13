@@ -4,12 +4,12 @@ import "errors"
 
 // Secret struct
 type Secret struct {
-	ID        string `yaml:"-" uesio:"uesio.id"`
-	Name      string `yaml:"name" uesio:"uesio.name"`
+	ID        string `yaml:"-" uesio:"studio.id"`
+	Name      string `yaml:"name" uesio:"studio.name"`
 	Namespace string `yaml:"-" uesio:"-"`
-	Store     string `yaml:"store,omitempty" uesio:"uesio.store"`
-	ManagedBy string `yaml:"managedBy" uesio:"uesio.managedby"`
-	Workspace string `yaml:"-" uesio:"uesio.workspaceid"`
+	Store     string `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace string `yaml:"-" uesio:"studio.workspaceid"`
 }
 
 // NewSecret function
@@ -38,7 +38,7 @@ func (s *Secret) GetCollection() CollectionableGroup {
 // GetConditions function
 func (s *Secret) GetConditions() map[string]string {
 	return map[string]string{
-		"uesio.name": s.Name,
+		"studio.name": s.Name,
 	}
 }
 

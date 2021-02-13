@@ -60,7 +60,7 @@ const check = async (): Promise<User | null> => {
 	const result = await response.json()
 	const user = result.user as User
 	user.cookie = cookie
-	if (user && user.profile === "uesio.standard" && user.site === "studio") {
+	if (user && user.profile === "studio.standard" && user.site === "studio") {
 		return user
 	}
 	return null

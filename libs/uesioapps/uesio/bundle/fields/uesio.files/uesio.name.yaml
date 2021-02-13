@@ -1,5 +1,0 @@
-name: name
-collection: uesio.files
-type: TEXT
-label: Name
-propertyName: name

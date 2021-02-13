@@ -63,7 +63,7 @@ func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadR
 	return PlatformLoads([]adapt.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",
-			CollectionName: "uesio." + group.GetName(),
+			CollectionName: group.GetName(),
 			Collection:     group,
 			Conditions:     conditions,
 			Fields:         fields,
@@ -96,10 +96,10 @@ func PlatformLoadOne(item meta.CollectionableItem, conditions []adapt.LoadReques
 }
 
 // PlatformDelete function
-func PlatformDelete(collectionID string, request meta.CollectionableGroup, session *sess.Session) error {
+func PlatformDelete(request meta.CollectionableGroup, session *sess.Session) error {
 	requests := []SaveRequest{{
 		Wire:       "deleteRequest",
-		Collection: "uesio." + collectionID,
+		Collection: request.GetName(),
 		Deletes:    request,
 	}}
 	return Save(
@@ -116,10 +116,8 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 
 	for _, psr := range psrs {
 		collection := psr.Collection
-		collectionName := collection.GetName()
-
 		requests = append(requests, SaveRequest{
-			Collection: "uesio." + collectionName,
+			Collection: collection.GetName(),
 			Wire:       "AnyKey",
 			Changes:    collection,
 			Options:    psr.Options,

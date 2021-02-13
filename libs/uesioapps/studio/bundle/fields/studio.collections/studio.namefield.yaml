@@ -1,0 +1,5 @@
+name: namefield
+collection: studio.collections
+type: TEXT
+label: Name Field
+propertyName: namefield

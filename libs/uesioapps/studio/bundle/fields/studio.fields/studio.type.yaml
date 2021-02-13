@@ -1,0 +1,6 @@
+name: type
+collection: stuio.fields
+type: SELECT
+selectList: studio.fieldtypes
+label: Type
+propertyName: type

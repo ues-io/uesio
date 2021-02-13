@@ -1,4 +1,0 @@
-name: route
-path: app/{appname}/workspace/{workspacename}/route/{routename}
-view: uesio.route
-theme: uesio.default

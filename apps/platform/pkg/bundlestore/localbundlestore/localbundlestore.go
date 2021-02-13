@@ -11,6 +11,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -42,7 +43,7 @@ func getStream(namespace string, version string, objectname string, filename str
 func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
-	collectionName := item.GetCollectionName()
+	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
 
 	permSet := session.GetContextPermissions()
 
@@ -71,7 +72,7 @@ func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, ses
 func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
-	basePath := filepath.Join(getBasePath(namespace, version), group.GetName(), "") + string(os.PathSeparator)
+	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
 	keys := []string{}
 	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -83,7 +84,8 @@ func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, versi
 		}
 		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
 		if err != nil {
-			return err
+			logger.LogError(err)
+			return nil
 		}
 		if key == "" {
 			return nil

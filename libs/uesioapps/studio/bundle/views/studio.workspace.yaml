@@ -1,0 +1,283 @@
+name: workspace
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    installedapps:
+      collection: studio.bundledependencies
+      fields:
+        studio.id:
+        studio.bundle:
+          fields:
+            uesio.namespace:
+            uesio.major:
+            uesio.minor:
+            uesio.patch:
+      conditions:
+        - field: studio.workspaceid
+          value: $Param{appname}_$Param{workspacename}
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
+    - material.container:
+        components:
+          - material.deck:
+              xs: 12
+              margin: 0
+              id: workspaceDeck
+              wire: workspaces
+              mode: READ
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                            namespace: studio
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                            namespace: studio
+                      - text: ${studio.name}
+                - material.grid:
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.card:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Bots
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Collections
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Select Lists
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Components
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Data Sources
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Files
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Permissions
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Routes
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Secrets and Config
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Views
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
+                                                namespace: "studio"
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            text: Themes
+                                            variant: text
+                                            fullWidth: true
+                                            margin: 0
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
+                                                namespace: "studio"
+                      - material.griditem:
+                          xs: true
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${studio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Import Data"
+                                                        signals:
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                            namespace: "studio"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "workspaces"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}"
+                                                            namespace: "studio"
+                                  - material.field:
+                                      fieldId: studio.name
+                            - material.grid:
+                                justify: space-between
+                                alignitems: center
+                                items:
+                                  - material.griditem:
+                                      components:
+                                        - material.typography:
+                                            text: Installed Bundles
+                                            variant: h5
+                                  - material.griditem:
+                                      components:
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  color: "primary"
+                                                  variant: "outlined"
+                                                  text: "Browse Bundle Store"
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                      namespace: "studio"
+                            - material.deck:
+                                xs: 3
+                                margin: 0
+                                id: installedDeck
+                                wire: installedapps
+                                mode: READ
+                                components:
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "primary"
+                                        height: 10px
+                                      margin: 1
+                                      components:
+                                        - material.typography:
+                                            text: ${["studio.bundle"]["uesio.namespace"]}
+                                        - material.typography:
+                                            text: v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
+                                          namespace: "studio"
+                            - material.grid:
+                                justify: space-between
+                                alignitems: center
+                                items:
+                                  - material.griditem:
+                                      components:
+                                        - material.typography:
+                                            text: Configuration
+                                            variant: h5
+                            - studio.configsecrets:

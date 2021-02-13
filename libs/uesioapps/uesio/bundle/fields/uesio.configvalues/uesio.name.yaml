@@ -1,5 +1,0 @@
-name: name
-collection: uesio.configvalues
-type: TEXT
-label: Config Value name
-propertyName: name

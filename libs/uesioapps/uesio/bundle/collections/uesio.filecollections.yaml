@@ -1,6 +1,0 @@
-name: filecollections
-dataSource: uesio.platform
-idField: uesio.id
-idFormat: "${uesio.name}"
-nameField: uesio.name
-collectionName: filecollections

@@ -87,7 +87,7 @@ func getCascadeDeletes(
 					err = collection.Loop(func(item loadable.Item) error {
 						refInterface, err := item.GetField(field.GetFullName())
 						if err != nil {
-							return err
+							return nil
 						}
 
 						if refInterface == nil {

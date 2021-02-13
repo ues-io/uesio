@@ -2,14 +2,16 @@ package meta
 
 // App struct
 type App struct {
-	ID             string `uesio:"uesio.id"`
-	Name           string `uesio:"uesio.name"`
-	Description    string `uesio:"uesio.description"`
-	Color          string `uesio:"uesio.color"`
-	LoginRoute     string `uesio:"uesio.loginroute"`
-	HomeRoute      string `uesio:"uesio.homeroute"`
-	DefaultProfile string `uesio:"uesio.defaultprofile"`
-	PublicProfile  string `uesio:"uesio.publicprofile"`
+	ID          string `uesio:"uesio.id"`
+	Name        string `uesio:"uesio.name"`
+	Description string `uesio:"uesio.description"`
+	Color       string `uesio:"uesio.color"`
+	/*
+		LoginRoute     string `uesio:"uesio.loginroute"`
+		HomeRoute      string `uesio:"uesio.homeroute"`
+		DefaultProfile string `uesio:"uesio.defaultprofile"`
+		PublicProfile  string `uesio:"uesio.publicprofile"`
+	*/
 }
 
 // GetCollectionName function

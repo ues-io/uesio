@@ -9,7 +9,7 @@ type PermissionSetCollection []PermissionSet
 
 // GetName function
 func (pc *PermissionSetCollection) GetName() string {
-	return "permissionsets"
+	return "studio.permissionsets"
 }
 
 // GetFields function

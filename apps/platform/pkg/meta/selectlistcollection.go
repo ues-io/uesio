@@ -12,7 +12,7 @@ type SelectListCollection []SelectList
 
 // GetName function
 func (slc *SelectListCollection) GetName() string {
-	return "selectlists"
+	return "studio.selectlists"
 }
 
 // GetFields function

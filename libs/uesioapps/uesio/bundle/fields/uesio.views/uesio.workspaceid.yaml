@@ -1,5 +1,0 @@
-name: workspaceid
-collection: uesio.views
-type: TEXT
-label: Workspace ID
-propertyName: workspaceid

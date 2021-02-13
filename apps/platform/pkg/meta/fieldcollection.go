@@ -14,7 +14,7 @@ type FieldCollection []Field
 
 // GetName function
 func (fc *FieldCollection) GetName() string {
-	return "fields"
+	return "studio.fields"
 }
 
 // GetFields function
@@ -48,7 +48,7 @@ func (fc *FieldCollection) NewBundleableItemWithKey(key string) (BundleableItem,
 
 // GetKeyFromPath function
 func (fc *FieldCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	collectionKey, hasCollection := conditions["uesio.collection"]
+	collectionKey, hasCollection := conditions["studio.collection"]
 	parts := strings.Split(path, string(os.PathSeparator))
 	if len(parts) != 2 || !strings.HasSuffix(parts[1], ".yaml") {
 		// Ignore this file

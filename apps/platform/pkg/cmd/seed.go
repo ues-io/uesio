@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -89,7 +90,24 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	session := sess.GetHeadlessSession()
+	site := &meta.Site{
+		Name:       "studio",
+		VersionRef: "v0.0.1",
+		AppRef:     "studio",
+	}
+
+	bundleDef, err := bundle.GetSiteAppBundle(site)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+	site.SetAppBundle(bundleDef)
+
+	session := sess.GetHeadlessSession(&meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}, site)
 
 	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
 		{
@@ -122,7 +140,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &adapt.UpsertOptions{},
 				Lookups: []adapt.Lookup{
 					{
-						RefField: "uesio.app",
+						RefField: "studio.app",
 					},
 				},
 			},

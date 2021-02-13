@@ -1,0 +1,5 @@
+name: store
+collection: studio.secrets
+type: TEXT
+label: Store
+propertyName: store

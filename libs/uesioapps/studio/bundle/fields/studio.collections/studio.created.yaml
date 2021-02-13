@@ -1,0 +1,6 @@
+name: created
+collection: studio.collections
+type: TIMESTAMP
+label: Created
+propertyName: created
+autopopulate: CREATE
