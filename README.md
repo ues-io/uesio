@@ -115,7 +115,6 @@ nx g @nrwl/workspace:library NEW_LIB
 -   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
 
 ---
-
 -   _Optional_. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
 -   _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
     ```
@@ -149,6 +148,14 @@ nx g @nrwl/workspace:library NEW_LIB
   ]
 }
 ```
+# CLI .uesio file Setup
+
+Uesio has a CLI that requires a .uesio file in your home directory. It is formatted like so:
+
+```
+{"sessionId":"Xhv-LoI9VaEtxUnfuedUWKtX","workspaceId":"dev","appId":"crm"}
+```
+If you are starting on a fresh machine, you can supply the workspaceId and appId that you care about, and the CLI will run you through a login process and grab the sessionId and save it during the first command you attempt to execute.
 
 # Build
 
