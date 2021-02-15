@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FunctionComponent } from "react"
-import { definition, material, hooks, wire } from "@uesio/ui"
+import React, { ChangeEvent, FunctionComponent, useState } from "react"
+import { definition, material, wire, context } from "@uesio/ui"
 import groupby from "lodash.groupby"
 import keyby from "lodash.keyby"
 
@@ -20,8 +20,68 @@ const useStyles = material.makeStyles((theme) =>
 		},
 	})
 )
-const setValue = (value: string) => {
-	console.log(value)
+function getRecordByStudioId(id: string, wire: wire.Wire) {
+	const records = wire.getData()
+	for (const record of records) {
+		if (record.source["studio.id"] === id) {
+			return record
+		}
+	}
+}
+function installBundle(
+	namespace: string,
+	version: string,
+	depWireId: string,
+	workspaceId: string,
+	context: context.Context
+) {
+	console.log("Trying to install: " + namespace + ", version: " + version)
+	const depWire = context.getWireById(depWireId)
+	if (!depWire) return
+	depWire.createRecord({
+		"studio.bundle": { "uesio.id": `${namespace}_${version}` },
+		"studio.workspaceid": workspaceId,
+	})
+	return depWire.save(context)
+}
+function uninstallBundle(
+	namespace: string,
+	version: string,
+	depWireId: string,
+	workspaceId: string,
+	context: context.Context
+) {
+	console.log("Trying to uninstall: " + namespace + ", version: " + version)
+	const depWire = context.getWireById(depWireId)
+	if (!depWire) return
+	const record = getRecordByStudioId(
+		`${workspaceId}_${namespace}_${version}`,
+		depWire
+	)
+	if (!record) return
+	depWire.markRecordForDeletion(record.getId())
+	return depWire.save(context)
+}
+async function updateBundle(
+	namespace: string,
+	version: string,
+	oldVersion: string,
+	depWireId: string,
+	workspaceId: string,
+	context: context.Context
+) {
+	console.log("Trying to update: " + namespace + ", version: " + version)
+	const depWire = context.getWireById(depWireId)
+
+	if (!depWire) return
+	const oldRecord = getRecordByStudioId(
+		`${workspaceId}_${namespace}_${oldVersion}`,
+		depWire
+	)
+
+	if (!oldRecord) return
+	depWire.markRecordForDeletion(oldRecord.getId())
+	installBundle(namespace, version, depWireId, workspaceId, context)
 }
 const AddBundle: FunctionComponent<Props> = (props) => {
 	const {
@@ -29,9 +89,13 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 	const classes = useStyles(props)
-
-	const uesio = hooks.useUesio(props)
-
+	const [selectedValues, setSelectedValues] = useState(
+		{} as Record<string, string>
+	)
+	const depWire = context.getWireById(currentdependencies)
+	const route = context.getRoute()
+	if (!depWire || !route) return null
+	const workspaceId = `${route?.params?.appname}_${route?.params?.workspacename}`
 	const bundles = context
 		.getWireById(installablebundleswire)
 		?.getData()
@@ -44,10 +108,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				version,
 			}
 		})
-	const deps = context
-		.getWireById(currentdependencies)
-		?.getData()
-		.map((record) => record.source)
+	const deps = depWire?.getData().map((record) => record.source)
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
 	const bundleNamespaces = Object.keys(bundleGrouping)
@@ -70,6 +131,69 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					.sort()
 					.reverse()
 				const installed = !!currentBundleVersions[namespace]
+				const versionSelected = selectedValues[namespace]
+				const installedVersion =
+					installed && currentBundleVersions[namespace].version
+				const selectedVersion =
+					versionSelected || installedVersion || versions[0]
+				const installedIsCurrent = installedVersion === selectedVersion
+				let actionButton = (
+					<material.Button
+						color="primary"
+						variant="contained"
+						onClick={() =>
+							installBundle(
+								namespace,
+								selectedVersion,
+								currentdependencies,
+								workspaceId,
+								context
+							)
+						}
+					>
+						Install
+					</material.Button>
+				)
+				if (installed) {
+					if (installedIsCurrent) {
+						actionButton = (
+							<material.Button
+								color="secondary"
+								variant="contained"
+								onClick={() =>
+									uninstallBundle(
+										namespace,
+										selectedVersion,
+										currentdependencies,
+										workspaceId,
+										context
+									)
+								}
+							>
+								Uninstall
+							</material.Button>
+						)
+					} else {
+						actionButton = (
+							<material.Button
+								color="primary"
+								variant="contained"
+								onClick={() =>
+									updateBundle(
+										namespace,
+										selectedVersion,
+										installedVersion,
+										currentdependencies,
+										workspaceId,
+										context
+									)
+								}
+							>
+								Update
+							</material.Button>
+						)
+					}
+				}
 				return (
 					<material.Grid
 						key={namespace}
@@ -109,13 +233,15 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 										disableAnimation: true,
 										shrink: true,
 									}}
-									value={
-										currentBundleVersions[namespace]
-											?.version || versions[0]
-									}
+									value={selectedVersion}
 									onChange={(
 										event: ChangeEvent<HTMLInputElement>
-									): void => setValue(event.target.value)}
+									): void => {
+										setSelectedValues({
+											...selectedValues,
+											[namespace]: event.target.value,
+										})
+									}}
 									size="small"
 									label="version"
 								>
@@ -129,21 +255,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 									))}
 								</material.TextField>
 								<div style={{ marginTop: "20px" }}>
-									{!installed ? (
-										<material.Button
-											color="primary"
-											variant="contained"
-										>
-											Install
-										</material.Button>
-									) : (
-										<material.Button
-											color="secondary"
-											variant="contained"
-										>
-											Uninstall
-										</material.Button>
-									)}
+									{actionButton}
 								</div>
 							</material.CardContent>
 						</material.Card>

@@ -1,12 +1,23 @@
 import { PlainCollection } from "../collection/types"
 import Collection from "../collection/class"
 import { getStore } from "../../store/store"
-import { setRecord, updateRecord } from "."
+import {
+	setRecord,
+	updateRecord,
+	createRecord,
+	markForDelete,
+	unmarkForDelete,
+	cancel,
+	empty,
+	toggleCondition,
+} from "."
 import saveWiresOp from "./operations/save"
+import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { PlainWireRecord } from "../wirerecord/types"
+import shortid from "shortid"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -39,7 +50,7 @@ class Wire {
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
-	dispatchRecordUpdate = (recordId: string, record: PlainWireRecord) => {
+	updateRecord = (recordId: string, record: PlainWireRecord) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -52,7 +63,7 @@ class Wire {
 		)
 	}
 
-	dispatchRecordSet = (recordId: string, record: PlainWireRecord) => {
+	setRecord = (recordId: string, record: PlainWireRecord) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -65,6 +76,64 @@ class Wire {
 		)
 	}
 
+	createRecord = (record: PlainWireRecord) => {
+		const recordId = shortid.generate()
+		getStore().dispatch(
+			createRecord({
+				entity: this.getFullId(),
+				record,
+				recordId,
+			})
+		)
+		return this.getRecord(recordId)
+	}
+
+	markRecordForDeletion = (recordId: string) => {
+		const idField = this.collection.getIdField()?.getId()
+		if (!idField) return
+		getStore().dispatch(
+			markForDelete({
+				entity: this.getFullId(),
+				idField,
+				recordId,
+			})
+		)
+	}
+
+	unmarkRecordForDeletion = (recordId: string) => {
+		getStore().dispatch(
+			unmarkForDelete({
+				entity: this.getFullId(),
+				recordId,
+			})
+		)
+	}
+
+	cancel = () => {
+		getStore().dispatch(
+			cancel({
+				entity: this.getFullId(),
+			})
+		)
+	}
+
+	empty = () => {
+		getStore().dispatch(
+			empty({
+				entity: this.getFullId(),
+			})
+		)
+	}
+
+	toggleCondition = (conditionId: string) => {
+		getStore().dispatch(
+			toggleCondition({
+				entity: this.getFullId(),
+				conditionId,
+			})
+		)
+	}
+
 	attachCollection = (collection: PlainCollection) => {
 		this.collection = new Collection(collection)
 		return this
@@ -72,6 +141,9 @@ class Wire {
 
 	save = (context: Context) =>
 		getStore().dispatch(saveWiresOp({ context, wires: [this.getId()] }))
+
+	load = (context: Context) =>
+		getStore().dispatch(loadWireOp({ context, wires: [this.getId()] }))
 }
 
 export default Wire

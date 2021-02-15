@@ -141,4 +141,4 @@ class Context {
 			: map
 }
 
-export { Context, ContextFrame }
+export { Context, ContextFrame, RouteState, WorkspaceState, SiteState }
