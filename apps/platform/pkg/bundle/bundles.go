@@ -43,10 +43,7 @@ func ClearAppBundleCache(session *sess.Session) {
 }
 
 func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*meta.BundleDef, error) {
-	entry, ok := localcache.GetCacheEntry("bundle-yaml", appName+":"+appVersion)
-	if ok {
-		return entry.(*meta.BundleDef), nil
-	}
+
 	bs, err := bundlestore.GetBundleStore(appName, session)
 	if err != nil {
 		return nil, err
@@ -58,7 +55,6 @@ func getAppBundleInternal(appName, appVersion string, session *sess.Session) (*m
 	if bundleyaml == nil {
 		return nil, errors.New("No bundleyaml found for app: " + appName + " with version:" + appVersion)
 	}
-	localcache.SetCacheEntry("bundle-yaml", appName+":"+appVersion, bundleyaml)
 	return bundleyaml, nil
 }
 

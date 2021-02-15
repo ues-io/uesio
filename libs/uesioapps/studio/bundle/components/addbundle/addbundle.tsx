@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FunctionComponent, useState } from "react"
-import { definition, material, wire, context } from "@uesio/ui"
+import { definition, material, wire, context, hooks } from "@uesio/ui"
 import groupby from "lodash.groupby"
 import keyby from "lodash.keyby"
 
@@ -28,32 +28,27 @@ function getRecordByStudioId(id: string, wire: wire.Wire) {
 		}
 	}
 }
-function installBundle(
+async function installBundle(
 	namespace: string,
 	version: string,
-	depWireId: string,
+	depWire: wire.Wire,
 	workspaceId: string,
 	context: context.Context
 ) {
-	console.log("Trying to install: " + namespace + ", version: " + version)
-	const depWire = context.getWireById(depWireId)
-	if (!depWire) return
 	depWire.createRecord({
 		"studio.bundle": { "uesio.id": `${namespace}_${version}` },
 		"studio.workspaceid": workspaceId,
 	})
-	return depWire.save(context)
+	await depWire.save(context)
+	return depWire.load(context)
 }
 function uninstallBundle(
 	namespace: string,
 	version: string,
-	depWireId: string,
+	depWire: wire.Wire,
 	workspaceId: string,
 	context: context.Context
 ) {
-	console.log("Trying to uninstall: " + namespace + ", version: " + version)
-	const depWire = context.getWireById(depWireId)
-	if (!depWire) return
 	const record = getRecordByStudioId(
 		`${workspaceId}_${namespace}_${version}`,
 		depWire
@@ -66,14 +61,10 @@ async function updateBundle(
 	namespace: string,
 	version: string,
 	oldVersion: string,
-	depWireId: string,
+	depWire: wire.Wire,
 	workspaceId: string,
 	context: context.Context
 ) {
-	console.log("Trying to update: " + namespace + ", version: " + version)
-	const depWire = context.getWireById(depWireId)
-
-	if (!depWire) return
 	const oldRecord = getRecordByStudioId(
 		`${workspaceId}_${namespace}_${oldVersion}`,
 		depWire
@@ -81,24 +72,36 @@ async function updateBundle(
 
 	if (!oldRecord) return
 	depWire.markRecordForDeletion(oldRecord.getId())
-	installBundle(namespace, version, depWireId, workspaceId, context)
+	return installBundle(namespace, version, depWire, workspaceId, context)
 }
 const AddBundle: FunctionComponent<Props> = (props) => {
 	const {
 		definition: { installablebundleswire, currentdependencies },
 		context,
 	} = props
+	const uesio = hooks.useUesio(props)
 	const classes = useStyles(props)
 	const [selectedValues, setSelectedValues] = useState(
 		{} as Record<string, string>
 	)
-	const depWire = context.getWireById(currentdependencies)
+	const depWire = uesio.wire.useWire(currentdependencies || "")
 	const route = context.getRoute()
 	if (!depWire || !route) return null
-	const workspaceId = `${route?.params?.appname}_${route?.params?.workspacename}`
-	const bundles = context
-		.getWireById(installablebundleswire)
+	const appName = route.params?.appname
+
+	const workspaceId = `${appName}_${route.params?.workspacename}`
+	const bundles = uesio.wire
+		.useWire(installablebundleswire || "")
 		?.getData()
+		.filter((record) => {
+			const source = record.source
+			const namespace = source["uesio.namespace"]
+			//We don't want to see ourselves, uesio or studio
+			if (namespace === appName) return false
+			if (namespace === "uesio") return false
+			if (namespace === "studio") return false
+			return true
+		})
 		.map((record) => {
 			const source = record.source
 			const namespace = source["uesio.namespace"] as string
@@ -108,7 +111,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				version,
 			}
 		})
-	const deps = depWire?.getData().map((record) => record.source)
+	const deps = depWire.getData().map((record) => record.source)
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
 	const bundleNamespaces = Object.keys(bundleGrouping)
@@ -145,7 +148,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 							installBundle(
 								namespace,
 								selectedVersion,
-								currentdependencies,
+								depWire,
 								workspaceId,
 								context
 							)
@@ -164,7 +167,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 									uninstallBundle(
 										namespace,
 										selectedVersion,
-										currentdependencies,
+										depWire,
 										workspaceId,
 										context
 									)
@@ -183,7 +186,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 										namespace,
 										selectedVersion,
 										installedVersion,
-										currentdependencies,
+										depWire,
 										workspaceId,
 										context
 									)
