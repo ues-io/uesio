@@ -84,13 +84,9 @@ class Context {
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
 
 	getWire = () => {
+		const state = getStore().getState()
 		const wireId = this.getWireId()
 		if (!wireId) return undefined
-		return this.getWireById(wireId)
-	}
-
-	getWireById = (wireId: string) => {
-		const state = getStore().getState()
 		const plainWire = selectWire(state, this.getViewId(), wireId)
 		const wireDef = this.getWireDef(wireId)
 		if (!wireDef) return undefined

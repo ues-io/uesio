@@ -47,10 +47,7 @@
   "/apps/cli/npm-shrinkwrap.json",
   "/apps/cli/oclif.manifest.json"
  ],
- "dependencies": {
-  "lodash.groupby": "^4.6.0",
-  "lodash.keyby": "^4.6.0"
- },
+ "dependencies": {},
  "devDependencies": {
   "@material-ui/core": "^4.11.2",
   "@material-ui/icons": "^4.11.2",
@@ -110,6 +107,8 @@
   "lodash.clone": "^4.5.0",
   "lodash.debounce": "^4.0.8",
   "lodash.get": "^4.4.2",
+  "lodash.groupby": "^4.6.0",
+  "lodash.keyby": "^4.6.0",
   "lodash.setwith": "^4.3.2",
   "lodash.topath": "^4.5.2",
   "monaco-editor": "^0.21.2",
