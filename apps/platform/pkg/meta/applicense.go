@@ -26,10 +26,6 @@ var DefaultAppLicenses = AppLicenseCollection{
 		LicensedAppRef: "material",
 	},
 	{
-		AppRef:         "uesio",
-		LicensedAppRef: "sample",
-	},
-	{
 		AppRef:         "studio",
 		LicensedAppRef: "uesio",
 	},

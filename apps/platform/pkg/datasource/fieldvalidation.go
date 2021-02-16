@@ -120,20 +120,16 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 
 	var listErrors []string
 	validationFunc := getValidationFunction(collectionMetadata)
-	idField, err := collectionMetadata.GetIDField()
-	if err != nil {
-		return nil, err
-	}
 
 	changes := adapt.ChangeItems{}
 	deletes := adapt.ChangeItems{}
 
 	if request.Changes != nil {
-		err = request.Changes.Loop(func(item loadable.Item) error {
+		err := request.Changes.Loop(func(item loadable.Item) error {
 			changeItem := adapt.ChangeItem{
 				FieldChanges: item,
 			}
-			idValue, err := item.GetField(idField.GetFullName())
+			idValue, err := item.GetField(collectionMetadata.IDField)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				changeItem.IsNew = true
 			} else {
@@ -153,7 +149,7 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 	}
 
 	if request.Deletes != nil {
-		err = request.Deletes.Loop(func(item loadable.Item) error {
+		err := request.Deletes.Loop(func(item loadable.Item) error {
 			deletes = append(deletes, adapt.ChangeItem{
 				FieldChanges: item,
 			})

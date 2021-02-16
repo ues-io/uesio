@@ -69,13 +69,11 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: ${uesio.name}
                 - material.card:
                     media:

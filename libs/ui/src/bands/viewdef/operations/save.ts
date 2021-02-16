@@ -26,17 +26,17 @@ export default createAsyncThunk<
 			}
 			if (defState?.yaml) {
 				changes[defKey] = {
-					"uesio.definition": defState.yaml.toString(),
-					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
+					"studio.definition": defState.yaml.toString(),
+					"studio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
 				}
 			}
 		}
 	}
-	return api.extra.saveData(context, {
+	return api.extra.saveData(new Context(), {
 		wires: [
 			{
 				wire: "saveview",
-				collection: "uesio.views",
+				collection: "studio.views",
 				changes,
 				deletes: {},
 			},
