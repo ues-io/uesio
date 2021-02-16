@@ -10,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
+func getAppLicense(app, appToCheck string, session *sess.Session) (*meta.AppLicense, error) {
 	for _, av := range meta.DefaultAppLicenses {
 		if av.AppRef == app && av.LicensedAppRef == appToCheck {
 			return &av, nil
@@ -68,8 +68,15 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return appVersion, nil
 	}
 
+	if namespace == "uesio" {
+		return "v0.0.1", nil
+	}
+	if namespace == "studio" && session.GetWorkspaceID() != "" {
+		return "v0.0.1", nil
+	}
+
 	// Check to see if we have a license to use this namespace
-	license, err := getAppLicense(appName, namespace)
+	license, err := getAppLicense(appName, namespace, session)
 	if err != nil {
 		return "", err
 	}
