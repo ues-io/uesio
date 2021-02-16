@@ -32,7 +32,7 @@ export default createAsyncThunk<
 			}
 		}
 	}
-	return api.extra.saveData(context, {
+	return api.extra.saveData(new Context(), {
 		wires: [
 			{
 				wire: "saveview",
