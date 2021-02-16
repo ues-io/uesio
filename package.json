@@ -47,7 +47,6 @@
   "/apps/cli/npm-shrinkwrap.json",
   "/apps/cli/oclif.manifest.json"
  ],
- "dependencies": {},
  "devDependencies": {
   "@material-ui/core": "^4.11.2",
   "@material-ui/icons": "^4.11.2",
