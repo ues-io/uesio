@@ -36,7 +36,7 @@ export default createAsyncThunk<
 		wires: [
 			{
 				wire: "saveview",
-				collection: "uesio.views",
+				collection: "studio.views",
 				changes,
 				deletes: {},
 			},
