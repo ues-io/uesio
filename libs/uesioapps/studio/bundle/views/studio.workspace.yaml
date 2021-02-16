@@ -246,7 +246,7 @@ definition:
                                                   text: "Browse Bundle Store"
                                                   signals:
                                                     - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
                                                       namespace: "studio"
                             - material.deck:
                                 xs: 3

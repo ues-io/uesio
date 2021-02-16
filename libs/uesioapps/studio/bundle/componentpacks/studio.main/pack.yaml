@@ -1,6 +1,7 @@
 name: main
 components:
   colorpicker:
+  addbundle:
   metadatafield:
   codefield:
   bulkjob:

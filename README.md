@@ -150,6 +150,16 @@ nx g @nrwl/workspace:library NEW_LIB
 }
 ```
 
+# CLI .uesio file Setup
+
+Uesio has a CLI that requires a .uesio file in your home directory. It is formatted like so:
+
+```
+{"sessionId":"Xhv-LoI9VaEtxUnfuedUWKtX","workspaceId":"dev","appId":"crm"}
+```
+
+If you are starting on a fresh machine, you can supply the workspaceId and appId that you care about, and the CLI will run you through a login process and grab the sessionId and save it during the first command you attempt to execute.
+
 # Build
 
 The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.

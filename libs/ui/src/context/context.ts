@@ -86,9 +86,8 @@ class Context {
 	getWire = () => {
 		const state = getStore().getState()
 		const wireId = this.getWireId()
-		const viewId = this.getViewId()
 		if (!wireId) return undefined
-		const plainWire = selectWire(state, viewId, wireId)
+		const plainWire = selectWire(state, this.getViewId(), wireId)
 		const wireDef = this.getWireDef(wireId)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
@@ -138,4 +137,4 @@ class Context {
 			: map
 }
 
-export { Context, ContextFrame }
+export { Context, ContextFrame, RouteState, WorkspaceState, SiteState }
