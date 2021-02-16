@@ -52,19 +52,16 @@ definition:
                   signals:
                     - signal: route/NAVIGATE
                       path: home
-                      namespace: studio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}
-                      namespace: studio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
-                      namespace: studio
                 - text: collections
           - material.grid:
               justify: space-between
@@ -88,7 +85,6 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newcollection"
-                                    namespace: "studio"
           - material.deck:
               xs: 12
               sm: 6
@@ -119,4 +115,3 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
-                        namespace: "studio"

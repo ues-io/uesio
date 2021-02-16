@@ -53,19 +53,16 @@ definition:
                   signals:
                     - signal: route/NAVIGATE
                       path: home
-                      namespace: studio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}
-                      namespace: studio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
-                      namespace: studio
                 - text: import
           - material.grid:
               justify: space-between
@@ -94,7 +91,6 @@ definition:
                                       - newbulkjob
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
-                                    namespace: "studio"
           - material.deck:
               xs: 12
               sm: 6
@@ -122,4 +118,3 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
-                        namespace: "studio"

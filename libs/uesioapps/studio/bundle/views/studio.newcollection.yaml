@@ -115,7 +115,6 @@ definition:
                                       app: $Param{appname}
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
-                                    namespace: "studio"
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
@@ -123,4 +122,3 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
-                                    namespace: "studio"

@@ -24,7 +24,6 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"
-                        namespace: "studio"
           # Avatar
           - material.griditem:
               components:

@@ -61,19 +61,16 @@ definition:
                   signals:
                     - signal: route/NAVIGATE
                       path: home
-                      namespace: studio
                 - text: $Param{appname}
                   href: app/$Param{appname}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}
-                      namespace: studio
                 - text: $Param{workspacename}
                   href: app/$Param{appname}/workspace/$Param{workspacename}
                   signals:
                     - signal: route/NAVIGATE
                       path: app/$Param{appname}/workspace/$Param{workspacename}
-                      namespace: studio
                 - text: permissions
           - material.grid:
               justify: space-between
@@ -97,7 +94,6 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newpermissionset"
-                                    namespace: "studio"
           - material.deck:
               xs: 12
               sm: 6
@@ -126,7 +122,6 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${studio.name}"
-                        namespace: "studio"
           - material.grid:
               justify: space-between
               items:
@@ -149,7 +144,6 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/newprofile"
-                                    namespace: "studio"
           - material.deck:
               xs: 12
               sm: 6
@@ -178,4 +172,3 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/$Param{appname}/workspace/$Param{workspacename}/profile/${studio.name}"
-                        namespace: "studio"

@@ -31,4 +31,3 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "login"
-                        namespace: "uesio"

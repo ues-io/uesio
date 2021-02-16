@@ -15,6 +15,7 @@ import theme from "../bands/theme"
 import component from "../bands/component"
 import wire from "../bands/wire"
 import view from "../bands/view"
+import site from "../bands/site"
 import { RouteState } from "../bands/route/types"
 import { UserState } from "../bands/user/types"
 import { BuilderState } from "../bands/builder/types"
@@ -56,7 +57,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 			view,
 			theme,
 			wire,
-			site: (state) => state || {},
+			site,
 			workspace: (state) => state || {},
 		},
 		devTools: true,

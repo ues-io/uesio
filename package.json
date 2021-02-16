@@ -4,7 +4,7 @@
  "private": true,
  "license": "MIT",
  "scripts": {
-  "get-module-version": "node -p \"require('./package').devDependencies['$npm_config_moduleName']\" | sed 's/^\\^//g'",
+  "get-module-version": "node -p \"require('./package').devDependencies['$npm_config_modulename']\" | sed 's/^\\^//g'",
   "clean": "rm -rf dist; rm -rf node_modules/.cache/nx",
   "dev": "npm run clean; npm run kill:webserver; npm run kill:firestore; npm run build-all; npm run start & firebase emulators:start & npm run nx -- seed platform; npm run dev:mock:crm; npm run dev:uesio:login; npm run deploy:uesioapps; npm run watch-all &",
   "watch-all": "nx run-many --target=watch --parallel --all",
@@ -47,7 +47,6 @@
   "/apps/cli/npm-shrinkwrap.json",
   "/apps/cli/oclif.manifest.json"
  ],
- "dependencies": {},
  "devDependencies": {
   "@material-ui/core": "^4.11.2",
   "@material-ui/icons": "^4.11.2",

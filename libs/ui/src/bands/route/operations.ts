@@ -8,12 +8,32 @@ const redirect = (context: Context, path: string) => () => {
 	return context
 }
 
+const getRouteUrlPrefix = (context: Context, namespace: string) => {
+	const workspace = context.getWorkspace()
+	if (workspace && workspace.app && workspace.name) {
+		return `/workspace/${workspace.app}/${workspace.name}/app/${namespace}/`
+	}
+	const site = context.getSite()
+	if (site && site.app && site.app !== namespace) {
+		return `/site/app/${namespace}/`
+	}
+	return "/"
+}
+
 const navigate = (
 	context: Context,
 	path: string,
 	namespace: string,
 	noPushState?: boolean
 ): ThunkFunc => async (dispatch, getState, platform) => {
+	if (!namespace) {
+		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
+		// provided, they want to navigate within the same namespace.
+		const viewDef = context.getViewDef()
+		namespace = viewDef?.namespace || ""
+	}
+
+	const workspace = context.getWorkspace()
 	const mergedPath = context.merge(path)
 	const routeResponse = await platform.getRoute(
 		context,
@@ -31,7 +51,7 @@ const navigate = (
 				{
 					view: `${view}()`,
 					viewDef: view,
-					workspace: context.getWorkspace(),
+					workspace,
 				},
 			]),
 			path: "",
@@ -42,11 +62,7 @@ const navigate = (
 	dispatch(setRoute(routeResponse))
 
 	if (!noPushState) {
-		const workspace = context.getWorkspace()
-		const prefix =
-			workspace && workspace.app && workspace.name
-				? `/workspace/${workspace.app}/${workspace.name}/app/${namespace}/`
-				: "/"
+		const prefix = getRouteUrlPrefix(context, namespace)
 		window.history.pushState(
 			{
 				namespace,

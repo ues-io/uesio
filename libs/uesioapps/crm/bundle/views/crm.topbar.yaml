@@ -17,8 +17,7 @@ definition:
                       - 0
                       - 2
                     signals:
-                      - namespace: crm
-                        path: home
+                      - path: home
                         signal: route/NAVIGATE
           - material.griditem:
               components:
@@ -29,8 +28,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - namespace: crm
-                                    path: accounts
+                                  - path: accounts
                                     signal: route/NAVIGATE
                                 text: Accounts
                                 variant: text
@@ -38,8 +36,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - namespace: crm
-                                    path: contacts
+                                  - path: contacts
                                     signal: route/NAVIGATE
                                 text: Contacts
                                 variant: text
@@ -47,8 +44,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - namespace: crm
-                                    path: leads
+                                  - path: leads
                                     signal: route/NAVIGATE
                                 text: Leads
                                 variant: text
@@ -56,8 +52,7 @@ definition:
                           components:
                             - material.button:
                                 signals:
-                                  - namespace: crm
-                                    path: opportunities
+                                  - path: opportunities
                                     signal: route/NAVIGATE
                                 text: Opportunities
                                 variant: text

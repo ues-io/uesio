@@ -66,25 +66,21 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: bots
                         href: app/$Param{appname}/workspace/$Param{workspacename}/bots
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/bots
-                            namespace: studio
                       - text: $Param{botname}
                 - material.grid:
                     items:
@@ -147,7 +143,6 @@ definition:
                                                               - "bots"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-                                                            namespace: "studio"
                                   - material.field:
                                       fieldId: studio.name
                                   - material.field:

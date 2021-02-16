@@ -100,31 +100,26 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: collections
                         href: app/$Param{appname}/workspace/$Param{workspacename}/collections
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/collections
-                            namespace: studio
                       - text: $Param{collectionname}
                         href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                            namespace: studio
                       - text: $Param{fieldname}
                 - material.grid:
                     items:
@@ -186,7 +181,6 @@ definition:
                                                               - "fields"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}"
-                                                            namespace: "studio"
                                   - material.field:
                                       fieldId: studio.name
                                   - material.field:

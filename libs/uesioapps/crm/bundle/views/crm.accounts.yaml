@@ -54,8 +54,7 @@ definition:
                 - material.button:
                     color: primary
                     signals:
-                      - namespace: crm
-                        path: account/${crm.id}
+                      - path: account/${crm.id}
                         signal: route/NAVIGATE
                     text: Edit
                     variant: contained

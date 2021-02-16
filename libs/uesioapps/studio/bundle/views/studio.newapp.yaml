@@ -60,7 +60,6 @@ definition:
                                       - "apps"
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"
-                                    namespace: "studio"
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
@@ -68,4 +67,3 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "home"
-                                    namespace: "studio"

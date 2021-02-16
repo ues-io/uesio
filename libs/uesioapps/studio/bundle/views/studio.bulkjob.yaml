@@ -44,25 +44,21 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: import
                         href: app/$Param{appname}/workspace/$Param{workspacename}/import
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/import
-                            namespace: studio
                       - text: $Param{bulkjobname}
                 - material.grid:
                     items:

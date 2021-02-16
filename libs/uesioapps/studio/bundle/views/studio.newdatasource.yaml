@@ -94,7 +94,6 @@ definition:
                                       - "datasources"
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
-                                    namespace: "studio"
                             - material.button:
                                 color: "primary"
                                 variant: "outlined"
@@ -102,4 +101,3 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
-                                    namespace: "studio"

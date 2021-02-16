@@ -63,25 +63,21 @@ definition:
                         signals:
                           - signal: "route/NAVIGATE"
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: "route/NAVIGATE"
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: "route/NAVIGATE"
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: themes
                         href: app/$Param{appname}/workspace/$Param{workspacename}/themes
                         signals:
                           - signal: "route/NAVIGATE"
                             path: app/$Param{appname}/workspace/$Param{workspacename}/themes
-                            namespace: studio
                       - text: $Param{themename}
                 - material.grid:
                     items:
@@ -143,7 +139,6 @@ definition:
                                                               - "themes"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
-                                                            namespace: "studio"
                                   - material.field:
                                       fieldId: studio.name
                                   - studio.codefield:

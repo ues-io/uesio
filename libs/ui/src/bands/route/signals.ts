@@ -12,7 +12,6 @@ interface RedirectSignal extends SignalDefinition {
 interface NavigateSignal extends SignalDefinition {
 	path: string
 	namespace: string
-	noPushState?: boolean
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -31,12 +30,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${ROUTE_BAND}/NAVIGATE`]: {
 		dispatcher: (signal: NavigateSignal, context: Context) =>
-			operations.navigate(
-				context,
-				signal.path,
-				signal.namespace,
-				signal.noPushState
-			),
+			operations.navigate(context, signal.path, signal.namespace),
 		label: "Navigate",
 		properties: () => [
 			{
@@ -48,11 +42,6 @@ const signals: Record<string, SignalDescriptor> = {
 				type: "NAMESPACE",
 				name: "namespace",
 				label: "Namespace",
-			},
-			{
-				type: "BOOLEAN",
-				name: "noPushState",
-				label: "Do not populate browser history",
 			},
 		],
 	},

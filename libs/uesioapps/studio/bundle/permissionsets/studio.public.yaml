@@ -1,0 +1,6 @@
+name: public
+named:
+views:
+routes:
+  studio.login: true
+files:
