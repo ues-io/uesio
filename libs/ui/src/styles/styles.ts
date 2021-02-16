@@ -1,9 +1,16 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import { Theme, colors, Color } from "@material-ui/core"
-import { CreateCSSProperties } from "@material-ui/core/styles/withStyles"
+import {
+	Theme,
+	colors,
+	Color,
+	createStyles,
+	makeStyles,
+} from "@material-ui/core"
+import {
+	CreateCSSProperties,
+	CSSProperties,
+} from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
-
-import { CSSProperties } from "@material-ui/styles"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 
 type ThemeIntention =
@@ -112,7 +119,43 @@ function isValidColor(potientialColor: string): boolean {
 	style.color = potientialColor
 	return !!style.color
 }
+interface styledDefinition {
+	definition: {
+		"uesio.styles"?: Record<string, Record<string, unknown>>
+	}
+}
 
+function getUseStyles<T extends styledDefinition>(
+	classNames: string[],
+	defaultStyling?: Record<
+		string,
+		((props: T, theme: Theme) => CSSProperties) | CSSProperties
+	>
+) {
+	return makeStyles((theme) => {
+		const createStyleArgs: Record<string, (props: T) => CSSProperties> = {}
+		classNames.forEach((className) => {
+			createStyleArgs[className] = (props: T): CSSProperties => {
+				const defaultValuesFromStyles = defaultStyling?.[className]
+				let defaultValues: CSSProperties = {}
+				if (typeof defaultValuesFromStyles === "function") {
+					defaultValues = defaultValuesFromStyles(props, theme)
+				} else if (defaultValuesFromStyles) {
+					defaultValues = defaultValuesFromStyles
+				}
+				const customExtensions =
+					props.definition?.["uesio.styles"]?.[className] || {}
+				return { ...defaultValues, ...customExtensions }
+			}
+		})
+		// Getting the type signature right here was super hard so I gave up.
+		// Could be improved.
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		return createStyles(createStyleArgs)
+	})
+}
 export {
 	useStyleProperty,
 	getBackgroundStyles,
@@ -122,5 +165,8 @@ export {
 	MarginDefinition,
 	FloatDefinition,
 	CSSProperties,
+	CreateCSSProperties,
+	Theme,
+	getUseStyles,
 	getColor,
 }

@@ -1,4 +1,3 @@
-import { CSSProperties } from "react"
 import yaml from "yaml"
 import { Context } from "../context/context"
 
@@ -6,7 +5,6 @@ export type YamlDoc = yaml.Document
 
 export type BaseProps = {
 	definition?: DefinitionMap
-	style?: CSSProperties
 	index?: number
 	path: string
 	componentType?: string
@@ -16,7 +14,9 @@ export type BaseProps = {
 export interface BasePropsPlus extends BaseProps {
 	[x: string]: unknown
 }
-
+export type BaseDefinition = {
+	"uesio.styles"?: Record<string, Record<string, string>>
+}
 export type DefinitionMap = {
 	[key: string]: Definition
 }

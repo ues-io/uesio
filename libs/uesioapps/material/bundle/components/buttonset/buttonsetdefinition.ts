@@ -3,7 +3,7 @@ import ButtonPropertyDefinition from "../button/buttondefinition"
 
 type ButtonSetDefinition = {
 	buttons: definition.DefinitionList
-}
+} & definition.BaseDefinition
 
 interface ButtonSetProps extends definition.BaseProps {
 	definition: ButtonSetDefinition
