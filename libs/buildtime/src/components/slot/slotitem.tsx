@@ -110,8 +110,6 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 
 	const addPlaceholder = path === dropNode
 
-	console.log(dragNode)
-
 	const classes = useStyles()
 	const containerClasses = clsx(
 		classes.root,
