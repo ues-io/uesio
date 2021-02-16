@@ -23,7 +23,6 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: lead/${crm.id}
-                              namespace: "crm"
                           components:
                             - material.griditem:
                                 components:
@@ -51,7 +50,6 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: account/${crm.id}
-                              namespace: "crm"
                           components:
                             - material.griditem:
                                 components:
@@ -79,7 +77,6 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: contact/${crm.id}
-                              namespace: "crm"
                           components:
                             - material.griditem:
                                 components:
@@ -107,7 +104,6 @@ definition:
                           signals:
                             - signal: route/NAVIGATE
                               path: opportunity/${crm.id}
-                              namespace: "crm"
                           components:
                             - material.griditem:
                                 components:

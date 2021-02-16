@@ -18,6 +18,7 @@ type ContextFrame = {
 	route?: RouteState
 	workspace?: WorkspaceState
 	siteadmin?: SiteState
+	site?: SiteState
 }
 
 const getFromContext = (
@@ -80,6 +81,8 @@ class Context {
 	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
 
 	getSiteAdmin = () => this.stack.find((frame) => frame?.siteadmin)?.siteadmin
+
+	getSite = () => this.stack.find((frame) => frame?.site)?.site
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
 

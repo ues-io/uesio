@@ -1,6 +1,6 @@
 name: default
 definition:
-  primary: "#FF0000"
+  primary: "#1976d2"
   secondary: "#dc004e"
   error: "#f44336"
   warning: "#ff9800"

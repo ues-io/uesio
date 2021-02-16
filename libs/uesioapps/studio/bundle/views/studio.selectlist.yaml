@@ -63,25 +63,21 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: selectlists
                         href: app/$Param{appname}/workspace/$Param{workspacename}/selectlists
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/selectlists
-                            namespace: studio
                       - text: $Param{selectlistname}
                 - material.grid:
                     items:
@@ -144,7 +140,6 @@ definition:
                                                               - "selectlists"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
-                                                            namespace: "studio"
                                   - material.field:
                                       fieldId: studio.name
                                   - material.field:

@@ -75,7 +75,6 @@ async function handleChange(
 						`/workspace/` +
 						workspaceName +
 						`/files`,
-					namespace: "uesio",
 				} as signal.SignalDefinition
 
 				await uesio.signal.run(navigateSig, context)

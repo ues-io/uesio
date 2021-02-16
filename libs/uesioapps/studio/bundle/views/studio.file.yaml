@@ -64,25 +64,21 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: $Param{workspacename}
                         href: app/$Param{appname}/workspace/$Param{workspacename}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}
-                            namespace: studio
                       - text: files
                         href: app/$Param{appname}/workspace/$Param{workspacename}/files
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}/workspace/$Param{workspacename}/files
-                            namespace: studio
                       - text: $Param{filename}
                 - material.grid:
                     items:
@@ -126,7 +122,6 @@ definition:
                                                         - "files"
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
-                                                      namespace: "studio"
                                                     - signal: component/material.dialog/TOGGLE_MODE
                                                       target: "fileDialog"
                                               - material.buttonset:

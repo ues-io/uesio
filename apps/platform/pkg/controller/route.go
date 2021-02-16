@@ -129,10 +129,10 @@ func HandleMissingRoute(w http.ResponseWriter, r *http.Request, session *sess.Se
 		if err == nil {
 			requestedPath := r.URL.Path
 			redirectPath := "/" + loginRoute.Path
-			if requestedPath != "" && requestedPath != "/" {
-				redirectPath = redirectPath + "?r=" + requestedPath
-			}
 			if redirectPath != requestedPath {
+				if requestedPath != "" && requestedPath != "/" {
+					redirectPath = redirectPath + "?r=" + requestedPath
+				}
 				http.Redirect(w, r, redirectPath, 302)
 				return
 			}

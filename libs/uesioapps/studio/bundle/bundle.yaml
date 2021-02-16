@@ -1,8 +1,8 @@
 name: studio
-loginRoute: uesio.login
+loginRoute: studio.login
 homeRoute: studio.home
 defaultProfile: studio.standard
-publicProfile: uesio.public
+publicProfile: studio.public
 dependencies:
   uesio:
     version: "v0.0.1"

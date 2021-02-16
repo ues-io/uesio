@@ -40,7 +40,6 @@ definition:
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "newapp"
-                                    namespace: "studio"
           - material.deck:
               xs: 12
               sm: 6
@@ -71,4 +70,3 @@ definition:
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "app/${uesio.name}"
-                        namespace: "studio"

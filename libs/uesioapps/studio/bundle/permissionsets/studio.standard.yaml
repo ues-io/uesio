@@ -89,9 +89,3 @@ routes:
   studio.installedbundle: true
   studio.addbundle: true
 files:
-  uesio.logo: true
-  uesio.logosmall: true
-  uesio.amazonsmall: true
-  uesio.facebooksmall: true
-  uesio.logoword: true
-  uesio.splash: true

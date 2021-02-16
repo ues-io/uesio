@@ -49,13 +49,11 @@ definition:
                         signals:
                           - signal: route/NAVIGATE
                             path: home
-                            namespace: studio
                       - text: $Param{appname}
                         href: app/$Param{appname}
                         signals:
                           - signal: route/NAVIGATE
                             path: app/$Param{appname}
-                            namespace: studio
                       - text: ${studio.name}
                 - material.grid:
                     items:
@@ -73,7 +71,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -84,7 +81,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -95,7 +91,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -113,7 +108,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -124,7 +118,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -135,7 +128,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -146,7 +138,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -157,7 +148,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -168,7 +158,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
-                                                namespace: "studio"
                                   - material.buttonset:
                                       buttons:
                                         - material.button:
@@ -179,7 +168,6 @@ definition:
                                             signals:
                                               - signal: "route/NAVIGATE"
                                                 path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
-                                                namespace: "studio"
                       - material.griditem:
                           xs: true
                           components:
@@ -212,7 +200,6 @@ definition:
                                                         signals:
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
-                                                            namespace: "studio"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -224,7 +211,6 @@ definition:
                                                               - "workspaces"
                                                           - signal: "route/NAVIGATE"
                                                             path: "app/$Param{appname}"
-                                                            namespace: "studio"
                                   - material.field:
                                       fieldId: studio.name
                             - material.grid:
@@ -247,7 +233,6 @@ definition:
                                                   signals:
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
-                                                      namespace: "studio"
                             - material.deck:
                                 xs: 3
                                 margin: 0
@@ -270,7 +255,6 @@ definition:
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
-                                          namespace: "studio"
                             - material.grid:
                                 justify: space-between
                                 alignitems: center

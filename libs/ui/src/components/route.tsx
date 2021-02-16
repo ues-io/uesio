@@ -12,6 +12,7 @@ import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
 import { ThemeState } from "../bands/theme/types"
+import { useSite } from "../bands/site/selectors"
 
 const makePaletteTheme = (theme: ThemeState) =>
 	Object.entries(theme?.definition || {}).reduce(
@@ -29,11 +30,13 @@ const makeTheme = (themePalette: PaletteOptions) =>
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
+	const site = useSite()
 	const route = useRoute()
 	const theme = useTheme(route?.theme || "")
 	if (!route) return null
 
 	const routeContext = props.context.addFrame({
+		site,
 		route,
 		workspace: route.workspace,
 		buildMode: props.context.getBuildMode() && !!route.workspace,
