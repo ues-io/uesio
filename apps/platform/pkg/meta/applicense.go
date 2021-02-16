@@ -11,6 +11,10 @@ type AppLicense struct {
 var DefaultAppLicenses = AppLicenseCollection{
 	{
 		AppRef:         "crm",
+		LicensedAppRef: "uesio",
+	},
+	{
+		AppRef:         "crm",
 		LicensedAppRef: "material",
 	},
 	{
@@ -22,8 +26,8 @@ var DefaultAppLicenses = AppLicenseCollection{
 		LicensedAppRef: "material",
 	},
 	{
-		AppRef:         "uesio",
-		LicensedAppRef: "sample",
+		AppRef:         "studio",
+		LicensedAppRef: "uesio",
 	},
 	{
 		AppRef:         "studio",

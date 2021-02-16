@@ -234,7 +234,6 @@ func (s *Session) GetContextNamespaces() map[string]bool {
 	bundleDef := s.GetContextAppBundle()
 	namespaces := map[string]bool{
 		bundleDef.Name: true,
-		"uesio": true,
 	}
 
 	for name := range bundleDef.Dependencies {
