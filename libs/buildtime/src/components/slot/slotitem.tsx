@@ -23,7 +23,7 @@ const useStyles = makeStyles(() =>
 		horizontal: {
 			display: "flex",
 			width: "unset",
-			"&$expanded": {
+			"&$structureView": {
 				padding: "0 8px 0 0",
 			},
 			"&$isLast": {
@@ -33,17 +33,18 @@ const useStyles = makeStyles(() =>
 		vertical: {
 			display: "block",
 			width: "100%",
-			"&$expanded": {
+			"&$structureView": {
 				padding: "0 0 8px 0",
 			},
 			"&$isLast": {
 				padding: 0,
 			},
+			"&$contentView": {
+				display: "contents",
+			},
 		},
 		structureView: {},
-		contentView: {
-			display: "contents",
-		},
+		contentView: {},
 		isLast: {},
 		isDragging: {
 			"&$vertical::before": {
@@ -108,6 +109,8 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const propDef = component.registry.getPropertiesDefinitionFromPath(fullPath)
 
 	const addPlaceholder = path === dropNode
+
+	console.log(dragNode)
 
 	const classes = useStyles()
 	const containerClasses = clsx(

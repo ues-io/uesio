@@ -37,13 +37,14 @@ const useStyles = makeStyles((theme) =>
 		},
 		vertical: {
 			display: "block",
+			"&$contentView": {
+				display: "contents",
+			},
 		},
 		structureView: {
 			padding: "8px",
 		},
-		contentView: {
-			display: "contents",
-		},
+		contentView: {},
 		isDragging: {},
 		placeHolder: {
 			backgroundColor: "#f4f4f4",

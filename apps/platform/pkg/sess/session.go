@@ -235,12 +235,8 @@ func (s *Session) GetContextNamespaces() map[string]bool {
 	namespaces := map[string]bool{
 		bundleDef.Name: true,
 	}
-
 	for name := range bundleDef.Dependencies {
 		namespaces[name] = true
-	}
-	if s.GetWorkspaceID() != "" {
-		namespaces["studio"] = true
 	}
 	return namespaces
 }

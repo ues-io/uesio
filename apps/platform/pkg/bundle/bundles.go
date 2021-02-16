@@ -68,13 +68,6 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 		return appVersion, nil
 	}
 
-	if namespace == "uesio" {
-		return "v0.0.1", nil
-	}
-	if namespace == "studio" && session.GetWorkspaceID() != "" {
-		return "v0.0.1", nil
-	}
-
 	// Check to see if we have a license to use this namespace
 	license, err := getAppLicense(appName, namespace)
 	if err != nil {
