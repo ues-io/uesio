@@ -3,16 +3,16 @@ import React, { FunctionComponent } from "react"
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: (props: ButtonProps) => ({
-			fontWeight: 400,
-			margin: theme.spacing(
-				styles.useStyleProperty(props.definition.margin, 1)
-			),
-		}),
-	})
-)
+const stylesObj = {
+	root: (props: ButtonProps, theme: styles.Theme) => ({
+		fontWeight: 400,
+		margin: theme.spacing(
+			styles.useStyleProperty(props.definition.margin, 1)
+		),
+	}),
+}
+
+const useStyles = styles.getUseStyles(["root"], stylesObj)
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props

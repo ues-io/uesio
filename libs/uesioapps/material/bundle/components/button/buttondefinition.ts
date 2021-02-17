@@ -7,7 +7,7 @@ type ButtonDefinition = {
 	signals?: signal.SignalDefinition[]
 	fullWidth?: boolean
 	margin?: number
-}
+} & definition.BaseDefinition
 
 interface ButtonProps extends definition.BaseProps {
 	definition: ButtonDefinition
