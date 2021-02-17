@@ -1,26 +1,26 @@
 [
 	{
-		"site": "studio_studio",
+		"site": "prod_studio",
 		"type": "domain",
 		"domain": "localhost"
 	},
 	{
-		"site": "studio_studio",
+		"site": "prod_studio",
 		"type": "domain",
 		"domain": "uesio-dev.com"
 	},
 	{
-		"site": "studio_studio",
+		"site": "prod_studio",
 		"type": "domain",
 		"domain": "uesio.com"
 	},
 	{
-		"site": "studio_studio",
+		"site": "prod_studio",
 		"type": "subdomain",
 		"domain": "www"
 	},
 	{
-		"site": "studio_studio",
+		"site": "prod_studio",
 		"type": "subdomain",
 		"domain": "studio"
 	}

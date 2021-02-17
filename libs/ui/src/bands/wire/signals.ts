@@ -4,6 +4,7 @@ import toggleDeleteOp from "./operations/toggledelete"
 import markForDeleteOp from "./operations/markfordelete"
 import unMarkForDeleteOp from "./operations/unmarkfordelete"
 import createRecordOp from "./operations/createrecord"
+import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import toggleConditionOp from "./operations/togglecondition"
@@ -21,6 +22,13 @@ const WIRE_BAND = "wire"
 
 interface CreateRecordSignal extends SignalDefinition {
 	wire: string
+}
+
+interface UpdateRecordSignal extends SignalDefinition {
+	wire: string
+	field: string
+	value: string
+	record: string
 }
 
 interface CancelWireSignal extends SignalDefinition {
@@ -75,6 +83,39 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 		dispatcher: (signal: CreateRecordSignal, context: Context) =>
 			createRecordOp(context, signal.wire),
+	},
+	[`${WIRE_BAND}/UPDATE_RECORD`]: {
+		label: "Update Record",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "field",
+				type: "TEXT",
+				label: "Field",
+			},
+			{
+				name: "value",
+				type: "TEXT",
+				label: "Value",
+			},
+			{
+				name: "record",
+				type: "TEXT",
+				label: "Record ID",
+			},
+		],
+		dispatcher: (signal: UpdateRecordSignal, context: Context) =>
+			updateRecordOp(
+				context,
+				signal.wire,
+				signal.record,
+				signal.field,
+				signal.value
+			),
 	},
 	[`${WIRE_BAND}/CANCEL`]: {
 		label: "Cancel Wire Changes",

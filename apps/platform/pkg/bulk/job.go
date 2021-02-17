@@ -13,7 +13,7 @@ func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 
 	job := meta.BulkJob{
 		Spec: *spec,
-		Site: site.Name,
+		Site: site.GetFullName(),
 	}
 
 	err := datasource.PlatformSaveOne(&job, nil, session)

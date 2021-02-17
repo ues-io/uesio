@@ -92,7 +92,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		perms := session.GetPermissions()
 
 		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.Name != "studio" {
+		if site.AppRef != "studio" {
 			err := errors.New("this site does not allow administering other sites")
 			logger.LogError(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -154,7 +154,7 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		perms := session.GetPermissions()
 
 		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.Name != "studio" {
+		if site.AppRef != "studio" {
 			err := errors.New("this site does not allow working with workspaces")
 			logger.LogError(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

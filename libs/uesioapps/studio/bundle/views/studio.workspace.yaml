@@ -203,6 +203,25 @@ definition:
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
+                                                        text: "Configuration"
+                                                        signals:
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/configuration"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Create New Bundle Version"
+                                                        signals:
+                                                          - signal: "bot/CALL"
+                                                            bot: "studio.newbundle"
+                                                            params:
+                                                              workspace: $Param{workspacename}
+                                                              app: $Param{appname}
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
                                                         text: "Delete"
                                                         signals:
                                                           - signal: wire/MARK_FOR_DELETE
@@ -255,13 +274,3 @@ definition:
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
-                            - material.grid:
-                                justify: space-between
-                                alignitems: center
-                                items:
-                                  - material.griditem:
-                                      components:
-                                        - material.typography:
-                                            text: Configuration
-                                            variant: h5
-                            - studio.configsecrets:

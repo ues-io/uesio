@@ -3,3 +3,4 @@ collection: uesio.sites
 type: "TEXT"
 label: "Bundle Version"
 propertyName: versionref
+required: true
