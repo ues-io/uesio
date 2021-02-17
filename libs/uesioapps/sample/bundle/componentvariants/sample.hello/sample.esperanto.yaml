@@ -1,4 +1,5 @@
 name: esperanto
+component: sample.hello
 label: Esperanta
 definition:
   greeting:  Saluton amiko!

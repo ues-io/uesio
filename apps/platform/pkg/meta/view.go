@@ -120,7 +120,7 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	return nil, fmt.Errorf("Node not found of key: " + key)
 }
 
-func getComponentsUsed(node *yaml.Node, usedComps *map[string]bool) {
+func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {
 	if node.Kind != yaml.SequenceNode {
 		return
 	}
@@ -130,9 +130,16 @@ func getComponentsUsed(node *yaml.Node, usedComps *map[string]bool) {
 		if isComponentLike(comp) {
 			compName := comp.Content[0].Value
 			(*usedComps)[compName] = true
-			for i := range comp.Content[1].Content {
-				prop := comp.Content[1].Content[i]
-				getComponentsUsed(prop, usedComps)
+			for i, prop := range comp.Content[1].Content {
+				if prop.Kind == yaml.ScalarNode && prop.Value == "uesio.variant" {
+					if len(comp.Content[1].Content) > i {
+						valueNode := comp.Content[1].Content[i+1]
+						if valueNode.Kind == yaml.ScalarNode && valueNode.Value != "" {
+							(*usedVariants)[compName+"."+valueNode.Value] = true
+						}
+					}
+				}
+				getComponentsAndVariantsUsed(prop, usedComps, usedVariants)
 			}
 		}
 	}
@@ -157,16 +164,17 @@ func isComponentLike(node *yaml.Node) bool {
 	return true
 }
 
-func (v *View) GetComponents() (map[string]bool, error) {
+func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, error) {
 
 	components, err := getMapNode(&v.Definition, "components")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	usedComps := map[string]bool{}
+	usedVariants := map[string]bool{}
 
-	getComponentsUsed(components, &usedComps)
+	getComponentsAndVariantsUsed(components, &usedComps, &usedVariants)
 
-	return usedComps, nil
+	return usedComps, usedVariants, nil
 }

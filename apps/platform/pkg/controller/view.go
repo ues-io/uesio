@@ -88,6 +88,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	cPackDeps := map[string]bool{}
 	configDependencies := map[string]string{}
+
 	var packs meta.ComponentPackCollection
 	err := bundle.LoadAllFromAny(&packs, nil, session)
 	if err != nil {
@@ -131,16 +132,19 @@ func getConfigValueDependencyFromComponent(key string, session *sess.Session) (s
 func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
 	workspace := session.GetWorkspaceID()
 	if workspace != "" {
+		view.GetComponentsAndVariants()
 		return getBuilderDependencies(session)
 	}
 
 	// Process Configuration Value Dependencies
-	componentsUsed, err := view.GetComponents()
+	componentsUsed, variantsUsed, err := view.GetComponentsAndVariants()
 	if err != nil {
 		return nil, err
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
+	//TODO:: You are here
+	variants := map[string]meta.ComponentVariantCollection{}
 
 	cPackDeps := map[string]bool{}
 	configDependencies := map[string]string{}
