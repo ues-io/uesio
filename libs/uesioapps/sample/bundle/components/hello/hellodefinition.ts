@@ -2,7 +2,7 @@ import { definition, builder } from "@uesio/ui"
 
 type HelloDefinition = {
 	greeting: string
-}
+} & definition.BaseDefinition
 
 interface HelloProps extends definition.BaseProps {
 	definition: HelloDefinition

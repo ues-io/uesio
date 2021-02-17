@@ -1,0 +1,7 @@
+name: esperanto
+label: Esperanta
+definition:
+  greeting:  Saluton amiko!
+  "uesio.styles":
+    root:
+      backgroundColor: green
