@@ -21,22 +21,32 @@ type ContextFrame = {
 	site?: SiteState
 }
 
+const ANCESTOR_INDICATOR = "Parent."
+
 const getFromContext = (
 	mergeType: string,
 	expression: string,
 	context: Context
 ) => {
-	if (mergeType === "" || mergeType === "Record") {
+	const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
+	const mergeTypeName = mergeSplit.pop()
+	const mergeAncestors = mergeSplit.length
+
+	if (mergeTypeName === "" || mergeTypeName === "Record") {
+		context = context.removeRecordFrame(mergeAncestors)
 		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
-	} else if (mergeType === "Param") {
+	} else if (mergeTypeName === "Param") {
 		return context.getView()?.params?.[expression] || ""
+	} else if (mergeTypeName === "RecordId") {
+		context = context.removeRecordFrame(mergeAncestors)
+		return context.getRecord()?.getId() || ""
 	}
 	return ""
 }
 
 const inject = (template: string, context: Context): string =>
-	template.replace(/\$([\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
+	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
 		getFromContext(mergeType, mergeExpression, context)
 	)
 
@@ -48,6 +58,19 @@ class Context {
 	stack: ContextFrame[]
 
 	getRecordId = () => this.stack.find((frame) => frame?.record)?.record
+
+	removeRecordFrame = (times: number): Context => {
+		if (!times) {
+			return this
+		}
+		const index = this.stack.findIndex((frame) => frame?.record)
+		if (index === -1) {
+			return new Context()
+		}
+		return new Context(this.stack.slice(index + 1)).removeRecordFrame(
+			times - 1
+		)
+	}
 
 	getRecord = () => {
 		const recordId = this.getRecordId()

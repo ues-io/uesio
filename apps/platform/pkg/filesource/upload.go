@@ -84,11 +84,11 @@ func Upload(fileBody io.Reader, details FileDetails, session *sess.Session) (*me
 		FileCollectionID: details.FileCollectionID,
 		Name:             details.Name,
 		RecordID:         details.RecordID,
-		SiteID:           site.Name,
+		SiteID:           site.GetFullName(),
 		WorkspaceID:      workspaceID,
 	}
 
-	path, err := ufc.GetFilePath(&ufm, site.Name, session.GetWorkspaceID())
+	path, err := ufc.GetFilePath(&ufm, site.GetFullName(), session.GetWorkspaceID())
 	if err != nil {
 		return nil, errors.New("error generating path for userfile: " + err.Error())
 	}

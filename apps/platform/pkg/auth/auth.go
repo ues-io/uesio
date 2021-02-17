@@ -83,7 +83,7 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 		FederationType: claims.AuthType,
 		FederationID:   claims.Subject,
 		Profile:        defaultSiteProfile,
-		Site:           site.Name,
+		Site:           site.GetFullName(),
 	}, nil, session)
 }
 
@@ -166,7 +166,7 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 			},
 			{
 				Field: "uesio.site",
-				Value: site.Name,
+				Value: site.GetFullName(),
 			},
 		},
 		session,

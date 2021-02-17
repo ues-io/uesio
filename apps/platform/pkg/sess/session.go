@@ -26,7 +26,7 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
 			"Profile":   user.Profile,
-			"Site":      site.Name,
+			"Site":      site.GetFullName(),
 			"FirstName": user.FirstName,
 			"LastName":  user.LastName,
 		},
@@ -110,7 +110,7 @@ func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 	// Check to make sure our session site matches the site from our domain.
 	browserSessionSite := browserSession.CAttr("Site")
 	newSession := create(&browserSession, site)
-	if browserSessionSite != site.Name {
+	if browserSessionSite != site.GetFullName() {
 		return Logout(w, newSession), nil
 	}
 	return newSession, nil
@@ -192,7 +192,7 @@ func (s *Session) GetUserInfo() *meta.User {
 		FirstName: s.getBrowserSessionAttribute("FirstName"),
 		LastName:  s.getBrowserSessionAttribute("LastName"),
 		Profile:   s.getBrowserSessionAttribute("Profile"),
-		Site:      s.site.Name,
+		Site:      s.site.GetFullName(),
 	}
 }
 

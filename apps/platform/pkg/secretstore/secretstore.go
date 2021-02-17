@@ -27,7 +27,7 @@ func getSecretKeyParts(secret *meta.Secret, session *sess.Session) []string {
 		return append(parts, "workspace", workspace.GetAppID(), workspace.Name)
 	}
 	site := session.GetSite()
-	return append(parts, "site", site.AppRef, site.Name)
+	return append(parts, "site", site.GetFullName())
 }
 
 func getSecretKey(secret *meta.Secret, session *sess.Session) string {

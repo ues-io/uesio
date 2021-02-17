@@ -1,4 +1,4 @@
 name: standard
 permissionSets:
-  - uesio.standard
+  - uesio.public
   - crm.standard

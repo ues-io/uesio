@@ -28,7 +28,7 @@ func getConfigKeyParts(cv *meta.ConfigValue, session *sess.Session) []string {
 		return append(parts, "workspace", workspace.GetAppID(), workspace.Name)
 	}
 	site := session.GetSite()
-	return append(parts, "site", site.AppRef, site.Name)
+	return append(parts, "site", site.GetFullName())
 }
 
 func getConfigKey(cv *meta.ConfigValue, session *sess.Session) string {

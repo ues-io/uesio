@@ -1,7 +1,7 @@
 [
 	{
-		"name": "studio",
-		"bundleid": "uesio_v0.0.1",
+		"name": "prod",
+		"bundleid": "studio_v0.0.1",
 		"appref": "studio",
 		"versionref": "v0.0.1"
 	}

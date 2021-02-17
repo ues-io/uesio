@@ -1,0 +1,4 @@
+name: newsite
+path: app/{appname}/newsite
+view: studio.newsite
+theme: uesio.default

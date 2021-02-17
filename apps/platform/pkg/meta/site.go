@@ -10,6 +10,10 @@ type Site struct {
 	bundleDef  *BundleDef
 }
 
+func (s *Site) GetFullName() string {
+	return s.Name + "_" + s.AppRef
+}
+
 // SetAppBundle function
 func (s *Site) SetAppBundle(bundleDef *BundleDef) {
 	s.bundleDef = bundleDef

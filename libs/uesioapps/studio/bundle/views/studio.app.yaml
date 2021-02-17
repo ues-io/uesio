@@ -223,6 +223,17 @@ definition:
                             - material.typography:
                                 text: Your site is in sight.
                                 variant: body2
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Create a Site"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/${uesio.name}/newsite"
                 - material.deck:
                     xs: 12
                     sm: 6
