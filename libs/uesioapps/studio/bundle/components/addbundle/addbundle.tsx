@@ -98,7 +98,6 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 			const namespace = source["uesio.namespace"]
 			//We don't want to see ourselves, uesio or studio
 			if (namespace === appName) return false
-			if (namespace === "uesio") return false
 			if (namespace === "studio") return false
 			return true
 		})
