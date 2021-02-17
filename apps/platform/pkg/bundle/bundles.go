@@ -16,7 +16,9 @@ func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 			return &av, nil
 		}
 	}
-	return nil, nil
+	// TODO: Fix this
+	// For now, everyone is licensed
+	return &meta.AppLicense{}, nil
 }
 
 // GetAppBundle function
