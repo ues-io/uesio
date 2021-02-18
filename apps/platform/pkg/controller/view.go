@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -22,8 +24,9 @@ type ViewResponse struct {
 }
 
 type ViewDependencies struct {
-	ComponentPacks map[string]bool   `yaml:"componentpacks,omitempty"`
-	ConfigValues   map[string]string `yaml:"configvalues,omitempty"`
+	ComponentPacks    map[string]bool                   `yaml:"componentpacks,omitempty"`
+	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
+	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
 }
 
 // ViewPreview is also good
@@ -88,11 +91,17 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	cPackDeps := map[string]bool{}
 	configDependencies := map[string]string{}
+	variantDependencies := map[string]*meta.ComponentVariant{}
 
 	var packs meta.ComponentPackCollection
+	var variants meta.ComponentVariantCollection
 	err := bundle.LoadAllFromAny(&packs, nil, session)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Failed to load packs: " + err.Error())
+	}
+	err = bundle.LoadAllFromAny(&variants, nil, session)
+	if err != nil {
+		return nil, errors.New("Failed to load variants: " + err.Error())
 	}
 	for _, pack := range packs {
 		cPackDeps[pack.GetKey()] = true
@@ -110,12 +119,16 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 				}
 			}
 		}
-
+	}
+	for i, _ := range variants {
+		variant := variants[i]
+		variantDependencies[variant.GetKey()] = &variant
 	}
 
 	dependenciesResponse := ViewDependencies{
-		ComponentPacks: cPackDeps,
-		ConfigValues:   configDependencies,
+		ComponentPacks:    cPackDeps,
+		ConfigValues:      configDependencies,
+		ComponentVariants: variantDependencies,
 	}
 
 	return &dependenciesResponse, nil
@@ -132,7 +145,6 @@ func getConfigValueDependencyFromComponent(key string, session *sess.Session) (s
 func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
 	workspace := session.GetWorkspaceID()
 	if workspace != "" {
-		view.GetComponentsAndVariants()
 		return getBuilderDependencies(session)
 	}
 
@@ -143,11 +155,27 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
-	//TODO:: You are here
-	variants := map[string]meta.ComponentVariantCollection{}
+	variants := map[string]*meta.ComponentVariant{}
 
 	cPackDeps := map[string]bool{}
 	configDependencies := map[string]string{}
+
+	for key := range variantsUsed {
+		partsOfKey := strings.Split(key, ".")
+		if len(partsOfKey) != 4 {
+			return nil, errors.New("Invalid variant key: " + key)
+		}
+		variantDep := meta.ComponentVariant{
+			Namespace: partsOfKey[2],
+			Name:      partsOfKey[3],
+			Component: partsOfKey[0] + "." + partsOfKey[1],
+		}
+		err = bundle.Load(&variantDep, session)
+		if err != nil {
+			return nil, errors.New("Failed to load variant: " + key + err.Error())
+		}
+		variants[key] = &variantDep
+	}
 
 	for key := range componentsUsed {
 		namespace, name, err := meta.ParseKey(key)
@@ -186,8 +214,9 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	}
 
 	dependenciesResponse := ViewDependencies{
-		ComponentPacks: cPackDeps,
-		ConfigValues:   configDependencies,
+		ComponentPacks:    cPackDeps,
+		ComponentVariants: variants,
+		ConfigValues:      configDependencies,
 	}
 
 	return &dependenciesResponse, nil

@@ -2,5 +2,5 @@ name: purple
 label: Purple
 definition:
   "uesio.styles":
-      root:
-        backgroundColor: purple
+    root:
+      backgroundColor: purple

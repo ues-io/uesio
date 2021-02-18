@@ -1,0 +1,5 @@
+name: definition
+collection: studio.componentvariants
+type: LONGTEXT
+label: Definition
+propertyName: definition
