@@ -94,6 +94,11 @@ class Context {
 			: undefined
 	}
 
+	getComponentVariant = (id: string) => {
+		const viewDef = this.getViewDef()
+		return viewDef?.dependencies?.componentvariants?.[id]
+	}
+
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
 	getWireDef = (wirename: string) =>

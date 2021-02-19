@@ -4,6 +4,7 @@ import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"
 import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
+import merge from "lodash.merge"
 
 type DisplayCondition = {
 	field: string
@@ -48,17 +49,37 @@ const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
-
+function mergeInVariants(
+	definition: DefinitionMap,
+	componentType: string,
+	context: Context
+): DefinitionMap {
+	if (!definition["uesio.variant"]) {
+		return definition
+	}
+	const variant = context.getComponentVariant(
+		`${componentType}.${definition["uesio.variant"] as string}`
+	)
+	if (!variant) {
+		return definition
+	}
+	const variantClone = JSON.parse(JSON.stringify(variant))
+	return merge(variantClone, definition)
+}
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
 	if (!componentType) return <NotFound {...props} />
 	if (!shouldDisplay(context, definition)) return null
-
+	const mergedDefinition =
+		definition && mergeInVariants(definition, componentType, context)
 	const [namespace, name] = parseKey(componentType)
 	const Loader =
 		getLoader(namespace, name, !!context.getBuildMode()) || NotFound
 	return (
-		<Loader {...props} context={additionalContext(context, definition)} />
+		<Loader
+			{...{ ...props, definition: mergedDefinition }}
+			context={additionalContext(context, mergedDefinition)}
+		/>
 	)
 }
 

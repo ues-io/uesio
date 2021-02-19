@@ -1,6 +1,7 @@
 import { Dispatcher } from "../store/store"
-import { Definition } from "../definition/definition"
+import { Definition, DefinitionMap } from "../definition/definition"
 import yaml from "yaml"
+import merge from "lodash.merge"
 import { Uesio } from "./hooks"
 import { AnyAction } from "redux"
 import {
@@ -15,6 +16,7 @@ import {
 import {
 	useViewConfigValue,
 	useViewDefinition,
+	useComponentVariant,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
 
@@ -33,10 +35,32 @@ class ViewAPI {
 		const viewDefId = this.uesio.getViewDefId()
 		return viewDefId ? useViewConfigValue(viewDefId, key) : ""
 	}
-
-	useDefinition(path?: string) {
+	useDefinitionLocal(path?: string) {
 		const viewDefId = this.uesio.getViewDefId()
+		if (!viewDefId) return
 		return viewDefId ? useViewDefinition(viewDefId, path) : undefined
+	}
+	useDefinition(path?: string) {
+		const def = this.useDefinitionLocal(path)
+		const viewDefId = this.uesio.getViewDefId()
+		if (!viewDefId) return def
+		const componentType = this.uesio.getComponentType()
+		if (!componentType || !def) {
+			return def
+		}
+
+		const variantName = (def as DefinitionMap)["uesio.variant"] as string
+		if (!variantName) {
+			return def
+		}
+
+		const variant = useComponentVariant(
+			viewDefId,
+			componentType + "." + variantName
+		)
+		if (!variant) return def
+		const variantCopy = JSON.parse(JSON.stringify(variant.definition))
+		return merge(variantCopy, def)
 	}
 
 	useYAML() {
