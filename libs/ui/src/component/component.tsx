@@ -63,8 +63,8 @@ function mergeInVariants(
 	if (!variant) {
 		return definition
 	}
-	const variantClone = JSON.parse(JSON.stringify(variant))
-	return merge(variantClone, definition)
+	const variantDefClone = JSON.parse(JSON.stringify(variant.definition))
+	return merge(variantDefClone, definition)
 }
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props
