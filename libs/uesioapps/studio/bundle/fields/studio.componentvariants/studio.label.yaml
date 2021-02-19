@@ -1,0 +1,5 @@
+name: label
+collection: studio.componentvariants
+type: TEXT
+label: Label
+propertyName: label
