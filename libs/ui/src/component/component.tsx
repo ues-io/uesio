@@ -4,7 +4,7 @@ import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"
 import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
-import merge from "lodash.merge"
+import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 
 type DisplayCondition = {
 	field: string
@@ -49,6 +49,7 @@ const Component: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, path } = props
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
+
 function mergeInVariants(
 	definition: DefinitionMap,
 	componentType: string,
@@ -63,8 +64,7 @@ function mergeInVariants(
 	if (!variant) {
 		return definition
 	}
-	const variantDefClone = JSON.parse(JSON.stringify(variant.definition))
-	return merge(variantDefClone, definition)
+	return mergeDefinitionMaps(variant.definition, definition)
 }
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context, definition } = props

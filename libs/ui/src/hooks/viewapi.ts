@@ -1,7 +1,7 @@
 import { Dispatcher } from "../store/store"
 import { Definition, DefinitionMap } from "../definition/definition"
 import yaml from "yaml"
-import merge from "lodash.merge"
+import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 import { Uesio } from "./hooks"
 import { AnyAction } from "redux"
 import {
@@ -59,8 +59,7 @@ class ViewAPI {
 			componentType + "." + variantName
 		)
 		if (!variant) return def
-		const variantCopy = JSON.parse(JSON.stringify(variant.definition))
-		return merge(variantCopy, def)
+		return mergeDefinitionMaps(variant.definition, def as DefinitionMap)
 	}
 
 	useYAML() {
