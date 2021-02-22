@@ -1,6 +1,7 @@
 import toPath from "lodash.topath"
 import { Pair, Node, Collection } from "yaml/types"
 import yaml from "yaml"
+import { DefinitionMap } from "../definition/definition"
 
 const YAML_OPTIONS = {
 	simpleKeys: true,
@@ -16,6 +17,45 @@ function isInRange(offset: number, node: Node): boolean {
 		return false
 	}
 	return offset >= node.range[0] && offset <= node.range[1]
+}
+
+const cache: Record<string, DefinitionMap> = {}
+
+/**
+ * Returns a new object that has a deep merge where source overrides
+ * destination, but ignoring empty values in source
+ * @param destDef
+ * @param sourceDef
+ */
+function mergeDefinitionMaps(destDef: DefinitionMap, sourceDef: DefinitionMap) {
+	const key = JSON.stringify([destDef, sourceDef])
+	if (cache[key]) return cache[key]
+	const destClone = JSON.parse(JSON.stringify(destDef))
+	const result = mergeDeep(destClone, sourceDef)
+	cache[key] = result
+	return result
+}
+
+/**
+ * Will ignore null/undefined/empty string in the src obj
+ * @param dest
+ * @param src
+ */
+function mergeDeep(dest: DefinitionMap, src: DefinitionMap): DefinitionMap {
+	const srcKeys = Object.keys(src)
+	for (const key of srcKeys) {
+		if (typeof src[key] === "object" && src[key] !== null) {
+			if (!dest[key] || typeof dest[key] !== "object") {
+				dest[key] = {}
+			}
+			mergeDeep(dest[key] as DefinitionMap, src[key] as DefinitionMap)
+		}
+
+		if (src[key] !== null && src[key] !== undefined && src[key] !== "") {
+			dest[key] = src[key]
+		}
+	}
+	return dest
 }
 
 function getNodeAtOffset(
@@ -162,6 +202,7 @@ export {
 	setNodeAtPath,
 	addNodeAtPath,
 	addNodePairAtPath,
+	mergeDefinitionMaps,
 	removeNodeAtPath,
 	getCommonAncestorPath,
 	getPathFromPathArray,

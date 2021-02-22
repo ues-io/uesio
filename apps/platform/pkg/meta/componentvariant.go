@@ -26,11 +26,11 @@ func (c *ComponentVariant) GetPermChecker() *PermissionSet {
 }
 
 func (c *ComponentVariant) GetKey() string {
-	return filepath.Join(c.Component, c.Namespace+"."+c.Name)
+	return c.Component + "." + c.Namespace + "." + c.Name
 }
 
 func (c *ComponentVariant) GetPath() string {
-	return c.GetKey() + ".yaml"
+	return filepath.Join(c.Component, c.Namespace+"."+c.Name) + ".yaml"
 }
 
 func (c *ComponentVariant) GetConditions() map[string]string {
