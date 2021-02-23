@@ -21,6 +21,7 @@ pgdata
 /ssl/private.key
 sessions/*
 userfiles/*
+localbundlestore/*
 .DS_Store
 .idea
 .vscode/launch.json

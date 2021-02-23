@@ -85,7 +85,7 @@ func (cvc *ComponentVariantCollection) Len() int {
 
 // GetItems function
 func (cvc *ComponentVariantCollection) GetItems() interface{} {
-	return cvc
+	return *cvc
 }
 
 // Slice function

@@ -61,7 +61,7 @@ func (pc *ProfileCollection) Len() int {
 
 // GetItems function
 func (pc *ProfileCollection) GetItems() interface{} {
-	return pc
+	return *pc
 }
 
 // Slice function

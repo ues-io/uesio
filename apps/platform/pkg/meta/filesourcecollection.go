@@ -61,7 +61,7 @@ func (fsc *FileSourceCollection) Len() int {
 
 // GetItems function
 func (fsc *FileSourceCollection) GetItems() interface{} {
-	return fsc
+	return *fsc
 }
 
 // Slice function

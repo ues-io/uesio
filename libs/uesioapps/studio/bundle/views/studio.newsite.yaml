@@ -80,18 +80,18 @@ definition:
                             - material.card:
                                 components:
                                   - material.typography:
-                                      text: ${uesio.namespace} ${uesio.major}.${uesio.minor}.${uesio.patch}
+                                      text: ${uesio.namespace} v${uesio.major}.${uesio.minor}.${uesio.patch}
                                 signals:
                                   - signal: "wire/UPDATE_RECORD"
                                     wire: sites
                                     record: $Parent.RecordId{}
                                     field: uesio.versionref
-                                    value: ${uesio.major}.${uesio.minor}.${uesio.patch}
+                                    value: v${uesio.major}.${uesio.minor}.${uesio.patch}
                                   - signal: "wire/UPDATE_RECORD"
                                     wire: sites
                                     record: $Parent.RecordId{}
                                     field: uesio.bundleid
-                                    value: ${uesio.namespace}_${uesio.major}.${uesio.minor}.${uesio.patch}
+                                    value: ${uesio.namespace}_v${uesio.major}.${uesio.minor}.${uesio.patch}
                       - material.buttonset:
                           buttons:
                             - material.button:

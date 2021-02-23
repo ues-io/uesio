@@ -99,7 +99,7 @@ func (bc *BotCollection) Len() int {
 
 // GetItems function
 func (bc *BotCollection) GetItems() interface{} {
-	return bc
+	return *bc
 }
 
 // Slice function

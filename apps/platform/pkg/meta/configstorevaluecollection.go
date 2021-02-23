@@ -46,7 +46,7 @@ func (cc *ConfigStoreValueCollection) Len() int {
 
 // GetItems function
 func (cc *ConfigStoreValueCollection) GetItems() interface{} {
-	return cc
+	return *cc
 }
 
 // Slice function

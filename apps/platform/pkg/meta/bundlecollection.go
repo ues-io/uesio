@@ -46,7 +46,7 @@ func (bc *BundleCollection) Len() int {
 
 // GetItems function
 func (bc *BundleCollection) GetItems() interface{} {
-	return bc
+	return *bc
 }
 
 // Slice function

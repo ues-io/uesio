@@ -61,7 +61,7 @@ func (pc *PermissionSetCollection) Len() int {
 
 // GetItems function
 func (pc *PermissionSetCollection) GetItems() interface{} {
-	return pc
+	return *pc
 }
 
 // Slice function

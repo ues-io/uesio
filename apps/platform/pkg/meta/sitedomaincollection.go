@@ -46,7 +46,7 @@ func (sdc *SiteDomainCollection) Len() int {
 
 // GetItems function
 func (sdc *SiteDomainCollection) GetItems() interface{} {
-	return sdc
+	return *sdc
 }
 
 // Slice function

@@ -1,4 +1,4 @@
-package localbundlestore
+package systembundlestore
 
 import (
 	"bufio"
@@ -16,13 +16,13 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// LocalBundleStore struct
-type LocalBundleStore struct {
+// SystemBundleStore struct
+type SystemBundleStore struct {
 }
 
 func getBasePath(namespace, version string) string {
 	// We're ignoring the version here because we always get the latest
-	return filepath.Join("localbundlestore", namespace, version)
+	return filepath.Join("..", "..", "libs", "uesioapps", namespace, "bundle")
 }
 
 func getStream(namespace string, version string, objectname string, filename string) (io.ReadCloser, error) {
@@ -40,7 +40,7 @@ func getStream(namespace string, version string, objectname string, filename str
 }
 
 // GetItem function
-func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
+func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
 	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
@@ -69,7 +69,7 @@ func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, ses
 }
 
 // GetItems function
-func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
@@ -116,17 +116,17 @@ func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, versi
 }
 
 // GetFileStream function
-func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
+func (b *SystemBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath())
 }
 
 // GetBotStream function
-func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+func (b *SystemBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
 // GetComponentPackStream function
-func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
+func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 
 	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
@@ -136,40 +136,12 @@ func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool
 }
 
 // StoreItems function
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
-	for _, itemStream := range itemStreams {
-		err := storeItem(namespace, version, itemStream)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
-	fullFilePath := filepath.Join(getBasePath(namespace, version), itemStream.Type, itemStream.FileName)
-	directory := filepath.Dir(fullFilePath)
-
-	err := os.MkdirAll(directory, 0744)
-	if err != nil {
-		return err
-	}
-
-	outFile, err := os.Create(fullFilePath)
-	if err != nil {
-		return errors.New("Error Creating File: " + err.Error())
-	}
-	defer outFile.Close()
-	_, err = io.Copy(outFile, &itemStream.Buffer)
-	if err != nil {
-		return errors.New("Error Writing File: " + err.Error())
-	}
-
-	return nil
+func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
+	return errors.New("Cannot Write to System Bundle Store")
 }
 
 // GetBundleDef function
-func (b *LocalBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
+func (b *SystemBundleStore) GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error) {
 	var by meta.BundleDef
 	stream, err := getStream(namespace, version, "", "bundle.yaml")
 	if err != nil {

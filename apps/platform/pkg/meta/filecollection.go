@@ -73,7 +73,7 @@ func (fc *FileCollection) Len() int {
 
 // GetItems function
 func (fc *FileCollection) GetItems() interface{} {
-	return fc
+	return *fc
 }
 
 // Slice function

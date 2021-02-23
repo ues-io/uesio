@@ -44,7 +44,7 @@ func (c *WorkspaceLoadCollection) GetName() string {
 
 // GetItems function
 func (c *WorkspaceLoadCollection) GetItems() interface{} {
-	return c
+	return c.Collection.GetItems()
 }
 
 // Slice function

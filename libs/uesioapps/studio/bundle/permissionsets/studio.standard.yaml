@@ -92,4 +92,5 @@ routes:
   studio.addbundle: true
   studio.workspaceconfig: true
   studio.newsite: true
+  studio.login: true
 files:

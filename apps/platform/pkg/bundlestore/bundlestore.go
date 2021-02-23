@@ -49,15 +49,6 @@ type BundleStore interface {
 	GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error)
 }
 
-// StoreWorkspaceAsBundle function
-func StoreWorkspaceAsBundle(appName string, version string, itemStreams []ItemStream, session *sess.Session) error {
-	bundleStoreInstance, err := GetBundleStore(appName, session)
-	if err != nil {
-		return err
-	}
-	return bundleStoreInstance.StoreItems(appName, version, itemStreams)
-}
-
 // GetBundleStore function
 func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error) {
 	// If we're in a workspace context and the namespace we're looking for is that workspace,
@@ -68,10 +59,11 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if session.GetWorkspaceApp() == namespace {
 		return getBundleStoreByType("workspace")
 	}
-	if namespace == "material" || namespace == "sample" || namespace == "crm" || namespace == "uesio" || namespace == "studio" {
-		return getBundleStoreByType("local")
+	if namespace == "material" || namespace == "uesio" || namespace == "studio" {
+		return getBundleStoreByType("system")
 	}
-	return getBundleStoreByType("platform")
+
+	return getBundleStoreByType("local")
 }
 
 // DecodeYAML function

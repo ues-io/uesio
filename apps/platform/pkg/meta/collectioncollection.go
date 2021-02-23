@@ -61,7 +61,7 @@ func (cc *CollectionCollection) Len() int {
 
 // GetItems function
 func (cc *CollectionCollection) GetItems() interface{} {
-	return cc
+	return *cc
 }
 
 // Slice function

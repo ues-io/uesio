@@ -85,7 +85,7 @@ func (fc *FieldCollection) Len() int {
 
 // GetItems function
 func (fc *FieldCollection) GetItems() interface{} {
-	return fc
+	return *fc
 }
 
 // Slice function
