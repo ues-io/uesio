@@ -6,7 +6,6 @@ import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { metadata } from "@uesio/constants"
 import { MetadataListStore } from "../bands/builder/types"
-import { ThemeState } from "../bands/theme/types"
 import { RouteState } from "../bands/route/types"
 
 type BotParams = {
@@ -32,11 +31,7 @@ type SecretResponse = {
 
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
-	getTheme(
-		context: Context,
-		namespace: string,
-		name: string
-	): Promise<ThemeState>
+	getTheme(context: Context, namespace: string, name: string): Promise<string>
 	getRoute(
 		context: Context,
 		namespace: string,

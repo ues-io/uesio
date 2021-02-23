@@ -1,3 +1,5 @@
+import { DefinitionMap } from "../../definition/definition"
+
 interface Palette {
 	primary?: string
 	secondary?: string
@@ -10,7 +12,7 @@ interface Palette {
 interface ThemeState {
 	name: string
 	namespace: string
-	definition?: Palette
+	definition: DefinitionMap
 }
 
 export { Palette, ThemeState }
