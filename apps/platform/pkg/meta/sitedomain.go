@@ -2,10 +2,11 @@ package meta
 
 // SiteDomain struct
 type SiteDomain struct {
-	ID     string `uesio:"uesio.id"`
-	Site   string `uesio:"uesio.site"`
-	Type   string `uesio:"uesio.type"`
-	Domain string `uesio:"uesio.domain"`
+	ID       string    `uesio:"uesio.id"`
+	Site     string    `uesio:"uesio.site"`
+	Type     string    `uesio:"uesio.type"`
+	Domain   string    `uesio:"uesio.domain"`
+	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -32,4 +33,14 @@ func (s *SiteDomain) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (s *SiteDomain) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// GetItemMeta function
+func (s *SiteDomain) GetItemMeta() *ItemMeta {
+	return s.itemMeta
+}
+
+// SetItemMeta function
+func (s *SiteDomain) SetItemMeta(itemMeta *ItemMeta) {
+	s.itemMeta = itemMeta
 }

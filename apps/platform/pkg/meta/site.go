@@ -8,6 +8,7 @@ type Site struct {
 	AppRef     string `uesio:"uesio.appref"`
 	VersionRef string `uesio:"uesio.versionref"`
 	bundleDef  *BundleDef
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (s *Site) GetFullName() string {
@@ -48,4 +49,14 @@ func (s *Site) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (s *Site) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// GetItemMeta function
+func (s *Site) GetItemMeta() *ItemMeta {
+	return s.itemMeta
+}
+
+// SetItemMeta function
+func (s *Site) SetItemMeta(itemMeta *ItemMeta) {
+	s.itemMeta = itemMeta
 }

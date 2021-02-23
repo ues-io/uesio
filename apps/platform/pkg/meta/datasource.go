@@ -18,12 +18,13 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string `yaml:"-" uesio:"studio.id"`
-	Name        string `yaml:"name" uesio:"studio.name"`
-	Namespace   string `yaml:"-" uesio:"-"`
-	Type        string `yaml:"type" uesio:"studio.type"`
-	Credentials string `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string `yaml:"-" uesio:"studio.workspaceid"`
+	ID          string    `yaml:"-" uesio:"studio.id"`
+	Name        string    `yaml:"name" uesio:"studio.name"`
+	Namespace   string    `yaml:"-" uesio:"-"`
+	Type        string    `yaml:"type" uesio:"studio.type"`
+	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -93,4 +94,14 @@ func (ds *DataSource) SetWorkspace(workspace string) {
 // Loop function
 func (ds *DataSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ds, iter)
+}
+
+// GetItemMeta function
+func (ds *DataSource) GetItemMeta() *ItemMeta {
+	return ds.itemMeta
+}
+
+// SetItemMeta function
+func (ds *DataSource) SetItemMeta(itemMeta *ItemMeta) {
+	ds.itemMeta = itemMeta
 }

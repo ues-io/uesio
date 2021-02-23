@@ -11,6 +11,7 @@ type ComponentPack struct {
 	Namespace  string                            `yaml:"namespace" uesio:"-"`
 	Workspace  string                            `yaml:"-" uesio:"studio.workspaceid"`
 	Components map[string]*ComponentDependencies `yaml:"components" uesio:"studio.components"`
+	itemMeta   *ItemMeta                         `yaml:"-" uesio:"-"`
 }
 
 type ComponentDependencies struct {
@@ -84,4 +85,14 @@ func (cp *ComponentPack) SetWorkspace(workspace string) {
 // Loop function
 func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cp, iter)
+}
+
+// GetItemMeta function
+func (cp *ComponentPack) GetItemMeta() *ItemMeta {
+	return cp.itemMeta
+}
+
+// SetItemMeta function
+func (cp *ComponentPack) SetItemMeta(itemMeta *ItemMeta) {
+	cp.itemMeta = itemMeta
 }

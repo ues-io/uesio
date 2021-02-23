@@ -21,14 +21,15 @@ type PermissionSet struct {
 	ID             string          `yaml:"-" uesio:"studio.id"`
 	Name           string          `yaml:"name" uesio:"studio.name"`
 	Namespace      string          `yaml:"-" uesio:"-"`
-	NamedRefs      map[string]bool `yaml:"named" uesio:"-"`
-	ViewRefs       map[string]bool `yaml:"views" uesio:"-"`
-	RouteRefs      map[string]bool `yaml:"routes" uesio:"-"`
-	FileRefs       map[string]bool `yaml:"files" uesio:"-"`
+	NamedRefs      map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
+	ViewRefs       map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
+	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
+	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
 	Workspace      string          `yaml:"-" uesio:"studio.workspaceid"`
-	AllowAllViews  bool            `yaml:"-" uesio:"-"`
-	AllowAllRoutes bool            `yaml:"-" uesio:"-"`
-	AllowAllFiles  bool            `yaml:"-" uesio:"-"`
+	AllowAllViews  bool            `yaml:"-" uesio:"studio.allowallviews"`
+	AllowAllRoutes bool            `yaml:"-" uesio:"studio.allowallroutes"`
+	AllowAllFiles  bool            `yaml:"-" uesio:"studio.allowallfiles"`
+	itemMeta       *ItemMeta       `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -98,6 +99,16 @@ func (ps *PermissionSet) SetWorkspace(workspace string) {
 // Loop function
 func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ps, iter)
+}
+
+// GetItemMeta function
+func (ps *PermissionSet) GetItemMeta() *ItemMeta {
+	return ps.itemMeta
+}
+
+// SetItemMeta function
+func (ps *PermissionSet) SetItemMeta(itemMeta *ItemMeta) {
+	ps.itemMeta = itemMeta
 }
 
 // HasPermission method

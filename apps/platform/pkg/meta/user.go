@@ -2,13 +2,14 @@ package meta
 
 // User struct
 type User struct {
-	ID             string `uesio:"uesio.id"`
-	FirstName      string `uesio:"uesio.firstname"`
-	LastName       string `uesio:"uesio.lastname"`
-	Profile        string `uesio:"uesio.profile"`
-	FederationID   string `uesio:"uesio.federationId"`
-	FederationType string `uesio:"uesio.federationType"`
-	Site           string `uesio:"uesio.site"`
+	ID             string    `uesio:"uesio.id"`
+	FirstName      string    `uesio:"uesio.firstname"`
+	LastName       string    `uesio:"uesio.lastname"`
+	Profile        string    `uesio:"uesio.profile"`
+	FederationID   string    `uesio:"uesio.federationId"`
+	FederationType string    `uesio:"uesio.federationType"`
+	Site           string    `uesio:"uesio.site"`
+	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -35,4 +36,14 @@ func (u *User) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (u *User) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(u, iter)
+}
+
+// GetItemMeta function
+func (u *User) GetItemMeta() *ItemMeta {
+	return u.itemMeta
+}
+
+// SetItemMeta function
+func (u *User) SetItemMeta(itemMeta *ItemMeta) {
+	u.itemMeta = itemMeta
 }

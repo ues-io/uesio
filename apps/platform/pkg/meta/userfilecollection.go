@@ -28,6 +28,7 @@ type UserFileCollection struct {
 	Bucket     string `yaml:"bucket"`
 	PathFormat string `yaml:"pathFormat"`
 	Workspace  string
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetFileSource function
@@ -121,4 +122,14 @@ func (ufc *UserFileCollection) GetPermChecker() *PermissionSet {
 // Loop function
 func (ufc *UserFileCollection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ufc, iter)
+}
+
+// GetItemMeta function
+func (ufc *UserFileCollection) GetItemMeta() *ItemMeta {
+	return ufc.itemMeta
+}
+
+// SetItemMeta function
+func (ufc *UserFileCollection) SetItemMeta(itemMeta *ItemMeta) {
+	ufc.itemMeta = itemMeta
 }

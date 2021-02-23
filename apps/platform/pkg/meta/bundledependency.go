@@ -4,9 +4,10 @@ import "fmt"
 
 // BundleDependency struct
 type BundleDependency struct {
-	ID          string  `uesio:"studio.id"`
-	WorkspaceID string  `uesio:"studio.workspaceid"`
-	Bundle      *Bundle `uesio:"studio.bundle"`
+	ID          string    `uesio:"studio.id"`
+	WorkspaceID string    `uesio:"studio.workspaceid"`
+	Bundle      *Bundle   `uesio:"studio.bundle"`
+	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -50,4 +51,14 @@ func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// GetItemMeta function
+func (b *BundleDependency) GetItemMeta() *ItemMeta {
+	return b.itemMeta
+}
+
+// SetItemMeta function
+func (b *BundleDependency) SetItemMeta(itemMeta *ItemMeta) {
+	b.itemMeta = itemMeta
 }

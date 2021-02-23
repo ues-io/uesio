@@ -18,12 +18,13 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID          string `yaml:"-" uesio:"studio.id"`
-	Name        string `uesio:"studio.name"`
-	Namespace   string `yaml:"-" uesio:"-"`
-	Type        string `yaml:"type,omitempty" uesio:"-"`
-	Credentials string `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string `uesio:"studio.workspaceid"`
+	ID          string    `yaml:"-" uesio:"studio.id"`
+	Name        string    `uesio:"studio.name"`
+	Namespace   string    `yaml:"-" uesio:"-"`
+	Type        string    `yaml:"type,omitempty" uesio:"-"`
+	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   string    `uesio:"studio.workspaceid"`
+	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -93,4 +94,14 @@ func (fs *FileSource) SetWorkspace(workspace string) {
 // Loop function
 func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(fs, iter)
+}
+
+// GetItemMeta function
+func (fs *FileSource) GetItemMeta() *ItemMeta {
+	return fs.itemMeta
+}
+
+// SetItemMeta function
+func (fs *FileSource) SetItemMeta(itemMeta *ItemMeta) {
+	fs.itemMeta = itemMeta
 }

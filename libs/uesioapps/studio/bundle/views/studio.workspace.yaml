@@ -9,6 +9,10 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+        studio.homeroute:
+        studio.loginroute:
+        studio.defaultprofile:
+        studio.publicprofile:
       conditions:
         - field: studio.appid
           valueSource: PARAM
@@ -196,29 +200,25 @@ definition:
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
-                                                        text: "Import Data"
+                                                        text: "Edit"
                                                         signals:
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                                          - signal: component/material.deck/TOGGLE_MODE
+                                                            target: "workspaceDeck"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
-                                                        text: "Configuration"
+                                                        text: "Save"
                                                         signals:
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/configuration"
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "workspaces"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
-                                                        text: "Create New Bundle Version"
+                                                        text: "Cancel"
                                                         signals:
-                                                          - signal: "bot/CALL"
-                                                            bot: "studio.newbundle"
-                                                            params:
-                                                              workspace: $Param{workspacename}
-                                                              app: $Param{appname}
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}"
+                                                          - signal: wire/CANCEL
+                                                            wire: "workspaces"
                                                     - material.button:
                                                         color: "primary"
                                                         variant: "outlined"
@@ -232,6 +232,52 @@ definition:
                                                             path: "app/$Param{appname}"
                                   - material.field:
                                       fieldId: studio.name
+                                  - studio.metadatafield:
+                                      fieldId: studio.homeroute
+                                      metadataType: "ROUTE"
+                                      label: "Home Route"
+                                  - studio.metadatafield:
+                                      fieldId: studio.loginroute
+                                      metadataType: "ROUTE"
+                                      label: "Login Route"
+                                  - studio.metadatafield:
+                                      fieldId: studio.defaultprofile
+                                      metadataType: "PROFILE"
+                                      label: "Default Profile"
+                                  - studio.metadatafield:
+                                      fieldId: studio.publicprofile
+                                      metadataType: "PROFILE"
+                                      label: "Public Profile"
+                            - material.card:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Import Data"
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Configuration"
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/configuration"
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Create New Bundle Version"
+                                            signals:
+                                              - signal: "bot/CALL"
+                                                bot: "studio.newbundle"
+                                                params:
+                                                  workspace: $Param{workspacename}
+                                                  app: $Param{appname}
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}"
                             - material.grid:
                                 justify: space-between
                                 alignitems: center

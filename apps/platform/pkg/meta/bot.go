@@ -65,6 +65,7 @@ type Bot struct {
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     string            `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
 }
 
 // GetBotTypes function
@@ -168,4 +169,14 @@ func (b *Bot) SetWorkspace(workspace string) {
 // Loop function
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// GetItemMeta function
+func (b *Bot) GetItemMeta() *ItemMeta {
+	return b.itemMeta
+}
+
+// SetItemMeta function
+func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
+	b.itemMeta = itemMeta
 }
