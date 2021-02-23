@@ -46,7 +46,7 @@ func (sc *SiteCollection) Len() int {
 
 // GetItems function
 func (sc *SiteCollection) GetItems() interface{} {
-	return sc
+	return *sc
 }
 
 // Slice function

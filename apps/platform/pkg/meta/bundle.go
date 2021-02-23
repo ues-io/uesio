@@ -1,5 +1,47 @@
 package meta
 
+import (
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+func getPartsFromVersion(version string) ([]int, error) {
+	errorObj := errors.New("version must be formatted like so: v#.#.#, gave: " + version)
+	if !strings.HasPrefix(version, "v") {
+		return nil, errorObj
+	}
+	version = strings.TrimPrefix(version, "v")
+	parts := strings.Split(version, ".")
+	if len(parts) != 3 {
+		return nil, errorObj
+	}
+	partsAsNums := make([]int, 3)
+	for i, part := range parts {
+		asInt, err := strconv.Atoi(part)
+		if err != nil {
+			return nil, errorObj
+		}
+		partsAsNums[i] = asInt
+	}
+	return partsAsNums, nil
+}
+
+func NewBundle(namespace, version, description string) (*Bundle, error) {
+	versionParts, err := getPartsFromVersion(version)
+	if err != nil {
+		return nil, err
+	}
+	return &Bundle{
+		Namespace:   namespace,
+		Major:       strconv.Itoa(versionParts[0]),
+		Minor:       strconv.Itoa(versionParts[1]),
+		Patch:       strconv.Itoa(versionParts[2]),
+		Description: description,
+	}, nil
+}
+
 // Bundle struct
 type Bundle struct {
 	ID          string `uesio:"uesio.id"`
@@ -8,6 +50,18 @@ type Bundle struct {
 	Patch       string `uesio:"uesio.patch"`
 	Namespace   string `uesio:"uesio.namespace"`
 	Description string `uesio:"uesio.description"`
+}
+
+func (b *Bundle) GetVersionString() string {
+	return fmt.Sprintf("v%s.%s.%s", b.Major, b.Minor, b.Patch)
+}
+
+func (b *Bundle) GetNextPatchVersionString() (string, error) {
+	patch, err := strconv.Atoi(b.Patch)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("v%s.%s.%s", b.Major, b.Minor, strconv.Itoa(patch+1)), nil
 }
 
 // GetCollectionName function

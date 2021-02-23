@@ -15,7 +15,15 @@ import (
 
 // Retrieve func
 func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
+	namespace := session.GetWorkspaceApp()
+	version, bs, err := bundle.GetBundleStoreWithVersion(namespace, session)
+	if err != nil {
+		return nil, err
+	}
+	return RetrieveBundle(namespace, version, bs, session)
+}
 
+func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, session *sess.Session) ([]bundlestore.ItemStream, error) {
 	itemStreams := []bundlestore.ItemStream{}
 
 	for _, metadataType := range meta.GetMetadataTypes() {
@@ -23,7 +31,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = bundle.LoadAll(group, session.GetWorkspaceApp(), nil, session)
+		err = bs.GetItems(group, namespace, version, nil, session)
 		if err != nil {
 			return nil, err
 		}
@@ -36,7 +44,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 			if metadataType == "bots" {
 				bot := item.(*meta.Bot)
 
-				stream, err := bundle.GetBotStream(bot, session)
+				stream, err := bs.GetBotStream(version, bot, session)
 				if err != nil {
 					return err
 				}
@@ -59,7 +67,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 			if metadataType == "files" {
 				file := item.(*meta.File)
 
-				stream, err := bundle.GetFileStream(file, session)
+				stream, err := bs.GetFileStream(version, file, session)
 				if err != nil {
 					return err
 				}
@@ -98,32 +106,28 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 		}
 
 	}
-	bundleYaml, err := generateBundleYaml(session)
-	if err != nil {
-		return nil, err
-	}
-	itemStreams = append(itemStreams, *bundleYaml)
-
-	return itemStreams, nil
-
-}
-
-func generateBundleYaml(session *sess.Session) (*bundlestore.ItemStream, error) {
-	itemStream := bundlestore.ItemStream{
+	bundleDefStream := bundlestore.ItemStream{
 		FileName: "bundle.yaml",
 		Type:     "",
 	}
 
-	by := session.GetContextAppBundle()
-
-	encoder := yaml.NewEncoder(&itemStream.Buffer)
-	encoder.SetIndent(2)
-
-	err := encoder.Encode(by)
+	by, err := bs.GetBundleDef(namespace, version, session)
 	if err != nil {
 		return nil, err
 	}
-	return &itemStream, nil
+
+	encoder := yaml.NewEncoder(&bundleDefStream.Buffer)
+	encoder.SetIndent(2)
+
+	err = encoder.Encode(by)
+	if err != nil {
+		return nil, err
+	}
+
+	itemStreams = append(itemStreams, bundleDefStream)
+
+	return itemStreams, nil
+
 }
 
 // Zip function

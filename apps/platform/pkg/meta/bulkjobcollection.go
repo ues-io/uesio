@@ -46,7 +46,7 @@ func (bjc *BulkJobCollection) Len() int {
 
 // GetItems function
 func (bjc *BulkJobCollection) GetItems() interface{} {
-	return bjc
+	return *bjc
 }
 
 // Slice function

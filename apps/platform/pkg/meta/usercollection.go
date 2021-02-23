@@ -46,7 +46,7 @@ func (uc *UserCollection) Len() int {
 
 // GetItems function
 func (uc *UserCollection) GetItems() interface{} {
-	return uc
+	return *uc
 }
 
 // Slice function

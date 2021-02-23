@@ -45,7 +45,7 @@ func (c *LoadOneCollection) GetName() string {
 
 // GetItems function
 func (c *LoadOneCollection) GetItems() interface{} {
-	return c
+	return []LoadOneCollection{*c}
 }
 
 // Slice function

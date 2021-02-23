@@ -67,7 +67,7 @@ func (slc *SelectListCollection) Len() int {
 
 // GetItems function
 func (slc *SelectListCollection) GetItems() interface{} {
-	return slc
+	return *slc
 }
 
 // Slice function

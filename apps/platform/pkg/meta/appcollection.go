@@ -46,7 +46,7 @@ func (ac *AppCollection) Len() int {
 
 // GetItems function
 func (ac *AppCollection) GetItems() interface{} {
-	return ac
+	return *ac
 }
 
 // Slice function

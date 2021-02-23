@@ -145,11 +145,6 @@ func (s *Session) GetSiteAdmin() *meta.Site {
 	return s.siteadmin
 }
 
-// SetWorkspace function
-func (s *Session) SetWorkspace(workspace *meta.Workspace) {
-	s.workspace = workspace
-}
-
 // GetWorkspace function
 func (s *Session) GetWorkspace() *meta.Workspace {
 	return s.workspace
@@ -227,6 +222,11 @@ func (s *Session) GetLoginRoute() string {
 // RemoveWorkspaceContext function
 func (s *Session) RemoveWorkspaceContext() *Session {
 	return create(s.browserSession, s.site)
+}
+
+// AddWorkspaceContext function
+func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) {
+	s.workspace = workspace
 }
 
 // GetContextNamespaces function

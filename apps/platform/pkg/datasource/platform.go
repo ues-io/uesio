@@ -71,6 +71,20 @@ func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadR
 	}, session)
 }
 
+// PlatformLoadWithOrder function
+func PlatformLoadWithOrder(group meta.CollectionableGroup, orders []adapt.LoadRequestOrder, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
+	return PlatformLoads([]adapt.LoadOp{
+		{
+			WireName:       group.GetName() + "Wire",
+			CollectionName: group.GetName(),
+			Collection:     group,
+			Conditions:     conditions,
+			Order:          orders,
+			Fields:         GetLoadRequestFields(group.GetFields()),
+		},
+	}, session)
+}
+
 // PlatformLoadOne function
 func PlatformLoadOne(item meta.CollectionableItem, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	collection := &LoadOneCollection{

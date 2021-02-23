@@ -18,6 +18,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/localbundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/platformbundlestore"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/workspacebundlestore"
 	"github.com/thecloudmasters/uesio/pkg/cmd"
 	"github.com/thecloudmasters/uesio/pkg/configstore"
@@ -63,6 +64,7 @@ func init() {
 
 	// Bundle Stores
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
+	bundlestore.RegisterBundleStore("system", &systembundlestore.SystemBundleStore{})
 	bundlestore.RegisterBundleStore("workspace", &workspacebundlestore.WorkspaceBundleStore{})
 	bundlestore.RegisterBundleStore("platform", &platformbundlestore.PlatformBundleStore{})
 

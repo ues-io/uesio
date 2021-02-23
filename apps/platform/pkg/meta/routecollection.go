@@ -61,7 +61,7 @@ func (rc *RouteCollection) Len() int {
 
 // GetItems function
 func (rc *RouteCollection) GetItems() interface{} {
-	return rc
+	return *rc
 }
 
 // Slice function

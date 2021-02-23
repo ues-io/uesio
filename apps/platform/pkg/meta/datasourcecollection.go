@@ -61,7 +61,7 @@ func (dsc *DataSourceCollection) Len() int {
 
 // GetItems function
 func (dsc *DataSourceCollection) GetItems() interface{} {
-	return dsc
+	return *dsc
 }
 
 // Slice function
