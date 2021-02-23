@@ -2,9 +2,10 @@ package meta
 
 // BulkJob struct
 type BulkJob struct {
-	ID   string  `uesio:"uesio.id"`
-	Spec JobSpec `uesio:"uesio.spec"`
-	Site string  `uesio:"uesio.site"`
+	ID       string    `uesio:"uesio.id"`
+	Spec     JobSpec   `uesio:"uesio.spec"`
+	Site     string    `uesio:"uesio.site"`
+	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // JobSpec struct
@@ -45,4 +46,14 @@ func (bj *BulkJob) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (bj *BulkJob) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bj, iter)
+}
+
+// GetItemMeta function
+func (bj *BulkJob) GetItemMeta() *ItemMeta {
+	return bj.itemMeta
+}
+
+// SetItemMeta function
+func (bj *BulkJob) SetItemMeta(itemMeta *ItemMeta) {
+	bj.itemMeta = itemMeta
 }

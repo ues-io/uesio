@@ -25,6 +25,7 @@ type File struct {
 	FileName  string            `yaml:"fileName" uesio:"-"`
 	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
 	Content   *UserFileMetadata `yaml:"-" uesio:"studio.content"`
+	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -104,4 +105,14 @@ func (f *File) SetWorkspace(workspace string) {
 // Loop function
 func (f *File) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
+}
+
+// GetItemMeta function
+func (f *File) GetItemMeta() *ItemMeta {
+	return f.itemMeta
+}
+
+// SetItemMeta function
+func (f *File) SetItemMeta(itemMeta *ItemMeta) {
+	f.itemMeta = itemMeta
 }

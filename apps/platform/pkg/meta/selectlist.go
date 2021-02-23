@@ -15,6 +15,7 @@ type SelectList struct {
 	Workspace string             `yaml:"-" uesio:"studio.workspaceid"`
 	Updated   int64              `yaml:"-" uesio:"studio.updated"`
 	Created   int64              `yaml:"-" uesio:"studio.created"`
+	itemMeta  *ItemMeta          `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -84,4 +85,14 @@ func (sl *SelectList) SetWorkspace(workspace string) {
 // Loop function
 func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sl, iter)
+}
+
+// GetItemMeta function
+func (sl *SelectList) GetItemMeta() *ItemMeta {
+	return sl.itemMeta
+}
+
+// SetItemMeta function
+func (sl *SelectList) SetItemMeta(itemMeta *ItemMeta) {
+	sl.itemMeta = itemMeta
 }

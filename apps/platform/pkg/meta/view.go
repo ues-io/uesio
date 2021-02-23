@@ -14,6 +14,7 @@ type View struct {
 	Namespace  string    `yaml:"-" uesio:"-"`
 	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
 	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -104,6 +105,16 @@ func (v *View) SetWorkspace(workspace string) {
 // Loop function
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
+}
+
+// GetItemMeta function
+func (v *View) GetItemMeta() *ItemMeta {
+	return v.itemMeta
+}
+
+// SetItemMeta function
+func (v *View) SetItemMeta(itemMeta *ItemMeta) {
+	v.itemMeta = itemMeta
 }
 
 func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {

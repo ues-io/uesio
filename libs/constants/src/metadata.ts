@@ -8,6 +8,8 @@ const METADATA = {
 	SELECTLIST: "selectlists",
 	BOT: "bots",
 	CREDENTIALS: "credentials",
+	ROUTE: "routes",
+	PROFILE: "profiles",
 }
 
 type MetadataType = keyof typeof METADATA

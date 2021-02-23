@@ -29,6 +29,7 @@ type Credential struct {
 	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
 	TypeRef   string                     `yaml:"type" uesio:"studio.type"`
 	Workspace string                     `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta  *ItemMeta                  `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -98,4 +99,14 @@ func (c *Credential) SetWorkspace(workspace string) {
 // Loop function
 func (c *Credential) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
+}
+
+// GetItemMeta function
+func (c *Credential) GetItemMeta() *ItemMeta {
+	return c.itemMeta
+}
+
+// SetItemMeta function
+func (c *Credential) SetItemMeta(itemMeta *ItemMeta) {
+	c.itemMeta = itemMeta
 }

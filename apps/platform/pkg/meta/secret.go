@@ -4,12 +4,13 @@ import "errors"
 
 // Secret struct
 type Secret struct {
-	ID        string `yaml:"-" uesio:"studio.id"`
-	Name      string `yaml:"name" uesio:"studio.name"`
-	Namespace string `yaml:"-" uesio:"-"`
-	Store     string `yaml:"store,omitempty" uesio:"studio.store"`
-	ManagedBy string `yaml:"managedBy" uesio:"studio.managedby"`
-	Workspace string `yaml:"-" uesio:"studio.workspaceid"`
+	ID        string    `yaml:"-" uesio:"studio.id"`
+	Name      string    `yaml:"name" uesio:"studio.name"`
+	Namespace string    `yaml:"-" uesio:"-"`
+	Store     string    `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string    `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // NewSecret function
@@ -91,4 +92,14 @@ func (s *Secret) SetWorkspace(workspace string) {
 // Loop function
 func (s *Secret) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// GetItemMeta function
+func (s *Secret) GetItemMeta() *ItemMeta {
+	return s.itemMeta
+}
+
+// SetItemMeta function
+func (s *Secret) SetItemMeta(itemMeta *ItemMeta) {
+	s.itemMeta = itemMeta
 }

@@ -9,6 +9,10 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
 
+type ItemMeta struct {
+	ValidFields map[string]bool
+}
+
 // BundleConditions type
 type BundleConditions map[string]string
 
@@ -24,6 +28,8 @@ type CollectionableItem interface {
 	loadable.Item
 	GetCollectionName() string
 	GetCollection() CollectionableGroup
+	GetItemMeta() *ItemMeta
+	SetItemMeta(*ItemMeta)
 }
 
 // BundleableGroup interface
@@ -98,7 +104,14 @@ func StandardFieldSet(item CollectionableItem, fieldName string, value interface
 
 // StandardItemLoop function
 func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
+	itemMeta := item.GetItemMeta()
 	for _, fieldName := range StandardGetFields(item) {
+		if itemMeta != nil && itemMeta.ValidFields != nil {
+			valid, ok := itemMeta.ValidFields[fieldName]
+			if !ok || !valid {
+				continue
+			}
+		}
 		val, err := item.GetField(fieldName)
 		if err != nil {
 			return err

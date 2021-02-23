@@ -44,12 +44,13 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 
 // Bundle struct
 type Bundle struct {
-	ID          string `uesio:"uesio.id"`
-	Major       string `uesio:"uesio.major"`
-	Minor       string `uesio:"uesio.minor"`
-	Patch       string `uesio:"uesio.patch"`
-	Namespace   string `uesio:"uesio.namespace"`
-	Description string `uesio:"uesio.description"`
+	ID          string    `uesio:"uesio.id"`
+	Major       string    `uesio:"uesio.major"`
+	Minor       string    `uesio:"uesio.minor"`
+	Patch       string    `uesio:"uesio.patch"`
+	Namespace   string    `uesio:"uesio.namespace"`
+	Description string    `uesio:"uesio.description"`
+	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (b *Bundle) GetVersionString() string {
@@ -88,4 +89,14 @@ func (b *Bundle) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// GetItemMeta function
+func (b *Bundle) GetItemMeta() *ItemMeta {
+	return b.itemMeta
+}
+
+// SetItemMeta function
+func (b *Bundle) SetItemMeta(itemMeta *ItemMeta) {
+	b.itemMeta = itemMeta
 }
