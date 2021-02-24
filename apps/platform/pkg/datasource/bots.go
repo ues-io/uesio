@@ -140,6 +140,9 @@ func CallBot(namespace, name string, params map[string]string, session *sess.Ses
 		Params: &ParamsAPI{
 			params: params,
 		},
+		StudioAPI: &StudioAPI{
+			session: session,
+		},
 	}
 
 	err = hydrateBot(robot, session)

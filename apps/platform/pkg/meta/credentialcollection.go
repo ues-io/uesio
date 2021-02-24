@@ -61,7 +61,7 @@ func (cc *CredentialCollection) Len() int {
 
 // GetItems function
 func (cc *CredentialCollection) GetItems() interface{} {
-	return cc
+	return *cc
 }
 
 // Slice function

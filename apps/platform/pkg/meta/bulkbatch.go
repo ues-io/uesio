@@ -2,9 +2,10 @@ package meta
 
 // BulkBatch struct
 type BulkBatch struct {
-	ID        string `uesio:"uesio.id"`
-	BulkJobID string `uesio:"uesio.bulkjobid"`
-	Status    string `uesio:"uesio.status"`
+	ID        string    `uesio:"uesio.id"`
+	BulkJobID string    `uesio:"uesio.bulkjobid"`
+	Status    string    `uesio:"uesio.status"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -31,4 +32,14 @@ func (bb *BulkBatch) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bb, iter)
+}
+
+// GetItemMeta function
+func (bb *BulkBatch) GetItemMeta() *ItemMeta {
+	return bb.itemMeta
+}
+
+// SetItemMeta function
+func (bb *BulkBatch) SetItemMeta(itemMeta *ItemMeta) {
+	bb.itemMeta = itemMeta
 }

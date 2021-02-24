@@ -11,6 +11,7 @@ type Theme struct {
 	Namespace  string    `yaml:"-" uesio:"-"`
 	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
 	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -96,4 +97,14 @@ func (t *Theme) SetWorkspace(workspace string) {
 // Loop function
 func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
+}
+
+// GetItemMeta function
+func (t *Theme) GetItemMeta() *ItemMeta {
+	return t.itemMeta
+}
+
+// SetItemMeta function
+func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
+	t.itemMeta = itemMeta
 }

@@ -2,12 +2,17 @@ package meta
 
 // Workspace struct
 type Workspace struct {
-	ID          string         `uesio:"studio.id"`
-	Name        string         `uesio:"studio.name"`
-	Namespace   string         `uesio:"-"`
-	App         *App           `uesio:"studio.app"`
-	Permissions *PermissionSet `uesio:"-"`
-	bundleDef   *BundleDef
+	ID             string         `uesio:"studio.id"`
+	Name           string         `uesio:"studio.name"`
+	Namespace      string         `uesio:"-"`
+	LoginRoute     string         `uesio:"studio.loginroute"`
+	HomeRoute      string         `uesio:"studio.homeroute"`
+	DefaultProfile string         `uesio:"studio.defaultprofile"`
+	PublicProfile  string         `uesio:"studio.publicprofile"`
+	App            *App           `uesio:"studio.app"`
+	Permissions    *PermissionSet `uesio:"-"`
+	bundleDef      *BundleDef
+	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (w *Workspace) GetAppID() string {
@@ -51,4 +56,14 @@ func (w *Workspace) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (w *Workspace) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(w, iter)
+}
+
+// GetItemMeta function
+func (w *Workspace) GetItemMeta() *ItemMeta {
+	return w.itemMeta
+}
+
+// SetItemMeta function
+func (w *Workspace) SetItemMeta(itemMeta *ItemMeta) {
+	w.itemMeta = itemMeta
 }

@@ -2,16 +2,11 @@ package meta
 
 // App struct
 type App struct {
-	ID          string `uesio:"uesio.id"`
-	Name        string `uesio:"uesio.name"`
-	Description string `uesio:"uesio.description"`
-	Color       string `uesio:"uesio.color"`
-	/*
-		LoginRoute     string `uesio:"uesio.loginroute"`
-		HomeRoute      string `uesio:"uesio.homeroute"`
-		DefaultProfile string `uesio:"uesio.defaultprofile"`
-		PublicProfile  string `uesio:"uesio.publicprofile"`
-	*/
+	ID          string    `uesio:"uesio.id"`
+	Name        string    `uesio:"uesio.name"`
+	Description string    `uesio:"uesio.description"`
+	Color       string    `uesio:"uesio.color"`
+	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -38,4 +33,14 @@ func (a *App) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (a *App) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(a, iter)
+}
+
+// GetItemMeta function
+func (a *App) GetItemMeta() *ItemMeta {
+	return a.itemMeta
+}
+
+// SetItemMeta function
+func (a *App) SetItemMeta(itemMeta *ItemMeta) {
+	a.itemMeta = itemMeta
 }

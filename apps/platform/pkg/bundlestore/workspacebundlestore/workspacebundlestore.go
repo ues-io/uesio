@@ -143,31 +143,14 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		}
 	}
 
-	// TODO: Finish this
-	_, err = getAppForNamespace(namespace, session)
-	if err != nil {
-		return nil, err
+	workspace := session.GetWorkspace()
+	if workspace == nil {
+		return nil, errors.New("No workspace found")
 	}
+	by.DefaultProfile = workspace.DefaultProfile
+	by.PublicProfile = workspace.PublicProfile
+	by.HomeRoute = workspace.HomeRoute
+	by.LoginRoute = workspace.LoginRoute
 
 	return &by, nil
-}
-
-func getAppForNamespace(namespace string, session *sess.Session) (*meta.App, error) {
-	var app meta.App
-
-	err := datasource.PlatformLoadOne(
-		&app,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: namespace,
-			},
-		},
-		session,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return &app, nil
 }

@@ -46,7 +46,7 @@ func (bc *BundleDependencyCollection) Len() int {
 
 // GetItems function
 func (bc *BundleDependencyCollection) GetItems() interface{} {
-	return bc
+	return *bc
 }
 
 // Slice function

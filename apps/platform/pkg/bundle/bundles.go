@@ -94,7 +94,7 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	return depBundle.Version, nil
 }
 
-func getBundleStoreWithVersion(namespace string, session *sess.Session) (string, bundlestore.BundleStore, error) {
+func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string, bundlestore.BundleStore, error) {
 	version, err := getVersion(namespace, session)
 	if err != nil {
 		return "", nil, err
@@ -121,7 +121,7 @@ func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions
 
 // LoadAll function
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
-	version, bs, err := getBundleStoreWithVersion(namespace, session)
+	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
 		return err
 	}
@@ -130,7 +130,7 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 
 // Load function
 func Load(item meta.BundleableItem, session *sess.Session) error {
-	version, bs, err := getBundleStoreWithVersion(item.GetNamespace(), session)
+	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func Load(item meta.BundleableItem, session *sess.Session) error {
 
 //GetFileStream function
 func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := getBundleStoreWithVersion(file.Namespace, session)
+	version, bs, err := GetBundleStoreWithVersion(file.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +148,7 @@ func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error
 
 //GetComponentPackStream function
 func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := getBundleStoreWithVersion(componentPack.Namespace, session)
+	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, s
 
 //GetBotStream function
 func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	version, bs, err := getBundleStoreWithVersion(bot.Namespace, session)
+	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
 	if err != nil {
 		return nil, err
 	}

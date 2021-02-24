@@ -67,7 +67,7 @@ func (sc *SecretCollection) Len() int {
 
 // GetItems function
 func (sc *SecretCollection) GetItems() interface{} {
-	return sc
+	return *sc
 }
 
 // Slice function

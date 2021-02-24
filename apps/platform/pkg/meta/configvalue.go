@@ -6,12 +6,13 @@ import (
 
 // ConfigValue struct
 type ConfigValue struct {
-	ID        string `yaml:"-" uesio:"studio.id"`
-	Name      string `yaml:"name" uesio:"studio.name"`
-	Namespace string `yaml:"-" uesio:"-"`
-	Store     string `yaml:"store,omitempty" uesio:"studio.store"`
-	ManagedBy string `yaml:"managedBy" uesio:"studio.managedby"`
-	Workspace string `yaml:"-" uesio:"studio.workspaceid"`
+	ID        string    `yaml:"-" uesio:"studio.id"`
+	Name      string    `yaml:"name" uesio:"studio.name"`
+	Namespace string    `yaml:"-" uesio:"-"`
+	Store     string    `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string    `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // NewConfigValue function
@@ -93,4 +94,14 @@ func (cv *ConfigValue) SetWorkspace(workspace string) {
 // Loop function
 func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cv, iter)
+}
+
+// GetItemMeta function
+func (cv *ConfigValue) GetItemMeta() *ItemMeta {
+	return cv.itemMeta
+}
+
+// SetItemMeta function
+func (cv *ConfigValue) SetItemMeta(itemMeta *ItemMeta) {
+	cv.itemMeta = itemMeta
 }

@@ -21,9 +21,10 @@ type Profile struct {
 	ID                string          `yaml:"-" uesio:"studio.id"`
 	Name              string          `yaml:"name" uesio:"studio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
-	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"-"`
+	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" uesio:"-"`
 	Workspace         string          `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta          *ItemMeta       `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -93,6 +94,16 @@ func (p *Profile) SetWorkspace(workspace string) {
 // Loop function
 func (p *Profile) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(p, iter)
+}
+
+// GetItemMeta function
+func (p *Profile) GetItemMeta() *ItemMeta {
+	return p.itemMeta
+}
+
+// SetItemMeta function
+func (p *Profile) SetItemMeta(itemMeta *ItemMeta) {
+	p.itemMeta = itemMeta
 }
 
 // HasPermission method

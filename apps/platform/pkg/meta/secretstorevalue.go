@@ -2,9 +2,10 @@ package meta
 
 // SecretStoreValue struct
 type SecretStoreValue struct {
-	ID    string `uesio:"uesio.id"`
-	Key   string `uesio:"uesio.key"`
-	Value string `uesio:"uesio.value"`
+	ID       string    `uesio:"uesio.id"`
+	Key      string    `uesio:"uesio.key"`
+	Value    string    `uesio:"uesio.value"`
+	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -31,4 +32,14 @@ func (s *SecretStoreValue) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (s *SecretStoreValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// GetItemMeta function
+func (s *SecretStoreValue) GetItemMeta() *ItemMeta {
+	return s.itemMeta
+}
+
+// SetItemMeta function
+func (s *SecretStoreValue) SetItemMeta(itemMeta *ItemMeta) {
+	s.itemMeta = itemMeta
 }

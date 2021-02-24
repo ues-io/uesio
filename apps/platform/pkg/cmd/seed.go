@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -109,6 +110,26 @@ func seed(cmd *cobra.Command, args []string) {
 		Profile:   "uesio.public",
 	}, site)
 
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllViews:  true,
+		AllowAllRoutes: true,
+		AllowAllFiles:  true,
+	})
+
+	// Install Default Bundles
+	// This takes code from the /libs/uesioapps code in the repo
+	// and installs it into the localbundlestore.
+	sysbs := &systembundlestore.SystemBundleStore{}
+
+	err = datasource.CreateBundle("crm", "v0.0.1", "v0.0.1", "Customer Relationship Management", sysbs, session)
+	if err != nil {
+		logger.Log("Error Creating crm bundle. It may already exist.", logger.INFO)
+	}
+	err = datasource.CreateBundle("sample", "v0.0.1", "v0.0.1", "Sample Bundle", sysbs, session)
+	if err != nil {
+		logger.Log("Error Creating sample bundle. It may already exist.", logger.INFO)
+	}
+
 	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
 		{
 			Collection: &apps,
@@ -150,6 +171,8 @@ func seed(cmd *cobra.Command, args []string) {
 		logger.LogError(err)
 		return
 	}
+
+	logger.Log("Success", logger.INFO)
 
 	time.Sleep(100 * time.Millisecond)
 }

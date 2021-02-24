@@ -76,7 +76,7 @@ func (cpc *ComponentPackCollection) Len() int {
 
 // GetItems function
 func (cpc *ComponentPackCollection) GetItems() interface{} {
-	return cpc
+	return *cpc
 }
 
 // Slice function

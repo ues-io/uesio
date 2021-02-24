@@ -1,6 +1,10 @@
 package adapt
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+)
 
 // ApplyLimitAndOffset function
 func ApplyLimitAndOffset(op *LoadOp) error {
@@ -36,20 +40,14 @@ func ApplyLimitAndOffset(op *LoadOp) error {
 }
 
 // LessFunc function
-func LessFunc(data interface{}, order []LoadRequestOrder) (func(i int, j int) bool, bool) {
-
-	dataCast, ok := data.([]Item)
-
-	if !ok {
-		return nil, ok
-	}
+func LessFunc(data loadable.Group, order []LoadRequestOrder) (func(i int, j int) bool, bool) {
 
 	sortFunc := func(i, j int) bool {
 
 		for _, singleOrder := range order {
 
-			vi, _ := dataCast[i].GetField(singleOrder.Field)
-			vj, _ := dataCast[j].GetField(singleOrder.Field)
+			vi, _ := data.GetItem(i).GetField(singleOrder.Field)
+			vj, _ := data.GetItem(j).GetField(singleOrder.Field)
 
 			if vi == nil && vj == nil {
 				continue
@@ -91,6 +89,7 @@ func LessFunc(data interface{}, order []LoadRequestOrder) (func(i int, j int) bo
 			}
 
 		}
+
 		return true
 	}
 

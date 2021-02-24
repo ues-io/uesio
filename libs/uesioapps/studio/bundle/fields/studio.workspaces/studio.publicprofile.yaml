@@ -1,0 +1,5 @@
+name: publicprofile
+collection: studio.workspaces
+type: TEXT
+label: Public Profile
+propertyName: publicprofile

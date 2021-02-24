@@ -1,8 +1,9 @@
 package meta
 
 import (
-	"gopkg.in/yaml.v3"
 	"path/filepath"
+
+	"gopkg.in/yaml.v3"
 )
 
 // ComponentVariant struct
@@ -14,6 +15,7 @@ type ComponentVariant struct {
 	Component  string    `yaml:"component" uesio:"studio.component"`
 	Label      string    `yaml:"label" uesio:"studio.label"`
 	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -92,4 +94,14 @@ func (v *ComponentVariant) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (c *ComponentVariant) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
+}
+
+// GetItemMeta function
+func (c *ComponentVariant) GetItemMeta() *ItemMeta {
+	return c.itemMeta
+}
+
+// SetItemMeta function
+func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
+	c.itemMeta = itemMeta
 }

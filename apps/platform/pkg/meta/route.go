@@ -27,6 +27,7 @@ type Route struct {
 	Params    map[string]string `yaml:"-" uesio:"-"`
 	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
 	ThemeRef  string            `yaml:"theme" uesio:"studio.theme"`
+	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -101,4 +102,14 @@ func (r *Route) SetWorkspace(workspace string) {
 // Loop function
 func (r *Route) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(r, iter)
+}
+
+// GetItemMeta function
+func (r *Route) GetItemMeta() *ItemMeta {
+	return r.itemMeta
+}
+
+// SetItemMeta function
+func (r *Route) SetItemMeta(itemMeta *ItemMeta) {
+	r.itemMeta = itemMeta
 }

@@ -7,27 +7,6 @@
 		"patch": "1"
 	},
 	{
-		"namespace": "crm",
-		"description": "A Sample CRM App",
-		"major": "0",
-		"minor": "0",
-		"patch": "1"
-	},
-	{
-		"namespace": "sample",
-		"description": "A Sample App for Testing",
-		"major": "0",
-		"minor": "0",
-		"patch": "1"
-	},
-	{
-		"namespace": "sample",
-		"description": "A Sample App for Testing - but better!",
-		"major": "0",
-		"minor": "0",
-		"patch": "2"
-	},
-	{
 		"namespace": "material",
 		"description": "Material UI Components",
 		"major": "0",

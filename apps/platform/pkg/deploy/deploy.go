@@ -189,6 +189,32 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 			},
 		})
 	}
+	// Upload workspace properties like homeRoute and loginRoute
+	workspaceItem := (&meta.Workspace{
+		ID:             workspace,
+		LoginRoute:     by.LoginRoute,
+		HomeRoute:      by.HomeRoute,
+		DefaultProfile: by.DefaultProfile,
+		PublicProfile:  by.PublicProfile,
+	})
+
+	// We set the valid fields here because it's and update and we don't want
+	// to overwrite the other fields
+	workspaceItem.SetItemMeta(&meta.ItemMeta{
+		ValidFields: map[string]bool{
+			"studio.id":             true,
+			"studio.loginroute":     true,
+			"studio.homeroute":      true,
+			"studio.defaultprofile": true,
+			"studio.publicprofile":  true,
+		},
+	})
+
+	err = datasource.PlatformSaveOne(workspaceItem, nil, session)
+	if err != nil {
+		return err
+	}
+
 	return datasource.PlatformSave(datasource.PlatformSaveRequest{
 		Collection: &deps,
 		Options: &adapt.SaveOptions{

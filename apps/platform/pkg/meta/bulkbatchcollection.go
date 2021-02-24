@@ -46,7 +46,7 @@ func (bbc *BulkBatchCollection) Len() int {
 
 // GetItems function
 func (bbc *BulkBatchCollection) GetItems() interface{} {
-	return bbc
+	return *bbc
 }
 
 // Slice function

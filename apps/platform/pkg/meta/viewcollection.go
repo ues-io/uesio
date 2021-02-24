@@ -67,7 +67,7 @@ func (vc *ViewCollection) Len() int {
 
 // GetItems function
 func (vc *ViewCollection) GetItems() interface{} {
-	return vc
+	return *vc
 }
 
 // Slice function

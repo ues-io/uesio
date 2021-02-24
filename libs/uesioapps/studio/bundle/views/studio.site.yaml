@@ -18,6 +18,7 @@ definition:
       fields:
         uesio.id:
         uesio.name:
+        uesio.versionref:
       conditions:
         - field: uesio.appref
           valueSource: PARAM
@@ -95,6 +96,8 @@ definition:
                                       textTransform: "uppercase"
                       - material.field:
                           fieldId: uesio.name
+                      - material.field:
+                          fieldId: uesio.versionref
                 - material.grid:
                     justify: space-between
                     items:

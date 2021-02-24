@@ -70,33 +70,29 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 			subheader={<material.ListSubheader>{label}</material.ListSubheader>}
 			dense
 		>
-			{data.map((record) => (
-				<material.ListItem divider>
-					<material.ListItemText
-						id={record.getId()}
-						primary={record.getFieldValue(nameNameField)}
-					/>
-					<material.ListItemSecondaryAction>
-						<material.Switch
-							edge="start"
-							disabled={disabled}
-							onChange={handleToggle(
-								record.getFieldValue(nameNameField) as string
-							)}
-							checked={
-								(value[
-									record.getFieldValue(
-										nameNameField
-									) as string
-								] as boolean) || false
-							}
-							inputProps={{
-								"aria-labelledby": record.getId(),
-							}}
+			{data.map((record) => {
+				const itemName =
+					appName + "." + record.getFieldValue(nameNameField)
+				return (
+					<material.ListItem divider>
+						<material.ListItemText
+							id={record.getId()}
+							primary={itemName}
 						/>
-					</material.ListItemSecondaryAction>
-				</material.ListItem>
-			))}
+						<material.ListItemSecondaryAction>
+							<material.Switch
+								edge="start"
+								disabled={disabled}
+								onChange={handleToggle(itemName)}
+								checked={(value[itemName] as boolean) || false}
+								inputProps={{
+									"aria-labelledby": record.getId(),
+								}}
+							/>
+						</material.ListItemSecondaryAction>
+					</material.ListItem>
+				)
+			})}
 		</material.List>
 	)
 }

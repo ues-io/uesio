@@ -149,66 +149,13 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		appName := vars["app"]
 		workspaceName := vars["workspace"]
 
-		session := GetSession(r)
-		site := session.GetSite()
-		perms := session.GetPermissions()
-
-		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.AppRef != "studio" {
-			err := errors.New("this site does not allow working with workspaces")
-			logger.LogError(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		// 2. we should have a profile that allows modifying workspaces
-		if !perms.HasPermission(&meta.PermissionSet{
-			NamedRefs: map[string]bool{
-				"workspace_admin": true,
-			},
-		}) {
-			err := errors.New("your profile does not allow you to work with workspaces")
-			logger.LogError(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Get the Workspace from the DB
-		var workspace meta.Workspace
-		err := datasource.PlatformLoadOne(
-			&workspace,
-			[]adapt.LoadRequestCondition{
-				{
-					Field: "studio.id",
-					Value: appName + "_" + workspaceName,
-				},
-			},
-			session,
-		)
+		err := datasource.AddContextWorkspace(appName, workspaceName, GetSession(r))
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// Get the workspace permissions and set them on the session
-		// For now give workspace users access to everything.
-		adminPerms := &meta.PermissionSet{
-			AllowAllViews:  true,
-			AllowAllRoutes: true,
-			AllowAllFiles:  true,
-		}
-
-		workspace.Permissions = adminPerms
-
-		session.SetWorkspace(&workspace)
-
-		bundleDef, err := bundle.GetAppBundle(session)
-		if err != nil {
-			http.Error(w, "Failed to get app bundle from site:"+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		session.GetWorkspace().SetAppBundle(bundleDef)
 		next.ServeHTTP(w, r)
 	})
 }

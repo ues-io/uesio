@@ -18,18 +18,19 @@ func NewCollection(key string) (*Collection, error) {
 
 // Collection struct
 type Collection struct {
-	ID             string `yaml:"-" uesio:"studio.id"`
-	Name           string `yaml:"name" uesio:"studio.name"`
-	Namespace      string `yaml:"-" uesio:"-"`
-	DataSourceRef  string `yaml:"dataSource" uesio:"studio.datasource"`
-	IDField        string `yaml:"idField" uesio:"studio.idfield"`
-	IDFormat       string `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
-	NameField      string `yaml:"nameField" uesio:"studio.namefield"`
-	CollectionName string `yaml:"collectionName" uesio:"studio.collectionname"`
-	ReadOnly       bool   `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace      string `yaml:"-" uesio:"studio.workspaceid"`
-	Updated        int64  `yaml:"-" uesio:"studio.updated"`
-	Created        int64  `yaml:"-" uesio:"studio.created"`
+	ID             string    `yaml:"-" uesio:"studio.id"`
+	Name           string    `yaml:"name" uesio:"studio.name"`
+	Namespace      string    `yaml:"-" uesio:"-"`
+	DataSourceRef  string    `yaml:"dataSource" uesio:"studio.datasource"`
+	IDField        string    `yaml:"idField" uesio:"studio.idfield"`
+	IDFormat       string    `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
+	NameField      string    `yaml:"nameField" uesio:"studio.namefield"`
+	CollectionName string    `yaml:"collectionName" uesio:"studio.collectionname"`
+	ReadOnly       bool      `yaml:"readonly,omitempty" uesio:"-"`
+	Workspace      string    `yaml:"-" uesio:"studio.workspaceid"`
+	Updated        int64     `yaml:"-" uesio:"studio.updated"`
+	Created        int64     `yaml:"-" uesio:"studio.created"`
+	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -99,4 +100,14 @@ func (c *Collection) SetWorkspace(workspace string) {
 // Loop function
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
+}
+
+// GetItemMeta function
+func (c *Collection) GetItemMeta() *ItemMeta {
+	return c.itemMeta
+}
+
+// SetItemMeta function
+func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
+	c.itemMeta = itemMeta
 }

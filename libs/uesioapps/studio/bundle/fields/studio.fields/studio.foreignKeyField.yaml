@@ -3,4 +3,3 @@ collection: studio.fields
 type: TEXT
 label: Foreign Key Field
 propertyName: foreignKeyField
-readOnly: false

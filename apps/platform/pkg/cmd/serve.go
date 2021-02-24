@@ -80,7 +80,6 @@ func serve(cmd *cobra.Command, args []string) {
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/storebundle", controller.StoreBundle).Methods("POST", "GET")
 	workspaceAPI(wr, "/metadata/migrate", controller.Migrate).Methods("POST")
 
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
