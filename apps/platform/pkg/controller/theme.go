@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gopkg.in/yaml.v3"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,9 +13,9 @@ import (
 
 //ThemeResponse struct
 type ThemeResponse struct {
-	Name       string                `json:"name"`
-	Namespace  string                `json:"namespace"`
-	Definition *meta.ThemeDefinition `json:"definition"`
+	Name       string     `yaml:"name"`
+	Namespace  string     `yaml:"namespace"`
+	Definition *yaml.Node `yaml:"definition"`
 }
 
 //Theme function
@@ -39,7 +40,7 @@ func Theme(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &ThemeResponse{
+	respondYAML(w, r, &ThemeResponse{
 		Name:       theme.Name,
 		Namespace:  theme.Namespace,
 		Definition: &theme.Definition,

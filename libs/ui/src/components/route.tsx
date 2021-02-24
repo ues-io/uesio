@@ -15,7 +15,7 @@ import { ThemeState } from "../bands/theme/types"
 import { useSite } from "../bands/site/selectors"
 
 const makePaletteTheme = (theme: ThemeState) =>
-	Object.entries(theme?.definition || {}).reduce(
+	Object.entries(theme?.definition?.palette || {}).reduce(
 		(acc, [label, color]) => ({
 			...acc,
 			[label]: { main: color },

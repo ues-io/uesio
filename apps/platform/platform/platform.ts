@@ -50,7 +50,7 @@ const postJSON = (url: string, body?: object) => {
 			if (response.status !== 200) {
 				throw new Error("Theme Not Found")
 			}
-			return response.json()
+			return response.text()
 		},
 
 		getRoute: async (context: any, namespace: string, route: string) => {

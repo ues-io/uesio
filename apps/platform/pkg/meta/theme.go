@@ -4,24 +4,14 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//ThemeDefinition struct
-type ThemeDefinition struct {
-	Error     string `json:"error"`
-	Info      string `json:"info"`
-	Primary   string `json:"primary"`
-	Secondary string `json:"secondary"`
-	Success   string `json:"success"`
-	Warning   string `json:"warning"`
-}
-
 // Theme struct
 type Theme struct {
-	ID         string          `yaml:"-" uesio:"studio.id"`
-	Name       string          `yaml:"name" uesio:"studio.name"`
-	Namespace  string          `yaml:"-" uesio:"-"`
-	Definition ThemeDefinition `yaml:"definition" uesio:"studio.definition"`
-	Workspace  string          `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta       `yaml:"-" uesio:"-"`
+	ID         string    `yaml:"-" uesio:"studio.id"`
+	Name       string    `yaml:"name" uesio:"studio.name"`
+	Namespace  string    `yaml:"-" uesio:"-"`
+	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
+	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
+	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -66,7 +56,13 @@ func (t *Theme) GetPermChecker() *PermissionSet {
 // SetField function
 func (t *Theme) SetField(fieldName string, value interface{}) error {
 	if fieldName == "studio.definition" {
-		return yaml.Unmarshal([]byte(value.(string)), &t.Definition)
+		var definition yaml.Node
+		err := yaml.Unmarshal([]byte(value.(string)), &definition)
+		if err != nil {
+			return err
+		}
+		t.Definition = *definition.Content[0]
+		return nil
 	}
 	return StandardFieldSet(t, fieldName, value)
 }
@@ -74,7 +70,7 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 // GetField function
 func (t *Theme) GetField(fieldName string) (interface{}, error) {
 	if fieldName == "studio.definition" {
-		bytes, err := yaml.Marshal(t.Definition)
+		bytes, err := yaml.Marshal(&t.Definition)
 		if err != nil {
 			return nil, err
 		}
