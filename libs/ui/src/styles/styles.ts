@@ -5,7 +5,6 @@ import {
 	Color,
 	createStyles,
 	makeStyles,
-	useTheme,
 } from "@material-ui/core"
 import {
 	CreateCSSProperties,
@@ -158,7 +157,6 @@ function getUseStyles<T extends styledDefinition>(
 	})
 }
 export {
-	useTheme,
 	useStyleProperty,
 	getBackgroundStyles,
 	getMarginStyles,

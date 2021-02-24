@@ -3,10 +3,10 @@ import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
+import { selectors as themeSelectors } from "../bands/theme/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
-import { useTheme } from "../styles/styles"
 import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 
 type ContextFrame = {
@@ -95,26 +95,33 @@ class Context {
 			? viewDefSelectors.selectById(getStore().getState(), viewDefId)
 			: undefined
 	}
+	getTheme = () => {
+		const route = this.getRoute()
+		return route
+			? themeSelectors.selectById(getStore().getState(), route.theme)
+			: undefined
+	}
 
-	getComponentVariant = (id: string) => {
+	getComponentVariant = (componentType: string, variantName: string) => {
 		const viewDef = this.getViewDef()
-		const theme = useTheme()
-		const variant = viewDef?.dependencies?.componentvariants?.[id]
+		const variant =
+			viewDef?.dependencies?.componentvariants?.[
+				componentType + "." + variantName
+			]
 		if (!variant) return
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if (theme.overrides && theme.overrides[id]) {
-			return {
-				...variant,
-				definition: mergeDefinitionMaps(
-					variant.definition,
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
-					{ "uesio.styles": theme.overrides[id] }
-				),
-			}
+		const theme = this.getTheme()
+		const override =
+			theme &&
+			theme?.definition?.variantOverrides?.[componentType]?.[variantName]
+		if (!override) {
+			return variant
 		}
-		return variant
+		return {
+			...variant,
+			definition: mergeDefinitionMaps(variant.definition, {
+				"uesio.styles": override,
+			}),
+		}
 	}
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef

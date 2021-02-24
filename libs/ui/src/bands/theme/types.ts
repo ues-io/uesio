@@ -14,7 +14,7 @@ interface ThemeState {
 	namespace: string
 	definition: {
 		palette?: Palette
-		variantOverrides?: DefinitionMap
+		variantOverrides?: Record<string, DefinitionMap>
 	}
 }
 

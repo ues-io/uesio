@@ -4,7 +4,8 @@ import { Definition } from "../../definition/definition"
 import { RootState } from "../../store/store"
 import { selectors } from "./adapter"
 import { ComponentVariant } from "./types"
-import { styles } from "@uesio/ui"
+import { ThemeState } from "../theme/types"
+import { mergeDefinitionMaps } from "../../yamlutils/yamlutils"
 
 const useBuilderHasChanges = () =>
 	useSelector(({ viewdef }: RootState) => {
@@ -32,15 +33,28 @@ const useViewDefinition = (viewDefId: string, path?: string): Definition =>
 	})
 const useComponentVariant = (
 	viewDefId: string,
-	componentVariantKey: string,
-	theme: styles.Theme
+	componentType: string,
+	variantName: string,
+	theme?: ThemeState
 ): ComponentVariant | undefined =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
 		const variant =
-			viewDef?.dependencies?.componentvariants?.[componentVariantKey]
-		console.log(theme)
-		return variant
+			viewDef?.dependencies?.componentvariants?.[
+				`${componentType}.${variantName}`
+			]
+		if (!variant) return
+		const variantOverride =
+			theme?.definition?.variantOverrides?.[componentType]?.[variantName]
+		if (!variantOverride) {
+			return variant
+		}
+		return {
+			...variant,
+			definition: mergeDefinitionMaps(variant.definition, {
+				"uesio.styles": variantOverride,
+			}),
+		}
 	})
 const useViewYAML = (viewDefId: string) =>
 	useSelector((state: RootState) => {
