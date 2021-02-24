@@ -12,7 +12,10 @@ interface Palette {
 interface ThemeState {
 	name: string
 	namespace: string
-	definition: DefinitionMap
+	definition: {
+		palette?: Palette
+		variantOverrides?: DefinitionMap
+	}
 }
 
 export { Palette, ThemeState }

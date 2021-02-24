@@ -6,6 +6,8 @@ import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
+import { useTheme } from "../styles/styles"
+import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 
 type ContextFrame = {
 	wire?: string
@@ -96,7 +98,23 @@ class Context {
 
 	getComponentVariant = (id: string) => {
 		const viewDef = this.getViewDef()
-		return viewDef?.dependencies?.componentvariants?.[id]
+		const theme = useTheme()
+		const variant = viewDef?.dependencies?.componentvariants?.[id]
+		if (!variant) return
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		if (theme.overrides && theme.overrides[id]) {
+			return {
+				...variant,
+				definition: mergeDefinitionMaps(
+					variant.definition,
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					{ "uesio.styles": theme.overrides[id] }
+				),
+			}
+		}
+		return variant
 	}
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef

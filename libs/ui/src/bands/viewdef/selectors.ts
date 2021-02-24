@@ -4,6 +4,7 @@ import { Definition } from "../../definition/definition"
 import { RootState } from "../../store/store"
 import { selectors } from "./adapter"
 import { ComponentVariant } from "./types"
+import { styles } from "@uesio/ui"
 
 const useBuilderHasChanges = () =>
 	useSelector(({ viewdef }: RootState) => {
@@ -31,11 +32,15 @@ const useViewDefinition = (viewDefId: string, path?: string): Definition =>
 	})
 const useComponentVariant = (
 	viewDefId: string,
-	componentVariantKey: string
+	componentVariantKey: string,
+	theme: styles.Theme
 ): ComponentVariant | undefined =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
-		return viewDef?.dependencies?.componentvariants?.[componentVariantKey]
+		const variant =
+			viewDef?.dependencies?.componentvariants?.[componentVariantKey]
+		console.log(theme)
+		return variant
 	})
 const useViewYAML = (viewDefId: string) =>
 	useSelector((state: RootState) => {

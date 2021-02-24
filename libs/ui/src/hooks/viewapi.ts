@@ -19,6 +19,7 @@ import {
 	useComponentVariant,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
+import { useTheme } from "../styles/styles"
 
 const VIEW_BAND = "view"
 
@@ -53,10 +54,11 @@ class ViewAPI {
 		if (!variantName) {
 			return def
 		}
-
+		const theme = useTheme()
 		const variant = useComponentVariant(
 			viewDefId,
-			componentType + "." + variantName
+			componentType + "." + variantName,
+			theme
 		)
 		if (!variant) return def
 		return mergeDefinitionMaps(variant.definition, def as DefinitionMap)

@@ -5,7 +5,7 @@ import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
-import { BaseProps } from "../definition/definition"
+import { BaseProps, DefinitionMap } from "../definition/definition"
 
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 
@@ -14,7 +14,21 @@ import { getDispatcher } from "../store/store"
 import { ThemeState } from "../bands/theme/types"
 import { useSite } from "../bands/site/selectors"
 
-const makePaletteTheme = (theme: ThemeState) =>
+const makeOverridesTheme = (theme: ThemeState) => {
+	const variantOverrides = theme?.definition?.variantOverrides
+	if (!variantOverrides) return {}
+	const componentNames = Object.keys(variantOverrides)
+	const overrides: Record<string, DefinitionMap> = {}
+	componentNames.forEach((c) => {
+		const variantNames = Object.keys(variantOverrides[c] || {})
+		const variants = variantOverrides[c] as DefinitionMap
+		variantNames.forEach((v) => {
+			overrides[c + "." + v] = (variants?.[v] as DefinitionMap) || {}
+		})
+	})
+	return overrides
+}
+const makePaletteTheme = (theme: ThemeState): PaletteOptions =>
 	Object.entries(theme?.definition?.palette || {}).reduce(
 		(acc, [label, color]) => ({
 			...acc,
@@ -23,10 +37,14 @@ const makePaletteTheme = (theme: ThemeState) =>
 		{}
 	)
 
-const makeTheme = (themePalette: PaletteOptions) =>
-	createMuiTheme({
+const makeTheme = (theme: ThemeState) => {
+	const themePalette = makePaletteTheme(theme)
+	const themeOverrides = makeOverridesTheme(theme)
+	return createMuiTheme({
 		palette: { ...themePalette },
+		overrides: themeOverrides,
 	})
+}
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
@@ -69,7 +87,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!theme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(makePaletteTheme(theme))}>
+		<ThemeProvider theme={makeTheme(theme)}>
 			<CssBaseline />
 			<ComponentInternal
 				componentType="uesio.runtime"
