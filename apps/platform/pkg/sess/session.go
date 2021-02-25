@@ -52,9 +52,14 @@ func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
 
 func GetHeadlessSite() *meta.Site {
 	site := &meta.Site{
-		Name:       "uesio",
-		VersionRef: "v0.0.1",
-		AppRef:     "uesio",
+		Name: "uesio",
+		Bundle: &meta.Bundle{
+			Namespace: "uesio",
+			Major:     "0",
+			Minor:     "0",
+			Patch:     "1",
+		},
+		AppRef: "uesio",
 	}
 	site.SetAppBundle(&meta.BundleDef{
 		Name: "uesio",
@@ -269,9 +274,9 @@ func (s *Session) GetContextVersionName() string {
 		return s.workspace.Name
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.VersionRef
+		return s.siteadmin.Bundle.GetVersionString()
 	}
-	return s.site.VersionRef
+	return s.site.Bundle.GetVersionString()
 }
 
 // GetContextPermissions returns the permissions in context

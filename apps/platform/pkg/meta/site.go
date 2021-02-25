@@ -2,13 +2,12 @@ package meta
 
 // Site struct
 type Site struct {
-	ID         string `uesio:"uesio.id"`
-	Name       string `uesio:"uesio.name"`
-	BundleID   string `uesio:"uesio.bundleid"`
-	AppRef     string `uesio:"uesio.appref"`
-	VersionRef string `uesio:"uesio.versionref"`
-	bundleDef  *BundleDef
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	ID        string  `uesio:"uesio.id"`
+	Name      string  `uesio:"uesio.name"`
+	Bundle    *Bundle `uesio:"uesio.bundle"`
+	AppRef    string  `uesio:"uesio.appref"`
+	bundleDef *BundleDef
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (s *Site) GetFullName() string {

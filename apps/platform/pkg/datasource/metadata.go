@@ -37,7 +37,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Namespace:            f.Namespace,
 		Createable:           !f.ReadOnly,
 		Accessible:           true,
-		Updateable:           !f.ReadOnly,
+		Updateable:           !f.ReadOnly && !f.CreateOnly,
 		Type:                 f.Type,
 		Label:                f.Label,
 		PropertyName:         f.PropertyName,

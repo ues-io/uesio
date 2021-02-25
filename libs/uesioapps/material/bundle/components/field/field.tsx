@@ -39,7 +39,11 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	if (!fieldMetadata) return null
 
 	const label = definition.label || fieldMetadata.getLabel()
-	const mode = context.getFieldMode() || "READ"
+	const canEdit = record.isNew()
+		? fieldMetadata.getCreateable()
+		: fieldMetadata.getUpdateable()
+
+	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const type = fieldMetadata.getType()
 
 	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {

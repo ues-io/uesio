@@ -26,7 +26,7 @@ type Collection struct {
 	IDFormat       string    `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
 	NameField      string    `yaml:"nameField" uesio:"studio.namefield"`
 	CollectionName string    `yaml:"collectionName" uesio:"studio.collectionname"`
-	ReadOnly       bool      `yaml:"readonly,omitempty" uesio:"-"`
+	ReadOnly       bool      `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace      string    `yaml:"-" uesio:"studio.workspaceid"`
 	Updated        int64     `yaml:"-" uesio:"studio.updated"`
 	Created        int64     `yaml:"-" uesio:"studio.created"`

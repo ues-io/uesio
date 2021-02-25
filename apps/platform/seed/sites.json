@@ -1,8 +1,9 @@
 [
 	{
 		"name": "prod",
-		"bundleid": "studio_v0.0.1",
-		"appref": "studio",
-		"versionref": "v0.0.1"
+		"bundle": {
+			"id": "studio_v0.0.1"
+		},
+		"appref": "studio"
 	}
 ]
