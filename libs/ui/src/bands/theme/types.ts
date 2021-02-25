@@ -13,7 +13,8 @@ interface ThemeState {
 	name: string
 	namespace: string
 	definition: {
-		palette?: Palette
+		spacing?: number
+		palette?: Record<string, string>
 		variantOverrides?: Record<string, DefinitionMap>
 	}
 }

@@ -3,26 +3,32 @@ import React, { FunctionComponent } from "react"
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
+interface ThemedProps extends ButtonProps {
+	theme: styles.ThemeState
+}
 const stylesObj = {
-	root: (props: ButtonProps, theme: styles.Theme) => ({
+	root: (props: ThemedProps) => ({
 		fontWeight: 400,
-		margin: theme.spacing(
-			styles.useStyleProperty(props.definition.margin, 1)
-		),
+		backgroundColor:
+			props.theme.definition?.palette?.[
+				props.definition?.color || "primary"
+			],
+		margin: styles.getSpacing(props.theme, props.definition.margin || 1),
 	}),
 }
 
-const useStyles = styles.getUseStyles(["root"], stylesObj)
+const useStyles = styles.getNewUseStyles(["root"], stylesObj)
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props
-	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
+	const theme = uesio.getTheme()
+	if (!theme) return null
+	const classes = useStyles({ theme, ...props })
 
 	return (
 		<material.Button
 			className={classes.root}
-			color={definition?.color || "primary"}
 			variant={definition?.variant || "contained"}
 			fullWidth={definition.fullWidth}
 			onClick={
