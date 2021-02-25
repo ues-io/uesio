@@ -28,112 +28,114 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: bulkjobDeck
-              wire: bulkjobs
-              mode: EDIT
+          - material.container:
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: import
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/import
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/import
-                      - text: $Param{bulkjobname}
-                - material.grid:
-                    items:
-                      - material.griditem:
-                          xs: true
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "primary"
-                                  height: 10px
-                                margin: 1
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: bulkjobDeck
+                    wire: bulkjobs
+                    mode: EDIT
+                    components:
+                      - material.breadcrumbs:
+                          crumbs:
+                            - text: home
+                              href: home
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: home
+                            - text: $Param{appname}
+                              href: app/$Param{appname}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}
+                            - text: $Param{workspacename}
+                              href: app/$Param{appname}/workspace/$Param{workspacename}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}/workspace/$Param{workspacename}
+                            - text: import
+                              href: app/$Param{appname}/workspace/$Param{workspacename}/import
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}/workspace/$Param{workspacename}/import
+                            - text: $Param{bulkjobname}
+                      - material.grid:
+                          items:
+                            - material.griditem:
+                                xs: true
                                 components:
-                                  - material.grid:
-                                      justify: space-between
-                                      alignitems: center
-                                      items:
-                                        - material.griditem:
-                                            components:
-                                              - material.typography:
-                                                  text: ${uesio.id}
-                                                  variant: h5
-                                        - material.griditem:
-                                            components:
-                                              - material.grid:
-                                                  alignitems: center
-                                                  items:
-                                                    - material.griditem:
-                                                        components:
-                                                          - studio.bulkjob:
-                                                              uesio.context:
-                                                                workspace:
-                                                                  name: $Param{workspacename}
-                                                                  app: $Param{appname}
-                                                              id: "bulkjobID"
-                                                              label: "Start Batch"
-                                                    - material.griditem:
-                                                        components:
-                                                          - material.buttonset:
-                                                              buttons:
-                                                                - ? material.button
-                                                                  : color: "primary"
-                                                                    variant: "outlined"
-                                                                    text: "SAVE"
-                                                                    signals:
-                                                                      - signal: wire/SAVE
-                                                                        wires:
-                                                                          - "bulkjobs"
-                                  - studio.codefield:
-                                      fieldId: uesio.spec
-                                      height: 350px
-                                      language: "json"
-    - material.container:
-        components:
-          - material.typography:
-              text: "Bulk Batches"
-              variant: h5
-          - material.button:
-              color: "primary"
-              variant: "outlined"
-              text: "Refresh"
-              signals:
-                - signal: wire/LOAD
-                  wires:
-                    - "bulkjobs"
-                    - "bulkbatches"
-          - material.table:
-              id: "bulkbatcheslist"
-              wire: "bulkbatches"
-              mode: "READ"
-              columns:
-                - material.column:
-                    field: uesio.id
-                - material.column:
-                    field: uesio.bulkjobid
-                - material.column:
-                    field: uesio.status
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "primary"
+                                        height: 10px
+                                      margin: 1
+                                      components:
+                                        - material.grid:
+                                            justify: space-between
+                                            alignitems: center
+                                            items:
+                                              - material.griditem:
+                                                  components:
+                                                    - material.typography:
+                                                        text: ${uesio.id}
+                                                        variant: h5
+                                              - material.griditem:
+                                                  components:
+                                                    - material.grid:
+                                                        alignitems: center
+                                                        items:
+                                                          - material.griditem:
+                                                              components:
+                                                                - studio.bulkjob:
+                                                                    uesio.context:
+                                                                      workspace:
+                                                                        name: $Param{workspacename}
+                                                                        app: $Param{appname}
+                                                                    id: "bulkjobID"
+                                                                    label: "Start Batch"
+                                                          - material.griditem:
+                                                              components:
+                                                                - material.buttonset:
+                                                                    buttons:
+                                                                      - material.button:
+                                                                          color: "primary"
+                                                                          variant: "outlined"
+                                                                          text: "SAVE"
+                                                                          signals:
+                                                                            - signal: wire/SAVE
+                                                                              wires:
+                                                                                - "bulkjobs"
+                                        - studio.codefield:
+                                            fieldId: uesio.spec
+                                            height: 350px
+                                            language: "json"
+          - material.container:
+              components:
+                - material.typography:
+                    text: "Bulk Batches"
+                    variant: h5
+                - material.button:
+                    color: "primary"
+                    variant: "outlined"
+                    text: "Refresh"
+                    signals:
+                      - signal: wire/LOAD
+                        wires:
+                          - "bulkjobs"
+                          - "bulkbatches"
+                - material.table:
+                    id: "bulkbatcheslist"
+                    wire: "bulkbatches"
+                    mode: "READ"
+                    columns:
+                      - material.column:
+                          field: uesio.id
+                      - material.column:
+                          field: uesio.bulkjobid
+                      - material.column:
+                          field: uesio.status

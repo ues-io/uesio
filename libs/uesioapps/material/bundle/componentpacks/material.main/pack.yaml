@@ -22,5 +22,6 @@ components:
   checkboxfield:
   textfield:
   autocompletefield:
+  materialwrapper:
   dialog:
   file:

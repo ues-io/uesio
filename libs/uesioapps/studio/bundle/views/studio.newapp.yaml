@@ -14,56 +14,58 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.typography:
-              text: Create a New App
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: appsDeck
-              wire: apps
-              mode: EDIT
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color: "${uesio.color}"
-                      height: 10px
-                    margin: 1
+                - material.typography:
+                    text: Create a New App
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: appsDeck
+                    wire: apps
+                    mode: EDIT
                     components:
-                      - material.grid:
-                          spacing: 4
-                          items:
-                            - material.griditem:
-                                xs: 10
-                                xl: 3
-                                components:
-                                  - material.field:
-                                      fieldId: uesio.name
-                                  - material.field:
-                                      fieldId: uesio.description
-                                  - material.field:
-                                      fieldId: uesio.color
-                                  - studio.colorpicker:
-                                      fieldId: uesio.color
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "apps"
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/${uesio.name}"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "home"
+                      - material.card:
+                          media:
+                            background:
+                              color: "${uesio.color}"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.grid:
+                                spacing: 4
+                                items:
+                                  - material.griditem:
+                                      xs: 10
+                                      xl: 3
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.name
+                                        - material.field:
+                                            fieldId: uesio.description
+                                        - material.field:
+                                            fieldId: uesio.color
+                                        - studio.colorpicker:
+                                            fieldId: uesio.color
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "contained"
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "apps"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/${uesio.name}"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "home"

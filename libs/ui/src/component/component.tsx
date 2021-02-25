@@ -59,7 +59,8 @@ function mergeInVariants(
 		return definition
 	}
 	const variant = context.getComponentVariant(
-		`${componentType}.${definition["uesio.variant"] as string}`
+		componentType,
+		definition["uesio.variant"] as string
 	)
 	if (!variant) {
 		return definition

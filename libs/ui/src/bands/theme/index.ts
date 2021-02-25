@@ -3,6 +3,8 @@ import themeAdapter from "./adapter"
 import ops from "./operations"
 import { getNodeAtPath, parse, YAML_OPTIONS } from "../../yamlutils/yamlutils"
 import yaml from "yaml"
+import { defaultTheme } from "../../styles/styles"
+import merge from "lodash.merge"
 
 const themeSlice = createSlice({
 	name: "theme",
@@ -19,7 +21,11 @@ const themeSlice = createSlice({
 				return themeAdapter.upsertOne(state, {
 					namespace: yamlDoc.get("namespace"),
 					name: yamlDoc.get("name"),
-					definition: defDoc.toJSON(),
+					definition: merge(
+						{},
+						defaultTheme.definition,
+						defDoc.toJSON()
+					),
 				})
 			}
 		)

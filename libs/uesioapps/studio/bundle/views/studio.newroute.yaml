@@ -52,60 +52,62 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.typography:
-              text: Create a New Route
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: routesDeck
-              wire: routes
-              mode: EDIT
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
+                - material.typography:
+                    text: Create a New Route
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: routesDeck
+                    wire: routes
+                    mode: EDIT
                     components:
-                      - material.grid:
-                          spacing: 4
-                          items:
-                            - material.griditem:
-                                xs: 3
-                                components:
-                                  - material.field:
-                                      fieldId: studio.name
-                                  - material.field:
-                                      fieldId: studio.path
-                                  - studio.metadatafield:
-                                      fieldId: studio.view
-                                      metadataType: "VIEW"
-                                      label: "View"
-                                  - studio.metadatafield:
-                                      fieldId: studio.theme
-                                      metadataType: "THEME"
-                                      label: "Theme"
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "routes"
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/route/${studio.name}"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.grid:
+                                spacing: 4
+                                items:
+                                  - material.griditem:
+                                      xs: 3
+                                      components:
+                                        - material.field:
+                                            fieldId: studio.name
+                                        - material.field:
+                                            fieldId: studio.path
+                                        - studio.metadatafield:
+                                            fieldId: studio.view
+                                            metadataType: "VIEW"
+                                            label: "View"
+                                        - studio.metadatafield:
+                                            fieldId: studio.theme
+                                            metadataType: "THEME"
+                                            label: "Theme"
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "contained"
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "routes"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/route/${studio.name}"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"

@@ -37,273 +37,145 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: workspaceDeck
-              wire: workspaces
-              mode: READ
+          - material.container:
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: ${studio.name}
-                - material.grid:
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.card:
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: workspaceDeck
+                    wire: workspaces
+                    mode: READ
+                    components:
+                      - material.breadcrumbs:
+                          crumbs:
+                            - text: home
+                              href: home
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: home
+                            - text: $Param{appname}
+                              href: app/$Param{appname}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}
+                            - text: ${studio.name}
+                      - material.grid:
+                          items:
+                            - material.griditem:
                                 components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Bots
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Collections
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Select Lists
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Components
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Data Sources
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Files
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Permissions
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Routes
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Secrets and Config
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Views
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            text: Themes
-                                            variant: text
-                                            fullWidth: true
-                                            margin: 0
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
-                      - material.griditem:
-                          xs: true
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "primary"
-                                  height: 10px
-                                margin: 1
-                                components:
-                                  - material.grid:
-                                      justify: space-between
-                                      alignitems: center
-                                      items:
-                                        - material.griditem:
-                                            components:
-                                              - material.typography:
-                                                  text: ${studio.name}
-                                                  variant: h5
-                                                  textTransform: "uppercase"
-                                        - material.griditem:
-                                            components:
-                                              - material.buttonset:
-                                                  buttons:
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Edit"
-                                                        signals:
-                                                          - signal: component/material.deck/TOGGLE_MODE
-                                                            target: "workspaceDeck"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Save"
-                                                        signals:
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "workspaces"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Cancel"
-                                                        signals:
-                                                          - signal: wire/CANCEL
-                                                            wire: "workspaces"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Delete"
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "workspaces"
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}"
-                                  - material.field:
-                                      fieldId: studio.name
-                                  - studio.metadatafield:
-                                      fieldId: studio.homeroute
-                                      metadataType: "ROUTE"
-                                      label: "Home Route"
-                                  - studio.metadatafield:
-                                      fieldId: studio.loginroute
-                                      metadataType: "ROUTE"
-                                      label: "Login Route"
-                                  - studio.metadatafield:
-                                      fieldId: studio.defaultprofile
-                                      metadataType: "PROFILE"
-                                      label: "Default Profile"
-                                  - studio.metadatafield:
-                                      fieldId: studio.publicprofile
-                                      metadataType: "PROFILE"
-                                      label: "Public Profile"
-                            - material.card:
-                                components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Import Data"
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Configuration"
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/configuration"
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Create New Bundle Version"
-                                            signals:
-                                              - signal: "bot/CALL"
-                                                bot: "studio.newbundle"
-                                                params:
-                                                  workspace: $Param{workspacename}
-                                                  app: $Param{appname}
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}"
-                            - material.grid:
-                                justify: space-between
-                                alignitems: center
-                                items:
-                                  - material.griditem:
-                                      components:
-                                        - material.typography:
-                                            text: Installed Bundles
-                                            variant: h5
-                                  - material.griditem:
+                                  - material.card:
                                       components:
                                         - material.buttonset:
                                             buttons:
                                               - material.button:
-                                                  color: "primary"
-                                                  variant: "outlined"
-                                                  text: "Browse Bundle Store"
+                                                  text: Bots
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
                                                   signals:
                                                     - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
-                            - material.deck:
-                                xs: 3
-                                margin: 0
-                                id: installedDeck
-                                wire: installedapps
-                                mode: READ
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Collections
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Select Lists
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Components
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Data Sources
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Files
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Permissions
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Routes
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/routes"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Secrets and Config
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/secretsandconfig"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Views
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/views"
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  text: Themes
+                                                  variant: text
+                                                  fullWidth: true
+                                                  margin: 0
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
+                            - material.griditem:
+                                xs: true
                                 components:
                                   - material.card:
                                       media:
@@ -313,10 +185,140 @@ definition:
                                         height: 10px
                                       margin: 1
                                       components:
-                                        - material.typography:
-                                            text: ${["studio.bundle"]["uesio.namespace"]}
-                                        - material.typography:
-                                            text: v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
+                                        - material.grid:
+                                            justify: space-between
+                                            alignitems: center
+                                            items:
+                                              - material.griditem:
+                                                  components:
+                                                    - material.typography:
+                                                        text: ${studio.name}
+                                                        variant: h5
+                                                        textTransform: "uppercase"
+                                              - material.griditem:
+                                                  components:
+                                                    - material.buttonset:
+                                                        buttons:
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Edit"
+                                                              signals:
+                                                                - signal: component/material.deck/TOGGLE_MODE
+                                                                  target: "workspaceDeck"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Save"
+                                                              signals:
+                                                                - signal: wire/SAVE
+                                                                  wires:
+                                                                    - "workspaces"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Cancel"
+                                                              signals:
+                                                                - signal: wire/CANCEL
+                                                                  wire: "workspaces"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Delete"
+                                                              signals:
+                                                                - signal: wire/MARK_FOR_DELETE
+                                                                - signal: wire/SAVE
+                                                                  wires:
+                                                                    - "workspaces"
+                                                                - signal: "route/NAVIGATE"
+                                                                  path: "app/$Param{appname}"
+                                        - material.field:
+                                            fieldId: studio.name
+                                        - studio.metadatafield:
+                                            fieldId: studio.homeroute
+                                            metadataType: "ROUTE"
+                                            label: "Home Route"
+                                        - studio.metadatafield:
+                                            fieldId: studio.loginroute
+                                            metadataType: "ROUTE"
+                                            label: "Login Route"
+                                        - studio.metadatafield:
+                                            fieldId: studio.defaultprofile
+                                            metadataType: "PROFILE"
+                                            label: "Default Profile"
+                                        - studio.metadatafield:
+                                            fieldId: studio.publicprofile
+                                            metadataType: "PROFILE"
+                                            label: "Public Profile"
+                                  - material.card:
+                                      components:
+                                        - material.buttonset:
+                                            buttons:
+                                              - material.button:
+                                                  color: "primary"
+                                                  variant: "outlined"
+                                                  text: "Import Data"
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                              - material.button:
+                                                  color: "primary"
+                                                  variant: "outlined"
+                                                  text: "Configuration"
+                                                  signals:
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/configuration"
+                                              - material.button:
+                                                  color: "primary"
+                                                  variant: "outlined"
+                                                  text: "Create New Bundle Version"
+                                                  signals:
+                                                    - signal: "bot/CALL"
+                                                      bot: "studio.newbundle"
+                                                      params:
+                                                        workspace: $Param{workspacename}
+                                                        app: $Param{appname}
+                                                    - signal: "route/NAVIGATE"
+                                                      path: "app/$Param{appname}"
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: Installed Bundles
+                                                  variant: h5
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Browse Bundle Store"
+                                                        signals:
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
+                                  - material.deck:
+                                      xs: 3
+                                      margin: 0
+                                      id: installedDeck
+                                      wire: installedapps
+                                      mode: READ
+                                      components:
+                                        - material.card:
+                                            media:
+                                              background:
+                                                color:
+                                                  intention: "primary"
+                                              height: 10px
+                                            margin: 1
+                                            components:
+                                              - material.typography:
+                                                  text: ${["studio.bundle"]["uesio.namespace"]}
+                                              - material.typography:
+                                                  text: v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"

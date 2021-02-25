@@ -43,75 +43,77 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.breadcrumbs:
-              crumbs:
-                - text: home
-                  href: home
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: home
-                - text: $Param{appname}
-                  href: app/$Param{appname}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}
-                - text: $Param{workspacename}
-                  href: app/$Param{appname}/workspace/$Param{workspacename}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}/workspace/$Param{workspacename}
-                - text: collections
-          - material.grid:
-              justify: space-between
-              items:
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: Collections
-                          variant: h5
-                      - material.typography:
-                          text: Gotta catch 'em all!
-                          variant: body2
-                - material.griditem:
-                    components:
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Create New Collection"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newcollection"
-          - material.deck:
-              xs: 12
-              sm: 6
-              md: 4
-              lg: 3
-              margin: 0
-              id: collectionsDeck
-              wire: collections
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
-                    components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                      - text: collections
+                - material.grid:
+                    justify: space-between
+                    items:
                       - material.griditem:
                           components:
-                            - material.icon:
-                                type: "open"
-                                float: right
-                      - material.typography:
-                          text: "${studio.name}"
-                          textTransform: "capitalize"
-                      - material.field:
-                          fieldId: studio.updated
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+                            - material.typography:
+                                text: Collections
+                                variant: h5
+                            - material.typography:
+                                text: Gotta catch 'em all!
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Create New Collection"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newcollection"
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    id: collectionsDeck
+                    wire: collections
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${studio.name}"
+                                textTransform: "capitalize"
+                            - material.field:
+                                fieldId: studio.updated
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"

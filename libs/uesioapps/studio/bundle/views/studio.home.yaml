@@ -16,57 +16,59 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.grid:
-              justify: space-between
-              items:
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: Apps
-                          variant: h5
-                      - material.typography:
-                          text: An app a day keeps the doctor away.
-                          variant: body2
-                - material.griditem:
-                    components:
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Create New App"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "newapp"
-          - material.deck:
-              xs: 12
-              sm: 6
-              md: 4
-              lg: 3
-              margin: 0
-              id: appsDeck
-              wire: apps
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color: "${uesio.color}"
-                      height: 10px
-                    margin: 1
-                    components:
+                - material.grid:
+                    justify: space-between
+                    items:
                       - material.griditem:
                           components:
-                            - material.icon:
-                                type: "open"
-                                float: right
-                      - material.typography:
-                          text: "${uesio.name}"
-                          textTransform: "uppercase"
-                      - material.typography:
-                          text: "${uesio.description}"
-                          variant: body2
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/${uesio.name}"
+                            - material.typography:
+                                text: Apps
+                                variant: h5
+                            - material.typography:
+                                text: An app a day keeps the doctor away.
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Create New App"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "newapp"
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    id: appsDeck
+                    wire: apps
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color: "${uesio.color}"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${uesio.name}"
+                                textTransform: "uppercase"
+                            - material.typography:
+                                text: "${uesio.description}"
+                                variant: body2
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/${uesio.name}"

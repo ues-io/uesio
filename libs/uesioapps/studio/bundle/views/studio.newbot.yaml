@@ -52,60 +52,62 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.typography:
-              text: Create a New Bot
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: botsDeck
-              wire: bots
-              mode: EDIT
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
+                - material.typography:
+                    text: Create a New Bot
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: botsDeck
+                    wire: bots
+                    mode: EDIT
                     components:
-                      - material.grid:
-                          spacing: 4
-                          items:
-                            - material.griditem:
-                                xs: 3
-                                components:
-                                  - material.field:
-                                      fieldId: studio.name
-                                  - studio.metadatafield:
-                                      fieldId: studio.collection
-                                      metadataType: "COLLECTION"
-                                      label: "Collection"
-                                  - material.field:
-                                      fieldId: studio.dialect
-                                  - material.field:
-                                      fieldId: studio.type
-                                  - material.field:
-                                      fieldId: studio.content
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "bots"
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.grid:
+                                spacing: 4
+                                items:
+                                  - material.griditem:
+                                      xs: 3
+                                      components:
+                                        - material.field:
+                                            fieldId: studio.name
+                                        - studio.metadatafield:
+                                            fieldId: studio.collection
+                                            metadataType: "COLLECTION"
+                                            label: "Collection"
+                                        - material.field:
+                                            fieldId: studio.dialect
+                                        - material.field:
+                                            fieldId: studio.type
+                                        - material.field:
+                                            fieldId: studio.content
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "contained"
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "bots"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"

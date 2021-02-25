@@ -1,17 +1,13 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import {
-	Theme,
-	colors,
-	Color,
-	createStyles,
-	makeStyles,
-} from "@material-ui/core"
+import { Theme, colors, Color } from "@material-ui/core"
+import { createUseStyles } from "react-jss"
 import {
 	CreateCSSProperties,
 	CSSProperties,
 } from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
+import { ThemeState } from "../bands/theme/types"
 
 type ThemeIntention =
 	| "primary"
@@ -119,44 +115,60 @@ function isValidColor(potientialColor: string): boolean {
 	style.color = potientialColor
 	return !!style.color
 }
+
 interface styledDefinition {
 	definition: {
 		"uesio.styles"?: Record<string, Record<string, unknown>>
 	}
 }
 
+function getSpacing(theme: ThemeState, count: number) {
+	return `${(theme.definition.spacing || 8) * count}px`
+}
+
+const defaultTheme: ThemeState = {
+	name: "default",
+	namespace: "system",
+	definition: {
+		palette: {
+			primary: "#1976d2",
+			secondary: "#dc004e",
+			error: "#f44336",
+			warning: "#ff9800",
+			info: "#2196f3",
+			success: "#4caf50",
+		},
+		variantOverrides: {},
+		spacing: 8,
+	},
+}
+
 function getUseStyles<T extends styledDefinition>(
 	classNames: string[],
 	defaultStyling?: Record<
 		string,
-		((props: T, theme: Theme) => CSSProperties) | CSSProperties
+		((props: T) => CSSProperties) | CSSProperties
 	>
-) {
-	return makeStyles((theme) => {
-		const createStyleArgs: Record<string, (props: T) => CSSProperties> = {}
-		classNames.forEach((className) => {
-			createStyleArgs[className] = (props: T): CSSProperties => {
-				const defaultValuesFromStyles = defaultStyling?.[className]
-				let defaultValues: CSSProperties = {}
-				if (typeof defaultValuesFromStyles === "function") {
-					defaultValues = defaultValuesFromStyles(props, theme)
-				} else if (defaultValuesFromStyles) {
-					defaultValues = defaultValuesFromStyles
-				}
-				const customExtensions =
-					props.definition?.["uesio.styles"]?.[className] || {}
-				return { ...defaultValues, ...customExtensions }
+): (props: T) => Record<string, string> {
+	const createStyleArgs: Record<string, (props: T) => CSSProperties> = {}
+	classNames.forEach((className) => {
+		createStyleArgs[className] = (props: T): CSSProperties => {
+			const defaultValuesFromStyles = defaultStyling?.[className]
+			let defaultValues: CSSProperties = {}
+			if (typeof defaultValuesFromStyles === "function") {
+				defaultValues = defaultValuesFromStyles(props)
+			} else if (defaultValuesFromStyles) {
+				defaultValues = defaultValuesFromStyles
 			}
-		})
-		// Getting the type signature right here was super hard so I gave up.
-		// Could be improved.
-
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return createStyles(createStyleArgs)
+			const customExtensions =
+				props.definition?.["uesio.styles"]?.[className] || {}
+			return { ...defaultValues, ...customExtensions }
+		}
 	})
+	return createUseStyles(createStyleArgs)
 }
 export {
+	defaultTheme,
 	useStyleProperty,
 	getBackgroundStyles,
 	getMarginStyles,
@@ -167,6 +179,8 @@ export {
 	CSSProperties,
 	CreateCSSProperties,
 	Theme,
+	ThemeState,
+	getSpacing,
 	getUseStyles,
 	getColor,
 }

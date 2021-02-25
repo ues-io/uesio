@@ -27,26 +27,28 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.breadcrumbs:
-              crumbs:
-                - text: home
-                  href: home
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: home
-                - text: $Param{appname}
-                  href: app/$Param{appname}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}
-                - text: $Param{workspacename}
-                  href: app/$Param{appname}/workspace/$Param{workspacename}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}/workspace/$Param{workspacename}
-                - text: Add Bundle
-          - studio.addbundle:
-              installablebundleswire: "installablebundles"
-              currentdependencies: "dependencies"
+          - material.container:
+              components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                      - text: Add Bundle
+                - studio.addbundle:
+                    installablebundleswire: "installablebundles"
+                    currentdependencies: "dependencies"

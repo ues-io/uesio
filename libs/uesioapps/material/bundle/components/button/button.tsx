@@ -4,10 +4,11 @@ import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
 const stylesObj = {
-	root: (props: ButtonProps, theme: styles.Theme) => ({
+	root: (props: ButtonProps) => ({
 		fontWeight: 400,
-		margin: theme.spacing(
-			styles.useStyleProperty(props.definition.margin, 1)
+		margin: styles.getSpacing(
+			props.context.getTheme(),
+			props.definition.margin || 1
 		),
 	}),
 }
@@ -16,13 +17,13 @@ const useStyles = styles.getUseStyles(["root"], stylesObj)
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props
-	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
+	const classes = useStyles(props)
 
 	return (
 		<material.Button
 			className={classes.root}
-			color={definition?.color || "primary"}
+			color={props.definition.color || "primary"}
 			variant={definition?.variant || "contained"}
 			fullWidth={definition.fullWidth}
 			onClick={

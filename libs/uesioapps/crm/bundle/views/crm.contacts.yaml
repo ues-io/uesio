@@ -3,80 +3,82 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.typography:
-        text: Contacts
-        variant: h6
-    - material.buttonset:
-        buttons:
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/CREATE_RECORD
-                  wire: contacts
-              text: Create Row
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - contacts
-              text: Save
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/CANCEL
-                  wire: contacts
-              text: Cancel
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: component/material.table/TOGGLE_MODE
-                  target: contactsTable
-              text: Mode
-              variant: contained
-    - material.table:
-        columns:
-          - material.column:
-              field: crm.firstname
-          - material.column:
-              field: crm.lastname
-          - material.column:
-              field: crm.gender
-          - material.column:
-              field: crm.deceased
-          - material.column:
-              field: crm.accountid
-          - material.column:
-              field: crm.account
-          - material.column:
-              field: crm.birthdate
-          - material.column:
-              field: crm.email
-          - material.column:
-              field: crm.updated
-          - material.column:
-              field: crm.created
-          - material.column:
-              components:
+    - material.materialwrapper:
+        components:
+          - material.typography:
+              text: Contacts
+              variant: h6
+          - material.buttonset:
+              buttons:
                 - material.button:
                     color: primary
                     signals:
-                      - path: contact/${crm.id}
-                        signal: route/NAVIGATE
-                    text: Edit
+                      - signal: wire/CREATE_RECORD
+                        wire: contacts
+                    text: Create Row
                     variant: contained
                 - material.button:
                     color: primary
                     signals:
-                      - signal: wire/TOGGLE_DELETE_STATUS
-                    text: Delete
+                      - signal: wire/SAVE
+                        wires:
+                          - contacts
+                    text: Save
                     variant: contained
-        id: contactsTable
-        mode: EDIT
-        wire: contacts
+                - material.button:
+                    color: primary
+                    signals:
+                      - signal: wire/CANCEL
+                        wire: contacts
+                    text: Cancel
+                    variant: contained
+                - material.button:
+                    color: primary
+                    signals:
+                      - signal: component/material.table/TOGGLE_MODE
+                        target: contactsTable
+                    text: Mode
+                    variant: contained
+          - material.table:
+              columns:
+                - material.column:
+                    field: crm.firstname
+                - material.column:
+                    field: crm.lastname
+                - material.column:
+                    field: crm.gender
+                - material.column:
+                    field: crm.deceased
+                - material.column:
+                    field: crm.accountid
+                - material.column:
+                    field: crm.account
+                - material.column:
+                    field: crm.birthdate
+                - material.column:
+                    field: crm.email
+                - material.column:
+                    field: crm.updated
+                - material.column:
+                    field: crm.created
+                - material.column:
+                    components:
+                      - material.button:
+                          color: primary
+                          signals:
+                            - path: contact/${crm.id}
+                              signal: route/NAVIGATE
+                          text: Edit
+                          variant: contained
+                      - material.button:
+                          color: primary
+                          signals:
+                            - signal: wire/TOGGLE_DELETE_STATUS
+                          text: Delete
+                          variant: contained
+              id: contactsTable
+              mode: EDIT
+              wire: contacts
   wires:
     contacts:
       collection: crm.contacts

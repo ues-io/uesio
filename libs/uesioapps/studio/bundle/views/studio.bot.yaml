@@ -50,108 +50,110 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: botsDeck
-              wire: bots
-              mode: READ
+          - material.container:
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: bots
-                        href: app/$Param{appname}/workspace/$Param{workspacename}/bots
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}/bots
-                      - text: $Param{botname}
-                - material.grid:
-                    items:
-                      - material.griditem:
-                          xs: true
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "primary"
-                                  height: 10px
-                                margin: 1
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: botsDeck
+                    wire: bots
+                    mode: READ
+                    components:
+                      - material.breadcrumbs:
+                          crumbs:
+                            - text: home
+                              href: home
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: home
+                            - text: $Param{appname}
+                              href: app/$Param{appname}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}
+                            - text: $Param{workspacename}
+                              href: app/$Param{appname}/workspace/$Param{workspacename}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}/workspace/$Param{workspacename}
+                            - text: bots
+                              href: app/$Param{appname}/workspace/$Param{workspacename}/bots
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}/workspace/$Param{workspacename}/bots
+                            - text: $Param{botname}
+                      - material.grid:
+                          items:
+                            - material.griditem:
+                                xs: true
                                 components:
-                                  - material.grid:
-                                      justify: space-between
-                                      alignitems: center
-                                      items:
-                                        - material.griditem:
-                                            components:
-                                              - material.typography:
-                                                  text: "Bot"
-                                                  variant: h5
-                                        - material.griditem:
-                                            components:
-                                              - material.buttonset:
-                                                  buttons:
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Edit"
-                                                        signals:
-                                                          - signal: component/material.deck/TOGGLE_MODE
-                                                            target: "botsDeck"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Save"
-                                                        signals:
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "bots"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Cancel"
-                                                        signals:
-                                                          - signal: wire/CANCEL
-                                                            wire: "bots"
-                                                          - signal: wire/CANCEL
-                                                            wire: "fields"
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Delete"
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "bots"
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-                                  - material.field:
-                                      fieldId: studio.name
-                                  - material.field:
-                                      fieldId: studio.type
-                                  - material.field:
-                                      fieldId: studio.dialect
-                                  - studio.metadatafield:
-                                      fieldId: studio.collection
-                                      metadataType: "COLLECTION"
-                                      label: "Collection"
-                                  - material.field:
-                                      fieldId: studio.content
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "primary"
+                                        height: 10px
+                                      margin: 1
+                                      components:
+                                        - material.grid:
+                                            justify: space-between
+                                            alignitems: center
+                                            items:
+                                              - material.griditem:
+                                                  components:
+                                                    - material.typography:
+                                                        text: "Bot"
+                                                        variant: h5
+                                              - material.griditem:
+                                                  components:
+                                                    - material.buttonset:
+                                                        buttons:
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Edit"
+                                                              signals:
+                                                                - signal: component/material.deck/TOGGLE_MODE
+                                                                  target: "botsDeck"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Save"
+                                                              signals:
+                                                                - signal: wire/SAVE
+                                                                  wires:
+                                                                    - "bots"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Cancel"
+                                                              signals:
+                                                                - signal: wire/CANCEL
+                                                                  wire: "bots"
+                                                                - signal: wire/CANCEL
+                                                                  wire: "fields"
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Delete"
+                                                              signals:
+                                                                - signal: wire/MARK_FOR_DELETE
+                                                                - signal: wire/SAVE
+                                                                  wires:
+                                                                    - "bots"
+                                                                - signal: "route/NAVIGATE"
+                                                                  path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+                                        - material.field:
+                                            fieldId: studio.name
+                                        - material.field:
+                                            fieldId: studio.type
+                                        - material.field:
+                                            fieldId: studio.dialect
+                                        - studio.metadatafield:
+                                            fieldId: studio.collection
+                                            metadataType: "COLLECTION"
+                                            label: "Collection"
+                                        - material.field:
+                                            fieldId: studio.content

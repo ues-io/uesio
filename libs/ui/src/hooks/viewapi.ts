@@ -53,10 +53,12 @@ class ViewAPI {
 		if (!variantName) {
 			return def
 		}
-
+		const theme = this.uesio.getTheme()
 		const variant = useComponentVariant(
 			viewDefId,
-			componentType + "." + variantName
+			componentType,
+			variantName,
+			theme
 		)
 		if (!variant) return def
 		return mergeDefinitionMaps(variant.definition, def as DefinitionMap)
