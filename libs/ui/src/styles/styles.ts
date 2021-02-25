@@ -1,11 +1,5 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import {
-	Theme,
-	colors,
-	Color,
-	createStyles,
-	makeStyles,
-} from "@material-ui/core"
+import { Theme, colors, Color } from "@material-ui/core"
 import { createUseStyles } from "react-jss"
 import {
 	CreateCSSProperties,
@@ -120,12 +114,6 @@ function isValidColor(potientialColor: string): boolean {
 	const style = new Option().style
 	style.color = potientialColor
 	return !!style.color
-}
-interface newStyledDefinition {
-	definition: {
-		"uesio.styles"?: Record<string, Record<string, unknown>>
-	}
-	theme: ThemeState
 }
 
 interface styledDefinition {

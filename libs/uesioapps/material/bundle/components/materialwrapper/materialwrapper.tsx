@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react"
 import { MaterialWrapperProps } from "./materialwrapperdefinition"
-import { component, material } from "@uesio/ui"
-import { ThemeState } from "../../../../../ui/src/bands/theme/types"
+import { component, material, styles } from "@uesio/ui"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
-const makePaletteTheme = (theme: ThemeState): PaletteOptions =>
+
+const makePaletteTheme = (theme: styles.ThemeState): PaletteOptions =>
 	Object.entries(theme?.definition?.palette || {}).reduce(
 		(acc, [label, color]) => ({
 			...acc,
@@ -11,10 +11,11 @@ const makePaletteTheme = (theme: ThemeState): PaletteOptions =>
 		}),
 		{}
 	)
-const makeTheme = (theme: ThemeState) => {
+const makeTheme = (theme: styles.ThemeState) => {
 	const themePalette = makePaletteTheme(theme)
 	return material.createMuiTheme({
 		palette: { ...themePalette },
+		spacing: theme.definition.spacing,
 	})
 }
 const Materialwrapper: FunctionComponent<MaterialWrapperProps> = (props) => (

@@ -150,7 +150,7 @@ func ServeRoute(w http.ResponseWriter, r *http.Request) {
 	path := vars["route"]
 
 	session := middleware.GetSession(r)
-	prefix := strings.TrimSuffix(r.URL.Path, "/"+path)
+	prefix := strings.TrimSuffix(r.URL.Path, path)
 
 	route, err := getRoute(r, namespace, path, prefix, session)
 	if err != nil {

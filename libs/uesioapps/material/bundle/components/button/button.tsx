@@ -13,7 +13,7 @@ const stylesObj = {
 	}),
 }
 
-const useStyles = styles.getNewUseStyles(["root"], stylesObj)
+const useStyles = styles.getUseStyles(["root"], stylesObj)
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props

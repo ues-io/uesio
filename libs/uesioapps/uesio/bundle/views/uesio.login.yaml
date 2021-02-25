@@ -5,55 +5,55 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - material.materialwrapper:
-          components:
-            - material.grid:
-                height: 100vh
-                background:
-                  image: uesio.splash
-                justify: center
-                alignitems: center
-                items:
-                  - material.griditem:
-                      height: 100vh
-                      background:
-                        color: white
-                      xs: 12
-                      md: 6
-                      lg: 5
-                      components:
-                        - material.grid:
-                            height: 100vh
-                            justify: center
-                            alignitems: center
-                            items:
-                              - material.griditem:
-                                  xs: 12
-                                  components:
-                                    - material.image:
-                                        file: uesio.logo
-                                        height: 100px
-                                        align: center
-                                        margin: 2
-                                    - uesio.logingoogle:
-                                        text: Sign in with Google
-                                        clientId: uesio.googleClientId
-                                        align: center
-                                    - uesio.loginmock:
-                                        text: Sign in with Mock
-                                        align: center
-                                    - uesio.loginfacebook:
-                                        text: Sign in with Facebook
-                                        clientId: uesio.facebookAppId
-                                        align: center
-                                    - uesio.logincognito:
-                                        text: Sign in with Email
-                                        clientId: uesio.cognitoClientId
-                                        poolId: uesio.cognitoPoolId
-                                        align: center
-                                    # Just makes the vertical centering nicer
-                                    - material.container:
-                                        padding: 8
-                  - material.griditem:
-                      xs: 0
-                      md: 6
-                      lg: 7
+        components:
+          - material.grid:
+              height: 100vh
+              background:
+                image: uesio.splash
+              justify: center
+              alignitems: center
+              items:
+                - material.griditem:
+                    height: 100vh
+                    background:
+                      color: white
+                    xs: 12
+                    md: 6
+                    lg: 5
+                    components:
+                      - material.grid:
+                          height: 100vh
+                          justify: center
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                xs: 12
+                                components:
+                                  - material.image:
+                                      file: uesio.logo
+                                      height: 100px
+                                      align: center
+                                      margin: 2
+                                  - uesio.logingoogle:
+                                      text: Sign in with Google
+                                      clientId: uesio.googleClientId
+                                      align: center
+                                  - uesio.loginmock:
+                                      text: Sign in with Mock
+                                      align: center
+                                  - uesio.loginfacebook:
+                                      text: Sign in with Facebook
+                                      clientId: uesio.facebookAppId
+                                      align: center
+                                  - uesio.logincognito:
+                                      text: Sign in with Email
+                                      clientId: uesio.cognitoClientId
+                                      poolId: uesio.cognitoPoolId
+                                      align: center
+                                  # Just makes the vertical centering nicer
+                                  - material.container:
+                                      padding: 8
+                - material.griditem:
+                    xs: 0
+                    md: 6
+                    lg: 7

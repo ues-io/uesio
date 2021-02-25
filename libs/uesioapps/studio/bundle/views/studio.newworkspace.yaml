@@ -32,7 +32,7 @@ definition:
         components:
           - material.container:
               components:
-              - material.typography:
+                - material.typography:
                     text: Create a New Workspace
                     variant: h5
                 - material.deck:
