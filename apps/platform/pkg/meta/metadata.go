@@ -13,6 +13,14 @@ type ItemMeta struct {
 	ValidFields map[string]bool
 }
 
+func (im *ItemMeta) IsValidField(fieldName string) bool {
+	if im.ValidFields != nil {
+		valid, ok := im.ValidFields[fieldName]
+		return ok && valid
+	}
+	return true
+}
+
 // BundleConditions type
 type BundleConditions map[string]string
 
@@ -94,6 +102,10 @@ func StandardGetFields(item CollectionableItem) []string {
 
 // StandardFieldGet function
 func StandardFieldGet(item CollectionableItem, fieldName string) (interface{}, error) {
+	itemMeta := item.GetItemMeta()
+	if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
+		return nil, errors.New("Field Not Found: " + fieldName)
+	}
 	return reflecttool.GetField(item, fieldName)
 }
 
@@ -106,11 +118,8 @@ func StandardFieldSet(item CollectionableItem, fieldName string, value interface
 func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) error) error {
 	itemMeta := item.GetItemMeta()
 	for _, fieldName := range StandardGetFields(item) {
-		if itemMeta != nil && itemMeta.ValidFields != nil {
-			valid, ok := itemMeta.ValidFields[fieldName]
-			if !ok || !valid {
-				continue
-			}
+		if itemMeta != nil && !itemMeta.IsValidField(fieldName) {
+			continue
 		}
 		val, err := item.GetField(fieldName)
 		if err != nil {

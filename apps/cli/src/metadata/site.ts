@@ -22,7 +22,7 @@ class Site {
 				id: "uesio.appref",
 			},
 			{
-				id: "uesio.versionref",
+				id: "uesio.bundle",
 			},
 		]
 	}
@@ -54,9 +54,10 @@ class Site {
 			createChange([
 				{
 					"uesio.name": responses.name,
-					"uesio.bundleid": `${app}_${responses.version}`,
+					"uesio.bundle": {
+						"uesio.id": `${app}_${responses.version}`,
+					},
 					"uesio.appref": app,
-					"uesio.versionref": responses.version,
 				},
 			])
 		)

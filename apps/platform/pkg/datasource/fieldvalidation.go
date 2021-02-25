@@ -16,6 +16,18 @@ var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z
 
 type validationFunc func(change adapt.ChangeItem) error
 
+func preventUpdate(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeItem) error {
+		if !change.IsNew {
+			_, err := change.FieldChanges.GetField(field.GetFullName())
+			if change.IsNew && err != nil {
+				return errors.New("Field: " + field.Label + " is not updateable: " + change.IDValue.(string))
+			}
+		}
+		return nil
+	}
+}
+
 func validateRequired(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
@@ -101,6 +113,9 @@ func getValidationFunction(collectionMetadata *adapt.CollectionMetadata) func(ad
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			timestamp := time.Now().Unix()
 			validations = append(validations, populateTimestamps(field, timestamp))
+		}
+		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
+			validations = append(validations, preventUpdate(field))
 		}
 	}
 

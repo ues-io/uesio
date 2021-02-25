@@ -3,3 +3,4 @@ collection: studio.workspaces
 type: TEXT
 label: Name
 propertyName: name
+createOnly: true

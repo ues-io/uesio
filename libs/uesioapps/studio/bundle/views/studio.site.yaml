@@ -18,7 +18,7 @@ definition:
       fields:
         uesio.id:
         uesio.name:
-        uesio.versionref:
+        uesio.bundle:
       conditions:
         - field: uesio.appref
           valueSource: PARAM
@@ -97,7 +97,7 @@ definition:
                       - material.field:
                           fieldId: uesio.name
                       - material.field:
-                          fieldId: uesio.versionref
+                          fieldId: uesio.bundle
                 - material.grid:
                     justify: space-between
                     items:

@@ -16,6 +16,11 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getFieldValue = (fieldName: string) => get(this.source, fieldName)
+	isNew = () => {
+		const metadata = this.wire.collection
+		const idField = metadata.getIdField()
+		return idField && !this.getFieldValue(idField.getId())
+	}
 
 	update = (fieldId: string, value: FieldValue) =>
 		this.wire.updateRecord(this.id, {
