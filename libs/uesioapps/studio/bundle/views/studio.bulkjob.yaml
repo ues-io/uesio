@@ -91,25 +91,25 @@ definition:
                                                         items:
                                                           - material.griditem:
                                                               components:
-                                                                - ? studio.bulkjob
-                                                                  : ? uesio.context
-                                                                    : workspace:
+                                                                - studio.bulkjob:
+                                                                    uesio.context:
+                                                                      workspace:
                                                                         name: $Param{workspacename}
                                                                         app: $Param{appname}
                                                                     id: "bulkjobID"
                                                                     label: "Start Batch"
                                                           - material.griditem:
                                                               components:
-                                                                - ? material.buttonset
-                                                                  : buttons:
-                                                                      - ? material.button
-                                                                        : color: "primary"
+                                                                - material.buttonset:
+                                                                    buttons:
+                                                                      - material.button:
+                                                                          color: "primary"
                                                                           variant: "outlined"
                                                                           text: "SAVE"
-                                                                          ? signals
-                                                                          : - signal: wire/SAVE
-                                                                              ? wires
-                                                                              : - "bulkjobs"
+                                                                          signals:
+                                                                            - signal: wire/SAVE
+                                                                              wires:
+                                                                                - "bulkjobs"
                                         - studio.codefield:
                                             fieldId: uesio.spec
                                             height: 350px

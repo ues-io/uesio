@@ -5,3 +5,4 @@ overrides:
   - files: "*.yaml"
     options:
       tabWidth: 2
+      printWidth: 1000
