@@ -87,7 +87,7 @@ definition:
                                         - signal: "wire/UPDATE_RECORD"
                                           wire: sites
                                           record: $Parent.RecordId{}
-                                          field:  uesio.bundleid
+                                          field: uesio.bundleid
                                           value: ${uesio.namespace}_v${uesio.major}.${uesio.minor}.${uesio.patch}
                             - material.buttonset:
                                 buttons:

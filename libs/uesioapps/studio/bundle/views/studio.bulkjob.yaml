@@ -92,10 +92,10 @@ definition:
                                                           - material.griditem:
                                                               components:
                                                                 - ? studio.bulkjob
-                                                                  : uesio.context:
-                                                                    workspace:
-                                                                      name: $Param{workspacename}
-                                                                      app: $Param{appname}
+                                                                  : ? uesio.context
+                                                                    : workspace:
+                                                                        name: $Param{workspacename}
+                                                                        app: $Param{appname}
                                                                     id: "bulkjobID"
                                                                     label: "Start Batch"
                                                           - material.griditem:
@@ -108,7 +108,8 @@ definition:
                                                                           text: "SAVE"
                                                                           ? signals
                                                                           : - signal: wire/SAVE
-                                                                              wires: "bulkjobs"
+                                                                              ? wires
+                                                                              : - "bulkjobs"
                                         - studio.codefield:
                                             fieldId: uesio.spec
                                             height: 350px
