@@ -3,3 +3,4 @@ collection: uesio.sites
 type: "TEXT"
 label: "Referenced App Namespace"
 propertyName: "appref"
+createOnly: true

@@ -92,9 +92,14 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	site := &meta.Site{
-		Name:       "studio",
-		VersionRef: "v0.0.1",
-		AppRef:     "studio",
+		Name: "studio",
+		Bundle: &meta.Bundle{
+			Namespace: "studio",
+			Major:     "0",
+			Minor:     "0",
+			Patch:     "1",
+		},
+		AppRef: "studio",
 	}
 
 	bundleDef, err := bundle.GetSiteAppBundle(site)
@@ -138,19 +143,24 @@ func seed(cmd *cobra.Command, args []string) {
 			},
 		},
 		{
+			Collection: &bundles,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
 			Collection: &sites,
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{},
+				Lookups: []adapt.Lookup{
+					{
+						RefField: "uesio.bundle",
+					},
+				},
 			},
 		},
 		{
 			Collection: &siteDomains,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &bundles,
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{},
 			},

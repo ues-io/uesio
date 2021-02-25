@@ -1,0 +1,5 @@
+name: createonly
+collection: studio.fields
+type: BOOLEAN
+label: CreateOnly
+propertyName: createonly
