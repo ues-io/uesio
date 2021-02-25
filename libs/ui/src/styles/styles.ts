@@ -138,37 +138,6 @@ function getSpacing(theme: ThemeState, count: number) {
 	return `${(theme.definition.spacing || 8) * count}px`
 }
 
-function getUseStyles<T extends styledDefinition>(
-	classNames: string[],
-	defaultStyling?: Record<
-		string,
-		((props: T, theme: Theme) => CSSProperties) | CSSProperties
-	>
-) {
-	return makeStyles((theme) => {
-		const createStyleArgs: Record<string, (props: T) => CSSProperties> = {}
-		classNames.forEach((className) => {
-			createStyleArgs[className] = (props: T): CSSProperties => {
-				const defaultValuesFromStyles = defaultStyling?.[className]
-				let defaultValues: CSSProperties = {}
-				if (typeof defaultValuesFromStyles === "function") {
-					defaultValues = defaultValuesFromStyles(props, theme)
-				} else if (defaultValuesFromStyles) {
-					defaultValues = defaultValuesFromStyles
-				}
-				const customExtensions =
-					props.definition?.["uesio.styles"]?.[className] || {}
-				return { ...defaultValues, ...customExtensions }
-			}
-		})
-		// Getting the type signature right here was super hard so I gave up.
-		// Could be improved.
-
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		return createStyles(createStyleArgs)
-	})
-}
 const defaultTheme: ThemeState = {
 	name: "default",
 	namespace: "system",
@@ -185,7 +154,8 @@ const defaultTheme: ThemeState = {
 		spacing: 8,
 	},
 }
-function getNewUseStyles<T extends styledDefinition>(
+
+function getUseStyles<T extends styledDefinition>(
 	classNames: string[],
 	defaultStyling?: Record<
 		string,
@@ -224,6 +194,5 @@ export {
 	ThemeState,
 	getSpacing,
 	getUseStyles,
-	getNewUseStyles,
 	getColor,
 }
