@@ -35,7 +35,7 @@ const useComponentVariant = (
 	viewDefId: string,
 	componentType: string,
 	variantName: string,
-	theme?: ThemeState
+	theme: ThemeState
 ): ComponentVariant | undefined =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
@@ -45,7 +45,7 @@ const useComponentVariant = (
 			]
 		if (!variant) return
 		const variantOverride =
-			theme?.definition?.variantOverrides?.[componentType]?.[variantName]
+			theme.definition.variantOverrides[componentType]?.[variantName]
 		if (!variantOverride) {
 			return variant
 		}

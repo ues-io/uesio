@@ -3,32 +3,12 @@ import themeOps from "../bands/theme/operations"
 import { useTheme } from "../bands/theme/selectors"
 import { ComponentInternal } from "../component/component"
 import { parseKey } from "../component/path"
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core"
 
 import { BaseProps } from "../definition/definition"
 
-import { PaletteOptions } from "@material-ui/core/styles/createPalette"
-
 import { useRoute } from "../bands/route/selectors"
 import { getDispatcher } from "../store/store"
-import { ThemeState } from "../bands/theme/types"
 import { useSite } from "../bands/site/selectors"
-
-const makePaletteTheme = (theme: ThemeState): PaletteOptions =>
-	Object.entries(theme?.definition?.palette || {}).reduce(
-		(acc, [label, color]) => ({
-			...acc,
-			[label]: { main: color },
-		}),
-		{}
-	)
-
-const makeTheme = (theme: ThemeState) => {
-	const themePalette = makePaletteTheme(theme)
-	return createMuiTheme({
-		palette: { ...themePalette },
-	})
-}
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const dispatcher = getDispatcher()
@@ -71,14 +51,11 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!theme) return null
 
 	return (
-		<ThemeProvider theme={makeTheme(theme)}>
-			<CssBaseline />
-			<ComponentInternal
-				componentType="uesio.runtime"
-				path=""
-				context={routeContext}
-			/>
-		</ThemeProvider>
+		<ComponentInternal
+			componentType="uesio.runtime"
+			path=""
+			context={routeContext}
+		/>
 	)
 }
 

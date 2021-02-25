@@ -48,50 +48,52 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.typography:
-              text: Create a New Theme
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: themesDeck
-              wire: themes
-              mode: EDIT
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
+                - material.typography:
+                    text: Create a New Theme
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: themesDeck
+                    wire: themes
+                    mode: EDIT
                     components:
-                      - material.grid:
-                          spacing: 4
-                          items:
-                            - material.griditem:
-                                xs: 3
-                                components:
-                                  - material.field:
-                                      fieldId: studio.name
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "themes"
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${studio.name}"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.grid:
+                                spacing: 4
+                                items:
+                                  - material.griditem:
+                                      xs: 3
+                                      components:
+                                        - material.field:
+                                            fieldId: studio.name
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "contained"
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "themes"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${studio.name}"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/themes"

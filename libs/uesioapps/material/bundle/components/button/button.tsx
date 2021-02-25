@@ -3,17 +3,13 @@ import React, { FunctionComponent } from "react"
 import { hooks, material, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
-interface ThemedProps extends ButtonProps {
-	theme: styles.ThemeState
-}
 const stylesObj = {
-	root: (props: ThemedProps) => ({
+	root: (props: ButtonProps) => ({
 		fontWeight: 400,
-		backgroundColor:
-			props.theme.definition?.palette?.[
-				props.definition?.color || "primary"
-			],
-		margin: styles.getSpacing(props.theme, props.definition.margin || 1),
+		margin: styles.getSpacing(
+			props.context.getTheme(),
+			props.definition.margin || 1
+		),
 	}),
 }
 
@@ -22,13 +18,12 @@ const useStyles = styles.getNewUseStyles(["root"], stylesObj)
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props
 	const uesio = hooks.useUesio(props)
-	const theme = uesio.getTheme()
-	if (!theme) return null
-	const classes = useStyles({ theme, ...props })
+	const classes = useStyles(props)
 
 	return (
 		<material.Button
 			className={classes.root}
+			color={props.definition.color || "primary"}
 			variant={definition?.variant || "contained"}
 			fullWidth={definition.fullWidth}
 			onClick={

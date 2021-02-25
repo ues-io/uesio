@@ -66,95 +66,97 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.breadcrumbs:
-              crumbs:
-                - text: home
-                  href: home
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: home
-                - text: $Param{appname}
-                  href: app/$Param{appname}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}
-                - text: $Param{workspacename}
-                  href: app/$Param{appname}/workspace/$Param{workspacename}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}/workspace/$Param{workspacename}
-                - text: files
-          - material.grid:
-              justify: space-between
-              items:
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: Files
-                          variant: h5
-                      - material.typography:
-                          text: Files gallery
-                          variant: body2
-                - material.griditem:
-                    components:
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
-                          id: fileDeck
-                          wire: filesCreate
-                          mode: READ
-                          components:
-                            - studio.fileupload:
-                                id: "fileuploadid"
-                                fieldId: studio.content
-                                fileCollection: uesio.workspacemetadatafiles
-          - material.deck:
-              xs: 12
-              sm: 6
-              md: 4
-              lg: 3
-              margin: 0
-              id: fileDeck
-              wire: files
-              mode: READ
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
-                    components:
-                      - material.file:
-                          fieldId: studio.content
-                          fileCollection: uesio.platform
-                          height: 100
-                          width: 100
-                          id: fileupid
-                          editable: false
-                          displayAs: preview
-                          accepts: all
-                      - material.typography:
-                          text: "Name:"
-                          variant: button
-                          color: primary
-                      - material.typography:
-                          text: "${studio.name}"
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${studio.name}"
-                    actions:
-                      - action:
-                        icon: "delete"
-                        size: "small"
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
                         signals:
-                          - signal: wire/MARK_FOR_DELETE
-                          - signal: wire/SAVE
-                            wires:
-                              - "files"
+                          - signal: route/NAVIGATE
+                            path: home
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                      - text: files
+                - material.grid:
+                    justify: space-between
+                    items:
+                      - material.griditem:
+                          components:
+                            - material.typography:
+                                text: Files
+                                variant: h5
+                            - material.typography:
+                                text: Files gallery
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.deck:
+                                xs: 12
+                                sm: 6
+                                md: 4
+                                lg: 3
+                                margin: 0
+                                id: fileDeck
+                                wire: filesCreate
+                                mode: READ
+                                components:
+                                  - studio.fileupload:
+                                      id: "fileuploadid"
+                                      fieldId: studio.content
+                                      fileCollection: uesio.workspacemetadatafiles
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    id: fileDeck
+                    wire: files
+                    mode: READ
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.file:
+                                fieldId: studio.content
+                                fileCollection: uesio.platform
+                                height: 100
+                                width: 100
+                                id: fileupid
+                                editable: false
+                                displayAs: preview
+                                accepts: all
+                            - material.typography:
+                                text: "Name:"
+                                variant: button
+                                color: primary
+                            - material.typography:
+                                text: "${studio.name}"
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${studio.name}"
+                          actions:
+                            - action:
+                              icon: "delete"
+                              size: "small"
+                              signals:
+                                - signal: wire/MARK_FOR_DELETE
+                                - signal: wire/SAVE
+                                  wires:
+                                    - "files"

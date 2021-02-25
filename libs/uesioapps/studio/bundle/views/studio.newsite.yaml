@@ -40,74 +40,76 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.typography:
-              text: Create a New Site
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: sitesDeck
-              wire: sites
-              mode: EDIT
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
+                - material.typography:
+                    text: Create a New Site
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: sitesDeck
+                    wire: sites
+                    mode: EDIT
                     components:
-                      - material.grid:
-                          spacing: 4
-                          items:
-                            - material.griditem:
-                                xs: 3
-                                components:
-                                  - material.field:
-                                      fieldId: uesio.name
-                      - material.typography:
-                          text: Select a bundle version
-                      - material.deck:
-                          xs: 3
-                          margin: 0
-                          id: bundlesDeck
-                          wire: bundles
-                          mode: READ
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
                           components:
-                            - material.card:
+                            - material.grid:
+                                spacing: 4
+                                items:
+                                  - material.griditem:
+                                      xs: 3
+                                      components:
+                                        - material.field:
+                                            fieldId: uesio.name
+                            - material.typography:
+                                text: Select a bundle version
+                            - material.deck:
+                                xs: 3
+                                margin: 0
+                                id: bundlesDeck
+                                wire: bundles
+                                mode: READ
                                 components:
-                                  - material.typography:
-                                      text: ${uesio.namespace} v${uesio.major}.${uesio.minor}.${uesio.patch}
-                                signals:
-                                  - signal: "wire/UPDATE_RECORD"
-                                    wire: sites
-                                    record: $Parent.RecordId{}
-                                    field: uesio.versionref
-                                    value: v${uesio.major}.${uesio.minor}.${uesio.patch}
-                                  - signal: "wire/UPDATE_RECORD"
-                                    wire: sites
-                                    record: $Parent.RecordId{}
-                                    field: uesio.bundleid
-                                    value: ${uesio.namespace}_v${uesio.major}.${uesio.minor}.${uesio.patch}
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "contained"
-                                text: "Save"
-                                signals:
-                                  - signal: wire/SAVE
-                                    wires:
-                                      - "sites"
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}"
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Cancel"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}"
+                                  - material.card:
+                                      components:
+                                        - material.typography:
+                                            text: ${uesio.namespace} v${uesio.major}.${uesio.minor}.${uesio.patch}
+                                      signals:
+                                        - signal: "wire/UPDATE_RECORD"
+                                          wire: sites
+                                          record: $Parent.RecordId{}
+                                          field: uesio.versionref
+                                          value: v${uesio.major}.${uesio.minor}.${uesio.patch}
+                                        - signal: "wire/UPDATE_RECORD"
+                                          wire: sites
+                                          record: $Parent.RecordId{}
+                                          field: uesio.bundleid
+                                          value: ${uesio.namespace}_v${uesio.major}.${uesio.minor}.${uesio.patch}
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "contained"
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "sites"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}"
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}"

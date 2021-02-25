@@ -8,6 +8,7 @@ import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
 import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
+import { defaultTheme, ThemeState } from "../styles/styles"
 
 type ContextFrame = {
 	wire?: string
@@ -21,6 +22,7 @@ type ContextFrame = {
 	workspace?: WorkspaceState
 	siteadmin?: SiteState
 	site?: SiteState
+	theme?: ThemeState
 }
 
 const ANCESTOR_INDICATOR = "Parent."
@@ -97,9 +99,13 @@ class Context {
 	}
 	getTheme = () => {
 		const route = this.getRoute()
-		return route
+		const theme = route
 			? themeSelectors.selectById(getStore().getState(), route.theme)
 			: undefined
+		if (!theme) {
+			return defaultTheme
+		}
+		return theme
 	}
 
 	getComponentVariant = (componentType: string, variantName: string) => {

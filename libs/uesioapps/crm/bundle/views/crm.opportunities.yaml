@@ -3,72 +3,74 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.typography:
-        text: Opportunities
-        variant: h6
-    - material.buttonset:
-        buttons:
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/CREATE_RECORD
-                  wire: opportunities
-              text: Create Row
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - opportunities
-              text: Save
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: wire/CANCEL
-                  wire: opportunities
-              text: Cancel
-              variant: contained
-          - material.button:
-              color: primary
-              signals:
-                - signal: component/material.table/TOGGLE_MODE
-                  target: opportunitiesTable
-              text: Mode
-              variant: contained
-    - material.table:
-        columns:
-          - material.column:
-              field: crm.name
-          - material.column:
-              field: crm.description
-          - material.column:
-              field: crm.status
-          - material.column:
-              field: crm.account
-          - material.column:
-              field: crm.updated
-          - material.column:
-              field: crm.created
-          - material.column:
-              components:
+    - material.materialwrapper:
+        components:
+          - material.typography:
+              text: Opportunities
+              variant: h6
+          - material.buttonset:
+              buttons:
                 - material.button:
                     color: primary
                     signals:
-                      - path: opportunity/${crm.id}
-                        signal: route/NAVIGATE
-                    text: Edit
+                      - signal: wire/CREATE_RECORD
+                        wire: opportunities
+                    text: Create Row
                     variant: contained
                 - material.button:
                     color: primary
                     signals:
-                      - signal: wire/TOGGLE_DELETE_STATUS
-                    text: Delete
+                      - signal: wire/SAVE
+                        wires:
+                          - opportunities
+                    text: Save
                     variant: contained
-        id: opportunitiesTable
-        mode: EDIT
-        wire: opportunities
+                - material.button:
+                    color: primary
+                    signals:
+                      - signal: wire/CANCEL
+                        wire: opportunities
+                    text: Cancel
+                    variant: contained
+                - material.button:
+                    color: primary
+                    signals:
+                      - signal: component/material.table/TOGGLE_MODE
+                        target: opportunitiesTable
+                    text: Mode
+                    variant: contained
+          - material.table:
+              columns:
+                - material.column:
+                    field: crm.name
+                - material.column:
+                    field: crm.description
+                - material.column:
+                    field: crm.status
+                - material.column:
+                    field: crm.account
+                - material.column:
+                    field: crm.updated
+                - material.column:
+                    field: crm.created
+                - material.column:
+                    components:
+                      - material.button:
+                          color: primary
+                          signals:
+                            - path: opportunity/${crm.id}
+                              signal: route/NAVIGATE
+                          text: Edit
+                          variant: contained
+                      - material.button:
+                          color: primary
+                          signals:
+                            - signal: wire/TOGGLE_DELETE_STATUS
+                          text: Delete
+                          variant: contained
+              id: opportunitiesTable
+              mode: EDIT
+              wire: opportunities
   wires:
     opportunities:
       collection: crm.opportunities

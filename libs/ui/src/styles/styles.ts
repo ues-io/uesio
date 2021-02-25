@@ -169,8 +169,23 @@ function getUseStyles<T extends styledDefinition>(
 		return createStyles(createStyleArgs)
 	})
 }
-
-function getNewUseStyles<T extends newStyledDefinition>(
+const defaultTheme: ThemeState = {
+	name: "default",
+	namespace: "system",
+	definition: {
+		palette: {
+			primary: "#1976d2",
+			secondary: "#dc004e",
+			error: "#f44336",
+			warning: "#ff9800",
+			info: "#2196f3",
+			success: "#4caf50",
+		},
+		variantOverrides: {},
+		spacing: 8,
+	},
+}
+function getNewUseStyles<T extends styledDefinition>(
 	classNames: string[],
 	defaultStyling?: Record<
 		string,
@@ -195,6 +210,7 @@ function getNewUseStyles<T extends newStyledDefinition>(
 	return createUseStyles(createStyleArgs)
 }
 export {
+	defaultTheme,
 	useStyleProperty,
 	getBackgroundStyles,
 	getMarginStyles,

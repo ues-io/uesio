@@ -3,118 +3,120 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.grid:
-        direction: column
-        justify: flex-start
-        items:
-          - material.griditem:
-              components:
-                - material.typography:
-                    text: "Recent Leads:"
-                    color: textSecondary
-                - material.deck:
-                    id: homeLeads
-                    margin: 0
-                    mode: READ
-                    wire: leads
-                    xs: 3
+    - material.materialwrapper:
+        components:
+          - material.grid:
+              direction: column
+              justify: flex-start
+              items:
+                - material.griditem:
                     components:
-                      - material.card:
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: lead/${crm.id}
+                      - material.typography:
+                          text: "Recent Leads:"
+                          color: textSecondary
+                      - material.deck:
+                          id: homeLeads
+                          margin: 0
+                          mode: READ
+                          wire: leads
+                          xs: 3
                           components:
-                            - material.griditem:
+                            - material.card:
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: lead/${crm.id}
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${crm.firstname}"
-                                textTransform: "capitalize"
-                            - material.field:
-                                fieldId: crm.updated
-          - material.griditem:
-              components:
-                - material.typography:
-                    text: "Recent Accounts:"
-                    color: textSecondary
-                - material.deck:
-                    id: homeAccounts
-                    margin: 0
-                    mode: READ
-                    wire: accounts
-                    xs: 3
+                                  - material.griditem:
+                                      components:
+                                        - material.icon:
+                                            type: "open"
+                                            float: right
+                                  - material.typography:
+                                      text: "${crm.firstname}"
+                                      textTransform: "capitalize"
+                                  - material.field:
+                                      fieldId: crm.updated
+                - material.griditem:
                     components:
-                      - material.card:
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: account/${crm.id}
+                      - material.typography:
+                          text: "Recent Accounts:"
+                          color: textSecondary
+                      - material.deck:
+                          id: homeAccounts
+                          margin: 0
+                          mode: READ
+                          wire: accounts
+                          xs: 3
                           components:
-                            - material.griditem:
+                            - material.card:
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: account/${crm.id}
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${crm.name}"
-                                textTransform: "capitalize"
-                            - material.field:
-                                fieldId: crm.updated
-          - material.griditem:
-              components:
-                - material.typography:
-                    text: "Recent Contacts:"
-                    color: textSecondary
-                - material.deck:
-                    id: homeContacts
-                    margin: 0
-                    mode: READ
-                    wire: contacts
-                    xs: 3
+                                  - material.griditem:
+                                      components:
+                                        - material.icon:
+                                            type: "open"
+                                            float: right
+                                  - material.typography:
+                                      text: "${crm.name}"
+                                      textTransform: "capitalize"
+                                  - material.field:
+                                      fieldId: crm.updated
+                - material.griditem:
                     components:
-                      - material.card:
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: contact/${crm.id}
+                      - material.typography:
+                          text: "Recent Contacts:"
+                          color: textSecondary
+                      - material.deck:
+                          id: homeContacts
+                          margin: 0
+                          mode: READ
+                          wire: contacts
+                          xs: 3
                           components:
-                            - material.griditem:
+                            - material.card:
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: contact/${crm.id}
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${crm.firstname}"
-                                textTransform: "capitalize"
-                            - material.field:
-                                fieldId: crm.updated
-          - material.griditem:
-              components:
-                - material.typography:
-                    text: "Recent Opportunities:"
-                    color: textSecondary
-                - material.deck:
-                    id: homeOpportunities
-                    margin: 0
-                    mode: READ
-                    wire: opportunities
-                    xs: 3
+                                  - material.griditem:
+                                      components:
+                                        - material.icon:
+                                            type: "open"
+                                            float: right
+                                  - material.typography:
+                                      text: "${crm.firstname}"
+                                      textTransform: "capitalize"
+                                  - material.field:
+                                      fieldId: crm.updated
+                - material.griditem:
                     components:
-                      - material.card:
-                          signals:
-                            - signal: route/NAVIGATE
-                              path: opportunity/${crm.id}
+                      - material.typography:
+                          text: "Recent Opportunities:"
+                          color: textSecondary
+                      - material.deck:
+                          id: homeOpportunities
+                          margin: 0
+                          mode: READ
+                          wire: opportunities
+                          xs: 3
                           components:
-                            - material.griditem:
+                            - material.card:
+                                signals:
+                                  - signal: route/NAVIGATE
+                                    path: opportunity/${crm.id}
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${crm.name}"
-                                textTransform: "capitalize"
-                            - material.field:
-                                fieldId: crm.updated
+                                  - material.griditem:
+                                      components:
+                                        - material.icon:
+                                            type: "open"
+                                            float: right
+                                  - material.typography:
+                                      text: "${crm.name}"
+                                      textTransform: "capitalize"
+                                  - material.field:
+                                      fieldId: crm.updated
 
   wires:
     accounts:

@@ -1,80 +1,82 @@
 name: topbar
 definition:
   components:
-    - material.grid:
-        alignitems: center
-        background:
-          color: "#222"
-        height: 60px
-        items:
-          - material.griditem:
-              components:
-                - material.image:
-                    align: left
-                    file: crm.logo
-                    height: 30px
-                    margin:
-                      - 0
-                      - 2
-                    signals:
-                      - path: home
-                        signal: route/NAVIGATE
-          - material.griditem:
-              components:
-                - material.grid:
-                    alignitems: center
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.button:
-                                signals:
-                                  - path: accounts
-                                    signal: route/NAVIGATE
-                                text: Accounts
-                                variant: text
-                      - material.griditem:
-                          components:
-                            - material.button:
-                                signals:
-                                  - path: contacts
-                                    signal: route/NAVIGATE
-                                text: Contacts
-                                variant: text
-                      - material.griditem:
-                          components:
-                            - material.button:
-                                signals:
-                                  - path: leads
-                                    signal: route/NAVIGATE
-                                text: Leads
-                                variant: text
-                      - material.griditem:
-                          components:
-                            - material.button:
-                                signals:
-                                  - path: opportunities
-                                    signal: route/NAVIGATE
-                                text: Opportunities
-                                variant: text
-          - material.griditem:
-              components:
-                - material.grid:
-                    alignitems: center
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.button:
-                                signals:
-                                  - signal: user/LOGOUT
-                                text: Log Out
-                                variant: text
-                      - material.griditem:
-                          components:
-                            - material.avatar:
-                                margin:
-                                  - 0
-                                  - 2
-                                  - 0
-                                  - 1
-        justify: space-between
+    - material.materialwrapper:
+        components:
+          - material.grid:
+              alignitems: center
+              background:
+                color: "#222"
+              height: 60px
+              items:
+                - material.griditem:
+                    components:
+                      - material.image:
+                          align: left
+                          file: crm.logo
+                          height: 30px
+                          margin:
+                            - 0
+                            - 2
+                          signals:
+                            - path: home
+                              signal: route/NAVIGATE
+                - material.griditem:
+                    components:
+                      - material.grid:
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                components:
+                                  - material.button:
+                                      signals:
+                                        - path: accounts
+                                          signal: route/NAVIGATE
+                                      text: Accounts
+                                      variant: text
+                            - material.griditem:
+                                components:
+                                  - material.button:
+                                      signals:
+                                        - path: contacts
+                                          signal: route/NAVIGATE
+                                      text: Contacts
+                                      variant: text
+                            - material.griditem:
+                                components:
+                                  - material.button:
+                                      signals:
+                                        - path: leads
+                                          signal: route/NAVIGATE
+                                      text: Leads
+                                      variant: text
+                            - material.griditem:
+                                components:
+                                  - material.button:
+                                      signals:
+                                        - path: opportunities
+                                          signal: route/NAVIGATE
+                                      text: Opportunities
+                                      variant: text
+                - material.griditem:
+                    components:
+                      - material.grid:
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                components:
+                                  - material.button:
+                                      signals:
+                                        - signal: user/LOGOUT
+                                      text: Log Out
+                                      variant: text
+                            - material.griditem:
+                                components:
+                                  - material.avatar:
+                                      margin:
+                                        - 0
+                                        - 2
+                                        - 0
+                                        - 1
+              justify: space-between
   wires: null

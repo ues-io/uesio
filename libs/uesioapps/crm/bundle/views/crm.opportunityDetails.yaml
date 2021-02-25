@@ -3,68 +3,70 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.deck:
+    - material.materialwrapper:
         components:
-          - material.card:
+          - material.deck:
               components:
-                - material.grid:
-                    alignitems: center
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.typography:
-                                text: ${crm.name}
-                                textTransform: uppercase
-                                variant: h5
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: primary
-                                      signals:
-                                        - signal: component/material.deck/TOGGLE_MODE
-                                          target: oneOpportunityDeck
-                                      text: Edit
-                                      variant: outlined
-                                  - material.button:
-                                      color: primary
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - opportunities
-                                      text: Save
-                                      variant: outlined
-                                  - material.button:
-                                      color: primary
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: opportunities
-                                      text: Cancel
-                                      variant: outlined
-                    justify: space-between
-                - material.field:
-                    fieldId: crm.name
-                - material.field:
-                    fieldId: crm.description
-                - material.field:
-                    fieldId: crm.status
-                - material.field:
-                    fieldId: crm.account
-                - material.field:
-                    fieldId: crm.updated
-                - material.field:
-                    fieldId: crm.created
-              margin: 1
-              media:
-                background: null
-                color: "#FF5733"
-                height: 10px
-        id: oneOpportunityDeck
-        margin: 0
-        mode: READ
-        wire: opportunities
-        xs: 12
+                - material.card:
+                    components:
+                      - material.grid:
+                          alignitems: center
+                          items:
+                            - material.griditem:
+                                components:
+                                  - material.typography:
+                                      text: ${crm.name}
+                                      textTransform: uppercase
+                                      variant: h5
+                            - material.griditem:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            color: primary
+                                            signals:
+                                              - signal: component/material.deck/TOGGLE_MODE
+                                                target: oneOpportunityDeck
+                                            text: Edit
+                                            variant: outlined
+                                        - material.button:
+                                            color: primary
+                                            signals:
+                                              - signal: wire/SAVE
+                                                wires:
+                                                  - opportunities
+                                            text: Save
+                                            variant: outlined
+                                        - material.button:
+                                            color: primary
+                                            signals:
+                                              - signal: wire/CANCEL
+                                                wire: opportunities
+                                            text: Cancel
+                                            variant: outlined
+                          justify: space-between
+                      - material.field:
+                          fieldId: crm.name
+                      - material.field:
+                          fieldId: crm.description
+                      - material.field:
+                          fieldId: crm.status
+                      - material.field:
+                          fieldId: crm.account
+                      - material.field:
+                          fieldId: crm.updated
+                      - material.field:
+                          fieldId: crm.created
+                    margin: 1
+                    media:
+                      background: null
+                      color: "#FF5733"
+                      height: 10px
+              id: oneOpportunityDeck
+              margin: 0
+              mode: READ
+              wire: opportunities
+              xs: 12
   wires:
     opportunities:
       collection: crm.opportunities

@@ -43,75 +43,77 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.breadcrumbs:
-              crumbs:
-                - text: home
-                  href: home
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: home
-                - text: $Param{appname}
-                  href: app/$Param{appname}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}
-                - text: $Param{workspacename}
-                  href: app/$Param{appname}/workspace/$Param{workspacename}
-                  signals:
-                    - signal: route/NAVIGATE
-                      path: app/$Param{appname}/workspace/$Param{workspacename}
-                - text: bots
-          - material.grid:
-              justify: space-between
-              items:
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: Bots
-                          variant: h5
-                      - material.typography:
-                          text: Gotta catch 'em all!
-                          variant: body2
-                - material.griditem:
-                    components:
-                      - material.buttonset:
-                          buttons:
-                            - material.button:
-                                color: "primary"
-                                variant: "outlined"
-                                text: "Create New Bot"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
-          - material.deck:
-              xs: 12
-              sm: 6
-              md: 4
-              lg: 3
-              margin: 0
-              id: botsDeck
-              wire: bots
+          - material.container:
               components:
-                - material.card:
-                    media:
-                      background:
-                        color:
-                          intention: "primary"
-                      height: 10px
-                    margin: 1
-                    components:
+                - material.breadcrumbs:
+                    crumbs:
+                      - text: home
+                        href: home
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: home
+                      - text: $Param{appname}
+                        href: app/$Param{appname}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}
+                      - text: $Param{workspacename}
+                        href: app/$Param{appname}/workspace/$Param{workspacename}
+                        signals:
+                          - signal: route/NAVIGATE
+                            path: app/$Param{appname}/workspace/$Param{workspacename}
+                      - text: bots
+                - material.grid:
+                    justify: space-between
+                    items:
                       - material.griditem:
                           components:
-                            - material.icon:
-                                type: "open"
-                                float: right
-                      - material.typography:
-                          text: "${studio.type}"
-                          textTransform: "capitalize"
-                      - material.typography:
-                          text: "${studio.name}"
-                    signals:
-                      - signal: "route/NAVIGATE"
-                        path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                            - material.typography:
+                                text: Bots
+                                variant: h5
+                            - material.typography:
+                                text: Gotta catch 'em all!
+                                variant: body2
+                      - material.griditem:
+                          components:
+                            - material.buttonset:
+                                buttons:
+                                  - material.button:
+                                      color: "primary"
+                                      variant: "outlined"
+                                      text: "Create New Bot"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
+                - material.deck:
+                    xs: 12
+                    sm: 6
+                    md: 4
+                    lg: 3
+                    margin: 0
+                    id: botsDeck
+                    wire: bots
+                    components:
+                      - material.card:
+                          media:
+                            background:
+                              color:
+                                intention: "primary"
+                            height: 10px
+                          margin: 1
+                          components:
+                            - material.griditem:
+                                components:
+                                  - material.icon:
+                                      type: "open"
+                                      float: right
+                            - material.typography:
+                                text: "${studio.type}"
+                                textTransform: "capitalize"
+                            - material.typography:
+                                text: "${studio.name}"
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"

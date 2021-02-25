@@ -34,84 +34,86 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.container:
+    - material.materialwrapper:
         components:
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: installedDeck
-              wire: installedapp
-              mode: READ
+          - material.container:
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: ${["studio.bundle"]["uesio.namespace"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
-                - material.grid:
-                    items:
-                      - material.griditem:
-                          xs: true
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "primary"
-                                  height: 10px
-                                margin: 1
-                                components:
-                                  - material.grid:
-                                      justify: space-between
-                                      alignitems: center
-                                      items:
-                                        - material.griditem:
-                                            components:
-                                              - material.typography:
-                                                  text: ${studio.name}
-                                                  variant: h5
-                                                  textTransform: "uppercase"
-                                        - material.griditem:
-                                            components:
-                                              - material.buttonset:
-                                                  buttons:
-                                                    - material.button:
-                                                        color: "primary"
-                                                        variant: "outlined"
-                                                        text: "Uninstall"
-                                                        signals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "installedapp"
-                                                          - signal: "route/NAVIGATE"
-                                                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                                  - material.field:
-                                      fieldId: studio.bundle
-          - material.typography:
-              text: Versions
-              variant: h5
-          - material.deck:
-              xs: 12
-              margin: 0
-              id: versions
-              wire: versions
-              mode: READ
-              components:
-                - material.card:
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: installedDeck
+                    wire: installedapp
+                    mode: READ
                     components:
-                      - material.typography:
-                          text: "v${uesio.major}.${uesio.minor}.${uesio.patch}"
+                      - material.breadcrumbs:
+                          crumbs:
+                            - text: home
+                              href: home
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: home
+                            - text: $Param{appname}
+                              href: app/$Param{appname}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}
+                            - text: $Param{workspacename}
+                              href: app/$Param{appname}/workspace/$Param{workspacename}
+                              signals:
+                                - signal: route/NAVIGATE
+                                  path: app/$Param{appname}/workspace/$Param{workspacename}
+                            - text: ${["studio.bundle"]["uesio.namespace"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                      - material.grid:
+                          items:
+                            - material.griditem:
+                                xs: true
+                                components:
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "primary"
+                                        height: 10px
+                                      margin: 1
+                                      components:
+                                        - material.grid:
+                                            justify: space-between
+                                            alignitems: center
+                                            items:
+                                              - material.griditem:
+                                                  components:
+                                                    - material.typography:
+                                                        text: ${studio.name}
+                                                        variant: h5
+                                                        textTransform: "uppercase"
+                                              - material.griditem:
+                                                  components:
+                                                    - material.buttonset:
+                                                        buttons:
+                                                          - material.button:
+                                                              color: "primary"
+                                                              variant: "outlined"
+                                                              text: "Uninstall"
+                                                              signals:
+                                                                - signal: wire/MARK_FOR_DELETE
+                                                                - signal: wire/SAVE
+                                                                  wires:
+                                                                    - "installedapp"
+                                                                - signal: "route/NAVIGATE"
+                                                                  path: app/$Param{appname}/workspace/$Param{workspacename}
+                                        - material.field:
+                                            fieldId: studio.bundle
+                - material.typography:
+                    text: Versions
+                    variant: h5
+                - material.deck:
+                    xs: 12
+                    margin: 0
+                    id: versions
+                    wire: versions
+                    mode: READ
+                    components:
+                      - material.card:
+                          components:
+                            - material.typography:
+                                text: "v${uesio.major}.${uesio.minor}.${uesio.patch}"
