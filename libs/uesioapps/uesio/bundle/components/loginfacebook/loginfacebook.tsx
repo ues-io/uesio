@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react"
 import { definition, hooks, styles } from "@uesio/ui"
 import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login"
-import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonStyles } from "../loginhelpers/button"
 
@@ -46,7 +45,6 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 				autoLoad={false}
 				fields="name,email"
 				callback={responseFacebook}
-				icon={<LoginIcon image="uesio.facebooksmall" {...props} />}
 				textButton={buttonText}
 				cssClass={classes.facebookLoginButton}
 			/>

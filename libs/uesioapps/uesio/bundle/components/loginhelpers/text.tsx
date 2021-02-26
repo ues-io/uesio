@@ -7,8 +7,9 @@ interface TextProps extends definition.BaseProps {
 
 const useStyles = styles.getUseStyles(["loginButtonText"], {
 	loginButtonText: {
-		padding: "10px 10px 10px 0",
+		padding: "10px",
 		fontWeight: 500,
+		margin: "auto",
 	},
 })
 

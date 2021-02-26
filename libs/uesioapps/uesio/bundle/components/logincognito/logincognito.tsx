@@ -5,7 +5,6 @@ import React, {
 	SetStateAction,
 } from "react"
 import { definition, hooks, component, styles } from "@uesio/ui"
-import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import LoginText from "../loginhelpers/text"
 import { getButtonStyles } from "../loginhelpers/button"
@@ -96,7 +95,6 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 			onClick={() => setMode("login")}
 			className={classes.loginButton}
 		>
-			<LoginIcon image="uesio.amazonsmall" {...props} />
 			<LoginText {...props} />
 		</button>
 	)

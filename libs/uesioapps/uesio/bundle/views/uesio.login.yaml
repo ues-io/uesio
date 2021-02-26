@@ -16,7 +16,7 @@ definition:
                 - material.griditem:
                     height: 100vh
                     background:
-                      color: white
+                      color: "#f3f3f3"
                     xs: 12
                     md: 6
                     lg: 5
@@ -31,9 +31,9 @@ definition:
                                 components:
                                   - material.image:
                                       file: uesio.logo
-                                      height: 100px
+                                      height: 150px
                                       align: center
-                                      margin: 2
+                                      margin: 4
                                   - uesio.logingoogle:
                                       text: Sign in with Google
                                       clientId: uesio.googleClientId
