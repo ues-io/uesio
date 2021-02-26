@@ -1,25 +1,24 @@
 import React, { FunctionComponent } from "react"
 import { DatePickerProps } from "./datePickerdefinition"
-import { material } from "@uesio/ui"
+import { styles } from "@uesio/ui"
+import { TextField } from "@material-ui/core"
 
-const useStyles = material.makeStyles(() => ({
+const useStyles = styles.getUseStyles(["container"], {
 	container: {
 		padding: "10px",
 	},
-}))
+})
 
-const DatePicker: FunctionComponent<DatePickerProps> = ({
-	definition: { color, label, variant },
-}) => (
-	<div className={useStyles().container}>
-		<material.TextField
-			color={color}
-			label={label}
+const DatePicker: FunctionComponent<DatePickerProps> = (props) => (
+	<div className={useStyles(props).container}>
+		<TextField
+			color={props.definition.color}
+			label={props.definition.label}
 			type="date"
 			InputLabelProps={{
 				shrink: true,
 			}}
-			variant={variant}
+			variant={props.definition.variant}
 		/>
 	</div>
 )

@@ -1,5 +1,13 @@
 import React, { FunctionComponent } from "react"
-import { definition, material, hooks, wire } from "@uesio/ui"
+import { definition, hooks, wire } from "@uesio/ui"
+import {
+	ListItem,
+	List,
+	Switch,
+	ListSubheader,
+	ListItemText,
+	ListItemSecondaryAction,
+} from "@material-ui/core"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -66,21 +74,15 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<material.List
-			subheader={<material.ListSubheader>{label}</material.ListSubheader>}
-			dense
-		>
+		<List subheader={<ListSubheader>{label}</ListSubheader>} dense>
 			{data.map((record) => {
 				const itemName =
 					appName + "." + record.getFieldValue(nameNameField)
 				return (
-					<material.ListItem divider>
-						<material.ListItemText
-							id={record.getId()}
-							primary={itemName}
-						/>
-						<material.ListItemSecondaryAction>
-							<material.Switch
+					<ListItem divider>
+						<ListItemText id={record.getId()} primary={itemName} />
+						<ListItemSecondaryAction>
+							<Switch
 								edge="start"
 								disabled={disabled}
 								onChange={handleToggle(itemName)}
@@ -89,11 +91,11 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 									"aria-labelledby": record.getId(),
 								}}
 							/>
-						</material.ListItemSecondaryAction>
-					</material.ListItem>
+						</ListItemSecondaryAction>
+					</ListItem>
 				)
 			})}
-		</material.List>
+		</List>
 	)
 }
 
