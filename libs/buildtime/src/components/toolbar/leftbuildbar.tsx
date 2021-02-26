@@ -3,8 +3,8 @@ import MiniToolbar from "./minitoolbar"
 import WiresToolbar from "./wirestoolbar/wirestoolbar"
 import ComponentsToolbar from "./componentstoolbar/componentstoolbar"
 import PropertiesPanel from "./propertiespanel/propertiespanel"
-import { definition, material, component, hooks } from "@uesio/ui"
-
+import { definition, component, hooks } from "@uesio/ui"
+import { Paper } from "@material-ui/core"
 interface Props extends definition.BaseProps {
 	selectedPanel: string
 	selectedNode: string
@@ -51,7 +51,7 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 			open={true}
 			variant="persistent"
 		>
-			<material.Paper
+			<Paper
 				style={{
 					height: "50%",
 					display: "flex",
@@ -67,8 +67,8 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 					definition={definition}
 					propDef={propDef}
 				/>
-			</material.Paper>
-			<material.Paper
+			</Paper>
+			<Paper
 				style={{
 					height: "50%",
 					display: "flex",
@@ -84,7 +84,7 @@ const LeftBuildbar: FunctionComponent<Props> = (props) => {
 						context={context}
 					/>
 				)}
-			</material.Paper>
+			</Paper>
 		</MiniToolbar>
 	)
 }

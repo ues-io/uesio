@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
-import { hooks, material, component, definition } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
 import CheckBox from "@material-ui/icons/CheckBox"
@@ -24,7 +24,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const [namespace] = component.path.parseKey(collectionKey)
 
 	const uesio = hooks.useUesio(props)
-	const theme = material.useTheme()
+	const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
 		"FIELD",
 		namespace,
@@ -77,7 +77,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								}
 								iconColor={
 									selected
-										? theme.palette.primary.main
+										? theme.definition.palette.primary
 										: undefined
 								}
 								key={index}

@@ -117,7 +117,7 @@ function isValidColor(potientialColor: string): boolean {
 }
 
 interface styledDefinition {
-	definition: {
+	definition?: {
 		"uesio.styles"?: Record<string, Record<string, unknown>>
 	}
 }
@@ -161,7 +161,7 @@ function getUseStyles<T extends styledDefinition>(
 				defaultValues = defaultValuesFromStyles
 			}
 			const customExtensions =
-				props.definition?.["uesio.styles"]?.[className] || {}
+				props?.definition?.["uesio.styles"]?.[className] || {}
 			return { ...defaultValues, ...customExtensions }
 		}
 	})

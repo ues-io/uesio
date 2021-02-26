@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { material, definition, wire, hooks, builder } from "@uesio/ui"
+import { definition, wire, hooks, builder } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import AddIcon from "@material-ui/icons/AddBox"
@@ -59,17 +59,17 @@ const getConditionProperties = (
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, definition: def, path, context } = props
 	const uesio = hooks.useUesio(props)
-	const theme = material.useTheme()
+	const theme = uesio.getTheme()
 	const selectedNode = uesio.builder.useSelectedNode()
 
 	const conditionsDef = def?.conditions as definition.Definition[] | undefined
-
+	const primaryColor = theme.definition.palette.primary
 	return (
 		<ExpandPanel
 			defaultExpanded={false}
 			title={section.title}
 			action={AddIcon}
-			actionColor={theme.palette.primary.main}
+			actionColor={primaryColor}
 			actionOnClick={(): void => {
 				uesio.view.addDefinition(path + '["conditions"]', {
 					field: null,
@@ -86,7 +86,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							title={getConditionTitle(condition)}
 							icon={ConditionsIcon}
 							selected={selected}
-							iconColor={theme.palette.primary.main}
+							iconColor={primaryColor}
 							key={index}
 							onClick={(): void => {
 								uesio.builder.setSelectedNode(conditionPath)

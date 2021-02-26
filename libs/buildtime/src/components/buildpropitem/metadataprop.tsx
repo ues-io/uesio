@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
-import { definition, component, hooks, builder, material } from "@uesio/ui"
+import { definition, component, hooks, builder } from "@uesio/ui"
+import { Grid } from "@material-ui/core"
 import SelectProp from "./selectprop"
 
 interface MetadataPropRendererProps extends PropRendererProps {
@@ -54,8 +55,8 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	})
 
 	return (
-		<material.Grid container spacing={1}>
-			<material.Grid item xs={6}>
+		<Grid container spacing={1}>
+			<Grid item xs={6}>
 				{namespaces ? (
 					<SelectProp
 						{...props}
@@ -81,8 +82,8 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 						}}
 					/>
 				)}
-			</material.Grid>
-			<material.Grid item xs={6}>
+			</Grid>
+			<Grid item xs={6}>
 				{metadata ? (
 					<SelectProp
 						{...props}
@@ -114,8 +115,8 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 						}}
 					/>
 				)}
-			</material.Grid>
-		</material.Grid>
+			</Grid>
+		</Grid>
 	)
 }
 

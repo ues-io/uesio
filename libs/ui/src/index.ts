@@ -30,7 +30,7 @@ export {
 	definition,
 	hooks,
 	loader,
-	material,
+	// material,
 	signal,
 	styles,
 	util,

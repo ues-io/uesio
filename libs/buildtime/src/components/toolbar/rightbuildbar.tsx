@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react"
 import MiniToolbar from "./minitoolbar"
 import CodeToolbar from "./codetoolbar/codetoolbar"
-import { definition, material } from "@uesio/ui"
+import { definition } from "@uesio/ui"
+import { Paper } from "@material-ui/core"
 
 interface Props extends definition.BaseProps {
 	selectedPanel: string
@@ -31,7 +32,7 @@ const RightBuildbar: FunctionComponent<Props> = ({
 			variant="persistent"
 		>
 			{current && (
-				<material.Paper
+				<Paper
 					style={{
 						overflow: "hidden",
 						margin: "8px 0",
@@ -39,7 +40,7 @@ const RightBuildbar: FunctionComponent<Props> = ({
 					}}
 				>
 					<current.component path="" context={context} />
-				</material.Paper>
+				</Paper>
 			)}
 		</MiniToolbar>
 	)

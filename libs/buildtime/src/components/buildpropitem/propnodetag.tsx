@@ -7,8 +7,8 @@ import {
 	CardActionArea,
 	Popper,
 	Paper,
+	colors,
 } from "@material-ui/core"
-import { material } from "@uesio/ui"
 
 type Props = {
 	title: string
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 			width: "40px",
 			flex: 0,
 			margin: "0 0 0 8px",
-			color: material.colors.grey[400],
+			color: colors.grey[400],
 		},
 		popper: {
 			marginLeft: "16px",
