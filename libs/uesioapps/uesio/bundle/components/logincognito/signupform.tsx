@@ -1,4 +1,4 @@
-import { material } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import React, {
 	useState,
 	ChangeEvent,
@@ -6,9 +6,11 @@ import React, {
 	Dispatch,
 	SetStateAction,
 } from "react"
+import { TextField, Button } from "@material-ui/core"
+
 import { useLoginStyles } from "./logincognito"
 
-type SignupFormProps = {
+interface SignupFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	setSignupUsername: Dispatch<SetStateAction<string>>
 	signupUsername: string
@@ -23,22 +25,23 @@ type SignupFormProps = {
 	) => void
 }
 
-const SignupForm: FunctionComponent<SignupFormProps> = ({
-	signUp,
-	setMode,
-	setSignupUsername,
-	setSignupPassword,
-	signupUsername,
-	signupPassword,
-}) => {
-	const classes = useLoginStyles()
+const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
+	const {
+		signUp,
+		setMode,
+		setSignupUsername,
+		setSignupPassword,
+		signupUsername,
+		signupPassword,
+	} = props
+	const classes = useLoginStyles(props)
 	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
 	const [lastname, setLastName] = useState("")
 
 	return (
 		<>
-			<material.TextField
+			<TextField
 				label="First Name"
 				variant="outlined"
 				fullWidth
@@ -48,7 +51,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					setFirstName(e.target.value)
 				}
 			/>
-			<material.TextField
+			<TextField
 				label="Last Name"
 				variant="outlined"
 				fullWidth
@@ -58,7 +61,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					setLastName(e.target.value)
 				}
 			/>
-			<material.TextField
+			<TextField
 				label="Username"
 				variant="outlined"
 				fullWidth
@@ -68,7 +71,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					setSignupUsername(e.target.value)
 				}
 			/>
-			<material.TextField
+			<TextField
 				label="Email"
 				variant="outlined"
 				fullWidth
@@ -78,7 +81,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					setEmail(e.target.value)
 				}
 			/>
-			<material.TextField
+			<TextField
 				label="Password"
 				variant="outlined"
 				type="password"
@@ -89,13 +92,10 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					setSignupPassword(e.target.value)
 				}
 			/>
-			<material.Button
-				onClick={() => setMode("")}
-				className={classes.button}
-			>
+			<Button onClick={() => setMode("")} className={classes.button}>
 				Cancel
-			</material.Button>
-			<material.Button
+			</Button>
+			<Button
 				variant="contained"
 				color="primary"
 				className={classes.button}
@@ -109,8 +109,8 @@ const SignupForm: FunctionComponent<SignupFormProps> = ({
 					)
 				}}
 			>
-				Create Account
-			</material.Button>
+				Create Account`
+			</Button>
 		</>
 	)
 }

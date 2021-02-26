@@ -22,8 +22,11 @@ const useStyles = makeStyles((theme) =>
 		},
 		highlightLines: {
 			backgroundColor: (props: definition.BaseProps) =>
-				styles.getColor({ intention: "info" }, theme, props.context) ||
-				"pink",
+				styles.getColor(
+					{ intention: "info" },
+					props.context.getTheme(),
+					props.context
+				) || "pink",
 			animation: `$lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 		},
 	})

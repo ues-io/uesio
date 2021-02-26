@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks, styles } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonStyles } from "../loginhelpers/button"
@@ -15,15 +15,13 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = material.makeStyles(() =>
-	material.createStyles({
-		loginButton: getButtonStyles(),
-	})
-)
+const useStyles = styles.getUseStyles(["loginButton"], {
+	loginButton: getButtonStyles(),
+})
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles()
+	const classes = useStyles(props)
 	const buttonText = props.definition.text
 
 	return (
@@ -41,8 +39,8 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				}}
 				className={classes.loginButton}
 			>
-				<LoginIcon image="uesio.logosmall" />
-				<LoginText text={buttonText} />
+				<LoginIcon image="uesio.logosmall" {...props} />
+				<LoginText text={buttonText} {...props} />
 			</button>
 		</LoginWrapper>
 	)

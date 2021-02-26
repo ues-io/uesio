@@ -1,6 +1,6 @@
 import { GoogleLogin, GoogleLoginResponse } from "react-google-login"
 import React, { FunctionComponent } from "react"
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks, styles } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonWidth } from "../loginhelpers/button"
 
@@ -14,20 +14,18 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = material.makeStyles(() =>
-	material.createStyles({
-		googleButton: {
-			width: getButtonWidth(),
-			paddingRight: "8px !important",
-		},
-	})
-)
+const useStyles = styles.getUseStyles(["googleButton"], {
+	googleButton: {
+		width: getButtonWidth(),
+		paddingRight: "8px !important",
+	},
+})
 
 const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const clientIdKey = props.definition.clientId
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
-	const classes = useStyles()
+	const classes = useStyles(props)
 	const buttonText = props.definition.text
 
 	if (!clientIdValue) return null

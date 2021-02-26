@@ -4,7 +4,7 @@ import React, {
 	Dispatch,
 	SetStateAction,
 } from "react"
-import { definition, material, hooks, component } from "@uesio/ui"
+import { definition, hooks, component, styles } from "@uesio/ui"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import LoginText from "../loginhelpers/text"
@@ -31,30 +31,38 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useLoginStyles = material.makeStyles((theme) =>
-	material.createStyles({
+const useLoginStyles = styles.getUseStyles(
+	[
+		"loginButton",
+		"formwrapper",
+		"button",
+		"textfield",
+		"textbutton",
+		"errormsg",
+	],
+	{
 		loginButton: getButtonStyles(),
 		formwrapper: {
 			width: "300px",
 			margin: "40px auto",
 			textAlign: "center",
 		},
-		button: {
-			margin: theme.spacing(2, 1),
-		},
-		textfield: {
-			margin: theme.spacing(1, 0),
-		},
+		button: (props: definition.BaseProps) => ({
+			margin: styles.getSpacing(props.context.getTheme(), 2, 1),
+		}),
+		textfield: (props: definition.BaseProps) => ({
+			margin: styles.getSpacing(props.context.getTheme(), 1, 0),
+		}),
 		textbutton: {
 			verticalAlign: "initial",
 		},
 		errormsg: {
 			marginBottom: "10px",
 		},
-	})
+	}
 )
 
-type LoginButtonProps = {
+interface LoginButtonProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	text: string
 }
@@ -80,18 +88,16 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 		ClientId: clientId, // Your client id here
 	})
 
-const LoginButton: FunctionComponent<LoginButtonProps> = ({
-	setMode,
-	text,
-}) => {
-	const classes = useLoginStyles()
+const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
+	const { setMode } = props
+	const classes = useLoginStyles(props)
 	return (
 		<button
 			onClick={() => setMode("login")}
 			className={classes.loginButton}
 		>
-			<LoginIcon image="uesio.amazonsmall" />
-			<LoginText text={text} />
+			<LoginIcon image="uesio.amazonsmall" {...props} />
+			<LoginText {...props} />
 		</button>
 	)
 }
@@ -144,7 +150,7 @@ const signUp = (
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useLoginStyles()
+	const classes = useLoginStyles(props)
 	const clientIdKey = props.definition.clientId
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
@@ -219,6 +225,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					<LoginButton
 						setMode={setMode}
 						text={props.definition.text}
+						{...props}
 					/>
 				</LoginWrapper>
 			)}
@@ -227,6 +234,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					setMode={setMode}
 					logIn={logIn}
 					setMessage={setMessage}
+					{...props}
 				/>
 			)}
 			{mode === "signup" && (
@@ -237,10 +245,11 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					signupPassword={signupPassword}
 					setSignupPassword={setSignupPassword}
 					signUp={signUp(pool, setMessage, setMode)}
+					{...props}
 				/>
 			)}
 			{mode === "confirm" && (
-				<ConfirmForm setMode={setMode} confirm={confirm} />
+				<ConfirmForm setMode={setMode} confirm={confirm} {...props} />
 			)}
 		</div>
 	)

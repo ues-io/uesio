@@ -1,4 +1,4 @@
-import { material } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import React, {
 	FunctionComponent,
 	useState,
@@ -7,22 +7,21 @@ import React, {
 	SetStateAction,
 } from "react"
 import { useLoginStyles } from "./logincognito"
+import { TextField, Button, Typography, Link } from "@material-ui/core"
 
-type ConfirmFormProps = {
+interface ConfirmFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	confirm: (verificationCode: string) => void
 }
 
-const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
-	setMode,
-	confirm,
-}) => {
-	const classes = useLoginStyles()
+const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
+	const { setMode, confirm } = props
+	const classes = useLoginStyles(props)
 	const [verificationCode, setVerificationCode] = useState("")
 
 	return (
 		<>
-			<material.TextField
+			<TextField
 				label="Verification Code"
 				variant="outlined"
 				type="password"
@@ -33,31 +32,28 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = ({
 					setVerificationCode(e.target.value)
 				}
 			/>
-			<material.Button
-				onClick={() => setMode("")}
-				className={classes.button}
-			>
+			<Button onClick={() => setMode("")} className={classes.button}>
 				Back to Signup
-			</material.Button>
-			<material.Button
+			</Button>
+			<Button
 				variant="contained"
 				color="primary"
 				className={classes.button}
 				onClick={() => confirm(verificationCode)}
 			>
 				Confirm
-			</material.Button>
+			</Button>
 			<div>
-				<material.Typography variant="body2" component="span">
+				<Typography variant="body2" component="span">
 					Lost your code?&nbsp;
-				</material.Typography>
-				<material.Link
+				</Typography>
+				<Link
 					component="span"
 					variant="body2"
 					onClick={() => console.info("I'm a button.")}
 				>
 					Resend code
-				</material.Link>
+				</Link>
 			</div>
 		</>
 	)
