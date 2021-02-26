@@ -1,14 +1,15 @@
 import React, { FunctionComponent } from "react"
-import { material, component, styles } from "@uesio/ui"
+import { component, styles } from "@uesio/ui"
 import { GridItemProps } from "./griditemdefinition"
+import * as material from "@material-ui/core"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles(() =>
 	material.createStyles({
 		root: (props: GridItemProps) => ({
 			height: props.definition.height,
 			...styles.getBackgroundStyles(
 				props.definition.background,
-				theme,
+				props.context.getTheme(),
 				props.context
 			),
 			...(props.definition.align && {

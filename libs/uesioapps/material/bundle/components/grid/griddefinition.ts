@@ -1,5 +1,6 @@
-import { definition, builder, styles, material } from "@uesio/ui"
+import { definition, builder, styles } from "@uesio/ui"
 import GridItemPropertyDefinition from "../griditem/griditemdefinition"
+import * as material from "@material-ui/core"
 
 type GridDefinition = {
 	components: definition.DefinitionList

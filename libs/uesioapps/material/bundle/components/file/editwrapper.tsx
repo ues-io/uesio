@@ -1,17 +1,21 @@
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
-import { hooks, material, styles } from "@uesio/ui"
+import { hooks, styles } from "@uesio/ui"
 import Edit from "@material-ui/icons/Edit"
 import Icon from "../icon/icon"
 import { handleChange } from "./file"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: ({ definition }: FileProps) => ({
+		root: (props: FileProps) => ({
 			display: "block",
 			lineHeight: 0,
-			...styles.getMarginStyles(definition?.margin, theme),
+			...styles.getMarginStyles(
+				props.definition.margin,
+				props.context.getTheme()
+			),
 		}),
 		input: {
 			display: "none",

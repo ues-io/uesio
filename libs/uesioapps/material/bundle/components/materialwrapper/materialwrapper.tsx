@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react"
 import { MaterialWrapperProps } from "./materialwrapperdefinition"
-import { component, material, styles } from "@uesio/ui"
+import { component, styles } from "@uesio/ui"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
+import * as material from "@material-ui/core"
 
 const makePaletteTheme = (theme: styles.ThemeState): PaletteOptions =>
 	Object.entries(theme?.definition?.palette || {}).reduce(

@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from "react"
 
-import { material, styles } from "@uesio/ui"
+import { styles } from "@uesio/ui"
+import * as material from "@material-ui/core"
+
 import { AvatarProps } from "./avatardefinition"
 
 const useStyles = material.makeStyles((theme) =>
@@ -12,7 +14,10 @@ const useStyles = material.makeStyles((theme) =>
 			backgroundColor: theme.palette.primary.main,
 			width: theme.spacing(5),
 			height: theme.spacing(5),
-			...styles.getMarginStyles(props.definition.margin, theme),
+			...styles.getMarginStyles(
+				props.definition.margin,
+				props.context.getTheme()
+			),
 		}),
 	})
 )

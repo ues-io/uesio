@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { material } from "@uesio/ui"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles(() =>
 	material.createStyles({

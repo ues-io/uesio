@@ -1,15 +1,9 @@
 import React, { FunctionComponent } from "react"
 
-import {
-	material,
-	wire,
-	collection,
-	context,
-	component,
-	definition,
-} from "@uesio/ui"
+import { wire, collection, context, component, definition } from "@uesio/ui"
 import { field } from "@uesio/constants"
 import { ColumnDefinition, TableState } from "./tabledefinition"
+import * as material from "@material-ui/core"
 
 interface Props {
 	wire: wire.Wire

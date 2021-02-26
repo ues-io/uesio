@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react"
-import { hooks, material } from "@uesio/ui"
+import { hooks } from "@uesio/ui"
 import { CardActionProps } from "./cardactiondefinition"
 import Icon from "../icon/icon"
+import * as material from "@material-ui/core"
 
 const CardAction: FunctionComponent<CardActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)

@@ -1,7 +1,8 @@
 import React, { FunctionComponent, SyntheticEvent } from "react"
 
-import { hooks, material } from "@uesio/ui"
+import { hooks } from "@uesio/ui"
 import { BreadcrumbsProps } from "./breadcrumbsdefinition"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) => ({
 	root: {

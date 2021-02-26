@@ -84,7 +84,7 @@ const getMarginStyles = (
 	}
 }
 
-const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
+const getFloatStyles = (definition: FloatDefinition): CSSProperties =>
 	!definition
 		? {}
 		: {

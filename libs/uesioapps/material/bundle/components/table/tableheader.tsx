@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react"
-
-import { material, collection, definition } from "@uesio/ui"
+import * as material from "@material-ui/core"
+import { collection, definition } from "@uesio/ui"
 import { ColumnDefinition } from "./tabledefinition"
 
 type Props = {

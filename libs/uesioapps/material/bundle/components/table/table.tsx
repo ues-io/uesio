@@ -1,11 +1,12 @@
 import React, { FunctionComponent } from "react"
 
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks } from "@uesio/ui"
 
 import { TableDefinition, TableState } from "./tabledefinition"
 import TableHeader from "./tableheader"
 import TableBody from "./tablebody"
 import Alert from "../alert/alert"
+import * as material from "@material-ui/core"
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
