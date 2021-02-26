@@ -1,0 +1,5 @@
+{
+	"extends": "../../../.eslintrc.json",
+	"ignorePatterns": ["!**/*", "bundle/bots/*", "bundle/componentpacks/*"],
+	"rules": {}
+}

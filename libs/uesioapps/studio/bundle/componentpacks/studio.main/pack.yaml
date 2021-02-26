@@ -1,10 +1,11 @@
 name: main
 components:
-  colorpicker:
-  addbundle:
-  metadatafield:
-  codefield:
-  bulkjob:
-  fileupload:
-  permissionpicker:
-  configsecrets:
+  view:
+    colorpicker:
+    addbundle:
+    metadatafield:
+    codefield:
+    bulkjob:
+    fileupload:
+    permissionpicker:
+    configsecrets:

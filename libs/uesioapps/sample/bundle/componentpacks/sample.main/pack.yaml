@@ -1,6 +1,7 @@
 name: main
 components:
-  hello:
-  error:
-  progressgauge:
-  datePicker:
+  view:
+    hello:
+    error:
+    progressgauge:
+    datePicker:
