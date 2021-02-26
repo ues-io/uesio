@@ -10,7 +10,7 @@ import { monaco } from "react-monaco-editor"
 
 const ANIMATION_DURATION = 3000
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
 	createStyles({
 		"@keyframes lineshighlight": {
 			from: {

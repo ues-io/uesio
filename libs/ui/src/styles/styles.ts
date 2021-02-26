@@ -9,7 +9,6 @@ import { Context } from "../context/context"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
 import { DefinitionMap } from "../definition/definition"
-import React from "react"
 type ThemeIntention =
 	| "primary"
 	| "secondary"
@@ -143,7 +142,7 @@ const defaultTheme: ThemeState = {
 		spacing: 8,
 	},
 }
-
+// eslint-disable-next-line
 function getUseStyles<T extends { [key: string]: any }>(
 	classNames: string[],
 	defaultStyling?: Record<
