@@ -1,20 +1,21 @@
 import React, { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
-import { hooks, material, styles, wire, signal, component } from "@uesio/ui"
-//import Icon from "../icon/icon"
+import { hooks, styles, wire, signal, component } from "@uesio/ui"
+import { Button } from "@material-ui/core"
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: (props: FileUploadProps) => ({
-			display: "block",
-			lineHeight: 0,
-			...styles.getMarginStyles(props.definition?.margin, theme),
-		}),
-		input: {
-			display: "none",
-		},
-	})
-)
+const useStyles = styles.getUseStyles(["root", "input"], {
+	root: (props: FileUploadProps) => ({
+		display: "block",
+		lineHeight: 0,
+		...styles.getMarginStyles(
+			props.definition?.margin,
+			props.context.getTheme()
+		),
+	}),
+	input: {
+		display: "none",
+	},
+})
 
 async function handleChange(
 	selectorFiles: FileList | null,
@@ -114,11 +115,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 						)
 					}
 				/>
-				<material.Button
-					color="primary"
-					variant="contained"
-					component="span"
-				>
+				<Button color="primary" variant="contained" component="span">
 					<Icon
 						definition={{
 							type: "librayadd",
@@ -127,7 +124,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 						path={props.path}
 						context={props.context}
 					/>
-				</material.Button>
+				</Button>
 			</label>
 		</div>
 	)

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { definition, material } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import clsx from "clsx"
 
 const COLORS = [
@@ -21,7 +21,7 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
-const useStyles = material.makeStyles(() => ({
+const useStyles = styles.getUseStyles(["root", "color", "selected"], {
 	root: {
 		margin: "8px",
 		lineHeight: 0,
@@ -37,13 +37,14 @@ const useStyles = material.makeStyles(() => ({
 		width: "28px",
 		margin: "0 4px 0 0",
 	},
-}))
+})
 
-const ColorPicker: FunctionComponent<Props> = ({
-	context,
-	definition: { fieldId },
-}) => {
-	const classes = useStyles()
+const ColorPicker: FunctionComponent<Props> = (props) => {
+	const {
+		context,
+		definition: { fieldId },
+	} = props
+	const classes = useStyles(props)
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null

@@ -66,20 +66,21 @@ const getBackgroundStyles = (
 
 const getMarginStyles = (
 	definition: MarginDefinition,
-	theme: Theme
-): CreateCSSProperties => {
+	theme: ThemeState
+): CSSProperties => {
 	if (!definition) {
 		return {}
 	}
 	if (Array.isArray(definition)) {
 		return {
-			margin: theme.spacing(
+			margin: getSpacing(
+				theme,
 				...(definition as [number, number, number, number])
 			),
 		}
 	}
 	return {
-		margin: theme.spacing(definition),
+		margin: getSpacing(theme, definition),
 	}
 }
 
@@ -121,12 +122,9 @@ function isValidColor(potientialColor: string): boolean {
 // 	}
 // }
 
-function getSpacing(theme: ThemeState, first: number, second?: number) {
+function getSpacing(theme: ThemeState, ...marginCounts: number[]) {
 	const spacing = theme.definition.spacing || 8
-	if (second === undefined) {
-		return `${spacing * first}px`
-	}
-	return `${spacing * first}px ${spacing * second}px`
+	return marginCounts.map((count) => `${spacing * count}px`).join(" ")
 }
 
 const defaultTheme: ThemeState = {
