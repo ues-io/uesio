@@ -105,7 +105,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	}
 	for _, pack := range packs {
 		cPackDeps[pack.GetKey()] = true
-		for _, componentInfo := range pack.Components {
+		for _, componentInfo := range pack.Components.ViewComponents {
 			if componentInfo != nil {
 				for _, key := range componentInfo.ConfigValues {
 					_, ok := configDependencies[key]
@@ -194,7 +194,8 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		}
 
 		for _, pack := range packsForNamespace {
-			componentInfo, ok := pack.Components[name]
+
+			componentInfo, ok := pack.Components.ViewComponents[name]
 			if ok {
 				cPackDeps[pack.GetKey()] = true
 				if componentInfo != nil {

@@ -6,12 +6,17 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID         string                            `yaml:"-" uesio:"studio.id"`
-	Name       string                            `yaml:"name" uesio:"studio.name"`
-	Namespace  string                            `yaml:"namespace" uesio:"-"`
-	Workspace  string                            `yaml:"-" uesio:"studio.workspaceid"`
-	Components map[string]*ComponentDependencies `yaml:"components" uesio:"studio.components"`
-	itemMeta   *ItemMeta                         `yaml:"-" uesio:"-"`
+	ID         string             `yaml:"-" uesio:"studio.id"`
+	Name       string             `yaml:"name" uesio:"studio.name"`
+	Namespace  string             `yaml:"namespace" uesio:"-"`
+	Workspace  string             `yaml:"-" uesio:"studio.workspaceid"`
+	Components ComponentsRegistry `yaml:"components" uesio:"studio.components"`
+	itemMeta   *ItemMeta          `yaml:"-" uesio:"-"`
+}
+
+type ComponentsRegistry struct {
+	ViewComponents    map[string]*ComponentDependencies `yaml:"view"`
+	UtilityComponents map[string]*ComponentDependencies `yaml:"utility"`
 }
 
 type ComponentDependencies struct {

@@ -29,19 +29,19 @@ const getEntryFile = async (
 
 	for (const name in components) {
 		const hasDefinition = await fileExists(
-			path.resolve(`./bundle/components/${name}/${name}.tsx`)
+			path.resolve(`./bundle/components/view/${name}/${name}.tsx`)
 		)
 		if (hasDefinition) {
 			const hasSignals = await fileExists(
-				path.resolve(`./bundle/components/${name}/signals.ts`)
+				path.resolve(`./bundle/components/view/${name}/signals.ts`)
 			)
 			imports.push(
-				`import ${name} from "../../components/${name}/${name}";`
+				`import ${name} from "../../components/view/${name}/${name}";`
 			)
 
 			if (hasSignals) {
 				imports.push(
-					`import ${name}signals from "../../components/${name}/signals";`
+					`import ${name}signals from "../../components/view/${name}/signals";`
 				)
 			}
 			registrations.push(
@@ -68,21 +68,23 @@ const getBuilderEntryFile = async (
 		const builderName = `${name}builder`
 		const propDefName = `${name}definition`
 		const hasBuilder = await fileExists(
-			path.resolve(`./bundle/components/${name}/${builderName}.tsx`)
+			path.resolve(`./bundle/components/view/${name}/${builderName}.tsx`)
 		)
 
 		if (hasBuilder) {
 			const hasDef = await fileExists(
-				path.resolve(`./bundle/components/${name}/${propDefName}.ts`)
+				path.resolve(
+					`./bundle/components/view/${name}/${propDefName}.ts`
+				)
 			)
 
 			builderImports.push(
-				`import ${builderName} from "../../components/${name}/${builderName}";`
+				`import ${builderName} from "../../components/view/${name}/${builderName}";`
 			)
 
 			if (hasDef) {
 				defImports.push(
-					`import ${propDefName} from "../../components/${name}/${propDefName}";`
+					`import ${propDefName} from "../../components/view/${name}/${propDefName}";`
 				)
 			}
 
@@ -116,6 +118,7 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const yamlContents = yaml.parse(contents)
 		const packName = yamlContents.name as string
 		const components = yamlContents.components
+		const viewComponents = components.view
 		const fullPackName = `${appName}.${packName}`
 		entries[fullPackName + "/runtime"] = path.resolve(
 			`./bundle/componentpacks/${fullPackName}/runtime.entry.ts`
@@ -126,12 +129,12 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 
 		await fs.writeFile(
 			path.resolve(packDir, `${fullPackName}/runtime.entry.ts`),
-			await getEntryFile(appName, components)
+			await getEntryFile(appName, viewComponents)
 		)
 
 		await fs.writeFile(
 			path.resolve(packDir, `${fullPackName}/builder.entry.ts`),
-			await getBuilderEntryFile(appName, components)
+			await getBuilderEntryFile(appName, viewComponents)
 		)
 	}
 
