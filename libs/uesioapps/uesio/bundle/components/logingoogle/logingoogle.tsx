@@ -1,8 +1,9 @@
-import { GoogleLogin, GoogleLoginResponse } from "react-google-login"
+import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
 import React, { FunctionComponent } from "react"
 import { definition, hooks, styles } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
-import { getButtonWidth } from "../loginhelpers/button"
+import { getButtonStyles } from "../loginhelpers/button"
+import LoginText from "../loginhelpers/text"
 
 type LoginDefinition = {
 	text: string
@@ -14,11 +15,8 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = styles.getUseStyles(["googleButton"], {
-	googleButton: {
-		width: getButtonWidth(),
-		paddingRight: "8px !important",
-	},
+const useStyles = styles.getUseStyles(["loginButton"], {
+	loginButton: getButtonStyles(),
 })
 
 const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
@@ -27,8 +25,6 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
 	const classes = useStyles(props)
 	const buttonText = props.definition.text
-
-	if (!clientIdValue) return null
 
 	const responseGoogle = (response: GoogleLoginResponse): void => {
 		uesio.signal.run(
@@ -46,17 +42,21 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 		console.log("Login Failed", error)
 	}
 
+	const { signIn } = useGoogleLogin({
+		clientId: clientIdValue,
+		onSuccess: responseGoogle,
+		onFailure: responseGoogleFail,
+		cookiePolicy: "single_host_origin",
+		autoLoad: false,
+	})
+
+	if (!clientIdValue) return null
+
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<GoogleLogin
-				clientId={clientIdValue}
-				buttonText={buttonText}
-				onSuccess={responseGoogle}
-				onFailure={responseGoogleFail}
-				cookiePolicy="single_host_origin"
-				className={classes.googleButton}
-				autoLoad={false}
-			/>
+			<button onClick={signIn} className={classes.loginButton}>
+				<LoginText text={buttonText} {...props} />
+			</button>
 		</LoginWrapper>
 	)
 }

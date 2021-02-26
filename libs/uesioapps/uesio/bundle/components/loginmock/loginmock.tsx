@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react"
 import { definition, hooks, styles } from "@uesio/ui"
-import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
 import { getButtonStyles } from "../loginhelpers/button"
 import LoginText from "../loginhelpers/text"
@@ -39,7 +38,6 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 				}}
 				className={classes.loginButton}
 			>
-				<LoginIcon image="uesio.logosmall" {...props} />
 				<LoginText text={buttonText} {...props} />
 			</button>
 		</LoginWrapper>
