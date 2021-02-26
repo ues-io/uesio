@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks, styles } from "@uesio/ui"
 import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login"
 import LoginIcon from "../loginhelpers/icon"
 import LoginWrapper from "../loginhelpers/wrapper"
@@ -15,17 +15,15 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = material.makeStyles(() =>
-	material.createStyles({
-		facebookLoginButton: getButtonStyles(),
-	})
-)
+const useStyles = styles.getUseStyles(["facebookLoginButton"], {
+	facebookLoginButton: getButtonStyles(),
+})
 
 const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const facebookAppIdKey = props.definition.clientId
 	const facebookAppId = uesio.view.useConfigValue(facebookAppIdKey)
-	const classes = useStyles()
+	const classes = useStyles(props)
 	const buttonText = props.definition.text
 
 	if (!facebookAppId) return null
@@ -48,7 +46,7 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 				autoLoad={false}
 				fields="name,email"
 				callback={responseFacebook}
-				icon={<LoginIcon image="uesio.facebooksmall" />}
+				icon={<LoginIcon image="uesio.facebooksmall" {...props} />}
 				textButton={buttonText}
 				cssClass={classes.facebookLoginButton}
 			/>

@@ -1,8 +1,9 @@
 import React, { FunctionComponent, ChangeEvent } from "react"
 
-import { material, definition, collection } from "@uesio/ui"
+import { definition, collection } from "@uesio/ui"
 import { field } from "@uesio/constants"
 import TextField from "../textfield/textfield"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) => ({
 	root: {

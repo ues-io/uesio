@@ -1,17 +1,20 @@
 import React, { FunctionComponent } from "react"
 
 import { FileProps } from "./filedefinition"
-import { hooks, material, styles, wire } from "@uesio/ui"
+import { hooks, styles, wire } from "@uesio/ui"
 import Icon from "../icon/icon"
 import Button from "./button"
 import EditWrapper from "./editwrapper"
-
+import * as material from "@material-ui/core"
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
-		root: ({ definition }: FileProps) => ({
+		root: (props: FileProps) => ({
 			display: "block",
 			lineHeight: 0,
-			...styles.getMarginStyles(definition?.margin, theme),
+			...styles.getMarginStyles(
+				props.definition.margin,
+				props.context.getTheme()
+			),
 		}),
 		avatar: ({ definition }: FileProps) => ({
 			width: definition?.width ? definition.width : 200,

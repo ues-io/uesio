@@ -4,8 +4,9 @@ import React, {
 	Dispatch,
 	SetStateAction,
 } from "react"
-import { definition, material, collection, wire, component } from "@uesio/ui"
+import { definition, collection, wire, component, styles } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
+import { InputLabel } from "@material-ui/core"
 
 type CodeFieldDefinition = {
 	fieldId: string
@@ -36,18 +37,16 @@ interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: {
-			margin: theme.spacing(1),
-		},
-		input: (props: Props) => ({
-			height: props.definition.height || "200px",
-			margin: theme.spacing(1, 0),
-			border: "1px solid #c8c8c8",
-		}),
-	})
-)
+const useStyles = styles.getUseStyles(["root", "input"], {
+	root: (props: Props) => ({
+		margin: styles.getSpacing(props.context.getTheme(), 1),
+	}),
+	input: (props: Props) => ({
+		height: props.definition.height || "200px",
+		margin: styles.getSpacing(props.context.getTheme(), 1, 0),
+		border: "1px solid #c8c8c8",
+	}),
+})
 
 function getChangeHandler(
 	fieldType: collection.FieldType,
@@ -122,9 +121,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<material.InputLabel shrink={true}>
-				{fieldMetadata.getLabel()}
-			</material.InputLabel>
+			<InputLabel shrink={true}>{fieldMetadata.getLabel()}</InputLabel>
 			{message && (
 				<AlertComponent
 					{...props}

@@ -1,15 +1,17 @@
 import React, { FunctionComponent } from "react"
 
-import { material, styles, hooks, component } from "@uesio/ui"
+import { styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
+import * as material from "@material-ui/core"
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: (props: DeckProps) => ({
-			...styles.getMarginStyles(props.definition.margin, theme),
-		}),
-	})
-)
+const useStyles = styles.getUseStyles(["root"], {
+	root: (props: DeckProps) => ({
+		...styles.getMarginStyles(
+			props.definition.margin,
+			props.context.getTheme()
+		),
+	}),
+})
 
 const Deck: FunctionComponent<DeckProps> = (props) => {
 	const { path, context, definition } = props

@@ -3,14 +3,15 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../toolbar/expandpanel/expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import SignalsIcon from "@material-ui/icons/Router"
-import { material, hooks, definition, signal } from "@uesio/ui"
+import { hooks, definition, signal } from "@uesio/ui"
 import AddIcon from "@material-ui/icons/AddBox"
 import PropertiesPanel from "../toolbar/propertiespanel/propertiespanel"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, definition: def, path } = props
 	const uesio = hooks.useUesio(props)
-	const theme = material.useTheme()
+	const theme = uesio.getTheme()
+	const primaryColor = theme.definition.palette.primary
 	const selectedNode = uesio.builder.useSelectedNode()
 
 	const signalsDef = def?.signals as definition.Definition[] | undefined
@@ -20,7 +21,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			defaultExpanded={true}
 			title={section.title}
 			action={AddIcon}
-			actionColor={theme.palette.primary.main}
+			actionColor={primaryColor}
 			actionOnClick={(): void =>
 				uesio.view.addDefinition(`${path}["signals"]`, {
 					signal: "NEW_SIGNAL",
@@ -35,7 +36,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						title={signal?.signal}
 						icon={SignalsIcon}
 						selected={selected}
-						iconColor={theme.palette.primary.main}
+						iconColor={primaryColor}
 						key={index}
 						onClick={(): void =>
 							uesio.builder.setSelectedNode(signalPath)

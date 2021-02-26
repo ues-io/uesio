@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react"
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks } from "@uesio/ui"
 import ToolbarTitle from "../toolbartitle"
 
 import AddIcon from "@material-ui/icons/AddBox"
@@ -12,7 +12,7 @@ interface Props extends definition.BaseProps {
 
 const WiresToolbar: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const theme = material.useTheme()
+	const theme = uesio.getTheme()
 	const path = '["wires"]'
 	const definition = uesio.view.useDefinition(
 		path
@@ -23,7 +23,7 @@ const WiresToolbar: FunctionComponent<Props> = (props) => {
 			<ToolbarTitle
 				title="Wires"
 				icon={AddIcon}
-				iconColor={theme.palette.primary.main}
+				iconColor={theme.definition.palette.primary}
 				iconOnClick={(): void => {
 					uesio.view.addDefinitionPair(
 						path,

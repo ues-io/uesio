@@ -1,5 +1,6 @@
 import React, { FunctionComponent, ChangeEvent } from "react"
-import { definition, material, hooks } from "@uesio/ui"
+import { definition, hooks, styles } from "@uesio/ui"
+import { Button } from "@material-ui/core"
 
 type BulkjobDefinition = {
 	id: string
@@ -10,16 +11,14 @@ interface Props extends definition.BaseProps {
 	definition: BulkjobDefinition
 }
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: {
-			margin: theme.spacing(1),
-		},
-		input: {
-			display: "none",
-		},
-	})
-)
+const useStyles = styles.getUseStyles(["root", "input"], {
+	root: (props: Props) => ({
+		margin: styles.getSpacing(props.context.getTheme(), 1),
+	}),
+	input: {
+		display: "none",
+	},
+})
 
 const handleChange = (
 	selectorFiles: FileList | null,
@@ -56,7 +55,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 
-	const classes = useStyles()
+	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 
 	const record = context.getRecord()
@@ -81,13 +80,9 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 						handleChange(e.target.files, uesio, jobId)
 					}
 				/>
-				<material.Button
-					color="primary"
-					variant="contained"
-					component="span"
-				>
+				<Button color="primary" variant="contained" component="span">
 					{label}
-				</material.Button>
+				</Button>
 			</label>
 		</div>
 	)

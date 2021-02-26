@@ -1,12 +1,13 @@
-import { context, styles, material } from "@uesio/ui"
+import { context, styles, definition } from "@uesio/ui"
 import React, { FunctionComponent } from "react"
 
-interface IconProps {
+interface IconProps extends definition.BaseProps {
 	image: string
 }
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
+const useStyles = styles.getUseStyles(
+	["loginButtonIcon", "loginButtonIconImage"],
+	{
 		loginButtonIcon: {
 			marginRight: "10px",
 			background: "rgb(255, 255, 255)",
@@ -16,17 +17,17 @@ const useStyles = material.makeStyles((theme) =>
 		loginButtonIconImage: (props: IconProps) => ({
 			width: "22px",
 			height: "22px",
+			backgroundPosition: "bottom",
 			...styles.getBackgroundStyles(
 				{
 					image: props.image,
 					color: "white",
 				},
-				theme,
+				props.context.getTheme(),
 				new context.Context()
 			),
-			backgroundPosition: "bottom",
 		}),
-	})
+	}
 )
 
 const LoginIcon: FunctionComponent<IconProps> = (props) => {

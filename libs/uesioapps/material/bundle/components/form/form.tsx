@@ -1,11 +1,10 @@
 import React, { FunctionComponent } from "react"
 
-import { material, hooks, component } from "@uesio/ui"
+import { hooks, component } from "@uesio/ui"
 import { FormProps, FormState } from "./formdefinition"
-import { createStyles } from "@material-ui/core"
-
+import * as material from "@material-ui/core"
 const useStyles = material.makeStyles(() =>
-	createStyles({
+	material.createStyles({
 		root: {},
 	})
 )

@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from "react"
 
-import { hooks, material, component, styles } from "@uesio/ui"
+import { hooks, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"
 
 import CardAction from "../cardaction/cardaction"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({
@@ -14,7 +15,7 @@ const useStyles = material.makeStyles((theme) =>
 			height: props.definition.media?.height,
 			...styles.getBackgroundStyles(
 				props.definition.media?.background,
-				theme,
+				props.context.getTheme(),
 				props.context
 			),
 		}),

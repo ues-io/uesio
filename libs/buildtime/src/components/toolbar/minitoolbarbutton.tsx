@@ -8,8 +8,8 @@ import {
 	Tooltip,
 	PopperPlacementType,
 	SvgIconProps,
+	colors,
 } from "@material-ui/core"
-import { material } from "@uesio/ui"
 
 type Props = {
 	id: string
@@ -29,10 +29,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			padding: "8px",
 		},
 		save: {
-			color: material.colors.green[800],
+			color: colors.green[800],
 		},
 		cancel: {
-			color: material.colors.grey[700],
+			color: colors.grey[700],
 		},
 	})
 )

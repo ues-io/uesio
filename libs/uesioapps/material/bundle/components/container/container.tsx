@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
 import { ContainerProps } from "./containerdefinition"
-import { component, material, styles } from "@uesio/ui"
+import { component, styles } from "@uesio/ui"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({

@@ -1,5 +1,19 @@
 import React, { FunctionComponent } from "react"
-import { definition, hooks, material } from "@uesio/ui"
+import { definition, hooks } from "@uesio/ui"
+import {
+	List,
+	ListSubheader,
+	ListItem,
+	ListItemText,
+	DialogContent,
+	DialogActions,
+	Dialog,
+	DialogTitle,
+	DialogContentText,
+	TextField,
+	ListItemSecondaryAction,
+	Button,
+} from "@material-ui/core"
 
 type PermissionPickerDefinition = {
 	app: string
@@ -75,11 +89,11 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			<material.List
+			<List
 				subheader={
-					<material.ListSubheader disableSticky>
+					<ListSubheader disableSticky>
 						{"Config Values"}
-					</material.ListSubheader>
+					</ListSubheader>
 				}
 				dense
 			>
@@ -87,16 +101,16 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 					const key = `${configValue.namespace}.${configValue.name}`
 					const value = configValue.value
 					return (
-						<material.ListItem divider>
-							<material.ListItemText
+						<ListItem divider>
+							<ListItemText
 								id={key}
 								primary={key}
 								secondary={value}
 							/>
 							{(configValue.managedby !== "app" ||
 								configValue.namespace === appName) && (
-								<material.ListItemSecondaryAction>
-									<material.Button
+								<ListItemSecondaryAction>
+									<Button
 										onClick={() =>
 											handleClickOpen(key, value, false)
 										}
@@ -106,34 +120,32 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 												? " for App"
 												: ""
 										}`}
-									</material.Button>
-								</material.ListItemSecondaryAction>
+									</Button>
+								</ListItemSecondaryAction>
 							)}
-						</material.ListItem>
+						</ListItem>
 					)
 				})}
-			</material.List>
-			<material.List
+			</List>
+			<List
 				subheader={
-					<material.ListSubheader disableSticky>
-						{"Secrets"}
-					</material.ListSubheader>
+					<ListSubheader disableSticky>{"Secrets"}</ListSubheader>
 				}
 				dense
 			>
 				{secrets?.map((secret) => {
 					const key = `${secret.namespace}.${secret.name}`
 					return (
-						<material.ListItem divider>
-							<material.ListItemText
+						<ListItem divider>
+							<ListItemText
 								id={key}
 								primary={key}
 								secondary={"********"}
 							/>
 							{(secret.managedby !== "app" ||
 								secret.namespace === appName) && (
-								<material.ListItemSecondaryAction>
-									<material.Button
+								<ListItemSecondaryAction>
+									<Button
 										onClick={() =>
 											handleClickOpen(key, "", true)
 										}
@@ -143,28 +155,26 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 												? " for App"
 												: ""
 										}`}
-									</material.Button>
-								</material.ListItemSecondaryAction>
+									</Button>
+								</ListItemSecondaryAction>
 							)}
-						</material.ListItem>
+						</ListItem>
 					)
 				})}
-			</material.List>
-			<material.Dialog
+			</List>
+			<Dialog
 				fullWidth
 				open={state.selected !== ""}
 				onClose={handleClose}
 				aria-labelledby="alert-dialog-title"
 				aria-describedby="alert-dialog-description"
 			>
-				<material.DialogTitle id="alert-dialog-title">
+				<DialogTitle id="alert-dialog-title">
 					{"Set " + (state.isSecret ? "Secret" : "Config Value")}
-				</material.DialogTitle>
-				<material.DialogContent>
-					<material.DialogContentText>
-						{state.selected}
-					</material.DialogContentText>
-					<material.TextField
+				</DialogTitle>
+				<DialogContent>
+					<DialogContentText>{state.selected}</DialogContentText>
+					<TextField
 						autoFocus
 						margin="dense"
 						id="value"
@@ -178,13 +188,13 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 							})
 						}
 					/>
-				</material.DialogContent>
-				<material.DialogActions>
-					<material.Button onClick={handleSet} color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleSet} color="primary">
 						Set
-					</material.Button>
-				</material.DialogActions>
-			</material.Dialog>
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</>
 	)
 }

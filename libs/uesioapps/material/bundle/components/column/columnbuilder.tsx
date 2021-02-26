@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
-import { hooks, material } from "@uesio/ui"
+import { hooks } from "@uesio/ui"
 import { ColumnProps, ColumnDefinition } from "./columndefinition"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({

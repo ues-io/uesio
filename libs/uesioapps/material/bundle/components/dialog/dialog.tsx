@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react"
-import { hooks, material, component } from "@uesio/ui"
+import { hooks, component } from "@uesio/ui"
 import { DialogProps, DialogState } from "./dialogdefinition"
+import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) =>
 	material.createStyles({

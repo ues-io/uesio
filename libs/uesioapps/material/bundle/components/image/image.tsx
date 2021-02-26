@@ -1,16 +1,20 @@
 import React, { FunctionComponent } from "react"
 
 import { ImageProps } from "./imagedefinition"
-import { hooks, material, styles } from "@uesio/ui"
+import { hooks, styles } from "@uesio/ui"
+import * as material from "@material-ui/core"
 
-const useStyles = material.makeStyles((theme) =>
+const useStyles = material.makeStyles(() =>
 	material.createStyles({
 		root: (props: ImageProps) => ({
 			display: "block",
 			textAlign: props.definition?.align || "left",
 			lineHeight: 0,
 			cursor: props.definition?.signals ? "pointer" : "",
-			...styles.getMarginStyles(props.definition?.margin, theme),
+			...styles.getMarginStyles(
+				props.definition.margin,
+				props.context.getTheme()
+			),
 		}),
 		inner: (props: ImageProps) => ({
 			display: "inline-block",

@@ -8,7 +8,7 @@ import {
 import { Context } from "../context/context"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
-
+import { DefinitionMap } from "../definition/definition"
 type ThemeIntention =
 	| "primary"
 	| "secondary"
@@ -47,7 +47,6 @@ function useStyleProperty<T>(property: T | undefined, defaultValue: T): T {
 
 const getBackgroundImage = (
 	definition: BackgroundDefinition,
-	theme: Theme,
 	context: Context
 ): string | undefined => {
 	const image = definition?.image
@@ -56,34 +55,35 @@ const getBackgroundImage = (
 
 const getBackgroundStyles = (
 	definition: BackgroundDefinition,
-	theme: Theme,
+	theme: ThemeState,
 	context: Context
-): CreateCSSProperties => ({
+): CSSProperties => ({
 	backgroundColor: getColor(definition?.color, theme, context),
-	backgroundImage: getBackgroundImage(definition, theme, context),
+	backgroundImage: getBackgroundImage(definition, context),
 	backgroundSize: "cover",
 })
 
 const getMarginStyles = (
 	definition: MarginDefinition,
-	theme: Theme
-): CreateCSSProperties => {
+	theme: ThemeState
+): CSSProperties => {
 	if (!definition) {
 		return {}
 	}
 	if (Array.isArray(definition)) {
 		return {
-			margin: theme.spacing(
+			margin: getSpacing(
+				theme,
 				...(definition as [number, number, number, number])
 			),
 		}
 	}
 	return {
-		margin: theme.spacing(definition),
+		margin: getSpacing(theme, definition),
 	}
 }
 
-const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
+const getFloatStyles = (definition: FloatDefinition): CSSProperties =>
 	!definition
 		? {}
 		: {
@@ -91,7 +91,7 @@ const getFloatStyles = (definition: FloatDefinition): CreateCSSProperties =>
 		  }
 const getColor = (
 	definition: ColorDefinition,
-	theme: Theme,
+	theme: ThemeState,
 	context: Context
 ): undefined | string => {
 	if (!definition) return undefined
@@ -101,8 +101,7 @@ const getColor = (
 	} else if (definition.value) {
 		result = context.merge(definition.value)
 	} else if (definition.intention) {
-		const intention = theme.palette?.[definition.intention]
-		result = intention[definition.key || "main"]
+		result = theme.definition.palette[definition.intention]
 	} else if (definition.hue) {
 		const hue = colors?.[definition.hue] as Color
 		result = hue[definition.shade || 500]
@@ -116,14 +115,15 @@ function isValidColor(potientialColor: string): boolean {
 	return !!style.color
 }
 
-interface styledDefinition {
-	definition: {
-		"uesio.styles"?: Record<string, Record<string, unknown>>
-	}
-}
+// interface styledDefinition {
+// 	definition?: {
+// 		"uesio.styles"?: Record<string, Record<string, unknown>>
+// 	}
+// }
 
-function getSpacing(theme: ThemeState, count: number) {
-	return `${(theme.definition.spacing || 8) * count}px`
+function getSpacing(theme: ThemeState, ...marginCounts: number[]) {
+	const spacing = theme.definition.spacing || 8
+	return marginCounts.map((count) => `${spacing * count}px`).join(" ")
 }
 
 const defaultTheme: ThemeState = {
@@ -142,8 +142,8 @@ const defaultTheme: ThemeState = {
 		spacing: 8,
 	},
 }
-
-function getUseStyles<T extends styledDefinition>(
+// eslint-disable-next-line
+function getUseStyles<T extends { [key: string]: any }>(
 	classNames: string[],
 	defaultStyling?: Record<
 		string,
@@ -160,8 +160,14 @@ function getUseStyles<T extends styledDefinition>(
 			} else if (defaultValuesFromStyles) {
 				defaultValues = defaultValuesFromStyles
 			}
+			const definition = <DefinitionMap>props.definition
+			const explicitStyles = definition && definition["uesio.styles"]
 			const customExtensions =
-				props.definition?.["uesio.styles"]?.[className] || {}
+				(explicitStyles &&
+					(<Record<string, Record<string, unknown>>>explicitStyles)[
+						className
+					]) ||
+				{}
 			return { ...defaultValues, ...customExtensions }
 		}
 	})

@@ -1,7 +1,8 @@
 import React, { ChangeEvent, FunctionComponent } from "react"
 
-import { material, definition } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import { field } from "@uesio/constants"
+import * as material from "@material-ui/core"
 
 type Props = {
 	label: string

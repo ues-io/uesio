@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react"
-import { definition, material, component, hooks } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import { metadata } from "@uesio/constants"
+import { Grid } from "@material-ui/core"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -76,7 +77,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	if (!fieldMetadata) return null
 
 	if (mode === "READ") {
-		return <component.Component {...props} componentType="material.field" />
+		return <component.Component {...props} componentType="field" />
 	}
 
 	const SelectField = component.registry.get("material", "selectfield")
@@ -99,8 +100,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 			  })
 
 	return (
-		<material.Grid container spacing={1}>
-			<material.Grid item xs={6}>
+		<Grid container spacing={1}>
+			<Grid item xs={6}>
 				<SelectField
 					{...props}
 					label={label}
@@ -120,8 +121,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						record.update(fieldId, value ? `${value}.` : "")
 					}}
 				/>
-			</material.Grid>
-			<material.Grid item xs={6}>
+			</Grid>
+			<Grid item xs={6}>
 				<SelectField
 					{...props}
 					label=" "
@@ -131,8 +132,8 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 						record.update(fieldId, `${namespace}.${value}`)
 					}}
 				/>
-			</material.Grid>
-		</material.Grid>
+			</Grid>
+		</Grid>
 	)
 }
 

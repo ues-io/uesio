@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from "react"
 
-import { hooks, material, styles } from "@uesio/ui"
+import { hooks, styles } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
+import * as material from "@material-ui/core"
 
 const stylesObj = {
 	root: (props: ButtonProps) => ({

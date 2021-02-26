@@ -10,7 +10,7 @@ import Delete from "@material-ui/icons/Delete"
 import Description from "@material-ui/icons/Description"
 import LibraryAdd from "@material-ui/icons/LibraryAdd"
 
-import { material } from "@uesio/ui"
+import * as material from "@material-ui/core"
 
 type IconMap = Record<string, ComponentType<material.SvgIconProps>>
 

@@ -1,4 +1,4 @@
-import { material } from "@uesio/ui"
+import { definition } from "@uesio/ui"
 import React, {
 	FunctionComponent,
 	useState,
@@ -6,26 +6,24 @@ import React, {
 	Dispatch,
 	SetStateAction,
 } from "react"
+import { TextField, Button, Typography, Link } from "@material-ui/core"
 import { useLoginStyles } from "./logincognito"
 
-type LoginFormProps = {
+interface LoginFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	setMessage: Dispatch<SetStateAction<string>>
 	logIn: (username: string, password: string) => void
 }
 
-const LoginForm: FunctionComponent<LoginFormProps> = ({
-	setMode,
-	setMessage,
-	logIn,
-}) => {
-	const classes = useLoginStyles()
+const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
+	const { setMode, setMessage, logIn } = props
+	const classes = useLoginStyles(props)
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
 	return (
 		<>
-			<material.TextField
+			<TextField
 				label="Username"
 				variant="outlined"
 				fullWidth
@@ -35,7 +33,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 					setUsername(e.target.value)
 				}
 			/>
-			<material.TextField
+			<TextField
 				label="Password"
 				variant="outlined"
 				type="password"
@@ -46,7 +44,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 					setPassword(e.target.value)
 				}
 			/>
-			<material.Button
+			<Button
 				onClick={() => {
 					setMode("")
 					setMessage("")
@@ -54,33 +52,33 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 				className={classes.button}
 			>
 				Cancel
-			</material.Button>
-			<material.Button
+			</Button>
+			<Button
 				variant="contained"
 				color="primary"
 				className={classes.button}
 				onClick={() => logIn(username, password)}
 			>
 				Sign In
-			</material.Button>
+			</Button>
 			<div>
-				<material.Typography variant="body2" component="span">
+				<Typography variant="body2" component="span">
 					Forgot your password?&nbsp;
-				</material.Typography>
-				<material.Link
+				</Typography>
+				<Link
 					component="button"
 					variant="body2"
 					className={classes.textbutton}
 					onClick={() => console.info("I'm a button.")}
 				>
 					Reset password
-				</material.Link>
+				</Link>
 			</div>
 			<div>
-				<material.Typography variant="body2" component="span">
+				<Typography variant="body2" component="span">
 					No Account?&nbsp;
-				</material.Typography>
-				<material.Link
+				</Typography>
+				<Link
 					component="button"
 					variant="body2"
 					className={classes.textbutton}
@@ -90,7 +88,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 					}}
 				>
 					Create account
-				</material.Link>
+				</Link>
 			</div>
 		</>
 	)

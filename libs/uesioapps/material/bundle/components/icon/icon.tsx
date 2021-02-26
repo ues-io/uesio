@@ -1,17 +1,18 @@
 import React, { FunctionComponent } from "react"
 
 import { IconProps } from "./icondefinition"
-import { material, styles } from "@uesio/ui"
+import { styles } from "@uesio/ui"
 import getIcon from "./iconmap"
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: (props: IconProps) => ({
-			...styles.getFloatStyles(props.definition?.float),
-			...styles.getMarginStyles(props.definition?.margin, theme),
-		}),
-	})
-)
+const useStyles = styles.getUseStyles(["root"], {
+	root: (props: IconProps) => ({
+		...styles.getFloatStyles(props.definition.float),
+		...styles.getMarginStyles(
+			props.definition.margin,
+			props.context.getTheme()
+		),
+	}),
+})
 
 const Icon: FunctionComponent<IconProps> = (props) => {
 	const classes = useStyles(props)

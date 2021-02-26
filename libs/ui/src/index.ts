@@ -10,7 +10,6 @@ import * as context from "./context/context"
 import * as definition from "./definition/definition"
 import * as hooks from "./hooks/hooks"
 import * as loader from "./loader/loader"
-import * as material from "@material-ui/core"
 import * as signal from "./signalexports"
 import * as styles from "./styles/styles"
 import * as util from "./utilexports"
@@ -30,7 +29,7 @@ export {
 	definition,
 	hooks,
 	loader,
-	material,
+	// material,
 	signal,
 	styles,
 	util,

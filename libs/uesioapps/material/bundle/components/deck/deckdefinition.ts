@@ -1,4 +1,5 @@
-import { definition, builder, styles, material } from "@uesio/ui"
+import { definition, builder, styles } from "@uesio/ui"
+import * as material from "@material-ui/core"
 
 type DeckMode = "READ" | "EDIT"
 

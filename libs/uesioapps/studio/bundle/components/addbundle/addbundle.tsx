@@ -1,5 +1,13 @@
 import React, { ChangeEvent, FunctionComponent, useState } from "react"
-import { definition, material, wire, context, hooks } from "@uesio/ui"
+import { definition, styles, wire, context, hooks } from "@uesio/ui"
+import {
+	Grid,
+	Button,
+	Card,
+	CardContent,
+	TextField,
+	MenuItem,
+} from "@material-ui/core"
 import groupby from "lodash.groupby"
 import keyby from "lodash.keyby"
 
@@ -12,14 +20,12 @@ interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
 
-const useStyles = material.makeStyles((theme) =>
-	material.createStyles({
-		root: {},
-		card: {
-			margin: theme.spacing(1),
-		},
-	})
-)
+const useStyles = styles.getUseStyles(["root", "card"], {
+	card: (props: Props) => ({
+		margin: styles.getSpacing(props.context.getTheme(), 1),
+	}),
+})
+
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
 	for (const record of records) {
@@ -126,7 +132,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	)
 
 	return (
-		<material.Grid className={classes.root} container={true}>
+		<Grid className={classes.root} container={true}>
 			{bundleNamespaces.map((namespace) => {
 				const versions = bundleGrouping[namespace]
 					.map((entry) => entry.version)
@@ -140,7 +146,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					versionSelected || installedVersion || versions[0]
 				const installedIsCurrent = installedVersion === selectedVersion
 				let actionButton = (
-					<material.Button
+					<Button
 						color="primary"
 						variant="contained"
 						onClick={() =>
@@ -154,12 +160,12 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 						}
 					>
 						Install
-					</material.Button>
+					</Button>
 				)
 				if (installed) {
 					if (installedIsCurrent) {
 						actionButton = (
-							<material.Button
+							<Button
 								color="secondary"
 								variant="contained"
 								onClick={() =>
@@ -173,11 +179,11 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 								}
 							>
 								Uninstall
-							</material.Button>
+							</Button>
 						)
 					} else {
 						actionButton = (
-							<material.Button
+							<Button
 								color="primary"
 								variant="contained"
 								onClick={() =>
@@ -192,29 +198,23 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 								}
 							>
 								Update
-							</material.Button>
+							</Button>
 						)
 					}
 				}
 				return (
-					<material.Grid
-						key={namespace}
-						item={true}
-						md={3}
-						sm={4}
-						xs={12}
-					>
-						<material.Card className={classes.card}>
-							<material.CardContent>
-								<material.Grid
+					<Grid key={namespace} item={true} md={3} sm={4} xs={12}>
+						<Card className={classes.card}>
+							<CardContent>
+								<Grid
 									className={classes.root}
 									container={true}
 									alignContent="space-between"
 								>
-									<material.Grid xs={6} item={true}>
+									<Grid xs={6} item={true}>
 										<h3>{namespace}</h3>
-									</material.Grid>
-									<material.Grid xs={6} item={true}>
+									</Grid>
+									<Grid xs={6} item={true}>
 										<div
 											style={{
 												color: "primary",
@@ -225,9 +225,9 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 												? `installed: ${currentBundleVersions[namespace].version}`
 												: ""}
 										</div>
-									</material.Grid>
-								</material.Grid>
-								<material.TextField
+									</Grid>
+								</Grid>
+								<TextField
 									select={true}
 									className={classes.root}
 									fullWidth={true}
@@ -248,23 +248,20 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 									label="version"
 								>
 									{versions.map((option, index) => (
-										<material.MenuItem
-											key={index}
-											value={option}
-										>
+										<MenuItem key={index} value={option}>
 											{option}
-										</material.MenuItem>
+										</MenuItem>
 									))}
-								</material.TextField>
+								</TextField>
 								<div style={{ marginTop: "20px" }}>
 									{actionButton}
 								</div>
-							</material.CardContent>
-						</material.Card>
-					</material.Grid>
+							</CardContent>
+						</Card>
+					</Grid>
 				)
 			})}
-		</material.Grid>
+		</Grid>
 	)
 }
 
