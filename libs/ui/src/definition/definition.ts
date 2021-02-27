@@ -11,7 +11,7 @@ export type BaseProps = {
 	context: Context
 }
 
-export interface BasePropsPlus extends BaseProps {
+export interface UtilityProps extends BaseProps {
 	[x: string]: unknown
 }
 export type BaseDefinition = {

@@ -3,7 +3,7 @@ import { wire, hooks, collection } from "@uesio/ui"
 import { RendererProps } from "./fielddefinition"
 import AutoCompleteField, {
 	SelectedItem,
-} from "../autocompletefield/autocompletefield"
+} from "../../utility/autocompletefield/autocompletefield"
 import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) => ({

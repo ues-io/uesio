@@ -2,9 +2,9 @@ import React, { FunctionComponent } from "react"
 
 import { FieldProps } from "./fielddefinition"
 import Reference from "./reference"
-import TextField from "../textfield/textfield"
-import SelectField from "../selectfield/selectfield"
-import CheckBoxField from "../checkboxfield/checkboxfield"
+import TextField from "../../utility/textfield/textfield"
+import SelectField from "../../utility/selectfield/selectfield"
+import CheckBoxField from "../../utility/checkboxfield/checkboxfield"
 
 function toLocalISOString(d: Date) {
 	const off = d.getTimezoneOffset()

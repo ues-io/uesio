@@ -6,7 +6,7 @@ import * as React from "react"
 import clsx from "clsx"
 
 import * as material from "@material-ui/core"
-import Icon from "../icon/icon"
+import Icon from "../../view/icon/icon"
 
 export const styles = (theme: material.Theme): material.StyleRules => {
 	const darken = material.darken

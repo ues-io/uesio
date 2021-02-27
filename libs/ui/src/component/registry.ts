@@ -1,30 +1,23 @@
-import { FunctionComponent, ComponentType } from "react"
-import { BaseProps, BasePropsPlus } from "../definition/definition"
+import { FC, ComponentType } from "react"
+import { BaseProps, UtilityProps } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash.topath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
+import { renderUtility } from "./component"
 
-const registry: Record<
-	string,
-	Record<string, FunctionComponent<BaseProps>>
-> = {}
-const builderRegistry: Record<
-	string,
-	Record<string, FunctionComponent<BaseProps>>
-> = {}
-const definitionRegistry: Record<
-	string,
-	Record<string, BuildPropertiesDefinition>
-> = {}
-const componentSignalsRegistry: Record<
-	string,
-	Record<string, Record<string, ComponentSignalDescriptor>>
-> = {}
+type Registry<T> = Record<string, T>
+const registry: Registry<Registry<FC<BaseProps>>> = {}
+const utilityRegistry: Registry<Registry<FC<UtilityProps>>> = {}
+const builderRegistry: Registry<Registry<FC<BaseProps>>> = {}
+const definitionRegistry: Registry<Registry<BuildPropertiesDefinition>> = {}
+const componentSignalsRegistry: Registry<Registry<
+	Registry<ComponentSignalDescriptor>
+>> = {}
 
 const addToRegistry = <T>(
-	registry: Record<string, Record<string, T>>,
+	registry: Registry<Registry<T>>,
 	namespace: string,
 	name: string,
 	item: T
@@ -38,22 +31,25 @@ const addToRegistry = <T>(
 const register = (
 	namespace: string,
 	name: string,
-	componentType: FunctionComponent<BaseProps>,
-	signals?: Record<string, ComponentSignalDescriptor>
+	componentType: FC<BaseProps>,
+	signals?: Registry<ComponentSignalDescriptor>
 ) => {
-	addToRegistry<FunctionComponent<BaseProps>>(
-		registry,
-		namespace,
-		name,
-		componentType
-	)
+	addToRegistry<FC<BaseProps>>(registry, namespace, name, componentType)
 	signals && addToRegistry(componentSignalsRegistry, namespace, name, signals)
+}
+
+const registerUtilityComponent = (
+	namespace: string,
+	name: string,
+	componentType: FC<UtilityProps>
+) => {
+	addToRegistry(utilityRegistry, namespace, name, componentType)
 }
 
 const registerBuilder = (
 	namespace: string,
 	name: string,
-	componentType: FunctionComponent<BaseProps>,
+	componentType: FC<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
 	addToRegistry(builderRegistry, namespace, name, componentType)
@@ -66,13 +62,21 @@ const getBuildtimeLoader = (namespace: string, name: string) =>
 const getRuntimeLoader = (namespace: string, name: string) =>
 	registry[namespace]?.[name]
 
+const getUtilityLoader = (namespace: string, name: string) =>
+	utilityRegistry[namespace]?.[name]
+
 const getLoader = (namespace: string, name: string, buildMode: boolean) =>
 	buildMode
 		? getBuildtimeLoader(namespace, name)
 		: getRuntimeLoader(namespace, name)
 
-const get = (namespace: string, name: string): ComponentType<BasePropsPlus> =>
-	getLoader(namespace, name, false) || NotFound
+const get = (namespace: string, name: string): ComponentType<BaseProps> =>
+	getRuntimeLoader(namespace, name) || NotFound
+
+const getUtility = (
+	namespace: string,
+	name: string
+): ComponentType<UtilityProps> => renderUtility(namespace, name)
 
 const getSignal = (namespace: string, name: string, signal: string) =>
 	componentSignalsRegistry[namespace]?.[name]?.[signal]
@@ -105,9 +109,12 @@ const getBuilderComponents = (namespace: string) =>
 
 export {
 	register,
+	registerUtilityComponent,
 	registerBuilder,
 	get,
+	getUtility,
 	getLoader,
+	getUtilityLoader,
 	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,

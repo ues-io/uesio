@@ -1,8 +1,13 @@
+// Had to do this for now because the library doesn't have typings if you
+// want to use a totally custom button.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React, { FunctionComponent } from "react"
-import { definition, hooks, styles } from "@uesio/ui"
-import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login"
+import { definition, hooks, component } from "@uesio/ui"
+import FacebookLogin, {
+	ReactFacebookLoginInfo,
+} from "react-facebook-login/dist/facebook-login-render-props"
 import LoginWrapper from "../loginhelpers/wrapper"
-import { getButtonStyles } from "../loginhelpers/button"
 
 type LoginDefinition = {
 	text: string
@@ -14,15 +19,10 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = styles.getUseStyles(["facebookLoginButton"], {
-	facebookLoginButton: getButtonStyles(),
-})
-
 const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const facebookAppIdKey = props.definition.clientId
 	const facebookAppId = uesio.view.useConfigValue(facebookAppIdKey)
-	const classes = useStyles(props)
 	const buttonText = props.definition.text
 
 	if (!facebookAppId) return null
@@ -38,6 +38,8 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 		)
 	}
 
+	const Button = component.registry.getUtility("io", "button")
+
 	return (
 		<LoginWrapper align={props.definition.align}>
 			<FacebookLogin
@@ -45,8 +47,21 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 				autoLoad={false}
 				fields="name,email"
 				callback={responseFacebook}
-				textButton={buttonText}
-				cssClass={classes.facebookLoginButton}
+				render={(renderProps) => (
+					<Button
+						{...props}
+						onClick={renderProps.onClick}
+						definition={{
+							"uesio.variant": "io.secondary",
+							"uesio.styles": {
+								root: {
+									width: "210px",
+								},
+							},
+						}}
+						label={buttonText}
+					/>
+				)}
 			/>
 		</LoginWrapper>
 	)

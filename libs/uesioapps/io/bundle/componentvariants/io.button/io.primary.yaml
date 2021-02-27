@@ -1,0 +1,10 @@
+name: primary
+component: io.button
+label: Primary
+definition:
+  "uesio.styles":
+    root:
+      backgroundColor: "#444"
+      color: white
+      fontWeight: 500
+      padding: 10px

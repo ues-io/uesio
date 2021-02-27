@@ -1,9 +1,7 @@
 import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
 import React, { FunctionComponent } from "react"
-import { definition, hooks, styles } from "@uesio/ui"
+import { definition, hooks, component } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
-import { getButtonStyles } from "../loginhelpers/button"
-import LoginText from "../loginhelpers/text"
 
 type LoginDefinition = {
 	text: string
@@ -15,15 +13,10 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = styles.getUseStyles(["loginButton"], {
-	loginButton: getButtonStyles(),
-})
-
 const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const clientIdKey = props.definition.clientId
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
-	const classes = useStyles(props)
 	const buttonText = props.definition.text
 
 	const responseGoogle = (response: GoogleLoginResponse): void => {
@@ -52,11 +45,23 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 
 	if (!clientIdValue) return null
 
+	const Button = component.registry.getUtility("io", "button")
+
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<button onClick={signIn} className={classes.loginButton}>
-				<LoginText text={buttonText} {...props} />
-			</button>
+			<Button
+				{...props}
+				onClick={signIn}
+				definition={{
+					"uesio.variant": "io.secondary",
+					"uesio.styles": {
+						root: {
+							width: "210px",
+						},
+					},
+				}}
+				label={buttonText}
+			/>
 		</LoginWrapper>
 	)
 }

@@ -1,0 +1,10 @@
+name: secondary
+component: io.button
+label: Secondary
+definition:
+  "uesio.styles":
+    root:
+      backgroundColor: "#e2e2e2"
+      color: "#333"
+      fontWeight: 500
+      padding: 10px

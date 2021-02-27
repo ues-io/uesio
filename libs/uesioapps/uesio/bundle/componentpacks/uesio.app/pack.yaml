@@ -12,3 +12,9 @@ components:
       configvalues:
         - uesio.cognitoPoolId
         - uesio.cognitoClientId
+  dependencies:
+    - io.main
+  variants:
+    - io.button.io.primary
+    - io.button.io.secondary
+

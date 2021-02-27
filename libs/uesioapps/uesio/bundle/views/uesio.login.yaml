@@ -31,9 +31,9 @@ definition:
                                 components:
                                   - material.image:
                                       file: uesio.logo
-                                      height: 150px
+                                      height: 120px
                                       align: center
-                                      margin: 4
+                                      margin: 6
                                   - uesio.logingoogle:
                                       text: Sign in with Google
                                       clientId: uesio.googleClientId

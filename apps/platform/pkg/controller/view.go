@@ -120,7 +120,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 			}
 		}
 	}
-	for i, _ := range variants {
+	for i := range variants {
 		variant := variants[i]
 		variantDependencies[variant.GetKey()] = &variant
 	}
@@ -142,6 +142,23 @@ func getConfigValueDependencyFromComponent(key string, session *sess.Session) (s
 	return value, nil
 }
 
+func loadVariant(key string, session *sess.Session) (*meta.ComponentVariant, error) {
+	partsOfKey := strings.Split(key, ".")
+	if len(partsOfKey) != 4 {
+		return nil, errors.New("Invalid variant key: " + key)
+	}
+	variantDep := meta.ComponentVariant{
+		Namespace: partsOfKey[2],
+		Name:      partsOfKey[3],
+		Component: partsOfKey[0] + "." + partsOfKey[1],
+	}
+	err := bundle.Load(&variantDep, session)
+	if err != nil {
+		return nil, errors.New("Failed to load variant: " + key + err.Error())
+	}
+	return &variantDep, nil
+}
+
 func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
 	workspace := session.GetWorkspaceID()
 	if workspace != "" {
@@ -161,20 +178,11 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	configDependencies := map[string]string{}
 
 	for key := range variantsUsed {
-		partsOfKey := strings.Split(key, ".")
-		if len(partsOfKey) != 4 {
-			return nil, errors.New("Invalid variant key: " + key)
-		}
-		variantDep := meta.ComponentVariant{
-			Namespace: partsOfKey[2],
-			Name:      partsOfKey[3],
-			Component: partsOfKey[0] + "." + partsOfKey[1],
-		}
-		err = bundle.Load(&variantDep, session)
+		variantDep, err := loadVariant(key, session)
 		if err != nil {
-			return nil, errors.New("Failed to load variant: " + key + err.Error())
+			return nil, err
 		}
-		variants[key] = &variantDep
+		variants[key] = variantDep
 	}
 
 	for key := range componentsUsed {
@@ -197,6 +205,19 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 
 			componentInfo, ok := pack.Components.ViewComponents[name]
 			if ok {
+				// Add in any dependent packs too
+				for _, dep := range pack.Components.Dependencies {
+					cPackDeps[dep] = true
+				}
+
+				for _, key := range pack.Components.Variants {
+					variantDep, err := loadVariant(key, session)
+					if err != nil {
+						return nil, err
+					}
+					variants[key] = variantDep
+				}
+
 				cPackDeps[pack.GetKey()] = true
 				if componentInfo != nil {
 					for _, key := range componentInfo.ConfigValues {

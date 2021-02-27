@@ -49,6 +49,7 @@ function mergeDeep(dest: DefinitionMap, src: DefinitionMap): DefinitionMap {
 				dest[key] = {}
 			}
 			mergeDeep(dest[key] as DefinitionMap, src[key] as DefinitionMap)
+			continue
 		}
 
 		if (src[key] !== null && src[key] !== undefined && src[key] !== "") {

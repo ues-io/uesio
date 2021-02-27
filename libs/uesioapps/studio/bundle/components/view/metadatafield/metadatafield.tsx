@@ -80,7 +80,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		return <component.Component {...props} componentType="field" />
 	}
 
-	const SelectField = component.registry.get("material", "selectfield")
+	const SelectField = component.registry.getUtility("material", "selectfield")
 
 	const options =
 		metadataType === "FIELD"
