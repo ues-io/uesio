@@ -1,14 +1,12 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import { Theme, colors, Color } from "@material-ui/core"
 import { createUseStyles } from "react-jss"
-import {
-	CreateCSSProperties,
-	CSSProperties,
-} from "@material-ui/core/styles/withStyles"
 import { Context } from "../context/context"
+import { colors, Color } from "@material-ui/core"
+import { CSSProperties } from "react"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
 import { DefinitionMap } from "../definition/definition"
+
 type ThemeIntention =
 	| "primary"
 	| "secondary"
@@ -16,6 +14,7 @@ type ThemeIntention =
 	| "warning"
 	| "info"
 	| "success"
+
 type ThemeHue = keyof typeof colors
 type ThemeShade = keyof Color
 
@@ -183,8 +182,6 @@ export {
 	MarginDefinition,
 	FloatDefinition,
 	CSSProperties,
-	CreateCSSProperties,
-	Theme,
 	ThemeState,
 	getSpacing,
 	getUseStyles,
