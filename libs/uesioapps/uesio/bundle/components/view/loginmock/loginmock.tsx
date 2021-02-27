@@ -1,8 +1,6 @@
 import React, { FunctionComponent } from "react"
-import { definition, hooks, styles } from "@uesio/ui"
+import { definition, hooks, component } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
-import { getButtonStyles } from "../loginhelpers/button"
-import LoginText from "../loginhelpers/text"
 
 type LoginDefinition = {
 	text: string
@@ -14,18 +12,16 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
-const useStyles = styles.getUseStyles(["loginButton"], {
-	loginButton: getButtonStyles(),
-})
-
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
 	const buttonText = props.definition.text
+
+	const Button = component.registry.getUtility("io", "button")
 
 	return (
 		<LoginWrapper align={props.definition.align}>
-			<button
+			<Button
+				{...props}
 				onClick={(): void => {
 					uesio.signal.run(
 						{
@@ -36,10 +32,16 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						props.context
 					)
 				}}
-				className={classes.loginButton}
-			>
-				<LoginText text={buttonText} {...props} />
-			</button>
+				definition={{
+					"uesio.variant": "io.secondary",
+					"uesio.styles": {
+						root: {
+							width: "210px",
+						},
+					},
+				}}
+				label={buttonText}
+			/>
 		</LoginWrapper>
 	)
 }

@@ -21,7 +21,8 @@ const factory = ['import { component } from "@uesio/ui";']
 
 const getEntryFile = async (
 	bundleName: string,
-	components: ComponentMap
+	components: ComponentMap,
+	utilityComponents: ComponentMap
 ): Promise<string> => {
 	// Create Runtime Entrypoint
 	const imports = []
@@ -48,6 +49,21 @@ const getEntryFile = async (
 				`component.registry.register("${bundleName}", "${name}", ${name}${
 					hasSignals ? `, ${name}signals` : ""
 				});`
+			)
+		}
+	}
+
+	for (const name in utilityComponents) {
+		const hasDefinition = await fileExists(
+			path.resolve(`./bundle/components/utility/${name}/${name}.tsx`)
+		)
+		if (hasDefinition) {
+			imports.push(
+				`import ${name}_utility from "../../components/utility/${name}/${name}";`
+			)
+
+			registrations.push(
+				`component.registry.registerUtilityComponent("${bundleName}", "${name}", ${name}_utility);`
 			)
 		}
 	}
@@ -119,6 +135,7 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 		const packName = yamlContents.name as string
 		const components = yamlContents.components
 		const viewComponents = components.view
+		const utilityComponents = components.utility
 		const fullPackName = `${appName}.${packName}`
 		entries[fullPackName + "/runtime"] = path.resolve(
 			`./bundle/componentpacks/${fullPackName}/runtime.entry.ts`
@@ -129,7 +146,7 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 
 		await fs.writeFile(
 			path.resolve(packDir, `${fullPackName}/runtime.entry.ts`),
-			await getEntryFile(appName, viewComponents)
+			await getEntryFile(appName, viewComponents, utilityComponents)
 		)
 
 		await fs.writeFile(

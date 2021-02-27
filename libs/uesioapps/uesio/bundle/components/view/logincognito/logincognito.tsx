@@ -6,8 +6,6 @@ import React, {
 } from "react"
 import { definition, hooks, component, styles } from "@uesio/ui"
 import LoginWrapper from "../loginhelpers/wrapper"
-import LoginText from "../loginhelpers/text"
-import { getButtonStyles } from "../loginhelpers/button"
 import LoginForm from "./loginform"
 import SignupForm from "./signupform"
 import ConfirmForm from "./confirmform"
@@ -31,16 +29,8 @@ interface LoginProps extends definition.BaseProps {
 }
 
 const useLoginStyles = styles.getUseStyles(
-	[
-		"loginButton",
-		"formwrapper",
-		"button",
-		"textfield",
-		"textbutton",
-		"errormsg",
-	],
+	["formwrapper", "button", "textfield", "textbutton", "errormsg"],
 	{
-		loginButton: getButtonStyles(),
 		formwrapper: {
 			width: "300px",
 			margin: "40px auto",
@@ -88,15 +78,22 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 	})
 
 const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
-	const { setMode } = props
-	const classes = useLoginStyles(props)
+	const { text, setMode } = props
+	const Button = component.registry.getUtility("io", "button")
 	return (
-		<button
+		<Button
+			{...props}
 			onClick={() => setMode("login")}
-			className={classes.loginButton}
-		>
-			<LoginText {...props} />
-		</button>
+			definition={{
+				"uesio.variant": "io.primary",
+				"uesio.styles": {
+					root: {
+						width: "210px",
+					},
+				},
+			}}
+			label={text}
+		/>
 	)
 }
 
@@ -187,7 +184,6 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 
 	function confirm(verificationCode: string): void {
 		const cognitoUser = getUser(signupUsername, pool)
-		console.log("confirm?", verificationCode)
 		cognitoUser.confirmRegistration(
 			verificationCode,
 			true,
@@ -204,7 +200,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 		)
 	}
 
-	const AlertComponent = component.registry.get("material", "alert")
+	const AlertComponent = component.registry.getUtility("material", "alert")
 
 	return (
 		<div className={classes.formwrapper}>

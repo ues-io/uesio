@@ -6,7 +6,13 @@ interface ButtonProps extends definition.BaseProps {
 	label?: string
 }
 
-const useStyles = styles.getUseStyles(["root", "label"])
+const useStyles = styles.getUseStyles(["root", "label"], {
+	root: {
+		fontFamily: "inherit",
+		border: "none",
+		cursor: "pointer",
+	},
+})
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const classes = useStyles(props)

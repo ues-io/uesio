@@ -117,7 +117,7 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	const language = props.definition.language || "yaml"
 
-	const AlertComponent = component.registry.get("material", "alert")
+	const AlertComponent = component.registry.getUtility("material", "alert")
 
 	return (
 		<div className={classes.root}>

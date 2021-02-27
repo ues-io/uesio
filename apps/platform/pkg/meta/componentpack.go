@@ -17,6 +17,8 @@ type ComponentPack struct {
 type ComponentsRegistry struct {
 	ViewComponents    map[string]*ComponentDependencies `yaml:"view"`
 	UtilityComponents map[string]*ComponentDependencies `yaml:"utility"`
+	Dependencies      []string                          `yaml:"dependencies"`
+	Variants          []string                          `yaml:"variants"`
 }
 
 type ComponentDependencies struct {

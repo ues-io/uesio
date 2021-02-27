@@ -1,8 +1,12 @@
 import React, { FunctionComponent } from "react"
-import { DefinitionMap, BaseProps } from "../definition/definition"
+import {
+	DefinitionMap,
+	BaseProps,
+	UtilityProps,
+} from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { parseKey } from "./path"
-import { getLoader } from "./registry"
+import { getLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 
@@ -67,15 +71,17 @@ function mergeInVariants(
 	}
 	return mergeDefinitionMaps(variant.definition, definition)
 }
-const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
-	const { componentType, context, definition } = props
-	if (!componentType) return <NotFound {...props} />
+
+function render(
+	loader: FunctionComponent<BaseProps>,
+	componentType: string,
+	props: BaseProps
+) {
+	const { context, definition } = props
 	if (!shouldDisplay(context, definition)) return null
 	const mergedDefinition =
 		definition && mergeInVariants(definition, componentType, context)
-	const [namespace, name] = parseKey(componentType)
-	const Loader =
-		getLoader(namespace, name, !!context.getBuildMode()) || NotFound
+	const Loader = loader
 	return (
 		<Loader
 			{...{ ...props, definition: mergedDefinition }}
@@ -84,4 +90,21 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	)
 }
 
-export { ComponentInternal, Component }
+const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
+	const { componentType, context } = props
+	if (!componentType) return <NotFound {...props} />
+	const [namespace, name] = parseKey(componentType)
+	const loader =
+		getLoader(namespace, name, !!context.getBuildMode()) || NotFound
+	return render(loader, componentType, props)
+}
+
+const renderUtility = (namespace: string, name: string) => (
+	props: UtilityProps
+) => {
+	const componentType = namespace + "." + name
+	const loader = getUtilityLoader(namespace, name) || NotFound
+	return render(loader, componentType, props)
+}
+
+export { ComponentInternal, renderUtility, Component, render }

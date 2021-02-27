@@ -6,3 +6,5 @@ publicProfile: uesio.public
 dependencies:
   material:
     version: "v0.0.1"
+  io:
+    version: "v0.0.1"

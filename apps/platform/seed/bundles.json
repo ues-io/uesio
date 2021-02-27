@@ -19,5 +19,12 @@
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
+	},
+	{
+		"namespace": "io",
+		"description": "Base Uesio Components",
+		"major": "0",
+		"minor": "0",
+		"patch": "1"
 	}
 ]
