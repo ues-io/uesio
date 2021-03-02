@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) =>
 		horizontal: {
 			display: "flex",
 			alignItems: "center",
-			"&$isDragging$expanded": {
+			"&$isDragging$structureView": {
 				minHeight: "40px",
 			},
 		},

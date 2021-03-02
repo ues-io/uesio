@@ -1,7 +1,7 @@
 name: main
 components:
   view:
-    hello:
-    error:
-    progressgauge:
-    datePicker:
+    sample.hello:
+    sample.error:
+    sample.progressgauge:
+    sample.datePicker:

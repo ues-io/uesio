@@ -13,10 +13,9 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 	}
 
 	const onClickHandler = (): void => {
-		const { path, registry } = component
+		const { registry } = component
 		const componentKey = action.componentKey
-		const [namespace, name] = path.parseKey(componentKey)
-		const propDef = registry.getPropertiesDefinition(namespace, name)
+		const propDef = registry.getPropertiesDefinition(componentKey)
 
 		if (propDef) {
 			uesio.view.addDefinition(`${props.path}["${action.slot}"]`, {
