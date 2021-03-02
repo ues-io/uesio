@@ -35,8 +35,7 @@ const ComponentsToolbar: FunctionComponent<Props> = (props) => {
 			.getBuilderComponents(namespace)
 			.forEach((name: string) => {
 				const definition = component.registry.getPropertiesDefinition(
-					namespace,
-					name
+					`${namespace}.${name}`
 				)
 				if (definition?.traits?.includes("uesio.standalone")) {
 					filteredListItem.names.push(name)

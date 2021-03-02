@@ -1,4 +1,3 @@
-import { parseKey } from "../../component/path"
 import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
@@ -19,8 +18,7 @@ export default {
 		const [band, scope, type] = signalName.split("/")
 		if (band !== "component" || !scope || !type || !target) return context
 
-		const [namespace, name] = parseKey(scope)
-		const handler = getSignal(namespace, name, type)
+		const handler = getSignal(scope, type)
 		const viewId = context.getViewId()
 		return handler.dispatcher(signal, context)(
 			(state: PlainComponentState) => {

@@ -28,42 +28,44 @@ const getEntryFile = async (
 	const imports = []
 	const registrations = []
 
-	for (const name in components) {
+	for (const key in components) {
+		const [, name] = key.split(".")
 		const hasDefinition = await fileExists(
-			path.resolve(`./bundle/components/view/${name}/${name}.tsx`)
+			path.resolve(`./bundle/components/view/${key}/${name}.tsx`)
 		)
 		if (hasDefinition) {
 			const hasSignals = await fileExists(
-				path.resolve(`./bundle/components/view/${name}/signals.ts`)
+				path.resolve(`./bundle/components/view/${key}/signals.ts`)
 			)
 			imports.push(
-				`import ${name} from "../../components/view/${name}/${name}";`
+				`import ${name} from "../../components/view/${key}/${name}";`
 			)
 
 			if (hasSignals) {
 				imports.push(
-					`import ${name}signals from "../../components/view/${name}/signals";`
+					`import ${name}signals from "../../components/view/${key}/signals";`
 				)
 			}
 			registrations.push(
-				`component.registry.register("${bundleName}", "${name}", ${name}${
+				`component.registry.register("${key}", ${name}${
 					hasSignals ? `, ${name}signals` : ""
 				});`
 			)
 		}
 	}
 
-	for (const name in utilityComponents) {
+	for (const key in utilityComponents) {
+		const [, name] = key.split(".")
 		const hasDefinition = await fileExists(
-			path.resolve(`./bundle/components/utility/${name}/${name}.tsx`)
+			path.resolve(`./bundle/components/utility/${key}/${name}.tsx`)
 		)
 		if (hasDefinition) {
 			imports.push(
-				`import ${name}_utility from "../../components/utility/${name}/${name}";`
+				`import ${name}_utility from "../../components/utility/${key}/${name}";`
 			)
 
 			registrations.push(
-				`component.registry.registerUtilityComponent("${bundleName}", "${name}", ${name}_utility);`
+				`component.registry.registerUtilityComponent("${key}", ${name}_utility);`
 			)
 		}
 	}
@@ -80,32 +82,34 @@ const getBuilderEntryFile = async (
 	const defImports = []
 	const builderRegistrations = []
 
-	for (const name in components) {
+	for (const key in components) {
+		const [, name] = key.split(".")
 		const builderName = `${name}builder`
 		const propDefName = `${name}definition`
+
 		const hasBuilder = await fileExists(
-			path.resolve(`./bundle/components/view/${name}/${builderName}.tsx`)
+			path.resolve(`./bundle/components/view/${key}/${builderName}.tsx`)
 		)
 
 		if (hasBuilder) {
 			const hasDef = await fileExists(
 				path.resolve(
-					`./bundle/components/view/${name}/${propDefName}.ts`
+					`./bundle/components/view/${key}/${propDefName}.ts`
 				)
 			)
 
 			builderImports.push(
-				`import ${builderName} from "../../components/view/${name}/${builderName}";`
+				`import ${builderName} from "../../components/view/${key}/${builderName}";`
 			)
 
 			if (hasDef) {
 				defImports.push(
-					`import ${propDefName} from "../../components/view/${name}/${propDefName}";`
+					`import ${propDefName} from "../../components/view/${key}/${propDefName}";`
 				)
 			}
 
 			builderRegistrations.push(
-				`component.registry.registerBuilder("${bundleName}", "${name}", ${builderName}, ${
+				`component.registry.registerBuilder("${key}", ${builderName}, ${
 					hasDef ? propDefName : "null"
 				});`
 			)

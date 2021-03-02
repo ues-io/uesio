@@ -1,6 +1,6 @@
 name: main
 components:
   view:
-    button:
+    io.button:
   utility:
-    button:
+    io.button:

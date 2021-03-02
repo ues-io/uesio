@@ -1,14 +1,14 @@
 name: app
 components:
   view:
-    loginmock:
-    loginfacebook:
+    uesio.loginmock:
+    uesio.loginfacebook:
       configvalues:
         - uesio.facebookAppId
-    logingoogle:
+    uesio.logingoogle:
       configvalues:
         - uesio.googleClientId
-    logincognito:
+    uesio.logincognito:
       configvalues:
         - uesio.cognitoPoolId
         - uesio.cognitoClientId

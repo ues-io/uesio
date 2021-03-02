@@ -5,7 +5,6 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import { parseKey } from "./path"
 import { getLoader, getUtilityLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
@@ -93,18 +92,14 @@ function render(
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	const { componentType, context } = props
 	if (!componentType) return <NotFound {...props} />
-	const [namespace, name] = parseKey(componentType)
 	const loader =
-		getLoader(namespace, name, !!context.getBuildMode()) || NotFound
+		getLoader(componentType, !!context.getBuildMode()) || NotFound
 	return render(loader, componentType, props)
 }
 
-const renderUtility = (namespace: string, name: string) => (
-	props: UtilityProps
-) => {
-	const componentType = namespace + "." + name
-	const loader = getUtilityLoader(namespace, name) || NotFound
-	return render(loader, componentType, props)
+const renderUtility = (key: string) => (props: UtilityProps) => {
+	const loader = getUtilityLoader(key) || NotFound
+	return render(loader, key, props)
 }
 
 export { ComponentInternal, renderUtility, Component, render }
