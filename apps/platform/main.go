@@ -46,7 +46,10 @@ func init() {
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})
-	auth.RegisterAuthType("mock", &mock.Auth{})
+	val, _ := os.LookupEnv("UESIO_MOCK_AUTH")
+	if val == "true" {
+		auth.RegisterAuthType("mock", &mock.Auth{})
+	}
 	auth.RegisterAuthType("facebook", &facebook.Auth{})
 	auth.RegisterAuthType("cognito", &cognito.Auth{})
 
