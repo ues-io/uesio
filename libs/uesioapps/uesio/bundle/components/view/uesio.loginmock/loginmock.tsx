@@ -2,7 +2,8 @@ import React, { ChangeEvent, FunctionComponent, useState } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import * as material from "@material-ui/core"
 import LoginWrapper from "../../shared/loginwrapper"
-
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import users from "../../../../../../../apps/platform/seed/users.json"
 type LoginDefinition = {
 	text: string
 	clientId: string
@@ -37,15 +38,22 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 					<material.MenuItem value="">
 						<em>None</em>
 					</material.MenuItem>
-					<material.MenuItem value={"Ben"}>
-						Ben (Maintainer)
-					</material.MenuItem>
-					<material.MenuItem value={"Abel"}>
-						Abel (Team member)
-					</material.MenuItem>
-					<material.MenuItem value={"Jackson"}>
-						Jackson (Contributor)
-					</material.MenuItem>
+					{users.map((user) => {
+						const value = JSON.stringify({
+							authType: user.federationType,
+							lastname: user.lastname,
+							firstname: user.firstname,
+							subject: user.federationId,
+							email:
+								user.firstname.toLowerCase() +
+								"@thecloudmasters.com",
+						})
+						return (
+							<material.MenuItem value={value}>
+								{user.firstname} ({user.uiDescriptor})
+							</material.MenuItem>
+						)
+					})}
 				</material.Select>
 				<Button
 					{...props}

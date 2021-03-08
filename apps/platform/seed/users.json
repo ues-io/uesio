@@ -5,7 +5,8 @@
 		"firstname": "Ben",
 		"lastname": "Hubbard",
 		"profile": "studio.standard",
-		"site": "prod_studio"
+		"site": "prod_studio",
+		"uiDescriptor": "Maintainer"
 	},
 	{
 		"federationId": "MockAbel",
@@ -13,7 +14,8 @@
 		"firstname": "Abel",
 		"lastname": "Abel",
 		"profile": "studio.standard",
-		"site": "prod_studio"
+		"site": "prod_studio",
+		"uiDescriptor": "Team Member"
 	},
 	{
 		"federationId": "MockJackson",
@@ -21,6 +23,7 @@
 		"firstname": "Jackson",
 		"lastname": "Stone",
 		"profile": "studio.standard",
-		"site": "prod_studio"
+		"site": "prod_studio",
+		"uiDescriptor": "Contributor"
 	}
 ]
