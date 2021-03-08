@@ -5,16 +5,16 @@ import {
 } from "./registry"
 
 const createComponentBankKey = (namespace: string, name: string) =>
-	`component-${namespace}-${name}`
+	`component-${namespace}.${name}`
 
 const createFieldBankKey = (collectionKey: string, fieldKey: string) =>
 	`field-${collectionKey}-${fieldKey}`
 
 const isComponentBankKey = (key: string) => key.startsWith("component-")
 
-const parseComponentBankKey = (key: string): [string, string] => {
-	const [, namespace, name] = key.split("-")
-	return [namespace, name]
+const parseComponentBankKey = (key: string): string => {
+	const [, componentType] = key.split("-")
+	return componentType
 }
 
 const isFieldBankKey = (key: string) => key.startsWith("field-")
@@ -28,8 +28,8 @@ const parseFieldBankKey = (key: string): [string, string, string] => {
 const getPropertiesDefinitionFromDragNode = (dragNode: string) => {
 	// Get the component id from the draggable id
 	if (isComponentBankKey(dragNode)) {
-		const [namespace, name] = parseComponentBankKey(dragNode)
-		return getPropertiesDefinition(namespace, name)
+		const componentType = parseComponentBankKey(dragNode)
+		return getPropertiesDefinition(componentType)
 	} else if (isFieldBankKey(dragNode)) {
 		const [namespace, name, collectionKey] = parseFieldBankKey(dragNode)
 		return {
@@ -48,8 +48,6 @@ export {
 	createComponentBankKey,
 	createFieldBankKey,
 	isComponentBankKey,
-	parseComponentBankKey,
 	isFieldBankKey,
-	parseFieldBankKey,
 	getPropertiesDefinitionFromDragNode,
 }

@@ -186,7 +186,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	}
 
 	for key := range componentsUsed {
-		namespace, name, err := meta.ParseKey(key)
+		namespace, _, err := meta.ParseKey(key)
 		if err != nil {
 			return nil, err
 		}
@@ -203,7 +203,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 
 		for _, pack := range packsForNamespace {
 
-			componentInfo, ok := pack.Components.ViewComponents[name]
+			componentInfo, ok := pack.Components.ViewComponents[key]
 			if ok {
 				// Add in any dependent packs too
 				for _, dep := range pack.Components.Dependencies {

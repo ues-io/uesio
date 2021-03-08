@@ -8,82 +8,66 @@ import { ComponentSignalDescriptor } from "../definition/signal"
 import { renderUtility } from "./component"
 
 type Registry<T> = Record<string, T>
-const registry: Registry<Registry<FC<BaseProps>>> = {}
-const utilityRegistry: Registry<Registry<FC<UtilityProps>>> = {}
-const builderRegistry: Registry<Registry<FC<BaseProps>>> = {}
-const definitionRegistry: Registry<Registry<BuildPropertiesDefinition>> = {}
+const registry: Registry<FC<BaseProps>> = {}
+const utilityRegistry: Registry<FC<UtilityProps>> = {}
+const builderRegistry: Registry<FC<BaseProps>> = {}
+const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<
-	Registry<ComponentSignalDescriptor>
+	ComponentSignalDescriptor
 >> = {}
 
-const addToRegistry = <T>(
-	registry: Registry<Registry<T>>,
-	namespace: string,
-	name: string,
-	item: T
-) => {
-	if (!registry[namespace]) {
-		registry[namespace] = {}
-	}
-	registry[namespace][name] = item
+const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
+	registry[key] = item
 }
 
 const register = (
-	namespace: string,
-	name: string,
+	key: string,
 	componentType: FC<BaseProps>,
 	signals?: Registry<ComponentSignalDescriptor>
 ) => {
-	addToRegistry<FC<BaseProps>>(registry, namespace, name, componentType)
-	signals && addToRegistry(componentSignalsRegistry, namespace, name, signals)
+	addToRegistry<FC<BaseProps>>(registry, key, componentType)
+	signals && addToRegistry(componentSignalsRegistry, key, signals)
 }
 
 const registerUtilityComponent = (
-	namespace: string,
-	name: string,
+	key: string,
 	componentType: FC<UtilityProps>
 ) => {
-	addToRegistry(utilityRegistry, namespace, name, componentType)
+	addToRegistry(utilityRegistry, key, componentType)
 }
 
 const registerBuilder = (
-	namespace: string,
-	name: string,
+	key: string,
 	componentType: FC<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
-	addToRegistry(builderRegistry, namespace, name, componentType)
-	definition && addToRegistry(definitionRegistry, namespace, name, definition)
+	addToRegistry(builderRegistry, key, componentType)
+	definition && addToRegistry(definitionRegistry, key, definition)
 }
 
-const getBuildtimeLoader = (namespace: string, name: string) =>
-	builderRegistry[namespace]?.[name] || getRuntimeLoader(namespace, name)
+const getBuildtimeLoader = (key: string) =>
+	builderRegistry[key] || getRuntimeLoader(key)
 
-const getRuntimeLoader = (namespace: string, name: string) =>
-	registry[namespace]?.[name]
+const getRuntimeLoader = (key: string) => registry[key]
 
-const getUtilityLoader = (namespace: string, name: string) =>
-	utilityRegistry[namespace]?.[name]
+const getUtilityLoader = (key: string) => utilityRegistry[key]
 
-const getLoader = (namespace: string, name: string, buildMode: boolean) =>
-	buildMode
-		? getBuildtimeLoader(namespace, name)
-		: getRuntimeLoader(namespace, name)
+const getLoader = (key: string, buildMode: boolean) =>
+	buildMode ? getBuildtimeLoader(key) : getRuntimeLoader(key)
 
-const get = (namespace: string, name: string): ComponentType<BaseProps> =>
-	getRuntimeLoader(namespace, name) || NotFound
+const get = (key: string): ComponentType<BaseProps> =>
+	getRuntimeLoader(key) || NotFound
 
-const getUtility = (
-	namespace: string,
-	name: string
-): ComponentType<UtilityProps> => renderUtility(namespace, name)
+const getUtility = (key: string): ComponentType<UtilityProps> =>
+	renderUtility(key)
 
-const getSignal = (namespace: string, name: string, signal: string) =>
-	componentSignalsRegistry[namespace]?.[name]?.[signal]
+const getSignal = (key: string, signal: string) =>
+	componentSignalsRegistry[key]?.[signal]
 
-const getPropertiesDefinition = (namespace: string, name: string) => {
-	const propDef = definitionRegistry[namespace]?.[name]
+const getPropertiesDefinition = (key: string) => {
+	const propDef = definitionRegistry[key]
 	if (propDef) {
+		const [namespace, name] = parseKey(key)
 		propDef.name = name
 		propDef.namespace = namespace
 	}
@@ -93,12 +77,11 @@ const getPropertiesDefinition = (namespace: string, name: string) => {
 const getPropertiesDefinitionFromPath = (path: string) => {
 	const pathArray = toPath(path)
 	if (pathArray[0] === "wires") {
-		return getPropertiesDefinition("uesio", "wire")
+		return getPropertiesDefinition("uesio.wire")
 	}
 	const componentFullName = getPathSuffix(pathArray)
 	if (componentFullName) {
-		const [namespace, name] = parseKey(componentFullName)
-		return getPropertiesDefinition(namespace, name)
+		return getPropertiesDefinition(componentFullName)
 	}
 	return null
 }
