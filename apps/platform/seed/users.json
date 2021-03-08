@@ -1,0 +1,26 @@
+[
+	{
+		"federationId": "MockBen",
+		"federationType": "mock",
+		"firstname": "Ben",
+		"lastname": "Hubbard",
+		"profile": "studio.standard",
+		"site": "prod_studio"
+	},
+	{
+		"federationId": "MockAbel",
+		"federationType": "mock",
+		"firstname": "Abel",
+		"lastname": "Abel",
+		"profile": "studio.standard",
+		"site": "prod_studio"
+	},
+	{
+		"federationId": "MockJackson",
+		"federationType": "mock",
+		"firstname": "Jackson",
+		"lastname": "Stone",
+		"profile": "studio.standard",
+		"site": "prod_studio"
+	}
+]

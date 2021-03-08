@@ -22,12 +22,12 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	return (
 		<LoginWrapper align={props.definition.align}>
 			<material.FormControl variant="outlined">
-				<material.InputLabel id="demo-simple-select-outlined-label">
+				<material.InputLabel id="mocked-user-label">
 					Mocked User
 				</material.InputLabel>
 				<material.Select
-					labelId="demo-simple-select-outlined-label"
-					id="demo-simple-select-outlined"
+					labelId="mocked-user-label"
+					id="mocked-users"
 					value={name}
 					onChange={(event: ChangeEvent<HTMLInputElement>) =>
 						setName(event.target.value)

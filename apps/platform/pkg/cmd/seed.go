@@ -184,6 +184,12 @@ func seed(cmd *cobra.Command, args []string) {
 				},
 			},
 		},
+		{
+			Collection: &users,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
 	}, session)
 	if err != nil {
 		logger.LogError(err)

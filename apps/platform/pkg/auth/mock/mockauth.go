@@ -23,7 +23,7 @@ func (a *Auth) Decode(token string, session *sess.Session) (*auth.Authentication
 			FirstName: "Ben",
 			LastName:  "Hubbard",
 			AuthType:  "mock",
-			Email:     "plusplusben@gmail.com",
+			Email:     "ben@thecloudmasters.com",
 		}, nil
 	}
 	if token == "Abel" {
