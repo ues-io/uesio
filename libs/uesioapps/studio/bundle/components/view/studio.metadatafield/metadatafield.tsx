@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import { metadata } from "@uesio/constants"
 import { Grid } from "@material-ui/core"
@@ -29,7 +29,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
-	uesio.addContextFrame({
+	const workspaceContext = context.addFrame({
 		workspace: {
 			name: workspaceName,
 			app: appName,
@@ -40,7 +40,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const fieldMetadata = collection.getField(fieldId)
 	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldValue(fieldId) as string
-	const namespaces = uesio.builder.useAvailableNamespaces(uesio.getContext())
+	const namespaces = uesio.builder.useAvailableNamespaces(workspaceContext)
 	const [namespace, name] = component.path.parseKey(value)
 	const metadata = uesio.builder.useMetadataList(metadataType, namespace)
 
@@ -58,7 +58,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	useEffect(() => {
 		if (!metadata && namespace && metadataType === "FIELD") {
 			uesio.builder.getMetadataList(
-				uesio.getContext(),
+				workspaceContext,
 				metadataType,
 				namespace,
 				grouping
@@ -67,7 +67,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		}
 		if (!metadata && namespace) {
 			uesio.builder.getMetadataList(
-				uesio.getContext(),
+				workspaceContext,
 				metadataType,
 				namespace
 			)

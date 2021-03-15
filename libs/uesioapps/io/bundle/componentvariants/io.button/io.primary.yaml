@@ -4,7 +4,10 @@ label: Primary
 definition:
   "uesio.styles":
     root:
-      backgroundColor: "#444"
+      backgroundColor: "${theme.color.primary}"
       color: white
       fontWeight: 500
       padding: 10px
+      "&:focus":
+        outline: none
+        boxShadow: ${theme.color.primary.darken} 0 0 10px 0px inset

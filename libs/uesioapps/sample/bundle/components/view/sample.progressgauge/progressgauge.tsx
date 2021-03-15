@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { ProgressGaugeProps } from "./progressgaugedefinition"
 import { styles } from "@uesio/ui"
 import { Slider } from "@material-ui/core"

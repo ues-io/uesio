@@ -38,3 +38,11 @@
 		/* Chrome 26+, Opera 23+, Firefox 39+ */
 			url("/fonts/roboto-v20-latin-700.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
+
+@font-face {
+	font-family: "Material Icons";
+	font-style: normal;
+	font-weight: 400;
+	src: local("Material Icons"), local("MaterialIcons-Sharp"),
+		url("/fonts/material-icons-sharp.woff2") format("woff2");
+}

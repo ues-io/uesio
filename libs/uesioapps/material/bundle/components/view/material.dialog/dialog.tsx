@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks, component } from "@uesio/ui"
 import { DialogProps, DialogState } from "./dialogdefinition"
 import * as material from "@material-ui/core"

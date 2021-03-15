@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks } from "@uesio/ui"
 import { ColumnProps, ColumnDefinition } from "./columndefinition"
 import * as material from "@material-ui/core"

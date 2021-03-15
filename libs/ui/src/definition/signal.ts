@@ -24,8 +24,8 @@ type SignalDescriptor = {
 }
 
 type ComponentSignalDescriptor = {
-	label: string
-	properties: (signal: SignalDefinition) => PropDescriptor[]
+	label?: string
+	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher
 }
 

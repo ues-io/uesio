@@ -1,0 +1,12 @@
+name: large
+component: io.iconbutton
+label: Large
+definition:
+  "uesio.styles":
+    root:
+      padding: "8px"
+      color: "#555"
+      "&:focus":
+        background: "#ddd"
+        outline: "none"
+        borderRadius: "40px"

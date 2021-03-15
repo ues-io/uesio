@@ -6,12 +6,14 @@ export type YamlDoc = yaml.Document
 export type BaseProps = {
 	definition?: DefinitionMap
 	index?: number
-	path: string
+	path?: string
 	componentType?: string
 	context: Context
 }
 
 export interface UtilityProps extends BaseProps {
+	variant?: string
+	styles?: Record<string, Record<string, string>>
 	[x: string]: unknown
 }
 export type BaseDefinition = {

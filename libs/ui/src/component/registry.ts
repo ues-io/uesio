@@ -5,7 +5,7 @@ import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash.topath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import { renderUtility } from "./component"
+import { render } from "./component"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -26,7 +26,14 @@ const register = (
 	signals?: Registry<ComponentSignalDescriptor>
 ) => {
 	addToRegistry<FC<BaseProps>>(registry, key, componentType)
-	signals && addToRegistry(componentSignalsRegistry, key, signals)
+	signals && registerSignals(key, signals)
+}
+
+const registerSignals = (
+	key: string,
+	signals: Registry<ComponentSignalDescriptor>
+) => {
+	addToRegistry(componentSignalsRegistry, key, signals)
 }
 
 const registerUtilityComponent = (
@@ -58,8 +65,15 @@ const getLoader = (key: string, buildMode: boolean) =>
 const get = (key: string): ComponentType<BaseProps> =>
 	getRuntimeLoader(key) || NotFound
 
-const getUtility = (key: string): ComponentType<UtilityProps> =>
-	renderUtility(key)
+const getUtility = (key: string) => (props: UtilityProps) => {
+	const loader = getUtilityLoader(key) || NotFound
+	const definition = {
+		...props.definition,
+		...(props.styles && { "uesio.styles": props.styles }),
+		...(props.variant && { "uesio.variant": props.variant }),
+	}
+	return render(loader, key, { ...props, componentType: key, definition })
+}
 
 const getSignal = (key: string, signal: string) =>
 	componentSignalsRegistry[key]?.[signal]
@@ -76,24 +90,20 @@ const getPropertiesDefinition = (key: string) => {
 
 const getPropertiesDefinitionFromPath = (path: string) => {
 	const pathArray = toPath(path)
-	if (pathArray[0] === "wires") {
-		return getPropertiesDefinition("uesio.wire")
-	}
 	const componentFullName = getPathSuffix(pathArray)
 	if (componentFullName) {
 		return getPropertiesDefinition(componentFullName)
 	}
-	return null
+	return undefined
 }
 
-const getBuilderNamespaces = () => Object.keys(builderRegistry)
-const getBuilderComponents = (namespace: string) =>
-	Object.keys(builderRegistry[namespace])
+const getBuilderComponents = () => Object.keys(builderRegistry)
 
 export {
 	register,
 	registerUtilityComponent,
 	registerBuilder,
+	registerSignals,
 	get,
 	getUtility,
 	getLoader,
@@ -101,6 +111,5 @@ export {
 	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
-	getBuilderNamespaces,
 	getBuilderComponents,
 }

@@ -1,9 +1,4 @@
-import React, {
-	useState,
-	FunctionComponent,
-	Dispatch,
-	SetStateAction,
-} from "react"
+import { useState, FunctionComponent, Dispatch, SetStateAction } from "react"
 import { definition, hooks, component, styles } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 import LoginForm from "./loginform"

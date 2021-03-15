@@ -42,12 +42,6 @@ const useDragNode = () =>
 const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
-const useLeftPanel = () =>
-	useSelector(({ builder }: RootState) => builder?.leftPanel || "")
-
-const useRightPanel = () =>
-	useSelector(({ builder }: RootState) => builder?.rightPanel || "")
-
 const useBuilderView = () =>
 	useSelector(({ builder }: RootState) => builder.buildView)
 
@@ -83,8 +77,6 @@ export {
 	useBuilderMode,
 	useDragNode,
 	useDropNode,
-	useLeftPanel,
-	useRightPanel,
 	useBuilderView,
 	useMetadataList,
 	useNamespaces,

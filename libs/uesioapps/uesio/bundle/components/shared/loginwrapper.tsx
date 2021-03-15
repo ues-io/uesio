@@ -1,5 +1,5 @@
 import { styles } from "@uesio/ui"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 interface WrapperProps {
 	align: "left" | "center" | "right"

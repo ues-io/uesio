@@ -102,42 +102,6 @@
         }
       }
     },
-    "buildtime": {
-      "root": "libs/buildtime",
-      "sourceRoot": "libs/buildtime/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/buildtime"],
-          "options": {
-            "command": "npx webpack --config webpack.config.js",
-            "cwd": "libs/buildtime"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "npx webpack --watch --config webpack.config.js &",
-            "cwd": "libs/buildtime"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/buildtime/**/*.ts*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/buildtime/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "lazymonaco": {
       "root": "libs/lazymonaco",
       "sourceRoot": "libs/lazymonaco/src",

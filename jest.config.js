@@ -1,7 +1,6 @@
 module.exports = {
 	projects: [
 		"<rootDir>/libs/ui",
-		"<rootDir>/libs/buildtime",
 		"<rootDir>/libs/apps/uesio",
 		"<rootDir>/libs/apps/sample",
 		"<rootDir>/libs/apps/crm",

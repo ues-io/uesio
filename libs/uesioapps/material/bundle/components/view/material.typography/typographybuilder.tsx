@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks } from "@uesio/ui"
 import { TypographyProps, TypographyDefinition } from "./typographydefinition"
 import Typography from "./typography"

@@ -103,6 +103,18 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	if err != nil {
 		return nil, errors.New("Failed to load variants: " + err.Error())
 	}
+
+	// Also load in studio variants
+	err = bundle.LoadAll(&variants, "io", nil, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, errors.New("Failed to load variants: " + err.Error())
+	}
+
+	err = bundle.LoadAll(&variants, "studio", nil, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, errors.New("Failed to load variants: " + err.Error())
+	}
+
 	for _, pack := range packs {
 		cPackDeps[pack.GetKey()] = true
 		for _, componentInfo := range pack.Components.ViewComponents {

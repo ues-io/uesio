@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FunctionComponent } from "react"
+import { ChangeEvent, FunctionComponent } from "react"
 
 import { definition } from "@uesio/ui"
 import { field } from "@uesio/constants"

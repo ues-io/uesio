@@ -1,29 +1,22 @@
-import React, { useEffect, FunctionComponent } from "react"
+import { useEffect, FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
-import { getPlatform } from "../store/store"
 import { useUesio } from "../hooks/hooks"
-import { useScripts, depsHaveLoaded } from "../hooks/usescripts"
 import { Context } from "../context/context"
 import Route from "./route"
 import routeOps from "../bands/route/operations"
 
-const getNeededScripts = (buildMode: boolean) =>
-	buildMode ? [getPlatform().getBuilderCoreURL()] : []
-
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
 	const buildMode = uesio.builder.useMode()
-	const neededScripts = getNeededScripts(buildMode)
-	const scriptResult = useScripts(neededScripts)
-	const scriptsHaveLoaded = depsHaveLoaded(
-		neededScripts,
-		scriptResult.scripts
-	)
+
+	// This tells us to load in the studio main component pack if we're in buildmode
+	const deps = buildMode ? ["studio.main", "io.main"] : []
+	const scriptResult = uesio.component.usePacks(deps, buildMode)
 
 	useEffect(() => {
-		const toggleFunc = (event: KeyboardEvent): void => {
+		const toggleFunc = (event: KeyboardEvent) => {
 			if (event.altKey && event.code === "KeyU") {
 				uesio.builder.toggleBuildMode()
 			}
@@ -32,7 +25,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		// Option + U
 		window.addEventListener("keyup", toggleFunc)
 
-		window.onpopstate = (event: PopStateEvent): void => {
+		window.onpopstate = (event: PopStateEvent) => {
 			if (!event.state.path || !event.state.namespace) {
 				// In some cases, our path and namespace aren't available in the history state.
 				// If that is the case, then just punt and do a plain redirect.
@@ -56,7 +49,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		}
 
 		// Remove event listeners on cleanup
-		return (): void => {
+		return () => {
 			window.removeEventListener("keyup", toggleFunc)
 		}
 	}, [])
@@ -65,7 +58,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		<Route
 			path={props.path}
 			context={props.context.addFrame({
-				buildMode: buildMode && scriptsHaveLoaded,
+				buildMode: buildMode && scriptResult.loaded,
 			})}
 		/>
 	)

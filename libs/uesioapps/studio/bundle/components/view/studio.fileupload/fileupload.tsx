@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { FileUploadProps } from "./fileuploaddefinition"
 import { hooks, styles, wire, signal, component } from "@uesio/ui"
 import { Button } from "@material-ui/core"

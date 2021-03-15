@@ -110,7 +110,7 @@ const getBuilderEntryFile = async (
 
 			builderRegistrations.push(
 				`component.registry.registerBuilder("${key}", ${builderName}, ${
-					hasDef ? propDefName : "null"
+					hasDef ? propDefName : "undefined"
 				});`
 			)
 		}
@@ -224,7 +224,7 @@ const getWebpackConfig = (
 					},
 			  }
 			: {}),
-		mode: dev ? "development" : "production",
+		mode: "production",
 		entry: entries,
 		output: {
 			path: path.resolve("./bundle/componentpacks"),
