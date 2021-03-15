@@ -1,5 +1,5 @@
 import { hooks, component, builder } from "@uesio/ui"
-import React from "react"
+import { DragEvent } from "react"
 
 const isExistingComponent = (dragNode: string): boolean =>
 	!component.dragdrop.isComponentBankKey(dragNode) &&
@@ -139,7 +139,7 @@ const getDropIndex = (
 const getOnDragStartToolbar = (uesio: hooks.Uesio) => {
 	const viewMode = uesio.builder.useView()
 	const contentView = viewMode === "contentview"
-	return (e: React.DragEvent) => {
+	return (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type && !contentView) {
 			uesio.builder.setDragNode(target.dataset.type)

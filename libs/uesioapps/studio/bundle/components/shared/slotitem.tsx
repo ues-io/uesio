@@ -1,5 +1,5 @@
 import { definition, component, hooks } from "@uesio/ui"
-import { FunctionComponent, SyntheticEvent } from "react"
+import { FunctionComponent, SyntheticEvent, DragEvent } from "react"
 import clsx from "clsx"
 import BuildBorder from "./buildborder"
 import { makeStyles, createStyles } from "@material-ui/core"
@@ -123,7 +123,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		}
 	)
 
-	const onDragOver = (e: React.DragEvent) => {
+	const onDragOver = (e: DragEvent) => {
 		if (!isDropAllowed(accepts, dragNode)) {
 			return
 		}
@@ -146,7 +146,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		}
 	}
 
-	const onDragStart = (e: React.DragEvent) => {
+	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		setTimeout(() => {
 			target.style.visibility = "hidden"
@@ -157,7 +157,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		}, 1)
 	}
 
-	const onDragEnd = (e: React.DragEvent) => {
+	const onDragEnd = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		target.style.removeProperty("visibility")
 		target.style.removeProperty("max-height")
@@ -168,7 +168,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		uesio.builder.setDropNode("")
 	}
 
-	const onDrop = (e: React.DragEvent) => {
+	const onDrop = (e: DragEvent) => {
 		if (!isDropAllowed(accepts, dragNode)) {
 			return
 		}

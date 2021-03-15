@@ -2,7 +2,7 @@
 // But to avoid a weird bug with lab buttons, I just copied it
 // into here. Eventually, if the Alert component makes it out of
 // lab, we can delete this.
-import * as React from "react"
+import { forwardRef } from "react"
 import clsx from "clsx"
 
 import * as material from "@material-ui/core"
@@ -149,7 +149,7 @@ const defaultIconMapping = {
 } as any
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Alert = React.forwardRef((props: any, ref) => {
+const Alert = forwardRef((props: any, ref) => {
 	const {
 		action,
 		children,
