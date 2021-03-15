@@ -1,30 +1,54 @@
-import React, { FunctionComponent, useEffect } from "react"
-import themeOps from "../bands/theme/operations"
-import { useTheme } from "../bands/theme/selectors"
+import { FunctionComponent, useEffect } from "react"
 import { ComponentInternal } from "../component/component"
-import { parseKey } from "../component/path"
-
 import { BaseProps } from "../definition/definition"
-
 import { useRoute } from "../bands/route/selectors"
-import { getDispatcher } from "../store/store"
 import { useSite } from "../bands/site/selectors"
+import { createUseStyles } from "react-jss"
+import { useUesio } from "../hooks/hooks"
+
+const useStyles = createUseStyles({
+	"@global": {
+		body: {
+			margin: 0,
+			fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+			fontWeight: 400,
+		},
+		/* apply a natural box layout model to all elements, but allowing components to change */
+		html: {
+			boxSizing: "border-box",
+		},
+		"*": {
+			boxSizing: "inherit",
+		},
+		"@keyframes lineshighlight": {
+			from: {
+				opacity: 1,
+			},
+			to: {
+				opacity: 0,
+			},
+		},
+	},
+})
 
 const Route: FunctionComponent<BaseProps> = (props) => {
-	const dispatcher = getDispatcher()
+	const uesio = useUesio(props)
 	const site = useSite()
 	const route = useRoute()
-	const theme = useTheme(route?.theme || "")
-	if (!route) return null
-
 	const routeContext = props.context.addFrame({
 		site,
 		route,
-		workspace: route.workspace,
-		buildMode: props.context.getBuildMode() && !!route.workspace,
+		workspace: route?.workspace,
+		buildMode: props.context.getBuildMode() && !!route?.workspace,
+		viewDef: route?.view,
+		view: route?.view + "()",
+		theme: route?.theme,
 	})
+	const theme = uesio.theme.useTheme(route?.theme || "", routeContext)
+	useStyles(props)
 
 	useEffect(() => {
+		if (!route) return
 		// This makes sure that the namespace and path of the route is specified in the history.
 		window.history.replaceState(
 			{
@@ -34,21 +58,10 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 			},
 			""
 		)
-		const [namespace, name] = parseKey(route.theme)
-
-		if (namespace && name && !theme) {
-			dispatcher(
-				themeOps.fetchTheme({
-					namespace,
-					name,
-					context: routeContext,
-				})
-			)
-		}
-	}, [theme])
+	})
 
 	// Quit rendering early if we don't have our theme yet.
-	if (!theme) return null
+	if (!theme || !route) return null
 
 	return (
 		<ComponentInternal

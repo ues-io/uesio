@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks, component } from "@uesio/ui"
 import { FormProps, FormDefinition } from "./formdefinition"
 import Form from "./form"

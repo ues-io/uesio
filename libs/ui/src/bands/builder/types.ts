@@ -12,8 +12,6 @@ type BuilderState = {
 	droppingNode?: string
 	lastModifiedNode?: string
 	buildView: string
-	rightPanel?: string
-	leftPanel?: string
 	metadata: MetadataListStore
 	namespaces: MetadataListStore
 }

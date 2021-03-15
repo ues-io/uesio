@@ -68,7 +68,6 @@ interface Platform {
 		name: string,
 		buildMode: boolean
 	): string
-	getBuilderCoreURL(): string
 	getMetadataList(
 		context: Context,
 		metadataType: metadata.MetadataType,

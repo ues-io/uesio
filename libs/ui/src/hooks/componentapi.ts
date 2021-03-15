@@ -4,6 +4,8 @@ import { PlainComponentState } from "../bands/component/types"
 import { useComponentState } from "../bands/component/selectors"
 import { useEffect } from "react"
 import { AnyAction } from "@reduxjs/toolkit"
+import useScripts from "./usescripts"
+import { parseKey } from "../component/path"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -22,6 +24,18 @@ class ComponentAPI {
 				name,
 				buildMode
 			)
+		)
+
+	usePacks = (packs: string[] | undefined, buildMode: boolean) =>
+		useScripts(
+			packs?.flatMap((key) => {
+				const [namespace, name] = parseKey(key)
+				const result = [this.getPackURL(namespace, name, false)]
+				if (buildMode) {
+					result.push(this.getPackURL(namespace, name, true))
+				}
+				return result
+			}) || []
 		)
 
 	useState = (
@@ -46,7 +60,7 @@ class ComponentAPI {
 			}
 		})
 
-		return state
+		return state || initialState
 	}
 }
 

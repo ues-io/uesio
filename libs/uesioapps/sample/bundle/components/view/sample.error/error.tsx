@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { ErrorProps } from "./errordefinition"
 import { styles } from "@uesio/ui"
 import { Button } from "@material-ui/core"

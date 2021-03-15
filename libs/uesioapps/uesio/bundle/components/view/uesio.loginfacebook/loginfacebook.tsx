@@ -2,7 +2,7 @@
 // want to use a totally custom button.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import FacebookLogin, {
 	ReactFacebookLoginInfo,

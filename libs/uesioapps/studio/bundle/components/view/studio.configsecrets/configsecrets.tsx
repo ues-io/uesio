@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
 import { definition, hooks } from "@uesio/ui"
 import {
 	List,
@@ -32,9 +32,11 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 	const appName = view?.params?.appname
 	const siteName = view?.params?.sitename
 
+	let newContext = props.context
+
 	if (appName) {
 		if (workspaceName) {
-			uesio.addContextFrame({
+			newContext = props.context.addFrame({
 				workspace: {
 					name: workspaceName,
 					app: appName,
@@ -42,7 +44,7 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 			})
 		}
 		if (siteName) {
-			uesio.addContextFrame({
+			newContext = props.context.addFrame({
 				siteadmin: {
 					name: siteName,
 					app: appName,
@@ -51,10 +53,10 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 		}
 	}
 	const [configValues, resetConfigValues] = uesio.configvalue.useConfigValues(
-		props.context
+		newContext
 	)
-	const [secrets, resetSecrets] = uesio.secret.useSecrets(props.context)
-	const [state, setState] = React.useState({
+	const [secrets, resetSecrets] = uesio.secret.useSecrets(newContext)
+	const [state, setState] = useState({
 		selected: "",
 		value: "",
 		isSecret: false,

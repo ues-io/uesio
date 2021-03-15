@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 import { hooks, component, styles } from "@uesio/ui"
 import { CardProps } from "./carddefinition"

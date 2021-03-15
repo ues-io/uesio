@@ -9,7 +9,7 @@ declare global {
 	}
 }
 
-import React, { lazy, createElement, FunctionComponent, Suspense } from "react"
+import { lazy, createElement, FunctionComponent, Suspense } from "react"
 import { LinearProgress } from "@material-ui/core"
 
 import {

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import * as material from "@material-ui/core"
 import { collection, definition } from "@uesio/ui"
 import { ColumnDefinition } from "./tabledefinition"

@@ -1,7 +1,7 @@
 {
 	"compileOnSave": false,
 	"compilerOptions": {
-		"jsx": "react",
+		"jsx": "react-jsx",
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
@@ -23,7 +23,6 @@
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"@uesio/buildtime": ["libs/buildtime/src/index.ts"],
 			"@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"],
 			"@uesio/constants": ["libs/constants/src/index.ts"]
 		}

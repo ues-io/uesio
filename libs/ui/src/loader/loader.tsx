@@ -12,7 +12,7 @@ class Loader {
 
 	platform: Platform
 
-	load(element: HTMLElement, initialState: InitialState): void {
+	load(element: HTMLElement, initialState: InitialState) {
 		ReactDOM.render(
 			<React.StrictMode>
 				<Provider store={create(this.platform, initialState)}>

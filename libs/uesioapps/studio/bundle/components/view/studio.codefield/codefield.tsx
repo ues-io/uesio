@@ -1,9 +1,4 @@
-import React, {
-	FunctionComponent,
-	useState,
-	Dispatch,
-	SetStateAction,
-} from "react"
+import { FunctionComponent, useState, Dispatch, SetStateAction } from "react"
 import { definition, collection, wire, component, styles } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 import { InputLabel } from "@material-ui/core"

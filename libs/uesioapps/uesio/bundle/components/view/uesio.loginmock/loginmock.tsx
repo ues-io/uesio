@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 
@@ -32,14 +32,8 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						props.context
 					)
 				}}
-				definition={{
-					"uesio.variant": "io.secondary",
-					"uesio.styles": {
-						root: {
-							width: "210px",
-						},
-					},
-				}}
+				variant="io.secondary"
+				width="210px"
 				label={buttonText}
 			/>
 		</LoginWrapper>

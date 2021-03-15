@@ -3,8 +3,6 @@ import {
 	useDragNode,
 	useDropNode,
 	useBuilderView,
-	useRightPanel,
-	useLeftPanel,
 	useMetadataList,
 	useNamespaces,
 	useNodeState,
@@ -21,8 +19,6 @@ import {
 	setPanelClosed,
 	setDragNode,
 	setDropNode,
-	setLeftPanel,
-	setRightPanel,
 	setSelectedNode,
 	setView,
 	toggleBuildMode,
@@ -49,8 +45,6 @@ class BuilderAPI {
 	useMode = useBuilderMode
 	useDragNode = useDragNode
 	useDropNode = useDropNode
-	useLeftPanel = useLeftPanel
-	useRightPanel = useRightPanel
 	useView = useBuilderView
 	useHasChanges = useBuilderHasChanges
 
@@ -72,14 +66,6 @@ class BuilderAPI {
 
 	setDropNode = (path: string) => {
 		this.dispatcher(setDropNode(path))
-	}
-
-	setRightPanel = (panel: string) => {
-		this.dispatcher(setRightPanel(panel))
-	}
-
-	setLeftPanel = (panel: string) => {
-		this.dispatcher(setLeftPanel(panel))
 	}
 
 	setView = (view: string) => {

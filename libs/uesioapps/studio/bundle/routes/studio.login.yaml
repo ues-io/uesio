@@ -1,4 +1,4 @@
 name: login
 path: login
 view: uesio.login
-theme: uesio.default
+theme: studio.default

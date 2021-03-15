@@ -1,4 +1,4 @@
-import React, { useState, useRef, FunctionComponent } from "react"
+import { useState, useRef, FunctionComponent } from "react"
 import { useCombobox } from "downshift"
 import { definition } from "@uesio/ui"
 import * as material from "@material-ui/core"

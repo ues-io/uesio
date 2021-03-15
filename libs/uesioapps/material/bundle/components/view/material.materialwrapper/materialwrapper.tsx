@@ -1,8 +1,9 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { MaterialWrapperProps } from "./materialwrapperdefinition"
 import { component, styles } from "@uesio/ui"
 import { PaletteOptions } from "@material-ui/core/styles/createPalette"
 import * as material from "@material-ui/core"
+import ScopedCssBaseline from "@material-ui/core/ScopedCssBaseline"
 
 const makePaletteTheme = (theme: styles.ThemeState): PaletteOptions =>
 	Object.entries(theme?.definition?.palette || {}).reduce(
@@ -21,14 +22,15 @@ const makeTheme = (theme: styles.ThemeState) => {
 }
 const Materialwrapper: FunctionComponent<MaterialWrapperProps> = (props) => (
 	<material.ThemeProvider theme={makeTheme(props.context.getTheme())}>
-		<material.CssBaseline />
-		<component.Slot
-			definition={props.definition}
-			listName="components"
-			path={props.path}
-			accepts={["uesio.standalone"]}
-			context={props.context}
-		/>
+		<ScopedCssBaseline>
+			<component.Slot
+				definition={props.definition}
+				listName="components"
+				path={props.path}
+				accepts={["uesio.standalone"]}
+				context={props.context}
+			/>
+		</ScopedCssBaseline>
 	</material.ThemeProvider>
 )
 

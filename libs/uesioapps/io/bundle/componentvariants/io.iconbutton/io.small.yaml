@@ -1,0 +1,14 @@
+name: small
+component: io.iconbutton
+label: Small
+definition:
+  "uesio.styles":
+    root:
+      padding: 0
+      color: "white"
+      "&:focus":
+        background: "rgba(255,255,255,0.3)"
+        outline: "none"
+        borderRadius: "40px"
+      "& > span":
+        fontSize: "14px"

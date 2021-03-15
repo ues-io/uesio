@@ -1,5 +1,5 @@
 import { definition } from "@uesio/ui"
-import React, {
+import {
 	useState,
 	ChangeEvent,
 	FunctionComponent,
