@@ -16,7 +16,11 @@ class Loader {
 		ReactDOM.render(
 			<StrictMode>
 				<Provider store={create(this.platform, initialState)}>
-					<Runtime path="" context={new Context()} />
+					<Runtime
+						path=""
+						componentType="uesio.runtime"
+						context={new Context()}
+					/>
 				</Provider>
 			</StrictMode>,
 			element

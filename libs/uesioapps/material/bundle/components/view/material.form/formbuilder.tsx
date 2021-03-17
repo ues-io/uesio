@@ -7,8 +7,7 @@ const FormBuilder: FunctionComponent<FormProps> = (props) => {
 	const { path, context } = props
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(path) as FormDefinition
-	const buildView = uesio.builder.useView()
-	const isStructureView = buildView === "structureview"
+	const isStructureView = uesio.builder.useIsStructureView()
 
 	return (
 		<>

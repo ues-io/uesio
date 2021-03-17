@@ -15,7 +15,7 @@ interface Props extends definition.BaseProps {
 
 const ComponentsPanel: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const contentView = uesio.builder.useView() === "contentview"
+	const isStructureView = uesio.builder.useIsStructureView()
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
 
@@ -65,7 +65,7 @@ const ComponentsPanel: FunctionComponent<Props> = (props) => {
 						>
 							<div>
 								{filteredList[element].map((value, indexTag) =>
-									contentView ? (
+									!isStructureView ? (
 										<PropNodeTag
 											title={value}
 											key={indexTag}

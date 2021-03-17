@@ -44,19 +44,25 @@ type WorkspaceMergeData struct {
 	App  string `json:"app"`
 }
 
-// BuilderMergeData stuff to merge
-type BuilderMergeData struct {
-	BuildMode bool   `json:"buildMode"`
-	BuildView string `json:"buildView"`
+type ComponentMergeData struct {
+	ID            string      `json:"id"`
+	ComponentType string      `json:"componentType"`
+	View          string      `json:"view"`
+	State         interface{} `json:"state"`
+}
+
+type ComponentsMergeData struct {
+	IDs      []string                      `json:"ids"`
+	Entities map[string]ComponentMergeData `json:"entities"`
 }
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route     *RouteMergeData     `json:"route"`
-	User      *UserMergeData      `json:"user"`
-	Site      *SiteMergeData      `json:"site"`
-	Workspace *WorkspaceMergeData `json:"workspace"`
-	Builder   *BuilderMergeData   `json:"builder"`
+	Route     *RouteMergeData      `json:"route"`
+	User      *UserMergeData       `json:"user"`
+	Site      *SiteMergeData       `json:"site"`
+	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component *ComponentsMergeData `json:"component,omitempty"`
 }
 
 var indexTemplate *template.Template
@@ -99,6 +105,23 @@ func GetWorkspaceMergeData(workspace *meta.Workspace) *WorkspaceMergeData {
 	}
 }
 
+func GetComponentMergeData(buildMode bool) *ComponentsMergeData {
+	if !buildMode {
+		return nil
+	}
+	return &ComponentsMergeData{
+		IDs: []string{"$root/uesio.runtime/buildmode"},
+		Entities: map[string]ComponentMergeData{
+			"$root/uesio.runtime/buildmode": {
+				ID:            "buildmode",
+				ComponentType: "uesio.runtime",
+				View:          "$root",
+				State:         true,
+			},
+		},
+	}
+}
+
 // ExecuteIndexTemplate function
 func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bool, session *sess.Session) {
 	w.Header().Set("content-type", "text/html")
@@ -121,10 +144,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 			Version: site.Bundle.GetVersionString(),
 			App:     site.AppRef,
 		},
-		Builder: &BuilderMergeData{
-			BuildMode: buildMode,
-			BuildView: "structureview",
-		},
+		Component: GetComponentMergeData(buildMode),
 	}
 
 	// Not checking this error for now.

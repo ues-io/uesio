@@ -19,7 +19,6 @@ const BottomLeftNav: FunctionComponent<Props> = (props) => {
 				onClick={uesio.signal.getHandler([
 					{
 						signal: "component/uesio.runtime/SHOW_COMPS",
-						target: "buildtime",
 					},
 				])}
 				label="Components"
@@ -31,7 +30,6 @@ const BottomLeftNav: FunctionComponent<Props> = (props) => {
 				onClick={uesio.signal.getHandler([
 					{
 						signal: "component/uesio.runtime/SHOW_WIRES",
-						target: "buildtime",
 					},
 				])}
 				label="Wires"

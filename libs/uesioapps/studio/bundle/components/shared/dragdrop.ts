@@ -137,11 +137,10 @@ const getDropIndex = (
 }
 
 const getOnDragStartToolbar = (uesio: hooks.Uesio) => {
-	const viewMode = uesio.builder.useView()
-	const contentView = viewMode === "contentview"
+	const isStructureView = uesio.builder.useIsStructureView()
 	return (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && !contentView) {
+		if (target && target.dataset.type && isStructureView) {
 			uesio.builder.setDragNode(target.dataset.type)
 		}
 	}

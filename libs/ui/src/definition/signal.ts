@@ -12,10 +12,7 @@ type SignalDispatcher = (
 type ComponentSignalDispatcher = (
 	signal: SignalDefinition,
 	context: Context
-) => (
-	setState: (state: PlainComponentState) => void,
-	getState: () => PlainComponentState | undefined
-) => Context
+) => (state: PlainComponentState | undefined) => PlainComponentState | undefined
 
 type SignalDescriptor = {
 	label: string
@@ -27,6 +24,7 @@ type ComponentSignalDescriptor = {
 	label?: string
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher
+	target?: string
 }
 
 type SignalDefinition = {

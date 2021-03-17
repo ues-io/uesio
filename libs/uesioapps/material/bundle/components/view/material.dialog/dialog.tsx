@@ -16,14 +16,12 @@ const Dialog: FunctionComponent<DialogProps> = (props) => {
 	const classes = useStyles()
 	const { definition, path, context } = props
 
-	const initialState: DialogState = {
-		mode: definition.mode || "CLOSE",
-	}
-
-	const componentState = uesio.component.useState(
+	const [componentState] = uesio.component.useState<DialogState>(
 		definition.id,
-		initialState
-	) as DialogState
+		{
+			mode: definition.mode || "CLOSE",
+		}
+	)
 
 	if (!componentState) return null
 

@@ -8,7 +8,7 @@ import { ComponentAPI } from "./componentapi"
 import { PlatformAPI } from "./platformapi"
 import { CollectionAPI } from "./collectionapi"
 import { BaseProps } from "../definition/definition"
-import { Context } from "../context/context"
+import { Context, ContextFrame } from "../context/context"
 import { AnyAction } from "redux"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
@@ -16,12 +16,12 @@ import { ThemeAPI } from "./themeapi"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
-	constructor(dispatcher: Dispatcher<AnyAction>, props?: BaseProps) {
+	constructor(dispatcher: Dispatcher<AnyAction>, props: BaseProps) {
 		this._dispatcher = dispatcher
-		this._props = props || {
-			path: "",
-			context: new Context(),
-		}
+
+		this._path = props.path || ""
+		this._context = props.context || new Context()
+		this._componentType = props.componentType || ""
 
 		this.signal = new SignalAPI(this)
 		this.wire = new WireAPI(this)
@@ -49,13 +49,15 @@ class Uesio {
 	secret: SecretAPI
 	theme: ThemeAPI
 
-	_props: BaseProps
+	_path: string
+	_context: Context
+	_componentType: string
+
 	_dispatcher: Dispatcher<AnyAction>
 
-	getProps = () => this._props
-	getPath = () => this._props.path
-	getComponentType = () => this._props.componentType || ""
-	getContext = () => this._props.context
+	getPath = () => this._path
+	getComponentType = () => this._componentType
+	getContext = () => this._context
 	getDispatcher = () => this._dispatcher
 	getView = () => this.getContext().getView()
 	getTheme = () => this.getContext().getTheme()
@@ -63,8 +65,10 @@ class Uesio {
 	getViewDef = () => this.getContext().getViewDef()
 	getViewDefId = () => this.getContext().getViewDefId()
 	getWireDef = (wirename: string) => this.getContext().getWireDef(wirename)
+	addContextFrame = (frame: ContextFrame) =>
+		(this._context = this._context.addFrame(frame))
 }
 
-const useUesio = (props?: BaseProps) => new Uesio(getDispatcher(), props)
+const useUesio = (props: BaseProps) => new Uesio(getDispatcher(), props)
 
 export { useUesio, Uesio }

@@ -41,10 +41,11 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 		workspace: route?.workspace,
 		buildMode: props.context.getBuildMode() && !!route?.workspace,
 		viewDef: route?.view,
-		view: route?.view + "()",
 		theme: route?.theme,
 	})
 	const theme = uesio.theme.useTheme(route?.theme || "", routeContext)
+
+	// This applies the global styles
 	useStyles(props)
 
 	useEffect(() => {
