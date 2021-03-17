@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 
 const NotFound: FunctionComponent<BaseProps> = (props) => (

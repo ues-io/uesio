@@ -1,9 +1,11 @@
-import { Dispatcher } from "../store/store"
+import { Dispatcher, getStore } from "../store/store"
 import { Uesio } from "./hooks"
 import { PlainComponentState } from "../bands/component/types"
-import { useComponentState } from "../bands/component/selectors"
+import { selectState, useComponentState } from "../bands/component/selectors"
 import { useEffect } from "react"
 import { AnyAction } from "@reduxjs/toolkit"
+import useScripts from "./usescripts"
+import { parseKey } from "../component/path"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -24,30 +26,61 @@ class ComponentAPI {
 			)
 		)
 
-	useState = (
+	usePacks = (packs: string[] | undefined, buildMode: boolean) =>
+		useScripts(
+			packs?.flatMap((key) => {
+				const [namespace, name] = parseKey(key)
+				const result = [this.getPackURL(namespace, name, false)]
+				if (buildMode) {
+					result.push(this.getPackURL(namespace, name, true))
+				}
+				return result
+			}) || []
+		)
+
+	useState = <T extends PlainComponentState>(
 		componentId: string,
-		initialState: PlainComponentState
-	): PlainComponentState | undefined => {
+		initialState?: T
+	): [T | undefined, (state: T) => void] => {
 		const viewId = this.uesio.getViewId()
 		const componentType = this.uesio.getComponentType()
-		const state = useComponentState(componentType, componentId, viewId)
+		const state = useComponentState<T>(componentType, componentId, viewId)
+
+		const setState = (state: T) => {
+			this.dispatcher({
+				type: "component/set",
+				payload: {
+					id: componentId,
+					componentType,
+					view: viewId,
+					state,
+				},
+			})
+		}
 
 		useEffect(() => {
-			if (!state && viewId) {
-				this.dispatcher({
-					type: "component/set",
-					payload: {
-						id: componentId,
-						componentType,
-						view: viewId,
-						state: initialState,
-					},
-				})
+			if (state === undefined && initialState !== undefined && viewId) {
+				setState(initialState)
 			}
 		})
 
-		return state
+		return [state || initialState, setState]
 	}
+
+	getState = <T extends PlainComponentState>(
+		componentId: string
+	): T | undefined => {
+		const state = getStore().getState()
+		const componentType = this.uesio.getComponentType()
+		const viewId = this.uesio.getViewId()
+		return selectState(state, componentType, componentId, viewId)
+	}
+
+	useExternalState = <T extends PlainComponentState>(
+		viewId: string,
+		componentType: string,
+		componentId: string
+	): T | undefined => useComponentState<T>(componentType, componentId, viewId)
 }
 
 export { ComponentAPI }

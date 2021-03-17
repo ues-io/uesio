@@ -1,0 +1,9 @@
+name: verticalnav
+component: io.scrollpanel
+label: Vertical Navigation
+definition:
+  "uesio.styles":
+    root:
+      backgroundColor: "#f2f2f2"
+      color: "#444"
+      padding: "8px"

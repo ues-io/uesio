@@ -1,10 +1,6 @@
 import {
-	useBuilderMode,
 	useDragNode,
 	useDropNode,
-	useBuilderView,
-	useRightPanel,
-	useLeftPanel,
 	useMetadataList,
 	useNamespaces,
 	useNodeState,
@@ -18,14 +14,9 @@ import { SignalDefinition } from "../definition/signal"
 import { metadata } from "@uesio/constants"
 import {
 	setActiveNode,
-	setPanelClosed,
 	setDragNode,
 	setDropNode,
-	setLeftPanel,
-	setRightPanel,
 	setSelectedNode,
-	setView,
-	toggleBuildMode,
 } from "../bands/builder"
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
@@ -46,12 +37,15 @@ class BuilderAPI {
 	useNodeState = useNodeState
 	useSelectedNode = useSelectedNode
 	useLastModifiedNode = useLastModifiedNode
-	useMode = useBuilderMode
 	useDragNode = useDragNode
 	useDropNode = useDropNode
-	useLeftPanel = useLeftPanel
-	useRightPanel = useRightPanel
-	useView = useBuilderView
+	useIsStructureView = () =>
+		this.uesio.component.useExternalState<string>(
+			"$root",
+			"uesio.runtime",
+			"buildview"
+		) !== "content"
+
 	useHasChanges = useBuilderHasChanges
 
 	useMetadataList = useMetadataList
@@ -59,9 +53,7 @@ class BuilderAPI {
 	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))
 	}
-	setPanelClosed = () => {
-		this.dispatcher(setPanelClosed())
-	}
+
 	setSelectedNode = (path: string) => {
 		this.dispatcher(setSelectedNode(path))
 	}
@@ -72,22 +64,6 @@ class BuilderAPI {
 
 	setDropNode = (path: string) => {
 		this.dispatcher(setDropNode(path))
-	}
-
-	setRightPanel = (panel: string) => {
-		this.dispatcher(setRightPanel(panel))
-	}
-
-	setLeftPanel = (panel: string) => {
-		this.dispatcher(setLeftPanel(panel))
-	}
-
-	setView = (view: string) => {
-		this.dispatcher(setView(view))
-	}
-
-	toggleBuildMode = () => {
-		this.dispatcher(toggleBuildMode())
 	}
 
 	save = () =>

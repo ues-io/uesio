@@ -1,7 +1,6 @@
 import { Dispatcher } from "../store/store"
-import { Definition, DefinitionMap } from "../definition/definition"
+import { Definition } from "../definition/definition"
 import yaml from "yaml"
-import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
 import { Uesio } from "./hooks"
 import { AnyAction } from "redux"
 import {
@@ -19,6 +18,12 @@ import {
 	useComponentVariant,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
+import { mergeInVariants } from "../component/component"
+import { useView } from "../bands/view/selectors"
+import { useEffect } from "react"
+import { ViewParams } from "../bands/view/types"
+import { Context } from "../context/context"
+import loadViewOp from "../bands/view/operations/load"
 
 const VIEW_BAND = "view"
 
@@ -31,6 +36,21 @@ class ViewAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
+	useView(viewId?: string, params?: ViewParams, context?: Context) {
+		const view = useView(viewId || "")
+		useEffect(() => {
+			if (!view) {
+				this.dispatcher(
+					loadViewOp({
+						context: context || this.uesio.getContext(),
+						path: this.uesio.getPath() || "",
+						params,
+					})
+				)
+			}
+		})
+		return view
+	}
 	useConfigValue(key: string): string {
 		const viewDefId = this.uesio.getViewDefId()
 		return viewDefId ? useViewConfigValue(viewDefId, key) : ""
@@ -49,19 +69,25 @@ class ViewAPI {
 			return def
 		}
 
-		const variantName = (def as DefinitionMap)["uesio.variant"] as string
+		if (typeof def !== "object" || Array.isArray(def)) return def
+
+		const variantName = def["uesio.variant"] as string
 		if (!variantName) {
 			return def
 		}
-		const theme = this.uesio.getTheme()
+
 		const variant = useComponentVariant(
 			viewDefId,
 			componentType,
-			variantName,
-			theme
+			variantName
 		)
 		if (!variant) return def
-		return mergeDefinitionMaps(variant.definition, def as DefinitionMap)
+		return mergeInVariants(
+			def,
+			componentType,
+			variant,
+			this.uesio.getTheme()
+		)
 	}
 
 	useYAML() {
@@ -131,7 +157,7 @@ class ViewAPI {
 
 	removeDefinition(path?: string) {
 		const viewDefId = this.uesio.getViewDefId()
-		const usePath = path || this.uesio.getPath()
+		const usePath = path || this.uesio.getPath() || ""
 		if (viewDefId) {
 			this.dispatcher(
 				removeDefinition({

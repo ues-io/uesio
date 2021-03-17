@@ -1,5 +1,5 @@
 import { useGoogleLogin, GoogleLoginResponse } from "react-google-login"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
 
@@ -52,12 +52,10 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 			<Button
 				{...props}
 				onClick={signIn}
-				definition={{
-					"uesio.variant": "io.secondary",
-					"uesio.styles": {
-						root: {
-							width: "210px",
-						},
+				variant="io.secondary"
+				styles={{
+					root: {
+						width: "210px",
 					},
 				}}
 				label={buttonText}

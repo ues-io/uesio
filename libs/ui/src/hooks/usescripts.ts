@@ -14,6 +14,7 @@ type ScriptCache = {
 type ScriptResult = {
 	error: boolean
 	scripts: string[]
+	loaded: boolean
 }
 
 const depsHaveNotLoaded = (want: string[], have: string[]) =>
@@ -26,6 +27,16 @@ const areNotAllLoaded = (cache: ScriptMap) =>
 	Object.keys(cache).some((key) => !cache[key].loaded)
 
 const areAllLoaded = (cache: ScriptMap) => !areNotAllLoaded(cache)
+
+const allScriptsLoaded = (sources: string[]) => {
+	for (const src of sources) {
+		const cache = cachedScripts[src]
+		if (!cache || !cache.loaded) {
+			return false
+		}
+	}
+	return true
+}
 
 const getLoadedScripts = (cache: ScriptMap) =>
 	Object.keys(cache).reduce(
@@ -44,8 +55,6 @@ const useScripts = (sources: string[]): ScriptResult => {
 	useEffect(
 		() => {
 			const scriptsToLoad: ScriptMap = {}
-			state.loaded = false
-			state.error = true
 
 			// Script event listener callbacks for load and error
 			const onScriptLoad = function (this: HTMLScriptElement): void {
@@ -84,7 +93,8 @@ const useScripts = (sources: string[]): ScriptResult => {
 			// If cachedScripts array already includes src that means another instance ...
 			// ... of this hook already loaded this script, so no need to load again.
 			sources.forEach((src: string) => {
-				if (!cachedScripts[src]) {
+				const cache = cachedScripts[src]
+				if (!cache) {
 					// Create script
 					const script = document.createElement("script")
 					script.src = src
@@ -104,6 +114,11 @@ const useScripts = (sources: string[]): ScriptResult => {
 
 					// Add script to document body
 					document.body.appendChild(script)
+				} else if (!cache.loaded) {
+					scriptsToLoad[src] = cache
+					const script = cache.script
+					script.addEventListener("load", onScriptLoad)
+					script.addEventListener("error", onScriptError)
 				}
 			})
 
@@ -125,10 +140,19 @@ const useScripts = (sources: string[]): ScriptResult => {
 		[sources.join(":")] // Only re-run effect if script src changes
 	)
 
+	if (allScriptsLoaded(sources)) {
+		return {
+			error: false,
+			scripts: state.scripts,
+			loaded: true,
+		}
+	}
+
 	return {
 		error: state.error,
 		scripts: state.scripts,
+		loaded: depsHaveLoaded(sources, state.scripts),
 	}
 }
 
-export { useScripts, depsHaveLoaded }
+export default useScripts

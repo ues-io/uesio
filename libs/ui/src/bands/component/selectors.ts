@@ -1,24 +1,27 @@
 import { useSelector } from "react-redux"
-import { selectors } from "."
+import { getComponentStateKey, selectors } from "."
 import { RootState } from "../../store/store"
+import { PlainComponentState } from "./types"
 
 // Both gets component state and subscribes to component changes
-const useComponentState = (
+const useComponentState = <T extends PlainComponentState>(
 	componentType: string,
 	componentId: string,
-	viewId?: string
+	viewId: string | undefined
 ) =>
 	useSelector((state: RootState) =>
-		selectState(state, componentType, componentId, viewId)
+		selectState<T>(state, componentType, componentId, viewId || "")
 	)
 
-const selectState = (
+const selectState = <T extends PlainComponentState>(
 	state: RootState,
 	componentType: string,
 	componentId: string,
-	viewId?: string
+	viewId: string | undefined
 ) =>
-	selectors.selectById(state, `${viewId}/${componentType}/${componentId}`)
-		?.state
+	selectors.selectById(
+		state,
+		getComponentStateKey(componentType, componentId, viewId)
+	)?.state as T | undefined
 
 export { useComponentState, selectState }

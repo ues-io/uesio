@@ -9,3 +9,14 @@ components:
     studio.fileupload:
     studio.permissionpicker:
     studio.configsecrets:
+    # Define a builder for the uesio runtime and slot
+    uesio.runtime:
+    uesio.slot:
+    uesio.view:
+  dependencies:
+    - io.main
+  variants:
+    - io.titlebar.io.primary
+    - io.scrollpanel.studio.verticalnav
+    - io.iconbutton.io.large
+    - io.iconbutton.io.small

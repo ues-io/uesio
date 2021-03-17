@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ChangeEvent } from "react"
+import { FunctionComponent, ChangeEvent } from "react"
 import { definition, hooks, styles } from "@uesio/ui"
 import { Button } from "@material-ui/core"
 

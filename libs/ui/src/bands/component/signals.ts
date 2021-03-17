@@ -3,10 +3,9 @@ import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
 import { selectState } from "./selectors"
-import { PlainComponentState } from "./types"
 
 interface ComponentSignal extends SignalDefinition {
-	target: string
+	target?: string
 }
 
 export default {
@@ -14,25 +13,27 @@ export default {
 		dispatch,
 		getState
 	) => {
-		const { target, signal: signalName } = signal
+		const { target: signalTarget, signal: signalName } = signal
 		const [band, scope, type] = signalName.split("/")
-		if (band !== "component" || !scope || !type || !target) return context
+		if (band !== "component" || !scope || !type) return context
 
 		const handler = getSignal(scope, type)
 		const viewId = context.getViewId()
-		return handler.dispatcher(signal, context)(
-			(state: PlainComponentState) => {
-				dispatch({
-					type: "component/set",
-					payload: {
-						id: target,
-						componentType: scope,
-						view: viewId,
-						state,
-					},
-				})
+		const target = signalTarget || handler.target || ""
+
+		dispatch({
+			type: "component/set",
+			payload: {
+				id: target,
+				componentType: scope,
+				view: viewId,
+				state: handler.dispatcher(
+					signal,
+					context
+				)(selectState(getState(), scope, target, viewId)),
 			},
-			() => selectState(getState(), scope, target, viewId)
-		)
+		})
+
+		return context
 	},
 }

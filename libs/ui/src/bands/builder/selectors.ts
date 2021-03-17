@@ -42,20 +42,6 @@ const useDragNode = () =>
 const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
-const useLeftPanel = () =>
-	useSelector(({ builder }: RootState) => builder?.leftPanel || "")
-
-const useRightPanel = () =>
-	useSelector(({ builder }: RootState) => builder?.rightPanel || "")
-
-const useBuilderView = () =>
-	useSelector(({ builder }: RootState) => builder.buildView)
-
-const useBuilderMode = () =>
-	useSelector(({ builder }: RootState) =>
-		builder ? !!builder.buildMode : false
-	)
-
 const useMetadataList = (
 	metadataType: metadata.MetadataType,
 	namespace: string,
@@ -80,12 +66,8 @@ export {
 	useNodeState,
 	useSelectedNode,
 	useLastModifiedNode,
-	useBuilderMode,
 	useDragNode,
 	useDropNode,
-	useLeftPanel,
-	useRightPanel,
-	useBuilderView,
 	useMetadataList,
 	useNamespaces,
 }

@@ -7,8 +7,7 @@ import { selectors as themeSelectors } from "../bands/theme/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
-import { mergeDefinitionMaps } from "../yamlutils/yamlutils"
-import { defaultTheme, ThemeState } from "../styles/styles"
+import { defaultTheme } from "../styles/styles"
 
 type ContextFrame = {
 	wire?: string
@@ -22,7 +21,7 @@ type ContextFrame = {
 	workspace?: WorkspaceState
 	siteadmin?: SiteState
 	site?: SiteState
-	theme?: ThemeState
+	theme?: string
 }
 
 const ANCESTOR_INDICATOR = "Parent."
@@ -97,38 +96,18 @@ class Context {
 			? viewDefSelectors.selectById(getStore().getState(), viewDefId)
 			: undefined
 	}
-	getTheme = () => {
-		const route = this.getRoute()
-		const theme = route
-			? themeSelectors.selectById(getStore().getState(), route.theme)
-			: undefined
-		if (!theme) {
-			return defaultTheme
-		}
-		return theme
-	}
+	getTheme = () =>
+		themeSelectors.selectById(
+			getStore().getState(),
+			this.getThemeId() || ""
+		) || defaultTheme
 
-	getComponentVariant = (componentType: string, variantName: string) => {
-		const viewDef = this.getViewDef()
-		const variant =
-			viewDef?.dependencies?.componentvariants?.[
-				componentType + "." + variantName
-			]
-		if (!variant) return
-		const theme = this.getTheme()
-		const override =
-			theme &&
-			theme?.definition?.variantOverrides?.[componentType]?.[variantName]
-		if (!override) {
-			return variant
-		}
-		return {
-			...variant,
-			definition: mergeDefinitionMaps(variant.definition, {
-				"uesio.styles": override,
-			}),
-		}
-	}
+	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
+
+	getComponentVariant = (componentType: string, variantName: string) =>
+		this.getViewDef()?.dependencies?.componentvariants?.[
+			componentType + "." + variantName
+		]
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 

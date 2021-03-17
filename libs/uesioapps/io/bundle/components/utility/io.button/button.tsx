@@ -1,17 +1,19 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface ButtonProps extends definition.BaseProps {
 	onClick?: () => void
 	label?: string
+	width?: string
 }
 
 const useStyles = styles.getUseStyles(["root", "label"], {
-	root: {
+	root: ({ width }) => ({
 		fontFamily: "inherit",
 		border: "none",
 		cursor: "pointer",
-	},
+		...(width && { width }),
+	}),
 })
 
 const Button: FunctionComponent<ButtonProps> = (props) => {

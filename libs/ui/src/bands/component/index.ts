@@ -2,9 +2,19 @@ import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { ComponentState } from "./types"
 
+const getComponentStateKey = (
+	componentType: string,
+	componentId: string,
+	viewId: string | undefined
+) => `${viewId}/${componentType}/${componentId}`
+
 const componentAdapter = createEntityAdapter<ComponentState>({
 	selectId: (component) =>
-		`${component.view}/${component.componentType}/${component.id}`,
+		getComponentStateKey(
+			component.componentType,
+			component.id,
+			component.view
+		),
 })
 
 const componentSlice = createSlice({
@@ -19,5 +29,5 @@ const selectors = componentAdapter.getSelectors(
 	(state: RootState) => state.component
 )
 export const { set } = componentSlice.actions
-export { selectors }
+export { selectors, getComponentStateKey }
 export default componentSlice.reducer

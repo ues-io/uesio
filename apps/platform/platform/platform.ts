@@ -154,8 +154,6 @@ const postJSON = (url: string, body?: object) => {
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
 
-		getBuilderCoreURL: () => "/static/buildtime/uesiobuildtime.js",
-
 		getMetadataList: async (
 			context: any,
 			metadataType: metadata.MetadataType,

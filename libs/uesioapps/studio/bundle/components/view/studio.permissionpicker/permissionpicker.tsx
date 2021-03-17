@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, wire } from "@uesio/ui"
 import {
 	ListItem,
@@ -35,13 +35,6 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!wire || !record || !workspaceName || !appName) {
 		return null
 	}
-
-	uesio.addContextFrame({
-		workspace: {
-			name: workspaceName,
-			app: appName,
-		},
-	})
 
 	const collection = wire.getCollection()
 	const nameField = collection.getNameField()

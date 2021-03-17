@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import Hello from "./hello"
 import { hooks } from "@uesio/ui"
 import { HelloProps, HelloDefinition } from "./hellodefinition"

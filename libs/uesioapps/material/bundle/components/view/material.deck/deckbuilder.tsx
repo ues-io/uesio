@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks, component } from "@uesio/ui"
 import { DeckProps, DeckDefinition } from "./deckdefinition"
 import Deck from "./deck"
@@ -7,8 +7,7 @@ const DeckBuilder: FunctionComponent<DeckProps> = (props) => {
 	const { path, context } = props
 	const uesio = hooks.useUesio(props)
 	const definition = uesio.view.useDefinition(path) as DeckDefinition
-	const buildView = uesio.builder.useView()
-	const isStructureView = buildView === "structureview"
+	const isStructureView = uesio.builder.useIsStructureView()
 
 	return (
 		<>

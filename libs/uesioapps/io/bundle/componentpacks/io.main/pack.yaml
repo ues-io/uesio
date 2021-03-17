@@ -4,3 +4,8 @@ components:
     io.button:
   utility:
     io.button:
+    io.iconbutton:
+    io.grid:
+    io.icon:
+    io.titlebar:
+    io.scrollpanel:

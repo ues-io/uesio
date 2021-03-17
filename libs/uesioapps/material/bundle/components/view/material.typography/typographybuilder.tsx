@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { hooks } from "@uesio/ui"
 import { TypographyProps, TypographyDefinition } from "./typographydefinition"
 import Typography from "./typography"
@@ -8,7 +8,7 @@ const TypographyBuilder: FunctionComponent<TypographyProps> = (props) => {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as TypographyDefinition
-	const isStructureView = uesio.builder.useView() === "structureview"
+	const isStructureView = uesio.builder.useIsStructureView()
 	const { context } = props
 
 	return (

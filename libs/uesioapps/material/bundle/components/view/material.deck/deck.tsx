@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 import { styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
@@ -19,14 +19,12 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
 
-	const initialState: DeckState = {
-		mode: definition.mode || "READ",
-	}
-
-	const componentState = uesio.component.useState(
+	const [componentState] = uesio.component.useState<DeckState>(
 		definition.id,
-		initialState
-	) as DeckState
+		{
+			mode: definition.mode || "READ",
+		}
+	)
 
 	if (!wire || !componentState) return null
 

@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { component, hooks, definition } from "@uesio/ui"
 import { FormColumnProps } from "./formcolumndefinition"
 import toPath from "lodash.topath"
