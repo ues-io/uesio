@@ -35,11 +35,11 @@ func RegisterAuthType(name string, authType AuthenticationType) {
 
 // AuthenticationClaims struct
 type AuthenticationClaims struct {
-	Subject   string
-	FirstName string
-	LastName  string
-	AuthType  string
-	Email     string
+	Subject   string `json:"subject"`
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
+	AuthType  string `json:"authType"`
+	Email     string `json:"email"`
 }
 
 // GetSiteFromHost function

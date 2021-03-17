@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"encoding/json"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -16,11 +17,10 @@ func (a *Auth) Verify(token string, session *sess.Session) error {
 
 // Decode function
 func (a *Auth) Decode(token string, session *sess.Session) (*auth.AuthenticationClaims, error) {
-	return &auth.AuthenticationClaims{
-		Subject:   "MockSubject",
-		FirstName: "Ben",
-		LastName:  "Hubbard",
-		AuthType:  "mock",
-		Email:     "plusplusben@gmail.com",
-	}, nil
+	claim := auth.AuthenticationClaims{}
+	err := json.Unmarshal([]byte(token), &claim)
+	if err != nil {
+		return nil, err
+	}
+	return &claim, nil
 }

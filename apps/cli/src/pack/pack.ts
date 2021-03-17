@@ -131,6 +131,8 @@ const createEntryFiles = async (): Promise<EntryFileMap> => {
 	const files = await fs.readdir(path.resolve(packDir)).catch(() => [])
 
 	for (const dirname of files) {
+		// Filter out .DS_Store and other hidden files
+		if (dirname.startsWith(".")) continue
 		const contents = await fs.readFile(
 			path.resolve(packDir, dirname, "pack.yaml"),
 			"utf8"

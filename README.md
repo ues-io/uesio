@@ -268,6 +268,8 @@ Do define the following environment variables in `~/.zshenv`.
 |                              | (Can be either empty, or "filesystem" if you want sessions to persist)                     |
 | UESIO_ALLOW_INSECURE_COOKIES | Allows cookies without the secure flag (Useful in local docker envirnments)                |
 | UESIO_LOCAL_FILES            | Set to "true" to have the uesio.platform filesource save files to the file system          |
+| UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             |
+|                              |                                                                                            |
 | COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |
 

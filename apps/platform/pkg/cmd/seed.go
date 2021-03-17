@@ -91,6 +91,14 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	// Read files from seed folder
+	var users meta.UserCollection
+	err = GetSeedDataFile(&users, "users.json")
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
 	site := &meta.Site{
 		Name: "studio",
 		Bundle: &meta.Bundle{
@@ -174,6 +182,12 @@ func seed(cmd *cobra.Command, args []string) {
 						RefField: "studio.app",
 					},
 				},
+			},
+		},
+		{
+			Collection: &users,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
 			},
 		},
 	}, session)
