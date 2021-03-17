@@ -14,14 +14,13 @@ const Form: FunctionComponent<FormProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
 	const classes = useStyles(props)
-	const initialState: FormState = {
-		mode: definition.mode || "READ",
-	}
 
-	const componentState = uesio.component.useState(
+	const [componentState] = uesio.component.useState<FormState>(
 		definition.id,
-		initialState
-	) as FormState
+		{
+			mode: definition.mode || "READ",
+		}
+	)
 
 	if (!wire || !componentState) return null
 

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 
-import { definition, component, hooks, context, signal } from "@uesio/ui"
+import { definition, component, hooks, context } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"
 import BottomLeftNav from "../../shared/bottomleftnav"
@@ -15,63 +15,57 @@ const Grid = component.registry.getUtility("io.grid")
 
 component.registry.registerSignals("uesio.runtime", {
 	TOGGLE_CODE: {
-		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
-			setState: (state: BuilderState) => void,
-			getState: () => BuilderState
-		) => {
-			const state = getState()
-			setState({
-				...state,
-				showCode: !state.showCode,
-			})
-			return ctx
-		},
+		dispatcher: () => (state: BuilderState) => ({
+			...state,
+			showCode: !state.showCode,
+		}),
+		target: "panels",
 	},
 	SHOW_COMPS: {
-		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
-			setState: (state: BuilderState) => void,
-			getState: () => BuilderState
-		) => {
-			const state = getState()
-			setState({
-				...state,
-				showComps: true,
-				showWires: false,
-			})
-			return ctx
-		},
+		dispatcher: () => (state: BuilderState) => ({
+			...state,
+			showComps: true,
+			showWires: false,
+		}),
+		target: "panels",
 	},
 	SHOW_WIRES: {
-		dispatcher: (signal: signal.SignalDefinition, ctx: context.Context) => (
-			setState: (state: BuilderState) => void,
-			getState: () => BuilderState
-		) => {
-			const state = getState()
-			setState({
-				...state,
-				showComps: false,
-				showWires: true,
-			})
-			return ctx
-		},
+		dispatcher: () => (state: BuilderState) => ({
+			...state,
+			showComps: false,
+			showWires: true,
+		}),
+		target: "panels",
+	},
+	TOGGLE_VIEW: {
+		dispatcher: () => (state: string) =>
+			state !== "content" ? "content" : "structure",
+		target: "buildview",
 	},
 })
 
 const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const def = uesio.view.useDefinitionLocal(props.path)
+	const viewDef = props.context.getViewDef()
 
-	const state = uesio.component.useState("buildtime", {
+	const scriptResult = uesio.component.usePacks(
+		Object.keys(viewDef?.dependencies?.componentpacks || {}),
+		true
+	)
+
+	const [state] = uesio.component.useState<BuilderState>("panels", {
 		showCode: false,
 		showComps: true,
 		showWires: false,
-	}) as BuilderState
+	})
 
 	const builderTheme = uesio.theme.useTheme(
 		"studio.default",
 		new context.Context()
 	)
-	if (!def || !builderTheme || !state) return <Canvas {...props} />
+	if (!scriptResult.loaded || !def || !builderTheme || !state)
+		return <Canvas {...props} />
 	const builderProps = {
 		...props,
 		context: props.context.addFrame({

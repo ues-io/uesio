@@ -98,9 +98,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const fullPath = `${path}["${componentType}"]`
 
 	const uesio = hooks.useUesio(props)
-	const viewMode = uesio.builder.useView()
-	const isContentView = viewMode === "contentview"
-	const isStructureView = viewMode === "structureview"
+	const isStructureView = uesio.builder.useIsStructureView()
 	const nodeState = uesio.builder.useNodeState(fullPath)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
@@ -118,7 +116,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 			[classes.isDragging]: dragNode,
 			[classes.placeHolder]: addPlaceholder,
 			[classes.structureView]: isStructureView,
-			[classes.contentView]: isContentView,
+			[classes.contentView]: !isStructureView,
 			[classes.isLast]: isLast,
 		}
 	)
@@ -211,7 +209,7 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 					isActive && uesio.builder.setActiveNode("")
 				}}
 				setDragging={(): void => {
-					if (isContentView) {
+					if (!isStructureView) {
 						return
 					}
 					// TODO: Do some kind of check here to ensure we aren't dragging the last button

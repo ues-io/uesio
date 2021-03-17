@@ -7,11 +7,9 @@ type MetadataListStore = {
 type BuilderState = {
 	activeNode?: string
 	selectedNode?: string
-	buildMode: boolean
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	buildView: string
 	metadata: MetadataListStore
 	namespaces: MetadataListStore
 }

@@ -8,7 +8,7 @@ const TypographyBuilder: FunctionComponent<TypographyProps> = (props) => {
 	const definition = uesio.view.useDefinition(
 		props.path
 	) as TypographyDefinition
-	const isStructureView = uesio.builder.useView() === "structureview"
+	const isStructureView = uesio.builder.useIsStructureView()
 	const { context } = props
 
 	return (

@@ -100,7 +100,6 @@ const CodePanel: FunctionComponent<Props> = (props) => {
 								{
 									signal:
 										"component/uesio.runtime/TOGGLE_CODE",
-									target: "buildtime",
 								},
 							])}
 						/>

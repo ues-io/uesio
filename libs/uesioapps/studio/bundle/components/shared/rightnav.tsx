@@ -43,7 +43,6 @@ const RightNav: FunctionComponent<Props> = (props) => {
 				onClick={uesio.signal.getHandler([
 					{
 						signal: "component/uesio.runtime/TOGGLE_CODE",
-						target: "buildtime",
 					},
 				])}
 			/>

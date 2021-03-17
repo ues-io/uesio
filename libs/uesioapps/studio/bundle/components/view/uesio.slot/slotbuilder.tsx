@@ -80,10 +80,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	const dragNode = uesio.builder.useDragNode()
 	const dropNode = uesio.builder.useDropNode()
-	const buildView = uesio.builder.useView()
-
-	const isStructureView = buildView === "structureview"
-	const isContentView = buildView === "contentview"
+	const isStructureView = uesio.builder.useIsStructureView()
 
 	const size = items.length
 
@@ -121,7 +118,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		{
 			[classes.structureView]: isStructureView,
 			[classes.isDragging]: dragNode,
-			[classes.contentView]: isContentView,
+			[classes.contentView]: !isStructureView,
 		}
 	)
 

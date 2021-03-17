@@ -10,28 +10,24 @@ interface Props extends definition.BaseProps {
 
 const TopLeftNav: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const builderView = uesio.builder.useView()
+	const isStructureView = uesio.builder.useIsStructureView()
+	const [label, icon] = isStructureView
+		? ["Switch to Content View", "border_outer"]
+		: ["Switch to Structure View", "border_clear"]
 
 	return (
 		<ScrollPanel {...props} variant="studio.verticalnav">
-			{builderView === "contentview" && (
-				<IconButton
-					{...props}
-					variant="io.large"
-					onClick={() => uesio.builder.setView("structureview")}
-					label="Switch to Structure View"
-					icon="border_clear"
-				/>
-			)}
-			{builderView !== "contentview" && (
-				<IconButton
-					{...props}
-					variant="io.large"
-					onClick={() => uesio.builder.setView("contentview")}
-					label="Switch to Content View"
-					icon="border_outer"
-				/>
-			)}
+			<IconButton
+				{...props}
+				variant="io.large"
+				onClick={uesio.signal.getHandler([
+					{
+						signal: "component/uesio.runtime/TOGGLE_VIEW",
+					},
+				])}
+				label={label}
+				icon={icon}
+			/>
 		</ScrollPanel>
 	)
 }

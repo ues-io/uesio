@@ -9,16 +9,22 @@ import routeOps from "../bands/route/operations"
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
-	const buildMode = uesio.builder.useMode()
+	uesio.addContextFrame({
+		view: "$root",
+	})
+	const [buildMode, setBuildMode] = uesio.component.useState<boolean>(
+		"buildmode",
+		false
+	)
 
 	// This tells us to load in the studio main component pack if we're in buildmode
 	const deps = buildMode ? ["studio.main", "io.main"] : []
-	const scriptResult = uesio.component.usePacks(deps, buildMode)
+	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
 
 	useEffect(() => {
 		const toggleFunc = (event: KeyboardEvent) => {
 			if (event.altKey && event.code === "KeyU") {
-				uesio.builder.toggleBuildMode()
+				setBuildMode(!uesio.component.getState("buildmode"))
 			}
 		}
 		// Handle swapping between buildmode and runtime
@@ -57,7 +63,7 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	return (
 		<Route
 			path={props.path}
-			context={props.context.addFrame({
+			context={uesio.getContext().addFrame({
 				buildMode: buildMode && scriptResult.loaded,
 			})}
 		/>

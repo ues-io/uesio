@@ -28,20 +28,11 @@ const builderSlice = createSlice({
 		setSelectedNode: (state, { payload }: PayloadAction<string>) => {
 			state.selectedNode = payload
 		},
-		setPanelClosed: (state) => {
-			state.selectedNode = ""
-		},
-		toggleBuildMode: (state) => {
-			state.buildMode = !state.buildMode
-		},
 		setDragNode: (state, { payload }: PayloadAction<string>) => {
 			state.draggingNode = payload
 		},
 		setDropNode: (state, { payload }: PayloadAction<string>) => {
 			state.droppingNode = payload
-		},
-		setView: (state, { payload }: PayloadAction<string>) => {
-			state.buildView = payload
 		},
 		setAvailableNamespaces: (
 			state,
@@ -120,12 +111,9 @@ const builderSlice = createSlice({
 export const {
 	setActiveNode,
 	setSelectedNode,
-	toggleBuildMode,
 	setDragNode,
 	setDropNode,
-	setView,
 	setAvailableNamespaces,
 	setMetadataList,
-	setPanelClosed,
 } = builderSlice.actions
 export default builderSlice.reducer

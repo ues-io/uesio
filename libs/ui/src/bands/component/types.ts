@@ -1,6 +1,10 @@
-type PlainComponentState = {
-	[key: string]: string | boolean | number
-}
+type PlainComponentState =
+	| {
+			[key: string]: string | boolean | number
+	  }
+	| string
+	| boolean
+	| number
 
 type ComponentState = {
 	view: string
