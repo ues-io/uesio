@@ -12,9 +12,20 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
+const Button = component.registry.getUtility("io.button")
+
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const Button = component.registry.getUtility("io.button")
+
+	const mode = uesio.component.useExternalState(
+		props.context.getViewId() || "",
+		"uesio.logincognito",
+		"mode"
+	)
+
+	if (mode) {
+		return null
+	}
 
 	return (
 		<>

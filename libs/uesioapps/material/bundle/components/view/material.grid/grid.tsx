@@ -7,7 +7,7 @@ import { GridProps } from "./griddefinition"
 const useStyles = material.makeStyles(() =>
 	material.createStyles({
 		root: (props: GridProps) => ({
-			height: props.definition.height,
+			minHeight: props.definition.height,
 			...styles.getBackgroundStyles(
 				props.definition.background,
 				props.context.getTheme(),

@@ -6,6 +6,7 @@ import NotFound from "../components/notfound"
 import { ComponentVariant } from "../bands/viewdef/types"
 import { ThemeState } from "../bands/theme/types"
 import chroma from "chroma-js"
+import { parseKey } from "./path"
 
 type DisplayCondition = {
 	field: string
@@ -170,12 +171,15 @@ function mergeContextVariants(
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 	const variantName = definition["uesio.variant"] as string
-	if (!variantName) return definition
-	const variant = context.getComponentVariant(componentType, variantName)
+	const [namespace] = parseKey(componentType)
+
 	return mergeInVariants(
 		definition,
 		componentType,
-		variant,
+		context.getComponentVariant(
+			componentType,
+			variantName || `${namespace}.default`
+		),
 		context.getTheme()
 	)
 }

@@ -6,7 +6,7 @@ import * as material from "@material-ui/core"
 const useStyles = material.makeStyles(() =>
 	material.createStyles({
 		root: (props: GridItemProps) => ({
-			height: props.definition.height,
+			minHeight: props.definition.height,
 			...styles.getBackgroundStyles(
 				props.definition.background,
 				props.context.getTheme(),

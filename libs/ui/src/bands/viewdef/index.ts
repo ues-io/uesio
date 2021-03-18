@@ -14,7 +14,7 @@ import {
 } from "../../yamlutils/yamlutils"
 import get from "lodash.get"
 import { createEntityReducer, EntityPayload } from "../utils"
-import { Collection } from "yaml/types"
+import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
