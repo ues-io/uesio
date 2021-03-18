@@ -1,14 +1,5 @@
-import { definition } from "@uesio/ui"
-import {
-	useState,
-	ChangeEvent,
-	FunctionComponent,
-	Dispatch,
-	SetStateAction,
-} from "react"
-import { TextField, Button } from "@material-ui/core"
-
-import { useLoginStyles } from "./logincognito"
+import { definition, component } from "@uesio/ui"
+import { useState, FunctionComponent, Dispatch, SetStateAction } from "react"
 
 interface SignupFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
@@ -25,6 +16,10 @@ interface SignupFormProps extends definition.BaseProps {
 	) => void
 }
 
+const TextField = component.registry.getUtility("io.textfield")
+const Button = component.registry.getUtility("io.button")
+const Grid = component.registry.getUtility("io.grid")
+
 const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 	const {
 		signUp,
@@ -34,83 +29,57 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 		signupUsername,
 		signupPassword,
 	} = props
-	const classes = useLoginStyles(props)
+
 	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
 	const [lastname, setLastName] = useState("")
 
 	return (
 		<>
-			<TextField
-				label="First Name"
-				variant="outlined"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setFirstName(e.target.value)
-				}
-			/>
-			<TextField
-				label="Last Name"
-				variant="outlined"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setLastName(e.target.value)
-				}
-			/>
+			<TextField label="First Name" setValue={setFirstName} {...props} />
+			<TextField label="Last Name" setValue={setLastName} {...props} />
 			<TextField
 				label="Username"
-				variant="outlined"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setSignupUsername(e.target.value)
-				}
+				setValue={setSignupUsername}
+				{...props}
 			/>
-			<TextField
-				label="Email"
-				variant="outlined"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setEmail(e.target.value)
-				}
-			/>
+			<TextField label="Email" setValue={setEmail} {...props} />
 			<TextField
 				label="Password"
-				variant="outlined"
-				type="password"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setSignupPassword(e.target.value)
-				}
+				setValue={setSignupPassword}
+				{...props}
 			/>
-			<Button onClick={() => setMode("")} className={classes.button}>
-				Cancel
-			</Button>
-			<Button
-				variant="contained"
-				color="primary"
-				className={classes.button}
-				onClick={() => {
-					signUp(
-						firstname,
-						lastname,
-						signupUsername,
-						email,
-						signupPassword
-					)
+			<Grid
+				{...props}
+				styles={{
+					root: {
+						gridTemplateColumns: "1fr 1fr",
+						columnGap: "10px",
+						padding: "20px 10px",
+					},
 				}}
 			>
-				Create Account`
-			</Button>
+				<Button
+					onClick={() => {
+						signUp(
+							firstname,
+							lastname,
+							signupUsername,
+							email,
+							signupPassword
+						)
+					}}
+					variant="io.primary"
+					{...props}
+					label="Create Account"
+				/>
+				<Button
+					onClick={() => setMode("login")}
+					{...props}
+					variant="io.secondary"
+					label="Cancel"
+				/>
+			</Grid>
 		</>
 	)
 }

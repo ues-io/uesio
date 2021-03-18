@@ -9,3 +9,6 @@ components:
     io.icon:
     io.titlebar:
     io.scrollpanel:
+    io.textfield:
+    io.text:
+    io.link:

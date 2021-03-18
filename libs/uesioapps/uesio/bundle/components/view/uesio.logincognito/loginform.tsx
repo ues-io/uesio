@@ -1,13 +1,5 @@
-import { definition } from "@uesio/ui"
-import {
-	FunctionComponent,
-	useState,
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-} from "react"
-import { TextField, Button, Typography, Link } from "@material-ui/core"
-import { useLoginStyles } from "./logincognito"
+import { definition, component } from "@uesio/ui"
+import { FunctionComponent, useState, Dispatch, SetStateAction } from "react"
 
 interface LoginFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
@@ -15,80 +7,67 @@ interface LoginFormProps extends definition.BaseProps {
 	logIn: (username: string, password: string) => void
 }
 
+const TextField = component.registry.getUtility("io.textfield")
+const Button = component.registry.getUtility("io.button")
+const Grid = component.registry.getUtility("io.grid")
+const Text = component.registry.getUtility("io.text")
+const Link = component.registry.getUtility("io.link")
+
 const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 	const { setMode, setMessage, logIn } = props
-	const classes = useLoginStyles(props)
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
 	return (
 		<>
-			<TextField
-				label="Username"
-				variant="outlined"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setUsername(e.target.value)
-				}
-			/>
-			<TextField
-				label="Password"
-				variant="outlined"
-				type="password"
-				fullWidth
-				size="small"
-				className={classes.textfield}
-				onChange={(e: ChangeEvent<HTMLInputElement>) =>
-					setPassword(e.target.value)
-				}
-			/>
-			<Button
-				onClick={() => {
-					setMode("")
-					setMessage("")
+			<TextField {...props} label="Username" setValue={setUsername} />
+			<TextField {...props} label="Password" setValue={setPassword} />
+			<Grid
+				{...props}
+				styles={{
+					root: {
+						gridTemplateColumns: "1fr 1fr",
+						columnGap: "10px",
+						padding: "20px 10px",
+					},
 				}}
-				className={classes.button}
 			>
-				Cancel
-			</Button>
-			<Button
-				variant="contained"
-				color="primary"
-				className={classes.button}
-				onClick={() => logIn(username, password)}
-			>
-				Sign In
-			</Button>
+				<Button
+					{...props}
+					variant="io.primary"
+					label="Sign In"
+					onClick={() => logIn(username, password)}
+				/>
+				<Button
+					{...props}
+					label="Cancel"
+					variant="io.secondary"
+					onClick={() => {
+						setMode("")
+						setMessage("")
+					}}
+				/>
+			</Grid>
 			<div>
-				<Typography variant="body2" component="span">
-					Forgot your password?&nbsp;
-				</Typography>
+				<Text {...props} text="Forgot your password?&nbsp;" />
 				<Link
-					component="button"
-					variant="body2"
-					className={classes.textbutton}
-					onClick={() => console.info("I'm a button.")}
-				>
-					Reset password
-				</Link>
+					{...props}
+					onClick={() => {
+						// not implemented
+					}}
+					text="Reset Password"
+				/>
 			</div>
 			<div>
-				<Typography variant="body2" component="span">
-					No Account?&nbsp;
-				</Typography>
+				<Text {...props} text="No Account?&nbsp;" />
 				<Link
-					component="button"
-					variant="body2"
-					className={classes.textbutton}
+					{...props}
 					onClick={() => {
 						setMode("signup")
 						setMessage("")
 					}}
-				>
-					Create account
-				</Link>
+					text="Create Acount"
+				/>
 			</div>
 		</>
 	)

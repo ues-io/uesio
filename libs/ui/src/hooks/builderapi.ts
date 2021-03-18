@@ -24,6 +24,7 @@ import { Dispatcher } from "../store/store"
 import { useBuilderHasChanges } from "../bands/viewdef/selectors"
 import { cancel as cancelViewChanges } from "../bands/viewdef"
 import saveViewDef from "../bands/viewdef/operations/save"
+import { PlainComponentState } from "../bands/component/types"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -34,17 +35,20 @@ class BuilderAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
+	useBuilderState = <T extends PlainComponentState>(scope: string) =>
+		this.uesio.component.useExternalState<T>(
+			"$root",
+			"uesio.runtime",
+			scope
+		)
+
 	useNodeState = useNodeState
 	useSelectedNode = useSelectedNode
 	useLastModifiedNode = useLastModifiedNode
 	useDragNode = useDragNode
 	useDropNode = useDropNode
 	useIsStructureView = () =>
-		this.uesio.component.useExternalState<string>(
-			"$root",
-			"uesio.runtime",
-			"buildview"
-		) !== "content"
+		this.useBuilderState<string>("buildview") !== "content"
 
 	useHasChanges = useBuilderHasChanges
 
