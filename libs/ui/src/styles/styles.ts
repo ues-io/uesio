@@ -6,6 +6,49 @@ import { CSSProperties } from "react"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
 import { DefinitionMap } from "../definition/definition"
+import clsx from "clsx"
+
+type ResponsiveDefinition =
+	| string
+	| {
+			xs?: string
+			sm?: string
+			md?: string
+			lg?: string
+			xl?: string
+	  }
+
+type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl"
+const getResponsiveStyles = (
+	styleType: string,
+	definition: ResponsiveDefinition
+): CSSProperties => {
+	if (typeof definition === "string") {
+		return {
+			[styleType]: definition,
+		}
+	}
+
+	const breakpoints: Record<Breakpoint, number> = {
+		xs: 0,
+		sm: 600,
+		md: 960,
+		lg: 1280,
+		xl: 1920,
+	}
+
+	return Object.keys(breakpoints).reduce(
+		(props: Record<string, unknown>, breakpoint: Breakpoint) => {
+			if (definition[breakpoint]) {
+				props[`@media (min-width: ${breakpoints[breakpoint]}px)`] = {
+					[styleType]: definition[breakpoint],
+				}
+			}
+			return props
+		},
+		{}
+	)
+}
 
 type ThemeIntention =
 	| "primary"
@@ -179,6 +222,7 @@ export {
 	getMarginStyles,
 	getFloatStyles,
 	BackgroundDefinition,
+	ResponsiveDefinition,
 	MarginDefinition,
 	FloatDefinition,
 	CSSProperties,
@@ -186,4 +230,6 @@ export {
 	getSpacing,
 	getUseStyles,
 	getColor,
+	getResponsiveStyles,
+	clsx,
 }

@@ -7,9 +7,18 @@ const useStyles = styles.getUseStyles(["root"], {
 	},
 })
 
-const Grid: FunctionComponent<definition.BaseProps> = (props) => {
+const Grid: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = useStyles(props)
-	return <div className={classes.root}>{props.children}</div>
+	return (
+		<div
+			className={styles.clsx(
+				classes.root,
+				props.className as string | undefined
+			)}
+		>
+			{props.children}
+		</div>
+	)
 }
 
 export default Grid
