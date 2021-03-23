@@ -2,6 +2,9 @@ name: main
 components:
   view:
     io.button:
+    io.grid:
+    io.griditem:
+    io.image:
   utility:
     io.button:
     io.iconbutton:

@@ -1,11 +1,15 @@
 import { FC, ComponentType } from "react"
-import { BaseProps, UtilityProps } from "../definition/definition"
+import {
+	BaseProps,
+	DefinitionMap,
+	UtilityProps,
+} from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash.topath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import { render } from "./component"
+import { mergeDefinitionMaps, render } from "./component"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -69,7 +73,15 @@ const getUtility = (key: string) => (props: UtilityProps) => {
 	const loader = getUtilityLoader(key) || NotFound
 	const definition = {
 		...props.definition,
-		...(props.styles && { "uesio.styles": props.styles }),
+		...(props.styles && {
+			"uesio.styles": props.definition?.["uesio.styles"]
+				? mergeDefinitionMaps(
+						props.styles,
+						props.definition["uesio.styles"] as DefinitionMap,
+						undefined
+				  )
+				: props.styles,
+		}),
 		...(props.variant && { "uesio.variant": props.variant }),
 	}
 	return render(loader, key, { ...props, componentType: key, definition })
