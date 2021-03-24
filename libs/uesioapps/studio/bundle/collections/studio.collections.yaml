@@ -18,7 +18,7 @@ recordChallengeTokens:
     collection: studio.teampermissions
     conditions:
       - field: "studio.collectionname"
-        value: "{studio.name}"
+        value: "studio.collections"
       - field: "studio.workspaceid"
         value: "{studio.workspaceid}"
       - field: "studio.access"
@@ -30,7 +30,7 @@ recordChallengeTokens:
     collection: studio.teampermissions
     conditions:
       - field: "studio.collectionname"
-        value: "{studio.name}"
+        value: "studio.collections"
       - field: "studio.workspaceid"
         value: "{studio.workspaceid}"
       - field: "studio.access"
