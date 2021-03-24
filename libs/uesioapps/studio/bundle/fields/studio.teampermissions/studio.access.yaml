@@ -1,0 +1,6 @@
+name: access
+collection: studio.teampermissions
+type: SELECT
+label: Access
+propertyName: access
+selectList: studio.access

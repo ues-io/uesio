@@ -1,0 +1,5 @@
+name: collectionname
+collection: studio.teampermissions
+type: TEXT
+label: Collection
+propertyName: collectionname

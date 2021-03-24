@@ -1,0 +1,6 @@
+name: member
+collection: studio.teammember
+type: REFERENCE
+label: Member
+propertyName: memberid
+referencedCollection: uesio.users
