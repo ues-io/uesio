@@ -20,3 +20,4 @@ components:
     - io.scrollpanel.studio.verticalnav
     - io.iconbutton.io.large
     - io.iconbutton.io.small
+    - io.button.io.nav

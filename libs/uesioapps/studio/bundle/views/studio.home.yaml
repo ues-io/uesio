@@ -14,61 +14,181 @@ definition:
           desc: false
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
-              components:
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.typography:
-                                text: Apps
-                                variant: h5
-                            - material.typography:
-                                text: An app a day keeps the doctor away.
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New App"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "newapp"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: appsDeck
-                    wire: apps
+    - io.grid:
+        uesio.styles:
+          root:
+            minHeight: 100vh
+        templateRows: 60px 1fr
+        items:
+          - uesio.view:
+              view: studio.topbar
+          - io.grid:
+              uesio.styles:
+                root:
+                  gridRow: 2
+              templateColumns: 300px 1fr
+              items:
+                - io.griditem:
+                    uesio.styles:
+                      root:
+                        backgroundColor: "#fafafa"
+                        padding: 20px
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color: "${uesio.color}"
-                            height: 10px
-                          margin: 1
+                      - io.grid:
+                          templateColumns: 1fr 0fr
+                          items:
+                            - io.text:
+                                text: My Apps
+                            - io.iconbutton:
+                                icon: add
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "newapp"
+                      - io.list:
+                          id: appslist
+                          wire: apps
                           components:
-                            - material.griditem:
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    marginTop: 4px
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/${uesio.name}"
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${uesio.name}"
-                                textTransform: "uppercase"
-                            - material.typography:
-                                text: "${uesio.description}"
-                                variant: body2
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontFamily: Material Icons
+                                      text: circle
+                                  - io.text:
+                                      text: ${uesio.name}
+                - io.griditem:
+                    components:
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              backgroundColor: "#FF5E2F"
+                              padding: 100px
+                              color: "#FFFFFFC0"
+                          components:
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    fontFamily: Gosha
+                                    fontSize: 40pt
+                                components:
+                                  - io.text:
+                                      text: "Get started with "
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: white
+                                      text: Uesio Studio.
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    lineHeight: 30px
+                                    paddingTop: 10px
+                                components:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: white
+                                      text: "Build "
+                                  - io.text:
+                                      text: "web appliations declaratively. "
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: white
+                                      text: "Reuse "
+                                  - io.text:
+                                      text: "components from other apps. "
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: white
+                                      text: "Iterate "
+                                  - io.text:
+                                      text: "quickly."
+                      - io.grid:
+                          templateColumns: 1fr 1fr
+                          items:
+                            - io.griditem:
+                                uesio.styles:
+                                  root:
+                                    padding: 50px
+                                components:
+                                  - io.text:
+                                      uesio.variant: io.smalltitle
+                                      text: Latest Updates/News
+                                      element: div
+                                  - io.text:
+                                      uesio.variant: io.smallcontent
+                                      text: Still in progress! Updates, News, and feature releases will be here for you to see when they come out.
+                            - io.griditem:
+                                uesio.styles:
+                                  root:
+                                    padding: 50px
+                                components:
+                                  - io.text:
+                                      uesio.variant: io.smalltitle
+                                      text: Learn Uesio
+                                      element: div
+                                  - io.text:
+                                      uesio.variant: io.smallcontent
+                                      text: More coming here soon! Learn the basic concepts of Uesio and how to navigate the studio.
+
+    - material.grid:
+        justify: space-between
+        items:
+          - material.griditem:
+              components:
+                - material.typography:
+                    text: Apps
+                    variant: h5
+                - material.typography:
+                    text: An app a day keeps the doctor away.
+                    variant: body2
+          - material.griditem:
+              components:
+                - material.buttonset:
+                    buttons:
+                      - material.button:
+                          color: "primary"
+                          variant: "outlined"
+                          text: "Create New App"
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/${uesio.name}"
+                              path: "newapp"
+    - material.deck:
+        xs: 12
+        sm: 6
+        md: 4
+        lg: 3
+        margin: 0
+        id: appsDeck
+        wire: apps
+        components:
+          - material.card:
+              media:
+                background:
+                  color: "${uesio.color}"
+                height: 10px
+              margin: 1
+              components:
+                - material.griditem:
+                    components:
+                      - material.icon:
+                          type: "open"
+                          float: right
+                - material.typography:
+                    text: "${uesio.name}"
+                    textTransform: "uppercase"
+                - material.typography:
+                    text: "${uesio.description}"
+                    variant: body2
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: "app/${uesio.name}"

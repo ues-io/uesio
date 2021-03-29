@@ -5,22 +5,23 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - io.grid:
-        "uesio.styles":
+        uesio.styles:
           root:
             backgroundSize: cover
             backgroundImage: ${file.uesio.splash}
+            minHeight: 100vh
         templateColumns:
           xs: 1fr
           md: 1fr 1fr
           lg: 5fr 7fr
         items:
           - io.griditem:
-              "uesio.styles":
+              uesio.styles:
                 root:
                   backgroundColor: "#f3f3f3"
               components:
                 - io.image:
-                    "uesio.styles":
+                    uesio.styles:
                       root:
                         margin: 60px
                     file: uesio.logo

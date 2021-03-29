@@ -1,4 +1,4 @@
 name: home
 path: home
 view: studio.home
-theme: uesio.default
+theme: studio.default
