@@ -1,5 +1,5 @@
 name: id
-collection: studio.teampermissions
+collection: studio.teammembers
 type: TEXT
 label: ID
 propertyName: id

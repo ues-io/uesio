@@ -1,6 +1,6 @@
 name: teammembers
 dataSource: uesio.platform
 idField: studio.id
-idFormat: "${studio.workspaceid}_${studio.teamid}_${studio.memberid}"
+idFormat: "${studio.appid}_${studio.teamid}_${studio.memberid}"
 nameField: studio.memberid
 collectionName: teammembers

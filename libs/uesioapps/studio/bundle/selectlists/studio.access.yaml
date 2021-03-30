@@ -1,8 +1,0 @@
-name: access
-options:
-  - label: "None"
-    value: "none"
-  - label: "Read"
-    value: "read"
-  - label: "Read-Write"
-    value: "read-write"

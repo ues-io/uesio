@@ -1,0 +1,8 @@
+name: access
+options:
+  - label: "None"
+    value: "none"
+  - label: "Maintainer"
+    value: "maintainer"
+  - label: "Admin"
+    value: "admin"

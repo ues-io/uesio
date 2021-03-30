@@ -11,30 +11,26 @@ userResponseTokens:
     conditions:
       - field: "studio.memberid"
         value: "{uesio.id}"
-    token: "{studio.workspaceid}_{studio.teamid}"
+    token: "{studio.appid}_{studio.teamid}"
     match: "team"
 recordChallengeTokens:
   - type: "lookup"
     collection: studio.teampermissions
     conditions:
-      - field: "studio.collectionname"
-        value: "studio.collections"
-      - field: "studio.workspaceid"
-        value: "{studio.workspaceid}"
-      - field: "studio.access"
-        value: "read"
-    token: "{studio.workspaceid}_{studio.teamid}"
+      - field: "studio.role"
+        value: "maintainer"
+      - field: "studio.appid"
+        value: "{studio.appid}"
+    token: "{studio.appid}_{studio.teamid}"
     match: "team"
-    access: read
+    access: read-write
   - type: "lookup"
     collection: studio.teampermissions
     conditions:
-      - field: "studio.collectionname"
-        value: "studio.collections"
-      - field: "studio.workspaceid"
-        value: "{studio.workspaceid}"
-      - field: "studio.access"
-        value: "read-write"
-    token: "{studio.workspaceid}_{studio.teamid}"
+      - field: "studio.role"
+        value: "admin"
+      - field: "studio.appid"
+        value: "{studio.appid}"
+    token: "{studio.appid}_{studio.teamid}"
     match: "team"
     access: read-write

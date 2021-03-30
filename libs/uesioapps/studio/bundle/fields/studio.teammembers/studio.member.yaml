@@ -1,5 +1,5 @@
 name: member
-collection: studio.teammember
+collection: studio.teammembers
 type: REFERENCE
 label: Member
 propertyName: memberid

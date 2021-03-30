@@ -1,5 +1,5 @@
 name: teamid
-collection: studio.teamid
+collection: studio.teampermissions
 type: TEXT
 label: ID
 propertyName: teamid
