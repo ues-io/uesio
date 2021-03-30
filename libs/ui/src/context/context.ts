@@ -8,6 +8,8 @@ import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
+import chroma from "chroma-js"
+import { getURLFromFullName } from "../hooks/fileapi"
 
 type ContextFrame = {
 	wire?: string
@@ -44,6 +46,26 @@ const getFromContext = (
 	} else if (mergeTypeName === "RecordId") {
 		context = context.removeRecordFrame(mergeAncestors)
 		return context.getRecord()?.getId() || ""
+	} else if (mergeTypeName === "Theme") {
+		const [scope, value, op] = expression.split(".")
+		const theme = context.getTheme()
+		if (scope === "color") {
+			if (op === "darken") {
+				return chroma(theme.definition.palette[value]).darken(0.5).hex()
+			}
+			return theme.definition.palette[value]
+		}
+		return ""
+	} else if (mergeTypeName === "Color") {
+		const [color, op] = expression.split(".")
+		if (chroma.valid(color)) {
+			if (op === "darken") {
+				return chroma(color).darken(0.5).hex()
+			}
+		}
+		return ""
+	} else if (mergeTypeName === "File") {
+		return `url("${getURLFromFullName(context, expression)}")`
 	}
 	return ""
 }

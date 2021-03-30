@@ -4,6 +4,6 @@ label: Default
 definition:
   "uesio.styles":
     root:
-      color: "${theme.color.primary}"
+      color: "$Theme{color.primary}"
       fontSize: "9pt"
       cursor: "pointer"

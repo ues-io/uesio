@@ -4,11 +4,11 @@ label: Navigation
 definition:
   "uesio.styles":
     root:
-      color: "${theme.color.primary}"
+      color: "$Theme{color.primary}"
       fontWeight: 500
       padding: 10px
       backgroundColor: inherit
       textTransform: uppercase
       "&:focus":
         outline: none
-        color: ${theme.color.primary.darken}
+        color: $Theme{color.primary.darken}
