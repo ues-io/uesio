@@ -1,11 +1,9 @@
 import { FunctionComponent } from "react"
 import { DefinitionMap, BaseProps } from "../definition/definition"
-import { getURLFromFullName } from "../hooks/fileapi"
 import { Context, ContextFrame } from "../context/context"
 import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { ComponentVariant } from "../bands/viewdef/types"
-import chroma from "chroma-js"
 import { parseKey } from "./path"
 
 type DisplayCondition = {
@@ -13,7 +11,7 @@ type DisplayCondition = {
 	value: string
 }
 
-const cache: Record<string, DefinitionMap> = {}
+//const cache: Record<string, DefinitionMap> = {}
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -26,11 +24,11 @@ function mergeDefinitionMaps(
 	sourceDef: DefinitionMap,
 	context: Context | undefined
 ) {
-	const key = JSON.stringify([destDef, sourceDef])
-	if (cache[key]) return cache[key]
+	//const key = JSON.stringify([destDef, sourceDef])
+	//if (cache[key]) return cache[key]
 	const destClone = JSON.parse(JSON.stringify(destDef))
 	const result = mergeDeep(destClone, sourceDef, context)
-	cache[key] = result
+	//cache[key] = result
 	return result
 }
 
@@ -63,56 +61,12 @@ function mergeDeep(
 			const value = src[key]
 			dest[key] =
 				typeof value === "string" && context
-					? inject(value, context)
+					? context.merge(value)
 					: value
 		}
 	}
 	return dest
 }
-
-const styleMergeAPIs = {
-	theme: (args: string[], context: Context) => {
-		const [scope, value, op] = args
-		const theme = context.getTheme()
-		if (scope === "color") {
-			if (op === "darken") {
-				return chroma(theme.definition.palette[value]).darken(0.5).hex()
-			}
-			return theme.definition.palette[value]
-		}
-		return ""
-	},
-	color: (args: string[]) => {
-		const [color, op] = args
-		if (chroma.valid(color)) {
-			if (op === "darken") {
-				return chroma(color).darken(0.5).hex()
-			}
-		}
-		return ""
-	},
-	file: (args: string[], context: Context) => {
-		const [namespace, name] = args
-		return `url("${getURLFromFullName(context, namespace + "." + name)}")`
-	},
-}
-
-const styleMerge = (
-	mergeType: string,
-	expression: string,
-	context: Context
-) => {
-	const [apiName, ...args] = expression.split(".")
-	if (apiName === "theme" || apiName === "color" || apiName === "file") {
-		return styleMergeAPIs[apiName](args, context)
-	}
-	return ""
-}
-
-const inject = (template: string, context: Context): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
-		styleMerge(mergeType, mergeExpression, context)
-	)
 
 function shouldDisplayCondition(condition: DisplayCondition, context: Context) {
 	const record = context.getRecord()

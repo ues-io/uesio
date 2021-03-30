@@ -60,6 +60,7 @@ definition:
                                       uesio.styles:
                                         root:
                                           fontFamily: Material Icons
+                                          color: "${uesio.color}"
                                       text: circle
                                   - io.text:
                                       text: ${uesio.name}

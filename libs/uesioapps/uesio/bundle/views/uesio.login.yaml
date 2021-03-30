@@ -8,7 +8,7 @@ definition:
         uesio.styles:
           root:
             backgroundSize: cover
-            backgroundImage: ${file.uesio.splash}
+            backgroundImage: $File{uesio.splash}
             minHeight: 100vh
         templateColumns:
           xs: 1fr

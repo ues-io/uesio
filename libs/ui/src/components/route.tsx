@@ -64,6 +64,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
+	// We add the key here so that the JSS provider fully refreshes after a navigation.
 	return (
 		<JssProvider key={route.namespace + route.path}>
 			<ComponentInternal
