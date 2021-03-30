@@ -10,6 +10,7 @@ components:
     io.image:
     io.list:
     io.text:
+    io.tile:
   utility:
     io.button:
     io.iconbutton:

@@ -1,7 +1,6 @@
 import { definition, builder, signal } from "@uesio/ui"
 
 type BoxDefinition = {
-	element?: string
 	signals?: signal.SignalDefinition[]
 } & definition.BaseDefinition
 

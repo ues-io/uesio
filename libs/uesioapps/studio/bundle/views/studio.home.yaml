@@ -36,8 +36,16 @@ definition:
                     components:
                       - io.grid:
                           templateColumns: 1fr 0fr
+                          uesio.styles:
+                            root:
+                              marginBottom: 20px
                           items:
                             - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontWeight: 500
+                                    fontSize: "11pt"
+                                    color: "#21242D"
                                 text: My Apps
                             - io.iconbutton:
                                 icon: add
@@ -48,22 +56,36 @@ definition:
                           id: appslist
                           wire: apps
                           components:
-                            - io.box:
+                            - io.tile:
                                 uesio.styles:
                                   root:
-                                    marginTop: 4px
+                                    marginTop: 10px
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"
-                                components:
+                                content:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: "#21242D"
+                                      text: ${uesio.name}
+                                      element: div
+                                  - io.text:
+                                      text: ${uesio.description}
+                                      element: div
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 9pt
+                                          color: "#777"
+                                          lineHeight: 16pt
+                                avatar:
                                   - io.text:
                                       uesio.styles:
                                         root:
                                           fontFamily: Material Icons
                                           color: "${uesio.color}"
+                                          verticalAlign: middle
                                       text: circle
-                                  - io.text:
-                                      text: ${uesio.name}
                 - io.griditem:
                     components:
                       - io.box:
@@ -140,56 +162,3 @@ definition:
                                   - io.text:
                                       uesio.variant: io.smallcontent
                                       text: More coming here soon! Learn the basic concepts of Uesio and how to navigate the studio.
-
-    - material.grid:
-        justify: space-between
-        items:
-          - material.griditem:
-              components:
-                - material.typography:
-                    text: Apps
-                    variant: h5
-                - material.typography:
-                    text: An app a day keeps the doctor away.
-                    variant: body2
-          - material.griditem:
-              components:
-                - material.buttonset:
-                    buttons:
-                      - material.button:
-                          color: "primary"
-                          variant: "outlined"
-                          text: "Create New App"
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "newapp"
-    - material.deck:
-        xs: 12
-        sm: 6
-        md: 4
-        lg: 3
-        margin: 0
-        id: appsDeck
-        wire: apps
-        components:
-          - material.card:
-              media:
-                background:
-                  color: "${uesio.color}"
-                height: 10px
-              margin: 1
-              components:
-                - material.griditem:
-                    components:
-                      - material.icon:
-                          type: "open"
-                          float: right
-                - material.typography:
-                    text: "${uesio.name}"
-                    textTransform: "uppercase"
-                - material.typography:
-                    text: "${uesio.description}"
-                    variant: body2
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: "app/${uesio.name}"

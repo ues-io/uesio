@@ -5,6 +5,6 @@ definition:
   "uesio.styles":
     root:
       color: "#21242D"
-      fontWeight: "bold"
+      fontWeight: "500"
       fontSize: "11pt"
       lineHeight: "30pt"
