@@ -1,0 +1,21 @@
+import { definition, builder } from "@uesio/ui"
+
+type AvatarDefinition = {
+	image?: string
+	text?: string
+} & definition.BaseDefinition
+
+interface AvatarProps extends definition.BaseProps {
+	definition: AvatarDefinition
+}
+
+const AvatarPropertyDefinition: builder.BuildPropertiesDefinition = {
+	title: "Avatar",
+	defaultDefinition: () => ({}),
+	properties: [],
+	sections: [],
+	actions: [],
+}
+export { AvatarProps, AvatarDefinition }
+
+export default AvatarPropertyDefinition

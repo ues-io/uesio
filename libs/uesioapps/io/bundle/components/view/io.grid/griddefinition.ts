@@ -2,6 +2,7 @@ import { definition, builder, styles } from "@uesio/ui"
 
 type GridDefinition = {
 	templateColumns?: styles.ResponsiveDefinition
+	templateRows?: styles.ResponsiveDefinition
 } & definition.BaseDefinition
 
 interface GridProps extends definition.BaseProps {

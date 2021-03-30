@@ -1,14 +1,22 @@
 import { FunctionComponent } from "react"
-import { component, styles } from "@uesio/ui"
-import { GridItemProps } from "./griditemdefinition"
+
+import { component, styles, hooks } from "@uesio/ui"
+import { BoxProps } from "./boxdefinition"
 
 const useStyles = styles.getUseStyles(["root"])
 
-const GridItem: FunctionComponent<GridItemProps> = (props) => {
+const Box: FunctionComponent<BoxProps> = (props) => {
 	const classes = useStyles(props)
+	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	return (
-		<div className={classes.root}>
+		<div
+			className={classes.root}
+			onClick={
+				definition?.signals &&
+				uesio.signal.getHandler(definition.signals)
+			}
+		>
 			<component.Slot
 				definition={definition}
 				listName="components"
@@ -20,4 +28,4 @@ const GridItem: FunctionComponent<GridItemProps> = (props) => {
 	)
 }
 
-export default GridItem
+export default Box

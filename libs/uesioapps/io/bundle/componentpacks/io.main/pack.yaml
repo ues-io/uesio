@@ -1,10 +1,15 @@
 name: main
 components:
   view:
+    io.avatar:
+    io.box:
     io.button:
     io.grid:
     io.griditem:
+    io.iconbutton:
     io.image:
+    io.list:
+    io.text:
   utility:
     io.button:
     io.iconbutton:

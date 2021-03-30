@@ -1,0 +1,10 @@
+name: smalltitle
+component: io.text
+label: Small Title
+definition:
+  "uesio.styles":
+    root:
+      color: "#21242D"
+      fontWeight: "bold"
+      fontSize: "11pt"
+      lineHeight: "30pt"

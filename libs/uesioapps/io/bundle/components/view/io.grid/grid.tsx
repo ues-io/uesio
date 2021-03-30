@@ -8,16 +8,22 @@ const IOGrid = component.registry.getUtility("io.grid")
 const useStyles = styles.getUseStyles(["root"], {
 	root: (props) => {
 		const definition = props.definition
-		const grid =
+		const gridCols =
 			definition.templateColumns &&
 			styles.getResponsiveStyles(
 				"gridTemplateColumns",
 				definition.templateColumns
 			)
+		const gridRows =
+			definition.templateRows &&
+			styles.getResponsiveStyles(
+				"gridTemplateRows",
+				definition.templateRows
+			)
 
 		return {
-			minHeight: "100vh",
-			...grid,
+			...gridCols,
+			...gridRows,
 		}
 	},
 })
@@ -25,7 +31,7 @@ const useStyles = styles.getUseStyles(["root"], {
 const Grid: FunctionComponent<GridProps> = (props) => {
 	const classes = useStyles(props)
 	return (
-		<IOGrid className={classes.root} {...props}>
+		<IOGrid className={classes.root} context={props.context}>
 			<component.Slot
 				definition={props.definition}
 				listName="items"
