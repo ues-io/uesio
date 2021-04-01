@@ -7,15 +7,12 @@ import { hooks } from "@uesio/ui"
 const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 	const { definition } = props
 	const uesio = hooks.useUesio(props)
+	const [handler, portals] = uesio.signal.useHandler(definition.signals)
 	return (
-		<IOIconButton
-			{...props}
-			icon={definition.icon}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
-			}
-		/>
+		<>
+			<IOIconButton {...props} icon={definition.icon} onClick={handler} />
+			{portals}
+		</>
 	)
 }
 

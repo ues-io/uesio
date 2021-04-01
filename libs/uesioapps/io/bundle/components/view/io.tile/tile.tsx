@@ -22,14 +22,9 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
+	const [handler, portals] = uesio.signal.useHandler(definition.signals)
 	return (
-		<div
-			className={classes.root}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
-			}
-		>
+		<div className={classes.root} onClick={handler}>
 			<div className={classes.avatar}>
 				<component.Slot
 					definition={definition}
@@ -48,6 +43,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 					context={context}
 				/>
 			</div>
+			{portals}
 		</div>
 	)
 }

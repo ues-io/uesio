@@ -12,6 +12,14 @@ definition:
       order:
         - field: uesio.name
           desc: false
+    newapp:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      type: CREATE
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -32,26 +40,22 @@ definition:
                     uesio.styles:
                       root:
                         backgroundColor: "#fafafa"
-                        padding: 20px
                     components:
-                      - io.grid:
-                          templateColumns: 1fr 0fr
+                      - io.titlebar:
                           uesio.styles:
                             root:
-                              marginBottom: 20px
-                          items:
-                            - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontWeight: 500
-                                    fontSize: "11pt"
-                                    color: "#21242D"
-                                text: My Apps
+                              padding: 20px
+                            title:
+                              fontWeight: 500
+                              fontSize: "11pt"
+                              color: "#21242D"
+                          title: My Apps
+                          actions:
                             - io.iconbutton:
                                 icon: add
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "newapp"
+                                  - signal: panel/TOGGLE
+                                    panel: newApp
                       - io.list:
                           id: appslist
                           wire: apps
@@ -59,7 +63,7 @@ definition:
                             - io.tile:
                                 uesio.styles:
                                   root:
-                                    marginTop: 10px
+                                    padding: 10px 20px
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"
@@ -162,3 +166,65 @@ definition:
                                   - io.text:
                                       uesio.variant: io.smallcontent
                                       text: More coming here soon! Learn the basic concepts of Uesio and how to navigate the studio.
+  panels:
+    - id: newApp
+      type: dialog
+      components:
+        - io.titlebar:
+            actions:
+              - io.iconbutton:
+                  icon: close
+                  signals:
+                    - signal: panel/TOGGLE
+                      panel: newApp
+        - material.typography:
+            text: Create a New App
+            variant: h5
+        - material.deck:
+            xs: 12
+            margin: 0
+            id: appsDeck
+            wire: newapp
+            mode: EDIT
+            components:
+              - material.card:
+                  media:
+                    background:
+                      color: "${uesio.color}"
+                    height: 10px
+                  margin: 1
+                  components:
+                    - material.grid:
+                        spacing: 4
+                        items:
+                          - material.griditem:
+                              xs: 10
+                              xl: 3
+                              components:
+                                - material.field:
+                                    fieldId: uesio.name
+                                - material.field:
+                                    fieldId: uesio.description
+                                - material.field:
+                                    fieldId: uesio.color
+                                - studio.colorpicker:
+                                    fieldId: uesio.color
+                    - material.buttonset:
+                        buttons:
+                          - material.button:
+                              color: "primary"
+                              variant: "contained"
+                              text: "Save"
+                              signals:
+                                - signal: wire/SAVE
+                                  wires:
+                                    - "newapp"
+                                - signal: "route/NAVIGATE"
+                                  path: "app/${uesio.name}"
+                          - material.button:
+                              color: "primary"
+                              variant: "outlined"
+                              text: "Cancel"
+                              signals:
+                                - signal: "panel/TOGGLE"
+                                  panel: "newApp"

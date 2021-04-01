@@ -14,18 +14,16 @@ const List: FunctionComponent<ListProps> = (props) => {
 	return (
 		<>
 			{data.map((record) => (
-				<div>
-					<component.Slot
-						definition={definition}
-						listName="components"
-						path={path}
-						accepts={["uesio.context"]}
-						context={context.addFrame({
-							record: record.getId(),
-							wire: wire.getId(),
-						})}
-					/>
-				</div>
+				<component.Slot
+					definition={definition}
+					listName="components"
+					path={path}
+					accepts={["uesio.context"]}
+					context={context.addFrame({
+						record: record.getId(),
+						wire: wire.getId(),
+					})}
+				/>
 			))}
 		</>
 	)
