@@ -1,0 +1,14 @@
+name: nav
+component: io.button
+label: Navigation
+definition:
+  "uesio.styles":
+    root:
+      color: "$Theme{color.primary}"
+      fontWeight: 500
+      padding: 10px
+      backgroundColor: inherit
+      textTransform: uppercase
+      "&:focus":
+        outline: none
+        color: $Theme{color.primary.darken}

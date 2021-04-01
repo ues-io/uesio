@@ -84,7 +84,7 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 
 	const handleSet = async () => {
 		const api = state.isSecret ? uesio.secret : uesio.configvalue
-		await api.set(context, state.selected, state.value)
+		await api.set(newContext, state.selected, state.value)
 		state.isSecret ? resetSecrets() : resetConfigValues()
 		handleClose()
 	}

@@ -3,7 +3,7 @@ import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
-import { createUseStyles } from "react-jss"
+import { createUseStyles, JssProvider } from "react-jss"
 import { useUesio } from "../hooks/hooks"
 
 const useStyles = createUseStyles({
@@ -64,12 +64,15 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
+	// We add the key here so that the JSS provider fully refreshes after a navigation.
 	return (
-		<ComponentInternal
-			componentType="uesio.runtime"
-			path=""
-			context={routeContext}
-		/>
+		<JssProvider key={route.namespace + route.path}>
+			<ComponentInternal
+				componentType="uesio.runtime"
+				path=""
+				context={routeContext}
+			/>
+		</JssProvider>
 	)
 }
 

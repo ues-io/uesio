@@ -1,7 +1,7 @@
 name: default
 definition:
   palette:
-    primary: "rgb(238,109,82)"
+    primary: "#FF5E2F"
     secondary: "#dc004e"
     error: "#f44336"
     warning: "#ff9800"

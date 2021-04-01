@@ -1,0 +1,8 @@
+name: default
+component: io.text
+label: Default
+definition:
+  "uesio.styles":
+    root:
+      color: "#444"
+      fontSize: "9pt"

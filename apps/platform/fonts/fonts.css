@@ -46,3 +46,14 @@
 	src: local("Material Icons"), local("MaterialIcons-Sharp"),
 		url("/fonts/material-icons-sharp.woff2") format("woff2");
 }
+
+@font-face {
+	font-family: Gosha;
+	src: url("/fonts/GoshaSans-Regular.otf") format("opentype");
+}
+
+@font-face {
+	font-family: Gosha;
+	font-weight: bold;
+	src: url("/fonts/GoshaSans-Bold.otf") format("opentype");
+}

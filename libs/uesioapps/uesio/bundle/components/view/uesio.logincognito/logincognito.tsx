@@ -23,22 +23,16 @@ interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
 
+const Button = component.registry.getUtility("io.button")
+const AlertComponent = component.registry.getUtility("material.alert")
+
 const useLoginStyles = styles.getUseStyles(
-	["formwrapper", "button", "textfield", "textbutton", "errormsg"],
+	["formwrapper", "textfield", "textbutton", "errormsg"],
 	{
 		formwrapper: {
 			width: "300px",
 			margin: "40px auto",
 			textAlign: "center",
-		},
-		button: (props: definition.BaseProps) => ({
-			margin: styles.getSpacing(props.context.getTheme(), 2, 1),
-		}),
-		textfield: (props: definition.BaseProps) => ({
-			margin: styles.getSpacing(props.context.getTheme(), 1, 0),
-		}),
-		textbutton: {
-			verticalAlign: "initial",
 		},
 		errormsg: {
 			marginBottom: "10px",
@@ -74,7 +68,6 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 
 const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	const { text, setMode } = props
-	const Button = component.registry.getUtility("io.button")
 	return (
 		<Button
 			{...props}
@@ -145,7 +138,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
 	const poolId = uesio.view.useConfigValue(poolIdKey)
-	const [mode, setMode] = useState("")
+	const [mode, setMode] = uesio.component.useState<string>("mode", "")
 	const [signupUsername, setSignupUsername] = useState("")
 	const [signupPassword, setSignupPassword] = useState("")
 
@@ -194,8 +187,6 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 			}
 		)
 	}
-
-	const AlertComponent = component.registry.getUtility("material.alert")
 
 	return (
 		<div className={classes.formwrapper}>

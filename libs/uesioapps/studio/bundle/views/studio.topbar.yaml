@@ -4,46 +4,39 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - material.materialwrapper:
-        components:
-          - material.grid:
-              height: 60px
-              background:
-                color: white
-              justify: space-between
-              alignitems: center
-              items:
-                # Uesio Logo
-                - material.griditem:
-                    components:
-                      - material.image:
-                          file: uesio.logoword
-                          height: 30px
-                          align: left
-                          margin:
-                            - 0
-                            - 2
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "home"
-                # Avatar
-                - material.griditem:
-                    components:
-                      - material.grid:
-                          alignitems: center
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.button:
-                                      text: Log Out
-                                      variant: text
-                                      signals:
-                                        - signal: "user/LOGOUT"
-                            - material.griditem:
-                                components:
-                                  - material.avatar:
-                                      margin:
-                                        - 0
-                                        - 2
-                                        - 0
-                                        - 1
+    - io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+            height: 60px
+            backgroundColor: "#F2F2F2"
+        templateColumns: 0fr 1fr 0fr
+        items:
+          # Uesio Logo
+          - io.griditem:
+              components:
+                - io.image:
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                    file: uesio.logo
+                    height: 34px
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "home"
+          - io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: right
+              components:
+                - io.button:
+                    uesio.variant: io.nav
+                    text: Log Out
+                    signals:
+                      - signal: "user/LOGOUT"
+
+          # Avatar
+          - io.griditem:
+              components:
+                - io.avatar:
+                    text: BH

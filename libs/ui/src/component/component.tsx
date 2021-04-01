@@ -4,15 +4,14 @@ import { Context, ContextFrame } from "../context/context"
 import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { ComponentVariant } from "../bands/viewdef/types"
-import { ThemeState } from "../bands/theme/types"
-import chroma from "chroma-js"
+import { parseKey } from "./path"
 
 type DisplayCondition = {
 	field: string
 	value: string
 }
 
-const cache: Record<string, DefinitionMap> = {}
+//const cache: Record<string, DefinitionMap> = {}
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -23,13 +22,13 @@ const cache: Record<string, DefinitionMap> = {}
 function mergeDefinitionMaps(
 	destDef: DefinitionMap,
 	sourceDef: DefinitionMap,
-	theme: ThemeState
+	context: Context | undefined
 ) {
-	const key = JSON.stringify([destDef, sourceDef])
-	if (cache[key]) return cache[key]
+	//const key = JSON.stringify([destDef, sourceDef])
+	//if (cache[key]) return cache[key]
 	const destClone = JSON.parse(JSON.stringify(destDef))
-	const result = mergeDeep(destClone, sourceDef, theme)
-	cache[key] = result
+	const result = mergeDeep(destClone, sourceDef, context)
+	//cache[key] = result
 	return result
 }
 
@@ -41,7 +40,7 @@ function mergeDefinitionMaps(
 function mergeDeep(
 	dest: DefinitionMap,
 	src: DefinitionMap,
-	theme: ThemeState
+	context: Context | undefined
 ): DefinitionMap {
 	const srcKeys = Object.keys(src)
 	for (const key of srcKeys) {
@@ -52,7 +51,7 @@ function mergeDeep(
 			mergeDeep(
 				dest[key] as DefinitionMap,
 				src[key] as DefinitionMap,
-				theme
+				context
 			)
 			continue
 		}
@@ -60,41 +59,14 @@ function mergeDeep(
 		if (src[key] !== null && src[key] !== undefined && src[key] !== "") {
 			// Merge src key base on theme
 			const value = src[key]
-			dest[key] = typeof value === "string" ? inject(value, theme) : value
+			dest[key] =
+				typeof value === "string" && context
+					? context.merge(value)
+					: value
 		}
 	}
 	return dest
 }
-
-const themeMerge = (
-	mergeType: string,
-	expression: string,
-	theme: ThemeState
-) => {
-	const [api, scope, value, op] = expression.split(".")
-
-	if (api === "theme") {
-		if (scope === "color") {
-			if (op === "darken") {
-				return chroma(theme.definition.palette[value]).darken(0.5).hex()
-			}
-			return theme.definition.palette[value]
-		}
-	}
-	if (api === "color") {
-		if (chroma.valid(scope)) {
-			if (value === "darken") {
-				return chroma(scope).darken(0.5).hex()
-			}
-		}
-	}
-	return ""
-}
-
-const inject = (template: string, theme: ThemeState): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
-		themeMerge(mergeType, mergeExpression, theme)
-	)
 
 function shouldDisplayCondition(condition: DisplayCondition, context: Context) {
 	const record = context.getRecord()
@@ -139,9 +111,26 @@ function mergeInVariants(
 	definition: DefinitionMap | undefined,
 	componentType: string,
 	variant: ComponentVariant | undefined,
-	theme: ThemeState
+	context: Context
 ): DefinitionMap | undefined {
-	if (!definition || !variant) return definition
+	if (!definition) return definition
+
+	const theme = context.getTheme()
+
+	const mergedDefinition = definition["uesio.styles"]
+		? {
+				...definition,
+				...(definition["uesio.styles"] && {
+					"uesio.styles": mergeDefinitionMaps(
+						{},
+						definition["uesio.styles"] as DefinitionMap,
+						context
+					),
+				}),
+		  }
+		: definition
+
+	if (!variant) return mergedDefinition
 
 	// Loop over variant styles and process merges
 	const override =
@@ -155,12 +144,16 @@ function mergeInVariants(
 					{
 						"uesio.styles": override,
 					},
-					theme
+					context
 				),
 		  }
 		: variant
 
-	return mergeDefinitionMaps(definition, themedVariant.definition, theme)
+	return mergeDefinitionMaps(
+		mergedDefinition,
+		themedVariant.definition,
+		context
+	)
 }
 
 function mergeContextVariants(
@@ -170,13 +163,16 @@ function mergeContextVariants(
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 	const variantName = definition["uesio.variant"] as string
-	if (!variantName) return definition
-	const variant = context.getComponentVariant(componentType, variantName)
+	const [namespace] = parseKey(componentType)
+
 	return mergeInVariants(
 		definition,
 		componentType,
-		variant,
-		context.getTheme()
+		context.getComponentVariant(
+			componentType,
+			variantName || `${namespace}.default`
+		),
+		context
 	)
 }
 
@@ -209,4 +205,10 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	return render(loader, componentType, props)
 }
 
-export { ComponentInternal, Component, render, mergeInVariants }
+export {
+	ComponentInternal,
+	Component,
+	render,
+	mergeInVariants,
+	mergeDefinitionMaps,
+}

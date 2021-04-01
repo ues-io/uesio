@@ -86,7 +86,7 @@ class ViewAPI {
 			def,
 			componentType,
 			variant,
-			this.uesio.getTheme()
+			this.uesio.getContext()
 		)
 	}
 

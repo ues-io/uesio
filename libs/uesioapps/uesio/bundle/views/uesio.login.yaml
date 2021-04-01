@@ -4,54 +4,44 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - material.grid:
-        height: 100vh
-        background:
-          image: uesio.splash
-        justify: center
-        alignitems: center
+    - io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: $File{uesio.splash}
+            minHeight: 100vh
+        templateColumns:
+          xs: 1fr
+          md: 1fr 1fr
+          lg: 5fr 7fr
         items:
-          - material.griditem:
-              height: 100vh
-              background:
-                color: "#f3f3f3"
-              xs: 12
-              md: 6
-              lg: 5
+          - io.griditem:
+              uesio.styles:
+                root:
+                  backgroundColor: "#f3f3f3"
               components:
-                - material.grid:
-                    height: 100vh
-                    justify: center
-                    alignitems: center
-                    items:
-                      - material.griditem:
-                          xs: 12
-                          components:
-                            - material.image:
-                                file: uesio.logo
-                                height: 120px
-                                align: center
-                                margin: 6
-                            - uesio.logingoogle:
-                                text: Sign in with Google
-                                clientId: uesio.googleClientId
-                                align: center
-                            - uesio.loginmock:
-                                text: Sign in with Mock
-                                align: center
-                            - uesio.loginfacebook:
-                                text: Sign in with Facebook
-                                clientId: uesio.facebookAppId
-                                align: center
-                            - uesio.logincognito:
-                                text: Sign in with Email
-                                clientId: uesio.cognitoClientId
-                                poolId: uesio.cognitoPoolId
-                                align: center
-                            # Just makes the vertical centering nicer
-                            - material.container:
-                                padding: 8
-          - material.griditem:
-              xs: 0
-              md: 6
-              lg: 7
+                - io.image:
+                    uesio.styles:
+                      root:
+                        margin: 60px
+                    file: uesio.logo
+                    height: 120px
+                    align: center
+                - uesio.logingoogle:
+                    text: Sign in with Google
+                    clientId: uesio.googleClientId
+                    align: center
+                - uesio.loginmock:
+                    text: Sign in with Mock
+                    align: center
+                - uesio.loginfacebook:
+                    text: Sign in with Facebook
+                    clientId: uesio.facebookAppId
+                    align: center
+                - uesio.logincognito:
+                    text: Sign in with Email
+                    clientId: uesio.cognitoClientId
+                    poolId: uesio.cognitoPoolId
+                    align: center
+          - io.griditem:
+              components:

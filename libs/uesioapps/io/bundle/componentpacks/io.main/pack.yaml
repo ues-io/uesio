@@ -1,7 +1,16 @@
 name: main
 components:
   view:
+    io.avatar:
+    io.box:
     io.button:
+    io.grid:
+    io.griditem:
+    io.iconbutton:
+    io.image:
+    io.list:
+    io.text:
+    io.tile:
   utility:
     io.button:
     io.iconbutton:
@@ -9,3 +18,6 @@ components:
     io.icon:
     io.titlebar:
     io.scrollpanel:
+    io.textfield:
+    io.text:
+    io.link:
