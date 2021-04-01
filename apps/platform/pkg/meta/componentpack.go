@@ -54,6 +54,14 @@ func (cp *ComponentPack) GetKey() string {
 	return cp.Namespace + "." + cp.Name
 }
 
+func (cp *ComponentPack) GetComponentPackFilePath() string {
+	return filepath.Join(cp.GetKey(), "runtime.bundle.js")
+}
+
+func (cp *ComponentPack) GetBuilderComponentPackFilePath() string {
+	return filepath.Join(cp.GetKey(), "builder.bundle.js")
+}
+
 // GetPath function
 func (cp *ComponentPack) GetPath() string {
 	return filepath.Join(cp.GetKey(), "pack.yaml")

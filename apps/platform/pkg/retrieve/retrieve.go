@@ -39,7 +39,33 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 		err = group.Loop(func(item loadable.Item) error {
 
 			path := item.(meta.BundleableItem).GetPath()
+			// Grabs the componentpack javascript files
+			if metadataType == "componentpacks" {
+				cp := item.(*meta.ComponentPack)
+				builderStream, err := bs.GetComponentPackStream(version, true, cp, session)
+				if err != nil {
+					return err
+				}
+				builderItem := bundlestore.ItemStream{
+					FileName: cp.GetBuilderComponentPackFilePath(),
+					Type:     metadataType,
+				}
+				_, err = io.Copy(&builderItem.Buffer, builderStream)
 
+				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
+				if err != nil {
+					return err
+				}
+				runtimeItem := bundlestore.ItemStream{
+					FileName: cp.GetComponentPackFilePath(),
+					Type:     metadataType,
+				}
+				_, err = io.Copy(&runtimeItem.Buffer, runtimeStream)
+
+				itemStreams = append(itemStreams, builderItem)
+				itemStreams = append(itemStreams, runtimeItem)
+
+			}
 			// Special handling for bots
 			if metadataType == "bots" {
 				bot := item.(*meta.Bot)

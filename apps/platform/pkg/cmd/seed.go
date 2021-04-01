@@ -134,13 +134,19 @@ func seed(cmd *cobra.Command, args []string) {
 	// and installs it into the localbundlestore.
 	sysbs := &systembundlestore.SystemBundleStore{}
 
-	err = datasource.CreateBundle("crm", "v0.0.1", "v0.0.1", "Customer Relationship Management", sysbs, session)
-	if err != nil {
-		logger.Log("Error Creating crm bundle. It may already exist.", logger.INFO)
-	}
 	err = datasource.CreateBundle("sample", "v0.0.1", "v0.0.1", "Sample Bundle", sysbs, session)
 	if err != nil {
-		logger.Log("Error Creating sample bundle. It may already exist.", logger.INFO)
+		err = datasource.StoreBundleAssets("sample", "v0.0.1", "v0.0.1", sysbs, session)
+		if err != nil {
+			logger.Log("Error Creating/Refreshing sample bundle.", logger.INFO)
+		}
+	}
+	err = datasource.CreateBundle("crm", "v0.0.1", "v0.0.1", "Customer Relationship Management", sysbs, session)
+	if err != nil {
+		err = datasource.StoreBundleAssets("crm", "v0.0.1", "v0.0.1", sysbs, session)
+		if err != nil {
+			logger.Log("Error Creating/Refreshing crm bundle.", logger.INFO)
+		}
 	}
 
 	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
