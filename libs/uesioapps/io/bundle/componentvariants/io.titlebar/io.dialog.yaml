@@ -7,6 +7,7 @@ definition:
       padding: 20px
       backgroundColor: "#f5f5f5"
       backgroundClip: "padding-box"
+      borderRadius: "4px 4px 0 0"
     title:
       fontWeight: 500
       fontSize: "11pt"

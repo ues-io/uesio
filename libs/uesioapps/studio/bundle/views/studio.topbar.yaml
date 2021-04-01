@@ -10,7 +10,7 @@ definition:
             alignItems: center
             height: 60px
             backgroundColor: "#F2F2F2"
-        templateColumns: 0fr 1fr 0fr
+        templateColumns: 58px 0fr 1fr 0fr
         items:
           # Uesio Logo
           - io.griditem:
@@ -19,11 +19,44 @@ definition:
                     uesio.styles:
                       root:
                         margin: 0 16px
+                        opacity: "0.8"
                     file: uesio.logo
                     height: 34px
                     signals:
                       - signal: "route/NAVIGATE"
                         path: "home"
+          - io.griditem:
+              components:
+                - io.list:
+                    id: appslist
+                    components:
+                      - io.tile:
+                          uesio.styles:
+                            root:
+                              padding: 8px 12px
+                              backgroundColor: "#fafafa"
+                              borderRadius: 4px
+                              boxShadow: "0 0 4px #00000007"
+                              marginLeft: 8px
+                              fontSize: 10pt
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#555"
+                                    fontSize: 8pt
+                                    textTransform: uppercase
+                                    display: inline
+                                text: ${uesio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontFamily: Material Icons
+                                    color: "${uesio.color}"
+                                    verticalAlign: middle
+                                text: circle
           - io.griditem:
               uesio.styles:
                 root:

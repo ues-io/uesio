@@ -89,15 +89,19 @@ function shouldDisplay(context: Context, definition?: DefinitionMap) {
 function additionalContext(context: Context, definition?: DefinitionMap) {
 	const additionalContext = definition?.["uesio.context"] as ContextFrame
 	if (additionalContext) {
+		const frame: ContextFrame = {}
 		const workspace = additionalContext.workspace
 		if (workspace) {
-			return context.addFrame({
-				workspace: {
-					name: context.merge(workspace.name),
-					app: context.merge(workspace.app),
-				},
-			})
+			frame.workspace = {
+				name: context.merge(workspace.name),
+				app: context.merge(workspace.app),
+			}
 		}
+		const wire = additionalContext.wire
+		if (wire) {
+			frame.wire = wire
+		}
+		return context.addFrame(frame)
 	}
 	return context
 }
