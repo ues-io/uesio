@@ -1,0 +1,14 @@
+name: plain
+component: io.plain
+label: Plain
+definition:
+  "uesio.styles":
+    root:
+      padding: 20px
+    title:
+      fontWeight: 500
+      fontSize: "11pt"
+      color: "#21242D"
+    subtitle:
+      fontSize: "9pt"
+      color: "#777"

@@ -42,13 +42,7 @@ definition:
                         backgroundColor: "#fafafa"
                     components:
                       - io.titlebar:
-                          uesio.styles:
-                            root:
-                              padding: 20px
-                            title:
-                              fontWeight: 500
-                              fontSize: "11pt"
-                              color: "#21242D"
+                          uesio.variant: io.plain
                           title: My Apps
                           actions:
                             - io.iconbutton:
@@ -171,49 +165,41 @@ definition:
       type: dialog
       components:
         - io.titlebar:
+            uesio.variant: io.dialog
+            title: Create a New App
             actions:
               - io.iconbutton:
                   icon: close
                   signals:
                     - signal: panel/TOGGLE
                       panel: newApp
-        - material.typography:
-            text: Create a New App
-            variant: h5
-        - material.deck:
-            xs: 12
-            margin: 0
+        - io.list:
             id: appsDeck
             wire: newapp
             mode: EDIT
             components:
-              - material.card:
-                  media:
-                    background:
-                      color: "${uesio.color}"
-                    height: 10px
-                  margin: 1
+              - io.box:
+                  uesio.styles:
+                    root:
+                      padding: 20px
                   components:
-                    - material.grid:
-                        spacing: 4
+                    - io.field:
+                        fieldId: uesio.name
+                    - io.field:
+                        fieldId: uesio.description
+                    - io.field:
+                        fieldId: uesio.color
+                    - studio.colorpicker:
+                        fieldId: uesio.color
+                    - io.grid:
+                        uesio.styles:
+                          root:
+                            paddingTop: 10px
+                            columnGap: 10px
+                        templateColumns: 100px 100px 1fr
                         items:
-                          - material.griditem:
-                              xs: 10
-                              xl: 3
-                              components:
-                                - material.field:
-                                    fieldId: uesio.name
-                                - material.field:
-                                    fieldId: uesio.description
-                                - material.field:
-                                    fieldId: uesio.color
-                                - studio.colorpicker:
-                                    fieldId: uesio.color
-                    - material.buttonset:
-                        buttons:
-                          - material.button:
-                              color: "primary"
-                              variant: "contained"
+                          - io.button:
+                              uesio.variant: "io.primary"
                               text: "Save"
                               signals:
                                 - signal: wire/SAVE
@@ -221,9 +207,8 @@ definition:
                                     - "newapp"
                                 - signal: "route/NAVIGATE"
                                   path: "app/${uesio.name}"
-                          - material.button:
-                              color: "primary"
-                              variant: "outlined"
+                          - io.button:
+                              uesio.variant: "io.secondary"
                               text: "Cancel"
                               signals:
                                 - signal: "panel/TOGGLE"

@@ -1,8 +1,15 @@
 import { definition, builder } from "@uesio/ui"
 
+type ListMode = "READ" | "EDIT"
+
+type ListState = {
+	mode: ListMode
+}
+
 type ListDefinition = {
 	id: string
 	wire: string
+	mode: ListMode
 } & definition.BaseDefinition
 
 interface ListProps extends definition.BaseProps {
@@ -16,6 +23,6 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 }
-export { ListProps, ListDefinition }
+export { ListProps, ListState, ListDefinition }
 
 export default ListPropertyDefinition
