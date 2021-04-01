@@ -4,6 +4,7 @@ components:
     io.avatar:
     io.box:
     io.button:
+    io.field:
     io.grid:
     io.griditem:
     io.iconbutton:
@@ -22,3 +23,5 @@ components:
     io.textfield:
     io.text:
     io.link:
+  variants:
+    - io.textfield.io.default

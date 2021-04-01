@@ -1,10 +1,15 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
+import { field } from "@uesio/constants"
 
 interface TextFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
+	value: string
 	width?: string
+	type?: string
+	hideLabel?: boolean
+	mode?: field.FieldMode
 }
 
 const useStyles = styles.getUseStyles(["root", "label", "input"], {
@@ -17,11 +22,12 @@ const useStyles = styles.getUseStyles(["root", "label", "input"], {
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	const classes = useStyles(props)
-	const { setValue } = props
+	const { setValue, value } = props
 	return (
 		<div className={classes.root}>
 			<div className={classes.label}>{props.label}</div>
 			<input
+				value={value}
 				className={classes.input}
 				type="text"
 				onChange={(event: ChangeEvent<HTMLInputElement>): void =>

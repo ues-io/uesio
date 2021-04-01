@@ -55,7 +55,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 					root: {
 						gridTemplateColumns: "1fr 1fr",
 						columnGap: "10px",
-						padding: "20px 10px",
+						padding: "20px 0",
 					},
 				}}
 			>
