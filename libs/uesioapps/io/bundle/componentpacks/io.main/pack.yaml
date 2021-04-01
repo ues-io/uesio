@@ -11,6 +11,7 @@ components:
     io.list:
     io.text:
     io.tile:
+    io.titlebar:
   utility:
     io.button:
     io.iconbutton:

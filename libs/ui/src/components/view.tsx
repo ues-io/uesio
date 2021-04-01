@@ -2,6 +2,7 @@ import { FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
+import Panel from "./panel"
 import { ViewParams } from "../bands/view/types"
 import { useViewDef } from "../bands/viewdef/selectors"
 
@@ -43,13 +44,23 @@ const View: FunctionComponent<Props> = (props) => {
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
 	return (
-		<Slot
-			definition={viewDef.definition}
-			listName="components"
-			path=""
-			accepts={["uesio.standalone"]}
-			context={viewContext}
-		/>
+		<>
+			<Slot
+				definition={viewDef.definition}
+				listName="components"
+				path=""
+				accepts={["uesio.standalone"]}
+				context={viewContext}
+			/>
+			{path === "" &&
+				viewDef?.definition?.panels?.map((panel, index) => (
+					<Panel
+						key={index}
+						definition={panel}
+						context={props.context}
+					/>
+				))}
+		</>
 	)
 }
 
