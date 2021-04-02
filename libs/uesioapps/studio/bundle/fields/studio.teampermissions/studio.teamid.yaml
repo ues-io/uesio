@@ -1,0 +1,6 @@
+name: teamid
+collection: studio.teampermissions
+type: TEXT
+label: ID
+propertyName: teamid
+readOnly: true

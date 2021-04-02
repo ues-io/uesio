@@ -1,0 +1,6 @@
+name: role
+collection: studio.teampermissions
+type: SELECT
+label: Role
+propertyName: role
+selectList: studio.role

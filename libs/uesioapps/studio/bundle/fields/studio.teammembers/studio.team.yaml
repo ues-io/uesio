@@ -1,0 +1,6 @@
+name: team
+collection: studio.teammembers
+type: REFERENCE
+label: Team
+propertyName: teamid
+referencedCollection: studio.teams

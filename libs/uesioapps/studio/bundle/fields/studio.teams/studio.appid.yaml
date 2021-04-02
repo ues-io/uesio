@@ -1,0 +1,5 @@
+name: appid
+collection: studio.teams
+type: TEXT
+label: App ID
+propertyName: appid

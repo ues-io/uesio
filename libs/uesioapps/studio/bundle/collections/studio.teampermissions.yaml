@@ -1,0 +1,6 @@
+name: teampermissions
+dataSource: uesio.platform
+idField: studio.id
+idFormat: "${studio.appid}_${studio.teamid}"
+nameField: studio.id
+collectionName: teampermissions
