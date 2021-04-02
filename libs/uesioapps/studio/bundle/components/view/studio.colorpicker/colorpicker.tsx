@@ -23,7 +23,7 @@ interface Props extends definition.BaseProps {
 
 const useStyles = styles.getUseStyles(["root", "color", "selected"], {
 	root: {
-		margin: "10px 0",
+		margin: "20px 0",
 		lineHeight: 0,
 	},
 	color: {

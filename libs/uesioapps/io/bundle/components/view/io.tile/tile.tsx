@@ -9,6 +9,9 @@ const useStyles = styles.getUseStyles(["root", "content", "avatar"], {
 		...(props.definition.signals && {
 			cursor: "pointer",
 		}),
+		"&:hover": {
+			backdropFilter: "brightness(97%)",
+		},
 	}),
 	content: () => ({
 		flex: 1,

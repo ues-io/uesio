@@ -7,15 +7,12 @@ import IOButton from "../../utility/io.button/button"
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition } = props
 	const uesio = hooks.useUesio(props)
+	const [handler, portals] = uesio.signal.useHandler(definition.signals)
 	return (
-		<IOButton
-			{...props}
-			label={definition.text}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
-			}
-		/>
+		<>
+			<IOButton {...props} label={definition.text} onClick={handler} />
+			{portals}
+		</>
 	)
 }
 

@@ -111,6 +111,21 @@ const Component: FunctionComponent<BaseProps> = (props) => {
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
 
+function getVariantStyles(
+	componentType: string,
+	variant: ComponentVariant | undefined,
+	context: Context
+): DefinitionMap {
+	if (!variant) return {}
+	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
+	const theme = context.getTheme()
+	const overrides = theme?.definition?.variantOverrides
+	const override = overrides?.[componentType]?.[variant.name] as DefinitionMap
+	return override
+		? mergeDefinitionMaps(variantStyles, override, context)
+		: variantStyles
+}
+
 function mergeInVariants(
 	definition: DefinitionMap | undefined,
 	componentType: string,
@@ -119,43 +134,16 @@ function mergeInVariants(
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 
-	const theme = context.getTheme()
-
-	const mergedDefinition = definition["uesio.styles"]
-		? {
-				...definition,
-				...(definition["uesio.styles"] && {
-					"uesio.styles": mergeDefinitionMaps(
-						{},
-						definition["uesio.styles"] as DefinitionMap,
-						context
-					),
-				}),
-		  }
-		: definition
-
-	if (!variant) return mergedDefinition
-
-	// Loop over variant styles and process merges
-	const override =
-		theme?.definition?.variantOverrides?.[componentType]?.[variant.name]
-
-	const themedVariant = override
-		? {
-				...variant,
-				definition: mergeDefinitionMaps(
-					variant.definition,
-					{
-						"uesio.styles": override,
-					},
-					context
-				),
-		  }
-		: variant
+	const variantStyles = getVariantStyles(componentType, variant, context)
+	const explicitStyles = definition["uesio.styles"] as DefinitionMap
 
 	return mergeDefinitionMaps(
-		mergedDefinition,
-		themedVariant.definition,
+		definition,
+		{
+			"uesio.styles": explicitStyles
+				? mergeDefinitionMaps(variantStyles, explicitStyles, context)
+				: variantStyles,
+		},
 		context
 	)
 }

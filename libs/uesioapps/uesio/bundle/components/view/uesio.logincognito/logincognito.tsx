@@ -78,6 +78,9 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 					root: {
 						width: "210px",
 					},
+					label: {
+						textTransform: "none",
+					},
 				},
 			}}
 			label={text}

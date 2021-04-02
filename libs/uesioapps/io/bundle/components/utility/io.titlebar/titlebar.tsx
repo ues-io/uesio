@@ -24,15 +24,18 @@ const useStyles = styles.getUseStyles(
 
 const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 	const classes = useStyles(props)
+	const { context, title, subtitle, actions } = props
 	return (
 		<div className={classes.root}>
 			<div className={classes.content}>
-				<div className={classes.title}>{props.title}</div>
-				{props.subtitle && (
-					<div className={classes.subtitle}>{props.subtitle}</div>
+				<div className={classes.title}>{context.merge(title)}</div>
+				{subtitle && (
+					<div className={classes.subtitle}>
+						{context.merge(subtitle)}
+					</div>
 				)}
 			</div>
-			<div className={classes.actions}>{props.actions}</div>
+			<div className={classes.actions}>{actions}</div>
 		</div>
 	)
 }

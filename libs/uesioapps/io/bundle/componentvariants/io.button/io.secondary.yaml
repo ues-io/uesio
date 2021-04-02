@@ -4,10 +4,15 @@ label: Secondary
 definition:
   "uesio.styles":
     root:
-      backgroundColor: "#e2e2e2"
-      color: "#333"
+      backgroundColor: "#f6f6f6"
       fontWeight: 500
       padding: 10px
+      color: "#555"
+      border: 2px solid white
+      boxShadow: "0 0 4px #00000053"
+      borderRadius: 4px
       "&:focus":
         outline: none
-        boxShadow: $Color{#e2e2e2.darken} 0 0 10px 0px inset
+        boxShadow: "0 0 6px #00000093"
+    label:
+      textTransform: uppercase

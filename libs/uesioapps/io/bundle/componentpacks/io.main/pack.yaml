@@ -4,9 +4,11 @@ components:
     io.avatar:
     io.box:
     io.button:
+    io.deck:
     io.field:
     io.grid:
     io.griditem:
+    io.group:
     io.iconbutton:
     io.image:
     io.list:
