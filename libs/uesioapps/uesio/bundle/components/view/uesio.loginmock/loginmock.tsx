@@ -58,6 +58,9 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 									root: {
 										width: "210px",
 									},
+									label: {
+										textTransform: "none",
+									},
 								},
 							}}
 							label={"Sign in as " + user.firstname}

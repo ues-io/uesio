@@ -1,0 +1,13 @@
+name: main
+component: io.main
+label: Main
+definition:
+  "uesio.styles":
+    root:
+      padding: 40px 40px 10px 40px
+    title:
+      color: "#444"
+      fontSize: "12pt"
+    subtitle:
+      fontSize: "9pt"
+      color: "#777"

@@ -5,9 +5,14 @@ definition:
   "uesio.styles":
     root:
       backgroundColor: "$Theme{color.primary}"
-      color: white
+      color: "#FFFFFFee"
       fontWeight: 500
+      border: 2px solid white
+      boxShadow: "0 0 4px #00000053"
+      borderRadius: 4px
       padding: 10px
       "&:focus":
         outline: none
-        boxShadow: $Theme{color.primary.darken} 0 0 10px 0px inset
+        boxShadow: "0 0 6px #00000093"
+    label:
+      textTransform: uppercase

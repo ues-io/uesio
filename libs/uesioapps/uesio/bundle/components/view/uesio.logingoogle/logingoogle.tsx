@@ -57,6 +57,9 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 					root: {
 						width: "210px",
 					},
+					label: {
+						textTransform: "none",
+					},
 				}}
 				label={buttonText}
 			/>

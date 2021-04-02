@@ -191,13 +191,8 @@ definition:
                         fieldId: uesio.color
                     - studio.colorpicker:
                         fieldId: uesio.color
-                    - io.grid:
-                        uesio.styles:
-                          root:
-                            paddingTop: 10px
-                            columnGap: 10px
-                        templateColumns: 100px 100px 1fr
-                        items:
+                    - io.group:
+                        components:
                           - io.button:
                               uesio.variant: "io.primary"
                               text: "Save"
