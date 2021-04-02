@@ -7,6 +7,7 @@ definition:
       color: "$Theme{color.primary}"
       fontWeight: 500
       padding: 10px
+      whiteSpace: nowrap
       backgroundColor: inherit
       textTransform: uppercase
       "&:focus":

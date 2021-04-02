@@ -43,46 +43,196 @@ definition:
         - field: uesio.appref
           valueSource: PARAM
           param: appname
+    newworkspace:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.app:
+      type: CREATE
+      defaults:
+        - field: studio.app
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
-              components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
-                    id: appsDeck
-                    wire: apps
-                    mode: READ
+    - io.grid:
+        uesio.styles:
+          root:
+            minHeight: 100vh
+        templateRows: 60px 1fr
+        items:
+          - uesio.view:
+              view: studio.topbar
+              uesio.context:
+                wire: apps
+          - io.grid:
+              uesio.styles:
+                root:
+                  gridRow: 2
+              templateColumns: 300px 1fr
+              items:
+                - io.griditem:
+                    uesio.styles:
+                      root:
+                        backgroundColor: "#fafafa"
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: /home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: ${uesio.name}
-                      - material.card:
-                          media:
-                            background:
-                              color: "${uesio.color}"
-                            height: 10px
-                          margin: 1
+                      - io.titlebar:
+                          uesio.variant: io.plain
+                          title: Workspaces
+                          actions:
+                            - io.iconbutton:
+                                icon: add
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newWorkspace
+                      - io.list:
+                          id: workspaceslist
+                          wire: workspaces
                           components:
+                            - io.tile:
+                                uesio.styles:
+                                  root:
+                                    padding: 10px 20px
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/${studio.name}"
+                                content:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: "#21242D"
+                                          display: "inline"
+                                          verticalAlign: middle
+                                      text: ${studio.name}
+                                      element: div
+                                avatar:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontFamily: Material Icons
+                                          color: "#ccc"
+                                          verticalAlign: middle
+                                      text: handyman
+                - io.griditem:
+                    components:
+                      - material.deck:
+                          xs: 12
+                          margin: 0
+                          id: appsDeck
+                          wire: apps
+                          mode: READ
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color: "${uesio.color}"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.grid:
+                                      justify: space-between
+                                      alignitems: center
+                                      items:
+                                        - material.griditem:
+                                            components:
+                                              - material.typography:
+                                                  text: ${uesio.name}
+                                                  variant: h5
+                                                  textTransform: "uppercase"
+                                        - material.griditem:
+                                            components:
+                                              - material.buttonset:
+                                                  buttons:
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Edit"
+                                                        signals:
+                                                          - signal: component/material.deck/TOGGLE_MODE
+                                                            target: "appsDeck"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Save"
+                                                        signals:
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "apps"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Cancel"
+                                                        signals:
+                                                          - signal: wire/CANCEL
+                                                            wire: "apps"
+                                                    - material.button:
+                                                        color: "primary"
+                                                        variant: "outlined"
+                                                        text: "Delete"
+                                                        signals:
+                                                          - signal: wire/MARK_FOR_DELETE
+                                                          - signal: wire/SAVE
+                                                            wires:
+                                                              - "apps"
+                                                          - signal: "route/NAVIGATE"
+                                                            path: "home"
+                                  - material.field:
+                                      fieldId: uesio.name
+                                  - material.field:
+                                      fieldId: uesio.description
+                                  - studio.colorpicker:
+                                      fieldId: uesio.color
                             - material.grid:
                                 justify: space-between
-                                alignitems: center
                                 items:
                                   - material.griditem:
                                       components:
                                         - material.typography:
-                                            text: ${uesio.name}
+                                            text: Bundles
                                             variant: h5
-                                            textTransform: "uppercase"
+                                        - material.typography:
+                                            text: Pack it up. Pack it in. Let me begin.
+                                            variant: body2
+                            - material.deck:
+                                xs: 12
+                                sm: 6
+                                md: 4
+                                lg: 3
+                                margin: 0
+                                wire: bundles
+                                id: bundlesDeck
+                                components:
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "secondary"
+                                            key: "dark"
+                                        height: 10px
+                                      components:
+                                        - material.griditem:
+                                            components:
+                                              - material.icon:
+                                                  type: "open"
+                                                  float: right
+                                        - material.typography:
+                                            text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
+                            - material.grid:
+                                justify: space-between
+                                items:
+                                  - material.griditem:
+                                      components:
+                                        - material.typography:
+                                            text: Sites
+                                            variant: h5
+                                        - material.typography:
+                                            text: Your site is in sight.
+                                            variant: body2
                                   - material.griditem:
                                       components:
                                         - material.buttonset:
@@ -90,175 +240,80 @@ definition:
                                               - material.button:
                                                   color: "primary"
                                                   variant: "outlined"
-                                                  text: "Edit"
+                                                  text: "Create a Site"
                                                   signals:
-                                                    - signal: component/material.deck/TOGGLE_MODE
-                                                      target: "appsDeck"
-                                              - material.button:
-                                                  color: "primary"
-                                                  variant: "outlined"
-                                                  text: "Save"
-                                                  signals:
-                                                    - signal: wire/SAVE
-                                                      wires:
-                                                        - "apps"
-                                              - material.button:
-                                                  color: "primary"
-                                                  variant: "outlined"
-                                                  text: "Cancel"
-                                                  signals:
-                                                    - signal: wire/CANCEL
-                                                      wire: "apps"
-                                              - material.button:
-                                                  color: "primary"
-                                                  variant: "outlined"
-                                                  text: "Delete"
-                                                  signals:
-                                                    - signal: wire/MARK_FOR_DELETE
-                                                    - signal: wire/SAVE
-                                                      wires:
-                                                        - "apps"
                                                     - signal: "route/NAVIGATE"
-                                                      path: "home"
-                            - material.field:
-                                fieldId: uesio.name
-                            - material.field:
-                                fieldId: uesio.description
-                            - studio.colorpicker:
-                                fieldId: uesio.color
-                      - material.grid:
-                          justify: space-between
-                          items:
-                            - material.griditem:
+                                                      path: "app/${uesio.name}/newsite"
+                            - material.deck:
+                                xs: 12
+                                sm: 6
+                                md: 4
+                                lg: 3
+                                margin: 0
+                                wire: sites
+                                id: sitesDeck
                                 components:
-                                  - material.typography:
-                                      text: Workspaces
-                                      variant: h5
-                                  - material.typography:
-                                      text: Create a workspace to start building.
-                                      variant: body2
-                            - material.griditem:
-                                components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Create a Workspace"
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/${uesio.name}/newworkspace"
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
-                          wire: workspaces
-                          id: workspacesDeck
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "secondary"
-                                      key: "light"
-                                  height: 10px
-                                components:
-                                  - material.griditem:
+                                  - material.card:
+                                      media:
+                                        background:
+                                          color:
+                                            intention: "secondary"
+                                        height: 10px
                                       components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "$Record{studio.name}"
-                                      textTransform: "capitalize"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/${studio.name}"
-                      - material.grid:
-                          justify: space-between
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: Bundles
-                                      variant: h5
-                                  - material.typography:
-                                      text: Pack it up. Pack it in. Let me begin.
-                                      variant: body2
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
-                          wire: bundles
-                          id: bundlesDeck
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "secondary"
-                                      key: "dark"
-                                  height: 10px
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
-                      - material.grid:
-                          justify: space-between
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: Sites
-                                      variant: h5
-                                  - material.typography:
-                                      text: Your site is in sight.
-                                      variant: body2
-                            - material.griditem:
-                                components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Create a Site"
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/${uesio.name}/newsite"
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
-                          wire: sites
-                          id: sitesDeck
-                          components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "secondary"
-                                  height: 10px
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${uesio.name}"
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/${uesio.name}"
+                                        - material.griditem:
+                                            components:
+                                              - material.icon:
+                                                  type: "open"
+                                                  float: right
+                                        - material.typography:
+                                            text: "${uesio.name}"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/site/${uesio.name}"
+  panels:
+    - id: newWorkspace
+      type: dialog
+      components:
+        - io.titlebar:
+            uesio.variant: io.dialog
+            title: Create a New Workspace
+            actions:
+              - io.iconbutton:
+                  icon: close
+                  signals:
+                    - signal: panel/TOGGLE
+                      panel: newWorkspace
+        - io.list:
+            id: newworkspacelist
+            wire: newworkspace
+            mode: EDIT
+            components:
+              - io.box:
+                  uesio.styles:
+                    root:
+                      padding: 20px
+                  components:
+                    - io.field:
+                        fieldId: studio.name
+                    - io.grid:
+                        uesio.styles:
+                          root:
+                            paddingTop: 10px
+                            columnGap: 10px
+                        templateColumns: 100px 100px 1fr
+                        items:
+                          - io.button:
+                              uesio.variant: "io.primary"
+                              text: "Save"
+                              signals:
+                                - signal: wire/SAVE
+                                  wires:
+                                    - "newworkspace"
+                                - signal: "route/NAVIGATE"
+                                  path: "app/$Param{appname}/workspace/${studio.name}"
+                          - io.button:
+                              uesio.variant: "io.secondary"
+                              text: "Cancel"
+                              signals:
+                                - signal: "panel/TOGGLE"
+                                  panel: "newWorkspace"

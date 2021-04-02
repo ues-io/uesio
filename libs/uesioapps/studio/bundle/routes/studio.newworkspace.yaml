@@ -1,4 +1,0 @@
-name: newworkspace
-path: app/{appname}/newworkspace
-view: studio.newworkspace
-theme: uesio.default

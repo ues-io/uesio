@@ -146,12 +146,19 @@ class Context {
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
 
+	findWireFrame = (): Context => {
+		const index = this.stack.findIndex((frame) => frame?.wire)
+		return new Context(this.stack.slice(index))
+	}
+
 	getWire = () => {
 		const state = getStore().getState()
-		const wireId = this.getWireId()
+		const wireFrame = this.findWireFrame()
+		const wireId = wireFrame.getWireId()
+
 		if (!wireId) return undefined
-		const plainWire = selectWire(state, this.getViewId(), wireId)
-		const wireDef = this.getWireDef(wireId)
+		const plainWire = selectWire(state, wireFrame.getViewId(), wireId)
+		const wireDef = wireFrame.getWireDef(wireId)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
 		const collection = new Collection(

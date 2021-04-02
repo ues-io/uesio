@@ -27,7 +27,7 @@ const useStyles = createUseStyles({
 	inner: {
 		boxShadow: "0 0 20px #0005",
 		borderRadius: "4px",
-		background: "white",
+		backgroundColor: "white",
 		gridRow: "2 / 3",
 		gridColumn: "2 / 3",
 		pointerEvents: "auto",

@@ -6,7 +6,15 @@ import { ListProps, ListState } from "./listdefinition"
 const List: FunctionComponent<ListProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(definition.wire)
+	const defWire = uesio.wire.useWire(definition.wire)
+	const wireToUse = defWire || context.getWire()
+
+	// If we got a wire from the definition, add it to context
+	const newContext = defWire
+		? context.addFrame({
+				wire: defWire.getId(),
+		  })
+		: context
 
 	const [componentState] = uesio.component.useState<ListState>(
 		definition.id,
@@ -15,9 +23,9 @@ const List: FunctionComponent<ListProps> = (props) => {
 		}
 	)
 
-	if (!wire || !componentState) return null
+	if (!wireToUse || !componentState) return null
 
-	const data = wire.getData()
+	const data = wireToUse.getData()
 	return (
 		<>
 			{data.map((record) => (
@@ -26,9 +34,8 @@ const List: FunctionComponent<ListProps> = (props) => {
 					listName="components"
 					path={path}
 					accepts={["uesio.context"]}
-					context={context.addFrame({
+					context={newContext.addFrame({
 						record: record.getId(),
-						wire: wire.getId(),
 						fieldMode: componentState.mode,
 					})}
 				/>
