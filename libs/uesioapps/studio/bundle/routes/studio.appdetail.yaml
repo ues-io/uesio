@@ -1,4 +1,4 @@
 name: appdetail
 path: app/{appname}
 view: studio.app
-theme: uesio.default
+theme: studio.default
