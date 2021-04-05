@@ -1,4 +1,4 @@
-import { FC, ComponentType } from "react"
+import { FC } from "react"
 import {
 	BaseProps,
 	DefinitionMap,
