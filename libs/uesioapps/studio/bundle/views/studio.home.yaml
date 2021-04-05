@@ -163,48 +163,37 @@ definition:
   panels:
     - id: newApp
       type: dialog
+      title: Create a New App
+      width: 400px
+      height: 500px
       components:
-        - io.titlebar:
-            uesio.variant: io.dialog
-            title: Create a New App
-            actions:
-              - io.iconbutton:
-                  icon: close
-                  signals:
-                    - signal: panel/TOGGLE
-                      panel: newApp
         - io.list:
             id: newapplist
             wire: newapp
             mode: EDIT
             components:
-              - io.box:
-                  uesio.styles:
-                    root:
-                      padding: 20px
+              - io.field:
+                  fieldId: uesio.name
+              - io.field:
+                  fieldId: uesio.description
+              - io.field:
+                  fieldId: uesio.color
+              - studio.colorpicker:
+                  fieldId: uesio.color
+              - io.group:
                   components:
-                    - io.field:
-                        fieldId: uesio.name
-                    - io.field:
-                        fieldId: uesio.description
-                    - io.field:
-                        fieldId: uesio.color
-                    - studio.colorpicker:
-                        fieldId: uesio.color
-                    - io.group:
-                        components:
-                          - io.button:
-                              uesio.variant: "io.primary"
-                              text: "Save"
-                              signals:
-                                - signal: wire/SAVE
-                                  wires:
-                                    - "newapp"
-                                - signal: "route/NAVIGATE"
-                                  path: "app/${uesio.name}"
-                          - io.button:
-                              uesio.variant: "io.secondary"
-                              text: "Cancel"
-                              signals:
-                                - signal: "panel/TOGGLE"
-                                  panel: "newApp"
+                    - io.button:
+                        uesio.variant: "io.primary"
+                        text: "Save"
+                        signals:
+                          - signal: wire/SAVE
+                            wires:
+                              - "newapp"
+                          - signal: "route/NAVIGATE"
+                            path: "app/${uesio.name}"
+                    - io.button:
+                        uesio.variant: "io.secondary"
+                        text: "Cancel"
+                        signals:
+                          - signal: "panel/TOGGLE"
+                            panel: "newApp"
