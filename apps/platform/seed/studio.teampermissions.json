@@ -1,0 +1,12 @@
+[
+	{
+		"studio.appid": "crm",
+		"studio.teamid": "crm_admins",
+		"studio.role": "admin"
+	},
+	{
+		"studio.appid": "crm",
+		"studio.teamid": "crm_maintainers",
+		"studio.role": "maintainer"
+	}
+]
