@@ -62,7 +62,7 @@ class SignalAPI {
 					panel.contextPath === getPanelKey(path, context)
 				) {
 					const panelInfo = panelRegistry[panelId]
-					if (panelInfo && panelInfo.domNode) {
+					if (panelInfo && panelInfo.domNode.current) {
 						portals.push(
 							createPortal(
 								<Slot
@@ -72,7 +72,7 @@ class SignalAPI {
 									accepts={["uesio.standalone"]}
 									context={context}
 								/>,
-								panelInfo.domNode
+								panelInfo.domNode.current
 							)
 						)
 					}

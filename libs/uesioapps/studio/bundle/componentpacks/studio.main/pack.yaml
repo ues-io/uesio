@@ -17,6 +17,7 @@ components:
     - io.main
   variants:
     - io.titlebar.io.primary
+    - io.titlebar.io.dialog
     - io.scrollpanel.studio.verticalnav
     - io.iconbutton.io.large
     - io.iconbutton.io.small

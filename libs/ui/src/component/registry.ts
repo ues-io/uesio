@@ -1,4 +1,4 @@
-import { FC, ComponentType } from "react"
+import { FC } from "react"
 import {
 	BaseProps,
 	DefinitionMap,
@@ -66,9 +66,14 @@ const getUtilityLoader = (key: string) => utilityRegistry[key]
 const getLoader = (key: string, buildMode: boolean) =>
 	buildMode ? getBuildtimeLoader(key) : getRuntimeLoader(key)
 
-const get = (key: string): ComponentType<BaseProps> =>
-	getRuntimeLoader(key) || NotFound
-
+const get = (key: string) => (props: BaseProps) => {
+	const loader = getRuntimeLoader(key) || NotFound
+	return render(loader, key, {
+		...props,
+		componentType: key,
+		definition: props.definition,
+	})
+}
 const getUtility = (key: string) => (props: UtilityProps) => {
 	const loader = getUtilityLoader(key) || NotFound
 	const definition = {
