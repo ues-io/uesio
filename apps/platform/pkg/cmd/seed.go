@@ -47,6 +47,29 @@ func GetSeedDataFile(v interface{}, fileName string) error {
 	return nil
 }
 
+func seedCollection(name, filename string, session *sess.Session) error {
+	// Read files from seed folder
+	changes := adapt.Collection{}
+	err := GetSeedDataFile(&changes, filename)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+	err = datasource.Save([]datasource.SaveRequest{{
+		Collection: name,
+		Wire:       name,
+		Changes:    &changes,
+		Options: &adapt.SaveOptions{
+			Upsert: &adapt.UpsertOptions{},
+		},
+	}}, session)
+	if err != nil {
+		logger.LogError(err)
+		return err
+	}
+	return nil
+}
+
 func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
@@ -197,8 +220,17 @@ func seed(cmd *cobra.Command, args []string) {
 			},
 		},
 	}, session)
+
+	err = seedCollection("studio.teams", "studio.teams.json", session)
 	if err != nil {
-		logger.LogError(err)
+		return
+	}
+	err = seedCollection("studio.teampermissions", "studio.teampermissions.json", session)
+	if err != nil {
+		return
+	}
+	err = seedCollection("studio.teammembers", "studio.teammembers.json", session)
+	if err != nil {
 		return
 	}
 
