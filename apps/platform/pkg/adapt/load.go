@@ -18,6 +18,7 @@ type LoadOp struct {
 	Limit                 int                    `json:"-"`
 	Offset                int                    `json:"-"`
 	ReferencedCollections ReferenceRegistry      `json:"-"`
+	UserResponseTokens    []string               `json:"-"`
 }
 
 // LoadRequestField struct

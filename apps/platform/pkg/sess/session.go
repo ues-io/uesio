@@ -20,6 +20,7 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 		user = &meta.User{
 			FirstName: "Guest",
 			LastName:  "User",
+			ID:        "-1",
 			Profile:   defaultSitePublicProfile,
 		}
 	}
@@ -29,18 +30,19 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 			"Site":      site.GetFullName(),
 			"FirstName": user.FirstName,
 			"LastName":  user.LastName,
+			"UserID":    user.ID,
 		},
 	})
 	return &sess
 }
 
-// GetHeadlessSession TODO:: JAS Ask ben what makes the most sense here
 func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
 	browserSession := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
 			"Profile":   user.Profile,
 			"FirstName": user.FirstName,
 			"LastName":  user.LastName,
+			"UserID":    user.ID,
 			"Site":      "studio",
 		},
 	})
@@ -189,6 +191,7 @@ func (s *Session) getBrowserSessionAttribute(key string) string {
 // GetUserInfo function
 func (s *Session) GetUserInfo() *meta.User {
 	return &meta.User{
+		ID:        s.getBrowserSessionAttribute("UserID"),
 		FirstName: s.getBrowserSessionAttribute("FirstName"),
 		LastName:  s.getBrowserSessionAttribute("LastName"),
 		Profile:   s.getBrowserSessionAttribute("Profile"),

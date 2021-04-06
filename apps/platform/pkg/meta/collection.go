@@ -16,6 +16,19 @@ func NewCollection(key string) (*Collection, error) {
 	}, nil
 }
 
+type UserResponseTokenDefinition struct {
+	Type       string            `yaml:"type"`
+	Collection string            `yaml:"collection"`
+	Token      string            `yaml:"token"`
+	Match      string            `yaml:"match"`
+	Conditions []*TokenCondition `yaml:"conditions"`
+}
+
+type TokenCondition struct {
+	Field string `yaml:"field"`
+	Value string `yaml:"value"`
+}
+
 // Collection struct
 type Collection struct {
 	ID             string    `yaml:"-" uesio:"studio.id"`
@@ -31,6 +44,9 @@ type Collection struct {
 	Updated        int64     `yaml:"-" uesio:"studio.updated"`
 	Created        int64     `yaml:"-" uesio:"studio.created"`
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
+	Access         string    `yaml:"access,omitempty" uesio:"studio.access"`
+	//TODO:: JAS Figure out if we want/how we want to handle a uesio encoding
+	UserResponseTokens []*UserResponseTokenDefinition `yaml:"userResponseTokens,omitempty" uesio:"-"`
 }
 
 // GetCollectionName function
