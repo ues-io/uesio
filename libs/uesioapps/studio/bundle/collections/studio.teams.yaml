@@ -10,7 +10,7 @@ userResponseTokens:
     collection: studio.teammembers
     conditions:
       - field: "studio.memberid"
-        value: "{uesio.id}"
+        value: "{{User.ID}}"
     token: "{studio.appid}_{studio.teamid}"
     match: "team"
 recordChallengeTokens:

@@ -49,6 +49,7 @@ func NewWithFuncs(templateString string, defaultTemplateFunc interface{}, templa
 }
 
 // Execute function
+//TODO:: JAS USe this instead
 func Execute(tmpl *template.Template, data interface{}) (string, error) {
 	if tmpl != nil {
 		var tpl bytes.Buffer

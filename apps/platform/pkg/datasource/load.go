@@ -1,8 +1,10 @@
 package datasource
 
 import (
+	"bytes"
 	"fmt"
 	"strings"
+	"text/template"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -83,14 +85,71 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 		first: getAdditionalLookupFields(rest),
 	}
 }
-func GenerateResponseTokens(metadata *adapt.CollectionMetadata, session *sess.Session) ([]string, error) {
-	userInfo := session.GetUserInfo()
-	//TODO:: JAS You are here
-	return []string{userInfo.ID}, nil
+
+type userMerge struct {
+	User meta.User
 }
 
-// Load function
-func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
+func getUserTokenLookupValues(tokenDefinition *meta.UserResponseTokenDefinition, session *sess.Session) ([]string, error) {
+	userInfo := session.GetUserInfo()
+	conditions := tokenDefinition.Conditions
+	loadConditions := []adapt.LoadRequestCondition{}
+	//tokenTemplate := tokenDefinition.Token
+	tokens := []string{}
+	lookupCollection := tokenDefinition.Collection
+	for _, condition := range conditions {
+		valueTemplate := template.Must(template.New("condition").Parse(condition.Value))
+		var tpl bytes.Buffer
+		if err := valueTemplate.Execute(&tpl, userMerge{User: *userInfo}); err != nil {
+			return tokens, err
+		}
+		value := tpl.String()
+		loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+			Field:    condition.Field,
+			Value:    value, //But merge it!
+			Operator: "=",
+		})
+	}
+	loadOps := []adapt.LoadOp{{
+		Conditions:     loadConditions,
+		CollectionName: lookupCollection,
+		Collection:     &adapt.Collection{},
+	}}
+	_, err := loadWithRecordPermissions(loadOps, session, false)
+	if err != nil {
+		return tokens, err
+	}
+	records := loadOps[0].Collection
+	if records != nil {
+		return tokens, err
+	}
+	return tokens, err
+}
+
+func GenerateResponseTokens(metadata *adapt.CollectionMetadata, session *sess.Session) ([]string, error) {
+	//userInfo := session.GetUserInfo()
+	tokenDefinitions := metadata.UserResponseTokens
+	tokens := []string{}
+	if tokenDefinitions == nil {
+		return tokens, nil
+	}
+	for _, tokenDefinition := range tokenDefinitions {
+		if tokenDefinition.Type == "lookup" {
+			tokenValues, err := getUserTokenLookupValues(tokenDefinition, session)
+			if err != nil {
+				return tokens, err
+			}
+			for _, token := range tokenValues {
+				tokens = append(tokens, tokenDefinition.Match+":"+token)
+			}
+		} else if tokenDefinition.Type == "user" {
+
+		}
+	}
+	//TODO:: JAS You are here
+	return tokens, nil
+}
+func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkCollectionAccess bool) (*adapt.MetadataCache, error) {
 	collated := map[string][]adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
 	//Indexed by collection name
@@ -109,7 +168,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 			return nil, err
 		}
 
-		if collectionMetadata.Access == "protected" {
+		if checkCollectionAccess && collectionMetadata.Access == "protected" {
 			responseTokensForCollection, ok := responseTokens[collectionMetadata.Name]
 			if !ok {
 				responseTokensForCollection, err = GenerateResponseTokens(collectionMetadata, session)
@@ -251,4 +310,9 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 
 	}
 	return &metadataResponse, nil
+}
+
+// Load function
+func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
+	return loadWithRecordPermissions(ops, session, true)
 }

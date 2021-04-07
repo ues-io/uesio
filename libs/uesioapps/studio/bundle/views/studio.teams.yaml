@@ -1,0 +1,14 @@
+name: teams
+definition:
+  # Wires are how we pull in data
+  wires:
+    teams:
+      collection: studio.teams
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: studio.topbar
