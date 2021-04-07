@@ -15,6 +15,7 @@ const toggle = (
 		setPanel({
 			id: panel,
 			contextPath,
+			type: panelState.type,
 			open: !panelState.open,
 		})
 	)

@@ -80,7 +80,6 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 		return nil, err
 	}
 
-	changeIndex := 0
 	for {
 		record, err := r.Read()
 		if err == io.EOF {
@@ -122,8 +121,6 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 		}
 
 		changes = append(changes, changeRequest)
-
-		changeIndex++
 
 	}
 

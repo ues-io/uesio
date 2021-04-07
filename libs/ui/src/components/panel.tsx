@@ -1,92 +1,64 @@
-import { FunctionComponent, useEffect, useRef } from "react"
-import { createUseStyles } from "react-jss"
+import { FunctionComponent, RefObject, useEffect, useRef } from "react"
 import { BaseProps, DefinitionMap } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import { set as setPanel } from "../bands/panel"
 import { usePanel } from "../bands/panel/selectors"
-
-const useStyles = createUseStyles({
-	blocker: {
-		position: "fixed",
-		top: 0,
-		bottom: 0,
-		height: "100%",
-		width: "100%",
-		backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
-	},
-	root: {
-		position: "absolute",
-		top: 0,
-		bottom: 0,
-		height: "100%",
-		width: "100%",
-		gridTemplateColumns: "10% 1fr 10%",
-		gridTemplateRows: "10% 1fr 10%",
-		pointerEvents: "none",
-	},
-	inner: {
-		boxShadow: "0 0 20px #0005",
-		borderRadius: "4px",
-		backgroundColor: "white",
-		gridRow: "2 / 3",
-		gridColumn: "2 / 3",
-		pointerEvents: "auto",
-	},
-})
+import PlainDialog from "../panels/plaindialog"
+import Dialog from "../panels/dialog"
 
 type PanelInfo = {
-	domNode: HTMLDivElement | null
+	domNode: RefObject<HTMLDivElement>
 	definition: DefinitionMap | undefined
 }
 
 const panelRegistry: Record<string, PanelInfo> = {}
 
 const Panel: FunctionComponent<BaseProps> = (props) => {
-	const classes = useStyles(props)
 	const uesio = useUesio(props)
 	const panelId = props.definition?.id as string
+	const panelType = props.definition?.type as string
 	const ref = useRef<HTMLDivElement>(null)
 
 	const panel = usePanel(panelId)
+
+	const closeHandler = uesio.signal.getHandler([
+		{
+			signal: "panel/TOGGLE",
+			panel: panelId,
+		},
+	])
 
 	useEffect(() => {
 		uesio.getDispatcher()(
 			setPanel({
 				id: panelId,
 				open: false,
+				type: panelType,
 				contextPath: "",
 			})
 		)
 		panelRegistry[panelId] = {
-			domNode: ref.current,
+			domNode: ref,
 			definition: props.definition,
 		}
 	}, [])
 
-	return (
-		<>
-			<div
-				style={{
-					display: panel && panel.open ? "block" : "none",
-				}}
-				className={classes.blocker}
-				onClick={uesio.signal.getHandler([
-					{
-						signal: "panel/TOGGLE",
-						panel: panelId,
-					},
-				])}
+	if (panel?.type === "plaindialog") {
+		return (
+			<PlainDialog
+				close={closeHandler}
+				ref={ref}
+				panel={panel}
+				{...props}
 			/>
-			<div
-				style={{
-					display: panel && panel.open ? "grid" : "none",
-				}}
-				className={classes.root}
-			>
-				<div ref={ref} className={classes.inner} />
-			</div>
-		</>
-	)
+		)
+	}
+	if (panel?.type === "dialog") {
+		return (
+			<Dialog close={closeHandler} ref={ref} panel={panel} {...props} />
+		)
+	}
+	return null
 }
 
 export { panelRegistry }
