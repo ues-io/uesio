@@ -112,8 +112,36 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 
 		// Get the Workspace from the DB
 		var siteadmin meta.Site
-		err := datasource.PlatformLoadOne(
+		err := datasource.PlatformLoadOneWithFields(
 			&siteadmin,
+			[]adapt.LoadRequestField{
+				{
+					ID: "uesio.id",
+				},
+				{
+					ID: "uesio.name",
+				},
+				{
+					ID: "uesio.appref",
+				},
+				{
+					ID: "uesio.bundle",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio.namespace",
+						},
+						{
+							ID: "uesio.major",
+						},
+						{
+							ID: "uesio.minor",
+						},
+						{
+							ID: "uesio.patch",
+						},
+					},
+				},
+			},
 			[]adapt.LoadRequestCondition{
 				{
 					Field: "uesio.id",
@@ -125,6 +153,13 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if siteadmin.Bundle == nil {
+			err := errors.New("No Bundle found for site to administer")
+			logger.LogError(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
