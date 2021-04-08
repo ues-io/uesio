@@ -129,16 +129,13 @@ const wireSlice = createSlice({
 		)
 		builder.addCase(
 			saveOp.fulfilled,
-			(
-				state,
-				{ payload }: PayloadAction<[SaveResponseBatch, string]>
-			) => {
-				const [response, viewId] = payload
+			(state, { payload }: PayloadAction<SaveResponseBatch>) => {
+				const response = payload
 				// TODO: This is definitely the wrong way to do this.
 				// I think you could accomplish this with a single assign statement.
 				if (response.wires) {
 					response.wires.forEach((wire) => {
-						const wireId = viewId + "/" + wire.wire
+						const wireId = wire.wire
 						Object.keys(wire.changes).forEach((tempId) => {
 							const data = state.entities[wireId]?.data
 							if (!data) return
@@ -208,8 +205,9 @@ const wireSlice = createSlice({
 		)
 		builder.addCase(saveOp.rejected, (state, action) => {
 			const viewId = action.meta.arg.context.getViewId()
-
-			action.meta.arg.wires.forEach((entityName) => {
+			// This doesn't handle the case where the wire comes from context
+			// instead of the definition
+			action.meta.arg.wires?.forEach((entityName) => {
 				const entity = state.entities[`${viewId}/${entityName}`]
 				if (entity) {
 					entity.error = action.error.message

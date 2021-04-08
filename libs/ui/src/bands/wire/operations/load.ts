@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Context } from "../../../context/context"
+import { Context, getWireDef } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
@@ -13,6 +13,7 @@ import {
 	getLoadRequestConditions,
 } from "../conditions/conditions"
 import { getDefaultRecord } from "../defaults/defaults"
+import { getWiresFromDefinitonOrContext } from "../adapter"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -34,19 +35,18 @@ export default createAsyncThunk<
 	[PlainWire[], Record<string, PlainCollection>],
 	{
 		context: Context
-		wires: string[]
+		wires?: string[]
 	},
 	UesioThunkAPI
 >("wire/load", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
-	const viewId = context.getViewId()
-	if (!viewId) throw new Error("No View Provided")
+	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const batch = {
-		wires: wires.map((wire) => {
-			const wiredef = context.getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire)
+		wires: wiresToLoad.map((wire) => {
+			const wiredef = getWireDef(wire)
+			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
 			return {
-				wire,
+				wire: getFullWireId(wire.view, wire.name),
 				type: wiredef.type,
 				collection: wiredef.collection,
 				fields: getFieldsRequest(wiredef.fields) || [],
@@ -72,9 +72,10 @@ export default createAsyncThunk<
 			data[localId] = item
 			original[localId] = item
 		})
-		wiresResponse[getFullWireId(viewId, wire.wire)] = {
-			name: wire.wire,
-			view: viewId,
+		const [view, name] = wire.wire.split("/")
+		wiresResponse[wire.wire] = {
+			name,
+			view,
 			data,
 			original,
 			changes: {},
@@ -88,16 +89,17 @@ export default createAsyncThunk<
 	for (const wire of batch.wires) {
 		if (wire.type === "CREATE") {
 			const localId = shortid.generate()
-			wiresResponse[getFullWireId(viewId, wire.wire)] = {
-				name: wire.wire,
-				view: viewId,
+			const [view, name] = wire.wire.split("/")
+			wiresResponse[wire.wire] = {
+				name,
+				view,
 				data: {
 					[localId]: getDefaultRecord(
 						context,
 						wiresResponse,
 						response.collections,
-						viewId,
-						wire.wire
+						view,
+						name
 					),
 				},
 				original: {},
@@ -106,8 +108,8 @@ export default createAsyncThunk<
 						context,
 						wiresResponse,
 						response.collections,
-						viewId,
-						wire.wire
+						view,
+						name
 					),
 				},
 				deletes: {},

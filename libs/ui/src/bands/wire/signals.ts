@@ -16,6 +16,7 @@ import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { WireDefinition } from "../../definition/wire"
 import { WireConditionDefinition } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
+import { SaveResponseBatch } from "../../load/saveresponse"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -45,11 +46,11 @@ interface ToggleConditionSignal extends SignalDefinition {
 }
 
 interface LoadWiresSignal extends SignalDefinition {
-	wires: string[]
+	wires?: string[]
 }
 
 interface SaveWiresSignal extends SignalDefinition {
-	wires: string[]
+	wires?: string[]
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -188,7 +189,26 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: SaveWiresSignal, context: Context) => async (
 			dispatch: Dispatcher<AnyAction>
 		) => {
-			await dispatch(saveWiresOp({ context, wires: signal.wires }))
+			const resp = await dispatch(
+				saveWiresOp({ context, wires: signal.wires })
+			)
+
+			const batch = resp.payload as SaveResponseBatch
+
+			// Special handling for saves of just one wire and one record
+			if (batch.wires.length === 1) {
+				const wire = batch.wires[0]
+				const changes = wire.changes
+				const changeKeys = Object.keys(changes)
+				if (changeKeys.length === 1) {
+					const [, name] = wire.wire.split("/")
+					return context.addFrame({
+						record: changeKeys[0],
+						wire: name,
+					})
+				}
+			}
+
 			return context
 		},
 		properties: (): PropDescriptor[] => [

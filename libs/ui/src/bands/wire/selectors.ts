@@ -7,7 +7,11 @@ import { PlainWire } from "./types"
 const useWire = (viewId?: string, wireName?: string): PlainWire | undefined =>
 	useSelector((state: RootState) => selectWire(state, viewId, wireName))
 
-const selectWire = (state: RootState, viewId?: string, wireName?: string) =>
+const selectWire = (
+	state: RootState,
+	viewId: string | undefined,
+	wireName: string | undefined
+) =>
 	viewId && wireName
 		? selectors.selectById(state, getFullWireId(viewId, wireName))
 		: undefined

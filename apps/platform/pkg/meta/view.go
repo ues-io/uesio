@@ -196,9 +196,20 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 			panel := panels.Content[i]
 			comps, err := getMapNode(panel, "components")
 			if err != nil {
-				return nil, nil, err
+				comps = nil
 			}
-			getComponentsAndVariantsUsed(comps, &usedComps, &usedVariants)
+			if comps != nil {
+				getComponentsAndVariantsUsed(comps, &usedComps, &usedVariants)
+			}
+
+			actions, err := getMapNode(panel, "actions")
+			if err != nil {
+				actions = nil
+			}
+			if actions != nil {
+				getComponentsAndVariantsUsed(actions, &usedComps, &usedVariants)
+			}
+
 		}
 	}
 

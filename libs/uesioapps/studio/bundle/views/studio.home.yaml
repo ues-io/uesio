@@ -167,33 +167,23 @@ definition:
       width: 400px
       height: 500px
       components:
-        - io.list:
-            id: newapplist
-            wire: newapp
-            mode: EDIT
-            components:
-              - io.field:
-                  fieldId: uesio.name
-              - io.field:
-                  fieldId: uesio.description
-              - io.field:
-                  fieldId: uesio.color
-              - studio.colorpicker:
-                  fieldId: uesio.color
-              - io.group:
-                  components:
-                    - io.button:
-                        uesio.variant: "io.primary"
-                        text: "Save"
-                        signals:
-                          - signal: wire/SAVE
-                            wires:
-                              - "newapp"
-                          - signal: "route/NAVIGATE"
-                            path: "app/${uesio.name}"
-                    - io.button:
-                        uesio.variant: "io.secondary"
-                        text: "Cancel"
-                        signals:
-                          - signal: "panel/TOGGLE"
-                            panel: "newApp"
+        - uesio.view:
+            view: studio.appedit
+            uesio.context:
+              wire: newapp
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newapp"
+              - signal: "route/NAVIGATE"
+                path: "app/${uesio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newApp"

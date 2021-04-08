@@ -57,7 +57,7 @@ const View: FunctionComponent<Props> = (props) => {
 					<Panel
 						key={index}
 						definition={panel}
-						context={props.context}
+						context={viewContext}
 					/>
 				))}
 		</>

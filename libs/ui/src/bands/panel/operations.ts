@@ -14,9 +14,7 @@ const toggle = (
 	dispatch(
 		setPanel({
 			id: panel,
-			contextPath,
-			type: panelState.type,
-			open: !panelState.open,
+			contextPath: panelState.contextPath ? "" : contextPath,
 		})
 	)
 	return context

@@ -10,6 +10,7 @@ import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName } from "../hooks/fileapi"
+import { PlainWire } from "../bands/wire/types"
 
 type ContextFrame = {
 	wire?: string
@@ -75,6 +76,21 @@ const inject = (template: string, context: Context): string =>
 		getFromContext(mergeType, mergeExpression, context)
 	)
 
+const getViewDef = (viewDefId: string | undefined) =>
+	viewDefId
+		? viewDefSelectors.selectById(getStore().getState(), viewDefId)
+		: undefined
+
+const getWire = (viewId: string | undefined, wireId: string | undefined) =>
+	selectWire(getStore().getState(), viewId, wireId)
+
+const getWireDef = (wire: PlainWire | undefined) => {
+	if (!wire) return undefined
+	const viewDefId = wire.view.split("(")[0]
+	const viewDef = getViewDef(viewDefId)
+	return viewDef?.definition?.wires?.[wire.name]
+}
+
 class Context {
 	constructor(stack?: ContextFrame[]) {
 		this.stack = stack || []
@@ -112,12 +128,8 @@ class Context {
 			: undefined
 	}
 
-	getViewDef = () => {
-		const viewDefId = this.getViewDefId()
-		return viewDefId
-			? viewDefSelectors.selectById(getStore().getState(), viewDefId)
-			: undefined
-	}
+	getViewDef = () => getViewDef(this.getViewDefId())
+
 	getTheme = () =>
 		themeSelectors.selectById(
 			getStore().getState(),
@@ -133,9 +145,6 @@ class Context {
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
-	getWireDef = (wirename: string) =>
-		this.getViewDef()?.definition?.wires?.[wirename]
-
 	getRoute = () => this.stack.find((frame) => frame?.route)?.route
 
 	getWorkspace = () => this.stack.find((frame) => frame?.workspace)?.workspace
@@ -146,19 +155,18 @@ class Context {
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
 
-	findWireFrame = (): Context => {
+	findWireFrame = () => {
 		const index = this.stack.findIndex((frame) => frame?.wire)
+		if (index < 0) {
+			return undefined
+		}
 		return new Context(this.stack.slice(index))
 	}
 
 	getWire = () => {
 		const state = getStore().getState()
-		const wireFrame = this.findWireFrame()
-		const wireId = wireFrame.getWireId()
-
-		if (!wireId) return undefined
-		const plainWire = selectWire(state, wireFrame.getViewId(), wireId)
-		const wireDef = wireFrame.getWireDef(wireId)
+		const plainWire = this.getPlainWire()
+		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
 		const collection = new Collection(
@@ -166,6 +174,13 @@ class Context {
 		)
 		wire.attachCollection(collection.source)
 		return wire
+	}
+
+	getPlainWire = () => {
+		const wireFrame = this.findWireFrame()
+		const wireId = wireFrame?.getWireId()
+		if (!wireId) return undefined
+		return getWire(wireFrame?.getViewId(), wireId)
 	}
 
 	getFieldMode = () =>
@@ -207,4 +222,12 @@ class Context {
 			: map
 }
 
-export { Context, ContextFrame, RouteState, WorkspaceState, SiteState }
+export {
+	Context,
+	ContextFrame,
+	RouteState,
+	WorkspaceState,
+	SiteState,
+	getWireDef,
+	getWire,
+}
