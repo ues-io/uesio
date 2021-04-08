@@ -27,3 +27,4 @@ components:
     io.link:
   variants:
     - io.textfield.io.default
+    - io.titlebar.io.dialog

@@ -15,7 +15,7 @@ import { usePanel } from "../bands/panel/selectors"
 import { panelRegistry } from "../components/panel"
 import { createPortal } from "react-dom"
 import { ReactElement, ReactPortal } from "react"
-import Slot from "../components/slot"
+import PanelContent from "../components/panelcontent"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -56,20 +56,14 @@ class SignalAPI {
 				const panel = usePanel(panelId)
 				const context = this.uesio.getContext()
 				const path = this.uesio.getPath()
-				if (
-					panel &&
-					panel.open &&
-					panel.contextPath === getPanelKey(path, context)
-				) {
+				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const panelInfo = panelRegistry[panelId]
 					if (panelInfo && panelInfo.domNode.current) {
 						portals.push(
 							createPortal(
-								<Slot
+								<PanelContent
 									definition={panelInfo.definition}
-									listName="components"
 									path={path}
-									accepts={["uesio.standalone"]}
 									context={context}
 								/>,
 								panelInfo.domNode.current

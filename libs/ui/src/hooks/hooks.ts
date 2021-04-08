@@ -64,7 +64,6 @@ class Uesio {
 	getViewId = () => this.getContext().getViewId()
 	getViewDef = () => this.getContext().getViewDef()
 	getViewDefId = () => this.getContext().getViewDefId()
-	getWireDef = (wirename: string) => this.getContext().getWireDef(wirename)
 	addContextFrame = (frame: ContextFrame) =>
 		(this._context = this._context.addFrame(frame))
 }

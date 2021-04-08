@@ -1,8 +1,8 @@
-import { forwardRef, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { createUseStyles } from "react-jss"
 import { BaseProps } from "../definition/definition"
-import { PanelState } from "../bands/panel/types"
 import { Context } from "../context/context"
+import Slot from "../components/slot"
 
 const minPagePadding = "40px"
 
@@ -21,6 +21,7 @@ const useStyles = createUseStyles({
 		bottom: 0,
 		height: "100%",
 		width: "100%",
+		display: "grid",
 		gridTemplateColumns: `minmax(${minPagePadding},1fr) minmax(auto,${
 			props.definition?.width || "100%"
 		}) minmax(${minPagePadding},1fr)`,
@@ -40,39 +41,33 @@ const useStyles = createUseStyles({
 })
 
 type DialogProps = {
-	panel: PanelState
 	close: () => Promise<Context>
 } & BaseProps
 
 const DialogBase: FunctionComponent<DialogProps> = (props) => {
 	const classes = useStyles(props)
-	const { panel, close } = props
+	const { close } = props
 	return (
 		<>
-			<div
-				style={{
-					display: panel && panel.open ? "block" : "none",
-				}}
-				className={classes.blocker}
-				onClick={close}
-			/>
-			<div
-				style={{
-					display: panel && panel.open ? "grid" : "none",
-				}}
-				className={classes.root}
-			>
+			<div className={classes.blocker} onClick={close} />
+			<div className={classes.root}>
 				<div className={classes.inner}>{props.children}</div>
 			</div>
 		</>
 	)
 }
 
-const PlainDialog = forwardRef<HTMLDivElement, DialogProps>((props, ref) => (
+const PlainDialog: FunctionComponent<DialogProps> = (props) => (
 	<DialogBase {...props}>
-		<div ref={ref} />
+		<Slot
+			definition={props.definition}
+			listName="components"
+			path={props.path}
+			accepts={["uesio.standalone"]}
+			context={props.context}
+		/>
 	</DialogBase>
-))
+)
 
 export { DialogBase, DialogProps }
 

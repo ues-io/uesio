@@ -251,34 +251,28 @@ definition:
     - id: editApp
       type: dialog
       title: Edit App
+      width: 400px
+      height: 500px
       components:
-        - io.list:
-            id: editapplist
-            mode: EDIT
-            components:
-              - io.field:
-                  fieldId: uesio.description
-              - io.field:
-                  fieldId: uesio.color
-              - studio.colorpicker:
-                  fieldId: uesio.color
-              - io.group:
-                  components:
-                    - io.button:
-                        uesio.variant: "io.primary"
-                        text: "Save"
-                        signals:
-                          - signal: wire/SAVE
-                            wires:
-                              - "apps"
-                          - signal: "panel/TOGGLE"
-                            panel: "editApp"
-                    - io.button:
-                        uesio.variant: "io.secondary"
-                        text: "Cancel"
-                        signals:
-                          - signal: "panel/TOGGLE"
-                            panel: "editApp"
+        - uesio.view:
+            view: studio.appedit
+            uesio.context:
+              wire: apps
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+              - signal: "panel/TOGGLE"
+                panel: "editApp"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: wire/CANCEL
+              - signal: "panel/TOGGLE"
+                panel: "editApp"
     - id: newWorkspace
       type: dialog
       title: Create a New Workspace
