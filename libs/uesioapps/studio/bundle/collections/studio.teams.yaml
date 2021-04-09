@@ -10,9 +10,12 @@ userResponseTokens:
     collection: studio.teammembers
     conditions:
       - field: "studio.memberid"
-        value: "{{User.ID}}"
-    token: "{studio.appid}_{studio.teamid}"
+        value: "${user.ID}"
+    token: "${studio.teamid}"
     match: "team"
+  - type: "user"
+    token: "${user.ID}"
+    match: "user"
 recordChallengeTokens:
   - type: "lookup"
     collection: studio.teampermissions
@@ -20,8 +23,8 @@ recordChallengeTokens:
       - field: "studio.role"
         value: "maintainer"
       - field: "studio.appid"
-        value: "{studio.appid}"
-    token: "{studio.appid}_{studio.teamid}"
+        value: "${studio.appid}"
+    token: "${studio.teamid}"
     match: "team"
     access: read
   - type: "lookup"
@@ -30,7 +33,7 @@ recordChallengeTokens:
       - field: "studio.role"
         value: "admin"
       - field: "studio.appid"
-        value: "{studio.appid}"
-    token: "{studio.appid}_{studio.teamid}"
+        value: "${studio.appid}"
+    token: "${studio.teamid}"
     match: "team"
     access: read-write
