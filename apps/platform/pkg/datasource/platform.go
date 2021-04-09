@@ -87,12 +87,20 @@ func PlatformLoadWithOrder(group meta.CollectionableGroup, orders []adapt.LoadRe
 
 // PlatformLoadOne function
 func PlatformLoadOne(item meta.CollectionableItem, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
+	return PlatformLoadOneWithFields(item, nil, conditions, session)
+}
+
+func PlatformLoadOneWithFields(item meta.CollectionableItem, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	collection := &LoadOneCollection{
 		Collection: item.GetCollection(),
 		Item:       item,
 	}
 
-	err := PlatformLoad(collection, conditions, session)
+	if fields == nil {
+		fields = GetLoadRequestFields(collection.GetFields())
+	}
+
+	err := PlatformLoadWithFields(collection, fields, conditions, session)
 	if err != nil {
 		return err
 	}
