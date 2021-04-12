@@ -15,20 +15,21 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 
 	return &adapt.CollectionMetadata{
-		Name:               e.Name,
-		Namespace:          e.Namespace,
-		IDField:            e.IDField,
-		IDFormat:           e.IDFormat,
-		NameField:          e.NameField,
-		Createable:         !e.ReadOnly,
-		Accessible:         true,
-		Updateable:         !e.ReadOnly,
-		Deleteable:         !e.ReadOnly,
-		Fields:             fieldMetadata,
-		CollectionName:     e.CollectionName,
-		DataSource:         e.DataSourceRef,
-		Access:             e.Access,
-		UserResponseTokens: e.UserResponseTokens,
+		Name:                  e.Name,
+		Namespace:             e.Namespace,
+		IDField:               e.IDField,
+		IDFormat:              e.IDFormat,
+		NameField:             e.NameField,
+		Createable:            !e.ReadOnly,
+		Accessible:            true,
+		Updateable:            !e.ReadOnly,
+		Deleteable:            !e.ReadOnly,
+		Fields:                fieldMetadata,
+		CollectionName:        e.CollectionName,
+		DataSource:            e.DataSourceRef,
+		Access:                e.Access,
+		UserResponseTokens:    e.UserResponseTokens,
+		RecordChallengeTokens: e.RecordChallengeTokens,
 	}
 }
 

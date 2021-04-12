@@ -169,7 +169,33 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 		if err != nil {
 			return nil, err
 		}
-		// TODO:: JAS Produce RecordChallengeTokens and filter records that do not have a matching userToken
+		for i := range batch {
+			// TODO:: JAS Produce RecordChallengeTokens and filter records that do not have a matching userToken
+			op := batch[i]
+			if op.Collection == nil {
+				continue
+			}
+			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+			if err != nil {
+				return nil, err
+			}
+			if collectionMetadata.Access != "protected" {
+				continue
+			}
+			recordChallengeTokens := collectionMetadata.RecordChallengeTokens
+			updatedCollection := &adapt.Collection{}
+			err = op.Collection.Loop(func(record loadable.Item) error {
+				// TODO:: JAS Check if Item has a matching record access token to a challenge token
+				item := updatedCollection.NewItem()
+				return item.Loop(func(fieldID string, value interface{}) error {
+					return item.SetField(fieldID, value)
+				})
+				return nil
+			})
+			if err != nil {
+				return nil, err
+			}
+		}
 
 		// Now do our supplemental reference loads
 		for i := range batch {

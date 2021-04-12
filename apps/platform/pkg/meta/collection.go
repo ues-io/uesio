@@ -24,6 +24,15 @@ type UserResponseTokenDefinition struct {
 	Conditions []*TokenCondition `yaml:"conditions"`
 }
 
+type RecordChallengeTokenDefinition struct {
+	Type       string            `yaml:"type"`
+	Collection string            `yaml:"collection"`
+	Token      string            `yaml:"token"`
+	Match      string            `yaml:"match"`
+	Access     string            `yaml:"access"`
+	Conditions []*TokenCondition `yaml:"conditions"`
+}
+
 type TokenCondition struct {
 	Field string `yaml:"field"`
 	Value string `yaml:"value"`
@@ -46,7 +55,8 @@ type Collection struct {
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 	Access         string    `yaml:"access,omitempty" uesio:"studio.access"`
 	//TODO:: JAS Figure out if we want/how we want to handle a uesio encoding
-	UserResponseTokens []*UserResponseTokenDefinition `yaml:"userResponseTokens,omitempty" uesio:"-"`
+	UserResponseTokens    []*UserResponseTokenDefinition    `yaml:"userResponseTokens,omitempty" uesio:"-"`
+	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 }
 
 // GetCollectionName function
