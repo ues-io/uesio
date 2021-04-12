@@ -18,15 +18,18 @@ components:
     io.tile:
     io.titlebar:
   utility:
+    io.autocomplete:
     io.button:
-    io.iconbutton:
     io.grid:
     io.icon:
-    io.titlebar:
-    io.scrollpanel:
-    io.textfield:
-    io.text:
+    io.iconbutton:
     io.link:
+    io.referencefield:
+    io.scrollpanel:
+    io.text:
+    io.textfield:
+    io.titlebar:
   variants:
     - io.textfield.io.default
+    - io.autocomplete.io.default
     - io.titlebar.io.dialog

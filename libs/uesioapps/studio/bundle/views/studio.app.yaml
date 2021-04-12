@@ -55,6 +55,23 @@ definition:
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id
+    newsite:
+      collection: uesio.sites
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.appref:
+        uesio.bundle:
+      type: CREATE
+      defaults:
+        - field: uesio.appref
+          valueSource: LOOKUP
+          lookupWire: apps
+          lookupField: uesio.id
+        - field: uesio.bundle
+          valueSource: LOOKUP
+          lookupWire: bundles
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -189,8 +206,8 @@ definition:
                                             text: "Create a Site"
                                             uesio.variant: io.secondary
                                             signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/${uesio.name}/newsite"
+                                              - signal: "panel/TOGGLE"
+                                                panel: "newSite"
                             - io.deck:
                                 id: siteslist
                                 wire: sites
@@ -276,6 +293,8 @@ definition:
     - io.dialog:
         id: newWorkspace
         title: Create a New Workspace
+        width: 400px
+        height: 500px
         components:
           - io.list:
               id: newworkspacelist
@@ -284,20 +303,51 @@ definition:
               components:
                 - io.field:
                     fieldId: studio.name
-                - io.group:
-                    components:
-                      - io.button:
-                          uesio.variant: "io.primary"
-                          text: "Save"
-                          signals:
-                            - signal: wire/SAVE
-                              wires:
-                                - "newworkspace"
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/${studio.name}"
-                      - io.button:
-                          uesio.variant: "io.secondary"
-                          text: "Cancel"
-                          signals:
-                            - signal: "panel/TOGGLE"
-                              panel: "newWorkspace"
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newworkspace"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newWorkspace"
+
+    - io.dialog:
+        id: newSite
+        title: Create a New Site
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newsitelist
+              wire: newsite
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: uesio.name
+                - io.field:
+                    fieldId: uesio.bundle
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newsite"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/site/${uesio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newSite"

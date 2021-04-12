@@ -3,6 +3,7 @@ import { FunctionComponent } from "react"
 import { FieldProps } from "./fielddefinition"
 import { component } from "@uesio/ui"
 const TextField = component.registry.getUtility("io.textfield")
+const ReferenceField = component.registry.getUtility("io.referencefield")
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
@@ -44,7 +45,18 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	} else if (type === "CHECKBOX") {
 		return null
 	} else if (type === "REFERENCE") {
-		return null
+		return (
+			<ReferenceField
+				{...props}
+				label={label}
+				fieldMetadata={fieldMetadata}
+				mode={mode}
+				fieldId={fieldId}
+				hideLabel={hideLabel}
+				record={record}
+				wire={wire}
+			/>
+		)
 	} else if (type === "TIMESTAMP") {
 		return null
 	}
