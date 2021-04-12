@@ -5,6 +5,8 @@ components:
     io.box:
     io.button:
     io.deck:
+    io.dialog:
+    io.dialogplain:
     io.field:
     io.grid:
     io.griditem:

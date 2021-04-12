@@ -5,6 +5,7 @@ import Slot from "./slot"
 import Panel from "./panel"
 import { ViewParams } from "../bands/view/types"
 import { useViewDef } from "../bands/viewdef/selectors"
+import { unWrapDefinition } from "../component/path"
 
 interface Props extends BaseProps {
 	definition: {
@@ -53,13 +54,17 @@ const View: FunctionComponent<Props> = (props) => {
 				context={viewContext}
 			/>
 			{path === "" &&
-				viewDef?.definition?.panels?.map((panel, index) => (
-					<Panel
-						key={index}
-						definition={panel}
-						context={viewContext}
-					/>
-				))}
+				viewDef?.definition?.panels?.map((panel, index) => {
+					const [componentType, def] = unWrapDefinition(panel)
+					return (
+						<Panel
+							key={index}
+							definition={def}
+							context={viewContext}
+							componentType={componentType}
+						/>
+					)
+				})}
 		</>
 	)
 }

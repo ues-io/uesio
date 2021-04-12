@@ -8,13 +8,11 @@ const toggle = (
 	panel: string,
 	contextPath: string
 ): ThunkFunc => async (dispatch, getState) => {
-	const state = getState()
-	const panelState = selectors.selectById(state, panel)
-	if (!panelState) return context
+	const panelState = selectors.selectById(getState(), panel)
 	dispatch(
 		setPanel({
 			id: panel,
-			contextPath: panelState.contextPath ? "" : contextPath,
+			contextPath: panelState?.contextPath ? "" : contextPath,
 		})
 	)
 	return context

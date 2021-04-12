@@ -223,81 +223,81 @@ definition:
                                                 verticalAlign: middle
                                             text: public
   panels:
-    - id: deleteApp
-      type: dialog
-      title: Delete App
-      width: 400px
-      height: 300px
-      components:
-        - io.text:
-            text: Are you sure you want to delete this app?
-      actions:
-        - io.button:
-            text: Delete
-            uesio.variant: io.primary
-            signals:
-              - signal: wire/MARK_FOR_DELETE
-              - signal: wire/SAVE
-                wires:
-                  - "apps"
-              - signal: "route/NAVIGATE"
-                path: "home"
-        - io.button:
-            text: Cancel
-            uesio.variant: io.secondary
-            signals:
-              - signal: panel/TOGGLE
-                panel: deleteApp
-    - id: editApp
-      type: dialog
-      title: Edit App
-      width: 400px
-      height: 500px
-      components:
-        - uesio.view:
-            view: studio.appedit
-            uesio.context:
-              wire: apps
-      actions:
-        - io.button:
-            uesio.variant: "io.primary"
-            text: "Save"
-            signals:
-              - signal: wire/SAVE
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
-        - io.button:
-            uesio.variant: "io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: wire/CANCEL
-              - signal: "panel/TOGGLE"
-                panel: "editApp"
-    - id: newWorkspace
-      type: dialog
-      title: Create a New Workspace
-      components:
-        - io.list:
-            id: newworkspacelist
-            wire: newworkspace
-            mode: EDIT
-            components:
-              - io.field:
-                  fieldId: studio.name
-              - io.group:
-                  components:
-                    - io.button:
-                        uesio.variant: "io.primary"
-                        text: "Save"
-                        signals:
-                          - signal: wire/SAVE
-                            wires:
-                              - "newworkspace"
-                          - signal: "route/NAVIGATE"
-                            path: "app/$Param{appname}/workspace/${studio.name}"
-                    - io.button:
-                        uesio.variant: "io.secondary"
-                        text: "Cancel"
-                        signals:
-                          - signal: "panel/TOGGLE"
-                            panel: "newWorkspace"
+    - io.dialog:
+        id: deleteApp
+        title: Delete App
+        width: 400px
+        height: 300px
+        components:
+          - io.text:
+              text: Are you sure you want to delete this app?
+        actions:
+          - io.button:
+              text: Delete
+              uesio.variant: io.primary
+              signals:
+                - signal: wire/MARK_FOR_DELETE
+                - signal: wire/SAVE
+                  wires:
+                    - "apps"
+                - signal: "route/NAVIGATE"
+                  path: "home"
+          - io.button:
+              text: Cancel
+              uesio.variant: io.secondary
+              signals:
+                - signal: panel/TOGGLE
+                  panel: deleteApp
+    - io.dialog:
+        id: editApp
+        title: Edit App
+        width: 400px
+        height: 500px
+        components:
+          - uesio.view:
+              view: studio.appedit
+              uesio.context:
+                wire: apps
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                - signal: "panel/TOGGLE"
+                  panel: "editApp"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: wire/CANCEL
+                - signal: "panel/TOGGLE"
+                  panel: "editApp"
+    - io.dialog:
+        id: newWorkspace
+        title: Create a New Workspace
+        components:
+          - io.list:
+              id: newworkspacelist
+              wire: newworkspace
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - io.group:
+                    components:
+                      - io.button:
+                          uesio.variant: "io.primary"
+                          text: "Save"
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - "newworkspace"
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/${studio.name}"
+                      - io.button:
+                          uesio.variant: "io.secondary"
+                          text: "Cancel"
+                          signals:
+                            - signal: "panel/TOGGLE"
+                              panel: "newWorkspace"

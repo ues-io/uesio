@@ -1,8 +1,6 @@
 import { FunctionComponent } from "react"
 import { createUseStyles } from "react-jss"
-import { BaseProps } from "../definition/definition"
-import { Context } from "../context/context"
-import Slot from "../components/slot"
+import { definition, hooks, component } from "@uesio/ui"
 
 const minPagePadding = "40px"
 
@@ -15,7 +13,7 @@ const useStyles = createUseStyles({
 		width: "100%",
 		backdropFilter: "grayscale(50%) blur(5px) brightness(50%)",
 	},
-	root: (props: DialogProps) => ({
+	root: (props: definition.BaseProps) => ({
 		position: "absolute",
 		top: 0,
 		bottom: 0,
@@ -40,16 +38,21 @@ const useStyles = createUseStyles({
 	},
 })
 
-type DialogProps = {
-	close: () => Promise<Context>
-} & BaseProps
-
-const DialogBase: FunctionComponent<DialogProps> = (props) => {
+const DialogBase: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
-	const { close } = props
+	const uesio = hooks.useUesio(props)
+	const panelId = props.definition?.id as string
 	return (
 		<>
-			<div className={classes.blocker} onClick={close} />
+			<div
+				className={classes.blocker}
+				onClick={uesio.signal.getHandler([
+					{
+						signal: "panel/TOGGLE",
+						panel: panelId,
+					},
+				])}
+			/>
 			<div className={classes.root}>
 				<div className={classes.inner}>{props.children}</div>
 			</div>
@@ -57,9 +60,9 @@ const DialogBase: FunctionComponent<DialogProps> = (props) => {
 	)
 }
 
-const PlainDialog: FunctionComponent<DialogProps> = (props) => (
+const PlainDialog: FunctionComponent<definition.BaseProps> = (props) => (
 	<DialogBase {...props}>
-		<Slot
+		<component.Slot
 			definition={props.definition}
 			listName="components"
 			path={props.path}
@@ -69,6 +72,6 @@ const PlainDialog: FunctionComponent<DialogProps> = (props) => (
 	</DialogBase>
 )
 
-export { DialogBase, DialogProps }
+export { DialogBase }
 
 export default PlainDialog

@@ -132,7 +132,7 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 }
 
 func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {
-	if node.Kind != yaml.SequenceNode {
+	if node == nil || node.Kind != yaml.SequenceNode {
 		return
 	}
 
@@ -190,28 +190,7 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 	usedVariants := map[string]bool{}
 
 	getComponentsAndVariantsUsed(components, &usedComps, &usedVariants)
-
-	if panels != nil {
-		for i := range panels.Content {
-			panel := panels.Content[i]
-			comps, err := getMapNode(panel, "components")
-			if err != nil {
-				comps = nil
-			}
-			if comps != nil {
-				getComponentsAndVariantsUsed(comps, &usedComps, &usedVariants)
-			}
-
-			actions, err := getMapNode(panel, "actions")
-			if err != nil {
-				actions = nil
-			}
-			if actions != nil {
-				getComponentsAndVariantsUsed(actions, &usedComps, &usedVariants)
-			}
-
-		}
-	}
+	getComponentsAndVariantsUsed(panels, &usedComps, &usedVariants)
 
 	return usedComps, usedVariants, nil
 }
