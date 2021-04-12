@@ -161,29 +161,29 @@ definition:
                                       uesio.variant: io.smallcontent
                                       text: More coming here soon! Learn the basic concepts of Uesio and how to navigate the studio.
   panels:
-    - id: newApp
-      type: dialog
-      title: Create a New App
-      width: 400px
-      height: 500px
-      components:
-        - uesio.view:
-            view: studio.appedit
-            uesio.context:
-              wire: newapp
-      actions:
-        - io.button:
-            uesio.variant: "io.primary"
-            text: "Save"
-            signals:
-              - signal: wire/SAVE
-                wires:
-                  - "newapp"
-              - signal: "route/NAVIGATE"
-                path: "app/${uesio.name}"
-        - io.button:
-            uesio.variant: "io.secondary"
-            text: "Cancel"
-            signals:
-              - signal: "panel/TOGGLE"
-                panel: "newApp"
+    - io.dialog:
+        id: newApp
+        title: Create a New App
+        width: 400px
+        height: 500px
+        components:
+          - uesio.view:
+              view: studio.appedit
+              uesio.context:
+                wire: newapp
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newapp"
+                - signal: "route/NAVIGATE"
+                  path: "app/${uesio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newApp"

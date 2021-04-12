@@ -15,7 +15,7 @@ import { usePanel } from "../bands/panel/selectors"
 import { panelRegistry } from "../components/panel"
 import { createPortal } from "react-dom"
 import { ReactElement, ReactPortal } from "react"
-import PanelContent from "../components/panelcontent"
+import { ComponentInternal } from "../component/component"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -61,10 +61,11 @@ class SignalAPI {
 					if (panelInfo && panelInfo.domNode.current) {
 						portals.push(
 							createPortal(
-								<PanelContent
+								<ComponentInternal
 									definition={panelInfo.definition}
 									path={path}
 									context={context}
+									componentType={panelInfo.componentType}
 								/>,
 								panelInfo.domNode.current
 							)

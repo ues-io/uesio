@@ -1,13 +1,12 @@
 import { FunctionComponent } from "react"
 import { createUseStyles } from "react-jss"
-import { get, getUtility } from "../component/registry"
-import { DialogBase, DialogProps } from "./plaindialog"
-import Slot from "../components/slot"
+import { definition, hooks, component } from "@uesio/ui"
+import { DialogBase } from "../io.dialogplain/dialogplain"
 
-const TitleBar = getUtility("io.titlebar")
-const IconButton = getUtility("io.iconbutton")
-const Grid = getUtility("io.grid")
-const Group = get("io.group")
+const TitleBar = component.registry.getUtility("io.titlebar")
+const IconButton = component.registry.getUtility("io.iconbutton")
+const Grid = component.registry.getUtility("io.grid")
+const Group = component.registry.get("io.group")
 
 const useStyles = createUseStyles({
 	root: {
@@ -16,8 +15,10 @@ const useStyles = createUseStyles({
 	},
 })
 
-const Dialog: FunctionComponent<DialogProps> = (props) => {
+const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 	const classes = useStyles(props)
+	const uesio = hooks.useUesio(props)
+	const panelId = props.definition?.id as string
 	return (
 		<DialogBase {...props}>
 			<Grid className={classes.root} context={props.context}>
@@ -28,13 +29,18 @@ const Dialog: FunctionComponent<DialogProps> = (props) => {
 					actions={
 						<IconButton
 							icon="close"
-							onClick={props.close}
+							onClick={uesio.signal.getHandler([
+								{
+									signal: "panel/TOGGLE",
+									panel: panelId,
+								},
+							])}
 							context={props.context}
 						/>
 					}
 				/>
 				<div style={{ padding: "20px", overflow: "auto" }}>
-					<Slot
+					<component.Slot
 						definition={props.definition}
 						listName="components"
 						path={props.path}
