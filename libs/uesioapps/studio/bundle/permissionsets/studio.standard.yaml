@@ -45,7 +45,6 @@ views:
   studio.installedbundle: true
   studio.addbundle: true
   studio.workspaceconfig: true
-  studio.newsite: true
 routes:
   studio.field: true
   studio.home: true
@@ -88,6 +87,5 @@ routes:
   studio.installedbundle: true
   studio.addbundle: true
   studio.workspaceconfig: true
-  studio.newsite: true
   studio.login: true
 files:

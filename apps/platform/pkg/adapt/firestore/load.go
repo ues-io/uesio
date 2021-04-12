@@ -50,7 +50,7 @@ func loadOne(
 			// Split the condition value into tokens
 			tokens := strings.Fields(condition.Value.(string))
 			for _, token := range tokens {
-				query = query.Where(searchIndexField+"."+strings.ToLower(token), "==", true)
+				query = query.WherePath(firestore.FieldPath{searchIndexField, strings.ToLower(token)}, "==", true)
 			}
 			continue
 		}
