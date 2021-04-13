@@ -17,20 +17,21 @@ func getUserMerge(session *sess.Session) map[string]interface{} {
 }
 func getUserTokenUserTypeValue(tokenDefinition *meta.UserResponseTokenDefinition, session *sess.Session) (string, error) {
 	userMerges := getUserMerge(session)
-	valueTemplate, err := templating.NewTemplateWithValidKeysOnly(tokenDefinition.Token)
+	return mergeTokenValue(tokenDefinition.Token, userMerges)
+}
+
+func mergeTokenValue(tokenTemplate string, mergeData interface{}) (string, error) {
+	valueTemplate, err := templating.NewTemplateWithValidKeysOnly(tokenTemplate)
 	if err != nil {
 		return "", err
 	}
-	return templating.Execute(valueTemplate, userMerges)
+	return templating.Execute(valueTemplate, mergeData)
 }
-func getUserTokenLookupTypeValues(tokenDefinition *meta.UserResponseTokenDefinition, session *sess.Session) ([]string, error) {
-	conditions := tokenDefinition.Conditions
+func getTokenLookupTypeValues(lookupCollection string, conditions []*meta.TokenCondition, tokenTemplate string, mergeData interface{}, session *sess.Session) ([]string, error) {
 	loadConditions := []adapt.LoadRequestCondition{}
 	tokens := []string{}
-	lookupCollection := tokenDefinition.Collection
-	userMerges := getUserMerge(session)
 	fields := []adapt.LoadRequestField{}
-	for _, fieldKey := range templating.ExtractKeys(tokenDefinition.Token) {
+	for _, fieldKey := range templating.ExtractKeys(tokenTemplate) {
 		fields = append(fields, adapt.LoadRequestField{
 			ID: fieldKey,
 		})
@@ -40,7 +41,7 @@ func getUserTokenLookupTypeValues(tokenDefinition *meta.UserResponseTokenDefinit
 		if err != nil {
 			return tokens, err
 		}
-		value, err := templating.Execute(valueTemplate, userMerges)
+		value, err := templating.Execute(valueTemplate, mergeData)
 		if err != nil {
 			return tokens, err
 		}
@@ -58,13 +59,13 @@ func getUserTokenLookupTypeValues(tokenDefinition *meta.UserResponseTokenDefinit
 		Conditions:     loadConditions,
 		Fields:         fields,
 	}}
-	_, err := loadWithRecordPermissions(loadOps, session, false)
+	_, err := loadWithRecordPermissions(&loadOps, session, false)
 	if err != nil {
 		return tokens, err
 	}
 	records := loadOps[0].Collection
 	if records != nil {
-		tokenTemplate, err := templating.NewTemplateWithValidKeysOnly(tokenDefinition.Token)
+		tokenTemplate, err := templating.NewTemplateWithValidKeysOnly(tokenTemplate)
 		if err != nil {
 			return tokens, nil
 		}
@@ -82,8 +83,56 @@ func getUserTokenLookupTypeValues(tokenDefinition *meta.UserResponseTokenDefinit
 func addToken(match string, tokens []string, newToken string) []string {
 	return append(tokens, match+":"+newToken)
 }
+
+func makeMap(elements []string) map[string]bool {
+	elementMap := make(map[string]bool)
+	for _, element := range elements {
+		elementMap[element] = true
+	}
+	return elementMap
+}
+
+func DetermineAccessFromChallengeTokens(metadata *adapt.CollectionMetadata, userResponseTokens []string, record loadable.Item, session *sess.Session) (string, error) {
+	access := "none"
+	challengeTokenDefinitions := metadata.RecordChallengeTokens
+	userResponseTokenMap := makeMap(userResponseTokens)
+	for _, tokenDefinition := range challengeTokenDefinitions {
+		if tokenDefinition.Type == "lookup" {
+			tokenValues, err := getTokenLookupTypeValues(tokenDefinition.Collection, tokenDefinition.Conditions, tokenDefinition.Token, record, session)
+			if err != nil {
+				return access, err
+			}
+			for _, token := range tokenValues {
+				ok := userResponseTokenMap[tokenDefinition.Match+":"+token]
+				if ok {
+					if tokenDefinition.Access == "read-write" {
+						// Max permission, short circuit
+						return "read-write", nil
+					} else if tokenDefinition.Access == "read" && access == "none" {
+						access = tokenDefinition.Access
+					}
+				}
+			}
+		} else if tokenDefinition.Type == "record" {
+			token, err := mergeTokenValue(tokenDefinition.Token, record)
+			if err != nil {
+				return access, err
+			}
+			ok := userResponseTokenMap[tokenDefinition.Match+":"+token]
+			if ok {
+				if tokenDefinition.Access == "read-write" {
+					// Max permission, short circuit
+					return "read-write", nil
+				} else if tokenDefinition.Access == "read" && access == "none" {
+					access = tokenDefinition.Access
+				}
+			}
+		}
+	}
+	return access, nil
+}
+
 func GenerateResponseTokens(metadata *adapt.CollectionMetadata, session *sess.Session) ([]string, error) {
-	//userInfo := session.GetUserInfo()
 	tokenDefinitions := metadata.UserResponseTokens
 	tokens := []string{}
 	if tokenDefinitions == nil {
@@ -91,7 +140,7 @@ func GenerateResponseTokens(metadata *adapt.CollectionMetadata, session *sess.Se
 	}
 	for _, tokenDefinition := range tokenDefinitions {
 		if tokenDefinition.Type == "lookup" {
-			tokenValues, err := getUserTokenLookupTypeValues(tokenDefinition, session)
+			tokenValues, err := getTokenLookupTypeValues(tokenDefinition.Collection, tokenDefinition.Conditions, tokenDefinition.Token, getUserMerge(session), session)
 			if err != nil {
 				return tokens, err
 			}

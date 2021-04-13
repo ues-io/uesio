@@ -83,6 +83,7 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
+//TODO:: JAS Add a filter function to a collection somehow
 func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkCollectionAccess bool) (*adapt.MetadataCache, error) {
 	collated := map[string][]adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
@@ -170,7 +171,9 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 			return nil, err
 		}
 		for i := range batch {
-			// TODO:: JAS Produce RecordChallengeTokens and filter records that do not have a matching userToken
+			if !checkCollectionAccess {
+				break
+			}
 			op := batch[i]
 			if op.Collection == nil {
 				continue
@@ -182,19 +185,25 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 			if collectionMetadata.Access != "protected" {
 				continue
 			}
-			recordChallengeTokens := collectionMetadata.RecordChallengeTokens
 			updatedCollection := &adapt.Collection{}
 			err = op.Collection.Loop(func(record loadable.Item) error {
 				// TODO:: JAS Check if Item has a matching record access token to a challenge token
-				item := updatedCollection.NewItem()
-				return item.Loop(func(fieldID string, value interface{}) error {
-					return item.SetField(fieldID, value)
-				})
+				access, err := DetermineAccessFromChallengeTokens(collectionMetadata, op.UserResponseTokens, record, session)
+				if err != nil {
+					return err
+				}
+				if access == "read" || access == "read-write" {
+					item := updatedCollection.NewItem()
+					return item.Loop(func(fieldID string, value interface{}) error {
+						return item.SetField(fieldID, value)
+					})
+				}
 				return nil
 			})
 			if err != nil {
 				return nil, err
 			}
+			op.Collection = updatedCollection
 		}
 
 		// Now do our supplemental reference loads
@@ -274,6 +283,6 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 }
 
 // Load function
-func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
+func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, []adapt.LoadOp, error) {
 	return loadWithRecordPermissions(ops, session, true)
 }

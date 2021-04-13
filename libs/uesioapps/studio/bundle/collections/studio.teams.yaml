@@ -17,16 +17,16 @@ userResponseTokens:
     token: "${user.ID}"
     match: "user"
 recordChallengeTokens:
-  - type: "lookup"
-    collection: studio.teampermissions
-    conditions:
-      - field: "studio.role"
-        value: "maintainer"
-      - field: "studio.appid"
-        value: "${studio.appid}"
-    token: "${studio.teamid}"
-    match: "team"
-    access: read
+#  - type: "lookup"
+#    collection: studio.teampermissions
+#    conditions:
+#      - field: "studio.role"
+#        value: "maintainer"
+#      - field: "studio.appid"
+#        value: "${studio.appid}"
+#    token: "${studio.teamid}"
+#    match: "team"
+#    access: read
   - type: "lookup"
     collection: studio.teampermissions
     conditions:
