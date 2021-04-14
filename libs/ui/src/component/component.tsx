@@ -9,6 +9,7 @@ import { parseKey } from "./path"
 type DisplayCondition = {
 	field: string
 	value: string
+	type: string
 }
 
 //const cache: Record<string, DefinitionMap> = {}
@@ -69,6 +70,11 @@ function mergeDeep(
 }
 
 function shouldDisplayCondition(condition: DisplayCondition, context: Context) {
+	if (condition.type === "collectionContext") {
+		const wire = context.getWire()
+		const collection = wire?.getCollection()
+		return collection?.getFullName() === condition.value
+	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
 	return value === condition.value

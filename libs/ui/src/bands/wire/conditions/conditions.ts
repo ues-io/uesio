@@ -123,11 +123,11 @@ const conditionHandlers: ConditionHandlers = {
 			active: true,
 		}
 	},
-	[LOOKUP]: (condition: LookupConditionState) => ({
+	[LOOKUP]: (condition: LookupConditionState, context: Context) => ({
 		field: condition.field,
 		valueSource: LOOKUP,
 		lookupField: condition.lookupField,
-		lookupWire: condition.lookupWire,
+		lookupWire: context.getViewId() + "/" + condition.lookupWire,
 		active: true,
 	}),
 }

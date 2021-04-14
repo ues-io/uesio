@@ -45,6 +45,7 @@ views:
   studio.installedbundle: true
   studio.addbundle: true
   studio.workspaceconfig: true
+  studio.workspacenav: true
 routes:
   studio.field: true
   studio.home: true
