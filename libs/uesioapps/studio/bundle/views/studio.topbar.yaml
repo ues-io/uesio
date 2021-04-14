@@ -26,8 +26,14 @@ definition:
                       - signal: "route/NAVIGATE"
                         path: "home"
           - io.griditem:
+              uesio.styles:
+                root:
+                  display: flex
               components:
                 - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        value: uesio.apps
                     id: appslist
                     components:
                       - io.tile:
@@ -57,6 +63,75 @@ definition:
                                     color: "${uesio.color}"
                                     verticalAlign: middle
                                 text: circle
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        value: studio.workspaces
+                    id: workspaceapptag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.styles:
+                            root:
+                              padding: 8px 12px
+                              backgroundColor: "#fafafa"
+                              borderRadius: 4px
+                              boxShadow: "0 0 4px #00000007"
+                              marginLeft: 8px
+                              fontSize: 10pt
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#555"
+                                    fontSize: 8pt
+                                    textTransform: uppercase
+                                    display: inline
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontFamily: Material Icons
+                                    color: ${["studio.app"]["uesio.color"]}
+                                    verticalAlign: middle
+                                text: circle
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        value: studio.workspaces
+                    id: workspacetag
+                    components:
+                      - io.tile:
+                          uesio.styles:
+                            root:
+                              padding: 8px 12px
+                              backgroundColor: "#fafafa"
+                              borderRadius: 4px
+                              boxShadow: "0 0 4px #00000007"
+                              marginLeft: 8px
+                              fontSize: 10pt
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#555"
+                                    fontSize: 8pt
+                                    textTransform: uppercase
+                                    display: inline
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontFamily: Material Icons
+                                    color: "#AAA"
+                                    verticalAlign: middle
+                                text: handyman
           - io.griditem:
               uesio.styles:
                 root:

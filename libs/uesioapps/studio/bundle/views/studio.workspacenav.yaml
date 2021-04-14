@@ -1,0 +1,329 @@
+name: workspacenav
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.list:
+        components:
+          - io.titlebar:
+              uesio.variant: io.plain
+              title: Data
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/bots
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Bots
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: smart_toy
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/collections
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Collections
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: list
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/datasources
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Data Sources
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: dynamic_feed
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/selectlists
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Select Lists
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: playlist_add_check
+          - io.titlebar:
+              uesio.variant: io.plain
+              title: User Interface
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/components
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Components
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: widgets
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/routes
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Routes
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: map
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/themes
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Themes
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: palette
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/views
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Views
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: view_quilt
+          - io.titlebar:
+              uesio.variant: io.plain
+              title: Admin
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/configvalues
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Config Values
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: tune
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/files
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Files
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: collections
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Permission Sets
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: rule
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Profiles
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: group
+          - io.tile:
+              uesio.styles:
+                root:
+                  padding: 10px 20px
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/secrets
+              content:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        color: "#21242D"
+                        display: "inline"
+                        verticalAlign: middle
+                    text: Secrets
+                    element: div
+              avatar:
+                - io.text:
+                    uesio.styles:
+                      root:
+                        fontFamily: Material Icons
+                        color: "#ccc"
+                        verticalAlign: middle
+                    text: lock

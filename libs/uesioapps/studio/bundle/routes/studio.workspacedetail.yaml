@@ -1,4 +1,4 @@
 name: workspacedetail
 path: app/{appname}/workspace/{workspacename}
 view: studio.workspace
-theme: uesio.default
+theme: studio.default
