@@ -10,7 +10,7 @@ import (
 const defaultTemplateKey = "__default__"
 
 // NewRequireKey function returns a template that requires keys and throws an error if they don't exist
-func NewRequiredKey(templateString string) (*template.Template, error) {
+func NewTemplateWithValidKeysOnly(templateString string) (*template.Template, error) {
 	return NewWithFunc(templateString, func(m map[string]interface{}, key string) (interface{}, error) {
 		val, ok := m[key]
 		if !ok {
@@ -23,6 +23,26 @@ func NewRequiredKey(templateString string) (*template.Template, error) {
 // NewWithFunc function
 func NewWithFunc(templateString string, templateFunc interface{}) (*template.Template, error) {
 	return NewWithFuncs(templateString, templateFunc, nil)
+}
+
+func ExtractKeys(templateString string) []string {
+	cursor := 0
+	keys := []string{}
+	len := len(templateString)
+	for cursor < len {
+		if templateString[cursor] == '$' && cursor+3 < len && templateString[cursor+1] == '{' {
+			cursor += 2
+			startIndex := cursor
+			for cursor < len && templateString[cursor] != '}' {
+				cursor++
+			}
+			if cursor < len {
+				keys = append(keys, templateString[startIndex:cursor])
+			}
+		}
+		cursor++
+	}
+	return keys
 }
 
 // NewWithFuncs function

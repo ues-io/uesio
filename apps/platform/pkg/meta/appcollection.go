@@ -53,3 +53,6 @@ func (ac *AppCollection) GetItems() interface{} {
 func (ac *AppCollection) Slice(start int, end int) {
 
 }
+func (ac *AppCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

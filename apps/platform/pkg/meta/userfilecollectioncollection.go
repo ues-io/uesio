@@ -7,6 +7,10 @@ import (
 // UserFileCollectionCollection slice
 type UserFileCollectionCollection []UserFileCollection
 
+func (ufcc *UserFileCollectionCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (ufcc *UserFileCollectionCollection) GetName() string {
 	return "studio.filecollections"

@@ -10,6 +10,10 @@ import (
 // SecretCollection slice
 type SecretCollection []Secret
 
+func (sc *SecretCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (sc *SecretCollection) GetName() string {
 	return "studio.secrets"

@@ -10,6 +10,10 @@ import (
 // ThemeCollection slice
 type ThemeCollection []Theme
 
+func (tc *ThemeCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (tc *ThemeCollection) GetName() string {
 	return "studio.themes"

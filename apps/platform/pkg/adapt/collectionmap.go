@@ -12,6 +12,10 @@ type CollectionMap struct {
 	IDs  []string
 }
 
+func (c *CollectionMap) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetItem function
 func (c *CollectionMap) GetItem(index int) loadable.Item {
 	key := c.IDs[index]

@@ -43,3 +43,19 @@ func (c *Collection) Len() int {
 func (c *Collection) Slice(start int, end int) {
 	*c = (*c)[start:end]
 }
+
+func (c *Collection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	filtered := Collection{}
+	for index := range *c {
+		item := (*c)[index]
+		passed, err := iter(c.GetItem(index))
+		if err != nil {
+			return err
+		}
+		if passed {
+			filtered = append(filtered, item)
+		}
+	}
+	*c = filtered
+	return nil
+}

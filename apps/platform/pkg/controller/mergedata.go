@@ -29,6 +29,7 @@ type UserMergeData struct {
 	LastName  string `json:"lastname"`
 	Profile   string `json:"profile"`
 	Site      string `json:"site"`
+	ID        string `json:"id"`
 }
 
 // SiteMergeData stuff to merge
@@ -87,6 +88,7 @@ func (md MergeData) String() string {
 func GetUserMergeData(session *sess.Session) *UserMergeData {
 	userInfo := session.GetUserInfo()
 	return &UserMergeData{
+		ID:        userInfo.ID,
 		Site:      userInfo.Site,
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,

@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
 // MetadataCache type
@@ -41,18 +42,21 @@ type SelectListMetadata struct {
 
 // CollectionMetadata struct
 type CollectionMetadata struct {
-	Name           string                    `json:"name"`
-	Namespace      string                    `json:"namespace"`
-	IDField        string                    `json:"idField"`
-	IDFormat       string                    `json:"-"`
-	NameField      string                    `json:"nameField"`
-	Createable     bool                      `json:"createable"`
-	Accessible     bool                      `json:"accessible"`
-	Updateable     bool                      `json:"updateable"`
-	Deleteable     bool                      `json:"deleteable"`
-	Fields         map[string]*FieldMetadata `json:"fields"`
-	CollectionName string                    `json:"-"`
-	DataSource     string                    `json:"-"`
+	Name                  string                                 `json:"name"`
+	Namespace             string                                 `json:"namespace"`
+	IDField               string                                 `json:"idField"`
+	IDFormat              string                                 `json:"-"`
+	NameField             string                                 `json:"nameField"`
+	Createable            bool                                   `json:"createable"`
+	Accessible            bool                                   `json:"accessible"`
+	Updateable            bool                                   `json:"updateable"`
+	Deleteable            bool                                   `json:"deleteable"`
+	Fields                map[string]*FieldMetadata              `json:"fields"`
+	CollectionName        string                                 `json:"-"`
+	DataSource            string                                 `json:"-"`
+	Access                string                                 `json:"-"`
+	UserResponseTokens    []*meta.UserResponseTokenDefinition    `json:"-"`
+	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 }
 
 // GetField function

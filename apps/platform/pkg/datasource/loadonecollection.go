@@ -12,6 +12,10 @@ type LoadOneCollection struct {
 	Length     int
 }
 
+func (c *LoadOneCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetItem function
 func (c *LoadOneCollection) GetItem(index int) loadable.Item {
 	return c.Item

@@ -68,3 +68,6 @@ func (pc *ProfileCollection) GetItems() interface{} {
 func (pc *ProfileCollection) Slice(start int, end int) {
 
 }
+func (bc *ProfileCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

@@ -7,6 +7,10 @@ import (
 // SecretStoreValueCollection slice
 type SecretStoreValueCollection []SecretStoreValue
 
+func (sc *SecretStoreValueCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (sc *SecretStoreValueCollection) GetName() string {
 	return "uesio.secretstorevalues"

@@ -68,3 +68,6 @@ func (fsc *FileSourceCollection) GetItems() interface{} {
 func (fsc *FileSourceCollection) Slice(start int, end int) {
 
 }
+func (bc *FileSourceCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

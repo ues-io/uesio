@@ -53,3 +53,7 @@ func (bbc *BulkBatchCollection) GetItems() interface{} {
 func (bbc *BulkBatchCollection) Slice(start int, end int) {
 
 }
+
+func (bbc *BulkBatchCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

@@ -10,6 +10,10 @@ import (
 // ViewCollection slice
 type ViewCollection []View
 
+func (vc *ViewCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (vc *ViewCollection) GetName() string {
 	return "studio.views"

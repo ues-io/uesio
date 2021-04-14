@@ -14,6 +14,7 @@ views:
   studio.views: true
   studio.newview: true
   studio.view: true
+  studio.teams: true
   studio.routes: true
   studio.newroute: true
   studio.route: true
@@ -48,6 +49,7 @@ views:
   studio.workspacenav: true
 routes:
   studio.field: true
+  studio.teams: true
   studio.home: true
   studio.appdetail: true
   studio.workspacedetail: true
