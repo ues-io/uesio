@@ -7,6 +7,10 @@ import (
 // UserFileMetadataCollection slice
 type UserFileMetadataCollection []UserFileMetadata
 
+func (ufmc *UserFileMetadataCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (ufmc *UserFileMetadataCollection) GetName() string {
 	return "uesio.userfiles"

@@ -7,6 +7,10 @@ import (
 // UserCollection slice
 type UserCollection []User
 
+func (uc *UserCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (uc *UserCollection) GetName() string {
 	return "uesio.users"

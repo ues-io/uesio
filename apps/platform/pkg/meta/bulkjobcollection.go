@@ -53,3 +53,7 @@ func (bjc *BulkJobCollection) GetItems() interface{} {
 func (bjc *BulkJobCollection) Slice(start int, end int) {
 
 }
+
+func (bjc *BulkJobCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

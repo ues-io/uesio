@@ -106,3 +106,6 @@ func (bc *BotCollection) GetItems() interface{} {
 func (bc *BotCollection) Slice(start int, end int) {
 
 }
+func (bc *BotCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

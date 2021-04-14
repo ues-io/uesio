@@ -7,6 +7,10 @@ import (
 // SiteDomainCollection slice
 type SiteDomainCollection []SiteDomain
 
+func (sdc *SiteDomainCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}
+
 // GetName function
 func (sdc *SiteDomainCollection) GetName() string {
 	return "uesio.sitedomains"

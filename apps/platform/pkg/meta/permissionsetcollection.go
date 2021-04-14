@@ -68,3 +68,6 @@ func (pc *PermissionSetCollection) GetItems() interface{} {
 func (pc *PermissionSetCollection) Slice(start int, end int) {
 
 }
+func (bc *PermissionSetCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

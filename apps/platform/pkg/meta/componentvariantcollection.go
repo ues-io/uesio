@@ -92,3 +92,6 @@ func (cvc *ComponentVariantCollection) GetItems() interface{} {
 func (cvc *ComponentVariantCollection) Slice(start int, end int) {
 
 }
+func (bc *ComponentVariantCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

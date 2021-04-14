@@ -53,3 +53,6 @@ func (cc *ConfigStoreValueCollection) GetItems() interface{} {
 func (cc *ConfigStoreValueCollection) Slice(start int, end int) {
 
 }
+func (bc *ConfigStoreValueCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return nil
+}

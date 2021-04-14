@@ -10,6 +10,10 @@ type WorkspaceLoadCollection struct {
 	Namespace  string
 }
 
+func (c *WorkspaceLoadCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
+	return c.Collection.Filter(iter)
+}
+
 // GetItem function
 func (c *WorkspaceLoadCollection) GetItem(index int) loadable.Item {
 	return c.Collection.GetItem(index)

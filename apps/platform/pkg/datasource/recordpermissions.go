@@ -59,7 +59,7 @@ func getTokenLookupTypeValues(lookupCollection string, conditions []*meta.TokenC
 		Conditions:     loadConditions,
 		Fields:         fields,
 	}}
-	_, err := loadWithRecordPermissions(&loadOps, session, false)
+	_, err := loadWithRecordPermissions(loadOps, session, false)
 	if err != nil {
 		return tokens, err
 	}
