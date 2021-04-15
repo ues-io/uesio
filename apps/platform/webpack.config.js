@@ -11,10 +11,7 @@ module.exports = {
 		// Add ".ts" and ".tsx" as resolvable extensions.
 		extensions: [".ts", ".tsx", ".js"],
 		alias: {
-			"@uesio/ui": path.resolve(
-				__dirname,
-				"../../libs/ui/src/index.ts"
-			),
+			"@uesio/ui": path.resolve(__dirname, "../../libs/ui/src/index.ts"),
 		},
 	},
 	module: {
@@ -30,4 +27,3 @@ module.exports = {
 		"@uesio/ui": "uesio",
 	},
 }
-
