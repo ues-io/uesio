@@ -1,5 +1,13 @@
 import { metadata } from "@uesio/ui"
 
+declare global {
+	interface Window {
+		monacoPublicPath?: string
+		uesioLoader: any
+		global: any
+	}
+}
+
 const getPrefix = (context: any) => {
 	const workspace = context.getWorkspace()
 	if (workspace) {
@@ -24,13 +32,13 @@ const postJSON = (url: string, body?: object) => {
 	})
 }
 
-;(window as any).monacoPublicPath = "/static/lazymonaco/"
+window.monacoPublicPath = "/static/lazymonaco/"
 
 // aws-sdk requires global to exist
-;(window as any).global = window
+window.global = window
 
-// UesioSSRLoadervar is accessible outside the generated webpack bundle
-;(window as any).UesioSSRLoadervar = (mergeData: object) => {
+// uesioLoader is accessible outside the generated webpack bundle
+window.uesioLoader = (mergeData: object) => {
 	// @ts-ignore
 	new uesio.loader.Loader({
 		getView: async (context: any, namespace: string, name: string) => {
