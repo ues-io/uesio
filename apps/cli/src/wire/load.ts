@@ -1,12 +1,11 @@
-import { LoadResponseBatch } from "./loadresponse"
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { LoadRequestCondition } from "./loadrequest"
+import { wire } from "@uesio/ui"
 
 const load = async (
 	metadata: Metadata,
-	conditions?: LoadRequestCondition[]
-): Promise<LoadResponseBatch> => {
+	conditions?: wire.WireConditionState[]
+): Promise<wire.LoadResponseBatch> => {
 	const request = {
 		wires: [
 			{

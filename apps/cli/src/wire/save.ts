@@ -1,13 +1,12 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { PlainWireRecordMap, PlainWireRecord } from "./wirerecord"
-import { SaveResponseBatch } from "./saveresponse"
-import * as shortid from "shortid"
+import { wire } from "@uesio/ui"
+import shortid from "shortid"
 
 const save = async (
 	metadata: Metadata,
-	changes: PlainWireRecordMap
-): Promise<SaveResponseBatch> => {
+	changes: Record<string, wire.PlainWireRecord>
+): Promise<wire.SaveResponseBatch> => {
 	const request = {
 		wires: [
 			{
@@ -24,7 +23,9 @@ const save = async (
 	return response.json()
 }
 
-const createChange = (data: PlainWireRecord[]): PlainWireRecordMap =>
+const createChange = (
+	data: wire.PlainWireRecord[]
+): Record<string, wire.PlainWireRecord> =>
 	Object.fromEntries(data.map((item) => [shortid.generate(), item]))
 
 export { save, createChange }

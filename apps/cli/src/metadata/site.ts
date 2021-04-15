@@ -1,4 +1,3 @@
-import { LoadRequestField } from "../wire/loadrequest"
 import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
@@ -10,7 +9,7 @@ class Site {
 	static getCollectionName(): string {
 		return "uesio.sites"
 	}
-	static getFields(): LoadRequestField[] {
+	static getFields() {
 		return [
 			{
 				id: "uesio.id",

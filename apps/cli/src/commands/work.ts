@@ -26,14 +26,15 @@ export default class Work extends Command {
 		const response = await load(workspaces, [
 			{
 				field: "studio.appid",
-				valuesource: "VALUE",
+				valueSource: "VALUE",
 				value: app,
+				active: true,
 			},
 		])
 
 		const workspaceList = response.wires[0].data
 
-		if (workspaceList.length === 0) {
+		if (!workspaceList || workspaceList.length === 0) {
 			throw new Error("No workspaces found for app: " + app)
 		}
 

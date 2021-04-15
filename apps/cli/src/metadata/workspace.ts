@@ -1,4 +1,3 @@
-import { LoadRequestField } from "../wire/loadrequest"
 import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
@@ -9,7 +8,7 @@ class Workspace {
 	static getCollectionName(): string {
 		return "studio.workspaces"
 	}
-	static getFields(): LoadRequestField[] {
+	static getFields() {
 		return [
 			{
 				id: "studio.id",
