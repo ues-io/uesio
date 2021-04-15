@@ -1,8 +1,8 @@
 import { LoadRequestField } from "../wire/loadrequest"
 import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
-import inquirer = require("inquirer")
-import chalk = require("chalk")
+import inquirer from "inquirer"
+import chalk from "chalk"
 import { save, createChange } from "../wire/save"
 
 const colors = [

@@ -1,12 +1,11 @@
 {
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"jsx": "react-jsx",
-		"declaration": true,
-		"importHelpers": true,
-		"module": "commonjs",
 		"outDir": "../../dist/cli/lib",
-		"strict": true,
-		"target": "es2019"
+		"module": "commonjs"
+	},
+	"paths": {
+		"@uesio/ui": ["../../libs/ui/src/index.ts"]
 	},
 	"include": ["src/**/*"]
 }

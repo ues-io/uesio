@@ -1,5 +1,5 @@
 import { Command } from "@oclif/command"
-import * as archiver from "archiver"
+import archiver from "archiver"
 import { post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"

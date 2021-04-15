@@ -5,14 +5,7 @@ import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { ComponentVariant } from "../bands/viewdef/types"
 import { parseKey } from "./path"
-
-type DisplayCondition = {
-	field: string
-	value: string
-	type: string
-}
-
-//const cache: Record<string, DefinitionMap> = {}
+import { shouldDisplay } from "./display"
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -67,29 +60,6 @@ function mergeDeep(
 		}
 	}
 	return dest
-}
-
-function shouldDisplayCondition(condition: DisplayCondition, context: Context) {
-	if (condition.type === "collectionContext") {
-		const wire = context.getWire()
-		const collection = wire?.getCollection()
-		return collection?.getFullName() === condition.value
-	}
-	const record = context.getRecord()
-	const value = record?.getFieldValue(condition.field)
-	return value === condition.value
-}
-
-function shouldDisplay(context: Context, definition?: DefinitionMap) {
-	const displayLogic = definition?.["uesio.display"] as DisplayCondition[]
-	if (displayLogic && displayLogic.length) {
-		for (const condition of displayLogic) {
-			if (!shouldDisplayCondition(condition, context)) {
-				return false
-			}
-		}
-	}
-	return true
 }
 
 function additionalContext(context: Context, definition?: DefinitionMap) {

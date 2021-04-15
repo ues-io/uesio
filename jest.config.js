@@ -9,6 +9,5 @@ module.exports = {
 		"<rootDir>/libs/apps/material",
 		"<rootDir>/libs/vendor",
 		"<rootDir>/apps/cli",
-		"<rootDir>/libs/constants",
 	],
 }

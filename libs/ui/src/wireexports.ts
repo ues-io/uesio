@@ -1,4 +1,4 @@
-import { WireDefinitionMap, WireDefinition } from "./definition/wire"
+import { WireDefinitionMap, WireDefinition, WireType } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
 import WireRecord from "./bands/wirerecord/class"
@@ -14,6 +14,7 @@ export {
 	WireRecord,
 	Wire,
 	FieldValue,
+	WireType,
 	WireDefinition,
 	WireDefinitionMap,
 	WireConditionState,

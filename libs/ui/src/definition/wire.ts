@@ -1,6 +1,6 @@
-import { wire } from "@uesio/constants"
 import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
+type WireType = "CREATE" | "QUERY" | "EMPTY"
 
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
@@ -11,7 +11,7 @@ type WireDefinition = {
 	fields: WireFieldDefinitionMap
 	conditions: WireConditionDefinition[]
 	defaults: WireDefault[]
-	type: wire.WireType
+	type: WireType
 	order: WireOrderDescription[]
 	limit: number
 	offset: number
@@ -32,6 +32,7 @@ type WireOrderDescription = {
 }
 
 export {
+	WireType,
 	WireDefinition,
 	WireDefinitionMap,
 	WireFieldDefinition,

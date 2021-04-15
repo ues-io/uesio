@@ -1,7 +1,6 @@
 import { ChangeEvent, FunctionComponent } from "react"
 
-import { definition } from "@uesio/ui"
-import { field } from "@uesio/constants"
+import { definition, context } from "@uesio/ui"
 import * as material from "@material-ui/core"
 
 type Props = {
@@ -9,7 +8,7 @@ type Props = {
 	setValue: (value: string) => void
 	value: definition.Definition
 	type?: string
-	mode?: field.FieldMode
+	mode?: context.FieldMode
 	variant?: "standard" | "filled" | "outlined"
 	hideLabel?: boolean
 } & definition.BaseProps

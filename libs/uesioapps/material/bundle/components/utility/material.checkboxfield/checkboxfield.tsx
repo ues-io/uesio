@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 
-import { definition } from "@uesio/ui"
-import { field } from "@uesio/constants"
+import { definition, context } from "@uesio/ui"
 import * as material from "@material-ui/core"
 
 const useStyles = material.makeStyles((theme) => ({
@@ -15,7 +14,7 @@ type Props = {
 	label: string
 	setValue: (value: boolean) => void
 	value: definition.Definition
-	mode?: field.FieldMode
+	mode?: context.FieldMode
 } & definition.BaseProps
 
 const CheckBoxField: FunctionComponent<Props> = ({

@@ -1,4 +1,4 @@
-import chalk = require("chalk")
+import chalk from "chalk"
 import { User } from "../auth/login"
 
 const printUser = (user: User): void => {

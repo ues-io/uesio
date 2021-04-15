@@ -1,7 +1,7 @@
 import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
-import { metadata } from "@uesio/constants"
 import { definition } from "@uesio/ui"
+import { MetadataType } from "../bands/builder/types"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -95,7 +95,7 @@ interface NumberProp extends BasePropDescriptor {
 
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
-	metadataType: metadata.MetadataType
+	metadataType: MetadataType
 	groupingParents?: number
 	groupingProperty?: string
 }

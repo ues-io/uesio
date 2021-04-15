@@ -11,9 +11,9 @@ module.exports = {
 		// Add ".ts" and ".tsx" as resolvable extensions.
 		extensions: [".ts", ".tsx", ".js"],
 		alias: {
-			"@uesio/constants": path.resolve(
+			"@uesio/ui": path.resolve(
 				__dirname,
-				"../../libs/constants/src/index.ts"
+				"../../libs/ui/src/index.ts"
 			),
 		},
 	},
@@ -21,9 +21,12 @@ module.exports = {
 		rules: [
 			// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
 			{
-				test: /\.tsx?$/,
+				test: /\.ts(x?)$/,
 				loader: "ts-loader",
 			},
 		],
+	},
+	externals: {
+		"@uesio/ui": "uesio",
 	},
 }

@@ -1,4 +1,4 @@
-import { metadata } from "@uesio/constants"
+import { metadata } from "@uesio/ui"
 
 const getPrefix = (context: any) => {
 	const workspace = context.getWorkspace()

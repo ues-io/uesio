@@ -11,7 +11,6 @@ import { Uesio } from "./hooks"
 import { useEffect } from "react"
 import { Context } from "../context/context"
 import { SignalDefinition } from "../definition/signal"
-import { metadata } from "@uesio/constants"
 import {
 	setActiveNode,
 	setDragNode,
@@ -25,6 +24,7 @@ import { useBuilderHasChanges } from "../bands/viewdef/selectors"
 import { cancel as cancelViewChanges } from "../bands/viewdef"
 import saveViewDef from "../bands/viewdef/operations/save"
 import { PlainComponentState } from "../bands/component/types"
+import { MetadataType } from "../bands/builder/types"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -81,7 +81,7 @@ class BuilderAPI {
 
 	getMetadataList = (
 		context: Context,
-		metadataType: metadata.MetadataType,
+		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
 	) =>

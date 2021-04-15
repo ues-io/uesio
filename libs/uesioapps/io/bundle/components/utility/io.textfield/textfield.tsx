@@ -1,6 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
-import { field } from "@uesio/constants"
+import { definition, styles, context } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
 	label?: string
@@ -9,7 +8,7 @@ interface TextFieldProps extends definition.UtilityProps {
 	width?: string
 	type?: string
 	hideLabel?: boolean
-	mode?: field.FieldMode
+	mode?: context.FieldMode
 }
 
 const useStyles = styles.getUseStyles(["root", "label", "input", "readonly"], {
