@@ -2,8 +2,7 @@ import { fileExists, getApp } from "../config/config"
 import * as path from "path"
 import { promises as fs } from "fs"
 import * as yaml from "yaml"
-import webpack = require("webpack")
-import { RuleSetRule } from "webpack"
+import webpack, { RuleSetRule } from "webpack"
 
 type ComponentMap = {
 	[key: string]: unknown
@@ -194,12 +193,6 @@ const getWebpackConfig = (
 	return {
 		// Configuration Object
 		resolve: {
-			alias: {
-				"@uesio/constants": path.resolve(
-					__dirname,
-					"../../../../libs/constants/src/index"
-				),
-			},
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
 		},

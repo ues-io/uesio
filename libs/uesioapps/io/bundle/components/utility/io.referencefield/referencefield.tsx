@@ -1,7 +1,13 @@
 import { FunctionComponent } from "react"
-import { wire, hooks, collection, definition, component } from "@uesio/ui"
+import {
+	wire,
+	hooks,
+	collection,
+	definition,
+	component,
+	context,
+} from "@uesio/ui"
 import { SelectedItem } from "../io.autocomplete/autocomplete"
-import { field } from "@uesio/constants"
 
 const TextField = component.registry.getUtility("io.textfield")
 const AutoComplete = component.registry.getUtility("io.autocomplete")
@@ -9,7 +15,7 @@ const AutoComplete = component.registry.getUtility("io.autocomplete")
 interface ReferenceFieldProps extends definition.UtilityProps {
 	label?: string
 	fieldMetadata: collection.Field
-	mode: field.FieldMode
+	mode: context.FieldMode
 	fieldId: string
 	hideLabel: boolean
 	record: wire.WireRecord

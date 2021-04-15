@@ -1,11 +1,11 @@
-import { metadata } from "@uesio/constants"
 import { setAvailableNamespaces, setMetadataList } from "."
 import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
+import { MetadataType } from "./types"
 
 const getMetadataList = (
 	context: Context,
-	metadataType: metadata.MetadataType,
+	metadataType: MetadataType,
 	namespace: string,
 	grouping?: string
 ): ThunkFunc => async (dispatch, getState, platform) => {

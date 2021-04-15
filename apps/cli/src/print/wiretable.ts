@@ -1,7 +1,6 @@
-import { LoadResponse, PlainCollectionMap } from "../wire/loadresponse"
-
 import cli from "cli-ux"
-import chalk = require("chalk")
+import chalk from "chalk"
+import { collection, wire } from "@uesio/ui"
 
 type TableColumn = {
 	id: string
@@ -9,8 +8,8 @@ type TableColumn = {
 }
 
 const wiretable = (
-	response: LoadResponse,
-	metadata: PlainCollectionMap,
+	response: wire.LoadResponse,
+	metadata: Record<string, collection.PlainCollection>,
 	columns: TableColumn[]
 ): void => {
 	const collectionMetadata = metadata[response.collection]
@@ -32,7 +31,9 @@ const wiretable = (
 		}
 		tableColumns[column.id] = tableColumn
 	})
-	cli.table(response.data, tableColumns)
+	if (response.data) {
+		cli.table(response.data, tableColumns)
+	}
 }
 
 export { wiretable, TableColumn }

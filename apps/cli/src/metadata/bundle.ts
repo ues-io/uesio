@@ -1,7 +1,6 @@
-import { LoadRequestField } from "../wire/loadrequest"
 import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
-import inquirer = require("inquirer")
+import inquirer from "inquirer"
 import { getApp, getWorkspace } from "../config/config"
 import { get } from "../request/request"
 import { authorize } from "../auth/login"
@@ -14,7 +13,7 @@ class Bundle {
 	static getCollectionName(): string {
 		return "uesio.bundles"
 	}
-	static getFields(): LoadRequestField[] {
+	static getFields() {
 		return [
 			{
 				id: "uesio.id",

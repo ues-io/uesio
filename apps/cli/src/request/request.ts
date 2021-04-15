@@ -1,7 +1,5 @@
-import { Archiver } from "archiver"
-import { ReadStream } from "fs"
-import * as https from "https"
-import fetch, { Response, RequestInit } from "node-fetch"
+import https from "https"
+import fetch, { Response, RequestInit, BodyInit } from "node-fetch"
 
 const agent = new https.Agent({
 	rejectUnauthorized: false,
@@ -27,14 +25,7 @@ const get = (
 
 const post = (
 	url: string,
-	body:
-		| string
-		| ArrayBuffer
-		| ArrayBufferView
-		| URLSearchParams
-		| Archiver
-		| ReadStream
-		| undefined,
+	body: BodyInit | undefined,
 	cookie?: string,
 	init?: RequestInit
 ): Promise<Response> =>

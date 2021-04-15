@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 
 import { wire, collection, context, component, definition } from "@uesio/ui"
-import { field } from "@uesio/constants"
 import { ColumnDefinition, TableState } from "./tabledefinition"
 import * as material from "@material-ui/core"
 
@@ -19,7 +18,7 @@ interface RowProps {
 	path: string
 	columns: definition.DefinitionList
 	context: context.Context
-	mode: field.FieldMode
+	mode: context.FieldMode
 	record: wire.WireRecord
 }
 

@@ -1,4 +1,4 @@
-import { WireDefinitionMap, WireDefinition } from "./definition/wire"
+import { WireDefinitionMap, WireDefinition, WireType } from "./definition/wire"
 
 import Wire from "./bands/wire/class"
 import WireRecord from "./bands/wirerecord/class"
@@ -8,12 +8,21 @@ import {
 	WireConditionDefinition,
 	WireConditionState,
 } from "./bands/wire/conditions/conditions"
+import { SaveResponse, SaveResponseBatch } from "./load/saveresponse"
+import { LoadResponse, LoadResponseBatch } from "./load/loadresponse"
+import { LoadRequestField } from "./load/loadrequest"
 
 export {
+	SaveResponse,
+	SaveResponseBatch,
+	LoadResponse,
+	LoadResponseBatch,
+	LoadRequestField,
 	PlainWireRecord,
 	WireRecord,
 	Wire,
 	FieldValue,
+	WireType,
 	WireDefinition,
 	WireDefinitionMap,
 	WireConditionState,

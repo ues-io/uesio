@@ -1,15 +1,13 @@
 {
+	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"outDir": "./platform",
-		"target": "esnext",
-		"module": "commonjs",
-		"strict": true
+		"outDir": "./platform"
 	},
 	"files": ["./platform/platform.ts"],
 	"include": ["./platform/platform.ts"],
 	"baseUrl": ".",
 	"paths": {
-		"@uesio/constants": "../../libs/constants/src"
+		"@uesio/ui": "../../libs/ui/src"
 	},
 	"exclude": []
 }

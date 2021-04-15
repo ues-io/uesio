@@ -2,17 +2,6 @@ name: bots
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -39,81 +29,165 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
+    newbot:
+      collection: studio.bots
+      fields:
+        studio.id:
+        studio.name:
+        studio.collection:
+        studio.workspaceid:
+        studio.dialect:
+        studio.type:
+        studio.content:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      type: CREATE
+      defaults:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
-              components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: bots
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
-                          components:
-                            - material.typography:
-                                text: Bots
-                                variant: h5
-                            - material.typography:
-                                text: Gotta catch 'em all!
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New Bot"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: botsDeck
-                    wire: bots
+    - io.grid:
+        uesio.styles:
+          root:
+            minHeight: 100vh
+        templateRows: 60px 1fr
+        items:
+          - uesio.view:
+              view: studio.topbar
+              uesio.context:
+                wire: workspaces
+              params:
+                itemType: bots
+                itemIcon: smart_toy
+          - io.grid:
+              uesio.styles:
+                root:
+                  gridRow: 2
+              templateColumns: 300px 1fr
+              items:
+                - io.griditem:
+                    uesio.styles:
+                      root:
+                        backgroundColor: "#fafafa"
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
-                          components:
+                      - uesio.view:
+                          uesio.context:
+                            wire: workspaces
+                          view: studio.workspacenav
+                - io.griditem:
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          uesio.styles:
+                            root:
+                              borderBottom: 6px solid ${uesio.color}
+                          title: Bots
+                          subtitle: Gotta catch 'em all!
+                          actions:
+                            - io.group:
+                                width: 210px
+                                components:
+                                  - io.button:
+                                      text: Create a New Bot
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: newBot
+                      - material.grid:
+                          justify: space-between
+                          items:
                             - material.griditem:
                                 components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${studio.type}"
-                                textTransform: "capitalize"
-                            - material.typography:
-                                text: "${studio.name}"
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                                  - material.typography:
+                                      text: Bots
+                                      variant: h5
+                                  - material.typography:
+                                      text: Gotta catch 'em all!
+                                      variant: body2
+                            - material.griditem:
+                                components:
+                                  - material.buttonset:
+                                      buttons:
+                                        - material.button:
+                                            color: "primary"
+                                            variant: "outlined"
+                                            text: "Create New Bot"
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
+                      - material.deck:
+                          xs: 12
+                          sm: 6
+                          md: 4
+                          lg: 3
+                          margin: 0
+                          id: botsDeck
+                          wire: bots
+                          components:
+                            - material.card:
+                                media:
+                                  background:
+                                    color:
+                                      intention: "primary"
+                                  height: 10px
+                                margin: 1
+                                components:
+                                  - material.griditem:
+                                      components:
+                                        - material.icon:
+                                            type: "open"
+                                            float: right
+                                  - material.typography:
+                                      text: "${studio.type}"
+                                      textTransform: "capitalize"
+                                  - material.typography:
+                                      text: "${studio.name}"
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+  panels:
+    - io.dialog:
+        id: newBot
+        title: Create a New Bot
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newbotlist
+              wire: newbot
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - studio.metadatafield:
+                    fieldId: studio.collection
+                    metadataType: "COLLECTION"
+                    label: "Collection"
+                - material.field:
+                    fieldId: studio.dialect
+                - material.field:
+                    fieldId: studio.type
+                - material.field:
+                    fieldId: studio.content
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newbot"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/{studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newBot"

@@ -1,5 +1,4 @@
-import { definition, collection, wire, builder } from "@uesio/ui"
-import { field } from "@uesio/constants"
+import { definition, collection, wire, builder, context } from "@uesio/ui"
 
 type FieldDefinition = {
 	fieldId: string
@@ -13,7 +12,7 @@ interface FieldProps extends definition.BaseProps {
 
 type RendererProps = {
 	fieldMetadata: collection.Field
-	mode: field.FieldMode
+	mode: context.FieldMode
 	fieldId: string
 	hideLabel: boolean
 	record: wire.WireRecord

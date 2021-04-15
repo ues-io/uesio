@@ -1,6 +1,6 @@
-import { metadata } from "@uesio/constants"
 import { useSelector } from "react-redux"
 import { RootState } from "../../store/store"
+import { MetadataType } from "./types"
 
 const isMatch = (componentPath: string, testPath?: string) => {
 	if (testPath) {
@@ -43,7 +43,7 @@ const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
 const useMetadataList = (
-	metadataType: metadata.MetadataType,
+	metadataType: MetadataType,
 	namespace: string,
 	grouping?: string
 ) =>

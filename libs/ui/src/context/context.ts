@@ -1,4 +1,3 @@
-import { field } from "@uesio/constants"
 import { getStore, SiteState } from "../store/store"
 import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
@@ -12,13 +11,15 @@ import chroma from "chroma-js"
 import { getURLFromFullName } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
 
+type FieldMode = "READ" | "EDIT"
+
 type ContextFrame = {
 	wire?: string
 	record?: string
 	view?: string
 	viewDef?: string
 	buildMode?: boolean
-	fieldMode?: field.FieldMode
+	fieldMode?: FieldMode
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
@@ -225,6 +226,7 @@ class Context {
 export {
 	Context,
 	ContextFrame,
+	FieldMode,
 	RouteState,
 	WorkspaceState,
 	SiteState,

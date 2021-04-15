@@ -1,9 +1,0 @@
-{
-	"extends": "../../tsconfig.base.json",
-	"files": [],
-	"include": ["src/**/*"],
-	"compilerOptions": {
-		"sourceMap": true,
-		"outDir": "../../dist/constants"
-	}
-}

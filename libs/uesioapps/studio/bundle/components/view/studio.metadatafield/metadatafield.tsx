@@ -1,6 +1,5 @@
 import { FunctionComponent, useEffect } from "react"
-import { definition, component, hooks } from "@uesio/ui"
-import { metadata } from "@uesio/constants"
+import { definition, component, hooks, metadata } from "@uesio/ui"
 import { Grid } from "@material-ui/core"
 
 type MetadataFieldDefinition = {

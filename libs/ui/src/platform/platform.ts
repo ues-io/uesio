@@ -4,8 +4,7 @@ import { LoginRequest, LoginResponse } from "../auth/auth"
 import { SaveRequestBatch } from "../load/saverequest"
 import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
-import { metadata } from "@uesio/constants"
-import { MetadataListStore } from "../bands/builder/types"
+import { MetadataListStore, MetadataType } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
 
 type BotParams = {
@@ -70,7 +69,7 @@ interface Platform {
 	): string
 	getMetadataList(
 		context: Context,
-		metadataType: metadata.MetadataType,
+		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
 	): Promise<MetadataListStore>

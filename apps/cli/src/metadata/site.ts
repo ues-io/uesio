@@ -1,7 +1,6 @@
-import { LoadRequestField } from "../wire/loadrequest"
 import { load } from "../wire/load"
 import { wiretable, TableColumn } from "../print/wiretable"
-import inquirer = require("inquirer")
+import inquirer from "inquirer"
 import { save, createChange } from "../wire/save"
 import { getApp } from "../config/config"
 import { throwIfBadFormat } from "../validation/version"
@@ -10,7 +9,7 @@ class Site {
 	static getCollectionName(): string {
 		return "uesio.sites"
 	}
-	static getFields(): LoadRequestField[] {
+	static getFields() {
 		return [
 			{
 				id: "uesio.id",

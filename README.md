@@ -50,7 +50,7 @@ See the [Uesio Specific Redux Docs](./docs/redux/README.md) on that matter.
 
 The present monorepo hosts several standalone **applications**, such as the `cli`.
 
-Sandalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs, such as the `constants` lib.
+Sandalone **libraries** are located in the `libs` folder. These libs are components of the applications or container for sharing code between applications and libs.
 
 The monorepo is managed by a tool called [nx](https://nx.dev/).
 `nx` has the particularity of having one single `package.json` for the whole monorepo.

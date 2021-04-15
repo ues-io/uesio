@@ -1,14 +1,14 @@
-import { LoadRequestField } from "../wire/loadrequest"
 import { App } from "./app"
 import { Workspace } from "./workspace"
 import { Bundle } from "./bundle"
 import { Site } from "./site"
 import { SiteDomain } from "./sitedomain"
 import { BundleDependency } from "./bundledependency"
+import { wire } from "@uesio/ui"
 
 interface Metadata {
 	getCollectionName(): string
-	getFields(): LoadRequestField[]
+	getFields(): wire.LoadRequestField[]
 	list(): Promise<void>
 	create(): Promise<void>
 }

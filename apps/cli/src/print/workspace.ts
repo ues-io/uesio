@@ -1,4 +1,4 @@
-import chalk = require("chalk")
+import chalk from "chalk"
 
 const printWorkspace = (workspace: string, app: string): void => {
 	console.log(
