@@ -1,14 +1,14 @@
-import { metadata } from "@uesio/ui"
+import { loader, metadata, state, context } from "@uesio/ui"
 
 declare global {
 	interface Window {
 		monacoPublicPath?: string
-		uesioLoader: any
+		uesioLoader: (mergeData: state.InitialState) => void
 		global: any
 	}
 }
 
-const getPrefix = (context: any) => {
+const getPrefix = (context: context.Context) => {
 	const workspace = context.getWorkspace()
 	if (workspace) {
 		return `/workspace/${workspace.app}/${workspace.name}`
@@ -38,10 +38,9 @@ window.monacoPublicPath = "/static/lazymonaco/"
 window.global = window
 
 // uesioLoader is accessible outside the generated webpack bundle
-window.uesioLoader = (mergeData: object) => {
-	// @ts-ignore
-	new uesio.loader.Loader({
-		getView: async (context: any, namespace: string, name: string) => {
+window.uesioLoader = (mergeData) => {
+	new loader.Loader({
+		getView: async (context, namespace, name) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/views/${namespace}/${name}`)
 			if (response.status !== 200) {
@@ -50,7 +49,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.text()
 		},
 
-		getTheme: async (context: any, namespace: string, name: string) => {
+		getTheme: async (context, namespace, name) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(
 				`${prefix}/themes/${namespace}/${name}`
@@ -61,7 +60,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.text()
 		},
 
-		getRoute: async (context: any, namespace: string, route: string) => {
+		getRoute: async (context, namespace, route) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(
 				`${prefix}/routes/${namespace}/${route}`
@@ -72,7 +71,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		loadData: async (context: any, requestBody: object) => {
+		loadData: async (context, requestBody) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/wires/load`, requestBody)
 			if (response.status != 200) {
@@ -82,7 +81,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		saveData: async (context: any, requestBody: object) => {
+		saveData: async (context, requestBody) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/wires/save`, requestBody)
 			if (response.status != 200) {
@@ -92,12 +91,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		callBot: async (
-			context: any,
-			namespace: string,
-			name: string,
-			params: object
-		) => {
+		callBot: async (context, namespace, name, params) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(
 				`${prefix}/bots/call/${namespace}/${name}`,
@@ -110,12 +104,12 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		getFileURL: (context: any, namespace: string, name: string) => {
+		getFileURL: (context, namespace, name) => {
 			const prefix = getPrefix(context)
 			return `${prefix}/files/${namespace}/${name}`
 		},
 
-		getUserFileURL: (context: any, userfileid: string) => {
+		getUserFileURL: (context, userfileid) => {
 			const prefix = getPrefix(context)
 			return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 				userfileid
@@ -123,13 +117,13 @@ window.uesioLoader = (mergeData: object) => {
 		},
 
 		uploadFile: async (
-			context: any,
-			fileData: any,
-			name: string,
-			fileCollection: string,
-			collectionID: any,
-			recordID: any,
-			fieldID: any
+			context,
+			fileData,
+			name,
+			fileCollection,
+			collectionID,
+			recordID,
+			fieldID
 		) => {
 			const prefix = getPrefix(context)
 			const url = `${prefix}/userfiles/upload`
@@ -151,23 +145,13 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		getComponentPackURL: (
-			context: any,
-			namespace: string,
-			name: string,
-			buildMode: boolean
-		) => {
+		getComponentPackURL: (context, namespace, name, buildMode) => {
 			const prefix = getPrefix(context)
 			const buildModeSuffix = buildMode ? "/builder" : ""
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
 
-		getMetadataList: async (
-			context: any,
-			metadataType: metadata.MetadataType,
-			namespace: string,
-			grouping: string
-		) => {
+		getMetadataList: async (context, metadataType, namespace, grouping) => {
 			const prefix = getPrefix(context)
 			const mdType = metadata.METADATA[metadataType]
 			const groupingUrl = grouping ? `/${grouping}` : ""
@@ -177,19 +161,19 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		getAvailableNamespaces: async (context: any) => {
+		getAvailableNamespaces: async (context) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/metadata/namespaces`)
 			return response.json()
 		},
 
-		getConfigValues: async (context: any) => {
+		getConfigValues: async (context) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/configvalues`)
 			return response.json()
 		},
 
-		setConfigValue: async (context: any, key: string, value: string) => {
+		setConfigValue: async (context, key, value) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/configvalues/${key}`, {
 				value,
@@ -197,13 +181,13 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		getSecrets: async (context: any) => {
+		getSecrets: async (context) => {
 			const prefix = getPrefix(context)
 			const response = await fetch(`${prefix}/secrets`)
 			return response.json()
 		},
 
-		setSecret: async (context: any, key: string, value: string) => {
+		setSecret: async (context, key, value) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/secrets/${key}`, {
 				value,
@@ -211,7 +195,7 @@ window.uesioLoader = (mergeData: object) => {
 			return response.json()
 		},
 
-		login: async (requestBody: object) => {
+		login: async (requestBody) => {
 			const response = await postJSON("/site/auth/login", requestBody)
 			return response.json()
 		},

@@ -30,7 +30,14 @@ const SESSION_KEY = "sessid"
 const authHandlers = {
 	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
 		type: "mock",
-		token: "mocktoken",
+		// TODO: actually read from seeds and allow mock login as all users
+		token: JSON.stringify({
+			subject: "MockBen",
+			authType: "mock",
+			firstname: "Ben",
+			lastname: "Hubbard",
+			email: "ben@thecloudmasters.com",
+		}),
 	}),
 	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
 		throw new Error("Google Auth is not yet supported.")

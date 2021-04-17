@@ -11,6 +11,7 @@ import * as definition from "./definition/definition"
 import * as hooks from "./hooks/hooks"
 import * as loader from "./loader/loader"
 import * as signal from "./signalexports"
+import * as state from "./stateexports"
 import * as styles from "./styles/styles"
 import * as util from "./utilexports"
 import * as wire from "./wireexports"
@@ -32,6 +33,7 @@ export {
 	loader,
 	metadata,
 	signal,
+	state,
 	styles,
 	util,
 	wire,
