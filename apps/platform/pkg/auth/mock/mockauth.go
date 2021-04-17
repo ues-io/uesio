@@ -2,6 +2,7 @@ package mock
 
 import (
 	"encoding/json"
+
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )

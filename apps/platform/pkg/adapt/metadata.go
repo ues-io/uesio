@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
