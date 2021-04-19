@@ -26,10 +26,12 @@ components:
     io.link:
     io.referencefield:
     io.scrollpanel:
+    io.selectfield:
     io.text:
     io.textfield:
     io.titlebar:
   variants:
     - io.textfield.io.default
+    - io.selectfield.io.default
     - io.autocomplete.io.default
     - io.titlebar.io.dialog

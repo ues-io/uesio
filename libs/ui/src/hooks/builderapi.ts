@@ -52,8 +52,6 @@ class BuilderAPI {
 
 	useHasChanges = useBuilderHasChanges
 
-	useMetadataList = useMetadataList
-
 	setActiveNode = (path: string) => {
 		this.dispatcher(setActiveNode(path))
 	}
@@ -79,29 +77,33 @@ class BuilderAPI {
 		this.dispatcher(cancelViewChanges())
 	}
 
-	getMetadataList = (
+	useMetadataList = (
 		context: Context,
 		metadataType: MetadataType,
 		namespace: string,
 		grouping?: string
-	) =>
-		this.dispatcher(
-			builderOps.getMetadataList(
-				context,
-				metadataType,
-				namespace,
-				grouping
-			)
-		)
-
-	getAvailableNamespaces = (context: Context) =>
-		this.dispatcher(builderOps.getAvailableNamespaces(context))
+	) => {
+		const metadata = useMetadataList(metadataType, namespace, grouping)
+		useEffect(() => {
+			if (!metadata) {
+				this.dispatcher(
+					builderOps.getMetadataList({
+						context,
+						metadataType,
+						namespace,
+						grouping,
+					})
+				)
+			}
+		})
+		return metadata
+	}
 
 	useAvailableNamespaces = (context: Context) => {
 		const namespaces = useNamespaces()
 		useEffect(() => {
 			if (!namespaces) {
-				this.getAvailableNamespaces(context)
+				this.dispatcher(builderOps.getAvailableNamespaces(context))
 			}
 		})
 		return namespaces

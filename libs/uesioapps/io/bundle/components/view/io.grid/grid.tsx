@@ -21,9 +21,14 @@ const useStyles = styles.getUseStyles(["root"], {
 				definition.templateRows
 			)
 
+		const columnGap = definition.columnGap && {
+			gridColumnGap: definition.columnGap,
+		}
+
 		return {
 			...gridCols,
 			...gridRows,
+			...columnGap,
 		}
 	},
 })

@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { hooks, builder } from "@uesio/ui"
 import SelectProp from "./selectprop"
@@ -14,13 +14,12 @@ const BotProp: FunctionComponent<BotPropRendererProps> = (props) => {
 	const namespace = descriptor.namespace
 	if (!namespace) return null
 
-	const metadata = uesio.builder.useMetadataList("BOT", namespace, botType)
-
-	useEffect(() => {
-		if (!metadata) {
-			uesio.builder.getMetadataList(context, "BOT", namespace, botType)
-		}
-	})
+	const metadata = uesio.builder.useMetadataList(
+		context,
+		"BOT",
+		namespace,
+		botType
+	)
 
 	return (
 		<SelectProp

@@ -91,6 +91,29 @@ definition:
                                                   signals:
                                                     - signal: panel/TOGGLE
                                                       panel: deleteWorkspace
+                                  - io.grid:
+                                      uesio.styles:
+                                        root:
+                                          padding: 40px
+                                      templateColumns: 1fr 1fr
+                                      columnGap: 10px
+                                      items:
+                                        - studio.metadatafield:
+                                            fieldId: studio.homeroute
+                                            metadataType: "ROUTE"
+                                            label: "Home Route"
+                                        - studio.metadatafield:
+                                            fieldId: studio.loginroute
+                                            metadataType: "ROUTE"
+                                            label: "Login Route"
+                                        - studio.metadatafield:
+                                            fieldId: studio.defaultprofile
+                                            metadataType: "PROFILE"
+                                            label: "Default Profile"
+                                        - studio.metadatafield:
+                                            fieldId: studio.publicprofile
+                                            metadataType: "PROFILE"
+                                            label: "Public Profile"
                                   - io.titlebar:
                                       uesio.variant: io.section
                                       actions:
@@ -194,9 +217,10 @@ definition:
         id: editWorkspace
         title: Edit Workspace
         width: 400px
-        height: 500px
+        height: 560px
         components:
           - io.list:
+              id: editWorkspaceList
               wire: workspaces
               mode: EDIT
               components:

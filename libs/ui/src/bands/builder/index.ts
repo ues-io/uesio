@@ -13,10 +13,12 @@ import {
 	setDefinition,
 	cancel,
 } from "../viewdef"
-import { BuilderState, MetadataListResponse, MetadataListStore } from "./types"
+import { BuilderState } from "./types"
 import { DefinitionMap } from "../../definition/definition"
+import builderOps from "./operations"
 
 import { set as setRoute } from "../route"
+import { getMetadataListKey } from "./selectors"
 
 const builderSlice = createSlice({
 	name: "builder",
@@ -34,34 +36,57 @@ const builderSlice = createSlice({
 		setDropNode: (state, { payload }: PayloadAction<string>) => {
 			state.droppingNode = payload
 		},
-		setAvailableNamespaces: (
-			state,
-			{ payload }: PayloadAction<MetadataListStore>
-		) => {
-			state.namespaces = payload
-		},
-		setMetadataList: (
-			state,
-			{
-				payload: { metadataType, namespace, grouping, metadata },
-			}: PayloadAction<MetadataListResponse>
-		) => ({
-			...state,
-			metadata: {
-				...state.metadata,
-				[metadataType]: {
-					...state.metadata?.[metadataType],
-					[namespace]: grouping
-						? {
-								...state.metadata?.[metadataType]?.[namespace],
-								[grouping]: metadata,
-						  }
-						: metadata,
-				},
-			},
-		}),
 	},
 	extraReducers: (builder) => {
+		builder.addCase(
+			builderOps.getAvailableNamespaces.fulfilled,
+			(state, { payload }) => {
+				state.namespaces = {
+					status: "FULFILLED",
+					data: payload,
+				}
+			}
+		)
+		builder.addCase(builderOps.getAvailableNamespaces.pending, (state) => {
+			state.namespaces = {
+				status: "PENDING",
+				data: null,
+			}
+		})
+		builder.addCase(
+			builderOps.getMetadataList.fulfilled,
+			(state, { payload, meta }) => {
+				const key = getMetadataListKey(
+					meta.arg.metadataType,
+					meta.arg.namespace,
+					meta.arg.grouping
+				)
+				if (!state.metadata) {
+					state.metadata = {}
+				}
+				state.metadata[key] = {
+					status: "FULFILLED",
+					data: payload,
+				}
+			}
+		)
+		builder.addCase(
+			builderOps.getMetadataList.pending,
+			(state, { meta }) => {
+				const key = getMetadataListKey(
+					meta.arg.metadataType,
+					meta.arg.namespace,
+					meta.arg.grouping
+				)
+				if (!state.metadata) {
+					state.metadata = {}
+				}
+				state.metadata[key] = {
+					status: "PENDING",
+					data: null,
+				}
+			}
+		)
 		builder.addCase(changeDefinitionKey, (state, { payload }) => {
 			const parentPath = getParentPath(payload.path)
 			const keyPath = `${parentPath}["${payload.key}"]`
@@ -113,7 +138,5 @@ export const {
 	setSelectedNode,
 	setDragNode,
 	setDropNode,
-	setAvailableNamespaces,
-	setMetadataList,
 } = builderSlice.actions
 export default builderSlice.reducer

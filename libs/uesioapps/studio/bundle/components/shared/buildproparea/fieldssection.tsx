@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import { hooks, component, definition } from "@uesio/ui"
@@ -23,21 +23,11 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
+		props.context,
 		"FIELD",
 		namespace,
 		collectionKey
 	)
-
-	useEffect(() => {
-		if (!fields) {
-			uesio.builder.getMetadataList(
-				props.context,
-				"FIELD",
-				namespace,
-				collectionKey
-			)
-		}
-	})
 
 	const fieldsDef = def?.fields as definition.DefinitionMap
 

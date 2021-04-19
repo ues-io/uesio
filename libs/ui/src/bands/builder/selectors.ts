@@ -42,25 +42,25 @@ const useDragNode = () =>
 const useDropNode = () =>
 	useSelector(({ builder }: RootState) => builder?.droppingNode || "")
 
+const getMetadataListKey = (
+	metadataType: MetadataType,
+	namespace: string,
+	grouping?: string
+) => `${metadataType}-${namespace}-${grouping}`
+
 const useMetadataList = (
 	metadataType: MetadataType,
 	namespace: string,
 	grouping?: string
-) =>
-	grouping
-		? useSelector(
-				({ builder }: RootState) =>
-					builder?.metadata?.[metadataType]?.[namespace]?.[
-						grouping
-					] || null
-		  )
-		: useSelector(
-				({ builder }: RootState) =>
-					builder?.metadata?.[metadataType]?.[namespace] || null
-		  )
+) => {
+	const key = getMetadataListKey(metadataType, namespace, grouping)
+	return useSelector(
+		({ builder }: RootState) => builder?.metadata?.[key]?.data || null
+	)
+}
 
 const useNamespaces = () =>
-	useSelector(({ builder }: RootState) => builder?.namespaces || null)
+	useSelector(({ builder }: RootState) => builder?.namespaces?.data || null)
 
 export {
 	useNodeState,
@@ -70,4 +70,5 @@ export {
 	useDropNode,
 	useMetadataList,
 	useNamespaces,
+	getMetadataListKey,
 }
