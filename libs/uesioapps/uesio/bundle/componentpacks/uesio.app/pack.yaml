@@ -18,6 +18,7 @@ components:
     - io.button.io.primary
     - io.button.io.secondary
     - io.textfield.io.default
+    - io.selectfield.io.default
     - io.text.io.default
     - io.link.io.default
 

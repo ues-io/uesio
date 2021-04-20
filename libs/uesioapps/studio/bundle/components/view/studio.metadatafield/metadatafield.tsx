@@ -1,6 +1,5 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks, metadata } from "@uesio/ui"
-import { Grid } from "@material-ui/core"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -11,6 +10,9 @@ type MetadataFieldDefinition = {
 interface Props extends definition.BaseProps {
 	definition: MetadataFieldDefinition
 }
+
+const Grid = component.registry.getUtility("io.grid")
+const SelectField = component.registry.getUtility("io.selectfield")
 
 const MetadataField: FunctionComponent<Props> = (props) => {
 	const {
@@ -41,97 +43,64 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const value = record.getFieldValue(fieldId) as string
 	const namespaces = uesio.builder.useAvailableNamespaces(workspaceContext)
 	const [namespace, name] = component.path.parseKey(value)
-	const metadata = uesio.builder.useMetadataList(metadataType, namespace)
-
-	const valueUesioCollectionname = record.getFieldValue(
-		"uesio.collectionname"
-	) as string
-
-	const grouping = valueUesioCollectionname
-		? `${namespace}.${valueUesioCollectionname}`
-		: //This reads the fields from the Ref. collection
-		  //grouping = record.getFieldValue("uesio.referencedCollection") as string
-		  //This read the fields from the actual collection
-		  (record.getFieldValue("uesio.collection") as string)
-
-	useEffect(() => {
-		if (!metadata && namespace && metadataType === "FIELD") {
-			uesio.builder.getMetadataList(
-				workspaceContext,
-				metadataType,
-				namespace,
-				grouping
-			)
-			return
-		}
-		if (!metadata && namespace) {
-			uesio.builder.getMetadataList(
-				workspaceContext,
-				metadataType,
-				namespace
-			)
-		}
-	})
+	const metadata = uesio.builder.useMetadataList(
+		workspaceContext,
+		metadataType,
+		namespace
+	)
 
 	if (!fieldMetadata) return null
 
 	if (mode === "READ") {
-		return <component.Component {...props} componentType="material.field" />
+		return <component.Component {...props} componentType="io.field" />
 	}
 
-	const SelectField = component.registry.getUtility("material.selectfield")
-
-	const options =
-		metadataType === "FIELD"
-			? Object.keys(metadata?.[grouping] || {})?.map?.((key) => {
-					const [, name] = component.path.parseKey(key)
-					return {
-						value: name,
-						label: name,
-					}
-			  })
-			: Object.keys(metadata || {}).map((key) => {
-					const [, name] = component.path.parseKey(key)
-					return {
-						value: name,
-						label: name,
-					}
-			  })
+	const options = Object.keys(metadata || {}).map((key) => {
+		const [, name] = component.path.parseKey(key)
+		return {
+			value: name,
+			label: name,
+		}
+	})
 
 	return (
-		<Grid container spacing={1}>
-			<Grid item xs={6}>
-				<SelectField
-					{...props}
-					label={label}
-					value={namespace}
-					options={[
-						{
-							value: "",
-							label: "<No Value>",
-						},
-					].concat(
-						Object.keys(namespaces || {}).map((key) => ({
-							value: key,
-							label: key,
-						}))
-					)}
-					setValue={(value: string) => {
-						record.update(fieldId, value ? `${value}.` : "")
-					}}
-				/>
-			</Grid>
-			<Grid item xs={6}>
-				<SelectField
-					{...props}
-					label=" "
-					value={name}
-					options={options}
-					setValue={(value: string) => {
-						record.update(fieldId, `${namespace}.${value}`)
-					}}
-				/>
-			</Grid>
+		<Grid
+			context={context}
+			styles={{
+				root: {
+					gridTemplateColumns: "1fr 1fr",
+					columnGap: "10px",
+				},
+			}}
+		>
+			<SelectField
+				context={context}
+				label={label}
+				value={namespace}
+				options={[
+					{
+						value: "",
+						label: "<No Value>",
+					},
+				].concat(
+					Object.keys(namespaces || {}).map((key) => ({
+						value: key,
+						label: key,
+					}))
+				)}
+				setValue={(value: string) => {
+					record.update(fieldId, value ? `${value}.` : "")
+				}}
+			/>
+			<SelectField
+				context={context}
+				label="&nbsp;"
+				value={name}
+				options={options}
+				setValue={(value: string) => {
+					record.update(fieldId, `${namespace}.${value}`)
+				}}
+			/>
 		</Grid>
 	)
 }

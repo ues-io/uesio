@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder } from "@uesio/ui"
 import { Grid } from "@material-ui/core"
@@ -38,21 +38,11 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const [namespace, name] = component.path.parseKey(value)
 
 	const metadata = uesio.builder.useMetadataList(
+		context,
 		metadataType,
 		namespace,
 		grouping
 	)
-
-	useEffect(() => {
-		if (!metadata && namespace) {
-			uesio.builder.getMetadataList(
-				context,
-				metadataType,
-				namespace,
-				grouping
-			)
-		}
-	})
 
 	return (
 		<Grid container spacing={1}>

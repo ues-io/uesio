@@ -15,7 +15,7 @@ const METADATA = {
 type MetadataType = keyof typeof METADATA
 
 type MetadataListStore = {
-	[key: string]: MetadataListStore | null
+	[key: string]: MetadataListStore
 } | null
 
 type BuilderState = {
@@ -24,8 +24,16 @@ type BuilderState = {
 	draggingNode?: string
 	droppingNode?: string
 	lastModifiedNode?: string
-	metadata: MetadataListStore
-	namespaces: MetadataListStore
+	metadata: {
+		[key: string]: {
+			status: string
+			data: MetadataListStore
+		}
+	} | null
+	namespaces: {
+		status: "PENDING" | "FULFILLED"
+		data: MetadataListStore
+	} | null
 }
 
 type MetadataListResponse = {

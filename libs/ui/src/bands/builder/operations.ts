@@ -1,39 +1,46 @@
-import { setAvailableNamespaces, setMetadataList } from "."
+import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../context/context"
-import { ThunkFunc } from "../../store/store"
-import { MetadataType } from "./types"
+import { UesioThunkAPI } from "../utils"
+import { getMetadataListKey } from "./selectors"
+import { MetadataListStore, MetadataType } from "./types"
 
-const getMetadataList = (
-	context: Context,
-	metadataType: MetadataType,
-	namespace: string,
-	grouping?: string
-): ThunkFunc => async (dispatch, getState, platform) => {
-	const metadata = await platform.getMetadataList(
-		context,
-		metadataType,
-		namespace,
-		grouping
-	)
-	dispatch(
-		setMetadataList({
-			metadataType,
-			namespace,
-			grouping,
-			metadata,
-		})
-	)
-	return context
-}
+const getMetadataList = createAsyncThunk<
+	MetadataListStore,
+	{
+		context: Context
+		metadataType: MetadataType
+		namespace: string
+		grouping?: string
+	},
+	UesioThunkAPI
+>(
+	"builder/getMetadataList",
+	async ({ context, metadataType, namespace, grouping }, api) =>
+		api.extra.getMetadataList(context, metadataType, namespace, grouping),
+	{
+		condition: ({ metadataType, namespace, grouping }, { getState }) => {
+			const { builder } = getState()
+			const key = getMetadataListKey(metadataType, namespace, grouping)
+			const status = builder.metadata?.[key]?.status
+			return status !== "FULFILLED" && status !== "PENDING"
+		},
+	}
+)
 
-const getAvailableNamespaces = (context: Context): ThunkFunc => async (
-	dispatch,
-	getState,
-	platform
-) => {
-	const namespaces = await platform.getAvailableNamespaces(context)
-	dispatch(setAvailableNamespaces(namespaces))
-	return context
-}
+const getAvailableNamespaces = createAsyncThunk<
+	MetadataListStore,
+	Context,
+	UesioThunkAPI
+>(
+	"builder/getAvailableNamespaces",
+	async (context, api) => api.extra.getAvailableNamespaces(context),
+	{
+		condition: (context, { getState }) => {
+			const { builder } = getState()
+			const status = builder.namespaces?.status
+			return status !== "FULFILLED" && status !== "PENDING"
+		},
+	}
+)
 
 export default { getMetadataList, getAvailableNamespaces }
