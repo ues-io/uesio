@@ -4,7 +4,7 @@ type GroupDefinition = {
 	align?: string
 	width?: string
 	components?: definition.DefinitionList
-} & definition.BaseDefinition
+}
 
 interface GroupProps extends definition.BaseProps {
 	definition: GroupDefinition

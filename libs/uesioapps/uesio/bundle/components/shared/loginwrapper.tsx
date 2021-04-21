@@ -5,15 +5,16 @@ interface WrapperProps {
 	align: "left" | "center" | "right"
 }
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: (props: WrapperProps) => ({
-		textAlign: props.align,
-		marginBottom: "10px",
-	}),
-})
-
 const LoginWrapper: FunctionComponent<WrapperProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				textAlign: props.align,
+				marginBottom: "10px",
+			},
+		},
+		null
+	)
 	return <div className={classes.root}>{props.children}</div>
 }
 

@@ -7,24 +7,22 @@ interface TitleBarProps extends definition.BaseProps {
 	actions?: ReactNode
 }
 
-const useStyles = styles.getUseStyles(
-	["root", "content", "title", "subtitle", "actions"],
-	{
-		root: () => ({
-			display: "flex",
-		}),
-		content: () => ({
-			flex: 1,
-		}),
-		title: () => ({}),
-		subtitle: () => ({}),
-		actions: () => ({}),
-	}
-)
-
 const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
-	const classes = useStyles(props)
 	const { context, title, subtitle, actions } = props
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "flex",
+			},
+			content: {
+				flex: 1,
+			},
+			title: {},
+			subtitle: {},
+			actions: {},
+		},
+		props
+	)
 	return (
 		<div className={classes.root}>
 			<div className={classes.content}>

@@ -3,33 +3,8 @@ import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
-import { createUseStyles, JssProvider } from "react-jss"
 import { useUesio } from "../hooks/hooks"
-
-const useStyles = createUseStyles({
-	"@global": {
-		body: {
-			margin: 0,
-			fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-			fontWeight: 400,
-		},
-		/* apply a natural box layout model to all elements, but allowing components to change */
-		html: {
-			boxSizing: "border-box",
-		},
-		"*": {
-			boxSizing: "inherit",
-		},
-		"@keyframes lineshighlight": {
-			from: {
-				opacity: 1,
-			},
-			to: {
-				opacity: 0,
-			},
-		},
-	},
-})
+import { injectGlobal } from "@emotion/css"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -46,7 +21,20 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	const theme = uesio.theme.useTheme(route?.theme || "", routeContext)
 
 	// This applies the global styles
-	useStyles(props)
+	injectGlobal({
+		body: {
+			margin: 0,
+			fontFamily: "Roboto, Helvetica, Arial, sans-serif",
+			fontWeight: 400,
+		},
+		/* apply a natural box layout model to all elements, but allowing components to change */
+		html: {
+			boxSizing: "border-box",
+		},
+		"*": {
+			boxSizing: "inherit",
+		},
+	})
 
 	useEffect(() => {
 		if (!route) return
@@ -64,15 +52,12 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
-	// We add the key here so that the JSS provider fully refreshes after a navigation.
 	return (
-		<JssProvider key={route.namespace + route.path}>
-			<ComponentInternal
-				componentType="uesio.runtime"
-				path=""
-				context={routeContext}
-			/>
-		</JssProvider>
+		<ComponentInternal
+			componentType="uesio.runtime"
+			path=""
+			context={routeContext}
+		/>
 	)
 }
 

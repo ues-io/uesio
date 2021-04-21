@@ -6,10 +6,13 @@ interface TextProps extends definition.UtilityProps {
 	element?: string
 }
 
-const useStyles = styles.getUseStyles(["root"])
-
 const Link: FunctionComponent<TextProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {},
+		},
+		props
+	)
 	const { text, element } = props
 	const mergedText = props.context.merge(text)
 	if (element === "div") {

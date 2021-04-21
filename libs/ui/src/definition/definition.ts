@@ -1,10 +1,14 @@
 import yaml from "yaml"
 import { Context } from "../context/context"
 
+export type BaseDefinition = {
+	"uesio.styles"?: Record<string, Record<string, string>>
+} & DefinitionMap
+
 export type YamlDoc = yaml.Document
 
 export type BaseProps = {
-	definition?: DefinitionMap
+	definition?: BaseDefinition
 	index?: number
 	path?: string
 	componentType?: string
@@ -16,9 +20,7 @@ export interface UtilityProps extends BaseProps {
 	styles?: Record<string, Record<string, string>>
 	[x: string]: unknown
 }
-export type BaseDefinition = {
-	"uesio.styles"?: Record<string, Record<string, string>>
-}
+
 export type DefinitionMap = {
 	[key: string]: Definition
 }

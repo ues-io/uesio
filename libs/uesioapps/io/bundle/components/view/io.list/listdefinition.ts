@@ -10,7 +10,7 @@ type ListDefinition = {
 	id: string
 	wire: string
 	mode: ListMode
-} & definition.BaseDefinition
+}
 
 interface ListProps extends definition.BaseProps {
 	definition: ListDefinition

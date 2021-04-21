@@ -7,21 +7,22 @@ interface ScrollPanelProps extends definition.BaseProps {
 	style?: CSSProperties
 }
 
-const useStyles = styles.getUseStyles(["root", "inner"], {
-	root: () => ({
-		display: "flex",
-		flexDirection: "column",
-		height: "100%",
-		overflow: "hidden",
-	}),
-	inner: () => ({
-		overflowY: "auto",
-		flex: 1,
-	}),
-})
-
 const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "flex",
+				flexDirection: "column",
+				height: "100%",
+				overflow: "hidden",
+			},
+			inner: {
+				overflowY: "auto",
+				flex: 1,
+			},
+		},
+		props
+	)
 	return (
 		<div style={props.style} className={classes.root}>
 			{props.header}

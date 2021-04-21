@@ -3,10 +3,8 @@ import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { BoxProps } from "./boxdefinition"
 
-const useStyles = styles.getUseStyles(["root"])
-
 const Box: FunctionComponent<BoxProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles({ root: {} }, props)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	return (

@@ -1,30 +1,31 @@
 import { CSSProperties, FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 
-const useStyles = styles.getUseStyles(["content", "inner"], {
-	content: (props) => ({
-		overflowY: "scroll",
-		padding: "60px",
-		...styles.getBackgroundStyles(
-			{
-				image: "uesio.whitesplash",
-			},
-			props.context.getTheme(),
-			props.context
-		),
-	}),
-	inner: {
-		background: "white",
-		overflow: "auto",
-	},
-})
-
 interface Props extends definition.BaseProps {
 	style?: CSSProperties
 }
 
 const Canvas: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			content: {
+				overflowY: "scroll",
+				padding: "60px",
+				...styles.getBackgroundStyles(
+					{
+						image: "uesio.whitesplash",
+					},
+					props.context.getTheme(),
+					props.context
+				),
+			},
+			inner: {
+				background: "white",
+				overflow: "auto",
+			},
+		},
+		props
+	)
 	const route = props.context.getRoute()
 
 	if (!route) {

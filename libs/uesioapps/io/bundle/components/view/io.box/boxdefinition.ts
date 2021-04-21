@@ -2,7 +2,7 @@ import { definition, builder, signal } from "@uesio/ui"
 
 type BoxDefinition = {
 	signals?: signal.SignalDefinition[]
-} & definition.BaseDefinition
+}
 
 interface BoxProps extends definition.BaseProps {
 	definition: BoxDefinition

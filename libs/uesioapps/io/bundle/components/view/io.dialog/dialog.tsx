@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
-import { createUseStyles } from "react-jss"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, hooks, component, styles } from "@uesio/ui"
 import { DialogBase } from "../io.dialogplain/dialogplain"
 
 const TitleBar = component.registry.getUtility("io.titlebar")
@@ -8,15 +7,20 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
 const Group = component.registry.get("io.group")
 
-const useStyles = createUseStyles({
-	root: {
-		gridTemplateRows: "auto 1fr auto",
-		height: "100%",
-	},
-})
-
 const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				gridTemplateRows: "auto 1fr auto",
+				height: "100%",
+			},
+			content: {
+				padding: "20px",
+				overflow: "auto",
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const panelId = props.definition?.id as string
 	return (
@@ -39,7 +43,7 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 						/>
 					}
 				/>
-				<div style={{ padding: "20px", overflow: "auto" }}>
+				<div className={classes.content}>
 					<component.Slot
 						definition={props.definition}
 						listName="components"

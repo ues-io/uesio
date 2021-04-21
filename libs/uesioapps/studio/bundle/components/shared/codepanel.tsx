@@ -14,16 +14,17 @@ interface Props extends definition.BaseProps {
 	style?: CSSProperties
 }
 
-const useStyles = styles.getUseStyles(["highlightLines"], {
-	highlightLines: {
-		backgroundColor: "pink",
-		animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
-	},
-})
-
 const CodePanel: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			highlightLines: {
+				backgroundColor: "pink",
+				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
+			},
+		},
+		props
+	)
 	const yamlDoc = uesio.view.useYAML()
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()

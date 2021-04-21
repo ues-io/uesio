@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
-import clsx from "clsx"
 
 const COLORS = [
 	"#003f5c",
@@ -21,30 +20,31 @@ interface Props extends definition.BaseProps {
 	definition: ColorPickerDefinition
 }
 
-const useStyles = styles.getUseStyles(["root", "color", "selected"], {
-	root: {
-		margin: "20px 0",
-		lineHeight: 0,
-	},
-	color: {
-		height: "20px",
-		width: "20px",
-		display: "inline-block",
-		margin: "4px 4px 4px 0",
-	},
-	selected: {
-		height: "28px",
-		width: "28px",
-		margin: "0 4px 0 0",
-	},
-})
-
 const ColorPicker: FunctionComponent<Props> = (props) => {
 	const {
 		context,
 		definition: { fieldId },
 	} = props
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				margin: "20px 0",
+				lineHeight: 0,
+			},
+			color: {
+				height: "20px",
+				width: "20px",
+				display: "inline-block",
+				margin: "4px 4px 4px 0",
+			},
+			selected: {
+				height: "28px",
+				width: "28px",
+				margin: "0 4px 0 0",
+			},
+		},
+		props
+	)
 	const record = context.getRecord()
 	const wire = context.getWire()
 	if (!wire || !record) return null
@@ -65,7 +65,7 @@ const ColorPicker: FunctionComponent<Props> = (props) => {
 					return (
 						<div
 							key={color}
-							className={clsx(classes.color, {
+							className={styles.cx(classes.color, {
 								[classes.selected]: isSelected,
 							})}
 							onClick={() => record.update(fieldId, color)}

@@ -3,21 +3,22 @@ import { FunctionComponent } from "react"
 import { ImageProps } from "./imagedefinition"
 import { hooks, styles } from "@uesio/ui"
 
-const useStyles = styles.getUseStyles(["root", "inner"], {
-	root: (props: ImageProps) => ({
-		display: "block",
-		textAlign: props.definition?.align || "left",
-		lineHeight: 0,
-		cursor: props.definition?.signals ? "pointer" : "",
-	}),
-	inner: (props: ImageProps) => ({
-		display: "inline-block",
-		height: props.definition?.height,
-	}),
-})
-
 const Image: FunctionComponent<ImageProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "block",
+				textAlign: props.definition?.align || "left",
+				lineHeight: 0,
+				cursor: props.definition?.signals ? "pointer" : "",
+			},
+			inner: {
+				display: "inline-block",
+				height: props.definition?.height,
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const fileFullName = props.definition?.file
 

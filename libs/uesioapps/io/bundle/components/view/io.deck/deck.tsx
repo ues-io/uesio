@@ -6,31 +6,27 @@ import List from "../io.list/list"
 
 const IOGrid = component.registry.getUtility("io.grid")
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: (props) => {
-		const definition = props.definition
-		const gridCols =
-			definition.templateColumns &&
-			styles.getResponsiveStyles(
-				"gridTemplateColumns",
-				definition.templateColumns
-			)
-		const gridRows =
-			definition.templateRows &&
-			styles.getResponsiveStyles(
-				"gridTemplateRows",
-				definition.templateRows
-			)
-
-		return {
-			...gridCols,
-			...gridRows,
-		}
-	},
-})
-
 const Deck: FunctionComponent<DeckProps> = (props) => {
-	const classes = useStyles(props)
+	const definition = props.definition
+	const gridCols =
+		definition.templateColumns &&
+		styles.getResponsiveStyles(
+			"gridTemplateColumns",
+			definition.templateColumns
+		)
+	const gridRows =
+		definition.templateRows &&
+		styles.getResponsiveStyles("gridTemplateRows", definition.templateRows)
+
+	const classes = styles.useStyles(
+		{
+			root: {
+				...gridCols,
+				...gridRows,
+			},
+		},
+		props
+	)
 	return (
 		<IOGrid className={classes.root} context={props.context}>
 			<List {...props} />

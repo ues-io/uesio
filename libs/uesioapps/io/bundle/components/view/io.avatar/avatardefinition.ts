@@ -3,7 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type AvatarDefinition = {
 	image?: string
 	text?: string
-} & definition.BaseDefinition
+}
 
 interface AvatarProps extends definition.BaseProps {
 	definition: AvatarDefinition

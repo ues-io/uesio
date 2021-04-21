@@ -26,20 +26,6 @@ interface LoginProps extends definition.BaseProps {
 const Button = component.registry.getUtility("io.button")
 const AlertComponent = component.registry.getUtility("material.alert")
 
-const useLoginStyles = styles.getUseStyles(
-	["formwrapper", "textfield", "textbutton", "errormsg"],
-	{
-		formwrapper: {
-			width: "300px",
-			margin: "40px auto",
-			textAlign: "center",
-		},
-		errormsg: {
-			marginBottom: "10px",
-		},
-	}
-)
-
 interface LoginButtonProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	text: string
@@ -136,7 +122,19 @@ const signUp = (
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const classes = useLoginStyles(props)
+	const classes = styles.useStyles(
+		{
+			formwrapper: {
+				width: "300px",
+				margin: "40px auto",
+				textAlign: "center",
+			},
+			errormsg: {
+				marginBottom: "10px",
+			},
+		},
+		props
+	)
 	const clientIdKey = props.definition.clientId
 	const clientId = uesio.view.useConfigValue(clientIdKey)
 	const poolIdKey = props.definition.poolId
@@ -239,5 +237,3 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 }
 
 export default LoginCognito
-
-export { useLoginStyles }

@@ -4,18 +4,19 @@ import { styles, hooks, component } from "@uesio/ui"
 import { DeckProps, DeckState } from "./deckdefinition"
 import * as material from "@material-ui/core"
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: (props: DeckProps) => ({
-		...styles.getMarginStyles(
-			props.definition.margin,
-			props.context.getTheme()
-		),
-	}),
-})
-
 const Deck: FunctionComponent<DeckProps> = (props) => {
 	const { path, context, definition } = props
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				...styles.getMarginStyles(
+					props.definition.margin,
+					props.context.getTheme()
+				),
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
 

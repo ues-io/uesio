@@ -3,7 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type TextDefinition = {
 	text?: string
 	element?: string
-} & definition.BaseDefinition
+}
 
 interface TextProps extends definition.BaseProps {
 	definition: TextDefinition

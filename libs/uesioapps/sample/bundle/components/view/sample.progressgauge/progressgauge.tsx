@@ -3,17 +3,19 @@ import { ProgressGaugeProps } from "./progressgaugedefinition"
 import { styles } from "@uesio/ui"
 import { Slider } from "@material-ui/core"
 
-const useStyles = styles.getUseStyles(["root"], {
-	// add padding depending on indicator
-	root: (props: ProgressGaugeProps) => ({
-		padding: "20px",
-		paddingTop: props.definition.indicator === "off" ? "20px" : "40px",
-		backgroundColor: "White",
-	}),
-})
-
 const ProgressGauge: FunctionComponent<ProgressGaugeProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			// add padding depending on indicator
+			root: {
+				padding: "20px",
+				paddingTop:
+					props.definition.indicator === "off" ? "20px" : "40px",
+				backgroundColor: "White",
+			},
+		},
+		props
+	)
 	return (
 		<div className={classes.root}>
 			<Slider

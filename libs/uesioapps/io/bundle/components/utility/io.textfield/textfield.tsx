@@ -11,25 +11,28 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const useStyles = styles.getUseStyles(["root", "label", "input", "readonly"], {
-	root: ({ width }) => ({
-		...(width && { width }),
-	}),
-	label: () => ({}),
-	input: () => ({}),
-	readonly: () => ({}),
-})
-
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const classes = useStyles(props)
 	const { setValue, value, mode } = props
 	const readonly = mode === "READ"
+	const width = props.definition?.width as string
+	const classes = styles.useStyles(
+		{
+			root: {
+				...(width && { width }),
+			},
+			label: {},
+			input: {},
+			readonly: {},
+		},
+		props
+	)
+
 	return (
 		<div className={classes.root}>
 			<div className={classes.label}>{props.label}</div>
 			<input
 				value={value}
-				className={styles.clsx(
+				className={styles.cx(
 					classes.input,
 					readonly && classes.readonly
 				)}
