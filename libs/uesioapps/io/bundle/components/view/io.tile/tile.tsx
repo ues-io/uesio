@@ -3,26 +3,27 @@ import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
 
-const useStyles = styles.getUseStyles(["root", "content", "avatar"], {
-	root: (props) => ({
-		display: "flex",
-		...(props.definition.signals && {
-			cursor: "pointer",
-		}),
-		"&:hover": {
-			backdropFilter: "brightness(97%)",
-		},
-	}),
-	content: () => ({
-		flex: 1,
-	}),
-	avatar: () => ({
-		marginRight: "8px",
-	}),
-})
-
 const Tile: FunctionComponent<TileProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "flex",
+				...(props.definition.signals && {
+					cursor: "pointer",
+				}),
+				"&:hover": {
+					backdropFilter: "brightness(97%)",
+				},
+			},
+			content: {
+				flex: 1,
+			},
+			avatar: {
+				marginRight: "8px",
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	const [handler, portals] = uesio.signal.useHandler(definition.signals)

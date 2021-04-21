@@ -1,6 +1,5 @@
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, SyntheticEvent, DragEvent } from "react"
-import clsx from "clsx"
 import BuildBorder from "./buildborder"
 import { makeStyles, createStyles } from "@material-ui/core"
 import { handleDrop, getDropIndex, isDropAllowed, isNextSlot } from "./dragdrop"
@@ -109,11 +108,11 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const addPlaceholder = path === dropNode
 
 	const classes = useStyles()
-	const containerClasses = clsx(
+	const containerClasses = styles.cx(
 		classes.root,
 		direction === "horizontal" ? classes.horizontal : classes.vertical,
 		{
-			[classes.isDragging]: dragNode,
+			[classes.isDragging]: !!dragNode,
 			[classes.placeHolder]: addPlaceholder,
 			[classes.structureView]: isStructureView,
 			[classes.contentView]: !isStructureView,

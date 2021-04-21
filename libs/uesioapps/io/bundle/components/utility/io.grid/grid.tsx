@@ -1,17 +1,18 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: {
-		display: "grid",
-	},
-})
-
 const Grid: FunctionComponent<definition.UtilityProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "grid",
+			},
+		},
+		props
+	)
 	return (
 		<div
-			className={styles.clsx(
+			className={styles.cx(
 				classes.root,
 				props.className as string | undefined
 			)}

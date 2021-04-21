@@ -6,10 +6,8 @@ interface LinkProps extends definition.UtilityProps {
 	text?: string
 }
 
-const useStyles = styles.getUseStyles(["root"])
-
 const Link: FunctionComponent<LinkProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles({ root: {} }, props)
 	const { onClick, text } = props
 	return (
 		<a

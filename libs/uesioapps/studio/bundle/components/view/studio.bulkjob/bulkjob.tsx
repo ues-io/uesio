@@ -11,15 +11,6 @@ interface Props extends definition.BaseProps {
 	definition: BulkjobDefinition
 }
 
-const useStyles = styles.getUseStyles(["root", "input"], {
-	root: (props: Props) => ({
-		margin: styles.getSpacing(props.context.getTheme(), 1),
-	}),
-	input: {
-		display: "none",
-	},
-})
-
 const handleChange = (
 	selectorFiles: FileList | null,
 	uesio: hooks.Uesio,
@@ -55,7 +46,17 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				margin: styles.getSpacing(props.context.getTheme(), 1),
+			},
+			input: {
+				display: "none",
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 
 	const record = context.getRecord()

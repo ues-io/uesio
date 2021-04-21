@@ -3,12 +3,13 @@
 // into here. Eventually, if the Alert component makes it out of
 // lab, we can delete this.
 import { forwardRef } from "react"
-import clsx from "clsx"
+
+import { styles } from "@uesio/ui"
 
 import * as material from "@material-ui/core"
 import Icon from "../../view/material.icon/icon"
 
-export const styles = (theme: material.Theme): material.StyleRules => {
+export const alertStyles = (theme: material.Theme): material.StyleRules => {
 	const darken = material.darken
 	const lighten = material.lighten
 	const getColor = theme.palette.type === "light" ? darken : lighten
@@ -183,7 +184,7 @@ const Alert = forwardRef((props: any, ref) => {
 			role={role}
 			square
 			elevation={0}
-			className={clsx(
+			className={styles.cx(
 				classes.root,
 				classes[`${variant}${material.capitalize(color || severity)}`],
 				className
@@ -219,5 +220,8 @@ const Alert = forwardRef((props: any, ref) => {
 		</material.Paper>
 	)
 })
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default material.withStyles(styles, { name: "MuiAlert" })(Alert) as any
+
+export default material.withStyles(alertStyles, { name: "MuiAlert" })(
+	Alert
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+) as any

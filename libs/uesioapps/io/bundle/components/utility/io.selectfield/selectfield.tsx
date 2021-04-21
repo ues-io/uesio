@@ -11,19 +11,21 @@ interface SelectFieldProps extends definition.UtilityProps {
 	options: collection.SelectOption[] | null
 }
 
-const useStyles = styles.getUseStyles(["root", "label", "input", "readonly"], {
-	root: ({ width }) => ({
-		...(width && { width }),
-	}),
-	label: () => ({}),
-	input: () => ({
-		appearance: "none",
-	}),
-	readonly: () => ({}),
-})
-
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const classes = useStyles(props)
+	const width = props.definition?.width as string
+	const classes = styles.useStyles(
+		{
+			root: {
+				...(width && { width }),
+			},
+			label: {},
+			input: {
+				appearance: "none",
+			},
+			readonly: {},
+		},
+		props
+	)
 	//const { setValue, value, mode } = props
 	//const readonly = mode === "READ"
 	return (

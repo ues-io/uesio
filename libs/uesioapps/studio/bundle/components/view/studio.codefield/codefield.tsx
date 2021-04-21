@@ -32,17 +32,6 @@ interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
 
-const useStyles = styles.getUseStyles(["root", "input"], {
-	root: (props: Props) => ({
-		margin: styles.getSpacing(props.context.getTheme(), 1),
-	}),
-	input: (props: Props) => ({
-		height: props.definition.height || "200px",
-		margin: styles.getSpacing(props.context.getTheme(), 1, 0),
-		border: "1px solid #c8c8c8",
-	}),
-})
-
 function getChangeHandler(
 	fieldType: collection.FieldType,
 	language: CodeFieldLanguage,
@@ -93,7 +82,19 @@ function getValue(
 }
 
 const CodeField: FunctionComponent<Props> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				margin: styles.getSpacing(props.context.getTheme(), 1),
+			},
+			input: {
+				height: props.definition.height || "200px",
+				margin: styles.getSpacing(props.context.getTheme(), 1, 0),
+				border: "1px solid #c8c8c8",
+			},
+		},
+		props
+	)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
 	const [message, setMessage] = useState("")

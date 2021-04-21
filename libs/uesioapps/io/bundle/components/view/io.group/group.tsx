@@ -5,17 +5,18 @@ import { GroupProps } from "./groupdefinition"
 
 const IOGrid = component.registry.getUtility("io.grid")
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: (props: GroupProps) => ({
-		gridTemplateColumns: props.definition?.components
-			?.map(() => props.definition.width || "100px")
-			.join(" "),
-		columnGap: "10px",
-	}),
-})
-
 const Grid: FunctionComponent<GroupProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				gridTemplateColumns: props.definition?.components
+					?.map(() => props.definition.width || "100px")
+					.join(" "),
+				columnGap: "10px",
+			},
+		},
+		props
+	)
 	return (
 		<IOGrid className={classes.root} context={props.context}>
 			<component.Slot

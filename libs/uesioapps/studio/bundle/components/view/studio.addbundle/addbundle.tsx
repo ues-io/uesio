@@ -20,12 +20,6 @@ interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
 
-const useStyles = styles.getUseStyles(["root", "card"], {
-	card: (props: Props) => ({
-		margin: styles.getSpacing(props.context.getTheme(), 1),
-	}),
-})
-
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
 	for (const record of records) {
@@ -86,7 +80,15 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		context,
 	} = props
 	const uesio = hooks.useUesio(props)
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {},
+			card: {
+				margin: styles.getSpacing(props.context.getTheme(), 1),
+			},
+		},
+		props
+	)
 	const [selectedValues, setSelectedValues] = useState(
 		{} as Record<string, string>
 	)

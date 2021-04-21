@@ -378,6 +378,8 @@
               "npm run get-module-version --modulename=redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/redux/{}/redux.js\" | xargs -I{} wget -O dist/vendor/redux.js {} &",
               "npm run get-module-version --modulename=react-redux | xargs -I{} echo \"https://cdnjs.cloudflare.com/ajax/libs/react-redux/{}/react-redux.js\" | xargs -I{} wget -O dist/vendor/react-redux.js {} &",
               "npm run get-module-version --modulename=@material-ui/core | xargs -I{} echo \"https://unpkg.com/@material-ui/core@{}/umd/material-ui.development.js\" | xargs -I{} wget -O dist/vendor/material-ui.development.js {} &",
+              "npm run get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js {} &",
+              "npm run get-module-version --modulename=@emotion/css | xargs -I{} echo \"https://unpkg.com/@emotion/css@{}/dist/emotion-css.umd.min.js.map\" | xargs -I{} wget -O dist/vendor/emotion-css.umd.min.js.map {} &",
               "echo Done!"
             ],
             "parallel": false

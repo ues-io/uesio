@@ -3,20 +3,6 @@ import { FileUploadProps } from "./fileuploaddefinition"
 import { hooks, styles, wire, signal, component } from "@uesio/ui"
 import { Button } from "@material-ui/core"
 
-const useStyles = styles.getUseStyles(["root", "input"], {
-	root: (props: FileUploadProps) => ({
-		display: "block",
-		lineHeight: 0,
-		...styles.getMarginStyles(
-			props.definition?.margin,
-			props.context.getTheme()
-		),
-	}),
-	input: {
-		display: "none",
-	},
-})
-
 async function handleChange(
 	selectorFiles: FileList | null,
 	fieldId: string,
@@ -86,7 +72,22 @@ async function handleChange(
 
 const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	const { definition, context } = props
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				display: "block",
+				lineHeight: 0,
+				...styles.getMarginStyles(
+					props.definition?.margin,
+					props.context.getTheme()
+				),
+			},
+			input: {
+				display: "none",
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 	const wire = context.getWire()

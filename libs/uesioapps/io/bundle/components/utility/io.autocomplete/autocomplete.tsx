@@ -20,18 +20,20 @@ type SelectedItem = {
 	value: string
 }
 
-const useStyles = styles.getUseStyles(["root", "label", "input", "readonly"], {
-	root: ({ width }) => ({
-		...(width && { width }),
-	}),
-	label: () => ({}),
-	input: () => ({}),
-	readonly: () => ({}),
-})
-
 const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	const { getItems, value, setValue, label } = props
-	const classes = useStyles(props)
+	const width = props.definition?.width as string
+	const classes = styles.useStyles(
+		{
+			root: {
+				...(width && { width }),
+			},
+			label: {},
+			input: {},
+			readonly: {},
+		},
+		props
+	)
 	const [loading, setLoading] = useState(false)
 	const [inputItems, setInputItems] = useState<{ value: string }[]>([])
 	const lastInputChange = useRef<number>(0)

@@ -1,12 +1,11 @@
 import { getURLFromFullName } from "../hooks/fileapi"
-import { createUseStyles } from "react-jss"
 import { Context } from "../context/context"
 import { colors, Color } from "@material-ui/core"
 import { CSSProperties } from "react"
 import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
-import { DefinitionMap } from "../definition/definition"
-import clsx from "clsx"
+import { BaseProps } from "../definition/definition"
+import { css, cx, CSSInterpolation } from "@emotion/css"
 
 type ResponsiveDefinition =
 	| string
@@ -184,37 +183,26 @@ const defaultTheme: ThemeState = {
 		spacing: 8,
 	},
 }
-// eslint-disable-next-line
-function getUseStyles<T extends { [key: string]: any }>(
-	classNames: string[],
-	defaultStyling?: Record<
-		string,
-		((props: T) => CSSProperties) | CSSProperties
-	>
-): (props: T) => Record<string, string> {
-	const createStyleArgs: Record<string, (props: T) => CSSProperties> = {}
-	classNames.forEach((className) => {
-		createStyleArgs[className] = (props: T): CSSProperties => {
-			const defaultValuesFromStyles = defaultStyling?.[className]
-			let defaultValues: CSSProperties = {}
-			if (typeof defaultValuesFromStyles === "function") {
-				defaultValues = defaultValuesFromStyles(props)
-			} else if (defaultValuesFromStyles) {
-				defaultValues = defaultValuesFromStyles
-			}
-			const definition = <DefinitionMap>props.definition
-			const explicitStyles = definition && definition["uesio.styles"]
-			const customExtensions =
-				(explicitStyles &&
-					(<Record<string, Record<string, unknown>>>explicitStyles)[
-						className
-					]) ||
-				{}
-			return { ...defaultValues, ...customExtensions }
-		}
-	})
-	return createUseStyles(createStyleArgs)
+
+function useStyles<K extends string>(
+	defaults: Record<K, CSSInterpolation>,
+	props: BaseProps | null
+) {
+	return Object.keys(defaults).reduce(
+		(classNames: Record<string, string>, className: K) => {
+			const defaultStyles = defaults[className]
+			const explicitStyles =
+				props?.definition?.["uesio.styles"]?.[className]
+			classNames[className] = css([
+				css(defaultStyles),
+				css(explicitStyles),
+			])
+			return classNames
+		},
+		{}
+	) as Record<K, string>
 }
+
 export {
 	defaultTheme,
 	useStyleProperty,
@@ -228,8 +216,8 @@ export {
 	CSSProperties,
 	ThemeState,
 	getSpacing,
-	getUseStyles,
 	getColor,
 	getResponsiveStyles,
-	clsx,
+	cx,
+	useStyles,
 }

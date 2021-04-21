@@ -1,7 +1,7 @@
 import { FC } from "react"
 import {
+	BaseDefinition,
 	BaseProps,
-	DefinitionMap,
 	UtilityProps,
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
@@ -82,13 +82,13 @@ const getUtility = (key: string) => (props: UtilityProps) => {
 			"uesio.styles": props.definition?.["uesio.styles"]
 				? mergeDefinitionMaps(
 						props.styles,
-						props.definition["uesio.styles"] as DefinitionMap,
+						props.definition["uesio.styles"],
 						undefined
 				  )
 				: props.styles,
 		}),
 		...(props.variant && { "uesio.variant": props.variant }),
-	}
+	} as BaseDefinition
 	return render(loader, key, { ...props, componentType: key, definition })
 }
 

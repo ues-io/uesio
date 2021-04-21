@@ -232,6 +232,7 @@ const getWebpackConfig = (
 			"@uesio/ui": "uesio",
 			"@uesio/lazymonaco": "LazyMonaco",
 			yaml: "yaml",
+			"@emotion/css": "emotion",
 			"@material-ui/core": "MaterialUI",
 			"@material-ui/core/SvgIcon": "MaterialUI.SvgIcon",
 		},

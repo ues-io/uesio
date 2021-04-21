@@ -9,21 +9,22 @@ interface IconButtonProps extends definition.BaseProps {
 	disabled?: boolean
 }
 
-const useStyles = styles.getUseStyles(["root"], {
-	root: () => ({
-		fontFamily: "inherit",
-		border: "none",
-		cursor: "pointer",
-		display: "block",
-		width: "100%",
-		background: "transparent",
-	}),
-})
-
 const Icon = component.registry.getUtility("io.icon")
 
 const IconButton: FunctionComponent<IconButtonProps> = (props) => {
-	const classes = useStyles(props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				fontFamily: "inherit",
+				border: "none",
+				cursor: "pointer",
+				display: "block",
+				width: "100%",
+				background: "transparent",
+			},
+		},
+		props
+	)
 	const { context, icon } = props
 	return (
 		<button onClick={props.onClick} className={classes.root}>

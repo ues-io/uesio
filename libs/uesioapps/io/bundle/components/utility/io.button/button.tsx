@@ -7,17 +7,20 @@ interface ButtonProps extends definition.BaseProps {
 	width?: string
 }
 
-const useStyles = styles.getUseStyles(["root", "label"], {
-	root: ({ width }) => ({
-		fontFamily: "inherit",
-		border: "none",
-		cursor: "pointer",
-		...(width && { width }),
-	}),
-})
-
 const Button: FunctionComponent<ButtonProps> = (props) => {
-	const classes = useStyles(props)
+	const width = props.definition?.width as string
+	const classes = styles.useStyles(
+		{
+			root: {
+				fontFamily: "inherit",
+				border: "none",
+				cursor: "pointer",
+				...(width && { width }),
+			},
+			label: {},
+		},
+		props
+	)
 	const { onClick, label } = props
 	return (
 		<button onClick={onClick} className={classes.root}>

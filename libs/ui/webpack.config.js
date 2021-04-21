@@ -64,6 +64,7 @@ module.exports = {
 		redux: "Redux",
 		"react-redux": "ReactRedux",
 		yaml: "yaml",
+		"@emotion/css": "emotion",
 		"yaml/types": "yaml.types",
 		"@material-ui/core": "MaterialUI",
 	},

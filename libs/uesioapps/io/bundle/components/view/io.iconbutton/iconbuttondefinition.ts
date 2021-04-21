@@ -3,7 +3,7 @@ import { definition, builder, signal } from "@uesio/ui"
 type IconButtonDefinition = {
 	icon: string
 	signals?: signal.SignalDefinition[]
-} & definition.BaseDefinition
+}
 
 interface IconButtonProps extends definition.BaseProps {
 	definition: IconButtonDefinition
