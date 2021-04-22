@@ -80,6 +80,8 @@ definition:
                           uesio.context:
                             wire: workspaces
                           view: studio.workspacenav
+                          params:
+                            selected: bots
                 - io.griditem:
                     components:
                       - io.titlebar:
@@ -99,58 +101,37 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: newBot
-                      - material.grid:
-                          justify: space-between
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: Bots
-                                      variant: h5
-                                  - material.typography:
-                                      text: Gotta catch 'em all!
-                                      variant: body2
-                            - material.griditem:
-                                components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Create New Bot"
-                                            signals:
-                                              - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/newbot"
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
+                      - io.deck:
                           id: botsDeck
                           wire: bots
+                          uesio.styles:
+                            root:
+                              padding: 40px
                           components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color:
-                                      intention: "primary"
-                                  height: 10px
-                                margin: 1
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${studio.type}"
-                                      textTransform: "capitalize"
-                                  - material.typography:
-                                      text: "${studio.name}"
+                            - io.tile:
+                                uesio.styles:
+                                  root:
+                                    padding: 10px 20px
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                                content:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: "#21242D"
+                                          display: "inline"
+                                          verticalAlign: middle
+                                      text: ${studio.type} - ${studio.name}
+                                      element: div
+                                avatar:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontFamily: Material Icons
+                                          color: "#ccc"
+                                          verticalAlign: middle
+                                      text: smart_toy
   panels:
     - io.dialog:
         id: newBot
@@ -169,11 +150,11 @@ definition:
                     fieldId: studio.collection
                     metadataType: "COLLECTION"
                     label: "Collection"
-                - material.field:
+                - io.field:
                     fieldId: studio.dialect
-                - material.field:
+                - io.field:
                     fieldId: studio.type
-                - material.field:
+                - io.field:
                     fieldId: studio.content
         actions:
           - io.button:
@@ -184,7 +165,7 @@ definition:
                   wires:
                     - "newbot"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/{studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

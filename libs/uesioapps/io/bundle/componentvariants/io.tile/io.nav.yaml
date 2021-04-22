@@ -1,0 +1,11 @@
+name: nav
+component: io.tile
+label: Nav
+definition:
+  "uesio.styles":
+    root:
+      padding: 10px 20px
+      color: "#21242D"
+    selected:
+      backgroundColor: $Theme{color.primary}
+      color: white

@@ -1,4 +1,0 @@
-name: newbot
-path: app/{appname}/workspace/{workspacename}/newbot
-view: studio.newbot
-theme: uesio.default

@@ -21,14 +21,23 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			avatar: {
 				marginRight: "8px",
 			},
+			selected: {},
 		},
 		props
 	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	const [handler, portals] = uesio.signal.useHandler(definition.signals)
+	const isSelected = component.shouldHaveClass(
+		context,
+		"selected",
+		definition
+	)
 	return (
-		<div className={classes.root} onClick={handler}>
+		<div
+			className={styles.cx(classes.root, isSelected && classes.selected)}
+			onClick={handler}
+		>
 			<div className={classes.avatar}>
 				<component.Slot
 					definition={definition}

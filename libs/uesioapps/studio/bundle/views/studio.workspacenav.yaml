@@ -10,9 +10,12 @@ definition:
               uesio.variant: io.plain
               title: Data
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: bots
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/bots
@@ -20,7 +23,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Bots
@@ -30,13 +32,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: smart_toy
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/collections
@@ -44,7 +43,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Collections
@@ -54,13 +52,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: list
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/datasources
@@ -68,7 +63,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Data Sources
@@ -78,13 +72,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: dynamic_feed
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/selectlists
@@ -92,7 +83,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Select Lists
@@ -102,16 +92,13 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: playlist_add_check
           - io.titlebar:
               uesio.variant: io.plain
               title: User Interface
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/components
@@ -119,7 +106,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Components
@@ -129,13 +115,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: widgets
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/routes
@@ -143,7 +126,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Routes
@@ -153,13 +135,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: map
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/themes
@@ -167,7 +146,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Themes
@@ -177,13 +155,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: palette
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/views
@@ -191,7 +166,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Views
@@ -201,16 +175,13 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: view_quilt
           - io.titlebar:
               uesio.variant: io.plain
               title: Admin
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/configvalues
@@ -218,7 +189,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Config Values
@@ -228,13 +198,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: tune
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/files
@@ -242,7 +209,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Files
@@ -252,13 +218,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: collections
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
@@ -266,7 +229,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Permission Sets
@@ -276,13 +238,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: rule
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
@@ -290,7 +249,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Profiles
@@ -300,13 +258,10 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: group
           - io.tile:
-              uesio.styles:
-                root:
-                  padding: 10px 20px
+              uesio.variant: io.nav
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/secrets
@@ -314,7 +269,6 @@ definition:
                 - io.text:
                     uesio.styles:
                       root:
-                        color: "#21242D"
                         display: "inline"
                         verticalAlign: middle
                     text: Secrets
@@ -324,6 +278,5 @@ definition:
                     uesio.styles:
                       root:
                         fontFamily: Material Icons
-                        color: "#ccc"
                         verticalAlign: middle
                     text: lock

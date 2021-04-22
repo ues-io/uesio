@@ -5,5 +5,15 @@ import * as registry from "./component/registry"
 import * as dragdrop from "./component/dragdrop"
 import { Component } from "./component/component"
 import SlotRuntime from "./components/slotruntime"
+import { shouldHaveClass } from "./component/display"
 
-export { Slot, SlotRuntime, View, path, registry, dragdrop, Component }
+export {
+	Slot,
+	SlotRuntime,
+	View,
+	path,
+	registry,
+	dragdrop,
+	Component,
+	shouldHaveClass,
+}

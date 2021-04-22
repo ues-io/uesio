@@ -31,7 +31,6 @@ views:
   studio.bundle: true
   studio.site: true
   studio.bots: true
-  studio.newbot: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
@@ -75,7 +74,6 @@ routes:
   studio.bundle: true
   studio.site: true
   studio.bots: true
-  studio.newbot: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
