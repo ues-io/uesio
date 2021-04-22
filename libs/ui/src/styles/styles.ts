@@ -193,14 +193,11 @@ function useStyles<K extends string>(
 			const defaultStyles = defaults[className]
 			const explicitStyles =
 				props?.definition?.["uesio.styles"]?.[className]
-			classNames[className] = css([
-				css(defaultStyles),
-				css(explicitStyles),
-			])
+			classNames[className] = css([defaultStyles, explicitStyles])
 			return classNames
 		},
-		{}
-	) as Record<K, string>
+		{} as Record<K, string>
+	)
 }
 
 export {

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, metadata } from "@uesio/ui"
+import { definition, component, hooks, metadata, collection } from "@uesio/ui"
 
 type MetadataFieldDefinition = {
 	fieldId: string
@@ -14,7 +14,9 @@ interface Props extends definition.BaseProps {
 const Grid = component.registry.getUtility("io.grid")
 const SelectField = component.registry.getUtility("io.selectfield")
 
-const MetadataField: FunctionComponent<Props> = (props) => {
+const addBlankSelectOption = collection.addBlankSelectOption
+
+const MetadataFieldSelect: FunctionComponent<Props> = (props) => {
 	const {
 		context,
 		definition: { fieldId, label, metadataType },
@@ -39,7 +41,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
-	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldValue(fieldId) as string
 	const namespaces = uesio.builder.useAvailableNamespaces(workspaceContext)
 	const [namespace, name] = component.path.parseKey(value)
@@ -50,18 +51,6 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	)
 
 	if (!fieldMetadata) return null
-
-	if (mode === "READ") {
-		return <component.Component {...props} componentType="io.field" />
-	}
-
-	const options = Object.keys(metadata || {}).map((key) => {
-		const [, name] = component.path.parseKey(key)
-		return {
-			value: name,
-			label: name,
-		}
-	})
 
 	return (
 		<Grid
@@ -77,12 +66,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 				context={context}
 				label={label}
 				value={namespace}
-				options={[
-					{
-						value: "",
-						label: "<No Value>",
-					},
-				].concat(
+				options={addBlankSelectOption(
 					Object.keys(namespaces || {}).map((key) => ({
 						value: key,
 						label: key,
@@ -96,7 +80,15 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 				context={context}
 				label="&nbsp;"
 				value={name}
-				options={options}
+				options={addBlankSelectOption(
+					Object.keys(metadata || {}).map((key) => {
+						const [, name] = component.path.parseKey(key)
+						return {
+							value: name,
+							label: name,
+						}
+					})
+				)}
 				setValue={(value: string) => {
 					record.update(fieldId, `${namespace}.${value}`)
 				}}
@@ -104,5 +96,12 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 		</Grid>
 	)
 }
+
+const MetadataField: FunctionComponent<Props> = (props) =>
+	props.context.getFieldMode() !== "EDIT" ? (
+		<component.Component {...props} componentType="io.field" />
+	) : (
+		<MetadataFieldSelect {...props} />
+	)
 
 export default MetadataField

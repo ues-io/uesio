@@ -4,7 +4,6 @@ import { parseKey } from "../../component/path"
 import viewAdapter from "./adapter"
 
 import loadViewOp from "./operations/load"
-import { set as routeSet } from "../route"
 
 const viewSlice = createSlice({
 	name: "view",
@@ -28,11 +27,6 @@ const viewSlice = createSlice({
 				loaded: false,
 			})
 		})
-		// Clear out all views on navigation
-		builder.addCase(routeSet, () => ({
-			ids: [],
-			entities: {},
-		}))
 	},
 })
 

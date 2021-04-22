@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
 
 interface SelectFieldProps extends definition.UtilityProps {
@@ -17,6 +17,15 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		{
 			root: {
 				...(width && { width }),
+				position: "relative",
+				"&:after": {
+					content: '"expand_more"',
+					fontFamily: "Material Icons",
+					position: "absolute",
+					right: "10px",
+					bottom: "20px",
+					pointerEvents: "none",
+				},
 			},
 			label: {},
 			input: {
@@ -26,16 +35,22 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		},
 		props
 	)
-	//const { setValue, value, mode } = props
-	//const readonly = mode === "READ"
+	const { setValue, value, mode } = props
+	const readonly = mode === "READ"
 	return (
 		<div className={classes.root}>
 			<div className={classes.label}>{props.label}</div>
-			<select className={classes.input}>
+			<select
+				className={classes.input}
+				onChange={(event: ChangeEvent<HTMLSelectElement>): void =>
+					setValue(event.target.value)
+				}
+				disabled={readonly}
+			>
 				{props.options?.map((option) => (
 					<option
 						value={option.value}
-						selected={props.value === option.value}
+						selected={value === option.value}
 					>
 						{option.label}
 					</option>

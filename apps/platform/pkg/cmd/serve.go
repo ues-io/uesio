@@ -85,6 +85,7 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
+	workspaceAPI(wr, "/metadata/{badapi:.*}", http.NotFound)
 
 	workspaceAPI(wr, "/bulk/job", controller.BulkJob).Methods("POST")
 	workspaceAPI(wr, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")

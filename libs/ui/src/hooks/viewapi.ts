@@ -39,7 +39,10 @@ class ViewAPI {
 	useView(viewId?: string, params?: ViewParams, context?: Context) {
 		const view = useView(viewId || "")
 		useEffect(() => {
-			if (!view) {
+			const newParams = params ? JSON.stringify(params) : ""
+			const oldParams =
+				view && view.params ? JSON.stringify(view.params) : ""
+			if (!view || (view && oldParams !== newParams)) {
 				this.dispatcher(
 					loadViewOp({
 						context: context || this.uesio.getContext(),

@@ -1,9 +1,13 @@
 import { FunctionComponent } from "react"
 
 import { FieldProps } from "./fielddefinition"
-import { component } from "@uesio/ui"
+import { component, collection } from "@uesio/ui"
+
 const TextField = component.registry.getUtility("io.textfield")
+const SelectField = component.registry.getUtility("io.selectfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
+
+const addBlankSelectOption = collection.addBlankSelectOption
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
@@ -33,7 +37,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				{...props}
 				mode={mode}
 				type={fieldMetadata.getType()}
-				value={(record.getFieldValue(fieldId) as string) || ""}
+				value={record.getFieldValue(fieldId) || ""}
 				setValue={(value: string) => record.update(fieldId, value)}
 				label={label}
 				hideLabel={hideLabel}
@@ -41,7 +45,18 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			/>
 		)
 	} else if (type === "SELECT") {
-		return null
+		return (
+			<SelectField
+				{...props}
+				mode={mode}
+				value={record.getFieldValue(fieldId) || ""}
+				setValue={(value: string) => record.update(fieldId, value)}
+				label={label}
+				hideLabel={hideLabel}
+				variant="io.default"
+				options={addBlankSelectOption(fieldMetadata.getOptions() || [])}
+			/>
+		)
 	} else if (type === "CHECKBOX") {
 		return null
 	} else if (type === "REFERENCE") {

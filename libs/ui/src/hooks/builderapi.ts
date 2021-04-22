@@ -85,7 +85,7 @@ class BuilderAPI {
 	) => {
 		const metadata = useMetadataList(metadataType, namespace, grouping)
 		useEffect(() => {
-			if (!metadata) {
+			if (!metadata && metadataType && namespace) {
 				this.dispatcher(
 					builderOps.getMetadataList({
 						context,
