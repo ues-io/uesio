@@ -163,7 +163,7 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 				hasAccess := hasWriteAccess(collectionMetadata, changeItem.IDValue, fieldsInvolvedInAccess, userResponseTokens, session)
 				if !hasAccess {
 					appendChange = false
-					listErrors = append(listErrors, "No access to record: "+changeItem.IDValue.(string))
+					listErrors = append(listErrors, "No write access to record: "+changeItem.IDValue.(string))
 				}
 			}
 			if appendChange {
@@ -189,7 +189,7 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 				})
 
 			} else {
-				listErrors = append(listErrors, "No access to record: "+idField.(string))
+				listErrors = append(listErrors, "No write access to record: "+idField.(string))
 			}
 			return nil
 		})

@@ -143,7 +143,7 @@ func getFieldsNeededFromRecordToDetermineWriteAccess(metadata *adapt.CollectionM
 	}
 	fieldKeys := map[string]bool{}
 	for _, tokenDefinition := range metadata.RecordChallengeTokens {
-		if tokenDefinition.Type == "Lookup" {
+		if tokenDefinition.Type == "lookup" {
 			// we need the keys in the conditions,
 			// not the template (which refers to the joined collection fields)
 			for _, condition := range tokenDefinition.Conditions {
@@ -152,7 +152,7 @@ func getFieldsNeededFromRecordToDetermineWriteAccess(metadata *adapt.CollectionM
 					fieldKeys[key] = true
 				}
 			}
-		} else if tokenDefinition.Type == "Record" {
+		} else if tokenDefinition.Type == "record" {
 			keys := templating.ExtractKeys(tokenDefinition.Token)
 			for _, key := range keys {
 				fieldKeys[key] = true
@@ -176,7 +176,7 @@ func hasWriteAccess(metadata *adapt.CollectionMetadata, recordId interface{}, fi
 		}
 	}
 	loadOp := adapt.LoadOp{
-		CollectionName: metadata.Name,
+		CollectionName: metadata.GetFullName(),
 		WireName:       "foo",
 		Collection:     &adapt.Collection{},
 		Conditions: []adapt.LoadRequestCondition{
