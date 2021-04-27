@@ -97,7 +97,7 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func getValidationFunction(collectionMetadata *adapt.CollectionMetadata) func(adapt.ChangeItem) error {
+func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata) func(adapt.ChangeItem) error {
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
@@ -134,11 +134,15 @@ func getValidationFunction(collectionMetadata *adapt.CollectionMetadata) func(ad
 func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.SaveOp, error) {
 
 	var listErrors []string
-	validationFunc := getValidationFunction(collectionMetadata)
+	fieldValidations := getFieldValidationsFunction(collectionMetadata)
 
 	changes := adapt.ChangeItems{}
 	deletes := adapt.ChangeItems{}
-
+	fieldsInvolvedInAccess := getFieldsNeededFromRecordToDetermineWriteAccess(collectionMetadata)
+	userResponseTokens, err := GenerateResponseTokens(collectionMetadata, session)
+	if err != nil {
+		return nil, err
+	}
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item loadable.Item) error {
 			changeItem := adapt.ChangeItem{
@@ -150,12 +154,21 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 			} else {
 				changeItem.IDValue = idValue
 			}
-			err = validationFunc(changeItem)
+			err = fieldValidations(changeItem)
 			if err != nil {
 				listErrors = append(listErrors, err.Error())
 			}
-
-			changes = append(changes, changeItem)
+			appendChange := true
+			if !changeItem.IsNew {
+				hasAccess := hasWriteAccess(collectionMetadata, changeItem.IDValue, fieldsInvolvedInAccess, userResponseTokens, session)
+				if !hasAccess {
+					appendChange = false
+					listErrors = append(listErrors, "No write access to record: "+changeItem.IDValue.(string))
+				}
+			}
+			if appendChange {
+				changes = append(changes, changeItem)
+			}
 			return nil
 		})
 		if err != nil {
@@ -165,9 +178,19 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 
 	if request.Deletes != nil {
 		err := request.Deletes.Loop(func(item loadable.Item) error {
-			deletes = append(deletes, adapt.ChangeItem{
-				FieldChanges: item,
-			})
+			idField, err := item.GetField(collectionMetadata.IDField)
+			if err != nil {
+				return err
+			}
+			hasAccess := hasWriteAccess(collectionMetadata, idField, fieldsInvolvedInAccess, userResponseTokens, session)
+			if hasAccess {
+				deletes = append(deletes, adapt.ChangeItem{
+					FieldChanges: item,
+				})
+
+			} else {
+				listErrors = append(listErrors, "No write access to record: "+idField.(string))
+			}
 			return nil
 		})
 		if err != nil {

@@ -12,3 +12,45 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
+    - material.buttonset:
+        buttons:
+          - material.button:
+              color: primary
+              signals:
+                - signal: wire/CREATE_RECORD
+                  wire: teams
+              text: Create Row
+              variant: contained
+          - material.button:
+              color: primary
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - teams
+              text: Save
+              variant: contained
+          - material.button:
+              color: primary
+              signals:
+                - signal: wire/CANCEL
+                  wire: teams
+              text: Cancel
+              variant: contained
+          - material.button:
+              color: primary
+              signals:
+                - signal: component/material.table/TOGGLE_MODE
+                  target: teamsTable
+              text: Mode
+              variant: contained
+    - material.table:
+        wire: teams
+        mode: EDIT
+        id: teamsTable
+        columns:
+          - material.column:
+              field: studio.name
+          - material.column:
+              field: studio.id
+          - material.column:
+              field: studio.appid

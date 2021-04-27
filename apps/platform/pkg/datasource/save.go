@@ -12,11 +12,12 @@ import (
 
 // SaveRequest struct
 type SaveRequest struct {
-	Collection string             `json:"collection"`
-	Wire       string             `json:"wire"`
-	Changes    loadable.Group     `json:"changes"`
-	Deletes    loadable.Group     `json:"deletes"`
-	Options    *adapt.SaveOptions `json:"-"`
+	Collection         string             `json:"collection"`
+	Wire               string             `json:"wire"`
+	Changes            loadable.Group     `json:"changes"`
+	Deletes            loadable.Group     `json:"deletes"`
+	Options            *adapt.SaveOptions `json:"-"`
+	UserResponseTokens *adapt.SaveOptions `json:"-"`
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
