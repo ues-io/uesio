@@ -109,9 +109,7 @@ definition:
                           wire: workspaces
                           components:
                             - io.tile:
-                                uesio.styles:
-                                  root:
-                                    padding: 10px 20px
+                                uesio.variant: io.nav
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/${studio.name}"
@@ -126,11 +124,8 @@ definition:
                                       element: div
                                 avatar:
                                   - io.text:
-                                      uesio.styles:
-                                        root:
-                                          fontFamily: Material Icons
-                                          color: "#ccc"
-                                          verticalAlign: middle
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
                                       text: handyman
                 - io.griditem:
                     components:
@@ -171,9 +166,7 @@ definition:
                                     padding: 0 40px
                                 components:
                                   - io.tile:
-                                      uesio.styles:
-                                        root:
-                                          padding: 10px 20px
+                                      uesio.variant: io.nav
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
@@ -188,11 +181,8 @@ definition:
                                             element: div
                                       avatar:
                                         - io.text:
-                                            uesio.styles:
-                                              root:
-                                                fontFamily: Material Icons
-                                                color: "#ccc"
-                                                verticalAlign: middle
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
                                             text: inventory_2
                             - io.titlebar:
                                 uesio.variant: io.section
@@ -216,9 +206,7 @@ definition:
                                     padding: 0 40px
                                 components:
                                   - io.tile:
-                                      uesio.styles:
-                                        root:
-                                          padding: 10px 20px
+                                      uesio.variant: io.nav
                                       signals:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/site/${uesio.name}"
@@ -233,11 +221,8 @@ definition:
                                             element: div
                                       avatar:
                                         - io.text:
-                                            uesio.styles:
-                                              root:
-                                                fontFamily: Material Icons
-                                                color: "#ccc"
-                                                verticalAlign: middle
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
                                             text: public
   panels:
     - io.dialog:

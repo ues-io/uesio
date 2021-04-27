@@ -109,9 +109,7 @@ definition:
                               padding: 40px
                           components:
                             - io.tile:
-                                uesio.styles:
-                                  root:
-                                    padding: 10px 20px
+                                uesio.variant: io.nav
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
@@ -126,11 +124,8 @@ definition:
                                       element: div
                                 avatar:
                                   - io.text:
-                                      uesio.styles:
-                                        root:
-                                          fontFamily: Material Icons
-                                          color: "#ccc"
-                                          verticalAlign: middle
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
                                       text: smart_toy
   panels:
     - io.dialog:

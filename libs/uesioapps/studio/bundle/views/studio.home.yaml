@@ -55,9 +55,7 @@ definition:
                           wire: apps
                           components:
                             - io.tile:
-                                uesio.styles:
-                                  root:
-                                    padding: 10px 20px
+                                uesio.variant: io.nav
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/${uesio.name}"
@@ -78,11 +76,8 @@ definition:
                                           lineHeight: 16pt
                                 avatar:
                                   - io.text:
-                                      uesio.styles:
-                                        root:
-                                          fontFamily: Material Icons
-                                          color: "${uesio.color}"
-                                          verticalAlign: middle
+                                      uesio.variant: io.icon
+                                      color: "${uesio.color}"
                                       text: circle
                 - io.griditem:
                     components:
