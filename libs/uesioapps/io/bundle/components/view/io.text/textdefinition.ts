@@ -3,6 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type TextDefinition = {
 	text?: string
 	element?: string
+	color?: string
 }
 
 interface TextProps extends definition.BaseProps {
@@ -24,6 +25,11 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "element",
 			type: "TEXT",
 			label: "element",
+		},
+		{
+			name: "color",
+			type: "TEXT",
+			label: "color",
 		},
 	],
 	sections: [],

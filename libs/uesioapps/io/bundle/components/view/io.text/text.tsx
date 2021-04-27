@@ -11,6 +11,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 			context={context}
 			text={definition.text}
 			element={definition.element}
+			color={definition.color}
 		/>
 	)
 }

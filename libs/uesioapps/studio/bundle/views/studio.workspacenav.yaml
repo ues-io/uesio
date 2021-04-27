@@ -29,10 +29,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: smart_toy
           - io.tile:
               uesio.variant: io.nav
@@ -49,10 +46,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: list
           - io.tile:
               uesio.variant: io.nav
@@ -69,10 +63,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: dynamic_feed
           - io.tile:
               uesio.variant: io.nav
@@ -89,10 +80,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: playlist_add_check
           - io.titlebar:
               uesio.variant: io.plain
@@ -112,10 +100,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: widgets
           - io.tile:
               uesio.variant: io.nav
@@ -132,10 +117,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: map
           - io.tile:
               uesio.variant: io.nav
@@ -152,10 +134,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: palette
           - io.tile:
               uesio.variant: io.nav
@@ -172,10 +151,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: view_quilt
           - io.titlebar:
               uesio.variant: io.plain
@@ -195,10 +171,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: tune
           - io.tile:
               uesio.variant: io.nav
@@ -215,10 +188,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: collections
           - io.tile:
               uesio.variant: io.nav
@@ -235,10 +205,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: rule
           - io.tile:
               uesio.variant: io.nav
@@ -255,10 +222,7 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: group
           - io.tile:
               uesio.variant: io.nav
@@ -275,8 +239,5 @@ definition:
                     element: div
               avatar:
                 - io.text:
-                    uesio.styles:
-                      root:
-                        fontFamily: Material Icons
-                        verticalAlign: middle
+                    uesio.variant: io.icon
                     text: lock

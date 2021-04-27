@@ -57,11 +57,8 @@ definition:
                                 element: div
                           avatar:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontFamily: Material Icons
-                                    color: "${uesio.color}"
-                                    verticalAlign: middle
+                                uesio.variant: io.icon
+                                color: "${uesio.color}"
                                 text: circle
                 - io.list:
                     uesio.display:
@@ -93,11 +90,8 @@ definition:
                                 element: div
                           avatar:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontFamily: Material Icons
-                                    color: ${["studio.app"]["uesio.color"]}
-                                    verticalAlign: middle
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["uesio.color"]}
                                 text: circle
                       - io.tile:
                           signals:
@@ -123,11 +117,8 @@ definition:
                                 element: div
                           avatar:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontFamily: Material Icons
-                                    color: "#AAA"
-                                    verticalAlign: middle
+                                uesio.variant: io.icon
+                                color: "#AAA"
                                 text: handyman
                       - io.tile:
                           uesio.display:
@@ -153,11 +144,8 @@ definition:
                                 element: div
                           avatar:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontFamily: Material Icons
-                                    color: "#AAA"
-                                    verticalAlign: middle
+                                uesio.variant: io.icon
+                                color: "#AAA"
                                 text: $Param{itemIcon}
           - io.griditem:
               uesio.styles:
