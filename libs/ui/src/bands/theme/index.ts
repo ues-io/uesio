@@ -1,8 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import themeAdapter from "./adapter"
 import ops from "./operations"
-import { getNodeAtPath, parse, YAML_OPTIONS } from "../../yamlutils/yamlutils"
-import yaml from "yaml"
+import { getNodeAtPath, parse, newDoc } from "../../yamlutils/yamlutils"
 import { defaultTheme } from "../../styles/styles"
 import merge from "lodash.merge"
 
@@ -15,7 +14,7 @@ const themeSlice = createSlice({
 			ops.fetchTheme.fulfilled,
 			(state, { payload }: PayloadAction<string>) => {
 				const yamlDoc = parse(payload)
-				const defDoc = new yaml.Document(YAML_OPTIONS)
+				const defDoc = newDoc()
 				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
 
 				return themeAdapter.upsertOne(state, {

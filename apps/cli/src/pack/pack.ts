@@ -263,7 +263,7 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors.forEach((message) => console.error(message))
+			info.errors?.forEach((message) => console.error(message))
 
 			// force the build process to fail upon compilation error, except for the watcher on dev mode
 			if (!dev) {
@@ -271,7 +271,7 @@ const getWebpackComplete = (
 			}
 		}
 		if (stats.hasWarnings()) {
-			info.warnings.forEach((message) => console.warn(message))
+			info.warnings?.forEach((message) => console.warn(message))
 		}
 		if (dev) {
 			if (firstMessage) {

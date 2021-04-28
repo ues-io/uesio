@@ -9,7 +9,7 @@ import {
 	getNodeAtPath,
 	removeNodeAtPath,
 	setNodeAtPath,
-	YAML_OPTIONS,
+	newDoc,
 	parse,
 } from "../../yamlutils/yamlutils"
 import get from "lodash.get"
@@ -303,7 +303,7 @@ const viewDefSlice = createSlice({
 			loadOp.fulfilled,
 			(state, { payload }: PayloadAction<string>) => {
 				const yamlDoc = parse(payload)
-				const defDoc = new yaml.Document(YAML_OPTIONS)
+				const defDoc = newDoc()
 				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
 				const dependenciesDoc = getNodeAtPath(
 					"dependencies",
