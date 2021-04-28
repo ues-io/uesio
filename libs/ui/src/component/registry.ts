@@ -16,9 +16,9 @@ const registry: Registry<FC<BaseProps>> = {}
 const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
-const componentSignalsRegistry: Registry<Registry<
-	ComponentSignalDescriptor
->> = {}
+const componentSignalsRegistry: Registry<
+	Registry<ComponentSignalDescriptor>
+> = {}
 
 const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
 	registry[key] = item
