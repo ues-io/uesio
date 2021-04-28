@@ -8,7 +8,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/platform"],
+          "outputs": [
+            "dist/platform"
+          ],
           "options": {
             "command": "go build -o ../../dist/platform/uesio && npx webpack --config webpack.config.js",
             "cwd": "apps/platform"
@@ -16,7 +18,9 @@
         },
         "build-go": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/platform"],
+          "outputs": [
+            "dist/platform"
+          ],
           "options": {
             "command": "go build -o ../../dist/platform/uesio",
             "cwd": "apps/platform"
@@ -74,7 +78,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/ui"],
+          "outputs": [
+            "dist/ui"
+          ],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/ui"
@@ -90,7 +96,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/ui/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/ui/**/*.ts*"
+            ]
           }
         },
         "test": {
@@ -98,7 +106,10 @@
           "options": {
             "jestConfig": "libs/ui/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/ui"
+          ]
         }
       }
     },
@@ -110,7 +121,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/lazymonaco"],
+          "outputs": [
+            "dist/lazymonaco"
+          ],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/lazymonaco"
@@ -126,7 +139,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/lazymonaco/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/lazymonaco/**/*.ts*"
+            ]
           }
         },
         "test": {
@@ -134,7 +149,10 @@
           "options": {
             "jestConfig": "libs/lazymonaco/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": [
+            "coverage/libs/lazymonaco"
+          ]
         }
       }
     },
@@ -146,7 +164,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/yaml"],
+          "outputs": [
+            "dist/yaml"
+          ],
           "options": {
             "command": "npx webpack --config webpack.config.js",
             "cwd": "libs/yaml"
@@ -184,7 +204,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/sample/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/uesioapps/sample/**/*.ts*"
+            ]
           }
         }
       }
@@ -212,7 +234,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/studio/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/uesioapps/studio/**/*.ts*"
+            ]
           }
         }
       }
@@ -240,7 +264,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/io/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/uesioapps/io/**/*.ts*"
+            ]
           }
         }
       }
@@ -347,7 +373,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/uesioapps/material/**/*.ts*"]
+            "lintFilePatterns": [
+              "libs/uesioapps/material/**/*.ts*"
+            ]
           }
         },
         "test": {
@@ -367,7 +395,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/vendor"],
+          "outputs": [
+            "dist/vendor"
+          ],
           "options": {
             "commands": [
               "mkdir -p dist/vendor &",
@@ -403,7 +433,9 @@
       "architect": {
         "build": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/cli"],
+          "outputs": [
+            "dist/cli"
+          ],
           "options": {
             "command": "npx tsc",
             "cwd": "apps/cli"
@@ -411,7 +443,9 @@
         },
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
-          "outputs": ["dist/cli"],
+          "outputs": [
+            "dist/cli"
+          ],
           "options": {
             "command": "npx -w tsc &",
             "cwd": "apps/cli"
@@ -420,7 +454,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/cli/**/*.ts*"]
+            "lintFilePatterns": [
+              "apps/cli/**/*.ts*"
+            ]
           }
         },
         "test": {
