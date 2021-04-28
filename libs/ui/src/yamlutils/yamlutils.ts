@@ -7,23 +7,22 @@ const YAML_OPTIONS = {
 	keepNodeTypes: false,
 }
 
-function parse(str: string): yaml.Document.Parsed {
-	return yaml.parseDocument(str, YAML_OPTIONS)
-}
+const newDoc = () => new yaml.Document(YAML_OPTIONS)
+const parse = (str: string) => yaml.parseDocument(str, YAML_OPTIONS)
 
-function isInRange(offset: number, node: Node): boolean {
+const isInRange = (offset: number, node: Node) => {
 	if (!node.range) {
 		return false
 	}
 	return offset >= node.range[0] && offset <= node.range[1]
 }
 
-function getNodeAtOffset(
+const getNodeAtOffset = (
 	offset: number,
 	parentnode: Node,
 	path: string,
 	includeKey?: boolean
-): [Node | null, string] {
+): [Node | null, string] => {
 	if (isInRange(offset, parentnode)) {
 		const nodes = (parentnode as Collection).items
 		let index = 0
@@ -166,5 +165,5 @@ export {
 	getCommonAncestorPath,
 	getPathFromPathArray,
 	parse,
-	YAML_OPTIONS,
+	newDoc,
 }

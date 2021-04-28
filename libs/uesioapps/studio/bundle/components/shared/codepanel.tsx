@@ -1,6 +1,6 @@
 import { FunctionComponent, useRef, useEffect, CSSProperties } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
-import yaml from "yaml"
+import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -163,7 +163,7 @@ const CodePanel: FunctionComponent<Props> = (props) => {
 										newAST.contents
 									)
 									if (newNode) {
-										const yamlDoc = new yaml.Document()
+										const yamlDoc = util.yaml.newDoc()
 										yamlDoc.contents = newNode
 										uesio.view.setYaml(
 											util.yaml.getPathFromPathArray(

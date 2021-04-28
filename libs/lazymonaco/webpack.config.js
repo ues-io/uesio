@@ -7,7 +7,7 @@ const MONACO_DIR = path.resolve(__dirname, "../../node_modules/monaco-editor")
 const sourceMaps = { devtool: "source-map" }
 const inDevMode = process.env.NODE_ENV
 	? process.env.NODE_ENV === "development"
-	: true
+	: false
 module.exports = {
 	mode: inDevMode ? "development" : "production",
 	// Enable sourcemaps for debugging webpack's output.
@@ -57,7 +57,7 @@ module.exports = {
 		libraryTarget: "umd",
 		filename: "[name].js",
 		chunkFilename: "[name].js",
-		sourceMapFilename: "[name].js.map",
+		sourceMapFilename: "[file].js.map",
 		path: path.join(__dirname, "../../dist/lazymonaco"),
 	},
 
