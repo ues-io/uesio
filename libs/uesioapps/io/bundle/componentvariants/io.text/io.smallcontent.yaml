@@ -2,7 +2,7 @@ name: smallcotent
 component: io.text
 label: Small Content
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       color: "#555"
       fontSize: "11pt"

@@ -2,7 +2,7 @@ name: secondary
 component: io.button
 label: Secondary
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       backgroundColor: "#f6f6f6"
       fontWeight: 500

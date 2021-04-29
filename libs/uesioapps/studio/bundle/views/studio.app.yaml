@@ -75,44 +75,93 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - io.grid:
-        uesio.styles:
-          root:
-            minHeight: 100vh
-        templateRows: 60px 1fr
+        uesio.variant: studio.mainlayout
         items:
-          - uesio.view:
-              view: studio.topbar
-              uesio.context:
-                wire: apps
-          - io.grid:
-              uesio.styles:
-                root:
-                  gridRow: 2
-              templateColumns: 300px 1fr
-              items:
-                - io.griditem:
-                    uesio.styles:
-                      root:
-                        backgroundColor: "#fafafa"
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: apps
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - io.titlebar:
+                    uesio.variant: io.plain
+                    title: Workspaces
+                    actions:
+                      - io.iconbutton:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newWorkspace
+                - io.list:
+                    id: workspaceslist
+                    wire: workspaces
+                    components:
+                      - io.tile:
+                          uesio.variant: io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/${studio.name}"
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                    display: "inline"
+                                    verticalAlign: middle
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#ccc"
+                                text: handyman
+          - io.griditem:
+              components:
+                - io.list:
+                    wire: apps
                     components:
                       - io.titlebar:
-                          uesio.variant: io.plain
-                          title: Workspaces
+                          uesio.variant: io.main
+                          uesio.styles:
+                            root:
+                              borderBottom: 6px solid ${uesio.color}
+                          title: ${uesio.name}
+                          subtitle: ${uesio.description}
                           actions:
-                            - io.iconbutton:
-                                icon: add
-                                signals:
-                                  - signal: panel/TOGGLE
-                                    panel: newWorkspace
-                      - io.list:
-                          id: workspaceslist
-                          wire: workspaces
+                            - io.group:
+                                components:
+                                  - io.button:
+                                      text: Edit
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: editApp
+                                  - io.button:
+                                      text: Delete
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: panel/TOGGLE
+                                          panel: deleteApp
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Bundles
+                          subtitle: Pack it up. Pack it in. Let me begin.
+                      - io.deck:
+                          id: bundleslist
+                          wire: bundles
+                          uesio.styles:
+                            root:
+                              padding: 0 40px
                           components:
                             - io.tile:
                                 uesio.variant: io.nav
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/${studio.name}"
+                                    path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
                                 content:
                                   - io.text:
                                       uesio.styles:
@@ -120,110 +169,53 @@ definition:
                                           color: "#21242D"
                                           display: "inline"
                                           verticalAlign: middle
-                                      text: ${studio.name}
+                                      text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
                                       element: div
                                 avatar:
                                   - io.text:
                                       uesio.variant: io.icon
                                       color: "#ccc"
-                                      text: handyman
-                - io.griditem:
-                    components:
-                      - io.list:
-                          wire: apps
+                                      text: inventory_2
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Sites
+                          subtitle: Your site is in sight.
+                          actions:
+                            - io.group:
+                                width: 210px
+                                components:
+                                  - io.button:
+                                      text: "Create a Site"
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: "panel/TOGGLE"
+                                          panel: "newSite"
+                      - io.deck:
+                          id: siteslist
+                          wire: sites
+                          uesio.styles:
+                            root:
+                              padding: 0 40px
                           components:
-                            - io.titlebar:
-                                uesio.variant: io.main
-                                uesio.styles:
-                                  root:
-                                    borderBottom: 6px solid ${uesio.color}
-                                title: ${uesio.name}
-                                subtitle: ${uesio.description}
-                                actions:
-                                  - io.group:
-                                      components:
-                                        - io.button:
-                                            text: Edit
-                                            uesio.variant: io.secondary
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: editApp
-                                        - io.button:
-                                            text: Delete
-                                            uesio.variant: io.secondary
-                                            signals:
-                                              - signal: panel/TOGGLE
-                                                panel: deleteApp
-                            - io.titlebar:
-                                uesio.variant: io.section
-                                title: Bundles
-                                subtitle: Pack it up. Pack it in. Let me begin.
-                            - io.deck:
-                                id: bundleslist
-                                wire: bundles
-                                uesio.styles:
-                                  root:
-                                    padding: 0 40px
-                                components:
-                                  - io.tile:
-                                      uesio.variant: io.nav
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
-                                      content:
-                                        - io.text:
-                                            uesio.styles:
-                                              root:
-                                                color: "#21242D"
-                                                display: "inline"
-                                                verticalAlign: middle
-                                            text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
-                                            element: div
-                                      avatar:
-                                        - io.text:
-                                            uesio.variant: io.icon
-                                            color: "#ccc"
-                                            text: inventory_2
-                            - io.titlebar:
-                                uesio.variant: io.section
-                                title: Sites
-                                subtitle: Your site is in sight.
-                                actions:
-                                  - io.group:
-                                      width: 210px
-                                      components:
-                                        - io.button:
-                                            text: "Create a Site"
-                                            uesio.variant: io.secondary
-                                            signals:
-                                              - signal: "panel/TOGGLE"
-                                                panel: "newSite"
-                            - io.deck:
-                                id: siteslist
-                                wire: sites
-                                uesio.styles:
-                                  root:
-                                    padding: 0 40px
-                                components:
-                                  - io.tile:
-                                      uesio.variant: io.nav
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/site/${uesio.name}"
-                                      content:
-                                        - io.text:
-                                            uesio.styles:
-                                              root:
-                                                color: "#21242D"
-                                                display: "inline"
-                                                verticalAlign: middle
-                                            text: ${uesio.name}
-                                            element: div
-                                      avatar:
-                                        - io.text:
-                                            uesio.variant: io.icon
-                                            color: "#ccc"
-                                            text: public
+                            - io.tile:
+                                uesio.variant: io.nav
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/site/${uesio.name}"
+                                content:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          color: "#21242D"
+                                          display: "inline"
+                                          verticalAlign: middle
+                                      text: ${uesio.name}
+                                      element: div
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: public
   panels:
     - io.dialog:
         id: deleteApp

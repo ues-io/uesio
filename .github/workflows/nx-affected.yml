@@ -6,7 +6,7 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [12.x]
+                node-version: [14.x]
                 go-version: [^1.15]
         steps:
             - uses: actions/checkout@v2
@@ -25,9 +25,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/.npm
-                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+                  key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-node-
+                      ${{ runner.os }}-${{ matrix.node-version }}-node-
             - name: Install npm Dependencies
               run: npm ci
             - name: Cache ./node_modules/.cache for nx usage

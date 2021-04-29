@@ -3,7 +3,7 @@ import themeAdapter from "./adapter"
 import ops from "./operations"
 import { getNodeAtPath, parse, newDoc } from "../../yamlutils/yamlutils"
 import { defaultTheme } from "../../styles/styles"
-import merge from "lodash.merge"
+import merge from "lodash/merge"
 
 const themeSlice = createSlice({
 	name: "theme",

@@ -1,6 +1,6 @@
 name: purple
 label: Purple
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       backgroundColor: purple

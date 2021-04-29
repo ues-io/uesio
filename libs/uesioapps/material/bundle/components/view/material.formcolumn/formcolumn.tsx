@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { component, hooks, definition } from "@uesio/ui"
 import { FormColumnProps } from "./formcolumndefinition"
-import toPath from "lodash.topath"
+import toPath from "lodash/toPath"
 import * as material from "@material-ui/core"
 const { useUesio } = hooks
 

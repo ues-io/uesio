@@ -51,15 +51,13 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 					<Button
 						{...props}
 						onClick={renderProps.onClick}
-						definition={{
-							"uesio.variant": "io.secondary",
-							"uesio.styles": {
-								root: {
-									width: "210px",
-								},
-								label: {
-									textTransform: "none",
-								},
+						variant="io.secondary"
+						styles={{
+							root: {
+								width: "210px",
+							},
+							label: {
+								textTransform: "none",
 							},
 						}}
 						label={buttonText}

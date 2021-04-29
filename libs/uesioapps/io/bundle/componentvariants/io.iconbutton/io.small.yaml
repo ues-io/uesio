@@ -2,7 +2,7 @@ name: small
 component: io.iconbutton
 label: Small
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       padding: 0
       color: "white"

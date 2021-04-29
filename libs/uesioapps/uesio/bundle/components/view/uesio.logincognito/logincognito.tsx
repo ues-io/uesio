@@ -58,15 +58,13 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 		<Button
 			{...props}
 			onClick={() => setMode("login")}
-			definition={{
-				"uesio.variant": "io.primary",
-				"uesio.styles": {
-					root: {
-						width: "210px",
-					},
-					label: {
-						textTransform: "none",
-					},
+			variant="io.primary"
+			styles={{
+				root: {
+					width: "210px",
+				},
+				label: {
+					textTransform: "none",
 				},
 			}}
 			label={text}

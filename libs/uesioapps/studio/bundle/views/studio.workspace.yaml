@@ -38,153 +38,145 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - io.grid:
-        uesio.styles:
-          root:
-            minHeight: 100vh
-        templateRows: 60px 1fr
+        uesio.variant: studio.mainlayout
         items:
-          - uesio.view:
-              view: studio.topbar
-              uesio.context:
-                wire: workspaces
-          - io.grid:
-              uesio.styles:
-                root:
-                  gridRow: 2
-              templateColumns: 300px 1fr
-              items:
-                - io.griditem:
-                    uesio.styles:
-                      root:
-                        backgroundColor: "#fafafa"
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+          - io.griditem:
+              components:
+                - io.list:
+                    wire: workspaces
                     components:
-                      - uesio.view:
-                          uesio.context:
-                            wire: workspaces
-                          view: studio.workspacenav
-                - io.griditem:
-                    components:
-                      - io.list:
-                          wire: workspaces
+                      - io.griditem:
                           components:
-                            - io.griditem:
-                                components:
-                                  - io.titlebar:
-                                      uesio.variant: io.main
-                                      uesio.styles:
-                                        root:
-                                          borderBottom: 6px solid ${uesio.color}
-                                      title: ${studio.name}
-                                      subtitle: Workspace
-                                      actions:
-                                        - io.group:
-                                            components:
-                                              - io.button:
-                                                  text: Edit
-                                                  uesio.variant: io.secondary
-                                                  signals:
-                                                    - signal: panel/TOGGLE
-                                                      panel: editWorkspace
-                                              - io.button:
-                                                  text: Delete
-                                                  uesio.variant: io.secondary
-                                                  signals:
-                                                    - signal: panel/TOGGLE
-                                                      panel: deleteWorkspace
-                                  - io.grid:
-                                      uesio.styles:
-                                        root:
-                                          padding: 40px
-                                      templateColumns:
-                                        xs: 1fr
-                                        md: 1fr 1fr
-                                        lg: 1fr 1fr 1fr 1fr
-                                      columnGap: 10px
-                                      items:
-                                        - studio.metadatafield:
-                                            fieldId: studio.homeroute
-                                            metadataType: "ROUTE"
-                                            label: "Home Route"
-                                        - studio.metadatafield:
-                                            fieldId: studio.loginroute
-                                            metadataType: "ROUTE"
-                                            label: "Login Route"
-                                        - studio.metadatafield:
-                                            fieldId: studio.defaultprofile
-                                            metadataType: "PROFILE"
-                                            label: "Default Profile"
-                                        - studio.metadatafield:
-                                            fieldId: studio.publicprofile
-                                            metadataType: "PROFILE"
-                                            label: "Public Profile"
-                                  - io.titlebar:
-                                      uesio.variant: io.section
-                                      actions:
-                                        - io.group:
-                                            width: 210px
-                                            components:
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: Import Data
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: Configuration
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: app/$Param{appname}/workspace/$Param{workspacename}/configuration
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: Package New Version
-                                                  signals:
-                                                    - signal: "bot/CALL"
-                                                      bot: "studio.newbundle"
-                                                      params:
-                                                        workspace: $Param{workspacename}
-                                                        app: $Param{appname}
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{appname}"
-                                  - io.titlebar:
-                                      uesio.variant: io.section
-                                      title: Installed Bundles
-                                      actions:
-                                        - io.group:
-                                            width: 210px
-                                            components:
-                                              - io.button:
-                                                  text: "Browse Bundle Store"
-                                                  uesio.variant: io.secondary
-                                                  signals:
-                                                    - signal: "route/NAVIGATE"
-                                                      path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
-                                  - io.deck:
-                                      id: installedbundleslist
-                                      wire: installedapps
-                                      uesio.styles:
-                                        root:
-                                          padding: 0 40px
+                            - io.titlebar:
+                                uesio.variant: io.main
+                                uesio.styles:
+                                  root:
+                                    borderBottom: 6px solid ${uesio.color}
+                                title: ${studio.name}
+                                subtitle: Workspace
+                                actions:
+                                  - io.group:
                                       components:
-                                        - io.tile:
-                                            uesio.variant: io.nav
+                                        - io.button:
+                                            text: Edit
+                                            uesio.variant: io.secondary
+                                            signals:
+                                              - signal: panel/TOGGLE
+                                                panel: editWorkspace
+                                        - io.button:
+                                            text: Delete
+                                            uesio.variant: io.secondary
+                                            signals:
+                                              - signal: panel/TOGGLE
+                                                panel: deleteWorkspace
+                            - io.grid:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - studio.metadatafield:
+                                      fieldId: studio.homeroute
+                                      metadataType: "ROUTE"
+                                      label: "Home Route"
+                                  - studio.metadatafield:
+                                      fieldId: studio.loginroute
+                                      metadataType: "ROUTE"
+                                      label: "Login Route"
+                                  - studio.metadatafield:
+                                      fieldId: studio.defaultprofile
+                                      metadataType: "PROFILE"
+                                      label: "Default Profile"
+                                  - studio.metadatafield:
+                                      fieldId: studio.publicprofile
+                                      metadataType: "PROFILE"
+                                      label: "Public Profile"
+                            - io.titlebar:
+                                uesio.variant: io.section
+                                actions:
+                                  - io.group:
+                                      width: 210px
+                                      components:
+                                        - io.button:
+                                            uesio.variant: io.secondary
+                                            text: Import Data
                                             signals:
                                               - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
-                                            content:
-                                              - io.text:
-                                                  uesio.styles:
-                                                    root:
-                                                      color: "#21242D"
-                                                      display: "inline"
-                                                      verticalAlign: middle
-                                                  text: ${["studio.bundle"]["uesio.namespace"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
-                                                  element: div
-                                            avatar:
-                                              - io.text:
-                                                  uesio.variant: io.icon
-                                                  color: "#ccc"
-                                                  text: circle
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/import"
+                                        - io.button:
+                                            uesio.variant: io.secondary
+                                            text: Configuration
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: app/$Param{appname}/workspace/$Param{workspacename}/configuration
+                                        - io.button:
+                                            uesio.variant: io.secondary
+                                            text: Package New Version
+                                            signals:
+                                              - signal: "bot/CALL"
+                                                bot: "studio.newbundle"
+                                                params:
+                                                  workspace: $Param{workspacename}
+                                                  app: $Param{appname}
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}"
+                            - io.titlebar:
+                                uesio.variant: io.section
+                                title: Installed Bundles
+                                actions:
+                                  - io.group:
+                                      width: 210px
+                                      components:
+                                        - io.button:
+                                            text: "Browse Bundle Store"
+                                            uesio.variant: io.secondary
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/add-bundle"
+                            - io.deck:
+                                id: installedbundleslist
+                                wire: installedapps
+                                uesio.styles:
+                                  root:
+                                    padding: 0 40px
+                                components:
+                                  - io.tile:
+                                      uesio.variant: io.nav
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
+                                      content:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                color: "#21242D"
+                                                display: "inline"
+                                                verticalAlign: middle
+                                            text: ${["studio.bundle"]["uesio.namespace"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                                            element: div
+                                      avatar:
+                                        - io.text:
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
+                                            text: circle
   panels:
     - io.dialog:
         id: deleteWorkspace

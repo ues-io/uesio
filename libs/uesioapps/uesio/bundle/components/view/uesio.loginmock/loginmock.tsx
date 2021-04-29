@@ -52,16 +52,14 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 									props.context
 								)
 							}}
-							definition={{
-								"uesio.variant": "io.secondary",
-								"uesio.styles": {
-									root: {
-										width: "210px",
-										backgroundColor: "white",
-									},
-									label: {
-										textTransform: "none",
-									},
+							variant="io.secondary"
+							styles={{
+								root: {
+									width: "210px",
+									backgroundColor: "white",
+								},
+								label: {
+									textTransform: "none",
 								},
 							}}
 							label={"Sign in as " + user.firstname}

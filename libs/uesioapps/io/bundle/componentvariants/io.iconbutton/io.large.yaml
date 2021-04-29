@@ -2,7 +2,7 @@ name: large
 component: io.iconbutton
 label: Large
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       padding: "8px"
       color: "#555"

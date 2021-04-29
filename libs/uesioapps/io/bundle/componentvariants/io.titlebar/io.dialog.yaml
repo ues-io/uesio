@@ -2,7 +2,7 @@ name: dialog
 component: io.dialog
 label: Dialog
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       padding: 20px
       backgroundColor: "#f5f5f5"

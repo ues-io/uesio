@@ -40,7 +40,11 @@ const View: FunctionComponent<Props> = (props) => {
 		buildMode: useBuildTime,
 	})
 
-	const view = uesio.view.useView(viewId, params, viewContext)
+	const view = uesio.view.useView(
+		viewId,
+		context.mergeMap(params),
+		viewContext
+	)
 
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 

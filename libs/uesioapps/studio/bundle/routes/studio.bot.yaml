@@ -1,4 +1,4 @@
 name: bot
 path: app/{appname}/workspace/{workspacename}/bot/{botname}
 view: studio.bot
-theme: uesio.default
+theme: studio.default

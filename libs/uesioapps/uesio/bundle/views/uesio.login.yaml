@@ -43,5 +43,3 @@ definition:
                     clientId: uesio.cognitoClientId
                     poolId: uesio.cognitoPoolId
                     align: center
-          - io.griditem:
-              components:

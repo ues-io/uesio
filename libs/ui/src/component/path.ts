@@ -1,4 +1,4 @@
-import toPath from "lodash.topath"
+import toPath from "lodash/toPath"
 import { DefinitionMap } from "../definition/definition"
 
 // Trims any path to the last element that is fully namespaced

@@ -1,7 +1,7 @@
 import { useState, useRef, FunctionComponent } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles } from "@uesio/ui"
-import debounce from "lodash.debounce"
+import debounce from "lodash/debounce"
 
 type DropDownProps = {
 	value: string

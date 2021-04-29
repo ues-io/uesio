@@ -8,8 +8,8 @@ import {
 	TextField,
 	MenuItem,
 } from "@material-ui/core"
-import groupby from "lodash.groupby"
-import keyby from "lodash.keyby"
+import groupby from "lodash/groupBy"
+import keyby from "lodash/keyBy"
 
 type AddBundleDefinition = {
 	installablebundleswire: string

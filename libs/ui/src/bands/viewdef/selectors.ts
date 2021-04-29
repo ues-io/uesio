@@ -1,4 +1,4 @@
-import get from "lodash.get"
+import get from "lodash/get"
 import { useSelector } from "react-redux"
 import { Definition } from "../../definition/definition"
 import { RootState } from "../../store/store"
