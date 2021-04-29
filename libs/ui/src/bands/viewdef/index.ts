@@ -1,6 +1,6 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
-import setWith from "lodash/setwith"
-import toPath from "lodash/topath"
+import setWith from "lodash/setWith"
+import toPath from "lodash/toPath"
 import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import yaml from "yaml"
 import {
