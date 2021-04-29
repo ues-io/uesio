@@ -1,4 +1,4 @@
-import toPath from "lodash.topath"
+import toPath from "lodash/topath"
 import { Pair, Node, Collection } from "yaml/types"
 import yaml from "yaml"
 

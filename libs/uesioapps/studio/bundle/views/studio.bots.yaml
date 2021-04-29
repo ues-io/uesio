@@ -53,80 +53,72 @@ definition:
   # Components are how we describe the layout of our view
   components:
     - io.grid:
-        uesio.styles:
-          root:
-            minHeight: 100vh
-        templateRows: 60px 1fr
+        uesio.variant: studio.mainlayout
         items:
-          - uesio.view:
-              view: studio.topbar
-              uesio.context:
-                wire: workspaces
-              params:
-                itemType: bots
-                itemIcon: smart_toy
-          - io.grid:
-              uesio.styles:
-                root:
-                  gridRow: 2
-              templateColumns: 300px 1fr
-              items:
-                - io.griditem:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: bots
+                      itemIcon: smart_toy
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: bots
+          - io.griditem:
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
                     uesio.styles:
                       root:
-                        backgroundColor: "#fafafa"
-                    components:
-                      - uesio.view:
-                          uesio.context:
-                            wire: workspaces
-                          view: studio.workspacenav
-                          params:
-                            selected: bots
-                - io.griditem:
-                    components:
-                      - io.titlebar:
-                          uesio.variant: io.main
-                          uesio.styles:
-                            root:
-                              borderBottom: 6px solid ${uesio.color}
-                          title: Bots
-                          subtitle: Gotta catch 'em all!
-                          actions:
-                            - io.group:
-                                width: 210px
-                                components:
-                                  - io.button:
-                                      text: Create a New Bot
-                                      uesio.variant: io.secondary
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: newBot
-                      - io.deck:
-                          id: botsDeck
-                          wire: bots
-                          uesio.styles:
-                            root:
-                              padding: 40px
+                        borderBottom: 6px solid ${uesio.color}
+                    title: Bots
+                    subtitle: Gotta catch 'em all!
+                    actions:
+                      - io.group:
+                          width: 210px
                           components:
-                            - io.tile:
-                                uesio.variant: io.nav
+                            - io.button:
+                                text: Create a New Bot
+                                uesio.variant: io.secondary
                                 signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
-                                content:
-                                  - io.text:
-                                      uesio.styles:
-                                        root:
-                                          color: "#21242D"
-                                          display: "inline"
-                                          verticalAlign: middle
-                                      text: ${studio.type} - ${studio.name}
-                                      element: div
-                                avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: smart_toy
+                                  - signal: panel/TOGGLE
+                                    panel: newBot
+                - io.deck:
+                    id: botsDeck
+                    wire: bots
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    components:
+                      - io.tile:
+                          uesio.variant: io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                    display: "inline"
+                                    verticalAlign: middle
+                                text: ${studio.type} - ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#ccc"
+                                text: smart_toy
   panels:
     - io.dialog:
         id: newBot

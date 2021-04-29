@@ -3,6 +3,6 @@ component: sample.hello
 label: Esperanta
 definition:
   greeting: Saluton amiko!
-  "uesio.styles":
+  uesio.styles:
     root:
       backgroundColor: green

@@ -38,24 +38,28 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			className={styles.cx(classes.root, isSelected && classes.selected)}
 			onClick={handler}
 		>
-			<div className={classes.avatar}>
-				<component.Slot
-					definition={definition}
-					listName="avatar"
-					path={path}
-					accepts={["uesio.standalone"]}
-					context={context}
-				/>
-			</div>
-			<div className={classes.content}>
-				<component.Slot
-					definition={definition}
-					listName="content"
-					path={path}
-					accepts={["uesio.standalone"]}
-					context={context}
-				/>
-			</div>
+			{definition.avatar && (
+				<div className={classes.avatar}>
+					<component.Slot
+						definition={definition}
+						listName="avatar"
+						path={path}
+						accepts={["uesio.standalone"]}
+						context={context}
+					/>
+				</div>
+			)}
+			{definition.content && (
+				<div className={classes.content}>
+					<component.Slot
+						definition={definition}
+						listName="content"
+						path={path}
+						accepts={["uesio.standalone"]}
+						context={context}
+					/>
+				</div>
+			)}
 			{portals}
 		</div>
 	)

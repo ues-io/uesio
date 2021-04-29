@@ -156,12 +156,6 @@ function isValidColor(potientialColor: string): boolean {
 	return !!style.color
 }
 
-// interface styledDefinition {
-// 	definition?: {
-// 		"uesio.styles"?: Record<string, Record<string, unknown>>
-// 	}
-// }
-
 function getSpacing(theme: ThemeState, ...marginCounts: number[]) {
 	const spacing = theme.definition.spacing || 8
 	return marginCounts.map((count) => `${spacing * count}px`).join(" ")

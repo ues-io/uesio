@@ -2,7 +2,7 @@ name: plain
 component: io.plain
 label: Plain
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       padding: 20px
     title:

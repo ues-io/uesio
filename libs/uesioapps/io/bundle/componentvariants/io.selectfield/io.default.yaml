@@ -2,7 +2,7 @@ name: default
 component: io.selectfield
 label: Default
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       color: black
       padding: 10px 0

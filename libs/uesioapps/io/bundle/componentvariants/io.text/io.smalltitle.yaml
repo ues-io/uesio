@@ -2,7 +2,7 @@ name: smalltitle
 component: io.text
 label: Small Title
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       color: "#21242D"
       fontWeight: "500"

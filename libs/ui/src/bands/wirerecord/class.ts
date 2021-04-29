@@ -1,4 +1,4 @@
-import get from "lodash.get"
+import get from "lodash/get"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 

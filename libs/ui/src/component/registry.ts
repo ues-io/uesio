@@ -6,7 +6,7 @@ import {
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import { parseKey, getPathSuffix } from "./path"
-import toPath from "lodash.topath"
+import toPath from "lodash/topath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import { mergeDefinitionMaps, render } from "./component"

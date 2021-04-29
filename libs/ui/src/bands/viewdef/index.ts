@@ -1,6 +1,6 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
-import setWith from "lodash.setwith"
-import toPath from "lodash.topath"
+import setWith from "lodash/setwith"
+import toPath from "lodash/topath"
 import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import yaml from "yaml"
 import {
@@ -12,7 +12,7 @@ import {
 	newDoc,
 	parse,
 } from "../../yamlutils/yamlutils"
-import get from "lodash.get"
+import get from "lodash/get"
 import { createEntityReducer, EntityPayload } from "../utils"
 import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"

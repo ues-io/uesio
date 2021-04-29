@@ -3,7 +3,14 @@ import { component, styles } from "@uesio/ui"
 import { GridItemProps } from "./griditemdefinition"
 
 const GridItem: FunctionComponent<GridItemProps> = (props) => {
-	const classes = styles.useStyles({ root: {} }, props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				gridColumn: props.definition.column,
+			},
+		},
+		props
+	)
 	const { definition, context, path } = props
 	return (
 		<div className={classes.root}>

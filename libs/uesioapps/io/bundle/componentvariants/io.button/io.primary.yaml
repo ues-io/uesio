@@ -2,7 +2,7 @@ name: primary
 component: io.button
 label: Primary
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       backgroundColor: "$Theme{color.primary}"
       color: "#FFFFFFee"

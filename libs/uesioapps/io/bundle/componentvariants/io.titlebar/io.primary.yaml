@@ -2,7 +2,7 @@ name: primary
 component: io.titlebar
 label: Primary
 definition:
-  "uesio.styles":
+  uesio.styles:
     root:
       backgroundColor: $Theme{color.primary}
       padding: 10px

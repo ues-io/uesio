@@ -37,22 +37,10 @@ definition:
                     id: appslist
                     components:
                       - io.tile:
-                          uesio.styles:
-                            root:
-                              padding: 8px 12px
-                              backgroundColor: "#fafafa"
-                              borderRadius: 4px
-                              boxShadow: "0 0 4px #00000007"
-                              marginLeft: 8px
-                              fontSize: 10pt
+                          uesio.variant: io.tag
                           content:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#555"
-                                    fontSize: 8pt
-                                    textTransform: uppercase
-                                    display: inline
+                                uesio.variant: io.tag
                                 text: ${uesio.name}
                                 element: div
                           avatar:
@@ -70,22 +58,10 @@ definition:
                           signals:
                             - signal: "route/NAVIGATE"
                               path: app/${["studio.app"]["uesio.id"]}
-                          uesio.styles:
-                            root:
-                              padding: 8px 12px
-                              backgroundColor: "#fafafa"
-                              borderRadius: 4px
-                              boxShadow: "0 0 4px #00000007"
-                              marginLeft: 8px
-                              fontSize: 10pt
+                          uesio.variant: io.tag
                           content:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#555"
-                                    fontSize: 8pt
-                                    textTransform: uppercase
-                                    display: inline
+                                uesio.variant: io.tag
                                 text: ${["studio.app"]["uesio.id"]}
                                 element: div
                           avatar:
@@ -97,22 +73,10 @@ definition:
                           signals:
                             - signal: "route/NAVIGATE"
                               path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}
-                          uesio.styles:
-                            root:
-                              padding: 8px 12px
-                              backgroundColor: "#fafafa"
-                              borderRadius: 4px
-                              boxShadow: "0 0 4px #00000007"
-                              marginLeft: 8px
-                              fontSize: 10pt
+                          uesio.variant: io.tag
                           content:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#555"
-                                    fontSize: 8pt
-                                    textTransform: uppercase
-                                    display: inline
+                                uesio.variant: io.tag
                                 text: ${studio.name}
                                 element: div
                           avatar:
@@ -124,22 +88,13 @@ definition:
                           uesio.display:
                             - type: paramIsSet
                               param: itemType
-                          uesio.styles:
-                            root:
-                              padding: 8px 12px
-                              backgroundColor: "#fafafa"
-                              borderRadius: 4px
-                              boxShadow: "0 0 4px #00000007"
-                              marginLeft: 8px
-                              fontSize: 10pt
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/$Param{itemType}
+                          uesio.variant: io.tag
                           content:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#555"
-                                    fontSize: 8pt
-                                    textTransform: uppercase
-                                    display: inline
+                                uesio.variant: io.tag
                                 text: $Param{itemType}
                                 element: div
                           avatar:
@@ -147,6 +102,16 @@ definition:
                                 uesio.variant: io.icon
                                 color: "#AAA"
                                 text: $Param{itemIcon}
+                      - io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: $Param{itemName}
+                                element: div
           - io.griditem:
               uesio.styles:
                 root:

@@ -1,0 +1,10 @@
+name: tag
+component: io.text
+label: Tag
+definition:
+  uesio.styles:
+    root:
+      color: "#555"
+      fontSize: 8pt
+      textTransform: uppercase
+      display: inline

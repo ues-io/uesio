@@ -2,6 +2,8 @@ import { definition, builder, signal } from "@uesio/ui"
 
 type TileDefinition = {
 	signals?: signal.SignalDefinition[]
+	avatar?: definition.DefinitionList
+	content?: definition.DefinitionList
 }
 
 interface TileProps extends definition.BaseProps {

@@ -11,7 +11,7 @@ interface GroupProps extends definition.BaseProps {
 }
 
 const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Grid",
+	title: "Group",
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],
