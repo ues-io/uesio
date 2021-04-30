@@ -111,6 +111,7 @@ type FieldMetadata struct {
 	Validate             *ValidationMetadata        `json:"validate"`
 	AutoPopulate         string                     `json:"autopopulate"`
 	OnDelete             string                     `json:"ondelete"`
+	FileCollection       string                     `json:"fileCollection"`
 }
 
 // GetFullName function

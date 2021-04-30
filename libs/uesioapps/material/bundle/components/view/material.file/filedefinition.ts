@@ -3,7 +3,6 @@ import { definition, builder, styles, signal } from "@uesio/ui"
 type FileDefinition = {
 	id: string
 	fieldId: string
-	fileCollection: string
 	editable: boolean
 	displayAs: "button" | "preview" | "fullPreview"
 	accepts: "images" | "all"
@@ -26,11 +25,6 @@ const FilePropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "fieldId",
 			type: "TEXT",
 			label: "Source",
-		},
-		{
-			name: "fileCollection",
-			type: "TEXT",
-			label: "File Collection",
 		},
 		{
 			name: "editable",

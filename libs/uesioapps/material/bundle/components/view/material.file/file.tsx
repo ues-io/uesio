@@ -34,16 +34,12 @@ async function handleChange(
 	fieldId: string,
 	record: wire.WireRecord,
 	wire: wire.Wire,
-	uesio: hooks.Uesio,
-	fileCollection: string
+	uesio: hooks.Uesio
 ) {
 	const collection = wire.getCollection()
 	const collectionFullName = collection.getFullName()
+	const recordId = record.getIdFieldValue() as string
 
-	const idField = collection.getIdField()
-	if (!idField) return
-
-	const recordId = record.getFieldValue(idField.getId()) as string
 	if (selectorFiles && recordId) {
 		if (selectorFiles.length !== 1) {
 			throw new Error("Too many files selected")
@@ -54,8 +50,6 @@ async function handleChange(
 		const fileId = await uesio.file.uploadFile(
 			uesio.getContext(),
 			file,
-			file.name,
-			fileCollection,
 			collectionFullName,
 			recordId,
 			fieldId

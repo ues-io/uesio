@@ -119,8 +119,6 @@ window.uesioLoader = (mergeData) => {
 		uploadFile: async (
 			context,
 			fileData,
-			name,
-			fileCollection,
 			collectionID,
 			recordID,
 			fieldID
@@ -128,8 +126,7 @@ window.uesioLoader = (mergeData) => {
 			const prefix = getPrefix(context)
 			const url = `${prefix}/userfiles/upload`
 			const params = new URLSearchParams()
-			params.append("name", name)
-			params.append("filecollection", fileCollection)
+			params.append("name", fileData.name)
 			params.append("collectionid", collectionID)
 			params.append("recordid", recordID)
 			params.append("fieldid", fieldID)

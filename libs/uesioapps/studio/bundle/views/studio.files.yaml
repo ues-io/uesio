@@ -114,7 +114,6 @@ definition:
                                   - studio.fileupload:
                                       id: "fileuploadid"
                                       fieldId: studio.content
-                                      fileCollection: uesio.workspacemetadatafiles
                 - material.deck:
                     xs: 12
                     sm: 6
@@ -135,7 +134,6 @@ definition:
                           components:
                             - material.file:
                                 fieldId: studio.content
-                                fileCollection: uesio.platform
                                 height: 100
                                 width: 100
                                 id: fileupid

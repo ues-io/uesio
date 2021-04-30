@@ -39,7 +39,7 @@ const getAccept = (accepts: string) =>
 const EditWrapper: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
-		definition: { fieldId, id, fileCollection, displayAs, accepts },
+		definition: { fieldId, id, displayAs, accepts },
 		children,
 	} = props
 	const classes = useStyles(props)
@@ -84,8 +84,7 @@ const EditWrapper: FunctionComponent<FileProps> = (props) => {
 										fieldId,
 										record,
 										wire,
-										uesio,
-										fileCollection
+										uesio
 									)
 								}
 							/>

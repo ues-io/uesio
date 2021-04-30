@@ -1,3 +1,6 @@
-import { SignalDefinition } from "./definition/signal"
+import {
+	SignalDefinition,
+	ComponentSignalDescriptor,
+} from "./definition/signal"
 
-export { SignalDefinition }
+export { SignalDefinition, ComponentSignalDescriptor }

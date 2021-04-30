@@ -4,6 +4,17 @@ type FieldDefinition = {
 	fieldId: string
 	hideLabel: boolean
 	label?: string
+	id?: string
+}
+
+type FieldState = {
+	value: string
+	originalValue: string
+	fieldId: string
+	recordId: string
+	collectionId: string
+	fileName: string
+	mimeType: string
 }
 
 interface FieldProps extends definition.BaseProps {
@@ -39,6 +50,6 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 }
 
-export { FieldProps, FieldDefinition, RendererProps }
+export { FieldProps, FieldDefinition, RendererProps, FieldState }
 
 export default FieldPropertyDefinition

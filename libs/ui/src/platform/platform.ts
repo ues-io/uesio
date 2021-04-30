@@ -55,8 +55,6 @@ interface Platform {
 	uploadFile(
 		context: Context,
 		fileData: File,
-		name: string,
-		fileCollection: string,
 		collectionID: string,
 		recordID: string,
 		fieldID: string

@@ -3,7 +3,6 @@ import { definition, builder, styles, signal } from "@uesio/ui"
 type FileUploadDefinition = {
 	id: string
 	fieldId: string
-	fileCollection: string
 	margin?: styles.MarginDefinition
 	signals: signal.SignalDefinition[]
 	wire: string
@@ -22,11 +21,6 @@ const FileUploadPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "fieldId",
 			type: "TEXT",
 			label: "Source",
-		},
-		{
-			name: "fileCollection",
-			type: "TEXT",
-			label: "File Collection",
 		},
 	],
 	traits: ["uesio.standalone"],

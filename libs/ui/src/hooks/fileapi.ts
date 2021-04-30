@@ -1,6 +1,9 @@
 import { Uesio } from "./hooks"
 import { getPlatform } from "../store/store"
 import { Context } from "../context/context"
+import WireRecord from "../bands/wirerecord/class"
+import { useEffect, useState } from "react"
+import { PlainWireRecord } from "../bands/wirerecord/types"
 
 const getURL = (context: Context, namespace: string, name: string) =>
 	getPlatform().getFileURL(context, namespace, name)
@@ -24,21 +27,11 @@ const getUserFileURL = (
 const uploadFile = (
 	context: Context,
 	fileData: File,
-	name: string,
-	fileCollection: string,
 	collectionID: string,
 	recordID: string,
 	fieldID: string
 ) =>
-	getPlatform().uploadFile(
-		context,
-		fileData,
-		name,
-		fileCollection,
-		collectionID,
-		recordID,
-		fieldID
-	)
+	getPlatform().uploadFile(context, fileData, collectionID, recordID, fieldID)
 
 class FileAPI {
 	constructor(uesio: Uesio) {
@@ -51,6 +44,25 @@ class FileAPI {
 	getURLFromFullName = getURLFromFullName
 	getUserFileURL = getUserFileURL
 	uploadFile = uploadFile
+
+	useUserFile = (context: Context, record: WireRecord, fieldId: string) => {
+		const [content, setContent] = useState<string>("")
+		useEffect(() => {
+			const userFile = record.getFieldValue(fieldId) as
+				| PlainWireRecord
+				| undefined
+
+			const userFileId = userFile?.["uesio.id"] as string
+			const fileUrl = getUserFileURL(context, userFileId, true)
+			const fetchData = async () => {
+				const res = await fetch(fileUrl)
+				const text = await res.text()
+				setContent(text)
+			}
+			fetchData()
+		}, [])
+		return content
+	}
 }
 
 export { FileAPI, getURL, getURLFromFullName, uploadFile, getUserFileURL }

@@ -16,10 +16,14 @@ export default createAsyncThunk<
 >("wire/save", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToSave = getWiresFromDefinitonOrContext(wires, context)
-	const response = await api.extra.saveData(context, {
+	let doSave = false
+	const saveRequest = {
 		wires: wiresToSave.map((wire) => {
 			const wiredef = getWireDef(wire)
 			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)
+			if (!doSave && (wire.changes.length || wire.deletes.length)) {
+				doSave = true
+			}
 			return {
 				wire: getFullWireId(wire.view, wire.name),
 				collection: wiredef.collection,
@@ -27,6 +31,17 @@ export default createAsyncThunk<
 				deletes: wire.deletes,
 			}
 		}),
-	})
+	}
+	if (!doSave) {
+		return {
+			wires: saveRequest.wires.map((wire) => ({
+				wire: wire.wire,
+				error: "",
+				changes: {},
+				deletes: {},
+			})),
+		}
+	}
+	const response = await api.extra.saveData(context, saveRequest)
 	return response
 })

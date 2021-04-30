@@ -39,7 +39,7 @@ func RegisterFileAdapter(name string, adapter FileAdapter) {
 func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) (*meta.UserFileCollection, *meta.FileSource, error) {
 	ufc, err := meta.NewUserFileCollection(fileCollectionID)
 	if err != nil {
-		return nil, nil, errors.New("Failed to create file collection")
+		return nil, nil, errors.New("Failed to create file collection: " + err.Error())
 	}
 	err = bundle.Load(ufc, session)
 	if err != nil {
@@ -60,6 +60,16 @@ func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) 
 		}
 	}
 	return ufc, fs, nil
+}
+
+func GetFileCollectionID(collectionMetadata *adapt.CollectionMetadata, fieldMetadata *adapt.FieldMetadata) (string, error) {
+	if fieldMetadata == nil {
+		return "", errors.New("No metadata setup for attachments yet: TODO!")
+	}
+	if fieldMetadata.FileCollection == "" {
+		return "", errors.New("No FileCollection specified for this field: " + collectionMetadata.GetFullName() + " : " + fieldMetadata.GetFullName())
+	}
+	return fieldMetadata.FileCollection, nil
 }
 
 func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Session) (FileAdapter, string, *adapt.Credentials, error) {

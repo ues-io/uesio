@@ -24,7 +24,7 @@ const useStyles = material.makeStyles(() =>
 const Button: FunctionComponent<FileProps> = (props) => {
 	const {
 		context,
-		definition: { fieldId, id, fileCollection, displayAs },
+		definition: { fieldId, id, displayAs },
 	} = props
 	const classes = useStyles(props)
 	const uesio = hooks.useUesio(props)
@@ -48,8 +48,7 @@ const Button: FunctionComponent<FileProps> = (props) => {
 							fieldId,
 							record,
 							wire,
-							uesio,
-							fileCollection
+							uesio
 						)
 					}
 				/>

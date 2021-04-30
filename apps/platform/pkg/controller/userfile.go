@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
@@ -14,7 +15,7 @@ import (
 func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "text")
 	session := middleware.GetSession(r)
-	details, err := filesource.NewFileDetails(r.URL.Query())
+	details, err := fileadapt.NewFileDetails(r.URL.Query())
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

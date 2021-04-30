@@ -3,6 +3,7 @@ import { Definition } from "./definition"
 import { ThunkFunc } from "../store/store"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { PlainComponentState } from "../bands/component/types"
+import { Platform } from "../platform/platform"
 
 type SignalDispatcher = (
 	signal: SignalDefinition,
@@ -11,8 +12,11 @@ type SignalDispatcher = (
 
 type ComponentSignalDispatcher = (
 	signal: SignalDefinition,
-	context: Context
-) => (state: PlainComponentState | undefined) => PlainComponentState | undefined
+	context: Context,
+	getState: () => PlainComponentState | undefined,
+	setState: (state: PlainComponentState | undefined) => void,
+	platform: Platform
+) => void
 
 type SignalDescriptor = {
 	label: string
