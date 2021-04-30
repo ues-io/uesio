@@ -8,14 +8,10 @@ async function handleChange(
 	fieldId: string,
 	record: wire.WireRecord,
 	wire: wire.Wire,
-	uesio: hooks.Uesio,
-	fileCollection: string
+	uesio: hooks.Uesio
 ) {
 	const collection = wire.getCollection()
 	const collectionName = collection.getFullName()
-
-	const idField = collection.getIdField()
-	if (!idField) return
 
 	const nameField = collection.getNameField()
 	const nameNameField = nameField?.getId()
@@ -39,14 +35,12 @@ async function handleChange(
 		const recordUpd = context.getRecord()
 
 		if (recordUpd) {
-			const recordId = recordUpd.getFieldValue(idField.getId()) as string
+			const recordId = recordUpd.getIdFieldValue() as string
 
 			if (recordId) {
 				await uesio.file.uploadFile(
 					context,
 					file,
-					file.name,
-					fileCollection,
 					collectionName,
 					recordId,
 					fieldId
@@ -111,8 +105,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 							definition.fieldId,
 							record,
 							wire,
-							uesio,
-							definition.fileCollection
+							uesio
 						)
 					}
 				/>

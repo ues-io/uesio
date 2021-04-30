@@ -16,7 +16,6 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 	label?: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
-	fieldId: string
 	hideLabel: boolean
 	record: wire.WireRecord
 	wire: wire.Wire
@@ -52,7 +51,8 @@ const generateReferenceFieldDisplayValue = (
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, hideLabel, mode, fieldId, record, context } = props
+	const { fieldMetadata, hideLabel, mode, record, context } = props
+	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
 		fieldMetadata.source.referencedCollection || ""

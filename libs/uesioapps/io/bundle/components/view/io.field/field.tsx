@@ -6,12 +6,13 @@ import { component, collection } from "@uesio/ui"
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
+const FileText = component.registry.getUtility("io.filetext")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId, hideLabel } = definition
+	const { fieldId, hideLabel, id } = definition
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -31,49 +32,41 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const type = fieldMetadata.getType()
 
+	const commonProps = {
+		...props,
+		mode,
+		fieldMetadata,
+		label,
+		hideLabel,
+		variant: "io.default",
+		id,
+	}
+
 	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {
 		return (
 			<TextField
-				{...props}
-				mode={mode}
-				type={fieldMetadata.getType()}
+				{...commonProps}
 				value={record.getFieldValue(fieldId) || ""}
 				setValue={(value: string) => record.update(fieldId, value)}
-				label={label}
-				hideLabel={hideLabel}
-				variant="io.default"
 			/>
 		)
 	} else if (type === "SELECT") {
 		return (
 			<SelectField
-				{...props}
-				mode={mode}
+				{...commonProps}
 				value={record.getFieldValue(fieldId) || ""}
 				setValue={(value: string) => record.update(fieldId, value)}
-				label={label}
-				hideLabel={hideLabel}
-				variant="io.default"
 				options={addBlankSelectOption(fieldMetadata.getOptions() || [])}
 			/>
 		)
 	} else if (type === "CHECKBOX") {
 		return null
 	} else if (type === "REFERENCE") {
-		return (
-			<ReferenceField
-				{...props}
-				label={label}
-				fieldMetadata={fieldMetadata}
-				mode={mode}
-				fieldId={fieldId}
-				hideLabel={hideLabel}
-				record={record}
-				wire={wire}
-			/>
-		)
+		return <ReferenceField {...commonProps} record={record} wire={wire} />
 	} else if (type === "TIMESTAMP") {
 		return null
+	} else if (type === "FILE") {
+		return <FileText {...commonProps} record={record} wire={wire} />
 	}
 	return null
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -148,12 +149,11 @@ func Deploy(body []byte, session *sess.Session) error {
 			continue
 		}
 
-		_, err := filesource.Upload(fileStream.Data, filesource.FileDetails{
-			Name:             fileStream.FileName,
-			CollectionID:     "studio." + fileStream.Type,
-			RecordID:         session.GetWorkspaceID() + "_" + recordID,
-			FieldID:          "studio.content",
-			FileCollectionID: "uesio.workspacemetadatafiles",
+		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
+			Name:         fileStream.FileName,
+			CollectionID: "studio." + fileStream.Type,
+			RecordID:     session.GetWorkspaceID() + "_" + recordID,
+			FieldID:      "studio.content",
 		}, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err

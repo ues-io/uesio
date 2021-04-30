@@ -28,6 +28,9 @@ definition:
         studio.dialect:
         studio.collection:
         studio.content:
+          fields:
+            uesio.mimetype:
+            uesio.name:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -87,6 +90,8 @@ definition:
                                       uesio.variant: io.secondary
                                       text: "Save"
                                       signals:
+                                        - signal: component/io.field/SAVE_FILE
+                                          target: botcontent
                                         - signal: wire/SAVE
                                           wires:
                                             - "bots"
@@ -94,6 +99,8 @@ definition:
                                       uesio.variant: io.secondary
                                       text: "Cancel"
                                       signals:
+                                        - signal: component/io.field/CANCEL_FILE
+                                          target: botcontent
                                         - signal: wire/CANCEL
                                           wire: "bots"
                                   - io.button:
@@ -106,25 +113,29 @@ definition:
                                             - "bots"
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-                      - io.grid:
+                      - io.box:
                           uesio.styles:
                             root:
                               padding: 40px
-                          templateColumns:
-                            xs: 1fr
-                            md: 1fr 1fr
-                            lg: 1fr 1fr 1fr 1fr
-                          columnGap: 10px
-                          items:
-                            - io.field:
-                                fieldId: studio.name
-                            - io.field:
-                                fieldId: studio.type
-                            - io.field:
-                                fieldId: studio.dialect
-                            - studio.metadatafield:
-                                fieldId: studio.collection
-                                metadataType: "COLLECTION"
-                                label: "Collection"
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.name
+                                  - io.field:
+                                      fieldId: studio.type
+                                  - io.field:
+                                      fieldId: studio.dialect
+                                  - studio.metadatafield:
+                                      fieldId: studio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
                             - io.field:
                                 fieldId: studio.content
+                                id: botcontent
+                                displayAs: TEXT

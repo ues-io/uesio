@@ -50,6 +50,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Validate:             GetValidateMetadata(f.Validate),
 		AutoPopulate:         f.AutoPopulate,
 		OnDelete:             f.OnDelete,
+		FileCollection:       f.FileCollection,
 	}
 }
 

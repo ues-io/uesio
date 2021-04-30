@@ -20,6 +20,8 @@ components:
   utility:
     io.autocomplete:
     io.button:
+    io.codefield:
+    io.filetext:
     io.grid:
     io.icon:
     io.iconbutton:
@@ -32,6 +34,7 @@ components:
     io.titlebar:
   variants:
     - io.textfield.io.default
+    - io.codefield.io.default
     - io.selectfield.io.default
     - io.autocomplete.io.default
     - io.titlebar.io.dialog

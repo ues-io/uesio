@@ -64,11 +64,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 	if (!wire || !record) return null
 
 	const wireCollection = wire.getCollection()
-	const idField = wireCollection.getIdField()
-	if (!idField) return null
-
-	const jobId = record.getFieldValue(idField.getId()) as string
-
+	const jobId = record.getIdFieldValue() as string
 	return (
 		<div className={classes.root}>
 			<label htmlFor={id}>

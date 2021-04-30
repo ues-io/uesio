@@ -16,7 +16,6 @@ definition:
                                 components:
                                   - material.file:
                                       fieldId: crm.profilepic
-                                      fileCollection: uesio.platform
                                       height: 150
                                       id: fileupid
                                       margin:

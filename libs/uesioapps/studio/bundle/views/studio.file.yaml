@@ -137,7 +137,6 @@ definition:
                                                                   target: "fileDialog"
                                         - material.file:
                                             fieldId: studio.content
-                                            fileCollection: uesio.platform
                                             height: 200
                                             width: 200
                                             id: fileupid

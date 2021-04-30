@@ -42,6 +42,7 @@ type Field struct {
 	Validate             Validate  `yaml:"validate,omitempty" uesio:"studio.validate"`
 	AutoPopulate         string    `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	OnDelete             string    `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
+	FileCollection       string    `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
 	itemMeta             *ItemMeta `yaml:"-" uesio:"-"`
 }
 

@@ -1,7 +1,8 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles, context, collection } from "@uesio/ui"
+import LazyMonaco from "@uesio/lazymonaco"
 
-interface TextFieldProps extends definition.UtilityProps {
+interface CodeFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
 	value: string
@@ -11,7 +12,7 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const TextField: FunctionComponent<TextFieldProps> = (props) => {
+const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
@@ -21,7 +22,9 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 				...(width && { width }),
 			},
 			label: {},
-			input: {},
+			input: {
+				height: "320px",
+			},
 			readonly: {},
 		},
 		props
@@ -30,20 +33,22 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	return (
 		<div className={classes.root}>
 			<div className={classes.label}>{props.label}</div>
-			<input
-				value={value}
-				className={styles.cx(
-					classes.input,
-					readonly && classes.readonly
-				)}
-				type="text"
-				disabled={readonly}
-				onChange={(event: ChangeEvent<HTMLInputElement>): void =>
-					setValue(event.target.value)
-				}
-			/>
+			<div className={classes.input}>
+				<LazyMonaco
+					value={value}
+					options={{
+						scrollBeyondLastLine: false,
+						automaticLayout: true,
+						minimap: {
+							enabled: false,
+						},
+					}}
+					language={"javascript"}
+					onChange={setValue}
+				/>
+			</div>
 		</div>
 	)
 }
 
-export default TextField
+export default CodeField
