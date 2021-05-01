@@ -2,17 +2,6 @@ name: datasources
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -22,9 +11,8 @@ definition:
         studio.app:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -39,77 +27,118 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
+    newdatasource:
+      collection: studio.datasources
+      fields:
+        studio.id:
+        studio.name:
+        studio.workspaceid:
+        studio.workspace:
+        studio.type:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      type: CREATE
+      defaults:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: datasources
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: datasources
+                      itemIcon: dynamic_feed
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: datasources
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Datasources
+                    subtitle: Invisible threads are the strongest ties!
+                    actions:
+                      - io.group:
+                          width: 210px
                           components:
-                            - material.typography:
-                                text: Datasources
-                                variant: h5
-                            - material.typography:
-                                text: Invisible threads are the strongest ties!
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New Datasource"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newdatasource"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: datasourcesDeck
-                    wire: datasources
+                            - io.button:
+                                text: Create a New Data Source
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newDatasource
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
+                      - io.deck:
+                          id: datasourcesDeck
+                          wire: datasources
+                          uesio.variant: io.section
                           components:
-                            - material.typography:
-                                text: "${studio.name}"
-                            - material.typography:
-                                text: "${studio.type}"
-                            - material.typography:
-                                text: "${studio.workspace}"
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.type} - ${studio.name}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: dynamic_feed
+  panels:
+    - io.dialog:
+        id: newDatasource
+        title: Create a New Data Source
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newdatasourcelist
+              wire: newdatasource
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - io.field:
+                    fieldId: studio.type
+                - io.field:
+                    fieldId: studio.region
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newdatasource"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newDatasource"

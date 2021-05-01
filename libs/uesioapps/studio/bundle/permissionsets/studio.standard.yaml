@@ -11,17 +11,14 @@ views:
   studio.collections: true
   studio.collection: true
   studio.views: true
-  studio.newview: true
   studio.view: true
   studio.teams: true
   studio.routes: true
-  studio.newroute: true
   studio.route: true
   studio.secretsandconfig: true
   studio.newsecret: true
   studio.secret: true
   studio.datasources: true
-  studio.newdatasource: true
   studio.datasource: true
   studio.files: true
   studio.file: true
@@ -30,10 +27,10 @@ views:
   studio.bundle: true
   studio.site: true
   studio.bots: true
+  studio.components: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
-  studio.newtheme: true
   studio.selectlists: true
   studio.selectlist: true
   studio.permissions: true
@@ -54,16 +51,13 @@ routes:
   studio.collections: true
   studio.collection: true
   studio.views: true
-  studio.newview: true
   studio.view: true
   studio.routes: true
-  studio.newroute: true
   studio.route: true
   studio.secretsandconfig: true
   studio.newsecret: true
   studio.secret: true
   studio.datasources: true
-  studio.newdatasource: true
   studio.datasource: true
   studio.files: true
   studio.file: true
@@ -72,10 +66,10 @@ routes:
   studio.bundle: true
   studio.site: true
   studio.bots: true
+  studio.components: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
-  studio.newtheme: true
   studio.selectlists: true
   studio.selectlist: true
   studio.permissions: true

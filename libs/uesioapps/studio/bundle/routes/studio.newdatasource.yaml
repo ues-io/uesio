@@ -1,4 +1,0 @@
-name: newdatasource
-path: app/{appname}/workspace/{workspacename}/newdatasource
-view: studio.newdatasource
-theme: uesio.default

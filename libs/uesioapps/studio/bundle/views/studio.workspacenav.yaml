@@ -45,6 +45,11 @@ definition:
                     text: list
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: datasources
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/datasources
@@ -57,6 +62,11 @@ definition:
                     text: dynamic_feed
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: selectlists
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/selectlists
@@ -72,6 +82,11 @@ definition:
               title: User Interface
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: components
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/components
@@ -84,6 +99,11 @@ definition:
                     text: widgets
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: routes
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/routes
@@ -96,6 +116,11 @@ definition:
                     text: map
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: themes
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/themes
@@ -108,6 +133,11 @@ definition:
                     text: palette
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: views
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/views
@@ -123,6 +153,11 @@ definition:
               title: Admin
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: configvalues
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/configvalues
@@ -135,6 +170,11 @@ definition:
                     text: tune
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: files
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/files
@@ -147,9 +187,14 @@ definition:
                     text: collections
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: permissionsets
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissionsets
               content:
                 - io.text:
                     text: Permission Sets
@@ -159,9 +204,14 @@ definition:
                     text: rule
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: profiles
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/permissions
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/profiles
               content:
                 - io.text:
                     text: Profiles
@@ -171,6 +221,11 @@ definition:
                     text: group
           - io.tile:
               uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: secrets
               signals:
                 - signal: "route/NAVIGATE"
                   path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/secrets

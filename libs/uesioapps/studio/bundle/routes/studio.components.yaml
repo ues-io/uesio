@@ -1,0 +1,4 @@
+name: components
+path: app/{appname}/workspace/{workspacename}/components
+view: studio.components
+theme: studio.default
