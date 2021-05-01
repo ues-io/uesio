@@ -65,6 +65,7 @@ definition:
                     params:
                       selected: bots
           - io.griditem:
+              uesio.variant: studio.content
               components:
                 - io.list:
                     id: botsDeck
@@ -73,9 +74,6 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          uesio.styles:
-                            root:
-                              borderBottom: 6px solid ${uesio.color}
                           title: Bot - ${studio.name}
                           actions:
                             - io.group:

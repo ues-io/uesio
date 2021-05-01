@@ -75,12 +75,10 @@ definition:
                     params:
                       selected: bots
           - io.griditem:
+              uesio.variant: studio.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    uesio.styles:
-                      root:
-                        borderBottom: 6px solid ${uesio.color}
                     title: Bots
                     subtitle: Gotta catch 'em all!
                     actions:
@@ -93,32 +91,27 @@ definition:
                                 signals:
                                   - signal: panel/TOGGLE
                                     panel: newBot
-                - io.deck:
-                    id: botsDeck
-                    wire: bots
-                    uesio.styles:
-                      root:
-                        padding: 40px
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - io.tile:
-                          uesio.variant: io.nav
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
-                          content:
-                            - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: "#21242D"
-                                    display: "inline"
-                                    verticalAlign: middle
-                                text: ${studio.type} - ${studio.name}
-                                element: div
-                          avatar:
-                            - io.text:
-                                uesio.variant: io.icon
-                                color: "#ccc"
-                                text: smart_toy
+                      - io.deck:
+                          id: botsDeck
+                          wire: bots
+                          uesio.variant: io.section
+                          components:
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bot/${studio.name}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.type} - ${studio.name}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: smart_toy
   panels:
     - io.dialog:
         id: newBot
@@ -141,8 +134,6 @@ definition:
                     fieldId: studio.dialect
                 - io.field:
                     fieldId: studio.type
-                - io.field:
-                    fieldId: studio.content
         actions:
           - io.button:
               uesio.variant: "io.primary"

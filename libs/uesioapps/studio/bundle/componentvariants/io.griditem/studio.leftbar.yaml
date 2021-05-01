@@ -4,4 +4,4 @@ label: Left Bar
 definition:
   uesio.styles:
     root:
-      backgroundColor: "#fafafa"
+      backgroundColor: white

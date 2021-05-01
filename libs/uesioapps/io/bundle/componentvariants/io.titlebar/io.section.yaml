@@ -4,7 +4,8 @@ label: Main
 definition:
   uesio.styles:
     root:
-      padding: 40px 40px 10px 40px
+      padding: 40px
+      borderBottom: "1px solid #eee"
     title:
       color: "#444"
       fontSize: "12pt"
