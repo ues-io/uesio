@@ -9,3 +9,5 @@ definition:
     selected:
       backgroundColor: $Theme{color.primary}
       color: white
+    content:
+      verticalAlign: middle

@@ -45,6 +45,8 @@ class Wire {
 		return this.getRecord(recordId)
 	}
 
+	getSize = () => Object.keys(this.source.data).length
+
 	getConditions = () => this.source.conditions || []
 
 	getCondition = (id: string) =>

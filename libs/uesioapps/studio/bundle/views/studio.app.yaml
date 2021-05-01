@@ -110,25 +110,20 @@ definition:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                    display: "inline"
-                                    verticalAlign: middle
                                 text: ${studio.name}
-                                element: div
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
                                 color: "#ccc"
                                 text: handyman
           - io.griditem:
+              uesio.variant: studio.content
               components:
                 - io.list:
                     wire: apps
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          uesio.styles:
-                            root:
-                              borderBottom: 6px solid ${uesio.color}
                           title: ${uesio.name}
                           subtitle: ${uesio.description}
                           actions:
@@ -146,76 +141,66 @@ definition:
                                       signals:
                                         - signal: panel/TOGGLE
                                           panel: deleteApp
-                      - io.titlebar:
+                      - io.box:
                           uesio.variant: io.section
-                          title: Bundles
-                          subtitle: Pack it up. Pack it in. Let me begin.
-                      - io.deck:
-                          id: bundleslist
-                          wire: bundles
-                          uesio.styles:
-                            root:
-                              padding: 0 40px
                           components:
-                            - io.tile:
-                                uesio.variant: io.nav
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
-                                content:
-                                  - io.text:
-                                      uesio.styles:
-                                        root:
-                                          color: "#21242D"
-                                          display: "inline"
-                                          verticalAlign: middle
-                                      text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
-                                      element: div
-                                avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: inventory_2
-                      - io.titlebar:
-                          uesio.variant: io.section
-                          title: Sites
-                          subtitle: Your site is in sight.
-                          actions:
-                            - io.group:
-                                width: 210px
+                            - io.titlebar:
+                                uesio.variant: io.section
+                                title: Bundles
+                                subtitle: Pack it up. Pack it in. Let me begin.
+                            - io.deck:
+                                id: bundleslist
+                                wire: bundles
+                                uesio.variant: io.section
                                 components:
-                                  - io.button:
-                                      text: "Create a Site"
-                                      uesio.variant: io.secondary
+                                  - io.tile:
+                                      uesio.variant: io.item
                                       signals:
-                                        - signal: "panel/TOGGLE"
-                                          panel: "newSite"
-                      - io.deck:
-                          id: siteslist
-                          wire: sites
-                          uesio.styles:
-                            root:
-                              padding: 0 40px
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
+                                      content:
+                                        - io.text:
+                                            text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
+                                      avatar:
+                                        - io.text:
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
+                                            text: inventory_2
+                      - io.box:
+                          uesio.variant: io.section
                           components:
-                            - io.tile:
-                                uesio.variant: io.nav
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/${uesio.name}"
-                                content:
-                                  - io.text:
-                                      uesio.styles:
-                                        root:
-                                          color: "#21242D"
-                                          display: "inline"
-                                          verticalAlign: middle
-                                      text: ${uesio.name}
-                                      element: div
-                                avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: public
+                            - io.titlebar:
+                                uesio.variant: io.section
+                                title: Sites
+                                subtitle: Your site is in sight.
+                                actions:
+                                  - io.group:
+                                      width: 210px
+                                      components:
+                                        - io.button:
+                                            text: "Create a Site"
+                                            uesio.variant: io.secondary
+                                            signals:
+                                              - signal: "panel/TOGGLE"
+                                                panel: "newSite"
+                            - io.deck:
+                                id: siteslist
+                                wire: sites
+                                uesio.variant: io.section
+                                components:
+                                  - io.tile:
+                                      uesio.variant: io.item
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/site/${uesio.name}"
+                                      content:
+                                        - io.text:
+                                            text: ${uesio.name}
+                                      avatar:
+                                        - io.text:
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
+                                            text: public
   panels:
     - io.dialog:
         id: deleteApp

@@ -72,6 +72,7 @@ definition:
                                 color: "${uesio.color}"
                                 text: circle
           - io.griditem:
+              uesio.variant: studio.content
               components:
                 - io.box:
                     uesio.styles:

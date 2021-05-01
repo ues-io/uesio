@@ -54,6 +54,10 @@ class FileAPI {
 
 			const userFileId = userFile?.["uesio.id"] as string
 			const fileUrl = getUserFileURL(context, userFileId, true)
+			if (!fileUrl) {
+				setContent("")
+				return
+			}
 			const fetchData = async () => {
 				const res = await fetch(fileUrl)
 				const text = await res.text()

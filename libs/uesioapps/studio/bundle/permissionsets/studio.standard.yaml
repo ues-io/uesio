@@ -9,7 +9,6 @@ views:
   studio.workspace: true
   studio.topbar: true
   studio.collections: true
-  studio.newcollection: true
   studio.collection: true
   studio.views: true
   studio.newview: true
@@ -53,7 +52,6 @@ routes:
   studio.appdetail: true
   studio.workspacedetail: true
   studio.collections: true
-  studio.newcollection: true
   studio.collection: true
   studio.views: true
   studio.newview: true

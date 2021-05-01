@@ -2,17 +2,6 @@ name: collections
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -39,81 +29,128 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
+    newcollection:
+      collection: studio.collections
+      fields:
+        studio.id:
+        studio.name:
+        studio.workspaceid:
+        studio.workspace:
+        studio.datasource:
+        studio.collectionname:
+        studio.namefield:
+        studio.idfield:
+        studio.created:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      type: CREATE
+      defaults:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: collections
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: collections
+                      itemIcon: list
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: collections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Collections
+                    subtitle: Gotta catch 'em all!
+                    actions:
+                      - io.group:
+                          width: 210px
                           components:
-                            - material.typography:
-                                text: Collections
-                                variant: h5
-                            - material.typography:
-                                text: Gotta catch 'em all!
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New Collection"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newcollection"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: collectionsDeck
-                    wire: collections
+                            - io.button:
+                                text: Create a New Collection
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newCollection
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
+                      - io.deck:
+                          id: collectionsDeck
+                          wire: collections
+                          uesio.variant: io.section
                           components:
-                            - material.griditem:
-                                components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${studio.name}"
-                                textTransform: "capitalize"
-                            - material.field:
-                                fieldId: studio.updated
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.name}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: list
+  panels:
+    - io.dialog:
+        id: newCollection
+        title: Create a New Collection
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newcollectionlist
+              wire: newcollection
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - studio.metadatafield:
+                    fieldId: studio.datasource
+                    metadataType: "DATASOURCE"
+                    label: "Data Source"
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              uesio.context:
+                wire: newcollection
+              text: "Save"
+              signals:
+                - signal: "bot/CALL"
+                  bot: "studio.newcollection"
+                  params:
+                    name: ${studio.name}
+                    datasource: ${studio.datasource}
+                    workspace: $Param{workspacename}
+                    app: $Param{appname}
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newCollection"

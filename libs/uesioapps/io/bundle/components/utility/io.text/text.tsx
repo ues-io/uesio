@@ -15,6 +15,7 @@ const Link: FunctionComponent<TextProps> = (props) => {
 				...(color && {
 					color: props.context.merge(color),
 				}),
+				verticalAlign: "inherit",
 			},
 		},
 		props

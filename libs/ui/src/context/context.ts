@@ -115,8 +115,32 @@ class Context {
 	}
 
 	getRecord = () => {
-		const recordId = this.getRecordId()
-		const wire = this.getWire()
+		const recordFrame = this.findRecordFrame()
+
+		// if we don't have a record id in context return the first
+		if (!recordFrame) {
+			const wire = this.getWire()
+			if (!wire) {
+				return undefined
+			}
+			const size = wire.getSize()
+			if (!size) {
+				throw new Error(
+					"No record provided for context and zero records exist"
+				)
+			}
+			if (size > 1) {
+				throw new Error(
+					"No record provided for context and multiple records exist"
+				)
+			}
+			return wire?.getFirstRecord()
+		}
+
+		const recordId = recordFrame.getRecordId()
+
+		const wire = recordFrame.getWire()
+
 		return recordId ? wire?.getRecord(recordId) : undefined
 	}
 
@@ -158,6 +182,14 @@ class Context {
 
 	findWireFrame = () => {
 		const index = this.stack.findIndex((frame) => frame?.wire)
+		if (index < 0) {
+			return undefined
+		}
+		return new Context(this.stack.slice(index))
+	}
+
+	findRecordFrame = () => {
+		const index = this.stack.findIndex((frame) => frame?.record)
 		if (index < 0) {
 			return undefined
 		}

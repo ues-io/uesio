@@ -21,7 +21,11 @@ export default createAsyncThunk<
 		wires: wiresToSave.map((wire) => {
 			const wiredef = getWireDef(wire)
 			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)
-			if (!doSave && (wire.changes.length || wire.deletes.length)) {
+			if (
+				!doSave &&
+				(Object.keys(wire.changes).length ||
+					Object.keys(wire.deletes).length)
+			) {
 				doSave = true
 			}
 			return {
