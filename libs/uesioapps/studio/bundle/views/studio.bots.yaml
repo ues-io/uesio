@@ -80,7 +80,7 @@ definition:
                 - io.titlebar:
                     uesio.variant: io.main
                     title: Bots
-                    subtitle: Gotta catch 'em all!
+                    subtitle: Beep. Boop. Beep.
                     actions:
                       - io.group:
                           width: 210px

@@ -2,17 +2,6 @@ name: themes
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -22,9 +11,8 @@ definition:
         studio.app:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -38,90 +26,112 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
+    newtheme:
+      collection: studio.themes
+      fields:
+        studio.id:
+        studio.name:
+        studio.workspaceid:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      type: CREATE
+      defaults:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: "route/NAVIGATE"
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: "route/NAVIGATE"
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: "route/NAVIGATE"
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: themes
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: themes
+                      itemIcon: palette
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: themes
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Themes
+                    subtitle: Motif?
+                    actions:
+                      - io.group:
+                          width: 210px
                           components:
-                            - material.typography:
-                                text: Themes
-                                variant: h5
-                            - material.typography:
-                                text: What a theme!
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New Theme"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/newtheme"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: themesDeck
-                    wire: themes
+                            - io.button:
+                                text: Create a New Theme
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newTheme
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
+                      - io.deck:
+                          id: themesDeck
+                          wire: themes
+                          uesio.variant: io.section
                           components:
-                            - material.griditem:
-                                components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${studio.name}"
-                                textTransform: "capitalize"
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${studio.name}"
-                          actions:
-                            - action:
-                              icon: "delete"
-                              size: "small"
-                              helptext: "Delete"
-                              helptextposition: "right"
-                              signals:
-                                - signal: wire/MARK_FOR_DELETE
-                                - signal: wire/SAVE
-                                  wires:
-                                    - "themes"
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${studio.name}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.name}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: palette
+  panels:
+    - io.dialog:
+        id: newTheme
+        title: Create a New Theme
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newthemelist
+              wire: newtheme
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newtheme"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/theme/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newTheme"
