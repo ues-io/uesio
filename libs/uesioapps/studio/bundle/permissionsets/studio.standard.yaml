@@ -15,8 +15,7 @@ views:
   studio.teams: true
   studio.routes: true
   studio.route: true
-  studio.secretsandconfig: true
-  studio.newsecret: true
+  studio.secrets: true
   studio.secret: true
   studio.datasources: true
   studio.datasource: true
@@ -28,16 +27,16 @@ views:
   studio.site: true
   studio.bots: true
   studio.components: true
+  studio.configvalues: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
   studio.selectlists: true
   studio.selectlist: true
-  studio.permissions: true
+  studio.permissionsets: true
   studio.permissionset: true
-  studio.newpermissionset: true
   studio.profile: true
-  studio.newprofile: true
+  studio.profiles: true
   studio.installedbundle: true
   studio.addbundle: true
   studio.workspaceconfig: true
@@ -54,8 +53,7 @@ routes:
   studio.view: true
   studio.routes: true
   studio.route: true
-  studio.secretsandconfig: true
-  studio.newsecret: true
+  studio.secrets: true
   studio.secret: true
   studio.datasources: true
   studio.datasource: true
@@ -67,16 +65,16 @@ routes:
   studio.site: true
   studio.bots: true
   studio.components: true
+  studio.configvalues: true
   studio.bot: true
   studio.themes: true
   studio.theme: true
   studio.selectlists: true
   studio.selectlist: true
-  studio.permissions: true
+  studio.permissionsets: true
   studio.permissionset: true
-  studio.newpermissionset: true
   studio.profile: true
-  studio.newprofile: true
+  studio.profiles: true
   studio.installedbundle: true
   studio.addbundle: true
   studio.workspaceconfig: true

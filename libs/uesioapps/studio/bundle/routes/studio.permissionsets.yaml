@@ -1,0 +1,4 @@
+name: permissions
+path: app/{appname}/workspace/{workspacename}/permissionsets
+view: studio.permissionsets
+theme: studio.default

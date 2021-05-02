@@ -1,4 +1,4 @@
-name: files
+name: profiles
 definition:
   # Wires are how we pull in data
   wires:
@@ -9,6 +9,8 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
           valueSource: PARAM
@@ -16,29 +18,21 @@ definition:
         - field: studio.name
           valueSource: PARAM
           param: workspacename
-    files:
-      collection: studio.files
+    profiles:
+      collection: studio.profiles
       fields:
         studio.id:
         studio.name:
-        studio.content:
-        studio.workspace:
-          fields:
-            studio.app:
-              fields:
-                uesio.color:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
-    newfile:
-      collection: studio.files
+    newprofile:
+      collection: studio.profiles
       fields:
         studio.id:
         studio.name:
-        studio.workspaceid:
-        studio.content:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -63,8 +57,8 @@ definition:
                     uesio.context:
                       wire: workspaces
                     params:
-                      itemType: files
-                      itemIcon: collections
+                      itemType: profiles
+                      itemIcon: group
           - io.griditem:
               uesio.variant: studio.leftbar
               components:
@@ -73,37 +67,37 @@ definition:
                       wire: workspaces
                     view: studio.workspacenav
                     params:
-                      selected: files
+                      selected: profiles
           - io.griditem:
               uesio.variant: studio.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: Files
-                    subtitle: Does it spark joy?
+                    title: Profiles
+                    subtitle: Be yourself. Only better.
                     actions:
                       - io.group:
                           width: 210px
                           components:
                             - io.button:
-                                text: Create a New File
+                                text: Create a New Profile
                                 uesio.variant: io.secondary
                                 signals:
                                   - signal: panel/TOGGLE
-                                    panel: newFile
+                                    panel: newProfile
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.deck:
-                          id: filesDeck
-                          wire: files
+                          id: profilesDeck
+                          wire: profiles
                           uesio.variant: io.section
                           components:
                             - io.tile:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/profile/${studio.name}"
                                 content:
                                   - io.text:
                                       text: ${studio.name}
@@ -111,17 +105,17 @@ definition:
                                   - io.text:
                                       uesio.variant: io.icon
                                       color: "#ccc"
-                                      text: collections
+                                      text: group
   panels:
     - io.dialog:
-        id: newFile
-        title: Create a New File
+        id: newProfile
+        title: Create a New Profile
         width: 400px
         height: 500px
         components:
           - io.list:
-              id: newfilelist
-              wire: newfile
+              id: newprofilelist
+              wire: newprofile
               mode: EDIT
               components:
                 - io.field:
@@ -133,12 +127,12 @@ definition:
               signals:
                 - signal: wire/SAVE
                   wires:
-                    - "newfile"
+                    - "newprofile"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/file/${studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/profile/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"
               signals:
                 - signal: "panel/TOGGLE"
-                  panel: "newFile"
+                  panel: "newProfile"

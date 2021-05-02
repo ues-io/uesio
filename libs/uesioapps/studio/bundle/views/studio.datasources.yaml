@@ -75,7 +75,7 @@ definition:
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: Datasources
+                    title: Data Sources
                     subtitle: Invisible threads are the strongest ties!
                     actions:
                       - io.group:
