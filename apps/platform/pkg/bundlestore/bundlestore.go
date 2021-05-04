@@ -59,7 +59,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if session.GetWorkspaceApp() == namespace {
 		return getBundleStoreByType("workspace")
 	}
-	if namespace == "material" || namespace == "uesio" || namespace == "studio" || namespace == "io" {
+	if namespace == "material" || namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "docs" {
 		return getBundleStoreByType("system")
 	}
 

@@ -11,6 +11,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 				...(props.definition.signals && {
 					cursor: "pointer",
 				}),
+				alignItems: "center",
 				"&:hover": {
 					backdropFilter: "brightness(97%)",
 				},

@@ -271,6 +271,35 @@
         }
       }
     },
+    "uesioapps-docs": {
+      "root": "libs/uesioapps/docs",
+      "sourceRoot": "libs/uesioapps/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/docs"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
+            "cwd": "libs/uesioapps/docs"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
+            "cwd": "libs/uesioapps/docs"
+          }
+        }
+      }
+    },
     "uesioapps-uesio": {
       "root": "libs/uesioapps/uesio",
       "sourceRoot": "libs/uesioapps/uesio/bundle",

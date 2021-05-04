@@ -1,4 +1,4 @@
 name: bulkjob
 path: app/{appname}/workspace/{workspacename}/bulkjob/{bulkjobname}
 view: studio.bulkjob
-theme: uesio.default
+theme: studio.default

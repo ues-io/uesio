@@ -23,5 +23,10 @@
 		"site": "prod_studio",
 		"type": "subdomain",
 		"domain": "studio"
+	},
+	{
+		"site": "prod_docs",
+		"type": "subdomain",
+		"domain": "docs"
 	}
 ]

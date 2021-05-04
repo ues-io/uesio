@@ -1,0 +1,9 @@
+name: mainlayout
+component: io.grid
+label: Main Layout
+definition:
+  uesio.styles:
+    root:
+      minHeight: 100vh
+      gridTemplateRows: 60px 1fr
+      gridTemplateColumns: 300px 1fr

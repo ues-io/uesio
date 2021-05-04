@@ -16,6 +16,9 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 			},
 			content: {
 				flex: 1,
+				display: "flex",
+				justifyContent: "center",
+				flexDirection: "column",
 			},
 			title: {},
 			subtitle: {},
