@@ -34,7 +34,7 @@ definition:
               uesio.variant: studio.leftbar
               components:
                 - io.titlebar:
-                    uesio.variant: io.plain
+                    uesio.variant: io.nav
                     title: My Apps
                     actions:
                       - io.iconbutton:

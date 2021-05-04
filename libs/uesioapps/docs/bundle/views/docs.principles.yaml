@@ -1,0 +1,72 @@
+name: principles
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: principles
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Principles
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Declarative app development
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Configuration, not code. In declarative, you specify the desired outcome, not the specific instructions to the computer.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Finding the right abstractions
+                      - io.text:
+                          uesio.variant: io.section
+                          text:
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Full Software Development Lifecycle Included
+                      - io.text:
+                          uesio.variant: io.section
+                          text:
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Share, Use, and Monitize App Metadata with the Bundle Store
+                      - io.text:
+                          uesio.variant: io.section
+                          text:
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Build the Platform with the Platform
+                      - io.text:
+                          uesio.variant: io.section
+                          text:

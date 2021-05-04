@@ -5,9 +5,10 @@ definition:
   uesio.styles:
     root:
       padding: 10px 20px
-      color: "#21242D"
+      color: "#444"
     selected:
       backgroundColor: $Theme{color.primary}
       color: white
     content:
       verticalAlign: middle
+      fontSize: 10pt

@@ -1,0 +1,33 @@
+name: home
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: home
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: What is Uesio?
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Uesio (pronounced "yoo-zee-oh") is a declarative application development platform for the web.

@@ -1,0 +1,99 @@
+name: keyfeatures
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: keyfeatures
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Key Features
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Realtime view editing
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Views react in real time to changes to their configuration. Whenever possible, the feedbock loop for a change is as short as possible.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Seamless upgrades and rollbacks
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Easily switch between bundle versions for a site, allowing administrators to quickly address issues.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Built-in, zero configuration data source
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Use Uesio's included platform data source right out of the box, zero configuration or separate account with a third party needed.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Full featured component library included
+                      - io.text:
+                          uesio.variant: io.section
+                          text: The IO components, included with Uesio provide a complete set of the components you need for a standard business application.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Create components quickly using React
+                      - io.text:
+                          uesio.variant: io.section
+                          text: For custom functionality, use React and Uesio's API hooks to connect to wires and send signals.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Back-end business logic with bots, and validation rules
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Write business logic in Javascript (or Typescript) using bots.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Distribute and monitize components, app structure, and data models
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Using the bundle store, sell subscriptions to the functionality you've built out.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Build quickly using bundles
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Choose from a large selection of pre-built functionality in the bundle store.

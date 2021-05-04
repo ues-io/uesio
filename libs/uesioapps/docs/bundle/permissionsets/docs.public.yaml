@@ -1,0 +1,14 @@
+name: public
+named:
+views:
+  docs.home: true
+  docs.topbar: true
+  docs.nav: true
+  docs.principles: true
+  docs.keyfeatures: true
+routes:
+  docs.login: true
+  docs.home: true
+  docs.principles: true
+  docs.keyfeatures: true
+files:

@@ -1,4 +1,4 @@
 name: import
 path: app/{appname}/workspace/{workspacename}/import
 view: studio.import
-theme: uesio.default
+theme: studio.default

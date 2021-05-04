@@ -5,5 +5,12 @@
 			"id": "studio_v0.0.1"
 		},
 		"appref": "studio"
+	},
+	{
+		"name": "prod",
+		"bundle": {
+			"id": "docs_v0.0.1"
+		},
+		"appref": "docs"
 	}
 ]

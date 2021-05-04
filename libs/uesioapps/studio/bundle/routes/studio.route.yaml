@@ -1,4 +1,4 @@
 name: route
 path: app/{appname}/workspace/{workspacename}/route/{routename}
 view: studio.route
-theme: uesio.default
+theme: studio.default

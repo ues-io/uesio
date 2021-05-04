@@ -7,7 +7,7 @@ definition:
     - io.list:
         components:
           - io.titlebar:
-              uesio.variant: io.plain
+              uesio.variant: io.nav
               title: Data
           - io.tile:
               uesio.variant: io.nav
@@ -78,7 +78,7 @@ definition:
                     uesio.variant: io.icon
                     text: playlist_add_check
           - io.titlebar:
-              uesio.variant: io.plain
+              uesio.variant: io.nav
               title: User Interface
           - io.tile:
               uesio.variant: io.nav
@@ -149,7 +149,7 @@ definition:
                     uesio.variant: io.icon
                     text: view_quilt
           - io.titlebar:
-              uesio.variant: io.plain
+              uesio.variant: io.nav
               title: Admin
           - io.tile:
               uesio.variant: io.nav

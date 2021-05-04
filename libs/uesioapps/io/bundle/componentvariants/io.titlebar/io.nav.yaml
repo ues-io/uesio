@@ -6,9 +6,11 @@ definition:
     root:
       padding: 20px
     title:
-      fontWeight: 500
-      fontSize: "11pt"
+      fontWeight: 300
+      fontSize: 9pt
       color: "#21242D"
+      textTransform: uppercase
+      letterSpacing: 1px
     subtitle:
-      fontSize: "9pt"
+      fontSize: 9pt
       color: "#777"

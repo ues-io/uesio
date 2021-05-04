@@ -23,5 +23,10 @@
 		"name": "material",
 		"description": "Material UI Components",
 		"color": "#ffa600"
+	},
+	{
+		"name": "docs",
+		"description": "Docs for Uesio",
+		"color": "#d45087"
 	}
 ]

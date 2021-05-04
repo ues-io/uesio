@@ -1,0 +1,10 @@
+name: docs
+loginRoute: docs.login
+homeRoute: docs.home
+defaultProfile: docs.public
+publicProfile: docs.public
+dependencies:
+  uesio:
+    version: "v0.0.1"
+  io:
+    version: "v0.0.1"

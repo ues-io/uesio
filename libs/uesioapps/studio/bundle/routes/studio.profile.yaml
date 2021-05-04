@@ -1,4 +1,4 @@
 name: profile
 path: app/{appname}/workspace/{workspacename}/profile/{profilename}
 view: studio.profile
-theme: uesio.default
+theme: studio.default

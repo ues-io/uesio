@@ -271,6 +271,36 @@
         }
       }
     },
+    "uesioapps-docs": {
+      "root": "libs/uesioapps/docs",
+      "sourceRoot": "libs/uesioapps/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/docs"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
+            "cwd": "libs/uesioapps/docs"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/uesioapps/docs/**/*.ts*"
+            ]
+          }
+        }
+      }
+    },
     "uesioapps-uesio": {
       "root": "libs/uesioapps/uesio",
       "sourceRoot": "libs/uesioapps/uesio/bundle",
