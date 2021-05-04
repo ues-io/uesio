@@ -292,11 +292,10 @@
           }
         },
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/docs/**/*.ts*"
-            ]
+            "command": "npx eslint . --ext .ts,.tsx --config=.eslintrc.json --no-error-on-unmatched-pattern",
+            "cwd": "libs/uesioapps/docs"
           }
         }
       }
