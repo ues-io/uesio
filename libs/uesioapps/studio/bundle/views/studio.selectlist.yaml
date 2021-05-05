@@ -2,17 +2,6 @@ name: selectlist
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -45,104 +35,86 @@ definition:
           param: selectlistname
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: selectlists
+                      itemIcon: playlist_add_check
+                      itemName: $Param{selectlistname}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: selectlists
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
                     id: selectlistsDeck
                     wire: selectlists
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: selectlists
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/selectlists
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/selectlists
-                            - text: $Param{selectlistname}
-                      - material.grid:
-                          items:
-                            - material.griditem:
-                                xs: true
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Select List - ${studio.name}
+                          actions:
+                            - io.group:
                                 components:
-                                  - material.card:
-                                      media:
-                                        background:
-                                          color:
-                                            intention: "primary"
-                                        height: 10px
-                                      margin: 1
-                                      components:
-                                        - material.grid:
-                                            justify: space-between
-                                            alignitems: center
-                                            items:
-                                              - material.griditem:
-                                                  components:
-                                                    - material.typography:
-                                                        text: "Select List"
-                                                        variant: h5
-                                              - material.griditem:
-                                                  components:
-                                                    - material.buttonset:
-                                                        buttons:
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Edit"
-                                                              signals:
-                                                                - signal: component/material.deck/TOGGLE_MODE
-                                                                  target: "selectlistsDeck"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Save"
-                                                              signals:
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "selectlists"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Cancel"
-                                                              signals:
-                                                                - signal: wire/CANCEL
-                                                                  wire: "selectlists"
-                                                                - signal: wire/CANCEL
-                                                                  wire: "fields"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Delete"
-                                                              signals:
-                                                                - signal: wire/MARK_FOR_DELETE
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "selectlists"
-                                                                - signal: "route/NAVIGATE"
-                                                                  path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
-                                        - material.field:
-                                            fieldId: studio.name
-                                        - material.field:
-                                            fieldId: studio.options
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Edit"
+                                      signals:
+                                        - signal: component/io.list/TOGGLE_MODE
+                                          target: "selectlistsDeck"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "selectlists"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: "selectlists"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Delete"
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "selectlists"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.name
+                                  - io.field:
+                                      fieldId: studio.options

@@ -3,3 +3,4 @@ collection: studio.themes
 type: TEXT
 label: Name
 propertyName: name
+createOnly: true

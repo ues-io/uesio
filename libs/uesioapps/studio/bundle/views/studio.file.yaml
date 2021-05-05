@@ -2,17 +2,6 @@ name: file
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -46,103 +36,95 @@ definition:
           param: filename
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: files
+                      itemIcon: collections
+                      itemName: $Param{filename}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: files
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
                     id: filesDeck
                     wire: files
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: files
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/files
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/files
-                            - text: $Param{filename}
-                      - material.grid:
-                          items:
-                            - material.griditem:
-                                xs: true
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: File - ${studio.name}
+                          actions:
+                            - io.group:
                                 components:
-                                  - material.card:
-                                      media:
-                                        background:
-                                          color:
-                                            intention: "primary"
-                                        height: 10px
-                                      margin: 1
-                                      components:
-                                        - material.grid:
-                                            justify: space-between
-                                            alignitems: center
-                                            items:
-                                              - material.griditem:
-                                                  components:
-                                                    - material.typography:
-                                                        text: ${studio.name}
-                                                        variant: h5
-                                                        textTransform: "uppercase"
-                                              - material.griditem:
-                                                  components:
-                                                    - material.dialog:
-                                                        id: "fileDialog"
-                                                        title: "Are you sure to delete this item?"
-                                                        content:
-                                                          - material.typography:
-                                                              text: "Are you sure you want to permanently delete this element. The information will be permanently delete"
-                                                        mode: "CLOSE"
-                                                        disagreeSignals:
-                                                          - signal: component/material.dialog/TOGGLE_MODE
-                                                            target: "fileDialog"
-                                                        agreeSignals:
-                                                          - signal: wire/MARK_FOR_DELETE
-                                                          - signal: wire/SAVE
-                                                            wires:
-                                                              - "files"
-                                                          - signal: "route/NAVIGATE"
-                                                            path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
-                                                          - signal: component/material.dialog/TOGGLE_MODE
-                                                            target: "fileDialog"
-                                                    - material.buttonset:
-                                                        buttons:
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Delete"
-                                                              signals:
-                                                                - signal: component/material.dialog/TOGGLE_MODE
-                                                                  target: "fileDialog"
-                                        - material.file:
-                                            fieldId: studio.content
-                                            height: 200
-                                            width: 200
-                                            id: fileupid
-                                            margin:
-                                              - 0
-                                              - 2
-                                            displayAs: fullPreview
-                                            editable: true
-                                            accepts: all
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Edit"
+                                      signals:
+                                        - signal: component/io.list/TOGGLE_MODE
+                                          target: "filesDeck"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "files"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: "files"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Delete"
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "files"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/files"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.name
+                            - material.file:
+                                fieldId: studio.content
+                                height: 200
+                                width: 200
+                                id: fileupid
+                                margin:
+                                  - 0
+                                  - 2
+                                displayAs: fullPreview
+                                editable: true
+                                accepts: all

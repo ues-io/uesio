@@ -1,4 +1,4 @@
-name: secret
+name: configvalue
 definition:
   # Wires are how we pull in data
   wires:
@@ -18,15 +18,13 @@ definition:
         - field: studio.name
           valueSource: PARAM
           param: workspacename
-    secrets:
-      collection: studio.secrets
+    configvalues:
+      collection: studio.configvalues
       fields:
         studio.id:
         studio.name:
         studio.workspaceid:
         studio.workspace:
-        studio.store:
-        studio.managedby:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -34,7 +32,7 @@ definition:
           lookupField: studio.id
         - field: studio.name
           valueSource: PARAM
-          param: secretname
+          param: configvaluename
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -48,9 +46,9 @@ definition:
                     uesio.context:
                       wire: workspaces
                     params:
-                      itemType: secrets
-                      itemIcon: lock
-                      itemName: $Param{secretname}
+                      itemType: configvalues
+                      itemIcon: tune
+                      itemName: $Param{configvaluename}
           - io.griditem:
               uesio.variant: studio.leftbar
               components:
@@ -59,50 +57,50 @@ definition:
                       wire: workspaces
                     view: studio.workspacenav
                     params:
-                      selected: secrets
+                      selected: configvalues
           - io.griditem:
               uesio.variant: studio.content
               components:
                 - io.list:
-                    id: secretsDeck
-                    wire: secrets
+                    id: configvaluesDeck
+                    wire: configvalues
                     mode: READ
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: Secret - ${studio.name}
+                          title: Config Value - ${studio.name}
                           actions:
                             - io.group:
                                 components:
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: Edit
+                                      text: "Edit"
                                       signals:
                                         - signal: component/io.list/TOGGLE_MODE
-                                          target: secretsDeck
+                                          target: "configvaluesDeck"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: Save
+                                      text: "Save"
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
-                                            - secrets
+                                            - "configvalues"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: Cancel
+                                      text: "Cancel"
                                       signals:
                                         - signal: wire/CANCEL
-                                          wire: secrets
+                                          wire: "configvalues"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: Delete
+                                      text: "Delete"
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE
                                           wires:
-                                            - secrets
-                                        - signal: route/NAVIGATE
-                                          path: app/$Param{appname}/workspace/$Param{workspacename}/secrets
+                                            - "configvalues"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/configvalues"
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -118,7 +116,3 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                                  - io.field:
-                                      fieldId: studio.store
-                                  - io.field:
-                                      fieldId: studio.managedby

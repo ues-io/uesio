@@ -1,4 +1,4 @@
 name: datasource
-path: app/{appname}/workspace/{workspacename}/datasource/{datasourcename}
+path: app/{appname}/workspace/{workspacename}/datasources/{datasourcename}
 view: studio.datasource
 theme: studio.default
