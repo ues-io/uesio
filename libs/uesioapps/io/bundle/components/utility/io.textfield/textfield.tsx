@@ -12,7 +12,7 @@ interface TextFieldProps extends definition.UtilityProps {
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode } = props
+	const { setValue, value, mode, hideLabel } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const classes = styles.useStyles(
@@ -29,7 +29,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<div className={classes.label}>{props.label}</div>
+			{!hideLabel && <div className={classes.label}>{props.label}</div>}
 			<input
 				value={value}
 				className={styles.cx(

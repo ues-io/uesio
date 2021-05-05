@@ -106,11 +106,32 @@ definition:
                           uesio.display:
                             - type: paramIsSet
                               param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/$Param{itemType}/$Param{itemName}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
                                 text: $Param{itemName}
+                                element: div
+                      - io.tile:
+                          uesio.display:
+                            - type: paramIsSet
+                              param: itemName
+                            - type: paramIsSet
+                              param: itemType
+                            - type: paramIsSet
+                              param: subItemName
+                            - type: paramIsSet
+                              param: subItemType
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: $Param{subItemName}
                                 element: div
           - io.griditem:
               uesio.styles:

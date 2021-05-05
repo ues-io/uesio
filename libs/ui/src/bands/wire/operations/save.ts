@@ -16,36 +16,45 @@ export default createAsyncThunk<
 >("wire/save", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToSave = getWiresFromDefinitonOrContext(wires, context)
-	let doSave = false
+	const response: SaveResponseBatch = {
+		wires: [],
+	}
 	const saveRequest = {
-		wires: wiresToSave.map((wire) => {
+		wires: wiresToSave.flatMap((wire) => {
 			const wiredef = getWireDef(wire)
 			if (!wiredef || !wire) throw new Error("Invalid Wire: " + wire)
+			const wireId = getFullWireId(wire.view, wire.name)
+			// Check to see if we need to go to the serve
 			if (
-				!doSave &&
-				(Object.keys(wire.changes).length ||
-					Object.keys(wire.deletes).length)
+				!Object.keys(wire.changes).length &&
+				!Object.keys(wire.deletes).length
 			) {
-				doSave = true
+				response.wires.push({
+					wire: wireId,
+					error: "",
+					changes: {},
+					deletes: {},
+				})
+				return []
 			}
-			return {
-				wire: getFullWireId(wire.view, wire.name),
-				collection: wiredef.collection,
-				changes: wire.changes,
-				deletes: wire.deletes,
-			}
+			return [
+				{
+					wire: wireId,
+					collection: wiredef.collection,
+					changes: wire.changes,
+					deletes: wire.deletes,
+				},
+			]
 		}),
 	}
-	if (!doSave) {
-		return {
-			wires: saveRequest.wires.map((wire) => ({
-				wire: wire.wire,
-				error: "",
-				changes: {},
-				deletes: {},
-			})),
-		}
+
+	if (!saveRequest.wires.length) {
+		return response
 	}
-	const response = await api.extra.saveData(context, saveRequest)
+	// Combine the server responses with the ones that did not need to go to the server.
+	const serverResponse = await api.extra.saveData(context, saveRequest)
+	serverResponse.wires.forEach((wire) => {
+		response.wires.push(wire)
+	})
 	return response
 })

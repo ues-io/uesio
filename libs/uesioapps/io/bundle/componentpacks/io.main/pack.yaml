@@ -14,6 +14,7 @@ components:
     io.iconbutton:
     io.image:
     io.list:
+    io.table:
     io.text:
     io.tile:
     io.titlebar:

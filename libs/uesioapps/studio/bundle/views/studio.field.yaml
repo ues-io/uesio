@@ -2,17 +2,6 @@ name: field
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -82,150 +72,125 @@ definition:
           lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
-                    id: fieldDeck
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: collections
+                      itemIcon: list
+                      itemName: $Param{collectionname}
+                      subItemType: collections
+                      subItemName: $Param{fieldname}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: collections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
+                    id: fieldsDeck
                     wire: fields
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: collections
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/collections
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/collections
-                            - text: $Param{collectionname}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}
-                            - text: $Param{fieldname}
-                      - material.grid:
-                          items:
-                            - material.griditem:
-                                xs: true
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Field - ${studio.name}
+                          actions:
+                            - io.group:
                                 components:
-                                  - material.card:
-                                      media:
-                                        background:
-                                          color:
-                                            intention: "primary"
-                                        height: 10px
-                                      margin: 1
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Edit"
+                                      signals:
+                                        - signal: component/io.list/TOGGLE_MODE
+                                          target: "fieldsDeck"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "fields"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: "fields"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Delete"
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "fields"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.name
+                                  - io.field:
+                                      fieldId: studio.type
+                                  - io.field:
+                                      fieldId: studio.label
+                                  - io.field:
+                                      fieldId: studio.propertyname
+                                  - studio.metadatafield:
+                                      fieldId: studio.collection
+                                      metadataType: "COLLECTION"
+                                      label: "Collection"
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "REFERENCE"
                                       components:
-                                        - material.grid:
-                                            justify: space-between
-                                            alignitems: center
-                                            items:
-                                              - material.griditem:
-                                                  components:
-                                                    - material.typography:
-                                                        text: ${studio.name}
-                                                        textTransform: "uppercase"
-                                                        variant: h5
-                                              - material.griditem:
-                                                  components:
-                                                    - material.buttonset:
-                                                        buttons:
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Edit"
-                                                              signals:
-                                                                - signal: component/material.deck/TOGGLE_MODE
-                                                                  target: "fieldDeck"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Save"
-                                                              signals:
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "fields"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Cancel"
-                                                              signals:
-                                                                - signal: wire/CANCEL
-                                                                  wire: "fields"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Delete"
-                                                              signals:
-                                                                - signal: wire/MARK_FOR_DELETE
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "fields"
-                                                                - signal: "route/NAVIGATE"
-                                                                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/$Param{collectionname}"
-                                        - material.field:
-                                            fieldId: studio.name
-                                        - material.field:
-                                            fieldId: studio.type
-                                        - material.field:
-                                            fieldId: studio.label
-                                        - material.field:
-                                            fieldId: studio.propertyname
                                         - studio.metadatafield:
-                                            fieldId: studio.collection
+                                            fieldId: studio.foreignKeyField
+                                            metadataType: "FIELD"
+                                            label: "Foreign Key Field"
+                                        - studio.metadatafield:
+                                            fieldId: studio.referencedCollection
                                             metadataType: "COLLECTION"
-                                            label: "Collection"
-                                        - material.container:
-                                            padding: 0
-                                            uesio.display:
-                                              - field: studio.type
-                                                value: "REFERENCE"
-                                            components:
-                                              - studio.metadatafield:
-                                                  fieldId: studio.foreignKeyField
-                                                  metadataType: "FIELD"
-                                                  label: "Foreign Key Field"
-                                              - studio.metadatafield:
-                                                  fieldId: studio.referencedCollection
-                                                  metadataType: "COLLECTION"
-                                                  label: "Ref. Collection"
-
-                                        - material.container:
-                                            padding: 0
-                                            uesio.display:
-                                              - field: studio.type
-                                                value: "TIMESTAMP"
-                                            components:
-                                              - material.field:
-                                                  fieldId: studio.autopopulate
-
-                                        - material.container:
-                                            padding: 0
-                                            uesio.display:
-                                              - field: studio.type
-                                                value: "SELECT"
-                                            components:
-                                              - uesio.metadatafield:
-                                                  fieldId: studio.selectlist
-                                                  metadataType: "SELECTLIST"
-                                                  label: "Select List"
+                                            label: "Ref. Collection"
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "TIMESTAMP"
+                                      components:
+                                        - io.field:
+                                            fieldId: studio.autopopulate
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "SELECT"
+                                      components:
+                                        - uesio.metadatafield:
+                                            fieldId: studio.selectlist
+                                            metadataType: "SELECTLIST"
+                                            label: "Select List"
