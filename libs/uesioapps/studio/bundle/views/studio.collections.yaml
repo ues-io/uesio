@@ -105,7 +105,7 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
                                 content:
                                   - io.text:
                                       text: ${studio.name}
@@ -147,7 +147,7 @@ definition:
                     workspace: $Param{workspacename}
                     app: $Param{appname}
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collection/${studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

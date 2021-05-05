@@ -1,4 +1,4 @@
 name: collection
-path: app/{appname}/workspace/{workspacename}/collection/{collectionname}
+path: app/{appname}/workspace/{workspacename}/collections/{collectionname}
 view: studio.collection
 theme: studio.default

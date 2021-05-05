@@ -112,6 +112,7 @@ definition:
                                         - signal: "route/NAVIGATE"
                                           path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
                       - io.box:
+                          uesio.variant: io.section
                           uesio.styles:
                             root:
                               padding: 40px
