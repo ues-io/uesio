@@ -99,7 +99,7 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources/${studio.name}"
                                 content:
                                   - io.text:
                                       text: ${studio.type} - ${studio.name}
@@ -135,7 +135,7 @@ definition:
                   wires:
                     - "newdatasource"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/datasource/${studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/datasources/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

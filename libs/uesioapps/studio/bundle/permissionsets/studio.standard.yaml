@@ -2,81 +2,87 @@ name: standard
 named:
   workspace_admin: true
 views:
-  studio.field: true
-  studio.home: true
+  studio.addbundle: true
   studio.app: true
   studio.appedit: true
-  studio.workspace: true
-  studio.topbar: true
-  studio.collections: true
-  studio.collection: true
-  studio.views: true
-  studio.view: true
-  studio.teams: true
-  studio.routes: true
-  studio.route: true
-  studio.secrets: true
-  studio.secret: true
-  studio.datasources: true
-  studio.datasource: true
-  studio.files: true
-  studio.file: true
-  studio.import: true
+  studio.bot: true
+  studio.bots: true
   studio.bulkjob: true
   studio.bundle: true
-  studio.site: true
-  studio.bots: true
+  studio.collection: true
+  studio.collections: true
   studio.components: true
+  studio.configvalue: true
   studio.configvalues: true
-  studio.bot: true
-  studio.themes: true
-  studio.theme: true
-  studio.selectlists: true
-  studio.selectlist: true
-  studio.permissionsets: true
+  studio.credential: true
+  studio.credentials: true
+  studio.datasource: true
+  studio.datasources: true
+  studio.field: true
+  studio.file: true
+  studio.files: true
+  studio.home: true
+  studio.import: true
+  studio.installedbundle: true
   studio.permissionset: true
+  studio.permissionsets: true
   studio.profile: true
   studio.profiles: true
-  studio.installedbundle: true
-  studio.addbundle: true
+  studio.route: true
+  studio.routes: true
+  studio.secret: true
+  studio.secrets: true
+  studio.selectlist: true
+  studio.selectlists: true
+  studio.site: true
+  studio.teams: true
+  studio.theme: true
+  studio.themes: true
+  studio.topbar: true
+  studio.view: true
+  studio.views: true
+  studio.workspace: true
   studio.workspaceconfig: true
   studio.workspacenav: true
 routes:
-  studio.field: true
-  studio.teams: true
-  studio.home: true
+  studio.addbundle: true
   studio.appdetail: true
-  studio.workspacedetail: true
-  studio.collections: true
-  studio.collection: true
-  studio.views: true
-  studio.view: true
-  studio.routes: true
-  studio.route: true
-  studio.secrets: true
-  studio.secret: true
-  studio.datasources: true
-  studio.datasource: true
-  studio.files: true
-  studio.file: true
-  studio.import: true
+  studio.bot: true
+  studio.bots: true
   studio.bulkjob: true
   studio.bundle: true
-  studio.site: true
-  studio.bots: true
+  studio.collection: true
+  studio.collections: true
   studio.components: true
+  studio.configvalue: true
   studio.configvalues: true
-  studio.bot: true
-  studio.themes: true
-  studio.theme: true
-  studio.selectlists: true
-  studio.selectlist: true
-  studio.permissionsets: true
+  studio.credential: true
+  studio.credentials: true
+  studio.datasource: true
+  studio.datasources: true
+  studio.field: true
+  studio.file: true
+  studio.files: true
+  studio.home: true
+  studio.import: true
+  studio.installedbundle: true
+  studio.login: true
   studio.permissionset: true
+  studio.permissionsets: true
   studio.profile: true
   studio.profiles: true
-  studio.installedbundle: true
-  studio.addbundle: true
+  studio.route: true
+  studio.routes: true
+  studio.secret: true
+  studio.secrets: true
+  studio.selectlist: true
+  studio.selectlists: true
+  studio.site: true
+  studio.teams: true
+  studio.theme: true
+  studio.themes: true
+  studio.view: true
+  studio.views: true
   studio.workspaceconfig: true
-  studio.login: true
+  studio.workspace: true
 files:

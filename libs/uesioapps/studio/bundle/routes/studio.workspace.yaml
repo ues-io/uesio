@@ -1,4 +1,4 @@
-name: workspacedetail
+name: workspace
 path: app/{appname}/workspace/{workspacename}
 view: studio.workspace
 theme: studio.default

@@ -97,7 +97,7 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/configvalue/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/configvalues/${studio.name}"
                                 content:
                                   - io.text:
                                       text: ${studio.name}
@@ -129,7 +129,7 @@ definition:
                   wires:
                     - "newconfigvalue"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/configvalue/${studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/configvalues/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"
