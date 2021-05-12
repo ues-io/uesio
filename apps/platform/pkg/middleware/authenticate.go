@@ -92,7 +92,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		perms := session.GetPermissions()
 
 		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.AppRef != "studio" {
+		if site.AppID != "studio" {
 			err := errors.New("this site does not allow administering other sites")
 			logger.LogError(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -122,13 +122,13 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 					ID: "uesio.name",
 				},
 				{
-					ID: "uesio.appref",
+					ID: "uesio.appid",
 				},
 				{
 					ID: "uesio.bundle",
 					Fields: []adapt.LoadRequestField{
 						{
-							ID: "uesio.namespace",
+							ID: "uesio.appid",
 						},
 						{
 							ID: "uesio.major",

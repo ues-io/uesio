@@ -1,10 +1,11 @@
 import { FunctionComponent } from "react"
 
 import { FieldProps } from "./fielddefinition"
-import { component, collection } from "@uesio/ui"
+import { component, collection, wire } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
+const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 
@@ -40,27 +41,21 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		hideLabel,
 		variant: "io.default",
 		id,
+		value: record.getFieldValue(fieldId),
+		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 	}
 
 	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {
-		return (
-			<TextField
-				{...commonProps}
-				value={record.getFieldValue(fieldId) || ""}
-				setValue={(value: string) => record.update(fieldId, value)}
-			/>
-		)
+		return <TextField {...commonProps} />
 	} else if (type === "SELECT") {
 		return (
 			<SelectField
 				{...commonProps}
-				value={record.getFieldValue(fieldId) || ""}
-				setValue={(value: string) => record.update(fieldId, value)}
 				options={addBlankSelectOption(fieldMetadata.getOptions() || [])}
 			/>
 		)
 	} else if (type === "CHECKBOX") {
-		return null
+		return <CheckboxField {...commonProps} />
 	} else if (type === "REFERENCE") {
 		return <ReferenceField {...commonProps} record={record} wire={wire} />
 	} else if (type === "TIMESTAMP") {

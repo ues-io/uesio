@@ -24,7 +24,7 @@ func (b *BundleDependency) GetBundleName() string {
 	if b.Bundle == nil {
 		return ""
 	}
-	return b.Bundle.Namespace
+	return b.Bundle.AppID
 }
 
 // GetCollectionName function

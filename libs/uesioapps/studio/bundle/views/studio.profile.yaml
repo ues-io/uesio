@@ -2,17 +2,6 @@ name: profile
 definition:
   # Wires are how we pull in data
   wires:
-    apps:
-      collection: uesio.apps
-      fields:
-        uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
-      conditions:
-        - field: uesio.name
-          valueSource: PARAM
-          param: appname
     workspaces:
       collection: studio.workspaces
       fields:
@@ -20,11 +9,12 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
-          valueSource: LOOKUP
-          lookupWire: apps
-          lookupField: uesio.id
+          valueSource: PARAM
+          param: appname
         - field: studio.name
           valueSource: PARAM
           param: workspacename
@@ -56,106 +46,88 @@ definition:
           lookupField: studio.id
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: profiles
+                      itemIcon: group
+                      itemName: $Param{profilename}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: profiles
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
                     id: profilesDeck
                     wire: profiles
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: profiles
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/permissions
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/permissions
-                            - text: $Param{profilename}
-                      - material.grid:
-                          items:
-                            - material.griditem:
-                                xs: true
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Profile - ${studio.name}
+                          actions:
+                            - io.group:
                                 components:
-                                  - material.card:
-                                      media:
-                                        background:
-                                          color:
-                                            intention: "primary"
-                                        height: 10px
-                                      margin: 1
-                                      components:
-                                        - material.grid:
-                                            justify: space-between
-                                            alignitems: center
-                                            items:
-                                              - material.griditem:
-                                                  components:
-                                                    - material.typography:
-                                                        text: "Profile"
-                                                        variant: h5
-                                              - material.griditem:
-                                                  components:
-                                                    - material.buttonset:
-                                                        buttons:
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Edit"
-                                                              signals:
-                                                                - signal: component/material.deck/TOGGLE_MODE
-                                                                  target: "profilesDeck"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Save"
-                                                              signals:
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "profiles"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Cancel"
-                                                              signals:
-                                                                - signal: wire/CANCEL
-                                                                  wire: "profiles"
-                                                                - signal: wire/CANCEL
-                                                                  wire: "fields"
-                                                          - material.button:
-                                                              color: "primary"
-                                                              variant: "outlined"
-                                                              text: "Delete"
-                                                              signals:
-                                                                - signal: wire/MARK_FOR_DELETE
-                                                                - signal: wire/SAVE
-                                                                  wires:
-                                                                    - "profiles"
-                                                                - signal: "route/NAVIGATE"
-                                                                  path: "app/$Param{appname}/workspace/$Param{workspacename}/permissions"
-                                        - material.field:
-                                            fieldId: studio.name
-                                        - studio.permissionpicker:
-                                            fieldId: studio.permissionsetsrefs
-                                            wireName: permissionsets
-                                            label: "Permission sets"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Edit"
+                                      signals:
+                                        - signal: component/io.list/TOGGLE_MODE
+                                          target: "profilesDeck"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "profiles"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: "profiles"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Delete"
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "profiles"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/profiles"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.name
+                            - studio.permissionpicker:
+                                fieldId: studio.permissionsetsrefs
+                                wireName: permissionsets
+                                label: "Permission sets"

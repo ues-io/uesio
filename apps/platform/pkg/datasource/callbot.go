@@ -56,7 +56,7 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 		},
 	}, []adapt.LoadRequestCondition{
 		{
-			Field: "uesio.namespace",
+			Field: "uesio.appid",
 			Value: app,
 		},
 	}, sa.session)

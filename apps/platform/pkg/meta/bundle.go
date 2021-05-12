@@ -34,7 +34,7 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 		return nil, err
 	}
 	return &Bundle{
-		Namespace:   namespace,
+		AppID:       namespace,
 		Major:       strconv.Itoa(versionParts[0]),
 		Minor:       strconv.Itoa(versionParts[1]),
 		Patch:       strconv.Itoa(versionParts[2]),
@@ -48,7 +48,7 @@ type Bundle struct {
 	Major       string    `uesio:"uesio.major"`
 	Minor       string    `uesio:"uesio.minor"`
 	Patch       string    `uesio:"uesio.patch"`
-	Namespace   string    `uesio:"uesio.namespace"`
+	AppID       string    `uesio:"uesio.appid"`
 	Description string    `uesio:"uesio.description"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 }

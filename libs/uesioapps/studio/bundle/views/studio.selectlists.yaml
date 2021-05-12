@@ -9,6 +9,8 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
           valueSource: PARAM

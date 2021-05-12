@@ -1,34 +1,34 @@
 [
 	{
-		"namespace": "uesio",
+		"appid": "uesio",
 		"description": "Uesio Base Functionality",
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
 	},
 	{
-		"namespace": "material",
+		"appid": "material",
 		"description": "Material UI Components",
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
 	},
 	{
-		"namespace": "studio",
+		"appid": "studio",
 		"description": "The Uesio Configuration App",
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
 	},
 	{
-		"namespace": "io",
+		"appid": "io",
 		"description": "Base Uesio Components",
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
 	},
 	{
-		"namespace": "docs",
+		"appid": "docs",
 		"description": "Uesio Docs",
 		"major": "0",
 		"minor": "0",

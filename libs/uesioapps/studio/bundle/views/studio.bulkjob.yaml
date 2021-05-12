@@ -2,6 +2,22 @@ name: bulkjob
 definition:
   # Wires are how we pull in data
   wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+          fields:
+            uesio.color:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
     bulkjobs:
       collection: uesio.bulkjobs
       fields:
@@ -26,11 +42,28 @@ definition:
 
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: import
+                      itemIcon: upload
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+          - io.griditem:
+              uesio.variant: studio.content
               components:
                 - material.deck:
                     xs: 12
@@ -39,29 +72,6 @@ definition:
                     wire: bulkjobs
                     mode: EDIT
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: import
-                              href: app/$Param{appname}/workspace/$Param{workspacename}/import
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}/import
-                            - text: $Param{bulkjobname}
                       - material.grid:
                           items:
                             - material.griditem:
@@ -114,28 +124,28 @@ definition:
                                             fieldId: uesio.spec
                                             height: 350px
                                             language: "json"
-          - material.container:
-              components:
-                - material.typography:
-                    text: "Bulk Batches"
-                    variant: h5
-                - material.button:
-                    color: "primary"
-                    variant: "outlined"
-                    text: "Refresh"
-                    signals:
-                      - signal: wire/LOAD
-                        wires:
-                          - "bulkjobs"
-                          - "bulkbatches"
-                - material.table:
-                    id: "bulkbatcheslist"
-                    wire: "bulkbatches"
-                    mode: "READ"
-                    columns:
-                      - material.column:
-                          field: uesio.id
-                      - material.column:
-                          field: uesio.bulkjobid
-                      - material.column:
-                          field: uesio.status
+                - material.container:
+                    components:
+                      - material.typography:
+                          text: "Bulk Batches"
+                          variant: h5
+                      - material.button:
+                          color: "primary"
+                          variant: "outlined"
+                          text: "Refresh"
+                          signals:
+                            - signal: wire/LOAD
+                              wires:
+                                - "bulkjobs"
+                                - "bulkbatches"
+                      - material.table:
+                          id: "bulkbatcheslist"
+                          wire: "bulkbatches"
+                          mode: "READ"
+                          columns:
+                            - material.column:
+                                field: uesio.id
+                            - material.column:
+                                field: uesio.bulkjobid
+                            - material.column:
+                                field: uesio.status

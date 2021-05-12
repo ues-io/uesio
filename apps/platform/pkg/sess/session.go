@@ -56,12 +56,12 @@ func GetHeadlessSite() *meta.Site {
 	site := &meta.Site{
 		Name: "uesio",
 		Bundle: &meta.Bundle{
-			Namespace: "uesio",
-			Major:     "0",
-			Minor:     "0",
-			Patch:     "1",
+			AppID: "uesio",
+			Major: "0",
+			Minor: "0",
+			Patch: "1",
 		},
-		AppRef: "uesio",
+		AppID: "uesio",
 	}
 	site.SetAppBundle(&meta.BundleDef{
 		Name: "uesio",
@@ -266,9 +266,9 @@ func (s *Session) GetContextAppName() string {
 		return s.workspace.GetAppID()
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.AppRef
+		return s.siteadmin.AppID
 	}
-	return s.site.AppRef
+	return s.site.AppID
 }
 
 // GetContextVersionName returns the appversion in context

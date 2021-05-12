@@ -19,8 +19,13 @@ definition:
         uesio.id:
         uesio.name:
         uesio.bundle:
+        uesio.app:
+          fields:
+            uesio.id:
+            uesio.name:
+            uesio.color:
       conditions:
-        - field: uesio.appref
+        - field: uesio.appid
           valueSource: PARAM
           param: appname
         - field: uesio.name
@@ -52,11 +57,21 @@ definition:
           value: subdomain
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: sites
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+          - io.griditem:
+              uesio.variant: studio.content
               components:
                 - material.deck:
                     xs: 12
@@ -65,19 +80,6 @@ definition:
                     wire: sites
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: ${uesio.name}
                       - material.card:
                           media:
                             background:

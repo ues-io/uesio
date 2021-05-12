@@ -1,6 +1,6 @@
-name: appref
+name: appid
 collection: uesio.sites
 type: "TEXT"
 label: "Referenced App Namespace"
-propertyName: "appref"
+propertyName: "appid"
 createOnly: true

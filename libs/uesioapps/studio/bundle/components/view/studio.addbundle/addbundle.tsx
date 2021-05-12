@@ -103,7 +103,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		?.getData()
 		.filter((record) => {
 			const source = record.source
-			const namespace = source["uesio.namespace"]
+			const namespace = source["uesio.appid"]
 			//We don't want to see ourselves, uesio or studio
 			if (namespace === appName) return false
 			if (namespace === "studio") return false
@@ -111,7 +111,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		})
 		.map((record) => {
 			const source = record.source
-			const namespace = source["uesio.namespace"] as string
+			const namespace = source["uesio.appid"] as string
 			const version = `v${source["uesio.major"]}.${source["uesio.minor"]}.${source["uesio.patch"]}`
 			return {
 				namespace,
@@ -126,7 +126,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		deps.map((dep) => {
 			const bundleInfo = dep["studio.bundle"] as wire.PlainWireRecord
 			return {
-				namespace: bundleInfo["uesio.namespace"],
+				namespace: bundleInfo["uesio.appid"],
 				version: `v${bundleInfo["uesio.major"]}.${bundleInfo["uesio.minor"]}.${bundleInfo["uesio.patch"]}`,
 			}
 		}),

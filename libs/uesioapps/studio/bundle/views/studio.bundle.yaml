@@ -21,8 +21,13 @@ definition:
         uesio.minor:
         uesio.patch:
         uesio.description:
+        uesio.app:
+          fields:
+            uesio.id:
+            uesio.name:
+            uesio.color:
       conditions:
-        - field: uesio.namespace
+        - field: uesio.appid
           valueSource: PARAM
           param: appname
         - field: uesio.major
@@ -36,11 +41,21 @@ definition:
           param: patch
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: bundles
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+          - io.griditem:
+              uesio.variant: studio.content
               components:
                 - material.deck:
                     xs: 12
@@ -49,19 +64,6 @@ definition:
                     wire: bundles
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: v${uesio.major}.${uesio.minor}.${uesio.patch}
                       - material.card:
                           media:
                             background:

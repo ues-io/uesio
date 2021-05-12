@@ -5,13 +5,13 @@ type Site struct {
 	ID        string  `uesio:"uesio.id"`
 	Name      string  `uesio:"uesio.name"`
 	Bundle    *Bundle `uesio:"uesio.bundle"`
-	AppRef    string  `uesio:"uesio.appref"`
+	AppID     string  `uesio:"uesio.appid"`
 	bundleDef *BundleDef
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 }
 
 func (s *Site) GetFullName() string {
-	return s.Name + "_" + s.AppRef
+	return s.Name + "_" + s.AppID
 }
 
 // SetAppBundle function

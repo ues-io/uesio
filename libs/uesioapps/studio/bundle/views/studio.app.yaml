@@ -31,7 +31,7 @@ definition:
         uesio.patch:
         uesio.description:
       conditions:
-        - field: uesio.namespace
+        - field: uesio.appid
           valueSource: PARAM
           param: appname
     sites:
@@ -40,7 +40,7 @@ definition:
         uesio.id:
         uesio.name:
       conditions:
-        - field: uesio.appref
+        - field: uesio.appid
           valueSource: PARAM
           param: appname
     newworkspace:
@@ -60,11 +60,11 @@ definition:
       fields:
         uesio.id:
         uesio.name:
-        uesio.appref:
+        uesio.appid:
         uesio.bundle:
       type: CREATE
       defaults:
-        - field: uesio.appref
+        - field: uesio.appid
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id

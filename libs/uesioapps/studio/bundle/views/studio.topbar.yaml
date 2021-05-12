@@ -37,6 +37,9 @@ definition:
                     id: appslist
                     components:
                       - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${uesio.name}
                           uesio.variant: io.tag
                           content:
                             - io.text:
@@ -48,6 +51,78 @@ definition:
                                 uesio.variant: io.icon
                                 color: "${uesio.color}"
                                 text: circle
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio.sites
+                    id: sitestag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["uesio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["uesio.app"]["uesio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio.app"]["uesio.id"]}/site/${uesio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${uesio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: public
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
+                        collection: uesio.bundles
+                    id: sitestag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["uesio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["uesio.app"]["uesio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["uesio.app"]["uesio.id"]}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: v${uesio.appid}.${uesio.major}.${uesio.minor}.${uesio.patch}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: inventory_2
                 - io.list:
                     uesio.display:
                       - type: collectionContext

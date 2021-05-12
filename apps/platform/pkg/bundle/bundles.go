@@ -12,7 +12,7 @@ import (
 
 func getAppLicense(app, appToCheck string) (*meta.AppLicense, error) {
 	for _, av := range meta.DefaultAppLicenses {
-		if av.AppRef == app && av.LicensedAppRef == appToCheck {
+		if av.AppID == app && av.LicensedAppID == appToCheck {
 			return &av, nil
 		}
 	}
@@ -34,7 +34,7 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.AppRef, site.Bundle.GetVersionString(), session)
+	return getAppBundleInternal(site.AppID, site.Bundle.GetVersionString(), session)
 }
 
 // ClearAppBundleCache entry

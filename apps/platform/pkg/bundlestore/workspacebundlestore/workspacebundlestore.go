@@ -107,7 +107,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 				ID: "studio.bundle",
 				Fields: []adapt.LoadRequestField{
 					{
-						ID: "uesio.namespace",
+						ID: "uesio.appid",
 					},
 					{
 						ID: "uesio.major",
