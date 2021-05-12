@@ -1,0 +1,6 @@
+name: app
+collection: uesio.bundles
+type: REFERENCE
+label: App
+propertyName: appid
+referencedCollection: uesio.apps

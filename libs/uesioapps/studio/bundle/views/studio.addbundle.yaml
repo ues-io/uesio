@@ -2,11 +2,27 @@ name: addbundle
 definition:
   # Wires are how we pull in data
   wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+          fields:
+            uesio.color:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
     installablebundles:
       collection: uesio.bundles
       fields:
         uesio.id:
-        uesio.namespace:
+        uesio.appid:
         uesio.major:
         uesio.minor:
         uesio.patch:
@@ -16,7 +32,7 @@ definition:
         studio.id:
         studio.bundle:
           fields:
-            uesio.namespace:
+            uesio.appid:
             uesio.major:
             uesio.minor:
             uesio.patch:
@@ -25,30 +41,35 @@ definition:
           value: $Param{appname}_$Param{workspacename}
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
               components:
-                - material.breadcrumbs:
-                    crumbs:
-                      - text: home
-                        href: home
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: home
-                      - text: $Param{appname}
-                        href: app/$Param{appname}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}
-                      - text: $Param{workspacename}
-                        href: app/$Param{appname}/workspace/$Param{workspacename}
-                        signals:
-                          - signal: route/NAVIGATE
-                            path: app/$Param{appname}/workspace/$Param{workspacename}
-                      - text: Add Bundle
-                - studio.addbundle:
-                    installablebundleswire: "installablebundles"
-                    currentdependencies: "dependencies"
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Add a Bundle
+                - io.box:
+                    uesio.variant: io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
+                    components:
+                      - studio.addbundle:
+                          installablebundleswire: "installablebundles"
+                          currentdependencies: "dependencies"

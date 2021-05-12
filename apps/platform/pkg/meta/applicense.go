@@ -2,35 +2,35 @@ package meta
 
 // AppLicense struct
 type AppLicense struct {
-	ID             string
-	AppRef         string
-	LicensedAppRef string
+	ID            string
+	AppID         string
+	LicensedAppID string
 }
 
 // DefaultAppLicenses Seed config values (these are necessary to make things work)
 var DefaultAppLicenses = AppLicenseCollection{
 	{
-		AppRef:         "crm",
-		LicensedAppRef: "uesio",
+		AppID:         "crm",
+		LicensedAppID: "uesio",
 	},
 	{
-		AppRef:         "crm",
-		LicensedAppRef: "material",
+		AppID:         "crm",
+		LicensedAppID: "material",
 	},
 	{
-		AppRef:         "crm",
-		LicensedAppRef: "sample",
+		AppID:         "crm",
+		LicensedAppID: "sample",
 	},
 	{
-		AppRef:         "uesio",
-		LicensedAppRef: "material",
+		AppID:         "uesio",
+		LicensedAppID: "material",
 	},
 	{
-		AppRef:         "studio",
-		LicensedAppRef: "uesio",
+		AppID:         "studio",
+		LicensedAppID: "uesio",
 	},
 	{
-		AppRef:         "studio",
-		LicensedAppRef: "material",
+		AppID:         "studio",
+		LicensedAppID: "material",
 	},
 }

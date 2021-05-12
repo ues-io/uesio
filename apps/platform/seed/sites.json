@@ -4,13 +4,13 @@
 		"bundle": {
 			"id": "studio_v0.0.1"
 		},
-		"appref": "studio"
+		"appid": "studio"
 	},
 	{
 		"name": "prod",
 		"bundle": {
 			"id": "docs_v0.0.1"
 		},
-		"appref": "docs"
+		"appid": "docs"
 	}
 ]

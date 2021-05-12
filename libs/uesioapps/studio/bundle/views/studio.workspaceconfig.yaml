@@ -9,6 +9,8 @@ definition:
         studio.name:
         studio.appid:
         studio.app:
+          fields:
+            uesio.color:
       conditions:
         - field: studio.appid
           valueSource: PARAM
@@ -18,11 +20,28 @@ definition:
           param: workspacename
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: configuration
+                      itemIcon: settings
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+          - io.griditem:
+              uesio.variant: studio.content
               components:
                 - material.deck:
                     xs: 12
@@ -31,25 +50,6 @@ definition:
                     wire: workspaces
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: configuration
-
                       - material.grid:
                           justify: space-between
                           alignitems: center

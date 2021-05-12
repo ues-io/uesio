@@ -19,7 +19,7 @@ class Bundle {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.namespace",
+				id: "uesio.appid",
 			},
 			{
 				id: "uesio.major",

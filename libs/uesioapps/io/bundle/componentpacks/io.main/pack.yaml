@@ -21,6 +21,7 @@ components:
   utility:
     io.autocomplete:
     io.button:
+    io.checkboxfield:
     io.codefield:
     io.filetext:
     io.grid:
@@ -36,6 +37,7 @@ components:
   variants:
     - io.textfield.io.default
     - io.codefield.io.default
+    - io.checkboxfield.io.default
     - io.selectfield.io.default
     - io.autocomplete.io.default
     - io.titlebar.io.dialog

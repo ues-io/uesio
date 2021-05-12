@@ -2,13 +2,29 @@ name: installedbundle
 definition:
   # Wires are how we pull in data
   wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+          fields:
+            uesio.color:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
     installedapp:
       collection: studio.bundledependencies
       fields:
         studio.id:
         studio.bundle:
           fields:
-            uesio.namespace:
+            uesio.appid:
             uesio.major:
             uesio.minor:
             uesio.patch:
@@ -21,22 +37,40 @@ definition:
       collection: uesio.bundles
       fields:
         uesio.id:
-        uesio.namespace:
+        uesio.appid:
         uesio.major:
         uesio.minor:
         uesio.patch:
       conditions:
-        - field: uesio.namespace
+        - field: uesio.appid
           valueSource: LOOKUP
           lookupWire: installedapp
-          lookupField: studio.bundle->uesio.namespace
+          lookupField: studio.bundle->uesio.appid
   # Components are how we describe the layout of our view
   components:
-    - uesio.view:
-        view: studio.topbar
-    - material.materialwrapper:
-        components:
-          - material.container:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: installed
+                      itemIcon: inventory_2
+                      itemName: $Param{bundledep}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+          - io.griditem:
+              uesio.variant: studio.content
               components:
                 - material.deck:
                     xs: 12
@@ -45,24 +79,6 @@ definition:
                     wire: installedapp
                     mode: READ
                     components:
-                      - material.breadcrumbs:
-                          crumbs:
-                            - text: home
-                              href: home
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: home
-                            - text: $Param{appname}
-                              href: app/$Param{appname}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}
-                            - text: $Param{workspacename}
-                              href: app/$Param{appname}/workspace/$Param{workspacename}
-                              signals:
-                                - signal: route/NAVIGATE
-                                  path: app/$Param{appname}/workspace/$Param{workspacename}
-                            - text: ${["studio.bundle"]["uesio.namespace"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
                       - material.grid:
                           items:
                             - material.griditem:

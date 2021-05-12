@@ -18,7 +18,7 @@ class Site {
 				id: "uesio.name",
 			},
 			{
-				id: "uesio.appref",
+				id: "uesio.appid",
 			},
 			{
 				id: "uesio.bundle",
@@ -56,7 +56,7 @@ class Site {
 					"uesio.bundle": {
 						"uesio.id": `${app}_${responses.version}`,
 					},
-					"uesio.appref": app,
+					"uesio.appid": app,
 				},
 			])
 		)

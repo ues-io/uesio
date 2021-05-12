@@ -125,12 +125,12 @@ func seed(cmd *cobra.Command, args []string) {
 	site := &meta.Site{
 		Name: "studio",
 		Bundle: &meta.Bundle{
-			Namespace: "studio",
-			Major:     "0",
-			Minor:     "0",
-			Patch:     "1",
+			AppID: "studio",
+			Major: "0",
+			Minor: "0",
+			Patch: "1",
 		},
-		AppRef: "studio",
+		AppID: "studio",
 	}
 
 	bundleDef, err := bundle.GetSiteAppBundle(site)
@@ -220,6 +220,10 @@ func seed(cmd *cobra.Command, args []string) {
 			},
 		},
 	}, session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
 
 	err = seedCollection("studio.teams", "studio.teams.json", session)
 	if err != nil {
