@@ -1,5 +1,5 @@
 name: plain
-component: io.plain
+component: io.titlebar
 label: Plain
 definition:
   uesio.styles:

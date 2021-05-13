@@ -28,8 +28,10 @@ const registry: Record<string, SignalDescriptor> = {
 const isPanelSignal = (signal: SignalDefinition) =>
 	signal.signal.startsWith("panel/")
 
-const getPanelKey = (path: string, context: Context) =>
-	`${path}:${context.getRecordId()}`
+const getPanelKey = (path: string, context: Context) => {
+	const recordContext = context.getRecordId()
+	return recordContext ? `${path}:${recordContext}` : path
+}
 
 class SignalAPI {
 	constructor(uesio: Uesio) {

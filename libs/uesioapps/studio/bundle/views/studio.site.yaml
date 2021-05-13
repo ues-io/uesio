@@ -73,113 +73,111 @@ definition:
           - io.griditem:
               uesio.variant: studio.content
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
+                - io.list:
                     id: siteDeck
                     wire: sites
                     mode: READ
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Site - ${uesio.name}
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
                           components:
-                            - material.grid:
-                                justify: space-between
-                                alignitems: center
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
                                 items:
-                                  - material.griditem:
-                                      components:
-                                        - material.typography:
-                                            text: ${uesio.name}
-                                            variant: h5
-                                            textTransform: "uppercase"
-                            - material.field:
-                                fieldId: uesio.name
-                            - material.field:
-                                fieldId: uesio.bundle
-                      - material.grid:
-                          justify: space-between
-                          items:
-                            - material.griditem:
+                                  - io.field:
+                                      fieldId: uesio.name
+                                  - io.field:
+                                      fieldId: uesio.bundle
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Domains
+                          subtitle: Add a domain to this site.
+                          actions:
+                            - io.group:
+                                width: 210px
                                 components:
-                                  - material.typography:
-                                      text: Domains
-                                      variant: h5
-                                  - material.typography:
-                                      text: Add a domain to this site.
-                                      variant: body2
-                            - material.griditem:
-                                components:
-                                  - material.dialog:
-                                      id: "createDomainDialog"
-                                      title: "Create Domain"
-                                      content:
-                                        - material.deck:
-                                            xs: 12
-                                            margin: 0
-                                            id: newDomainDeck
-                                            wire: newdomain
-                                            mode: EDIT
-                                            components:
-                                              - material.field:
-                                                  fieldId: uesio.domain
-                                      mode: "CLOSE"
-                                      disagreeSignals:
-                                        - signal: wire/CANCEL
-                                          wire: newdomain
-                                        - signal: component/material.dialog/TOGGLE_MODE
-                                          target: "createDomainDialog"
-                                      agreeSignals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - newdomain
-                                        - signal: component/material.dialog/TOGGLE_MODE
-                                          target: "createDomainDialog"
-                                        - signal: wire/EMPTY
-                                          wire: newdomain
-                                        - signal: wire/CREATE_RECORD
-                                          wire: newdomain
-                                        - signal: wire/LOAD
-                                          wires:
-                                            - domains
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: "primary"
-                                            variant: "outlined"
-                                            text: "Add a Domain"
-                                            signals:
-                                              - signal: component/material.dialog/TOGGLE_MODE
-                                                target: "createDomainDialog"
-                      - material.deck:
-                          xs: 12
-                          sm: 6
-                          md: 4
-                          lg: 3
-                          margin: 0
+                                  - io.button:
+                                      text: "Add a Domain"
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: "panel/TOGGLE"
+                                          panel: "newDomain"
+                      - io.deck:
+                          id: domainslist
                           wire: domains
-                          id: domainsDeck
+                          uesio.variant: io.section
                           components:
-                            - material.card:
-                                media:
-                                  background:
-                                    color: "secondary"
-                                  height: 10px
-                                components:
-                                  - material.typography:
-                                      text: "$Record{uesio.type} ${uesio.domain}"
-                      - material.grid:
-                          justify: space-between
-                          alignitems: center
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: Configuration
-                                      variant: h5
-                      - studio.configsecrets:
+                            - io.tile:
+                                uesio.variant: io.item
+                                content:
+                                  - io.text:
+                                      text: ${uesio.type} ${uesio.domain}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: verified_user
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Configuration
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.configsecrets:
+  panels:
+    - io.dialog:
+        id: newDomain
+        title: Add a Domain
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newdomainlist
+              wire: newdomain
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: uesio.domain
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - newdomain
+                - signal: "panel/TOGGLE"
+                  panel: "newDomain"
+                - signal: wire/EMPTY
+                  wire: newdomain
+                - signal: wire/CREATE_RECORD
+                  wire: newdomain
+                - signal: wire/LOAD
+                  wires:
+                    - domains
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newDomain"
+                - signal: wire/CANCEL
+                  wire: newdomain

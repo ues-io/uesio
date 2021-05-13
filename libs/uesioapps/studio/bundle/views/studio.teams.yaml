@@ -12,45 +12,41 @@ definition:
   components:
     - uesio.view:
         view: studio.topbar
-    - material.buttonset:
-        buttons:
-          - material.button:
-              color: primary
+    - io.group:
+        components:
+          - io.button:
               signals:
                 - signal: wire/CREATE_RECORD
                   wire: teams
               text: Create Row
-              variant: contained
-          - material.button:
-              color: primary
+              uesio.variant: io.secondary
+          - io.button:
               signals:
                 - signal: wire/SAVE
                   wires:
                     - teams
               text: Save
-              variant: contained
-          - material.button:
-              color: primary
+              uesio.variant: io.secondary
+          - io.button:
               signals:
                 - signal: wire/CANCEL
                   wire: teams
               text: Cancel
-              variant: contained
-          - material.button:
-              color: primary
+              uesio.variant: io.secondary
+          - io.button:
               signals:
-                - signal: component/material.table/TOGGLE_MODE
+                - signal: component/io.table/TOGGLE_MODE
                   target: teamsTable
               text: Mode
-              variant: contained
-    - material.table:
+              uesio.variant: io.secondary
+    - io.table:
         wire: teams
         mode: EDIT
         id: teamsTable
         columns:
-          - material.column:
+          - io.column:
               field: studio.name
-          - material.column:
+          - io.column:
               field: studio.id
-          - material.column:
+          - io.column:
               field: studio.appid

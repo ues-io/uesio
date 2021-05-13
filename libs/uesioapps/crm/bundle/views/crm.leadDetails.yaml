@@ -3,66 +3,57 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.materialwrapper:
+    - io.list:
+        id: leadList
+        wire: leads
+        mode: READ
         components:
-          - material.deck:
-              components:
-                - material.card:
+          - io.titlebar:
+              uesio.variant: io.main
+              title: ${crm.firstname} ${crm.lastname}
+              actions:
+                - io.group:
                     components:
-                      - material.grid:
-                          alignitems: center
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: ${crm.firstname}
-                                      textTransform: uppercase
-                                      variant: h5
-                            - material.griditem:
-                                components:
-                                  - material.buttonset:
-                                      buttons:
-                                        - material.button:
-                                            color: primary
-                                            signals:
-                                              - signal: component/material.deck/TOGGLE_MODE
-                                                target: oneleadDeck
-                                            text: Edit
-                                            variant: outlined
-                                        - material.button:
-                                            color: primary
-                                            signals:
-                                              - signal: wire/SAVE
-                                                wires:
-                                                  - leads
-                                            text: Save
-                                            variant: outlined
-                                        - material.button:
-                                            color: primary
-                                            signals:
-                                              - signal: wire/CANCEL
-                                                wire: leads
-                                            text: Cancel
-                                            variant: outlined
-                          justify: space-between
-                      - material.field:
+                      - io.button:
+                          signals:
+                            - signal: component/io.list/TOGGLE_MODE
+                              target: leadList
+                          text: Edit
+                          uesio.variant: io.secondary
+                      - io.button:
+                          signals:
+                            - signal: wire/SAVE
+                              wires:
+                                - leads
+                          text: Save
+                          uesio.variant: io.secondary
+                      - io.button:
+                          signals:
+                            - signal: wire/CANCEL
+                              wire: leads
+                          text: Cancel
+                          uesio.variant: io.secondary
+          - io.box:
+              uesio.variant: io.section
+              uesio.styles:
+                root:
+                  padding: 40px
+              components:
+                - io.grid:
+                    templateColumns:
+                      xs: 1fr
+                      md: 1fr 1fr
+                      lg: 1fr 1fr 1fr 1fr
+                    columnGap: 10px
+                    items:
+                      - io.field:
                           fieldId: crm.firstname
-                      - material.field:
+                      - io.field:
                           fieldId: crm.lastname
-                      - material.field:
+                      - io.field:
                           fieldId: crm.updated
-                      - material.field:
+                      - io.field:
                           fieldId: crm.created
-                    margin: 1
-                    media:
-                      background: null
-                      color: "#FF5733"
-                      height: 10px
-              id: oneleadDeck
-              margin: 0
-              mode: READ
-              wire: leads
-              xs: 12
   wires:
     leads:
       collection: crm.leads

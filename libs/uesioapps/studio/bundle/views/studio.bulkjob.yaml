@@ -65,87 +65,73 @@ definition:
           - io.griditem:
               uesio.variant: studio.content
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
+                - io.list:
                     id: bulkjobDeck
                     wire: bulkjobs
                     mode: EDIT
                     components:
-                      - material.grid:
-                          items:
-                            - material.griditem:
-                                xs: true
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Bulk Job - ${uesio.id}
+                          actions:
+                            - io.group:
+                                width: 210px
                                 components:
-                                  - material.card:
-                                      media:
-                                        background:
-                                          color:
-                                            intention: "primary"
-                                        height: 10px
-                                      margin: 1
-                                      components:
-                                        - material.grid:
-                                            justify: space-between
-                                            alignitems: center
-                                            items:
-                                              - material.griditem:
-                                                  components:
-                                                    - material.typography:
-                                                        text: ${uesio.id}
-                                                        variant: h5
-                                              - material.griditem:
-                                                  components:
-                                                    - material.grid:
-                                                        alignitems: center
-                                                        items:
-                                                          - material.griditem:
-                                                              components:
-                                                                - studio.bulkjob:
-                                                                    uesio.context:
-                                                                      workspace:
-                                                                        name: $Param{workspacename}
-                                                                        app: $Param{appname}
-                                                                    id: "bulkjobID"
-                                                                    label: "Start Batch"
-                                                          - material.griditem:
-                                                              components:
-                                                                - material.buttonset:
-                                                                    buttons:
-                                                                      - material.button:
-                                                                          color: "primary"
-                                                                          variant: "outlined"
-                                                                          text: "SAVE"
-                                                                          signals:
-                                                                            - signal: wire/SAVE
-                                                                              wires:
-                                                                                - "bulkjobs"
-                                        - studio.codefield:
-                                            fieldId: uesio.spec
-                                            height: 350px
-                                            language: "json"
-                - material.container:
+                                  - studio.bulkjob:
+                                      uesio.context:
+                                        workspace:
+                                          name: $Param{workspacename}
+                                          app: $Param{appname}
+                                      id: "bulkjobID"
+                                      label: "Start Batch"
+                                  - io.button:
+                                      uesio.variant: "io.secondary"
+                                      text: "SAVE"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "bulkjobs"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.codefield:
+                                fieldId: uesio.spec
+                                height: 350px
+                                language: "json"
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - material.typography:
-                          text: "Bulk Batches"
-                          variant: h5
-                      - material.button:
-                          color: "primary"
-                          variant: "outlined"
-                          text: "Refresh"
-                          signals:
-                            - signal: wire/LOAD
-                              wires:
-                                - "bulkjobs"
-                                - "bulkbatches"
-                      - material.table:
-                          id: "bulkbatcheslist"
-                          wire: "bulkbatches"
-                          mode: "READ"
-                          columns:
-                            - material.column:
-                                field: uesio.id
-                            - material.column:
-                                field: uesio.bulkjobid
-                            - material.column:
-                                field: uesio.status
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Bulk Batches
+                          actions:
+                            - io.group:
+                                width: 210px
+                                components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Refresh"
+                                      signals:
+                                        - signal: wire/LOAD
+                                          wires:
+                                            - "bulkjobs"
+                                            - "bulkbatches"
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.table:
+                                id: "bulkbatcheslist"
+                                wire: "bulkbatches"
+                                mode: "READ"
+                                columns:
+                                  - io.column:
+                                      field: uesio.id
+                                  - io.column:
+                                      field: uesio.bulkjobid
+                                  - io.column:
+                                      field: uesio.status

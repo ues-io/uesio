@@ -1,5 +1,5 @@
 name: main
-component: io.main
+component: io.titlebar
 label: Main
 definition:
   uesio.styles:
