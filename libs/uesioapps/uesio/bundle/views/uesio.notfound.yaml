@@ -4,32 +4,43 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - material.materialwrapper:
-        components:
-          - material.grid:
-              background:
-                color: white
-              justify: center
-              alignitems: center
-              items:
-                - material.griditem:
-                    height: 100vh
-                    align: center
-                    components:
-                      # Just makes the vertical centering nicer
-                      - material.container:
-                          padding: 8
-                      - material.typography:
-                          text: "😞"
-                          variant: h1
-                      - material.typography:
-                          text: "Nothing to see here."
-                      - material.typography:
-                          text: "You may need to log in again"
-                          variant: "body2"
-                      - material.button:
-                          text: "Go To Login Page"
-                          variant: outlined
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "login"
+    - material.grid:
+        background:
+          color: white
+        justify: center
+        alignitems: center
+        items:
+          - material.griditem:
+              height: 100vh
+              align: center
+              components:
+                # Just makes the vertical centering nicer
+                - material.container:
+                    padding: 8
+                - io.text:
+                    text: "😞"
+                    uesio.styles:
+                      root:
+                        fontSize: 60pt
+                        padding: 20px
+                    element: div
+                - io.text:
+                    text: "Nothing to see here."
+                    uesio.styles:
+                      root:
+                        fontSize: 14pt
+                        fontWeight: bold
+                    element: div
+                - io.text:
+                    text: "You may need to log in again"
+                    uesio.styles:
+                      root:
+                        fontSize: 9pt
+                        paddingBottom: 20pt
+                    element: div
+                - io.button:
+                    uesio.variant: io.secondary
+                    text: "Go To Login Page"
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "login"

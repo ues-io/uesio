@@ -3,121 +3,78 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.materialwrapper:
+    - io.box:
+        uesio.variant: io.section
         components:
-          - material.grid:
-              direction: column
-              justify: flex-start
-              items:
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: "Recent Leads:"
-                          color: textSecondary
-                      - material.deck:
-                          id: homeLeads
-                          margin: 0
-                          mode: READ
-                          wire: leads
-                          xs: 3
-                          components:
-                            - material.card:
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: lead/${crm.id}
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${crm.firstname}"
-                                      textTransform: "capitalize"
-                                  - material.field:
-                                      fieldId: crm.updated
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: "Recent Accounts:"
-                          color: textSecondary
-                      - material.deck:
-                          id: homeAccounts
-                          margin: 0
-                          mode: READ
-                          wire: accounts
-                          xs: 3
-                          components:
-                            - material.card:
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: account/${crm.id}
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${crm.name}"
-                                      textTransform: "capitalize"
-                                  - material.field:
-                                      fieldId: crm.updated
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: "Recent Contacts:"
-                          color: textSecondary
-                      - material.deck:
-                          id: homeContacts
-                          margin: 0
-                          mode: READ
-                          wire: contacts
-                          xs: 3
-                          components:
-                            - material.card:
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: contact/${crm.id}
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${crm.firstname}"
-                                      textTransform: "capitalize"
-                                  - material.field:
-                                      fieldId: crm.updated
-                - material.griditem:
-                    components:
-                      - material.typography:
-                          text: "Recent Opportunities:"
-                          color: textSecondary
-                      - material.deck:
-                          id: homeOpportunities
-                          margin: 0
-                          mode: READ
-                          wire: opportunities
-                          xs: 3
-                          components:
-                            - material.card:
-                                signals:
-                                  - signal: route/NAVIGATE
-                                    path: opportunity/${crm.id}
-                                components:
-                                  - material.griditem:
-                                      components:
-                                        - material.icon:
-                                            type: "open"
-                                            float: right
-                                  - material.typography:
-                                      text: "${crm.name}"
-                                      textTransform: "capitalize"
-                                  - material.field:
-                                      fieldId: crm.updated
-
+          - io.titlebar:
+              uesio.variant: io.section
+              title: Recent Leads
+          - io.deck:
+              id: homeLeads
+              wire: leads
+              uesio.variant: io.section
+              components:
+                - io.tile:
+                    uesio.variant: io.item
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: lead/${crm.id}
+                    content:
+                      - io.text:
+                          text: ${crm.firstname} ${crm.lastname}
+                    avatar:
+                      - io.text:
+                          uesio.variant: io.icon
+                          color: "#ccc"
+                          text: emoji_people
+    - io.box:
+        uesio.variant: io.section
+        components:
+          - io.titlebar:
+              uesio.variant: io.section
+              title: Recent Accounts
+          - io.deck:
+              id: homeAccounts
+              wire: accounts
+              uesio.variant: io.section
+              components:
+                - io.tile:
+                    uesio.variant: io.item
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: account/${crm.id}
+                    content:
+                      - io.text:
+                          text: ${crm.name}
+                    avatar:
+                      - io.text:
+                          uesio.variant: io.icon
+                          color: "#ccc"
+                          text: business
+    - io.box:
+        uesio.variant: io.section
+        components:
+          - io.titlebar:
+              uesio.variant: io.section
+              title: Recent Contacts
+          - io.deck:
+              id: homeContacts
+              wire: contacts
+              uesio.variant: io.section
+              components:
+                - io.tile:
+                    uesio.variant: io.item
+                    signals:
+                      - signal: route/NAVIGATE
+                        path: account/${crm.id}
+                    content:
+                      - io.text:
+                          text: ${crm.firstname} ${crm.lastname}
+                    avatar:
+                      - io.text:
+                          uesio.variant: io.icon
+                          color: "#ccc"
+                          text: person
   wires:
     accounts:
       collection: crm.accounts
@@ -134,6 +91,7 @@ definition:
       fields:
         crm.id:
         crm.firstname:
+        crm.lastname:
         crm.updated:
       limit: 4
       order:
@@ -144,22 +102,9 @@ definition:
       fields:
         crm.id:
         crm.firstname:
+        crm.lastname:
         crm.updated:
       limit: 4
       order:
         - field: crm.updated
           desc: true
-    opportunities:
-      collection: crm.opportunities
-      fields:
-        crm.id:
-        crm.name:
-        crm.updated:
-      limit: 4
-      order:
-        - field: crm.updated
-          desc: true
-dependencies:
-  componentpacks:
-    material.main:
-    sample.main:

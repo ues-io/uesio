@@ -1,7 +1,6 @@
 name: main
 components:
   view:
-    material.avatar:
     material.buttonset:
     material.button:
     material.card:
@@ -9,16 +8,9 @@ components:
     material.container:
     material.deck:
     material.field:
-    material.form:
-    material.formcolumn:
     material.grid:
     material.griditem:
-    material.image:
     material.icon:
-    material.table:
-    material.typography:
-    material.materialwrapper:
-    material.dialog:
     material.file:
   utility:
     material.alert:

@@ -1,5 +1,5 @@
 name: tag
-component: io.tag
+component: io.tile
 label: Tag
 definition:
   uesio.styles:

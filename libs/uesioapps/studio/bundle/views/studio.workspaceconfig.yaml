@@ -43,20 +43,13 @@ definition:
           - io.griditem:
               uesio.variant: studio.content
               components:
-                - material.deck:
-                    xs: 12
-                    margin: 0
-                    id: workspaceDeck
-                    wire: workspaces
-                    mode: READ
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Configuration
+                - io.box:
+                    uesio.variant: io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
                     components:
-                      - material.grid:
-                          justify: space-between
-                          alignitems: center
-                          items:
-                            - material.griditem:
-                                components:
-                                  - material.typography:
-                                      text: Configuration
-                                      variant: h5
                       - studio.configsecrets:

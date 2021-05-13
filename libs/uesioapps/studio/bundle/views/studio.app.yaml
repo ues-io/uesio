@@ -281,7 +281,6 @@ definition:
               signals:
                 - signal: "panel/TOGGLE"
                   panel: "newWorkspace"
-
     - io.dialog:
         id: newSite
         title: Create a New Site

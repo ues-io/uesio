@@ -3,79 +3,77 @@ definition:
   components:
     - uesio.view:
         view: crm.topbar
-    - material.materialwrapper:
-        components:
-          - material.typography:
-              text: Contacts
-              variant: h6
-          - material.buttonset:
-              buttons:
-                - material.button:
-                    color: primary
+    - io.titlebar:
+        title: Contacts
+        uesio.variant: io.main
+        actions:
+          - io.group:
+              components:
+                - io.button:
                     signals:
                       - signal: wire/CREATE_RECORD
                         wire: contacts
-                    text: Create Row
-                    variant: contained
-                - material.button:
-                    color: primary
+                    text: Create
+                    uesio.variant: io.secondary
+                - io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
                           - contacts
                     text: Save
-                    variant: contained
-                - material.button:
-                    color: primary
+                    uesio.variant: io.secondary
+                - io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: contacts
                     text: Cancel
-                    variant: contained
-                - material.button:
-                    color: primary
+                    uesio.variant: io.secondary
+                - io.button:
                     signals:
-                      - signal: component/material.table/TOGGLE_MODE
+                      - signal: component/io.table/TOGGLE_MODE
                         target: contactsTable
                     text: Mode
-                    variant: contained
-          - material.table:
+                    uesio.variant: io.secondary
+    - io.box:
+        uesio.styles:
+          root:
+            padding: 40px
+        components:
+          - io.table:
               columns:
-                - material.column:
+                - io.column:
                     field: crm.firstname
-                - material.column:
+                - io.column:
                     field: crm.lastname
-                - material.column:
+                - io.column:
                     field: crm.gender
-                - material.column:
+                - io.column:
                     field: crm.deceased
-                - material.column:
+                - io.column:
                     field: crm.accountid
-                - material.column:
+                - io.column:
                     field: crm.account
-                - material.column:
+                - io.column:
                     field: crm.birthdate
-                - material.column:
+                - io.column:
                     field: crm.email
-                - material.column:
+                - io.column:
                     field: crm.updated
-                - material.column:
+                - io.column:
                     field: crm.created
-                - material.column:
+                - io.column:
                     components:
-                      - material.button:
-                          color: primary
+                      - io.button:
                           signals:
                             - path: contact/${crm.id}
                               signal: route/NAVIGATE
                           text: Edit
-                          variant: contained
-                      - material.button:
-                          color: primary
+                          uesio.variant: io.secondary
+                      - io.button:
                           signals:
                             - signal: wire/TOGGLE_DELETE_STATUS
                           text: Delete
-                          variant: contained
+                          uesio.variant: io.secondary
               id: contactsTable
               mode: EDIT
               wire: contacts

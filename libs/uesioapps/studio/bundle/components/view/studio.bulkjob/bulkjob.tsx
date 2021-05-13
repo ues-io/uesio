@@ -48,9 +48,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 
 	const classes = styles.useStyles(
 		{
-			root: {
-				margin: styles.getSpacing(props.context.getTheme(), 1),
-			},
+			root: {},
 			input: {
 				display: "none",
 			},

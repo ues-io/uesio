@@ -55,57 +55,38 @@ definition:
           - io.griditem:
               uesio.variant: studio.content
               components:
-                - material.grid:
-                    justify: space-between
-                    items:
-                      - material.griditem:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Data Import Jobs
+                    subtitle: Gotta catch 'em all!
+                    actions:
+                      - io.group:
+                          width: 210px
                           components:
-                            - material.typography:
-                                text: Data Import Jobs
-                                variant: h5
-                            - material.typography:
-                                text: Gotta catch 'em all!
-                                variant: body2
-                      - material.griditem:
-                          components:
-                            - material.buttonset:
-                                buttons:
-                                  - material.button:
-                                      color: "primary"
-                                      variant: "outlined"
-                                      text: "Create New Import Job"
-                                      signals:
-                                        - signal: wire/CREATE_RECORD
-                                          wire: "newbulkjob"
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - newbulkjob
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
-                - material.deck:
-                    xs: 12
-                    sm: 6
-                    md: 4
-                    lg: 3
-                    margin: 0
-                    id: bulkjobsDeck
-                    wire: bulkjobs
+                            - io.button:
+                                text: Create New Import Job
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: wire/CREATE_RECORD
+                                    wire: "newbulkjob"
+                                  - signal: wire/SAVE
+                                    wires:
+                                      - newbulkjob
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
+                - io.box:
+                    uesio.variant: io.section
                     components:
-                      - material.card:
-                          media:
-                            background:
-                              color:
-                                intention: "primary"
-                            height: 10px
-                          margin: 1
+                      - io.deck:
+                          id: bulkjobsDeck
+                          wire: bulkjobs
+                          uesio.variant: io.section
                           components:
-                            - material.griditem:
-                                components:
-                                  - material.icon:
-                                      type: "open"
-                                      float: right
-                            - material.typography:
-                                text: "${uesio.id}"
-                          signals:
-                            - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bulkjob/${uesio.id}"
+                                content:
+                                  - io.text:
+                                      text: ${uesio.id}

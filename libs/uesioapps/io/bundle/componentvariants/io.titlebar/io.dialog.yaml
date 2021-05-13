@@ -1,5 +1,5 @@
 name: dialog
-component: io.dialog
+component: io.titlebar
 label: Dialog
 definition:
   uesio.styles:
