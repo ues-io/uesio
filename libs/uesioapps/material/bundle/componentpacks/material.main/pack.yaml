@@ -1,20 +1,6 @@
 name: main
 components:
   view:
-    material.buttonset:
-    material.button:
-    material.card:
-    material.column:
-    material.container:
-    material.deck:
-    material.field:
-    material.grid:
-    material.griditem:
-    material.icon:
     material.file:
   utility:
     material.alert:
-    material.autocompletefield:
-    material.checkboxfield:
-    material.selectfield:
-    material.textfield:
