@@ -113,19 +113,19 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	const language = props.definition.language || "yaml"
 
-	const AlertComponent = component.registry.getUtility("material.alert")
+	const Alert = component.registry.getUtility("io.alert")
 
 	return (
 		<div className={classes.root}>
 			<InputLabel shrink={true}>{fieldMetadata.getLabel()}</InputLabel>
 			{message && (
-				<AlertComponent
+				<Alert
 					{...props}
 					onClose={() => setMessage("")}
 					severity="error"
 				>
 					{message}
-				</AlertComponent>
+				</Alert>
 			)}
 			<div className={classes.input}>
 				<LazyMonaco

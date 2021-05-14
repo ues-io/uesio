@@ -15,22 +15,10 @@ var DefaultAppLicenses = AppLicenseCollection{
 	},
 	{
 		AppID:         "crm",
-		LicensedAppID: "material",
-	},
-	{
-		AppID:         "crm",
 		LicensedAppID: "sample",
-	},
-	{
-		AppID:         "uesio",
-		LicensedAppID: "material",
 	},
 	{
 		AppID:         "studio",
 		LicensedAppID: "uesio",
-	},
-	{
-		AppID:         "studio",
-		LicensedAppID: "material",
 	},
 }

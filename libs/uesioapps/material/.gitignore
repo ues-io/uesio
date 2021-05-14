@@ -1,7 +1,0 @@
-node_modules/
-bundle/componentpacks/*/*.bundle.js
-bundle/componentpacks/*/*.entry.ts
-*.js.map
-.idea
-.DS_Store
-package-lock.json

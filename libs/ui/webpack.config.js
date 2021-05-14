@@ -62,6 +62,5 @@ module.exports = {
 		yaml: "yaml",
 		"@emotion/css": "emotion",
 		"yaml/types": "yaml.types",
-		"@material-ui/core": "MaterialUI",
 	},
 }

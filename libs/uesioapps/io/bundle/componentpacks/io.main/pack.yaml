@@ -19,11 +19,13 @@ components:
     io.tile:
     io.titlebar:
   utility:
+    io.alert:
     io.autocomplete:
     io.button:
     io.checkboxfield:
     io.codefield:
     io.filetext:
+    io.fileupload:
     io.grid:
     io.icon:
     io.iconbutton:

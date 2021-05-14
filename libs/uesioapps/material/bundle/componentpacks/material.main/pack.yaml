@@ -1,6 +1,0 @@
-name: main
-components:
-  view:
-    material.file:
-  utility:
-    material.alert:

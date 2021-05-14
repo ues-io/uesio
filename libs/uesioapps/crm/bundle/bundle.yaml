@@ -4,8 +4,6 @@ homeRoute: crm.home
 defaultProfile: crm.standard
 publicProfile: uesio.public
 dependencies:
-  material:
-    version: v0.0.1
   sample:
     version: v0.0.1
   uesio:

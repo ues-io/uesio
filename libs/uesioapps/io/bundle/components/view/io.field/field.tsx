@@ -8,12 +8,13 @@ const SelectField = component.registry.getUtility("io.selectfield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
+const FileUpload = component.registry.getUtility("io.fileupload")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId, hideLabel, id } = definition
+	const { fieldId, hideLabel, id, displayAs } = definition
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -33,7 +34,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const type = fieldMetadata.getType()
 
-	const commonProps = {
+	const common = {
 		...props,
 		mode,
 		fieldMetadata,
@@ -43,27 +44,38 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		id,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
+		record,
+		wire,
 	}
 
-	if (["TEXT", "LONGTEXT", "DATE", "NUMBER"].indexOf(type) !== -1) {
-		return <TextField {...commonProps} />
-	} else if (type === "SELECT") {
-		return (
-			<SelectField
-				{...commonProps}
-				options={addBlankSelectOption(fieldMetadata.getOptions() || [])}
-			/>
-		)
-	} else if (type === "CHECKBOX") {
-		return <CheckboxField {...commonProps} />
-	} else if (type === "REFERENCE") {
-		return <ReferenceField {...commonProps} record={record} wire={wire} />
-	} else if (type === "TIMESTAMP") {
-		return null
-	} else if (type === "FILE") {
-		return <FileText {...commonProps} record={record} wire={wire} />
+	switch (true) {
+		case type === "TEXT":
+		case type === "LONGTEXT":
+		case type === "DATE":
+		case type === "NUMBER":
+			return <TextField {...common} />
+		case type === "SELECT":
+			return (
+				<SelectField
+					{...common}
+					options={addBlankSelectOption(
+						fieldMetadata.getOptions() || []
+					)}
+				/>
+			)
+		case type === "CHECKBOX":
+			return <CheckboxField {...common} />
+		case type === "REFERENCE":
+			return <ReferenceField {...common} />
+		case type === "TIMESTAMP":
+			return null
+		case type === "FILE" && displayAs === "TEXT":
+			return <FileText {...common} />
+		case type === "FILE":
+			return <FileUpload {...common} />
+		default:
+			return null
 	}
-	return null
 }
 
 export default Field

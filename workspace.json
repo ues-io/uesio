@@ -379,43 +379,6 @@
         }
       }
     },
-    "uesioapps-material": {
-      "root": "libs/uesioapps/material",
-      "sourceRoot": "libs/uesioapps/material/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/material"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop &",
-            "cwd": "libs/uesioapps/material"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/material/**/*.ts*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "echo TODO: set up test for uesioapps-material.",
-            "cwd": "libs/uesioapps/material"
-          }
-        }
-      }
-    },
     "vendor": {
       "root": "libs/vendor",
       "sourceRoot": "libs/vendor/src",

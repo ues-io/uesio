@@ -1,8 +1,6 @@
 import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
-import { colors, Color } from "@material-ui/core"
 import { CSSProperties } from "react"
-import { PaletteColor } from "@material-ui/core/styles/createPalette"
 import { ThemeState } from "../bands/theme/types"
 import { BaseProps } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
@@ -57,9 +55,6 @@ type ThemeIntention =
 	| "info"
 	| "success"
 
-type ThemeHue = keyof typeof colors
-type ThemeShade = keyof Color
-
 type BackgroundDefinition =
 	| {
 			image?: string
@@ -77,9 +72,6 @@ type ColorDefinition =
 	| {
 			value?: string
 			intention?: ThemeIntention
-			key?: keyof PaletteColor
-			hue?: ThemeHue
-			shade?: ThemeShade
 	  }
 
 function useStyleProperty<T>(property: T | undefined, defaultValue: T): T {
@@ -143,9 +135,6 @@ const getColor = (
 		result = context.merge(definition.value)
 	} else if (definition.intention) {
 		result = theme.definition.palette[definition.intention]
-	} else if (definition.hue) {
-		const hue = colors?.[definition.hue] as Color
-		result = hue[definition.shade || 500]
 	}
 	if (result && isValidColor(result)) return result
 }
