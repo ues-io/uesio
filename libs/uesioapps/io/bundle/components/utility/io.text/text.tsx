@@ -7,7 +7,7 @@ interface TextProps extends definition.UtilityProps {
 	color?: string
 }
 
-const Link: FunctionComponent<TextProps> = (props) => {
+const Text: FunctionComponent<TextProps> = (props) => {
 	const { text, element, color } = props
 	const classes = styles.useStyles(
 		{
@@ -28,4 +28,4 @@ const Link: FunctionComponent<TextProps> = (props) => {
 	return <span className={classes.root}>{mergedText}</span>
 }
 
-export default Link
+export default Text

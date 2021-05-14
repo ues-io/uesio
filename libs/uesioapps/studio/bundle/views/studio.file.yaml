@@ -117,14 +117,5 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                            - material.file:
+                            - io.field:
                                 fieldId: studio.content
-                                height: 200
-                                width: 200
-                                id: fileupid
-                                margin:
-                                  - 0
-                                  - 2
-                                displayAs: fullPreview
-                                editable: true
-                                accepts: all

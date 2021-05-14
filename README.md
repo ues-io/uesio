@@ -40,7 +40,6 @@ As regards the **package naming** in Go, we do follow this [guideline](https://b
 -   [Redux](https://redux.js.org/). Single source of truth for the entire application's data.
 -   [Redux-toolkit](https://redux-toolkit.js.org/). Bootstrap for Redux.
 -   [Redux Thunk](https://github.com/reduxjs/redux-thunk). Middleware for Redux, for handling asynchronous redux-actions.
--   [Material-UI](https://material-ui.com/). UI framework for React applications.
 
 # <a id="redux-architecture"></a> Redux architecture
 

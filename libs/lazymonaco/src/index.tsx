@@ -10,7 +10,6 @@ declare global {
 }
 
 import { lazy, createElement, FunctionComponent, Suspense } from "react"
-import { LinearProgress } from "@material-ui/core"
 
 import {
 	ChangeHandler,
@@ -48,7 +47,7 @@ const LazyMonaco: FunctionComponent<Props> = ({
 	options,
 	height,
 }) => (
-	<Suspense fallback={createElement(LinearProgress)}>
+	<Suspense fallback={<div>Loading</div>}>
 		<LaziestMonaco
 			height={height}
 			value={value}

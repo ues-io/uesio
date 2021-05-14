@@ -24,7 +24,7 @@ interface LoginProps extends definition.BaseProps {
 }
 
 const Button = component.registry.getUtility("io.button")
-const AlertComponent = component.registry.getUtility("material.alert")
+const Alert = component.registry.getUtility("io.alert")
 
 interface LoginButtonProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
@@ -190,14 +190,13 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	return (
 		<div className={classes.formwrapper}>
 			{message && (
-				<AlertComponent
+				<Alert
 					{...props}
 					onClose={() => setMessage("")}
 					className={classes.errormsg}
 					severity="error"
-				>
-					{message}
-				</AlertComponent>
+					text={message}
+				/>
 			)}
 			{mode === "" && (
 				<LoginWrapper align={props.definition.align}>

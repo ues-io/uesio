@@ -7,13 +7,6 @@
 		"patch": "1"
 	},
 	{
-		"appid": "material",
-		"description": "Material UI Components",
-		"major": "0",
-		"minor": "0",
-		"patch": "1"
-	},
-	{
 		"appid": "studio",
 		"description": "The Uesio Configuration App",
 		"major": "0",

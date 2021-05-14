@@ -5,6 +5,7 @@ type FieldDefinition = {
 	hideLabel: boolean
 	label?: string
 	id?: string
+	displayAs?: string
 }
 
 type FieldState = {
