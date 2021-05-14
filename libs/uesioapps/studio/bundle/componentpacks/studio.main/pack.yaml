@@ -6,7 +6,6 @@ components:
     studio.metadatafield:
     studio.codefield:
     studio.bulkjob:
-    studio.fileupload:
     studio.permissionpicker:
     studio.configsecrets:
     # Define a builder for the uesio runtime and slot

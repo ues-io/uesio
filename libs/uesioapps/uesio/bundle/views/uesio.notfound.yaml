@@ -4,19 +4,19 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
-    - material.grid:
-        background:
-          color: white
-        justify: center
-        alignitems: center
+    - io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+            justifyItems: center
+            height: 100vh
+            backgroundColor: "#F2F2F2"
         items:
-          - material.griditem:
-              height: 100vh
-              align: center
+          - io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: center
               components:
-                # Just makes the vertical centering nicer
-                - material.container:
-                    padding: 8
                 - io.text:
                     text: "😞"
                     uesio.styles:

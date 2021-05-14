@@ -92,9 +92,7 @@ const calculateNewPathAheadOfTime = (
 	fromPathStr: string,
 	toPathStr: string
 ) => {
-	//"components", "0", "material.container", "components", "0"
 	const fromPathArray = toPath(fromPathStr)
-	// "components", "0", "material.container", "components", "1", "material.deck", "components", "0"
 	const toPathArray = toPath(toPathStr)
 
 	let index = 0
