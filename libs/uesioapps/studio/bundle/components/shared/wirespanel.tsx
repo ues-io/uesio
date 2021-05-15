@@ -1,7 +1,6 @@
 import { CSSProperties, FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
-import Power from "@material-ui/icons/Power"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
@@ -51,7 +50,7 @@ const WiresPanel: FunctionComponent<Props> = (props) => {
 						<PropNodeTag
 							title={key}
 							onClick={onClick}
-							icon={Power}
+							icon="power"
 							key={index}
 							selected={wirePath === selectedNode}
 						/>

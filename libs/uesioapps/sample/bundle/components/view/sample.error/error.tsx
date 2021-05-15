@@ -1,7 +1,8 @@
 import { FunctionComponent } from "react"
 import { ErrorProps } from "./errordefinition"
-import { styles } from "@uesio/ui"
-import { Button } from "@material-ui/core"
+import { styles, component } from "@uesio/ui"
+
+const Button = component.registry.getUtility("io.button")
 
 const Error: FunctionComponent<ErrorProps> = (props) => {
 	const classes = styles.useStyles(
@@ -27,12 +28,10 @@ const Error: FunctionComponent<ErrorProps> = (props) => {
 			<h1 className={classes.h1}>{props.definition.message}</h1>
 			<p className={classes.p}> {props.definition.subMessage}</p>
 			<Button
-				color="primary"
-				variant="contained"
-				href={props.definition.url}
-			>
-				{props.definition.url}
-			</Button>
+				variant="io.secondary"
+				label={props.definition.url}
+				context={props.context}
+			/>
 		</div>
 	)
 }

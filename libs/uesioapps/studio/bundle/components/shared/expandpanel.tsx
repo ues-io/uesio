@@ -5,16 +5,18 @@ import {
 	AccordionDetails,
 	makeStyles,
 	createStyles,
-	SvgIconProps,
 } from "@material-ui/core"
 
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import SmallIconButton from "./smalliconbutton"
+
+import { component, context } from "@uesio/ui"
+
+const Icon = component.registry.getUtility("io.icon")
 
 interface Props {
 	title: string
 	defaultExpanded: boolean
-	action?: FunctionComponent<SvgIconProps>
+	action?: string
 	actionColor?: string
 	actionOnClick?: () => void
 }
@@ -97,7 +99,12 @@ const ExpandPanel: FunctionComponent<Props> = ({
 		>
 			<AccordionSummary
 				classes={summaryClasses}
-				expandIcon={<ExpandMoreIcon style={{ fontSize: "1.25rem" }} />}
+				expandIcon={
+					<Icon
+						icon={"expand_more"}
+						context={new context.Context()}
+					/>
+				}
 				IconButtonProps={{ size: "small" }}
 			>
 				<div style={{ flex: 1 }}>{title}</div>

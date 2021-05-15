@@ -3,21 +3,24 @@ import {
 	Card,
 	makeStyles,
 	createStyles,
-	SvgIconProps,
 	CardActionArea,
 	Popper,
 	Paper,
 	colors,
 } from "@material-ui/core"
 
+import { component, context } from "@uesio/ui"
+
 type Props = {
 	title: string
-	icon?: FunctionComponent<SvgIconProps>
+	icon?: string
 	iconColor?: string
 	selected?: boolean
 	onClick?: () => void
 	draggable?: string
 }
+
+const Icon = component.registry.getUtility("io.icon")
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -60,7 +63,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		onClick,
 		children,
 		draggable,
-		icon: Icon,
+		icon,
 		iconColor,
 		selected,
 	} = props
@@ -69,15 +72,9 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const ref = useRef<HTMLDivElement | null>(null)
 	const innerArea = (
 		<div className={classes.wrapper}>
-			{Icon && (
+			{icon && (
 				<div className={classes.icon}>
-					<Icon
-						style={{
-							fontSize: "0.9rem",
-							display: "block",
-							color: iconColor,
-						}}
-					/>
+					<Icon icon={icon} context={new context.Context()} />
 				</div>
 			)}
 			<div className={classes.content}>{title}</div>

@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 import { DatePickerProps } from "./datePickerdefinition"
 import { styles } from "@uesio/ui"
-import { TextField } from "@material-ui/core"
 
 const DatePicker: FunctionComponent<DatePickerProps> = (props) => {
 	const classes = styles.useStyles(
@@ -14,15 +13,7 @@ const DatePicker: FunctionComponent<DatePickerProps> = (props) => {
 	)
 	return (
 		<div className={classes.container}>
-			<TextField
-				color={props.definition.color}
-				label={props.definition.label}
-				type="date"
-				InputLabelProps={{
-					shrink: true,
-				}}
-				variant={props.definition.variant}
-			/>
+			<input type="date" />
 		</div>
 	)
 }

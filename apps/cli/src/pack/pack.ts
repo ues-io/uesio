@@ -234,7 +234,6 @@ const getWebpackConfig = (
 			yaml: "yaml",
 			"@emotion/css": "emotion",
 			"@material-ui/core": "MaterialUI",
-			"@material-ui/core/SvgIcon": "MaterialUI.SvgIcon",
 		},
 	}
 }

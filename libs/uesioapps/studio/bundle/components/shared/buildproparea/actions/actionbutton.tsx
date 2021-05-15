@@ -1,15 +1,10 @@
 import { SyntheticEvent, FunctionComponent } from "react"
-import {
-	useTheme,
-	SvgIconProps,
-	makeStyles,
-	createStyles,
-} from "@material-ui/core"
+import { useTheme, makeStyles, createStyles } from "@material-ui/core"
 import SmallIconButton from "../../smalliconbutton"
 
 interface Props {
 	title: string
-	icon: FunctionComponent<SvgIconProps>
+	icon: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
 }

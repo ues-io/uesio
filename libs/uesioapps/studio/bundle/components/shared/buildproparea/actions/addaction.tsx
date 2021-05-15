@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { hooks, builder, component } from "@uesio/ui"
-import AddIcon from "@material-ui/icons/Add"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
@@ -28,7 +27,7 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 		<ActionButton
 			title={action.label}
 			onClick={onClickHandler}
-			icon={AddIcon}
+			icon="add"
 		/>
 	)
 }

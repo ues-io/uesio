@@ -2,7 +2,6 @@ import { FunctionComponent } from "react"
 import { builder, hooks, signal, definition } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
-import SignalsIcon from "@material-ui/icons/Router"
 
 const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -20,7 +19,7 @@ const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 		<ActionButton
 			title={action.label}
 			onClick={uesio.signal.getHandler(signals)}
-			icon={SignalsIcon}
+			icon="router"
 		/>
 	)
 }

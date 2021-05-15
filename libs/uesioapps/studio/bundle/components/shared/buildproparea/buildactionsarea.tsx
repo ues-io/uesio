@@ -17,6 +17,7 @@ interface Props extends definition.BaseProps {
 const useStyles = makeStyles(() =>
 	createStyles({
 		wrapper: {
+			display: "flex",
 			backgroundColor: "#f0f0f0",
 			padding: "8px",
 		},

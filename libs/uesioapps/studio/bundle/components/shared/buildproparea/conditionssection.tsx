@@ -2,8 +2,6 @@ import { FunctionComponent } from "react"
 import { definition, wire, hooks, builder } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
-import AddIcon from "@material-ui/icons/AddBox"
-import ConditionsIcon from "@material-ui/icons/FilterList"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import PropertiesPane from "../propertiespane"
 
@@ -68,7 +66,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		<ExpandPanel
 			defaultExpanded={false}
 			title={section.title}
-			action={AddIcon}
+			action="add_box"
 			actionColor={primaryColor}
 			actionOnClick={(): void => {
 				uesio.view.addDefinition(path + '["conditions"]', {
@@ -85,7 +83,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					return (
 						<PropNodeTag
 							title={getConditionTitle(condition)}
-							icon={ConditionsIcon}
+							icon={"filter_list"}
 							selected={selected}
 							iconColor={primaryColor}
 							key={index}

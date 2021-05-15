@@ -32,9 +32,6 @@
     "lazymonaco": {
       "tags": []
     },
-    "yaml": {
-      "tags": []
-    },
     "uesioapps-sample": {
       "tags": [],
       "implicitDependencies": ["cli"]

@@ -1,15 +1,11 @@
 import { FunctionComponent } from "react"
-import { TextField } from "@material-ui/core"
-import {
-	PropRendererProps,
-	inputStyles,
-	inputProps,
-	inputLabelProps,
-} from "./proprendererdefinition"
-import { hooks, util } from "@uesio/ui"
+import { PropRendererProps } from "./proprendererdefinition"
+import { hooks, util, component } from "@uesio/ui"
+
+const TextField = component.registry.getUtility("io.textfield")
 
 const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
-	const { path, descriptor } = props
+	const { path, descriptor, context } = props
 	const pathArray = util.toPath(path)
 	const key = pathArray.pop()
 	const uesio = hooks.useUesio(props)
@@ -19,15 +15,11 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 		<TextField
 			value={key}
 			label={descriptor.label}
-			size="small"
-			fullWidth={true}
-			style={inputStyles}
-			InputProps={inputProps}
-			InputLabelProps={inputLabelProps}
-			variant="outlined"
-			onChange={(event): void =>
-				uesio.view.changeDefinitionKey(path || "", event.target.value)
+			setValue={(value: string): void =>
+				uesio.view.changeDefinitionKey(path || "", value)
 			}
+			variant="io.default"
+			context={context}
 		/>
 	)
 }

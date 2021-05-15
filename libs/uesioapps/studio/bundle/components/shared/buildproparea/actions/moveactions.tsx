@@ -1,7 +1,5 @@
 import { FunctionComponent } from "react"
 import { hooks, component, definition } from "@uesio/ui"
-import UpIcon from "@material-ui/icons/ArrowUpward"
-import DownIcon from "@material-ui/icons/ArrowDownward"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
@@ -36,13 +34,13 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 			<ActionButton
 				title="Move Backward"
 				onClick={onClickBackward}
-				icon={UpIcon}
+				icon="arrow_upward"
 				disabled={!enableBackward}
 			/>
 			<ActionButton
 				title="Move Forward"
 				onClick={onClickForward}
-				icon={DownIcon}
+				icon="arrow_downward"
 				disabled={!enableForward}
 			/>
 		</>

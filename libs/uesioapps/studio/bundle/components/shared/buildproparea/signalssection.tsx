@@ -2,9 +2,7 @@ import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
-import SignalsIcon from "@material-ui/icons/Router"
 import { hooks, definition, signal } from "@uesio/ui"
-import AddIcon from "@material-ui/icons/AddBox"
 import PropertiesPane from "../propertiespane"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
@@ -20,7 +18,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		<ExpandPanel
 			defaultExpanded={true}
 			title={section.title}
-			action={AddIcon}
+			action="add_box"
 			actionColor={primaryColor}
 			actionOnClick={(): void =>
 				uesio.view.addDefinition(`${path}["signals"]`, {
@@ -34,7 +32,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				return (
 					<PropNodeTag
 						title={signal?.signal}
-						icon={SignalsIcon}
+						icon="router"
 						selected={selected}
 						iconColor={primaryColor}
 						key={index}
