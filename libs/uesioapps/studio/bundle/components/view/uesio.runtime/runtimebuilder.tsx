@@ -15,31 +15,42 @@ const Grid = component.registry.getUtility("io.grid")
 
 component.registry.registerSignals("uesio.runtime", {
 	TOGGLE_CODE: {
-		dispatcher: () => (state: BuilderState) => ({
-			...state,
-			showCode: !state.showCode,
-		}),
+		dispatcher: (signal, context, getState, setState) => {
+			const state = getState() as BuilderState
+			setState({
+				...state,
+				showCode: !state.showCode,
+			})
+		},
 		target: "panels",
 	},
 	SHOW_COMPS: {
-		dispatcher: () => (state: BuilderState) => ({
-			...state,
-			showComps: true,
-			showWires: false,
-		}),
+		dispatcher: (signal, context, getState, setState) => {
+			const state = getState() as BuilderState
+			setState({
+				...state,
+				showComps: true,
+				showWires: false,
+			})
+		},
 		target: "panels",
 	},
 	SHOW_WIRES: {
-		dispatcher: () => (state: BuilderState) => ({
-			...state,
-			showComps: false,
-			showWires: true,
-		}),
+		dispatcher: (signal, context, getState, setState) => {
+			const state = getState() as BuilderState
+			setState({
+				...state,
+				showComps: false,
+				showWires: true,
+			})
+		},
 		target: "panels",
 	},
 	TOGGLE_VIEW: {
-		dispatcher: () => (state: string) =>
-			state !== "content" ? "content" : "structure",
+		dispatcher: (signal, context, getState, setState) => {
+			const state = getState() as string
+			setState(state !== "content" ? "content" : "structure")
+		},
 		target: "buildview",
 	},
 })

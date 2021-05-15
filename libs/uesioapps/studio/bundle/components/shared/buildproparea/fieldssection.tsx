@@ -3,8 +3,6 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
-import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank"
-import CheckBox from "@material-ui/icons/CheckBox"
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "../dragdrop"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
@@ -60,7 +58,9 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								)}
 								title={fieldId}
 								icon={
-									selected ? CheckBox : CheckBoxOutlineBlank
+									selected
+										? "check_box"
+										: "check_box_outline_blank"
 								}
 								iconColor={
 									selected

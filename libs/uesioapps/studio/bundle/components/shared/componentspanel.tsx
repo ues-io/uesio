@@ -4,7 +4,6 @@ import { definition, component, hooks } from "@uesio/ui"
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "./dragdrop"
 import ExpandPanel from "./expandpanel"
 import PropNodeTag from "./buildpropitem/propnodetag"
-import DragIndicator from "@material-ui/icons/DragIndicator"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
@@ -77,7 +76,7 @@ const ComponentsPanel: FunctionComponent<Props> = (props) => {
 												value
 											)}
 											title={value}
-											icon={DragIndicator}
+											icon="drag_indicator"
 											key={indexTag}
 										/>
 									)

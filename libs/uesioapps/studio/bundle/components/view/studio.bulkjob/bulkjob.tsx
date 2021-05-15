@@ -1,6 +1,7 @@
 import { FunctionComponent, ChangeEvent } from "react"
-import { definition, hooks, styles } from "@uesio/ui"
-import { Button } from "@material-ui/core"
+import { definition, hooks, styles, component } from "@uesio/ui"
+
+const Button = component.registry.getUtility("io.button")
 
 type BulkjobDefinition = {
 	id: string
@@ -75,7 +76,7 @@ const Bulkjob: FunctionComponent<Props> = (props) => {
 						handleChange(e.target.files, uesio, jobId)
 					}
 				/>
-				<Button color="primary" variant="contained" component="span">
+				<Button label={label} context={context} variant="io.secondary">
 					{label}
 				</Button>
 			</label>

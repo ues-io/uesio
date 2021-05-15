@@ -1,10 +1,14 @@
 import { FunctionComponent, SyntheticEvent } from "react"
 
-import { SvgIconProps, IconButton, Tooltip } from "@material-ui/core"
+import { Tooltip } from "@material-ui/core"
+
+import { context, component } from "@uesio/ui"
+
+const IconButton = component.registry.getUtility("io.iconbutton")
 
 interface Props {
 	title?: string
-	icon: FunctionComponent<SvgIconProps>
+	icon: string
 	color?: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
@@ -17,7 +21,7 @@ const SmallIconButton: FunctionComponent<Props> = ({
 	onClick,
 	className,
 	title,
-	icon: Icon,
+	icon,
 }) => {
 	const localColor = disabled ? "#ccc" : color
 	const button = (
@@ -26,15 +30,9 @@ const SmallIconButton: FunctionComponent<Props> = ({
 			size="small"
 			disabled={disabled}
 			className={className}
-		>
-			<Icon
-				style={{
-					fontSize: "0.9rem",
-					color: localColor,
-				}}
-				fontSize="small"
-			/>
-		</IconButton>
+			icon={icon}
+			context={new context.Context()}
+		/>
 	)
 	if (title && !disabled) {
 		return (

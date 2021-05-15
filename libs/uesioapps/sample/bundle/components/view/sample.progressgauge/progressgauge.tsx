@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 import { ProgressGaugeProps } from "./progressgaugedefinition"
 import { styles } from "@uesio/ui"
-import { Slider } from "@material-ui/core"
 
 const ProgressGauge: FunctionComponent<ProgressGaugeProps> = (props) => {
 	const classes = styles.useStyles(
@@ -18,11 +17,10 @@ const ProgressGauge: FunctionComponent<ProgressGaugeProps> = (props) => {
 	)
 	return (
 		<div className={classes.root}>
-			<Slider
+			<input
+				type="range"
 				max={props.definition.total}
 				value={props.definition.current}
-				valueLabelDisplay={props.definition.indicator}
-				aria-labelledby="discrete-slider-always"
 			/>
 		</div>
 	)

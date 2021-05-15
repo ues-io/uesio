@@ -1,28 +1,23 @@
 import { FunctionComponent } from "react"
-import { TextField } from "@material-ui/core"
-import {
-	PropRendererProps,
-	inputStyles,
-	inputProps,
-	inputLabelProps,
-} from "./proprendererdefinition"
+import { PropRendererProps } from "./proprendererdefinition"
+
+import { component } from "@uesio/ui"
+
+const TextField = component.registry.getUtility("io.textfield")
 
 const TextProp: FunctionComponent<PropRendererProps> = ({
 	getValue,
 	descriptor,
 	setValue,
+	context,
 }) => (
 	// Fall back to text component
 	<TextField
 		value={getValue()}
 		label={descriptor.label}
-		size="small"
-		fullWidth={true}
-		style={inputStyles}
-		InputProps={inputProps}
-		InputLabelProps={inputLabelProps}
-		variant="outlined"
-		onChange={(event): void => setValue(event.target.value)}
+		setValue={setValue}
+		variant="io.default"
+		context={context}
 	/>
 )
 

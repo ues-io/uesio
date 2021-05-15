@@ -5,7 +5,6 @@ module.exports = {
 		"<rootDir>/libs/uesioapps/sample",
 		"<rootDir>/libs/uesioapps/crm",
 		"<rootDir>/libs/lazymonaco",
-		"<rootDir>/libs/yaml",
 		"<rootDir>/libs/vendor",
 		"<rootDir>/apps/cli",
 	],
