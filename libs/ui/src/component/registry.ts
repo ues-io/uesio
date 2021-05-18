@@ -1,7 +1,7 @@
 import { FC } from "react"
 import {
-	BaseDefinition,
 	BaseProps,
+	DefinitionMap,
 	UtilityProps,
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
@@ -9,7 +9,12 @@ import { parseKey, getPathSuffix } from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
-import { mergeDefinitionMaps, render } from "./component"
+import {
+	getVariantStylesDef,
+	mergeDefinitionMaps,
+	render,
+	renderUtility,
+} from "./component"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -74,22 +79,52 @@ const get = (key: string) => (props: BaseProps) => {
 		definition: props.definition,
 	})
 }
+
+const getVariantInfo = (
+	fullName: string | undefined,
+	key: string
+): [string, string] => {
+	const parts = fullName?.split(".")
+	if (parts?.length === 4) {
+		return [`${parts[0]}.${parts[1]}`, `${parts[2]}.${parts[3]}`]
+	}
+	if (parts?.length === 2) {
+		return [key, `${parts[0]}.${parts[1]}`]
+	}
+	const [keyNamespace] = parseKey(key)
+	return [key, `${keyNamespace}.default`]
+}
+
+const getVariantStyleInfo = (props: UtilityProps, key: string) => {
+	const { variant, context, styles } = props
+	const [componentType, variantName] = getVariantInfo(variant, key)
+	if (!variantName) {
+		return styles as DefinitionMap
+	}
+
+	const variantStyles = getVariantStylesDef(
+		componentType,
+		variantName,
+		context
+	)
+
+	const mergedVariantStyles = mergeDefinitionMaps({}, variantStyles, context)
+
+	if (!styles) {
+		return mergedVariantStyles
+	}
+
+	return mergeDefinitionMaps(
+		mergedVariantStyles,
+		styles as DefinitionMap,
+		context
+	)
+}
+
 const getUtility = (key: string) => (props: UtilityProps) => {
 	const loader = getUtilityLoader(key) || NotFound
-	const definition = {
-		...props.definition,
-		...(props.styles && {
-			"uesio.styles": props.definition?.["uesio.styles"]
-				? mergeDefinitionMaps(
-						props.styles,
-						props.definition["uesio.styles"],
-						undefined
-				  )
-				: props.styles,
-		}),
-		...(props.variant && { "uesio.variant": props.variant }),
-	} as BaseDefinition
-	return render(loader, key, { ...props, componentType: key, definition })
+	const styles = getVariantStyleInfo(props, key)
+	return renderUtility(loader, { ...props, styles, componentType: key })
 }
 
 const getSignal = (key: string, signal: string) =>

@@ -6,5 +6,5 @@ definition:
     root:
       color: "#21242D"
       fontWeight: "500"
-      fontSize: "11pt"
+      fontSize: "10pt"
       lineHeight: "30pt"

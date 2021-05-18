@@ -7,7 +7,7 @@ import List from "../io.list/list"
 const IOGrid = component.registry.getUtility("io.grid")
 
 const Deck: FunctionComponent<DeckProps> = (props) => {
-	const definition = props.definition
+	const { definition, context } = props
 	const gridCols =
 		definition.templateColumns &&
 		styles.getResponsiveStyles(
@@ -28,7 +28,11 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		props
 	)
 	return (
-		<IOGrid className={classes.root} context={props.context}>
+		<IOGrid
+			variant={definition["uesio.variant"]}
+			classes={classes}
+			context={context}
+		>
 			<List {...props} />
 		</IOGrid>
 	)

@@ -18,7 +18,7 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 		props
 	)
 	return (
-		<IOGrid className={classes.root} context={props.context}>
+		<IOGrid classes={classes} context={props.context}>
 			<component.Slot
 				definition={props.definition}
 				listName="components"

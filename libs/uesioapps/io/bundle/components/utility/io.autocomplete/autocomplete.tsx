@@ -23,7 +23,7 @@ type SelectedItem = {
 const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	const { getItems, value, setValue, label } = props
 	const width = props.definition?.width as string
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),

@@ -8,7 +8,7 @@ interface AlertProps extends definition.UtilityProps {
 
 const Alert: FunctionComponent<AlertProps> = (props) => {
 	const { text, severity } = props
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				verticalAlign: "inherit",

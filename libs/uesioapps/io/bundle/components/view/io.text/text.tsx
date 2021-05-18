@@ -1,13 +1,22 @@
 import { FunctionComponent } from "react"
 
 import { TextProps } from "./textdefinition"
-import IOText from "../../utility/io.text/text"
+import { component, styles } from "@uesio/ui"
+
+const IOText = component.registry.getUtility("io.text")
 
 const Text: FunctionComponent<TextProps> = (props) => {
 	const { definition, context } = props
+	const classes = styles.useStyles(
+		{
+			root: {},
+		},
+		props
+	)
 	return (
 		<IOText
-			{...props}
+			classes={classes}
+			variant={definition["uesio.variant"]}
 			context={context}
 			text={definition.text}
 			element={definition.element}

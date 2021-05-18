@@ -16,7 +16,7 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 	const { setValue, value, mode } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),

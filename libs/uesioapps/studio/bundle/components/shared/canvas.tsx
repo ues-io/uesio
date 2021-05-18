@@ -1,14 +1,10 @@
-import { CSSProperties, FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const Canvas: FunctionComponent<Props> = (props) => {
-	const classes = styles.useStyles(
+const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
+	const classes = styles.useUtilityStyles(
 		{
-			content: {
+			root: {
 				overflowY: "scroll",
 				padding: "60px",
 				...styles.getBackgroundStyles(
@@ -66,8 +62,7 @@ const Canvas: FunctionComponent<Props> = (props) => {
 		<div
 			onDragLeave={onDragLeave}
 			onDragOver={onDragOver}
-			className={classes.content}
-			style={props.style}
+			className={classes.root}
 		>
 			<div className={classes.inner}>
 				<component.View

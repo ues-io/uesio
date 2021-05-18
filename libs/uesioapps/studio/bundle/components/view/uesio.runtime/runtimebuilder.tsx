@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 
-import { definition, component, hooks, context } from "@uesio/ui"
+import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"
 import BottomLeftNav from "../../shared/bottomleftnav"
@@ -57,8 +57,9 @@ component.registry.registerSignals("uesio.runtime", {
 
 const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const def = uesio.view.useDefinitionLocal(props.path)
-	const viewDef = props.context.getViewDef()
+	const { context, path } = props
+	const def = uesio.view.useDefinitionLocal(path)
+	const viewDef = context.getViewDef()
 
 	const scriptResult = uesio.component.usePacks(
 		Object.keys(viewDef?.dependencies?.componentpacks || {}),
@@ -73,67 +74,67 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const builderTheme = uesio.theme.useTheme(
 		"studio.default",
-		new context.Context()
+		new ctx.Context()
 	)
 	if (!scriptResult.loaded || !def || !builderTheme || !state)
-		return <Canvas {...props} />
-	const builderProps = {
-		...props,
-		context: props.context.addFrame({
-			theme: "studio.default",
-		}),
-	}
+		return <Canvas context={context} />
+	const builderContext = context.addFrame({
+		theme: "studio.default",
+	})
+
 	return (
 		<Grid
-			{...props}
-			styles={{
-				root: {
+			context={context}
+			classes={styles.useStyle(
+				"root",
+				{
 					height: "100vh",
 					gridTemplateColumns: "50px 300px 1fr 300px 50px",
 					gridTemplateRows: "1fr 1fr",
 				},
-			}}
+				props
+			)}
 		>
 			<TopLeftNav
-				{...builderProps}
-				style={{ gridRow: 1, gridColumn: 1 }}
+				context={builderContext}
+				className={styles.css({ gridRow: 1, gridColumn: 1 })}
 			/>
 			<BottomLeftNav
-				{...builderProps}
-				style={{ gridRow: 2, gridColumn: 1 }}
+				context={builderContext}
+				className={styles.css({ gridRow: 2, gridColumn: 1 })}
 			/>
 			<PropertiesPanel
-				{...builderProps}
-				style={{ gridRow: 1, gridColumn: 2 }}
+				context={builderContext}
+				className={styles.css({ gridRow: 1, gridColumn: 2 })}
 			/>
 			{state.showWires && (
 				<WiresPanel
-					{...builderProps}
-					style={{ gridRow: 2, gridColumn: 2 }}
+					context={builderContext}
+					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
 			{state.showComps && (
 				<ComponentsPanel
-					{...builderProps}
-					style={{ gridRow: 2, gridColumn: 2 }}
+					context={builderContext}
+					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
 			<Canvas
 				{...props}
-				style={{
+				className={styles.css({
 					gridRow: "1 / 3",
 					gridColumn: state.showCode ? "3" : "3 / 5",
-				}}
+				})}
 			/>
 			{state.showCode && (
 				<CodePanel
-					{...builderProps}
-					style={{ gridRow: "1 / 3", gridColumn: 4 }}
+					context={builderContext}
+					className={styles.css({ gridRow: "1 / 3", gridColumn: 4 })}
 				/>
 			)}
 			<RightNav
-				{...builderProps}
-				style={{ gridRow: "1 / 3", gridColumn: 5 }}
+				context={builderContext}
+				className={styles.css({ gridRow: "1 / 3", gridColumn: 5 })}
 			/>
 		</Grid>
 	)

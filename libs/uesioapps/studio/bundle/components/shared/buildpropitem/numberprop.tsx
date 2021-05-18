@@ -15,7 +15,6 @@ const NumberProp: FunctionComponent<PropRendererProps> = ({
 		value={getValue()}
 		label={descriptor.label}
 		setValue={(value: string): void => setValue(parseInt(value, 10))}
-		variant="io.default"
 		context={context}
 	/>
 )

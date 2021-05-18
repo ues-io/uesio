@@ -4,7 +4,7 @@ type TextDefinition = {
 	text?: string
 	element?: string
 	color?: string
-}
+} & definition.BaseDefinition
 
 interface TextProps extends definition.BaseProps {
 	definition: TextDefinition

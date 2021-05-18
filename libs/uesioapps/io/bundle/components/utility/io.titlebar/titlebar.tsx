@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TitleBarProps extends definition.BaseProps {
+interface TitleBarProps extends definition.UtilityProps {
 	title?: string
 	subtitle?: string
 	actions?: ReactNode
@@ -9,7 +9,7 @@ interface TitleBarProps extends definition.BaseProps {
 
 const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 	const { context, title, subtitle, actions } = props
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				display: "flex",

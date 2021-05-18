@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
-interface IconButtonProps extends definition.BaseProps {
+interface IconButtonProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	icon?: string
@@ -12,7 +12,7 @@ interface IconButtonProps extends definition.BaseProps {
 const Icon = component.registry.getUtility("io.icon")
 
 const IconButton: FunctionComponent<IconButtonProps> = (props) => {
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				fontFamily: "inherit",

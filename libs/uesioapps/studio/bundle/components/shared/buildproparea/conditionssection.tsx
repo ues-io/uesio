@@ -79,7 +79,6 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				(condition: wire.WireConditionDefinition, index) => {
 					const conditionPath = `${path}["conditions"]["${index}"]`
 					const selected = selectedNode.startsWith(conditionPath)
-					console.log(getConditionProperties, context)
 					return (
 						<PropNodeTag
 							title={getConditionTitle(condition)}
@@ -90,6 +89,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							onClick={(): void => {
 								uesio.builder.setSelectedNode(conditionPath)
 							}}
+							context={context}
 						>
 							{
 								<PropertiesPane

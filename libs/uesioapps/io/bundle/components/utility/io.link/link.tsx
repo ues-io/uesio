@@ -7,7 +7,7 @@ interface LinkProps extends definition.UtilityProps {
 }
 
 const Link: FunctionComponent<LinkProps> = (props) => {
-	const classes = styles.useStyles({ root: {} }, props)
+	const classes = styles.useUtilityStyles({ root: {} }, props)
 	const { onClick, text } = props
 	return (
 		<a

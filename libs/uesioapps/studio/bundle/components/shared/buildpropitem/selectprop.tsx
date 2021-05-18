@@ -15,7 +15,6 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	context,
 }) => (
 	<SelectField
-		variant="io.default"
 		value={getValue()}
 		label={descriptor.label}
 		setValue={setValue}

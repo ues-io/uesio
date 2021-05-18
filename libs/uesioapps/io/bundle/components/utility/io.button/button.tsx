@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface ButtonProps extends definition.BaseProps {
+interface ButtonProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	width?: string
@@ -9,7 +9,7 @@ interface ButtonProps extends definition.BaseProps {
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const width = props.definition?.width as string
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				fontFamily: "inherit",

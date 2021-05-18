@@ -1,14 +1,13 @@
-import { ReactNode, CSSProperties, FunctionComponent } from "react"
+import { ReactNode, FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface ScrollPanelProps extends definition.BaseProps {
+interface ScrollPanelProps extends definition.UtilityProps {
 	header?: ReactNode
 	footer?: ReactNode
-	style?: CSSProperties
 }
 
 const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				display: "flex",
@@ -24,7 +23,7 @@ const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
 		props
 	)
 	return (
-		<div style={props.style} className={classes.root}>
+		<div className={classes.root}>
 			{props.header}
 			<div className={classes.inner}>{props.children}</div>
 			{props.footer}

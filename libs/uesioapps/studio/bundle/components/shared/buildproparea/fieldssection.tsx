@@ -6,7 +6,7 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "../dragdrop"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path } = props
+	const { section, definition: def, path, context } = props
 	const collectionKey = def?.collection as string | undefined
 
 	if (!collectionKey) {
@@ -21,7 +21,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const fields = uesio.builder.useMetadataList(
-		props.context,
+		context,
 		"FIELD",
 		namespace,
 		collectionKey
@@ -70,6 +70,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								key={index}
 								onClick={onClick}
 								selected={selected}
+								context={context}
 							/>
 						)
 					})}

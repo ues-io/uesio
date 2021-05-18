@@ -9,7 +9,7 @@ interface TextProps extends definition.UtilityProps {
 
 const Text: FunctionComponent<TextProps> = (props) => {
 	const { text, element, color } = props
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(color && {

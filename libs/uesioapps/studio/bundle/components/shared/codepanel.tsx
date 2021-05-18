@@ -10,11 +10,7 @@ const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const CodePanel: FunctionComponent<Props> = (props) => {
+const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
 		{

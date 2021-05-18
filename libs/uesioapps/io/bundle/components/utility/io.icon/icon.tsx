@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface IconProps extends definition.BaseProps {
+interface IconProps extends definition.UtilityProps {
 	icon?: string
 }
 
 const Icon: FunctionComponent<IconProps> = (props) => {
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				fontFamily: "Material Icons",

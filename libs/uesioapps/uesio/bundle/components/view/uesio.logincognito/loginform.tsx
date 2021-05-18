@@ -14,16 +14,24 @@ const Text = component.registry.getUtility("io.text")
 const Link = component.registry.getUtility("io.link")
 
 const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
-	const { setMode, setMessage, logIn } = props
+	const { setMode, setMessage, logIn, context } = props
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
 	return (
 		<>
-			<TextField {...props} label="Username" setValue={setUsername} />
-			<TextField {...props} label="Password" setValue={setPassword} />
+			<TextField
+				context={context}
+				label="Username"
+				setValue={setUsername}
+			/>
+			<TextField
+				context={context}
+				label="Password"
+				setValue={setPassword}
+			/>
 			<Grid
-				{...props}
+				context={context}
 				styles={{
 					root: {
 						gridTemplateColumns: "1fr 1fr",
@@ -33,13 +41,13 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				}}
 			>
 				<Button
-					{...props}
+					context={context}
 					variant="io.primary"
 					label="Sign In"
 					onClick={() => logIn(username, password)}
 				/>
 				<Button
-					{...props}
+					context={context}
 					label="Cancel"
 					variant="io.secondary"
 					onClick={() => {
@@ -49,9 +57,9 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				/>
 			</Grid>
 			<div>
-				<Text {...props} text="Forgot your password?&nbsp;" />
+				<Text context={context} text="Forgot your password?&nbsp;" />
 				<Link
-					{...props}
+					context={context}
 					onClick={() => {
 						// not implemented
 					}}
@@ -59,9 +67,9 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				/>
 			</div>
 			<div>
-				<Text {...props} text="No Account?&nbsp;" />
+				<Text context={context} text="No Account?&nbsp;" />
 				<Link
-					{...props}
+					context={context}
 					onClick={() => {
 						setMode("signup")
 						setMessage("")

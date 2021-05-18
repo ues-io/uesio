@@ -16,7 +16,6 @@ const TextProp: FunctionComponent<PropRendererProps> = ({
 		value={getValue()}
 		label={descriptor.label}
 		setValue={setValue}
-		variant="io.default"
 		context={context}
 	/>
 )

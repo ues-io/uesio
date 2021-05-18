@@ -1,14 +1,10 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 const IconButton = component.registry.getUtility("io.iconbutton")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const TopLeftNav: FunctionComponent<Props> = (props) => {
+const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const isStructureView = uesio.builder.useIsStructureView()
 	const [label, icon] = isStructureView
@@ -16,9 +12,13 @@ const TopLeftNav: FunctionComponent<Props> = (props) => {
 		: ["Switch to Structure View", "border_clear"]
 
 	return (
-		<ScrollPanel {...props} variant="studio.verticalnav">
+		<ScrollPanel
+			className={props.className}
+			context={props.context}
+			variant="studio.verticalnav"
+		>
 			<IconButton
-				{...props}
+				context={props.context}
 				variant="io.large"
 				onClick={uesio.signal.getHandler([
 					{
