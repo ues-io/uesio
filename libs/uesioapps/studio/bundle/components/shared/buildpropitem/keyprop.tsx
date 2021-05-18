@@ -18,7 +18,6 @@ const KeyProp: FunctionComponent<PropRendererProps> = (props) => {
 			setValue={(value: string): void =>
 				uesio.view.changeDefinitionKey(path || "", value)
 			}
-			variant="io.default"
 			context={context}
 		/>
 	)

@@ -1,21 +1,18 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 const IconButton = component.registry.getUtility("io.iconbutton")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const RightNav: FunctionComponent<Props> = (props) => {
+const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
+	const { context } = props
 	const uesio = hooks.useUesio(props)
 	const hasChanges = uesio.builder.useHasChanges()
 
 	return (
 		<ScrollPanel {...props} variant="studio.verticalnav">
 			<IconButton
-				{...props}
+				context={context}
 				variant="io.large"
 				label="Save"
 				disabled={!hasChanges}
@@ -25,7 +22,7 @@ const RightNav: FunctionComponent<Props> = (props) => {
 				}}
 			/>
 			<IconButton
-				{...props}
+				context={context}
 				variant="io.large"
 				label="Cancel"
 				disabled={!hasChanges}
@@ -35,7 +32,7 @@ const RightNav: FunctionComponent<Props> = (props) => {
 				}}
 			/>
 			<IconButton
-				{...props}
+				context={context}
 				variant="io.large"
 				label="Code"
 				disabled={!hasChanges}
@@ -47,9 +44,9 @@ const RightNav: FunctionComponent<Props> = (props) => {
 				])}
 			/>
 			<IconButton
-				{...props}
+				context={context}
 				variant="io.large"
-				label="View Detial"
+				label="View Detail"
 				icon="listalt"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()

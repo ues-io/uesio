@@ -2,8 +2,9 @@ import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
 import { ThemeState } from "../bands/theme/types"
-import { BaseProps } from "../definition/definition"
+import { BaseProps, UtilityProps } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
+import { stringify } from "yaml"
 
 type ResponsiveDefinition =
 	| string
@@ -171,12 +172,49 @@ function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
 ) {
+	return mergeStyles(defaults, props?.definition?.["uesio.styles"])
+}
+
+function useStyle<K extends string>(
+	className: K,
+	defaults: CSSInterpolation,
+	props: BaseProps | null
+) {
+	return useStyles(
+		{
+			[className]: defaults,
+		},
+		props
+	)
+}
+
+function useUtilityStyles<K extends string>(
+	defaults: Record<K, CSSInterpolation>,
+	props: UtilityProps | null
+) {
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
-			const defaultStyles = defaults[className]
-			const explicitStyles =
-				props?.definition?.["uesio.styles"]?.[className]
-			classNames[className] = css([defaultStyles, explicitStyles])
+			classNames[className] = cx(
+				css([defaults[className], props?.styles?.[className]]),
+				props?.classes?.[className],
+				props?.className
+			)
+			return classNames
+		},
+		{} as Record<K, string>
+	)
+}
+
+function mergeStyles<K extends string>(
+	defaults: Record<K, CSSInterpolation>,
+	existing: Record<string, CSSInterpolation> | undefined
+) {
+	return Object.keys(defaults).reduce(
+		(classNames: Record<string, string>, className: K) => {
+			classNames[className] = css([
+				defaults[className],
+				existing?.[className],
+			])
 			return classNames
 		},
 		{} as Record<K, string>
@@ -199,5 +237,8 @@ export {
 	getColor,
 	getResponsiveStyles,
 	cx,
+	css,
+	useUtilityStyles,
 	useStyles,
+	useStyle,
 }

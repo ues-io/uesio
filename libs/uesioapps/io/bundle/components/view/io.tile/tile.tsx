@@ -3,25 +3,14 @@ import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
 
+const IOTile = component.registry.getUtility("io.tile")
+
 const Tile: FunctionComponent<TileProps> = (props) => {
 	const classes = styles.useStyles(
 		{
-			root: {
-				display: "flex",
-				...(props.definition.signals && {
-					cursor: "pointer",
-				}),
-				alignItems: "center",
-				"&:hover": {
-					backdropFilter: "brightness(97%)",
-				},
-			},
-			content: {
-				flex: 1,
-			},
-			avatar: {
-				marginRight: "8px",
-			},
+			root: {},
+			content: {},
+			avatar: {},
 			selected: {},
 		},
 		props
@@ -34,35 +23,32 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		"selected",
 		definition
 	)
+
 	return (
-		<div
-			className={styles.cx(classes.root, isSelected && classes.selected)}
+		<IOTile
+			classes={classes}
+			context={context}
 			onClick={handler}
+			isSelected={isSelected}
+			portals={portals}
+			avatar={
+				<component.Slot
+					definition={definition}
+					listName="avatar"
+					path={path}
+					accepts={["uesio.standalone"]}
+					context={context}
+				/>
+			}
 		>
-			{definition.avatar && (
-				<div className={classes.avatar}>
-					<component.Slot
-						definition={definition}
-						listName="avatar"
-						path={path}
-						accepts={["uesio.standalone"]}
-						context={context}
-					/>
-				</div>
-			)}
-			{definition.content && (
-				<div className={classes.content}>
-					<component.Slot
-						definition={definition}
-						listName="content"
-						path={path}
-						accepts={["uesio.standalone"]}
-						context={context}
-					/>
-				</div>
-			)}
-			{portals}
-		</div>
+			<component.Slot
+				definition={definition}
+				listName="content"
+				path={path}
+				accepts={["uesio.standalone"]}
+				context={context}
+			/>
+		</IOTile>
 	)
 }
 

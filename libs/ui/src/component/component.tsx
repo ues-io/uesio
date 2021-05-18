@@ -1,5 +1,9 @@
 import { FunctionComponent } from "react"
-import { DefinitionMap, BaseProps } from "../definition/definition"
+import {
+	DefinitionMap,
+	BaseProps,
+	UtilityProps,
+} from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
@@ -87,13 +91,13 @@ const Component: FunctionComponent<BaseProps> = (props) => {
 	return <ComponentInternal {...props} path={`${path}["${componentType}"]`} />
 }
 
-function getVariantStyles(
-	componentType: string,
+function getStylesFromVariant(
 	variant: ComponentVariant | undefined,
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}
 	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
+	const componentType = variant.component
 	const theme = context.getTheme()
 	const overrides = theme?.definition?.variantOverrides
 	const override = overrides?.[componentType]?.[variant.name] as DefinitionMap
@@ -102,15 +106,25 @@ function getVariantStyles(
 		: variantStyles
 }
 
+function getVariantStylesDef(
+	componentType: string,
+	variantName: string,
+	context: Context
+) {
+	return getStylesFromVariant(
+		context.getComponentVariant(componentType, variantName),
+		context
+	)
+}
+
 function mergeInVariants(
 	definition: DefinitionMap | undefined,
-	componentType: string,
 	variant: ComponentVariant | undefined,
 	context: Context
 ): DefinitionMap | undefined {
 	if (!definition) return definition
 
-	const variantStyles = getVariantStyles(componentType, variant, context)
+	const variantStyles = getStylesFromVariant(variant, context)
 	const explicitStyles = definition["uesio.styles"] as DefinitionMap
 
 	return mergeDefinitionMaps(
@@ -135,7 +149,6 @@ function mergeContextVariants(
 
 	return mergeInVariants(
 		definition,
-		componentType,
 		context.getComponentVariant(
 			componentType,
 			variantName || `${namespace}.default`
@@ -156,13 +169,19 @@ function render(
 		componentType,
 		context
 	)
+	return renderUtility(loader, {
+		...props,
+		definition: mergedDefinition,
+		context: additionalContext(context, mergedDefinition),
+	})
+}
+
+function renderUtility(
+	loader: FunctionComponent<UtilityProps>,
+	props: UtilityProps
+) {
 	const Loader = loader
-	return (
-		<Loader
-			{...{ ...props, definition: mergedDefinition }}
-			context={additionalContext(context, mergedDefinition)}
-		/>
-	)
+	return <Loader {...props} />
 }
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
@@ -177,6 +196,8 @@ export {
 	ComponentInternal,
 	Component,
 	render,
+	renderUtility,
 	mergeInVariants,
+	getVariantStylesDef,
 	mergeDefinitionMaps,
 }

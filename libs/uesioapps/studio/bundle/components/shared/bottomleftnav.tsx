@@ -4,17 +4,17 @@ import { definition, component, hooks } from "@uesio/ui"
 const IconButton = component.registry.getUtility("io.iconbutton")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const BottomLeftNav: FunctionComponent<Props> = (props) => {
+const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	return (
-		<ScrollPanel {...props} variant="studio.verticalnav">
+		<ScrollPanel
+			className={props.className}
+			context={props.context}
+			variant="studio.verticalnav"
+		>
 			<IconButton
-				{...props}
+				context={props.context}
 				variant="io.large"
 				onClick={uesio.signal.getHandler([
 					{
@@ -25,7 +25,7 @@ const BottomLeftNav: FunctionComponent<Props> = (props) => {
 				icon="widgets"
 			/>
 			<IconButton
-				{...props}
+				context={props.context}
 				variant="io.large"
 				onClick={uesio.signal.getHandler([
 					{

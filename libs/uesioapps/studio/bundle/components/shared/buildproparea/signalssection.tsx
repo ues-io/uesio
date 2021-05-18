@@ -6,7 +6,7 @@ import { hooks, definition, signal } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path } = props
+	const { section, definition: def, path, context } = props
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const primaryColor = theme.definition.palette.primary
@@ -39,12 +39,13 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						onClick={(): void =>
 							uesio.builder.setSelectedNode(signalPath)
 						}
+						context={context}
 					>
 						{
 							<PropertiesPane
 								path={signalPath}
 								index={0}
-								context={props.context}
+								context={context}
 								definition={signal}
 								propsDef={{
 									title: "Signal",

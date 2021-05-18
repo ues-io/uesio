@@ -33,7 +33,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const checked = value === true
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),

@@ -54,12 +54,12 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 				fileName,
 				mimeType,
 			},
-			props.context
+			context
 		)
 	}, [fileContent])
 	return (
 		<CodeField
-			{...props}
+			context={context}
 			value={currentValue?.value || ""}
 			setValue={(value: string) => {
 				uesio.signal.run(
@@ -68,7 +68,7 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 						target: componentId,
 						value,
 					},
-					props.context
+					context
 				)
 			}}
 		/>

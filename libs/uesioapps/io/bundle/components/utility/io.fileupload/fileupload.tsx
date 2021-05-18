@@ -38,7 +38,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	const mimeType = userFile?.["uesio.mimetype"] as string
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
 
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				position: "relative",

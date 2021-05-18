@@ -3,7 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type TitleBarDefinition = {
 	title: string
 	subtitle: string
-}
+} & definition.BaseDefinition
 
 interface TitleBarProps extends definition.BaseProps {
 	definition: TitleBarDefinition

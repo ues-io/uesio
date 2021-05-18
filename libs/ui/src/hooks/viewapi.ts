@@ -85,12 +85,7 @@ class ViewAPI {
 			variantName
 		)
 		if (!variant) return def
-		return mergeInVariants(
-			def,
-			componentType,
-			variant,
-			this.uesio.getContext()
-		)
+		return mergeInVariants(def, variant, this.uesio.getContext())
 	}
 
 	useYAML() {

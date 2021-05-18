@@ -1,11 +1,7 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 import { WirePropertyDefinition } from "../shared/wire/wiredefinition"
-
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
 
 const getPropsDef = (path: string) => {
 	const pathArray = component.path.toPath(path)
@@ -17,7 +13,7 @@ const getPropsDef = (path: string) => {
 		: undefined
 }
 
-const PropertiesPanel: FunctionComponent<Props> = (props) => {
+const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const selectedNode = uesio.builder.useSelectedNode()
 	const path = selectedNode

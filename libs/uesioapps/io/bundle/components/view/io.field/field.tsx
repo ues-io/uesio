@@ -35,12 +35,11 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	const type = fieldMetadata.getType()
 
 	const common = {
-		...props,
+		context,
 		mode,
 		fieldMetadata,
 		label,
 		hideLabel,
-		variant: "io.default",
 		id,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),

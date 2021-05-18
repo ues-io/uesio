@@ -21,3 +21,4 @@ components:
     - io.iconbutton.io.large
     - io.iconbutton.io.small
     - io.button.io.nav
+    - io.tile.studio.propnodetag

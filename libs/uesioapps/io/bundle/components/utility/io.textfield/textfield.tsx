@@ -15,7 +15,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	const { setValue, value, mode, hideLabel } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
-	const classes = styles.useStyles(
+	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),

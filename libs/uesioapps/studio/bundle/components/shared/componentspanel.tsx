@@ -1,4 +1,4 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "./dragdrop"
@@ -8,12 +8,9 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const ComponentsPanel: FunctionComponent<Props> = (props) => {
+const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const { context } = props
 	const isStructureView = uesio.builder.useIsStructureView()
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
@@ -41,10 +38,10 @@ const ComponentsPanel: FunctionComponent<Props> = (props) => {
 				<TitleBar
 					variant="io.primary"
 					title={"Components"}
-					{...props}
+					context={context}
 				/>
 			}
-			{...props}
+			context={context}
 		>
 			<div
 				onDragStart={onDragStart}
@@ -68,6 +65,7 @@ const ComponentsPanel: FunctionComponent<Props> = (props) => {
 										<PropNodeTag
 											title={value}
 											key={indexTag}
+											context={context}
 										/>
 									) : (
 										<PropNodeTag
@@ -78,6 +76,7 @@ const ComponentsPanel: FunctionComponent<Props> = (props) => {
 											title={value}
 											icon="drag_indicator"
 											key={indexTag}
+											context={context}
 										/>
 									)
 								)}

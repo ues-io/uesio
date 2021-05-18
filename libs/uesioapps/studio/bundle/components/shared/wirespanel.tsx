@@ -1,4 +1,4 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
 
@@ -6,12 +6,9 @@ const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
-interface Props extends definition.BaseProps {
-	style?: CSSProperties
-}
-
-const WiresPanel: FunctionComponent<Props> = (props) => {
+const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const path = '["wires"]'
+	const { context } = props
 	const uesio = hooks.useUesio(props)
 	const selectedNode = uesio.builder.useSelectedNode()
 	const def = uesio.view.useDefinition(path) as definition.DefinitionMap
@@ -21,10 +18,10 @@ const WiresPanel: FunctionComponent<Props> = (props) => {
 				<TitleBar
 					variant="io.primary"
 					title={"wires"}
-					{...props}
+					context={context}
 					actions={
 						<IconButton
-							{...props}
+							context={context}
 							variant="io.small"
 							icon="add"
 							onClick={() =>
@@ -53,6 +50,7 @@ const WiresPanel: FunctionComponent<Props> = (props) => {
 							icon="power"
 							key={index}
 							selected={wirePath === selectedNode}
+							context={context}
 						/>
 					)
 				})}

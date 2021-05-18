@@ -35,6 +35,7 @@ components:
     io.selectfield:
     io.text:
     io.textfield:
+    io.tile:
     io.titlebar:
   variants:
     - io.textfield.io.default
