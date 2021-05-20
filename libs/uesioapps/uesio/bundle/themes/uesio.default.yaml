@@ -1,5 +1,10 @@
 name: default
 definition:
+  variantOverrides:
+    sample.hello:
+      sample.esperanto:
+        root:
+          backgroundColor: lime
   palette:
     primary: "#111111"
     secondary: "#dc004e"

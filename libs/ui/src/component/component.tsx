@@ -100,7 +100,9 @@ function getStylesFromVariant(
 	const componentType = variant.component
 	const theme = context.getTheme()
 	const overrides = theme?.definition?.variantOverrides
-	const override = overrides?.[componentType]?.[variant.name] as DefinitionMap
+	const override = overrides?.[componentType]?.[
+		variant.namespace + "." + variant.name
+	] as DefinitionMap
 	return override
 		? mergeDefinitionMaps(variantStyles, override, context)
 		: variantStyles
