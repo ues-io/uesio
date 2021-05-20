@@ -1,8 +1,7 @@
 import { FunctionComponent } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import { definition, component, hooks, builder } from "@uesio/ui"
-import { Grid } from "@material-ui/core"
-import SelectProp from "./selectprop"
+import MetadataPicker from "../../utility/metadatapicker/metadatapicker"
 
 interface MetadataPropRendererProps extends PropRendererProps {
 	descriptor: builder.MetadataProp
@@ -13,8 +12,6 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const { path, getValue, context, setValue, descriptor } = props
 	const metadataType = descriptor.metadataType
 	const value = getValue() as string
-
-	const namespaces = uesio.builder.useAvailableNamespaces(context)
 
 	let grouping = ""
 
@@ -35,78 +32,15 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 		grouping = groupingNode[descriptor.groupingProperty] as string
 	}
 
-	const [namespace, name] = component.path.parseKey(value)
-
-	const metadata = uesio.builder.useMetadataList(
-		context,
-		metadataType,
-		namespace,
-		grouping
-	)
-
 	return (
-		<Grid container spacing={1}>
-			<Grid item xs={6}>
-				{namespaces ? (
-					<SelectProp
-						{...props}
-						setValue={(value: string) => setValue(`${value}.`)}
-						getValue={() => namespace}
-						descriptor={{
-							...descriptor,
-							type: "SELECT",
-							options: Object.keys(namespaces).map((key) => ({
-								value: key,
-								label: key,
-							})),
-						}}
-					/>
-				) : (
-					<SelectProp
-						{...props}
-						descriptor={{
-							...descriptor,
-							type: "SELECT",
-							label: "",
-							options: [],
-						}}
-					/>
-				)}
-			</Grid>
-			<Grid item xs={6}>
-				{metadata ? (
-					<SelectProp
-						{...props}
-						setValue={(value: string) =>
-							setValue(`${namespace}.${value}`)
-						}
-						getValue={() => name}
-						descriptor={{
-							...descriptor,
-							type: "SELECT",
-							label: "",
-							options: Object.keys(metadata).map((key) => {
-								const [, name] = component.path.parseKey(key)
-								return {
-									value: name,
-									label: name,
-								}
-							}),
-						}}
-					/>
-				) : (
-					<SelectProp
-						{...props}
-						descriptor={{
-							...descriptor,
-							type: "SELECT",
-							label: "",
-							options: [],
-						}}
-					/>
-				)}
-			</Grid>
-		</Grid>
+		<MetadataPicker
+			metadataType={metadataType}
+			label={descriptor.label}
+			value={value}
+			setValue={setValue}
+			context={context}
+			grouping={grouping}
+		/>
 	)
 }
 

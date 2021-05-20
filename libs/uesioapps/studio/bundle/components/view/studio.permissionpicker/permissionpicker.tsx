@@ -42,14 +42,11 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
-	const value = (record.getFieldValue(fieldId) as wire.PlainWireRecord) || {}
-
-	let disabled = false
-	if (mode === "READ") {
-		disabled = true
-	}
-
+	const value = record.getFieldReference(fieldId)
+	const disabled = mode === "READ"
 	const data = wire.getData()
+
+	if (!value) return null
 
 	const handleToggle = (listRecord: string) => () => {
 		const hasProperty = Object.prototype.hasOwnProperty.call(

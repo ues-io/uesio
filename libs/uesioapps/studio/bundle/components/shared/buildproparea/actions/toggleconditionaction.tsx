@@ -45,6 +45,7 @@ const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 			title={action.label}
 			onClick={clickHandler}
 			icon={condition.active ? "visibility_off" : "visibility"}
+			context={props.context}
 		/>
 	)
 }

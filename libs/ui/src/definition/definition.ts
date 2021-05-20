@@ -36,6 +36,5 @@ export type DefinitionValue = string | number | boolean | null | undefined
 export type Definition =
 	| DefinitionValue
 	| DefinitionMap
-	| string[]
-	| number[]
+	| DefinitionValue[]
 	| DefinitionMap[]

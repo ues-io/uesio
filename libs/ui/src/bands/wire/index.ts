@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { LoadResponseRecord } from "../../load/loadresponse"
 import { SaveResponseBatch } from "../../load/saveresponse"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
@@ -25,7 +24,7 @@ type UpdateRecordPayload = {
 } & EntityPayload
 
 type CreateRecordPayload = {
-	record: LoadResponseRecord
+	record: PlainWireRecord
 	recordId: string
 } & EntityPayload
 
