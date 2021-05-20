@@ -5,4 +5,4 @@ definition:
   greeting: Saluton amiko!
   uesio.styles:
     root:
-      backgroundColor: green
+      backgroundColor: orange

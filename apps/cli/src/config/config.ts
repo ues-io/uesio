@@ -90,7 +90,9 @@ const getWorkspace = async (): Promise<string | null> => {
 	const appFromBundle = await getApp()
 	// Make sure the configured app id and the workspace app id match
 	if (appIdPref !== appFromBundle) {
-		return null
+		throw Error(
+			"The app you are attempting to modify is different from your appId in your .uesio file"
+		)
 	}
 	return workspaceId
 }
