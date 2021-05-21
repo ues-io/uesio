@@ -4,7 +4,7 @@ definition:
     sample.hello:
       sample.esperanto:
         root:
-          backgroundColor: lime
+          backgroundColor: purple
   palette:
     primary: "#111111"
     secondary: "#dc004e"
