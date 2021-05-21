@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context, collection } from "@uesio/ui"
+import { definition, styles, context } from "@uesio/ui"
 import LazyMonaco from "@uesio/lazymonaco"
 
 interface CodeFieldProps extends definition.UtilityProps {
@@ -7,13 +7,13 @@ interface CodeFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string
 	width?: string
-	fieldMetadata: collection.Field
 	hideLabel?: boolean
+	language?: string
 	mode?: context.FieldMode
 }
 
 const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
-	const { setValue, value, mode } = props
+	const { setValue, value, mode, language } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
@@ -43,7 +43,7 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 							enabled: false,
 						},
 					}}
-					language={"javascript"}
+					language={language || "javascript"}
 					onChange={setValue}
 				/>
 			</div>

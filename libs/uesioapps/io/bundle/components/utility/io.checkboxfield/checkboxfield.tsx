@@ -10,7 +10,7 @@ import {
 
 interface CheckboxFieldProps extends definition.UtilityProps {
 	label?: string
-	setValue: (value: wire.FieldValue) => void
+	setValue: (value: boolean) => void
 	value: wire.FieldValue
 	width?: string
 	fieldMetadata: collection.Field
@@ -21,15 +21,7 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 const Icon = component.registry.getUtility("io.icon")
 
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const {
-		setValue,
-		value,
-		mode,
-		hideLabel,
-		path,
-		fieldMetadata,
-		context,
-	} = props
+	const { setValue, value, mode, hideLabel, context } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const checked = value === true
