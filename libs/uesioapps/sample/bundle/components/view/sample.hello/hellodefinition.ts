@@ -2,6 +2,7 @@ import { definition, builder } from "@uesio/ui"
 
 type HelloDefinition = {
 	greeting: string
+	pink: boolean
 }
 
 interface HelloProps extends definition.BaseProps {
@@ -11,6 +12,7 @@ interface HelloProps extends definition.BaseProps {
 const HelloPropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		greeting: "Yo!",
+		pink: false,
 	}),
 	title: "Hello Sample",
 	sections: [],
@@ -19,6 +21,11 @@ const HelloPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "greeting",
 			type: "TEXT",
 			label: "Greeting",
+		},
+		{
+			name: "pink",
+			type: "BOOLEAN",
+			label: "Pink?",
 		},
 	],
 

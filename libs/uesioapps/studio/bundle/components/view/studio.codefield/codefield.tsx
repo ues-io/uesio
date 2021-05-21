@@ -1,7 +1,5 @@
 import { FunctionComponent, useState, Dispatch, SetStateAction } from "react"
-import { definition, collection, wire, component, styles } from "@uesio/ui"
-import LazyMonaco from "@uesio/lazymonaco"
-import { InputLabel } from "@material-ui/core"
+import { definition, collection, wire, component } from "@uesio/ui"
 
 type CodeFieldDefinition = {
 	fieldId: string
@@ -31,6 +29,8 @@ const tryParseJSON = (jsonString: string) => {
 interface Props extends definition.BaseProps {
 	definition: CodeFieldDefinition
 }
+
+const IOCodeField = component.registry.getUtility("io.codefield")
 
 function getChangeHandler(
 	fieldType: collection.FieldType,
@@ -82,19 +82,6 @@ function getValue(
 }
 
 const CodeField: FunctionComponent<Props> = (props) => {
-	const classes = styles.useStyles(
-		{
-			root: {
-				margin: styles.getSpacing(props.context.getTheme(), 1),
-			},
-			input: {
-				height: props.definition.height || "200px",
-				margin: styles.getSpacing(props.context.getTheme(), 1, 0),
-				border: "1px solid #c8c8c8",
-			},
-		},
-		props
-	)
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
 	const [message, setMessage] = useState("")
@@ -113,45 +100,23 @@ const CodeField: FunctionComponent<Props> = (props) => {
 
 	const language = props.definition.language || "yaml"
 
-	const Alert = component.registry.getUtility("io.alert")
-
 	return (
-		<div className={classes.root}>
-			<InputLabel shrink={true}>{fieldMetadata.getLabel()}</InputLabel>
-			{message && (
-				<Alert
-					{...props}
-					onClose={() => setMessage("")}
-					severity="error"
-				>
-					{message}
-				</Alert>
+		<IOCodeField
+			label={fieldMetadata.getLabel()}
+			value={
+				stringValue || getValue(fieldType, language, value, setMessage)
+			}
+			setValue={getChangeHandler(
+				fieldType,
+				language,
+				record,
+				fieldId,
+				setMessage,
+				setStringValue
 			)}
-			<div className={classes.input}>
-				<LazyMonaco
-					value={
-						stringValue ||
-						getValue(fieldType, language, value, setMessage)
-					}
-					options={{
-						scrollBeyondLastLine: false,
-						automaticLayout: true,
-						minimap: {
-							enabled: false,
-						},
-					}}
-					language={language}
-					onChange={getChangeHandler(
-						fieldType,
-						language,
-						record,
-						fieldId,
-						setMessage,
-						setStringValue
-					)}
-				/>
-			</div>
-		</div>
+			language={language}
+			context={props.context}
+		/>
 	)
 }
 

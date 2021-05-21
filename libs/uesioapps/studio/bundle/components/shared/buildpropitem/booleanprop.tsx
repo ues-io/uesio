@@ -1,40 +1,21 @@
 import { FunctionComponent } from "react"
-import {
-	FormControlLabel,
-	Checkbox,
-	Switch,
-	TextField,
-} from "@material-ui/core"
-import { builder } from "@uesio/ui"
-import {
-	PropRendererProps,
-	inputLabelProps,
-	inputStyles,
-	inputProps,
-} from "./proprendererdefinition"
+import { builder, component } from "@uesio/ui"
+import { PropRendererProps } from "./proprendererdefinition"
+
+const SelectField = component.registry.getUtility("io.selectfield")
+const CheckBoxField = component.registry.getUtility("io.checkboxfield")
 
 const BooleanProp: FunctionComponent<PropRendererProps> = ({
 	descriptor,
 	getValue,
 	setValue,
+	context,
 }) => {
 	const selected = !!getValue()
 
 	switch ((descriptor as builder.BooleanProp).displaytype) {
 		case "switch":
-			return (
-				<FormControlLabel
-					control={
-						<Switch
-							checked={selected}
-							onChange={(event): void =>
-								setValue(event.target.checked)
-							}
-						/>
-					}
-					label={descriptor.label}
-				/>
-			)
+			return <div>Switch not supported yet</div>
 		case "select": {
 			const optionslist: builder.PropertySelectOption[] = [
 				{
@@ -48,42 +29,25 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 			]
 
 			return (
-				<TextField
-					select={true}
-					SelectProps={{ native: true }}
-					variant="outlined"
-					InputProps={inputProps}
-					InputLabelProps={inputLabelProps}
-					style={inputStyles}
-					size="small"
+				<SelectField
 					value={selected}
 					label={descriptor.label}
-					fullWidth={true}
-					onChange={(event): void =>
-						setValue(event.target.value === "true")
+					setValue={(value: string): void =>
+						setValue(value === "true")
 					}
-				>
-					{optionslist.map((option) => (
-						<option key={option.value} value={option.value}>
-							{option.label}
-						</option>
-					))}
-				</TextField>
+					options={optionslist}
+					context={context}
+				/>
 			)
 		}
 		default:
 			//Checkbox as default
 			return (
-				<FormControlLabel
-					control={
-						<Checkbox
-							checked={selected}
-							onChange={(event): void =>
-								setValue(event.target.checked)
-							}
-						/>
-					}
+				<CheckBoxField
+					value={selected}
 					label={descriptor.label}
+					setValue={setValue}
+					context={context}
 				/>
 			)
 	}

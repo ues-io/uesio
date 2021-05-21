@@ -7,7 +7,7 @@ const Hello: FunctionComponent<HelloProps> = (props) => {
 		{
 			root: {
 				padding: "100px",
-				backgroundColor: "pink",
+				backgroundColor: props.definition.pink ? "pink" : "lightblue",
 			},
 		},
 		props
