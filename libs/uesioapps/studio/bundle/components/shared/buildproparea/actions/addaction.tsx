@@ -28,6 +28,7 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 			title={action.label}
 			onClick={onClickHandler}
 			icon="add"
+			context={props.context}
 		/>
 	)
 }

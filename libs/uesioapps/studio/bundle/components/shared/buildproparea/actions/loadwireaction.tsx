@@ -5,7 +5,7 @@ import ActionButton from "./actionbutton"
 
 const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { path, action } = props
+	const { path, action, context } = props
 	const wireName = component.path.getKeyAtPath(path || "")
 
 	if (!action || !wireName) {
@@ -23,6 +23,7 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 			title={action.label}
 			onClick={uesio.signal.getHandler(signals)}
 			icon="refresh"
+			context={context}
 		/>
 	)
 }

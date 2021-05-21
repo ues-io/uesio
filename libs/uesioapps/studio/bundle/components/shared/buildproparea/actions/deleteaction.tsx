@@ -10,6 +10,7 @@ const DeleteAction: FunctionComponent<ActionProps> = (props) => {
 			title="Delete"
 			onClick={(): void => uesio.view.removeDefinition()}
 			icon="delete"
+			context={props.context}
 		/>
 	)
 }

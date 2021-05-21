@@ -1,9 +1,8 @@
 import { Dictionary } from "@reduxjs/toolkit"
-import { LoadResponseRecord } from "../../../load/loadresponse"
 import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
-import { FieldValue } from "../../wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
 import { PlainCollectionMap } from "../../collection/types"
 
 const LOOKUP = "LOOKUP"
@@ -54,14 +53,14 @@ const getDefaultRecord = (
 	collections: PlainCollectionMap,
 	viewId: string,
 	wireName: string
-): LoadResponseRecord => {
+): PlainWireRecord => {
 	const viewDef = context.getViewDef()
 	if (!viewDef) return {}
 	const wire = viewDef.definition?.wires[wireName]
 	if (!wire) return {}
 	const defaults = wire.defaults
 	const collection = collections[wire.collection]
-	const defaultRecord: LoadResponseRecord = {}
+	const defaultRecord: PlainWireRecord = {}
 	defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
 		const fieldMetadata = collection.fields[defaultItem.field]

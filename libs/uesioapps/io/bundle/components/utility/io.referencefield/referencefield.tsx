@@ -30,7 +30,7 @@ const generateReferenceFieldDisplayValue = (
 	const nameFieldOfReferencedCollection = referencedCollection
 		.getNameField()
 		?.getId()
-	const referenceFieldValue = record.getFieldValue(fieldId)
+	const referenceFieldValue = record.getFieldReference(fieldId)
 	if (
 		!referenceFieldValue ||
 		typeof referenceFieldValue !== "object" ||

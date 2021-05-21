@@ -36,12 +36,14 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 				onClick={onClickBackward}
 				icon="arrow_upward"
 				disabled={!enableBackward}
+				context={props.context}
 			/>
 			<ActionButton
 				title="Move Forward"
 				onClick={onClickForward}
 				icon="arrow_downward"
 				disabled={!enableForward}
+				context={props.context}
 			/>
 		</>
 	)

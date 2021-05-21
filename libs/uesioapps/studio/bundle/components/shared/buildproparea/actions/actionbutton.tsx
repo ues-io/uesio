@@ -1,37 +1,30 @@
 import { SyntheticEvent, FunctionComponent } from "react"
-import { useTheme, makeStyles, createStyles } from "@material-ui/core"
 import SmallIconButton from "../../smalliconbutton"
+import { styles, definition } from "@uesio/ui"
 
-interface Props {
+interface Props extends definition.BaseProps {
 	title: string
 	icon: string
 	onClick?: (event: SyntheticEvent) => void
 	disabled?: boolean
 }
 
-const useStyles = makeStyles(() =>
-	createStyles({
-		root: {
-			marginRight: "8px",
+const ActionButton: FunctionComponent<Props> = (props) => {
+	const { title, onClick, icon, disabled } = props
+	const classes = styles.useStyles(
+		{
+			root: {
+				marginRight: "8px",
+			},
 		},
-	})
-)
-
-const ActionButton: FunctionComponent<Props> = ({
-	title,
-	onClick,
-	icon,
-	disabled,
-}) => {
-	const theme = useTheme()
-	const classes = useStyles()
+		props
+	)
 
 	return (
 		<SmallIconButton
 			title={title}
 			onClick={onClick}
 			icon={icon}
-			color={theme.palette.primary.main}
 			disabled={disabled}
 			className={classes.root}
 		/>

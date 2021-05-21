@@ -20,6 +20,7 @@ const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 			title={action.label}
 			onClick={uesio.signal.getHandler(signals)}
 			icon="router"
+			context={props.context}
 		/>
 	)
 }

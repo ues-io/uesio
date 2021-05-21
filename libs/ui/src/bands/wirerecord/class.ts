@@ -16,6 +16,10 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getFieldValue = (fieldName: string) => get(this.source, fieldName)
+	getFieldString = (fieldName: string) =>
+		get(this.source, fieldName) as string
+	getFieldReference = (fieldName: string) =>
+		get(this.source, fieldName) as PlainWireRecord | undefined
 	isNew = () => !this.getIdFieldValue()
 
 	getIdFieldValue = () => {

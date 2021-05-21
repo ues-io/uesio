@@ -29,10 +29,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 
 	const fileInput = useRef<HTMLInputElement>(null)
 
-	const userFile = record.getFieldValue(fieldId) as
-		| wire.PlainWireRecord
-		| undefined
-
+	const userFile = record.getFieldReference(fieldId)
 	const userFileId = userFile?.["uesio.id"] as string
 	const fileName = userFile?.["uesio.name"] as string
 	const mimeType = userFile?.["uesio.mimetype"] as string

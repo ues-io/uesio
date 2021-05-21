@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
-import { makeStyles, createStyles } from "@material-ui/core"
-import { definition, builder } from "@uesio/ui"
+
+import { definition, builder, styles } from "@uesio/ui"
 import BuildSection from "./buildsection"
 import PropList from "./proplist"
 
@@ -8,26 +8,21 @@ interface Props extends definition.BaseProps {
 	buildPropsDef: builder.BuildPropertiesDefinition
 }
 
-const useStyles = makeStyles(() =>
-	createStyles({
-		wrapper: {
-			overflow: "auto",
-			flex: 1,
+const BuildPropArea: FunctionComponent<Props> = (props) => {
+	const { buildPropsDef, path, definition, context } = props
+	const classes = styles.useStyles(
+		{
+			wrapper: {
+				overflow: "auto",
+				flex: 1,
+			},
+			propList: {
+				padding: "10px 6px 0 6px",
+				borderBottom: "1px solid #ccc",
+			},
 		},
-		propList: {
-			padding: "10px 6px 0 6px",
-			borderBottom: "1px solid #ccc",
-		},
-	})
-)
-
-const BuildPropArea: FunctionComponent<Props> = ({
-	buildPropsDef,
-	path,
-	definition,
-	context,
-}) => {
-	const classes = useStyles()
+		props
+	)
 	return (
 		<div className={classes.wrapper}>
 			{buildPropsDef?.properties && (

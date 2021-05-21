@@ -1,6 +1,5 @@
 import { FunctionComponent, ComponentType } from "react"
-import { makeStyles, createStyles } from "@material-ui/core"
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, styles } from "@uesio/ui"
 
 import DeleteAction from "./actions/deleteaction"
 import MoveActions from "./actions/moveactions"
@@ -14,16 +13,6 @@ interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
 }
 
-const useStyles = makeStyles(() =>
-	createStyles({
-		wrapper: {
-			display: "flex",
-			backgroundColor: "#f0f0f0",
-			padding: "8px",
-		},
-	})
-)
-
 const ACTION_TO_COMPONENT: {
 	[K in builder.ActionDescriptor["type"]]: ComponentType<ActionProps>
 } = {
@@ -34,7 +23,16 @@ const ACTION_TO_COMPONENT: {
 }
 
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
-	const classes = useStyles()
+	const classes = styles.useStyles(
+		{
+			wrapper: {
+				display: "flex",
+				backgroundColor: "#f0f0f0",
+				padding: "8px",
+			},
+		},
+		props
+	)
 	const actions = props.actions
 	return (
 		<div className={classes.wrapper}>

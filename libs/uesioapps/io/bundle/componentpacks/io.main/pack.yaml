@@ -30,6 +30,7 @@ components:
     io.icon:
     io.iconbutton:
     io.link:
+    io.multiselectfield:
     io.referencefield:
     io.scrollpanel:
     io.selectfield:
