@@ -53,7 +53,7 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 		route := &meta.Route{
 			ViewRef:  view.GetKey(),
 			Params:   map[string]string{},
-			ThemeRef: "uesio.default",
+			ThemeRef: viewNamespace + ".default",
 		}
 
 		ExecuteIndexTemplate(w, route, buildMode, session)
@@ -83,7 +83,7 @@ func ViewEdit(w http.ResponseWriter, r *http.Request) {
 	route := &meta.Route{
 		ViewRef:  view.GetKey(),
 		Params:   map[string]string{},
-		ThemeRef: "uesio.default",
+		ThemeRef: viewNamespace + ".default",
 	}
 
 	ExecuteIndexTemplate(w, route, true, session)
