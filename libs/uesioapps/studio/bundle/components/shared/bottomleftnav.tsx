@@ -22,6 +22,7 @@ const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				])}
 				label="Components"
+				tooltipPlacement="right"
 				icon="widgets"
 			/>
 			<IconButton
@@ -33,6 +34,7 @@ const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				])}
 				label="Wires"
+				tooltipPlacement="right"
 				icon="power"
 			/>
 		</ScrollPanel>

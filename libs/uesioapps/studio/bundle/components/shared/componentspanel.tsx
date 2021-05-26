@@ -58,6 +58,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							title={element}
 							defaultExpanded={true}
 							key={index}
+							context={context}
 						>
 							<div>
 								{filteredList[element].map((value, indexTag) =>

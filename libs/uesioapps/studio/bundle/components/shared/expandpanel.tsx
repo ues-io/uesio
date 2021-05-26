@@ -7,13 +7,12 @@ import {
 	createStyles,
 } from "@material-ui/core"
 
-import SmallIconButton from "./smalliconbutton"
-
-import { component, context } from "@uesio/ui"
+const IconButton = component.registry.getUtility("io.iconbutton")
+import { component, context, definition } from "@uesio/ui"
 
 const Icon = component.registry.getUtility("io.icon")
 
-interface Props {
+interface Props extends definition.BaseProps {
 	title: string
 	defaultExpanded: boolean
 	action?: string
@@ -85,6 +84,7 @@ const ExpandPanel: FunctionComponent<Props> = ({
 	title,
 	defaultExpanded,
 	actionOnClick,
+	context,
 }) => {
 	const summaryClasses = useSummaryStyles()
 	const expansionClasses = useExpansionStyles()
@@ -99,24 +99,20 @@ const ExpandPanel: FunctionComponent<Props> = ({
 		>
 			<AccordionSummary
 				classes={summaryClasses}
-				expandIcon={
-					<Icon
-						icon={"expand_more"}
-						context={new context.Context()}
-					/>
-				}
+				expandIcon={<Icon icon={"expand_more"} context={context} />}
 				IconButtonProps={{ size: "small" }}
 			>
 				<div style={{ flex: 1 }}>{title}</div>
 				<div style={{ flex: 0 }}>
 					{action && (
-						<SmallIconButton
+						<IconButton
 							onClick={(event: SyntheticEvent): void => {
 								event.stopPropagation()
 								actionOnClick?.()
 							}}
+							size="small"
 							icon={action}
-							color={actionColor}
+							context={context}
 						/>
 					)}
 				</div>

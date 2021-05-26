@@ -16,6 +16,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	return (
 		<ExpandPanel
+			context={context}
 			defaultExpanded={true}
 			title={section.title}
 			action="add_box"

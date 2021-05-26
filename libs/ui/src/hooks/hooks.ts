@@ -13,6 +13,7 @@ import { AnyAction } from "redux"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
 import { ThemeAPI } from "./themeapi"
+import usePortal from "./useportal"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
@@ -70,4 +71,4 @@ class Uesio {
 
 const useUesio = (props: BaseProps) => new Uesio(getDispatcher(), props)
 
-export { useUesio, Uesio }
+export { useUesio, Uesio, usePortal }

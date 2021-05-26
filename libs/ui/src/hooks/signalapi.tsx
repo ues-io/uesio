@@ -12,10 +12,12 @@ import componentSignal from "../bands/component/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
-import { panelRegistry } from "../components/panel"
 import { createPortal } from "react-dom"
 import { ReactElement, ReactPortal } from "react"
 import { ComponentInternal } from "../component/component"
+import { unWrapDefinition } from "../component/path"
+import { DefinitionMap } from "../definition/definition"
+import usePortal from "./useportal"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -56,20 +58,34 @@ class SignalAPI {
 			if (isPanelSignal(signal)) {
 				const panelId = signal.panel as string
 				const panel = usePanel(panelId)
+				const portalNode = usePortal()
+
 				const context = this.uesio.getContext()
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
-					const panelInfo = panelRegistry[panelId]
-					if (panelInfo && panelInfo.domNode.current) {
+					const viewDef = context.getViewDef()
+					const panels = viewDef?.definition?.panels
+					if (!panels) return
+					let componentType = ""
+					let panelDef: DefinitionMap = {}
+					for (const wrappedPanelDef of panels) {
+						const [cType, def] = unWrapDefinition(wrappedPanelDef)
+						if (def.id === panelId) {
+							componentType = cType
+							panelDef = def
+							break
+						}
+					}
+					if (portalNode && componentType && panelDef) {
 						portals.push(
 							createPortal(
 								<ComponentInternal
-									definition={panelInfo.definition}
+									definition={panelDef}
 									path={path}
 									context={context}
-									componentType={panelInfo.componentType}
+									componentType={componentType}
 								/>,
-								panelInfo.domNode.current
+								portalNode
 							)
 						)
 					}

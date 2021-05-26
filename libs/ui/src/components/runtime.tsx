@@ -1,4 +1,4 @@
-import { useEffect, FunctionComponent } from "react"
+import { useEffect, FunctionComponent, useRef, RefObject } from "react"
 
 import { BaseProps } from "../definition/definition"
 
@@ -6,6 +6,8 @@ import { useUesio } from "../hooks/hooks"
 import { Context } from "../context/context"
 import Route from "./route"
 import routeOps from "../bands/route/operations"
+
+let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -60,14 +62,20 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		}
 	}, [])
 
+	panelsDomNode = useRef<HTMLDivElement>(null)
+
 	return (
-		<Route
-			path={props.path}
-			context={uesio.getContext().addFrame({
-				buildMode: buildMode && scriptResult.loaded,
-			})}
-		/>
+		<>
+			<Route
+				path={props.path}
+				context={uesio.getContext().addFrame({
+					buildMode: buildMode && scriptResult.loaded,
+				})}
+			/>
+			<div ref={panelsDomNode} />
+		</>
 	)
 }
 
+export { panelsDomNode }
 export default Runtime

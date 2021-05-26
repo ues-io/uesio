@@ -1,11 +1,9 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, RefObject } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
-import Panel from "./panel"
 import { ViewParams } from "../bands/view/types"
 import { useViewDef } from "../bands/viewdef/selectors"
-import { unWrapDefinition } from "../component/path"
 
 interface Props extends BaseProps {
 	definition: {
@@ -49,27 +47,13 @@ const View: FunctionComponent<Props> = (props) => {
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
 	return (
-		<>
-			<Slot
-				definition={viewDef.definition}
-				listName="components"
-				path=""
-				accepts={["uesio.standalone"]}
-				context={viewContext}
-			/>
-			{path === "" &&
-				viewDef?.definition?.panels?.map((panel, index) => {
-					const [componentType, def] = unWrapDefinition(panel)
-					return (
-						<Panel
-							key={index}
-							definition={def}
-							context={viewContext}
-							componentType={componentType}
-						/>
-					)
-				})}
-		</>
+		<Slot
+			definition={viewDef.definition}
+			listName="components"
+			path=""
+			accepts={["uesio.standalone"]}
+			context={viewContext}
+		/>
 	)
 }
 
