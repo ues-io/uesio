@@ -74,6 +74,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					value: "NEW_VALUE",
 				})
 			}}
+			context={context}
 		>
 			{conditionsDef?.map(
 				(condition: wire.WireConditionDefinition, index) => {

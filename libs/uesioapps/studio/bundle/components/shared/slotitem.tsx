@@ -1,7 +1,6 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, SyntheticEvent, DragEvent } from "react"
 import BuildBorder from "./buildborder"
-import { makeStyles, createStyles } from "@material-ui/core"
 import { handleDrop, getDropIndex, isDropAllowed, isNextSlot } from "./dragdrop"
 
 interface SlotItemProps extends definition.BaseProps {
@@ -11,72 +10,6 @@ interface SlotItemProps extends definition.BaseProps {
 	dragNode: string
 	dropNode: string
 }
-
-const useStyles = makeStyles(() =>
-	createStyles({
-		root: {
-			userSelect: "none",
-			position: "relative",
-			transition: "max-height 0.2s ease, max-width 0.2s ease",
-		},
-		horizontal: {
-			display: "flex",
-			width: "unset",
-			"&$structureView": {
-				padding: "0 8px 0 0",
-			},
-			"&$isLast": {
-				padding: 0,
-			},
-		},
-		vertical: {
-			display: "block",
-			width: "100%",
-			"&$structureView": {
-				padding: "0 0 8px 0",
-			},
-			"&$isLast": {
-				padding: 0,
-			},
-			"&$contentView": {
-				display: "contents",
-			},
-		},
-		structureView: {},
-		contentView: {},
-		isLast: {},
-		isDragging: {
-			"&$vertical::before": {
-				display: "block",
-			},
-			"&$horizontal::before": {
-				display: "flex",
-				width: 0,
-				alignSelf: "stretch",
-			},
-			"&::before": {
-				content: "''",
-				transition: "padding 0.2s ease",
-			},
-			maxHeight: "100%",
-			maxWidth: "100%",
-		},
-		placeHolder: {
-			"&$vertical::before": {
-				paddingTop: "40px",
-				marginBottom: "8px",
-			},
-			"&$horizontal::before": {
-				paddingLeft: "120px",
-				marginRight: "8px",
-			},
-			"&::before": {
-				backgroundColor: "#f4f4f4",
-				border: "1px solid #EEE",
-			},
-		},
-	})
-)
 
 const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 	const {
@@ -90,35 +23,88 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 		size = 0,
 		index = 0,
 	} = props
+
+	const uesio = hooks.useUesio(props)
 	const path = `${wrapperPath}["${index}"]`
+	const isStructureView = uesio.builder.useIsStructureView()
+	const isContentView = !isStructureView
+	const isHorizontal = direction === "horizontal"
+	const isVertical = !isHorizontal
+	const isLast = index === size - 1
+	const isDragging = !!dragNode
+	const addPlaceholder = path === dropNode
+	const classes = styles.useStyles(
+		{
+			root: {
+				userSelect: "none",
+				position: "relative",
+				transition: "max-height 0.2s ease, max-width 0.2s ease",
+				...(isHorizontal && {
+					display: "flex",
+					width: "unset",
+					...(isStructureView && {
+						padding: "0 8px 0 0",
+					}),
+					...(isLast && {
+						padding: 0,
+					}),
+				}),
+				...(isVertical && {
+					display: "block",
+					width: "100%",
+					...(isStructureView && {
+						padding: "0 0 8px 0",
+					}),
+					...(isLast && {
+						padding: 0,
+					}),
+					...(isContentView && {
+						display: "contents",
+					}),
+				}),
+				...(isDragging && {
+					"&:before": {
+						...(isVertical && {
+							display: "block",
+						}),
+						...(isHorizontal && {
+							display: "flex",
+							width: 0,
+							alignSelf: "stretch",
+						}),
+						content: "''",
+						transition: "padding 0.2s ease",
+						...(addPlaceholder && {
+							...(isVertical && {
+								paddingTop: "40px",
+								marginBottom: "8px",
+							}),
+							...(isHorizontal && {
+								paddingLeft: "120px",
+								marginRight: "8px",
+							}),
+							backgroundColor: "#f4f4f4",
+							border: "1px solid #EEE",
+						}),
+					},
+					maxHeight: "100%",
+					maxWidth: "100%",
+				}),
+			},
+		},
+		props
+	)
+
 	const [componentType, unWrappedDef] = component.path.unWrapDefinition(
 		definition as definition.DefinitionMap
 	)
 	const fullPath = `${path}["${componentType}"]`
 
-	const uesio = hooks.useUesio(props)
-	const isStructureView = uesio.builder.useIsStructureView()
 	const nodeState = uesio.builder.useNodeState(fullPath)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
-	const isLast = index === size - 1
 
 	const propDef = component.registry.getPropertiesDefinitionFromPath(fullPath)
-
-	const addPlaceholder = path === dropNode
-
-	const classes = useStyles()
-	const containerClasses = styles.cx(
-		classes.root,
-		direction === "horizontal" ? classes.horizontal : classes.vertical,
-		{
-			[classes.isDragging]: !!dragNode,
-			[classes.placeHolder]: addPlaceholder,
-			[classes.structureView]: isStructureView,
-			[classes.contentView]: !isStructureView,
-			[classes.isLast]: isLast,
-		}
-	)
 
 	const onDragOver = (e: DragEvent) => {
 		if (!isDropAllowed(accepts, dragNode)) {
@@ -190,24 +176,24 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 			onDrop={onDrop}
 			onDragStart={onDragStart}
 			onDragEnd={onDragEnd}
-			className={containerClasses}
+			className={classes.root}
 			draggable={dragNode === fullPath}
 		>
 			<BuildBorder
 				isStructureView={isStructureView}
 				isActive={isActive}
 				isSelected={isSelected}
-				onClick={(event: SyntheticEvent): void => {
+				onClick={(event: SyntheticEvent) => {
 					!isSelected && uesio.builder.setSelectedNode(fullPath)
 					event.stopPropagation()
 				}}
-				onMouseEnter={(): void => {
+				onMouseEnter={() => {
 					!isActive && uesio.builder.setActiveNode(fullPath)
 				}}
-				onMouseLeave={(): void => {
+				onMouseLeave={() => {
 					isActive && uesio.builder.setActiveNode("")
 				}}
-				setDragging={(): void => {
+				setDragging={() => {
 					if (!isStructureView) {
 						return
 					}

@@ -9,7 +9,11 @@ const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const section = props.section as builder.PropListSection
 
 	return (
-		<ExpandPanel defaultExpanded={false} title={section.title}>
+		<ExpandPanel
+			defaultExpanded={false}
+			title={section.title}
+			context={context}
+		>
 			{section.properties && (
 				<PropList
 					path={path}

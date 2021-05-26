@@ -1,6 +1,5 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, DragEvent } from "react"
-import { makeStyles, createStyles } from "@material-ui/core"
 import SlotItem from "../../shared/slotitem"
 import { handleDrop, getDropIndex, isDropAllowed } from "../../shared/dragdrop"
 
@@ -13,58 +12,6 @@ type SlotDefinition = {
 interface SlotProps extends definition.BaseProps {
 	definition: SlotDefinition
 }
-
-const useStyles = makeStyles((theme) =>
-	createStyles({
-		root: {
-			"& > .adder": {
-				display: "none",
-			},
-			"&:hover > .adder": {
-				display: "inline-block",
-				margin: theme.spacing(1),
-				padding: "2px 8px",
-			},
-			height: "100%",
-		},
-		horizontal: {
-			display: "flex",
-			alignItems: "center",
-			"&$isDragging$structureView": {
-				minHeight: "40px",
-			},
-		},
-		vertical: {
-			display: "block",
-			"&$contentView": {
-				display: "contents",
-			},
-		},
-		structureView: {
-			padding: "8px",
-		},
-		contentView: {},
-		isDragging: {},
-		placeHolder: {
-			backgroundColor: "#f4f4f4",
-			border: "1px solid #EEE",
-			"$vertical > &": {
-				paddingTop: "40px",
-				marginTop: "8px",
-			},
-			"$horizontal > &": {
-				paddingLeft: "120px",
-				marginLeft: "8px",
-				alignSelf: "stretch",
-			},
-			"&$placeHolderNoMargin": {
-				marginTop: 0,
-				marginLeft: 0,
-			},
-		},
-		placeHolderNoMargin: {},
-	})
-)
 
 const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const {
@@ -80,6 +27,9 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const dragNode = uesio.builder.useDragNode()
 	const dropNode = uesio.builder.useDropNode()
 	const isStructureView = uesio.builder.useIsStructureView()
+	const isContentView = !isStructureView
+	const isHorizontal = direction === "horizontal"
+	const isVertical = !isHorizontal
 
 	const size = items.length
 
@@ -110,15 +60,49 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		handleDrop(dragNode, path, getDropIndex(dragNode, path, size), uesio)
 	}
 
-	const classes = useStyles()
-	const containerClasses = styles.cx(
-		classes.root,
-		direction === "horizontal" ? classes.horizontal : classes.vertical,
+	const isDragging = !!dragNode
+
+	const classes = styles.useStyles(
 		{
-			[classes.structureView]: isStructureView,
-			[classes.isDragging]: !!dragNode,
-			[classes.contentView]: !isStructureView,
-		}
+			root: {
+				height: "100%",
+				...(isHorizontal && {
+					display: "flex",
+					alignItems: "center",
+					...(isDragging &&
+						isStructureView && {
+							minHeight: "40px",
+						}),
+				}),
+				...(isVertical && {
+					display: "block",
+					...(isContentView && {
+						display: "contents",
+					}),
+				}),
+				...(isStructureView && {
+					padding: "8px",
+				}),
+			},
+			placeHolder: {
+				backgroundColor: "#f4f4f4",
+				border: "1px solid #EEE",
+				...(isHorizontal && {
+					paddingLeft: "120px",
+					marginLeft: "8px",
+					alignSelf: "stretch",
+				}),
+				...(isVertical && {
+					paddingTop: "40px",
+					marginTop: "8px",
+				}),
+			},
+			placeHolderNoMargin: {
+				marginTop: 0,
+				marginLeft: 0,
+			},
+		},
+		props
 	)
 
 	const addPlaceholder =
@@ -130,11 +114,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,
 	})
 	return (
-		<div
-			onDragOver={onDragOver}
-			onDrop={onDrop}
-			className={containerClasses}
-		>
+		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
 			{items.map((itemDef, index) => (
 				<SlotItem
 					key={index}

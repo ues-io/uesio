@@ -1,5 +1,4 @@
-import { FunctionComponent, useRef } from "react"
-import { Popper, Paper } from "@material-ui/core"
+import { FunctionComponent, useState } from "react"
 
 import { component, context, styles } from "@uesio/ui"
 
@@ -15,6 +14,7 @@ type Props = {
 
 const Icon = component.registry.getUtility("io.icon")
 const Tile = component.registry.getUtility("io.tile")
+const Popper = component.registry.getUtility("io.popper")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {
@@ -30,19 +30,15 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 
 	const classes = styles.useStyles(
 		{
-			popper: {
-				marginLeft: "16px",
-				width: "239px",
-			},
 			popperPaper: {
 				overflow: "hidden",
 			},
 		},
 		props
 	)
-	const ref = useRef<HTMLDivElement | null>(null)
+	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	return (
-		<div ref={ref} draggable={!!draggable} data-type={draggable}>
+		<div ref={setAnchorEl} draggable={!!draggable} data-type={draggable}>
 			<Tile
 				variant="io.tile.studio.propnodetag"
 				avatar={<Icon icon={icon} context={context} />}
@@ -51,14 +47,13 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			>
 				{title}
 			</Tile>
-			{selected && ref.current && children && (
+			{selected && anchorEl && children && (
 				<Popper
-					className={classes.popper}
-					anchorEl={ref.current}
-					open={true}
+					referenceEl={anchorEl}
+					context={context}
 					placement="right"
 				>
-					<Paper className={classes.popperPaper}>{children}</Paper>
+					{children}
 				</Popper>
 			)}
 		</div>

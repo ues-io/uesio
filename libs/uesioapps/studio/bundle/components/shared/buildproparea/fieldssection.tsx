@@ -33,7 +33,11 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const onDragEnd = getOnDragStopToolbar(uesio)
 
 	return (
-		<ExpandPanel defaultExpanded={false} title={section.title}>
+		<ExpandPanel
+			defaultExpanded={false}
+			title={section.title}
+			context={context}
+		>
 			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{fields &&
 					collectionKey &&

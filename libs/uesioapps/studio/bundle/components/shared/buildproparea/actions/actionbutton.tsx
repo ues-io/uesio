@@ -1,6 +1,5 @@
 import { SyntheticEvent, FunctionComponent } from "react"
-import SmallIconButton from "../../smalliconbutton"
-import { styles, definition } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	title: string
@@ -9,24 +8,20 @@ interface Props extends definition.BaseProps {
 	disabled?: boolean
 }
 
+const IconButton = component.registry.getUtility("io.iconbutton")
+
 const ActionButton: FunctionComponent<Props> = (props) => {
-	const { title, onClick, icon, disabled } = props
-	const classes = styles.useStyles(
-		{
-			root: {
-				marginRight: "8px",
-			},
-		},
-		props
-	)
+	const { title, onClick, icon, disabled, context } = props
 
 	return (
-		<SmallIconButton
-			title={title}
+		<IconButton
 			onClick={onClick}
-			icon={icon}
+			size="small"
 			disabled={disabled}
-			className={classes.root}
+			icon={icon}
+			label={title}
+			tooltipPlacement="bottom"
+			context={context}
 		/>
 	)
 }

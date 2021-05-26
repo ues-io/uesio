@@ -26,6 +26,7 @@ const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				])}
 				label={label}
+				tooltipPlacement="right"
 				icon={icon}
 			/>
 		</ScrollPanel>

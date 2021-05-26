@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { CSSProperties, FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 const IconButton = component.registry.getUtility("io.iconbutton")
@@ -15,6 +15,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				context={context}
 				variant="io.large"
 				label="Save"
+				tooltipPlacement="left"
 				disabled={!hasChanges}
 				icon="save"
 				onClick={() => {
@@ -25,6 +26,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				context={context}
 				variant="io.large"
 				label="Cancel"
+				tooltipPlacement="left"
 				disabled={!hasChanges}
 				icon="cancel"
 				onClick={() => {
@@ -35,6 +37,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				context={context}
 				variant="io.large"
 				label="Code"
+				tooltipPlacement="left"
 				disabled={!hasChanges}
 				icon="code"
 				onClick={uesio.signal.getHandler([
@@ -47,6 +50,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				context={context}
 				variant="io.large"
 				label="View Detail"
+				tooltipPlacement="left"
 				icon="listalt"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()

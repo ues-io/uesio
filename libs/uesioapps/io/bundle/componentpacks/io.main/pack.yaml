@@ -31,6 +31,7 @@ components:
     io.iconbutton:
     io.link:
     io.multiselectfield:
+    io.popper:
     io.referencefield:
     io.scrollpanel:
     io.selectfield:
@@ -38,6 +39,7 @@ components:
     io.textfield:
     io.tile:
     io.titlebar:
+    io.tooltip:
   variants:
     - io.textfield.io.default
     - io.codefield.io.default
