@@ -3,7 +3,6 @@ import { definition, styles } from "@uesio/ui"
 
 interface TileProps extends definition.UtilityProps {
 	avatar?: ReactNode
-	portals?: ReactNode
 	onClick?: () => void
 	isSelected: boolean
 }
@@ -17,7 +16,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 				...(onClick && {
 					cursor: "pointer",
 				}),
-				alignItems: "center",
 				"&:hover": {
 					backdropFilter: "brightness(97%)",
 				},
@@ -40,7 +38,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		>
 			{avatar && <div className={classes.avatar}>{avatar}</div>}
 			{children && <div className={classes.content}>{children}</div>}
-			{portals}
 		</div>
 	)
 }

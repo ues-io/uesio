@@ -127,7 +127,17 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                            - studio.permissionpicker:
-                                fieldId: studio.permissionsetsrefs
-                                wireName: permissionsets
-                                label: "Permission sets"
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Permission Sets
+                                uesio.variant: io.section
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.permissionsetsrefs
+                                      wireName: permissionsets

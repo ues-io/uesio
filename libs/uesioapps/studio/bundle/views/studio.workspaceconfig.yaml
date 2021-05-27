@@ -48,8 +48,27 @@ definition:
                     title: Configuration
                 - io.box:
                     uesio.variant: io.section
-                    uesio.styles:
-                      root:
-                        padding: 40px
                     components:
-                      - studio.configsecrets:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Config Values
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.configsecrets:
+                                valueType: config
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Secrets
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.configsecrets:
+                                valueType: secrets

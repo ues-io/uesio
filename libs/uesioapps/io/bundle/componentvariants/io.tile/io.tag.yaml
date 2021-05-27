@@ -10,3 +10,4 @@ definition:
       boxShadow: "0 0 4px #00000007"
       marginLeft: 8px
       fontSize: 10pt
+      alignItems: center

@@ -12,12 +12,11 @@ import componentSignal from "../bands/component/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
-import { createPortal } from "react-dom"
-import { ReactElement, ReactPortal } from "react"
+import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
 import { unWrapDefinition } from "../component/path"
 import { DefinitionMap } from "../definition/definition"
-import usePortal from "./useportal"
+import Panel from "../components/panel"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -46,26 +45,20 @@ class SignalAPI {
 
 	useHandler = (
 		signals: SignalDefinition[] | undefined
-	): [() => Promise<Context>, ReactElement] => {
-		if (!signals) {
-			return [async () => this.uesio.getContext(), <></>]
-		}
-		const portals: ReactPortal[] = []
-		// Handle signals here
-		signals.forEach((signal) => {
+	): [() => Promise<Context>, ReactNode] => [
+		this.getHandler(signals),
+		signals?.flatMap((signal) => {
 			// If this signal is a panel signal and we're controlling it from this
 			// path, then send the context from this path into a portal
 			if (isPanelSignal(signal)) {
 				const panelId = signal.panel as string
 				const panel = usePanel(panelId)
-				const portalNode = usePortal()
-
 				const context = this.uesio.getContext()
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
 					const panels = viewDef?.definition?.panels
-					if (!panels) return
+					if (!panels) return []
 					let componentType = ""
 					let panelDef: DefinitionMap = {}
 					for (const wrappedPanelDef of panels) {
@@ -76,28 +69,26 @@ class SignalAPI {
 							break
 						}
 					}
-					if (portalNode && componentType && panelDef) {
-						portals.push(
-							createPortal(
+					if (componentType && panelDef) {
+						return [
+							<Panel context={context}>
 								<ComponentInternal
 									definition={panelDef}
 									path={path}
 									context={context}
 									componentType={componentType}
-								/>,
-								portalNode
-							)
-						)
+								/>
+							</Panel>,
+						]
 					}
 				}
 			}
-		})
-
-		return [this.getHandler(signals), <>{portals}</>]
-	}
+			return []
+		}),
+	]
 
 	// Returns a handler function for running a list of signals
-	getHandler = (signals: SignalDefinition[]) => async () => {
+	getHandler = (signals: SignalDefinition[] | undefined) => async () => {
 		/*
 			// More confusing alternative using reduce
 			return signals.reduce<Promise<Context>>(
@@ -107,17 +98,19 @@ class SignalAPI {
 			*/
 
 		let context = this.uesio.getContext()
-		for (const signal of signals) {
-			// Special handling for panel signals
-			let useSignal = signal
-			if (isPanelSignal(signal)) {
-				useSignal = {
-					...signal,
-					path: getPanelKey(this.uesio.getPath(), context),
+		if (signals) {
+			for (const signal of signals) {
+				// Special handling for panel signals
+				let useSignal = signal
+				if (isPanelSignal(signal)) {
+					useSignal = {
+						...signal,
+						path: getPanelKey(this.uesio.getPath(), context),
+					}
 				}
+				// Keep adding to context as each signal is run
+				context = await this.run(useSignal, context)
 			}
-			// Keep adding to context as each signal is run
-			context = await this.run(useSignal, context)
 		}
 		return context
 	}

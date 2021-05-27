@@ -1,13 +1,5 @@
-import { ChangeEvent, FunctionComponent, useState } from "react"
-import { definition, styles, wire, context, hooks } from "@uesio/ui"
-import {
-	Grid,
-	Button,
-	Card,
-	CardContent,
-	TextField,
-	MenuItem,
-} from "@material-ui/core"
+import { FunctionComponent, useState } from "react"
+import { definition, styles, wire, context, hooks, component } from "@uesio/ui"
 import groupby from "lodash/groupBy"
 import keyby from "lodash/keyBy"
 
@@ -19,6 +11,12 @@ type AddBundleDefinition = {
 interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
+
+const Grid = component.registry.getUtility("io.grid")
+const Tile = component.registry.getUtility("io.tile")
+const Button = component.registry.getUtility("io.button")
+const SelectField = component.registry.getUtility("io.selectfield")
+const TitleBar = component.registry.getUtility("io.titlebar")
 
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
@@ -82,9 +80,9 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
 		{
-			root: {},
-			card: {
-				margin: styles.getSpacing(props.context.getTheme(), 1),
+			root: {
+				gridTemplateColumns: "1fr 1fr 1fr",
+				columnGap: "8px",
 			},
 		},
 		props
@@ -134,7 +132,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	)
 
 	return (
-		<Grid className={classes.root} container={true}>
+		<Grid className={classes.root} context={context}>
 			{bundleNamespaces.map((namespace) => {
 				const versions = bundleGrouping[namespace]
 					.map((entry) => entry.version)
@@ -149,8 +147,9 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				const installedIsCurrent = installedVersion === selectedVersion
 				let actionButton = (
 					<Button
-						color="primary"
-						variant="contained"
+						variant="io.primary"
+						context={context}
+						label="Install"
 						onClick={() =>
 							installBundle(
 								namespace,
@@ -160,16 +159,15 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 								context
 							)
 						}
-					>
-						Install
-					</Button>
+					/>
 				)
 				if (installed) {
 					if (installedIsCurrent) {
 						actionButton = (
 							<Button
-								color="secondary"
-								variant="contained"
+								variant="io.secondary"
+								context={context}
+								label="Uninstall"
 								onClick={() =>
 									uninstallBundle(
 										namespace,
@@ -179,15 +177,14 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 										context
 									)
 								}
-							>
-								Uninstall
-							</Button>
+							/>
 						)
 					} else {
 						actionButton = (
 							<Button
-								color="primary"
-								variant="contained"
+								variant="io.primary"
+								context={context}
+								label="Update"
 								onClick={() =>
 									updateBundle(
 										namespace,
@@ -198,69 +195,46 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 										context
 									)
 								}
-							>
-								Update
-							</Button>
+							/>
 						)
 					}
 				}
 				return (
-					<Grid key={namespace} item={true} md={3} sm={4} xs={12}>
-						<Card className={classes.card}>
-							<CardContent>
-								<Grid
-									className={classes.root}
-									container={true}
-									alignContent="space-between"
-								>
-									<Grid xs={6} item={true}>
-										<h3>{namespace}</h3>
-									</Grid>
-									<Grid xs={6} item={true}>
-										<div
-											style={{
-												color: "primary",
-												marginTop: "20px",
-											}}
-										>
-											{installed
-												? `installed: ${currentBundleVersions[namespace].version}`
-												: ""}
-										</div>
-									</Grid>
-								</Grid>
-								<TextField
-									select={true}
-									className={classes.root}
-									fullWidth={true}
-									InputLabelProps={{
-										disableAnimation: true,
-										shrink: true,
-									}}
-									value={selectedVersion}
-									onChange={(
-										event: ChangeEvent<HTMLInputElement>
-									): void => {
-										setSelectedValues({
-											...selectedValues,
-											[namespace]: event.target.value,
-										})
-									}}
-									size="small"
-									label="version"
-								>
-									{versions.map((option, index) => (
-										<MenuItem key={index} value={option}>
-											{option}
-										</MenuItem>
-									))}
-								</TextField>
-								<div style={{ marginTop: "20px" }}>
-									{actionButton}
-								</div>
-							</CardContent>
-						</Card>
-					</Grid>
+					<Tile
+						context={context}
+						variant="io.item"
+						styles={{
+							root: {
+								alignItems: "top",
+							},
+						}}
+					>
+						<TitleBar
+							context={context}
+							title={namespace}
+							subtitle={
+								installed
+									? `installed: ${currentBundleVersions[namespace].version}`
+									: ""
+							}
+						/>
+						<SelectField
+							context={context}
+							value={selectedVersion}
+							setValue={(value: string): void => {
+								setSelectedValues({
+									...selectedValues,
+									[namespace]: value,
+								})
+							}}
+							label="version"
+							options={versions.map((option, index) => ({
+								key: index,
+								label: option,
+							}))}
+						/>
+						<div style={{ marginTop: "20px" }}>{actionButton}</div>
+					</Tile>
 				)
 			})}
 		</Grid>

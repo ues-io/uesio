@@ -48,6 +48,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 				accepts={["uesio.standalone"]}
 				context={context}
 			/>
+			{portals}
 		</IOTile>
 	)
 }
