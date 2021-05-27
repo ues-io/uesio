@@ -61,7 +61,6 @@ definition:
                     subtitle: Gotta catch 'em all!
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create New Import Job

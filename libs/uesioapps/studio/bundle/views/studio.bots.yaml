@@ -83,7 +83,6 @@ definition:
                     subtitle: Beep. Boop. Beep.
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create a New Bot

@@ -1,33 +1,20 @@
 import { FunctionComponent } from "react"
 
-import { component, styles } from "@uesio/ui"
+import { component } from "@uesio/ui"
 import { GroupProps } from "./groupdefinition"
 
-const IOGrid = component.registry.getUtility("io.grid")
+const IOGroup = component.registry.getUtility("io.group")
 
-const Grid: FunctionComponent<GroupProps> = (props) => {
-	const classes = styles.useStyles(
-		{
-			root: {
-				gridTemplateColumns: props.definition?.components
-					?.map(() => props.definition.width || "100px")
-					.join(" "),
-				columnGap: "10px",
-			},
-		},
-		props
-	)
-	return (
-		<IOGrid classes={classes} context={props.context}>
-			<component.Slot
-				definition={props.definition}
-				listName="components"
-				path={props.path}
-				accepts={["uesio.standalone"]}
-				context={props.context}
-			/>
-		</IOGrid>
-	)
-}
+const Grid: FunctionComponent<GroupProps> = (props) => (
+	<IOGroup context={props.context}>
+		<component.Slot
+			definition={props.definition}
+			listName="components"
+			path={props.path}
+			accepts={["uesio.standalone"]}
+			context={props.context}
+		/>
+	</IOGroup>
+)
 
 export default Grid

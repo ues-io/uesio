@@ -78,7 +78,6 @@ definition:
                     subtitle: Check it twice.
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create a New Select List

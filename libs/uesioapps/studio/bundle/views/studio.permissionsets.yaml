@@ -77,7 +77,6 @@ definition:
                     subtitle: Ask not what you can do.
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: New Permission Set

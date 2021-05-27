@@ -84,7 +84,6 @@ definition:
                     subtitle: Not until we are lost do we begin to understand ourselves.
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create a New Route

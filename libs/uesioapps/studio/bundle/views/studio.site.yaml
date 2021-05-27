@@ -107,7 +107,6 @@ definition:
                           subtitle: Add a domain to this site.
                           actions:
                             - io.group:
-                                width: 210px
                                 components:
                                   - io.button:
                                       text: "Add a Domain"

@@ -9,6 +9,7 @@ definition:
       fontWeight: 500
       border: "1px solid rgb(200,74, 37)"
       boxShadow: "0 0 4px #00000033"
+      minWidth: 100px
       borderRadius: 4px
       padding: 10px
       "&:focus":

@@ -175,7 +175,6 @@ definition:
                                 subtitle: Your site is in sight.
                                 actions:
                                   - io.group:
-                                      width: 210px
                                       components:
                                         - io.button:
                                             text: "Create a Site"

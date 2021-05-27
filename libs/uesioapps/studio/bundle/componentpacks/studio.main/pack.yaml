@@ -17,8 +17,11 @@ components:
   variants:
     - io.titlebar.io.primary
     - io.titlebar.io.dialog
+    - io.titlebar.io.section
+    - io.titlebar.io.nav
     - io.scrollpanel.studio.verticalnav
     - io.iconbutton.io.large
     - io.iconbutton.io.small
     - io.button.io.nav
+    - io.button.io.secondary
     - io.tile.studio.propnodetag
