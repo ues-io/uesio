@@ -1,6 +1,6 @@
-name: plain
+name: nav
 component: io.titlebar
-label: Plain
+label: Nav
 definition:
   uesio.styles:
     root:

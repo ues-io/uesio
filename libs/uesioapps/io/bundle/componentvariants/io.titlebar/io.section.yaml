@@ -1,6 +1,6 @@
-name: main
+name: section
 component: io.titlebar
-label: Main
+label: Section
 definition:
   uesio.styles:
     root:

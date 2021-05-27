@@ -1,30 +1,13 @@
 import { FunctionComponent, useState } from "react"
-import { definition, hooks } from "@uesio/ui"
-import {
-	List,
-	ListSubheader,
-	ListItem,
-	ListItemText,
-	DialogContent,
-	DialogActions,
-	Dialog,
-	DialogTitle,
-	DialogContentText,
-	TextField,
-	ListItemSecondaryAction,
-	Button,
-} from "@material-ui/core"
+import { definition, hooks, component } from "@uesio/ui"
+import { createPortal } from "react-dom"
 
-type PermissionPickerDefinition = {
-	app: string
-	site: string
-}
+const TitleBar = component.registry.getUtility("io.titlebar")
+const Button = component.registry.getUtility("io.button")
+const Dialog = component.registry.getUtility("io.dialog")
+const TextField = component.registry.getUtility("io.textfield")
 
-interface Props extends definition.BaseProps {
-	definition: PermissionPickerDefinition
-}
-
-const ConfigSecrets: FunctionComponent<Props> = (props) => {
+const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context } = props
 	const view = context.getView()
@@ -62,6 +45,8 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 		isSecret: false,
 	})
 
+	const portalNode = hooks.usePortal()
+
 	if (!configValues || !secrets) {
 		return null
 	}
@@ -91,112 +76,98 @@ const ConfigSecrets: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			<List
-				subheader={
-					<ListSubheader disableSticky>
-						{"Config Values"}
-					</ListSubheader>
-				}
-				dense
-			>
-				{configValues?.map((configValue) => {
-					const key = `${configValue.namespace}.${configValue.name}`
-					const value = configValue.value
-					return (
-						<ListItem divider>
-							<ListItemText
-								id={key}
-								primary={key}
-								secondary={value}
+			<TitleBar
+				title="Config Values"
+				variant="io.section"
+				context={context}
+			/>
+
+			{configValues?.map((configValue) => {
+				const key = `${configValue.namespace}.${configValue.name}`
+				const value = configValue.value
+				return (
+					<TitleBar
+						title={key}
+						subtitle={value}
+						context={context}
+						variant="io.nav"
+						actions={
+							<Button
+								onClick={() =>
+									handleClickOpen(key, value, false)
+								}
+								variant="io.secondary"
+								context={context}
+								label={`Set${
+									configValue.managedby === "app"
+										? " for App"
+										: ""
+								}`}
 							/>
-							{(configValue.managedby !== "app" ||
-								configValue.namespace === appName) && (
-								<ListItemSecondaryAction>
-									<Button
-										onClick={() =>
-											handleClickOpen(key, value, false)
-										}
-									>
-										{`Set${
-											configValue.managedby === "app"
-												? " for App"
-												: ""
-										}`}
-									</Button>
-								</ListItemSecondaryAction>
-							)}
-						</ListItem>
-					)
-				})}
-			</List>
-			<List
-				subheader={
-					<ListSubheader disableSticky>{"Secrets"}</ListSubheader>
-				}
-				dense
-			>
-				{secrets?.map((secret) => {
-					const key = `${secret.namespace}.${secret.name}`
-					return (
-						<ListItem divider>
-							<ListItemText
-								id={key}
-								primary={key}
-								secondary={"********"}
-							/>
-							{(secret.managedby !== "app" ||
-								secret.namespace === appName) && (
-								<ListItemSecondaryAction>
-									<Button
-										onClick={() =>
-											handleClickOpen(key, "", true)
-										}
-									>
-										{`Set${
-											secret.managedby === "app"
-												? " for App"
-												: ""
-										}`}
-									</Button>
-								</ListItemSecondaryAction>
-							)}
-						</ListItem>
-					)
-				})}
-			</List>
-			<Dialog
-				fullWidth
-				open={state.selected !== ""}
-				onClose={handleClose}
-				aria-labelledby="alert-dialog-title"
-				aria-describedby="alert-dialog-description"
-			>
-				<DialogTitle id="alert-dialog-title">
-					{"Set " + (state.isSecret ? "Secret" : "Config Value")}
-				</DialogTitle>
-				<DialogContent>
-					<DialogContentText>{state.selected}</DialogContentText>
-					<TextField
-						autoFocus
-						margin="dense"
-						id="value"
-						label="Value"
-						value={state.value}
-						fullWidth
-						onChange={(event) =>
-							setState({
-								...state,
-								value: event.target.value,
-							})
 						}
 					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleSet} color="primary">
-						Set
-					</Button>
-				</DialogActions>
-			</Dialog>
+				)
+			})}
+
+			<TitleBar title="Secrets" variant="io.section" context={context} />
+
+			{secrets?.map((secret) => {
+				const key = `${secret.namespace}.${secret.name}`
+				return (
+					<TitleBar
+						title={key}
+						subtitle="*********"
+						context={context}
+						variant="io.nav"
+						actions={
+							<Button
+								onClick={() => handleClickOpen(key, "", true)}
+								variant="io.secondary"
+								context={context}
+								label={`Set${
+									secret.managedby === "app" ? " for App" : ""
+								}`}
+							/>
+						}
+					/>
+				)
+			})}
+			{state.selected !== "" &&
+				createPortal(
+					<Dialog
+						width="400px"
+						height="300px"
+						onClose={handleClose}
+						context={context}
+						title={
+							"Set " +
+							(state.isSecret ? "Secret" : "Config Value")
+						}
+						actions={
+							<Button
+								label="Set"
+								onClick={handleSet}
+								variant="io.secondary"
+								context={context}
+							/>
+						}
+					>
+						{state.selected}
+
+						<TextField
+							context={context}
+							label="Value"
+							value={state.value}
+							setValue={(value: string) =>
+								setState({
+									...state,
+									value,
+								})
+							}
+						/>
+					</Dialog>,
+					portalNode
+				)}
 		</>
 	)
 }

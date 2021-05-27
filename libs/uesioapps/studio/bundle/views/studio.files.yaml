@@ -85,7 +85,6 @@ definition:
                     subtitle: Does it spark joy?
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create a New File

@@ -24,9 +24,13 @@ components:
     io.button:
     io.checkboxfield:
     io.codefield:
+    io.dialog:
+    io.dialogplain:
+    io.expandpanel:
     io.filetext:
     io.fileupload:
     io.grid:
+    io.group:
     io.icon:
     io.iconbutton:
     io.link:

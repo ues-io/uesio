@@ -81,7 +81,6 @@ definition:
                     subtitle: Invisible threads are the strongest ties!
                     actions:
                       - io.group:
-                          width: 210px
                           components:
                             - io.button:
                                 text: Create a New Data Source
