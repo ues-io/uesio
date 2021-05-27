@@ -1,8 +1,7 @@
 import { FunctionComponent, useState } from "react"
-import { definition, styles, hooks } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
 import type { Placement } from "@popperjs/core"
-import { createPortal } from "react-dom"
 
 interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
@@ -15,8 +14,6 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		placement: props.placement,
 		modifiers: [{ name: "offset", options: { offset: [0, 8] } }],
 	})
-
-	const portalNode = hooks.usePortal()
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -31,16 +28,17 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 		props
 	)
 
-	return createPortal(
-		<div
-			className={classes.popper}
-			ref={setPopperEl}
-			style={popper.styles.popper}
-			{...popper.attributes.popper}
-		>
-			{props.children}
-		</div>,
-		portalNode
+	return (
+		<component.Panel context={props.context}>
+			<div
+				className={classes.popper}
+				ref={setPopperEl}
+				style={popper.styles.popper}
+				{...popper.attributes.popper}
+			>
+				{props.children}
+			</div>
+		</component.Panel>
 	)
 }
 

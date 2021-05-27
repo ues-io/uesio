@@ -26,6 +26,7 @@ type SecretResponse = {
 	name: string
 	namespace: string
 	managedby: string
+	value: string
 }
 
 interface Platform {

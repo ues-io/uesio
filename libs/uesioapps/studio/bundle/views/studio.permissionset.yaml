@@ -166,15 +166,45 @@ definition:
                                       fieldId: studio.allowallroutes
                                   - io.field:
                                       fieldId: studio.allowallviews
-                            - studio.permissionpicker:
-                                fieldId: studio.filerefs
-                                wireName: files
-                                label: "Files"
-                            - studio.permissionpicker:
-                                fieldId: studio.routerefs
-                                wireName: routes
-                                label: "Routes"
-                            - studio.permissionpicker:
-                                fieldId: studio.viewrefs
-                                wireName: views
-                                label: "Views"
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Files
+                                uesio.variant: io.section
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.filerefs
+                                      wireName: files
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Routes
+                                uesio.variant: io.section
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.routerefs
+                                      wireName: routes
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Views
+                                uesio.variant: io.section
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.viewrefs
+                                      wireName: views

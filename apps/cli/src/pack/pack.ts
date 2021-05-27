@@ -233,7 +233,6 @@ const getWebpackConfig = (
 			"@uesio/lazymonaco": "LazyMonaco",
 			yaml: "yaml",
 			"@emotion/css": "emotion",
-			"@material-ui/core": "MaterialUI",
 		},
 	}
 }

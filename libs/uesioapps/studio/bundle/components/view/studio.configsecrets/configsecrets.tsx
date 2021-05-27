@@ -1,6 +1,5 @@
 import { FunctionComponent, useState } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import { createPortal } from "react-dom"
 
 const TitleBar = component.registry.getUtility("io.titlebar")
 const Button = component.registry.getUtility("io.button")
@@ -16,6 +15,9 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 	const siteName = view?.params?.sitename
 
 	let newContext = props.context
+
+	const valueType = props.definition?.valueType
+	const isSecret = valueType !== "config"
 
 	if (appName) {
 		if (workspaceName) {
@@ -35,27 +37,24 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 			})
 		}
 	}
-	const [configValues, resetConfigValues] = uesio.configvalue.useConfigValues(
-		newContext
-	)
-	const [secrets, resetSecrets] = uesio.secret.useSecrets(newContext)
+
+	const [values, resetValues] = isSecret
+		? uesio.secret.useSecrets(newContext)
+		: uesio.configvalue.useConfigValues(newContext)
+
 	const [state, setState] = useState({
 		selected: "",
 		value: "",
-		isSecret: false,
 	})
 
-	const portalNode = hooks.usePortal()
-
-	if (!configValues || !secrets) {
+	if (!values) {
 		return null
 	}
 
-	const handleClickOpen = (key: string, value: string, isSecret: boolean) => {
+	const handleClickOpen = (key: string, value: string) => {
 		setState({
 			selected: key,
 			value,
-			isSecret,
 		})
 	}
 
@@ -63,43 +62,40 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 		setState({
 			selected: "",
 			value: "",
-			isSecret: false,
 		})
 	}
 
 	const handleSet = async () => {
-		const api = state.isSecret ? uesio.secret : uesio.configvalue
+		const api = isSecret ? uesio.secret : uesio.configvalue
 		await api.set(newContext, state.selected, state.value)
-		state.isSecret ? resetSecrets() : resetConfigValues()
+		resetValues()
 		handleClose()
 	}
 
 	return (
 		<>
-			<TitleBar
-				title="Config Values"
-				variant="io.section"
-				context={context}
-			/>
-
-			{configValues?.map((configValue) => {
-				const key = `${configValue.namespace}.${configValue.name}`
-				const value = configValue.value
+			{values?.map((response) => {
+				const key = `${response.namespace}.${response.name}`
+				const value = isSecret ? "*********" : response.value
 				return (
 					<TitleBar
 						title={key}
 						subtitle={value}
 						context={context}
-						variant="io.nav"
+						styles={{
+							root: {
+								marginBottom: "20px",
+							},
+						}}
 						actions={
 							<Button
 								onClick={() =>
-									handleClickOpen(key, value, false)
+									handleClickOpen(key, isSecret ? "" : value)
 								}
 								variant="io.secondary"
 								context={context}
 								label={`Set${
-									configValue.managedby === "app"
+									response.managedby === "app"
 										? " for App"
 										: ""
 								}`}
@@ -108,41 +104,14 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 					/>
 				)
 			})}
-
-			<TitleBar title="Secrets" variant="io.section" context={context} />
-
-			{secrets?.map((secret) => {
-				const key = `${secret.namespace}.${secret.name}`
-				return (
-					<TitleBar
-						title={key}
-						subtitle="*********"
-						context={context}
-						variant="io.nav"
-						actions={
-							<Button
-								onClick={() => handleClickOpen(key, "", true)}
-								variant="io.secondary"
-								context={context}
-								label={`Set${
-									secret.managedby === "app" ? " for App" : ""
-								}`}
-							/>
-						}
-					/>
-				)
-			})}
-			{state.selected !== "" &&
-				createPortal(
+			{state.selected !== "" && (
+				<component.Panel context={context}>
 					<Dialog
 						width="400px"
 						height="300px"
 						onClose={handleClose}
 						context={context}
-						title={
-							"Set " +
-							(state.isSecret ? "Secret" : "Config Value")
-						}
+						title={"Set " + (isSecret ? "Secret" : "Config Value")}
 						actions={
 							<Button
 								label="Set"
@@ -165,9 +134,9 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 								})
 							}
 						/>
-					</Dialog>,
-					portalNode
-				)}
+					</Dialog>
+				</component.Panel>
+			)}
 		</>
 	)
 }

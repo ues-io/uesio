@@ -1,28 +1,22 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, wire } from "@uesio/ui"
-import {
-	ListItem,
-	List,
-	Switch,
-	ListSubheader,
-	ListItemText,
-	ListItemSecondaryAction,
-} from "@material-ui/core"
+import { definition, hooks, component } from "@uesio/ui"
 
 type PermissionPickerDefinition = {
 	fieldId: string
 	wireName: string
-	label: string
 }
 
 interface Props extends definition.BaseProps {
 	definition: PermissionPickerDefinition
 }
 
+const CheckboxField = component.registry.getUtility("io.checkboxfield")
+const TitleBar = component.registry.getUtility("io.titlebar")
+
 const PermissionPicker: FunctionComponent<Props> = (props) => {
 	const {
 		context,
-		definition: { fieldId, label, wireName },
+		definition: { fieldId, wireName },
 	} = props
 
 	const uesio = hooks.useUesio(props)
@@ -48,7 +42,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 
 	if (!value) return null
 
-	const handleToggle = (listRecord: string) => () => {
+	const handleToggle = (listRecord: string) => {
 		const hasProperty = Object.prototype.hasOwnProperty.call(
 			value,
 			listRecord
@@ -64,28 +58,27 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<List subheader={<ListSubheader>{label}</ListSubheader>} dense>
+		<>
 			{data.map((record) => {
 				const itemName =
 					appName + "." + record.getFieldValue(nameNameField)
 				return (
-					<ListItem divider>
-						<ListItemText id={record.getId()} primary={itemName} />
-						<ListItemSecondaryAction>
-							<Switch
-								edge="start"
+					<TitleBar
+						context={context}
+						title={itemName}
+						actions={
+							<CheckboxField
+								context={context}
 								disabled={disabled}
-								onChange={handleToggle(itemName)}
-								checked={(value[itemName] as boolean) || false}
-								inputProps={{
-									"aria-labelledby": record.getId(),
-								}}
+								setValue={() => handleToggle(itemName)}
+								value={(value[itemName] as boolean) || false}
+								mode={mode}
 							/>
-						</ListItemSecondaryAction>
-					</ListItem>
+						}
+					/>
 				)
 			})}
-		</List>
+		</>
 	)
 }
 

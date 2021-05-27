@@ -78,6 +78,5 @@ module.exports = {
 	externals: {
 		react: "React",
 		"react-dom": "ReactDOM",
-		"@material-ui/core": "MaterialUI",
 	},
 }

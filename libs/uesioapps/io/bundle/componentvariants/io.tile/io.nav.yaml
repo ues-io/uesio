@@ -6,6 +6,7 @@ definition:
     root:
       padding: 10px 20px
       color: "#444"
+      alignItems: center
     selected:
       backgroundColor: $Theme{color.primary}
       color: white
