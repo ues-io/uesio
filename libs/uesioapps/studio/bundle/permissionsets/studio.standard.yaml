@@ -35,7 +35,7 @@ views:
   studio.selectlist: true
   studio.selectlists: true
   studio.site: true
-  studio.teams: true
+  studio.team: true
   studio.theme: true
   studio.themes: true
   studio.topbar: true
@@ -78,7 +78,7 @@ routes:
   studio.selectlist: true
   studio.selectlists: true
   studio.site: true
-  studio.teams: true
+  studio.team: true
   studio.theme: true
   studio.themes: true
   studio.view: true

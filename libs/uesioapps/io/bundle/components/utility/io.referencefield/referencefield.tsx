@@ -84,6 +84,9 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 			<AutoComplete
 				context={context}
 				value={value}
+				{...(!hideLabel && {
+					label: fieldMetadata.getLabel(),
+				})}
 				setValue={(value: string) => {
 					foreignFieldId && record.update(foreignFieldId, value)
 				}}

@@ -1,4 +1,4 @@
 name: file
-path: app/{appname}/workspace/{workspacename}/file/{filename}
+path: app/{appname}/workspace/{workspacename}/files/{filename}
 view: studio.file
 theme: studio.default

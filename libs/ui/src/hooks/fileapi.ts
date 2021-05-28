@@ -3,7 +3,6 @@ import { getPlatform } from "../store/store"
 import { Context } from "../context/context"
 import WireRecord from "../bands/wirerecord/class"
 import { useEffect, useState } from "react"
-import { PlainWireRecord } from "../bands/wirerecord/types"
 
 const getURL = (context: Context, namespace: string, name: string) =>
 	getPlatform().getFileURL(context, namespace, name)
