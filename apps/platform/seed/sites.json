@@ -12,5 +12,19 @@
 			"id": "docs_v0.0.1"
 		},
 		"appid": "docs"
+	},
+	{
+		"name": "prod",
+		"bundle": {
+			"id": "crm_v0.0.1"
+		},
+		"appid": "crm"
+	},
+	{
+		"name": "uat",
+		"bundle": {
+			"id": "crm_v0.0.1"
+		},
+		"appid": "crm"
 	}
 ]

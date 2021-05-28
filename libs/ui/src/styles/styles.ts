@@ -4,7 +4,6 @@ import { CSSProperties } from "react"
 import { ThemeState } from "../bands/theme/types"
 import { BaseProps, UtilityProps } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
-import { stringify } from "yaml"
 
 type ResponsiveDefinition =
 	| string

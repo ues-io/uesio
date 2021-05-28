@@ -1,0 +1,117 @@
+name: team
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    teams:
+      collection: studio.teams
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+          fields:
+            uesio.id:
+            uesio.name:
+            uesio.color:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: teamname
+    teammembers:
+      collection: studio.teammembers
+      fields:
+        studio.id:
+        studio.appid:
+        studio.memberid:
+        studio.teamid:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.teamid
+          value: $Param{appname}_$Param{teamname}
+    teampermissions:
+      collection: studio.teampermissions
+      fields:
+        studio.id:
+        studio.appid:
+        studio.role:
+        studio.teamid:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.teamid
+          value: $Param{appname}_$Param{teamname}
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: teams
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
+                    id: teamDeck
+                    wire: teams
+                    mode: READ
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Team - ${studio.name}
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Members
+                      - io.deck:
+                          id: teammembersslist
+                          wire: teammembers
+                          uesio.variant: io.section
+                          components:
+                            - io.tile:
+                                uesio.variant: io.item
+                                content:
+                                  - io.text:
+                                      text: ${studio.memberid}
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Permissions
+                      - io.deck:
+                          id: teampermissionslist
+                          wire: teampermissions
+                          uesio.variant: io.section
+                          components:
+                            - io.tile:
+                                uesio.variant: io.item
+                                content:
+                                  - io.text:
+                                      text: ${studio.role}

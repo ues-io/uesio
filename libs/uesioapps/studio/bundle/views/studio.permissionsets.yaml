@@ -96,7 +96,7 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionsets/${studio.name}"
                                 content:
                                   - io.text:
                                       text: ${studio.name}
@@ -128,7 +128,7 @@ definition:
                   wires:
                     - "newpermissionset"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionset/${studio.name}"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/permissionsets/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

@@ -43,6 +43,16 @@ definition:
         - field: uesio.appid
           valueSource: PARAM
           param: appname
+    teams:
+      collection: studio.teams
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
     newworkspace:
       collection: studio.workspaces
       fields:
@@ -71,6 +81,18 @@ definition:
         - field: uesio.bundle
           valueSource: LOOKUP
           lookupWire: bundles
+          lookupField: uesio.id
+    newteam:
+      collection: studio.teams
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+      type: CREATE
+      defaults:
+        - field: studio.appid
+          valueSource: LOOKUP
+          lookupWire: apps
           lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
@@ -116,6 +138,35 @@ definition:
                                 uesio.variant: io.icon
                                 color: "#ccc"
                                 text: handyman
+                - io.titlebar:
+                    uesio.variant: io.nav
+                    title: Sites
+                    actions:
+                      - io.iconbutton:
+                          icon: add
+                          signals:
+                            - signal: panel/TOGGLE
+                              panel: newSite
+                - io.list:
+                    id: siteslist
+                    wire: sites
+                    components:
+                      - io.tile:
+                          uesio.variant: io.nav
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: "app/$Param{appname}/site/${uesio.name}"
+                          content:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    color: "#21242D"
+                                text: ${uesio.name}
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#ccc"
+                                text: public
           - io.griditem:
               uesio.variant: studio.content
               components:
@@ -171,35 +222,35 @@ definition:
                           components:
                             - io.titlebar:
                                 uesio.variant: io.section
-                                title: Sites
-                                subtitle: Your site is in sight.
+                                title: Teams
+                                subtitle: There's no I in team, but there is M and E.
                                 actions:
                                   - io.group:
                                       components:
                                         - io.button:
-                                            text: "Create a Site"
+                                            text: "New Team"
                                             uesio.variant: io.secondary
                                             signals:
                                               - signal: "panel/TOGGLE"
-                                                panel: "newSite"
+                                                panel: "newTeam"
                             - io.deck:
-                                id: siteslist
-                                wire: sites
+                                id: teamslist
+                                wire: teams
                                 uesio.variant: io.section
                                 components:
                                   - io.tile:
                                       uesio.variant: io.item
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/site/${uesio.name}"
+                                          path: "app/$Param{appname}/teams/${studio.name}"
                                       content:
                                         - io.text:
-                                            text: ${uesio.name}
+                                            text: ${studio.name}
                                       avatar:
                                         - io.text:
                                             uesio.variant: io.icon
                                             color: "#ccc"
-                                            text: public
+                                            text: groups
   panels:
     - io.dialog:
         id: deleteApp
@@ -311,3 +362,32 @@ definition:
               signals:
                 - signal: "panel/TOGGLE"
                   panel: "newSite"
+    - io.dialog:
+        id: newTeam
+        title: Create a New Team
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newteamlist
+              wire: newteam
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newteam"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/teams/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newTeam"

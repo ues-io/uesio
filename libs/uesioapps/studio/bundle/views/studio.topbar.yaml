@@ -126,6 +126,42 @@ definition:
                 - io.list:
                     uesio.display:
                       - type: collectionContext
+                        collection: studio.teams
+                    id: teamstag
+                    components:
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${["studio.app"]["uesio.id"]}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: ${["studio.app"]["uesio.color"]}
+                                text: circle
+                      - io.tile:
+                          signals:
+                            - signal: "route/NAVIGATE"
+                              path: app/${["studio.app"]["uesio.id"]}/teams/${studio.name}
+                          uesio.variant: io.tag
+                          content:
+                            - io.text:
+                                uesio.variant: io.tag
+                                text: ${studio.name}
+                                element: div
+                          avatar:
+                            - io.text:
+                                uesio.variant: io.icon
+                                color: "#AAA"
+                                text: groups
+                - io.list:
+                    uesio.display:
+                      - type: collectionContext
                         collection: studio.workspaces
                     id: workspaceapptag
                     components:
