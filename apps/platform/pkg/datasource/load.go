@@ -2,13 +2,32 @@ package datasource
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"strings"
 )
+
+type SpecialReferences struct {
+	OnDelete       string
+	CollectionName string
+	Fields         []string
+}
+
+var specialRefs = map[string]SpecialReferences{
+	"FILE": {
+		OnDelete:       "CASCADE",
+		CollectionName: "uesio.userfiles",
+		Fields:         []string{"uesio.mimetype", "uesio.name"},
+	},
+	"USER": {
+		CollectionName: "uesio.users",
+		Fields:         []string{"uesio.firstname", "uesio.lastname"},
+	},
+}
 
 func getMetadataForLoad(
 	op *adapt.LoadOp,
@@ -69,7 +88,46 @@ func getMetadataForLoad(
 
 	}
 
-	return collections.Load(op, metadataResponse, session)
+	err = collections.Load(metadataResponse, session)
+	if err != nil {
+		return err
+	}
+
+	collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
+	if err != nil {
+		return err
+	}
+
+	// Now loop over fields and do some additional processing for reference fields
+	for i, requestField := range op.Fields {
+		fieldMetadata, err := collectionMetadata.GetField(requestField.ID)
+		if err != nil {
+			return err
+		}
+		specialRef, ok := specialRefs[fieldMetadata.Type]
+		if ok {
+
+			fields := []adapt.LoadRequestField{}
+			for _, fieldID := range specialRef.Fields {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: fieldID,
+				})
+			}
+
+			// If the reference to a different data source, we'll
+			// need to do a whole new approach to reference fields.
+			if collectionMetadata.DataSource != "uesio.platform" {
+				op.ReferencedCollections = adapt.ReferenceRegistry{}
+				refCol := op.ReferencedCollections.Get(specialRef.CollectionName)
+				refCol.AddReference(fieldMetadata)
+				refCol.AddFields(fields)
+			} else {
+				op.Fields[i].Fields = fields
+			}
+		}
+	}
+
+	return nil
 
 }
 
@@ -194,6 +252,9 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 				}
 				return false, nil
 			})
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		// Now do our supplemental reference loads

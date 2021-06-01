@@ -24,8 +24,6 @@ definition:
         studio.id:
         studio.name:
         studio.content:
-          fields:
-            uesio.mimetype:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP

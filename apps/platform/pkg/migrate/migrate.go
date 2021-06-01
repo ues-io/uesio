@@ -49,7 +49,7 @@ func Migrate(session *sess.Session) error {
 		}
 	}
 
-	err = metadataRequest.Load(nil, &metadataResponse, session)
+	err = metadataRequest.Load(&metadataResponse, session)
 	if err != nil {
 		return err
 	}

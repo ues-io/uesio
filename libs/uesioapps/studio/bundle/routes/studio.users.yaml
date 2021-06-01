@@ -1,0 +1,4 @@
+name: users
+path: app/{appname}/site/{sitename}/users
+view: studio.users
+theme: studio.default

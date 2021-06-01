@@ -99,7 +99,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 		}
 
-		err = collections.Load(nil, &metadataResponse, session)
+		err = collections.Load(&metadataResponse, session)
 		if err != nil {
 			return err
 		}

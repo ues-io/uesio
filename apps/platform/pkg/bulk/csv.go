@@ -34,7 +34,7 @@ func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session
 		}
 	}
 
-	err = collections.Load(nil, &metadataResponse, session)
+	err = collections.Load(&metadataResponse, session)
 	if err != nil {
 		return nil, nil, err
 	}

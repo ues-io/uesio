@@ -28,9 +28,6 @@ definition:
         studio.dialect:
         studio.collection:
         studio.content:
-          fields:
-            uesio.mimetype:
-            uesio.name:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP

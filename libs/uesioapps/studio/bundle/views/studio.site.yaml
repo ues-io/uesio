@@ -31,30 +31,6 @@ definition:
         - field: uesio.name
           valueSource: PARAM
           param: sitename
-    domains:
-      collection: uesio.sitedomains
-      fields:
-        uesio.id:
-        uesio.type:
-        uesio.domain:
-      conditions:
-        - field: uesio.site
-          valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
-    newdomain:
-      collection: uesio.sitedomains
-      fields:
-        uesio.id:
-        uesio.type:
-        uesio.domain:
-      type: CREATE
-      defaults:
-        - field: uesio.site
-          valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
-        - field: uesio.type
-          valueSource: VALUE
-          value: subdomain
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -70,6 +46,10 @@ definition:
           - io.griditem:
               uesio.variant: studio.leftbar
               components:
+                - uesio.view:
+                    view: studio.sitenav
+                    uesio.context:
+                      wire: sites
           - io.griditem:
               uesio.variant: studio.content
               components:
@@ -103,80 +83,25 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.section
-                          title: Domains
-                          subtitle: Add a domain to this site.
-                          actions:
-                            - io.group:
-                                components:
-                                  - io.button:
-                                      text: "Add a Domain"
-                                      uesio.variant: io.secondary
-                                      signals:
-                                        - signal: "panel/TOGGLE"
-                                          panel: "newDomain"
-                      - io.deck:
-                          id: domainslist
-                          wire: domains
-                          uesio.variant: io.section
-                          components:
-                            - io.tile:
-                                uesio.variant: io.item
-                                content:
-                                  - io.text:
-                                      text: ${uesio.type} ${uesio.domain}
-                                avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: verified_user
-                - io.box:
-                    uesio.variant: io.section
-                    components:
-                      - io.titlebar:
-                          uesio.variant: io.section
-                          title: Configuration
+                          title: Config Values
                       - io.box:
                           uesio.styles:
                             root:
                               padding: 40px
                           components:
                             - studio.configsecrets:
+                                valueType: config
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Secrets
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.configsecrets:
+                                valueType: secrets
   panels:
-    - io.dialog:
-        id: newDomain
-        title: Add a Domain
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newdomainlist
-              wire: newdomain
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: uesio.domain
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - newdomain
-                - signal: "panel/TOGGLE"
-                  panel: "newDomain"
-                - signal: wire/EMPTY
-                  wire: newdomain
-                - signal: wire/CREATE_RECORD
-                  wire: newdomain
-                - signal: wire/LOAD
-                  wires:
-                    - domains
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newDomain"
-                - signal: wire/CANCEL
-                  wire: newdomain

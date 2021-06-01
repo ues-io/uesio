@@ -68,8 +68,6 @@ definition:
         crm.id:
         crm.name:
         crm.profilepic:
-          fields:
-            uesio.mimetype:
         crm.description:
         crm.created:
         crm.updated:
