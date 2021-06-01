@@ -39,7 +39,7 @@ func getUploadMetadataResponse(collectionID, fieldID string, session *sess.Sessi
 
 	metadataResponse := adapt.MetadataCache{}
 
-	err := collections.Load(nil, &metadataResponse, session)
+	err := collections.Load(&metadataResponse, session)
 	if err != nil {
 		return nil, err
 	}

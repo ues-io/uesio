@@ -61,7 +61,7 @@ func (rr *ReferenceRegistry) Get(collectionKey string) *ReferenceRequest {
 type Loader func([]LoadOp) error
 
 func IsReference(fieldType string) bool {
-	return fieldType == "REFERENCE" || fieldType == "FILE"
+	return fieldType == "REFERENCE" || fieldType == "FILE" || fieldType == "USER"
 }
 
 func HandleReferences(

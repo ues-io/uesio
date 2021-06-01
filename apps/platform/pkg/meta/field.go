@@ -56,6 +56,7 @@ func GetFieldTypes() map[string]bool {
 		"SELECT":    true,
 		"REFERENCE": true,
 		"FILE":      true,
+		"USER":      true,
 		"IMAGE":     true,
 		"LIST":      true,
 		"DATE":      true,

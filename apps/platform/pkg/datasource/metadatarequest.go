@@ -86,7 +86,7 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 }
 
 // Load function
-func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.MetadataCache, session *sess.Session) error {
+func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
 	// Implement the old way to make sure it still works
@@ -115,25 +115,17 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 
 		for fieldKey, fieldMetadata := range metadata.Fields {
 
-			if fieldMetadata.Type == "FILE" {
-				userfilesCollection := "uesio.userfiles"
-				fieldMetadata.ReferencedCollection = userfilesCollection
-				fieldMetadata.OnDelete = "CASCADE"
-				// If the reference to a different data source, we'll
-				// need to do a whole new approach to reference fields.
-				if op != nil && metadata.DataSource != "uesio.platform" {
-					err = additionalRequests.AddField(userfilesCollection, "uesio.mimetype", nil)
+			specialRef, ok := specialRefs[fieldMetadata.Type]
+			if ok {
+				fieldMetadata.ReferencedCollection = specialRef.CollectionName
+				if specialRef.OnDelete != "" {
+					fieldMetadata.OnDelete = specialRef.OnDelete
+				}
+				for _, fieldID := range specialRef.Fields {
+					err = additionalRequests.AddField(specialRef.CollectionName, fieldID, nil)
 					if err != nil {
 						return err
 					}
-					op.ReferencedCollections = adapt.ReferenceRegistry{}
-					refCol := op.ReferencedCollections.Get(userfilesCollection)
-					refCol.AddReference(fieldMetadata)
-					refCol.AddFields([]adapt.LoadRequestField{
-						{
-							ID: "uesio.mimetype",
-						},
-					})
 				}
 			}
 
@@ -179,7 +171,7 @@ func (mr *MetadataRequest) Load(op *adapt.LoadOp, metadataResponse *adapt.Metada
 
 	// Recursively load any additional requests from reference fields
 	if additionalRequests.HasRequests() {
-		return additionalRequests.Load(op, metadataResponse, session)
+		return additionalRequests.Load(metadataResponse, session)
 	}
 	return nil
 }

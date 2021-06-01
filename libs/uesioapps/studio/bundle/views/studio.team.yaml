@@ -36,7 +36,7 @@ definition:
       fields:
         studio.id:
         studio.appid:
-        studio.memberid:
+        studio.member:
         studio.teamid:
       conditions:
         - field: studio.appid
@@ -98,7 +98,7 @@ definition:
                                 uesio.variant: io.item
                                 content:
                                   - io.text:
-                                      text: ${studio.memberid}
+                                      text: ${["studio.member"]["uesio.firstname"]} ${["studio.member"]["uesio.lastname"]}
                 - io.box:
                     uesio.variant: io.section
                     components:

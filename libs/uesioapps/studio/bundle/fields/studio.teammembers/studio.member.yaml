@@ -1,6 +1,5 @@
 name: member
 collection: studio.teammembers
-type: REFERENCE
+type: USER
 label: Member
 propertyName: memberid
-referencedCollection: uesio.users

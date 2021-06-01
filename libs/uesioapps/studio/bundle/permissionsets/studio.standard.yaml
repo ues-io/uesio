@@ -18,6 +18,7 @@ views:
   studio.credentials: true
   studio.datasource: true
   studio.datasources: true
+  studio.domains: true
   studio.field: true
   studio.file: true
   studio.files: true
@@ -35,10 +36,12 @@ views:
   studio.selectlist: true
   studio.selectlists: true
   studio.site: true
+  studio.sitenav: true
   studio.team: true
   studio.theme: true
   studio.themes: true
   studio.topbar: true
+  studio.users: true
   studio.view: true
   studio.views: true
   studio.workspace: true
@@ -60,6 +63,7 @@ routes:
   studio.credentials: true
   studio.datasource: true
   studio.datasources: true
+  studio.domains: true
   studio.field: true
   studio.file: true
   studio.files: true
@@ -81,6 +85,7 @@ routes:
   studio.team: true
   studio.theme: true
   studio.themes: true
+  studio.users: true
   studio.view: true
   studio.views: true
   studio.workspaceconfig: true
