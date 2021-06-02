@@ -60,6 +60,7 @@ interface Platform {
 		recordID: string,
 		fieldID: string
 	): Promise<string>
+	deleteFile(context: Context, userfileid: string): Promise<BotResponse>
 	getComponentPackURL(
 		context: Context,
 		namespace: string,

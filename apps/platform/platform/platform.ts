@@ -142,6 +142,15 @@ window.uesioLoader = (mergeData) => {
 			return response.json()
 		},
 
+		deleteFile: async (context, userFileID) => {
+			const prefix = getPrefix(context)
+			const url = `${prefix}/userfiles/delete/${userFileID}`
+			const response = await fetch(url, {
+				method: "POST",
+			})
+			return response.json()
+		},
+
 		getComponentPackURL: (context, namespace, name, buildMode) => {
 			const prefix = getPrefix(context)
 			const buildModeSuffix = buildMode ? "/builder" : ""

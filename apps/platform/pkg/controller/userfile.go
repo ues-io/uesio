@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -39,6 +40,22 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	respondJSON(w, r, ufm)
+}
+
+func DeleteUserFile(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userFileID := vars["fileid"]
+	session := middleware.GetSession(r)
+	// Load all the userfile records
+	err := filesource.Delete(userFileID, session)
+	if err != nil {
+		logger.LogError(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	respondJSON(w, r, &BotResponse{
+		Success: true,
+	})
 }
 
 // DownloadUserFile function

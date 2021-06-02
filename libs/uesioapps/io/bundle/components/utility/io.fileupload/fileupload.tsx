@@ -1,4 +1,10 @@
-import { FunctionComponent, DragEvent, useRef } from "react"
+import {
+	FunctionComponent,
+	DragEvent,
+	useRef,
+	CSSProperties,
+	useState,
+} from "react"
 import {
 	definition,
 	styles,
@@ -28,12 +34,25 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const fileInput = useRef<HTMLInputElement>(null)
+	const [showTools, setShowTools] = useState<boolean>(false)
 
 	const userFile = record.getFieldReference(fieldId)
 	const userFileId = userFile?.["uesio.id"] as string
 	const fileName = userFile?.["uesio.name"] as string
 	const mimeType = userFile?.["uesio.mimetype"] as string
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
+
+	const actionIconStyles: CSSProperties = {
+		cursor: "pointer",
+		padding: "4px",
+		margin: "4px",
+		color: "white",
+		backdropFilter: "brightness(0.6)",
+		borderRadius: "4px",
+		display: "block",
+		position: "absolute",
+		top: "0",
+	}
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -45,19 +64,25 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 				width: "100%",
 			},
 			editicon: {
-				display: "block",
-				position: "absolute",
-				top: "0",
 				right: "0",
-				cursor: "pointer",
-				padding: "4px",
-				margin: "4px",
-				color: "white",
-				backdropFilter: "brightness(0.6)",
-				borderRadius: "4px",
+				...actionIconStyles,
+			},
+			deleteicon: {
+				left: "0",
+				...actionIconStyles,
 			},
 			fileinput: {
 				display: "none",
+			},
+			nofile: {
+				display: "flex",
+				backgroundColor: "#f5f5f5",
+				justifyContent: "center",
+			},
+			nofileicon: {
+				fontSize: "80px",
+				padding: "32px",
+				color: "#ccc",
 			},
 		},
 		props
@@ -78,6 +103,11 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 			)
 			record.set(fieldId, fileId)
 		}
+	}
+
+	const deleteFile = async () => {
+		await uesio.file.deleteFile(uesio.getContext(), userFileId)
+		record.set(fieldId, "")
 	}
 
 	const onDrop = (e: DragEvent) => {
@@ -107,18 +137,28 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 			onDragOver={onDragOver}
 			onDragEnter={onDragEnter}
 			onDragLeave={onDragLeave}
+			onMouseEnter={() => setShowTools(true)}
+			onMouseLeave={() => setShowTools(false)}
 			className={classes.root}
 		>
-			<div
-				className={classes.editicon}
-				onClick={() => fileInput.current?.click()}
-			>
-				<Icon
-					className={classes.editicon}
-					context={context}
-					icon="edit"
-				/>
-			</div>
+			{showTools && (
+				<>
+					<div
+						className={classes.editicon}
+						onClick={() => fileInput.current?.click()}
+					>
+						<Icon context={context} icon="edit" />
+					</div>
+					{userFileId && (
+						<div
+							className={classes.deleteicon}
+							onClick={() => deleteFile()}
+						>
+							<Icon context={context} icon="delete" />
+						</div>
+					)}
+				</>
+			)}
 			<input
 				className={classes.fileinput}
 				type="file"
@@ -127,7 +167,17 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 				}}
 				ref={fileInput}
 			/>
-			<img className={classes.image} src={fileUrl} />
+			{userFileId ? (
+				<img className={classes.image} src={fileUrl} />
+			) : (
+				<div className={classes.nofile}>
+					<Icon
+						className={classes.nofileicon}
+						context={context}
+						icon="person"
+					/>
+				</div>
+			)}
 		</div>
 	)
 }
