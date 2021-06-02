@@ -41,6 +41,7 @@ views:
   studio.theme: true
   studio.themes: true
   studio.topbar: true
+  studio.user: true
   studio.users: true
   studio.view: true
   studio.views: true
@@ -85,6 +86,7 @@ routes:
   studio.team: true
   studio.theme: true
   studio.themes: true
+  studio.user: true
   studio.users: true
   studio.view: true
   studio.views: true

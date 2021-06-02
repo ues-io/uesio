@@ -131,6 +131,14 @@ func PlatformDelete(request meta.CollectionableGroup, session *sess.Session) err
 	)
 }
 
+func PlatformDeleteOne(item meta.CollectionableItem, session *sess.Session) error {
+	collection := &LoadOneCollection{
+		Collection: item.GetCollection(),
+		Item:       item,
+	}
+	return PlatformDelete(collection, session)
+}
+
 // PlatformSaves function
 func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 

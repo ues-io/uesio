@@ -1,4 +1,4 @@
-name: users
+name: user
 definition:
   # Wires are how we pull in data
   wires:
@@ -38,10 +38,16 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.federationId:
+        uesio.federationType:
+        uesio.profile:
+        uesio.picture:
       conditions:
         - field: uesio.site
           valueSource: VALUE
           value: $Param{sitename}_$Param{appname}
+        - field: uesio.federationId
+          valueSource: VALUE
+          value: $Param{userid}
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -66,28 +72,41 @@ definition:
           - io.griditem:
               uesio.variant: studio.content
               components:
-                - io.titlebar:
-                    uesio.variant: io.main
-                    title: Users
-                - io.box:
-                    uesio.variant: io.section
+                - io.list:
+                    id: userDeck
+                    wire: users
+                    mode: READ
                     components:
-                      - io.deck:
-                          id: userslist
-                          wire: users
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: User - ${uesio.firstname} ${uesio.lastname}
+                      - io.box:
                           uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
                           components:
-                            - io.tile:
-                                uesio.variant: io.item
-                                content:
-                                  - io.text:
-                                      text: ${uesio.firstname} ${uesio.lastname}
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.federationId}"
-                                avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: person
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 3fr
+                                columnGap: 10px
+                                items:
+                                  - io.griditem:
+                                      components:
+                                        - io.field:
+                                            fieldId: uesio.picture
+                                  - io.griditem:
+                                      components:
+                                        - io.field:
+                                            fieldId: uesio.firstname
+                                        - io.field:
+                                            fieldId: uesio.lastname
+                                        - io.field:
+                                            fieldId: uesio.federationId
+                                        - io.field:
+                                            fieldId: uesio.federationType
+                                        - io.field:
+                                            fieldId: uesio.profile
   panels:
