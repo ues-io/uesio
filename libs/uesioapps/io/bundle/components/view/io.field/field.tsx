@@ -9,6 +9,7 @@ const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 const FileUpload = component.registry.getUtility("io.fileupload")
+const UserField = component.registry.getUtility("io.userfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -72,6 +73,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			return <FileText {...common} />
 		case type === "FILE":
 			return <FileUpload {...common} />
+		case type === "USER":
+			return <UserField {...common} />
 		default:
 			return null
 	}

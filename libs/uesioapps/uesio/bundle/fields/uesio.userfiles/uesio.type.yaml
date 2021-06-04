@@ -1,6 +1,6 @@
-name: siteid
+name: type
 collection: uesio.userfiles
 type: "TEXT"
-label: "Site ID"
-propertyName: "siteid"
+label: "Type"
+propertyName: "type"
 readOnly: true

@@ -15,6 +15,7 @@ type FieldType =
 	| "MAP"
 	| "TIMESTAMP"
 	| "LIST"
+	| "USER"
 
 type SelectOption = {
 	label: string

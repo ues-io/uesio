@@ -3,3 +3,4 @@ collection: studio.bots
 type: TEXT
 label: Name
 propertyName: name
+createOnly: true

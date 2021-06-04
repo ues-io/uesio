@@ -1,9 +1,14 @@
 import { FunctionComponent } from "react"
 
-import { styles } from "@uesio/ui"
+import { styles, hooks } from "@uesio/ui"
 import { AvatarProps } from "./avatardefinition"
 
 const Avatar: FunctionComponent<AvatarProps> = (props) => {
+	const { definition, context } = props
+	const image = context.merge(definition.image)
+	const text = context.merge(definition.text)
+	const uesio = hooks.useUesio(props)
+
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -18,13 +23,22 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
 				width: "32px",
 				display: "grid",
 				fontWeight: "bold",
+				backgroundImage: image
+					? `url('${uesio.file.getUserFileURL(
+							context,
+							image,
+							true
+					  )}')`
+					: "initial",
+				backgroundSize: "cover",
+				backgroundPosition: "center",
 				backgroundColor: props.context.getTheme().definition.palette
 					.primary,
 			},
 		},
 		props
 	)
-	return <div className={classes.root}>{props.definition.text}</div>
+	return <div className={classes.root}>{!image && text}</div>
 }
 
 export default Avatar

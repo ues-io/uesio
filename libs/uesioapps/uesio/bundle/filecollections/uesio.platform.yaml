@@ -1,4 +1,4 @@
 name: platform
 bucket: uesio.genericFileBucket
-pathFormat: "${workspaceid}/${collectionid}/${recordid}/${fieldid}/${name}"
+pathFormat: "${collectionid}/${recordid}/${type}/${name}"
 filesource: uesio.platform

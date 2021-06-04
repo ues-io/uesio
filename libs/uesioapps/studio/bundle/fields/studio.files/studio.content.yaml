@@ -3,4 +3,4 @@ collection: studio.files
 type: FILE
 label: Content
 propertyName: content
-filecollection: uesio.workspacemetadatafiles
+filecollection: uesio.platform

@@ -2,7 +2,6 @@ package filesource
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -25,7 +24,7 @@ func Delete(userFileID string, session *sess.Session) error {
 	}
 
 	collectionID := userFile.CollectionID
-	fieldID := strings.TrimPrefix(userFile.FieldID, "field_")
+	fieldID := userFile.FieldID
 
 	metadataResponse, err := getUploadMetadataResponse(collectionID, fieldID, session)
 	if err != nil {

@@ -28,6 +28,7 @@ definition:
         studio.dialect:
         studio.collection:
         studio.content:
+        studio.updatedby:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -131,6 +132,8 @@ definition:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
+                                  - io.field:
+                                      fieldId: studio.updatedby
                             - io.field:
                                 fieldId: studio.content
                                 id: botcontent

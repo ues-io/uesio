@@ -14,12 +14,18 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFieldIDPart(details fileadapt.FileDetails) string {
-	fieldID := details.FieldID
-	if fieldID == "" {
-		return "attachment_" + details.Name
+func getFileMetadataType(details fileadapt.FileDetails) string {
+	if details.FieldID == "" {
+		return "attachment"
 	}
-	return "field_" + fieldID
+	return "field"
+}
+
+func getFileName(details fileadapt.FileDetails) string {
+	if details.FieldID == "" {
+		return details.Name
+	}
+	return details.FieldID
 }
 
 func getUploadMetadataResponse(collectionID, fieldID string, session *sess.Session) (*adapt.MetadataCache, error) {
@@ -66,8 +72,6 @@ func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fiel
 
 // Upload function
 func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Session) (*meta.UserFileMetadata, error) {
-	site := session.GetSite()
-	workspaceID := session.GetWorkspaceID()
 
 	metadataResponse, err := getUploadMetadataResponse(details.CollectionID, details.FieldID, session)
 	if err != nil {
@@ -92,15 +96,14 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 	ufm := meta.UserFileMetadata{
 		CollectionID:     details.CollectionID,
 		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
-		FieldID:          getFieldIDPart(details),
+		FieldID:          details.FieldID,
+		Type:             getFileMetadataType(details),
 		FileCollectionID: fileCollectionID,
-		Name:             details.Name,
+		Name:             getFileName(details),
 		RecordID:         details.RecordID,
-		SiteID:           site.GetFullName(),
-		WorkspaceID:      workspaceID,
 	}
 
-	path, err := ufc.GetFilePath(&ufm, site.GetFullName(), session.GetWorkspaceID())
+	path, err := ufc.GetFilePath(&ufm)
 	if err != nil {
 		return nil, errors.New("error generating path for userfile: " + err.Error())
 	}

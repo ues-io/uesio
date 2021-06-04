@@ -1,6 +1,0 @@
-name: workspace
-collection: uesio.userfiles
-type: REFERENCE
-label: Site
-propertyName: siteid
-referencedCollection: uesio.sites

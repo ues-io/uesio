@@ -12,8 +12,7 @@ type UserFileMetadata struct {
 	Name             string    `uesio:"uesio.name" json:"-"`
 	Path             string    `uesio:"uesio.path" json:"-"`
 	RecordID         string    `uesio:"uesio.recordid" json:"-"`
-	WorkspaceID      string    `uesio:"uesio.workspaceid" json:"-"`
-	SiteID           string    `uesio:"uesio.siteid" json:"-"`
+	Type             string    `uesio:"uesio.type" json:"-"`
 	itemMeta         *ItemMeta `yaml:"-" uesio:"-"`
 }
 

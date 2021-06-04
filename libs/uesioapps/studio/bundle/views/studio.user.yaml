@@ -88,10 +88,10 @@ definition:
                           components:
                             - io.grid:
                                 templateColumns:
-                                  xs: 1fr
+                                  sm: 1fr
                                   md: 1fr 1fr
                                   lg: 1fr 3fr
-                                columnGap: 10px
+                                columnGap: 40px
                                 items:
                                   - io.griditem:
                                       components:

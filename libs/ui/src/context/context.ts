@@ -45,6 +45,14 @@ const getFromContext = (
 		return value ? `${value}` : ""
 	} else if (mergeTypeName === "Param") {
 		return context.getView()?.params?.[expression] || ""
+	} else if (mergeTypeName === "User") {
+		const user = context.getUser()
+		if (!user) return ""
+		if (expression === "initials") {
+			return user.firstname.charAt(0) + user.lastname.charAt(0)
+		} else if (expression === "picture") {
+			return user.picture
+		}
 	} else if (mergeTypeName === "RecordId") {
 		context = context.removeRecordFrame(mergeAncestors)
 		return context.getRecord()?.getId() || ""
@@ -231,6 +239,8 @@ class Context {
 		}
 		return false
 	}
+
+	getUser = () => getStore().getState().user
 
 	getNoMerge = () => this.stack.some((frame) => frame?.noMerge)
 
