@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -44,6 +45,27 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 		// Always populate the fields marked with UPDATE
 		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+}
+
+func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
+	return func(change adapt.ChangeItem) error {
+		// Only populate fields marked with CREATE on insert
+		// Always populate the fields marked with UPDATE
+		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
+			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
+				"uesio.id":        user.ID,
+				"uesio.firstname": user.FirstName,
+				"uesio.lastname":  user.LastName,
+				"uesio.picture": map[string]interface{}{
+					"uesio.id": user.GetPictureID(),
+				},
+			})
 			if err != nil {
 				return err
 			}
@@ -97,7 +119,7 @@ func isValidRegex(regex string) (*regexp.Regexp, bool) {
 	return r, true
 }
 
-func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata) func(adapt.ChangeItem) error {
+func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, session *sess.Session) func(adapt.ChangeItem) error {
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
@@ -111,8 +133,14 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata) f
 			validations = append(validations, validateRegex(field))
 		}
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
-			timestamp := time.Now().Unix()
-			validations = append(validations, populateTimestamps(field, timestamp))
+			if field.Type == "TIMESTAMP" {
+				timestamp := time.Now().Unix()
+				validations = append(validations, populateTimestamps(field, timestamp))
+			}
+			if field.Type == "USER" {
+				user := session.GetUserInfo()
+				validations = append(validations, populateUser(field, user))
+			}
 		}
 		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
 			validations = append(validations, preventUpdate(field))
@@ -134,7 +162,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata) f
 func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.SaveOp, error) {
 
 	var listErrors []string
-	fieldValidations := getFieldValidationsFunction(collectionMetadata)
+	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
 	changes := adapt.ChangeItems{}
 	deletes := adapt.ChangeItems{}

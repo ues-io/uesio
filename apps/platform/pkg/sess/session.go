@@ -31,6 +31,7 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 			"FirstName": user.FirstName,
 			"LastName":  user.LastName,
 			"UserID":    user.ID,
+			"Picture":   user.GetPictureID(),
 		},
 	})
 	return &sess
@@ -185,7 +186,11 @@ func (s *Session) GetWorkspaceApp() string {
 
 func (s *Session) getBrowserSessionAttribute(key string) string {
 	browserSession := *s.browserSession
-	return browserSession.CAttr(key).(string)
+	value, ok := browserSession.CAttr(key).(string)
+	if !ok {
+		return ""
+	}
+	return value
 }
 
 // GetUserInfo function
@@ -196,6 +201,9 @@ func (s *Session) GetUserInfo() *meta.User {
 		LastName:  s.getBrowserSessionAttribute("LastName"),
 		Profile:   s.getBrowserSessionAttribute("Profile"),
 		Site:      s.site.GetFullName(),
+		Picture: &meta.UserFileMetadata{
+			ID: s.getBrowserSessionAttribute("Picture"),
+		},
 	}
 }
 

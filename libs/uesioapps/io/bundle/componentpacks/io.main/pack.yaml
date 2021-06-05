@@ -44,6 +44,7 @@ components:
     io.tile:
     io.titlebar:
     io.tooltip:
+    io.userfield:
   variants:
     - io.textfield.io.default
     - io.codefield.io.default

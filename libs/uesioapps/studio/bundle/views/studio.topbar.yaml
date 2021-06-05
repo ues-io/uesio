@@ -259,4 +259,5 @@ definition:
           - io.griditem:
               components:
                 - io.avatar:
-                    text: BH
+                    text: $User{initials}
+                    image: $User{picture}

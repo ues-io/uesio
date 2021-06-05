@@ -1,6 +1,0 @@
-name: workspaceid
-collection: uesio.userfiles
-type: "TEXT"
-label: "Workspace Id"
-propertyName: "workspaceid"
-readOnly: true

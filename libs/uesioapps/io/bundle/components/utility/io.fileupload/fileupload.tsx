@@ -58,7 +58,6 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 		{
 			root: {
 				position: "relative",
-				maxWidth: "200px",
 			},
 			image: {
 				width: "100%",

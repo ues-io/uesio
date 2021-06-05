@@ -37,20 +37,18 @@ func (ufc *UserFileCollection) GetFileSource() string {
 }
 
 // GetPath function
-func (ufc *UserFileCollection) GetFilePath(userFile *UserFileMetadata, siteID, workspaceID string) (string, error) {
+func (ufc *UserFileCollection) GetFilePath(userFile *UserFileMetadata) (string, error) {
 	template, err := templating.NewTemplateWithValidKeysOnly(ufc.PathFormat)
 	if err != nil {
 		return "", err
 	}
 
 	mergeObj := map[string]interface{}{
-		"workspaceid":      workspaceID,
-		"name":             userFile.Name,
-		"recordid":         userFile.RecordID,
-		"fieldid":          userFile.FieldID,
-		"collectionid":     userFile.CollectionID,
-		"filecollectionid": userFile.FileCollectionID,
-		"siteid":           siteID,
+		"name":         userFile.Name,
+		"recordid":     userFile.RecordID,
+		"fieldid":      userFile.FieldID,
+		"collectionid": userFile.CollectionID,
+		"type":         userFile.Type,
 	}
 	return templating.Execute(template, mergeObj)
 }

@@ -25,7 +25,7 @@ var specialRefs = map[string]SpecialReferences{
 	},
 	"USER": {
 		CollectionName: "uesio.users",
-		Fields:         []string{"uesio.firstname", "uesio.lastname"},
+		Fields:         []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
 }
 

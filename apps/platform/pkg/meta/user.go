@@ -2,14 +2,22 @@ package meta
 
 // User struct
 type User struct {
-	ID             string    `uesio:"uesio.id"`
-	FirstName      string    `uesio:"uesio.firstname"`
-	LastName       string    `uesio:"uesio.lastname"`
-	Profile        string    `uesio:"uesio.profile"`
-	FederationID   string    `uesio:"uesio.federationId"`
-	FederationType string    `uesio:"uesio.federationType"`
-	Site           string    `uesio:"uesio.site"`
-	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
+	ID             string            `uesio:"uesio.id"`
+	FirstName      string            `uesio:"uesio.firstname"`
+	LastName       string            `uesio:"uesio.lastname"`
+	Profile        string            `uesio:"uesio.profile"`
+	FederationID   string            `uesio:"uesio.federationId"`
+	FederationType string            `uesio:"uesio.federationType"`
+	Site           string            `uesio:"uesio.site"`
+	Picture        *UserFileMetadata `uesio:"uesio.picture"`
+	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
+}
+
+func (u *User) GetPictureID() string {
+	if u.Picture != nil {
+		return u.Picture.ID
+	}
+	return ""
 }
 
 // GetCollectionName function

@@ -30,6 +30,7 @@ type UserMergeData struct {
 	Profile   string `json:"profile"`
 	Site      string `json:"site"`
 	ID        string `json:"id"`
+	PictureID string `json:"picture"`
 }
 
 // SiteMergeData stuff to merge
@@ -93,6 +94,7 @@ func GetUserMergeData(session *sess.Session) *UserMergeData {
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
 		Profile:   userInfo.Profile,
+		PictureID: userInfo.Picture.ID,
 	}
 }
 
