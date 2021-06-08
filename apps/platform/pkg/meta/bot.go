@@ -65,6 +65,8 @@ type Bot struct {
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     string            `yaml:"-" uesio:"studio.workspaceid"`
+	CreatedBy     *User             `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy     *User             `yaml:"-" uesio:"studio.updatedby"`
 	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
 }
 

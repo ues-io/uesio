@@ -1,5 +1,12 @@
-import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
+import { FunctionComponent } from "react"
+import {
+	definition,
+	styles,
+	context,
+	collection,
+	wire,
+	component,
+} from "@uesio/ui"
 
 interface UserFieldProps extends definition.UtilityProps {
 	label?: string
@@ -10,18 +17,24 @@ interface UserFieldProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const TextField: FunctionComponent<UserFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel, record, fieldMetadata } = props
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
+const Tile = component.registry.getUtility("io.tile")
+const Avatar = component.registry.getUtility("io.avatar")
+
+const UserField: FunctionComponent<UserFieldProps> = (props) => {
+	const { label, mode, hideLabel, record, fieldMetadata, context } = props
 	const readonly = mode === "READ"
 	const fieldId = fieldMetadata.getId()
 	const user = record.getFieldReference(fieldId)
+	const firstName = user?.["uesio.firstname"] as string
+	const lastName = user?.["uesio.lastname"] as string
+	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),
 			},
-			label: {},
 			input: {},
 			readonly: {},
 		},
@@ -30,12 +43,22 @@ const TextField: FunctionComponent<UserFieldProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{!hideLabel && <div className={classes.label}>{props.label}</div>}
-			<div>
-				{user && `${user["uesio.firstname"]} ${user["uesio.lastname"]}`}
-			</div>
+			<FieldLabel label={label} hide={hideLabel} context={context} />
+			{user && (
+				<Tile
+					avatar={
+						<Avatar
+							image={picture?.["uesio.id"]}
+							context={context}
+						/>
+					}
+					context={context}
+				>
+					{`${firstName} ${lastName}`}
+				</Tile>
+			)}
 		</div>
 	)
 }
 
-export default TextField
+export default UserField

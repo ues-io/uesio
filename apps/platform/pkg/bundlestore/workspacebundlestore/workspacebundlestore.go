@@ -66,7 +66,7 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 	if err != nil {
 		return nil, err
 	}
-	file.FileName = userFile.Name
+	file.FileName = userFile.FileName
 	return stream, nil
 }
 

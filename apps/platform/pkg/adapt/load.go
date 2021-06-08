@@ -162,7 +162,10 @@ func HydrateItem(
 					return err
 				}
 			} else {
-				reference.AddID(fieldData, index)
+				reference.AddID(fieldData, ReferenceLocator{
+					RecordIndex: index,
+					Field:       fieldMetadata,
+				})
 			}
 			continue
 		}

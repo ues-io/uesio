@@ -8,17 +8,17 @@ interface TileProps extends definition.UtilityProps {
 }
 
 const Tile: FunctionComponent<TileProps> = (props) => {
-	const { avatar, children, portals, onClick, isSelected } = props
+	const { avatar, children, onClick, isSelected } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				display: "flex",
 				...(onClick && {
 					cursor: "pointer",
+					"&:hover": {
+						backdropFilter: "brightness(97%)",
+					},
 				}),
-				"&:hover": {
-					backdropFilter: "brightness(97%)",
-				},
 			},
 			content: {
 				flex: 1,

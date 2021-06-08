@@ -3,28 +3,39 @@ components:
   view:
     studio.colorpicker:
     studio.addbundle:
+      utilities:
+        - io.grid
+        - io.tile
+        - io.selectfield
+        - io.button
+        - io.titlebar
     studio.metadatafield:
+      utilities:
+        - io.textfield
+        - io.selectfield
+        - io.grid
     studio.codefield:
+      utilities:
+        - io.codefield
     studio.bulkjob:
+      utilities:
+        - io.button
     studio.permissionpicker:
+      utilities:
+        - io.checkboxfield
+        - io.titlebar
     studio.configsecrets:
+      utilities:
+        - io.titlebar
+        - io.button
+        - io.textfield
+        - io.dialog
+      variants:
+        - io.button.io.secondary
+        - io.textfield.io.default
+        - io.titlebar.io.default
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.slot:
     uesio.view:
-  dependencies:
-    - io.main
-  variants:
-    - io.titlebar.io.primary
-    - io.titlebar.io.dialog
-    - io.titlebar.io.section
-    - io.titlebar.io.nav
-    - io.titlebar.io.default
-    - io.scrollpanel.studio.verticalnav
-    - io.iconbutton.io.large
-    - io.iconbutton.io.small
-    - io.button.io.nav
-    - io.button.io.secondary
-    - io.button.io.primary
-    - io.tile.studio.propnodetag
-    - io.tile.io.item
+

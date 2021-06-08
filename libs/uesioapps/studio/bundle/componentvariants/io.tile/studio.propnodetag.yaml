@@ -11,6 +11,7 @@ definition:
       color: "#444"
       backgroundColor: white
       borderRadius: 4px
+      alignItems: center
     content:
       verticalAlign: middle
       padding: 8px 8px 8px 0px

@@ -10,6 +10,7 @@ type UserFileMetadata struct {
 	FieldID          string    `uesio:"uesio.fieldid" json:"-"`
 	FileCollectionID string    `uesio:"uesio.filecollectionid" json:"-"`
 	Name             string    `uesio:"uesio.name" json:"-"`
+	FileName         string    `uesio:"uesio.filename" json:"-"`
 	Path             string    `uesio:"uesio.path" json:"-"`
 	RecordID         string    `uesio:"uesio.recordid" json:"-"`
 	Type             string    `uesio:"uesio.type" json:"-"`

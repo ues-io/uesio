@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection } from "@uesio/ui"
+import { definition, styles, context, collection, component } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
 	label?: string
@@ -11,8 +11,10 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
+
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel } = props
+	const { setValue, value, mode, hideLabel, context, label } = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
@@ -20,7 +22,6 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 			root: {
 				...(width && { width }),
 			},
-			label: {},
 			input: {},
 			readonly: {},
 		},
@@ -29,7 +30,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{!hideLabel && <div className={classes.label}>{props.label}</div>}
+			<FieldLabel label={label} hide={hideLabel} context={context} />
 			<input
 				value={value}
 				className={styles.cx(

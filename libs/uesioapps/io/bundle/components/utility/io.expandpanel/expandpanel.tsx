@@ -23,6 +23,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				textTransform: "uppercase",
 				fontSize: "9pt",
 				color: "#444",
+				padding: "6px",
 			},
 		},
 		props
@@ -49,6 +50,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				title={label}
 				context={context}
 				actions={titleBarActions}
+				variant="io.expandpanel"
 				styles={{
 					root: {
 						padding: "4px 8px",

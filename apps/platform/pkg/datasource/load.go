@@ -308,7 +308,10 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 						if err != nil {
 							return err
 						}
-						referencedCol.AddID(value, index)
+						referencedCol.AddID(value, adapt.ReferenceLocator{
+							RecordIndex: index,
+							Field:       reference,
+						})
 					}
 					index++
 					return nil

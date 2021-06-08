@@ -14,8 +14,3 @@ definition:
       "&:focus":
         outline: none
         background: "#ddd"
-    label:
-      textAlign: left
-      fontSize: 10pt
-      paddingBottom: 4px
-      color: "#444"
