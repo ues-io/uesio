@@ -1,6 +1,6 @@
 import { useState, useRef, FunctionComponent } from "react"
 import { useCombobox } from "downshift"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
 import debounce from "lodash/debounce"
 
 type DropDownProps = {
@@ -20,15 +20,16 @@ type SelectedItem = {
 	value: string
 }
 
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
+
 const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
-	const { getItems, value, setValue, label } = props
+	const { getItems, value, setValue, label, hideLabel, context } = props
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				...(width && { width }),
 			},
-			label: {},
 			input: {},
 			readonly: {},
 		},
@@ -90,7 +91,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	return (
 		<>
 			<div className={classes.root} {...getComboboxProps()}>
-				<div className={classes.label}>{label}</div>
+				<FieldLabel label={label} hide={hideLabel} context={context} />
 				<input className={classes.input} {...getInputProps()} />
 			</div>
 			<div

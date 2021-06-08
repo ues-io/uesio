@@ -2,23 +2,33 @@ name: app
 components:
   view:
     uesio.loginmock:
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.secondary
     uesio.loginfacebook:
       configvalues:
         - uesio.facebookAppId
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.secondary
     uesio.logingoogle:
       configvalues:
         - uesio.googleClientId
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.secondary
     uesio.logincognito:
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.primary
+        - io.button.io.secondary
+        - io.textfield.io.default
+        - io.text.io.default
+        - io.link.io.default
       configvalues:
         - uesio.cognitoPoolId
         - uesio.cognitoClientId
-  dependencies:
-    - io.main
-  variants:
-    - io.button.io.primary
-    - io.button.io.secondary
-    - io.textfield.io.default
-    - io.selectfield.io.default
-    - io.text.io.default
-    - io.link.io.default
-

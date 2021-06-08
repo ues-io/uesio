@@ -1,5 +1,5 @@
 name: default
-component: io.checkboxfield
+component: io.userfield
 label: Default
 definition:
   uesio.styles:
@@ -7,8 +7,10 @@ definition:
       color: black
       padding: 10px 0
     input:
+      width: "100%"
       backgroundColor: white
-      padding: 8px
+      padding: 10px
+      border: "1px solid #00000044"
       "&:focus":
         outline: none
         background: "#ddd"

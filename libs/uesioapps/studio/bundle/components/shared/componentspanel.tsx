@@ -60,28 +60,26 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							key={index}
 							context={context}
 						>
-							<div>
-								{filteredList[element].map((value, indexTag) =>
-									!isStructureView ? (
-										<PropNodeTag
-											title={value}
-											key={indexTag}
-											context={context}
-										/>
-									) : (
-										<PropNodeTag
-											draggable={component.dragdrop.createComponentBankKey(
-												element,
-												value
-											)}
-											title={value}
-											icon="drag_indicator"
-											key={indexTag}
-											context={context}
-										/>
-									)
-								)}
-							</div>
+							{filteredList[element].map((value, indexTag) =>
+								!isStructureView ? (
+									<PropNodeTag
+										title={value}
+										key={indexTag}
+										context={context}
+									/>
+								) : (
+									<PropNodeTag
+										draggable={component.dragdrop.createComponentBankKey(
+											element,
+											value
+										)}
+										title={value}
+										icon="drag_indicator"
+										key={indexTag}
+										context={context}
+									/>
+								)
+							)}
 						</ExpandPanel>
 					))}
 			</div>

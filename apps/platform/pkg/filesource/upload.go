@@ -21,7 +21,7 @@ func getFileMetadataType(details fileadapt.FileDetails) string {
 	return "field"
 }
 
-func getFileName(details fileadapt.FileDetails) string {
+func getFileUniqueName(details fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return details.Name
 	}
@@ -99,7 +99,8 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 		FieldID:          details.FieldID,
 		Type:             getFileMetadataType(details),
 		FileCollectionID: fileCollectionID,
-		Name:             getFileName(details),
+		FileName:         details.Name,
+		Name:             getFileUniqueName(details), // Different for file fields and attachments
 		RecordID:         details.RecordID,
 	}
 

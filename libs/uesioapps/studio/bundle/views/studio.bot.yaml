@@ -29,6 +29,7 @@ definition:
         studio.collection:
         studio.content:
         studio.updatedby:
+        studio.createdby:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -132,6 +133,8 @@ definition:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
+                                  - io.field:
+                                      fieldId: studio.createdby
                                   - io.field:
                                       fieldId: studio.updatedby
                             - io.field:

@@ -6,8 +6,19 @@ components:
     io.button:
     io.deck:
     io.dialog:
+      variants:
+        - io.titlebar.io.dialog
     io.dialogplain:
     io.field:
+      variants:
+        - io.textfield.io.default
+        - io.codefield.io.default
+        - io.userfield.io.default
+        - io.checkboxfield.io.default
+        - io.selectfield.io.default
+        - io.autocomplete.io.default
+        - io.fieldlabel.io.default
+        - io.tile.io.default
     io.grid:
     io.griditem:
     io.group:
@@ -20,6 +31,7 @@ components:
     io.titlebar:
   utility:
     io.alert:
+    io.avatar:
     io.autocomplete:
     io.button:
     io.checkboxfield:
@@ -27,6 +39,7 @@ components:
     io.dialog:
     io.dialogplain:
     io.expandpanel:
+    io.fieldlabel:
     io.filetext:
     io.fileupload:
     io.grid:
@@ -45,10 +58,3 @@ components:
     io.titlebar:
     io.tooltip:
     io.userfield:
-  variants:
-    - io.textfield.io.default
-    - io.codefield.io.default
-    - io.checkboxfield.io.default
-    - io.selectfield.io.default
-    - io.autocomplete.io.default
-    - io.titlebar.io.dialog

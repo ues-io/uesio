@@ -1,0 +1,6 @@
+name: filename
+collection: uesio.userfiles
+type: "TEXT"
+label: "File Name"
+propertyName: "filename"
+readOnly: true

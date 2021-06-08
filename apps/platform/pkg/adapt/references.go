@@ -10,18 +10,23 @@ type ReferenceRequest struct {
 	Fields          []LoadRequestField
 	Metadata        *CollectionMetadata
 	ReferenceFields FieldsMap
-	IDs             map[string][]int
+	IDs             map[string][]ReferenceLocator
+}
+
+type ReferenceLocator struct {
+	RecordIndex int
+	Field       *FieldMetadata
 }
 
 // AddID function
-func (rr *ReferenceRequest) AddID(value interface{}, index int) {
+func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
 	foreignKeyValueAsString, ok := value.(string)
 	if ok {
 		items, ok := rr.IDs[foreignKeyValueAsString]
 		if !ok {
-			rr.IDs[foreignKeyValueAsString] = []int{}
+			rr.IDs[foreignKeyValueAsString] = []ReferenceLocator{}
 		}
-		rr.IDs[foreignKeyValueAsString] = append(items, index)
+		rr.IDs[foreignKeyValueAsString] = append(items, locator)
 	}
 }
 
@@ -42,7 +47,7 @@ type ReferenceRegistry map[string]*ReferenceRequest
 func (rr *ReferenceRegistry) Add(collectionKey string) {
 	(*rr)[collectionKey] = &ReferenceRequest{
 		ReferenceFields: FieldsMap{},
-		IDs:             map[string][]int{},
+		IDs:             map[string][]ReferenceLocator{},
 		Fields:          []LoadRequestField{},
 	}
 }
@@ -131,8 +136,11 @@ func HandleReferences(
 				return nil
 			}
 
-			for _, index := range matchIndexes {
+			for _, locator := range matchIndexes {
 				for _, reference := range referencedCollection.ReferenceFields {
+					if reference != locator.Field {
+						continue
+					}
 					referenceValue := Item{}
 
 					err = copier.Copy(&referenceValue, refItem)
@@ -140,7 +148,7 @@ func HandleReferences(
 						return err
 					}
 
-					item := collection.GetItem(index)
+					item := collection.GetItem(locator.RecordIndex)
 					err = item.SetField(reference.GetFullName(), referenceValue)
 					if err != nil {
 						return err

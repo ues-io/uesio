@@ -38,6 +38,8 @@ const getDefaultValue = (
 		if (!lookupWire) return
 
 		const firstRecord = Object.values(lookupWire.data)[0]
+		if (!firstRecord) return
+
 		return item.lookupField
 			? firstRecord[item.lookupField]
 			: context.merge(item.lookupTemplate)

@@ -1,0 +1,14 @@
+name: default
+component: io.tile
+label: Default
+definition:
+  uesio.styles:
+    root:
+      color: rgb(33, 36, 45)
+      margin: 8px 0
+      alignItems: center
+    content:
+      verticalAlign: middle
+      fontSize: 10pt
+    avatar:
+      marginRight: 14px
