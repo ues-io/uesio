@@ -19,6 +19,7 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 	hideLabel: boolean
 	record: wire.WireRecord
 	wire: wire.Wire
+	variant: string
 }
 
 // TODO:: Modify this to accept an arbitary display template
@@ -51,7 +52,7 @@ const generateReferenceFieldDisplayValue = (
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, hideLabel, mode, record, context } = props
+	const { fieldMetadata, hideLabel, mode, record, context, variant } = props
 	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
@@ -77,12 +78,14 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 					label: fieldMetadata.getLabel(),
 				})}
 				context={context}
+				variant={variant}
 			/>
 		)
 	} else {
 		return (
 			<AutoComplete
 				context={context}
+				variant={variant}
 				value={value}
 				{...(!hideLabel && {
 					label: fieldMetadata.getLabel(),

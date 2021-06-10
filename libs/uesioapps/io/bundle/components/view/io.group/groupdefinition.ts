@@ -1,8 +1,7 @@
 import { definition, builder } from "@uesio/ui"
 
 type GroupDefinition = {
-	align?: string
-	width?: string
+	columnGap: string
 	components?: definition.DefinitionList
 }
 

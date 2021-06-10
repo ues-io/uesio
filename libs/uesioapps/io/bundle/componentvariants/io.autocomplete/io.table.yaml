@@ -1,0 +1,15 @@
+name: table
+component: io.autocomplete
+label: Table
+definition:
+  uesio.styles:
+    root:
+      color: black
+    input:
+      width: "100%"
+      backgroundColor: transparent
+      padding: 16px
+      border: "none"
+      "&:focus":
+        outline: none
+        background: "#ddd"

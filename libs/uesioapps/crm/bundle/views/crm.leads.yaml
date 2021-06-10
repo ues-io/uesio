@@ -40,6 +40,18 @@ definition:
             padding: 40px
         components:
           - io.table:
+              rowactions:
+                - text: Edit
+                  signals:
+                    - path: lead/${crm.id}
+                      signal: route/NAVIGATE
+                - text: Delete
+                  signals:
+                    - signal: wire/TOGGLE_DELETE_STATUS
+                - text: Convert Lead
+                  signals:
+                    - bot: crm.convertlead
+                      signal: bot/CALL
               columns:
                 - io.column:
                     field: crm.firstname
@@ -49,25 +61,6 @@ definition:
                     field: crm.updated
                 - io.column:
                     field: crm.created
-                - io.column:
-                    components:
-                      - io.button:
-                          signals:
-                            - path: lead/${crm.id}
-                              signal: route/NAVIGATE
-                          text: Edit
-                          uesio.variant: io.secondary
-                      - io.button:
-                          signals:
-                            - signal: wire/TOGGLE_DELETE_STATUS
-                          text: Delete
-                          uesio.variant: io.secondary
-                      - io.button:
-                          signals:
-                            - bot: crm.convertlead
-                              signal: bot/CALL
-                          text: Convert Lead
-                          uesio.variant: io.secondary
               id: leadsTable
               mode: EDIT
               wire: leads

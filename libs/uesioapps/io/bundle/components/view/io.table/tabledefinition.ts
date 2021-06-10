@@ -1,6 +1,11 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, signal } from "@uesio/ui"
 
 type TableMode = "READ" | "EDIT"
+
+type TableClasses = Record<
+	"root" | "table" | "headerCell" | "header" | "cell" | "row" | "rowDeleted",
+	string
+>
 
 type TableState = {
 	mode: TableMode
@@ -11,10 +16,16 @@ type TableDefinition = {
 	wire: string
 	mode: TableMode
 	columns: definition.DefinitionList
+	rowactions: RowAction[]
 }
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition
+}
+
+type RowAction = {
+	text: string
+	signals: signal.SignalDefinition[]
 }
 
 type ColumnDefinition = {
@@ -30,6 +41,13 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 }
-export { TableProps, TableState, TableDefinition, ColumnDefinition }
+export {
+	TableProps,
+	TableState,
+	TableDefinition,
+	ColumnDefinition,
+	TableClasses,
+	RowAction,
+}
 
 export default TablePropertyDefinition

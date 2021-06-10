@@ -23,8 +23,10 @@ const View: FunctionComponent<Props> = (props) => {
 	const viewId = `${viewDefId}(${path})`
 	const viewDef = useViewDef(viewDefId)
 
+	const isSubView = path !== ""
+
 	// Currently only going into buildtime for the base view. We could change this later.
-	const buildMode = !!context.getBuildMode() && path === ""
+	const buildMode = !!context.getBuildMode() && !isSubView
 	const scriptResult = uesio.component.usePacks(
 		Object.keys(viewDef?.dependencies?.componentpacks || {}),
 		buildMode
@@ -46,7 +48,7 @@ const View: FunctionComponent<Props> = (props) => {
 
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
-	return (
+	const slot = (
 		<Slot
 			definition={viewDef.definition}
 			listName="components"
@@ -54,6 +56,12 @@ const View: FunctionComponent<Props> = (props) => {
 			accepts={["uesio.standalone"]}
 			context={viewContext}
 		/>
+	)
+
+	return isSubView && context.getBuildMode() ? (
+		<div style={{ pointerEvents: "none" }}>{slot}</div>
+	) : (
+		slot
 	)
 }
 

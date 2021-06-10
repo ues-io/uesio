@@ -40,6 +40,14 @@ definition:
             padding: 40px
         components:
           - io.table:
+              rowactions:
+                - text: Edit
+                  signals:
+                    - path: contact/${crm.id}
+                      signal: route/NAVIGATE
+                - text: Delete
+                  signals:
+                    - signal: wire/TOGGLE_DELETE_STATUS
               columns:
                 - io.column:
                     field: crm.firstname
@@ -61,19 +69,6 @@ definition:
                     field: crm.updated
                 - io.column:
                     field: crm.created
-                - io.column:
-                    components:
-                      - io.button:
-                          signals:
-                            - path: contact/${crm.id}
-                              signal: route/NAVIGATE
-                          text: Edit
-                          uesio.variant: io.secondary
-                      - io.button:
-                          signals:
-                            - signal: wire/TOGGLE_DELETE_STATUS
-                          text: Delete
-                          uesio.variant: io.secondary
               id: contactsTable
               mode: EDIT
               wire: contacts

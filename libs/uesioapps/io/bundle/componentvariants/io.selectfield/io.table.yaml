@@ -1,0 +1,21 @@
+name: default
+component: io.selectfield
+label: Default
+definition:
+  uesio.styles:
+    root:
+      color: black
+      "&:after":
+        bottom: "16px"
+    input:
+      width: "100%"
+      backgroundColor: transparent
+      textOverflow: ellipsis
+      padding: 16px 32px 16px 16px;
+      border: "none"
+      "&:focus":
+        outline: none
+        background: "#ddd"
+    readonly:
+      backgroundColor: transparent
+      border: "none"

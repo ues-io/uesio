@@ -74,15 +74,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 							minHeight: "40px",
 						}),
 				}),
-				...(isVertical && {
-					display: "block",
-					...(isContentView && {
-						display: "contents",
-					}),
-				}),
-				...(isStructureView && {
-					padding: "8px",
-				}),
+				display: "contents",
 			},
 			placeHolder: {
 				backgroundColor: "#f4f4f4",

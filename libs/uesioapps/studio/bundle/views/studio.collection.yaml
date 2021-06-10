@@ -198,6 +198,11 @@ definition:
                           id: "fields"
                           wire: "fields"
                           mode: "READ"
+                          rowactions:
+                            - text: Edit
+                              signals:
+                                - signal: "route/NAVIGATE"
+                                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${studio.name}"
                           columns:
                             - io.column:
                                 field: studio.name
@@ -209,11 +214,3 @@ definition:
                                 field: studio.propertyname
                             - io.column:
                                 field: studio.collection
-                            - io.column:
-                                components:
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: Edit
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${studio.name}"

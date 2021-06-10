@@ -26,6 +26,13 @@ components:
     io.image:
     io.list:
     io.table:
+      variants:
+        - io.textfield.io.table
+        - io.selectfield.io.table
+        - io.checkboxfield.io.table
+        - io.autocomplete.io.table
+        - io.table.io.default
+        - io.button.io.nav
     io.text:
     io.tile:
     io.titlebar:

@@ -39,6 +39,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 	const classes = styles.useStyles(
 		{
 			mask: {
+				position: "relative",
 				outline: getOutline(props),
 				boxShadow: props.isSelected ? deepShadow : "none",
 				backgroundColor: getBackgroundColor(props),
@@ -54,35 +55,28 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 					  }`,
 				boxShadow: props.isSelected ? deepShadow : "none",
 			},
-
+			inner: {
+				position: "relative",
+			},
 			header: {
 				boxShadow: props.isSelected ? deepShadow : "none",
 				outline: getOutline(props),
 				position: "absolute",
-				top: "-24px",
-				left: 0,
+				top: "-34px",
+				left: "-8px",
+				right: "-8px",
+				bottom: "-8px",
 				fontSize: "9pt",
 				textTransform: "uppercase",
 				color: "#333",
-				padding: "8px 8px 0 10px",
-				opacity: 0.95,
+				padding: "10px",
 				fontWeight: "bold",
 				backgroundColor: getBackgroundColor(props),
-				width: "100%",
-				"&::after": {
-					height: "7px",
-					width: "100%",
-					backgroundColor: "white",
-					content: "''",
-					position: "absolute",
-					bottom: "-7px",
-					left: 0,
-				},
 			},
 			headerStructureView: {
 				color: "#333",
 				fontWeight: "bold",
-				padding: "8px 8px 4px 10px",
+				padding: "10px",
 				textTransform: "uppercase",
 				fontSize: "9pt",
 			},
@@ -110,7 +104,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 					{title}
 				</div>
 			)}
-			{children}
+			<div className={classes.inner}>{children}</div>
 		</div>
 	)
 }
