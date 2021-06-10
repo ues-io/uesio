@@ -17,7 +17,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			},
 			inner: {
 				background: "white",
-				overflow: "auto",
 			},
 		},
 		props

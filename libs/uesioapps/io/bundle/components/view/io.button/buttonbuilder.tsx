@@ -7,10 +7,12 @@ const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {
-				position: "relative",
+				pointerEvents: "none",
 			},
 		},
-		props
+		{
+			context: props.context,
+		}
 	)
 
 	const uesio = hooks.useUesio(props)

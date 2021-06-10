@@ -21,6 +21,7 @@ class WireRecord {
 	getFieldReference = (fieldName: string) =>
 		get(this.source, fieldName) as PlainWireRecord | undefined
 	isNew = () => !this.getIdFieldValue()
+	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
 	getIdFieldValue = () => {
 		const metadata = this.wire.collection

@@ -6,7 +6,7 @@ type FieldDefinition = {
 	label?: string
 	id?: string
 	displayAs?: string
-}
+} & definition.BaseDefinition
 
 type FieldState = {
 	value: string

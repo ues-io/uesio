@@ -46,6 +46,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
+		variant: definition["uesio.variant"],
 	}
 
 	switch (true) {

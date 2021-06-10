@@ -1,0 +1,16 @@
+name: table
+component: io.checkboxfield
+label: Table
+definition:
+  uesio.styles:
+    root:
+      color: black
+    input:
+      backgroundColor: transparent
+      padding: 16px
+      "&:focus":
+        outline: none
+        background: "#ddd"
+    readonly:
+      backgroundColor: "transparent"
+      border: "none"

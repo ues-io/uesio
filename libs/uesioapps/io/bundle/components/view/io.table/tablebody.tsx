@@ -1,23 +1,40 @@
 import { FunctionComponent } from "react"
-import { wire, collection, context, component, definition } from "@uesio/ui"
-import { ColumnDefinition, TableState } from "./tabledefinition"
+import {
+	wire,
+	collection,
+	context,
+	component,
+	definition,
+	styles,
+	hooks,
+} from "@uesio/ui"
+import {
+	ColumnDefinition,
+	RowAction,
+	TableClasses,
+	TableState,
+} from "./tabledefinition"
 
 interface Props {
 	wire: wire.Wire
 	collection: collection.Collection
 	columns: definition.DefinitionList
+	rowactions: RowAction[]
 	path: string
 	context: context.Context
 	state: TableState
+	classes: TableClasses
 }
 
 interface RowProps {
 	wire: wire.Wire
 	path: string
 	columns: definition.DefinitionList
+	rowactions: RowAction[]
 	context: context.Context
 	mode: context.FieldMode
 	record: wire.WireRecord
+	classes: TableClasses
 }
 
 interface CellProps {
@@ -25,6 +42,7 @@ interface CellProps {
 	context: context.Context
 	path: string
 	index: number
+	classes: TableClasses
 }
 
 const FieldCell: FunctionComponent<CellProps> = ({
@@ -32,13 +50,15 @@ const FieldCell: FunctionComponent<CellProps> = ({
 	path,
 	index,
 	context,
+	classes,
 }) => (
-	<td key={field}>
+	<td key={field} className={classes.cell}>
 		<component.Component
 			componentType="io.field"
 			definition={{
 				fieldId: field,
 				hideLabel: true,
+				"uesio.variant": "io.table",
 			}}
 			index={index}
 			path={`${path}["columns"]["${index}"]`}
@@ -52,10 +72,11 @@ const SlotCell: FunctionComponent<CellProps> = ({
 	path,
 	index,
 	context,
+	classes,
 }) => {
 	const fieldId = column.field
 	return (
-		<td key={fieldId}>
+		<td key={fieldId} className={classes.cell}>
 			<component.Slot
 				definition={column}
 				listName="components"
@@ -68,65 +89,91 @@ const SlotCell: FunctionComponent<CellProps> = ({
 	)
 }
 
+const Group = component.registry.getUtility("io.group")
+const Button = component.registry.getUtility("io.button")
+
 const TableRow: FunctionComponent<RowProps> = ({
 	path,
 	wire,
 	columns,
+	rowactions,
 	context,
 	mode,
 	record,
-}) => (
-	<tr>
-		{columns.map((columnDef, index) => {
-			const column = columnDef["io.column"] as ColumnDefinition
-
-			if (!column.components) {
+	classes,
+}) => {
+	const rowContext = context.addFrame({
+		record: record.getId(),
+		wire: wire.getId(),
+		fieldMode: mode,
+	})
+	const uesio = hooks.useUesio({ context: rowContext })
+	return (
+		<tr
+			className={styles.cx(
+				classes.row,
+				record.isDeleted() && classes.rowDeleted
+			)}
+		>
+			{columns.map((columnDef, index) => {
+				const column = columnDef["io.column"] as ColumnDefinition
+				const Cell = column.components ? SlotCell : FieldCell
 				return (
-					<FieldCell
+					<Cell
+						classes={classes}
 						key={index}
 						column={column}
-						context={context.addFrame({
-							record: record.getId(),
-							wire: wire.getId(),
-							fieldMode: mode,
-						})}
+						context={rowContext}
 						path={path}
 						index={index}
 					/>
 				)
-			}
-
-			return (
-				<SlotCell
-					key={index}
-					column={column}
-					context={context.addFrame({
-						record: record.getId(),
-						wire: wire.getId(),
-						fieldMode: mode,
-					})}
-					path={path}
-					index={index}
-				/>
-			)
-		})}
-	</tr>
-)
+			})}
+			{rowactions && (
+				<td key="rowactions" className={classes.cell}>
+					<Group
+						styles={{ root: { padding: "0 16px" } }}
+						columnGap={0}
+						context={rowContext}
+					>
+						{rowactions.map((action) => {
+							const [handler, portals] = uesio.signal.useHandler(
+								action.signals
+							)
+							return (
+								<Button
+									variant="io.nav"
+									label={action.text}
+									context={rowContext}
+									onClick={handler}
+								/>
+							)
+						})}
+					</Group>
+				</td>
+			)}
+		</tr>
+	)
+}
 
 const TableBody: FunctionComponent<Props> = ({
 	wire,
 	path,
 	columns,
+	rowactions,
 	context,
 	state: { mode },
+	classes,
 }) => (
 	<tbody>
 		{wire.getData().map((record) => (
 			<TableRow
+				classes={classes}
 				key={record.getId()}
 				wire={wire}
 				path={path}
 				columns={columns}
+				rowactions={rowactions}
 				context={context}
 				mode={mode}
 				record={record}

@@ -76,6 +76,10 @@ definition:
           - io.griditem:
               components:
                 - io.avatar:
-                    text: BH
+                    uesio.styles:
+                      root:
+                        margin: 0 16px
+                    text: $User{initials}
+                    image: $User{picture}
         justify: space-between
   wires: null

@@ -1,4 +1,4 @@
-import { hooks, component, styles } from "@uesio/ui"
+import { hooks, styles } from "@uesio/ui"
 import { FunctionComponent } from "react"
 
 import { TableProps, TableState } from "./tabledefinition"
@@ -27,6 +27,27 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},
+			table: {
+				width: "100%",
+				overflow: "hidden",
+			},
+			header: {},
+			headerCell: {
+				"&:last-child": {
+					borderRight: 0,
+				},
+			},
+			cell: {
+				"&:last-child": {
+					borderRight: 0,
+				},
+			},
+			row: {
+				"&:last-child>td": {
+					borderBottom: 0,
+				},
+			},
+			rowDeleted: {},
 		},
 		props
 	)
@@ -36,17 +57,26 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const collection = wire.getCollection()
 
 	return (
-		<table className={classes.root}>
-			<TableHeader columns={definition.columns} collection={collection} />
-			<TableBody
-				wire={wire}
-				collection={collection}
-				state={componentState}
-				columns={definition.columns}
-				path={path}
-				context={newContext}
-			/>
-		</table>
+		<div className={classes.root}>
+			<table className={classes.table}>
+				<TableHeader
+					classes={classes}
+					columns={definition.columns}
+					rowactions={definition.rowactions}
+					collection={collection}
+				/>
+				<TableBody
+					classes={classes}
+					wire={wire}
+					collection={collection}
+					state={componentState}
+					columns={definition.columns}
+					rowactions={definition.rowactions}
+					path={path}
+					context={newContext}
+				/>
+			</table>
+		</div>
 	)
 }
 

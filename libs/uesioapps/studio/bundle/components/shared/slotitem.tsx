@@ -43,21 +43,23 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 					display: "flex",
 					width: "unset",
 					...(isStructureView && {
-						padding: "0 8px 0 0",
+						padding: "8px 0px 8px 8px",
 					}),
-					...(isLast && {
-						padding: 0,
-					}),
+					...(isStructureView &&
+						isLast && {
+							padding: "8px",
+						}),
 				}),
 				...(isVertical && {
 					display: "block",
 					width: "100%",
 					...(isStructureView && {
-						padding: "0 0 8px 0",
+						padding: "8px 8px 0 8px",
 					}),
-					...(isLast && {
-						padding: 0,
-					}),
+					...(isStructureView &&
+						isLast && {
+							padding: "8px",
+						}),
 					...(isContentView && {
 						display: "contents",
 					}),
