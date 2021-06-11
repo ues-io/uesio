@@ -7,6 +7,7 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	metadataType: metadata.MetadataType
 	label: string
 	grouping?: string
+	defaultNamespace?: string
 }
 
 const Grid = component.registry.getUtility("io.grid")
@@ -15,11 +16,20 @@ const SelectField = component.registry.getUtility("io.selectfield")
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
-	const { value, setValue, label, metadataType, context, grouping } = props
+	const {
+		value,
+		setValue,
+		label,
+		metadataType,
+		context,
+		grouping,
+		defaultNamespace,
+	} = props
 	const uesio = hooks.useUesio(props)
 
 	const namespaces = uesio.builder.useAvailableNamespaces(context)
-	const [namespace, name] = component.path.parseKey(value)
+	const [currentNamespace, name] = component.path.parseKey(value)
+	const namespace = defaultNamespace || currentNamespace
 	const metadata = uesio.builder.useMetadataList(
 		context,
 		metadataType,
@@ -34,28 +44,30 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			context={context}
 			styles={{
 				root: {
-					gridTemplateColumns: "1fr 1fr",
+					gridTemplateColumns: defaultNamespace ? "1fr" : "1fr 1fr",
 					columnGap: "10px",
 				},
 			}}
 		>
+			{!defaultNamespace && (
+				<SelectField
+					context={context}
+					label={label}
+					value={namespace}
+					options={addBlankSelectOption(
+						Object.keys(namespaces || {}).map((key) => ({
+							value: key,
+							label: key,
+						}))
+					)}
+					setValue={(value: string) => {
+						setValue(value ? `${value}.` : "")
+					}}
+				/>
+			)}
 			<SelectField
 				context={context}
-				label={label}
-				value={namespace}
-				options={addBlankSelectOption(
-					Object.keys(namespaces || {}).map((key) => ({
-						value: key,
-						label: key,
-					}))
-				)}
-				setValue={(value: string) => {
-					setValue(value ? `${value}.` : "")
-				}}
-			/>
-			<SelectField
-				context={context}
-				label={label && nbsp}
+				label={defaultNamespace ? label : label && nbsp}
 				value={name}
 				options={addBlankSelectOption(
 					Object.keys(metadata || {}).map((key) => {

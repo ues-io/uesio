@@ -32,13 +32,15 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			isSelected={isSelected}
 			portals={portals}
 			avatar={
-				<component.Slot
-					definition={definition}
-					listName="avatar"
-					path={path}
-					accepts={["uesio.standalone"]}
-					context={context}
-				/>
+				definition.avatar && (
+					<component.Slot
+						definition={definition}
+						listName="avatar"
+						path={path}
+						accepts={["uesio.standalone"]}
+						context={context}
+					/>
+				)
 			}
 		>
 			<component.Slot

@@ -1,6 +1,6 @@
-name: created
+name: createdat
 collection: studio.collections
 type: TIMESTAMP
-label: Created
-propertyName: created
+label: Created At
+propertyName: createdat
 autopopulate: CREATE

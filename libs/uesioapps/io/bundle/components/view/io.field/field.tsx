@@ -10,6 +10,7 @@ const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 const FileUpload = component.registry.getUtility("io.fileupload")
 const UserField = component.registry.getUtility("io.userfield")
+const TimestampField = component.registry.getUtility("io.timestampfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -69,7 +70,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case type === "REFERENCE":
 			return <ReferenceField {...common} />
 		case type === "TIMESTAMP":
-			return null
+			return <TimestampField {...common} />
 		case type === "FILE" && displayAs === "TEXT":
 			return <FileText {...common} />
 		case type === "FILE":

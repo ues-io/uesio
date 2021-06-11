@@ -10,6 +10,7 @@ views:
   studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
+  studio.collectiondata: true
   studio.collections: true
   studio.components: true
   studio.configvalue: true
@@ -56,6 +57,7 @@ routes:
   studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
+  studio.collectiondata: true
   studio.collections: true
   studio.components: true
   studio.configvalue: true

@@ -1,5 +1,5 @@
 name: default
-component: io.field.label
+component: io.fieldlabel
 label: Default
 definition:
   uesio.styles:

@@ -23,7 +23,7 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.updated:
+        studio.updatedat:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -40,7 +40,7 @@ definition:
         studio.collectionname:
         studio.namefield:
         studio.idfield:
-        studio.created:
+        studio.createdat:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP

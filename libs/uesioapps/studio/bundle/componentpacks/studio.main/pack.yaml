@@ -34,6 +34,11 @@ components:
         - io.button.io.secondary
         - io.textfield.io.default
         - io.titlebar.io.default
+    studio.datamanager:
+      variants:
+        - io.table.io.default
+      utilities:
+        - io.table
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.slot:

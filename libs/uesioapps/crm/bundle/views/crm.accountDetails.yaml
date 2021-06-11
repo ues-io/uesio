@@ -67,7 +67,7 @@ definition:
       fields:
         crm.id:
         crm.name:
-        crm.profilepic:
+        crm.logo:
         crm.description:
         crm.created:
         crm.updated:

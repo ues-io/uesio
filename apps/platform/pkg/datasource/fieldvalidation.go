@@ -134,7 +134,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		}
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
-				timestamp := time.Now().Unix()
+				timestamp := time.Now().UnixNano() / 1e6
 				validations = append(validations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {

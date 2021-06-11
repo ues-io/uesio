@@ -301,7 +301,7 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 
 						refItem, ok := refInterface.(adapt.Item)
 						if !ok {
-							return nil
+							continue
 						}
 
 						value, err := refItem.GetField(referencedCol.Metadata.IDField)
