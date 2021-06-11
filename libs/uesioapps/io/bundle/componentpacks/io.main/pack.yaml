@@ -33,6 +33,7 @@ components:
         - io.autocomplete.io.table
         - io.table.io.default
         - io.button.io.nav
+        - io.fileupload.io.table
     io.text:
     io.tile:
     io.titlebar:
@@ -62,6 +63,7 @@ components:
     io.text:
     io.textfield:
     io.tile:
+    io.timestampfield:
     io.titlebar:
     io.tooltip:
     io.userfield:

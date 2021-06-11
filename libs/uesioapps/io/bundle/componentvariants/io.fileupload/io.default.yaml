@@ -1,0 +1,6 @@
+name: default
+component: io.fileupload
+label: Default
+definition:
+  uesio.styles:
+    root:

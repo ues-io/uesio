@@ -13,8 +13,10 @@ type SelectList struct {
 	Namespace string             `yaml:"-" uesio:"-"`
 	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`
 	Workspace string             `yaml:"-" uesio:"studio.workspaceid"`
-	Updated   int64              `yaml:"-" uesio:"studio.updated"`
-	Created   int64              `yaml:"-" uesio:"studio.created"`
+	CreatedBy *User              `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy *User              `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt int64              `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt int64              `yaml:"-" uesio:"studio.createdat"`
 	itemMeta  *ItemMeta          `yaml:"-" uesio:"-"`
 }
 

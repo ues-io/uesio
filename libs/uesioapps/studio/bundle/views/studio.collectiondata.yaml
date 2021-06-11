@@ -1,0 +1,129 @@
+name: collectiondata
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        studio.id:
+        studio.name:
+        studio.appid:
+        studio.app:
+          fields:
+            uesio.color:
+      conditions:
+        - field: studio.appid
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    collections:
+      collection: studio.collections
+      fields:
+        studio.id:
+        studio.name:
+        studio.namefield:
+        studio.idfield:
+        studio.workspaceid:
+        studio.workspace:
+        studio.collectionname:
+        studio.datasource:
+        studio.updatedat:
+        studio.updatedby:
+        studio.createdat:
+        studio.createdby:
+      conditions:
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+        - field: studio.name
+          value: $Param{collectionname}
+    fields:
+      collection: studio.fields
+      fields:
+        studio.id:
+        studio.name:
+        studio.type:
+        studio.label:
+        studio.propertyname:
+        studio.collection:
+        studio.workspaceid:
+        studio.foreignKeyField:
+        studio.referencedCollection:
+      conditions:
+        - field: studio.collection
+          value: $Param{appname}.$Param{collectionname}
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+      defaults:
+        - field: studio.collection
+          valueSource: LOOKUP
+          lookupWire: collections
+          lookupTemplate: $Param{appname}.$Param{collectionname}
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: collections
+                      itemIcon: list
+                      itemName: $Param{collectionname}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: collections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
+                    id: collectionsDeck
+                    wire: collections
+                    mode: READ
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Collection - ${studio.name}
+                          actions:
+                            - io.group:
+                                components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Collection Configuration"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.datamanager:
+                                collectionId: $Param{collectionname}
+                                namespace: $Param{appname}
+                                fieldsWire: "fields"
+                                uesio.context:
+                                  workspace:
+                                    name: $Param{workspacename}
+                                    app: $Param{appname}

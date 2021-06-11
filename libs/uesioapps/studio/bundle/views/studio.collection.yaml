@@ -29,8 +29,10 @@ definition:
         studio.workspace:
         studio.collectionname:
         studio.datasource:
-        studio.updated:
-        studio.created:
+        studio.updatedat:
+        studio.updatedby:
+        studio.createdat:
+        studio.createdby:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
@@ -57,6 +59,24 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
+      defaults:
+        - field: studio.collection
+          valueSource: LOOKUP
+          lookupWire: collections
+          lookupTemplate: $Param{appname}.$Param{collectionname}
+        - field: studio.workspaceid
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: studio.id
+    newfield:
+      collection: studio.fields
+      fields:
+        studio.id:
+        studio.name:
+        studio.type:
+        studio.label:
+        studio.propertyname:
+      type: CREATE
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
@@ -107,36 +127,22 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: io.secondary
+                                      text: "Manage Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/data/$Param{collectionname}"
+                                  - io.button:
+                                      uesio.variant: io.secondary
                                       text: "Edit"
                                       signals:
-                                        - signal: component/io.list/TOGGLE_MODE
-                                          target: "collectionsDeck"
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: "Save"
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "collections"
-                                            - "fields"
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: "Cancel"
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: "collections"
-                                        - signal: wire/CANCEL
-                                          wire: "fields"
+                                        - signal: panel/TOGGLE
+                                          panel: editCollection
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Delete"
                                       signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "collections"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+                                        - signal: panel/TOGGLE
+                                          panel: deleteCollection
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -152,10 +158,6 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                                  - io.field:
-                                      fieldId: studio.updated
-                                  - io.field:
-                                      fieldId: studio.created
                                   - studio.metadatafield:
                                       fieldId: studio.idfield
                                       metadataType: "FIELD"
@@ -170,6 +172,21 @@ definition:
                                       fieldId: studio.datasource
                                       metadataType: "DATASOURCE"
                                       label: "Data Source"
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.createdby
+                                  - io.field:
+                                      fieldId: studio.createdat
+                                  - io.field:
+                                      fieldId: studio.updatedby
+                                  - io.field:
+                                      fieldId: studio.updatedat
                 - io.box:
                     uesio.variant: io.section
                     components:
@@ -183,14 +200,8 @@ definition:
                                       uesio.variant: "io.secondary"
                                       text: "New Field"
                                       signals:
-                                        - signal: wire/CREATE_RECORD
-                                          wire: "fields"
-                                  - io.button:
-                                      uesio.variant: "io.secondary"
-                                      text: "Edit Mode"
-                                      signals:
-                                        - signal: component/io.table/TOGGLE_MODE
-                                          target: "fields"
+                                        - signal: panel/TOGGLE
+                                          panel: "newField"
                       - io.table:
                           uesio.styles:
                             root:
@@ -214,3 +225,113 @@ definition:
                                 field: studio.propertyname
                             - io.column:
                                 field: studio.collection
+  panels:
+    - io.dialog:
+        id: deleteCollection
+        title: Delete Collection
+        width: 400px
+        height: 300px
+        components:
+          - io.text:
+              text: Are you sure you want to delete this collection?
+        actions:
+          - io.button:
+              text: Delete
+              uesio.variant: io.primary
+              signals:
+                - signal: wire/MARK_FOR_DELETE
+                - signal: wire/SAVE
+                  wires:
+                    - "collections"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+          - io.button:
+              text: Cancel
+              uesio.variant: io.secondary
+              signals:
+                - signal: panel/TOGGLE
+                  panel: deleteCollection
+    - io.dialog:
+        id: editCollection
+        title: Edit Collection
+        width: 400px
+        height: 560px
+        components:
+          - io.list:
+              id: editCollectionList
+              wire: collections
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - studio.metadatafield:
+                    fieldId: studio.idfield
+                    metadataType: "FIELD"
+                    label: "ID Field"
+                    grouping: $Param{appname}.$Param{collectionname}
+                    namespace: $Param{appname}
+                - studio.metadatafield:
+                    fieldId: studio.namefield
+                    metadataType: "FIELD"
+                    label: "Name Field"
+                    grouping: $Param{appname}.$Param{collectionname}
+                    namespace: $Param{appname}
+                - io.field:
+                    fieldId: studio.collectionname
+                - studio.metadatafield:
+                    fieldId: studio.datasource
+                    metadataType: "DATASOURCE"
+                    label: "Data Source"
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - collections
+                - signal: "panel/TOGGLE"
+                  panel: "editCollection"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: wire/CANCEL
+                  wire: collections
+                - signal: "panel/TOGGLE"
+                  panel: "editCollection"
+    - io.dialog:
+        id: newField
+        title: Create a New Field
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: newfieldlist
+              wire: newfield
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: studio.name
+                - io.field:
+                    fieldId: studio.type
+                - io.field:
+                    fieldId: studio.label
+                - io.field:
+                    fieldId: studio.propertyname
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - "newfield"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${studio.name}"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "newField"

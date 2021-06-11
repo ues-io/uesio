@@ -6,6 +6,8 @@ type MetadataFieldDefinition = {
 	fieldId: string
 	metadataType: metadata.MetadataType
 	label: string
+	grouping?: string
+	namespace?: string
 }
 
 interface Props extends definition.BaseProps {
@@ -23,6 +25,9 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
+
+	const grouping = context.merge(props.definition.grouping)
+	const namespace = context.merge(props.definition.namespace)
 
 	if (!wire || !record || !workspaceName || !appName) {
 		return null
@@ -51,6 +56,12 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 					name: workspaceName,
 					app: appName,
 				},
+			})}
+			{...(grouping && {
+				grouping,
+			})}
+			{...(namespace && {
+				defaultNamespace: namespace,
 			})}
 		/>
 	)

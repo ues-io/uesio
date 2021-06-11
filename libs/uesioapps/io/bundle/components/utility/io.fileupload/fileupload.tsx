@@ -61,6 +61,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 			},
 			image: {
 				width: "100%",
+				display: "block",
 			},
 			editicon: {
 				right: "0",

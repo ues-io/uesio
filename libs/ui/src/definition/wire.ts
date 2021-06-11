@@ -21,10 +21,13 @@ type WireFieldDefinitionMap = {
 	[key: string]: WireFieldDefinition
 }
 
-type WireFieldDefinition = {
-	id: string
-	fields: WireFieldDefinitionMap
-}
+type WireFieldDefinition =
+	| {
+			id: string
+			fields: WireFieldDefinitionMap
+	  }
+	| undefined
+	| null
 
 type WireOrderDescription = {
 	field: string

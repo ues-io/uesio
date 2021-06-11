@@ -50,8 +50,10 @@ type Collection struct {
 	CollectionName string    `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly       bool      `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace      string    `yaml:"-" uesio:"studio.workspaceid"`
-	Updated        int64     `yaml:"-" uesio:"studio.updated"`
-	Created        int64     `yaml:"-" uesio:"studio.created"`
+	CreatedBy      *User     `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy      *User     `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt      int64     `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt      int64     `yaml:"-" uesio:"studio.createdat"`
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 	Access         string    `yaml:"access,omitempty" uesio:"studio.access"`
 	//TODO:: JAS Figure out if we want/how we want to handle a uesio encoding
