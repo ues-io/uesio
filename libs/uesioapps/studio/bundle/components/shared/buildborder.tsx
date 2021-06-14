@@ -36,63 +36,57 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 		children,
 		title,
 	} = props
+	const isContentViewSelected = (isActive || isSelected) && !isStructureView
 	const classes = styles.useStyles(
 		{
 			mask: {
-				position: "relative",
-				outline: getOutline(props),
-				boxShadow: props.isSelected ? deepShadow : "none",
-				backgroundColor: getBackgroundColor(props),
+				...(isStructureView && {
+					outline: isSelected ? getOutline(props) : "",
+					border: isSelected
+						? "1px solid transparent"
+						: `1px solid ${
+								isActive ? SELECTED_COLOR : ACTIVE_COLOR
+						  }`,
+				}),
+				...(isContentViewSelected && {
+					position: "relative",
+					outline: getOutline(props),
+				}),
+				...((isActive || isSelected || !isStructureView) && {
+					backgroundColor: getBackgroundColor(props),
+					boxShadow: isSelected ? deepShadow : "none",
+				}),
 			},
 
-			maskStructureView: {
-				backgroundColor: getBackgroundColor(props),
-				outline: props.isSelected ? getOutline(props) : "",
-				border: props.isSelected
-					? "1px solid transparent"
-					: `1px solid ${
-							props.isActive ? SELECTED_COLOR : ACTIVE_COLOR
-					  }`,
-				boxShadow: props.isSelected ? deepShadow : "none",
-			},
 			inner: {
 				position: "relative",
+				overflow: isStructureView ? "auto" : "visible",
 			},
+
 			header: {
-				boxShadow: props.isSelected ? deepShadow : "none",
-				outline: getOutline(props),
-				position: "absolute",
-				top: "-34px",
-				left: "-8px",
-				right: "-8px",
-				bottom: "-8px",
-				fontSize: "9pt",
-				textTransform: "uppercase",
 				color: "#333",
-				padding: "10px",
 				fontWeight: "bold",
 				backgroundColor: getBackgroundColor(props),
-			},
-			headerStructureView: {
-				color: "#333",
-				fontWeight: "bold",
 				padding: "10px",
 				textTransform: "uppercase",
 				fontSize: "9pt",
+				...(!isStructureView && {
+					boxShadow: props.isSelected ? deepShadow : "none",
+					outline: getOutline(props),
+					position: "absolute",
+					top: "-34px",
+					left: "-8px",
+					right: "-8px",
+					bottom: "-8px",
+				}),
 			},
 		},
 		null
 	)
-	const wrapperClass = styles.cx({
-		[classes.maskStructureView]: isStructureView,
-		[classes.mask]: (isActive || isSelected) && !isStructureView,
-	})
-	const headerClass = isStructureView
-		? classes.headerStructureView
-		: classes.header
+
 	return (
 		<div
-			className={wrapperClass}
+			className={classes.mask}
 			// Using MouseDown here instead of Click because of weirdness
 			// with propagation.
 			onMouseDown={onClick}
@@ -100,7 +94,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 			onMouseLeave={onMouseLeave}
 		>
 			{(isSelected || isStructureView) && (
-				<div onMouseDown={setDragging} className={headerClass}>
+				<div onMouseDown={setDragging} className={classes.header}>
 					{title}
 				</div>
 			)}

@@ -11,7 +11,7 @@ interface TextProps extends definition.BaseProps {
 }
 
 const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Button",
+	title: "Text",
 	defaultDefinition: () => ({
 		text: "Text Goes Here",
 	}),
@@ -34,6 +34,7 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export { TextProps, TextDefinition }
 

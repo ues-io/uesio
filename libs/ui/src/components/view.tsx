@@ -1,9 +1,10 @@
-import { FunctionComponent, RefObject } from "react"
+import { FunctionComponent } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
 import { ViewParams } from "../bands/view/types"
 import { useViewDef } from "../bands/viewdef/selectors"
+import { css } from "@emotion/css"
 
 interface Props extends BaseProps {
 	definition: {
@@ -22,6 +23,11 @@ const View: FunctionComponent<Props> = (props) => {
 
 	const viewId = `${viewDefId}(${path})`
 	const viewDef = useViewDef(viewDefId)
+
+	const subViewClass = css({
+		pointerEvents: "none",
+		display: "grid",
+	})
 
 	const isSubView = path !== ""
 
@@ -59,7 +65,7 @@ const View: FunctionComponent<Props> = (props) => {
 	)
 
 	return isSubView && context.getBuildMode() ? (
-		<div style={{ pointerEvents: "none" }}>{slot}</div>
+		<div className={subViewClass}>{slot}</div>
 	) : (
 		slot
 	)
