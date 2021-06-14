@@ -24,10 +24,11 @@ const Tooltip: FunctionComponent<TooltipProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			tooltip: {
-				padding: "4px",
-				background: "black",
-				color: "white",
+				padding: "6px",
+				background: "#222",
+				color: "#f5f5f5",
 				zIndex: 2,
+				fontSize: "8pt",
 			},
 			arrow: {
 				position: "absolute",

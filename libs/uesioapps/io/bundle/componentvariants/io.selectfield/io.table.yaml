@@ -1,6 +1,6 @@
-name: default
+name: table
 component: io.selectfield
-label: Default
+label: Table
 definition:
   uesio.styles:
     root:
