@@ -23,7 +23,7 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.updated:
+        studio.updatedat:
       conditions:
         - field: studio.workspaceid
           valueSource: LOOKUP
