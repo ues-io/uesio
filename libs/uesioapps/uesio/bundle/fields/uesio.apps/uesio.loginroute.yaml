@@ -1,5 +1,0 @@
-name: loginroute
-collection: uesio.apps
-type: TEXT
-label: Login Route
-propertyName: loginroute

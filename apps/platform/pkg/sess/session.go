@@ -268,6 +268,14 @@ func (s *Session) GetContextAppBundle() *meta.BundleDef {
 	return s.site.GetAppBundle()
 }
 
+func (s *Session) GetDefaultTheme() string {
+	defaultTheme := s.GetContextAppBundle().DefaultTheme
+	if defaultTheme == "" {
+		return "uesio.default"
+	}
+	return defaultTheme
+}
+
 // GetContextAppName returns the appname in context
 func (s *Session) GetContextAppName() string {
 	if s.workspace != nil {

@@ -2,6 +2,7 @@ name: docs
 loginRoute: docs.login
 homeRoute: docs.home
 defaultProfile: docs.public
+defaultTheme: uesio.default
 publicProfile: docs.public
 dependencies:
   uesio:

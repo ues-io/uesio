@@ -15,6 +15,7 @@ definition:
         studio.loginroute:
         studio.defaultprofile:
         studio.publicprofile:
+        studio.defaulttheme:
       conditions:
         - field: studio.appid
           valueSource: PARAM
@@ -110,6 +111,10 @@ definition:
                                             fieldId: studio.publicprofile
                                             metadataType: "PROFILE"
                                             label: "Public Profile"
+                                        - studio.metadatafield:
+                                            fieldId: studio.defaulttheme
+                                            metadataType: "THEME"
+                                            label: "Default Theme"
                             - io.box:
                                 uesio.variant: io.section
                                 components:
@@ -229,6 +234,10 @@ definition:
                     fieldId: studio.publicprofile
                     metadataType: "PROFILE"
                     label: "Public Profile"
+                - studio.metadatafield:
+                    fieldId: studio.defaulttheme
+                    metadataType: "THEME"
+                    label: "Default Theme"
         actions:
           - io.button:
               uesio.variant: "io.primary"

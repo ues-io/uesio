@@ -2,6 +2,7 @@ name: studio
 loginRoute: studio.login
 homeRoute: studio.home
 defaultProfile: studio.standard
+defaultTheme: studio.default
 publicProfile: studio.public
 dependencies:
   uesio:

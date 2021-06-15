@@ -206,6 +206,14 @@ const SlotItem: FunctionComponent<SlotItemProps> = (props) => {
 						uesio.builder.setDragNode(fullPath)
 					}
 				}}
+				stopDragging={() => {
+					if (!isStructureView) {
+						return
+					}
+					if (dragNode) {
+						uesio.builder.setDragNode("")
+					}
+				}}
 				title={propDef?.title ?? "Unknown"}
 			>
 				<component.Component

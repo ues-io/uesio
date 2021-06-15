@@ -17,6 +17,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			},
 			inner: {
 				background: "white",
+				minHeight: "100vh",
+				padding: "0.05px", // Hack to prevent margin collapse
 			},
 		},
 		props
@@ -65,7 +67,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<div className={classes.inner}>
 				<component.View
-					{...props}
+					context={props.context}
+					path=""
 					definition={{
 						view: route.view,
 						params: route.params,

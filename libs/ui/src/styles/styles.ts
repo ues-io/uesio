@@ -196,7 +196,9 @@ function useUtilityStyles<K extends string>(
 			classNames[className] = cx(
 				css([defaults[className], props?.styles?.[className]]),
 				props?.classes?.[className],
-				props?.className
+				// A bit weird here... Only apply the passed-in className prop to root styles.
+				// Otherwise, it would be applied to every class sent in as defaults.
+				className === "root" && props?.className
 			)
 			return classNames
 		},

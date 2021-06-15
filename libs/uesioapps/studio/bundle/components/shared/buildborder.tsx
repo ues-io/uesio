@@ -9,6 +9,7 @@ interface Props {
 	onMouseEnter?: (event: MouseEvent) => void
 	onMouseLeave?: (event: MouseEvent) => void
 	setDragging?: (event: MouseEvent) => void
+	stopDragging?: (event: MouseEvent) => void
 	isSelected?: boolean
 	isActive?: boolean
 	title?: string
@@ -31,6 +32,7 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 		onMouseLeave,
 		isSelected,
 		setDragging,
+		stopDragging,
 		isActive,
 		isStructureView,
 		children,
@@ -94,7 +96,11 @@ const BuildBorder: FunctionComponent<Props> = (props) => {
 			onMouseLeave={onMouseLeave}
 		>
 			{(isSelected || isStructureView) && (
-				<div onMouseDown={setDragging} className={classes.header}>
+				<div
+					onMouseDown={setDragging}
+					onMouseUp={stopDragging}
+					className={classes.header}
+				>
 					{title}
 				</div>
 			)}

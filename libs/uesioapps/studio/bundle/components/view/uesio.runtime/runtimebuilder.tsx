@@ -120,7 +120,7 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 				/>
 			)}
 			<Canvas
-				{...props}
+				context={context}
 				className={styles.css({
 					gridRow: "1 / 3",
 					gridColumn: state.showCode ? "3" : "3 / 5",

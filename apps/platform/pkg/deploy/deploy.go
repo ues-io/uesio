@@ -196,9 +196,10 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 		HomeRoute:      by.HomeRoute,
 		DefaultProfile: by.DefaultProfile,
 		PublicProfile:  by.PublicProfile,
+		DefaultTheme:   by.DefaultTheme,
 	})
 
-	// We set the valid fields here because it's and update and we don't want
+	// We set the valid fields here because it's an update and we don't want
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
@@ -207,6 +208,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 			"studio.homeroute":      true,
 			"studio.defaultprofile": true,
 			"studio.publicprofile":  true,
+			"studio.defaulttheme":   true,
 		},
 	})
 
