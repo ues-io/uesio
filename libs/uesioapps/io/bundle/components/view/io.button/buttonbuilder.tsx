@@ -1,12 +1,12 @@
 import { FunctionComponent } from "react"
 import { ButtonProps, ButtonDefinition } from "./buttondefinition"
 import Button from "./button"
-import { hooks, styles } from "@uesio/ui"
+import { hooks, styles, component } from "@uesio/ui"
 
 const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 	const classes = styles.useStyles(
 		{
-			root: {
+			inner: {
 				pointerEvents: "none",
 			},
 		},
@@ -15,13 +15,12 @@ const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 		}
 	)
 
-	const uesio = hooks.useUesio(props)
-	const definition = uesio.view.useDefinition(props.path) as ButtonDefinition
+	const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
 	return (
-		<div className={classes.root}>
-			<Button {...props} definition={definition} />
-		</div>
+		<BuildWrapper {...props} classes={classes}>
+			<Button {...props} />
+		</BuildWrapper>
 	)
 }
 

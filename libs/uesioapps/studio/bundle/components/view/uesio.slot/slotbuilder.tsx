@@ -1,6 +1,5 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, DragEvent } from "react"
-import SlotItem from "../../shared/slotitem"
 import { handleDrop, getDropIndex, isDropAllowed } from "../../shared/dragdrop"
 
 type SlotDefinition = {
@@ -46,8 +45,8 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		if (path !== dropNode) {
-			uesio.builder.setDropNode(path)
+		if (size === 0) {
+			uesio.builder.setDropNode(`${path}["0"]`)
 		}
 	}
 
@@ -57,7 +56,8 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		handleDrop(dragNode, path, getDropIndex(dragNode, path, size), uesio)
+		const index = component.path.getIndexFromPath(dropNode) || 0
+		handleDrop(dragNode, path, getDropIndex(dragNode, path, index), uesio)
 	}
 
 	const isDragging = !!dragNode
@@ -65,15 +65,6 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {
-				height: "100%",
-				...(isHorizontal && {
-					display: "flex",
-					alignItems: "center",
-					...(isDragging &&
-						isStructureView && {
-							minHeight: "40px",
-						}),
-				}),
 				display: "contents",
 			},
 			placeHolder: {
@@ -97,33 +88,23 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		props
 	)
 
-	const addPlaceholder =
-		dropNode === path || dropNode === `${path}["${size}"]`
-
-	const placeholderClasses = styles.cx(classes.placeHolder, {
-		[classes.placeHolderNoMargin]:
-			addPlaceholder &&
-			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,
-	})
 	return (
 		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
-			{items.map((itemDef, index) => (
-				<SlotItem
-					key={index}
-					path={path}
-					index={index}
-					definition={itemDef}
-					direction={
-						direction === "horizontal" ? "horizontal" : "vertical"
-					}
-					size={size}
-					context={context}
-					accepts={accepts}
-					dragNode={dragNode}
-					dropNode={dropNode}
-				/>
-			))}
-			{addPlaceholder && <div className={placeholderClasses} />}
+			{items.map((itemDef, index) => {
+				const [
+					componentType,
+					unWrappedDef,
+				] = component.path.unWrapDefinition(itemDef)
+				return (
+					<component.Component
+						definition={unWrappedDef}
+						componentType={componentType}
+						index={index}
+						path={`${path}["${index}"]`}
+						context={context}
+					/>
+				)
+			})}
 		</div>
 	)
 }

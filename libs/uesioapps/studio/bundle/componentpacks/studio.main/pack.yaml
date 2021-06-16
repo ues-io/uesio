@@ -49,4 +49,6 @@ components:
     uesio.runtime:
     uesio.slot:
     uesio.view:
+  utility:
+    studio.buildwrapper:
 
