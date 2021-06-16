@@ -10,11 +10,23 @@ interface TitleBarProps extends definition.BaseProps {
 }
 
 const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
-	title: "Button",
-	defaultDefinition: () => ({}),
-	properties: [],
+	title: "Title Bar",
+	defaultDefinition: () => ({ title: "New Title" }),
+	properties: [
+		{
+			name: "title",
+			type: "TEXT",
+			label: "Title",
+		},
+		{
+			name: "subtitle",
+			type: "TEXT",
+			label: "Subtitle",
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export { TitleBarProps, TitleBarDefinition }
 
