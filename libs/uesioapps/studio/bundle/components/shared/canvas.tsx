@@ -6,6 +6,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		{
 			root: {
 				overflowY: "scroll",
+				position: "relative",
 				padding: "60px",
 				...styles.getBackgroundStyles(
 					{

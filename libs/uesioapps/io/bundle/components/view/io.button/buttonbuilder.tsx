@@ -1,7 +1,9 @@
 import { FunctionComponent } from "react"
-import { ButtonProps, ButtonDefinition } from "./buttondefinition"
+import { ButtonProps } from "./buttondefinition"
 import Button from "./button"
-import { hooks, styles, component } from "@uesio/ui"
+import { styles, component } from "@uesio/ui"
+
+const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
 const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 	const classes = styles.useStyles(
@@ -14,8 +16,6 @@ const ButtonBuilder: FunctionComponent<ButtonProps> = (props) => {
 			context: props.context,
 		}
 	)
-
-	const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
 	return (
 		<BuildWrapper {...props} classes={classes}>

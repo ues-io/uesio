@@ -22,7 +22,9 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 			},
 			title: {},
 			subtitle: {},
-			actions: {},
+			actions: {
+				position: "relative",
+			},
 		},
 		props
 	)

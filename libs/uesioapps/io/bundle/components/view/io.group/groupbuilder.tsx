@@ -1,13 +1,14 @@
 import { FunctionComponent } from "react"
-import { GroupProps, GroupDefinition } from "./groupdefinition"
+import { GroupProps } from "./groupdefinition"
 import Group from "./group"
-import { hooks, styles } from "@uesio/ui"
+import { component } from "@uesio/ui"
 
-const GroupBuilder: FunctionComponent<GroupProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const definition = uesio.view.useDefinition(props.path) as GroupDefinition
+const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
-	return <Group {...props} definition={definition} />
-}
+const GroupBuilder: FunctionComponent<GroupProps> = (props) => (
+	<BuildWrapper {...props}>
+		<Group {...props} />
+	</BuildWrapper>
+)
 
 export default GroupBuilder

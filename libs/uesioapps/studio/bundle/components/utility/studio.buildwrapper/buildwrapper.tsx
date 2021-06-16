@@ -1,12 +1,5 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
-import {
-	definition,
-	styles,
-	component,
-	hooks,
-	metadata,
-	collection,
-} from "@uesio/ui"
+import { definition, styles, component, hooks } from "@uesio/ui"
 import {
 	handleDrop,
 	getDropIndex,
@@ -24,7 +17,7 @@ const INACTIVE_COLOR = "#eee"
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { children, definition, path = "", index = 0 } = props
+	const { children, path = "", index = 0 } = props
 
 	const propDef = component.registry.getPropertiesDefinitionFromPath(path)
 
@@ -44,11 +37,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const accepts = ["uesio.standalone"]
 	const direction = "horizontal"
 
-	const isHorizontal = direction === "horizontal"
-	const isVertical = !isHorizontal
 	const wrapperPath = component.path.getGrandParentPath(path)
 
-	const isDragging = !!dragNode
 	const isDraggingMe = path === dragNode
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropNode
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropNode
@@ -58,6 +48,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
+				position: "relative",
 				userSelect: "none",
 				...(isStructureView && {
 					border: `1px solid ${
@@ -115,30 +106,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		props
 	)
 
-	const onDragOver = (e: DragEvent) => {
-		if (!isDropAllowed(accepts, dragNode)) {
-			return
-		}
-		e.preventDefault()
-		e.stopPropagation()
-		const currentTarget = e.currentTarget as HTMLDivElement
-		const bounds = currentTarget.getBoundingClientRect()
-		const dropIndex = isNextSlot(bounds, direction, e.pageX, e.pageY)
-			? index + 1
-			: index
-		let usePath = `${wrapperPath}["${dropIndex}"]`
-
-		if (usePath === component.path.getParentPath(dragNode)) {
-			// Don't drop on ourselfs, just move to the next index
-			usePath = `${wrapperPath}["${dropIndex + 1}"]`
-		}
-
-		if (usePath !== dropNode) {
-			uesio.builder.setDropNode(usePath)
-		}
-	}
-
 	const onDragStart = (e: DragEvent) => {
+		e.stopPropagation()
 		setTimeout(() => {
 			if (dragNode !== path) {
 				uesio.builder.setDragNode(path)
@@ -151,31 +120,11 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		uesio.builder.setDropNode("")
 	}
 
-	const onDrop = (e: DragEvent) => {
-		if (!isDropAllowed(accepts, dragNode)) {
-			return
-		}
-		e.preventDefault()
-		e.stopPropagation()
-		const currentTarget = e.currentTarget as HTMLDivElement
-		const bounds = currentTarget.getBoundingClientRect()
-		const dropIndex = isNextSlot(bounds, direction, e.pageX, e.pageY)
-			? index + 1
-			: index
-
-		handleDrop(
-			dragNode,
-			wrapperPath || "",
-			getDropIndex(dragNode, wrapperPath || "", dropIndex),
-			uesio
-		)
-	}
 	return (
 		<>
 			{addBeforePlaceholder && <div className={classes.placeholder} />}
 			<div
-				onDragOver={onDragOver}
-				onDrop={onDrop}
+				data-index={index}
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
 				className={classes.root}

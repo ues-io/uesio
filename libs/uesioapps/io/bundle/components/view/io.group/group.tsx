@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, createRef } from "react"
 
 import { component, styles } from "@uesio/ui"
 import { GroupProps } from "./groupdefinition"

@@ -1,6 +1,11 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, DragEvent } from "react"
-import { handleDrop, getDropIndex, isDropAllowed } from "../../shared/dragdrop"
+import {
+	handleDrop,
+	getDropIndex,
+	isDropAllowed,
+	isNextSlot,
+} from "../../shared/dragdrop"
 
 type SlotDefinition = {
 	items: definition.DefinitionList
@@ -40,13 +45,49 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	if (!path) return null
 
 	const onDragOver = (e: DragEvent) => {
+		let target = e.target as Element | null
 		if (!isDropAllowed(accepts, dragNode)) {
 			return
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		if (size === 0) {
-			uesio.builder.setDropNode(`${path}["0"]`)
+
+		while (
+			target !== null &&
+			target !== e.currentTarget &&
+			target?.parentElement !== e.currentTarget
+		) {
+			target = target?.parentElement || null
+		}
+
+		// Find the direct child
+		if (target === e.currentTarget) {
+			if (size === 0) {
+				uesio.builder.setDropNode(`${path}["0"]`)
+			}
+		}
+		const dataIndex = target?.getAttribute("data-index")
+		if (target?.parentElement === e.currentTarget && dataIndex) {
+			const index = parseInt(dataIndex, 10)
+			const bounds = target.getBoundingClientRect()
+			const dropIndex = isNextSlot(
+				bounds,
+				direction || "vertical",
+				e.pageX,
+				e.pageY
+			)
+				? index + 1
+				: index
+			let usePath = `${path}["${dropIndex}"]`
+
+			if (usePath === component.path.getParentPath(dragNode)) {
+				// Don't drop on ourselfs, just move to the next index
+				usePath = `${path}["${dropIndex + 1}"]`
+			}
+
+			if (usePath !== dropNode) {
+				uesio.builder.setDropNode(usePath)
+			}
 		}
 	}
 
@@ -66,6 +107,13 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		{
 			root: {
 				display: "contents",
+			},
+			coverall: {
+				position: "absolute",
+				top: 0,
+				bottom: 0,
+				left: 0,
+				right: 0,
 			},
 			placeHolder: {
 				backgroundColor: "#f4f4f4",
@@ -90,6 +138,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	return (
 		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
+			<div className={classes.coverall} />
 			{items.map((itemDef, index) => {
 				const [
 					componentType,
