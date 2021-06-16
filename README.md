@@ -1,6 +1,6 @@
 # About Uesio
 
-![Uesio Logo](./libs/uesioapps/uesio/bundle/files/uesio.logo/file/logo.png)
+![Uesio Logo](./libs/uesioapps/uesio/bundle/files/uesio.logo/file/uesioblack.png)
 
 Uesio is a **low-code** application development platform.
 
@@ -64,25 +64,9 @@ nx g @nrwl/workspace:library NEW_LIB
 
 # Set up dev environment
 
-> This set up has been successfully tested with the following environments :
->
-> ```
-> go --version
-> go version go1.15.6 darwin/amd64
-> ```
->
-> ```
-> npm -v
-> 6.14.4
-> ```
->
-> ```
-> node -v
-> v12.16.3
-> ```
-
 -   Install [homebrew](https://brew.sh/) (for macOS user)
 -   Install git
+-   Install GitHub Desktop [GitHub Desktop](https://desktop.github.com/)
 -   ```
     brew install wget
     ```
@@ -95,23 +79,24 @@ nx g @nrwl/workspace:library NEW_LIB
 
 -   Install [Go](https://golang.org/dl/)
 -   Install [VS Code](https://code.visualstudio.com/Download) and plugins (ESLint, Prettier, Go, GitLens). Do enable `format on save` in conjunction with the `Prettier`. Set up the `code` [environment variable](https://code.visualstudio.com/docs/setup/mac#_launching-from-the-command-line).
--   git clone repo (ssh method is prefered)
--   Download and install the npm module dependencies :
+-   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+-   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
+-   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+-   _Optional_. Install the `nx` cli globally.
 
-```
-  npm install
-```
+    ```
+    npm install -g nx
+    ```
 
+-   Use Git clone and store this repository in your local machine
 -   Do follow the instructions for setting up SSL [here](#set-up-ssl).
 -   Do follow the instructions for environment variables [here](#environment-variables).
 -   Do follow the instructions for setting up DNS [here](#set-up-local-dns).
--   Build the monorepo :
+-   Create an alias in your terminal, this will help to execute Uesio commands.
 
-```
-  npm run build-all
-```
-
--   Install the following [Google Chrome plugins](https://chrome.google.com/webstore) : `React Developers Tools`, `Redux DevTools`.
+    ```
+    alias uesio=“npm run uesio”
+    ```
 
 ---
 
@@ -119,13 +104,6 @@ nx g @nrwl/workspace:library NEW_LIB
 -   _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
     ```
     npm run dev
-    ```
--   _Optional_. Install [Oh My Zsh](https://ohmyz.sh/)
--   _Optional_. [Add a SSH key to your github account](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
--   _Optional_. Install [iTerm2](https://www.iterm2.com/) (for macOS user)
--   _Optional_. Install the `nx` cli globally.
-    ```
-    npm install -g nx
     ```
 -   _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
@@ -163,6 +141,12 @@ If you are starting on a fresh machine, you can supply the workspaceId and appId
 
 The build process is done either by `webpack`, or our own `cli` or `go build` or the TypeScript compiler aka `tsc` depending on the application/library.
 
+-   Download and install the npm module dependencies :
+
+```
+  npm install
+```
+
 ## Build all applications and libs
 
 ```
@@ -172,7 +156,7 @@ npm run build-all
 ## Build a dedicated app (no watcher and no source map)
 
 ```
-cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run pack
+cd ./libs/uesioapps/crm && uesio pack
 
 // or
 npm run nx -- build uesioapps-crm
@@ -186,7 +170,7 @@ nx build uesioapps-crm
 On the frontend, the `source map` is enabled in webpack in `dev` mode. While developping you might want to rebuild on saving with the source map in the browser :
 
 ```
-cd ./libs/uesioapps/uesio && ../../../apps/cli/bin/run pack --develop
+cd ./libs/uesioapps/uesio && uesio pack --develop
 ```
 
 # Watch mode
@@ -207,10 +191,10 @@ As a side note, the `dev` npm script does include this `watch-all` npm script.
 
 **Uesio apps** such as the **uesio crm** are applications which can be plugged into the uesio system. These uesio apps are located in the `uesioapps` directory which is located under the `libs` folder.
 
-For plugging such an application into uesio, you have to deploy it, obviously after having built it. This deployment process is done by the `cli`.
+For plugging such an application into uesio, you have to deploy it, **obviously after having built it**. This deployment process is done by the `cli`.
 
 ```
-cd ./libs/uesioapps/crm && ../../../apps/cli/bin/run deploy
+cd ./libs/uesioapps/crm && uesio deploy
 
 // or
 npm run nx -- deploy uesioapps-crm
@@ -247,32 +231,43 @@ On Mac modify the `/etc/hosts` file to include the following lines
 127.0.0.1 uesio-dev.com
 127.0.0.1 studio.uesio-dev.com
 127.0.0.1 www.uesio-dev.com
+127.0.0.1 docs.uesio-dev.com
+127.0.0.1 www.docs.uesio-dev.com
 ```
 
-Mac users can also use a service called dnsmasq for managing local DNS, but that has not been documented yet.
+Mac users can also use a service called dnsmasq for managing local DNS.
+
+```
+brew install dnsmasq
+```
+
+The installation process will output several commands that you can use to start Dnsmasq automatically with a default configuration. I used the following commands but you should use whichever commands brew tells you to:
+
+```
+sudo brew services start dnsmasq
+```
 
 # <a id="environment-variables"></a> Environment Variables
 
-Do define the following environment variables in `~/.zshenv`.
+Do define the following environment variables in `~/.zshenv`. (If you are using Oh My Zsh)
 
-| Environment Variable         | Description                                                                                |
-| ---------------------------- | ------------------------------------------------------------------------------------------ |
-| UESIO_USE_HTTPS              | Use ssl or not                                                                             |
-| GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    |
-| GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  |
-|                              | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)         |
-| FIRESTORE_EMULATOR_HOST      | Emulator host and port                                                                     |
-| UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                |
-| UESIO_PLATFORM_BUCKET        | The Bucket in GCP file uploads will be populated to if using the useio.platform filesource |
-|                              | (Can be either empty, or "filesystem" if you want sessions to persist)                     |
-| UESIO_ALLOW_INSECURE_COOKIES | Allows cookies without the secure flag (Useful in local docker envirnments)                |
-| UESIO_LOCAL_FILES            | Set to "true" to have the uesio.platform filesource save files to the file system          |
-| UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             |
-|                              |                                                                                            |
-| COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |
-| COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |
+| Environment Variable         | Description                                                                                | Examples, Values & Help                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| UESIO_USE_HTTPS              | Use ssl or not                                                                             | true or false                                                                           |
+| GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    | test-cf94a                                                                              |
+| GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)      |
+| FIRESTORE_EMULATOR_HOST      | Emulator host and port                                                                     |                                                                                         |
+| UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                | filesystem or "" (Can be either empty, or "filesystem" if you want sessions to persist) |
+| UESIO_PLATFORM_BUCKET        | The Bucket in GCP file uploads will be populated to if using the useio.platform filesource |                                                                                         |
+| UESIO_ALLOW_INSECURE_COOKIES | Allows cookies without the secure flag (Useful in local docker envirnments)                | true                                                                                    |
+| UESIO_LOCAL_FILES            | Set to "true" to have the uesio.platform filesource save files to the file system          | true                                                                                    |
+| UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             | true                                                                                    |
+| COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |                                                                                         |
+| COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
 
 # Seed Local Database with Test Data
+
+This creates test data & the basic data Uesio needs to start in you database.
 
 ```
 npm run nx -- seed platform
