@@ -11,10 +11,17 @@ interface GroupProps extends definition.BaseProps {
 
 const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Group",
-	defaultDefinition: () => ({}),
-	properties: [],
+	defaultDefinition: () => ({ columnGap: "10px" }),
+	properties: [
+		{
+			name: "columnGap",
+			type: "TEXT",
+			label: "Column Gap",
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export { GroupProps, GroupDefinition }
 
