@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
-
-import { hooks, styles } from "@uesio/ui"
+import { hooks, styles, component } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
-import IOButton from "../../utility/io.button/button"
+
+const IOButton = component.registry.getUtility("io.button")
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition, context } = props
