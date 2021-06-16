@@ -18,10 +18,22 @@ interface ListProps extends definition.BaseProps {
 
 const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "List",
-	defaultDefinition: () => ({}),
-	properties: [],
+	defaultDefinition: () => ({ wire: "", mode: "READ" }),
+	properties: [
+		{
+			name: "wire",
+			type: "TEXT",
+			label: "Wire",
+		},
+		{
+			name: "mode",
+			type: "TEXT",
+			label: "Mode",
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export { ListProps, ListState, ListDefinition }
 
