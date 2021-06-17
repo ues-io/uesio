@@ -1,12 +1,14 @@
 import { FunctionComponent } from "react"
-import { TextProps, TextDefinition } from "./textdefinition"
+import { TextProps } from "./textdefinition"
 import Text from "./text"
-import { hooks } from "@uesio/ui"
+import { component } from "@uesio/ui"
 
-const TextBuilder: FunctionComponent<TextProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const definition = uesio.view.useDefinition(props.path) as TextDefinition
-	return <Text {...props} definition={definition} />
-}
+const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
+
+const TextBuilder: FunctionComponent<TextProps> = (props) => (
+	<BuildWrapper {...props}>
+		<Text {...props} />
+	</BuildWrapper>
+)
 
 export default TextBuilder

@@ -19,12 +19,12 @@ const isInRange = (offset: number, node: Node) => {
 
 const getNodeAtOffset = (
 	offset: number,
-	parentnode: Node,
+	parentnode: Collection,
 	path: string,
 	includeKey?: boolean
 ): [Node | null, string] => {
 	if (isInRange(offset, parentnode)) {
-		const nodes = (parentnode as Collection).items
+		const nodes = parentnode.items
 		let index = 0
 		if (!nodes) {
 			return [parentnode, path]
@@ -110,49 +110,58 @@ const getCommonAncestorPath = (
 
 const setNodeAtPath = (
 	path: string | string[],
-	node: Node | null,
+	node: Collection | null,
 	setNode: Node | null
 ): void => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const parentPath = pathArray.slice(0, -1)
-	const parentNode = (node as Collection)?.getIn(parentPath)
+	const parentNode = node?.getIn(parentPath)
 	if (!parentNode && parentPath.length > 0) {
 		setNodeAtPath(parentPath, node, yaml.createNode({}))
 	}
-	;(node as Collection)?.setIn(pathArray, setNode)
+	node?.setIn(pathArray, setNode)
 }
 
 const addNodeAtPath = (
 	path: string | string[],
-	node: Node | null,
+	node: Collection | null,
 	setNode: Node,
 	index: number
 ): void => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
-	let parentNode = (node as Collection)?.getIn(pathArray)
+	let parentNode = node?.getIn(pathArray)
 	if (!parentNode && path.length > 0) {
 		setNodeAtPath(path, node, yaml.createNode([]))
-		parentNode = (node as Collection)?.getIn(pathArray)
+		parentNode = node?.getIn(pathArray)
 	}
 	parentNode.items.splice(index, 0, setNode)
 }
 
 const addNodePairAtPath = (
 	path: string | string[],
-	node: Node | null,
+	node: Collection | null,
 	setNode: Node,
 	key: string
 ): void => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
-	const parentNode = (node as Collection)?.getIn(pathArray)
-	parentNode
-		? (node as Collection)?.addIn(pathArray, new Pair(key, setNode))
-		: (node as Collection)?.setIn(pathArray, new Pair(key, setNode))
+	const hasParent = node?.hasIn(pathArray)
+	if (hasParent) {
+		const fullPathArray = pathArray.concat([key])
+		const alreadyExists = node?.hasIn(fullPathArray)
+		alreadyExists
+			? node?.setIn(fullPathArray, setNode)
+			: node?.addIn(pathArray, new Pair(key, setNode))
+		return
+	}
+	node?.setIn(pathArray, new Pair(key, setNode))
 }
 
-const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
+const removeNodeAtPath = (
+	path: string | string[],
+	node: Collection | null
+): void => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
-	;(node as Collection)?.deleteIn(pathArray)
+	node?.deleteIn(pathArray)
 }
 
 export {

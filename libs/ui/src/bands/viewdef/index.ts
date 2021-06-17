@@ -106,15 +106,21 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 	const index = pathArray.pop() // Get the index
 	const parent = get(state.definition, pathArray)
 	if (index) {
-		const newParent = Array.isArray(parent)
-			? parent.filter(
-					(item: Definition, itemIndex: number) =>
-						parseInt(index, 10) !== itemIndex
-			  )
-			: delete parent[index]
-		if (state.definition) {
-			setWith(state, ["definition"].concat(pathArray), newParent)
+		if (Array.isArray(parent)) {
+			const newParent = parent.filter(
+				(item: Definition, itemIndex: number) =>
+					parseInt(index, 10) !== itemIndex
+			)
+			if (state.definition) {
+				setWith(state, ["definition"].concat(pathArray), newParent)
+			}
+		} else {
+			delete parent[index]
+			if (state.definition) {
+				setWith(state, ["definition"].concat(pathArray), parent)
+			}
 		}
+
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
 			state.yaml = parse(state.yaml.toString())
