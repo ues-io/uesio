@@ -22,7 +22,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [
 		{
 			name: "id",
-			type: "KEY",
+			type: "TEXT",
 			label: "id",
 		},
 		{
