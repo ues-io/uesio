@@ -36,10 +36,37 @@ type ColumnDefinition = {
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
-	defaultDefinition: () => ({}),
-	properties: [],
+	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	properties: [
+		{
+			name: "id",
+			type: "KEY",
+			label: "id",
+		},
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "wire",
+		},
+		{
+			name: "mode",
+			type: "SELECT",
+			label: "Mode",
+			options: [
+				{
+					value: "READ",
+					label: "Read",
+				},
+				{
+					value: "EDIT",
+					label: "Edit",
+				},
+			],
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
 }
 export {
 	TableProps,
