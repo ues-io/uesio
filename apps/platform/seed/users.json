@@ -18,12 +18,21 @@
 		"uiDescriptor": "Team Member"
 	},
 	{
-		"federationId": "MockJackson",
+		"federationId": "MockWessel",
 		"federationType": "mock",
-		"firstname": "Jackson",
-		"lastname": "Stone",
+		"firstname": "Wessel",
+		"lastname": "van der Plas",
 		"profile": "studio.standard",
 		"site": "prod_studio",
-		"uiDescriptor": "Contributor"
+		"uiDescriptor": "Team Member"
+	},
+	{
+		"federationId": "MockGregg",
+		"federationType": "mock",
+		"firstname": "Gregg",
+		"lastname": "Baxter",
+		"profile": "studio.standard",
+		"site": "prod_studio",
+		"uiDescriptor": "Team Member"
 	}
 ]

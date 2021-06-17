@@ -2,5 +2,5 @@ name: account
 collection: crm.contacts
 type: REFERENCE
 label: Account
-propertyName: accountid
+propertyName: account
 referencedCollection: crm.accounts
