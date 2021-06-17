@@ -29,7 +29,7 @@ const View: FunctionComponent<Props> = (props) => {
 		display: "grid",
 	})
 
-	const isSubView = path !== ""
+	const isSubView = !!path
 
 	// Currently only going into buildtime for the base view. We could change this later.
 	const buildMode = !!context.getBuildMode() && !isSubView

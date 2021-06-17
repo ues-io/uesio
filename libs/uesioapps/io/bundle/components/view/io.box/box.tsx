@@ -4,7 +4,14 @@ import { component, styles, hooks } from "@uesio/ui"
 import { BoxProps } from "./boxdefinition"
 
 const Box: FunctionComponent<BoxProps> = (props) => {
-	const classes = styles.useStyles({ root: {} }, props)
+	const classes = styles.useStyles(
+		{
+			root: {
+				position: "relative",
+			},
+		},
+		props
+	)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	return (

@@ -2,6 +2,7 @@ name: crm
 loginRoute: uesio.login
 homeRoute: crm.home
 defaultProfile: crm.standard
+defaultTheme: crm.default
 publicProfile: uesio.public
 dependencies:
   sample:

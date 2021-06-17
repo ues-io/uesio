@@ -62,7 +62,9 @@ const FieldCell: FunctionComponent<CellProps> = ({
 			}}
 			index={index}
 			path={`${path}["columns"]["${index}"]`}
-			context={context}
+			context={context.addFrame({
+				buildMode: false,
+			})}
 		/>
 	</td>
 )

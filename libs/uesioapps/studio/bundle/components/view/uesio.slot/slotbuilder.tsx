@@ -1,7 +1,11 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { FunctionComponent, DragEvent } from "react"
-import SlotItem from "../../shared/slotitem"
-import { handleDrop, getDropIndex, isDropAllowed } from "../../shared/dragdrop"
+import {
+	handleDrop,
+	getDropIndex,
+	isDropAllowed,
+	isNextSlot,
+} from "../../shared/dragdrop"
 
 type SlotDefinition = {
 	items: definition.DefinitionList
@@ -41,13 +45,52 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	if (!path) return null
 
 	const onDragOver = (e: DragEvent) => {
+		let target = e.target as Element | null
 		if (!isDropAllowed(accepts, dragNode)) {
 			return
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		if (path !== dropNode) {
-			uesio.builder.setDropNode(path)
+
+		while (
+			target !== null &&
+			target !== e.currentTarget &&
+			target?.parentElement !== e.currentTarget
+		) {
+			target = target?.parentElement || null
+		}
+
+		const isCoverall = !!target?.getAttribute("data-coverall")
+		// Find the direct child
+		if (target === e.currentTarget || isCoverall) {
+			if (size === 0) {
+				uesio.builder.setDropNode(`${path}["0"]`)
+			}
+		}
+
+		const dataIndex = target?.getAttribute("data-index")
+
+		if (target?.parentElement === e.currentTarget && dataIndex) {
+			const index = parseInt(dataIndex, 10)
+			const bounds = target.getBoundingClientRect()
+			const dropIndex = isNextSlot(
+				bounds,
+				direction || "vertical",
+				e.pageX,
+				e.pageY
+			)
+				? index + 1
+				: index
+			let usePath = `${path}["${dropIndex}"]`
+
+			if (usePath === component.path.getParentPath(dragNode)) {
+				// Don't drop on ourselfs, just move to the next index
+				usePath = `${path}["${dropIndex + 1}"]`
+			}
+
+			if (usePath !== dropNode) {
+				uesio.builder.setDropNode(usePath)
+			}
 		}
 	}
 
@@ -57,7 +100,8 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		handleDrop(dragNode, path, getDropIndex(dragNode, path, size), uesio)
+		const index = component.path.getIndexFromPath(dropNode) || 0
+		handleDrop(dragNode, path, getDropIndex(dragNode, path, index), uesio)
 	}
 
 	const isDragging = !!dragNode
@@ -65,65 +109,51 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {
-				height: "100%",
-				...(isHorizontal && {
-					display: "flex",
-					alignItems: "center",
-					...(isDragging &&
-						isStructureView && {
-							minHeight: "40px",
-						}),
-				}),
 				display: "contents",
 			},
-			placeHolder: {
-				backgroundColor: "#f4f4f4",
-				border: "1px solid #EEE",
-				...(isHorizontal && {
-					paddingLeft: "120px",
-					marginLeft: "8px",
-					alignSelf: "stretch",
+			coverall: {
+				...(size > 0 && {
+					position: "absolute",
+					top: 0,
+					bottom: 0,
+					left: 0,
+					right: 0,
 				}),
-				...(isVertical && {
-					paddingTop: "40px",
-					marginTop: "8px",
-				}),
-			},
-			placeHolderNoMargin: {
-				marginTop: 0,
-				marginLeft: 0,
+				...(size === 0 &&
+					isDropAllowed(accepts, dragNode) && {
+						minWidth: "40px",
+						minHeight: "40px",
+					}),
+				...(size === 0 &&
+					dropNode === `${path}["0"]` && {
+						border: "1px dashed #ccc",
+						backgroundColor: "#e5e5e5",
+					}),
 			},
 		},
 		props
 	)
 
-	const addPlaceholder =
-		dropNode === path || dropNode === `${path}["${size}"]`
-
-	const placeholderClasses = styles.cx(classes.placeHolder, {
-		[classes.placeHolderNoMargin]:
-			addPlaceholder &&
-			component.path.getParentPath(dragNode) === `${path}["${size - 1}"]`,
-	})
 	return (
 		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
-			{items.map((itemDef, index) => (
-				<SlotItem
-					key={index}
-					path={path}
-					index={index}
-					definition={itemDef}
-					direction={
-						direction === "horizontal" ? "horizontal" : "vertical"
-					}
-					size={size}
-					context={context}
-					accepts={accepts}
-					dragNode={dragNode}
-					dropNode={dropNode}
-				/>
-			))}
-			{addPlaceholder && <div className={placeholderClasses} />}
+			{isDragging && isStructureView && (
+				<div className={classes.coverall} data-coverall="true" />
+			)}
+			{items.map((itemDef, index) => {
+				const [
+					componentType,
+					unWrappedDef,
+				] = component.path.unWrapDefinition(itemDef)
+				return (
+					<component.Component
+						definition={unWrappedDef}
+						componentType={componentType}
+						index={index}
+						path={`${path}["${index}"]`}
+						context={context}
+					/>
+				)
+			})}
 		</div>
 	)
 }

@@ -151,6 +151,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.PublicProfile = workspace.PublicProfile
 	by.HomeRoute = workspace.HomeRoute
 	by.LoginRoute = workspace.LoginRoute
+	by.DefaultTheme = workspace.DefaultTheme
 
 	return &by, nil
 }

@@ -5,7 +5,7 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import { getLoader } from "./registry"
+import { getLoader, getRuntimeLoader, getUtility } from "./registry"
 import NotFound from "../components/notfound"
 import { ComponentVariant } from "../bands/viewdef/types"
 import { parseKey } from "./path"
@@ -194,6 +194,17 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	return render(loader, componentType, props)
 }
 
+const BuildWrapper = getUtility("studio.buildwrapper")
+
+const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
+	const Loader = getRuntimeLoader(key)
+	return (
+		<BuildWrapper {...props}>
+			<Loader {...props} />
+		</BuildWrapper>
+	)
+}
+
 export {
 	ComponentInternal,
 	Component,
@@ -201,5 +212,6 @@ export {
 	renderUtility,
 	mergeInVariants,
 	getVariantStylesDef,
+	getDefaultBuildtimeLoader,
 	mergeDefinitionMaps,
 }

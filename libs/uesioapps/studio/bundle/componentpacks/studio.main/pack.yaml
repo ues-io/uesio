@@ -9,6 +9,12 @@ components:
         - io.selectfield
         - io.button
         - io.titlebar
+      variants:
+        - io.button.io.secondary
+        - io.button.io.primary
+        - io.selectfield.io.default
+        - io.tile.io.item
+        - io.titlebar.io.default
     studio.metadatafield:
       utilities:
         - io.textfield
@@ -43,4 +49,6 @@ components:
     uesio.runtime:
     uesio.slot:
     uesio.view:
+  utility:
+    studio.buildwrapper:
 

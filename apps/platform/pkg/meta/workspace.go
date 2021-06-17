@@ -8,6 +8,7 @@ type Workspace struct {
 	LoginRoute     string         `uesio:"studio.loginroute"`
 	HomeRoute      string         `uesio:"studio.homeroute"`
 	DefaultProfile string         `uesio:"studio.defaultprofile"`
+	DefaultTheme   string         `uesio:"studio.defaulttheme"`
 	PublicProfile  string         `uesio:"studio.publicprofile"`
 	App            *App           `uesio:"studio.app"`
 	Permissions    *PermissionSet `uesio:"-"`

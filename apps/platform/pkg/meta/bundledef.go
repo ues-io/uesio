@@ -12,6 +12,7 @@ type BundleDef struct {
 	LoginRoute     string                 `yaml:"loginRoute,omitempty"`
 	HomeRoute      string                 `yaml:"homeRoute,omitempty"`
 	DefaultProfile string                 `yaml:"defaultProfile,omitempty"`
+	DefaultTheme   string                 `yaml:"defaultTheme,omitempty"`
 	PublicProfile  string                 `yaml:"publicProfile,omitempty"`
 	Dependencies   BundleDefDependencyMap `yaml:"dependencies,omitempty"`
 }

@@ -10,6 +10,7 @@ import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import {
+	getDefaultBuildtimeLoader,
 	getVariantStylesDef,
 	mergeDefinitionMaps,
 	render,
@@ -54,15 +55,15 @@ const registerUtilityComponent = (
 
 const registerBuilder = (
 	key: string,
-	componentType: FC<BaseProps>,
+	componentType?: FC<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
-	addToRegistry(builderRegistry, key, componentType)
+	componentType && addToRegistry(builderRegistry, key, componentType)
 	definition && addToRegistry(definitionRegistry, key, definition)
 }
 
 const getBuildtimeLoader = (key: string) =>
-	builderRegistry[key] || getRuntimeLoader(key)
+	builderRegistry[key] || getDefaultBuildtimeLoader(key)
 
 const getRuntimeLoader = (key: string) => registry[key]
 
@@ -149,7 +150,7 @@ const getPropertiesDefinitionFromPath = (path: string) => {
 	return undefined
 }
 
-const getBuilderComponents = () => Object.keys(builderRegistry)
+const getBuilderComponents = () => Object.keys(definitionRegistry)
 
 export {
 	register,
@@ -159,6 +160,7 @@ export {
 	get,
 	getUtility,
 	getLoader,
+	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,
 	getPropertiesDefinition,
