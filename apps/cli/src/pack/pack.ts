@@ -91,26 +91,26 @@ const getBuilderEntryFile = async (
 		)
 
 		if (hasBuilder) {
-			const hasDef = await fileExists(
-				path.resolve(
-					`./bundle/components/view/${key}/${propDefName}.ts`
-				)
-			)
-
 			builderImports.push(
 				`import ${builderName} from "../../components/view/${key}/${builderName}";`
 			)
+		}
 
-			if (hasDef) {
-				defImports.push(
-					`import ${propDefName} from "../../components/view/${key}/${propDefName}";`
-				)
-			}
+		const hasDef = await fileExists(
+			path.resolve(`./bundle/components/view/${key}/${propDefName}.ts`)
+		)
 
+		if (hasDef) {
+			defImports.push(
+				`import ${propDefName} from "../../components/view/${key}/${propDefName}";`
+			)
+		}
+
+		if (hasDef || hasBuilder) {
 			builderRegistrations.push(
-				`component.registry.registerBuilder("${key}", ${builderName}, ${
-					hasDef ? propDefName : "undefined"
-				});`
+				`component.registry.registerBuilder("${key}", ${
+					hasBuilder ? builderName : "undefined"
+				}, ${hasDef ? propDefName : "undefined"});`
 			)
 		}
 	}

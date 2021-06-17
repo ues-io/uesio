@@ -6,7 +6,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		{
 			root: {
 				overflowY: "scroll",
-				position: "relative",
 				padding: "60px",
 				...styles.getBackgroundStyles(
 					{
@@ -20,6 +19,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				background: "white",
 				minHeight: "100vh",
 				padding: "0.05px", // Hack to prevent margin collapse
+				position: "relative",
 			},
 		},
 		props

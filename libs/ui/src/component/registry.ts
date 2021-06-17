@@ -55,10 +55,10 @@ const registerUtilityComponent = (
 
 const registerBuilder = (
 	key: string,
-	componentType: FC<BaseProps>,
+	componentType?: FC<BaseProps>,
 	definition?: BuildPropertiesDefinition
 ) => {
-	addToRegistry(builderRegistry, key, componentType)
+	componentType && addToRegistry(builderRegistry, key, componentType)
 	definition && addToRegistry(definitionRegistry, key, definition)
 }
 
@@ -150,7 +150,7 @@ const getPropertiesDefinitionFromPath = (path: string) => {
 	return undefined
 }
 
-const getBuilderComponents = () => Object.keys(builderRegistry)
+const getBuilderComponents = () => Object.keys(definitionRegistry)
 
 export {
 	register,

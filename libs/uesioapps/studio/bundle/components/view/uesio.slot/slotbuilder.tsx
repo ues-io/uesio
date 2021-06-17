@@ -60,13 +60,16 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 			target = target?.parentElement || null
 		}
 
+		const isCoverall = !!target?.getAttribute("data-coverall")
 		// Find the direct child
-		if (target === e.currentTarget) {
+		if (target === e.currentTarget || isCoverall) {
 			if (size === 0) {
 				uesio.builder.setDropNode(`${path}["0"]`)
 			}
 		}
+
 		const dataIndex = target?.getAttribute("data-index")
+
 		if (target?.parentElement === e.currentTarget && dataIndex) {
 			const index = parseInt(dataIndex, 10)
 			const bounds = target.getBoundingClientRect()
@@ -109,28 +112,23 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 				display: "contents",
 			},
 			coverall: {
-				position: "absolute",
-				top: 0,
-				bottom: 0,
-				left: 0,
-				right: 0,
-			},
-			placeHolder: {
-				backgroundColor: "#f4f4f4",
-				border: "1px solid #EEE",
-				...(isHorizontal && {
-					paddingLeft: "120px",
-					marginLeft: "8px",
-					alignSelf: "stretch",
+				...(size > 0 && {
+					position: "absolute",
+					top: 0,
+					bottom: 0,
+					left: 0,
+					right: 0,
 				}),
-				...(isVertical && {
-					paddingTop: "40px",
-					marginTop: "8px",
-				}),
-			},
-			placeHolderNoMargin: {
-				marginTop: 0,
-				marginLeft: 0,
+				...(size === 0 &&
+					isDropAllowed(accepts, dragNode) && {
+						minWidth: "40px",
+						minHeight: "40px",
+					}),
+				...(size === 0 &&
+					dropNode === `${path}["0"]` && {
+						border: "1px dashed #ccc",
+						backgroundColor: "#e5e5e5",
+					}),
 			},
 		},
 		props
@@ -138,7 +136,9 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	return (
 		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
-			<div className={classes.coverall} />
+			{isDragging && isStructureView && (
+				<div className={classes.coverall} data-coverall="true" />
+			)}
 			{items.map((itemDef, index) => {
 				const [
 					componentType,
