@@ -38,6 +38,10 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		)
 
 		uesio.wire.loadWires(context, ["collectionData"])
+
+		return () => {
+			uesio.view.removeDefinition(`["wires"]["collectionData"]`)
+		}
 	}, [])
 
 	if (!fieldsWire) return null
