@@ -1,0 +1,6 @@
+name: createdby
+collection: studio.profiles
+type: USER
+label: Created By
+propertyName: createdby
+autopopulate: CREATE
