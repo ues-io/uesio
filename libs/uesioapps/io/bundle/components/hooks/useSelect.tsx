@@ -1,3 +1,4 @@
+import { initial } from "lodash"
 import { useEffect, useState } from "react"
 
 export const useSelect = (
@@ -7,8 +8,9 @@ export const useSelect = (
 	const [value, setValue] = useState(initialValue)
 
 	useEffect(() => {
+		if (value === initialValue) return
 		onChange(value)
-	}, [value])
+	}, [value, initialValue])
 
 	return [value, setValue]
 }
