@@ -1,7 +1,7 @@
 import { ChangeEvent, FunctionComponent } from "react"
 import { definition, styles, context, collection, component } from "@uesio/ui"
 import TextField from "../io.textfield/textfield"
-import useSelect from "../../../hooks/useSelect"
+import useSelect from "../../hooks/useSelect"
 interface SelectFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
