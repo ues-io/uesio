@@ -10,6 +10,7 @@ const METADATA = {
 	CREDENTIALS: "credentials",
 	ROUTE: "routes",
 	PROFILE: "profiles",
+	COMPONENTVARIANT: "componentvariants",
 }
 
 type MetadataType = keyof typeof METADATA
