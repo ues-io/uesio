@@ -5,6 +5,7 @@ import SelectProp from "./selectprop"
 
 type DefinitionSelectorProps = PropRendererProps & {
 	definitionPath: string
+	noValueLabel: string
 	filter?: (def: definition.Definition, index: string | number) => boolean
 	valueGrabber?: (
 		def: definition.Definition,
@@ -24,7 +25,7 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 	const definitions = uesio.view.useDefinition(
 		props.definitionPath
 	) as definition.DefinitionMap
-	console.log("definitions", definitions)
+
 	let entries = Object.keys(definitions || {})
 	if (props.filter) {
 		const filter = props.filter
@@ -34,7 +35,7 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 	const options = [
 		{
 			value: "",
-			label: "No wire selected",
+			label: props.noValueLabel,
 		},
 		...entries.map((id) => ({
 			value: props.valueGrabber
