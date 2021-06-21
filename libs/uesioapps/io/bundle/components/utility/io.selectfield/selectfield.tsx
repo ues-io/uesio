@@ -17,11 +17,8 @@ const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 	const { setValue, value, mode, hideLabel, options, label, context } = props
-	const defaultOption = options && options[0] ? options[0].value : ""
-	const [selectVal, setSelectVal] = useSelect(
-		value || defaultOption,
-		setValue
-	)
+
+	const [selectVal, setSelectVal] = useSelect(value, setValue, options)
 
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)

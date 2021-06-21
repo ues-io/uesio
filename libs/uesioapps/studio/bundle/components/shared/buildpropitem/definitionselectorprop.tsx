@@ -24,12 +24,27 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 	const definitions = uesio.view.useDefinition(
 		props.definitionPath
 	) as definition.DefinitionMap
-
+	console.log("definitions", definitions)
 	let entries = Object.keys(definitions || {})
 	if (props.filter) {
 		const filter = props.filter
 		entries = entries.filter((key) => filter(definitions[key], key))
 	}
+
+	const options = [
+		{
+			value: "",
+			label: "No wire selected",
+		},
+		...entries.map((id) => ({
+			value: props.valueGrabber
+				? props.valueGrabber(definitions[id], id) || id
+				: id,
+			label: props.labelGrabber
+				? props.labelGrabber(definitions[id], id) || id
+				: id,
+		})),
+	]
 
 	return (
 		<SelectProp
@@ -37,14 +52,7 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 			descriptor={{
 				...descriptor,
 				type: "SELECT",
-				options: entries.map((id) => ({
-					value: props.valueGrabber
-						? props.valueGrabber(definitions[id], id) || id
-						: id,
-					label: props.labelGrabber
-						? props.labelGrabber(definitions[id], id) || id
-						: id,
-				})),
+				options,
 			}}
 		/>
 	)
