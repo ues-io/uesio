@@ -1,0 +1,6 @@
+name: createdat
+collection: studio.fields
+type: TIMESTAMP
+label: Created At
+propertyName: createdat
+autopopulate: CREATE

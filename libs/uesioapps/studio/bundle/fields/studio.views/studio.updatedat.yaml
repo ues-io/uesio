@@ -1,0 +1,6 @@
+name: updatedat
+collection: studio.views
+type: TIMESTAMP
+label: Updated At
+propertyName: updatedat
+autopopulate: UPDATE

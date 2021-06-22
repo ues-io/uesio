@@ -16,6 +16,10 @@ type ComponentVariant struct {
 	Label      string    `yaml:"label" uesio:"studio.label"`
 	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
