@@ -108,6 +108,7 @@ func CheckProvisionWhitelist(claims *AuthenticationClaims, site *meta.Site) erro
 		"thecloudmasters.com": true,
 		"uesio.com":           true,
 		"tfbnw.net":           true,
+		"ues.io":              true,
 	}
 
 	_, emailOk := emailWhitelist[email]

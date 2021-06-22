@@ -2,6 +2,8 @@ name: app
 components:
   view:
     uesio.loginmock:
+      configvalues:
+        - uesio.mockAuth
       utilities:
         - io.button
       variants:

@@ -57,7 +57,7 @@
         "build-image": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "docker build --tag uesio:v0.0.1 -f ./apps/platform/Dockerfile .",
+            "command": "docker build --tag uesio:latest -f ./apps/platform/Dockerfile .",
             "cwd": "."
           }
         },
