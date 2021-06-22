@@ -28,7 +28,7 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 	} else if metadatatype == "bots" {
 		conditions["studio.type"] = grouping
 	} else if metadatatype == "componentvariants" {
-		conditions["studio.component"] = "io.button"
+		conditions["studio.component"] = grouping
 	}
 
 	collection, err := meta.GetBundleableGroupFromType(metadatatype)
