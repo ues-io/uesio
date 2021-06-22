@@ -2,11 +2,15 @@ package meta
 
 // SiteDomain struct
 type SiteDomain struct {
-	ID       string    `uesio:"uesio.id"`
-	Site     string    `uesio:"uesio.site"`
-	Type     string    `uesio:"uesio.type"`
-	Domain   string    `uesio:"uesio.domain"`
-	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
+	ID        string    `uesio:"uesio.id"`
+	Site      string    `uesio:"uesio.site"`
+	Type      string    `uesio:"uesio.type"`
+	Domain    string    `uesio:"uesio.domain"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy *User     `uesio:"uesio.createdby"`
+	UpdatedBy *User     `uesio:"uesio.updatedby"`
+	UpdatedAt int64     `uesio:"uesio.updatedat"`
+	CreatedAt int64     `uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function

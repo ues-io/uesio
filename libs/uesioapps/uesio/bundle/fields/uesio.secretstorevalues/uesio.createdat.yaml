@@ -1,0 +1,6 @@
+name: createdat
+collection: uesio.secretstorevalues
+type: TIMESTAMP
+label: Created At
+propertyName: createdat
+autopopulate: CREATE
