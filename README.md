@@ -264,6 +264,7 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | UESIO_MOCK_AUTH              | Allows the use of mocked users                                                             | true                                                                                    |
 | COGNITO_CLIENT_ID            | Client Id for a Cognito Pool Device                                                        |                                                                                         |
 | COGNITO_POOL_ID              | Pool Id for a Cognito Pool                                                                 |                                                                                         |
+| GOOGLE_CLIENT_ID             | Client ID for Google Sign In                                                               |
 
 # Seed Local Database with Test Data
 
@@ -418,3 +419,11 @@ Most of commmands you might run related to npm modules.
 ```
   npm update
 ```
+
+# Create Docker Image and push to GCP
+
+1. `nx build-image platform`
+
+2. `docker tag uesio:latest us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
+
+3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`

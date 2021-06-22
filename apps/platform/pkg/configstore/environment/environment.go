@@ -16,6 +16,7 @@ var configValues = map[string]string{
 	"uesio:cognitoPoolId":     os.Getenv("COGNITO_POOL_ID"),
 	"uesio:genericFileBucket": os.Getenv("UESIO_PLATFORM_BUCKET"),
 	"uesio:googleProjectId":   os.Getenv("GOOGLE_CLOUD_PROJECT"),
+	"uesio:mockAuth":          os.Getenv("UESIO_MOCK_AUTH"),
 }
 
 // Get function
