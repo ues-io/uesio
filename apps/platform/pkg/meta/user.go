@@ -11,6 +11,8 @@ type User struct {
 	Site           string            `uesio:"uesio.site"`
 	Picture        *UserFileMetadata `uesio:"uesio.picture"`
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
+	UpdatedAt      int64             `uesio:"uesio.updatedat"`
+	CreatedAt      int64             `uesio:"uesio.createdat"`
 }
 
 func (u *User) GetPictureID() string {

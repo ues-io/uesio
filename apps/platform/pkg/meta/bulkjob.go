@@ -2,10 +2,14 @@ package meta
 
 // BulkJob struct
 type BulkJob struct {
-	ID       string    `uesio:"uesio.id"`
-	Spec     JobSpec   `uesio:"uesio.spec"`
-	Site     string    `uesio:"uesio.site"`
-	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
+	ID        string    `uesio:"uesio.id"`
+	Spec      JobSpec   `uesio:"uesio.spec"`
+	Site      string    `uesio:"uesio.site"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy *User     `uesio:"uesio.createdby"`
+	UpdatedBy *User     `uesio:"uesio.updatedby"`
+	UpdatedAt int64     `uesio:"uesio.updatedat"`
+	CreatedAt int64     `uesio:"uesio.createdat"`
 }
 
 // JobSpec struct

@@ -1,0 +1,6 @@
+name: createdat
+collection: uesio.sitedomains
+type: TIMESTAMP
+label: Created At
+propertyName: createdat
+autopopulate: CREATE

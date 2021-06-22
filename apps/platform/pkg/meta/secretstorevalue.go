@@ -2,10 +2,14 @@ package meta
 
 // SecretStoreValue struct
 type SecretStoreValue struct {
-	ID       string    `uesio:"uesio.id"`
-	Key      string    `uesio:"uesio.key"`
-	Value    string    `uesio:"uesio.value"`
-	itemMeta *ItemMeta `yaml:"-" uesio:"-"`
+	ID        string    `uesio:"uesio.id"`
+	Key       string    `uesio:"uesio.key"`
+	Value     string    `uesio:"uesio.value"`
+	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy *User     `uesio:"uesio.createdby"`
+	UpdatedBy *User     `uesio:"uesio.updatedby"`
+	UpdatedAt int64     `uesio:"uesio.updatedat"`
+	CreatedAt int64     `uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
