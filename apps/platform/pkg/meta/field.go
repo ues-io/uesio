@@ -44,6 +44,10 @@ type Field struct {
 	OnDelete             string    `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 	FileCollection       string    `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
 	itemMeta             *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy            *User     `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy            *User     `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt            int64     `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt            int64     `yaml:"-" uesio:"studio.createdat"`
 }
 
 // GetFieldTypes function
