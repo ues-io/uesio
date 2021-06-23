@@ -39,6 +39,13 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 
 	const nbsp = "\u00A0"
 
+	const defaultProps = {
+		context,
+		label,
+		value,
+		setValue: (value: string) => setValue(value),
+	}
+
 	return (
 		<Grid
 			context={context}
@@ -51,37 +58,52 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		>
 			{!defaultNamespace && (
 				<SelectField
-					context={context}
-					label={label}
-					value={namespace}
+					{...defaultProps}
+					value={name}
 					options={addBlankSelectOption(
 						Object.keys(namespaces || {}).map((key) => ({
-							value: key,
+							value: `${key}.`,
 							label: key,
 						}))
 					)}
-					setValue={(value: string) => {
-						setValue(value ? `${value}.` : "")
-					}}
 				/>
 			)}
-			<SelectField
-				context={context}
-				label={defaultNamespace ? label : label && nbsp}
-				value={name}
-				options={addBlankSelectOption(
-					Object.keys(metadata || {}).map((key) => {
-						const [, name] = component.path.parseKey(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})
-				)}
-				setValue={(value: string) => {
-					setValue(`${namespace}.${value}`)
-				}}
-			/>
+
+			{metadataType === "COMPONENTVARIANT" ? (
+				<SelectField
+					{...defaultProps}
+					label={nbsp}
+					options={addBlankSelectOption(
+						Object.keys(metadata || {}).map((key) => {
+							// add to component.path.parseVariantKey
+							const [
+								,
+								,
+								namespace,
+								name,
+							] = component.path.parseVariantKey(key)
+							return {
+								value: `${namespace}.${name}`,
+								label: name,
+							}
+						})
+					)}
+				/>
+			) : (
+				<SelectField
+					{...defaultProps}
+					label={defaultNamespace ? label : label && nbsp}
+					options={addBlankSelectOption(
+						Object.keys(metadata || {}).map((key) => {
+							const [, name] = component.path.parseKey(key)
+							return {
+								value: `${namespace}.${value}`,
+								label: name,
+							}
+						})
+					)}
+				/>
+			)}
 		</Grid>
 	)
 }
