@@ -15,7 +15,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			metadataType: "COMPONENTVARIANT",
 			label: "Variant",
 			groupingParents: 1,
-			groupingProperty: "component",
+			getGroupingFromKey: true,
 		},
 	]
 

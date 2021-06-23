@@ -14,21 +14,24 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const value = getValue() as string
 
 	const getGrouping = (): string | undefined => {
-		const { groupingParents, groupingProperty, metadataType } = descriptor
-		if (!groupingParents || !groupingProperty) return
+		const {
+			groupingParents,
+			groupingProperty,
+			getGroupingFromKey,
+		} = descriptor
 
 		const groupingNodePath = component.path.getAncestorPath(
 			path || "",
-			groupingParents
+			groupingParents || 1
 		)
 		const groupingNode = uesio.view.useDefinition(
 			groupingNodePath
 		) as definition.DefinitionMap
 
-		if (metadataType === "COMPONENTVARIANT")
-			return Object.keys(groupingNode)[0]
+		if (getGroupingFromKey)
+			return component.path.getDefinitionKey(groupingNode)
 
-		return groupingNode[groupingProperty] as string
+		if (groupingProperty) return groupingNode[groupingProperty] as string
 	}
 
 	return (

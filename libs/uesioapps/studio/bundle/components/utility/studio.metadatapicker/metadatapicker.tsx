@@ -37,14 +37,16 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
-	const nbsp = "\u00A0"
-
-	const defaultProps = {
-		context,
-		label,
-		value,
-		setValue: (value: string) => setValue(value),
+	const getMetadataName = (key: string) => {
+		if (metadataType === "COMPONENTVARIANT") {
+			const [, , , name] = component.path.parseVariantKey(key)
+			return name
+		}
+		const [, name] = component.path.parseKey(key)
+		return name
 	}
+
+	const nbsp = "\u00A0"
 
 	return (
 		<Grid
@@ -58,52 +60,40 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		>
 			{!defaultNamespace && (
 				<SelectField
-					{...defaultProps}
-					value={name}
+					context={context}
+					label={label}
+					value={namespace}
 					options={addBlankSelectOption(
 						Object.keys(namespaces || {}).map((key) => ({
-							value: `${key}.`,
+							value: key,
 							label: key,
 						}))
 					)}
+					setValue={(value: string) => {
+						setValue(value ? `${value}.` : "")
+					}}
 				/>
 			)}
 
-			{metadataType === "COMPONENTVARIANT" ? (
+			{
 				<SelectField
-					{...defaultProps}
-					label={nbsp}
-					options={addBlankSelectOption(
-						Object.keys(metadata || {}).map((key) => {
-							// add to component.path.parseVariantKey
-							const [
-								,
-								,
-								namespace,
-								name,
-							] = component.path.parseVariantKey(key)
-							return {
-								value: `${namespace}.${name}`,
-								label: name,
-							}
-						})
-					)}
-				/>
-			) : (
-				<SelectField
-					{...defaultProps}
+					context={context}
 					label={defaultNamespace ? label : label && nbsp}
+					value={name}
 					options={addBlankSelectOption(
 						Object.keys(metadata || {}).map((key) => {
-							const [, name] = component.path.parseKey(key)
+							const name = getMetadataName(key)
 							return {
-								value: `${namespace}.${value}`,
+								value: name,
 								label: name,
 							}
 						})
 					)}
+					setValue={(value: string) => {
+						setValue(`${namespace}.${value}`)
+					}}
 				/>
-			)}
+			}
 		</Grid>
 	)
 }
