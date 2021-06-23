@@ -11,6 +11,8 @@ type User struct {
 	Site           string            `uesio:"uesio.site"`
 	Picture        *UserFileMetadata `uesio:"uesio.picture"`
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
+	CreatedBy      *User             `yaml:"-" uesio:"uesio.createdby"`
+	UpdatedBy      *User             `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt      int64             `uesio:"uesio.updatedat"`
 	CreatedAt      int64             `uesio:"uesio.createdat"`
 }
