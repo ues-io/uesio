@@ -74,26 +74,23 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					}}
 				/>
 			)}
-
-			{
-				<SelectField
-					context={context}
-					label={defaultNamespace ? label : label && nbsp}
-					value={name}
-					options={addBlankSelectOption(
-						Object.keys(metadata || {}).map((key) => {
-							const name = getMetadataName(key)
-							return {
-								value: name,
-								label: name,
-							}
-						})
-					)}
-					setValue={(value: string) => {
-						setValue(`${namespace}.${value}`)
-					}}
-				/>
-			}
+			<SelectField
+				context={context}
+				label={defaultNamespace ? label : label && nbsp}
+				value={name}
+				options={addBlankSelectOption(
+					Object.keys(metadata || {}).map((key) => {
+						const name = getMetadataName(key)
+						return {
+							value: name,
+							label: name,
+						}
+					})
+				)}
+				setValue={(value: string) => {
+					setValue(`${namespace}.${value}`)
+				}}
+			/>
 		</Grid>
 	)
 }
