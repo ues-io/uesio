@@ -37,6 +37,15 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
+	const getMetadataName = (key: string) => {
+		if (metadataType === "COMPONENTVARIANT") {
+			const [, , , name] = component.path.parseVariantKey(key)
+			return name
+		}
+		const [, name] = component.path.parseKey(key)
+		return name
+	}
+
 	const nbsp = "\u00A0"
 
 	return (
@@ -71,7 +80,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				value={name}
 				options={addBlankSelectOption(
 					Object.keys(metadata || {}).map((key) => {
-						const [, name] = component.path.parseKey(key)
+						const name = getMetadataName(key)
 						return {
 							value: name,
 							label: name,

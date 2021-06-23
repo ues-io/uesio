@@ -4,6 +4,7 @@ import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"
 import ConditionsSection from "./conditionssection"
 import SignalsSection from "./signalssection"
+import StylesSection from "./stylessection"
 
 interface Props extends definition.BaseProps {
 	section: builder.PropertySection
@@ -16,6 +17,7 @@ const SECTION_TO_COMPONENT: {
 	CONDITIONS: ConditionsSection,
 	SIGNALS: SignalsSection,
 	PROPLIST: PropListSection,
+	STYLES: StylesSection,
 }
 
 const BuildSection: FunctionComponent<Props> = ({

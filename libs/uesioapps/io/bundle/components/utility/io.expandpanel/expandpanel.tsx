@@ -20,7 +20,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			root: {},
 			content: {
 				display: expanded ? "block" : "none",
-				textTransform: "uppercase",
 				fontSize: "9pt",
 				color: "#444",
 				padding: "6px",

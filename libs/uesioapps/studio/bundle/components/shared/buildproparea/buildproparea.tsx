@@ -23,6 +23,17 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
+
+	const sections =
+		buildPropsDef.type === "component"
+			? buildPropsDef.sections.concat([
+					{
+						title: "Styles",
+						type: "STYLES",
+					},
+			  ])
+			: buildPropsDef.sections
+
 	return (
 		<div className={classes.wrapper}>
 			{buildPropsDef?.properties && (
@@ -35,7 +46,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					/>
 				</div>
 			)}
-			{buildPropsDef.sections.map((section, index) => (
+			{sections.map((section, index) => (
 				<BuildSection
 					key={index}
 					path={path}

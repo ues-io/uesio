@@ -32,6 +32,20 @@ const parseKey = (fullName: string): [string, string] => {
 	return [namespace, name]
 }
 
+// io.button.io.nav ==> [io, button, io, nav]
+const parseVariantKey = (
+	fullName: string
+): [string, string, string, string] => {
+	if (!fullName) return ["", "", "", ""]
+	const [
+		componentNamespace,
+		componentName,
+		variantNamespace,
+		variantName,
+	] = fullName.split(".")
+	return [componentNamespace, componentName, variantNamespace, variantName]
+}
+
 // Trims a path and then returns the last element of the path.
 const getPathSuffix = (path: string | string[]) => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
@@ -161,6 +175,7 @@ const getIndexFromPath = (path: string) => {
 export {
 	calculateNewPathAheadOfTime,
 	parseKey,
+	parseVariantKey,
 	getPathSuffix,
 	trimPathToComponent,
 	unWrapDefinition,
@@ -172,4 +187,5 @@ export {
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
+	getDefinitionKey,
 }

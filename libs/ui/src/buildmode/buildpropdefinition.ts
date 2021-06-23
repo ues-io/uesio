@@ -20,6 +20,7 @@ type BuildPropertiesDefinition = {
 	) => void
 	name?: string // auto-populated
 	namespace?: string // auto-populated
+	type?: string
 }
 
 type PropertySection =
@@ -27,6 +28,7 @@ type PropertySection =
 	| ConditionsSection
 	| SignalsSection
 	| PropListSection
+	| StylesSection
 
 type BasePropSection = {
 	title: string
@@ -48,6 +50,10 @@ interface SignalsSection extends BasePropSection {
 interface PropListSection extends BasePropSection {
 	type: "PROPLIST"
 	properties: PropDescriptor[]
+}
+
+interface StylesSection extends BasePropSection {
+	type: "STYLES"
 }
 
 type PropDescriptor =
@@ -98,6 +104,7 @@ interface MetadataProp extends BasePropDescriptor {
 	metadataType: MetadataType
 	groupingParents?: number
 	groupingProperty?: string
+	getGroupingFromKey?: boolean
 }
 
 interface BotProp extends BasePropDescriptor {
@@ -196,6 +203,7 @@ export {
 	WiresProp,
 	ComponentTargetProp,
 	FieldsSection,
+	StylesSection,
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
