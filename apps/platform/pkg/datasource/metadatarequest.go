@@ -121,7 +121,15 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 				if specialRef.OnDelete != "" {
 					fieldMetadata.OnDelete = specialRef.OnDelete
 				}
+				// Only add to additional requests if we don't already have that metadata
+				refCollection, _ := metadataResponse.GetCollection(specialRef.CollectionName)
 				for _, fieldID := range specialRef.Fields {
+					if refCollection != nil {
+						_, err := refCollection.GetField(fieldID)
+						if err == nil {
+							continue
+						}
+					}
 					err = additionalRequests.AddField(specialRef.CollectionName, fieldID, nil)
 					if err != nil {
 						return err
