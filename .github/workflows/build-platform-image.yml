@@ -62,7 +62,7 @@ jobs:
                   export_default_credentials: true
             - name: Configure Docker
               run: |
-                  gcloud auth configure-docker
+                  gcloud auth configure-docker us-east1-docker.pkg.dev
             - name: Build
               run: |
                   docker tag uesio:latest us-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
