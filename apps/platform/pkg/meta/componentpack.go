@@ -12,6 +12,10 @@ type ComponentPack struct {
 	Workspace  string             `yaml:"-" uesio:"studio.workspaceid"`
 	Components ComponentsRegistry `yaml:"components" uesio:"studio.components"`
 	itemMeta   *ItemMeta          `yaml:"-" uesio:"-"`
+	CreatedBy  *User              `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy  *User              `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt  int64              `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt  int64              `yaml:"-" uesio:"studio.createdat"`
 }
 
 type ComponentsRegistry struct {

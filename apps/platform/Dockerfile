@@ -1,10 +1,17 @@
-FROM golang:1.15-alpine
+FROM golang:1.16-alpine AS multistage
 
-WORKDIR /location/of/source/code
-COPY ./dist ../../dist
-COPY ./libs/uesioapps ../../libs/uesioapps
+WORKDIR /src
 COPY ./apps/platform .
 RUN go build
-CMD ["./uesio", "serve"]
 
+##
+
+FROM alpine:latest
+COPY --from=multistage /src/uesio .
+COPY ./dist ./dist
+COPY ./libs/uesioapps ./libs/uesioapps
+COPY ./apps/platform/platform ./platform
+COPY ./apps/platform/fonts ./fonts
+COPY ./apps/platform/seed ./seed
 EXPOSE 3000
+CMD ["./uesio", "serve"]

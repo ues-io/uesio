@@ -1,8 +1,9 @@
 name: Platform Image build
-on:
-    push:
-        branches:
-            - master
+#on:
+#    push:
+#        branches:
+#            - master
+on: workflow_dispatch
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -52,12 +53,19 @@ jobs:
               run: npm run build-all
             - name: Build image
               run: npm run nx -- build-image platform
-#        Push The image somewhere
-#      - name: Save image
-#        run: docker save -o ./platform-image uesio:v0.0.1
-#      - name: Upload image
-#        uses: actions/upload-artifact@v1
-#        with:
-#          name: uesio-image
-#          path: ./platform-image
-
+            - name: Setup GCP Service Account
+              uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+              with:
+                  version: "latest"
+                  service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+                  service_account_key: ${{ secrets.GCP_SA_KEY }}
+                  export_default_credentials: true
+            - name: Configure Docker
+              run: |
+                  gcloud auth configure-docker
+            - name: Build
+              run: |
+                  docker tag uesio:latest us-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
+            - name: Push
+              run: |
+                  docker push us-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest

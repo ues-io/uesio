@@ -16,6 +16,11 @@ const Button = component.registry.getUtility("io.button")
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const useMock = uesio.view.useConfigValue("uesio.mockAuth")
+
+	if (useMock !== "true") {
+		return null
+	}
 
 	const mode = uesio.component.useExternalState(
 		props.context.getViewId() || "",

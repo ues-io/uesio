@@ -8,6 +8,10 @@ type Site struct {
 	AppID     string  `uesio:"uesio.appid"`
 	bundleDef *BundleDef
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy *User     `uesio:"uesio.createdby"`
+	UpdatedBy *User     `uesio:"uesio.updatedby"`
+	UpdatedAt int64     `uesio:"uesio.updatedat"`
+	CreatedAt int64     `uesio:"uesio.createdat"`
 }
 
 func (s *Site) GetFullName() string {

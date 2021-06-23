@@ -8,6 +8,7 @@ const WireProp: FunctionComponent<PropRendererProps> = (props) => {
 	}
 	return (
 		<DefinitionSelectorProp
+			noValueLabel="No Wire selected"
 			{...props}
 			definitionPath='["wires"]'
 			filter={props.descriptor.filter}

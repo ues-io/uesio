@@ -1,0 +1,6 @@
+name: createdat
+collection: uesio.userfiles
+type: TIMESTAMP
+label: Created At
+propertyName: createdat
+autopopulate: CREATE

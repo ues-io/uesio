@@ -30,14 +30,16 @@ func getNewClient(ctx context.Context, credentials *adapt.Credentials) (*firesto
 			projectID,
 		)
 	}
+
+	options := []option.ClientOption{}
 	apiKey, ok := (*credentials)["apikey"]
-	if !ok {
-		return nil, errors.New("No api key provided in credentials")
+	if ok && apiKey != "" {
+		options = append(options, option.WithCredentialsJSON([]byte(apiKey)))
 	}
 	return firestore.NewClient(
 		ctx,
 		projectID,
-		option.WithCredentialsJSON([]byte(apiKey)),
+		options...,
 	)
 }
 

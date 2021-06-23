@@ -5,6 +5,7 @@ import SelectProp from "./selectprop"
 
 type DefinitionSelectorProps = PropRendererProps & {
 	definitionPath: string
+	noValueLabel: string
 	filter?: (def: definition.Definition, index: string | number) => boolean
 	valueGrabber?: (
 		def: definition.Definition,
@@ -31,20 +32,28 @@ const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 		entries = entries.filter((key) => filter(definitions[key], key))
 	}
 
+	const options = [
+		{
+			value: "",
+			label: props.noValueLabel,
+		},
+		...entries.map((id) => ({
+			value: props.valueGrabber
+				? props.valueGrabber(definitions[id], id) || id
+				: id,
+			label: props.labelGrabber
+				? props.labelGrabber(definitions[id], id) || id
+				: id,
+		})),
+	]
+
 	return (
 		<SelectProp
 			{...props}
 			descriptor={{
 				...descriptor,
 				type: "SELECT",
-				options: entries.map((id) => ({
-					value: props.valueGrabber
-						? props.valueGrabber(definitions[id], id) || id
-						: id,
-					label: props.labelGrabber
-						? props.labelGrabber(definitions[id], id) || id
-						: id,
-				})),
+				options,
 			}}
 		/>
 	)

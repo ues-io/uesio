@@ -1,0 +1,6 @@
+name: createdby
+collection: uesio.bulkbatches
+type: USER
+label: Created By
+propertyName: createdby
+autopopulate: CREATE

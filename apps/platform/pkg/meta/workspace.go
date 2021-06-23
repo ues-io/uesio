@@ -14,6 +14,10 @@ type Workspace struct {
 	Permissions    *PermissionSet `uesio:"-"`
 	bundleDef      *BundleDef
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
+	CreatedBy      *User     `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy      *User     `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt      int64     `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt      int64     `yaml:"-" uesio:"studio.createdat"`
 }
 
 func (w *Workspace) GetAppID() string {

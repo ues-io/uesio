@@ -14,6 +14,7 @@ const ConditionPropComponent: FunctionComponent<PropRendererProps> = (
 	}
 	return (
 		<DefinitionSelectorProp
+			noValueLabel="No Condition selected"
 			{...props}
 			filter={descriptor.filter}
 			definitionPath={`["wires"]["${wireId}"]["conditions"]`}
