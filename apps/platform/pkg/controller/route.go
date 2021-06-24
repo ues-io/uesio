@@ -13,9 +13,31 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+func getHomeRoute(session *sess.Session) (*meta.Route, error) {
+	homeRoute := session.GetSite().GetAppBundle().HomeRoute
+	namespace, name, err := meta.ParseKey(homeRoute)
+	if err != nil {
+		return nil, err
+	}
+	route := &meta.Route{
+		Name:      name,
+		Namespace: namespace,
+	}
+	err = bundle.Load(route, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return route, nil
+}
+
 func getRoute(r *http.Request, namespace, path, prefix string, session *sess.Session) (*meta.Route, error) {
 	var route *meta.Route
 	var routes meta.RouteCollection
+
+	if path == "" {
+		return getHomeRoute(session)
+	}
 
 	err := bundle.LoadAll(&routes, namespace, nil, session)
 	if err != nil {

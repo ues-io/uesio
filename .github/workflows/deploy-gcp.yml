@@ -62,10 +62,10 @@ jobs:
                   export_default_credentials: true
             - name: Configure Docker
               run: |
-                  gcloud auth configure-docker ${{ GCP_ARTIFACT_REGISTRY_HOST }}
+                  gcloud auth configure-docker ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}
             - name: Build
               run: |
-                  docker tag uesio:latest ${{ GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
+                  docker tag uesio:latest ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
             - name: Push
               run: |
-                  docker push ${{ GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
+                  docker push ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
