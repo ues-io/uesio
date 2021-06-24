@@ -13,9 +13,28 @@ interface GridProps extends definition.BaseProps {
 const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Grid",
 	defaultDefinition: () => ({}),
-	properties: [],
+	properties: [
+		{
+			name: "columnGap",
+			type: "TEXT",
+			label: "Column Gap",
+		},
+	],
 	sections: [],
 	actions: [],
+	traits: ["uesio.standalone"],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		uesio.view.addDefinition(
+			dropNode,
+			{
+				"io.field": {
+					fieldId: `${propDef.namespace}.${propDef.name}`,
+				},
+			},
+			dropIndex,
+			true
+		)
+	},
 }
 export { GridProps, GridDefinition }
 
