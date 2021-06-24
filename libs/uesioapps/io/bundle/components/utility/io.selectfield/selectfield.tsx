@@ -36,6 +36,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 					right: "10px",
 					bottom: "20px",
 					pointerEvents: "none",
+					fontSize: "initial",
 				},
 			},
 			input: {

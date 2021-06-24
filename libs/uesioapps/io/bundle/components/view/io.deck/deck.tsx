@@ -12,11 +12,16 @@ const Deck: FunctionComponent<DeckProps> = (props) => {
 		definition.templateColumns &&
 		styles.getResponsiveStyles(
 			"gridTemplateColumns",
-			definition.templateColumns
+			definition.templateColumns,
+			context
 		)
 	const gridRows =
 		definition.templateRows &&
-		styles.getResponsiveStyles("gridTemplateRows", definition.templateRows)
+		styles.getResponsiveStyles(
+			"gridTemplateRows",
+			definition.templateRows,
+			context
+		)
 
 	const classes = styles.useStyles(
 		{
