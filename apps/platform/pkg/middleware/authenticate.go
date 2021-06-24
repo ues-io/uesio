@@ -25,6 +25,8 @@ func init() {
 	var store session.Store
 	if storageType == "filesystem" {
 		store = auth.NewFSSessionStore()
+	} else if storageType == "redis" {
+		store = auth.NewRedisSessionStore()
 	} else if storageType == "" {
 		store = session.NewInMemStore()
 	} else {
