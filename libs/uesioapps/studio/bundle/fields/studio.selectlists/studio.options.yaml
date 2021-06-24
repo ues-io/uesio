@@ -3,3 +3,6 @@ collection: studio.selectlists
 type: LIST
 label: Options
 propertyName: options
+subFields:
+  - name: label
+  - name: value

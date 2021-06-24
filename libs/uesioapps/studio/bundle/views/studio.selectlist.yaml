@@ -116,5 +116,5 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                                  - io.field:
+                                  - studio.list:
                                       fieldId: studio.options

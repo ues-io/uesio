@@ -24,30 +24,36 @@ type Validate struct {
 	Regex string `yaml:"regex,omitempty" uesio:"Regex"`
 }
 
+// SubField struct
+type SubField struct {
+	Label string `uesio:"name"`
+}
+
 // Field struct
 type Field struct {
-	ID                   string    `yaml:"-" uesio:"studio.id"`
-	Name                 string    `yaml:"name" uesio:"studio.name"`
-	CollectionRef        string    `yaml:"collection" uesio:"studio.collection"`
-	Namespace            string    `yaml:"-" uesio:"-"`
-	Type                 string    `yaml:"type" uesio:"studio.type"`
-	Label                string    `yaml:"label" uesio:"studio.label"`
-	PropertyName         string    `yaml:"propertyName" uesio:"studio.propertyname"`
-	ReadOnly             bool      `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
-	CreateOnly           bool      `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
-	ReferencedCollection string    `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
-	SelectList           string    `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
-	Workspace            string    `yaml:"-" uesio:"studio.workspaceid"`
-	Required             bool      `yaml:"required,omitempty" uesio:"studio.required"`
-	Validate             Validate  `yaml:"validate,omitempty" uesio:"studio.validate"`
-	AutoPopulate         string    `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
-	OnDelete             string    `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
-	FileCollection       string    `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
-	itemMeta             *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy            *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy            *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt            int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt            int64     `yaml:"-" uesio:"studio.createdat"`
+	ID                   string     `yaml:"-" uesio:"studio.id"`
+	Name                 string     `yaml:"name" uesio:"studio.name"`
+	CollectionRef        string     `yaml:"collection" uesio:"studio.collection"`
+	Namespace            string     `yaml:"-" uesio:"-"`
+	Type                 string     `yaml:"type" uesio:"studio.type"`
+	Label                string     `yaml:"label" uesio:"studio.label"`
+	PropertyName         string     `yaml:"propertyName" uesio:"studio.propertyname"`
+	ReadOnly             bool       `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
+	CreateOnly           bool       `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
+	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
+	SelectList           string     `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
+	Workspace            string     `yaml:"-" uesio:"studio.workspaceid"`
+	Required             bool       `yaml:"required,omitempty" uesio:"studio.required"`
+	Validate             Validate   `yaml:"validate,omitempty" uesio:"studio.validate"`
+	AutoPopulate         string     `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
+	OnDelete             string     `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
+	FileCollection       string     `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
+	itemMeta             *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy            *User      `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy            *User      `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
+	subFields            []SubField `yaml:"subfields" uesio:"studio.subfields"`
 }
 
 // GetFieldTypes function

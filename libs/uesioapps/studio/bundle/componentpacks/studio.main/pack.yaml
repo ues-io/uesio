@@ -20,6 +20,11 @@ components:
         - io.textfield
         - io.selectfield
         - io.grid
+    studio.list:
+      utilities:
+        - io.textfield
+        - io.selectfield
+        - io.grid
     studio.codefield:
       utilities:
         - io.codefield
