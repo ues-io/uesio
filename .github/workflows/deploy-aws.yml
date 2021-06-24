@@ -1,4 +1,4 @@
-name: Platform Image build
+name: Deploy to AWS
 #on:
 #    push:
 #        branches:
@@ -53,19 +53,4 @@ jobs:
               run: npm run build-all
             - name: Build image
               run: npm run nx -- build-image platform
-            - name: Setup GCP Service Account
-              uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-              with:
-                  version: "latest"
-                  service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-                  service_account_key: ${{ secrets.GCP_SA_KEY }}
-                  export_default_credentials: true
-            - name: Configure Docker
-              run: |
-                  gcloud auth configure-docker us-east1-docker.pkg.dev
-            - name: Build
-              run: |
-                  docker tag uesio:latest us-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
-            - name: Push
-              run: |
-                  docker push us-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
+            # Now run steps to deploy to AWS
