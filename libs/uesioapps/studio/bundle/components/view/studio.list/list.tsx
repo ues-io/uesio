@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, metadata } from "@uesio/ui"
+import { definition, component, metadata, wire } from "@uesio/ui"
 import MetadataPicker from "../../utility/studio.metadatapicker/metadatapicker"
 
 //const TitleBar = component.registry.getUtility("io.titlebar")
@@ -14,8 +14,8 @@ interface Props extends definition.BaseProps {
 }
 
 type Option = {
-	value: string
 	label: string
+	value: string
 }
 
 const List: FunctionComponent<Props> = (props) => {
@@ -34,42 +34,43 @@ const List: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
+	const VALUE = [
+		{
+			label: "Male",
+			value: "MALE",
+		},
+		{
+			label: "Female",
+			value: "FEMALE",
+		},
+		{
+			label: "Other",
+			value: "OTHER",
+		},
+	]
+
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
+	//const value = record.getFieldString(fieldId)
 
-	console.log("fieldMetadata", fieldMetadata)
+	if (!fieldMetadata || !fieldMetadata.source.subfields) return null
 
-	const value = record.getFieldValue(fieldId)
+	const tableHeader = fieldMetadata.source.subfields
 
-	if (!fieldMetadata) return null
-
-	if (context.getFieldMode() !== "EDIT") {
-		;<div>value</div>
-		// return <component.Component {...props} componentType="io.field" />
-	}
-	console.log("value", value)
 	return (
-		<h1>value</h1>
-		// <MetadataPicker
-		// 	metadataType={metadataType}
-		// 	label={label}
-		// 	value={value}
-		// 	setValue={(value: string) => {
-		// 		record.update(fieldId, value)
-		// 	}}
-		// 	context={context.addFrame({
-		// 		workspace: {
-		// 			name: workspaceName,
-		// 			app: appName,
-		// 		},
-		// 	})}
-		// 	{...(grouping && {
-		// 		grouping,
-		// 	})}
-		// 	{...(namespace && {
-		// 		defaultNamespace: namespace,
-		// 	})}
-		// />
+		<table>
+			<tr>
+				{tableHeader.map((item) => (
+					<th>{item.name}</th>
+				))}
+			</tr>
+			{VALUE.map((item) => (
+				<tr>
+					<td>{item.label}</td>
+					<td>{item.value}</td>
+				</tr>
+			))}
+		</table>
 	)
 }
 

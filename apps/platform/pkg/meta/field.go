@@ -26,7 +26,7 @@ type Validate struct {
 
 // SubField struct
 type SubField struct {
-	Label string `uesio:"name"`
+	Name string `uesio:"name"`
 }
 
 // Field struct
@@ -53,7 +53,7 @@ type Field struct {
 	UpdatedBy            *User      `yaml:"-" uesio:"studio.updatedby"`
 	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
 	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
-	subFields            []SubField `yaml:"subfields" uesio:"studio.subfields"`
+	SubFields            []SubField `yaml:"subfields" uesio:"studio.subfields"`
 }
 
 // GetFieldTypes function

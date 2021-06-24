@@ -94,6 +94,11 @@ type ValidationMetadata struct {
 	Regex string `json:"regex"`
 }
 
+// SubField struct
+type SubField struct {
+	Name string `json:"name"`
+}
+
 // FieldMetadata struct
 type FieldMetadata struct {
 	Name                 string                     `json:"name"`
@@ -112,6 +117,7 @@ type FieldMetadata struct {
 	AutoPopulate         string                     `json:"autopopulate"`
 	OnDelete             string                     `json:"ondelete"`
 	FileCollection       string                     `json:"fileCollection"`
+	SubFields            []SubField                 `json:"subfields"`
 }
 
 // GetFullName function

@@ -51,7 +51,19 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		AutoPopulate:         f.AutoPopulate,
 		OnDelete:             f.OnDelete,
 		FileCollection:       f.FileCollection,
+		SubFields:            GetSubFieldsMetadata(f.SubFields),
 	}
+}
+
+// GetSubFieldsMetadata function
+func GetSubFieldsMetadata(subfields []meta.SubField) []adapt.SubField {
+	subfieldsMetadata := []adapt.SubField{}
+	for _, subfield := range subfields {
+		subfieldsMetadata = append(subfieldsMetadata, adapt.SubField{
+			Name: subfield.Name,
+		})
+	}
+	return subfieldsMetadata
 }
 
 // GetValidateMetadata function
