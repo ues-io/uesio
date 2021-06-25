@@ -5,6 +5,7 @@ import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
+import Progress from "./progress"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -53,11 +54,14 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!theme || !route) return null
 
 	return (
-		<ComponentInternal
-			componentType="uesio.runtime"
-			path=""
-			context={routeContext}
-		/>
+		<>
+			<ComponentInternal
+				componentType="uesio.runtime"
+				path=""
+				context={routeContext}
+			/>
+			<Progress isAnimating={!!route.isLoading} context={props.context} />
+		</>
 	)
 }
 
