@@ -95,15 +95,13 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	return (
 		<Grid
 			context={context}
-			classes={styles.useStyle(
-				"root",
-				{
+			styles={{
+				root: {
 					height: "100vh",
 					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${RIGHT_PANEL_WIDTH}px ${NAV_WIDTH}px`,
 					gridTemplateRows: "1fr 1fr",
 				},
-				props
-			)}
+			}}
 		>
 			<TopLeftNav
 				context={builderContext}

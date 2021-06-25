@@ -49,14 +49,12 @@ const ListField: FunctionComponent<Props> = (props) => {
 			/>
 			{value.map((item: wire.PlainWireRecord, index) => (
 				<Grid
-					classes={styles.useStyle(
-						"root",
-						{
+					styles={{
+						root: {
 							gridTemplateColumns: "1fr 0fr",
 							alignItems: "center",
 						},
-						props
-					)}
+					}}
 					context={context}
 				>
 					<Group context={context}>
