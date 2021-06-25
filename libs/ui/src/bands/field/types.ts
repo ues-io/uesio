@@ -22,6 +22,10 @@ type SelectOption = {
 	value: string
 }
 
+type SubField = {
+	name: string
+}
+
 type FieldMetadata = {
 	name: string
 	namespace: string
@@ -33,6 +37,7 @@ type FieldMetadata = {
 	options?: SelectOption[]
 	foreignKeyField?: string
 	referencedCollection?: string
+	subfields?: SubField[]
 }
 
-export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType }
+export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }

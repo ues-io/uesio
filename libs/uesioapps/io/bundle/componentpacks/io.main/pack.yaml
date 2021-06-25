@@ -67,3 +67,4 @@ components:
     io.titlebar:
     io.tooltip:
     io.userfield:
+    io.listfield:
