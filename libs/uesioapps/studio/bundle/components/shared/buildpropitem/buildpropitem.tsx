@@ -10,6 +10,7 @@ import NumberProp from "./numberprop"
 import BooleanProp from "./booleanprop"
 import ConditionProp from "./conditionprop"
 import NamespaceProp from "./namespaceprop"
+import MetadataListProp from "./metadatalistprop"
 import BotProp from "./botprop"
 
 interface Props extends definition.BaseProps {
@@ -38,6 +39,8 @@ function getPropHandler(type?: string) {
 			return NumberProp
 		case "BOOLEAN":
 			return BooleanProp
+		case "METADATALIST":
+			return MetadataListProp
 		default:
 			return TextProp
 	}

@@ -30,6 +30,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					{
 						title: "Styles",
 						type: "STYLES",
+						classes: buildPropsDef.classes || [],
 					},
 			  ])
 			: buildPropsDef.sections

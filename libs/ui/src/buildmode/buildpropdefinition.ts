@@ -21,6 +21,7 @@ type BuildPropertiesDefinition = {
 	name?: string // auto-populated
 	namespace?: string // auto-populated
 	type?: string
+	classes?: string[]
 }
 
 type PropertySection =
@@ -54,6 +55,7 @@ interface PropListSection extends BasePropSection {
 
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
+	classes: string[]
 }
 
 type PropDescriptor =
@@ -70,6 +72,7 @@ type PropDescriptor =
 	| ConditionProp
 	| NamespaceProp
 	| ComponentTargetProp
+	| MetadataListProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -93,6 +96,11 @@ interface NamespaceProp extends BasePropDescriptor {
 
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
+}
+export interface MetadataListProp extends BasePropDescriptor {
+	type: "METADATALIST"
+	metadataType: MetadataType
+	classes: string[]
 }
 
 interface NumberProp extends BasePropDescriptor {
