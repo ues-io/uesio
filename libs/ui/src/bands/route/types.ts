@@ -12,6 +12,7 @@ type RouteState = {
 	path: string
 	workspace?: WorkspaceState
 	theme: string
+	isLoading?: boolean
 } | null
 
 export { RouteState, WorkspaceState }

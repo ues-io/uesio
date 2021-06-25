@@ -1,6 +1,6 @@
 import { Context } from "../../context/context"
 import { ThunkFunc } from "../../store/store"
-import { set as setRoute } from "."
+import { set as setRoute, setLoading } from "."
 import loadViewOp from "../view/operations/load"
 
 const redirect = (context: Context, path: string) => () => {
@@ -32,6 +32,8 @@ const navigate = (
 		const viewDef = context.getViewDef()
 		namespace = viewDef?.namespace || ""
 	}
+
+	dispatch(setLoading())
 
 	const workspace = context.getWorkspace()
 	const mergedPath = context.merge(path)
