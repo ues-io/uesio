@@ -6,4 +6,4 @@ propertyName: options
 subfields:
   - name: label
   - name: value
-  - name: another
+  - name: color

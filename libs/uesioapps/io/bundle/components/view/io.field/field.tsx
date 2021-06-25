@@ -11,6 +11,7 @@ const FileText = component.registry.getUtility("io.filetext")
 const FileUpload = component.registry.getUtility("io.fileupload")
 const UserField = component.registry.getUtility("io.userfield")
 const TimestampField = component.registry.getUtility("io.timestampfield")
+const ListField = component.registry.getUtility("io.listfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -77,6 +78,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			return <FileUpload {...common} />
 		case type === "USER":
 			return <UserField {...common} />
+		case type === "LIST":
+			return <ListField {...common} />
 		default:
 			return null
 	}
