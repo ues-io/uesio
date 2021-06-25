@@ -15,7 +15,8 @@ class WireRecord {
 
 	getId = () => this.id
 	getWire = () => this.wire
-	getFieldArray = (fieldName: string) => get(this.source, fieldName) as []
+	getFieldArray = (fieldName: string) =>
+		get(this.source, fieldName) as FieldValue[]
 	getFieldValue = (fieldName: string) => get(this.source, fieldName)
 	getFieldString = (fieldName: string) =>
 		get(this.source, fieldName) as string

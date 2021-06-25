@@ -79,7 +79,12 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case type === "USER":
 			return <UserField {...common} />
 		case type === "LIST":
-			return <ListField {...common} />
+			return (
+				<ListField
+					{...common}
+					subFields={fieldMetadata.source.subfields}
+				/>
+			)
 		default:
 			return null
 	}

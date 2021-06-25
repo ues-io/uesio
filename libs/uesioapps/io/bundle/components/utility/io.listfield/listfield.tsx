@@ -1,66 +1,98 @@
 import { FunctionComponent } from "react"
 import {
 	wire,
-	hooks,
 	collection,
 	definition,
 	context,
 	component,
+	styles,
 } from "@uesio/ui"
 
-const KeyValueList = component.registry.getUtility("io.keyvaluelist")
-
-type Option = {
-	label: string
-	value: string
-}
+const TextField = component.registry.getUtility("io.textfield")
+const Group = component.registry.getUtility("io.group")
+const TitleBar = component.registry.getUtility("io.titlebar")
+const IconButton = component.registry.getUtility("io.iconbutton")
+const Grid = component.registry.getUtility("io.grid")
 
 interface Props extends definition.UtilityProps {
 	label?: string
-	fieldMetadata: collection.Field
 	mode: context.FieldMode
-	hideLabel: boolean
-	record: wire.WireRecord
-	wire: wire.Wire
-	variant: string
+	value: wire.PlainWireRecord[]
+	setValue: (value: wire.PlainWireRecord[]) => void
+	subFields: collection.SubField[]
 }
 
-const ListFieldField: FunctionComponent<Props> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, hideLabel, mode, record, context, variant } = props
-
-	if (!fieldMetadata) return null
-
-	const fieldId = fieldMetadata.getId()
-	const value = record.getFieldArray(fieldId)
-	const subfields = fieldMetadata.source.subfields
-
-	if (!subfields || !value) return null
-
-	const allowed = subfields.map((subfield) => subfield.name)
-	const filtered = Array.from(value, (element, index) =>
-		Object.fromEntries(
-			Object.entries(element).filter(([key, val]) =>
-				allowed.includes(key)
-			)
-		)
-	)
-
-	return (
-		<table>
-			<tr>
-				{subfields.map((subfield) => (
-					<th>{subfield.name}</th>
-				))}
-			</tr>
-			{filtered.map((item: Option) => (
-				<tr>
-					<td>{item.label}</td>
-					<td>{item.value}</td>
-				</tr>
+const ListField: FunctionComponent<Props> = (props) => {
+	const { subFields, mode, context, value, label, setValue } = props
+	const editMode = mode === "EDIT"
+	return subFields ? (
+		<div>
+			<TitleBar
+				title={label}
+				actions={
+					editMode && (
+						<IconButton
+							label="add"
+							icon="add_circle"
+							context={context}
+							onClick={() => {
+								// We have to do this in a way that doesn't mutate listValue
+								// since it can be readonly.
+								const newValue = [...value]
+								newValue.push({})
+								setValue(newValue)
+							}}
+						/>
+					)
+				}
+				context={context}
+			/>
+			{value.map((item: wire.PlainWireRecord, index) => (
+				<Grid
+					classes={styles.useStyle(
+						"root",
+						{
+							gridTemplateColumns: "1fr 0fr",
+							alignItems: "center",
+						},
+						props
+					)}
+					context={context}
+				>
+					<Group context={context}>
+						{subFields.map((subfield) => (
+							<TextField
+								label={subfield.name}
+								value={item[subfield.name]}
+								mode={mode}
+								context={context}
+								setValue={(newFieldValue: wire.FieldValue) => {
+									// We have to do this in a way that doesn't mutate listValue
+									// since it can be readonly.
+									const newValue = [...value]
+									newValue[index] = {
+										...newValue[index],
+										[subfield.name]: newFieldValue,
+									}
+									setValue(newValue)
+								}}
+							/>
+						))}
+					</Group>
+					{editMode && (
+						<IconButton
+							label="delete"
+							icon="delete"
+							context={context}
+							onClick={() => {
+								setValue(value.filter((_, i) => i !== index))
+							}}
+						/>
+					)}
+				</Grid>
 			))}
-		</table>
-	)
+		</div>
+	) : null
 }
 
-export default ListFieldField
+export default ListField
