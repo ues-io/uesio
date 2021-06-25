@@ -75,7 +75,10 @@ func (s *FSSessionStore) Add(sess session.Session) {
 	defer s.mux.Unlock()
 	// Create the sessions directory if it does not exist
 	if _, err := os.Stat(sessDir); os.IsNotExist(err) {
-		os.Mkdir(sessDir, 0744)
+		err := os.Mkdir(sessDir, 0744)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	err := ioutil.WriteFile(filePath, byteSlice, 0644)
 	if err != nil {

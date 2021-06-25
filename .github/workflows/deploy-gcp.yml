@@ -1,12 +1,15 @@
-name: Build and Test
-on:
-    push:
+name: Deploy to GCP
+#on:
+#    push:
+#        branches:
+#            - master
+on: workflow_dispatch
 jobs:
     build:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [14.x]
+                node-version: [12.x]
                 go-version: [^1.15]
         steps:
             - uses: actions/checkout@v2
@@ -25,9 +28,9 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/.npm
-                  key: ${{ runner.os }}-${{ matrix.node-version }}-node-${{ hashFiles('**/package-lock.json') }}
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
                   restore-keys: |
-                      ${{ runner.os }}-${{ matrix.node-version }}-node-
+                      ${{ runner.os }}-node-
             - name: Install npm Dependencies
               run: npm ci
             - name: Cache ./node_modules/.cache for nx usage
@@ -45,11 +48,24 @@ jobs:
                   key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
                   restore-keys: |
                       ${{ runner.os }}-go-
-            - name: Run Affected Tests
+            - name: Run Build all resources
               shell: bash
+              run: npm run build-all
+            - name: Build image
+              run: npm run nx -- build-image platform
+            - name: Setup GCP Service Account
+              uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+              with:
+                  version: "latest"
+                  service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+                  service_account_key: ${{ secrets.GCP_SA_KEY }}
+                  export_default_credentials: true
+            - name: Configure Docker
               run: |
-                  npm run prettier-check
-                  npm run affected:lint -- --base=origin/master --head=$GITHUB_SHA --parallel
-                  npm run build-all
-                  npm run affected:test -- --base=origin/master --head=$GITHUB_SHA --parallel
-                  npm run affected:e2e -- --base=origin/master --head=$GITHUB_SHA --parallel
+                  gcloud auth configure-docker ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}
+            - name: Build
+              run: |
+                  docker tag uesio:latest ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest
+            - name: Push
+              run: |
+                  docker push ${{ secrets.GCP_ARTIFACT_REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/uesio/uesio:latest

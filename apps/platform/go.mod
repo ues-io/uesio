@@ -13,6 +13,7 @@ require (
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gomodule/redigo v1.8.5
 	github.com/google/uuid v1.1.3
 	github.com/gorilla/mux v1.8.0
 	github.com/huandu/facebook/v2 v2.5.2

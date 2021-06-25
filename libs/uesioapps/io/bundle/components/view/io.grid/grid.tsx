@@ -6,16 +6,21 @@ import { GridProps } from "./griddefinition"
 const IOGrid = component.registry.getUtility("io.grid")
 
 const Grid: FunctionComponent<GridProps> = (props) => {
-	const definition = props.definition
+	const { definition, context } = props
 	const gridCols =
 		definition.templateColumns &&
 		styles.getResponsiveStyles(
 			"gridTemplateColumns",
-			definition.templateColumns
+			definition.templateColumns,
+			context
 		)
 	const gridRows =
 		definition.templateRows &&
-		styles.getResponsiveStyles("gridTemplateRows", definition.templateRows)
+		styles.getResponsiveStyles(
+			"gridTemplateRows",
+			definition.templateRows,
+			context
+		)
 
 	const columnGap = definition.columnGap && {
 		gridColumnGap: definition.columnGap,
@@ -36,7 +41,7 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 				definition={props.definition}
 				listName="items"
 				path={props.path}
-				accepts={["io.griditem"]}
+				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
 				context={props.context}
 			/>
 		</IOGrid>
