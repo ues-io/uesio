@@ -25,7 +25,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			classes: section.classes || [],
 			// groupingParents: 1,
 			// groupingProperty: "component",
-			getGroupingFromKey: true,
+			// getGroupingFromKey: true,
 		},
 	]
 
@@ -40,7 +40,6 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 				definition={definition}
 				properties={properties}
 				context={context}
-				section={section}
 			/>
 		</ExpandPanel>
 	)

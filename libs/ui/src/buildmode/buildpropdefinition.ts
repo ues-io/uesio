@@ -51,6 +51,7 @@ interface SignalsSection extends BasePropSection {
 interface PropListSection extends BasePropSection {
 	type: "PROPLIST"
 	properties: PropDescriptor[]
+	classes: string[]
 }
 
 interface StylesSection extends BasePropSection {
@@ -215,4 +216,5 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
+	// MetadataListProp,
 }

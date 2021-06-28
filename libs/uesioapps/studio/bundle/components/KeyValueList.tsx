@@ -1,6 +1,6 @@
 import React, { FC, useState, useReducer, useEffect } from "react"
 import { component, hooks } from "@uesio/ui"
-import { keyBy } from "lodash"
+import { css, cx } from "@emotion/css"
 
 const Grid = component.registry.getUtility("io.grid")
 const Textfield = component.registry.getUtility("io.textfield")
@@ -119,22 +119,40 @@ const KeyValueList: FC<T> = (props) => {
 		onListUpdate(list.slice(0, list.length - 1))
 	}, [list])
 
-	return (
-		<Grid
-			context={context}
-			styles={{
-				root: {
-					gridTemplateColumns: "4fr 6fr 1fr",
-					columnGap: "5px",
+	const stylesRow = {
+		root: {
+			deleteIcon: {
+				opacity: "0",
+			},
+			"&:hover": {
+				backgroundColor: "rgba(0, 0, 0, 0.05)",
+
+				deleteIcon: {
+					opacity: "1",
 				},
-			}}
-		>
+			},
+		},
+	}
+	const stylesInput = {
+		root: {
+			padding: "0",
+			border: "none",
+		},
+		input: {
+			padding: "4px 2px",
+			backgroundColor: "transparent",
+		},
+	}
+
+	return (
+		<>
 			{list.map((item, i) => (
-				<>
+				<Grid context={context} styles={stylesRow}>
 					<Textfield
 						value={item.key}
 						context={context}
 						placeholder={"e.g. padding"}
+						styles={stylesInput}
 						setValue={(x: string) =>
 							update({
 								id: i,
@@ -146,6 +164,7 @@ const KeyValueList: FC<T> = (props) => {
 					<Textfield
 						value={item.value}
 						context={context}
+						styles={stylesInput}
 						placeholder={"e.g. 12px"}
 						setValue={(x: string) =>
 							update({
@@ -155,7 +174,10 @@ const KeyValueList: FC<T> = (props) => {
 							})
 						}
 					/>
-					<div style={{ display: "flex", alignItems: "center" }}>
+					<div
+						className={"deleteIcon"}
+						style={{ display: "flex", alignItems: "center" }}
+					>
 						{i !== list.length - 1 && (
 							<ActionButton
 								title="Delete"
@@ -165,9 +187,9 @@ const KeyValueList: FC<T> = (props) => {
 							/>
 						)}
 					</div>
-				</>
+				</Grid>
 			))}
-		</Grid>
+		</>
 	)
 }
 export default KeyValueList
