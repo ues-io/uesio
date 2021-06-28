@@ -1,0 +1,6 @@
+name: createdat
+collection: studio.route
+type: TIMESTAMP
+label: Created At
+propertyName: createdat
+autopopulate: CREATE

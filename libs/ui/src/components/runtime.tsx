@@ -64,14 +64,13 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 
 	panelsDomNode = useRef<HTMLDivElement>(null)
 
+	const context = uesio.getContext().addFrame({
+		buildMode: buildMode && scriptResult.loaded,
+	})
+
 	return (
 		<>
-			<Route
-				path={props.path}
-				context={uesio.getContext().addFrame({
-					buildMode: buildMode && scriptResult.loaded,
-				})}
-			/>
+			<Route path={props.path} context={context} />
 			<div ref={panelsDomNode} />
 		</>
 	)

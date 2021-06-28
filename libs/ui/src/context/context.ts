@@ -26,6 +26,7 @@ type ContextFrame = {
 	siteadmin?: SiteState
 	site?: SiteState
 	theme?: string
+	mediaOffset?: number
 }
 
 const ANCESTOR_INDICATOR = "Parent."
@@ -187,6 +188,9 @@ class Context {
 	getSite = () => this.stack.find((frame) => frame?.site)?.site
 
 	getWireId = () => this.stack.find((frame) => frame?.wire)?.wire
+
+	getMediaOffset = () =>
+		this.stack.find((frame) => frame?.mediaOffset)?.mediaOffset
 
 	findWireFrame = () => {
 		const index = this.stack.findIndex((frame) => frame?.wire)

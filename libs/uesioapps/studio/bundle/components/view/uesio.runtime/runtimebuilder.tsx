@@ -55,6 +55,10 @@ component.registry.registerSignals("uesio.runtime", {
 	},
 })
 
+const NAV_WIDTH = 50
+const LEFT_PANEL_WIDTH = 300
+const RIGHT_PANEL_WIDTH = 300
+
 const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, path } = props
@@ -81,19 +85,23 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	const builderContext = context.addFrame({
 		theme: "studio.default",
 	})
+	const canvasContext = context.addFrame({
+		mediaOffset:
+			NAV_WIDTH * 2 +
+			(state.showComps || state.showWires ? LEFT_PANEL_WIDTH : 0) +
+			(state.showCode ? RIGHT_PANEL_WIDTH : 0),
+	})
 
 	return (
 		<Grid
 			context={context}
-			classes={styles.useStyle(
-				"root",
-				{
+			styles={{
+				root: {
 					height: "100vh",
-					gridTemplateColumns: "50px 300px 1fr 300px 50px",
+					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${RIGHT_PANEL_WIDTH}px ${NAV_WIDTH}px`,
 					gridTemplateRows: "1fr 1fr",
 				},
-				props
-			)}
+			}}
 		>
 			<TopLeftNav
 				context={builderContext}
@@ -120,7 +128,7 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 				/>
 			)}
 			<Canvas
-				context={context}
+				context={canvasContext}
 				className={styles.css({
 					gridRow: "1 / 3",
 					gridColumn: state.showCode ? "3" : "3 / 5",

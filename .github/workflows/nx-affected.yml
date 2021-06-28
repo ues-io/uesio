@@ -1,4 +1,4 @@
-name: Nx Affected CI
+name: Build and Test
 on:
     push:
 jobs:

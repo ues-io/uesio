@@ -37,6 +37,15 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
+	const getMetadataName = (key: string) => {
+		if (metadataType === "COMPONENTVARIANT") {
+			const [, , , name] = component.path.parseVariantKey(key)
+			return name
+		}
+		const [, name] = component.path.parseKey(key)
+		return name
+	}
+
 	const nbsp = "\u00A0"
 
 	const defaultProps = {
@@ -68,42 +77,23 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 					)}
 				/>
 			)}
-
-			{metadataType === "COMPONENTVARIANT" ? (
-				<SelectField
-					{...defaultProps}
-					label={nbsp}
-					options={addBlankSelectOption(
-						Object.keys(metadata || {}).map((key) => {
-							// add to component.path.parseVariantKey
-							const [
-								,
-								,
-								namespace,
-								name,
-							] = component.path.parseVariantKey(key)
-							return {
-								value: `${namespace}.${name}`,
-								label: name,
-							}
-						})
-					)}
-				/>
-			) : (
-				<SelectField
-					{...defaultProps}
-					label={defaultNamespace ? label : label && nbsp}
-					options={addBlankSelectOption(
-						Object.keys(metadata || {}).map((key) => {
-							const [, name] = component.path.parseKey(key)
-							return {
-								value: `${namespace}.${value}`,
-								label: name,
-							}
-						})
-					)}
-				/>
-			)}
+			<SelectField
+				context={context}
+				label={defaultNamespace ? label : label && nbsp}
+				value={name}
+				options={addBlankSelectOption(
+					Object.keys(metadata || {}).map((key) => {
+						const name = getMetadataName(key)
+						return {
+							value: name,
+							label: name,
+						}
+					})
+				)}
+				setValue={(value: string) => {
+					setValue(`${namespace}.${value}`)
+				}}
+			/>
 		</Grid>
 	)
 }

@@ -6,8 +6,11 @@ const routeSlice = createSlice({
 	initialState: null as RouteState,
 	reducers: {
 		set: (state, { payload }: PayloadAction<RouteState>) => payload,
+		setLoading: (state) => {
+			if (state) state.isLoading = true
+		},
 	},
 })
 
-export const { set } = routeSlice.actions
+export const { set, setLoading } = routeSlice.actions
 export default routeSlice.reducer

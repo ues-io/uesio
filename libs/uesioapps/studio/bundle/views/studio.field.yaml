@@ -190,7 +190,7 @@ definition:
                                         - field: studio.type
                                           value: "SELECT"
                                       components:
-                                        - uesio.metadatafield:
+                                        - studio.metadatafield:
                                             fieldId: studio.selectlist
                                             metadataType: "SELECTLIST"
                                             label: "Select List"

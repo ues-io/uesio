@@ -187,4 +187,5 @@ export {
 	getKeyAtPath,
 	getIndexPath,
 	getIndexFromPath,
+	getDefinitionKey,
 }

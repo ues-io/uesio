@@ -112,6 +112,7 @@ interface MetadataProp extends BasePropDescriptor {
 	metadataType: MetadataType
 	groupingParents?: number
 	groupingProperty?: string
+	getGroupingFromKey?: boolean
 }
 
 interface BotProp extends BasePropDescriptor {

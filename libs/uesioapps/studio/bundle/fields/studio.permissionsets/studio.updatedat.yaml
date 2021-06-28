@@ -1,0 +1,6 @@
+name: updatedat
+collection: studio.permissionsets
+type: TIMESTAMP
+label: Updated At
+propertyName: updatedat
+autopopulate: UPDATE

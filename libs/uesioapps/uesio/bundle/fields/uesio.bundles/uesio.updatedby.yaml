@@ -1,0 +1,6 @@
+name: updatedby
+collection: uesio.bundles
+type: USER
+label: Updated By
+propertyName: updatedby
+autopopulate: UPDATE

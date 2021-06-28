@@ -6,7 +6,8 @@ import PropList from "./proplist"
 
 const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, definition, context } = props
-	const section = props.section as builder.StylesSection
+	const section = props.section as builder.PropListSection
+
 	const properties: builder.PropDescriptor[] = [
 		{
 			name: "uesio.variant",
@@ -16,8 +17,6 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			groupingParents: 1,
 			groupingProperty: "component",
 		},
-		// todo only show style selector when classes
-		// Loop over classes and show list per class
 		{
 			name: "uesio.styles",
 			type: "METADATALIST",
@@ -26,6 +25,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			classes: section.classes || [],
 			// groupingParents: 1,
 			// groupingProperty: "component",
+			getGroupingFromKey: true,
 		},
 	]
 
