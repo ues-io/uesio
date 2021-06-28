@@ -23,7 +23,7 @@ interface Props extends definition.UtilityProps {
 }
 
 const ListField: FunctionComponent<Props> = (props) => {
-	const { subFields, mode, context, value, label, setValue } = props
+	const { subFields, mode, context, value = [], label, setValue } = props
 	const editMode = mode === "EDIT"
 	return subFields ? (
 		<div>
