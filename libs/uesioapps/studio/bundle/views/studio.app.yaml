@@ -318,11 +318,15 @@ definition:
         actions:
           - io.button:
               uesio.variant: "io.primary"
+              uesio.context:
+                wire: newworkspace
               text: "Save"
               signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newworkspace"
+                - signal: "bot/CALL"
+                  bot: "studio.newworkspace"
+                  params:
+                    name: ${studio.name}
+                    app: $Param{appname}
                 - signal: "route/NAVIGATE"
                   path: "app/$Param{appname}/workspace/${studio.name}"
           - io.button:
