@@ -1,0 +1,8 @@
+name: public
+named:
+views:
+  web.home: true
+routes:
+  web.home: true
+files:
+  web.logo: true

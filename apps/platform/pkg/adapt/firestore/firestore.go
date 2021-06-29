@@ -3,7 +3,6 @@ package firestore
 import (
 	"context"
 	"errors"
-	"os"
 
 	"cloud.google.com/go/firestore"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -23,12 +22,6 @@ func getNewClient(ctx context.Context, credentials *adapt.Credentials) (*firesto
 	projectID, ok := (*credentials)["project"]
 	if !ok {
 		return nil, errors.New("No project id provided in credentials")
-	}
-	if os.Getenv("FIRESTORE_EMULATOR_HOST") != "" {
-		return firestore.NewClient(
-			ctx,
-			projectID,
-		)
 	}
 
 	options := []option.ClientOption{}

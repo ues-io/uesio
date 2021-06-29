@@ -1,0 +1,51 @@
+name: home
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.styles:
+          root:
+            alignItems: center
+        templateColumns:
+          sm: 0 1fr 0
+          md: 1fr 900px 1fr
+        items:
+          - io.griditem:
+              components:
+          - io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: right
+              components:
+                - io.grid:
+                    templateColumns: 0fr 1fr
+                    items:
+                      - io.griditem:
+                          components:
+                            - io.image:
+                                uesio.styles:
+                                  root:
+                                    margin: 16px
+                                height: 40px
+                                file: web.logo
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "home"
+                      - io.griditem:
+                          components:
+                            - io.button:
+                                uesio.variant: io.nav
+                                text: Blog
+                            - io.button:
+                                uesio.variant: io.nav
+                                text: Who we are
+                            - io.button:
+                                uesio.variant: io.nav
+                                text: Get a demo
+                            - io.button:
+                                uesio.variant: io.primary
+                                text: Login
+          - io.griditem:
+              components:

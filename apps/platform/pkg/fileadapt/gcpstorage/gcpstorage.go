@@ -3,7 +3,6 @@ package gcpstorage
 import (
 	"context"
 	"errors"
-	"os"
 
 	"cloud.google.com/go/storage"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -18,18 +17,15 @@ type FileAdapter struct {
 var clientPool = map[string]*storage.Client{}
 
 func getNewClient(ctx context.Context, credentials *adapt.Credentials) (*storage.Client, error) {
+	options := []option.ClientOption{}
 	apiKey, ok := (*credentials)["apikey"]
-	if !ok {
-		return nil, errors.New("No api key provided in credentials")
+	if ok && apiKey != "" {
+		options = append(options, option.WithCredentialsJSON([]byte(apiKey)))
 	}
 	return storage.NewClient(
 		ctx,
-		option.WithCredentialsJSON([]byte(apiKey)),
+		options...,
 	)
-}
-
-func getProjectID() string {
-	return os.Getenv("GOOGLE_CLOUD_PROJECT")
 }
 
 func getClient(credentials *adapt.Credentials) (*storage.Client, error) {

@@ -11,7 +11,7 @@ import (
 func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
 	client, err := getClient(credentials)
 	if err != nil {
-		return nil, errors.New("invalid FileAdapterCredentials specified")
+		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
 	ctx := context.Background()
 	rc, err := client.Bucket(bucket).Object(path).NewReader(ctx)

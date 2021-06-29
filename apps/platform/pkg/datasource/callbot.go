@@ -30,7 +30,7 @@ type StudioAPI struct {
 	session *sess.Session
 }
 
-// GetErrorString function
+// CreateBundle function
 func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 	// Add in a workspace context here
 	err := AddContextWorkspace(app, workspace, sa.session)
@@ -86,4 +86,36 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 	}
 
 	return nil
+}
+
+//GetBundleLastVersion function
+func (sa *StudioAPI) GetBundleLastVersion(app string) string {
+
+	var bundles meta.BundleCollection
+
+	err := PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
+		{
+			Field: "uesio.major",
+			Desc:  true,
+		},
+		{
+			Field: "uesio.minor",
+			Desc:  true,
+		},
+		{
+			Field: "uesio.patch",
+			Desc:  true,
+		},
+	}, []adapt.LoadRequestCondition{
+		{
+			Field: "uesio.appid",
+			Value: app,
+		},
+	}, sa.session)
+	if err != nil {
+		return ""
+	}
+
+	version := bundles.GetItem(0).(*meta.Bundle).GetVersionString()
+	return version
 }

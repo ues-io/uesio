@@ -20,63 +20,65 @@ const getRouteUrlPrefix = (context: Context, namespace: string) => {
 	return "/"
 }
 
-const navigate = (
-	context: Context,
-	path: string,
-	namespace: string,
-	noPushState?: boolean
-): ThunkFunc => async (dispatch, getState, platform) => {
-	if (!namespace) {
-		// This is the namespace of the viewdef in context. We can assume if a namespace isn't
-		// provided, they want to navigate within the same namespace.
-		const viewDef = context.getViewDef()
-		namespace = viewDef?.namespace || ""
-	}
+const navigate =
+	(
+		context: Context,
+		path: string,
+		namespace: string,
+		noPushState?: boolean
+	): ThunkFunc =>
+	async (dispatch, getState, platform) => {
+		if (!namespace) {
+			// This is the namespace of the viewdef in context. We can assume if a namespace isn't
+			// provided, they want to navigate within the same namespace.
+			const viewDef = context.getViewDef()
+			namespace = viewDef?.namespace || ""
+		}
 
-	dispatch(setLoading())
+		dispatch(setLoading())
 
-	const workspace = context.getWorkspace()
-	const mergedPath = context.merge(path)
-	const routeResponse = await platform.getRoute(
-		context,
-		namespace,
-		mergedPath
-	)
+		const workspace = context.getWorkspace()
+		const mergedPath = context.merge(path)
+		const routeResponse = await platform.getRoute(
+			context,
+			namespace,
+			mergedPath
+		)
 
-	if (!routeResponse) return context
-	const view = routeResponse.view
+		if (!routeResponse) return context
+		const view = routeResponse.view
 
-	// Pre-load the view for faster appearances and no white flash
-	await dispatch(
-		loadViewOp({
-			context: new Context([
+		// Pre-load the view for faster appearances and no white flash
+		await dispatch(
+			loadViewOp({
+				context: new Context([
+					{
+						view: `${view}()`,
+						viewDef: view,
+						workspace,
+					},
+				]),
+				path: "",
+				params: routeResponse.params,
+			})
+		)
+
+		dispatch(setRoute(routeResponse))
+
+		if (!noPushState) {
+			const prefix = getRouteUrlPrefix(context, namespace)
+			window.history.pushState(
 				{
-					view: `${view}()`,
-					viewDef: view,
+					namespace,
+					path: mergedPath,
 					workspace,
 				},
-			]),
-			path: "",
-			params: routeResponse.params,
-		})
-	)
-
-	dispatch(setRoute(routeResponse))
-
-	if (!noPushState) {
-		const prefix = getRouteUrlPrefix(context, namespace)
-		window.history.pushState(
-			{
-				namespace,
-				path: mergedPath,
-				workspace,
-			},
-			"",
-			prefix + mergedPath
-		)
+				"",
+				prefix + mergedPath
+			)
+		}
+		return context
 	}
-	return context
-}
 
 export default {
 	redirect,

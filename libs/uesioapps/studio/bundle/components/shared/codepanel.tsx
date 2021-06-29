@@ -95,8 +95,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{
-									signal:
-										"component/uesio.runtime/TOGGLE_CODE",
+									signal: "component/uesio.runtime/TOGGLE_CODE",
 								},
 							])}
 						/>
@@ -144,10 +143,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									""
 								)
 
-								const commonPath = util.yaml.getCommonAncestorPath(
-									startPath,
-									endPath
-								)
+								const commonPath =
+									util.yaml.getCommonAncestorPath(
+										startPath,
+										endPath
+									)
 								const commonNode = util.yaml.getNodeAtPath(
 									commonPath,
 									currentAST.current.contents
@@ -186,15 +186,13 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						const position = e.position
 						if (model && position && currentAST.current?.contents) {
 							const offset = model.getOffsetAt(position)
-							const [
-								relevantNode,
-								nodePath,
-							] = util.yaml.getNodeAtOffset(
-								offset,
-								currentAST.current.contents,
-								"",
-								true
-							)
+							const [relevantNode, nodePath] =
+								util.yaml.getNodeAtOffset(
+									offset,
+									currentAST.current.contents,
+									"",
+									true
+								)
 							if (relevantNode && nodePath) {
 								uesio.builder.setSelectedNode(nodePath)
 							}
@@ -205,15 +203,13 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						const position = e.target.position
 						if (model && position && currentAST.current?.contents) {
 							const offset = model.getOffsetAt(position)
-							const [
-								relevantNode,
-								nodePath,
-							] = util.yaml.getNodeAtOffset(
-								offset,
-								currentAST.current.contents,
-								"",
-								true
-							)
+							const [relevantNode, nodePath] =
+								util.yaml.getNodeAtOffset(
+									offset,
+									currentAST.current.contents,
+									"",
+									true
+								)
 							if (relevantNode && nodePath) {
 								uesio.builder.setActiveNode(nodePath)
 							}

@@ -49,6 +49,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 					avatar={
 						<Avatar
 							image={picture?.["uesio.id"]}
+							text={firstName.charAt(0) + lastName.charAt(0)}
 							context={context}
 						/>
 					}

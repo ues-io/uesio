@@ -78,7 +78,7 @@ func Migrate(session *sess.Session) error {
 		// It would be better to make this requests in parallel
 		// instead of in series
 		adapterType := ds.Type
-		adapter, err := adapt.GetAdapter(adapterType)
+		adapter, err := adapt.GetAdapter(adapterType, session)
 		if err != nil {
 			return err
 		}

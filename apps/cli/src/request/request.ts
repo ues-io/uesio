@@ -5,7 +5,8 @@ const agent = new https.Agent({
 	rejectUnauthorized: false,
 })
 
-const makeFullURL = (url: string): string => `https://uesio-dev.com:3000/${url}`
+const makeFullURL = (url: string): string =>
+	`https://studio.uesio-dev.com:3000/${url}`
 
 const get = (
 	url: string,
