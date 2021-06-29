@@ -214,7 +214,7 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 		// It would be better to make this requests in parallel
 		// instead of in series
 		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType)
+		adapter, err := adapt.GetAdapter(adapterType, session)
 		if err != nil {
 			return nil, err
 		}
@@ -282,7 +282,7 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 				// It would be better to make this requests in parallel
 				// instead of in series
 				adapterType := datasource.Type
-				adapter, err := adapt.GetAdapter(adapterType)
+				adapter, err := adapt.GetAdapter(adapterType, session)
 				if err != nil {
 					return nil, err
 				}

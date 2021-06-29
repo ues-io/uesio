@@ -21,6 +21,13 @@
 		"appid": "crm"
 	},
 	{
+		"name": "prod",
+		"bundle": {
+			"id": "web_v0.0.1"
+		},
+		"appid": "web"
+	},
+	{
 		"name": "uat",
 		"bundle": {
 			"id": "crm_v0.0.1"

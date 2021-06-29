@@ -114,6 +114,18 @@ func serve(cmd *cobra.Command, args []string) {
 		port = "3000"
 	}
 
+	// Verify that required environment variables are set.
+	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
+	platformFSType := os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE")
+
+	if platformDSType == "" {
+		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
+	}
+
+	if platformFSType == "" {
+		logger.Log("No Platform File Source Type Specified", logger.ERROR)
+	}
+
 	useSSL := os.Getenv("UESIO_USE_HTTPS")
 	if useSSL == "true" {
 		logger.Log("Service Started over SSL on Port: "+port, logger.INFO)

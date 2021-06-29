@@ -10,7 +10,7 @@ import (
 func (a *FileAdapter) Delete(bucket string, path string, credentials *adapt.Credentials) error {
 	client, err := getClient(credentials)
 	if err != nil {
-		return errors.New("invalid FileAdapterCredentials specified")
+		return errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
 	ctx := context.Background()
 	fsbucket := client.Bucket(bucket)
