@@ -6,6 +6,7 @@ import { component, collection, wire } from "@uesio/ui"
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
+const SwitchField = component.registry.getUtility("io.swtichfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 const FileUpload = component.registry.getUtility("io.fileupload")
@@ -68,6 +69,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			)
 		case type === "CHECKBOX":
 			return <CheckboxField {...common} />
+		case type === "CHECKBOX" && displayAs === "SWITCH":
+			return <SwitchField {...common} />
 		case type === "REFERENCE":
 			return <ReferenceField {...common} />
 		case type === "TIMESTAMP":
