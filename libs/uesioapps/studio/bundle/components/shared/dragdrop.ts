@@ -20,9 +20,8 @@ const handleDrop = (
 	dropIndex: number,
 	uesio: hooks.Uesio
 ): void => {
-	const propDef = component.dragdrop.getPropertiesDefinitionFromDragNode(
-		dragNode
-	)
+	const propDef =
+		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
 
 	uesio.builder.setDragNode("")
 	uesio.builder.setDropNode("")
@@ -52,9 +51,8 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const propDef = component.dragdrop.getPropertiesDefinitionFromDragNode(
-		dragNode
-	)
+	const propDef =
+		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([
@@ -80,7 +78,8 @@ const handleBankDrop = (
 	uesio.view.addDefinition(
 		dropNode,
 		{
-			[`${propDef.namespace}.${propDef.name}`]: propDef.defaultDefinition(),
+			[`${propDef.namespace}.${propDef.name}`]:
+				propDef.defaultDefinition(),
 		},
 		dropIndex,
 		true
@@ -94,9 +93,8 @@ const handleFieldDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
-	const dropPropDef = component.registry.getPropertiesDefinitionFromPath(
-		dropNode
-	)
+	const dropPropDef =
+		component.registry.getPropertiesDefinitionFromPath(dropNode)
 	const handler = dropPropDef?.handleFieldDrop
 	if (handler) {
 		return handler(dragNode, dropNode, dropIndex, propDef, uesio)

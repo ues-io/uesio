@@ -72,51 +72,53 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	)
 }
 
-const signUp = (
-	pool: CognitoUserPool,
-	setMessage: (message: string) => void,
-	setMode: (message: string) => void
-) => (
-	firstname: string,
-	lastname: string,
-	username: string,
-	email: string,
-	password: string
-): void => {
-	const attributeList = [
-		new CognitoUserAttribute({
-			Name: "email",
-			Value: email,
-		}),
-		new CognitoUserAttribute({
-			Name: "family_name",
-			Value: lastname,
-		}),
-		new CognitoUserAttribute({
-			Name: "given_name",
-			Value: firstname,
-		}),
-	]
+const signUp =
+	(
+		pool: CognitoUserPool,
+		setMessage: (message: string) => void,
+		setMode: (message: string) => void
+	) =>
+	(
+		firstname: string,
+		lastname: string,
+		username: string,
+		email: string,
+		password: string
+	): void => {
+		const attributeList = [
+			new CognitoUserAttribute({
+				Name: "email",
+				Value: email,
+			}),
+			new CognitoUserAttribute({
+				Name: "family_name",
+				Value: lastname,
+			}),
+			new CognitoUserAttribute({
+				Name: "given_name",
+				Value: firstname,
+			}),
+		]
 
-	pool.signUp(
-		username,
-		password,
-		attributeList,
-		[],
-		(err: Error, result: unknown) => {
-			if (err) {
-				setMessage(err.message || JSON.stringify(err))
-				return
+		pool.signUp(
+			username,
+			password,
+			attributeList,
+			[],
+			(err: Error, result: unknown) => {
+				if (err) {
+					setMessage(err.message || JSON.stringify(err))
+					return
+				}
+				if (!result) {
+					setMessage("No result!")
+					return
+				}
+				setMessage("")
+				setMode("confirm")
 			}
-			if (!result) {
-				setMessage("No result!")
-				return
-			}
-			setMessage("")
-			setMode("confirm")
-		}
-	)
-}
+		)
+	}
 
 const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
