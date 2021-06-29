@@ -1,25 +1,22 @@
 import { FC, useEffect, useState } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
-import KeyValueList, { ListItem } from "../../KeyValueList"
+import KeyValueList, { List } from "../KeyValueList"
+import { hooks, styles, component } from "@uesio/ui"
+
+// Couldn't find another fix
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import * as T from "../../../../../../ui/src/buildmode/buildpropdefinition"
-import { hooks, component, definition } from "@uesio/ui"
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 type StylingObjectForInput = {
 	className: string
-	values: { key: string; value: string }[]
+	values: List
 }
-
-type List = ListItem[]
 
 const MetadataListProp: FC<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const descriptor = props.descriptor as T.MetadataListProp
 	const { getValue, context, path, definition } = props
-
-	// // {..., padding: '12px'} ==> [{key: 'padding', value: '12px'}]
-	// const styleArray = (styleObject: KeyValueObject): KeyValueArray =>
-	// 	Object.keys(styleObject).map((k) => ({ key: k, value: styleObject[k] }))
 
 	const valuesFromSource = (): StylingObjectForInput[] => {
 		if (!definition || !definition[`uesio.styles`]) return []
@@ -45,7 +42,7 @@ const MetadataListProp: FC<PropRendererProps> = (props) => {
 		)
 	}
 
-	// save value so we're not rerunning the function everytime from the .map below
+	// Save value so we're not running the function everytime from the .map below
 	const sourceData = valuesFromSource()
 
 	const handleUpdate = (className: string, list: List = []) => {
@@ -65,12 +62,21 @@ const MetadataListProp: FC<PropRendererProps> = (props) => {
 		)
 	}
 
+	const classes = styles.useStyles(
+		{
+			inlineStylesInput: {
+				marginBottom: "1em",
+			},
+		},
+		props
+	)
+
 	return (
 		<div>
+			<FieldLabel label={"Inline Styles"} context={context} />
 			{descriptor.classes.map((className, i) => (
-				<div>
-					{/* TODO: get better component for label */}
-					<span>{className}</span>
+				<div className={classes.inlineStylesInput}>
+					<span>.{className}</span>
 					<KeyValueList
 						onListUpdate={(list: List) =>
 							handleUpdate(className, list)
@@ -79,7 +85,7 @@ const MetadataListProp: FC<PropRendererProps> = (props) => {
 						value={
 							sourceData.find(
 								(item) => item.className === className
-							)?.values
+							)?.values || []
 						}
 					/>
 				</div>
