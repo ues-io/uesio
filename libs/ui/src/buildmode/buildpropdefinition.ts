@@ -51,12 +51,10 @@ interface SignalsSection extends BasePropSection {
 interface PropListSection extends BasePropSection {
 	type: "PROPLIST"
 	properties: PropDescriptor[]
-	classes: string[]
 }
 
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
-	classes: string[]
 }
 
 type PropDescriptor =
@@ -73,7 +71,7 @@ type PropDescriptor =
 	| ConditionProp
 	| NamespaceProp
 	| ComponentTargetProp
-	| MetadataListProp
+	| StylesListProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -98,10 +96,8 @@ interface NamespaceProp extends BasePropDescriptor {
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
-export interface MetadataListProp extends BasePropDescriptor {
-	type: "METADATALIST"
-	metadataType: MetadataType
-	classes: string[]
+interface StylesListProp extends BasePropDescriptor {
+	type: "STYLESLIST"
 }
 
 interface NumberProp extends BasePropDescriptor {
@@ -216,5 +212,5 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
-	// MetadataListProp,
+	StylesListProp,
 }

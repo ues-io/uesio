@@ -1,11 +1,8 @@
-import { FC, useEffect, useState } from "react"
+import { FC } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import KeyValueList, { List } from "../KeyValueList"
 import { hooks, styles, component } from "@uesio/ui"
 
-// Couldn't find another fix
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import * as T from "../../../../../../ui/src/buildmode/buildpropdefinition"
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 type StylingObjectForInput = {
@@ -13,10 +10,9 @@ type StylingObjectForInput = {
 	values: List
 }
 
-const MetadataListProp: FC<PropRendererProps> = (props) => {
+const StylesListProp: FC<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const descriptor = props.descriptor as T.MetadataListProp
-	const { getValue, context, path, definition } = props
+	const { context, path, definition, descriptor, propsDef } = props
 
 	const valuesFromSource = (): StylingObjectForInput[] => {
 		if (!definition || !definition[`uesio.styles`]) return []
@@ -74,7 +70,7 @@ const MetadataListProp: FC<PropRendererProps> = (props) => {
 	return (
 		<div>
 			<FieldLabel label={"Inline Styles"} context={context} />
-			{descriptor.classes.map((className, i) => (
+			{propsDef.classes?.map((className) => (
 				<div className={classes.inlineStylesInput}>
 					<span>.{className}</span>
 					<KeyValueList
@@ -94,4 +90,4 @@ const MetadataListProp: FC<PropRendererProps> = (props) => {
 	)
 }
 
-export default MetadataListProp
+export default StylesListProp

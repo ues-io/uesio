@@ -5,7 +5,7 @@ import { builder } from "@uesio/ui"
 import PropList from "./proplist"
 
 const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { path, definition, context } = props
+	const { path, definition, context, propsDef } = props
 	const section = props.section as builder.PropListSection
 
 	const properties: builder.PropDescriptor[] = [
@@ -15,17 +15,12 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			metadataType: "COMPONENTVARIANT",
 			label: "Variant",
 			groupingParents: 1,
-			groupingProperty: "component",
+			getGroupingFromKey: true,
 		},
 		{
 			name: "uesio.styles",
-			type: "METADATALIST",
-			metadataType: "COMPONENTSTYLES",
+			type: "STYLESLIST",
 			label: "Variant",
-			classes: section.classes || [],
-			// groupingParents: 1,
-			// groupingProperty: "component",
-			// getGroupingFromKey: true,
 		},
 	]
 
@@ -38,6 +33,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			<PropList
 				path={path}
 				definition={definition}
+				propsDef={propsDef}
 				properties={properties}
 				context={context}
 			/>
