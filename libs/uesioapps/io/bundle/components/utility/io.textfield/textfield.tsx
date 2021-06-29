@@ -17,15 +17,8 @@ interface TextFieldProps extends definition.UtilityProps {
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const {
-		setValue,
-		value,
-		mode,
-		hideLabel,
-		context,
-		label,
-		placeholder,
-	} = props
+	const { setValue, value, mode, hideLabel, context, label, placeholder } =
+		props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
