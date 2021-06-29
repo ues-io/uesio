@@ -41,7 +41,9 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			<FieldLabel label={label} hide={hideLabel} context={context} />
+			{label && (
+				<FieldLabel label={label} hide={hideLabel} context={context} />
+			)}
 			<input
 				value={value}
 				className={styles.cx(
