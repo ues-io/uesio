@@ -81,10 +81,10 @@ definition:
                                           path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${studio.name}/preview"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Edit"
+                                      text: "Build"
                                       signals:
-                                        - signal: component/io.list/TOGGLE_MODE
-                                          target: "viewsDeck"
+                                        - signal: "route/REDIRECT"
+                                          path: "/workspace/$Param{appname}/$Param{workspacename}/views/$Param{appname}/${studio.name}/edit"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Save"
