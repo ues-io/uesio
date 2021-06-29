@@ -1,30 +1,32 @@
-import React, { FC, useState, useReducer, useEffect } from "react"
-import { component, hooks } from "@uesio/ui"
-import { css, cx } from "@emotion/css"
+import React, { FC, useReducer, useEffect } from "react"
+import { component, definition } from "@uesio/ui"
 
 const Grid = component.registry.getUtility("io.grid")
 const Textfield = component.registry.getUtility("io.textfield")
-import ActionButton from "./shared/buildproparea/actions/actionbutton"
+import ActionButton from "./buildproparea/actions/actionbutton"
 
 // TODO, update type
-type T = any
+interface T extends definition.BaseProps {
+	onListUpdate: (arg1: List) => void
+	value: List | []
+}
 
 export type ListItem = {
 	key: string
 	value: string
 }
+export type List = ListItem[]
 
 type ListAction =
-	| { type: "set"; payload: ListItem[] }
+	| { type: "set"; payload: List }
 	| { type: "add"; payload: ListItem }
 	| { type: "remove"; id: number }
 	| { type: "update"; payload: { id: number; key: string; value: string } }
 	| { type: "removeAll" }
 
-const listReducer = (state: { list: ListItem[] }, action: ListAction) => {
+const listReducer = (state: { list: List }, action: ListAction) => {
 	switch (action.type) {
 		case useList.types.set: {
-			console.log("setting", action)
 			return {
 				list: action.payload,
 			}
@@ -35,12 +37,6 @@ const listReducer = (state: { list: ListItem[] }, action: ListAction) => {
 			}
 		}
 		case useList.types.remove: {
-			if (listReducer.length - 1 === action.id) {
-				console.warn(`Can't remove last list item`)
-				return {
-					list: state.list,
-				}
-			}
 			return {
 				list: state.list.filter((l, index) => index !== action.id),
 			}
@@ -66,7 +62,7 @@ const listReducer = (state: { list: ListItem[] }, action: ListAction) => {
 	}
 }
 
-const useList = (initialValue: ListItem[]) => {
+const useList = (initialValue: List) => {
 	const [{ list }, dispatch] = useReducer(listReducer, {
 		list: [...initialValue, { key: "", value: "" }],
 	})
@@ -74,15 +70,14 @@ const useList = (initialValue: ListItem[]) => {
 	useEffect(() => {
 		// Ensure there is always blank option to fill in
 		const { key, value } = list[list.length - 1]
-		const lastItemIsEmpty = !key && !value
-		if (!lastItemIsEmpty)
+		if (!!key && !!value)
 			return dispatch({
 				type: useList.types.add,
 				payload: { key: "", value: "" },
 			})
 	}, [list])
 
-	const set = (payload: ListItem[]) =>
+	const set = (payload: List) =>
 		dispatch({ type: useList.types.set, payload })
 	const add = (payload: ListItem) =>
 		dispatch({ type: useList.types.add, payload })
@@ -121,26 +116,41 @@ const KeyValueList: FC<T> = (props) => {
 
 	const stylesRow = {
 		root: {
-			deleteIcon: {
+			gridTemplateColumns: "4fr 6fr 1fr",
+			columnGap: "5px",
+			".deleteIcon": {
 				opacity: "0",
 			},
 			"&:hover": {
 				backgroundColor: "rgba(0, 0, 0, 0.05)",
-
-				deleteIcon: {
+				".deleteIcon": {
 					opacity: "1",
 				},
 			},
+			padding: "1px",
+			paddingLeft: "8px",
 		},
 	}
 	const stylesInput = {
 		root: {
 			padding: "0",
 			border: "none",
+			cursor: "pointer",
+			"&.last input": {
+				border: "1px solid #eee",
+				padding: "4px",
+			},
 		},
 		input: {
-			padding: "4px 2px",
+			padding: "2px",
 			backgroundColor: "transparent",
+			border: "1px solid transparent",
+			cursor: "pointer",
+
+			"&:focus": {
+				border: "1px solid #eee",
+				cursor: "text",
+			},
 		},
 	}
 
@@ -152,11 +162,12 @@ const KeyValueList: FC<T> = (props) => {
 						value={item.key}
 						context={context}
 						placeholder={"e.g. padding"}
+						className={i === list.length - 1 ? "last" : ""}
 						styles={stylesInput}
-						setValue={(x: string) =>
+						setValue={(key: string) =>
 							update({
 								id: i,
-								key: x,
+								key,
 								value: item.value,
 							})
 						}
@@ -164,13 +175,14 @@ const KeyValueList: FC<T> = (props) => {
 					<Textfield
 						value={item.value}
 						context={context}
-						styles={stylesInput}
+						className={i === list.length - 1 ? "last" : ""}
+						styles={{ ...stylesInput }}
 						placeholder={"e.g. 12px"}
-						setValue={(x: string) =>
+						setValue={(value: string) =>
 							update({
 								id: i,
 								key: item.key,
-								value: x,
+								value,
 							})
 						}
 					/>
