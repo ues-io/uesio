@@ -1,0 +1,4 @@
+name: home
+path: home
+view: web.home
+theme: uesio.default

@@ -2,6 +2,9 @@ package adapt
 
 import (
 	"errors"
+
+	"github.com/thecloudmasters/uesio/pkg/configstore"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // Adapter interface
@@ -14,8 +17,12 @@ type Adapter interface {
 var adapterMap = map[string]Adapter{}
 
 // GetAdapter gets an adapter of a certain type
-func GetAdapter(adapterType string) (Adapter, error) {
-	adapter, ok := adapterMap[adapterType]
+func GetAdapter(adapterType string, session *sess.Session) (Adapter, error) {
+	mergedType, err := configstore.Merge(adapterType, session)
+	if err != nil {
+		return nil, err
+	}
+	adapter, ok := adapterMap[mergedType]
 	if !ok {
 		return nil, errors.New("No adapter found of this type: " + adapterType)
 	}

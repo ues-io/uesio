@@ -3,7 +3,6 @@ package fileadapt
 import (
 	"errors"
 	"io"
-	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -22,8 +21,12 @@ type FileAdapter interface {
 var adapterMap = map[string]FileAdapter{}
 
 // GetFileAdapter gets an adapter of a certain type
-func GetFileAdapter(adapterType string) (FileAdapter, error) {
-	adapter, ok := adapterMap[adapterType]
+func GetFileAdapter(adapterType string, session *sess.Session) (FileAdapter, error) {
+	mergedType, err := configstore.Merge(adapterType, session)
+	if err != nil {
+		return nil, err
+	}
+	adapter, ok := adapterMap[mergedType]
 	if !ok {
 		return nil, errors.New("No adapter found of this type: " + adapterType)
 	}
@@ -53,12 +56,6 @@ func GetFileSourceAndCollection(fileCollectionID string, session *sess.Session) 
 	if err != nil {
 		return nil, nil, errors.New("No file source found")
 	}
-	if fs.Name == "platform" && fs.Namespace == "uesio" {
-		value := os.Getenv("UESIO_LOCAL_FILES")
-		if value == "true" {
-			fs.Type = "uesio.local"
-		}
-	}
 	return ufc, fs, nil
 }
 
@@ -84,7 +81,7 @@ func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Sessio
 		return nil, "", nil, err
 	}
 
-	fileAdapter, err := GetFileAdapter(fs.Type)
+	fileAdapter, err := GetFileAdapter(fs.Type, session)
 	if err != nil {
 		return nil, "", nil, err
 	}

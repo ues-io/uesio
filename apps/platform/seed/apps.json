@@ -23,5 +23,10 @@
 		"name": "docs",
 		"description": "Docs for Uesio",
 		"color": "#d45087"
+	},
+	{
+		"name": "web",
+		"description": "Uesio Website",
+		"color": "#003f5c"
 	}
 ]

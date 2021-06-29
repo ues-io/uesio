@@ -1,0 +1,11 @@
+name: web
+loginRoute: uesio.login
+homeRoute: web.home
+defaultProfile: web.public
+defaultTheme: crm.default
+publicProfile: web.public
+dependencies:
+  uesio:
+    version: v0.0.1
+  io:
+    version: v0.0.1

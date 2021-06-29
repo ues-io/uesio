@@ -29,7 +29,12 @@ func (c *Credentials) GetHash() string {
 func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
 	credmap := Credentials{}
 
-	credential, err := meta.NewCredential(key)
+	mergedKey, err := configstore.Merge(key, session)
+	if err != nil {
+		return nil, err
+	}
+
+	credential, err := meta.NewCredential(mergedKey)
 	if err != nil {
 		return nil, err
 	}

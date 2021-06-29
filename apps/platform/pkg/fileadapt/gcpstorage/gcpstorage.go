@@ -3,7 +3,6 @@ package gcpstorage
 import (
 	"context"
 	"errors"
-	"os"
 
 	"cloud.google.com/go/storage"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -26,10 +25,6 @@ func getNewClient(ctx context.Context, credentials *adapt.Credentials) (*storage
 		ctx,
 		option.WithCredentialsJSON([]byte(apiKey)),
 	)
-}
-
-func getProjectID() string {
-	return os.Getenv("GOOGLE_CLOUD_PROJECT")
 }
 
 func getClient(credentials *adapt.Credentials) (*storage.Client, error) {

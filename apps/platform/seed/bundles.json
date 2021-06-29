@@ -26,5 +26,12 @@
 		"major": "0",
 		"minor": "0",
 		"patch": "1"
+	},
+	{
+		"appid": "web",
+		"description": "Uesio Website",
+		"major": "0",
+		"minor": "0",
+		"patch": "1"
 	}
 ]
