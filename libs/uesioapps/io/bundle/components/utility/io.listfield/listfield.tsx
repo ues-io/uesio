@@ -31,7 +31,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		value = [],
 		label,
 		setValue,
-		autoAdd = true,
+		autoAdd,
 	} = props
 	const editMode = mode === "EDIT"
 	const rowStyles = {

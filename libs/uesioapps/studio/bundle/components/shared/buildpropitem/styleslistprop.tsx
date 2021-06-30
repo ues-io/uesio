@@ -32,6 +32,7 @@ const StylesListProp: FC<PropRendererProps> = (props) => {
 								  }))
 								: []
 						}
+						autoAdd
 						subFields={[
 							{
 								name: "key",
