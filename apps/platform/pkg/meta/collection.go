@@ -52,8 +52,8 @@ type Collection struct {
 	Workspace      string    `yaml:"-" uesio:"studio.workspaceid"`
 	CreatedBy      *User     `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy      *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt      int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt      int64     `yaml:"-" uesio:"studio.createdat"`
+	UpdatedAt      float64   `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt      float64   `yaml:"-" uesio:"studio.createdat"`
 	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
 	Access         string    `yaml:"access,omitempty" uesio:"studio.access"`
 	//TODO:: JAS Figure out if we want/how we want to handle a uesio encoding

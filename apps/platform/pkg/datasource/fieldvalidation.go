@@ -39,7 +39,7 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
-func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
+func populateTimestamps(field *adapt.FieldMetadata, timestamp float64) validationFunc {
 	return func(change adapt.ChangeItem) error {
 		// Only populate fields marked with CREATE on insert
 		// Always populate the fields marked with UPDATE
@@ -135,7 +135,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
 				timestamp := time.Now().UnixNano() / 1e6
-				validations = append(validations, populateTimestamps(field, timestamp))
+				validations = append(validations, populateTimestamps(field, float64(timestamp)))
 			}
 			if field.Type == "USER" {
 				user := session.GetUserInfo()

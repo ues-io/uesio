@@ -13,8 +13,8 @@ type User struct {
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy      *User             `yaml:"-" uesio:"uesio.createdby"`
 	UpdatedBy      *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt      int64             `uesio:"uesio.updatedat"`
-	CreatedAt      int64             `uesio:"uesio.createdat"`
+	UpdatedAt      float64           `uesio:"uesio.updatedat"`
+	CreatedAt      float64           `uesio:"uesio.createdat"`
 }
 
 func (u *User) GetPictureID() string {

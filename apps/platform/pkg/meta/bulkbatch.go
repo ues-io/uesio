@@ -8,8 +8,8 @@ type BulkBatch struct {
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `uesio:"uesio.createdby"`
 	UpdatedBy *User     `uesio:"uesio.updatedby"`
-	UpdatedAt int64     `uesio:"uesio.updatedat"`
-	CreatedAt int64     `uesio:"uesio.createdat"`
+	UpdatedAt float64   `uesio:"uesio.updatedat"`
+	CreatedAt float64   `uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function

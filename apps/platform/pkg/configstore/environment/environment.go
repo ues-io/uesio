@@ -21,6 +21,9 @@ var configValues = map[string]string{
 	"uesio:platformFileSourceType":        os.Getenv("UESIO_PLATFORM_FILESOURCE_TYPE"),
 	"uesio:platformDataSourceCredentials": os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS"),
 	"uesio:platformFileSourceCredentials": os.Getenv("UESIO_PLATFORM_FILESOURCE_CREDENTIALS"),
+	"uesio:aws_access_key_id":             os.Getenv("AWS_ACCESS_KEY_ID"),
+	"uesio:aws_secret_access_key":         os.Getenv("AWS_SECRET_ACCESS_KEY"),
+	"uesio:aws_region":                    os.Getenv("AWS_REGION"),
 }
 
 // Get function

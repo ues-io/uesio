@@ -16,8 +16,8 @@ type UserFileMetadata struct {
 	Type             string    `uesio:"uesio.type" json:"-"`
 	CreatedBy        *User     `yaml:"-" uesio:"uesio.createdby"`
 	UpdatedBy        *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt        int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt        int64     `yaml:"-" uesio:"uesio.createdat"`
+	UpdatedAt        float64   `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt        float64   `yaml:"-" uesio:"uesio.createdat"`
 	itemMeta         *ItemMeta `yaml:"-" uesio:"-"`
 }
 

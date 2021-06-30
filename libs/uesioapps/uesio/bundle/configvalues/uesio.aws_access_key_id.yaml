@@ -1,0 +1,3 @@
+name: aws_access_key_id
+managedBy: app
+store: environment
