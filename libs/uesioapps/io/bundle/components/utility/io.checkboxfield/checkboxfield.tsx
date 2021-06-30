@@ -49,9 +49,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				checked={checked}
 				type="checkbox"
 				disabled={readonly}
-				onChange={(event: ChangeEvent<HTMLInputElement>): void =>
-					setValue(event.target.checked)
-				}
+				onChange={(event) => setValue(event.target.checked)}
 			/>
 			<div className={classes.input}>
 				<Icon
