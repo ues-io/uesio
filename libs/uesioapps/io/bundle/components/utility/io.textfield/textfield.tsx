@@ -10,8 +10,6 @@ interface TextFieldProps extends definition.UtilityProps {
 	hideLabel?: boolean
 	mode?: context.FieldMode
 	placeholder?: string
-	handleFocus?: () => void
-	handleBlur?: () => void
 }
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
@@ -34,9 +32,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<div className={classes.root}>
-			{label && (
-				<FieldLabel label={label} hide={hideLabel} context={context} />
-			)}
+			<FieldLabel label={label} hide={hideLabel} context={context} />
 			<input
 				value={value}
 				className={styles.cx(

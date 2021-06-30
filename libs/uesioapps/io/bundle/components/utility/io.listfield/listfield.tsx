@@ -9,10 +9,10 @@ import {
 } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
-const Group = component.registry.getUtility("io.group")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 interface Props extends definition.UtilityProps {
 	label?: string
@@ -20,48 +20,70 @@ interface Props extends definition.UtilityProps {
 	value: wire.PlainWireRecord[]
 	setValue: (value: wire.PlainWireRecord[]) => void
 	subFields: collection.SubField[]
+	autoAdd?: boolean
 }
 
 const ListField: FunctionComponent<Props> = (props) => {
-	const { subFields, mode, context, value = [], label, setValue } = props
+	const {
+		subFields,
+		mode,
+		context,
+		value = [],
+		label,
+		setValue,
+		autoAdd = true,
+	} = props
 	const editMode = mode === "EDIT"
+	const rowStyles = {
+		root: {
+			gridTemplateColumns: `repeat(${subFields.length},1fr)${
+				editMode ? " 0fr" : ""
+			}`,
+			alignItems: "center",
+			columnGap: "10px",
+			".deleteicon": {
+				opacity: "0",
+			},
+			"&:hover": {
+				".deleteicon": {
+					opacity: "1",
+				},
+			},
+		},
+	}
 	return subFields ? (
 		<div>
-			<TitleBar
-				title={label}
-				actions={
-					editMode && (
-						<IconButton
-							label="add"
-							icon="add_circle"
-							context={context}
-							onClick={() => {
-								// We have to do this in a way that doesn't mutate listValue
-								// since it can be readonly.
-								const newValue = [...value]
-								newValue.push({})
-								setValue(newValue)
-							}}
-						/>
-					)
-				}
-				context={context}
-			/>
-			{value.map((item: wire.PlainWireRecord, index) => (
-				<Grid
-					styles={{
-						root: {
-							gridTemplateColumns: "1fr 0fr",
-							alignItems: "center",
-						},
-					}}
-					context={context}
-				>
-					<Group context={context}>
+			<FieldLabel label={label} context={context} />
+			<Grid styles={rowStyles} context={context}>
+				{subFields.map((subfield) => (
+					<FieldLabel label={subfield.name} context={context}>
+						{subfield.name}
+					</FieldLabel>
+				))}
+				{editMode && !autoAdd && (
+					<IconButton
+						label="add"
+						icon="add_circle"
+						context={context}
+						className="editicon"
+						onClick={() => {
+							// We have to do this in a way that doesn't mutate listValue
+							// since it can be readonly.
+							const newValue = [...value]
+							newValue.push({})
+							setValue(newValue)
+						}}
+					/>
+				)}
+			</Grid>
+			{value
+				.concat(autoAdd && editMode ? [{}] : [])
+				.map((item: wire.PlainWireRecord, index) => (
+					<Grid styles={rowStyles} context={context}>
 						{subFields.map((subfield) => (
 							<TextField
-								label={subfield.name}
-								value={item[subfield.name]}
+								hideLabel
+								value={item[subfield.name] || ""}
 								mode={mode}
 								context={context}
 								setValue={(newFieldValue: wire.FieldValue) => {
@@ -76,19 +98,21 @@ const ListField: FunctionComponent<Props> = (props) => {
 								}}
 							/>
 						))}
-					</Group>
-					{editMode && (
-						<IconButton
-							label="delete"
-							icon="delete"
-							context={context}
-							onClick={() => {
-								setValue(value.filter((_, i) => i !== index))
-							}}
-						/>
-					)}
-				</Grid>
-			))}
+						{editMode && (
+							<IconButton
+								label="delete"
+								icon="delete"
+								className="deleteicon"
+								context={context}
+								onClick={() => {
+									setValue(
+										value.filter((_, i) => i !== index)
+									)
+								}}
+							/>
+						)}
+					</Grid>
+				))}
 		</div>
 	) : null
 }
