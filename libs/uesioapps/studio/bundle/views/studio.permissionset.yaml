@@ -162,6 +162,7 @@ definition:
                                       fieldId: studio.name
                                   - io.field:
                                       fieldId: studio.allowallfiles
+                                      displayAs: "TOGGLE"
                                   - io.field:
                                       fieldId: studio.allowallroutes
                                   - io.field:
