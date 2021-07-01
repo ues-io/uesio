@@ -29,7 +29,6 @@ components:
     studio.permissionpicker:
       utilities:
         - io.checkboxfield
-        - io.toggleswitch
         - io.titlebar
     studio.configsecrets:
       utilities:
