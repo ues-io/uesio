@@ -8,7 +8,7 @@ import {
 	wire,
 	hooks,
 } from "@uesio/ui"
-import toggleStyles from "./toggleStyles"
+import toggleStyles from "./togglestyles"
 
 interface ToggleFieldProps extends definition.UtilityProps {
 	label?: string
