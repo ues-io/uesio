@@ -4,3 +4,4 @@ type: SELECT
 selectList: studio.datasourcetypes
 label: Type
 propertyName: type
+required: true

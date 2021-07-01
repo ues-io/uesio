@@ -3,3 +3,7 @@ collection: studio.permissionsets
 type: TEXT
 label: Name
 propertyName: name
+required: true
+createOnly: true
+validate:
+  type: METADATA
