@@ -117,20 +117,24 @@ const TableRow: FunctionComponent<RowProps> = ({
 				record.isDeleted() && classes.rowDeleted
 			)}
 		>
-			{columns.map((columnDef, index) => {
-				const column = columnDef["io.column"] as ColumnDefinition
-				const Cell = column.components ? SlotCell : FieldCell
-				return (
-					<Cell
-						classes={classes}
-						key={index}
-						column={column}
-						context={rowContext}
-						path={path}
-						index={index}
-					/>
-				)
-			})}
+			{columns
+				? columns.map((columnDef, index) => {
+						const column = columnDef[
+							"io.column"
+						] as ColumnDefinition
+						const Cell = SlotCell // column.components ? SlotCell : FieldCell
+						return (
+							<Cell
+								classes={classes}
+								key={index}
+								column={column}
+								context={rowContext}
+								path={path}
+								index={index}
+							/>
+						)
+				  })
+				: null}
 			{rowactions && (
 				<td key="rowactions" className={classes.cell}>
 					<Group

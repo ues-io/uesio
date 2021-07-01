@@ -67,6 +67,18 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		uesio.view.addDefinition(
+			dropNode,
+			{
+				"io.column": {
+					fieldId: `${propDef.namespace}.${propDef.name}`,
+				},
+			},
+			dropIndex,
+			true
+		)
+	},
 }
 export {
 	TableProps,
