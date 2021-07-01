@@ -9,8 +9,9 @@ function newworkspace(bot) {
 	bot.save("studio.workspaces", [
 		{
 			"studio.name": workspace,
-			"studio.app": app,
-			"studio.appid": app,
+			"studio.app": {
+				"uesio.id": app,
+			},
 		},
 	])
 

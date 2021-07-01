@@ -41,6 +41,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					<PropList
 						path={path}
 						definition={definition}
+						propsDef={buildPropsDef}
 						properties={buildPropsDef.properties}
 						context={context}
 					/>
@@ -51,6 +52,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					key={index}
 					path={path}
 					definition={definition}
+					propsDef={buildPropsDef}
 					section={section}
 					index={index}
 					context={context}

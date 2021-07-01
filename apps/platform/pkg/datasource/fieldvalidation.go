@@ -102,6 +102,22 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
+func validateMetadata(field *adapt.FieldMetadata) validationFunc {
+	regex, ok := isValidRegex("^[a-zA-Z0-9]*$")
+	if !ok {
+		return func(adapt.ChangeItem) error {
+			return errors.New("Regex for the field: " + field.Label + " is not valid")
+		}
+	}
+	return func(change adapt.ChangeItem) error {
+		val, err := change.FieldChanges.GetField(field.GetFullName())
+		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
+			return errors.New("Field: " + field.Label + " failed metadata validation, no special characters allowed")
+		}
+		return nil
+	}
+}
+
 func isEmailValid(e string) bool {
 	if len(e) < 3 && len(e) > 254 {
 		return false
@@ -131,6 +147,9 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		}
 		if field.Validate != nil && field.Validate.Type == "REGEX" {
 			validations = append(validations, validateRegex(field))
+		}
+		if field.Validate != nil && field.Validate.Type == "METADATA" {
+			validations = append(validations, validateMetadata(field))
 		}
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {

@@ -1,5 +1,5 @@
 name: opportunities
-dataSource: crm.dynamo
+dataSource: uesio.platform
 idField: crm.id
 nameField: crm.name
 collectionName: opportunities
