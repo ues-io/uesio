@@ -62,9 +62,7 @@ const FieldCell: FunctionComponent<CellProps> = ({
 			}}
 			index={index}
 			path={`${path}["columns"]["${index}"]`}
-			context={context.addFrame({
-				buildMode: false,
-			})}
+			context={context}
 		/>
 	</td>
 )
@@ -117,7 +115,7 @@ const TableRow: FunctionComponent<RowProps> = ({
 				record.isDeleted() && classes.rowDeleted
 			)}
 		>
-			{columns.map((columnDef, index) => {
+			{columns?.map((columnDef, index) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				const Cell = column.components ? SlotCell : FieldCell
 				return (
@@ -145,6 +143,7 @@ const TableRow: FunctionComponent<RowProps> = ({
 							return (
 								<Button
 									variant="io.nav"
+									className="rowaction"
 									label={action.text}
 									context={rowContext}
 									onClick={handler}

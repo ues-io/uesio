@@ -34,8 +34,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const isContentView = !isStructureView
 	const showHeader = isStructureView || (isContentView && isSelected)
 
-	const accepts = ["uesio.standalone"]
-	const direction = "horizontal"
+	const accepts = propDef?.accepts
 
 	const wrapperPath = component.path.getGrandParentPath(path)
 
@@ -120,6 +119,28 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		uesio.builder.setDropNode("")
 	}
 
+	const onDragOver = (e: DragEvent) => {
+		//const target = e.target as Element | null
+		if (!accepts) return
+		if (!isDropAllowed(accepts, dragNode)) {
+			return
+		}
+		e.preventDefault()
+		e.stopPropagation()
+		//console.log(target)
+		uesio.builder.setDropNode(path)
+	}
+
+	const onDrop = (e: DragEvent) => {
+		if (!accepts) return
+		if (!isDropAllowed(accepts, dragNode)) {
+			return
+		}
+		e.preventDefault()
+		e.stopPropagation()
+		handleDrop(dragNode, path, 0, uesio)
+	}
+
 	return (
 		<>
 			{addBeforePlaceholder && <div className={classes.placeholder} />}
@@ -127,6 +148,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				data-index={index}
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
+				onDragOver={onDragOver}
+				onDrop={onDrop}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected && uesio.builder.setSelectedNode(path)

@@ -105,6 +105,7 @@ const builderSlice = createSlice({
 			state.lastModifiedNode = payload.path
 		})
 		builder.addCase(cancel, (state) => {
+			state.selectedNode = ""
 			state.lastModifiedNode = ""
 		})
 		builder.addCase(addDefinition, (state, { payload }) => {

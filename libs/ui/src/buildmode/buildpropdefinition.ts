@@ -11,6 +11,7 @@ type BuildPropertiesDefinition = {
 	defaultDefinition: () => DefinitionMap
 	signals?: SignalProperties[]
 	traits?: string[]
+	accepts?: string[]
 	handleFieldDrop?: (
 		dragNode: string,
 		dropNode: string,
