@@ -64,7 +64,7 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					uesio.signal.run(
 						{
 							signal: "route/REDIRECT",
-							path: `/app/${workspace.app}/workspace/${workspace.name}/view/${viewName}`,
+							path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`,
 						},
 						props.context
 					)
