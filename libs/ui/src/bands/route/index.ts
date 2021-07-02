@@ -9,12 +9,8 @@ const routeSlice = createSlice({
 		setLoading: (state) => {
 			if (state) state.isLoading = true
 		},
-		setNotification: (state) => {
-			console.log("setting notificationz")
-			if (state && state.params) state.params.notification = "hey"
-		},
 	},
 })
 
-export const { set, setLoading, setNotification } = routeSlice.actions
+export const { set, setLoading } = routeSlice.actions
 export default routeSlice.reducer
