@@ -157,7 +157,8 @@ const addNodePairAtPath = (
 			: node?.addIn(pathArray, new Pair(key, setNode))
 		return
 	}
-	node?.setIn(pathArray, new Pair(key, setNode))
+	node?.setIn(pathArray, new YAMLMap())
+	node?.addIn(pathArray, new Pair(key, setNode))
 }
 
 const removeNodeAtPath = (
