@@ -1,7 +1,8 @@
 import { FunctionComponent, useEffect } from "react"
 import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
-import { useRoute } from "../bands/route/selectors"
+import { useRoute, useDispatch } from "../bands/route/selectors"
+import { setNotification } from "../bands/route"
 import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
@@ -57,11 +58,14 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	if (!theme || !route) return null
 
 	const notification: Notification = {
-		type: "info",
+		type: "error",
 		title: "Hey there stranger",
 		body: "nice work on that app, you rock",
 	}
 
+	console.log("route params", route)
+	console.log(uesio.getDispatcher()(setNotification))
+	console.log("route", route)
 	return (
 		<>
 			<ComponentInternal
