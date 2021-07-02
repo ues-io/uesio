@@ -4,8 +4,9 @@ import { BaseProps } from "../definition/definition"
 import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
-import { injectGlobal } from "@emotion/css"
+import { css, injectGlobal } from "@emotion/css"
 import Progress from "./progress"
+import NotificationArea from "./notificationarea"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -61,6 +62,17 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				context={routeContext}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
+			<div
+				className={css({
+					position: "fixed",
+					right: "2em",
+					bottom: "2em",
+					display: "grid",
+					rowGap: "10px",
+				})}
+			>
+				<NotificationArea context={props.context} />
+			</div>
 		</>
 	)
 }
