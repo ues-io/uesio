@@ -6,6 +6,9 @@ import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
 import { injectGlobal } from "@emotion/css"
 import Progress from "./progress"
+import NotificationToast, {
+	Notification,
+} from "./notificationtoast/notificationtoast"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -53,6 +56,12 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
+	const notification: Notification = {
+		type: "info",
+		title: "Hey there stranger",
+		body: "nice work on that app, you rock",
+	}
+
 	return (
 		<>
 			<ComponentInternal
@@ -61,6 +70,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				context={routeContext}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
+			<NotificationToast {...notification} />
 		</>
 	)
 }
