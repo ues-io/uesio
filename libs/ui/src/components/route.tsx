@@ -1,15 +1,12 @@
 import { FunctionComponent, useEffect } from "react"
 import { ComponentInternal } from "../component/component"
 import { BaseProps } from "../definition/definition"
-import { useRoute, useDispatch } from "../bands/route/selectors"
-import { setNotification } from "../bands/route"
+import { useRoute } from "../bands/route/selectors"
 import { useSite } from "../bands/site/selectors"
 import { useUesio } from "../hooks/hooks"
-import { injectGlobal } from "@emotion/css"
+import { css, injectGlobal } from "@emotion/css"
 import Progress from "./progress"
-import NotificationToast, {
-	Notification,
-} from "./notificationtoast/notificationtoast"
+import NotificationArea from "./notificationarea"
 
 const Route: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -57,15 +54,6 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 	// Quit rendering early if we don't have our theme yet.
 	if (!theme || !route) return null
 
-	const notification: Notification = {
-		type: "error",
-		title: "Hey there stranger",
-		body: "nice work on that app, you rock",
-	}
-
-	console.log("route params", route)
-	console.log(uesio.getDispatcher()(setNotification))
-	console.log("route", route)
 	return (
 		<>
 			<ComponentInternal
@@ -74,7 +62,17 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 				context={routeContext}
 			/>
 			<Progress isAnimating={!!route.isLoading} context={props.context} />
-			<NotificationToast {...notification} />
+			<div
+				className={css({
+					position: "fixed",
+					right: "2em",
+					bottom: "2em",
+					display: "grid",
+					rowGap: "10px",
+				})}
+			>
+				<NotificationArea context={props.context} />
+			</div>
 		</>
 	)
 }

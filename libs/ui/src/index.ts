@@ -16,6 +16,7 @@ import * as styles from "./styles/styles"
 import * as util from "./utilexports"
 import * as wire from "./wireexports"
 import * as metadata from "./metadataexports"
+import * as notification from "./notificationexports"
 import { register } from "./component/registry"
 
 // Register with the component registry so that it's not an explicit dependency
@@ -32,6 +33,7 @@ export {
 	hooks,
 	loader,
 	metadata,
+	notification,
 	signal,
 	state,
 	styles,

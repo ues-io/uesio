@@ -8,6 +8,7 @@ import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
 import panelSignals from "../bands/panel/signals"
+import notificationSignals from "../bands/notification/signals"
 import componentSignal from "../bands/component/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
@@ -24,6 +25,7 @@ const registry: Record<string, SignalDescriptor> = {
 	...userSignals,
 	...wireSignals,
 	...panelSignals,
+	...notificationSignals,
 }
 
 const isPanelSignal = (signal: SignalDefinition) =>
