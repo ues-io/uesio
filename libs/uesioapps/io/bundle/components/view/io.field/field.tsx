@@ -5,6 +5,7 @@ import { component, collection, wire } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
+const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
@@ -66,6 +67,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 					)}
 				/>
 			)
+		case type === "CHECKBOX" && displayAs === "TOGGLE":
+			return <ToggleField {...common} />
 		case type === "CHECKBOX":
 			return <CheckboxField {...common} />
 		case type === "REFERENCE":

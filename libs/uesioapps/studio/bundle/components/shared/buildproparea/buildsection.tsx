@@ -5,13 +5,10 @@ import FieldsSection from "./fieldssection"
 import ConditionsSection from "./conditionssection"
 import SignalsSection from "./signalssection"
 import StylesSection from "./stylessection"
-
-interface Props extends definition.BaseProps {
-	section: builder.PropertySection
-}
+import { SectionRendererProps } from "./sectionrendererdefinition"
 
 const SECTION_TO_COMPONENT: {
-	[K in builder.PropertySection["type"]]: ComponentType<Props>
+	[K in builder.PropertySection["type"]]: ComponentType<SectionRendererProps>
 } = {
 	FIELDS: FieldsSection,
 	CONDITIONS: ConditionsSection,
@@ -20,8 +17,9 @@ const SECTION_TO_COMPONENT: {
 	STYLES: StylesSection,
 }
 
-const BuildSection: FunctionComponent<Props> = ({
+const BuildSection: FunctionComponent<SectionRendererProps> = ({
 	section,
+	propsDef,
 	context,
 	path,
 	definition,
@@ -30,6 +28,7 @@ const BuildSection: FunctionComponent<Props> = ({
 	return (
 		<SectionHandler
 			section={section}
+			propsDef={propsDef}
 			path={path}
 			definition={definition}
 			context={context}

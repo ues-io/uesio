@@ -3,3 +3,4 @@ collection: studio.collections
 type: TEXT
 label: Data Source
 propertyName: datasource
+required: true

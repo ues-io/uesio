@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FC } from "react"
 import {
 	definition,
 	styles,
@@ -6,9 +6,11 @@ import {
 	collection,
 	component,
 	wire,
+	hooks,
 } from "@uesio/ui"
+import toggleStyles from "./togglestyles"
 
-interface CheckboxFieldProps extends definition.UtilityProps {
+interface ToggleFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
@@ -18,11 +20,18 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 }
 
-const Icon = component.registry.getUtility("io.icon")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
-const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
+const ToggleField: FC<ToggleFieldProps> = (props) => {
 	const { setValue, value, mode, hideLabel, context, label } = props
+	const uesio = hooks.useUesio(props)
+
+	const {
+		definition: {
+			palette: { primary: primaryColor },
+		},
+	} = uesio.getTheme()
+
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const checked = value === true
@@ -30,11 +39,9 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 		{
 			root: {
 				...(width && { width }),
+				...toggleStyles(primaryColor, mode),
 			},
-			native: {
-				opacity: "0",
-				position: "absolute",
-			},
+			native: {},
 			input: {},
 			readonly: {},
 		},
@@ -42,23 +49,20 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	)
 
 	return (
-		<label className={classes.root}>
+		<label title={`toggle ${label}`} className={classes.root}>
 			<FieldLabel label={label} hide={hideLabel} context={context} />
-			<input
-				className={classes.native}
-				checked={checked}
-				type="checkbox"
-				disabled={readonly}
-				onChange={(event) => setValue(event.target.checked)}
-			/>
-			<div className={classes.input}>
-				<Icon
-					context={context}
-					icon={checked ? "check_box" : "check_box_outline_blank"}
+			<div className="switch">
+				<input
+					className={classes.native}
+					checked={checked}
+					type="checkbox"
+					disabled={readonly}
+					onChange={(event): void => setValue(event.target.checked)}
 				/>
+				<span className="slider round" />
 			</div>
 		</label>
 	)
 }
 
-export default CheckboxField
+export default ToggleField

@@ -61,7 +61,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				{options?.map((option) => (
 					<option
 						value={option.value}
-						selected={value.includes(option.value)}
+						selected={value?.includes(option.value)}
 					>
 						{option.label}
 					</option>

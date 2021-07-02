@@ -1,5 +1,5 @@
 name: contacts
-dataSource: crm.dynamo
+dataSource: uesio.platform
 idField: crm.id
 nameField: crm.lastname
 collectionName: contacts

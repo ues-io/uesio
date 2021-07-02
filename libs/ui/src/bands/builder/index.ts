@@ -93,8 +93,11 @@ const builderSlice = createSlice({
 			state.selectedNode = keyPath
 			state.lastModifiedNode = parentPath
 		})
-		builder.addCase(removeDefinition, (state) => {
-			state.selectedNode = ""
+		builder.addCase(removeDefinition, (state, { payload }) => {
+			// only unselect the current item if it is the thing being removed
+			if (payload.path === state.selectedNode) {
+				state.selectedNode = ""
+			}
 			state.lastModifiedNode = ""
 		})
 		builder.addCase(setRoute, (state) => {
@@ -105,6 +108,7 @@ const builderSlice = createSlice({
 			state.lastModifiedNode = payload.path
 		})
 		builder.addCase(cancel, (state) => {
+			state.selectedNode = ""
 			state.lastModifiedNode = ""
 		})
 		builder.addCase(addDefinition, (state, { payload }) => {
