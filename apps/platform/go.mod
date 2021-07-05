@@ -7,6 +7,11 @@ require (
 	cloud.google.com/go/storage v1.12.0
 	github.com/Masterminds/squirrel v1.5.0
 	github.com/aws/aws-sdk-go v1.36.19
+	github.com/aws/aws-sdk-go-v2 v1.7.0
+	github.com/aws/aws-sdk-go-v2/config v1.4.1
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.1.2
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.1.2
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.4.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/dop251/goja v0.0.0-20201022115936-e21ccf39bfce
