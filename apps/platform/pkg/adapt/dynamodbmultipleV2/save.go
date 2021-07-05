@@ -1,4 +1,4 @@
-package dynamodbV2
+package dynamodbmultipleV2
 
 import (
 	"context"
@@ -20,10 +20,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 	client, err := getDynamoDB(credentials)
 	if err != nil {
 		return err
-	}
-
-	if SystemSetUp != nil {
-		return SystemSetUp
 	}
 
 	for _, request := range requests {
@@ -69,8 +65,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				}
 				delete(update, idFieldDBName)
 
-				update[SystemCollectionID] = collectionName
-
 				updates := expression.UpdateBuilder{}
 
 				for name, value := range update {
@@ -84,9 +78,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 				input := &dynamodb.UpdateItemInput{
 					Key: map[string]types.AttributeValue{
-						idFieldDBName: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
+						idFieldDBName: &types.AttributeValueMemberS{Value: dbID.(string)},
 					},
-					TableName:                 aws.String(SystemTable),
+					TableName:                 aws.String(collectionName),
 					ExpressionAttributeNames:  expr.Names(),
 					ExpressionAttributeValues: expr.Values(),
 					ReturnValues:              "UPDATED_NEW",
@@ -103,21 +97,13 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			},
 			// Insert Func
 			func(id interface{}, insert map[string]interface{}) error {
-				dbID, ok := insert[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb insert")
-				}
-
-				insert[SystemID] = getSystemID(collectionName, dbID.(string))
-				insert[SystemCollectionID] = collectionName
-
 				itemDb, err := attributevalue.MarshalMap(insert)
 				if err != nil {
 					return err
 				}
 				input := &dynamodb.PutItemInput{
 					Item:      itemDb,
-					TableName: aws.String(SystemTable),
+					TableName: aws.String(collectionName),
 				}
 				_, err = client.PutItem(ctx, input)
 				if err != nil {
@@ -148,7 +134,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		}
 
 		err = adapt.ProcessDeletes(&request, metadata, func(dbID interface{}) error {
-
 			_, err = client.DeleteItem(ctx, &dynamodb.DeleteItemInput{
 				Key: map[string]types.AttributeValue{
 					idFieldDBName: &types.AttributeValueMemberS{Value: dbID.(string)},
@@ -163,6 +148,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		if err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
