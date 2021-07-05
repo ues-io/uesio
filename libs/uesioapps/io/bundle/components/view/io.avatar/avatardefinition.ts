@@ -15,6 +15,8 @@ const AvatarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [],
 	sections: [],
 	actions: [],
+	type: "component",
+	classes: ["root"],
 }
 export { AvatarProps, AvatarDefinition }
 
