@@ -22,6 +22,8 @@ const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
 }
 export { GroupProps, GroupDefinition }
 

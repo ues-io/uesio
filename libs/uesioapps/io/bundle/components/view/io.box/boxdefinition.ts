@@ -11,10 +11,18 @@ interface BoxProps extends definition.BaseProps {
 const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Box",
 	defaultDefinition: () => ({}),
-	properties: [],
+	properties: [
+		{
+			name: "wire",
+			type: "WIRE",
+			label: "wire",
+		},
+	],
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
 }
 export { BoxProps, BoxDefinition }
 
