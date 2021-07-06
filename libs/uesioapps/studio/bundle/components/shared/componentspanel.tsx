@@ -7,6 +7,17 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const Tooltip = component.registry.getUtility("io.tooltip")
+
+type ComponentItem = {
+	name: string
+	tooltip: string
+}
+
+type Namespace = {
+	namespace: string
+	components: ComponentItem[]
+}
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -14,23 +25,42 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const isStructureView = uesio.builder.useIsStructureView()
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
+	const builderComponents = component.registry.getBuilderComponents()
+	console.log(builderComponents)
 
-	const filteredList: Record<string, string[]> = {}
+	const namespaces = builderComponents.reduce(
+		(arr: Namespace[], el: ComponentItem) => {
+			const [namespace, name] = component.path.parseKey(el.name)
+			const definition = component.registry.getPropertiesDefinition(
+				`${namespace}.${name}`
+			)
+			if (!definition?.traits?.includes("uesio.standalone")) return arr
 
-	component.registry.getBuilderComponents().forEach((key: string) => {
-		const [namespace, name] = component.path.parseKey(key)
+			const componentItem = { name, tooltip: el.tooltip }
+			const namespaceToUpdate = arr.findIndex(
+				(el) => el.namespace === namespace
+			)
 
-		const names = filteredList[namespace] || []
+			if (namespaceToUpdate === -1)
+				return [...arr, { namespace, components: [componentItem] }]
+			const newComponentsArr: ComponentItem[] = [
+				...arr[namespaceToUpdate].components,
+				componentItem,
+			]
+			return arr.map((el: Namespace, i: number) => {
+				const namespace = el
+				if (i === namespaceToUpdate) {
+					namespace.components = newComponentsArr
+				}
+				return namespace
+			})
+		},
+		[]
+	)
 
-		const definition = component.registry.getPropertiesDefinition(
-			`${namespace}.${name}`
-		)
-		if (definition?.traits?.includes("uesio.standalone")) {
-			names.push(name)
-		}
+	console.log("dataz", namespaces)
 
-		filteredList[namespace] = names
-	})
+	// c
 
 	return (
 		<ScrollPanel
@@ -51,37 +81,45 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					flex: 1,
 				}}
 			>
-				{Object.keys(filteredList)
-					.filter((element) => filteredList[element].length)
-					.map((element, index) => (
-						<ExpandPanel
-							title={element}
-							defaultExpanded={true}
-							key={index}
-							context={context}
-						>
-							{filteredList[element].map((value, indexTag) =>
+				{namespaces.map(({ namespace, components }, index) => (
+					<ExpandPanel
+						title={namespace}
+						defaultExpanded={true}
+						key={index}
+						context={context}
+					>
+						{components.map(
+							(
+								{ name, tooltip }: ComponentItem,
+								indexTag: number
+							) =>
 								!isStructureView ? (
 									<PropNodeTag
-										title={value}
+										title={name}
 										key={indexTag}
 										context={context}
 									/>
 								) : (
-									<PropNodeTag
-										draggable={component.dragdrop.createComponentBankKey(
-											element,
-											value
-										)}
-										title={value}
-										icon="drag_indicator"
-										key={indexTag}
+									<Tooltip
+										text={tooltip}
 										context={context}
-									/>
+										placement={"auto"}
+									>
+										<PropNodeTag
+											draggable={component.dragdrop.createComponentBankKey(
+												namespace,
+												name
+											)}
+											title={name}
+											icon="drag_indicator"
+											key={indexTag}
+											context={context}
+										/>
+									</Tooltip>
 								)
-							)}
-						</ExpandPanel>
-					))}
+						)}
+					</ExpandPanel>
+				))}
 			</div>
 		</ScrollPanel>
 	)

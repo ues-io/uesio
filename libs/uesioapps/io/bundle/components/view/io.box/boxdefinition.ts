@@ -10,6 +10,7 @@ interface BoxProps extends definition.BaseProps {
 
 const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Box",
+	tooltip: "Used for grouping elements",
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],
