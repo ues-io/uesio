@@ -28,6 +28,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const builderComponents = component.registry.getBuilderComponents()
 	console.log(builderComponents)
 
+	// Structure component data so it's easily mappable in the render function
 	const namespaces = builderComponents.reduce(
 		(arr: Namespace[], el: ComponentItem) => {
 			const [namespace, name] = component.path.parseKey(el.name)
@@ -43,6 +44,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 			if (namespaceToUpdate === -1)
 				return [...arr, { namespace, components: [componentItem] }]
+
 			const newComponentsArr: ComponentItem[] = [
 				...arr[namespaceToUpdate].components,
 				componentItem,
@@ -57,10 +59,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		},
 		[]
 	)
-
-	console.log("dataz", namespaces)
-
-	// c
 
 	return (
 		<ScrollPanel
