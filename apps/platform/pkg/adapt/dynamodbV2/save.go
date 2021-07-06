@@ -84,7 +84,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 				input := &dynamodb.UpdateItemInput{
 					Key: map[string]types.AttributeValue{
-						idFieldDBName: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
+						SystemID: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
 					},
 					TableName:                 aws.String(SystemTable),
 					ExpressionAttributeNames:  expr.Names(),
