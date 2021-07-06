@@ -15,6 +15,9 @@ definition:
     content:
       verticalAlign: middle
       padding: 8px 8px 8px 0px
+      display: flex
+      alignItems: center
+      justifyContent: space-between
     avatar:
       marginLeft: 8px
       color: "#aaa"

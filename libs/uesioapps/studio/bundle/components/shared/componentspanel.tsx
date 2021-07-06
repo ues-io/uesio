@@ -7,7 +7,6 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
-const Tooltip = component.registry.getUtility("io.tooltip")
 
 type ComponentItem = {
 	name: string
@@ -26,7 +25,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
 	const builderComponents = component.registry.getBuilderComponents()
-	console.log(builderComponents)
 
 	// Structure component data so it's easily mappable in the render function
 	const namespaces = builderComponents.reduce(
@@ -98,22 +96,17 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										context={context}
 									/>
 								) : (
-									<Tooltip
-										text={tooltip}
+									<PropNodeTag
+										draggable={component.dragdrop.createComponentBankKey(
+											namespace,
+											name
+										)}
+										title={name}
+										icon="drag_indicator"
+										key={indexTag}
+										tooltip={tooltip}
 										context={context}
-										placement={"auto"}
-									>
-										<PropNodeTag
-											draggable={component.dragdrop.createComponentBankKey(
-												namespace,
-												name
-											)}
-											title={name}
-											icon="drag_indicator"
-											key={indexTag}
-											context={context}
-										/>
-									</Tooltip>
+									/>
 								)
 						)}
 					</ExpandPanel>
