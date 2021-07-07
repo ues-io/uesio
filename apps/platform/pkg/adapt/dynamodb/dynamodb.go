@@ -73,19 +73,19 @@ func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.DynamoDB, error) {
 		return nil, errors.New("No region provided in credentials")
 	}
 
-	accessKeyID, ok := (*dbcreds)["accessKeyId"]
-	if !ok {
-		return nil, errors.New("No access key id provided in credentials")
-	}
+	accessKeyID := (*dbcreds)["accessKeyId"]
+	secretAccessKey := (*dbcreds)["secretAccessKey"]
+	sessionToken := (*dbcreds)["sessionToken"]
 
-	secretAccessKey, ok := (*dbcreds)["secretAccessKey"]
-	if !ok {
-		return nil, errors.New("No access key id provided in credentials")
+	var awsCredentials *credentials.Credentials = nil
+
+	if accessKeyID != "" && secretAccessKey != "" {
+		awsCredentials = credentials.NewStaticCredentials(accessKeyID, secretAccessKey, sessionToken)
 	}
 
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(region),
-		Credentials: credentials.NewStaticCredentials(accessKeyID, secretAccessKey, ""),
+		Credentials: awsCredentials,
 	})
 	if err != nil {
 		return nil, err
