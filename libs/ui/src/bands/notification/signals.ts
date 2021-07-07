@@ -16,19 +16,18 @@ interface AddNotificationSignal extends SignalDefinition {
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
 	[`${NOTIFICATION_BAND}/ADD`]: {
-		dispatcher: (signal: AddNotificationSignal, context: Context) => (
-			dispatch
-		) => {
-			dispatch(
-				addNotification({
-					id: shortid.generate(),
-					severity: signal.severity,
-					text: signal.text,
-					details: signal.details,
-				})
-			)
-			return context
-		},
+		dispatcher:
+			(signal: AddNotificationSignal, context: Context) => (dispatch) => {
+				dispatch(
+					addNotification({
+						id: shortid.generate(),
+						severity: signal.severity,
+						text: signal.text,
+						details: signal.details,
+					})
+				)
+				return context
+			},
 		label: "Add Notification",
 		properties: () => [
 			{

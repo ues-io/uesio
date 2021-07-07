@@ -164,10 +164,8 @@ const wireSlice = createSlice({
 						})
 						Object.keys(wire.deletes).forEach((tempId) => {
 							const newData: Record<string, PlainWireRecord> = {}
-							const newOriginal: Record<
-								string,
-								PlainWireRecord
-							> = {}
+							const newOriginal: Record<string, PlainWireRecord> =
+								{}
 							const data = state.entities[wireId]?.data
 							if (!data) return
 							Object.keys(data)

@@ -137,10 +137,6 @@ const builderSlice = createSlice({
 	},
 })
 
-export const {
-	setActiveNode,
-	setSelectedNode,
-	setDragNode,
-	setDropNode,
-} = builderSlice.actions
+export const { setActiveNode, setSelectedNode, setDragNode, setDropNode } =
+	builderSlice.actions
 export default builderSlice.reducer

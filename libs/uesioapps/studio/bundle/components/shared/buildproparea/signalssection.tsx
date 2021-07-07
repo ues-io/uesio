@@ -52,9 +52,10 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									title: "Signal",
 									sections: [],
 									defaultDefinition: () => ({}),
-									properties: uesio.builder.getSignalProperties(
-										signal
-									),
+									properties:
+										uesio.builder.getSignalProperties(
+											signal
+										),
 								}}
 							/>
 						}
