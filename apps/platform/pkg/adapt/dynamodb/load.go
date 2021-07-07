@@ -137,6 +137,9 @@ func loadOne(
 			if err != nil {
 				return nil, err
 			}
+			if fieldMetadata.Type == "TIMESTAMP" {
+				return int64(i.(float64)), nil
+			}
 			return i, nil
 		})
 		if err != nil {
