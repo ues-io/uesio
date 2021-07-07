@@ -140,8 +140,10 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 				<div className={classes.coverall} data-coverall="true" />
 			)}
 			{items.map((itemDef, index) => {
-				const [componentType, unWrappedDef] =
-					component.path.unWrapDefinition(itemDef)
+				const [
+					componentType,
+					unWrappedDef,
+				] = component.path.unWrapDefinition(itemDef)
 				return (
 					<component.Component
 						definition={unWrappedDef}

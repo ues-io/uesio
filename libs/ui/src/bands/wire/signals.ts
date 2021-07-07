@@ -170,12 +170,12 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
-		dispatcher:
-			(signal: LoadWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
-				await dispatch(loadWiresOp({ context, wires: signal.wires }))
-				return context
-			},
+		dispatcher: (signal: LoadWiresSignal, context: Context) => async (
+			dispatch: Dispatcher<AnyAction>
+		) => {
+			await dispatch(loadWiresOp({ context, wires: signal.wires }))
+			return context
+		},
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",
@@ -186,31 +186,31 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${WIRE_BAND}/SAVE`]: {
 		label: "Save Wire(s)",
-		dispatcher:
-			(signal: SaveWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
-				const resp = await dispatch(
-					saveWiresOp({ context, wires: signal.wires })
-				)
+		dispatcher: (signal: SaveWiresSignal, context: Context) => async (
+			dispatch: Dispatcher<AnyAction>
+		) => {
+			const resp = await dispatch(
+				saveWiresOp({ context, wires: signal.wires })
+			)
 
-				const batch = resp.payload as SaveResponseBatch
+			const batch = resp.payload as SaveResponseBatch
 
-				// Special handling for saves of just one wire and one record
-				if (batch.wires.length === 1) {
-					const wire = batch.wires[0]
-					const changes = wire.changes
-					const changeKeys = Object.keys(changes)
-					if (changeKeys.length === 1) {
-						const [, name] = wire.wire.split("/")
-						return context.addFrame({
-							record: changeKeys[0],
-							wire: name,
-						})
-					}
+			// Special handling for saves of just one wire and one record
+			if (batch.wires.length === 1) {
+				const wire = batch.wires[0]
+				const changes = wire.changes
+				const changeKeys = Object.keys(changes)
+				if (changeKeys.length === 1) {
+					const [, name] = wire.wire.split("/")
+					return context.addFrame({
+						record: changeKeys[0],
+						wire: name,
+					})
 				}
+			}
 
-				return context
-			},
+			return context
+		},
 		properties: (): PropDescriptor[] => [
 			{
 				name: "wires",

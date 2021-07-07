@@ -24,8 +24,9 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		if (!fieldsWire) return
 		const fields: wire.WireFieldDefinitionMap = {}
 		fieldsWire.getData().forEach((record) => {
-			fields[`${namespace}.${record.getFieldString("studio.name")}`] =
-				null
+			fields[
+				`${namespace}.${record.getFieldString("studio.name")}`
+			] = null
 		})
 		uesio.view.addDefinitionPair(
 			`["wires"]`,

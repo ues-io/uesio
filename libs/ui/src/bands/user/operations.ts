@@ -27,24 +27,28 @@ async function responseRedirect(
 	return context
 }
 
-const login =
-	(context: Context, type: string, token: string): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		const response = await platform.login({
-			type,
-			token,
-		})
-		dispatch(setUser(response.user))
-		return responseRedirect(response, dispatch, context)
-	}
+const login = (
+	context: Context,
+	type: string,
+	token: string
+): ThunkFunc => async (dispatch, getState, platform) => {
+	const response = await platform.login({
+		type,
+		token,
+	})
+	dispatch(setUser(response.user))
+	return responseRedirect(response, dispatch, context)
+}
 
-const logout =
-	(context: Context): ThunkFunc =>
-	async (dispatch, getState, platform) => {
-		const response = await platform.logout()
-		dispatch(setUser(response.user))
-		return responseRedirect(response, dispatch, context)
-	}
+const logout = (context: Context): ThunkFunc => async (
+	dispatch,
+	getState,
+	platform
+) => {
+	const response = await platform.logout()
+	dispatch(setUser(response.user))
+	return responseRedirect(response, dispatch, context)
+}
 
 export default {
 	login,
