@@ -16,6 +16,8 @@ const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [],
 	sections: [],
 	actions: [],
+	type: "component",
+	classes: ["root"],
 }
 export { DeckProps, DeckDefinition }
 

@@ -27,6 +27,8 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 			],
 		},
 	],
+	classes: ["root"],
+	type: "component",
 }
 export { ImageProps, ImageDefinition }
 
