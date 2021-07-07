@@ -14,6 +14,8 @@ const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
 		components: [],
 	}),
 	sections: [],
+	classes: ["root"],
+	type: "component",
 }
 export { GridItemProps, GridItemDefinition }
 
