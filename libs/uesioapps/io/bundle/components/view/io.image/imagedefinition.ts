@@ -5,6 +5,8 @@ type ImageDefinition = {
 	height?: string
 	align?: "left" | "center" | "right"
 	signals?: signal.SignalDefinition[]
+	loading: "lazy" | "eager"
+	alt: string
 }
 
 interface ImageProps extends definition.BaseProps {
@@ -21,12 +23,39 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 			properties: [
 				{
 					name: "file",
-					type: "TEXT",
+					type: "FILE",
 					label: "Source",
+				},
+				{
+					name: "alt",
+					type: "TEXT",
+					label: "Alt text",
+				},
+				{
+					name: "align",
+					type: "SELECT",
+					label: "Source",
+					options: [
+						{
+							value: "left",
+							label: "Left",
+						},
+						{
+							value: "center",
+							label: "Center",
+						},
+						{
+							value: "right",
+							label: "Right",
+						},
+					],
 				},
 			],
 		},
 	],
+	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
 }
 export { ImageProps, ImageDefinition }
 

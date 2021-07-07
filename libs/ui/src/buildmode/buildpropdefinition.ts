@@ -73,6 +73,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| FileProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -99,6 +100,9 @@ interface TextProp extends BasePropDescriptor {
 }
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
+}
+interface FileProp extends BasePropDescriptor {
+	type: "FILE"
 }
 
 interface NumberProp extends BasePropDescriptor {

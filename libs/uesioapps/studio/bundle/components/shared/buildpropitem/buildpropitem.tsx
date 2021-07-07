@@ -11,6 +11,7 @@ import BooleanProp from "./booleanprop"
 import ConditionProp from "./conditionprop"
 import NamespaceProp from "./namespaceprop"
 import StylesListProp from "./styleslistprop"
+import FileProp from "./fileprop"
 import BotProp from "./botprop"
 
 interface Props extends definition.BaseProps {
@@ -42,7 +43,12 @@ function getPropHandler(type?: string) {
 			return BooleanProp
 		case "STYLESLIST":
 			return StylesListProp
+		case "TEXT":
+			return TextProp
+		case "FILE":
+			return FileProp
 		default:
+			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp
 	}
 }

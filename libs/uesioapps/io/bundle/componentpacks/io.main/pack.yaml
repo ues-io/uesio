@@ -51,6 +51,7 @@ components:
     io.fieldlabel:
     io.filetext:
     io.fileupload:
+    io.imageupload:
     io.grid:
     io.group:
     io.icon:
