@@ -9,7 +9,7 @@ const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
-const ImageUpload = component.registry.getUtility("io.imageupload")
+const FileUpload = component.registry.getUtility("io.FileUpload")
 const UserField = component.registry.getUtility("io.userfield")
 const TimestampField = component.registry.getUtility("io.timestampfield")
 const ListField = component.registry.getUtility("io.listfield")
@@ -78,7 +78,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		case type === "FILE" && displayAs === "TEXT":
 			return <FileText {...common} />
 		case type === "FILE":
-			return <ImageUpload {...common} />
+			return <FileUpload {...common} />
 		case type === "USER":
 			return <UserField {...common} />
 		case type === "LIST":

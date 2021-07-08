@@ -33,9 +33,14 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 					label: "Alt text",
 				},
 				{
+					name: "height",
+					type: "TEXT",
+					label: "Height",
+				},
+				{
 					name: "align",
 					type: "SELECT",
-					label: "Source",
+					label: "Alignment",
 					options: [
 						{
 							value: "left",
@@ -52,6 +57,10 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 					],
 				},
 			],
+		},
+		{
+			title: "Signals",
+			type: "SIGNALS",
 		},
 	],
 	traits: ["uesio.standalone"],

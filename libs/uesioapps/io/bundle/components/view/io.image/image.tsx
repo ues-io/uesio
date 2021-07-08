@@ -11,11 +11,11 @@ const Image: FC<ImageProps> = (props) => {
 			root: {
 				display: "block",
 				textAlign: definition?.align || "left",
-				maxWidth: "100%",
 				lineHeight: 0,
 				cursor: definition?.signals ? "pointer" : "",
 			},
 			inner: {
+				maxWidth: "100%",
 				display: "inline-block",
 				height: definition?.height,
 			},
