@@ -10,37 +10,35 @@ interface ComponentSignal extends SignalDefinition {
 }
 
 export default {
-	dispatcher: (signal: ComponentSignal, context: Context): ThunkFunc => (
-		dispatch,
-		getState,
-		platform
-	) => {
-		const { target: signalTarget, signal: signalName } = signal
-		const [band, scope, type] = signalName.split("/")
-		if (band !== "component" || !scope || !type) return context
+	dispatcher:
+		(signal: ComponentSignal, context: Context): ThunkFunc =>
+		(dispatch, getState, platform) => {
+			const { target: signalTarget, signal: signalName } = signal
+			const [band, scope, type] = signalName.split("/")
+			if (band !== "component" || !scope || !type) return context
 
-		const handler = getSignal(scope, type)
-		const viewId = context.getViewId()
-		const target = signalTarget || handler.target || ""
+			const handler = getSignal(scope, type)
+			const viewId = context.getViewId()
+			const target = signalTarget || handler.target || ""
 
-		handler.dispatcher(
-			signal,
-			context,
-			() => selectState(getState(), scope, target, viewId),
-			(state: PlainComponentState | undefined) => {
-				dispatch({
-					type: "component/set",
-					payload: {
-						id: target,
-						componentType: scope,
-						view: viewId,
-						state,
-					},
-				})
-			},
-			platform
-		)
+			handler.dispatcher(
+				signal,
+				context,
+				() => selectState(getState(), scope, target, viewId),
+				(state: PlainComponentState | undefined) => {
+					dispatch({
+						type: "component/set",
+						payload: {
+							id: target,
+							componentType: scope,
+							view: viewId,
+							state,
+						},
+					})
+				},
+				platform
+			)
 
-		return context
-	},
+			return context
+		},
 }
