@@ -1,3 +1,4 @@
+
 {
   "version": 1,
   "projects": {
@@ -33,6 +34,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "npx webpack --watch --config webpack.config.js",
+            "command": "npx webpack --watch --config webpack.config.js &",
             "cwd": "apps/platform"
           }
         },
@@ -93,6 +95,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "npx webpack --watch --config webpack.config.js",
+            "command": "npx webpack --watch --config webpack.config.js &",
             "cwd": "libs/ui"
           }
         },
@@ -206,6 +209,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../apps/cli/bin/run pack --develop &",
             "cwd": "libs/uesioapps/studio"
           }
         },
@@ -236,6 +240,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "./../../../apps/cli/bin/run pack --develop",
+            "command": "./../../../apps/cli/bin/run pack --develop &",
             "cwd": "libs/uesioapps/io"
           }
         },
@@ -417,6 +422,7 @@
           ],
           "options": {
             "command": "npx -w tsc",
+            "command": "npx -w tsc &",
             "cwd": "apps/cli"
           }
         },

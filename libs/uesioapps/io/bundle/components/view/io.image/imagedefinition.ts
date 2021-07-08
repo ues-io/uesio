@@ -23,8 +23,9 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 			properties: [
 				{
 					name: "file",
-					type: "FILE",
-					label: "Source",
+					type: "METADATA",
+					metadataType: "FILE",
+					label: "File",
 				},
 				{
 					name: "alt",

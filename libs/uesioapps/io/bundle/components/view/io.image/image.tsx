@@ -4,7 +4,7 @@ import { ImageProps } from "./imagedefinition"
 import { hooks, styles } from "@uesio/ui"
 
 const Image: FC<ImageProps> = (props) => {
-	const { definition } = props
+	const { definition, context } = props
 
 	const classes = styles.useStyles(
 		{
@@ -24,14 +24,13 @@ const Image: FC<ImageProps> = (props) => {
 	)
 	const uesio = hooks.useUesio(props)
 	const fileFullName = definition?.file
-	console.log("Definitely!", definition)
-	// if (!fileFullName) {
-	// 	return null
-	// }
 
-	// const fileUrl = uesio.file.getURLFromFullName(context, fileFullName)
+	if (!fileFullName) {
+		return null
+	}
 
-	const fileUrl = "https://picsum.photos/200/300"
+	const fileUrl = uesio.file.getURLFromFullName(context, fileFullName)
+
 	return (
 		<div
 			className={classes.root}
