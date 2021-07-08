@@ -1,14 +1,15 @@
 package dynamodb
 
 import (
+	"context"
 	"errors"
 	"os"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -66,7 +67,7 @@ func InitSystemEnv() error {
 
 }
 
-func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.DynamoDB, error) {
+func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 
 	region, ok := (*dbcreds)["region"]
 	if !ok {
@@ -77,22 +78,19 @@ func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.DynamoDB, error) {
 	secretAccessKey := (*dbcreds)["secretAccessKey"]
 	sessionToken := (*dbcreds)["sessionToken"]
 
-	var awsCredentials *credentials.Credentials = nil
+	config.WithRegion(region)
 
-	if accessKeyID != "" && secretAccessKey != "" {
-		awsCredentials = credentials.NewStaticCredentials(accessKeyID, secretAccessKey, sessionToken)
-	}
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
 
-	sess, err := session.NewSession(&aws.Config{
-		Region:      aws.String(region),
-		Credentials: awsCredentials,
-	})
 	if err != nil {
 		return nil, err
 	}
 
-	svc := dynamodb.New(sess)
+	svc := dynamodb.NewFromConfig(cfg)
+
 	return svc, nil
+
 }
 
 func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {
@@ -109,53 +107,49 @@ func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata) (string, 
 	return collectionMetadata.Namespace + "." + collectionMetadata.CollectionName, nil
 }
 
-func describeTableDynamoDB(tableName string, client *dynamodb.DynamoDB) (bool, error) {
+func describeTableDynamoDB(ctx context.Context, tableName string, client *dynamodb.Client) (bool, error) {
+
+	//TO-DO Not sure about GlobalTableNotFoundException there are so many new types
+	// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/dynamodb@v1.4.0/types#ExportNotFoundException
+	var nfe *types.GlobalTableNotFoundException
 
 	input := &dynamodb.DescribeTableInput{
 		TableName: aws.String(tableName),
 	}
 
-	_, err := client.DescribeTable(input)
-	if err != nil {
-		if aerr, ok := err.(awserr.Error); ok {
-			switch aerr.Code() {
-			case dynamodb.ErrCodeResourceNotFoundException:
-				return true, nil
-			case dynamodb.ErrCodeInternalServerError:
-				return false, err
-			default:
-				return false, err
-			}
-		}
+	_, err := client.DescribeTable(ctx, input)
+
+	if errors.As(err, &nfe) {
+		return true, nil
 	}
 
 	return false, err
 
 }
 
-func createTableDynamoDB(tableName string, idFieldName string, client *dynamodb.DynamoDB) error {
+func createTableDynamoDB(ctx context.Context, tableName string, idFieldName string, client *dynamodb.Client) error {
 
 	input := &dynamodb.CreateTableInput{
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{
+		AttributeDefinitions: []types.AttributeDefinition{
 			{
 				AttributeName: aws.String(idFieldName),
-				AttributeType: aws.String("S"),
+				AttributeType: types.ScalarAttributeTypeS,
 			},
 		},
-		KeySchema: []*dynamodb.KeySchemaElement{
+		KeySchema: []types.KeySchemaElement{
 			{
 				AttributeName: aws.String(idFieldName),
-				KeyType:       aws.String("HASH"),
+				KeyType:       types.KeyTypeHash,
 			},
 		},
-		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits:  aws.Int64(5),
-			WriteCapacityUnits: aws.Int64(5),
-		},
+		// ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+		// 	ReadCapacityUnits:  aws.Int64(5),
+		// 	WriteCapacityUnits: aws.Int64(5),
+		// },
 		TableName: aws.String(tableName),
 	}
 
-	_, err := client.CreateTable(input)
+	_, err := client.CreateTable(ctx, input)
 
 	if err != nil {
 		return err
