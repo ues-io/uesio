@@ -8,16 +8,6 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 
-type ComponentItem = {
-	name: string
-	description: string
-}
-
-type Namespace = {
-	namespace: string
-	components: ComponentItem[]
-}
-
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context } = props
