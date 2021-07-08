@@ -68,7 +68,7 @@ func loadOne(
 		if err != nil {
 			return err
 		}
-		//TODO:: Needs to be added to other adapters eventually.
+
 		if condition.Operator == "IN" {
 			query = query.Where(fieldName, "in", conditionValue)
 		} else {

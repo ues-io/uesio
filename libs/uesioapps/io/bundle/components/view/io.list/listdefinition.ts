@@ -50,6 +50,7 @@ const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	traits: ["uesio.standalone"],
 	type: "component",
+	classes: ["root"],
 }
 export { ListProps, ListState, ListDefinition }
 

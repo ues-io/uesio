@@ -34,6 +34,8 @@ const IconButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 			slot: "signals",
 		},
 	],
+	classes: ["root"],
+	type: "component",
 }
 export { IconButtonProps, IconButtonDefinition }
 

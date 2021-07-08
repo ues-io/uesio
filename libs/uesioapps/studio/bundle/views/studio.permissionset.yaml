@@ -165,8 +165,10 @@ definition:
                                       displayAs: "TOGGLE"
                                   - io.field:
                                       fieldId: studio.allowallroutes
+                                      displayAs: "TOGGLE"
                                   - io.field:
                                       fieldId: studio.allowallviews
+                                      displayAs: "TOGGLE"
                       - io.box:
                           uesio.variant: io.section
                           components:
