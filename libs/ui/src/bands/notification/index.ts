@@ -12,15 +12,11 @@ const notificationSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(saveOp.rejected, (state, action) => {
-			const notId = shortid.generate()
-			state.ids.push(notId)
-			state.entities = Object.assign({}, state.entities, {
-				[notId]: Object.assign({}, state.entities[notId], {
-					id: notId,
-					severity: "error",
-					text: "ERROR",
-					details: action?.error?.message,
-				}),
+			notificationAdapter.addOne(state, {
+				id: shortid.generate(),
+				severity: "error",
+				text: "FATAL ERROR",
+				details: action?.error?.message,
 			})
 		})
 	},
