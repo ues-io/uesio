@@ -103,7 +103,7 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	regex, ok := isValidRegex("^[a-z0-9]*$")
+	regex, ok := isValidRegex("^[a-z_0-9]*$")
 	if !ok {
 		return func(adapt.ChangeItem) error {
 			return errors.New("Regex for the field: " + field.Label + " is not valid")
