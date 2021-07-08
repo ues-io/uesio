@@ -3,11 +3,11 @@ package dynamodb
 import (
 	"context"
 	"errors"
-	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -68,18 +68,25 @@ func InitSystemEnv() error {
 }
 
 func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
-	// Using the SDK's default configuration, loading additional config
-	// and credentials values from the environment variables, shared
-	// credentials, and shared configuration files
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("eu-west-1"))
-	if err != nil {
-		log.Fatalf("unable to load SDK config, %v", err)
+
+	region, ok := (*dbcreds)["region"]
+	if !ok {
+		return nil, errors.New("No region provided in credentials")
 	}
 
-	// Using the Config value, create the DynamoDB client
+	accessKeyID := (*dbcreds)["accessKeyId"]
+	secretAccessKey := (*dbcreds)["secretAccessKey"]
+	sessionToken := (*dbcreds)["sessionToken"]
+
+	config.WithRegion(region)
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
+
 	svc := dynamodb.NewFromConfig(cfg)
 
-	return svc, nil
+	return svc, err
+
 }
 
 func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {

@@ -122,6 +122,8 @@ func loadOne(
 			dynamoCondition = expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue)))
 		}
 
+		dynamoConditions = append(dynamoConditions, dynamoCondition)
+
 	}
 
 	filt := makeAndConditionBuilder(dynamoConditions)
