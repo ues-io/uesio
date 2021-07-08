@@ -102,8 +102,9 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 										title: "Condition",
 										sections: [],
 										defaultDefinition: () => ({}),
-										properties:
-											getConditionProperties(condition),
+										properties: getConditionProperties(
+											condition
+										),
 										actions: [
 											{
 												label: "Toggle Condition",
