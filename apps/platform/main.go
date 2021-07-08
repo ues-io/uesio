@@ -5,9 +5,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodb"
-	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodbV2"
 	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodbmultiple"
-	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodbmultipleV2"
 	"github.com/thecloudmasters/uesio/pkg/adapt/firestore"
 	"github.com/thecloudmasters/uesio/pkg/adapt/sql/mysql"
 	"github.com/thecloudmasters/uesio/pkg/adapt/sql/postgresql"
@@ -42,9 +40,7 @@ func init() {
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.firestore", &firestore.Adapter{})
 	adapt.RegisterAdapter("uesio.dynamodb", &dynamodb.Adapter{})
-	adapt.RegisterAdapter("uesio.dynamodbV2", &dynamodbV2.Adapter{})
 	adapt.RegisterAdapter("uesio.dynamodbmultiple", &dynamodbmultiple.Adapter{})
-	adapt.RegisterAdapter("uesio.dynamodbmultipleV2", &dynamodbmultipleV2.Adapter{})
 	adapt.RegisterAdapter("uesio.postgresql", &postgresql.Adapter{})
 	adapt.RegisterAdapter("uesio.mysql", &mysql.Adapter{})
 
