@@ -39,12 +39,12 @@ const Image: FC<ImageProps> = (props) => {
 				uesio.signal.getHandler(definition.signals)
 			}
 		>
-				<img
-					className={classes.inner}
-					src={fileUrl}
-					loading={definition.loading}
-					alt={definition.alt}
-				/>
+			<img
+				className={classes.inner}
+				src={fileUrl}
+				loading={definition.loading}
+				alt={definition.alt}
+			/>
 		</div>
 	)
 }
