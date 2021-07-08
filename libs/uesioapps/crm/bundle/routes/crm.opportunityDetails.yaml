@@ -1,4 +1,0 @@
-name: opportunityDetails
-path: opportunity/{opportunityid}
-view: crm.opportunityDetails
-theme: crm.default

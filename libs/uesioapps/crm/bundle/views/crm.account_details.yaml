@@ -1,36 +1,37 @@
-name: leadDetails
+name: account_details
 definition:
   components:
     - uesio.view:
         view: crm.topbar
     - io.list:
-        id: leadList
-        wire: leads
+        id: accountList
+        wire: accounts
         mode: READ
         components:
           - io.titlebar:
               uesio.variant: io.main
-              title: ${crm.firstname} ${crm.lastname}
+              title: ${crm.name}
+              subtitle: ${crm.description}
               actions:
                 - io.group:
                     components:
                       - io.button:
                           signals:
                             - signal: component/io.list/TOGGLE_MODE
-                              target: leadList
+                              target: accountList
                           text: Edit
                           uesio.variant: io.secondary
                       - io.button:
                           signals:
                             - signal: wire/SAVE
                               wires:
-                                - leads
+                                - accounts
                           text: Save
                           uesio.variant: io.secondary
                       - io.button:
                           signals:
                             - signal: wire/CANCEL
-                              wire: leads
+                              wire: accounts
                           text: Cancel
                           uesio.variant: io.secondary
           - io.box:
@@ -47,23 +48,26 @@ definition:
                     columnGap: 10px
                     items:
                       - io.field:
-                          fieldId: crm.firstname
+                          fieldId: crm.id
                       - io.field:
-                          fieldId: crm.lastname
+                          fieldId: crm.name
                       - io.field:
-                          fieldId: crm.updated
+                          fieldId: crm.description
                       - io.field:
                           fieldId: crm.created
+                      - io.field:
+                          fieldId: crm.updated
   wires:
-    leads:
-      collection: crm.leads
+    accounts:
+      collection: crm.accounts
       conditions:
         - field: crm.id
-          param: leadid
+          param: accountid
           valueSource: PARAM
       fields:
-        crm.firstname: null
-        crm.id: null
-        crm.lastname: null
-        crm.updated:
+        crm.id:
+        crm.name:
+        crm.logo:
+        crm.description:
         crm.created:
+        crm.updated:
