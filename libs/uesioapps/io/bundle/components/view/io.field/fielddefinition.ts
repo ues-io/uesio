@@ -49,6 +49,8 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	],
 	sections: [],
 	actions: [],
+	type: "component",
+	classes: ["root"],
 }
 
 export { FieldProps, FieldDefinition, RendererProps, FieldState }

@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/google/uuid"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
@@ -82,19 +83,17 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				}
 
 				input := &dynamodb.UpdateItemInput{
-					Key: map[string]*dynamodb.AttributeValue{
-						idFieldDBName: {
-							S: aws.String(getSystemID(collectionName, dbID.(string))),
-						},
+					Key: map[string]types.AttributeValue{
+						SystemID: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
 					},
 					TableName:                 aws.String(SystemTable),
 					ExpressionAttributeNames:  expr.Names(),
 					ExpressionAttributeValues: expr.Values(),
-					ReturnValues:              aws.String("UPDATED_NEW"),
+					ReturnValues:              "UPDATED_NEW",
 					UpdateExpression:          expr.Update(),
 				}
 
-				_, err = client.UpdateItem(input)
+				_, err = client.UpdateItem(ctx, input)
 
 				if err != nil {
 					return errors.New("Update failed DynamoDB:" + err.Error())
@@ -112,7 +111,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				insert[SystemID] = getSystemID(collectionName, dbID.(string))
 				insert[SystemCollectionID] = collectionName
 
-				itemDb, err := dynamodbattribute.MarshalMap(insert)
+				itemDb, err := attributevalue.MarshalMap(insert)
 				if err != nil {
 					return err
 				}
@@ -120,7 +119,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					Item:      itemDb,
 					TableName: aws.String(SystemTable),
 				}
-				_, err = client.PutItem(input)
+				_, err = client.PutItem(ctx, input)
 				if err != nil {
 					return err
 				}
@@ -149,11 +148,10 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		}
 
 		err = adapt.ProcessDeletes(&request, metadata, func(dbID interface{}) error {
-			_, err = client.DeleteItem(&dynamodb.DeleteItemInput{
-				Key: map[string]*dynamodb.AttributeValue{
-					idFieldDBName: {
-						S: aws.String(dbID.(string)),
-					},
+
+			_, err = client.DeleteItem(ctx, &dynamodb.DeleteItemInput{
+				Key: map[string]types.AttributeValue{
+					idFieldDBName: &types.AttributeValueMemberS{Value: dbID.(string)},
 				},
 				TableName: aws.String(collectionName),
 			})

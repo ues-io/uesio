@@ -4,22 +4,22 @@ views:
   crm.home: true
   crm.topbar: true
   crm.accounts: true
-  crm.accountDetails: true
+  crm.account_details: true
   crm.contacts: true
-  crm.contactDetails: true
+  crm.contact_details: true
   crm.opportunities: true
-  crm.opportunityDetails: true
+  crm.opportunity_details: true
   crm.leads: true
-  crm.leadDetails: true
+  crm.lead_details: true
 routes:
   crm.home: true
   crm.accounts: true
-  crm.accountDetails: true
+  crm.account_details: true
   crm.contacts: true
-  crm.contactDetails: true
+  crm.contact_details: true
   crm.opportunities: true
-  crm.opportunityDetails: true
+  crm.opportunity_details: true
   crm.leads: true
-  crm.leadDetails: true
+  crm.lead_details: true
 files:
   crm.logo: true
