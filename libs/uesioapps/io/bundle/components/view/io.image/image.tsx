@@ -39,15 +39,12 @@ const Image: FC<ImageProps> = (props) => {
 				uesio.signal.getHandler(definition.signals)
 			}
 		>
-			<picture>
-				<source srcSet={fileUrl} media="(min-width: 800px)" />
 				<img
 					className={classes.inner}
 					src={fileUrl}
 					loading={definition.loading}
 					alt={definition.alt}
 				/>
-			</picture>
 		</div>
 	)
 }
