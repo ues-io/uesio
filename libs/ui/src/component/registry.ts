@@ -149,7 +149,18 @@ const getPropertiesDefinitionFromPath = (path: string) => {
 	return undefined
 }
 
-const getBuilderComponents = () => Object.keys(definitionRegistry)
+const getBuilderComponents = () =>
+	Object.keys(definitionRegistry).reduce((acc, fullName) => {
+		const [namespace, name] = parseKey(fullName)
+		if (!acc[namespace]) {
+			acc[namespace] = {}
+		}
+		const definition = getPropertiesDefinition(`${namespace}.${name}`)
+		if (definition?.traits?.includes("uesio.standalone")) {
+			acc[namespace][name] = definition
+		}
+		return acc
+	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
 
 export {
 	register,

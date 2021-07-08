@@ -58,8 +58,6 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-	console.log("props", props.context.getViewDef)
-
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	return (
 		<div

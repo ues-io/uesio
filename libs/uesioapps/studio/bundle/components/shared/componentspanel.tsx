@@ -26,41 +26,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragEnd = getOnDragStopToolbar(uesio)
 	const builderComponents = component.registry.getBuilderComponents()
 
-	// Structure component data so it's easily mappable in the render function
-	const namespaces = builderComponents.reduce(
-		(arr: Namespace[], builderComponent: string) => {
-			const [namespace, name] = component.path.parseKey(builderComponent)
-			const definition = component.registry.getPropertiesDefinition(
-				`${namespace}.${name}`
-			)
-			if (!definition?.traits?.includes("uesio.standalone")) return arr
-
-			const componentItem = {
-				name,
-				description: definition.description || definition.title,
-			}
-			const namespaceToUpdate = arr.findIndex(
-				(el) => el.namespace === namespace
-			)
-
-			if (namespaceToUpdate === -1)
-				return [...arr, { namespace, components: [componentItem] }]
-
-			const newComponentsArr: ComponentItem[] = [
-				...arr[namespaceToUpdate].components,
-				componentItem,
-			]
-			return arr.map((el: Namespace, i: number) => {
-				const namespace = el
-				if (i === namespaceToUpdate) {
-					namespace.components = newComponentsArr
-				}
-				return namespace
-			})
-		},
-		[]
-	)
-
 	return (
 		<ScrollPanel
 			header={
@@ -80,40 +45,40 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					flex: 1,
 				}}
 			>
-				{namespaces.map(({ namespace, components }, index) => (
-					<ExpandPanel
-						title={namespace}
-						defaultExpanded={true}
-						key={index}
-						context={context}
-					>
-						{components.map(
-							(
-								{ name, description }: ComponentItem,
-								indexTag: number
-							) =>
-								!isStructureView ? (
-									<PropNodeTag
-										title={name}
-										key={indexTag}
-										context={context}
-									/>
-								) : (
-									<PropNodeTag
-										draggable={component.dragdrop.createComponentBankKey(
-											namespace,
-											name
-										)}
-										title={name}
-										icon="drag_indicator"
-										key={indexTag}
-										tooltip={description}
-										context={context}
-									/>
-								)
-						)}
-					</ExpandPanel>
-				))}
+				{Object.entries(builderComponents).map(
+					([namespace, components], index) => (
+						<ExpandPanel
+							title={namespace}
+							defaultExpanded={true}
+							key={index}
+							context={context}
+						>
+							{Object.entries(components).map(
+								([componentName, propDef], indexTag) =>
+									!isStructureView ? (
+										<PropNodeTag
+											title={componentName}
+											key={indexTag}
+											tooltip={propDef.description}
+											context={context}
+										/>
+									) : (
+										<PropNodeTag
+											draggable={component.dragdrop.createComponentBankKey(
+												namespace,
+												componentName
+											)}
+											title={componentName}
+											icon="drag_indicator"
+											key={indexTag}
+											tooltip={propDef.description}
+											context={context}
+										/>
+									)
+							)}
+						</ExpandPanel>
+					)
+				)}
 			</div>
 		</ScrollPanel>
 	)
