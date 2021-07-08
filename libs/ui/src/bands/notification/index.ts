@@ -9,6 +9,7 @@ const notificationSlice = createSlice({
 	reducers: {
 		add: notificationAdapter.addOne,
 		remove: notificationAdapter.removeOne,
+		addMany: notificationAdapter.addMany,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(saveOp.rejected, (state, action) => {
@@ -18,6 +19,24 @@ const notificationSlice = createSlice({
 				text: "FATAL ERROR",
 				details: action?.error?.message,
 			})
+		})
+		builder.addCase(saveOp.fulfilled, (state, action) => {
+			console.log("saveOp.fulfilled")
+			const wires = action?.payload?.wires
+			console.log("action", action)
+			console.log("wires", wires)
+			if (wires) {
+				wires.forEach((wire) => {
+					const error = wire.error
+					console.log("error", error)
+					notificationAdapter.addOne(state, {
+						id: shortid.generate(),
+						severity: "error",
+						text: "ERROR",
+						details: error,
+					})
+				})
+			}
 		})
 	},
 })
