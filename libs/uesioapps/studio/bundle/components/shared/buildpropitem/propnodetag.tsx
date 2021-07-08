@@ -52,9 +52,13 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			popperPaper: {
 				overflow: "hidden",
 			},
+			title: {
+				textTransform: "uppercase",
+			},
 		},
 		props
 	)
+	console.log("props", props.context.getViewDef)
 
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	return (
@@ -70,17 +74,16 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				context={context}
 				onClick={onClick}
 			>
-				<span>{title}</span>
-				{/* We might want to make a renderprop for the tooltip */}
+				<span className={classes.title}>{title}</span>
+
 				{tooltip && (
-					<span className="tooltip">
-						<IconButton
-							size="small"
-							icon="help"
-							label={tooltip}
-							context={context}
-						/>
-					</span>
+					<IconButton
+						size="small"
+						icon="help"
+						label={tooltip}
+						className="tooltip"
+						context={context}
+					/>
 				)}
 			</Tile>
 			{selected && anchorEl && children && (

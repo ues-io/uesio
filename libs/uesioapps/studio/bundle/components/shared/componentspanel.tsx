@@ -10,7 +10,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 
 type ComponentItem = {
 	name: string
-	tooltip: string
+	description: string
 }
 
 type Namespace = {
@@ -28,14 +28,17 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	// Structure component data so it's easily mappable in the render function
 	const namespaces = builderComponents.reduce(
-		(arr: Namespace[], el: ComponentItem) => {
-			const [namespace, name] = component.path.parseKey(el.name)
+		(arr: Namespace[], builderComponent: string) => {
+			const [namespace, name] = component.path.parseKey(builderComponent)
 			const definition = component.registry.getPropertiesDefinition(
 				`${namespace}.${name}`
 			)
 			if (!definition?.traits?.includes("uesio.standalone")) return arr
 
-			const componentItem = { name, tooltip: el.tooltip }
+			const componentItem = {
+				name,
+				description: definition.description || definition.title,
+			}
 			const namespaceToUpdate = arr.findIndex(
 				(el) => el.namespace === namespace
 			)
@@ -86,7 +89,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					>
 						{components.map(
 							(
-								{ name, tooltip }: ComponentItem,
+								{ name, description }: ComponentItem,
 								indexTag: number
 							) =>
 								!isStructureView ? (
@@ -104,7 +107,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										title={name}
 										icon="drag_indicator"
 										key={indexTag}
-										tooltip={tooltip}
+										tooltip={description}
 										context={context}
 									/>
 								)

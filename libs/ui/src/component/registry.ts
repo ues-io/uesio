@@ -150,11 +150,7 @@ const getPropertiesDefinitionFromPath = (path: string) => {
 	return undefined
 }
 
-const getBuilderComponents = () =>
-	Object.keys(definitionRegistry).map((k) => ({
-		name: k,
-		tooltip: definitionRegistry[k].tooltip || k,
-	}))
+const getBuilderComponents = () => Object.keys(definitionRegistry)
 
 export {
 	register,
