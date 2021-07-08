@@ -37,8 +37,12 @@ const parseVariantKey = (
 	fullName: string
 ): [string, string, string, string] => {
 	if (!fullName) return ["", "", "", ""]
-	const [componentNamespace, componentName, variantNamespace, variantName] =
-		fullName.split(".")
+	const [
+		componentNamespace,
+		componentName,
+		variantNamespace,
+		variantName,
+	] = fullName.split(".")
 	return [componentNamespace, componentName, variantNamespace, variantName]
 }
 
