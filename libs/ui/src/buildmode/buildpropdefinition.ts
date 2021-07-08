@@ -100,6 +100,7 @@ interface TextProp extends BasePropDescriptor {
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
 }
+
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
 }
