@@ -6,7 +6,6 @@ require (
 	cloud.google.com/go/firestore v1.3.0
 	cloud.google.com/go/storage v1.12.0
 	github.com/Masterminds/squirrel v1.5.0
-	github.com/aws/aws-sdk-go v1.36.19
 	github.com/aws/aws-sdk-go-v2 v1.7.0
 	github.com/aws/aws-sdk-go-v2/config v1.4.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.3.0
@@ -28,6 +27,7 @@ require (
 	github.com/jinzhu/copier v0.0.0-20201025035756-632e723a6687
 	github.com/lib/pq v1.9.0
 	github.com/spf13/cobra v1.1.1
+	golang.org/x/net v0.0.0-20201110031124-69a78807bb2b // indirect
 	google.golang.org/api v0.34.0
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 )

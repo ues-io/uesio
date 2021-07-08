@@ -83,9 +83,13 @@ func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
 
+	if err != nil {
+		return nil, err
+	}
+
 	svc := dynamodb.NewFromConfig(cfg)
 
-	return svc, err
+	return svc, nil
 
 }
 
