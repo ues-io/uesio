@@ -183,6 +183,7 @@ function renderUtility(
 	props: UtilityProps
 ) {
 	const Loader = loader
+	loader.displayName = props.componentType
 	return <Loader {...props} />
 }
 
