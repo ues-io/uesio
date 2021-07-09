@@ -1,4 +1,4 @@
-name: opportunityDetails
+name: opportunity_details
 definition:
   components:
     - uesio.view:

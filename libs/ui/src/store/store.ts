@@ -34,6 +34,8 @@ type SiteState = {
 	name: string
 	app: string
 	version?: string
+	domain: string
+	subdomain: string
 }
 
 type InitialState = {

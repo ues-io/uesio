@@ -1,15 +1,17 @@
 package dynamodb
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
-// Migrate function
+// // Migrate function
 func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 	fmt.Println("Migrating dynamoDB")
 
+	ctx := context.Background()
 	client, err := getDynamoDB(credentials)
 	if err != nil {
 		return err
@@ -22,7 +24,7 @@ func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Cred
 			return err
 		}
 
-		addTable, err := describeTableDynamoDB(collectionName, client)
+		addTable, err := describeTableDynamoDB(ctx, collectionName, client)
 		if err != nil {
 			return err
 		}
@@ -37,7 +39,7 @@ func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Cred
 			if err != nil {
 				return err
 			}
-			err = createTableDynamoDB(collectionName, idFieldName, client)
+			err = createTableDynamoDB(ctx, collectionName, idFieldName, client)
 			if err != nil {
 				return err
 			}

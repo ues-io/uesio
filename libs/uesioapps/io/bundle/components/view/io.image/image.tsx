@@ -1,41 +1,49 @@
-import { FunctionComponent } from "react"
+import { FC } from "react"
 
 import { ImageProps } from "./imagedefinition"
 import { hooks, styles } from "@uesio/ui"
 
-const Image: FunctionComponent<ImageProps> = (props) => {
+const Image: FC<ImageProps> = (props) => {
+	const { definition, context } = props
+
 	const classes = styles.useStyles(
 		{
 			root: {
 				display: "block",
-				textAlign: props.definition?.align || "left",
+				textAlign: definition?.align || "left",
 				lineHeight: 0,
-				cursor: props.definition?.signals ? "pointer" : "",
+				cursor: definition?.signals ? "pointer" : "",
 			},
 			inner: {
 				display: "inline-block",
-				height: props.definition?.height,
+				height: definition?.height,
 			},
 		},
 		props
 	)
 	const uesio = hooks.useUesio(props)
-	const fileFullName = props.definition?.file
+	const fileFullName = definition?.file
 
 	if (!fileFullName) {
 		return null
 	}
 
-	const fileUrl = uesio.file.getURLFromFullName(props.context, fileFullName)
+	const fileUrl = uesio.file.getURLFromFullName(context, fileFullName)
+
 	return (
 		<div
 			className={classes.root}
 			onClick={
-				props.definition?.signals &&
-				uesio.signal.getHandler(props.definition.signals)
+				definition?.signals &&
+				uesio.signal.getHandler(definition.signals)
 			}
 		>
-			<img className={classes.inner} src={fileUrl} />
+			<img
+				className={classes.inner}
+				src={fileUrl}
+				loading={definition.loading}
+				alt={definition.alt}
+			/>
 		</div>
 	)
 }

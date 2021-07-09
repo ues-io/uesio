@@ -27,6 +27,9 @@ definition:
                     file: uesio.logo
                     height: 120px
                     align: center
+                    signals:
+                      - signal: "route/REDIRECT"
+                        path: "https://$Site{domain}"
                 - uesio.logingoogle:
                     text: Sign in with Google
                     clientId: uesio.googleClientId

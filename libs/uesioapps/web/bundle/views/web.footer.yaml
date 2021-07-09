@@ -1,0 +1,16 @@
+name: footer
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.styles:
+          root:
+            backgroundColor: rgb(33,36,44)
+            minHeight: 400px
+        uesio.variant: web.mainlayout
+        items:
+          - io.griditem:
+              area: main
+              components:

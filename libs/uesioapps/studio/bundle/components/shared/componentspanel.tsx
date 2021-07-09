@@ -14,23 +14,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const isStructureView = uesio.builder.useIsStructureView()
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
-
-	const filteredList: Record<string, string[]> = {}
-
-	component.registry.getBuilderComponents().forEach((key: string) => {
-		const [namespace, name] = component.path.parseKey(key)
-
-		const names = filteredList[namespace] || []
-
-		const definition = component.registry.getPropertiesDefinition(
-			`${namespace}.${name}`
-		)
-		if (definition?.traits?.includes("uesio.standalone")) {
-			names.push(name)
-		}
-
-		filteredList[namespace] = names
-	})
+	const builderComponents = component.registry.getBuilderComponents()
 
 	return (
 		<ScrollPanel
@@ -51,37 +35,40 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					flex: 1,
 				}}
 			>
-				{Object.keys(filteredList)
-					.filter((element) => filteredList[element].length)
-					.map((element, index) => (
+				{Object.entries(builderComponents).map(
+					([namespace, components], index) => (
 						<ExpandPanel
-							title={element}
+							title={namespace}
 							defaultExpanded={true}
 							key={index}
 							context={context}
 						>
-							{filteredList[element].map((value, indexTag) =>
-								!isStructureView ? (
-									<PropNodeTag
-										title={value}
-										key={indexTag}
-										context={context}
-									/>
-								) : (
-									<PropNodeTag
-										draggable={component.dragdrop.createComponentBankKey(
-											element,
-											value
-										)}
-										title={value}
-										icon="drag_indicator"
-										key={indexTag}
-										context={context}
-									/>
-								)
+							{Object.entries(components).map(
+								([componentName, propDef], indexTag) =>
+									!isStructureView ? (
+										<PropNodeTag
+											title={componentName}
+											key={indexTag}
+											tooltip={propDef.description}
+											context={context}
+										/>
+									) : (
+										<PropNodeTag
+											draggable={component.dragdrop.createComponentBankKey(
+												namespace,
+												componentName
+											)}
+											title={componentName}
+											icon="drag_indicator"
+											key={indexTag}
+											tooltip={propDef.description}
+											context={context}
+										/>
+									)
 							)}
 						</ExpandPanel>
-					))}
+					)
+				)}
 			</div>
 		</ScrollPanel>
 	)

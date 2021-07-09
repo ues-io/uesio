@@ -44,23 +44,28 @@ type AuthenticationClaims struct {
 
 // GetSiteFromHost function
 func GetSiteFromHost(host string) (*meta.Site, error) {
-	var domainType, domain string
+	var domainType, domainValue, domain, subdomain string
 	stringParts := strings.Split(host, ".")
 	if len(stringParts) == 3 {
 		domainType = "subdomain"
-		domain = stringParts[0]
+		domainValue = stringParts[0]
+		subdomain = domainValue
+		domain = stringParts[1] + "." + stringParts[2]
 	} else {
 		domainType = "domain"
 		hostParts := strings.Split(host, ":")
-		domain = hostParts[0] // Strip off the port
+		domainValue = hostParts[0] // Strip off the port
+		domain = host
 	}
-	site, err := site.GetSiteFromDomain(domainType, domain)
+	site, err := site.GetSiteFromDomain(domainType, domainValue)
 	if err != nil {
 		return nil, err
 	}
 	if site == nil {
 		return nil, errors.New("No Site Found: " + domainType + " : " + domain)
 	}
+	site.Domain = domain
+	site.Subdomain = subdomain
 	return site, nil
 }
 

@@ -10,11 +10,13 @@ type Props = {
 	onClick?: () => void
 	draggable?: string
 	context: context.Context
+	tooltip?: string
 }
 
 const Icon = component.registry.getUtility("io.icon")
 const Tile = component.registry.getUtility("io.tile")
 const Popper = component.registry.getUtility("io.popper")
+const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {
@@ -24,28 +26,63 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		draggable,
 		icon,
 		iconColor,
+		tooltip,
 		selected,
 		context,
 	} = props
 
 	const classes = styles.useStyles(
 		{
+			root: {
+				cursor: draggable ? "grab" : "inherit",
+				"&:hover .tooltip": {
+					opacity: 0.3,
+				},
+
+				".tooltip": {
+					cursor: "initial",
+					opacity: 0,
+					textTransform: "initial",
+					transition: "opacity 0.125s ease",
+					"&:hover": {
+						opacity: 1,
+					},
+				},
+			},
 			popperPaper: {
 				overflow: "hidden",
+			},
+			title: {
+				textTransform: "uppercase",
 			},
 		},
 		props
 	)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	return (
-		<div ref={setAnchorEl} draggable={!!draggable} data-type={draggable}>
+		<div
+			className={classes.root}
+			ref={setAnchorEl}
+			draggable={!!draggable}
+			data-type={draggable}
+		>
 			<Tile
 				variant="io.tile.studio.propnodetag"
 				avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
 			>
-				{title}
+				<span className={classes.title}>{title}</span>
+
+				{tooltip && (
+					<IconButton
+						size="small"
+						icon="help"
+						label={tooltip}
+						className="tooltip"
+						context={context}
+					/>
+				)}
 			</Tile>
 			{selected && anchorEl && children && (
 				<Popper

@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { SiteState } from "../../store/store"
 
-const userSlice = createSlice({
+const siteSlice = createSlice({
 	name: "site",
 	initialState: {} as SiteState,
 	reducers: {},
 })
 
-export default userSlice.reducer
+export default siteSlice.reducer

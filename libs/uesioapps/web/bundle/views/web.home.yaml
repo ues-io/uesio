@@ -4,48 +4,104 @@ definition:
   wires:
   # Components are how we describe the layout of our view
   components:
+    - uesio.view:
+        view: web.topbar
     - io.grid:
-        uesio.styles:
-          root:
-            alignItems: center
-        templateColumns:
-          sm: 0 1fr 0
-          md: 1fr 900px 1fr
+        uesio.variant: web.mainlayout
         items:
           - io.griditem:
-              components:
-          - io.griditem:
-              uesio.styles:
-                root:
-                  textAlign: right
+              area: main
               components:
                 - io.grid:
-                    templateColumns: 0fr 1fr
+                    templateColumns: 400px 1fr
+                    uesio.styles:
+                      root:
+                        marginTop: 120px
+                        padding: 80px
                     items:
                       - io.griditem:
                           components:
-                            - io.image:
+                            - io.text:
                                 uesio.styles:
                                   root:
-                                    margin: 16px
-                                height: 40px
-                                file: web.logo
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "home"
+                                    fontSize: 38pt
+                                    color: "#333"
+                                    fontFamily: Gosha
+                                element: div
+                                text: Integrated data comes out of the box now.
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 13pt
+                                    lineHeight: 22pt
+                                    color: "#888"
+                                    fontWeight: 300
+                                    marginTop: 30px
+                                element: div
+                                text: Uesio is a web application builder, where you work on configuration rather than code. Think specifying the desired outcome, not the individual instructions to the computer.
+    - io.grid:
+        uesio.variant: web.mainlayout
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: $File{uesio.splash}
+        items:
+          - io.griditem:
+              area: main
+              components:
+                - io.griditem:
+                    area: main
+                    components:
+                      - io.grid:
+                          templateColumns: 1fr 0fr 1fr
+                          uesio.styles:
+                            root:
+                              padding: 180px
+                          items:
+                            - io.griditem:
+                                components:
+                            - io.griditem:
+                                uesio.styles:
+                                  root:
+                                    width: 500px
+                                components:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 38pt
+                                          color: "white"
+                                          fontFamily: Gosha
+                                      element: div
+                                      text: Build Rome in a day.
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 22pt
+                                          color: "white"
+                                          fontFamily: Gosha
+                                      element: div
+                                      text: The bundle store makes it easy.
+    - io.grid:
+        uesio.variant: web.mainlayout
+        items:
+          - io.griditem:
+              area: main
+              components:
+                - io.grid:
+                    templateColumns: 400px 1fr
+                    uesio.styles:
+                      root:
+                        padding: 80px
+                    items:
                       - io.griditem:
                           components:
-                            - io.button:
-                                uesio.variant: io.nav
-                                text: Blog
-                            - io.button:
-                                uesio.variant: io.nav
-                                text: Who we are
-                            - io.button:
-                                uesio.variant: io.nav
-                                text: Get a demo
-                            - io.button:
-                                uesio.variant: io.primary
-                                text: Login
-          - io.griditem:
-              components:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 38pt
+                                    color: "#333"
+                                    fontFamily: Gosha
+                                element: div
+                                text: Build & bundle
+    - uesio.view:
+        view: web.footer
