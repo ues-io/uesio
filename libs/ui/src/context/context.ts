@@ -13,6 +13,12 @@ import { PlainWire } from "../bands/wire/types"
 
 type FieldMode = "READ" | "EDIT"
 
+type SiteAdminState = {
+	name: string
+	app: string
+	version?: string
+}
+
 type ContextFrame = {
 	wire?: string
 	record?: string
@@ -23,7 +29,7 @@ type ContextFrame = {
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
-	siteadmin?: SiteState
+	siteadmin?: SiteAdminState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
