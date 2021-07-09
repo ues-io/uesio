@@ -67,6 +67,13 @@ func InitSystemEnv() error {
 
 }
 
+func getConfig(region, accessKeyID, secretAccessKey, sessionToken string) (aws.Config, error) {
+	if accessKeyID != "" && secretAccessKey != "" {
+		return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region), config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
+	}
+	return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
+}
+
 func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 
 	region, ok := (*dbcreds)["region"]
@@ -78,16 +85,7 @@ func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 	secretAccessKey := (*dbcreds)["secretAccessKey"]
 	sessionToken := (*dbcreds)["sessionToken"]
 
-	regionConfig := config.WithRegion(region)
-
-	var awsCredentials config.LoadOptionsFunc
-
-	if accessKeyID != "" && secretAccessKey != "" {
-		awsCredentials = config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken))
-	}
-
-	cfg, err := config.LoadDefaultConfig(context.TODO(), regionConfig, awsCredentials)
-
+	cfg, err := getConfig(region, accessKeyID, secretAccessKey, sessionToken)
 	if err != nil {
 		return nil, err
 	}
