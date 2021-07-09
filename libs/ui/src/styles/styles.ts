@@ -14,13 +14,15 @@ type ResponsiveDefinition =
 			lg?: string
 			xl?: string
 	  }
+	| undefined
 
 type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl"
 const getResponsiveStyles = (
 	styleType: string,
 	definition: ResponsiveDefinition,
 	context: Context
-): CSSProperties => {
+): CSSProperties | undefined => {
+	if (!definition) return undefined
 	if (typeof definition === "string") {
 		return {
 			[styleType]: definition,

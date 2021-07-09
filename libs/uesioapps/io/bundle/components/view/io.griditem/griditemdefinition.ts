@@ -1,7 +1,8 @@
 import { definition, builder } from "@uesio/ui"
 
 type GridItemDefinition = {
-	column: string
+	column?: string
+	area?: string
 }
 
 interface GridItemProps extends definition.BaseProps {

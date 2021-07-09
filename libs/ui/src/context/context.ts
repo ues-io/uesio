@@ -77,6 +77,13 @@ const getFromContext = (
 		return ""
 	} else if (mergeTypeName === "File") {
 		return `url("${getURLFromFullName(context, expression)}")`
+	} else if (mergeTypeName === "Site") {
+		const site = context.getSite()
+		if (!site) return ""
+		if (expression === "domain") {
+			return site.domain
+		}
+		return ""
 	}
 	return ""
 }
