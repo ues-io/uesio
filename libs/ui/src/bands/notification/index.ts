@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import notificationAdapter from "./adapter"
 import saveOp from "../wire/operations/save"
 import shortid from "shortid"
+import callBot from "../bot/operations/call"
 
 const notificationSlice = createSlice({
 	name: "notification",
@@ -16,27 +17,17 @@ const notificationSlice = createSlice({
 			notificationAdapter.addOne(state, {
 				id: shortid.generate(),
 				severity: "error",
-				text: "FATAL ERROR",
+				text: "ERROR",
 				details: action?.error?.message,
 			})
 		})
-		builder.addCase(saveOp.fulfilled, (state, action) => {
-			console.log("saveOp.fulfilled")
-			const wires = action?.payload?.wires
-			console.log("action", action)
-			console.log("wires", wires)
-			if (wires) {
-				wires.forEach((wire) => {
-					const error = wire.error
-					console.log("error", error)
-					notificationAdapter.addOne(state, {
-						id: shortid.generate(),
-						severity: "error",
-						text: "ERROR",
-						details: error,
-					})
-				})
-			}
+		builder.addCase(callBot.rejected, (state, action) => {
+			notificationAdapter.addOne(state, {
+				id: shortid.generate(),
+				severity: "error",
+				text: "ERROR",
+				details: action?.error?.message,
+			})
 		})
 	},
 })
