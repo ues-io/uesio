@@ -78,10 +78,15 @@ func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 	secretAccessKey := (*dbcreds)["secretAccessKey"]
 	sessionToken := (*dbcreds)["sessionToken"]
 
-	config.WithRegion(region)
+	regionConfig := config.WithRegion(region)
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
+	var awsCredentials config.LoadOptionsFunc
+
+	if accessKeyID != "" && secretAccessKey != "" {
+		awsCredentials = config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken))
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), regionConfig, awsCredentials)
 
 	if err != nil {
 		return nil, err
