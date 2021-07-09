@@ -10,7 +10,6 @@ const notificationSlice = createSlice({
 	reducers: {
 		add: notificationAdapter.addOne,
 		remove: notificationAdapter.removeOne,
-		addMany: notificationAdapter.addMany,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(saveOp.rejected, (state, action) => {
