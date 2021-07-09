@@ -13,6 +13,12 @@ import { PlainWire } from "../bands/wire/types"
 
 type FieldMode = "READ" | "EDIT"
 
+type SiteAdminState = {
+	name: string
+	app: string
+	version?: string
+}
+
 type ContextFrame = {
 	wire?: string
 	record?: string
@@ -23,7 +29,7 @@ type ContextFrame = {
 	noMerge?: boolean
 	route?: RouteState
 	workspace?: WorkspaceState
-	siteadmin?: SiteState
+	siteadmin?: SiteAdminState
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
@@ -77,6 +83,13 @@ const getFromContext = (
 		return ""
 	} else if (mergeTypeName === "File") {
 		return `url("${getURLFromFullName(context, expression)}")`
+	} else if (mergeTypeName === "Site") {
+		const site = context.getSite()
+		if (!site) return ""
+		if (expression === "domain") {
+			return site.domain
+		}
+		return ""
 	}
 	return ""
 }

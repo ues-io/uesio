@@ -12,6 +12,8 @@ type Site struct {
 	UpdatedBy *User     `uesio:"uesio.updatedby"`
 	UpdatedAt int64     `uesio:"uesio.updatedat"`
 	CreatedAt int64     `uesio:"uesio.createdat"`
+	Domain    string
+	Subdomain string
 }
 
 func (s *Site) GetFullName() string {

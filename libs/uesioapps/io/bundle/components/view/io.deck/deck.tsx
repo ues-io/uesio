@@ -8,20 +8,16 @@ const IOGrid = component.registry.getUtility("io.grid")
 
 const Deck: FunctionComponent<DeckProps> = (props) => {
 	const { definition, context } = props
-	const gridCols =
-		definition.templateColumns &&
-		styles.getResponsiveStyles(
-			"gridTemplateColumns",
-			definition.templateColumns,
-			context
-		)
-	const gridRows =
-		definition.templateRows &&
-		styles.getResponsiveStyles(
-			"gridTemplateRows",
-			definition.templateRows,
-			context
-		)
+	const gridCols = styles.getResponsiveStyles(
+		"gridTemplateColumns",
+		definition.templateColumns,
+		context
+	)
+	const gridRows = styles.getResponsiveStyles(
+		"gridTemplateRows",
+		definition.templateRows,
+		context
+	)
 
 	const classes = styles.useStyles(
 		{

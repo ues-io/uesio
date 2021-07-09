@@ -15,7 +15,6 @@ const Image: FC<ImageProps> = (props) => {
 				cursor: definition?.signals ? "pointer" : "",
 			},
 			inner: {
-				maxWidth: "100%",
 				display: "inline-block",
 				height: definition?.height,
 			},

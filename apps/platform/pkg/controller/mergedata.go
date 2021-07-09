@@ -35,9 +35,11 @@ type UserMergeData struct {
 
 // SiteMergeData stuff to merge
 type SiteMergeData struct {
-	Name    string `json:"name"`
-	App     string `json:"app"`
-	Version string `json:"version"`
+	Name      string `json:"name"`
+	App       string `json:"app"`
+	Version   string `json:"version"`
+	Domain    string `json:"domain"`
+	Subdomain string `json:"subdomain"`
 }
 
 // WorkspaceMergeData stuff to merge
@@ -144,9 +146,11 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 		},
 		User: GetUserMergeData(session),
 		Site: &SiteMergeData{
-			Name:    site.Name,
-			Version: site.Bundle.GetVersionString(),
-			App:     site.AppID,
+			Name:      site.Name,
+			Version:   site.Bundle.GetVersionString(),
+			App:       site.AppID,
+			Subdomain: site.Subdomain,
+			Domain:    site.Domain,
 		},
 		Component: GetComponentMergeData(buildMode),
 	}

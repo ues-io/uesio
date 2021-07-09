@@ -1,0 +1,68 @@
+name: topbar
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: web.mainlayout
+        uesio.styles:
+          root:
+            backgroundColor: white
+            position: fixed
+            left: 0
+            right: 0
+            height: 120px
+        items:
+          - io.griditem:
+              uesio.styles:
+                root:
+                  display: grid
+              area: main
+              components:
+                - io.grid:
+                    templateColumns: 0fr 1fr 0fr
+                    uesio.styles:
+                      root:
+                        alignItems: center
+                    items:
+                      - io.griditem:
+                          components:
+                            - io.image:
+                                uesio.styles:
+                                  root:
+                                    margin: 16px
+                                height: 55px
+                                file: web.logo
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "home"
+                      - io.griditem:
+                          components:
+                      - io.griditem:
+                          components:
+                            - io.group:
+                                uesio.styles:
+                                  root:
+                                    margin: 20px
+                                columnGap: 40px
+                                components:
+                                  - io.group:
+                                      components:
+                                        - io.button:
+                                            uesio.variant: web.secondary
+                                            text: Blog
+                                        - io.button:
+                                            uesio.variant: web.secondary
+                                            text: Who we are
+                                        - io.button:
+                                            uesio.variant: web.secondary
+                                            text: Login
+                                            signals:
+                                              - signal: "route/REDIRECT"
+                                                path: "https://studio.$Site{domain}"
+                                  - io.group:
+                                      components:
+                                        - io.button:
+                                            uesio.variant: web.calltoaction
+                                            text: Early Access

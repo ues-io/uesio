@@ -2,6 +2,8 @@ name: public
 named:
 views:
   web.home: true
+  web.topbar: true
+  web.footer: true
 routes:
   web.home: true
 files:

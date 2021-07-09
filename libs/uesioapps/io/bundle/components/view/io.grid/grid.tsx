@@ -7,20 +7,22 @@ const IOGrid = component.registry.getUtility("io.grid")
 
 const Grid: FunctionComponent<GridProps> = (props) => {
 	const { definition, context } = props
-	const gridCols =
-		definition.templateColumns &&
-		styles.getResponsiveStyles(
-			"gridTemplateColumns",
-			definition.templateColumns,
-			context
-		)
-	const gridRows =
-		definition.templateRows &&
-		styles.getResponsiveStyles(
-			"gridTemplateRows",
-			definition.templateRows,
-			context
-		)
+	const gridCols = styles.getResponsiveStyles(
+		"gridTemplateColumns",
+		definition.templateColumns,
+		context
+	)
+	const gridRows = styles.getResponsiveStyles(
+		"gridTemplateRows",
+		definition.templateRows,
+		context
+	)
+
+	const gridAreas = styles.getResponsiveStyles(
+		"gridTemplateAreas",
+		definition.templateAreas,
+		context
+	)
 
 	const columnGap = definition.columnGap && {
 		gridColumnGap: definition.columnGap,
@@ -30,6 +32,7 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 			root: {
 				...gridCols,
 				...gridRows,
+				...gridAreas,
 				...columnGap,
 			},
 		},
