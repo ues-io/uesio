@@ -1,0 +1,35 @@
+name: earlyaccessthanks
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: web.topbar
+    - io.grid:
+        uesio.variant: web.mainlayout
+        items:
+          - io.griditem:
+              area: main
+              components:
+                - io.grid:
+                    templateColumns:
+                      sm: 1fr
+                      md: 350px 1fr
+                      lg: 450px 1fr
+                    columnGap: 40px
+                    uesio.styles:
+                      root:
+                        marginTop: 120px
+                        padding: 80px
+                    items:
+                      - io.griditem:
+                          components:
+                            - io.text:
+                                uesio.variant: web.callout
+                                text: Thanks for registering.
+                            - io.text:
+                                uesio.variant: web.calloutsub
+                                text: We'll send you an email or something cool like that.
+    - uesio.view:
+        view: web.footer

@@ -1,0 +1,12 @@
+name: smallcalloutsub
+component: io.text
+label: Small Callout Subtitle
+definition:
+  uesio.styles:
+    root:
+      fontSize: 10pt
+      lineHeight: 16pt
+      color: "#888"
+      fontWeight: 300
+      margin: 20px 0
+  element: div

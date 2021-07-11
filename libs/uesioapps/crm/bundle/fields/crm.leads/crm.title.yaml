@@ -1,0 +1,5 @@
+name: title
+collection: crm.leads
+type: TEXT
+label: Title
+propertyName: title

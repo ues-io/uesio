@@ -22,22 +22,10 @@ definition:
                       - io.griditem:
                           components:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontSize: 38pt
-                                    color: "#333"
-                                    fontFamily: Gosha
-                                element: div
+                                uesio.variant: web.callout
                                 text: Integrated data comes out of the box now.
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontSize: 13pt
-                                    lineHeight: 22pt
-                                    color: "#888"
-                                    fontWeight: 300
-                                    marginTop: 30px
-                                element: div
+                                uesio.variant: web.calloutsub
                                 text: Uesio is a web application builder, where you work on configuration rather than code. Think specifying the desired outcome, not the individual instructions to the computer.
     - io.grid:
         uesio.variant: web.mainlayout
@@ -96,12 +84,71 @@ definition:
                       - io.griditem:
                           components:
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontSize: 38pt
-                                    color: "#333"
-                                    fontFamily: Gosha
-                                element: div
+                                uesio.variant: web.callout
                                 text: Build & bundle
+    - io.grid:
+        uesio.variant: web.mainlayout
+        items:
+          - io.griditem:
+              area: main
+              components:
+                - io.grid:
+                    templateColumns: 1fr 400px
+                    uesio.styles:
+                      root:
+                        padding: 80px
+                    items:
+                      - io.griditem:
+                          components:
+                      - io.griditem:
+                          components:
+                            - io.box:
+                                uesio.variant: web.featurebox
+                                components:
+                                  - io.text:
+                                      uesio.variant: web.sectiontag
+                                      text: Base components
+                                  - io.text:
+                                      uesio.variant: web.smallcallout
+                                      text: Get started with a full featured component library
+                                  - io.text:
+                                      uesio.variant: web.smallcalloutsub
+                                      text: Create standard business applications fast with a complete set of ready-to-use components and fully fledgged applications.
+                            - io.box:
+                                uesio.variant: web.featurebox
+                                components:
+                                  - io.text:
+                                      uesio.variant: web.sectiontag
+                                      text: Community components
+                                  - io.text:
+                                      uesio.variant: web.smallcallout
+                                      text: Build even faster using community bundles
+                                  - io.text:
+                                      uesio.variant: web.smallcalloutsub
+                                      text: Choose from a large selection of pre-built applications or their individual nested components from the Uesio Bundle Store and pull them into your workspace.
+                            - io.box:
+                                uesio.variant: web.featurebox
+                                components:
+                                  - io.text:
+                                      uesio.variant: web.sectiontag
+                                      text: Custom components
+                                  - io.text:
+                                      uesio.variant: web.smallcallout
+                                      text: Enhance your app using React
+                                  - io.text:
+                                      uesio.variant: web.smallcalloutsub
+                                      text: For custom functionality, use React and Uesio's API hooks to connect to wires and signals.
+                            - io.box:
+                                uesio.variant: web.featurebox
+                                components:
+                                  - io.text:
+                                      uesio.variant: web.sectiontag
+                                      text: Back-end business logic
+                                  - io.text:
+                                      uesio.variant: web.smallcallout
+                                      text: Benefit from bots and validation rules
+                                  - io.text:
+                                      uesio.variant: web.smallcalloutsub
+                                      text: Write business logic using bots in Javascript (or Typescript)
     - uesio.view:
         view: web.footer
