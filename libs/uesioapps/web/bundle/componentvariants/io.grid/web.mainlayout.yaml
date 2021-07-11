@@ -7,3 +7,6 @@ definition:
     sm: 0 1fr 0
     md: 1fr 900px 1fr
     lg: 1fr 1080px 1fr
+  uesio.styles:
+    root:
+      backgroundColor: rgb(249,249,249)

@@ -14,3 +14,31 @@ definition:
           - io.griditem:
               area: main
               components:
+                - io.grid:
+                    templateColumns: 0fr 1fr 0fr
+                    uesio.styles:
+                      root:
+                        alignItems: center
+                        margin: 16px
+                    items:
+                      - io.griditem:
+                          components:
+                            - io.text:
+                                uesio.variant: web.footertext
+                                text: 2020 - 2021 ues.io - All rights reserved.
+                      - io.griditem:
+                          components:
+                      - io.griditem:
+                          components:
+                            - io.group:
+                                columnGap: 14px
+                                components:
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Legal notice
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Privacy policy
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Terms of use

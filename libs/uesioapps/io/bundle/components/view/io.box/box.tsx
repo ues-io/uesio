@@ -6,9 +6,7 @@ import { BoxProps } from "./boxdefinition"
 const Box: FunctionComponent<BoxProps> = (props) => {
 	const classes = styles.useStyles(
 		{
-			root: {
-				position: "relative",
-			},
+			root: {},
 		},
 		props
 	)

@@ -47,7 +47,7 @@ class SignalAPI {
 
 	useHandler = (
 		signals: SignalDefinition[] | undefined
-	): [() => Promise<Context>, ReactNode] => [
+	): [(() => Promise<Context>) | undefined, ReactNode] => [
 		this.getHandler(signals),
 		signals?.flatMap((signal) => {
 			// If this signal is a panel signal and we're controlling it from this
@@ -90,8 +90,10 @@ class SignalAPI {
 	]
 
 	// Returns a handler function for running a list of signals
-	getHandler = (signals: SignalDefinition[] | undefined) => async () => {
-		/*
+	getHandler = (signals: SignalDefinition[] | undefined) => {
+		if (!signals) return undefined
+		return async () => {
+			/*
 			// More confusing alternative using reduce
 			return signals.reduce<Promise<Context>>(
 				async (context, signal) => this.run(signal, await context),
@@ -99,8 +101,7 @@ class SignalAPI {
 			)
 			*/
 
-		let context = this.uesio.getContext()
-		if (signals) {
+			let context = this.uesio.getContext()
 			for (const signal of signals) {
 				// Special handling for panel signals
 				let useSignal = signal
@@ -113,8 +114,8 @@ class SignalAPI {
 				// Keep adding to context as each signal is run
 				context = await this.run(useSignal, context)
 			}
+			return context
 		}
-		return context
 	}
 
 	run = (signal: SignalDefinition, context: Context) => {

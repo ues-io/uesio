@@ -9,5 +9,5 @@ definition:
       fontSize: 11pt
       borderRadius: 8px
       fontFamily: Gosha
-      backgroundColor: white
+      backgroundColor: transparent
       whiteSpace: nowrap
