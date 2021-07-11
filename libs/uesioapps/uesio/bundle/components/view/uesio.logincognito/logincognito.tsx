@@ -24,7 +24,6 @@ interface LoginProps extends definition.BaseProps {
 }
 
 const Button = component.registry.getUtility("io.button")
-const Alert = component.registry.getUtility("io.alert")
 
 interface LoginButtonProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
@@ -53,10 +52,9 @@ const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
 	})
 
 const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
-	const { text, setMode } = props
+	const { text, setMode, context } = props
 	return (
 		<Button
-			{...props}
 			onClick={() => setMode("login")}
 			variant="io.primary"
 			styles={{
@@ -68,23 +66,45 @@ const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 				},
 			}}
 			label={text}
+			context={context}
 		/>
 	)
 }
 
-const signUp =
-	(
-		pool: CognitoUserPool,
-		setMessage: (message: string) => void,
-		setMode: (message: string) => void
-	) =>
-	(
+const LoginCognito: FunctionComponent<LoginProps> = (props) => {
+	const { context, definition, path } = props
+	const uesio = hooks.useUesio(props)
+	const classes = styles.useStyles(
+		{
+			formwrapper: {
+				width: "300px",
+				margin: "40px auto",
+				textAlign: "center",
+			},
+			errormsg: {
+				marginBottom: "10px",
+			},
+		},
+		props
+	)
+	const clientIdKey = definition.clientId
+	const clientId = uesio.view.useConfigValue(clientIdKey)
+	const poolIdKey = definition.poolId
+	const poolId = uesio.view.useConfigValue(poolIdKey)
+	const [mode, setMode] = uesio.component.useState<string>("mode", "")
+	const [signupUsername, setSignupUsername] = useState("")
+	const [signupPassword, setSignupPassword] = useState("")
+
+	if (!poolId || !clientId) return null
+	const pool = getPool(poolId, clientId)
+
+	function signUp(
 		firstname: string,
 		lastname: string,
 		username: string,
 		email: string,
 		password: string
-	): void => {
+	): void {
 		const attributeList = [
 			new CognitoUserAttribute({
 				Name: "email",
@@ -107,53 +127,24 @@ const signUp =
 			[],
 			(err: Error, result: unknown) => {
 				if (err) {
-					setMessage(err.message || JSON.stringify(err))
+					const message = err.message || JSON.stringify(err)
+					uesio.notification.addError(message, context, path)
 					return
 				}
 				if (!result) {
-					setMessage("No result!")
+					uesio.notification.addError("No Result!", context, path)
 					return
 				}
-				setMessage("")
 				setMode("confirm")
 			}
 		)
 	}
-
-const LoginCognito: FunctionComponent<LoginProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const classes = styles.useStyles(
-		{
-			formwrapper: {
-				width: "300px",
-				margin: "40px auto",
-				textAlign: "center",
-			},
-			errormsg: {
-				marginBottom: "10px",
-			},
-		},
-		props
-	)
-	const clientIdKey = props.definition.clientId
-	const clientId = uesio.view.useConfigValue(clientIdKey)
-	const poolIdKey = props.definition.poolId
-	const poolId = uesio.view.useConfigValue(poolIdKey)
-	const [mode, setMode] = uesio.component.useState<string>("mode", "")
-	const [signupUsername, setSignupUsername] = useState("")
-	const [signupPassword, setSignupPassword] = useState("")
-
-	const [message, setMessage] = useState("")
-
-	if (!poolId || !clientId) return null
-	const pool = getPool(poolId, clientId)
 
 	function logIn(username: string, password: string): void {
 		const authenticationDetails = getAuthDetails(username, password)
 		const cognitoUser = getUser(username, pool)
 		cognitoUser.authenticateUser(authenticationDetails, {
 			onSuccess: (result) => {
-				setMessage("")
 				const accessToken = result.getIdToken().getJwtToken()
 				uesio.signal.run(
 					{
@@ -161,12 +152,13 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 						type: "cognito",
 						token: accessToken,
 					},
-					props.context
+					context
 				)
 			},
 
 			onFailure: (err) => {
-				setMessage(err.message || JSON.stringify(err))
+				const message = err.message || JSON.stringify(err)
+				uesio.notification.addError(message, context, path)
 			},
 		})
 	}
@@ -178,11 +170,11 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 			true,
 			(err, result) => {
 				if (err) {
-					setMessage(err.message || JSON.stringify(err))
+					const message = err.message || JSON.stringify(err)
+					uesio.notification.addError(message, context, path)
 					return
 				}
 				if (result === "SUCCESS") {
-					setMessage("")
 					logIn(signupUsername, signupPassword)
 				}
 			}
@@ -191,31 +183,18 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 
 	return (
 		<div className={classes.formwrapper}>
-			{message && (
-				<Alert
-					{...props}
-					onClose={() => setMessage("")}
-					className={classes.errormsg}
-					severity="error"
-					text={message}
-				/>
-			)}
+			<component.NotificationArea context={context} path={path} />
 			{mode === "" && (
-				<LoginWrapper align={props.definition.align}>
+				<LoginWrapper align={definition.align}>
 					<LoginButton
 						setMode={setMode}
-						text={props.definition.text}
-						{...props}
+						text={definition.text}
+						context={context}
 					/>
 				</LoginWrapper>
 			)}
 			{mode === "login" && (
-				<LoginForm
-					setMode={setMode}
-					logIn={logIn}
-					setMessage={setMessage}
-					{...props}
-				/>
+				<LoginForm setMode={setMode} logIn={logIn} context={context} />
 			)}
 			{mode === "signup" && (
 				<SignupForm
@@ -224,12 +203,16 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					setSignupUsername={setSignupUsername}
 					signupPassword={signupPassword}
 					setSignupPassword={setSignupPassword}
-					signUp={signUp(pool, setMessage, setMode)}
-					{...props}
+					signUp={signUp}
+					context={context}
 				/>
 			)}
 			{mode === "confirm" && (
-				<ConfirmForm setMode={setMode} confirm={confirm} {...props} />
+				<ConfirmForm
+					setMode={setMode}
+					confirm={confirm}
+					context={context}
+				/>
 			)}
 		</div>
 	)

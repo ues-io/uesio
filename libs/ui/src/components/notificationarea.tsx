@@ -15,20 +15,26 @@ const NotificationArea: FunctionComponent<BaseProps> = (props) => {
 
 	return (
 		<>
-			{notifications.map((notification) => (
-				<Alert
-					key={notification.id}
-					text={notification.text}
-					details={notification.details}
-					severity={notification.severity}
-					context={props.context}
-					onClick={() => {
-						uesio.getDispatcher()(
-							removeNotification(notification.id)
-						)
-					}}
-				/>
-			))}
+			{notifications
+				.filter(
+					(notification) =>
+						notification.path === props.path ||
+						(!notification.path && !props.path)
+				)
+				.map((notification) => (
+					<Alert
+						key={notification.id}
+						text={notification.text}
+						details={notification.details}
+						severity={notification.severity}
+						context={props.context}
+						onClick={() => {
+							uesio.getDispatcher()(
+								removeNotification(notification.id)
+							)
+						}}
+					/>
+				))}
 		</>
 	)
 }

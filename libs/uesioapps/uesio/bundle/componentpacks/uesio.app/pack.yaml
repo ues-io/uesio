@@ -31,6 +31,7 @@ components:
         - io.textfield.io.default
         - io.text.io.default
         - io.link.io.default
+        - io.fieldlabel.io.default
       configvalues:
         - uesio.cognitoPoolId
         - uesio.cognitoClientId

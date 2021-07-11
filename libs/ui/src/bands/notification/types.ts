@@ -5,6 +5,7 @@ interface NotificationState {
 	severity: NotificationSeverity
 	text: string
 	details?: string
+	path?: string
 }
 
 export { NotificationSeverity, NotificationState }
