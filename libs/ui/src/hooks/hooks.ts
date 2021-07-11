@@ -13,6 +13,7 @@ import { AnyAction } from "redux"
 import { ConfigValueAPI } from "./configvalueapi"
 import { SecretAPI } from "./secretapi"
 import { ThemeAPI } from "./themeapi"
+import { NotificationAPI } from "./notificationapi"
 
 // Create a new Uesio API instance for use inside a component
 class Uesio {
@@ -34,6 +35,7 @@ class Uesio {
 		this.configvalue = new ConfigValueAPI(this)
 		this.secret = new SecretAPI(this)
 		this.theme = new ThemeAPI(this)
+		this.notification = new NotificationAPI(this)
 	}
 
 	// Public Apis
@@ -48,6 +50,7 @@ class Uesio {
 	configvalue: ConfigValueAPI
 	secret: SecretAPI
 	theme: ThemeAPI
+	notification: NotificationAPI
 
 	_path: string
 	_context: Context

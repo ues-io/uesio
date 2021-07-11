@@ -69,6 +69,7 @@ const Route: FunctionComponent<BaseProps> = (props) => {
 					bottom: "2em",
 					display: "grid",
 					rowGap: "10px",
+					marginLeft: "2em",
 				})}
 			>
 				<NotificationArea context={props.context} />
