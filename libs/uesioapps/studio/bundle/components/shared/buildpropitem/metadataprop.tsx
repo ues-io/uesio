@@ -7,6 +7,8 @@ interface MetadataPropRendererProps extends PropRendererProps {
 	descriptor: builder.MetadataProp
 }
 
+// MetadataPicker.displayName = "metazzz"
+
 const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path, getValue, context, setValue, descriptor } = props
@@ -14,8 +16,11 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const value = getValue() as string
 
 	const getGrouping = (): string | undefined => {
-		const { groupingParents, groupingProperty, getGroupingFromKey } =
-			descriptor
+		const {
+			groupingParents,
+			groupingProperty,
+			getGroupingFromKey,
+		} = descriptor
 
 		const groupingNodePath = component.path.getAncestorPath(
 			path || "",

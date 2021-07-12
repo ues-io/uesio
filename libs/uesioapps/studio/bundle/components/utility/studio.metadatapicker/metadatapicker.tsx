@@ -95,4 +95,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	)
 }
 
+MetadataPicker.displayName = "MetadataPicker"
+
 export default MetadataPicker
