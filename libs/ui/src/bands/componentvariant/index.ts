@@ -1,38 +1,28 @@
-import { createEntityAdapter, createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
-import { useSelector } from "react-redux"
-import shortid from "shortid"
 import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
-
-const componentVariantAdapter = createEntityAdapter({
-	selectId: ({ component, name }) => component + "." + name,
-})
+import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
+import componentVariantAdapter from "./adapter"
 
 const componentVariantSlice = createSlice({
 	name: "componentVariant",
 	initialState: componentVariantAdapter.getInitialState(),
-	reducers: {
-		set: componentVariantAdapter.setAll,
-	},
+	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(loadOp.fulfilled, (state, action) => {
 			const yamlDoc = parse(action.payload)
-
-			const defDoc = newDoc()
-			defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
 			const dependenciesDoc = getNodeAtPath(
 				["dependencies", "componentvariants"],
 				yamlDoc.contents
 			)?.toJSON()
 
-			componentVariantAdapter.setAll(state, dependenciesDoc)
+			componentVariantAdapter.upsertMany(state, dependenciesDoc)
 		})
 	},
 })
 
 export const { selectAll } = componentVariantAdapter.getSelectors(
-	(state: RootState) => state.componentVariant
+	(state: RootState) => state.componentvariant
 )
 
 // export const { set } = componentVariantSlice.actions

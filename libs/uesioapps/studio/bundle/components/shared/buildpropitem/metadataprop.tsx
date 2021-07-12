@@ -7,8 +7,6 @@ interface MetadataPropRendererProps extends PropRendererProps {
 	descriptor: builder.MetadataProp
 }
 
-// MetadataPicker.displayName = "metazzz"
-
 const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path, getValue, context, setValue, descriptor } = props
