@@ -10,7 +10,10 @@ type SecretStore struct {
 }
 
 var secretValues = map[string]string{
-	"uesio:googleGCPAPIKey": os.Getenv("GOOGLE_CLOUD_API_KEY"),
+	"uesio:googleGCPAPIKey":    os.Getenv("GOOGLE_CLOUD_API_KEY"),
+	"uesio:awsAccessKeyId":     os.Getenv("AWS_ACCESS_KEY_ID"),
+	"uesio:awsSecretAccessKey": os.Getenv("AWS_SECRET_ACCESS_KEY"),
+	"uesio:awsSessionToken":    os.Getenv("AWS_SESSION_TOKEN"),
 }
 
 // Get function

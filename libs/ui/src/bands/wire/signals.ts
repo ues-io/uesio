@@ -196,7 +196,7 @@ const signals: Record<string, SignalDescriptor> = {
 				const batch = resp.payload as SaveResponseBatch
 
 				// Special handling for saves of just one wire and one record
-				if (batch.wires.length === 1) {
+				if (batch?.wires.length === 1) {
 					const wire = batch.wires[0]
 					const changes = wire.changes
 					const changeKeys = Object.keys(changes)

@@ -80,6 +80,8 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			true
 		)
 	},
+	type: "component",
+	classes: ["root"],
 }
 export {
 	TableProps,

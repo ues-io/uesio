@@ -1,0 +1,18 @@
+name: checkitem
+component: io.tile
+label: Check Item
+definition:
+  uesio.styles:
+    root:
+      color: "#888"
+      fontWeight: 300
+      margin: 20px 0
+      alignItems: baseline
+  avatar:
+    - io.text:
+        uesio.styles:
+          root:
+            fontSize: 16pt
+        uesio.variant: io.icon
+        color: green
+        text: check

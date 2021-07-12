@@ -18,7 +18,9 @@ const StylesListProp: FC<PropRendererProps> = (props) => {
 
 	return (
 		<div>
-			<FieldLabel label={"Inline Styles"} context={context} />
+			{propsDef.classes && (
+				<FieldLabel label={"Inline Styles"} context={context} />
+			)}
 			{propsDef.classes?.map((className) => {
 				const data = styleData?.[className]
 				return (

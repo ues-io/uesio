@@ -6,16 +6,45 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
+// This is soooooo dumb, but they dynamodb api forces us to write silly code.
+// At least I can't think of a better way. --- BH
+func makeAndConditionBuilder(conditions []expression.ConditionBuilder) expression.ConditionBuilder {
+	var emptyFilt expression.ConditionBuilder
+	if len(conditions) == 0 {
+		return emptyFilt
+	} else if len(conditions) == 1 {
+		return conditions[0]
+	} else if len(conditions) == 2 {
+		return expression.And(conditions[0], conditions[1])
+	}
+	return expression.And(conditions[0], conditions[1], conditions[2:]...)
+}
+
+// This is soooooo dumb, but they dynamodb api forces us to write silly code.
+// At least I can't think of a better way. --- BH
+func makeInConditionBuilder(fieldName string, values []string) expression.ConditionBuilder {
+	if len(values) == 0 {
+		return expression.In(expression.Name(fieldName), expression.Value(""))
+	} else if len(values) == 1 {
+		return expression.In(expression.Name(fieldName), expression.Value(values[0]))
+	}
+	operands := []expression.OperandBuilder{}
+	for _, value := range values {
+		operands = append(operands, expression.Value(value))
+	}
+	return expression.In(expression.Name(fieldName), operands[0], operands[1:]...)
+}
+
 func loadOne(
 	ctx context.Context,
-	client *dynamodb.DynamoDB,
+	client *dynamodb.Client,
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []adapt.LoadOp,
@@ -52,19 +81,23 @@ func loadOne(
 	}
 
 	var projBuild expression.ProjectionBuilder
-	var filt expression.ConditionBuilder
 	searchQuery := false
 
 	for _, name := range fieldIDs {
 		projBuild = expression.AddNames(projBuild, expression.Name(name))
 	}
 
-	for i, condition := range op.Conditions {
+	dynamoConditions := []expression.ConditionBuilder{}
+
+	for _, condition := range op.Conditions {
+
+		var dynamoCondition expression.ConditionBuilder
 
 		if condition.Type == "SEARCH" {
 			searchToken := condition.Value.(string)
 			searchQuery = true
-			filt = expression.Name(nameFieldDB).Contains(searchToken)
+			dynamoCondition = expression.Name(nameFieldDB).Contains(searchToken)
+			dynamoConditions = append(dynamoConditions, dynamoCondition)
 			continue
 		}
 
@@ -81,13 +114,19 @@ func loadOne(
 			return err
 		}
 
-		if i == 0 {
-			filt = expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue)))
+		if condition.Operator == "IN" {
+			// Cast conditionValue to array
+			valueArray := conditionValue.([]string)
+			dynamoCondition = makeInConditionBuilder(fieldName, valueArray)
 		} else {
-			filt = filt.And(expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue))))
+			dynamoCondition = expression.Name(fieldName).Equal(expression.Value(fmt.Sprintf("%v", conditionValue)))
 		}
 
+		dynamoConditions = append(dynamoConditions, dynamoCondition)
+
 	}
+
+	filt := makeAndConditionBuilder(dynamoConditions)
 
 	keyCond := expression.Key(SystemCollectionID).Equal(expression.Value(collectionName))
 	mybuilder := expression.NewBuilder()
@@ -114,7 +153,7 @@ func loadOne(
 		ProjectionExpression:      expr.Projection(),
 	}
 
-	result, err := client.Query(params)
+	result, err := client.Query(ctx, params)
 
 	if err != nil {
 		return errors.New("DynamoDB failed to make Query API call:" + err.Error())
@@ -133,9 +172,12 @@ func loadOne(
 			if !ok {
 				return nil, nil
 			}
-			err = dynamodbattribute.Unmarshal(value, &i)
+			err = attributevalue.Unmarshal(value, &i)
 			if err != nil {
 				return nil, err
+			}
+			if fieldMetadata.Type == "TIMESTAMP" {
+				return int64(i.(float64)), nil
 			}
 			return i, nil
 		})
@@ -181,7 +223,7 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 
 func loadMany(
 	ctx context.Context,
-	client *dynamodb.DynamoDB,
+	client *dynamodb.Client,
 	ops []adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 ) error {
