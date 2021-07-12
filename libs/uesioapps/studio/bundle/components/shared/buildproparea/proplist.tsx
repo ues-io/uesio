@@ -17,7 +17,7 @@ const PropList: FunctionComponent<Props> = ({
 	<>
 		{properties.map((descriptor, index) => (
 			<BuildPropItem
-				key={index}
+				key={path + descriptor.name}
 				path={path}
 				definition={def}
 				propsDef={propsDef}
