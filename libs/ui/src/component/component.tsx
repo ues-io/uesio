@@ -43,6 +43,12 @@ function mergeDeep(
 	const srcKeys = Object.keys(src)
 	for (const key of srcKeys) {
 		if (typeof src[key] === "object" && src[key] !== null) {
+			if (Array.isArray(src[key])) {
+				// Just bail on arrays and set dest to src
+				// Can't really merge them well.
+				dest[key] = src[key]
+				continue
+			}
 			if (!dest[key] || typeof dest[key] !== "object") {
 				dest[key] = {}
 			}
@@ -123,7 +129,7 @@ function getDefinitionFromVariant(
 	if (!variant) return {}
 	const override = getThemeOverride(variant, context)
 	return mergeDefinitionMaps(
-		variant.definition,
+		mergeDefinitionMaps({}, variant.definition, context),
 		override ? { "uesio.styles": override } : {},
 		context
 	)
@@ -146,16 +152,8 @@ function mergeInVariants(
 	context: Context
 ): DefinitionMap | undefined {
 	if (!definition) return definition
-	if (definition["uesio.styles"]) {
-		definition["uesio.styles"] = mergeDefinitionMaps(
-			{},
-			definition["uesio.styles"] as DefinitionMap,
-			context
-		)
-	}
-
 	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return mergeDefinitionMaps(definition, variantDefinition, context)
+	return mergeDefinitionMaps(variantDefinition, definition, context)
 }
 
 function mergeContextVariants(

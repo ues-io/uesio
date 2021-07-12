@@ -8,7 +8,6 @@ definition:
         uesio.variant: web.mainlayout
         uesio.styles:
           root:
-            backgroundColor: white
             position: fixed
             left: 0
             right: 0
@@ -36,7 +35,7 @@ definition:
                                 file: web.logo
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "home"
+                                    path: ""
                       - io.griditem:
                           components:
                       - io.griditem:
@@ -66,3 +65,6 @@ definition:
                                         - io.button:
                                             uesio.variant: web.calltoaction
                                             text: Early Access
+                                            signals:
+                                              - signal: "route/NAVIGATE"
+                                                path: "earlyaccess"

@@ -36,6 +36,8 @@ components:
         - io.fileupload.io.table
     io.text:
     io.tile:
+      variants:
+        - io.text.io.icon
     io.titlebar:
   utility:
     io.alert:

@@ -11,6 +11,7 @@ interface AddNotificationSignal extends SignalDefinition {
 	severity: NotificationSeverity
 	text: string
 	details: string
+	path?: string
 }
 
 // "Signal Handlers" for all of the signals in the band
@@ -24,6 +25,7 @@ const signals: Record<string, SignalDescriptor> = {
 						severity: signal.severity,
 						text: signal.text,
 						details: signal.details,
+						path: signal.path,
 					})
 				)
 				return context
