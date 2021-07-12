@@ -2,5 +2,10 @@ import { selectById } from "./adapter"
 import { RootState } from "../../store/store"
 import { useSelector } from "react-redux"
 
-export const getComponentVariantById = (id: string) =>
-	useSelector((state: RootState) => selectById(state, id))
+export const useComponentVariant = (
+	componentType: string,
+	variantName: string
+) =>
+	useSelector((state: RootState) =>
+		selectById(state, `${componentType}.${variantName}`)
+	)

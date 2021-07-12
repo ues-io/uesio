@@ -7,9 +7,9 @@ import {
 import { Context, ContextFrame } from "../context/context"
 import { getLoader, getRuntimeLoader, getUtility } from "./registry"
 import NotFound from "../components/notfound"
-import { ComponentVariant } from "../bands/viewdef/types"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
+import { ComponentVariant } from "../bands/componentvariant/types"
 
 /**
  * Returns a new object that has a deep merge where source overrides

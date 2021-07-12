@@ -12,16 +12,7 @@ type ConfigValueDependencies = {
 type ComponentPackDependency = {
 	loaded: boolean
 }
-export type ComponentVariant = {
-	name: string
-	namespace: string
-	label: string
-	component: string
-	definition: DefinitionMap
-}
-type ComponentVariants = {
-	[key: string]: ComponentVariant
-}
+
 type ComponentPackDependencies = {
 	[key: string]: ComponentPackDependency
 }
@@ -29,7 +20,6 @@ type ComponentPackDependencies = {
 type Dependencies = {
 	configvalues: ConfigValueDependencies
 	componentpacks: ComponentPackDependencies
-	componentvariants: ComponentVariants
 }
 
 type PlainViewDef = {
