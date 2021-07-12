@@ -1,8 +1,6 @@
-import { useSelector } from "react-redux"
+import { selectById } from "./adapter"
 import { RootState } from "../../store/store"
-// import { ComponentVariant } from "./types"
-import { selectors } from "./"
+import { useSelector } from "react-redux"
 
-// Both gets component state and subscribes to component changes
-export const useComponentVariant = (id: string) =>
-	useSelector((state: RootState) => selectors.selectById(state, id))
+export const getComponentVariantById = (id: string): any =>
+	useSelector((state: RootState) => selectById(state, id))

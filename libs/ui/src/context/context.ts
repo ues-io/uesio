@@ -3,6 +3,7 @@ import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
+import { getComponentVariantById } from "../bands/componentvariant/selectors"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
@@ -186,9 +187,7 @@ class Context {
 	getThemeId = () => this.stack.find((frame) => frame?.theme)?.theme
 
 	getComponentVariant = (componentType: string, variantName: string) =>
-		this.getViewDef()?.dependencies?.componentvariants?.[
-			componentType + "." + variantName
-		]
+		getComponentVariantById(`${componentType}.${variantName.split(".")[1]}`)
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
