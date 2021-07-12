@@ -21,9 +21,10 @@ interface LoginProps extends definition.BaseProps {
 
 const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const facebookAppIdKey = props.definition.clientId
+	const { context, definition } = props
+	const facebookAppIdKey = definition.clientId
 	const facebookAppId = uesio.view.useConfigValue(facebookAppIdKey)
-	const buttonText = props.definition.text
+	const buttonText = definition.text
 
 	if (!facebookAppId) return null
 
@@ -41,7 +42,7 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 	const Button = component.registry.getUtility("io", "button")
 
 	return (
-		<LoginWrapper align={props.definition.align}>
+		<LoginWrapper align={definition.align}>
 			<FacebookLogin
 				appId={facebookAppId}
 				autoLoad={false}
@@ -49,7 +50,7 @@ const LoginFacebook: FunctionComponent<LoginProps> = (props) => {
 				callback={responseFacebook}
 				render={(renderProps) => (
 					<Button
-						{...props}
+						context={context}
 						onClick={renderProps.onClick}
 						variant="io.secondary"
 						styles={{

@@ -15,9 +15,10 @@ interface LoginProps extends definition.BaseProps {
 
 const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const clientIdKey = props.definition.clientId
+	const { context, definition } = props
+	const clientIdKey = definition.clientId
 	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
-	const buttonText = props.definition.text
+	const buttonText = definition.text
 
 	const responseGoogle = (response: GoogleLoginResponse): void => {
 		uesio.signal.run(
@@ -26,7 +27,7 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 				type: "google",
 				token: response.getAuthResponse().id_token,
 			},
-			props.context
+			context
 		)
 	}
 
@@ -48,9 +49,9 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const Button = component.registry.getUtility("io.button")
 
 	return (
-		<LoginWrapper align={props.definition.align}>
+		<LoginWrapper align={definition.align}>
 			<Button
-				{...props}
+				context={context}
 				onClick={signIn}
 				variant="io.secondary"
 				styles={{

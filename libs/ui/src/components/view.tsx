@@ -21,7 +21,7 @@ const View: FunctionComponent<Props> = (props) => {
 		definition: { params, view: viewDefId },
 	} = props
 
-	const viewId = `${viewDefId}(${path})`
+	const viewId = `${viewDefId}(${path || ""})`
 	const viewDef = useViewDef(viewDefId)
 
 	const subViewClass = css({

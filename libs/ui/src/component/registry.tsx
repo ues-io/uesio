@@ -10,10 +10,8 @@ import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import {
-	getDefaultBuildtimeLoader,
 	getVariantStylesDef,
 	mergeDefinitionMaps,
-	render,
 	renderUtility,
 } from "./component"
 
@@ -25,7 +23,11 @@ const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
 	{}
 
-const addToRegistry = <T>(registry: Registry<T>, key: string, item: T) => {
+const addToRegistry = <T extends unknown>(
+	registry: Registry<T>,
+	key: string,
+	item: T
+) => {
 	registry[key] = item
 }
 
@@ -70,15 +72,6 @@ const getUtilityLoader = (key: string) => utilityRegistry[key]
 
 const getLoader = (key: string, buildMode: boolean) =>
 	buildMode ? getBuildtimeLoader(key) : getRuntimeLoader(key)
-
-const get = (key: string) => (props: BaseProps) => {
-	const loader = getRuntimeLoader(key) || NotFound
-	return render(loader, key, {
-		...props,
-		componentType: key,
-		definition: props.definition,
-	})
-}
 
 const getVariantInfo = (
 	fullName: string | undefined,
@@ -127,6 +120,17 @@ const getUtility = (key: string) => (props: UtilityProps) => {
 	return renderUtility(loader, { ...props, styles, componentType: key })
 }
 
+const BuildWrapper = getUtility("studio.buildwrapper")
+
+const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
+	const Loader = getRuntimeLoader(key)
+	return (
+		<BuildWrapper {...props}>
+			<Loader {...props} />
+		</BuildWrapper>
+	)
+}
+
 const getSignal = (key: string, signal: string) =>
 	componentSignalsRegistry[key]?.[signal]
 
@@ -167,7 +171,6 @@ export {
 	registerUtilityComponent,
 	registerBuilder,
 	registerSignals,
-	get,
 	getUtility,
 	getLoader,
 	getRuntimeLoader,

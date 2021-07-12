@@ -211,24 +211,11 @@ const ComponentInternal: FunctionComponent<BaseProps> = (props) => {
 	return render(loader, componentType, props)
 }
 
-const BuildWrapper = getUtility("studio.buildwrapper")
-
-const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
-	const Loader = getRuntimeLoader(key)
-	return (
-		<BuildWrapper {...props}>
-			<Loader {...props} />
-		</BuildWrapper>
-	)
-}
-
 export {
 	ComponentInternal,
 	Component,
-	render,
 	renderUtility,
 	mergeInVariants,
 	getVariantStylesDef,
-	getDefaultBuildtimeLoader,
 	mergeDefinitionMaps,
 }

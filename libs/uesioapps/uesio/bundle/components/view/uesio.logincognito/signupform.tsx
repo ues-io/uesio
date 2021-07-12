@@ -28,6 +28,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 		setSignupPassword,
 		signupUsername,
 		signupPassword,
+		context,
 	} = props
 
 	const [email, setEmail] = useState("")
@@ -36,21 +37,29 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 
 	return (
 		<>
-			<TextField label="First Name" setValue={setFirstName} {...props} />
-			<TextField label="Last Name" setValue={setLastName} {...props} />
+			<TextField
+				label="First Name"
+				setValue={setFirstName}
+				context={context}
+			/>
+			<TextField
+				label="Last Name"
+				setValue={setLastName}
+				context={context}
+			/>
 			<TextField
 				label="Username"
 				setValue={setSignupUsername}
-				{...props}
+				context={context}
 			/>
-			<TextField label="Email" setValue={setEmail} {...props} />
+			<TextField label="Email" setValue={setEmail} context={context} />
 			<TextField
 				label="Password"
 				setValue={setSignupPassword}
-				{...props}
+				context={context}
 			/>
 			<Grid
-				{...props}
+				context={context}
 				styles={{
 					root: {
 						gridTemplateColumns: "1fr 1fr",
@@ -70,12 +79,12 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 						)
 					}}
 					variant="io.primary"
-					{...props}
+					context={context}
 					label="Create Account"
 				/>
 				<Button
 					onClick={() => setMode("login")}
-					{...props}
+					context={context}
 					variant="io.secondary"
 					label="Cancel"
 				/>
