@@ -13,18 +13,18 @@ const Text = component.registry.getUtility("io.text")
 const Link = component.registry.getUtility("io.link")
 
 const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
-	const { setMode, confirm } = props
+	const { setMode, confirm, context } = props
 	const [verificationCode, setVerificationCode] = useState("")
 
 	return (
 		<>
 			<TextField
-				{...props}
+				context={context}
 				label="Verification Code"
 				setValue={setVerificationCode}
 			/>
 			<Grid
-				{...props}
+				context={context}
 				styles={{
 					root: {
 						gridTemplateColumns: "1fr 1fr",
@@ -34,22 +34,22 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 				}}
 			>
 				<Button
-					{...props}
+					context={context}
 					variant="io.primary"
 					label="Confirm"
 					onClick={() => confirm(verificationCode)}
 				/>
 				<Button
-					{...props}
+					context={context}
 					variant="io.secondary"
 					label="Back to Signup"
 					onClick={() => setMode("")}
 				/>
 			</Grid>
 			<div>
-				<Text {...props} text="Lost your code?&nbsp;" />
+				<Text context={context} text="Lost your code?&nbsp;" />
 				<Link
-					{...props}
+					context={context}
 					onClick={() => {
 						// not implemented
 					}}

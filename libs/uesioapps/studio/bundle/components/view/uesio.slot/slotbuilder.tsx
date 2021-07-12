@@ -31,16 +31,8 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 	const dragNode = uesio.builder.useDragNode()
 	const dropNode = uesio.builder.useDropNode()
 	const isStructureView = uesio.builder.useIsStructureView()
-	const isContentView = !isStructureView
-	const isHorizontal = direction === "horizontal"
-	const isVertical = !isHorizontal
 
 	const size = items.length
-
-	// Temporary Hack
-	if (direction === "manual") {
-		return <component.SlotRuntime {...props} />
-	}
 
 	if (!path) return null
 

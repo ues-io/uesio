@@ -100,6 +100,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 					padding: "8px",
 				}),
 				position: "relative",
+				overflow: "auto",
 			},
 		},
 		props

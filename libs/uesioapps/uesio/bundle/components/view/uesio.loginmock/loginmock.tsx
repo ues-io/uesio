@@ -16,6 +16,7 @@ const Button = component.registry.getUtility("io.button")
 
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const { context, definition } = props
 	const useMock = uesio.view.useConfigValue("uesio.mockAuth")
 
 	if (useMock !== "true") {
@@ -23,7 +24,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	const mode = uesio.component.useExternalState(
-		props.context.getViewId() || "",
+		context.getViewId() || "",
 		"uesio.logincognito",
 		"mode"
 	)
@@ -44,9 +45,9 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						user.firstname.toLowerCase() + "@thecloudmasters.com",
 				})
 				return (
-					<LoginWrapper align={props.definition.align}>
+					<LoginWrapper align={definition.align}>
 						<Button
-							{...props}
+							context={context}
 							onClick={(): void => {
 								uesio.signal.run(
 									{
@@ -54,7 +55,7 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 										type: "mock",
 										token: value,
 									},
-									props.context
+									context
 								)
 							}}
 							variant="io.secondary"
