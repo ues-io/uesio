@@ -29,7 +29,7 @@ components:
         - io.button.io.primary
         - io.button.io.secondary
         - io.textfield.io.default
-        - io.text.io.default
+        - io.text.io.aside
         - io.link.io.default
         - io.fieldlabel.io.default
       configvalues:

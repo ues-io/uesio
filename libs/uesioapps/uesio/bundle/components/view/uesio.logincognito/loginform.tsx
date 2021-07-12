@@ -55,7 +55,11 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				/>
 			</Grid>
 			<div>
-				<Text context={context} text="Forgot your password?&nbsp;" />
+				<Text
+					variant="io.aside"
+					context={context}
+					text="Forgot your password?&nbsp;"
+				/>
 				<Link
 					context={context}
 					onClick={() => {
@@ -65,7 +69,11 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 				/>
 			</div>
 			<div>
-				<Text context={context} text="No Account?&nbsp;" />
+				<Text
+					variant="io.aside"
+					context={context}
+					text="No Account?&nbsp;"
+				/>
 				<Link
 					context={context}
 					onClick={() => {

@@ -15,7 +15,6 @@ import {
 import {
 	useViewConfigValue,
 	useViewDefinition,
-	useComponentVariant,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
 import { mergeInVariants } from "../component/component"
@@ -24,6 +23,7 @@ import { useEffect } from "react"
 import { ViewParams } from "../bands/view/types"
 import { Context } from "../context/context"
 import loadViewOp from "../bands/view/operations/load"
+import { useComponentVariant } from "../bands/componentvariant/selectors"
 
 const VIEW_BAND = "view"
 
@@ -79,11 +79,8 @@ class ViewAPI {
 			return def
 		}
 
-		const variant = useComponentVariant(
-			viewDefId,
-			componentType,
-			variantName
-		)
+		const variant = useComponentVariant(componentType, variantName)
+
 		if (!variant) return def
 		return mergeInVariants(def, variant, this.uesio.getContext())
 	}

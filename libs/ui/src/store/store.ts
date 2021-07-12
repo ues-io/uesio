@@ -13,6 +13,7 @@ import builder from "../bands/builder"
 import viewdef from "../bands/viewdef"
 import theme from "../bands/theme"
 import component from "../bands/component"
+import componentvariant from "../bands/componentvariant"
 import wire from "../bands/wire"
 import view from "../bands/view"
 import site from "../bands/site"
@@ -54,6 +55,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 		reducer: {
 			collection,
 			component,
+			componentvariant,
 			route,
 			user,
 			builder,

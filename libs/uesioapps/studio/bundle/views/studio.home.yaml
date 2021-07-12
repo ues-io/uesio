@@ -90,9 +90,7 @@ definition:
                             - io.text:
                                 text: "Get started with "
                             - io.text:
-                                uesio.styles:
-                                  root:
-                                    color: white
+                                color: white
                                 text: Uesio Studio.
                       - io.box:
                           uesio.styles:

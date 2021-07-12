@@ -3,7 +3,6 @@ import { useSelector } from "react-redux"
 import { Definition } from "../../definition/definition"
 import { RootState } from "../../store/store"
 import { selectors } from "./adapter"
-import { ComponentVariant } from "./types"
 
 const useBuilderHasChanges = () =>
 	useSelector(({ viewdef }: RootState) => {
@@ -29,16 +28,6 @@ const useViewDefinition = (viewDefId: string, path?: string): Definition =>
 		const definition = viewDef?.definition
 		return path ? get(definition, path || "") : definition
 	})
-const useComponentVariant = (
-	viewDefId: string,
-	componentType: string,
-	variantName: string
-): ComponentVariant | undefined =>
-	useSelector(
-		(state: RootState) =>
-			selectors.selectById(state, viewDefId)?.dependencies
-				?.componentvariants?.[`${componentType}.${variantName}`]
-	)
 const useViewYAML = (viewDefId: string) =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
@@ -53,7 +42,6 @@ const useViewConfigValue = (viewDefId: string, key: string) =>
 
 export {
 	useBuilderHasChanges,
-	useComponentVariant,
 	useViewDef,
 	useViewYAML,
 	useViewDefinition,

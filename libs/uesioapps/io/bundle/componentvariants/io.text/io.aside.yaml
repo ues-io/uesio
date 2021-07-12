@@ -1,6 +1,6 @@
-name: default
+name: aside
 component: io.text
-label: Default
+label: Aside
 definition:
   uesio.styles:
     root:
