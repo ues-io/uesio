@@ -73,5 +73,5 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 		</ScrollPanel>
 	)
 }
-
+RightNav.displayName = "RightNav"
 export default RightNav

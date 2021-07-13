@@ -58,5 +58,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		</ScrollPanel>
 	)
 }
+WiresPanel.displayName = "WiresPanel"
 
 export default WiresPanel
