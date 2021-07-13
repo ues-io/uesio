@@ -2,6 +2,7 @@ import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { BotParams } from "../../platform/platform"
 import callBot from "./operations/call"
+import { unwrapResult } from "@reduxjs/toolkit"
 
 // The key for the entire band
 const BOT_BAND = "bot"
@@ -13,16 +14,24 @@ interface CallSignal extends SignalDefinition {
 
 const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
-		dispatcher: (signal: CallSignal, context: Context) => (dispatch) => {
-			dispatch(
-				callBot({
-					botname: signal.bot,
-					context,
-					params: signal.params,
-				})
-			)
-			return context
-		},
+		dispatcher:
+			(signal: CallSignal, context: Context) => async (dispatch) => {
+				try {
+					unwrapResult(
+						await dispatch(
+							callBot({
+								botname: signal.bot,
+								context,
+								params: signal.params,
+							})
+						)
+					)
+					return context
+				} catch (error) {
+					const errors: Error[] = [error]
+					return context.addFrame({ errors })
+				}
+			},
 		label: "Call Bot",
 		properties: (signal: SignalDefinition) => [
 			{

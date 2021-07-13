@@ -113,6 +113,10 @@ class SignalAPI {
 				}
 				// Keep adding to context as each signal is run
 				context = await this.run(useSignal, context)
+				// STOP running the rest of signals if there is an error
+				if (context.getErrors()) {
+					break
+				}
 			}
 			return context
 		}
