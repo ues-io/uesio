@@ -79,5 +79,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		</div>
 	)
 }
+Canvas.displayName = "Canvas"
 
 export default Canvas

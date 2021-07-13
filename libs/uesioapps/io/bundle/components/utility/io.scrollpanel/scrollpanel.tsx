@@ -31,4 +31,6 @@ const ScrollPanel: FunctionComponent<ScrollPanelProps> = (props) => {
 	)
 }
 
+ScrollPanel.displayName = "ScrollPanel"
+
 export default ScrollPanel
