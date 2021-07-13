@@ -1,0 +1,5 @@
+name: phone
+collection: crm.leads
+type: TEXT
+label: Phone
+propertyName: phone

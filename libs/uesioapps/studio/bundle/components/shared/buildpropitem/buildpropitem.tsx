@@ -42,7 +42,10 @@ function getPropHandler(type?: string) {
 			return BooleanProp
 		case "STYLESLIST":
 			return StylesListProp
+		case "TEXT":
+			return TextProp
 		default:
+			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp
 	}
 }

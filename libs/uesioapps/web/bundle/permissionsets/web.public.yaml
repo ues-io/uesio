@@ -2,7 +2,13 @@ name: public
 named:
 views:
   web.home: true
+  web.topbar: true
+  web.footer: true
+  web.earlyaccess: true
+  web.earlyaccessthanks: true
 routes:
   web.home: true
+  web.earlyaccess: true
+  web.earlyaccessthanks: true
 files:
   web.logo: true

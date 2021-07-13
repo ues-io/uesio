@@ -3,7 +3,6 @@ import { FunctionComponent, useState, Dispatch, SetStateAction } from "react"
 
 interface LoginFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
-	setMessage: Dispatch<SetStateAction<string>>
 	logIn: (username: string, password: string) => void
 }
 
@@ -14,7 +13,7 @@ const Text = component.registry.getUtility("io.text")
 const Link = component.registry.getUtility("io.link")
 
 const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
-	const { setMode, setMessage, logIn, context } = props
+	const { setMode, logIn, context } = props
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 
@@ -52,7 +51,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 					variant="io.secondary"
 					onClick={() => {
 						setMode("")
-						setMessage("")
 					}}
 				/>
 			</Grid>
@@ -72,7 +70,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 					context={context}
 					onClick={() => {
 						setMode("signup")
-						setMessage("")
 					}}
 					text="Create Acount"
 				/>

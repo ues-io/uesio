@@ -1,4 +1,0 @@
-name: accountDetails
-path: account/{accountid}
-view: crm.accountDetails
-theme: crm.default

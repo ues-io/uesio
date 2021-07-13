@@ -5,6 +5,7 @@ import { MetadataType } from "../bands/builder/types"
 
 type BuildPropertiesDefinition = {
 	title: string
+	description?: string
 	properties?: PropDescriptor[]
 	sections: PropertySection[]
 	actions?: ActionDescriptor[]

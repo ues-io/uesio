@@ -1,0 +1,10 @@
+name: callout
+component: io.text
+label: Callout
+definition:
+  uesio.styles:
+    root:
+      fontSize: 38pt
+      color: "#333"
+      fontFamily: Gosha
+  element: div

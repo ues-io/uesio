@@ -10,11 +10,14 @@ interface BoxProps extends definition.BaseProps {
 
 const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Box",
+	description: "Used for grouping elements",
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
 }
 export { BoxProps, BoxDefinition }
 

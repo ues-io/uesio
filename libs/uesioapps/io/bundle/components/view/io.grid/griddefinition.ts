@@ -3,6 +3,7 @@ import { definition, builder, styles } from "@uesio/ui"
 type GridDefinition = {
 	templateColumns?: styles.ResponsiveDefinition
 	templateRows?: styles.ResponsiveDefinition
+	templateAreas?: styles.ResponsiveDefinition
 	columnGap?: string
 }
 

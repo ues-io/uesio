@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 func loadOne(
 	ctx context.Context,
-	client *dynamodb.DynamoDB,
+	client *dynamodb.Client,
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []adapt.LoadOp,
@@ -120,7 +120,7 @@ func loadOne(
 		ProjectionExpression:      expr.Projection(),
 	}
 
-	result, err := client.Scan(params)
+	result, err := client.Scan(ctx, params)
 
 	if err != nil {
 		return errors.New("DynamoDB failed to make Query API call:" + err.Error())
@@ -139,9 +139,12 @@ func loadOne(
 			if !ok {
 				return nil, nil
 			}
-			err = dynamodbattribute.Unmarshal(value, &i)
+			err = attributevalue.Unmarshal(value, &i)
 			if err != nil {
 				return nil, err
+			}
+			if fieldMetadata.Type == "TIMESTAMP" {
+				return int64(i.(float64)), nil
 			}
 			return i, nil
 		})
@@ -189,7 +192,7 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 
 func loadMany(
 	ctx context.Context,
-	client *dynamodb.DynamoDB,
+	client *dynamodb.Client,
 	ops []adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 ) error {
