@@ -21,6 +21,7 @@ require (
 	github.com/gomodule/redigo v1.8.5
 	github.com/google/uuid v1.1.3
 	github.com/gorilla/mux v1.8.0
+	github.com/hashicorp/go-multierror v1.1.1
 	github.com/huandu/facebook/v2 v2.5.2
 	github.com/icza/mighty v0.0.0-20200205104645-c377cb773678 // indirect
 	github.com/icza/session v1.2.0

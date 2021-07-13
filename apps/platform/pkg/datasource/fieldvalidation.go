@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -167,11 +168,15 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 	}
 
 	return func(change adapt.ChangeItem) error {
+		var errorList error
 		for _, validation := range validations {
 			err := validation(change)
 			if err != nil {
-				return err
+				errorList = multierror.Append(errorList, err)
 			}
+		}
+		if errorList != nil {
+			return errorList
 		}
 		return nil
 	}
