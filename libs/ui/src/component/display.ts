@@ -9,6 +9,7 @@ type FieldEqualsValueCondition = {
 	type: "fieldEquals" | undefined
 	field: string
 	value: string
+	negate: boolean
 } & DisplayConditionBase
 
 type ParamIsSetCondition = {
@@ -47,6 +48,9 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
+	if (condition.negate) {
+		return value !== condition.value
+	}
 	return value === condition.value
 }
 

@@ -185,10 +185,16 @@ definition:
                     fieldId: studio.type
                 - io.field:
                     fieldId: studio.dialect
-                - studio.metadatafield:
-                    fieldId: studio.collection
-                    metadataType: "COLLECTION"
-                    label: "Collection"
+                - io.box:
+                    uesio.display:
+                      - field: studio.type
+                        value: "LISTENER"
+                        negate: true
+                    components:
+                      - studio.metadatafield:
+                          fieldId: studio.collection
+                          metadataType: "COLLECTION"
+                          label: "Collection"
         actions:
           - io.button:
               uesio.variant: "io.primary"
