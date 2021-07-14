@@ -99,7 +99,10 @@ window.uesioLoader = (mergeData) => {
 			)
 			if (response.status != 200) {
 				const error = await response.text()
-				throw new Error(error)
+				return {
+					success: false,
+					error,
+				}
 			}
 			return response.json()
 		},

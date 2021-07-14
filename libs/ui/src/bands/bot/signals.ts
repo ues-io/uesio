@@ -16,19 +16,17 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${BOT_BAND}/CALL`]: {
 		dispatcher:
 			(signal: CallSignal, context: Context) => async (dispatch) => {
-				try {
-					await dispatch(
-						callBot({
-							botname: signal.bot,
-							context,
-							params: signal.params,
-						})
-					).then(unwrapResult)
-					return context
-				} catch (error) {
-					const err = error as Error
-					return context.addFrame({ errors: [err.message] })
+				const response = await dispatch(
+					callBot({
+						botname: signal.bot,
+						context,
+						params: signal.params,
+					})
+				).then(unwrapResult)
+				if (response.error) {
+					return context.addFrame({ errors: [response.error] })
 				}
+				return context
 			},
 		label: "Call Bot",
 		properties: (signal: SignalDefinition) => [

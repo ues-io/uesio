@@ -6,6 +6,8 @@ import { useUesio } from "../hooks/hooks"
 import { Context } from "../context/context"
 import Route from "./route"
 import routeOps from "../bands/route/operations"
+import { css } from "@emotion/css"
+import NotificationArea from "./notificationarea"
 
 let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
@@ -72,6 +74,19 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		<>
 			<Route path={props.path} context={context} />
 			<div ref={panelsDomNode} />
+			<div
+				className={css({
+					position: "fixed",
+					right: "2em",
+					bottom: "2em",
+					display: "grid",
+					rowGap: "10px",
+					marginLeft: "2em",
+					width: "350px",
+				})}
+			>
+				<NotificationArea context={props.context} />
+			</div>
 		</>
 	)
 }

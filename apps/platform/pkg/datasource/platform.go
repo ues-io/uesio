@@ -152,6 +152,17 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 	return DoPlatformSave(requests, session)
 }
 
+func HandleSaveRequestErrors(requests []SaveRequest) error {
+	for _, request := range requests {
+		if request.Errors != nil {
+			if len(request.Errors) > 0 {
+				return errors.New(request.Errors[0].Error())
+			}
+		}
+	}
+	return nil
+}
+
 func DoPlatformSave(requests []SaveRequest, session *sess.Session) error {
 	err := Save(
 		requests,
@@ -161,14 +172,7 @@ func DoPlatformSave(requests []SaveRequest, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	for _, request := range requests {
-		if request.Errors != nil {
-			if len(request.Errors) > 0 {
-				return errors.New(request.Errors[0].Error())
-			}
-		}
-	}
-	return nil
+	return HandleSaveRequestErrors(requests)
 }
 
 // PlatformSave function
