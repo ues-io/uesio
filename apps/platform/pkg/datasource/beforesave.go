@@ -17,14 +17,14 @@ type BeforeSaveAPI struct {
 	session *sess.Session
 }
 
-func NewBeforeSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
+func NewBeforeSaveAPI(changes, deletes *adapt.ChangeItems, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Changes: &ChangesAPI{
-			changes:  request.Changes,
+			changes:  changes,
 			metadata: metadata,
 		},
 		Deletes: &DeletesAPI{
-			deletes:  request.Deletes,
+			deletes:  deletes,
 			metadata: metadata,
 		},
 		session: session,

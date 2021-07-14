@@ -48,9 +48,9 @@ func (ufcc *UserFileCollectionCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (ufcc *UserFileCollectionCollection) Loop(iter func(item loadable.Item) error) error {
+func (ufcc *UserFileCollectionCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *ufcc {
-		err := iter(ufcc.GetItem(index))
+		err := iter(ufcc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

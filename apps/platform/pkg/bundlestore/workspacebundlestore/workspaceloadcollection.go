@@ -27,7 +27,7 @@ func (c *WorkspaceLoadCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (c *WorkspaceLoadCollection) Loop(iter func(item loadable.Item) error) error {
+func (c *WorkspaceLoadCollection) Loop(iter loadable.GroupIterator) error {
 	return c.Collection.Loop(iter)
 }
 

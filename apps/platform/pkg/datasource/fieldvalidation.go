@@ -1,12 +1,11 @@
 package datasource
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
-	"strings"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -22,7 +21,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		if !change.IsNew {
 			_, err := change.FieldChanges.GetField(field.GetFullName())
 			if change.IsNew && err != nil {
-				return errors.New("Field: " + field.Label + " is not updateable: " + change.IDValue.(string))
+				return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue.(string))
 			}
 		}
 		return nil
@@ -33,7 +32,7 @@ func validateRequired(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if (change.IsNew && err != nil) || val == "" {
-			return errors.New("Field: " + field.Label + " is required")
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is required")
 		}
 		return nil
 	}
@@ -46,7 +45,7 @@ func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationF
 		if (change.IsNew && field.AutoPopulate == "CREATE") || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), timestamp)
 			if err != nil {
-				return err
+				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -67,7 +66,7 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 				},
 			})
 			if err != nil {
-				return err
+				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
 			}
 		}
 		return nil
@@ -79,7 +78,7 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil {
 			if !isEmailValid(fmt.Sprintf("%v", val)) {
-				return errors.New(field.Label + " is not a valid email address")
+				return NewSaveError(change.RecordKey, field.GetFullName(), field.Label+" is not a valid email address")
 			}
 		}
 		return nil
@@ -89,14 +88,14 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	regex, ok := isValidRegex(field.Validate.Regex)
 	if !ok {
-		return func(adapt.ChangeItem) error {
-			return errors.New("Regex for the field: " + field.Label + " is not valid")
+		return func(change adapt.ChangeItem) error {
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
 	}
 	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return errors.New("Field: " + field.Label + " don't match regex: " + field.Validate.Regex)
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.Validate.Regex)
 		}
 		return nil
 	}
@@ -105,14 +104,14 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 	regex, ok := isValidRegex("^[a-z0-9_]+$")
 	if !ok {
-		return func(adapt.ChangeItem) error {
-			return errors.New("Regex for the field: " + field.Label + " is not valid")
+		return func(change adapt.ChangeItem) error {
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
 	}
 	return func(change adapt.ChangeItem) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return errors.New("Field: " + field.Label + " failed metadata validation, no special characters allowed")
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
 		}
 		return nil
 	}
@@ -167,20 +166,20 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 	}
 
 	return func(change adapt.ChangeItem) error {
+		var errorList error
 		for _, validation := range validations {
 			err := validation(change)
 			if err != nil {
-				return err
+				errorList = multierror.Append(errorList, err)
 			}
 		}
-		return nil
+		return errorList
 	}
 }
 
 //PopulateAndValidate function
-func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.SaveOp, error) {
+func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.ChangeItems, *adapt.ChangeItems, error) {
 
-	var listErrors []string
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
 	changes := adapt.ChangeItems{}
@@ -188,12 +187,13 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 	fieldsInvolvedInAccess := getFieldsNeededFromRecordToDetermineWriteAccess(collectionMetadata)
 	userResponseTokens, err := GenerateResponseTokens(collectionMetadata, session)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if request.Changes != nil {
-		err := request.Changes.Loop(func(item loadable.Item) error {
+		err := request.Changes.Loop(func(item loadable.Item, recordKey interface{}) error {
 			changeItem := adapt.ChangeItem{
 				FieldChanges: item,
+				RecordKey:    recordKey,
 			}
 			idValue, err := item.GetField(collectionMetadata.IDField)
 			if err != nil || idValue == nil || idValue.(string) == "" {
@@ -203,57 +203,53 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 			}
 			err = fieldValidations(changeItem)
 			if err != nil {
-				listErrors = append(listErrors, err.Error())
+				if merr, ok := err.(*multierror.Error); ok {
+					for _, err := range merr.Errors {
+						if serr, ok := err.(*SaveError); ok {
+							request.AddError(serr)
+						}
+					}
+				} else {
+					return err
+				}
+
 			}
-			appendChange := true
 			if !changeItem.IsNew {
 				hasAccess := hasWriteAccess(collectionMetadata, changeItem.IDValue, fieldsInvolvedInAccess, userResponseTokens, session)
 				if !hasAccess {
-					appendChange = false
-					listErrors = append(listErrors, "No write access to record: "+changeItem.IDValue.(string))
+					request.AddError(NewSaveError(changeItem.IDValue, "", "No write access to record: "+changeItem.IDValue.(string)))
 				}
 			}
-			if appendChange {
-				changes = append(changes, changeItem)
-			}
+
+			changes = append(changes, changeItem)
+
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	if request.Deletes != nil {
-		err := request.Deletes.Loop(func(item loadable.Item) error {
-			idField, err := item.GetField(collectionMetadata.IDField)
+		err := request.Deletes.Loop(func(item loadable.Item, _ interface{}) error {
+			idFieldValue, err := item.GetField(collectionMetadata.IDField)
 			if err != nil {
 				return err
 			}
-			hasAccess := hasWriteAccess(collectionMetadata, idField, fieldsInvolvedInAccess, userResponseTokens, session)
+			hasAccess := hasWriteAccess(collectionMetadata, idFieldValue, fieldsInvolvedInAccess, userResponseTokens, session)
 			if hasAccess {
 				deletes = append(deletes, adapt.ChangeItem{
 					FieldChanges: item,
 				})
-
 			} else {
-				listErrors = append(listErrors, "No write access to record: "+idField.(string))
+				request.AddError(NewSaveError(idFieldValue, "", "No write access to record: "+idFieldValue.(string)))
 			}
 			return nil
 		})
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
-	if len(listErrors) != 0 {
-		return nil, errors.New("Validation Errors: " + strings.Join(listErrors, ", "))
-	}
-
-	return &adapt.SaveOp{
-		CollectionName: request.Collection,
-		WireName:       request.Wire,
-		Changes:        changes,
-		Deletes:        deletes,
-		Options:        request.Options,
-	}, nil
+	return &changes, &deletes, nil
 }

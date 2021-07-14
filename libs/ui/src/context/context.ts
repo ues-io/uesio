@@ -34,6 +34,7 @@ type ContextFrame = {
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
+	errors?: string[]
 }
 
 const ANCESTOR_INDICATOR = "Parent."
@@ -279,6 +280,7 @@ class Context {
 					])
 			  )
 			: map
+	getErrors = () => this.stack.find((frame) => frame?.errors)?.errors
 }
 
 export {

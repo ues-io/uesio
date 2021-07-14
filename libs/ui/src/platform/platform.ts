@@ -13,6 +13,7 @@ type BotParams = {
 
 type BotResponse = {
 	success: boolean
+	error: string
 }
 
 type ConfigValueResponse = {

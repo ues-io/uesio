@@ -44,9 +44,9 @@ func (dsc *DataSourceCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (dsc *DataSourceCollection) Loop(iter func(item loadable.Item) error) error {
+func (dsc *DataSourceCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *dsc {
-		err := iter(dsc.GetItem(index))
+		err := iter(dsc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

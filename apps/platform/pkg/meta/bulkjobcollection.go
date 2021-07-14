@@ -29,9 +29,9 @@ func (bjc *BulkJobCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (bjc *BulkJobCollection) Loop(iter func(item loadable.Item) error) error {
+func (bjc *BulkJobCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bjc {
-		err := iter(bjc.GetItem(index))
+		err := iter(bjc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

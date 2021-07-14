@@ -51,7 +51,7 @@ func hydrateBot(bot *meta.Bot, session *sess.Session) error {
 }
 
 // RunBeforeSaveBots function
-func RunBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func RunBeforeSaveBots(changes *adapt.ChangeItems, deletes *adapt.ChangeItems, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
@@ -62,7 +62,7 @@ func RunBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 		return err
 	}
 
-	botAPI := NewBeforeSaveAPI(request, collectionMetadata, session)
+	botAPI := NewBeforeSaveAPI(changes, deletes, collectionMetadata, session)
 
 	for _, bot := range robots {
 		err := hydrateBot(&bot, session)

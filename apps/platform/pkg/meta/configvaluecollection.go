@@ -44,9 +44,9 @@ func (cvc *ConfigValueCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (cvc *ConfigValueCollection) Loop(iter func(item loadable.Item) error) error {
+func (cvc *ConfigValueCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cvc {
-		err := iter(cvc.GetItem(index))
+		err := iter(cvc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

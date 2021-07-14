@@ -54,9 +54,9 @@ func (tc *ThemeCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (tc *ThemeCollection) Loop(iter func(item loadable.Item) error) error {
+func (tc *ThemeCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *tc {
-		err := iter(tc.GetItem(index))
+		err := iter(tc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

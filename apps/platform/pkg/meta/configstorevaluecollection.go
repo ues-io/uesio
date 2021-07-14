@@ -29,9 +29,9 @@ func (cc *ConfigStoreValueCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (cc *ConfigStoreValueCollection) Loop(iter func(item loadable.Item) error) error {
+func (cc *ConfigStoreValueCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cc {
-		err := iter(cc.GetItem(index))
+		err := iter(cc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

@@ -11,8 +11,8 @@ import (
 type SaveOp struct {
 	CollectionName string
 	WireName       string
-	Changes        ChangeItems
-	Deletes        ChangeItems
+	Changes        *ChangeItems
+	Deletes        *ChangeItems
 	Options        *SaveOptions
 	Error          string
 }
@@ -24,6 +24,7 @@ type ChangeItem struct {
 	IsNew        bool
 	IDValue      interface{}
 	Error        string
+	RecordKey    interface{}
 }
 
 // Lookup struct
@@ -62,7 +63,7 @@ func ProcessDeletes(request *SaveOp, metadata *MetadataCache, deleteFunc DeleteF
 	}
 	idFieldName := collectionMetadata.IDField
 
-	for _, delete := range request.Deletes {
+	for _, delete := range *request.Deletes {
 		dbID, err := delete.FieldChanges.GetField(idFieldName)
 		if err != nil {
 			return err
@@ -123,7 +124,7 @@ func ProcessChanges(
 		return err
 	}
 
-	for _, change := range request.Changes {
+	for _, change := range *request.Changes {
 
 		changeMap := map[string]interface{}{}
 		searchableValues := []string{}

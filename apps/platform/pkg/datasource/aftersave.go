@@ -46,11 +46,16 @@ func (as *AfterSaveAPI) GetErrorString() string {
 
 // Save function
 func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
-	return Save([]SaveRequest{
+	requests := []SaveRequest{
 		{
 			Collection: collection,
 			Wire:       "apiaftersave",
 			Changes:    &changes,
 		},
-	}, as.session)
+	}
+	err := Save(requests, as.session)
+	if err != nil {
+		return err
+	}
+	return HandleSaveRequestErrors(requests)
 }

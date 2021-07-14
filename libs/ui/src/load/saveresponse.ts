@@ -1,8 +1,14 @@
 import { PlainWireRecord } from "../bands/wirerecord/types"
 
+type SaveError = {
+	recordid: string
+	fieldid: string
+	message: string
+}
+
 type SaveResponse = {
 	wire: string
-	error: string
+	errors: SaveError[]
 	changes: ChangeResults
 	deletes: ChangeResults
 }

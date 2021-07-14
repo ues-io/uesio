@@ -119,16 +119,11 @@ func PlatformLoadOneWithFields(item meta.CollectionableItem, fields []adapt.Load
 
 // PlatformDelete function
 func PlatformDelete(request meta.CollectionableGroup, session *sess.Session) error {
-	requests := []SaveRequest{{
+	return DoPlatformSave([]SaveRequest{{
 		Wire:       "deleteRequest",
 		Collection: request.GetName(),
 		Deletes:    request,
-	}}
-	return Save(
-		requests,
-		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session.RemoveWorkspaceContext(),
-	)
+	}}, session)
 }
 
 func PlatformDeleteOne(item meta.CollectionableItem, session *sess.Session) error {
@@ -154,11 +149,30 @@ func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
 		})
 	}
 
-	return Save(
+	return DoPlatformSave(requests, session)
+}
+
+func HandleSaveRequestErrors(requests []SaveRequest) error {
+	for _, request := range requests {
+		if request.Errors != nil {
+			if len(request.Errors) > 0 {
+				return errors.New(request.Errors[0].Error())
+			}
+		}
+	}
+	return nil
+}
+
+func DoPlatformSave(requests []SaveRequest, session *sess.Session) error {
+	err := Save(
 		requests,
 		// We always want to be in the site context when doing platform loads, NOT the workspace context
 		session.RemoveWorkspaceContext(),
 	)
+	if err != nil {
+		return err
+	}
+	return HandleSaveRequestErrors(requests)
 }
 
 // PlatformSave function

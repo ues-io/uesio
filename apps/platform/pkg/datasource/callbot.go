@@ -16,13 +16,18 @@ type CallBotAPI struct {
 
 // Save function
 func (cba *CallBotAPI) Save(collection string, changes adapt.Collection) error {
-	return Save([]SaveRequest{
+	requests := []SaveRequest{
 		{
 			Collection: collection,
 			Wire:       "apicallbot",
 			Changes:    &changes,
 		},
-	}, cba.session)
+	}
+	err := Save(requests, cba.session)
+	if err != nil {
+		return err
+	}
+	return HandleSaveRequestErrors(requests)
 }
 
 // StudioAPU type

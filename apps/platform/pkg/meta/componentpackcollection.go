@@ -59,9 +59,9 @@ func (cpc *ComponentPackCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (cpc *ComponentPackCollection) Loop(iter func(item loadable.Item) error) error {
+func (cpc *ComponentPackCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cpc {
-		err := iter(cpc.GetItem(index))
+		err := iter(cpc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

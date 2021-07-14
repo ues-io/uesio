@@ -16,7 +16,7 @@ import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { WireDefinition } from "../../definition/wire"
 import { WireConditionDefinition } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
-import { SaveResponseBatch } from "../../load/saveresponse"
+import { unwrapResult } from "@reduxjs/toolkit"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -189,11 +189,11 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher:
 			(signal: SaveWiresSignal, context: Context) =>
 			async (dispatch: Dispatcher<AnyAction>) => {
-				const resp = await dispatch(
+				const batch = await dispatch(
 					saveWiresOp({ context, wires: signal.wires })
-				)
+				).then(unwrapResult)
 
-				const batch = resp.payload as SaveResponseBatch
+				const errors: string[] = []
 
 				// Special handling for saves of just one wire and one record
 				if (batch?.wires.length === 1) {
@@ -201,14 +201,30 @@ const signals: Record<string, SignalDescriptor> = {
 					const changes = wire.changes
 					const changeKeys = Object.keys(changes)
 					if (changeKeys.length === 1) {
+						if (wire.errors) {
+							for (const error of wire.errors) {
+								errors.push(error.message)
+							}
+						}
 						const [, name] = wire.wire.split("/")
 						return context.addFrame({
 							record: changeKeys[0],
 							wire: name,
+							errors,
 						})
 					}
 				}
 
+				for (const wire of batch.wires) {
+					if (wire.errors) {
+						for (const error of wire.errors) {
+							errors.push(error.message)
+						}
+					}
+				}
+				if (errors.length > 0) {
+					return context.addFrame({ errors })
+				}
 				return context
 			},
 		properties: (): PropDescriptor[] => [

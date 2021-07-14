@@ -35,12 +35,11 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 		{
 			root: {
 				cursor: "pointer",
-				backgroundColor: "#eee",
+				backgroundColor: "#f9f9f9",
 				padding: "1.3em",
 				display: "grid",
 				gridTemplateColumns: "auto 1fr auto",
 				columnGap: "1.3em",
-				alignItems: "center",
 				transform: "translateX(8px)",
 				opacity: "0",
 				borderRadius: "3px",
@@ -49,6 +48,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 				borderTopLeftRadius: "3px",
 				borderBottomLeftRadius: "3px",
 				borderLeft: `0px solid ${color}`,
+				boxShadow: "0 0 4px #00000033",
 
 				"&:hover .icon--close": {
 					color: "#000",
@@ -58,6 +58,9 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 					opacity: 0,
 					transition: "opacity 0.125s ease-in-out 0.1s",
 					margin: "0 0 0.25em 0",
+					fontSize: "9pt",
+					lineHeight: "14pt",
+					color: "rgb(68, 68, 68)",
 				},
 
 				"&.visible": {

@@ -29,9 +29,9 @@ func (ac *AppCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (ac *AppCollection) Loop(iter func(item loadable.Item) error) error {
+func (ac *AppCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *ac {
-		err := iter(ac.GetItem(index))
+		err := iter(ac.GetItem(index), index)
 		if err != nil {
 			return err
 		}

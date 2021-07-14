@@ -33,9 +33,9 @@ func (sc *SecretStoreValueCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (sc *SecretStoreValueCollection) Loop(iter func(item loadable.Item) error) error {
+func (sc *SecretStoreValueCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *sc {
-		err := iter(sc.GetItem(index))
+		err := iter(sc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

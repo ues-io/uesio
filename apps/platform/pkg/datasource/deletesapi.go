@@ -6,7 +6,7 @@ import (
 
 // DeletesAPI type
 type DeletesAPI struct {
-	deletes  adapt.ChangeItems
+	deletes  *adapt.ChangeItems
 	metadata *adapt.CollectionMetadata
 }
 
@@ -14,7 +14,7 @@ type DeletesAPI struct {
 func (d *DeletesAPI) Get() []string {
 	ids := []string{}
 
-	for _, delete := range d.deletes {
+	for _, delete := range *d.deletes {
 
 		idField, err := d.metadata.GetIDField()
 		if err != nil {

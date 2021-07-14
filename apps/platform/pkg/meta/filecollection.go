@@ -56,9 +56,9 @@ func (fc *FileCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (fc *FileCollection) Loop(iter func(item loadable.Item) error) error {
+func (fc *FileCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *fc {
-		err := iter(fc.GetItem(index))
+		err := iter(fc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

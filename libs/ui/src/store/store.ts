@@ -78,7 +78,8 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-const getDispatcher = () => useDispatch<Dispatcher<AnyAction>>()
+export type AppDispatch = typeof store.dispatch
+const getDispatcher = () => useDispatch<AppDispatch>()
 const getPlatform = () => platform
 const getStore = () => store
 

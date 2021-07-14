@@ -33,9 +33,9 @@ func (sdc *SiteDomainCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (sdc *SiteDomainCollection) Loop(iter func(item loadable.Item) error) error {
+func (sdc *SiteDomainCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *sdc {
-		err := iter(sdc.GetItem(index))
+		err := iter(sdc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

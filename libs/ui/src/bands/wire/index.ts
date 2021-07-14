@@ -135,6 +135,7 @@ const wireSlice = createSlice({
 				if (response.wires) {
 					response.wires.forEach((wire) => {
 						const wireId = wire.wire
+						if (wire.errors) return
 						Object.keys(wire.changes).forEach((tempId) => {
 							const data = state.entities[wireId]?.data
 							if (!data) return

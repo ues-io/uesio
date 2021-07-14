@@ -24,9 +24,9 @@ func (c *Collection) GetItems() interface{} {
 }
 
 // Loop function
-func (c *Collection) Loop(iter func(item loadable.Item) error) error {
+func (c *Collection) Loop(iter loadable.GroupIterator) error {
 	for index := range *c {
-		err := iter(c.GetItem(index))
+		err := iter(c.GetItem(index), index)
 		if err != nil {
 			return err
 		}

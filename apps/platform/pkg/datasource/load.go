@@ -292,7 +292,7 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 				}
 
 				index := 0
-				err = op.Collection.Loop(func(item loadable.Item) error {
+				err = op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
 					for _, reference := range referencedCol.ReferenceFields {
 						refInterface, err := item.GetField(reference.GetFullName())
 						if err != nil {

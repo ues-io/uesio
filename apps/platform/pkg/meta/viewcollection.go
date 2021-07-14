@@ -54,9 +54,9 @@ func (vc *ViewCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (vc *ViewCollection) Loop(iter func(item loadable.Item) error) error {
+func (vc *ViewCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *vc {
-		err := iter(vc.GetItem(index))
+		err := iter(vc.GetItem(index), index)
 		if err != nil {
 			return err
 		}
