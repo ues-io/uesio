@@ -9,6 +9,7 @@ import { getLoader, getRuntimeLoader, getUtility } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
+import { shouldHide } from "./hide"
 import { ComponentVariant } from "../bands/componentvariant/types"
 
 /**
@@ -182,6 +183,7 @@ function render(
 ) {
 	const { context, definition } = props
 	if (!shouldDisplay(context, definition)) return null
+	if (!shouldHide(context, definition)) return null
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
