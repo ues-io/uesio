@@ -1,4 +1,4 @@
-import { AnyAction } from "redux"
+import { AnyAction, Store } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
@@ -78,7 +78,8 @@ const create = (plat: Platform, initialState: InitialState) => {
 
 type RootState = ReturnType<typeof store.getState>
 
-const getDispatcher = () => useDispatch<Dispatcher<AnyAction>>()
+export type AppDispatch = typeof store.dispatch
+const getDispatcher = () => useDispatch<AppDispatch>()
 const getPlatform = () => platform
 const getStore = () => store
 

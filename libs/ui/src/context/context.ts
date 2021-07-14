@@ -34,7 +34,7 @@ type ContextFrame = {
 	site?: SiteState
 	theme?: string
 	mediaOffset?: number
-	errors?: Error[]
+	errors?: string[]
 }
 
 const ANCESTOR_INDICATOR = "Parent."

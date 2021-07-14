@@ -189,30 +189,43 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher:
 			(signal: SaveWiresSignal, context: Context) =>
 			async (dispatch: Dispatcher<AnyAction>) => {
-				try {
-					const batch = unwrapResult(
-						await dispatch(
-							saveWiresOp({ context, wires: signal.wires })
-						)
-					)
-					// Special handling for saves of just one wire and one record
-					if (batch?.wires.length === 1) {
-						const wire = batch.wires[0]
-						const changes = wire.changes
-						const changeKeys = Object.keys(changes)
-						if (changeKeys.length === 1) {
-							const [, name] = wire.wire.split("/")
-							return context.addFrame({
-								record: changeKeys[0],
-								wire: name,
-							})
+				const batch = await dispatch(
+					saveWiresOp({ context, wires: signal.wires })
+				).then(unwrapResult)
+
+				const errors: string[] = []
+
+				// Special handling for saves of just one wire and one record
+				if (batch?.wires.length === 1) {
+					const wire = batch.wires[0]
+					const changes = wire.changes
+					const changeKeys = Object.keys(changes)
+					if (changeKeys.length === 1) {
+						if (wire.errors) {
+							for (const error of wire.errors) {
+								errors.push(error.message)
+							}
+						}
+						const [, name] = wire.wire.split("/")
+						return context.addFrame({
+							record: changeKeys[0],
+							wire: name,
+							errors,
+						})
+					}
+				}
+
+				for (const wire of batch.wires) {
+					if (wire.errors) {
+						for (const error of wire.errors) {
+							errors.push(error.message)
 						}
 					}
-					return context
-				} catch (error) {
-					const errors: Error[] = [error]
+				}
+				if (errors.length > 0) {
 					return context.addFrame({ errors })
 				}
+				return context
 			},
 		properties: (): PropDescriptor[] => [
 			{

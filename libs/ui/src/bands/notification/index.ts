@@ -3,6 +3,7 @@ import notificationAdapter from "./adapter"
 import saveOp from "../wire/operations/save"
 import shortid from "shortid"
 import callBot from "../bot/operations/call"
+import { NotificationState } from "./types"
 
 const notificationSlice = createSlice({
 	name: "notification",
@@ -19,6 +20,22 @@ const notificationSlice = createSlice({
 				text: "ERROR",
 				details: action?.error?.message,
 			})
+		})
+		builder.addCase(saveOp.fulfilled, (state, action) => {
+			const notifications: NotificationState[] = []
+			for (const wire of action.payload.wires) {
+				if (wire.errors) {
+					for (const error of wire.errors) {
+						notifications.push({
+							id: shortid.generate(),
+							severity: "error",
+							text: "ERROR",
+							details: error.message,
+						})
+					}
+				}
+			}
+			notificationAdapter.addMany(state, notifications)
 		})
 		builder.addCase(callBot.rejected, (state, action) => {
 			notificationAdapter.addOne(state, {

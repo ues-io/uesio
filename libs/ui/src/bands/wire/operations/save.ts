@@ -31,7 +31,7 @@ export default createAsyncThunk<
 			) {
 				response.wires.push({
 					wire: wireId,
-					error: "",
+					errors: [],
 					changes: {},
 					deletes: {},
 				})
