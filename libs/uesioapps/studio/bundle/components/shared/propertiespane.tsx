@@ -52,5 +52,6 @@ const PropertiesPane: FunctionComponent<Props> = (props) => {
 		</ScrollPanel>
 	)
 }
+PropertiesPane.displayName = "PropertiesPane"
 
 export default PropertiesPane

@@ -73,5 +73,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		</ScrollPanel>
 	)
 }
+ComponentsPanel.displayName = "ComponentsPanel"
 
 export default ComponentsPanel

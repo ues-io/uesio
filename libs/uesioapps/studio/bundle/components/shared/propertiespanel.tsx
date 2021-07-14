@@ -39,4 +39,6 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 }
 
+PropertiesPanel.displayName = "PropertiesPanel"
+
 export default PropertiesPanel

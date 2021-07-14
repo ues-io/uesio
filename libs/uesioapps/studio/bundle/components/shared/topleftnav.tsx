@@ -33,4 +33,6 @@ const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 }
 
+TopLeftNav.displayName = "TopLeftNav"
+
 export default TopLeftNav

@@ -1,20 +1,22 @@
 import { Context } from "../context/context"
 import { DefinitionMap } from "../definition/definition"
 
-type DisplayConditionBase = {
-	type: "collectionContext" | "paramIsSet" | undefined
-}
-
 type FieldEqualsValueCondition = {
 	type: "fieldEquals" | undefined
 	field: string
 	value: string
-} & DisplayConditionBase
+}
+
+type FieldNotEqualsValueCondition = {
+	type: "fieldNotEquals"
+	field: string
+	value: string
+}
 
 type ParamIsSetCondition = {
 	type: "paramIsSet"
 	param: string
-} & DisplayConditionBase
+}
 
 type ParamIsValueCondition = {
 	type: "paramIsValue"
@@ -25,10 +27,11 @@ type ParamIsValueCondition = {
 type CollectionContextCondition = {
 	type: "collectionContext"
 	collection: string
-} & DisplayConditionBase
+}
 
 type DisplayCondition =
 	| FieldEqualsValueCondition
+	| FieldNotEqualsValueCondition
 	| ParamIsSetCondition
 	| ParamIsValueCondition
 	| CollectionContextCondition
@@ -47,6 +50,10 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
+
+	if (condition.type === "fieldNotEquals") {
+		return value !== condition.value
+	}
 	return value === condition.value
 }
 
