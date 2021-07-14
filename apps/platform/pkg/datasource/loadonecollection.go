@@ -28,8 +28,8 @@ func (c *LoadOneCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (c *LoadOneCollection) Loop(iter func(item loadable.Item) error) error {
-	return iter(c.GetItem(0))
+func (c *LoadOneCollection) Loop(iter loadable.GroupIterator) error {
+	return iter(c.GetItem(0), 0)
 }
 
 // Len function

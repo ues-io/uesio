@@ -29,9 +29,9 @@ func (bc *BundleCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (bc *BundleCollection) Loop(iter func(item loadable.Item) error) error {
+func (bc *BundleCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bc {
-		err := iter(bc.GetItem(index))
+		err := iter(bc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

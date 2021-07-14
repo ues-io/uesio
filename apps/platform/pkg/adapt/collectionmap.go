@@ -34,9 +34,9 @@ func (c *CollectionMap) GetItems() interface{} {
 }
 
 // Loop function
-func (c *CollectionMap) Loop(iter func(item loadable.Item) error) error {
-	for index := range c.IDs {
-		err := iter(c.GetItem(index))
+func (c *CollectionMap) Loop(iter loadable.GroupIterator) error {
+	for index, key := range c.IDs {
+		err := iter(c.GetItem(index), key)
 		if err != nil {
 			return err
 		}

@@ -109,7 +109,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 
 func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, error) {
 	lookupResult := map[string]loadable.Item{}
-	err := op.Collection.Loop(func(item loadable.Item) error {
+	err := op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
 		keyVal, err := item.GetField(keyField)
 		if err == nil {
 			keyString, ok := keyVal.(string)
@@ -125,7 +125,7 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 	return lookupResult, nil
 }
 
-func mergeUpsertLookupResponse(op *LoadOp, changes ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeUpsertLookupResponse(op *LoadOp, changes *ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
 	lookupResult, err := getLookupResultMap(op, matchField)
@@ -144,7 +144,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes ChangeItems, options *UpsertO
 		return errors.New("Cannot upsert without id format metadata")
 	}
 
-	for index, change := range changes {
+	for index, change := range *changes {
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
@@ -158,17 +158,20 @@ func mergeUpsertLookupResponse(op *LoadOp, changes ChangeItems, options *UpsertO
 			if err != nil {
 				return err
 			}
-			change.FieldChanges.SetField(collectionMetadata.IDField, idValue)
+			err = change.FieldChanges.SetField(collectionMetadata.IDField, idValue)
+			if err != nil {
+				return err
+			}
 			change.IsNew = false
 			change.IDValue = idValue
-			changes[index] = change
+			(*changes)[index] = change
 		}
 
 	}
 	return nil
 }
 
-func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes ChangeItems, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItems, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	lookupField := lookup.RefField
 
@@ -193,7 +196,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes ChangeItems
 		return err
 	}
 
-	for _, change := range changes {
+	for _, change := range *changes {
 
 		keyRefInterface, err := change.FieldChanges.GetField(lookupField)
 		if err != nil {

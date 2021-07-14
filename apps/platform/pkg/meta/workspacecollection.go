@@ -33,9 +33,9 @@ func (wc *WorkspaceCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (wc *WorkspaceCollection) Loop(iter func(item loadable.Item) error) error {
+func (wc *WorkspaceCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *wc {
-		err := iter(wc.GetItem(index))
+		err := iter(wc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

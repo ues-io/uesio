@@ -82,9 +82,9 @@ func (bc *BotCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (bc *BotCollection) Loop(iter func(item loadable.Item) error) error {
+func (bc *BotCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bc {
-		err := iter(bc.GetItem(index))
+		err := iter(bc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

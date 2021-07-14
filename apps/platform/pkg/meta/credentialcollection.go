@@ -44,9 +44,9 @@ func (cc *CredentialCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (cc *CredentialCollection) Loop(iter func(item loadable.Item) error) error {
+func (cc *CredentialCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cc {
-		err := iter(cc.GetItem(index))
+		err := iter(cc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

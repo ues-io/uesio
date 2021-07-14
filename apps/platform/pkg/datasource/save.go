@@ -10,14 +10,40 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+type SaveError struct {
+	RecordID interface{} `json:"recordid"`
+	FieldID  string      `json:"fieldid"`
+	Message  string      `json:"message"`
+}
+
+func (se *SaveError) Error() string {
+	return se.Message
+}
+
+func NewSaveError(recordID interface{}, fieldID, message string) *SaveError {
+	return &SaveError{
+		RecordID: recordID,
+		FieldID:  fieldID,
+		Message:  message,
+	}
+}
+
 // SaveRequest struct
 type SaveRequest struct {
 	Collection         string             `json:"collection"`
 	Wire               string             `json:"wire"`
 	Changes            loadable.Group     `json:"changes"`
 	Deletes            loadable.Group     `json:"deletes"`
+	Errors             []SaveError        `json:"errors"`
 	Options            *adapt.SaveOptions `json:"-"`
 	UserResponseTokens *adapt.SaveOptions `json:"-"`
+}
+
+func (sr *SaveRequest) AddError(err *SaveError) {
+	if sr.Errors == nil {
+		sr.Errors = []SaveError{}
+	}
+	sr.Errors = append(sr.Errors, *err)
 }
 
 func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
@@ -69,7 +95,9 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	metadataResponse := adapt.MetadataCache{}
 
 	// Loop over the requests and batch per data source
-	for _, request := range requests {
+	for index := range requests {
+
+		request := &requests[index]
 
 		collectionKey := request.Collection
 
@@ -110,19 +138,31 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		saveOp, err := PopulateAndValidate(&request, collectionMetadata, session)
+		changes, deletes, err := PopulateAndValidate(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
-		err = RunBeforeSaveBots(saveOp, collectionMetadata, session)
+		err = RunBeforeSaveBots(changes, deletes, collectionMetadata, session)
 		if err != nil {
 			return err
+		}
+
+		if len(requests[index].Errors) > 0 {
+			// Don't return an error here because it's just expect validation errors
+			// and Bot errors. However, we don't want to go any further with processing the request.
+			return nil
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch = append(batch, *saveOp)
+		batch = append(batch, adapt.SaveOp{
+			CollectionName: request.Collection,
+			WireName:       request.Wire,
+			Changes:        changes,
+			Deletes:        deletes,
+			Options:        request.Options,
+		})
 		collated[dsKey] = batch
 	}
 

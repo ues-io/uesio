@@ -44,9 +44,9 @@ func (fsc *FileSourceCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (fsc *FileSourceCollection) Loop(iter func(item loadable.Item) error) error {
+func (fsc *FileSourceCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *fsc {
-		err := iter(fsc.GetItem(index))
+		err := iter(fsc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

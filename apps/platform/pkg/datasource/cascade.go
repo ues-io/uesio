@@ -34,12 +34,12 @@ func getCascadeDeletes(
 
 				// Get the ids that we need to delete
 				for _, wire := range wires {
-					if wire.CollectionName != collectionKey || len(wire.Deletes) == 0 {
+					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
 						continue
 					}
 
 					ids := []string{}
-					for _, deletion := range wire.Deletes {
+					for _, deletion := range *wire.Deletes {
 
 						idField, err := collectionMetadata.GetIDField()
 						if err != nil {
@@ -84,7 +84,7 @@ func getCascadeDeletes(
 						return nil, err
 					}
 
-					err = collection.Loop(func(item loadable.Item) error {
+					err = collection.Loop(func(item loadable.Item, _ interface{}) error {
 						refInterface, err := item.GetField(field.GetFullName())
 						if err != nil {
 							return nil

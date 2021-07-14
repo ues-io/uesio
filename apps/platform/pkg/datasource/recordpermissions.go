@@ -74,7 +74,7 @@ func getTokenLookupTypeValues(lookupCollection string, conditions []*meta.TokenC
 		return tokens, nil
 	}
 	i := 0
-	err = records.Loop(func(record loadable.Item) error {
+	err = records.Loop(func(record loadable.Item, _ interface{}) error {
 		tokenValue, err := templating.Execute(template, record)
 		if err != nil {
 			return err

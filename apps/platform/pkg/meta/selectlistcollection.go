@@ -54,9 +54,9 @@ func (slc *SelectListCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (slc *SelectListCollection) Loop(iter func(item loadable.Item) error) error {
+func (slc *SelectListCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *slc {
-		err := iter(slc.GetItem(index))
+		err := iter(slc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

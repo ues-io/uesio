@@ -36,7 +36,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			return nil, err
 		}
 
-		err = group.Loop(func(item loadable.Item) error {
+		err = group.Loop(func(item loadable.Item, _ interface{}) error {
 
 			path := item.(meta.BundleableItem).GetPath()
 			// Grabs the componentpack javascript files
@@ -51,6 +51,9 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 					Type:     metadataType,
 				}
 				_, err = io.Copy(&builderItem.Buffer, builderStream)
+				if err != nil {
+					return err
+				}
 
 				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
 				if err != nil {
@@ -61,6 +64,9 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 					Type:     metadataType,
 				}
 				_, err = io.Copy(&runtimeItem.Buffer, runtimeStream)
+				if err != nil {
+					return err
+				}
 
 				itemStreams = append(itemStreams, builderItem)
 				itemStreams = append(itemStreams, runtimeItem)

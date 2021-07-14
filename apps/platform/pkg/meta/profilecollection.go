@@ -44,9 +44,9 @@ func (pc *ProfileCollection) GetItem(index int) loadable.Item {
 }
 
 // Loop function
-func (pc *ProfileCollection) Loop(iter func(item loadable.Item) error) error {
+func (pc *ProfileCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *pc {
-		err := iter(pc.GetItem(index))
+		err := iter(pc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

@@ -29,9 +29,9 @@ func (bbc *BulkBatchCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (bbc *BulkBatchCollection) Loop(iter func(item loadable.Item) error) error {
+func (bbc *BulkBatchCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bbc {
-		err := iter(bbc.GetItem(index))
+		err := iter(bbc.GetItem(index), index)
 		if err != nil {
 			return err
 		}

@@ -33,9 +33,9 @@ func (uc *UserCollection) NewItem() loadable.Item {
 }
 
 // Loop function
-func (uc *UserCollection) Loop(iter func(item loadable.Item) error) error {
+func (uc *UserCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *uc {
-		err := iter(uc.GetItem(index))
+		err := iter(uc.GetItem(index), index)
 		if err != nil {
 			return err
 		}
