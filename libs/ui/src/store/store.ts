@@ -1,4 +1,4 @@
-import { AnyAction, Store } from "redux"
+import { AnyAction } from "redux"
 import thunk, { ThunkDispatch, ThunkAction } from "redux-thunk"
 import { Provider, useDispatch } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"

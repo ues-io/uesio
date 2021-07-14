@@ -13,7 +13,7 @@ import (
 // BotResponse struct
 type BotResponse struct {
 	Success bool
-	Error string
+	Error   string
 }
 
 // CallBot is good
