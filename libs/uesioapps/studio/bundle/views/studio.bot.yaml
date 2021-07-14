@@ -186,9 +186,10 @@ definition:
                 - io.field:
                     fieldId: studio.dialect
                 - io.box:
-                    uesio.hide:
+                    uesio.display:
                       - field: studio.type
                         value: "LISTENER"
+                        type: "fieldNotEquals"
                     components:
                       - studio.metadatafield:
                           fieldId: studio.collection
