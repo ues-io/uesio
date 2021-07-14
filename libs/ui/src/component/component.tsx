@@ -182,8 +182,8 @@ function render(
 	props: BaseProps
 ) {
 	const { context, definition } = props
-	if (!shouldDisplay(context, definition)) return null
-	if (!shouldHide(context, definition)) return null
+	if (!shouldDisplay(context, definition) || !shouldHide(context, definition))
+		return null
 	const mergedDefinition = mergeContextVariants(
 		definition,
 		componentType,
