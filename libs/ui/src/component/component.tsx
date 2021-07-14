@@ -141,7 +141,7 @@ function getVariantStylesDef(
 	context: Context
 ) {
 	return getStylesFromVariant(
-		context.getComponentVariant(componentType, variantName),
+		context.getComponentVariant({ componentType, variantName }),
 		context
 	)
 }
@@ -167,10 +167,10 @@ function mergeContextVariants(
 
 	return mergeInVariants(
 		definition,
-		context.getComponentVariant(
+		context.getComponentVariant({
 			componentType,
-			variantName || `${namespace}.default`
-		),
+			variantName: variantName || `${namespace}.default`,
+		}),
 		context
 	)
 }

@@ -5,6 +5,7 @@ import SelectProp from "./selectprop"
 import KeyProp from "./keyprop"
 import WireProp from "./wireprop"
 import WiresProp from "./wiresprop"
+import ComponentVariantProp from "./componentvariantprop"
 import MetadataProp from "./metadataprop"
 import NumberProp from "./numberprop"
 import BooleanProp from "./booleanprop"
@@ -22,6 +23,8 @@ function getPropHandler(type?: string) {
 	switch (type) {
 		case "METADATA":
 			return MetadataProp
+		case "COMPONENTVARIANT":
+			return ComponentVariantProp
 		case "SELECT":
 			return SelectProp
 		case "KEY":

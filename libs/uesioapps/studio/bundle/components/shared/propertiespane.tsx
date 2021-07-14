@@ -1,6 +1,6 @@
 import { CSSProperties, FunctionComponent } from "react"
 import { definition, component, builder, hooks } from "@uesio/ui"
-import BuildPropArea from "./buildproparea/buildproparea"
+import BuildPropAreaVariant from "./buildproparea/buildpropareavariant"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 
 interface Props extends definition.BaseProps {
@@ -13,6 +13,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<Props> = (props) => {
+	const isVariant = true
 	const uesio = hooks.useUesio(props)
 	const propsDef = props.propsDef
 	const subtitle = props.path
@@ -48,9 +49,12 @@ const PropertiesPane: FunctionComponent<Props> = (props) => {
 			}
 			{...props}
 		>
-			{propsDef && <BuildPropArea {...props} buildPropsDef={propsDef} />}
+			{isVariant && propsDef && (
+				<BuildPropAreaVariant {...props} buildPropsDef={propsDef} />
+			)}
 		</ScrollPanel>
 	)
 }
+PropertiesPane.displayName = "PropertiesPane"
 
 export default PropertiesPane

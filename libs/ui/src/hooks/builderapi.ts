@@ -26,6 +26,21 @@ import saveViewDef from "../bands/viewdef/operations/save"
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 
+// type ViewNode = {
+// 	key: 'view'
+// 	fullname: string
+// 	path: string
+// }
+// type ThemeNode = {
+// 	key: 'theme'
+// 	fullname: string
+// }
+// type VariantNode = {
+// 	key: 'variant'
+// 	fullname: string
+// }
+// type InputNode = VariantNode | ThemeNode | ViewNode
+
 class BuilderAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
@@ -56,8 +71,20 @@ class BuilderAPI {
 		this.dispatcher(setActiveNode(path))
 	}
 
+	// WIP
+	// setActiveNode = ({ key = "", fullname = "", path = "" }) => {
+	// 	const node = `[${key}][${fullname}]` + path ? `[${path}]` : ""
+	// 	return this.dispatcher(setActiveNode(node))
+	// }
+
 	setSelectedNode = (path: string) => {
 		this.dispatcher(setSelectedNode(path))
+	}
+
+	// Todo : add clearSelectedNode
+	// TODO: update existing setSelected node with empty string
+	clearSetSelectedNode = () => {
+		this.dispatcher(setSelectedNode(""))
 	}
 
 	setDragNode = (path: string) => {
@@ -84,6 +111,7 @@ class BuilderAPI {
 		grouping?: string
 	) => {
 		const metadata = useMetadataList(metadataType, namespace, grouping)
+		console.log("HERE", metadata, metadataType, namespace)
 		useEffect(() => {
 			if (!metadata && metadataType && namespace) {
 				this.dispatcher(

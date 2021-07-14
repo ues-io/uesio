@@ -20,8 +20,9 @@ const registry: Registry<FC<BaseProps>> = {}
 const utilityRegistry: Registry<FC<UtilityProps>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
-const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
-	{}
+const componentSignalsRegistry: Registry<
+	Registry<ComponentSignalDescriptor>
+> = {}
 
 const addToRegistry = <T extends unknown>(
 	registry: Registry<T>,
@@ -145,6 +146,17 @@ const getPropertiesDefinition = (key: string) => {
 }
 
 const getPropertiesDefinitionFromPath = (path: string) => {
+	const pathArray = toPath(path)
+	const componentFullName = getPathSuffix(pathArray)
+
+	if (componentFullName) {
+		return getPropertiesDefinition(componentFullName)
+	}
+	return undefined
+}
+
+// WIP
+const getPropertiesDefinitionFromComponentVariantName = (path: string) => {
 	const pathArray = toPath(path)
 	const componentFullName = getPathSuffix(pathArray)
 	if (componentFullName) {

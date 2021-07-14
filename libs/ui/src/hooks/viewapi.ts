@@ -61,7 +61,7 @@ class ViewAPI {
 	useDefinitionLocal(path?: string) {
 		const viewDefId = this.uesio.getViewDefId()
 		if (!viewDefId) return
-		return viewDefId ? useViewDefinition(viewDefId, path) : undefined
+		return useViewDefinition(viewDefId, path)
 	}
 	useDefinition(path?: string) {
 		const def = this.useDefinitionLocal(path)

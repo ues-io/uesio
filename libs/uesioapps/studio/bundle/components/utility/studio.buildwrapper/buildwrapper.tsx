@@ -199,4 +199,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	)
 }
 
+BuildWrapper.displayName = "BuildWrapper"
+
 export default BuildWrapper

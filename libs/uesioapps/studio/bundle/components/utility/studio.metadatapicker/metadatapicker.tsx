@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState, useEffect } from "react"
 import { definition, component, hooks, metadata, collection } from "@uesio/ui"
 
 interface MetadataPickerProps extends definition.UtilityProps {
@@ -14,6 +14,32 @@ const Grid = component.registry.getUtility("io.grid")
 const SelectField = component.registry.getUtility("io.selectfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
+type UseNamespaceInputs = {
+	metadataType: string
+	defaultNamespace: string | undefined
+	currentNamespace: string
+	setValue: (arg1: string) => void
+}
+
+const useNamespace = ({
+	metadataType,
+	defaultNamespace,
+	currentNamespace,
+	setValue,
+}: UseNamespaceInputs) => {
+	const isVariantLogic = metadataType === "COMPONENTVARIANT" && true
+	const initialValue = !isVariantLogic
+		? defaultNamespace || currentNamespace
+		: ""
+
+	const [namespace, setNamespace] = useState(initialValue)
+
+	useEffect(() => {
+		if (isVariantLogic) return setValue(`${namespace}.`)
+	}, [namespace])
+
+	return { namespace, setNamespace }
+}
 
 const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 	const {
@@ -26,18 +52,47 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		defaultNamespace,
 	} = props
 	const uesio = hooks.useUesio(props)
-
 	const namespaces = uesio.builder.useAvailableNamespaces(context)
+
 	const [currentNamespace, name] = component.path.parseKey(value)
-	const namespace = defaultNamespace || currentNamespace
-	const metadata = uesio.builder.useMetadataList(
-		context,
+
+	const { namespace, setNamespace } = useNamespace({
 		metadataType,
-		namespace,
-		grouping
-	)
+		defaultNamespace,
+		currentNamespace,
+		setValue,
+	})
+
+	const metadata = () => {
+		const isVariantLogic = metadataType === "COMPONENTVARIANT"
+		const variants = Object.values(context.getComponentVariants()).filter(
+			(el: any) => el.namespace === namespace
+		)
+		console.log("variants", variants)
+		return !isVariantLogic
+			? uesio.builder.useMetadataList(
+					context,
+					metadataType,
+					namespace,
+					grouping
+			  )
+			: {
+					option1: {
+						name: "one",
+					},
+					option2: {
+						name: "two",
+					},
+			  }
+	}
+
+	console.log("metadata", metadata())
 
 	const getMetadataName = (key: string) => {
+		const isVariantLogic = metadataType === "COMPONENTVARIANT" && true
+		if (isVariantLogic) {
+			return key
+		}
 		if (metadataType === "COMPONENTVARIANT") {
 			const [, , , name] = component.path.parseVariantKey(key)
 			return name
@@ -69,9 +124,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 							label: key,
 						}))
 					)}
-					setValue={(value: string) => {
-						setValue(value ? `${value}.` : "")
-					}}
+					setValue={(value: string) => setNamespace(value)}
 				/>
 			)}
 			<SelectField
@@ -79,7 +132,7 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 				label={defaultNamespace ? label : label && nbsp}
 				value={name}
 				options={addBlankSelectOption(
-					Object.keys(metadata || {}).map((key) => {
+					Object.keys(metadata() || {}).map((key) => {
 						const name = getMetadataName(key)
 						return {
 							value: name,

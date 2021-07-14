@@ -148,4 +148,6 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	)
 }
 
+Buildtime.displayName = "BUILDER"
+
 export default Buildtime

@@ -44,27 +44,32 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 						>
 							{Object.entries(components).map(
-								([componentName, propDef], indexTag) =>
-									!isStructureView ? (
-										<PropNodeTag
-											title={componentName}
-											key={indexTag}
-											tooltip={propDef.description}
-											context={context}
-										/>
-									) : (
-										<PropNodeTag
-											draggable={component.dragdrop.createComponentBankKey(
-												namespace,
-												componentName
-											)}
-											title={componentName}
-											icon="drag_indicator"
-											key={indexTag}
-											tooltip={propDef.description}
-											context={context}
-										/>
-									)
+								([componentName, propDef], indexTag) => (
+									<PropNodeTag
+										title={componentName}
+										key={indexTag}
+										tooltip={propDef.description}
+										context={context}
+										draggable={
+											isStructureView
+												? component.dragdrop.createComponentBankKey(
+														namespace,
+														componentName
+												  )
+												: undefined
+										}
+										onClick={() =>
+											uesio.builder.setSelectedNode(
+												`["componentvariants"]["${namespace}.${componentName}"]`
+											)
+										}
+										icon={
+											isStructureView
+												? "drag_indicator"
+												: undefined
+										}
+									/>
+								)
 							)}
 						</ExpandPanel>
 					)

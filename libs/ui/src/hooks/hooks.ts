@@ -69,6 +69,7 @@ class Uesio {
 	getViewDefId = () => this.getContext().getViewDefId()
 	addContextFrame = (frame: ContextFrame) =>
 		(this._context = this._context.addFrame(frame))
+	// add Variant hook here
 }
 
 const useUesio = (props: BaseProps) => new Uesio(getDispatcher(), props)

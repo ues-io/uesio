@@ -32,6 +32,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+// | ComponentVariantDefinitionProp
 
 type BasePropSection = {
 	title: string
@@ -74,6 +75,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| ComponentVariantDefinitionProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -104,6 +106,9 @@ interface StylesListProp extends BasePropDescriptor {
 
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
+}
+interface ComponentVariantDefinitionProp extends BasePropDescriptor {
+	type: "COMPONENTVARIANT"
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -215,4 +220,5 @@ export {
 	SignalsSection,
 	PropListSection,
 	StylesListProp,
+	ComponentVariantDefinitionProp,
 }
