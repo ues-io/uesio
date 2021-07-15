@@ -9,7 +9,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/site"
 )
 
 // AuthenticationType interface
@@ -57,7 +56,7 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 		domainValue = hostParts[0] // Strip off the port
 		domain = host
 	}
-	site, err := site.GetSiteFromDomain(domainType, domainValue)
+	site, err := GetSiteFromDomain(domainType, domainValue)
 	if err != nil {
 		return nil, err
 	}
