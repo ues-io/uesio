@@ -25,9 +25,22 @@ func (c *Credentials) GetHash() string {
 	return string(sum[:])
 }
 
+var tenantIDKey = "uesio.tenantid"
+
+func (c *Credentials) SetTenantID(session *sess.Session) {
+	(*c)[tenantIDKey] = session.GetTenantID()
+}
+
+func (c *Credentials) GetTenantID() string {
+	return (*c)[tenantIDKey]
+}
+
 // GetCredentials function
 func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
 	credmap := Credentials{}
+
+	// Always add the tenant id to credentials
+	credmap.SetTenantID(session)
 
 	mergedKey, err := configstore.Merge(key, session)
 	if err != nil {

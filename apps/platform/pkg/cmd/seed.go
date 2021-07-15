@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore/systembundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -122,29 +122,11 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	site := &meta.Site{
-		Name: "studio",
-		Bundle: &meta.Bundle{
-			AppID: "studio",
-			Major: "0",
-			Minor: "0",
-			Patch: "1",
-		},
-		AppID: "studio",
-	}
-
-	bundleDef, err := bundle.GetSiteAppBundle(site)
+	session, err := auth.GetHeadlessSession()
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
-	site.SetAppBundle(bundleDef)
-
-	session := sess.GetHeadlessSession(&meta.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		Profile:   "uesio.public",
-	}, site)
 
 	session.SetPermissions(&meta.PermissionSet{
 		AllowAllViews:  true,

@@ -53,23 +53,6 @@ func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
 	}
 }
 
-func GetHeadlessSite() *meta.Site {
-	site := &meta.Site{
-		Name: "uesio",
-		Bundle: &meta.Bundle{
-			AppID: "uesio",
-			Major: "0",
-			Minor: "0",
-			Patch: "1",
-		},
-		AppID: "uesio",
-	}
-	site.SetAppBundle(&meta.BundleDef{
-		Name: "uesio",
-	})
-	return site
-}
-
 func create(browserSession *session.Session, site *meta.Site) *Session {
 	return &Session{
 		browserSession: browserSession,
@@ -166,6 +149,13 @@ func (s *Session) SetPermissions(permissions *meta.PermissionSet) {
 // GetPermissions function
 func (s *Session) GetPermissions() *meta.PermissionSet {
 	return s.permissions
+}
+
+func (s *Session) GetTenantID() string {
+	if s.workspace != nil {
+		return "workspace:" + s.workspace.ID
+	}
+	return "site:" + s.site.ID
 }
 
 // GetWorkspaceID function

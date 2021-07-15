@@ -1,9 +1,10 @@
-package site
+package auth
 
 import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -58,11 +59,10 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if ok {
 		return entry.(*meta.Site), nil
 	}
-	headlessSession := sess.GetHeadlessSession(&meta.User{
-		FirstName: "Guest",
-		LastName:  "User",
-		Profile:   "uesio.public",
-	}, sess.GetHeadlessSite())
+	headlessSession, err := GetHeadlessSession()
+	if err != nil {
+		return nil, err
+	}
 	siteDomain, err := getDomain(domainType, domain, headlessSession)
 	if err != nil {
 		return nil, err
@@ -76,4 +76,29 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 		return site, nil
 	}
 	return site, err
+}
+
+func GetHeadlessSession() (*sess.Session, error) {
+	site := &meta.Site{
+		ID:   "prod_studio",
+		Name: "prod_studio",
+		Bundle: &meta.Bundle{
+			AppID: "studio",
+			Major: "0",
+			Minor: "0",
+			Patch: "1",
+		},
+		AppID: "studio",
+	}
+	bundleDef, err := bundle.GetSiteAppBundle(site)
+	if err != nil {
+		return nil, err
+	}
+	site.SetAppBundle(bundleDef)
+
+	return sess.GetHeadlessSession(&meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		Profile:   "uesio.public",
+	}, site), nil
 }

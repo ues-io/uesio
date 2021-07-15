@@ -17,6 +17,7 @@ func loadOne(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []adapt.LoadOp,
+	tenantID string,
 ) error {
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -24,7 +25,7 @@ func loadOne(
 		return err
 	}
 
-	collectionName, err := getDBCollectionName(collectionMetadata)
+	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
 	if err != nil {
 		return err
 	}
@@ -140,7 +141,7 @@ func loadOne(
 	}
 
 	err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-		return loadMany(ctx, client, ops, metadata)
+		return loadMany(ctx, client, ops, metadata, tenantID)
 	}, op.Collection, referencedCollections)
 	if err != nil {
 		return err
@@ -180,7 +181,7 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 		return errors.New("Failed to create or retrieve client:" + err.Error())
 	}
 
-	return loadMany(ctx, client, ops, metadata)
+	return loadMany(ctx, client, ops, metadata, credentials.GetTenantID())
 }
 
 func loadMany(
@@ -188,9 +189,10 @@ func loadMany(
 	client *firestore.Client,
 	ops []adapt.LoadOp,
 	metadata *adapt.MetadataCache,
+	tenantID string,
 ) error {
 	for i := range ops {
-		err := loadOne(ctx, client, &ops[i], metadata, ops)
+		err := loadOne(ctx, client, &ops[i], metadata, ops, tenantID)
 		if err != nil {
 			return err
 		}
