@@ -3,6 +3,5 @@ collection: crm.leads
 type: TEXT
 label: Email
 propertyName: email
-required: true
 validate:
   type: EMAIL

@@ -4,7 +4,7 @@ definition:
     - uesio.view:
         view: crm.topbar
     - io.titlebar:
-        title: Contacts
+        title: Leads
         uesio.variant: io.main
         actions:
           - io.group:
