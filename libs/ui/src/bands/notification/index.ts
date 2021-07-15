@@ -45,6 +45,17 @@ const notificationSlice = createSlice({
 				details: action?.error?.message,
 			})
 		})
+		builder.addCase(callBot.fulfilled, (state, action) => {
+			const success = action?.payload?.success
+			if (!success) {
+				notificationAdapter.addOne(state, {
+					id: shortid.generate(),
+					severity: "error",
+					text: "ERROR",
+					details: action?.payload?.error,
+				})
+			}
+		})
 	},
 })
 
