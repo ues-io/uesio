@@ -12,8 +12,8 @@ import (
 
 // BotResponse struct
 type BotResponse struct {
-	Success bool
-	Error   string
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
 }
 
 // CallBot is good
@@ -36,7 +36,10 @@ func CallBot(w http.ResponseWriter, r *http.Request) {
 	err = datasource.CallBot(namespace, name, params, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondJSON(w, r, &BotResponse{
+			Success: false,
+			Error:   err.Error(),
+		})
 		return
 	}
 
