@@ -68,7 +68,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		referencedCollection,
 		record
 	)
-
 	const foreignFieldId = fieldMetadata.source.foreignKeyField
 	if (mode === "READ") {
 		return (
@@ -79,6 +78,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				})}
 				context={context}
 				variant={variant}
+				mode={mode}
 			/>
 		)
 	} else {

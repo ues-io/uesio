@@ -174,6 +174,12 @@ definition:
                                             fieldId: studio.foreignKeyField
                                             metadataType: "FIELD"
                                             label: "Foreign Key Field"
+                                            grouping: ${studio.referencedCollection}
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "REFERENCE"
+                                      components:
                                         - studio.metadatafield:
                                             fieldId: studio.referencedCollection
                                             metadataType: "COLLECTION"
