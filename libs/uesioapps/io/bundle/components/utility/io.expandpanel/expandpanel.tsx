@@ -12,8 +12,8 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 const IOGrid = component.registry.getUtility("io.grid")
 
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
-	const { label, context, children, defaultExpanded, actions } = props
-	const [expanded, setExpanded] = useState<boolean>(defaultExpanded || true)
+	const { label, context, children, defaultExpanded = true, actions } = props
+	const [expanded, setExpanded] = useState<boolean>(defaultExpanded)
 
 	const classes = styles.useUtilityStyles(
 		{
