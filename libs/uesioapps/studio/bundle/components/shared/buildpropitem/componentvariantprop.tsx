@@ -1,14 +1,16 @@
 import { FC, useState, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
-import { definition, component, hooks, builder } from "@uesio/ui"
+import { wire, component, hooks, builder } from "@uesio/ui"
 import ExpandPanel from "../expandpanel"
 
 import ComponentVariantPicker from "../../utility/studio.componentvariantpicker/componentvariantpicker"
-import StylesSection from "../buildproparea/stylessection"
+import WiresProp from "./wiresprop"
+import SignalsSection from "../buildproparea/signalssection"
 
 interface T extends PropRendererProps {
 	descriptor: builder.MetadataProp
 }
+const MultiSelectField = component.registry.getUtility("io.multiselectfield")
 
 const TextField = component.registry.getUtility("io.textfield")
 const ListField = component.registry.getUtility("io.listfield")
@@ -38,7 +40,19 @@ const useDraft = (initialValue: ComponentVariant) => {
 			},
 		})
 
-	return [state, setState, updateStyles]
+	const addSignal = (signal: any) => {
+		console.log("adding signal in parent")
+		setState({
+			...state,
+			signals: [
+				{
+					signal: "wire/CREATE_RECORD",
+					wire: "contacts",
+				},
+			],
+		})
+	}
+	return [state, setState, updateStyles, addSignal]
 }
 
 const ComponentVariantProp: FC<T> = (props) => {
@@ -52,22 +66,21 @@ const ComponentVariantProp: FC<T> = (props) => {
 		`["${componentToEdit}"]`
 	)
 
-	console.log(
-		"look here 	baseDefinition",
-		baseDefinition,
-		`["${componentToEdit}"]`
-	)
-
 	const [componentVariant, setComponentVariant] = useState<any>()
-	const [draft, setDraft, updateStyles] = useDraft(componentVariant)
+	const [draft, setDraft, updateStyles, addSignal] = useDraft(
+		componentVariant
+	)
 
 	useEffect(() => {
 		setDraft(componentVariant)
-	}, [componentVariant])
+	}, [componentVariant, componentToEdit])
 
 	const updateComponent = (id: string) =>
 		setComponentVariant(context.getComponentVariant(id))
 
+	const wires = uesio.view.useDefinition(
+		'["wires"]'
+	) as wire.WireDefinitionMap
 	return (
 		<div>
 			<ComponentVariantPicker
@@ -77,18 +90,11 @@ const ComponentVariantProp: FC<T> = (props) => {
 				context={context}
 				componentToEdit={componentToEdit}
 			/>
-			{componentToEdit}
-			{draft && (
+			{draft && baseDefinition && (
 				<div>
-					<TextField
-						hideLabel
-						value={draft.name}
-						// mode={mode}
-						context={context}
-						// setValue={(
-						// 	setValue(newValue)
-						// }}
-					/>
+					<p>
+						{componentToEdit} | {draft.name}{" "}
+					</p>
 
 					{/* Styles */}
 					<ExpandPanel
@@ -130,8 +136,40 @@ const ComponentVariantProp: FC<T> = (props) => {
 							})}
 					</ExpandPanel>
 
-					{/* Wires */}
 					{/* Signals */}
+					<ExpandPanel
+						defaultExpanded={false}
+						title={"Signals"}
+						context={context}
+					>
+						<SignalsSection
+							section={{ type: "SIGNALS", title: "Signals" }}
+							propsDef={baseDefinition}
+							// path={path}
+							definition={{ key: "string" }}
+							context={context}
+							variantSignals={draft.signals || []}
+							addSignalToVariant={(s) => addSignal(s)}
+						/>
+					</ExpandPanel>
+
+					{/* Wires */}
+					<ExpandPanel
+						defaultExpanded={false}
+						title={"Wires"}
+						context={context}
+					>
+						<MultiSelectField
+							getValue={() => "contacts"}
+							label={descriptor.label}
+							setValue={setValue}
+							options={Object.keys(wires || {}).map((wireId) => ({
+								value: wireId,
+								label: wireId,
+							}))}
+							context={context}
+						/>
+					</ExpandPanel>
 
 					<pre>{JSON.stringify(draft, null, 4)}</pre>
 				</div>

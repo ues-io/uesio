@@ -1,18 +1,42 @@
-import { FunctionComponent } from "react"
+import { FC } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import { hooks, definition, signal } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
-const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path, context } = props
+interface T extends SectionRendererProps {
+	variantSignals: signal.SignalDefinition[]
+	addSignalToVariant: (signal: signal.SignalDefinition) => void
+}
+
+const SignalsSection: FC<T> = (props) => {
+	const {
+		section,
+		definition: def,
+		path,
+		context,
+		variantSignals,
+		addSignalToVariant,
+	} = props
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const primaryColor = theme.definition.palette.primary
 	const selectedNode = uesio.builder.useSelectedNode()
-
 	const signalsDef = def?.signals as definition.Definition[] | undefined
+	const isVariant = true
+	const signals = variantSignals || signalsDef
+
+	//
+	const addSignal = (signal: any) => {
+		console.log("adding")
+		const addToView = uesio.view.addDefinition(`${path}["signals"]`, {
+			signal: "NEW_SIGNAL",
+		})
+
+		const addToVariant = addSignalToVariant(signal)
+		isVariant ? addToVariant : addToView
+	}
 
 	return (
 		<ExpandPanel
@@ -21,13 +45,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			title={section.title}
 			action="add_box"
 			actionColor={primaryColor}
-			actionOnClick={(): void =>
-				uesio.view.addDefinition(`${path}["signals"]`, {
-					signal: "NEW_SIGNAL",
-				})
-			}
+			actionOnClick={(): void => addSignal("signally")}
 		>
-			{signalsDef?.map((signal: signal.SignalDefinition, index) => {
+			{signals.map((signal: signal.SignalDefinition, index) => {
 				const signalPath = `${path}["signals"]["${index}"]`
 				const selected = selectedNode.startsWith(signalPath)
 				return (
@@ -52,10 +72,9 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									title: "Signal",
 									sections: [],
 									defaultDefinition: () => ({}),
-									properties:
-										uesio.builder.getSignalProperties(
-											signal
-										),
+									properties: uesio.builder.getSignalProperties(
+										signal
+									),
 								}}
 							/>
 						}
