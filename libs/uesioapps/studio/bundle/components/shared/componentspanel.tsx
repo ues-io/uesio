@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "./dragdrop"
@@ -16,6 +16,13 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragEnd = getOnDragStopToolbar(uesio)
 	const builderComponents = component.registry.getBuilderComponents()
 
+	// DELETE // REMOVE // Temp setting for easy devving
+	useEffect(() => {
+		console.warn(
+			"Hey dev, there is some hardcoded logic to make your life easier"
+		)
+		uesio.builder.setSelectedNode(`["componentvariants"]["io.button"]`)
+	}, [])
 	return (
 		<ScrollPanel
 			header={
