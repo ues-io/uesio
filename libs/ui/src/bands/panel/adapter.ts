@@ -2,9 +2,7 @@ import { createEntityAdapter } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { PanelState } from "./types"
 
-const panelAdapter = createEntityAdapter<PanelState>({
-	selectId: (panel) => panel.id,
-})
+const panelAdapter = createEntityAdapter<PanelState>()
 
 const selectors = panelAdapter.getSelectors((state: RootState) => state.panel)
 
