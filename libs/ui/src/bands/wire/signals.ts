@@ -17,6 +17,7 @@ import { WireDefinition } from "../../definition/wire"
 import { WireConditionDefinition } from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
+import { SaveResponse } from "../../load/saveresponse"
 
 // The key for the entire band
 const WIRE_BAND = "wire"
@@ -52,6 +53,9 @@ interface LoadWiresSignal extends SignalDefinition {
 interface SaveWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
+
+const getErrorStrings = (response: SaveResponse) =>
+	response.errors?.map((error) => error.message) || []
 
 // "Signal Handlers" for all of the signals in the band
 const signals: Record<string, SignalDescriptor> = {
@@ -193,35 +197,23 @@ const signals: Record<string, SignalDescriptor> = {
 					saveWiresOp({ context, wires: signal.wires })
 				).then(unwrapResult)
 
-				const errors: string[] = []
-
 				// Special handling for saves of just one wire and one record
 				if (batch?.wires.length === 1) {
 					const wire = batch.wires[0]
 					const changes = wire.changes
 					const changeKeys = Object.keys(changes)
 					if (changeKeys.length === 1) {
-						if (wire.errors) {
-							for (const error of wire.errors) {
-								errors.push(error.message)
-							}
-						}
 						const [, name] = wire.wire.split("/")
 						return context.addFrame({
 							record: changeKeys[0],
 							wire: name,
-							errors,
+							errors: getErrorStrings(wire),
 						})
 					}
 				}
 
-				for (const wire of batch.wires) {
-					if (wire.errors) {
-						for (const error of wire.errors) {
-							errors.push(error.message)
-						}
-					}
-				}
+				const errors = batch.wires.flatMap(getErrorStrings)
+
 				if (errors.length > 0) {
 					return context.addFrame({ errors })
 				}
