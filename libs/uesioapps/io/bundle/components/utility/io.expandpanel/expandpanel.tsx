@@ -1,4 +1,11 @@
-import { FunctionComponent, ReactNode, SyntheticEvent, useState } from "react"
+import {
+	FunctionComponent,
+	ReactNode,
+	SyntheticEvent,
+	useState,
+	useEffect,
+} from "react"
+
 import { definition, styles, component } from "@uesio/ui"
 
 interface ExpandPanelProps extends definition.UtilityProps {
@@ -14,17 +21,43 @@ const IOGrid = component.registry.getUtility("io.grid")
 const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const { label, context, children, defaultExpanded = true, actions } = props
 	const [expanded, setExpanded] = useState<boolean>(defaultExpanded)
+	const [displayContent, setdisplayContent] = useState(defaultExpanded)
+
+	useEffect(() => {
+		if (!expanded && displayContent) {
+			setTimeout(() => {
+				setdisplayContent(false)
+			}, 300)
+		}
+
+		if (expanded && !displayContent) setdisplayContent(true)
+	}, [expanded])
 
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				border: "1px solid red",
+				borderBottom: "1px solid #eee",
+				padding: "6px 0px",
+				borderTop: "none",
+			},
+			titlebar: {
+				cursor: "pointer",
+			},
+			icon: {
+				transform: expanded ? "rotate(0deg)" : "rotate(180deg)",
+				transition: "all 0.3s ease",
 			},
 			content: {
-				display: expanded ? "block" : "none",
+				visibility: displayContent ? "visible" : "hidden",
 				fontSize: "9pt",
 				color: "#444",
-				padding: "6px",
+				padding: "0 6px",
+				transition: "all 0.3s ease",
+				maxHeight: expanded ? "999px" : "0px",
+				opacity: expanded ? "1" : "0",
+				transform: expanded ? "translateY(0)" : "translateY(-5px)",
+				willChange: "max-height",
+				boxSizing: "border-box",
 			},
 		},
 		props
@@ -34,10 +67,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 		<IOGrid context={context} styles={{ root: { gridAutoFlow: "column" } }}>
 			{actions}
 			<IconButton
-				onClick={(event: SyntheticEvent): void => {
-					event.stopPropagation()
-					setExpanded(!expanded)
-				}}
+				className={classes.icon}
 				size="small"
 				icon="expand_more"
 				context={context}
@@ -48,6 +78,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	return (
 		<div className={classes.root}>
 			<TitleBar
+				className={classes.titlebar}
 				title={label}
 				context={context}
 				actions={titleBarActions}
@@ -58,6 +89,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 					},
 				}}
 				onClick={() => setExpanded(!expanded)}
+				// expanded={expanded}
 			/>
 			<div className={classes.content}>{children}</div>
 		</div>
