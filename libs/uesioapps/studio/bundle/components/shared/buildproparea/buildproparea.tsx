@@ -26,7 +26,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					position: "absolute",
 					left: "6px",
 					right: "6px",
-					height: "2px",
+					height: "1px",
 					backgroundColor: "#eee",
 					bottom: "0",
 				},
