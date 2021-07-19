@@ -5,8 +5,10 @@ import ActionButton from "./actionbutton"
 
 const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const { path, context, getValue } = props
 
-	const def = uesio.view.useDefinition(props.path) as definition.DefinitionMap
+	const def = getValue(path || "") as definition.DefinitionMap
+
 	const action = props.action as builder.RunSignalsAction
 
 	const slot = action?.slot || "signals"
@@ -20,7 +22,7 @@ const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 			title={action.label}
 			onClick={uesio.signal.getHandler(signals)}
 			icon="router"
-			context={props.context}
+			context={context}
 		/>
 	)
 }

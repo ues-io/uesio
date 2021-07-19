@@ -26,7 +26,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const dragNode = uesio.builder.useDragNode()
 	const dropNode = uesio.builder.useDropNode()
 
-	const nodeState = uesio.builder.useNodeState(path)
+	const viewDefId = uesio.getViewDefId()
+	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
 
@@ -142,6 +143,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		handleDrop(dragNode, path, 0, uesio)
 	}
 
+	if (!viewDefId) return null
+
 	return (
 		<>
 			{addBeforePlaceholder && <div className={classes.placeholder} />}
@@ -153,14 +156,20 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				onDrop={onDrop}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
-					!isSelected && uesio.builder.setSelectedNode(path)
+					!isSelected &&
+						uesio.builder.setSelectedNode(
+							"viewdef",
+							viewDefId,
+							path
+						)
 					event.stopPropagation()
 				}}
 				onMouseEnter={() => {
-					!isActive && uesio.builder.setActiveNode(path)
+					!isActive &&
+						uesio.builder.setActiveNode("viewdef", viewDefId, path)
 				}}
 				onMouseLeave={() => {
-					isActive && uesio.builder.setActiveNode("")
+					isActive && uesio.builder.clearActiveNode()
 				}}
 				draggable={canDrag}
 			>

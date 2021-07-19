@@ -17,13 +17,18 @@ const isMatch = (componentPath: string, testPath?: string) => {
 	return false
 }
 
-const useNodeState = (path: string) =>
+const useNodeState = (
+	metadataType: string,
+	metadataItem: string | undefined,
+	path: string
+) =>
 	useSelector(({ builder }: RootState) => {
+		const fullPath = `["${metadataType}"]["${metadataItem}"]${path}`
 		if (builder) {
-			if (isMatch(path, builder.selectedNode)) {
+			if (isMatch(fullPath, builder.selectedNode)) {
 				return "selected"
 			}
-			if (isMatch(path, builder.activeNode)) {
+			if (isMatch(fullPath, builder.activeNode)) {
 				return "active"
 			}
 		}

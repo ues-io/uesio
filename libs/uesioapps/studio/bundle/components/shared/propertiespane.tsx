@@ -1,11 +1,12 @@
-import { CSSProperties, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, component, builder, hooks } from "@uesio/ui"
 import BuildPropArea from "./buildproparea/buildproparea"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	propsDef?: builder.BuildPropertiesDefinition
-	style?: CSSProperties
+	setValue: (path: string, value: definition.DefinitionValue) => void
+	getValue: (path: string) => definition.Definition
 }
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
@@ -14,13 +15,12 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const propsDef = props.propsDef
-	const subtitle = props.path
-		? component.path.toPath(props.path).join(" > ")
+	const { propsDef, path, context, getValue, setValue, className } = props
+	const subtitle = path
+		? component.path.toPath(path).join(" > ")
 		: "No Element Selected"
 	return (
 		<ScrollPanel
-			style={props.style}
 			header={
 				<TitleBar
 					title={propsDef?.title || "Properties"}
@@ -29,26 +29,40 @@ const PropertiesPane: FunctionComponent<Props> = (props) => {
 					actions={
 						props.path && (
 							<IconButton
-								{...props}
+								context={context}
 								variant="io.small"
 								icon="close"
 								onClick={() =>
-									uesio.builder.setSelectedNode("")
+									uesio.builder.clearSelectedNode()
 								}
 							/>
 						)
 					}
-					{...props}
+					context={context}
 				/>
 			}
 			footer={
 				propsDef && (
-					<BuildActionsArea {...props} actions={propsDef.actions} />
+					<BuildActionsArea
+						path={path}
+						context={context}
+						getValue={getValue}
+						actions={propsDef.actions}
+					/>
 				)
 			}
-			{...props}
+			className={className}
+			context={context}
 		>
-			{propsDef && <BuildPropArea {...props} buildPropsDef={propsDef} />}
+			{propsDef && (
+				<BuildPropArea
+					path={path}
+					setValue={setValue}
+					getValue={getValue}
+					context={context}
+					propsDef={propsDef}
+				/>
+			)}
 		</ScrollPanel>
 	)
 }

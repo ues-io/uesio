@@ -20,11 +20,12 @@ import {
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
 import { Dispatcher } from "../store/store"
-import { useBuilderHasChanges } from "../bands/viewdef/selectors"
+import { useBuilderHasChanges, useViewYAML } from "../bands/viewdef/selectors"
 import { cancel as cancelViewChanges } from "../bands/viewdef"
 import saveViewDef from "../bands/viewdef/operations/save"
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
+import { fromPath, toPath } from "../component/path"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -43,7 +44,13 @@ class BuilderAPI {
 		)
 
 	useNodeState = useNodeState
-	useSelectedNode = useSelectedNode
+	useSelectedNode = (): [string, string, string] => {
+		const path = useSelectedNode()
+		const pathArray = toPath(path)
+		const metadataType = pathArray.shift() || ""
+		const metadataItem = pathArray.shift() || ""
+		return [metadataType, metadataItem, fromPath(pathArray)]
+	}
 	useLastModifiedNode = useLastModifiedNode
 	useDragNode = useDragNode
 	useDropNode = useDropNode
@@ -52,12 +59,41 @@ class BuilderAPI {
 
 	useHasChanges = useBuilderHasChanges
 
-	setActiveNode = (path: string) => {
-		this.dispatcher(setActiveNode(path))
+	useSelectedYAML = (metadataType: string) => {
+		// Check here for the selected item and get its yaml doc
+		if (metadataType === "viewdef" || !metadataType) {
+			const viewDefId = this.uesio.getViewDefId()
+			return viewDefId ? useViewYAML(viewDefId) : undefined
+		}
+		return
 	}
 
-	setSelectedNode = (path: string) => {
-		this.dispatcher(setSelectedNode(path))
+	setActiveNode = (
+		metadataType: string,
+		metadataItem: string,
+		path: string
+	) => {
+		this.dispatcher(
+			setActiveNode(`["${metadataType}"]["${metadataItem}"]${path}`)
+		)
+	}
+
+	clearActiveNode = () => {
+		this.dispatcher(setActiveNode(""))
+	}
+
+	setSelectedNode = (
+		metadataType: string,
+		metadataItem: string,
+		path: string
+	) => {
+		this.dispatcher(
+			setSelectedNode(`["${metadataType}"]["${metadataItem}"]${path}`)
+		)
+	}
+
+	clearSelectedNode = () => {
+		this.dispatcher(setSelectedNode(""))
 	}
 
 	setDragNode = (path: string) => {

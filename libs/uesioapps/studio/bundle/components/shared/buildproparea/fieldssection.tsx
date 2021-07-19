@@ -6,8 +6,9 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 import { getOnDragStartToolbar, getOnDragStopToolbar } from "../dragdrop"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path, context } = props
-	const collectionKey = def?.collection as string | undefined
+	const { section, path, context, getValue } = props
+	const wireDef = getValue(path || "") as definition.DefinitionMap | undefined
+	const collectionKey = wireDef?.collection as string | undefined
 
 	if (!collectionKey) {
 		return null
@@ -27,7 +28,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		collectionKey
 	)
 
-	const fieldsDef = def?.fields as definition.DefinitionMap
+	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)

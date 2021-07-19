@@ -10,7 +10,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context } = props
+	const { context, className } = props
 	const isStructureView = uesio.builder.useIsStructureView()
 	const onDragStart = getOnDragStartToolbar(uesio)
 	const onDragEnd = getOnDragStopToolbar(uesio)
@@ -26,6 +26,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				/>
 			}
 			context={context}
+			className={className}
 		>
 			<div
 				onDragStart={onDragStart}

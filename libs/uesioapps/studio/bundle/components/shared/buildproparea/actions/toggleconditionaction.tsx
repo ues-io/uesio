@@ -5,10 +5,10 @@ import ActionButton from "./actionbutton"
 
 const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const path = props.path || ""
+	const { path, getValue } = props
 
-	const def = uesio.view.useDefinition(props.path) as definition.DefinitionMap
-	const wirePath = component.path.trimPathToComponent(path)
+	const def = getValue(path || "") as definition.DefinitionMap
+	const wirePath = component.path.trimPathToComponent(path || "")
 	const wireName = component.path.getKeyAtPath(wirePath)
 
 	const wire = uesio.wire.useWire(wireName || "")
