@@ -20,7 +20,17 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 			},
 			propList: {
 				padding: "10px 6px 0 6px",
-				borderBottom: "1px solid #ccc",
+				position: "relative",
+				"&::after": {
+					content: "''",
+					position: "absolute",
+					left: "6px",
+					right: "6px",
+					height: "2px",
+					backgroundColor: "#eee",
+					bottom: "0",
+				},
+				// borderBottom: "1px solid #ccc",
 			},
 		},
 		props
