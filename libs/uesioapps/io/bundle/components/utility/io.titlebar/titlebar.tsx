@@ -5,10 +5,11 @@ interface TitleBarProps extends definition.UtilityProps {
 	title?: string
 	subtitle?: string
 	actions?: ReactNode
+	onClick?: () => void
 }
 
 const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
-	const { context, title, subtitle, actions } = props
+	const { context, title, subtitle, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -29,7 +30,7 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 		props
 	)
 	return (
-		<div className={classes.root}>
+		<div onClick={() => onClick && onClick()} className={classes.root}>
 			<div className={classes.content}>
 				<div className={classes.title}>{context.merge(title)}</div>
 				{subtitle && (

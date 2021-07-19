@@ -17,7 +17,9 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {},
+			root: {
+				border: "1px solid red",
+			},
 			content: {
 				display: expanded ? "block" : "none",
 				fontSize: "9pt",
@@ -55,6 +57,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 						padding: "4px 8px",
 					},
 				}}
+				onClick={() => setExpanded(!expanded)}
 			/>
 			<div className={classes.content}>{children}</div>
 		</div>
