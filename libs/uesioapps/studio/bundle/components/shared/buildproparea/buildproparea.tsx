@@ -38,7 +38,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 
 	return (
 		<div className={classes.wrapper}>
-			{propsDef?.properties && (
+			{!!propsDef?.properties?.length && (
 				<div className={classes.propList}>
 					<PropList
 						path={path}

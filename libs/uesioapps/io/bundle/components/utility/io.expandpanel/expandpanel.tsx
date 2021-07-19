@@ -36,7 +36,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				borderBottom: "1px solid #eee",
+				// borderBottom: "1px solid #eee",
 				padding: "6px 0px",
 				borderTop: "none",
 			},
@@ -46,6 +46,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			icon: {
 				transform: expanded ? "rotate(0deg)" : "rotate(180deg)",
 				transition: "all 0.3s ease",
+				fontSize: "18px",
 			},
 			content: {
 				visibility: displayContent ? "visible" : "hidden",
