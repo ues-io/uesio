@@ -22,7 +22,8 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const { label, context, children, defaultExpanded = true, actions } = props
 	const [expanded, setExpanded] = useState<boolean>(defaultExpanded)
 	const [displayContent, setdisplayContent] = useState(defaultExpanded)
-
+	const ariaControls = `expandPanel-${label}`
+	const ariaLabelledBy = `accordionId-${label}`
 	useEffect(() => {
 		if (!expanded && displayContent) {
 			setTimeout(() => {
@@ -81,8 +82,11 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			<TitleBar
 				className={classes.titlebar}
 				title={label}
+				id={ariaLabelledBy}
 				context={context}
 				actions={titleBarActions}
+				ariaExpanded={expanded}
+				ariaControls={ariaControls}
 				variant="io.expandpanel"
 				styles={{
 					root: {
@@ -90,9 +94,15 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 					},
 				}}
 				onClick={() => setExpanded(!expanded)}
-				// expanded={expanded}
 			/>
-			<div className={classes.content}>{children}</div>
+			<div
+				role="region"
+				aria-labelledby={ariaLabelledBy}
+				id={ariaControls}
+				className={classes.content}
+			>
+				{children}
+			</div>
 		</div>
 	)
 }
