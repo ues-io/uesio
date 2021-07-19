@@ -1,5 +1,5 @@
 import { FunctionComponent, ComponentType } from "react"
-import { definition, builder } from "@uesio/ui"
+import { builder } from "@uesio/ui"
 import PropListSection from "./proplistsection"
 import FieldsSection from "./fieldssection"
 import ConditionsSection from "./conditionssection"
@@ -22,7 +22,8 @@ const BuildSection: FunctionComponent<SectionRendererProps> = ({
 	propsDef,
 	context,
 	path,
-	definition,
+	getValue,
+	setValue,
 }) => {
 	const SectionHandler = SECTION_TO_COMPONENT[section.type]
 	return (
@@ -30,8 +31,9 @@ const BuildSection: FunctionComponent<SectionRendererProps> = ({
 			section={section}
 			propsDef={propsDef}
 			path={path}
-			definition={definition}
 			context={context}
+			getValue={getValue}
+			setValue={setValue}
 		/>
 	)
 }

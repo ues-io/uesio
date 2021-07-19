@@ -16,6 +16,8 @@ import BotProp from "./botprop"
 interface Props extends definition.BaseProps {
 	descriptor: builder.PropDescriptor
 	propsDef: builder.BuildPropertiesDefinition
+	setValue: (value: definition.DefinitionValue) => void
+	getValue: () => definition.Definition
 }
 
 function getPropHandler(type?: string) {
@@ -51,19 +53,11 @@ function getPropHandler(type?: string) {
 }
 
 const BuildPropItem: FunctionComponent<Props> = (props) => {
-	const { definition, descriptor, path } = props
-
-	const uesio = hooks.useUesio(props)
-
-	const getValue = (): definition.Definition =>
-		definition ? definition[descriptor.name] : ""
-
-	const setValue = (value: string): void =>
-		uesio.view.setDefinition(path + '["' + descriptor.name + '"]', value)
+	const { descriptor } = props
 
 	const PropHandler = getPropHandler(descriptor.type)
 
-	return <PropHandler getValue={getValue} setValue={setValue} {...props} />
+	return <PropHandler {...props} />
 }
 
 export default BuildPropItem

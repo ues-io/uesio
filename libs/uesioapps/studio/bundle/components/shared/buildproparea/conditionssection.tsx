@@ -55,12 +55,19 @@ const getConditionProperties = (
 		: []
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path, context } = props
+	const { section, path, context, getValue, setValue } = props
+	const wireDef = getValue(path || "") as definition.DefinitionMap | undefined
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
-	const selectedNode = uesio.builder.useSelectedNode()
+	const [metadataType, metadataItem, selectedNode] =
+		uesio.builder.useSelectedNode()
+	const viewDefId = uesio.getViewDefId()
+	if (!viewDefId) return null
 
-	const conditionsDef = def?.conditions as definition.Definition[] | undefined
+	const conditionsDef = wireDef?.conditions as
+		| definition.Definition[]
+		| undefined
+
 	const primaryColor = theme.definition.palette.primary
 	return (
 		<ExpandPanel
@@ -87,8 +94,12 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							selected={selected}
 							iconColor={primaryColor}
 							key={index}
-							onClick={(): void => {
-								uesio.builder.setSelectedNode(conditionPath)
+							onClick={() => {
+								uesio.builder.setSelectedNode(
+									"viewdef",
+									viewDefId,
+									conditionPath
+								)
 							}}
 							context={context}
 						>
@@ -97,7 +108,6 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									path={conditionPath}
 									index={0}
 									context={context}
-									definition={condition}
 									propsDef={{
 										title: "Condition",
 										sections: [],
@@ -111,6 +121,8 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 											},
 										],
 									}}
+									getValue={getValue}
+									setValue={setValue}
 								/>
 							}
 						</PropNodeTag>

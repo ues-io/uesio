@@ -12,6 +12,7 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const { context, className } = props
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
@@ -21,7 +22,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		},
 		props
 	)
-	const yamlDoc = uesio.view.useYAML()
+	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
+	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 
@@ -90,7 +92,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					title={"code"}
 					actions={
 						<IconButton
-							{...props}
+							context={context}
 							variant="io.small"
 							icon="close"
 							onClick={uesio.signal.getHandler([
@@ -100,10 +102,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							])}
 						/>
 					}
-					{...props}
+					context={context}
 				/>
 			}
-			{...props}
+			context={context}
+			className={className}
 		>
 			<LazyMonaco
 				value={currentYaml}
@@ -194,7 +197,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									true
 								)
 							if (relevantNode && nodePath) {
-								uesio.builder.setSelectedNode(nodePath)
+								uesio.builder.setSelectedNode(
+									metadataType,
+									metadataItem,
+									nodePath
+								)
 							}
 						}
 					})
@@ -211,7 +218,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									true
 								)
 							if (relevantNode && nodePath) {
-								uesio.builder.setActiveNode(nodePath)
+								uesio.builder.setActiveNode(
+									metadataType,
+									metadataItem,
+									nodePath
+								)
 							}
 						}
 					})

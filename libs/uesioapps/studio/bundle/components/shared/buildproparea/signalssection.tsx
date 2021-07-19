@@ -6,13 +6,20 @@ import { hooks, definition, signal } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, definition: def, path, context } = props
+	const { section, path, context, getValue, setValue } = props
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const primaryColor = theme.definition.palette.primary
-	const selectedNode = uesio.builder.useSelectedNode()
+	const [metadataType, metadataItem, selectedNode] =
+		uesio.builder.useSelectedNode()
 
-	const signalsDef = def?.signals as definition.Definition[] | undefined
+	const componentDef = getValue(path || "") as
+		| definition.DefinitionMap
+		| undefined
+
+	const signalsDef = componentDef?.signals as
+		| definition.Definition[]
+		| undefined
 
 	return (
 		<ExpandPanel
@@ -38,7 +45,11 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						iconColor={primaryColor}
 						key={index}
 						onClick={(): void =>
-							uesio.builder.setSelectedNode(signalPath)
+							uesio.builder.setSelectedNode(
+								metadataType,
+								metadataItem,
+								signalPath
+							)
 						}
 						context={context}
 					>
@@ -57,6 +68,8 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 											signal
 										),
 								}}
+								getValue={getValue}
+								setValue={setValue}
 							/>
 						}
 					</PropNodeTag>

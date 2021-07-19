@@ -15,7 +15,6 @@ import {
 import {
 	useViewConfigValue,
 	useViewDefinition,
-	useViewYAML,
 } from "../bands/viewdef/selectors"
 import { mergeInVariants } from "../component/component"
 import { useView } from "../bands/view/selectors"
@@ -83,11 +82,6 @@ class ViewAPI {
 
 		if (!variant) return def
 		return mergeInVariants(def, variant, this.uesio.getContext())
-	}
-
-	useYAML() {
-		const viewDefId = this.uesio.getViewDefId()
-		return viewDefId ? useViewYAML(viewDefId) : undefined
 	}
 
 	setDefinition(path: string, definition: Definition) {

@@ -5,11 +5,13 @@ import BuildSection from "./buildsection"
 import PropList from "./proplist"
 
 interface Props extends definition.BaseProps {
-	buildPropsDef: builder.BuildPropertiesDefinition
+	propsDef: builder.BuildPropertiesDefinition
+	setValue: (path: string, value: definition.DefinitionValue) => void
+	getValue: (path: string) => definition.Definition
 }
 
 const BuildPropArea: FunctionComponent<Props> = (props) => {
-	const { buildPropsDef, path, definition, context } = props
+	const { propsDef, path, context, getValue, setValue } = props
 	const classes = styles.useStyles(
 		{
 			wrapper: {
@@ -25,25 +27,26 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 	)
 
 	const sections =
-		buildPropsDef.type === "component"
-			? buildPropsDef.sections.concat([
+		propsDef.type === "component"
+			? propsDef.sections.concat([
 					{
 						title: "Styles",
 						type: "STYLES",
 					},
 			  ])
-			: buildPropsDef.sections
+			: propsDef.sections
 
 	return (
 		<div className={classes.wrapper}>
-			{buildPropsDef?.properties && (
+			{propsDef?.properties && (
 				<div className={classes.propList}>
 					<PropList
 						path={path}
-						definition={definition}
-						propsDef={buildPropsDef}
-						properties={buildPropsDef.properties}
+						propsDef={propsDef}
+						properties={propsDef.properties}
 						context={context}
+						getValue={getValue}
+						setValue={setValue}
 					/>
 				</div>
 			)}
@@ -51,11 +54,12 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 				<BuildSection
 					key={index}
 					path={path}
-					definition={definition}
-					propsDef={buildPropsDef}
+					propsDef={propsDef}
 					section={section}
 					index={index}
 					context={context}
+					getValue={getValue}
+					setValue={setValue}
 				/>
 			))}
 		</div>

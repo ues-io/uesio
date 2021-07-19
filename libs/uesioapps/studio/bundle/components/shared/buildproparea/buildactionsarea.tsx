@@ -11,6 +11,7 @@ import { ActionProps } from "./actions/actiondefinition"
 
 interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
+	getValue: (path: string) => definition.Definition
 }
 
 const ACTION_TO_COMPONENT: {
@@ -34,18 +35,19 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-	const actions = props.actions
+	const { actions, path, context, getValue } = props
 	return (
 		<div className={classes.wrapper}>
-			<DeleteAction {...props} definition={definition} />
-			<MoveActions {...props} definition={definition} />
+			<DeleteAction getValue={getValue} context={context} path={path} />
+			<MoveActions getValue={getValue} context={context} path={path} />
 			{actions?.map?.((action, index) => {
 				const ActionHandler = ACTION_TO_COMPONENT[action.type]
 				return (
 					<ActionHandler
-						{...props}
+						getValue={getValue}
+						context={context}
+						path={path}
 						key={index}
-						definition={definition}
 						action={action}
 					/>
 				)
