@@ -30,7 +30,6 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					backgroundColor: "#eee",
 					bottom: "0",
 				},
-				// borderBottom: "1px solid #ccc",
 			},
 		},
 		props

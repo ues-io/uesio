@@ -29,7 +29,6 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 			wrapper: {
 				display: "flex",
 				justifyContent: "space-around",
-				// backgroundColor: "#f0f0f0",
 				padding: "8px",
 				position: "relative",
 				"&::after": {
