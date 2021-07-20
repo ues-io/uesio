@@ -115,6 +115,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
+					fontSize: 11,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
 					//quickSuggestions: true,
