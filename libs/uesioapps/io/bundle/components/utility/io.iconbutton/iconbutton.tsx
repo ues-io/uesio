@@ -9,13 +9,15 @@ interface IconButtonProps extends definition.UtilityProps {
 	size?: string
 	disabled?: boolean
 	tooltipPlacement?: Placement
+	// CSS syntax
+	iconSize: string
 }
 
 const Icon = component.registry.getUtility("io.icon")
 const Tooltip = component.registry.getUtility("io.tooltip")
 
 const IconButton: FunctionComponent<IconButtonProps> = (props) => {
-	const { context, icon, label, tooltipPlacement, onClick } = props
+	const { context, icon, iconSize, label, tooltipPlacement, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -24,6 +26,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 				cursor: onClick ? "pointer" : "inherit",
 				display: "block",
 				width: "100%",
+				fontSize: "1.2em",
 				background: "transparent",
 			},
 		},
@@ -31,7 +34,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 	)
 	const button = (
 		<button onClick={onClick} className={classes.root}>
-			<Icon size={props.size} context={context} icon={icon} />
+			<Icon fontSize={iconSize} context={context} icon={icon} />
 		</button>
 	)
 	return label ? (

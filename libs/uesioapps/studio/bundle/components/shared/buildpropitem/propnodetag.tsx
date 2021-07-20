@@ -68,7 +68,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		>
 			<Tile
 				variant="io.tile.studio.propnodetag"
-				avatar={<Icon icon={icon} context={context} />}
+				avatar={<Icon fontSize="1.8em" icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
 			>
@@ -76,7 +76,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 
 				{tooltip && (
 					<IconButton
-						size="small"
+						fontSize="1.2em"
 						icon="help"
 						label={tooltip}
 						className="tooltip"

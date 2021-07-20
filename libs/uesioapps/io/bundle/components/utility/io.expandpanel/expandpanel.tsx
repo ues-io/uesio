@@ -51,7 +51,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			},
 			content: {
 				visibility: displayContent ? "visible" : "hidden",
-				fontSize: "9pt",
+				fontSize: "1rem",
 				color: "#444",
 				padding: "0 6px",
 				transition: "all 0.3s ease",
