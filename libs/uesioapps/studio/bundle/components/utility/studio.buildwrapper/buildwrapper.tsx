@@ -13,6 +13,7 @@ interface BuildWrapperProps extends definition.UtilityProps {
 
 const ACTIVE_COLOR = "#eee"
 const SELECTED_COLOR = "#aaa"
+const HOVER_COLOR = "#aaaaaaae"
 const INACTIVE_COLOR = "#eee"
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
@@ -39,6 +40,12 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 
 	const wrapperPath = component.path.getGrandParentPath(path)
 
+	const borderColor = (() => {
+		if (isSelected) return SELECTED_COLOR
+		if (isActive) return HOVER_COLOR
+		return INACTIVE_COLOR
+	})()
+
 	const isDraggingMe = path === dragNode
 	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropNode
 	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropNode
@@ -48,12 +55,17 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
+				cursor: "pointer",
 				position: "relative",
 				userSelect: "none",
 				...(isStructureView && {
-					border: `1px solid ${
-						isSelected ? SELECTED_COLOR : INACTIVE_COLOR
-					}`,
+					border: `1px solid ${borderColor}`,
+					marginTop: "-1px",
+					zIndex: isSelected ? 1 : 0,
+					transition: "all 0.18s ease",
+					"&:hover": {
+						zIndex: 1,
+					},
 				}),
 				...(isContentView && {
 					position: "relative",
