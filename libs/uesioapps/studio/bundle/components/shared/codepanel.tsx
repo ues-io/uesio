@@ -126,6 +126,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						return
 					}
 					event.changes.forEach((change) => {
+						console.log("change", change)
 						if (
 							currentAST.current?.contents &&
 							newAST &&
@@ -206,7 +207,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							return uesio.builder.clearSelectedNode()
 
 						const position = {
-							lineNumber: startColumn,
+							lineNumber: startLineNumber,
 							column: startColumn,
 						}
 
