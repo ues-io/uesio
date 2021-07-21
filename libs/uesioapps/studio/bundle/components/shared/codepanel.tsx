@@ -185,10 +185,32 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
-					editor.onDidChangeCursorPosition((e) => {
+					// We want to:
+					// Or set the selected node when clicking
+					// Or clear the selected node when selecting text
+					editor.onDidChangeCursorSelection((e) => {
 						const model = editor.getModel()
-						const position = e.position
-						if (model && position && currentAST.current?.contents) {
+						const {
+							endColumn,
+							startColumn,
+							endLineNumber,
+							startLineNumber,
+						} = e.selection
+						const hasSelection = !(
+							endColumn === startColumn &&
+							endLineNumber === startLineNumber
+						)
+
+						// Check if text is selected, if so... stop
+						if (hasSelection)
+							return uesio.builder.clearSelectedNode()
+
+						const position = {
+							lineNumber: startColumn,
+							column: startColumn,
+						}
+
+						if (model && currentAST.current?.contents) {
 							const offset = model.getOffsetAt(position)
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
@@ -197,15 +219,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									"",
 									true
 								)
-							if (relevantNode && nodePath) {
+
+							if (relevantNode && nodePath)
 								uesio.builder.setSelectedNode(
 									metadataType,
 									metadataItem,
 									nodePath
 								)
-							}
 						}
 					})
+
 					editor.onMouseMove((e) => {
 						const model = editor.getModel()
 						const position = e.target.position
