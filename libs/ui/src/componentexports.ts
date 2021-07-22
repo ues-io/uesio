@@ -4,7 +4,6 @@ import Panel from "./components/panel"
 import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
-import * as dragdrop from "./component/dragdrop"
 import { Component } from "./component/component"
 import SlotRuntime from "./components/slotruntime"
 import { shouldHaveClass } from "./component/display"
@@ -15,7 +14,6 @@ export {
 	View,
 	path,
 	registry,
-	dragdrop,
 	Component,
 	Panel,
 	NotificationArea,

@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
-import { hooks, component } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const ListField = component.registry.getUtility("io.listfield")
@@ -11,10 +11,9 @@ type StyleValue = {
 }
 
 const StylesListProp: FC<PropRendererProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { context, path, definition, descriptor, propsDef } = props
+	const { context, path, propsDef, valueAPI } = props
 
-	const styleData = definition?.["uesio.styles"]
+	const styleData = valueAPI.get(path) as definition.DefinitionMap
 
 	return (
 		<div>
@@ -22,7 +21,7 @@ const StylesListProp: FC<PropRendererProps> = (props) => {
 				<FieldLabel label={"Inline Styles"} context={context} />
 			)}
 			{propsDef.classes?.map((className) => {
-				const data = styleData?.[className]
+				const data = styleData?.[className] as definition.DefinitionMap
 				return (
 					<ListField
 						label={className}
@@ -42,8 +41,8 @@ const StylesListProp: FC<PropRendererProps> = (props) => {
 							{ name: "value" },
 						]}
 						setValue={(value: StyleValue[]) =>
-							uesio.view.setDefinition(
-								`${path}["${descriptor.name}"]["${className}"]`,
+							valueAPI.set(
+								`${path}["${className}"]`,
 								value.reduce(
 									(obj, item) => ({
 										...obj,

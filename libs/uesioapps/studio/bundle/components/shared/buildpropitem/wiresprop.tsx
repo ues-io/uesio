@@ -5,17 +5,14 @@ import { hooks, wire, component } from "@uesio/ui"
 const MultiSelectField = component.registry.getUtility("io.multiselectfield")
 
 const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
-	const { descriptor, context, setValue, getValue } = props
-	const uesio = hooks.useUesio(props)
-	const wires = uesio.view.useDefinition(
-		'["wires"]'
-	) as wire.WireDefinitionMap
+	const { descriptor, context, valueAPI, path } = props
+	const wires = valueAPI.get(path) as wire.WireDefinitionMap
 
 	return (
 		<MultiSelectField
-			value={getValue()}
+			value={wires}
 			label={descriptor.label}
-			setValue={setValue}
+			setValue={(value: string) => valueAPI.set(path, value)}
 			options={Object.keys(wires).map((wireId) => ({
 				value: wireId,
 				label: wireId,

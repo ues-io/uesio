@@ -5,16 +5,14 @@ import ActionButton from "./actionbutton"
 
 const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const path = props.path || ""
+	const { path = "", valueAPI, context } = props
 
 	// Pop off the first item of the path and check to see if its a number
 
 	const index = component.path.getIndexFromPath(path)
 	const indexPath = component.path.getIndexPath(path)
 	const parentPath = component.path.getParentPath(indexPath)
-	const parentDef = uesio.view.useDefinition(
-		parentPath
-	) as definition.Definition[]
+	const parentDef = valueAPI.get(parentPath) as definition.Definition[]
 	const size = parentDef?.length
 	const enableBackward = !!index
 	const enableForward = index !== null && size && index < size - 1
@@ -24,7 +22,7 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 
 		const suffix = component.path.getPathSuffix(path)
 		const newSelectedPath = `${toPath}["${suffix}"]`
-		uesio.view.moveDefinition(path, newSelectedPath)
+		valueAPI.move(path, newSelectedPath)
 	}
 
 	const onClickBackward = () => index && moveToIndex(index - 1)
@@ -36,14 +34,14 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 				onClick={onClickBackward}
 				icon="arrow_upward"
 				disabled={!enableBackward}
-				context={props.context}
+				context={context}
 			/>
 			<ActionButton
 				title="Move Forward"
 				onClick={onClickForward}
 				icon="arrow_downward"
 				disabled={!enableForward}
-				context={props.context}
+				context={context}
 			/>
 		</>
 	)

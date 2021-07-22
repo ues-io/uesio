@@ -8,20 +8,25 @@ interface MetadataPropRendererProps extends PropRendererProps {
 }
 
 const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const { path, getValue, context, setValue, descriptor } = props
+	const { path, valueAPI, context, descriptor } = props
 	const metadataType = descriptor.metadataType
-	const value = getValue() as string
+	const value = valueAPI.get(path) as string
+
+	if (!path) return null
 
 	const getGrouping = (): string | undefined => {
-		const { groupingParents, groupingProperty, getGroupingFromKey } =
-			descriptor
+		const {
+			groupingParents = 1,
+			groupingProperty,
+			getGroupingFromKey,
+		} = descriptor
 
 		const groupingNodePath = component.path.getAncestorPath(
 			path || "",
-			groupingParents || 1
+			groupingParents + 1
 		)
-		const groupingNode = uesio.view.useDefinition(
+
+		const groupingNode = valueAPI.get(
 			groupingNodePath
 		) as definition.DefinitionMap
 
@@ -36,7 +41,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			metadataType={metadataType}
 			label={descriptor.label}
 			value={value}
-			setValue={setValue}
+			setValue={(value) => valueAPI.set(path, value)}
 			context={context}
 			grouping={getGrouping()}
 		/>

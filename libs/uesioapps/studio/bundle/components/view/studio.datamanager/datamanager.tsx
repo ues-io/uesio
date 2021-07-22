@@ -19,7 +19,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 	const fieldsWire = uesio.wire.useWire(definition.fieldsWire)
 
 	// Get Field info
-	const dataWire = useEffect(() => {
+	useEffect(() => {
 		// Create on-the-fly wire
 		if (!fieldsWire) return
 		const fields: wire.WireFieldDefinitionMap = {}
@@ -27,8 +27,9 @@ const DataManager: FunctionComponent<Props> = (props) => {
 			fields[`${namespace}.${record.getFieldString("studio.name")}`] =
 				null
 		})
-		uesio.view.addDefinitionPair(
-			`["wires"]`,
+		const basePath = `["viewdef"]["${context.getViewDefId()}"]["wires"]`
+		uesio.builder.addDefinitionPair(
+			basePath,
 			{
 				collection: `${namespace}.${collectionId}`,
 				fields,
@@ -39,7 +40,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		uesio.wire.loadWires(context, ["collectionData"])
 
 		return () => {
-			uesio.view.removeDefinition(`["wires"]["collectionData"]`)
+			uesio.builder.removeDefinition(`${basePath}["collectionData"]`)
 		}
 	}, [])
 

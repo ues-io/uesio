@@ -10,14 +10,14 @@ const SelectField = component.registry.getUtility("io.selectfield")
 
 const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	descriptor,
-	setValue,
-	getValue,
+	valueAPI,
 	context,
+	path,
 }) => (
 	<SelectField
-		value={getValue()}
+		value={valueAPI.get(path)}
 		label={descriptor.label}
-		setValue={setValue}
+		setValue={(value: string) => valueAPI.set(path, value)}
 		options={descriptor.options}
 		context={context}
 	/>

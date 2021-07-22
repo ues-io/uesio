@@ -1,21 +1,17 @@
 import { FunctionComponent } from "react"
-import { definition, component, builder, hooks } from "@uesio/ui"
+import { component, hooks } from "@uesio/ui"
 import BuildPropArea from "./buildproparea/buildproparea"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
-
-interface Props extends definition.UtilityProps {
-	propsDef?: builder.BuildPropertiesDefinition
-	setValue: (path: string, value: definition.DefinitionValue) => void
-	getValue: (path: string) => definition.Definition
-}
+import { PropertiesPaneProps } from "./propertiespaneldefinition"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
-const PropertiesPane: FunctionComponent<Props> = (props) => {
+const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { propsDef, path, context, getValue, setValue, className } = props
+	const { propsDef, path, context, valueAPI, className } = props
+
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
 		: "No Element Selected"
@@ -46,8 +42,7 @@ const PropertiesPane: FunctionComponent<Props> = (props) => {
 					<BuildActionsArea
 						path={path}
 						context={context}
-						getValue={getValue}
-						actions={propsDef.actions}
+						valueAPI={valueAPI}
 					/>
 				)
 			}
@@ -57,8 +52,7 @@ const PropertiesPane: FunctionComponent<Props> = (props) => {
 			{propsDef && (
 				<BuildPropArea
 					path={path}
-					setValue={setValue}
-					getValue={getValue}
+					valueAPI={valueAPI}
 					context={context}
 					propsDef={propsDef}
 				/>

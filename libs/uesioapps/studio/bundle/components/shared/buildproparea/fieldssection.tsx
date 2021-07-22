@@ -1,13 +1,12 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, DragEvent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
-import { getOnDragStartToolbar, getOnDragStopToolbar } from "../dragdrop"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, getValue } = props
-	const wireDef = getValue(path || "") as definition.DefinitionMap | undefined
+	const { section, path, context, valueAPI } = props
+	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const collectionKey = wireDef?.collection as string | undefined
 
 	if (!collectionKey) {
@@ -29,9 +28,18 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	)
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
+	const isStructureView = uesio.builder.useIsStructureView()
 
-	const onDragStart = getOnDragStartToolbar(uesio)
-	const onDragEnd = getOnDragStopToolbar(uesio)
+	const onDragStart = (e: DragEvent) => {
+		const target = e.target as HTMLDivElement
+		if (target && target.dataset.type && isStructureView) {
+			uesio.builder.setDragNode("field", "", target.dataset.type)
+		}
+	}
+	const onDragEnd = () => {
+		uesio.builder.clearDragNode()
+		uesio.builder.clearDropNode()
+	}
 
 	return (
 		<ExpandPanel
@@ -47,20 +55,17 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						const selected = fieldDef !== undefined
 						const onClick = (): void =>
 							selected
-								? uesio.view.removeDefinition(
+								? valueAPI.remove(
 										`${path}["fields"]["${fieldId}"]`
 								  )
-								: uesio.view.addDefinitionPair(
+								: valueAPI.addPair(
 										`${path}["fields"]`,
 										null,
 										fieldId
 								  )
 						return (
 							<PropNodeTag
-								draggable={component.dragdrop.createFieldBankKey(
-									collectionKey,
-									fieldId
-								)}
+								draggable={`${collectionKey}.${fieldId}`}
 								title={fieldId}
 								icon={
 									selected

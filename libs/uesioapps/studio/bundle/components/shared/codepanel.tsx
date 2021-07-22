@@ -132,7 +132,14 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						) {
 							// If the change contains newlines, give up. Just parse the entire thing.
 							if (change.text.includes("\n")) {
-								uesio.view.setYaml("", newAST)
+								uesio.builder.setYaml(
+									component.path.makeFullPath(
+										metadataType,
+										metadataItem,
+										""
+									),
+									newAST
+								)
 							} else {
 								// We need to find the first shared parent of the start offset and end offset
 								const [, startPath] = util.yaml.getNodeAtOffset(
@@ -164,9 +171,13 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									if (newNode) {
 										const yamlDoc = util.yaml.newDoc()
 										yamlDoc.contents = newNode
-										uesio.view.setYaml(
-											util.yaml.getPathFromPathArray(
-												commonPath
+										uesio.builder.setYaml(
+											component.path.makeFullPath(
+												metadataType,
+												metadataItem,
+												util.yaml.getPathFromPathArray(
+													commonPath
+												)
 											),
 											yamlDoc
 										)

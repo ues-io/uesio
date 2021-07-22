@@ -38,8 +38,16 @@ const parseVariantKey = (
 ): [string, string, string, string] => {
 	if (!fullName) return ["", "", "", ""]
 	const [componentNamespace, componentName, variantNamespace, variantName] =
-		fullName.split(".")
+		fullName.split(".", 4)
 	return [componentNamespace, componentName, variantNamespace, variantName]
+}
+
+// io.button.io.nav ==> [io, button, io, nav]
+const parseFieldKey = (fullName: string): [string, string, string, string] => {
+	if (!fullName) return ["", "", "", ""]
+	const [collectionNamespace, collectionName, fieldNamespace, fieldName] =
+		fullName.split(".", 4)
+	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
 }
 
 // Trims a path and then returns the last element of the path.
@@ -150,6 +158,19 @@ const getAncestorPath = (path: string, parents: number): string =>
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
+const getFullPathParts = (path: string): [string, string, string] => {
+	const pathArray = toPath(path)
+	const metadataType = pathArray.shift() || ""
+	const metadataItem = pathArray.shift() || ""
+	return [metadataType, metadataItem, fromPath(pathArray)]
+}
+
+const makeFullPath = (
+	metadataType: string,
+	metadataItem: string,
+	path: string
+) => `["${metadataType}"]["${metadataItem}"]${path}`
+
 // Trims a path to the closest index segment
 const getIndexPath = (path: string) => {
 	const pathArray = toPath(path)
@@ -172,6 +193,7 @@ export {
 	calculateNewPathAheadOfTime,
 	parseKey,
 	parseVariantKey,
+	parseFieldKey,
 	getPathSuffix,
 	trimPathToComponent,
 	unWrapDefinition,
@@ -184,4 +206,6 @@ export {
 	getIndexPath,
 	getIndexFromPath,
 	getDefinitionKey,
+	getFullPathParts,
+	makeFullPath,
 }

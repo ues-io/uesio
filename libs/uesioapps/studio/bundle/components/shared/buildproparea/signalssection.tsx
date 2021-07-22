@@ -6,14 +6,14 @@ import { hooks, definition, signal } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, getValue, setValue } = props
+	const { section, path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const primaryColor = theme.definition.palette.primary
 	const [metadataType, metadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 
-	const componentDef = getValue(path || "") as
+	const componentDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
 
@@ -28,8 +28,8 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			title={section.title}
 			action="add_box"
 			actionColor={primaryColor}
-			actionOnClick={(): void =>
-				uesio.view.addDefinition(`${path}["signals"]`, {
+			actionOnClick={() =>
+				valueAPI.add(`${path}["signals"]`, {
 					signal: "NEW_SIGNAL",
 				})
 			}
@@ -68,8 +68,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 											signal
 										),
 								}}
-								getValue={getValue}
-								setValue={setValue}
+								valueAPI={valueAPI}
 							/>
 						}
 					</PropNodeTag>

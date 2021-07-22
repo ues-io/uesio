@@ -7,12 +7,17 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
-	const path = '["wires"]'
 	const { context, className } = props
 	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
-	const def = uesio.view.useDefinition(path) as definition.DefinitionMap
+	const localPath = '["wires"]'
+	const path = component.path.makeFullPath(
+		metadataType,
+		metadataItem,
+		localPath
+	)
+	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
 	return (
 		<ScrollPanel
 			header={
@@ -26,7 +31,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							variant="io.small"
 							icon="add"
 							onClick={() =>
-								uesio.view.addDefinitionPair(
+								uesio.builder.addDefinitionPair(
 									path,
 									null,
 									"newwire" +
@@ -42,8 +47,8 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(def || {}).map((key: string, index) => {
-					const wirePath = `${path}["${key}"]`
-					const onClick = (): void =>
+					const wirePath = `${localPath}["${key}"]`
+					const onClick = () =>
 						uesio.builder.setSelectedNode(
 							metadataType,
 							metadataItem,
