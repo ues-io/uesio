@@ -7,14 +7,16 @@ const TextField = component.registry.getUtility("io.textfield")
 
 const NumberProp: FunctionComponent<PropRendererProps> = ({
 	descriptor,
-	setValue,
-	getValue,
+	valueAPI,
 	context,
+	path,
 }) => (
 	<TextField
-		value={getValue()}
+		value={valueAPI.get(path)}
 		label={descriptor.label}
-		setValue={(value: string): void => setValue(parseInt(value, 10))}
+		setValue={(value: string): void =>
+			valueAPI.set(path, parseInt(value, 10))
+		}
 		context={context}
 	/>
 )

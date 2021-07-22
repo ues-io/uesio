@@ -5,7 +5,7 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder } from "@uesio/ui"
 
 const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { path, definition, context, propsDef, getValue, setValue } = props
+	const { path, definition, context, propsDef, valueAPI } = props
 	const section = props.section as builder.PropListSection
 
 	return (
@@ -21,8 +21,7 @@ const PropListSection: FunctionComponent<SectionRendererProps> = (props) => {
 					propsDef={propsDef}
 					properties={section.properties}
 					context={context}
-					getValue={getValue}
-					setValue={setValue}
+					valueAPI={valueAPI}
 				/>
 			)}
 		</ExpandPanel>

@@ -13,13 +13,26 @@ import {
 	parse,
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
-import { createEntityReducer, EntityPayload } from "../utils"
+import { EntityPayload } from "../utils"
 import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import viewdefAdapter from "./adapter"
-import { calculateNewPathAheadOfTime, fromPath } from "../../component/path"
+import {
+	calculateNewPathAheadOfTime,
+	fromPath,
+	getFullPathParts,
+} from "../../component/path"
+import {
+	setDefinition,
+	addDefinition,
+	addDefinitionPair,
+	removeDefinition,
+	changeDefinitionKey,
+	moveDefinition,
+	setYaml,
+} from "../builder"
 
 type YamlUpdatePayload = {
 	path: string
@@ -44,7 +57,6 @@ type AddDefinitionPayload = {
 	path: string
 	definition: Definition
 	index?: number
-	bankDrop: boolean
 } & EntityPayload
 
 type AddDefinitionPairPayload = {
@@ -151,7 +163,6 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 		...payload,
 		definition,
 		index,
-		bankDrop: false,
 		path: fromPath(updatePathArr),
 	})
 }
@@ -277,31 +288,6 @@ const viewDefSlice = createSlice({
 	name: "viewdef",
 	initialState: viewdefAdapter.getInitialState(),
 	reducers: {
-		setYaml: createEntityReducer<YamlUpdatePayload, PlainViewDef>(
-			updateYaml
-		),
-		setDefinition: createEntityReducer<SetDefinitionPayload, PlainViewDef>(
-			setDef
-		),
-		removeDefinition: createEntityReducer<
-			RemoveDefinitionPayload,
-			PlainViewDef
-		>(removeDef),
-		moveDefinition: createEntityReducer<
-			MoveDefinitionPayload,
-			PlainViewDef
-		>(moveDef),
-		addDefinition: createEntityReducer<AddDefinitionPayload, PlainViewDef>(
-			addDef
-		),
-		addDefinitionPair: createEntityReducer<
-			AddDefinitionPairPayload,
-			PlainViewDef
-		>(addDefPair),
-		changeDefinitionKey: createEntityReducer<
-			ChangeDefinitionKeyPayload,
-			PlainViewDef
-		>(changeDefKey),
 		cancel: cancelAllDefs,
 	},
 	extraReducers: (builder) => {
@@ -327,18 +313,130 @@ const viewDefSlice = createSlice({
 			}
 		)
 		builder.addCase(saveOp.fulfilled, saveAllDefs)
+		builder.addCase(
+			setDefinition,
+			(state, { payload }: PayloadAction<SetDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						setDef(entityState, {
+							path: localPath,
+							definition: payload.definition,
+							entity: metadataItem,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			addDefinition,
+			(state, { payload }: PayloadAction<AddDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						addDef(entityState, {
+							path: localPath,
+							definition: payload.definition,
+							entity: metadataItem,
+							index: payload.index,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			addDefinitionPair,
+			(state, { payload }: PayloadAction<AddDefinitionPairPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						addDefPair(entityState, {
+							path: localPath,
+							definition: payload.definition,
+							entity: metadataItem,
+							key: payload.key,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			removeDefinition,
+			(state, { payload }: PayloadAction<RemoveDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						removeDef(entityState, {
+							path: localPath,
+							entity: metadataItem,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			changeDefinitionKey,
+			(state, { payload }: PayloadAction<ChangeDefinitionKeyPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						changeDefKey(entityState, {
+							path: localPath,
+							entity: metadataItem,
+							key: payload.key,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			moveDefinition,
+			(state, { payload }: PayloadAction<MoveDefinitionPayload>) => {
+				const [toType, toItem, toPath] = getFullPathParts(
+					payload.toPath
+				)
+				const [fromType, fromItem, fromPath] = getFullPathParts(
+					payload.fromPath
+				)
+				if (
+					toType === "viewdef" &&
+					fromType === "viewdef" &&
+					toItem === fromItem
+				) {
+					const entityState = state.entities[toItem]
+					entityState &&
+						moveDef(entityState, {
+							fromPath,
+							entity: toItem,
+							toPath,
+						})
+				}
+			}
+		)
+		builder.addCase(
+			setYaml,
+			(state, { payload }: PayloadAction<YamlUpdatePayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						updateYaml(entityState, {
+							path: localPath,
+							yaml: payload.yaml,
+							entity: metadataItem,
+						})
+				}
+			}
+		)
 	},
 })
 
-export const {
-	cancel,
-	setYaml,
-	removeDefinition,
-	setDefinition,
-	moveDefinition,
-	addDefinition,
-	addDefinitionPair,
-	changeDefinitionKey,
-} = viewDefSlice.actions
+export const { cancel } = viewDefSlice.actions
 
 export default viewDefSlice.reducer

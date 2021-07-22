@@ -1,7 +1,6 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
-import { getOnDragStartToolbar, getOnDragStopToolbar } from "./dragdrop"
 import ExpandPanel from "./expandpanel"
 import PropNodeTag from "./buildpropitem/propnodetag"
 
@@ -12,8 +11,16 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const isStructureView = uesio.builder.useIsStructureView()
-	const onDragStart = getOnDragStartToolbar(uesio)
-	const onDragEnd = getOnDragStopToolbar(uesio)
+	const onDragStart = (e: DragEvent) => {
+		const target = e.target as HTMLDivElement
+		if (target && target.dataset.type && isStructureView) {
+			uesio.builder.setDragNode("component", target.dataset.type, "")
+		}
+	}
+	const onDragEnd = () => {
+		uesio.builder.clearDragNode()
+		uesio.builder.clearDropNode()
+	}
 	const builderComponents = component.registry.getBuilderComponents()
 
 	return (
@@ -55,10 +62,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										/>
 									) : (
 										<PropNodeTag
-											draggable={component.dragdrop.createComponentBankKey(
-												namespace,
-												componentName
-											)}
+											draggable={`${namespace}.${componentName}`}
 											title={componentName}
 											icon="drag_indicator"
 											key={indexTag}
