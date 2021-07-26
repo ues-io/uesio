@@ -23,6 +23,7 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setYaml,
+	cancel,
 } from "../bands/builder"
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
@@ -32,8 +33,7 @@ import {
 	useBuilderHasChanges,
 	useViewYAML,
 } from "../bands/viewdef/selectors"
-import { cancel as cancelViewChanges } from "../bands/viewdef"
-import saveViewDef from "../bands/viewdef/operations/save"
+
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import { getFullPathParts, makeFullPath } from "../component/path"
@@ -143,22 +143,21 @@ class BuilderAPI {
 	}
 
 	save = () =>
-		this.uesio.signal.dispatcher(
-			saveViewDef({ context: this.uesio.getContext() || new Context() })
+		this.dispatcher(
+			builderOps.save({
+				context: this.uesio.getContext() || new Context(),
+			})
 		)
 
-	cancel = () => {
-		this.dispatcher(cancelViewChanges())
-	}
+	cancel = () => this.dispatcher(cancel())
 
-	setDefinition = (path: string, definition: Definition) => {
+	setDefinition = (path: string, definition: Definition) =>
 		this.dispatcher(
 			setDefinition({
 				path,
 				definition,
 			})
 		)
-	}
 
 	addDefinition(
 		path: string,
@@ -176,12 +175,18 @@ class BuilderAPI {
 		)
 	}
 
-	addDefinitionPair(path: string, definition: Definition, key: string) {
+	addDefinitionPair(
+		path: string,
+		definition: Definition,
+		key: string,
+		type?: string
+	) {
 		this.dispatcher(
 			addDefinitionPair({
 				path,
 				definition,
 				key,
+				type,
 			})
 		)
 	}

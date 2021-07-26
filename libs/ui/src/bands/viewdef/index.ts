@@ -17,7 +17,7 @@ import { EntityPayload } from "../utils"
 import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
-import saveOp from "./operations/save"
+import builderOps from "../builder/operations"
 import viewdefAdapter from "./adapter"
 import {
 	calculateNewPathAheadOfTime,
@@ -32,6 +32,7 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setYaml,
+	cancel,
 } from "../builder"
 
 type YamlUpdatePayload = {
@@ -312,7 +313,7 @@ const viewDefSlice = createSlice({
 				})
 			}
 		)
-		builder.addCase(saveOp.fulfilled, saveAllDefs)
+		builder.addCase(builderOps.save.fulfilled, saveAllDefs)
 		builder.addCase(
 			setDefinition,
 			(state, { payload }: PayloadAction<SetDefinitionPayload>) => {
@@ -434,9 +435,8 @@ const viewDefSlice = createSlice({
 				}
 			}
 		)
+		builder.addCase(cancel, cancelAllDefs)
 	},
 })
-
-export const { cancel } = viewDefSlice.actions
 
 export default viewDefSlice.reducer

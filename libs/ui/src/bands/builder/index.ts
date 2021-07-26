@@ -8,7 +8,6 @@ import { getMetadataListKey } from "./selectors"
 import {
 	calculateNewPathAheadOfTime,
 	fromPath,
-	getFullPathParts,
 	getParentPath,
 	toPath,
 } from "../../component/path"
@@ -30,6 +29,7 @@ type AddDefinitionPairPayload = {
 	path: string
 	definition: Definition
 	key: string
+	type?: string
 }
 
 type RemoveDefinitionPayload = {
@@ -76,7 +76,9 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<AddDefinitionPairPayload>
 		) => {
-			// nothing actually happens here, just something for others to listen to.
+			if (payload.type === "wire") {
+				state.selectedNode = `${payload.path}["${payload.key}"]`
+			}
 		},
 		removeDefinition: (
 			state,
@@ -110,6 +112,13 @@ const builderSlice = createSlice({
 			const pathArr = toPath(updatedPath)
 			pathArr.splice(-1) //We just want the index, not the key level
 			state.lastModifiedNode = fromPath(pathArr)
+		},
+		save: () => {
+			console.log("SAVING")
+		},
+		cancel: (state) => {
+			state.selectedNode = ""
+			state.lastModifiedNode = ""
 		},
 		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
 			state.lastModifiedNode = payload.path
@@ -182,12 +191,6 @@ const builderSlice = createSlice({
 			state.namespaces = null
 			state.metadata = null
 		})
-		/*
-		builder.addCase(cancel, (state) => {
-			state.selectedNode = ""
-			state.lastModifiedNode = ""
-		})
-		*/
 	},
 })
 
@@ -203,5 +206,7 @@ export const {
 	moveDefinition,
 	changeDefinitionKey,
 	setYaml,
+	save,
+	cancel,
 } = builderSlice.actions
 export default builderSlice.reducer
