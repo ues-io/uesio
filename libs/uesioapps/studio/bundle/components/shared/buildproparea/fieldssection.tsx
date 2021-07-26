@@ -33,7 +33,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type && isStructureView) {
-			uesio.builder.setDragNode("field", "", target.dataset.type)
+			uesio.builder.setDragNode("field", target.dataset.type, "")
 		}
 	}
 	const onDragEnd = () => {
