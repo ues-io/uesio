@@ -183,24 +183,9 @@ const builderSlice = createSlice({
 			state.metadata = null
 		})
 		/*
-
-
 		builder.addCase(cancel, (state) => {
 			state.selectedNode = ""
 			state.lastModifiedNode = ""
-		})
-		builder.addCase(addDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
-			if (!payload.bankDrop || payload.index === undefined) {
-				// Added a not dragged component
-				// (added button to buttonset for example)
-				// in which case we do not want to shift the
-				// selected node
-				return
-			}
-			const def = <DefinitionMap>payload.definition
-			const key = Object.keys(def)[0]
-			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
 		})
 		*/
 	},
