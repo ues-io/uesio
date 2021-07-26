@@ -1,11 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 import { BuilderState } from "./types"
-import { Definition, YamlDoc } from "../../definition/definition"
+import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import builderOps from "./operations"
 
 import { getMetadataListKey } from "./selectors"
-import { getParentPath } from "../../component/path"
+import {
+	calculateNewPathAheadOfTime,
+	fromPath,
+	getFullPathParts,
+	getParentPath,
+	toPath,
+} from "../../component/path"
 import { set as setRoute } from "../route"
 
 type SetDefinitionPayload = {
@@ -17,6 +23,7 @@ type AddDefinitionPayload = {
 	path: string
 	definition: Definition
 	index?: number
+	type?: string
 }
 
 type AddDefinitionPairPayload = {
@@ -58,7 +65,12 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<AddDefinitionPayload>
 		) => {
-			// nothing actually happens here, just something for others to listen to.
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+			if (payload.type === "component") {
+				const def = payload.definition as DefinitionMap
+				const key = Object.keys(def)[0]
+				state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
+			}
 		},
 		addDefinitionPair: (
 			state,
@@ -90,10 +102,17 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<MoveDefinitionPayload>
 		) => {
-			// nothing actually happens here, just something for others to listen to.
+			const updatedPath = calculateNewPathAheadOfTime(
+				payload.fromPath,
+				payload.toPath
+			)
+			state.selectedNode = updatedPath
+			const pathArr = toPath(updatedPath)
+			pathArr.splice(-1) //We just want the index, not the key level
+			state.lastModifiedNode = fromPath(pathArr)
 		},
 		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
-			// nothing actually happens here, just something for others to listen to.
+			state.lastModifiedNode = payload.path
 		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
 			state.activeNode = payload
@@ -182,16 +201,6 @@ const builderSlice = createSlice({
 			const def = <DefinitionMap>payload.definition
 			const key = Object.keys(def)[0]
 			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
-		})
-		builder.addCase(moveDefinition, (state, { payload }) => {
-			const updatedPath = calculateNewPathAheadOfTime(
-				payload.fromPath,
-				payload.toPath
-			)
-			state.selectedNode = updatedPath
-			const pathArr = toPath(updatedPath)
-			pathArr.splice(-1) //We just want the index, not the key level
-			state.lastModifiedNode = fromPath(pathArr)
 		})
 		*/
 	},

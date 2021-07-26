@@ -160,12 +160,18 @@ class BuilderAPI {
 		)
 	}
 
-	addDefinition(path: string, definition: Definition, index?: number) {
+	addDefinition(
+		path: string,
+		definition: Definition,
+		index?: number,
+		type?: string
+	) {
 		this.dispatcher(
 			addDefinition({
 				path,
 				definition,
 				index,
+				type,
 			})
 		)
 	}
