@@ -1,4 +1,5 @@
-import { FunctionComponent } from "react"
+import { FC, useState, useEffect, useRef, useCallback } from "react"
+import _ from "lodash"
 
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
@@ -8,9 +9,8 @@ import RightNav from "../../shared/rightnav"
 import PropertiesPanel from "../../shared/propertiespanel"
 import ComponentsPanel from "../../shared/componentspanel"
 import WiresPanel from "../../shared/wirespanel"
-import CodePanel from "../../shared/codepanel"
 import { BuilderState } from "./runtimebuilderdefinition"
-
+import SlidingBuildPanels from "./SlidingBuildPanels"
 const Grid = component.registry.getUtility("io.grid")
 
 component.registry.registerSignals("uesio.runtime", {
@@ -59,7 +59,11 @@ const NAV_WIDTH = 50
 const LEFT_PANEL_WIDTH = 300
 const RIGHT_PANEL_WIDTH = 300
 
-const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
+const Buildtime: FC<definition.BaseProps> = (props) => {
+	console.log("rendered runtime builder")
+	// const [separatorXPosition, setSeparatorXPosition] = useState<number>(0)
+	const slidePanelsRef = useRef<HTMLDivElement>(null)
+
 	const uesio = hooks.useUesio(props)
 	const { context, path } = props
 	const def = uesio.view.useDefinitionLocal(path)
@@ -82,6 +86,7 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 	)
 	if (!scriptResult.loaded || !def || !builderTheme || !state)
 		return <Canvas context={context} />
+
 	const builderContext = context.addFrame({
 		theme: "studio.default",
 	})
@@ -94,6 +99,7 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 
 	return (
 		<Grid
+			ref={slidePanelsRef}
 			context={context}
 			styles={{
 				root: {
@@ -127,22 +133,27 @@ const Buildtime: FunctionComponent<definition.BaseProps> = (props) => {
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
-			<Canvas
-				context={canvasContext}
+			<div
+				ref={slidePanelsRef}
 				className={styles.css({
 					gridRow: "1 / 3",
-					gridColumn: state.showCode ? "3" : "3 / 5",
+					gridColumn: "3 / 5",
+					display: "flex",
 				})}
-			/>
-			{state.showCode && (
-				<CodePanel
-					context={builderContext}
-					className={styles.css({ gridRow: "1 / 3", gridColumn: 4 })}
+			>
+				<SlidingBuildPanels
+					showCode={state.showCode}
+					builderContext={builderContext}
+					canvasContext={canvasContext}
+					slidePanelsRef={slidePanelsRef}
 				/>
-			)}
+			</div>
 			<RightNav
 				context={builderContext}
-				className={styles.css({ gridRow: "1 / 3", gridColumn: 5 })}
+				className={styles.css({
+					gridRow: "1 / 3",
+					gridColumn: 5,
+				})}
 			/>
 		</Grid>
 	)
