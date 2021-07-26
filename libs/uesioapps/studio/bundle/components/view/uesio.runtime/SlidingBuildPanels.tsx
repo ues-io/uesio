@@ -69,6 +69,7 @@ const SlidingBuildPanels: FC<T> = ({
 				<>
 					<div
 						role="seperator"
+						aria-valuenow={0}
 						onMouseDown={() => setDragging(true)}
 						className={styles.css({
 							display: "flex",
