@@ -28,17 +28,26 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	const uesio = hooks.useUesio(props)
 
-	const dragNode = uesio.builder.useDragNode()
-	const dropNode = uesio.builder.useDropNode()
+	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
+	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const fullDragPath = component.path.makeFullPath(
+		dragType,
+		dragItem,
+		dragPath
+	)
 	const isStructureView = uesio.builder.useIsStructureView()
 
 	const size = items.length
 
-	if (!path) return null
+	const viewDefId = context.getViewDefId()
+
+	if (!path || !viewDefId) return null
+
+	const isDragging = !!dragType && !!dragItem
 
 	const onDragOver = (e: DragEvent) => {
 		let target = e.target as Element | null
-		if (!isDropAllowed(accepts, dragNode)) {
+		if (!isDropAllowed(accepts, fullDragPath)) {
 			return
 		}
 		e.preventDefault()
@@ -56,7 +65,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		// Find the direct child
 		if (target === e.currentTarget || isCoverall) {
 			if (size === 0) {
-				uesio.builder.setDropNode(`${path}["0"]`)
+				uesio.builder.setDropNode("viewdef", viewDefId, `${path}["0"]`)
 			}
 		}
 
@@ -75,28 +84,36 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 				: index
 			let usePath = `${path}["${dropIndex}"]`
 
-			if (usePath === component.path.getParentPath(dragNode)) {
+			if (usePath === component.path.getParentPath(dragPath)) {
 				// Don't drop on ourselfs, just move to the next index
 				usePath = `${path}["${dropIndex + 1}"]`
 			}
 
-			if (usePath !== dropNode) {
-				uesio.builder.setDropNode(usePath)
+			if (usePath !== dropPath) {
+				uesio.builder.setDropNode("viewdef", viewDefId, usePath)
 			}
 		}
 	}
 
 	const onDrop = (e: DragEvent) => {
-		if (!isDropAllowed(accepts, dragNode)) {
+		if (!isDropAllowed(accepts, fullDragPath)) {
 			return
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		const index = component.path.getIndexFromPath(dropNode) || 0
-		handleDrop(dragNode, path, getDropIndex(dragNode, path, index), uesio)
+		const index = component.path.getIndexFromPath(dropPath) || 0
+		const fullDropPath = component.path.makeFullPath(
+			"viewdef",
+			viewDefId,
+			path
+		)
+		handleDrop(
+			fullDragPath,
+			fullDropPath,
+			getDropIndex(fullDragPath, fullDropPath, index),
+			uesio
+		)
 	}
-
-	const isDragging = !!dragNode
 
 	const classes = styles.useStyles(
 		{
@@ -112,12 +129,12 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 					right: 0,
 				}),
 				...(size === 0 &&
-					isDropAllowed(accepts, dragNode) && {
+					isDropAllowed(accepts, fullDragPath) && {
 						minWidth: "40px",
 						minHeight: "40px",
 					}),
 				...(size === 0 &&
-					dropNode === `${path}["0"]` && {
+					dropPath === `${path}["0"]` && {
 						border: "1px dashed #ccc",
 						backgroundColor: "#e5e5e5",
 					}),

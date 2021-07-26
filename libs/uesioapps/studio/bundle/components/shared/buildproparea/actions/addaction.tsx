@@ -17,7 +17,7 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 		const propDef = registry.getPropertiesDefinition(componentKey)
 
 		if (propDef) {
-			uesio.view.addDefinition(`${props.path}["${action.slot}"]`, {
+			props.valueAPI.add(`${props.path}["${action.slot}"]`, {
 				[componentKey]: propDef.defaultDefinition(),
 			})
 		}

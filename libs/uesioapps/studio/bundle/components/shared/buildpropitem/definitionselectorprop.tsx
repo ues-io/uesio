@@ -19,10 +19,9 @@ type DefinitionSelectorProps = PropRendererProps & {
 const DefinitionSelectorProp: FunctionComponent<DefinitionSelectorProps> = (
 	props
 ) => {
-	const uesio = hooks.useUesio(props)
 	const descriptor = props.descriptor
 
-	const definitions = uesio.view.useDefinition(
+	const definitions = props.valueAPI.get(
 		props.definitionPath
 	) as definition.DefinitionMap
 

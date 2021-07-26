@@ -110,18 +110,6 @@ function getThemeOverride(
 	return override
 }
 
-function getStylesFromVariant(
-	variant: ComponentVariant | undefined,
-	context: Context
-): DefinitionMap {
-	if (!variant) return {}
-	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
-	const override = getThemeOverride(variant, context)
-	return override
-		? mergeDefinitionMaps(variantStyles, override, context)
-		: variantStyles
-}
-
 function getDefinitionFromVariant(
 	variant: ComponentVariant | undefined,
 	context: Context
@@ -140,20 +128,13 @@ function getVariantStylesDef(
 	variantName: string,
 	context: Context
 ) {
-	return getStylesFromVariant(
-		context.getComponentVariant(componentType, variantName),
-		context
-	)
-}
-
-function mergeInVariants(
-	definition: DefinitionMap | undefined,
-	variant: ComponentVariant | undefined,
-	context: Context
-): DefinitionMap | undefined {
-	if (!definition) return definition
-	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return mergeDefinitionMaps(variantDefinition, definition, context)
+	const variant = context.getComponentVariant(componentType, variantName)
+	if (!variant) return {}
+	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
+	const override = getThemeOverride(variant, context)
+	return override
+		? mergeDefinitionMaps(variantStyles, override, context)
+		: variantStyles
 }
 
 function mergeContextVariants(
@@ -165,14 +146,13 @@ function mergeContextVariants(
 	const variantName = definition["uesio.variant"] as string
 	const [namespace] = parseKey(componentType)
 
-	return mergeInVariants(
-		definition,
-		context.getComponentVariant(
-			componentType,
-			variantName || `${namespace}.default`
-		),
-		context
+	if (!definition) return definition
+	const variant = context.getComponentVariant(
+		componentType,
+		variantName || `${namespace}.default`
 	)
+	const variantDefinition = getDefinitionFromVariant(variant, context)
+	return mergeDefinitionMaps(variantDefinition, definition, context)
 }
 
 function render(
@@ -215,7 +195,6 @@ export {
 	ComponentInternal,
 	Component,
 	renderUtility,
-	mergeInVariants,
 	getVariantStylesDef,
 	mergeDefinitionMaps,
 }

@@ -65,8 +65,13 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const slidePanelsRef = useRef<HTMLDivElement>(null)
 
 	const uesio = hooks.useUesio(props)
-	const { context, path } = props
-	const def = uesio.view.useDefinitionLocal(path)
+	const { context } = props
+
+	// This can be removed when we figure out a better way to get all variants onto the page for buildtime
+	// Right now we need this so we can re-render when we get the view definition in.
+	const def = uesio.builder.useDefinition(
+		component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
+	)
 	const viewDef = context.getViewDef()
 
 	const scriptResult = uesio.component.usePacks(

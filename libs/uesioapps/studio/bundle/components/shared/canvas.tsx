@@ -37,7 +37,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	// out the drop node.
 	const onDragLeave = (e: DragEvent) => {
 		if (e.target === e.currentTarget) {
-			uesio.builder.setDropNode("")
+			uesio.builder.clearDropNode()
 		} else {
 			const currentTarget = e.currentTarget as HTMLDivElement
 			const bounds = currentTarget.getBoundingClientRect()
@@ -46,7 +46,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			const outsideTop = e.pageY < bounds.top
 			const outsideBottom = e.pageY > bounds.bottom
 			if (outsideLeft || outsideRight || outsideTop || outsideBottom) {
-				uesio.builder.setDropNode("")
+				uesio.builder.clearDropNode()
 			}
 		}
 	}
@@ -57,7 +57,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragOver = (e: DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		uesio.builder.setDropNode("")
+		uesio.builder.clearDropNode()
 	}
 
 	return (

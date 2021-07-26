@@ -1,8 +1,9 @@
 import { definition, builder } from "@uesio/ui"
+import { ValueAPI } from "../../propertiespaneldefinition"
 
 interface ActionProps extends definition.BaseProps {
 	action?: builder.ActionDescriptor
-	getValue: (path: string) => definition.Definition
+	valueAPI: ValueAPI
 }
 
 export { ActionProps }

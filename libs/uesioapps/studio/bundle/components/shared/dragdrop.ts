@@ -1,14 +1,10 @@
 import { hooks, component, builder } from "@uesio/ui"
-import { DragEvent } from "react"
-
-const isExistingComponent = (dragNode: string): boolean =>
-	!component.dragdrop.isComponentBankKey(dragNode) &&
-	!component.dragdrop.isFieldBankKey(dragNode)
 
 function getDropHandler(dragNode: string) {
-	if (component.dragdrop.isFieldBankKey(dragNode)) {
+	const [metadataType] = component.path.getFullPathParts(dragNode)
+	if (metadataType === "field") {
 		return handleFieldDrop
-	} else if (component.dragdrop.isComponentBankKey(dragNode)) {
+	} else if (metadataType === "component") {
 		return handleBankDrop
 	}
 	return handleExistingDrop
@@ -20,11 +16,10 @@ const handleDrop = (
 	dropIndex: number,
 	uesio: hooks.Uesio
 ): void => {
-	const propDef =
-		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
+	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
 
-	uesio.builder.setDragNode("")
-	uesio.builder.setDropNode("")
+	uesio.builder.clearDragNode()
+	uesio.builder.clearDropNode()
 
 	if (!propDef) {
 		console.log("No prop def found")
@@ -51,8 +46,7 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const propDef =
-		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
+	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([
@@ -75,14 +69,13 @@ const handleBankDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
-	uesio.view.addDefinition(
+	uesio.builder.addDefinition(
 		dropNode,
 		{
 			[`${propDef.namespace}.${propDef.name}`]:
 				propDef.defaultDefinition(),
 		},
-		dropIndex,
-		true
+		dropIndex
 	)
 }
 
@@ -108,11 +101,10 @@ const handleExistingDrop = (
 	propDef: builder.BuildPropertiesDefinition,
 	uesio: hooks.Uesio
 ): void => {
-	const pathArray = component.path.toPath(dragNode)
-	const key = pathArray[pathArray.length - 1]
+	const key = component.path.getKeyAtPath(dragNode)
 	const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
 	// Selection Handling
-	uesio.view.moveDefinition(dragNode, toPath)
+	uesio.builder.moveDefinition(dragNode, toPath)
 }
 
 const getDropIndex = (
@@ -120,7 +112,8 @@ const getDropIndex = (
 	dropNode: string,
 	dropIndex: number
 ): number => {
-	if (isExistingComponent(dragNode)) {
+	const [metadataType] = component.path.getFullPathParts(dragNode)
+	if (metadataType === "viewdef") {
 		const dragIndex = component.path.getIndexFromPath(dragNode)
 		// The parent path is actually the grandparent path here.
 		const dragParentPath = component.path.getGrandParentPath(dragNode)
@@ -134,25 +127,4 @@ const getDropIndex = (
 	return dropIndex
 }
 
-const getOnDragStartToolbar = (uesio: hooks.Uesio) => {
-	const isStructureView = uesio.builder.useIsStructureView()
-	return (e: DragEvent) => {
-		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && isStructureView) {
-			uesio.builder.setDragNode(target.dataset.type)
-		}
-	}
-}
-const getOnDragStopToolbar = (uesio: hooks.Uesio) => () => {
-	uesio.builder.setDragNode("")
-	uesio.builder.setDropNode("")
-}
-
-export {
-	handleDrop,
-	getDropIndex,
-	isDropAllowed,
-	isNextSlot,
-	getOnDragStartToolbar,
-	getOnDragStopToolbar,
-}
+export { handleDrop, getDropIndex, isDropAllowed, isNextSlot }

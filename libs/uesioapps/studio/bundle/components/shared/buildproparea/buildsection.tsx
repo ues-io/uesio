@@ -17,25 +17,9 @@ const SECTION_TO_COMPONENT: {
 	STYLES: StylesSection,
 }
 
-const BuildSection: FunctionComponent<SectionRendererProps> = ({
-	section,
-	propsDef,
-	context,
-	path,
-	getValue,
-	setValue,
-}) => {
-	const SectionHandler = SECTION_TO_COMPONENT[section.type]
-	return (
-		<SectionHandler
-			section={section}
-			propsDef={propsDef}
-			path={path}
-			context={context}
-			getValue={getValue}
-			setValue={setValue}
-		/>
-	)
+const BuildSection: FunctionComponent<SectionRendererProps> = (props) => {
+	const SectionHandler = SECTION_TO_COMPONENT[props.section.type]
+	return <SectionHandler {...props} />
 }
 
 export default BuildSection

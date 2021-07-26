@@ -25,15 +25,14 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
-		uesio.view.addDefinition(
+		uesio.builder.addDefinition(
 			dropNode,
 			{
 				"io.field": {
 					fieldId: `${propDef.namespace}.${propDef.name}`,
 				},
 			},
-			dropIndex,
-			true
+			dropIndex
 		)
 	},
 }

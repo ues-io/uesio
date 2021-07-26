@@ -23,11 +23,8 @@ const useViewDef = (viewDefId: string) =>
 	useSelector((state: RootState) => selectors.selectById(state, viewDefId))
 
 const useViewDefinition = (viewDefId: string, path?: string): Definition =>
-	useSelector((state: RootState) => {
-		const viewDef = selectors.selectById(state, viewDefId)
-		const definition = viewDef?.definition
-		return path ? get(definition, path || "") : definition
-	})
+	useSelector((state: RootState) => getViewDefinition(state, viewDefId, path))
+
 const useViewYAML = (viewDefId: string) =>
 	useSelector((state: RootState) => {
 		const viewDef = selectors.selectById(state, viewDefId)
@@ -40,10 +37,21 @@ const useViewConfigValue = (viewDefId: string, key: string) =>
 		return viewDef?.dependencies?.configvalues[key] || ""
 	})
 
+const getViewDefinition = (
+	state: RootState,
+	viewDefId: string,
+	path?: string
+): Definition => {
+	const viewDef = selectors.selectById(state, viewDefId)
+	const definition = viewDef?.definition
+	return path ? get(definition, path || "") : definition
+}
+
 export {
 	useBuilderHasChanges,
 	useViewDef,
 	useViewYAML,
 	useViewDefinition,
 	useViewConfigValue,
+	getViewDefinition,
 }

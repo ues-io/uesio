@@ -7,11 +7,11 @@ const CheckBoxField = component.registry.getUtility("io.checkboxfield")
 
 const BooleanProp: FunctionComponent<PropRendererProps> = ({
 	descriptor,
-	getValue,
-	setValue,
+	valueAPI,
 	context,
+	path,
 }) => {
-	const selected = !!getValue()
+	const selected = !!valueAPI.get(path)
 
 	switch ((descriptor as builder.BooleanProp).displaytype) {
 		case "switch":
@@ -32,8 +32,8 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 				<SelectField
 					value={selected}
 					label={descriptor.label}
-					setValue={(value: string): void =>
-						setValue(value === "true")
+					setValue={(value: string) =>
+						valueAPI.set(path, value === "true")
 					}
 					options={optionslist}
 					context={context}
@@ -46,7 +46,7 @@ const BooleanProp: FunctionComponent<PropRendererProps> = ({
 				<CheckBoxField
 					value={selected}
 					label={descriptor.label}
-					setValue={setValue}
+					setValue={(value: boolean) => valueAPI.set(path, value)}
 					context={context}
 				/>
 			)

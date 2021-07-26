@@ -1,29 +1,100 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import {
-	getParentPath,
-	toPath,
-	fromPath,
-	calculateNewPathAheadOfTime,
-} from "../../component/path"
-import {
-	addDefinition,
-	changeDefinitionKey,
-	removeDefinition,
-	moveDefinition,
-	setDefinition,
-	cancel,
-} from "../viewdef"
+
 import { BuilderState } from "./types"
-import { DefinitionMap } from "../../definition/definition"
+import { Definition, YamlDoc } from "../../definition/definition"
 import builderOps from "./operations"
 
-import { set as setRoute } from "../route"
 import { getMetadataListKey } from "./selectors"
+import { getParentPath } from "../../component/path"
+import { set as setRoute } from "../route"
+
+type SetDefinitionPayload = {
+	path: string
+	definition: Definition
+}
+
+type AddDefinitionPayload = {
+	path: string
+	definition: Definition
+	index?: number
+}
+
+type AddDefinitionPairPayload = {
+	path: string
+	definition: Definition
+	key: string
+}
+
+type RemoveDefinitionPayload = {
+	path: string
+}
+
+type MoveDefinitionPayload = {
+	toPath: string
+	fromPath: string
+}
+
+type ChangeDefinitionKeyPayload = {
+	path: string
+	key: string
+}
+
+type YamlUpdatePayload = {
+	path: string
+	yaml: YamlDoc
+}
 
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
 	reducers: {
+		setDefinition: (
+			state,
+			{ payload }: PayloadAction<SetDefinitionPayload>
+		) => {
+			state.lastModifiedNode = payload.path
+		},
+		addDefinition: (
+			state,
+			{ payload }: PayloadAction<AddDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+		},
+		addDefinitionPair: (
+			state,
+			{ payload }: PayloadAction<AddDefinitionPairPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+		},
+		removeDefinition: (
+			state,
+			{ payload }: PayloadAction<RemoveDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+			if (payload.path === state.selectedNode) {
+				state.selectedNode = ""
+			}
+			state.lastModifiedNode = ""
+		},
+		changeDefinitionKey: (
+			state,
+			{
+				payload: { path, key },
+			}: PayloadAction<ChangeDefinitionKeyPayload>
+		) => {
+			const parentPath = getParentPath(path)
+			state.selectedNode = `${parentPath}["${key}"]`
+			state.lastModifiedNode = parentPath
+		},
+		moveDefinition: (
+			state,
+			{ payload }: PayloadAction<MoveDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+		},
+		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
+			// nothing actually happens here, just something for others to listen to.
+		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
 			state.activeNode = payload
 		},
@@ -87,26 +158,14 @@ const builderSlice = createSlice({
 				}
 			}
 		)
-		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			const parentPath = getParentPath(payload.path)
-			const keyPath = `${parentPath}["${payload.key}"]`
-			state.selectedNode = keyPath
-			state.lastModifiedNode = parentPath
-		})
-		builder.addCase(removeDefinition, (state, { payload }) => {
-			// only unselect the current item if it is the thing being removed
-			if (payload.path === state.selectedNode) {
-				state.selectedNode = ""
-			}
-			state.lastModifiedNode = ""
-		})
+
 		builder.addCase(setRoute, (state) => {
 			state.namespaces = null
 			state.metadata = null
 		})
-		builder.addCase(setDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path
-		})
+		/*
+
+
 		builder.addCase(cancel, (state) => {
 			state.selectedNode = ""
 			state.lastModifiedNode = ""
@@ -134,9 +193,21 @@ const builderSlice = createSlice({
 			pathArr.splice(-1) //We just want the index, not the key level
 			state.lastModifiedNode = fromPath(pathArr)
 		})
+		*/
 	},
 })
 
-export const { setActiveNode, setSelectedNode, setDragNode, setDropNode } =
-	builderSlice.actions
+export const {
+	setActiveNode,
+	setSelectedNode,
+	setDragNode,
+	setDropNode,
+	setDefinition,
+	addDefinition,
+	addDefinitionPair,
+	removeDefinition,
+	moveDefinition,
+	changeDefinitionKey,
+	setYaml,
+} = builderSlice.actions
 export default builderSlice.reducer

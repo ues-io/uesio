@@ -55,8 +55,10 @@ const getConditionProperties = (
 		: []
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, getValue, setValue } = props
-	const wireDef = getValue(path || "") as definition.DefinitionMap | undefined
+	const { section, path, context, valueAPI } = props
+	const wireDef = valueAPI.get(path || "") as
+		| definition.DefinitionMap
+		| undefined
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const [metadataType, metadataItem, selectedNode] =
@@ -75,8 +77,8 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			title={section.title}
 			action="add_box"
 			actionColor={primaryColor}
-			actionOnClick={(): void => {
-				uesio.view.addDefinition(path + '["conditions"]', {
+			actionOnClick={() => {
+				valueAPI.add(`${path}["conditions"]`, {
 					field: null,
 					value: "NEW_VALUE",
 				})
@@ -121,8 +123,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 											},
 										],
 									}}
-									getValue={getValue}
-									setValue={setValue}
+									valueAPI={valueAPI}
 								/>
 							}
 						</PropNodeTag>

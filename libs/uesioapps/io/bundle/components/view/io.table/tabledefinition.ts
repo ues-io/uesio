@@ -69,15 +69,14 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
-		uesio.view.addDefinition(
+		uesio.builder.addDefinition(
 			dropNode + '["columns"]',
 			{
 				"io.column": {
 					field: `${propDef.namespace}.${propDef.name}`,
 				},
 			},
-			dropIndex,
-			true
+			dropIndex
 		)
 	},
 	type: "component",
