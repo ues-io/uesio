@@ -5,9 +5,9 @@ import ActionButton from "./actionbutton"
 
 const ToggleConditionAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { path, getValue } = props
+	const { path, valueAPI } = props
 
-	const def = getValue(path || "") as definition.DefinitionMap
+	const def = valueAPI.get(path) as definition.DefinitionMap
 	const wirePath = component.path.trimPathToComponent(path || "")
 	const wireName = component.path.getKeyAtPath(wirePath)
 

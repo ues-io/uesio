@@ -3,15 +3,15 @@ import { FunctionComponent } from "react"
 import { definition, builder, styles } from "@uesio/ui"
 import BuildSection from "./buildsection"
 import PropList from "./proplist"
+import { ValueAPI } from "../propertiespaneldefinition"
 
 interface Props extends definition.BaseProps {
 	propsDef: builder.BuildPropertiesDefinition
-	setValue: (path: string, value: definition.DefinitionValue) => void
-	getValue: (path: string) => definition.Definition
+	valueAPI: ValueAPI
 }
 
 const BuildPropArea: FunctionComponent<Props> = (props) => {
-	const { propsDef, path, context, getValue, setValue } = props
+	const { propsDef, path, context, valueAPI } = props
 	const classes = styles.useStyles(
 		{
 			wrapper: {
@@ -54,8 +54,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 						propsDef={propsDef}
 						properties={propsDef.properties}
 						context={context}
-						getValue={getValue}
-						setValue={setValue}
+						valueAPI={valueAPI}
 					/>
 				</div>
 			)}
@@ -67,8 +66,7 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 					section={section}
 					index={index}
 					context={context}
-					getValue={getValue}
-					setValue={setValue}
+					valueAPI={valueAPI}
 				/>
 			))}
 		</div>

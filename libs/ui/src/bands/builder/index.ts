@@ -1,29 +1,128 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import {
-	getParentPath,
-	toPath,
-	fromPath,
-	calculateNewPathAheadOfTime,
-} from "../../component/path"
-import {
-	addDefinition,
-	changeDefinitionKey,
-	removeDefinition,
-	moveDefinition,
-	setDefinition,
-	cancel,
-} from "../viewdef"
+
 import { BuilderState } from "./types"
-import { DefinitionMap } from "../../definition/definition"
+import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import builderOps from "./operations"
 
-import { set as setRoute } from "../route"
 import { getMetadataListKey } from "./selectors"
+import {
+	calculateNewPathAheadOfTime,
+	fromPath,
+	getParentPath,
+	toPath,
+} from "../../component/path"
+import { set as setRoute } from "../route"
+
+type SetDefinitionPayload = {
+	path: string
+	definition: Definition
+}
+
+type AddDefinitionPayload = {
+	path: string
+	definition: Definition
+	index?: number
+	type?: string
+}
+
+type AddDefinitionPairPayload = {
+	path: string
+	definition: Definition
+	key: string
+	type?: string
+}
+
+type RemoveDefinitionPayload = {
+	path: string
+}
+
+type MoveDefinitionPayload = {
+	toPath: string
+	fromPath: string
+}
+
+type ChangeDefinitionKeyPayload = {
+	path: string
+	key: string
+}
+
+type YamlUpdatePayload = {
+	path: string
+	yaml: YamlDoc
+}
 
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
 	reducers: {
+		setDefinition: (
+			state,
+			{ payload }: PayloadAction<SetDefinitionPayload>
+		) => {
+			state.lastModifiedNode = payload.path
+		},
+		addDefinition: (
+			state,
+			{ payload }: PayloadAction<AddDefinitionPayload>
+		) => {
+			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
+			if (payload.type === "component") {
+				const def = payload.definition as DefinitionMap
+				const key = Object.keys(def)[0]
+				state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
+			}
+		},
+		addDefinitionPair: (
+			state,
+			{ payload }: PayloadAction<AddDefinitionPairPayload>
+		) => {
+			if (payload.type === "wire") {
+				state.selectedNode = `${payload.path}["${payload.key}"]`
+			}
+		},
+		removeDefinition: (
+			state,
+			{ payload }: PayloadAction<RemoveDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
+			if (payload.path === state.selectedNode) {
+				state.selectedNode = ""
+			}
+			state.lastModifiedNode = ""
+		},
+		changeDefinitionKey: (
+			state,
+			{
+				payload: { path, key },
+			}: PayloadAction<ChangeDefinitionKeyPayload>
+		) => {
+			const parentPath = getParentPath(path)
+			state.selectedNode = `${parentPath}["${key}"]`
+			state.lastModifiedNode = parentPath
+		},
+		moveDefinition: (
+			state,
+			{ payload }: PayloadAction<MoveDefinitionPayload>
+		) => {
+			const updatedPath = calculateNewPathAheadOfTime(
+				payload.fromPath,
+				payload.toPath
+			)
+			state.selectedNode = updatedPath
+			const pathArr = toPath(updatedPath)
+			pathArr.splice(-1) //We just want the index, not the key level
+			state.lastModifiedNode = fromPath(pathArr)
+		},
+		save: () => {
+			console.log("SAVING")
+		},
+		cancel: (state) => {
+			state.selectedNode = ""
+			state.lastModifiedNode = ""
+		},
+		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
+			state.lastModifiedNode = payload.path
+		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
 			state.activeNode = payload
 		},
@@ -87,56 +186,27 @@ const builderSlice = createSlice({
 				}
 			}
 		)
-		builder.addCase(changeDefinitionKey, (state, { payload }) => {
-			const parentPath = getParentPath(payload.path)
-			const keyPath = `${parentPath}["${payload.key}"]`
-			state.selectedNode = keyPath
-			state.lastModifiedNode = parentPath
-		})
-		builder.addCase(removeDefinition, (state, { payload }) => {
-			// only unselect the current item if it is the thing being removed
-			if (payload.path === state.selectedNode) {
-				state.selectedNode = ""
-			}
-			state.lastModifiedNode = ""
-		})
+
 		builder.addCase(setRoute, (state) => {
 			state.namespaces = null
 			state.metadata = null
 		})
-		builder.addCase(setDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path
-		})
-		builder.addCase(cancel, (state) => {
-			state.selectedNode = ""
-			state.lastModifiedNode = ""
-		})
-		builder.addCase(addDefinition, (state, { payload }) => {
-			state.lastModifiedNode = payload.path + `["${payload.index || 0}"]`
-			if (!payload.bankDrop || payload.index === undefined) {
-				// Added a not dragged component
-				// (added button to buttonset for example)
-				// in which case we do not want to shift the
-				// selected node
-				return
-			}
-			const def = <DefinitionMap>payload.definition
-			const key = Object.keys(def)[0]
-			state.selectedNode = `${payload.path}["${payload.index}"]["${key}"]`
-		})
-		builder.addCase(moveDefinition, (state, { payload }) => {
-			const updatedPath = calculateNewPathAheadOfTime(
-				payload.fromPath,
-				payload.toPath
-			)
-			state.selectedNode = updatedPath
-			const pathArr = toPath(updatedPath)
-			pathArr.splice(-1) //We just want the index, not the key level
-			state.lastModifiedNode = fromPath(pathArr)
-		})
 	},
 })
 
-export const { setActiveNode, setSelectedNode, setDragNode, setDropNode } =
-	builderSlice.actions
+export const {
+	setActiveNode,
+	setSelectedNode,
+	setDragNode,
+	setDropNode,
+	setDefinition,
+	addDefinition,
+	addDefinitionPair,
+	removeDefinition,
+	moveDefinition,
+	changeDefinitionKey,
+	setYaml,
+	save,
+	cancel,
+} = builderSlice.actions
 export default builderSlice.reducer

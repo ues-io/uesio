@@ -5,7 +5,12 @@ import {
 	UtilityProps,
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
-import { parseKey, getPathSuffix } from "./path"
+import {
+	parseKey,
+	getPathSuffix,
+	getFullPathParts,
+	parseFieldKey,
+} from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
@@ -144,12 +149,74 @@ const getPropertiesDefinition = (key: string) => {
 	return propDef
 }
 
-const getPropertiesDefinitionFromPath = (path: string) => {
-	const pathArray = toPath(path)
-	const componentFullName = getPathSuffix(pathArray)
-	if (componentFullName) {
-		return getPropertiesDefinition(componentFullName)
+const getPropertiesDefinitionFromPath = (
+	path: string
+): BuildPropertiesDefinition | undefined => {
+	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
+	if (metadataType === "component")
+		return getPropertiesDefinition(metadataItem)
+	if (metadataType === "field") {
+		const [namespace, name, collectionNamespace, collectionName] =
+			parseFieldKey(metadataItem)
+		return {
+			title: name,
+			sections: [],
+			defaultDefinition: () => ({}),
+			traits: [
+				"uesio.field",
+				"wire." + collectionNamespace + "." + collectionName,
+			],
+			namespace,
+			name,
+		}
 	}
+	if (metadataType === "viewdef") {
+		const pathArray = toPath(localPath)
+		if (pathArray[0] === "wires") {
+			return {
+				title: "Wire",
+				defaultDefinition: () => ({
+					color: "primary",
+					variant: "contained",
+					text: "New Button",
+				}),
+				properties: [
+					{
+						name: "name",
+						type: "KEY",
+						label: "Name",
+					},
+					{
+						name: "collection",
+						type: "METADATA",
+						metadataType: "COLLECTION",
+						label: "Collection",
+					},
+				],
+				sections: [
+					{
+						title: "Fields",
+						type: "FIELDS",
+					},
+					{
+						title: "Conditions",
+						type: "CONDITIONS",
+					},
+				],
+				actions: [
+					{
+						type: "LOAD_WIRE",
+						label: "Refresh Wire",
+					},
+				],
+			}
+		}
+		const componentFullName = getPathSuffix(pathArray)
+		if (componentFullName) {
+			return getPropertiesDefinition(componentFullName)
+		}
+	}
+
 	return undefined
 }
 

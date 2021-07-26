@@ -16,16 +16,30 @@ import {
 	setDragNode,
 	setDropNode,
 	setSelectedNode,
+	setDefinition,
+	addDefinition,
+	addDefinitionPair,
+	removeDefinition,
+	changeDefinitionKey,
+	moveDefinition,
+	setYaml,
+	cancel,
 } from "../bands/builder"
 import { AnyAction } from "redux"
 import builderOps from "../bands/builder/operations"
-import { Dispatcher } from "../store/store"
-import { useBuilderHasChanges, useViewYAML } from "../bands/viewdef/selectors"
-import { cancel as cancelViewChanges } from "../bands/viewdef"
-import saveViewDef from "../bands/viewdef/operations/save"
+import { Dispatcher, RootState } from "../store/store"
+import {
+	getViewDefinition,
+	useBuilderHasChanges,
+	useViewYAML,
+} from "../bands/viewdef/selectors"
+
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
-import { fromPath, toPath } from "../component/path"
+import { getFullPathParts, makeFullPath } from "../component/path"
+import { Definition } from "../definition/definition"
+import { useSelector } from "react-redux"
+import yaml from "yaml"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -45,15 +59,19 @@ class BuilderAPI {
 
 	useNodeState = useNodeState
 	useSelectedNode = (): [string, string, string] => {
-		const path = useSelectedNode()
-		const pathArray = toPath(path)
-		const metadataType = pathArray.shift() || ""
-		const metadataItem = pathArray.shift() || ""
-		return [metadataType, metadataItem, fromPath(pathArray)]
+		const [metadataType, metadataItem, localPath] = getFullPathParts(
+			useSelectedNode()
+		)
+		if (!metadataType || !metadataItem)
+			return ["viewdef", this.uesio.getViewDefId() || "", ""]
+		return [metadataType, metadataItem, localPath]
 	}
 	useLastModifiedNode = useLastModifiedNode
-	useDragNode = useDragNode
-	useDropNode = useDropNode
+	useDragNode = () => getFullPathParts(useDragNode())
+
+	useDropNode = (): [string, string, string] =>
+		getFullPathParts(useDropNode())
+
 	useIsStructureView = () =>
 		this.useBuilderState<string>("buildview") !== "content"
 
@@ -61,7 +79,7 @@ class BuilderAPI {
 
 	useSelectedYAML = (metadataType: string) => {
 		// Check here for the selected item and get its yaml doc
-		if (metadataType === "viewdef" || !metadataType) {
+		if (metadataType === "viewdef") {
 			const viewDefId = this.uesio.getViewDefId()
 			return viewDefId ? useViewYAML(viewDefId) : undefined
 		}
@@ -74,7 +92,7 @@ class BuilderAPI {
 		path: string
 	) => {
 		this.dispatcher(
-			setActiveNode(`["${metadataType}"]["${metadataItem}"]${path}`)
+			setActiveNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
@@ -88,7 +106,7 @@ class BuilderAPI {
 		path: string
 	) => {
 		this.dispatcher(
-			setSelectedNode(`["${metadataType}"]["${metadataItem}"]${path}`)
+			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
 	}
 
@@ -96,21 +114,125 @@ class BuilderAPI {
 		this.dispatcher(setSelectedNode(""))
 	}
 
-	setDragNode = (path: string) => {
-		this.dispatcher(setDragNode(path))
+	setDragNode = (
+		metadataType: string,
+		metadataItem: string,
+		path: string
+	) => {
+		this.dispatcher(
+			setDragNode(makeFullPath(metadataType, metadataItem, path))
+		)
 	}
 
-	setDropNode = (path: string) => {
-		this.dispatcher(setDropNode(path))
+	clearDragNode = () => {
+		this.dispatcher(setDragNode(""))
+	}
+
+	setDropNode = (
+		metadataType: string,
+		metadataItem: string,
+		path: string
+	) => {
+		this.dispatcher(
+			setDropNode(makeFullPath(metadataType, metadataItem, path))
+		)
+	}
+
+	clearDropNode = () => {
+		this.dispatcher(setDropNode(""))
 	}
 
 	save = () =>
-		this.uesio.signal.dispatcher(
-			saveViewDef({ context: this.uesio.getContext() || new Context() })
+		this.dispatcher(
+			builderOps.save({
+				context: this.uesio.getContext() || new Context(),
+			})
 		)
 
-	cancel = () => {
-		this.dispatcher(cancelViewChanges())
+	cancel = () => this.dispatcher(cancel())
+
+	setDefinition = (path: string, definition: Definition) =>
+		this.dispatcher(
+			setDefinition({
+				path,
+				definition,
+			})
+		)
+
+	addDefinition(
+		path: string,
+		definition: Definition,
+		index?: number,
+		type?: string
+	) {
+		this.dispatcher(
+			addDefinition({
+				path,
+				definition,
+				index,
+				type,
+			})
+		)
+	}
+
+	addDefinitionPair(
+		path: string,
+		definition: Definition,
+		key: string,
+		type?: string
+	) {
+		this.dispatcher(
+			addDefinitionPair({
+				path,
+				definition,
+				key,
+				type,
+			})
+		)
+	}
+
+	removeDefinition(path: string) {
+		this.dispatcher(
+			removeDefinition({
+				path,
+			})
+		)
+	}
+
+	changeDefinitionKey(path: string, key: string) {
+		this.dispatcher(
+			changeDefinitionKey({
+				path,
+				key,
+			})
+		)
+	}
+
+	moveDefinition(fromPath: string, toPath: string) {
+		this.dispatcher(
+			moveDefinition({
+				fromPath,
+				toPath,
+			})
+		)
+	}
+
+	setYaml(path: string, yamlDoc: yaml.Document) {
+		this.dispatcher(
+			setYaml({
+				path,
+				yaml: yamlDoc,
+			})
+		)
+	}
+
+	useDefinition = (path: string) => {
+		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
+		return useSelector((state: RootState) => {
+			if (metadataType === "viewdef" && metadataItem) {
+				return getViewDefinition(state, metadataItem, localPath)
+			}
+		})
 	}
 
 	useMetadataList = (

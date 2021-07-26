@@ -1,21 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
-import { WirePropertyDefinition } from "../shared/wire/wiredefinition"
-
-const getPropsDef = (
-	metadataType: string,
-	metadataItem: string,
-	path: string
-) => {
-	const pathArray = component.path.toPath(path)
-	if (pathArray[0] === "wires") {
-		return WirePropertyDefinition
-	}
-	return path
-		? component.registry.getPropertiesDefinitionFromPath(path)
-		: undefined
-}
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -28,10 +13,12 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const trimmedPath =
 		(selectedPath && component.path.trimPathToComponent(selectedPath)) || ""
 
-	const propsDef = getPropsDef(metadataType, metadataItem, selectedPath)
+	const propsDef = component.registry.getPropertiesDefinitionFromPath(
+		component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
+	)
 
-	const definition = uesio.view.useDefinitionLocal(
-		""
+	const definition = uesio.builder.useDefinition(
+		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
 	return (
@@ -40,9 +27,79 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={props.className}
 			propsDef={propsDef}
 			path={trimmedPath}
-			getValue={(path: string) => util.get(definition, path)}
-			setValue={(path: string, value: string) => {
-				uesio.view.setDefinition(path, value)
+			valueAPI={{
+				get: (path: string) => util.get(definition, path),
+				set: (path: string, value: string) => {
+					if (path === undefined) return
+					uesio.builder.setDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						),
+						value
+					)
+				},
+				add: (path: string, value: string, number?: number) => {
+					if (path === undefined) return
+					uesio.builder.addDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						),
+						value,
+						number
+					)
+				},
+				addPair: (path: string, value: string, key: string) => {
+					if (path === undefined) return
+					uesio.builder.addDefinitionPair(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						),
+						value,
+						key
+					)
+				},
+				remove: (path: string) => {
+					if (path === undefined) return
+					uesio.builder.removeDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						)
+					)
+				},
+				changeKey: (path: string, key: string) => {
+					if (path === undefined) return
+					uesio.builder.changeDefinitionKey(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							path
+						),
+						key
+					)
+				},
+				move: (fromPath: string, toPath: string) => {
+					if (fromPath === undefined || toPath === undefined) return
+					uesio.builder.moveDefinition(
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							fromPath
+						),
+						component.path.makeFullPath(
+							metadataType,
+							metadataItem,
+							toPath
+						)
+					)
+				},
 			}}
 		/>
 	)

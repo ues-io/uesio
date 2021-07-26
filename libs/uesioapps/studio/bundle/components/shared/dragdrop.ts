@@ -1,18 +1,4 @@
-import { hooks, component, builder } from "@uesio/ui"
-import { DragEvent } from "react"
-
-const isExistingComponent = (dragNode: string): boolean =>
-	!component.dragdrop.isComponentBankKey(dragNode) &&
-	!component.dragdrop.isFieldBankKey(dragNode)
-
-function getDropHandler(dragNode: string) {
-	if (component.dragdrop.isFieldBankKey(dragNode)) {
-		return handleFieldDrop
-	} else if (component.dragdrop.isComponentBankKey(dragNode)) {
-		return handleBankDrop
-	}
-	return handleExistingDrop
-}
+import { hooks, component } from "@uesio/ui"
 
 const handleDrop = (
 	dragNode: string,
@@ -20,20 +6,48 @@ const handleDrop = (
 	dropIndex: number,
 	uesio: hooks.Uesio
 ): void => {
-	const propDef =
-		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
+	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
 
-	uesio.builder.setDragNode("")
-	uesio.builder.setDropNode("")
+	uesio.builder.clearDragNode()
+	uesio.builder.clearDropNode()
 
 	if (!propDef) {
 		console.log("No prop def found")
 		return
 	}
 
-	const handler = getDropHandler(dragNode)
+	const [metadataType] = component.path.getFullPathParts(dragNode)
 
-	handler(dragNode, dropNode, dropIndex, propDef, uesio)
+	switch (metadataType) {
+		case "field": {
+			const dropPropDef =
+				component.registry.getPropertiesDefinitionFromPath(dropNode)
+			const handler = dropPropDef?.handleFieldDrop
+			if (handler) {
+				handler(dragNode, dropNode, dropIndex, propDef, uesio)
+			}
+			break
+		}
+		case "component": {
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					[`${propDef.namespace}.${propDef.name}`]:
+						propDef.defaultDefinition(),
+				},
+				dropIndex,
+				metadataType
+			)
+			break
+		}
+		case "viewdef": {
+			const key = component.path.getKeyAtPath(dragNode)
+			const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
+			// Selection Handling
+			uesio.builder.moveDefinition(dragNode, toPath)
+			break
+		}
+	}
 }
 
 const isNextSlot = (
@@ -51,8 +65,7 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const propDef =
-		component.dragdrop.getPropertiesDefinitionFromDragNode(dragNode)
+	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([
@@ -68,59 +81,13 @@ const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
 	return false
 }
 
-const handleBankDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	uesio.view.addDefinition(
-		dropNode,
-		{
-			[`${propDef.namespace}.${propDef.name}`]:
-				propDef.defaultDefinition(),
-		},
-		dropIndex,
-		true
-	)
-}
-
-const handleFieldDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	const dropPropDef =
-		component.registry.getPropertiesDefinitionFromPath(dropNode)
-	const handler = dropPropDef?.handleFieldDrop
-	if (handler) {
-		return handler(dragNode, dropNode, dropIndex, propDef, uesio)
-	}
-}
-
-const handleExistingDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	const pathArray = component.path.toPath(dragNode)
-	const key = pathArray[pathArray.length - 1]
-	const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
-	// Selection Handling
-	uesio.view.moveDefinition(dragNode, toPath)
-}
-
 const getDropIndex = (
 	dragNode: string,
 	dropNode: string,
 	dropIndex: number
 ): number => {
-	if (isExistingComponent(dragNode)) {
+	const [metadataType] = component.path.getFullPathParts(dragNode)
+	if (metadataType === "viewdef") {
 		const dragIndex = component.path.getIndexFromPath(dragNode)
 		// The parent path is actually the grandparent path here.
 		const dragParentPath = component.path.getGrandParentPath(dragNode)
@@ -134,25 +101,4 @@ const getDropIndex = (
 	return dropIndex
 }
 
-const getOnDragStartToolbar = (uesio: hooks.Uesio) => {
-	const isStructureView = uesio.builder.useIsStructureView()
-	return (e: DragEvent) => {
-		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && isStructureView) {
-			uesio.builder.setDragNode(target.dataset.type)
-		}
-	}
-}
-const getOnDragStopToolbar = (uesio: hooks.Uesio) => () => {
-	uesio.builder.setDragNode("")
-	uesio.builder.setDropNode("")
-}
-
-export {
-	handleDrop,
-	getDropIndex,
-	isDropAllowed,
-	isNextSlot,
-	getOnDragStartToolbar,
-	getOnDragStopToolbar,
-}
+export { handleDrop, getDropIndex, isDropAllowed, isNextSlot }

@@ -5,9 +5,9 @@ import ActionButton from "./actionbutton"
 
 const RunSignalsAction: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { path, context, getValue } = props
+	const { path, context, valueAPI } = props
 
-	const def = getValue(path || "") as definition.DefinitionMap
+	const def = valueAPI.get(path) as definition.DefinitionMap
 
 	const action = props.action as builder.RunSignalsAction
 

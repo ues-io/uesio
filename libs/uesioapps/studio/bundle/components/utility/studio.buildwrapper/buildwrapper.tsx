@@ -1,11 +1,6 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
-import {
-	handleDrop,
-	getDropIndex,
-	isDropAllowed,
-	isNextSlot,
-} from "../../shared/dragdrop"
+import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
@@ -19,15 +14,18 @@ const INACTIVE_COLOR = "#eee"
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { children, path = "", index = 0 } = props
-
-	const propDef = component.registry.getPropertiesDefinitionFromPath(path)
+	const viewDefId = uesio.getViewDefId()
 
 	const [canDrag, setCanDrag] = useState<boolean>(false)
 
-	const dragNode = uesio.builder.useDragNode()
-	const dropNode = uesio.builder.useDropNode()
+	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
+	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const fullDragPath = component.path.makeFullPath(
+		dragType,
+		dragItem,
+		dragPath
+	)
 
-	const viewDefId = uesio.getViewDefId()
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
@@ -35,8 +33,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const isStructureView = uesio.builder.useIsStructureView()
 	const isContentView = !isStructureView
 	const showHeader = isStructureView || (isContentView && isSelected)
-
-	const accepts = propDef?.accepts
 
 	const wrapperPath = component.path.getGrandParentPath(path)
 
@@ -46,9 +42,10 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		return INACTIVE_COLOR
 	})()
 
-	const isDraggingMe = path === dragNode
-	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropNode
-	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropNode
+	const isDraggingMe =
+		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
+	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
+	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
 
 	const deepShadow =
 		"0px 3px 3px -2px rgba(0,0,0,0.2),0px 3px 4px 0px rgba(0,0,0,0.14),0px 1px 8px 0px rgba(0,0,0,0.12)"
@@ -119,43 +116,51 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		props
 	)
 
+	if (!viewDefId) return null
+
+	const propDef = component.registry.getPropertiesDefinitionFromPath(
+		component.path.makeFullPath("viewdef", viewDefId, path)
+	)
+	const accepts = propDef?.accepts
+
 	const onDragStart = (e: DragEvent) => {
 		e.stopPropagation()
 		setTimeout(() => {
-			if (dragNode !== path) {
-				uesio.builder.setDragNode(path)
+			if (dragPath !== path) {
+				uesio.builder.setDragNode("viewdef", viewDefId, path)
 			}
 		})
 	}
 
 	const onDragEnd = (e: DragEvent) => {
-		uesio.builder.setDragNode("")
-		uesio.builder.setDropNode("")
+		uesio.builder.clearDragNode()
+		uesio.builder.clearDropNode()
 	}
 
 	const onDragOver = (e: DragEvent) => {
-		//const target = e.target as Element | null
 		if (!accepts) return
-		if (!isDropAllowed(accepts, dragNode)) {
+		if (!isDropAllowed(accepts, fullDragPath)) {
 			return
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		//console.log(target)
-		uesio.builder.setDropNode(path)
+		uesio.builder.setDropNode("viewdef", viewDefId, path)
 	}
 
 	const onDrop = (e: DragEvent) => {
 		if (!accepts) return
-		if (!isDropAllowed(accepts, dragNode)) {
+		if (!isDropAllowed(accepts, fullDragPath)) {
 			return
 		}
 		e.preventDefault()
 		e.stopPropagation()
-		handleDrop(dragNode, path, 0, uesio)
+		handleDrop(
+			fullDragPath,
+			component.path.makeFullPath("viewdef", viewDefId, path),
+			0,
+			uesio
+		)
 	}
-
-	if (!viewDefId) return null
 
 	return (
 		<>
@@ -198,7 +203,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 							if (!isStructureView) {
 								return
 							}
-							if (dragNode) {
+							if (dragPath) {
 								setCanDrag(false)
 							}
 						}}
