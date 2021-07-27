@@ -1,0 +1,34 @@
+name: writingcomponents
+definition:
+  wires:
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: writingcomponents
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Writing Components
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: HUMAN WRITING MAY BE A THING OF THE PAST
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Coming soon!
