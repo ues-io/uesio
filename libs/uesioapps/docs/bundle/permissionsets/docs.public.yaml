@@ -6,9 +6,27 @@ views:
   docs.nav: true
   docs.principles: true
   docs.keyfeatures: true
+  docs.gettingstarted: true
+  docs.apps: true
+  docs.workspaces: true
+  docs.comparison: true
+  docs.writingcomponents: true
+  docs.sites: true
+  docs.bundles: true
+  docs.context: true
+  docs.wires: true
 routes:
   docs.login: true
   docs.home: true
   docs.principles: true
   docs.keyfeatures: true
+  docs.gettingstarted: true
+  docs.apps: true
+  docs.workspaces: true
+  docs.comparison: true
+  docs.writingcomponents: true
+  docs.sites: true
+  docs.bundles: true
+  docs.context: true
+  docs.wires: true
 files:
