@@ -1,0 +1,208 @@
+name: pitch
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.styles:
+          root:
+            backgroundSize: cover
+            backgroundImage: $File{uesio.splash}
+            minHeight: 100vh
+        templateRows: 100px 1fr 100px
+        items:
+          - io.griditem:
+          - io.griditem:
+              uesio.styles:
+                root:
+                  display: grid
+                  alignItems: center
+              components:
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "1"
+                    components:
+                      - io.image:
+                          file: uesio.logowhite
+                          height: 140px
+                          align: center
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "2"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: A new approach
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: to web development.
+                      - io.image:
+                          uesio.styles:
+                            root:
+                              position: absolute
+                              top: 0
+                              right: 0
+                          file: uesio.logowhite
+                          height: 170px
+                          align: center
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "3"
+                    components:
+                      - io.text:
+                          uesio.styles:
+                            root:
+                              margin: 0 0 20px 0
+                          uesio.variant: web.pitchtitle
+                          text: Agenda
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 1. Context
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 2. Principles
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 3. Product
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 4. Demo
+                      - io.image:
+                          uesio.styles:
+                            root:
+                              position: absolute
+                              top: 120
+                              right: 0
+                          file: uesio.logowhite
+                          height: 170px
+                          align: center
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "4"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: The dryer & the piano
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Bad analogy for good abstractions
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "5"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: The evolution of the web
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Declarative > Imperative > Declarative
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "6"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: HTML and CSS
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Declarative by design
+                      - io.text:
+                          uesio.variant: web.pitchicon
+                          text: code
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "7"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: The Javascript Imperative
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Adding interactivity to the web
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "8"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: Cloud services and the modern web
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text:
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "9"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 1. Configuration-first web development
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Creativity through configuration
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "10"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 2. Provide useful abstractions
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Back to the dryer analogy
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "11"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 3. Instantaneous feedback loop
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: See changes in realtime.
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "12"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 4. Full application lifecycle included
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Build > Test > Deploy > Publish

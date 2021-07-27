@@ -16,7 +16,9 @@ const componentVariantSlice = createSlice({
 				yamlDoc.contents
 			)?.toJSON()
 
-			componentVariantAdapter.upsertMany(state, dependenciesDoc)
+			if (dependenciesDoc) {
+				componentVariantAdapter.upsertMany(state, dependenciesDoc)
+			}
 		})
 	},
 })

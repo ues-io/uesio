@@ -1,0 +1,12 @@
+name: pitchtitlesmall
+component: io.text
+label: Pitch Title
+definition:
+  uesio.styles:
+    root:
+      fontSize: 40pt
+      fontFamily: Gosha
+      color: white
+      fontWeight: bold
+      textShadow: "0 0 6px #00000033"
+  element: div

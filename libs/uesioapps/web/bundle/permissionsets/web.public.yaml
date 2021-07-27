@@ -6,9 +6,11 @@ views:
   web.footer: true
   web.earlyaccess: true
   web.earlyaccessthanks: true
+  web.pitch: true
 routes:
   web.home: true
   web.earlyaccess: true
   web.earlyaccessthanks: true
+  web.pitch: true
 files:
   web.logo: true

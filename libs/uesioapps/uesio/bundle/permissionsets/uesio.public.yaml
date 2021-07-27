@@ -7,6 +7,7 @@ routes:
   uesio.login: true
 files:
   uesio.logo: true
+  uesio.logowhite: true
   uesio.logosmall: true
   uesio.amazonsmall: true
   uesio.facebooksmall: true
