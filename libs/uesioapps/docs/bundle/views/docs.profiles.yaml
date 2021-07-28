@@ -1,4 +1,4 @@
-name: wires
+name: profiles
 definition:
   wires:
   components:
@@ -16,13 +16,13 @@ definition:
                 - uesio.view:
                     view: docs.nav
                     params:
-                      selected: wires
+                      selected: profiles
           - io.griditem:
               uesio.variant: docs.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: wires
+                    title: profiles
                 - io.box:
                     uesio.variant: io.section
                     components:

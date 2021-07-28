@@ -1,0 +1,4 @@
+name: components
+path: components
+view: docs.components
+theme: uesio.default

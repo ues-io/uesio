@@ -1,4 +1,4 @@
-name: wires
+name: bots
 definition:
   wires:
   components:
@@ -16,13 +16,13 @@ definition:
                 - uesio.view:
                     view: docs.nav
                     params:
-                      selected: wires
+                      selected: bots
           - io.griditem:
               uesio.variant: docs.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: wires
+                    title: bots
                 - io.box:
                     uesio.variant: io.section
                     components:
