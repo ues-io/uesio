@@ -27,7 +27,7 @@ definition:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
+                          uesio.variant: io.secondary
                           title: HUMAN WRITING MAY BE A THING OF THE PAST
                       - io.text:
                           uesio.variant: io.section

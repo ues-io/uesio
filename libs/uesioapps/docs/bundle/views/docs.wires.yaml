@@ -28,4 +28,4 @@ definition:
                     components:
                       - io.text:
                           uesio.variant: io.section
-                          text: More info soon.
+                          text: Used to connect your components to your data points within your data Collections.
