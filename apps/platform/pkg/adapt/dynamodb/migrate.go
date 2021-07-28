@@ -17,9 +17,11 @@ func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Cred
 		return err
 	}
 
+	tenantID := credentials.GetTenantID()
+
 	for _, collectionMetadata := range metadata.Collections {
 
-		collectionName, err := getDBCollectionName(collectionMetadata)
+		collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
 		if err != nil {
 			return err
 		}

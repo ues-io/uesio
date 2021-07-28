@@ -103,11 +103,11 @@ func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {
 	return fieldMetadata.Namespace + ":" + fieldMetadata.PropertyName, nil
 }
 
-func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata) (string, error) {
-	if collectionMetadata.Namespace == "" || collectionMetadata.CollectionName == "" {
+func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata, tenantID string) (string, error) {
+	if collectionMetadata.Namespace == "" || collectionMetadata.CollectionName == "" || tenantID == "" {
 		return "", errors.New("Could not get DB Collection Name: Missing important collection metadata: " + collectionMetadata.Name)
 	}
-	return collectionMetadata.Namespace + "." + collectionMetadata.CollectionName, nil
+	return collectionMetadata.Namespace + "." + collectionMetadata.CollectionName + "." + tenantID, nil
 }
 
 func describeTableDynamoDB(ctx context.Context, tableName string, client *dynamodb.Client) (bool, error) {
