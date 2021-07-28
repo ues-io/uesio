@@ -1,4 +1,4 @@
-name: home
+name: bundles
 definition:
   wires:
   components:
@@ -16,28 +16,22 @@ definition:
                 - uesio.view:
                     view: docs.nav
                     params:
-                      selected: home
+                      selected: bundles
           - io.griditem:
               uesio.variant: docs.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: What is Uesio?
+                    title: Bundles
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.text:
                           uesio.variant: io.section
-                          text: UESIO – (u)ser (e)xperience (s)tud(io) – ues.io (pronounced "yoo-zee-oh") is a web application builder where you work on configuration rather than code.
-                - io.box:
-                    uesio.variant: io.section
-                    components:
+                          text: Bundles are like a container in which all your components and configurations for your apps are packaged into.
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: VERSIONING
                       - io.text:
                           uesio.variant: io.section
-                          text: Think specifying the desired outcome, not the individual instructions to the computer.
-                - io.box:
-                    uesio.variant: io.section
-                    components:
-                      - io.text:
-                          uesio.variant: io.section
-                          text: Add shortcuts to your development cycles, share your coding talent and profit by listing in the Bundle Store.
+                          text: Versioning is a way to track different stages of your app when ready for distribution and is made up of three digits V (MAJOR).(MINOR).(PATCH) i.e. V0.1.1

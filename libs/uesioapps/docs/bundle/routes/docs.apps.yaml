@@ -1,0 +1,4 @@
+name: apps
+path: apps
+view: docs.apps
+theme: uesio.default
