@@ -7,10 +7,13 @@ import TopLeftNav from "../../shared/topleftnav"
 import BottomLeftNav from "../../shared/bottomleftnav"
 import RightNav from "../../shared/rightnav"
 import PropertiesPanel from "../../shared/propertiespanel"
+import CodePanel from "../../shared/codepanel"
+
 import ComponentsPanel from "../../shared/componentspanel"
 import WiresPanel from "../../shared/wirespanel"
 import { BuilderState } from "./runtimebuilderdefinition"
-import SlidingBuildPanels from "./SlidingBuildPanels"
+// import SlidingBuildPanels from "./SlidingBuildPanels"
+import usePanels from "./usePanels"
 const Grid = component.registry.getUtility("io.grid")
 
 component.registry.registerSignals("uesio.runtime", {
@@ -60,9 +63,24 @@ const LEFT_PANEL_WIDTH = 300
 const RIGHT_PANEL_WIDTH = 300
 
 const Buildtime: FC<definition.BaseProps> = (props) => {
-	console.log("rendered runtime builder")
-	// const [separatorXPosition, setSeparatorXPosition] = useState<number>(0)
-	const slidePanelsRef = useRef<HTMLDivElement>(null)
+	const leftPanelRef = useRef<HTMLDivElement>(null)
+	const rightPanelRef = useRef<HTMLDivElement>(null)
+	const [setDragging, setBoxDimensions, panelWidth] = usePanels()
+	const [codePanelWidth, setCodePanelWidth] = useState("1fr")
+
+	useEffect(() => {
+		console.log("running")
+		if (!leftPanelRef?.current || !rightPanelRef.current) return
+
+		const dimensions = {
+			offset: leftPanelRef.current.getBoundingClientRect().left,
+			width:
+				leftPanelRef.current.offsetWidth +
+				rightPanelRef.current.offsetWidth,
+		}
+
+		setBoxDimensions(dimensions)
+	}, [leftPanelRef?.current, rightPanelRef.current])
 
 	const uesio = hooks.useUesio(props)
 	const { context } = props
@@ -72,6 +90,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const def = uesio.builder.useDefinition(
 		component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
 	)
+
 	const viewDef = context.getViewDef()
 
 	const scriptResult = uesio.component.usePacks(
@@ -84,6 +103,11 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		showComps: true,
 		showWires: false,
 	})
+
+	useEffect(() => {
+		const newWidth = state?.showCode ? panelWidth + "%" : "1fr"
+		setCodePanelWidth(newWidth)
+	}, [panelWidth])
 
 	const builderTheme = uesio.theme.useTheme(
 		"studio.default",
@@ -104,12 +128,11 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 	return (
 		<Grid
-			ref={slidePanelsRef}
 			context={context}
 			styles={{
 				root: {
 					height: "100vh",
-					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${RIGHT_PANEL_WIDTH}px ${NAV_WIDTH}px`,
+					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth} ${NAV_WIDTH}px`,
 					gridTemplateRows: "1fr 1fr",
 				},
 			}}
@@ -138,21 +161,68 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
+
 			<div
-				ref={slidePanelsRef}
+				ref={leftPanelRef}
 				className={styles.css({
 					gridRow: "1 / 3",
-					gridColumn: "3 / 5",
-					display: "flex",
+					gridColumn: `3 / ${state.showCode ? 4 : 7}`,
+					overflow: "auto",
 				})}
 			>
-				<SlidingBuildPanels
-					showCode={state.showCode}
-					builderContext={builderContext}
-					canvasContext={canvasContext}
-					slidePanelsRef={slidePanelsRef}
-				/>
+				<Canvas context={canvasContext} />
 			</div>
+			{state.showCode && (
+				// <>
+				<div
+					ref={rightPanelRef}
+					className={styles.css({
+						gridRow: "1 / 3",
+						gridColumn: `4`,
+						position: "relative",
+					})}
+				>
+					{/* Whole box, from top to down that is slidable */}
+					<div
+						role="seperator"
+						aria-valuenow={0}
+						onMouseDown={() => setDragging(true)}
+						className={styles.css({
+							display: "flex",
+							alignItems: "center",
+							cursor: "ew-resize",
+							width: "10px",
+							position: "absolute",
+							left: "-3px",
+							top: 0,
+							// background: "pink",
+							height: "100%",
+							zIndex: 1,
+
+							"&:hover span, &:active span": {
+								opacity: 1,
+							},
+						})}
+					>
+						{/* Visual indicator */}
+						<span
+							className={styles.css({
+								backgroundColor: "rgb(255, 94, 47)",
+								width: "4px",
+								height: "8em",
+								borderRadius: "6px",
+								transform: "translateX(-50%)",
+								opacity: 0.5,
+								cursor: "ew-resize",
+								maxHeight: "6em",
+								transition: "all 0.125s ease",
+								position: "absolute",
+							})}
+						/>
+					</div>
+					<CodePanel context={builderContext} />
+				</div>
+			)}
 			<RightNav
 				context={builderContext}
 				className={styles.css({
