@@ -6,11 +6,16 @@ views:
   web.footer: true
   web.earlyaccess: true
   web.earlyaccessthanks: true
-  web.pitch: true
+  web.preview: true
 routes:
   web.home: true
   web.earlyaccess: true
   web.earlyaccessthanks: true
-  web.pitch: true
+  web.preview: true
 files:
   web.logo: true
+  web.piano: true
+  web.accordion: true
+  web.dryer: true
+  web.htmlexample: true
+  web.cssexample: true

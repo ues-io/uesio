@@ -1,4 +1,4 @@
-name: pitch
+name: preview
 definition:
   # Wires are how we pull in data
   wires:
@@ -67,7 +67,7 @@ definition:
                           text: Agenda
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
-                          text: 1. Context
+                          text: 1. History & Context
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
                           text: 2. Principles
@@ -107,11 +107,26 @@ definition:
                         value: "5"
                     components:
                       - io.text:
-                          uesio.variant: web.pitchtitlesmall
-                          text: The evolution of the web
-                      - io.text:
-                          uesio.variant: web.pitchsubtitlesmall
-                          text: Declarative > Imperative > Declarative
+                          uesio.variant: web.pitchtitle
+                          text: The piano UI
+                      - io.grid:
+                          templateColumns: 1fr 1fr
+                          columnGap: 40px
+                          items:
+                            - io.image:
+                                uesio.styles:
+                                  inner:
+                                    border: 40px solid white
+                                    margin: 40px 0
+                                file: web.piano
+                                height: 300px
+                            - io.image:
+                                uesio.styles:
+                                  inner:
+                                    border: 40px solid white
+                                    margin: 40px 0
+                                file: web.accordion
+                                height: 300px
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -121,13 +136,14 @@ definition:
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitle
-                          text: HTML and CSS
-                      - io.text:
-                          uesio.variant: web.pitchsubtitle
-                          text: Declarative by design
-                      - io.text:
-                          uesio.variant: web.pitchicon
-                          text: code
+                          text: The dryer UI
+                      - io.image:
+                          uesio.styles:
+                            inner:
+                              border: 40px solid white
+                              margin: 40px 0
+                          file: web.dryer
+                          height: 300px
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -137,16 +153,126 @@ definition:
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
-                          text: The Javascript Imperative
+                          text: The evolution of the web
                       - io.text:
                           uesio.variant: web.pitchsubtitlesmall
-                          text: Adding interactivity to the web
+                          text: Declarative > Imperative > Declarative?
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
                       - type: paramIsValue
                         param: step
                         value: "8"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: HTML and CSS
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Declarative by design
+                      - io.grid:
+                          templateColumns: 400px 400px
+                          columnGap: 40px
+                          items:
+                            - io.code:
+                                uesio.styles:
+                                  root:
+                                    margin: 40px 0
+                                    padding: 40px
+                                    backgroundColor: white
+                                language: html
+                                label: index.html
+                                file: web.htmlexample
+                            - io.code:
+                                uesio.styles:
+                                  root:
+                                    margin: 40px 0
+                                    padding: 40px
+                                    backgroundColor: white
+                                language: css
+                                label: styles.css
+                                file: web.cssexample
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "9"
+                    components:
+                      - io.box:
+                          components:
+                            - io.text:
+                                uesio.variant: web.pitchtitlesmall
+                                uesio.styles:
+                                  root:
+                                    position: relative
+                                    left: 0
+                                    transition: "left ease 0.5s"
+                                    "&:hover":
+                                      left: "-40px"
+                                text: "The "
+                                element: span
+                            - io.text:
+                                uesio.variant: web.pitchtitlesmall
+                                uesio.styles:
+                                  root:
+                                    position: relative
+                                    top: 0
+                                    transition: "top ease 0.3s"
+                                    "&:hover":
+                                      top: "-15px"
+                                text: "Javascript"
+                                element: span
+                            - io.text:
+                                uesio.variant: web.pitchtitlesmall
+                                uesio.styles:
+                                  root:
+                                    position: relative
+                                    left: 0
+                                    transition: "left ease 0.5s"
+                                    "&:hover":
+                                      left: "40px"
+                                text: " Imperative"
+                                element: span
+                      - io.box:
+                          components:
+                            - io.text:
+                                uesio.variant: web.pitchsubtitlesmall
+                                text: "Adding "
+                                element: span
+                            - io.text:
+                                uesio.variant: web.pitchsubtitlesmall
+                                uesio.styles:
+                                  root:
+                                    position: relative
+                                    top: 0
+                                    transition: "top ease 0.3s"
+                                    "&:hover":
+                                      top: "15px"
+                                text: interactivity
+                                element: span
+                            - io.text:
+                                uesio.variant: web.pitchsubtitlesmall
+                                text: " to the web"
+                                element: span
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Single Page Applications
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "10"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -159,7 +285,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "9"
+                        value: "11"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -172,7 +298,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "10"
+                        value: "12"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -185,7 +311,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "11"
+                        value: "13"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -198,7 +324,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "12"
+                        value: "14"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall

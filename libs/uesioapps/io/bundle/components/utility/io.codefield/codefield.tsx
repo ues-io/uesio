@@ -10,14 +10,27 @@ interface CodeFieldProps extends definition.UtilityProps {
 	hideLabel?: boolean
 	language?: string
 	mode?: context.FieldMode
+	lineNumbers?: "on" | "off"
+	lineNumbersMinChars?: number
 }
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
-	const { setValue, value, mode, language, context, hideLabel, label } = props
+	const {
+		setValue,
+		value,
+		mode,
+		language,
+		context,
+		hideLabel,
+		label,
+		definition,
+		lineNumbers,
+		lineNumbersMinChars,
+	} = props
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
+	const width = definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -43,6 +56,8 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 						minimap: {
 							enabled: false,
 						},
+						lineNumbers,
+						lineNumbersMinChars,
 					}}
 					language={language || "javascript"}
 					onChange={setValue}

@@ -1,4 +1,0 @@
-name: pitch
-path: pitch/{step}
-view: web.pitch
-theme: uesio.default

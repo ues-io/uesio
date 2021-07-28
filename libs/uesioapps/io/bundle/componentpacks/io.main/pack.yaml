@@ -4,6 +4,9 @@ components:
     io.avatar:
     io.box:
     io.button:
+    io.code:
+      variants:
+        - io.fieldlabel.io.default
     io.deck:
     io.dialog:
       variants:
