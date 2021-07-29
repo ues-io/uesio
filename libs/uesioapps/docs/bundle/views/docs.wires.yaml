@@ -22,10 +22,10 @@ definition:
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: Context
+                    title: wires
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.text:
                           uesio.variant: io.section
-                          text: More info soon.
+                          text: Used to connect your components to your data points within your data Collections.

@@ -26,15 +26,21 @@ definition:
                 - io.box:
                     uesio.variant: io.section
                     components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Site Admin
                       - io.text:
                           uesio.variant: io.section
                           text: Sites serve up the Bundle version you Packaged with your App using subdomains.
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: SITE ADMIN
+                          uesio.variant: io.secondary
+                          title: Site Admin - Users
                       - io.text:
                           uesio.variant: io.section
-                          text: USERS - Administer the Users that will access the Site.
+                          text: Administer the Users that will access the Site.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Site Admin - Domains
                       - io.text:
                           uesio.variant: io.section
-                          text: DOMAINS - Create subdomains to use with the Site.
+                          text: Create subdomains to use with the Site.

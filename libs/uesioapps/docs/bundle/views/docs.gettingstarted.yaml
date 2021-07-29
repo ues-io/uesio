@@ -27,29 +27,50 @@ definition:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: CONCEPTS
+                          uesio.variant: io.secondary
+                          title: Wires
                       - io.text:
                           uesio.variant: io.section
-                          text: WIRES - Used to connect your components to your data points within your data Collections.
+                          text: Used to connect your components to your data points within your data Collections.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Signals
                       - io.text:
                           uesio.variant: io.section
-                          text: SIGNALS - This is a method that interacts with components to achieve certain actions like Call Bot or Create Record etc.
+                          text: This is a method that interacts with components to achieve certain actions like Call Bot or Create Record etc.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Components
                       - io.text:
                           uesio.variant: io.section
-                          text: COMPONENTS - Reusable pieces of functionaity that can be dragged and dropped into place in the View Builder used to build an app.
+                          text: Reusable pieces of functionaity that can be dragged and dropped into place in the View Builder used to build an app.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views
                       - io.text:
                           uesio.variant: io.section
-                          text: VIEWS - The Ui (U)ser (i)nterface you create to interact with your users and the data that is displayed for them to view within your apps.
+                          text: The Ui (U)ser (i)nterface you create to interact with your users and the data that is displayed for them to view within your apps.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Bots
                       - io.text:
                           uesio.variant: io.section
-                          text: BOTS - Configurable workflow management and event handler to create user journeys within apps.
+                          text: Configurable workflow management and event handler to create user journeys within apps.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Bundles
                       - io.text:
                           uesio.variant: io.section
                           text: BUNDLES - Bundles are like a container in which all your components and configurations for your apps are packaged into.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Apps
                       - io.text:
                           uesio.variant: io.section
-                          text: APPS - Mobile and desktop Web Applications for self service or subscription based applications.
+                          text: Mobile and desktop Web Applications for self service or subscription based applications.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Packages
                       - io.text:
                           uesio.variant: io.section
-                          text: PACKAGES - Packages contain all your bundles and are in essence versions of your packaged bundles.
+                          text: Packages contain all your bundles and are in essence versions of your packaged bundles.

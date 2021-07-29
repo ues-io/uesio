@@ -1,0 +1,4 @@
+name: configvalues
+path: configvalues
+view: docs.configvalues
+theme: uesio.default

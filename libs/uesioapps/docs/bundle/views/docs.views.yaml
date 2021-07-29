@@ -1,4 +1,4 @@
-name: writingcomponents
+name: views
 definition:
   wires:
   components:
@@ -16,19 +16,16 @@ definition:
                 - uesio.view:
                     view: docs.nav
                     params:
-                      selected: writingcomponents
+                      selected: views
           - io.griditem:
               uesio.variant: docs.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: Writing Components
+                    title: views
                 - io.box:
                     uesio.variant: io.section
                     components:
-                      - io.titlebar:
-                          uesio.variant: io.secondary
-                          title: HUMAN WRITING MAY BE A THING OF THE PAST
                       - io.text:
                           uesio.variant: io.section
-                          text: Coming soon!
+                          text: More info soon.
