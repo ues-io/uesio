@@ -1,14 +1,4 @@
-import { hooks, component, builder } from "@uesio/ui"
-
-function getDropHandler(dragNode: string) {
-	const [metadataType] = component.path.getFullPathParts(dragNode)
-	if (metadataType === "field") {
-		return handleFieldDrop
-	} else if (metadataType === "component") {
-		return handleBankDrop
-	}
-	return handleExistingDrop
-}
+import { hooks, component } from "@uesio/ui"
 
 const handleDrop = (
 	dragNode: string,
@@ -26,9 +16,38 @@ const handleDrop = (
 		return
 	}
 
-	const handler = getDropHandler(dragNode)
+	const [metadataType] = component.path.getFullPathParts(dragNode)
 
-	handler(dragNode, dropNode, dropIndex, propDef, uesio)
+	switch (metadataType) {
+		case "field": {
+			const dropPropDef =
+				component.registry.getPropertiesDefinitionFromPath(dropNode)
+			const handler = dropPropDef?.handleFieldDrop
+			if (handler) {
+				handler(dragNode, dropNode, dropIndex, propDef, uesio)
+			}
+			break
+		}
+		case "component": {
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					[`${propDef.namespace}.${propDef.name}`]:
+						propDef.defaultDefinition(),
+				},
+				dropIndex,
+				metadataType
+			)
+			break
+		}
+		case "viewdef": {
+			const key = component.path.getKeyAtPath(dragNode)
+			const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
+			// Selection Handling
+			uesio.builder.moveDefinition(dragNode, toPath)
+			break
+		}
+	}
 }
 
 const isNextSlot = (
@@ -60,51 +79,6 @@ const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
 		}
 	}
 	return false
-}
-
-const handleBankDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	uesio.builder.addDefinition(
-		dropNode,
-		{
-			[`${propDef.namespace}.${propDef.name}`]:
-				propDef.defaultDefinition(),
-		},
-		dropIndex
-	)
-}
-
-const handleFieldDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	const dropPropDef =
-		component.registry.getPropertiesDefinitionFromPath(dropNode)
-	const handler = dropPropDef?.handleFieldDrop
-	if (handler) {
-		return handler(dragNode, dropNode, dropIndex, propDef, uesio)
-	}
-}
-
-const handleExistingDrop = (
-	dragNode: string,
-	dropNode: string,
-	dropIndex: number,
-	propDef: builder.BuildPropertiesDefinition,
-	uesio: hooks.Uesio
-): void => {
-	const key = component.path.getKeyAtPath(dragNode)
-	const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
-	// Selection Handling
-	uesio.builder.moveDefinition(dragNode, toPath)
 }
 
 const getDropIndex = (

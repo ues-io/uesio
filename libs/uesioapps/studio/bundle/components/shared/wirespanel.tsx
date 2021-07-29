@@ -35,7 +35,8 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									path,
 									null,
 									"newwire" +
-										(Math.floor(Math.random() * 60) + 1)
+										(Math.floor(Math.random() * 60) + 1),
+									"wire"
 								)
 							}
 						/>

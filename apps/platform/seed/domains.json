@@ -16,6 +16,11 @@
 	},
 	{
 		"site": "prod_web",
+		"type": "domain",
+		"domain": "ues.io"
+	},
+	{
+		"site": "prod_web",
 		"type": "subdomain",
 		"domain": "www"
 	},

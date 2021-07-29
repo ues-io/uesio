@@ -1,4 +1,4 @@
-name: home
+name: sites
 definition:
   wires:
   components:
@@ -16,31 +16,31 @@ definition:
                 - uesio.view:
                     view: docs.nav
                     params:
-                      selected: home
+                      selected: sites
           - io.griditem:
               uesio.variant: docs.content
               components:
                 - io.titlebar:
                     uesio.variant: io.main
-                    title: What is Uesio?
+                    title: Sites
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: UESIO – User Experience Studio
+                          title: Site Admin
                       - io.text:
                           uesio.variant: io.section
-                          text: (u)ser (e)xperience (s)tud(io) - ues.io - (pronounced "yoo-zee-oh") is a web application builder where you work on configuration rather than code.
-                - io.box:
-                    uesio.variant: io.section
-                    components:
+                          text: Sites serve up the Bundle version you Packaged with your App using subdomains.
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: Think specifying the desired outcome, not the individual instructions to the computer.
-                - io.box:
-                    uesio.variant: io.section
-                    components:
+                          title: Site Admin - Users
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Administer the Users that will access the Site.
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: Add shortcuts to your development cycles, share your coding talent and profit by listing in the Bundle Store.
+                          title: Site Admin - Domains
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Create subdomains to use with the Site.

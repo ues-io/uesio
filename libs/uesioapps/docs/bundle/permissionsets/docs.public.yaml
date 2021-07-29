@@ -6,9 +6,55 @@ views:
   docs.nav: true
   docs.principles: true
   docs.keyfeatures: true
+  docs.gettingstarted: true
+  docs.apps: true
+  docs.workspaces: true
+  docs.comparison: true
+  docs.writingcomponents: true
+  docs.sites: true
+  docs.bundles: true
+  docs.context: true
+  docs.wires: true
+  docs.signals: true
+  docs.views: true
+  docs.routes: true
+  docs.components: true
+  docs.themes: true
+  docs.bots: true
+  docs.collections: true
+  docs.datasources: true
+  docs.selectlists: true
+  docs.configvalues: true
+  docs.files: true
+  docs.permissionsets: true
+  docs.profiles: true
+  docs.secrets: true
 routes:
   docs.login: true
   docs.home: true
   docs.principles: true
   docs.keyfeatures: true
+  docs.gettingstarted: true
+  docs.apps: true
+  docs.workspaces: true
+  docs.comparison: true
+  docs.writingcomponents: true
+  docs.sites: true
+  docs.bundles: true
+  docs.context: true
+  docs.wires: true
+  docs.signals: true
+  docs.views: true
+  docs.routes: true
+  docs.components: true
+  docs.themes: true
+  docs.bots: true
+  docs.collections: true
+  docs.datasources: true
+  docs.selectlists: true
+  docs.configvalues: true
+  docs.files: true
+  docs.permissionsets: true
+  docs.profiles: true
+  docs.secrets: true
 files:

@@ -1,8 +1,6 @@
 name: principles
 definition:
-  # Wires are how we pull in data
   wires:
-  # Components are how we describe the layout of our view
   components:
     - io.grid:
         uesio.variant: docs.mainlayout
@@ -29,44 +27,56 @@ definition:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: Declarative app development
+                          uesio.variant: io.secondary
+                          title: Build and Bundle
                       - io.text:
                           uesio.variant: io.section
-                          text: Configuration, not code. In declarative, you specify the desired outcome, not the specific instructions to the computer.
+                          text: Get started with a full featured component library – Create standard business applications fast with a complete set of ready-to-use components and fully fledged applications.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: Finding the right abstractions
+                          uesio.variant: io.secondary
+                          title: share
                       - io.text:
                           uesio.variant: io.section
-                          text:
+                          text: Collaborate with the Community – Share your creations at any point on the ues.io Bundle Store for further consumption by the community.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Monetize your work –  You may also sell your components, bundles, or even subscriptions to the functionality you've built.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: Full Software Development Lifecycle Included
+                          uesio.variant: io.secondary
+                          title: connect & integrate
                       - io.text:
                           uesio.variant: io.section
-                          text:
+                          text: Integrate with the services you already use – Connect your favorite databases, integrate with your favorite tools and work with the best of each world.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Use data sources – Save time with our built-in zero configuration data management. Use ues.io's included platform data source right out of the box, zero configuration or third party accounts needed.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: Share, Use, and Monitize App Metadata with the Bundle Store
+                          uesio.variant: io.secondary
+                          title: host & distribute
                       - io.text:
                           uesio.variant: io.section
-                          text:
+                          text: Go live within minutes – As soon as you are ready, publish bundles directly on our servers. Choose where you want to host your websites.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: Build the Platform with the Platform
+                          uesio.variant: io.secondary
+                          title: pay as you grow
                       - io.text:
                           uesio.variant: io.section
-                          text:
+                          text: Building apps is free – We only charge for transactions and using our data sources.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Add as many users as you want at no cost. – Don‘t pay for dormant users.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: no advance payments!

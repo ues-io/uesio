@@ -1,0 +1,37 @@
+name: bundles
+definition:
+  wires:
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: bundles
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Bundles
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Bundles are like a container in which all your components and configurations for your apps are packaged into.
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: VERSIONING
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Versioning is a way to track different stages of your app when ready for distribution and is made up of three digits V (MAJOR).(MINOR).(PATCH) i.e. V0.1.1

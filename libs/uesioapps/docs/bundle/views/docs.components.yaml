@@ -1,0 +1,31 @@
+name: components
+definition:
+  wires:
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: components
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: components
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.text:
+                          uesio.variant: io.section
+                          text: More info soon.

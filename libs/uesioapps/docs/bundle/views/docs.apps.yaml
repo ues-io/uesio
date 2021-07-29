@@ -1,0 +1,64 @@
+name: apps
+definition:
+  wires:
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: apps
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Apps
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Create an App
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Select the "+" icon then add the name of your app, a description and then select the default color.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: App Admin View
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Select an app to see the App Admin View were you can Edit or Delete your App and see Bundles, Teams, Workspaces and Sites settings.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: App Admin View - Bundles
+                      - io.text:
+                          uesio.variant: io.section
+                          text: This is a list of the bundle versions that you have previously packaged for your users.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: APP ADMIN VIEW - Teams
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Create Teams to work in collaboration on your app.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: App Admin View - Workspaces
+                      - io.text:
+                          uesio.variant: io.section
+                          text: These are areas that you can create and define your apps Data, User Interface and Administer security.
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: App Admin View - Sites
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Create a Site that is linked to a subdomain and administer Users.

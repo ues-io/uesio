@@ -1,0 +1,4 @@
+name: datasources
+path: datasources
+view: docs.datasources
+theme: uesio.default

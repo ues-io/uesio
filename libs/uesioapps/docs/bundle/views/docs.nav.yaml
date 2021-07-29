@@ -1,8 +1,6 @@
 name: nav
 definition:
-  # Wires are how we pull in data
   wires:
-  # Components are how we describe the layout of our view
   components:
     - io.titlebar:
         uesio.variant: io.nav
@@ -104,7 +102,7 @@ definition:
               value: writingcomponents
         signals:
           - signal: "route/NAVIGATE"
-            path: writingcompoents
+            path: writingcomponents
         content:
           - io.text:
               text: Writing Components

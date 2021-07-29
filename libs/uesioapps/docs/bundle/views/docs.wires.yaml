@@ -1,0 +1,31 @@
+name: wires
+definition:
+  wires:
+  components:
+    - io.grid:
+        uesio.variant: docs.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: docs.topbar
+              components:
+                - uesio.view:
+                    view: docs.topbar
+          - io.griditem:
+              uesio.variant: docs.leftbar
+              components:
+                - uesio.view:
+                    view: docs.nav
+                    params:
+                      selected: wires
+          - io.griditem:
+              uesio.variant: docs.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: wires
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Used to connect your components to your data points within your data Collections.

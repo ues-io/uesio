@@ -1,4 +1,4 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder, signal, component } from "@uesio/ui"
 
 type TableMode = "READ" | "EDIT"
 
@@ -69,15 +69,21 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
-		uesio.builder.addDefinition(
-			dropNode + '["columns"]',
-			{
-				"io.column": {
-					field: `${propDef.namespace}.${propDef.name}`,
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode + '["columns"]',
+				{
+					"io.column": {
+						field: `${fieldNamespace}.${fieldName}`,
+					},
 				},
-			},
-			dropIndex
-		)
+				dropIndex
+			)
+		}
 	},
 	type: "component",
 	classes: ["root"],
