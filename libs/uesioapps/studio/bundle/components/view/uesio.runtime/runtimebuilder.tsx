@@ -1,21 +1,18 @@
 import { FC, useEffect, useRef } from "react"
 import _ from "lodash"
-
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"
 import BottomLeftNav from "../../shared/bottomleftnav"
 import RightNav from "../../shared/rightnav"
 import PropertiesPanel from "../../shared/propertiespanel"
-import CodePanel from "../../shared/codepanel"
-
-import ComponentsPanel from "../../shared/componentspanel"
 import WiresPanel from "../../shared/wirespanel"
+import CodePanel from "../../shared/codepanel"
 import { BuilderState } from "./runtimebuilderdefinition"
+import ComponentsPanel from "../../shared/componentspanel"
 
-// import SlidingBuildPanels from "./SlidingBuildPanels"
-import usePanels from "./usePanels"
 const Grid = component.registry.getUtility("io.grid")
+import usePanels from "./usePanels"
 
 component.registry.registerSignals("uesio.runtime", {
 	TOGGLE_CODE: {
