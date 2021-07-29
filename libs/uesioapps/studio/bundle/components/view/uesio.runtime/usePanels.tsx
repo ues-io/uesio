@@ -4,15 +4,34 @@ import _ from "lodash"
 export default (): [
 	(arg: boolean) => void,
 	(arg: { offset: number; width: number }) => void,
-	number
+	{ height: number; width: number },
+	string
 ] => {
-	const [width, setWidth] = useState(40)
+	const [width, setWidth] = useState("22%")
 	const [dragging, setDragging] = useState(false)
 	const [mouseX, setMouseX] = useState(0)
 	const [boxDimensions, setBoxDimensions] = useState({
 		offset: 0,
 		width: 0,
 	})
+	const [windowSize, setWindowSize] = useState({
+		width: 0,
+		height: 0,
+	})
+
+	useEffect(() => {
+		const handleResize = () => {
+			setWindowSize({
+				width: window.innerWidth,
+				height: window.innerHeight,
+			})
+		}
+
+		const debouncedHandler = _.debounce(() => handleResize(), 300)
+		window.addEventListener("resize", debouncedHandler)
+
+		return () => window.removeEventListener("resize", debouncedHandler)
+	}, [])
 
 	// woah not soo fast
 	const throttledMouseHandler = _.throttle((e) => {
@@ -26,25 +45,21 @@ export default (): [
 
 	useEffect(() => {
 		if (!dragging) return
+		const { offset, width: bWidth } = boxDimensions
 
-		const boxOffset = boxDimensions.offset
-		const boxWidth = boxDimensions.width
-
-		const calcWidth = (x: number) => {
+		const calcWidth = () => {
+			const multiplier = 1 // speed factor, above 1 is faster and under 1 is slower than mouse
+			const x = Math.round(
+				100 * (1 - (mouseX / multiplier - offset) / bWidth)
+			)
 			const min = 20
 			const max = 60
-
 			if (x < min) return min
 			if (x > max) return max
 			return x
 		}
-		const x =
-			(Math.round(((mouseX - boxOffset) / boxWidth) * 1000) / 10 - 100) *
-			-1
 
-		const newWidth = calcWidth(x)
-		setWidth(newWidth)
-		// debounceMonacoResize()
+		setWidth(calcWidth() + "%")
 	}, [dragging, mouseX])
 
 	useEffect(() => {
@@ -57,5 +72,5 @@ export default (): [
 		}
 	})
 
-	return [setDragging, setBoxDimensions, width]
+	return [setDragging, setBoxDimensions, windowSize, width]
 }
