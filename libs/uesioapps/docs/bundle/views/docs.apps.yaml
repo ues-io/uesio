@@ -32,30 +32,45 @@ definition:
                       - io.text:
                           uesio.variant: io.section
                           text: Select the "+" icon then add the name of your app, a description and then select the default color.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: App Admin View
                       - io.text:
                           uesio.variant: io.section
                           text: Select an app to see the App Admin View were you can Edit or Delete your App and see Bundles, Teams, Workspaces and Sites settings.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: App Admin View - Bundles
                       - io.text:
                           uesio.variant: io.section
                           text: This is a list of the bundle versions that you have previously packaged for your users.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: APP ADMIN VIEW - Teams
                       - io.text:
                           uesio.variant: io.section
                           text: Create Teams to work in collaboration on your app.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: App Admin View - Workspaces
                       - io.text:
                           uesio.variant: io.section
                           text: These are areas that you can create and define your apps Data, User Interface and Administer security.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: App Admin View - Sites

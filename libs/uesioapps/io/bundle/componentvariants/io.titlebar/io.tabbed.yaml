@@ -1,0 +1,15 @@
+name: tabbed
+component: io.titlebar
+label: Primary
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: "#D5D8DC"
+      padding: 10px 30px
+      #borderTop: "1px solid #D5D8DC"
+      #borderBottom: "1px solid #D5D8DC"
+    title:
+      color: "#566573"
+      #textTransform: uppercase
+      fontSize: 11pt
+      fontWeight: 400

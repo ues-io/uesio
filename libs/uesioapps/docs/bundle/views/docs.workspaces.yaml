@@ -20,69 +20,129 @@ definition:
           - io.griditem:
               uesio.variant: docs.content
               components:
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                 - io.titlebar:
                     uesio.variant: io.main
                     title: WORKSPACES
                 - io.box:
                     uesio.variant: io.section
                     components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Workspace Areas
                       - io.text:
                           uesio.variant: io.section
                           text: Workspaces are areas you can build your apps and Bundle them for publication. See them as separate rooms you can work in. You can create as many workspaces as you need.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
-                          uesio.variant: io.section
+                          uesio.variant: io.secondary
                           title: Create a Workspace/s
                       - io.text:
                           uesio.variant: io.section
                           text: Here you can create and define your apps Data, User Interface and Administer your Files and Security.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: DATA COMPONENTS
-                      - io.text:
-                          uesio.variant: io.section
-                          text: BOTS - See Bots as workflow processes that you create to do something when something happens.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: COLLECTIONS - Manage the different tables and fields that are wired up from the Data Sources tab
-                      - io.text:
-                          uesio.variant: io.section
-                          text: DATA SOURCES - Set up and connect to your data sources.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: SELECT LISTS - A place where you can create select options for users to categorise their data
+                          uesio.variant: io.secondary
+                          title: Workspace - Data
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: USER INTERFACE COMPONENTS
+                          uesio.variant: io.tabbed
+                          title: Bots
                       - io.text:
                           uesio.variant: io.section
-                          text: COMPONENTS - The Component Builder is a way for you to easily create components that you can include in your workspace and app.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: ROUTES - Sets the path that the user will use to reach the Views you have created.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: THEMES - Specify design properties such as colors, spacing, typography, shadows and border rounding.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: VIEWS - Configure the user interface and the different components within each view.
+                          text: See Bots as workflow processes that you create to do something when something happens.
                       - io.titlebar:
-                          uesio.variant: io.section
-                          title: ADMIN COMPONENTS
+                          uesio.variant: io.tabbed
+                          title: Collections
                       - io.text:
                           uesio.variant: io.section
-                          text: CONFIG VALUES - Set the Config Values.
+                          text: Manage the different tables and fields that are wired up from the Data Sources tab.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Data Sources
                       - io.text:
                           uesio.variant: io.section
-                          text: CREDENTIALS - Set the Credentials.
+                          text: Set up and connect to your data sources.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Select Lists
                       - io.text:
                           uesio.variant: io.section
-                          text: FILES - Upload files for logos or any graphic items you would like to expose in your App Views you create in your workspace.
+                          text: A place where you can create select options for users to categorise their data.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Workspace - User Interface
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Components
                       - io.text:
                           uesio.variant: io.section
-                          text: PERMISSION SETS - Set access to Files, Routes and Views and then assign the named permissions set to specific profiles.
+                          text: The Component Builder is a way for you to easily create components that you can include in your workspace and app.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Routes
                       - io.text:
                           uesio.variant: io.section
-                          text: PROFILES - Create Profiles and assign permission sets to each and give your app a granular level of security.
+                          text: Sets the path that the user will use to reach the Views you have created.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Themes
                       - io.text:
                           uesio.variant: io.section
-                          text: SECRETS - Items generated by your third party provider of apps or API connectors are stored here.
+                          text: Specify design properties such as colors, spacing, typography, shadows and border rounding.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Views
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Configure the user interface and the different components within each view.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Workspace - Admin
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Config Values
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Set the Config Values.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Credentials
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Set the Credentials.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Files
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Upload files for logos or any graphic items you would like to expose in your App Views you create in your workspace.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Permission Sets
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Set access to Files, Routes and Views and then assign the named permissions set to specific profiles.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Profiles
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Create Profiles and assign permission sets to each and give your app a granular level of security.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Secrets
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Items generated by your third party provider of apps or API connectors are stored here.

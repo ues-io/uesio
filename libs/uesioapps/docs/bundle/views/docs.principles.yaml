@@ -29,54 +29,81 @@ definition:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: Build and Bundle
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Get started with a full featured component library.
                       - io.text:
                           uesio.variant: io.section
-                          text: Get started with a full featured component library – Create standard business applications fast with a complete set of ready-to-use components and fully fledged applications.
+                          text: Create standard business applications fast with a complete set of ready-to-use components and fully fledged applications.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: share
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Collaborate with the Community.
                       - io.text:
                           uesio.variant: io.section
-                          text: Collaborate with the Community – Share your creations at any point on the ues.io Bundle Store for further consumption by the community.
+                          text: Share your creations at any point on the ues.io Bundle Store for further consumption by the community.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Monetize your work.
                       - io.text:
                           uesio.variant: io.section
-                          text: Monetize your work –  You may also sell your components, bundles, or even subscriptions to the functionality you've built.
+                          text: You may also sell your components, bundles, or even subscriptions to the functionality you've built.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: connect & integrate
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Integrate with the services you already use.
                       - io.text:
                           uesio.variant: io.section
-                          text: Integrate with the services you already use – Connect your favorite databases, integrate with your favorite tools and work with the best of each world.
+                          text: Connect your favorite databases, integrate with your favorite tools and work with the best of each world.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Use data sources.
                       - io.text:
                           uesio.variant: io.section
-                          text: Use data sources – Save time with our built-in zero configuration data management. Use ues.io's included platform data source right out of the box, zero configuration or third party accounts needed.
+                          text: Save time with our built-in zero configuration data management. Use ues.io's included platform data source right out of the box, zero configuration or third party accounts needed.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: host & distribute
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Go live within minutes.
                       - io.text:
                           uesio.variant: io.section
-                          text: Go live within minutes – As soon as you are ready, publish bundles directly on our servers. Choose where you want to host your websites.
+                          text: As soon as you are ready, publish bundles directly on our servers. Choose where you want to host your websites.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: pay as you grow
-                      - io.text:
-                          uesio.variant: io.section
-                          text: Building apps is free – We only charge for transactions and using our data sources.
-                      - io.text:
-                          uesio.variant: io.section
-                          text: Add as many users as you want at no cost. – Don‘t pay for dormant users.
                       - io.titlebar:
-                          uesio.variant: io.secondary
-                          title: no advance payments!
+                          uesio.variant: io.tabbed
+                          title: Build apps for free.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: We only charge for transactions once your app is published and your users are active.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: Add as many users as you want at no cost.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Don‘t pay for dormant users.
+                      - io.titlebar:
+                          uesio.variant: io.tabbed
+                          title: No advance payments.
+                      - io.text:
+                          uesio.variant: io.section
+                          text: No annual or monthly fees up front.
