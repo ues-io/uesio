@@ -138,12 +138,23 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
+		//TO-DO Abel:
+		// Send inserts & updates instead of the generic changes
+
 		changes, deletes, err := PopulateAndValidate(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
-		err = RunBeforeSaveBots(changes, deletes, collectionMetadata, session)
+		err = RunBeforeInsertBots(changes, collectionMetadata, session)
+		if err != nil {
+			return err
+		}
+		err = RunBeforeUpdateBots(changes, collectionMetadata, session)
+		if err != nil {
+			return err
+		}
+		err = RunBeforeDeleteBots(deletes, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
@@ -215,7 +226,15 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = RunAfterSaveBots(&op, collectionMetadata, session)
+			err = RunAfterInsertBots(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
+			err = RunAfterUpdateBots(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
+			err = RunAfterDeleteBots(&op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
