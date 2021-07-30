@@ -1,0 +1,18 @@
+name: myview
+definition:
+  # Wires are how we pull in data
+  wires:
+    mywire:
+      collection: mycollection
+    fields:
+      myfield1:
+      myfield2:
+  # Components are how we describe the layout of our view
+  components:
+    - io.text:
+        text: Some text here
+    - io.button:
+        label: Press this button
+        signals:
+          - signal: notification/ADD
+            message: Hello World!

@@ -67,6 +67,25 @@ class FileAPI {
 		}, [])
 		return content
 	}
+
+	useFile = (context: Context, fileId?: string) => {
+		const [content, setContent] = useState<string>("")
+		useEffect(() => {
+			if (!fileId) return
+			const fileUrl = this.uesio.file.getURLFromFullName(context, fileId)
+			if (!fileUrl) {
+				setContent("")
+				return
+			}
+			const fetchData = async () => {
+				const res = await fetch(fileUrl)
+				const text = await res.text()
+				setContent(text)
+			}
+			fetchData()
+		}, [])
+		return content
+	}
 }
 
 export {

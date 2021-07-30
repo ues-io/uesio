@@ -4,6 +4,7 @@ import { GridItemProps } from "./griditemdefinition"
 
 const GridItem: FunctionComponent<GridItemProps> = (props) => {
 	const { definition, context, path } = props
+	if (!definition) return <div />
 	const classes = styles.useStyles(
 		{
 			root: {

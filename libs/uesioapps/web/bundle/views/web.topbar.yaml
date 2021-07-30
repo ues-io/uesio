@@ -37,7 +37,6 @@ definition:
                                   - signal: "route/NAVIGATE"
                                     path: ""
                       - io.griditem:
-                          components:
                       - io.griditem:
                           components:
                             - io.group:

@@ -41,11 +41,11 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 	return (
 		<IOGrid classes={classes} context={props.context}>
 			<component.Slot
-				definition={props.definition}
+				definition={definition}
 				listName="items"
 				path={props.path}
 				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
-				context={props.context}
+				context={context}
 			/>
 		</IOGrid>
 	)

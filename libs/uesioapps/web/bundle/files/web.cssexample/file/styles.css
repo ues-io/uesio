@@ -1,0 +1,12 @@
+.myClass {
+	color: rebeccapurple;
+	padding: 30px;
+}
+
+#styleThis {
+	border: 1px dashed khaki;
+}
+
+.crucial {
+	color: tomato !important;
+}
