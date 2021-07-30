@@ -19,3 +19,5 @@ files:
   web.dryer: true
   web.htmlexample: true
   web.cssexample: true
+  web.viewexample: true
+  web.routeexample: true

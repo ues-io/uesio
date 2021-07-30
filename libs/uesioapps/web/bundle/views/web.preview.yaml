@@ -156,7 +156,7 @@ definition:
                           text: The evolution of the web
                       - io.text:
                           uesio.variant: web.pitchsubtitlesmall
-                          text: Declarative > Imperative > Declarative?
+                          text: Declarative -> Imperative -> Declarative?
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -267,6 +267,30 @@ definition:
                                     fontSize: 34pt
                                 uesio.variant: io.icon
                                 text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Dynamic Content
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Content Platform -> Application Platform
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -276,16 +300,29 @@ definition:
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
-                          text: Cloud services and the modern web
+                          text: The modern web
                       - io.text:
                           uesio.variant: web.pitchsubtitlesmall
-                          text:
+                          text: Cloud Services, Build Tools, Application Frameworks
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
                       - type: paramIsValue
                         param: step
                         value: "11"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Principles
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Fast, Simple, Intuitive
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "12"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -298,7 +335,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "12"
+                        value: "13"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -311,7 +348,7 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "13"
+                        value: "14"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
@@ -324,11 +361,598 @@ definition:
                     uesio.display:
                       - type: paramIsValue
                         param: step
-                        value: "14"
+                        value: "15"
                     components:
                       - io.text:
                           uesio.variant: web.pitchtitlesmall
                           text: 4. Full application lifecycle included
                       - io.text:
                           uesio.variant: web.pitchsubtitlesmall
-                          text: Build > Test > Deploy > Publish
+                          text: Build -> Test -> Deploy -> Publish
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "16"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 5. First-class packaging/bundling model
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Use ready-made app config. Share/sell your own config.
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "17"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: 6. Build the product on the product
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Getting high on our own supply.
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "18"
+                    components:
+                      - io.image:
+                          file: uesio.logowhite
+                          height: 140px
+                          align: center
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "19"
+                    components:
+                      - io.grid:
+                          templateColumns: 1fr 1fr
+                          columnGap: 30px
+                          uesio.styles:
+                            root:
+                              alignItems: center
+                          items:
+                            - io.image:
+                                uesio.styles:
+                                  root:
+                                    textAlign: right
+                                file: uesio.logowhite
+                                height: 140px
+                                align: center
+                            - io.box:
+                                components:
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontWeight: normal
+                                      uesio.variant: web.pitchtitle
+                                      text: ues.io
+                                  - io.text:
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 9pt
+                                      uesio.variant: web.pitchsubtitlesmall
+                                      text: '" you - zee - oh "'
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "20"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: What is ues.io?
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: A declarative web application platform
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Real-time runtime
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Application configuration studio
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Integrated view builder
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Site management console
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Bundle (app) store
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "21"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitlesmall
+                          text: How does ues.io work?
+                      - io.text:
+                          uesio.variant: web.pitchsubtitlesmall
+                          text: Configuration files stored as yaml
+                      - io.grid:
+                          templateColumns: 400px 400px
+                          columnGap: 40px
+                          items:
+                            - io.code:
+                                uesio.styles:
+                                  root:
+                                    margin: 40px 0
+                                    padding: 40px
+                                    backgroundColor: white
+                                language: yaml
+                                label: myview.yaml
+                                file: web.viewexample
+                            - io.code:
+                                uesio.styles:
+                                  root:
+                                    margin: 40px 0
+                                    padding: 40px
+                                    backgroundColor: white
+                                language: yaml
+                                label: myroute.yaml
+                                file: web.routeexample
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "22"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Configuration Types
+                      - io.grid:
+                          templateColumns: 1fr 1fr 1fr
+                          columnGap: 40px
+                          items:
+                            - io.box:
+                                components:
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Views
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: view_quilt
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Routes
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: map
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Components
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: widgets
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Themes
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: palette
+                            - io.box:
+                                components:
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Bots
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: smart_toy
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Collections
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: list
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Data Sources
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: dynamic_feed
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Select Lists
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: playlist_add_check
+                            - io.box:
+                                components:
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Config Values
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: tune
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Files
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: collections
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Permission Sets
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: rule
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Profiles
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: group
+                                  - io.tile:
+                                      uesio.variant: web.pitchitem
+                                      content:
+                                        - io.text:
+                                            text: Secrets
+                                      avatar:
+                                        - io.text:
+                                            uesio.styles:
+                                              root:
+                                                fontSize: 34pt
+                                            uesio.variant: io.icon
+                                            text: lock
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "23"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: App bundles
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: A set of configuration items
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Point-in-time snapshot of functionality
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Immutable - (once created can never be changed)
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Private, internal only, or public
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "24"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Sites
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Publish app functionality to a set of users
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Instantaneous Upgrades and Rollback
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Multi-tenant data separation
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Manage users and site configuration from the Studio
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Use a custom domain, or register subdomains on the ues.io domain
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "25"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Bundle Store
+                      - io.text:
+                          uesio.variant: web.pitchsubtitle
+                          text: Publish bundles to be used in other apps
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Allow your app to be extended by others
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Use functionality from the store in your app
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Generate revenue on the ues.io platform
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: Manage licenses and billing through the bundle management console
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "26"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Demo
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "27"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Pricing
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "28"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Optimistic Timeline
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "29"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Our Team
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "30"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Feedback
+                - io.box:
+                    uesio.variant: web.pitchbox
+                    uesio.display:
+                      - type: paramIsValue
+                        param: step
+                        value: "31"
+                    components:
+                      - io.text:
+                          uesio.variant: web.pitchtitle
+                          text: Thank you!
