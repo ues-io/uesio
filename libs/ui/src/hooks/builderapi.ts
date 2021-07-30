@@ -6,6 +6,8 @@ import {
 	useNodeState,
 	useSelectedNode,
 	useLastModifiedNode,
+	useSelectedType,
+	useSelectedItem,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { useEffect } from "react"
@@ -66,6 +68,10 @@ class BuilderAPI {
 			return ["viewdef", this.uesio.getViewDefId() || "", ""]
 		return [metadataType, metadataItem, localPath]
 	}
+	useSelectedType = () => useSelectedType() || "viewdef"
+
+	useSelectedItem = () => useSelectedItem() || this.uesio.getViewDefId() || ""
+
 	useLastModifiedNode = useLastModifiedNode
 	useDragNode = () => getFullPathParts(useDragNode())
 
