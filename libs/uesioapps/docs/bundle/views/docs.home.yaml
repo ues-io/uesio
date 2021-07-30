@@ -29,18 +29,21 @@ definition:
                       - io.titlebar:
                           uesio.variant: io.secondary
                           title: UESIO – User Experience Studio
-                      - io.text:
-                          uesio.variant: io.section
-                          text: (u)ser (e)xperience (s)tud(io) - ues.io - (pronounced "yoo-zee-oh") is a web application builder where you work on configuration rather than code.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.secondary
+                          uesio.variant: docs.tabbed
+                          title: (u)ser (e)xperience (s)tud(io) - ues.io - (pronounced "yoo-zee-oh") is a web application builder where you work on configuration rather than code.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
                           title: Think specifying the desired outcome, not the individual instructions to the computer.
                 - io.box:
                     uesio.variant: io.section
                     components:
                       - io.titlebar:
-                          uesio.variant: io.secondary
+                          uesio.variant: docs.tabbed
                           title: Add shortcuts to your development cycles, share your coding talent and profit by listing in the Bundle Store.

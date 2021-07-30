@@ -28,7 +28,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: realtime view editing
+                          title: Views
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Realtime view editing.
                       - io.text:
                           uesio.variant: io.section
                           text: Views react in real time to changes to their configuration. Whenever possible, the feedbock loop for a change is as short as possible.
@@ -37,7 +40,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: seamless upgrades and rollbacks
+                          title: Versioning
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Seamless upgrades and rollbacks.
                       - io.text:
                           uesio.variant: io.section
                           text: Easily switch between bundle versions for a site, allowing administrators to quickly address issues.
@@ -46,7 +52,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: built-in, zero configuration data source
+                          title: Data
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Built-in zero configuration data source.
                       - io.text:
                           uesio.variant: io.section
                           text: Use Uesio's included platform data source right out of the box, zero configuration or separate account with a third party needed.
@@ -55,7 +64,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: full featured component library included
+                          title: Components
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Full featured component library included.
                       - io.text:
                           uesio.variant: io.section
                           text: The IO components, included with Uesio provide a complete set of the components you need for a standard business application.
@@ -64,7 +76,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: create components quickly using react
+                          title: Customization
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Create components quickly using react.
                       - io.text:
                           uesio.variant: io.section
                           text: For custom functionality, use React and Uesio's API hooks to connect to wires and send signals.
@@ -73,7 +88,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: back-end business logic with bots, and validation rules
+                          title: Workflows
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Back-end business logic with bots and validation rules.
                       - io.text:
                           uesio.variant: io.section
                           text: Write business logic in Javascript (or Typescript) using bots.
@@ -82,7 +100,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: distribute and monitize components, app structure, and data models
+                          title: Generate Revenue
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Distribute and monitize components, app structure, and data models.
                       - io.text:
                           uesio.variant: io.section
                           text: Using the bundle store, sell subscriptions to the functionality you've built out.
@@ -91,7 +112,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.secondary
-                          title: build quickly using bundles
+                          title: Bundle Store
+                      - io.titlebar:
+                          uesio.variant: docs.tabbed
+                          title: Build quickly using bundles.
                       - io.text:
                           uesio.variant: io.section
                           text: Choose from a large selection of pre-built functionality in the bundle store.
