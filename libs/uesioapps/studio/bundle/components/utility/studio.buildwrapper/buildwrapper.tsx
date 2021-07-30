@@ -25,70 +25,63 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	)
 	const accepts = propDef?.accepts
 
-	const Drag = (() => {
-		const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-		const fullDragPath = component.path.makeFullPath(
-			dragType,
-			dragItem,
-			dragPath
-		)
-		const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
-
-		return {
-			fullDragPath,
-			dropNode: {
-				path: dropPath,
-			},
-			dragNode: {
-				path: dragPath,
-			},
-			isDragging:
-				path === dragPath &&
-				dragType === "viewdef" &&
-				dragItem === viewDefId,
-			start: (e: DragEvent) => {
-				e.stopPropagation()
-				setTimeout(() => {
-					if (dragPath !== path) {
-						uesio.builder.setDragNode("viewdef", viewDefId, path)
-					}
-				})
-			},
-			end: () => {
-				uesio.builder.clearDragNode()
-				uesio.builder.clearDropNode()
-			},
-			over: (e: DragEvent) => {
-				if (!accepts) return
-				if (!isDropAllowed(accepts, fullDragPath)) {
-					return
+	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
+	const fullDragPath = component.path.makeFullPath(
+		dragType,
+		dragItem,
+		dragPath
+	)
+	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const dragger = {
+		fullDragPath,
+		dropNode: dropPath,
+		dragNode: dragPath,
+		isDragging:
+			path === dragPath &&
+			dragType === "viewdef" &&
+			dragItem === viewDefId,
+		start: (e: DragEvent) => {
+			e.stopPropagation()
+			setTimeout(() => {
+				if (dragPath !== path) {
+					uesio.builder.setDragNode("viewdef", viewDefId, path)
 				}
-				e.preventDefault()
-				e.stopPropagation()
-				uesio.builder.setDropNode("viewdef", viewDefId, path)
-			},
-			drop: (e: DragEvent) => {
-				if (!accepts) return
-				if (!isDropAllowed(accepts, fullDragPath)) {
-					return
-				}
-				e.preventDefault()
-				e.stopPropagation()
-				handleDrop(
-					fullDragPath,
-					component.path.makeFullPath("viewdef", viewDefId, path),
-					0,
-					uesio
-				)
-			},
-		}
-	})()
+			})
+		},
+		end: () => {
+			uesio.builder.clearDragNode()
+			uesio.builder.clearDropNode()
+		},
+		over: (e: DragEvent) => {
+			if (!accepts) return
+			if (!isDropAllowed(accepts, fullDragPath)) {
+				return
+			}
+			e.preventDefault()
+			e.stopPropagation()
+			uesio.builder.setDropNode("viewdef", viewDefId, path)
+		},
+		drop: (e: DragEvent) => {
+			if (!accepts) return
+			if (!isDropAllowed(accepts, fullDragPath)) {
+				return
+			}
+			e.preventDefault()
+			e.stopPropagation()
+			handleDrop(
+				fullDragPath,
+				component.path.makeFullPath("viewdef", viewDefId, path),
+				0,
+				uesio
+			)
+		},
+	}
 
 	const wrapperPath = component.path.getGrandParentPath(path)
 	const addBeforePlaceholder =
-		`${wrapperPath}["${index}"]` === Drag.dropNode.path
+		`${wrapperPath}["${index}"]` === dragger.dropNode
 	const addAfterPlaceholder =
-		`${wrapperPath}["${index + 1}"]` === Drag.dropNode.path
+		`${wrapperPath}["${index + 1}"]` === dragger.dropNode
 	const classes = styling(
 		props,
 		styles,
@@ -96,17 +89,17 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		isActive,
 		isStructureView,
 		isContentView,
-		Drag.isDragging
+		dragger.isDragging
 	)
 	return (
 		<>
 			{addBeforePlaceholder && <div className={classes.placeholder} />}
 			<div
 				data-index={index}
-				onDragStart={Drag.start}
-				onDragEnd={Drag.end}
-				onDragOver={Drag.over}
-				onDrop={Drag.drop}
+				onDragStart={dragger.start}
+				onDragEnd={dragger.end}
+				onDragOver={dragger.over}
+				onDrop={dragger.drop}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected &&
@@ -132,7 +125,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 						onMouseDown={() => isStructureView && setCanDrag(true)}
 						onMouseUp={() =>
 							isStructureView &&
-							Drag.dragNode.path &&
+							dragger.dragNode &&
 							setCanDrag(false)
 						}
 					>
