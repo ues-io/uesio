@@ -30,7 +30,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Views
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Realtime view editing.
                       - io.text:
                           uesio.variant: io.section
@@ -42,7 +42,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Versioning
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Seamless upgrades and rollbacks.
                       - io.text:
                           uesio.variant: io.section
@@ -54,7 +54,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Data
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Built-in zero configuration data source.
                       - io.text:
                           uesio.variant: io.section
@@ -66,7 +66,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Components
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Full featured component library included.
                       - io.text:
                           uesio.variant: io.section
@@ -78,7 +78,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Customization
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Create components quickly using react.
                       - io.text:
                           uesio.variant: io.section
@@ -90,7 +90,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Workflows
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Back-end business logic with bots and validation rules.
                       - io.text:
                           uesio.variant: io.section
@@ -102,7 +102,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Generate Revenue
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Distribute and monitize components, app structure, and data models.
                       - io.text:
                           uesio.variant: io.section
@@ -114,7 +114,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Bundle Store
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Build quickly using bundles.
                       - io.text:
                           uesio.variant: io.section

@@ -30,7 +30,7 @@ definition:
                           uesio.variant: io.secondary
                           title: Build and Bundle
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Get started with a full featured component library.
                       - io.text:
                           uesio.variant: io.section
@@ -42,13 +42,13 @@ definition:
                           uesio.variant: io.secondary
                           title: share
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Collaborate with the Community.
                       - io.text:
                           uesio.variant: io.section
                           text: Share your creations at any point on the ues.io Bundle Store for further consumption by the community.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Monetize your work.
                       - io.text:
                           uesio.variant: io.section
@@ -60,13 +60,13 @@ definition:
                           uesio.variant: io.secondary
                           title: connect & integrate
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Integrate with the services you already use.
                       - io.text:
                           uesio.variant: io.section
                           text: Connect your favorite databases, integrate with your favorite tools and work with the best of each world.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Use data sources.
                       - io.text:
                           uesio.variant: io.section
@@ -78,7 +78,7 @@ definition:
                           uesio.variant: io.secondary
                           title: host & distribute
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Go live within minutes.
                       - io.text:
                           uesio.variant: io.section
@@ -90,19 +90,19 @@ definition:
                           uesio.variant: io.secondary
                           title: pay as you grow
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Build apps for free.
                       - io.text:
                           uesio.variant: io.section
                           text: We only charge for transactions once your app is published and your users are active.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Add as many users as you want at no cost.
                       - io.text:
                           uesio.variant: io.section
                           text: Don‘t pay for dormant users.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: No advance payments.
                       - io.text:
                           uesio.variant: io.section

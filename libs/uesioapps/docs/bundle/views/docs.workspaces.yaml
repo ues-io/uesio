@@ -51,25 +51,25 @@ definition:
                           uesio.variant: io.secondary
                           title: Workspace - Data
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Bots
                       - io.text:
                           uesio.variant: io.section
                           text: See Bots as workflow processes that you create to do something when something happens.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Collections
                       - io.text:
                           uesio.variant: io.section
                           text: Manage the different tables and fields that are wired up from the Data Sources tab.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Data Sources
                       - io.text:
                           uesio.variant: io.section
                           text: Set up and connect to your data sources.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Select Lists
                       - io.text:
                           uesio.variant: io.section
@@ -81,25 +81,25 @@ definition:
                           uesio.variant: io.secondary
                           title: Workspace - User Interface
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Components
                       - io.text:
                           uesio.variant: io.section
                           text: The Component Builder is a way for you to easily create components that you can include in your workspace and app.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Routes
                       - io.text:
                           uesio.variant: io.section
                           text: Sets the path that the user will use to reach the Views you have created.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Themes
                       - io.text:
                           uesio.variant: io.section
                           text: Specify design properties such as colors, spacing, typography, shadows and border rounding.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Views
                       - io.text:
                           uesio.variant: io.section
@@ -111,37 +111,37 @@ definition:
                           uesio.variant: io.secondary
                           title: Workspace - Admin
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Config Values
                       - io.text:
                           uesio.variant: io.section
                           text: Set the Config Values.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Credentials
                       - io.text:
                           uesio.variant: io.section
                           text: Set the Credentials.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Files
                       - io.text:
                           uesio.variant: io.section
                           text: Upload files for logos or any graphic items you would like to expose in your App Views you create in your workspace.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Permission Sets
                       - io.text:
                           uesio.variant: io.section
                           text: Set access to Files, Routes and Views and then assign the named permissions set to specific profiles.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Profiles
                       - io.text:
                           uesio.variant: io.section
                           text: Create Profiles and assign permission sets to each and give your app a granular level of security.
                       - io.titlebar:
-                          uesio.variant: io.tabbed
+                          uesio.variant: docs.tabbed
                           title: Secrets
                       - io.text:
                           uesio.variant: io.section
