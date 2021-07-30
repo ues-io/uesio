@@ -4,3 +4,4 @@ type: SELECT
 selectList: studio.fieldtypes
 label: Type
 propertyName: type
+required: true
