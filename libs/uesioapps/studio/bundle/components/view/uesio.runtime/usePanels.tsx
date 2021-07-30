@@ -1,77 +1,49 @@
 import { useState, useEffect } from "react"
-import debounce from "lodash/debounce"
 import throttle from "lodash/throttle"
 
-export default (): [
-	(arg: boolean) => void,
-	(arg: { offset: number; width: number }) => void,
-	{ height: number; width: number },
-	string
-] => {
-	const [width, setWidth] = useState("22%")
+export default (
+	element: HTMLDivElement | null
+): [(arg: boolean) => void, number] => {
+	const [width, setWidth] = useState(300)
 	const [dragging, setDragging] = useState(false)
-	const [mouseX, setMouseX] = useState(0)
-	const [boxDimensions, setBoxDimensions] = useState({
-		offset: 0,
-		width: 0,
-	})
-	const [windowSize, setWindowSize] = useState({
-		width: 0,
-		height: 0,
-	})
-
-	useEffect(() => {
-		const handleResize = () => {
-			setWindowSize({
-				width: window.innerWidth,
-				height: window.innerHeight,
-			})
-		}
-
-		const debouncedHandler = debounce(() => handleResize(), 300)
-		window.addEventListener("resize", debouncedHandler)
-
-		return () => window.removeEventListener("resize", debouncedHandler)
-	}, [])
+	const panelPosition = element?.getBoundingClientRect().left
 
 	// woah not soo fast
 	const throttledMouseHandler = throttle((e) => {
-		setMouseX(e.clientX),
-			1000,
-			{
-				leading: true,
-				trailing: false,
-			}
-	})
+		if (!dragging) return
+
+		const mouseX = e.clientX
+
+		if (!panelPosition || !mouseX) return
+		const change = panelPosition - mouseX
+		const x = width + change
+		const min = 250
+		const max = 600
+
+		if (x < min) {
+			setWidth(min)
+			return
+		}
+		if (x > max) {
+			setWidth(max)
+			return
+		}
+
+		setWidth(x)
+	}, 50)
 
 	useEffect(() => {
 		if (!dragging) return
-		const { offset, width: bWidth } = boxDimensions
-
-		const calcWidth = () => {
-			const multiplier = 1 // speed factor, above 1 is faster and under 1 is slower than mouse
-			const x = Math.round(
-				100 * (1 - (mouseX / multiplier - offset) / bWidth)
-			)
-			const min = 20
-			const max = 60
-			if (x < min) return min
-			if (x > max) return max
-			return x
-		}
-
-		setWidth(calcWidth() + "%")
-	}, [dragging, mouseX])
-
-	useEffect(() => {
 		document.addEventListener("mousemove", throttledMouseHandler)
-		document.addEventListener("mouseup", () => setDragging(false))
+		document.addEventListener("mouseup", (e: MouseEvent) =>
+			setDragging(false)
+		)
 
 		return () => {
 			document.removeEventListener("mousemove", throttledMouseHandler)
 			document.removeEventListener("mouseup", () => setDragging(false))
 		}
-	})
+	}, [dragging])
 
-	return [setDragging, setBoxDimensions, windowSize, width]
+	return [setDragging, width]
 }

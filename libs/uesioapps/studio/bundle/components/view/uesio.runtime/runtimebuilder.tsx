@@ -57,12 +57,10 @@ component.registry.registerSignals("uesio.runtime", {
 
 const NAV_WIDTH = 50
 const LEFT_PANEL_WIDTH = 300
-const RIGHT_PANEL_WIDTH = 300
 
 const Buildtime: FC<definition.BaseProps> = (props) => {
-	const slidePanelRef = useRef<HTMLDivElement>(null)
-	const [setDragging, setBoxDimensions, windowSize, codePanelWidth] =
-		usePanels()
+	const slideRef = useRef<HTMLDivElement>(null)
+	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
 
 	const [state] = uesio.component.useState<BuilderState>("panels", {
@@ -70,15 +68,6 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		showComps: true,
 		showWires: false,
 	})
-
-	useEffect(() => {
-		if (!slidePanelRef?.current) return
-		const dimensions = {
-			offset: slidePanelRef.current.getBoundingClientRect().left,
-			width: slidePanelRef.current.offsetWidth,
-		}
-		setBoxDimensions(dimensions)
-	}, [slidePanelRef?.current, windowSize])
 
 	const { context } = props
 
@@ -109,7 +98,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		mediaOffset:
 			NAV_WIDTH * 2 +
 			(state.showComps || state.showWires ? LEFT_PANEL_WIDTH : 0) +
-			(state.showCode ? RIGHT_PANEL_WIDTH : 0),
+			(state.showCode ? codePanelWidth : 0),
 	})
 
 	return (
@@ -118,7 +107,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 			styles={{
 				root: {
 					height: "100vh",
-					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${NAV_WIDTH}px`,
+					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth}px ${NAV_WIDTH}px`,
 					gridTemplateRows: "1fr 1fr",
 				},
 			}}
@@ -147,88 +136,73 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
-
-			<div
-				ref={slidePanelRef}
+			<Canvas
 				className={styles.css({
 					gridRow: "1 / 3",
-					gridColumn: `3`,
-					overflow: "auto",
-					display: "flex",
+					gridColumn: state.showCode ? "3" : "3 / 5",
 				})}
-			>
-				<Canvas
+				context={canvasContext}
+			/>
+			{state.showCode && (
+				<div
+					ref={slideRef}
 					className={styles.css({
+						gridRow: "1 / 3",
+						gridColumn: 4,
 						position: "relative",
-						flex: 1,
 					})}
-					context={canvasContext}
-				/>
-				{state.showCode && (
+				>
+					{/* Whole box, from top to down that is slidable */}
 					<div
+						role="seperator"
+						aria-valuenow={0}
+						onMouseDown={() => setDragging(true)}
 						className={styles.css({
-							maxWidth: codePanelWidth,
-							position: "relative",
-							width: "100vw",
-							transition: "all 0.3s ease-in-out",
-							willChange: "max-width",
+							display: "flex",
+							alignItems: "center",
+							cursor: "ew-resize",
+							width: "10px",
+							position: "absolute",
+							left: "-3px",
+							top: 0,
+							height: "100%",
+							zIndex: 1,
+
+							"&:hover span, &:active span": {
+								opacity: 1,
+								cursor: "ew-resize",
+							},
 						})}
 					>
-						{/* Whole box, from top to down that is slidable */}
-						<div
-							role="seperator"
-							aria-valuenow={0}
-							onMouseDown={() => setDragging(true)}
+						{/* Visual indicator */}
+						<span
 							className={styles.css({
-								display: "flex",
-								alignItems: "center",
+								backgroundColor: "rgb(255, 94, 47)",
+								width: "4px",
+								height: "8em",
+								borderRadius: "6px",
+								transform: "translateX(-50%)",
+								opacity: 0.5,
 								cursor: "ew-resize",
-								width: "10px",
+								maxHeight: "6em",
+								transition: "all 0.125s ease",
 								position: "absolute",
-								left: "-3px",
-								top: 0,
-								height: "100%",
-								zIndex: 1,
-
-								"&:hover span, &:active span": {
-									opacity: 1,
-									cursor: "ew-resize",
-								},
 							})}
-						>
-							{/* Visual indicator */}
-							<span
-								className={styles.css({
-									backgroundColor: "rgb(255, 94, 47)",
-									width: "4px",
-									height: "8em",
-									borderRadius: "6px",
-									transform: "translateX(-50%)",
-									opacity: 0.5,
-									cursor: "ew-resize",
-									maxHeight: "6em",
-									transition: "all 0.125s ease",
-									position: "absolute",
-								})}
-							/>
-						</div>
-						<CodePanel
-							className={styles.css({
-								position: "relative",
-								boxShadow: "0 0 19px -6px rgb(0 0 0 / 20%)",
-							})}
-							context={builderContext}
 						/>
 					</div>
-				)}
-			</div>
+					<CodePanel
+						className={styles.css({
+							position: "relative",
+							boxShadow: "0 0 19px -6px rgb(0 0 0 / 20%)",
+						})}
+						context={builderContext}
+					/>
+				</div>
+			)}
 
 			<RightNav
 				context={builderContext}
-				className={styles.css({
-					gridRow: "1 / 3",
-					gridColumn: 4,
-				})}
+				className={styles.css({ gridRow: "1 / 3", gridColumn: 5 })}
 			/>
 		</Grid>
 	)
