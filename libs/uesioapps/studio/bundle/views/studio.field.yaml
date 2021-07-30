@@ -47,7 +47,6 @@ definition:
         studio.propertyname:
         studio.collection:
         studio.workspaceid:
-        studio.foreignKeyField:
         studio.referencedCollection:
         studio.autopopulate:
         studio.selectlist:
@@ -165,16 +164,6 @@ definition:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
-                                  - io.box:
-                                      uesio.display:
-                                        - field: studio.type
-                                          value: "REFERENCE"
-                                      components:
-                                        - studio.metadatafield:
-                                            fieldId: studio.foreignKeyField
-                                            metadataType: "FIELD"
-                                            label: "Foreign Key Field"
-                                            grouping: ${studio.referencedCollection}
                                   - io.box:
                                       uesio.display:
                                         - field: studio.type

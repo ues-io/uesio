@@ -69,8 +69,9 @@ definition:
         crm.id:
         crm.name:
         crm.account:
+          fields:
+            crm.name:
         crm.description:
         crm.status:
-        crm.accountid:
         crm.updated:
         crm.created:

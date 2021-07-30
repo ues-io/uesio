@@ -58,8 +58,6 @@ definition:
                 - io.column:
                     field: crm.deceased
                 - io.column:
-                    field: crm.accountid
-                - io.column:
                     field: crm.account
                 - io.column:
                     field: crm.birthdate
@@ -79,8 +77,6 @@ definition:
         crm.account:
           fields:
             crm.name:
-            crm.description:
-        crm.accountid: null
         crm.birthdate: null
         crm.deceased: null
         crm.firstname: null

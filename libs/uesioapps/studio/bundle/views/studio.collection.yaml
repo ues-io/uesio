@@ -50,7 +50,6 @@ definition:
         studio.propertyname:
         studio.collection:
         studio.workspaceid:
-        studio.foreignKeyField:
         studio.referencedCollection:
       conditions:
         - field: studio.collection

@@ -6,7 +6,7 @@ type GridItemDefinition = {
 }
 
 interface GridItemProps extends definition.BaseProps {
-	definition: GridItemDefinition
+	definition?: GridItemDefinition
 }
 
 const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {

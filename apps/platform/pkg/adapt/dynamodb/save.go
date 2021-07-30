@@ -153,9 +153,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 			_, err = client.DeleteItem(ctx, &dynamodb.DeleteItemInput{
 				Key: map[string]types.AttributeValue{
-					idFieldDBName: &types.AttributeValueMemberS{Value: dbID.(string)},
+					SystemID: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
 				},
-				TableName: aws.String(collectionName),
+				TableName: aws.String(SystemTable),
 			})
 			if err != nil {
 				return errors.New("Delete faild DynamoDB:" + err.Error())

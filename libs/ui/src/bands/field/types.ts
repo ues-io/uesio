@@ -35,7 +35,6 @@ type FieldMetadata = {
 	type: FieldType
 	label: string
 	options?: SelectOption[]
-	foreignKeyField?: string
 	referencedCollection?: string
 	subfields?: SubField[]
 }

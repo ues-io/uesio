@@ -1,0 +1,8 @@
+name: pitchbox
+component: io.box
+label: Pitch Box
+definition:
+  uesio.styles:
+    root:
+      margin: 0 160px
+      position: relative

@@ -28,6 +28,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt/s3"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
@@ -55,6 +56,7 @@ func init() {
 
 	// File Adapters
 	fileadapt.RegisterFileAdapter("uesio.gcpstorage", &gcpstorage.FileAdapter{})
+	fileadapt.RegisterFileAdapter("uesio.s3", &s3.FileAdapter{})
 	fileadapt.RegisterFileAdapter("uesio.local", &localfiles.FileAdapter{})
 
 	// Config Stores

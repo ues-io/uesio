@@ -47,7 +47,6 @@ definition:
                               padding: 180px
                           items:
                             - io.griditem:
-                                components:
                             - io.griditem:
                                 uesio.styles:
                                   root:
@@ -99,7 +98,6 @@ definition:
                         padding: 80px
                     items:
                       - io.griditem:
-                          components:
                       - io.griditem:
                           components:
                             - io.box:

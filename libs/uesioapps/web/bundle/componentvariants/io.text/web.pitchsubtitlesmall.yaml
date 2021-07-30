@@ -1,0 +1,11 @@
+name: pitchsubtitlesmall
+component: io.text
+label: Pitch Subtitle Small
+definition:
+  uesio.styles:
+    root:
+      fontSize: 24pt
+      fontFamily: Gosha
+      color: white
+      textShadow: "0 0 6px #00000033"
+  element: div

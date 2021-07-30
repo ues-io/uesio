@@ -1,0 +1,4 @@
+name: preview
+path: preview/{step}
+view: web.preview
+theme: uesio.default
