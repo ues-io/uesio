@@ -68,7 +68,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		referencedCollection,
 		record
 	)
-	const foreignFieldId = fieldMetadata.source.foreignKeyField
 	if (mode === "READ") {
 		return (
 			<TextField
@@ -91,7 +90,11 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 					label: fieldMetadata.getLabel(),
 				})}
 				setValue={(value: string) => {
-					foreignFieldId && record.update(foreignFieldId, value)
+					const idField = referencedCollection.getIdField()?.getId()
+					if (!idField) return
+					record.update(fieldId, {
+						[idField]: value,
+					})
 				}}
 				getItems={async (
 					searchText: string,
