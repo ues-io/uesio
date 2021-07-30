@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux"
+import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
 import { MetadataType } from "./types"
 
@@ -41,6 +42,18 @@ const useLastModifiedNode = () =>
 const useSelectedNode = () =>
 	useSelector(({ builder }: RootState) => builder?.selectedNode || "")
 
+const useSelectedType = () =>
+	useSelector(({ builder }: RootState) => {
+		const [metadataType] = getFullPathParts(builder?.selectedNode || "")
+		return metadataType
+	})
+
+const useSelectedItem = () =>
+	useSelector(({ builder }: RootState) => {
+		const [, metadataItem] = getFullPathParts(builder?.selectedNode || "")
+		return metadataItem
+	})
+
 const useDragNode = () =>
 	useSelector(({ builder }: RootState) => builder?.draggingNode || "")
 
@@ -70,6 +83,8 @@ const useNamespaces = () =>
 export {
 	useNodeState,
 	useSelectedNode,
+	useSelectedType,
+	useSelectedItem,
 	useLastModifiedNode,
 	useDragNode,
 	useDropNode,
