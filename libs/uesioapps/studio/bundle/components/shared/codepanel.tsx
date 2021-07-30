@@ -127,7 +127,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						return
 					}
 					event.changes.forEach((change) => {
-						console.log("change", change)
 						if (
 							currentAST.current?.contents &&
 							newAST &&

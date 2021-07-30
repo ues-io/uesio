@@ -1,5 +1,4 @@
 import { FC, useEffect, useRef } from "react"
-import _ from "lodash"
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"
@@ -63,7 +62,7 @@ const RIGHT_PANEL_WIDTH = 300
 const Buildtime: FC<definition.BaseProps> = (props) => {
 	const slidePanelRef = useRef<HTMLDivElement>(null)
 	const [setDragging, setBoxDimensions, windowSize, codePanelWidth] =
-		usePanels("33%")
+		usePanels()
 	const uesio = hooks.useUesio(props)
 
 	const [state] = uesio.component.useState<BuilderState>("panels", {

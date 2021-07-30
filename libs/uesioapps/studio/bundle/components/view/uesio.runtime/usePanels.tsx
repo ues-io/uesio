@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import _ from "lodash"
+import debounce from "lodash/debounce"
+import throttle from "lodash/throttle"
 
 export default (): [
 	(arg: boolean) => void,
@@ -27,14 +28,14 @@ export default (): [
 			})
 		}
 
-		const debouncedHandler = _.debounce(() => handleResize(), 300)
+		const debouncedHandler = debounce(() => handleResize(), 300)
 		window.addEventListener("resize", debouncedHandler)
 
 		return () => window.removeEventListener("resize", debouncedHandler)
 	}, [])
 
 	// woah not soo fast
-	const throttledMouseHandler = _.throttle((e) => {
+	const throttledMouseHandler = throttle((e) => {
 		setMouseX(e.clientX),
 			1000,
 			{
