@@ -51,6 +51,8 @@ definition:
         studio.collection:
         studio.workspaceid:
         studio.referencedCollection:
+        studio.selectlist:
+        studio.autopopulate:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -318,6 +320,31 @@ definition:
                     fieldId: studio.label
                 - io.field:
                     fieldId: studio.propertyname
+                - io.box:
+                    uesio.display:
+                      - field: studio.type
+                        value: "REFERENCE"
+                    components:
+                      - studio.metadatafield:
+                          fieldId: studio.referencedCollection
+                          metadataType: "COLLECTION"
+                          label: "Ref. Collection"
+                - io.box:
+                    uesio.display:
+                      - field: studio.type
+                        value: "TIMESTAMP"
+                    components:
+                      - io.field:
+                          fieldId: studio.autopopulate
+                - io.box:
+                    uesio.display:
+                      - field: studio.type
+                        value: "SELECT"
+                    components:
+                      - studio.metadatafield:
+                          fieldId: studio.selectlist
+                          metadataType: "SELECTLIST"
+                          label: "Select List"
         actions:
           - io.button:
               uesio.variant: "io.primary"
