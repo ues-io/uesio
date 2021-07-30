@@ -82,14 +82,15 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		`${wrapperPath}["${index}"]` === dragger.dropNode
 	const addAfterPlaceholder =
 		`${wrapperPath}["${index + 1}"]` === dragger.dropNode
-	const classes = styling(
-		props,
-		styles,
-		isSelected,
-		isActive,
-		isStructureView,
-		isContentView,
-		dragger.isDragging
+	const classes = styles.useUtilityStyles(
+		styling(
+			isSelected,
+			isActive,
+			isStructureView,
+			isContentView,
+			dragger.isDragging
+		),
+		props
 	)
 	return (
 		<>
