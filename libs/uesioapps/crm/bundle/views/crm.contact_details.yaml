@@ -11,7 +11,7 @@ definition:
           - io.titlebar:
               uesio.variant: io.main
               title: ${crm.firstname} ${crm.lastname}
-              subtitle: ${crm.account}
+              subtitle: ${["crm.account"]["crm.name"]}
               actions:
                 - io.group:
                     components:
@@ -73,8 +73,9 @@ definition:
           param: contactid
           valueSource: PARAM
       fields:
-        crm.account: null
-        crm.accountid: null
+        crm.account:
+          fields:
+            crm.name:
         crm.birthdate: null
         crm.deceased: null
         crm.firstname: null

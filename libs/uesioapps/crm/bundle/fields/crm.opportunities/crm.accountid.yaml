@@ -1,5 +1,0 @@
-name: accountid
-collection: crm.opportunities
-type: TEXT
-label: Account ID
-propertyName: accountid
