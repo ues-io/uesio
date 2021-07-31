@@ -7,11 +7,15 @@ views:
   web.earlyaccess: true
   web.earlyaccessthanks: true
   web.preview: true
+  web.privacy: true
+  web.terms: true
 routes:
   web.home: true
   web.earlyaccess: true
   web.earlyaccessthanks: true
   web.preview: true
+  web.privacy: true
+  web.terms: true
 files:
   web.logo: true
   web.piano: true

@@ -25,7 +25,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.footertext
-                                text: 2020 - 2021 ues.io - All rights reserved.
+                                text: © 2020 - 2021 ues.io - All rights reserved.
                       - io.griditem:
                           components:
                       - io.griditem:
@@ -35,10 +35,28 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: web.footerlink
-                                      text: Legal notice
+                                      text: Who we are
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Our team
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Contact us
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Resources
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: docs.ues.io
                                   - io.button:
                                       uesio.variant: web.footerlink
                                       text: Privacy policy
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: privacy
                                   - io.button:
                                       uesio.variant: web.footerlink
                                       text: Terms of use
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: terms
