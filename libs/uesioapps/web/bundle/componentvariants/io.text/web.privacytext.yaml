@@ -1,0 +1,15 @@
+name: privacytext
+component: io.text
+label: Callout
+definition:
+  uesio.styles:
+    root:
+      fontSize: 11pt
+      color: "#808B96"
+      fontFamily: Gosha
+      minWidth: 1028px
+      line-height: 28px
+      padding-top: 20px
+      padding-bottom: 0px
+
+  element: div

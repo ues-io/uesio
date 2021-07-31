@@ -23,7 +23,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.callout
-                                text: Integrated data comes out of the box now.
+                                text: A new approach to web development.
                             - io.text:
                                 uesio.variant: web.calloutsub
                                 text: Uesio is a web application builder, where you work on configuration rather than code. Think specifying the desired outcome, not the individual instructions to the computer.
@@ -75,7 +75,7 @@ definition:
               area: main
               components:
                 - io.grid:
-                    templateColumns: 400px 1fr
+                    templateColumns: 850px 1fr
                     uesio.styles:
                       root:
                         padding: 80px
@@ -84,7 +84,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.callout
-                                text: Build & bundle
+                                text: Build & Bundle - Share & Sell
     - io.grid:
         uesio.variant: web.mainlayout
         items:
