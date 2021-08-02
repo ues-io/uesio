@@ -13,6 +13,7 @@ const FileUpload = component.registry.getUtility("io.fileupload")
 const UserField = component.registry.getUtility("io.userfield")
 const TimestampField = component.registry.getUtility("io.timestampfield")
 const ListField = component.registry.getUtility("io.listfield")
+const DateField = component.registry.getUtility("io.datefield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -53,10 +54,9 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	}
 
 	switch (true) {
-		case type === "TEXT":
-		case type === "LONGTEXT":
 		case type === "DATE":
-		case type === "NUMBER":
+			return <DateField {...common} />
+		case type === "NUMBER" || type === "LONGTEXT" || type === "TEXT":
 			return <TextField {...common} />
 		case type === "SELECT":
 			return (
