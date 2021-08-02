@@ -27,6 +27,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
+	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
+		component.path.getFullPathParts(lastModifiedNode || "")
 
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	currentAST.current = util.yaml.parse(currentYaml)
@@ -41,9 +43,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const m = monacoRef.current
 
 	useEffect(() => {
-		if (e && m && currentAST.current && lastModifiedNode) {
+		if (
+			e &&
+			m &&
+			currentAST.current &&
+			lastModifiedNode &&
+			lastModifiedType === metadataType &&
+			lastModifiedItem === metadataItem
+		) {
 			const node = util.yaml.getNodeAtPath(
-				lastModifiedNode,
+				lastModifiedLocalPath,
 				currentAST.current.contents
 			)
 			const model = e.getModel()
