@@ -57,22 +57,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		err = adapt.ProcessInserts(
 			&request,
 			metadata,
-			// Update Func
-			func(id interface{}, update map[string]interface{}) error {
-				dbID, ok := update[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb update")
-				}
-				delete(update, idFieldDBName)
-				_, err = psql.Update(collectionName).SetMap(update).RunWith(db).Where(sq.Eq{
-					idFieldDBName: dbID,
-				}).Query()
-
-				if err != nil {
-					return errors.New("Failed to Update in SQL Adapter:" + err.Error())
-				}
-				return nil
-			},
 			// Insert Func
 			func(id interface{}, insert map[string]interface{}) error {
 				newID, ok := insert[idFieldDBName]
@@ -132,18 +116,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					return errors.New("Failed to Update in SQL Adapter:" + err.Error())
 				}
 				return nil
-			},
-			// Insert Func
-			func(id interface{}, insert map[string]interface{}) error {
-				newID, ok := insert[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb update")
-				}
-				result, err := psql.Insert(collectionName).SetMap(insert).RunWith(db).Query()
-				if err != nil {
-					return errors.New("Failed to insert in SQL Adapter:" + err.Error())
-				}
-				return result.Scan(newID)
 			},
 			// SetData Func
 			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {

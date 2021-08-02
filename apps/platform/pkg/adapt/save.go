@@ -104,11 +104,10 @@ func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata, metadata 
 	return fk, nil
 }
 
-func ProcessChanges(
+func ProcessUpdates(
 	request *SaveOp,
 	metadata *MetadataCache,
 	updateFunc ChangeFunc,
-	insertFunc ChangeFunc,
 	setDataFunc SetDataFunc,
 	fieldNameFunc FieldNameFunc,
 	searchFieldFunc SearchFieldFunc,
@@ -120,12 +119,7 @@ func ProcessChanges(
 		return err
 	}
 
-	idTemplate, err := NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
-	if err != nil {
-		return err
-	}
-
-	for _, change := range *request.Changes {
+	for _, change := range *request.Updates {
 
 		changeMap := map[string]interface{}{}
 		searchableValues := []string{}
@@ -169,38 +163,102 @@ func ProcessChanges(
 			if err != nil {
 				return err
 			}
-		} else {
-			newID, err := templating.Execute(idTemplate, change.FieldChanges)
+		}
+
+	}
+	return nil
+
+}
+
+func ProcessInserts(
+	request *SaveOp,
+	metadata *MetadataCache,
+	insertFunc ChangeFunc,
+	setDataFunc SetDataFunc,
+	fieldNameFunc FieldNameFunc,
+	searchFieldFunc SearchFieldFunc,
+	defaultIDFunc DefaultIDFunc,
+) error {
+
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
+	if err != nil {
+		return err
+	}
+
+	idTemplate, err := NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
+	if err != nil {
+		return err
+	}
+
+	for _, change := range *request.Inserts {
+
+		changeMap := map[string]interface{}{}
+		searchableValues := []string{}
+
+		err := change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			fieldMetadata, err := collectionMetadata.GetField(fieldID)
 			if err != nil {
 				return err
 			}
 
-			if newID == "" {
-				newID = defaultIDFunc()
+			if fieldID == collectionMetadata.NameField {
+				searchableValues = append(searchableValues, value.(string))
 			}
 
-			// Make sure to set the id field
-			idFieldMetadata, err := collectionMetadata.GetIDField()
+			fieldName, err := fieldNameFunc(fieldMetadata)
 			if err != nil {
 				return err
 			}
 
-			idFieldName, err := fieldNameFunc(idFieldMetadata)
+			updateValue, err := setDataFunc(value, fieldMetadata)
 			if err != nil {
 				return err
 			}
 
-			changeMap[idFieldName] = newID
+			changeMap[fieldName] = updateValue
+			return nil
+		})
+		if err != nil {
+			return err
+		}
 
-			err = change.FieldChanges.SetField(idFieldMetadata.GetFullName(), newID)
-			if err != nil {
-				return err
+		if searchFieldFunc != nil && len(searchableValues) > 0 {
+			searchIndexField, searchIndex := searchFieldFunc(searchableValues)
+			if searchIndexField != "" {
+				changeMap[searchIndexField] = searchIndex
 			}
+		}
 
-			err = insertFunc(newID, changeMap)
-			if err != nil {
-				return err
-			}
+		newID, err := templating.Execute(idTemplate, change.FieldChanges)
+		if err != nil {
+			return err
+		}
+
+		if newID == "" {
+			newID = defaultIDFunc()
+		}
+
+		// Make sure to set the id field
+		idFieldMetadata, err := collectionMetadata.GetIDField()
+		if err != nil {
+			return err
+		}
+
+		idFieldName, err := fieldNameFunc(idFieldMetadata)
+		if err != nil {
+			return err
+		}
+
+		changeMap[idFieldName] = newID
+
+		err = change.FieldChanges.SetField(idFieldMetadata.GetFullName(), newID)
+		if err != nil {
+			return err
+		}
+
+		err = insertFunc(newID, changeMap)
+		if err != nil {
+			return err
 		}
 
 	}

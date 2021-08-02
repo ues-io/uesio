@@ -62,47 +62,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		err = adapt.ProcessInserts(
 			&request,
 			metadata,
-			// Update Func
-			func(id interface{}, update map[string]interface{}) error {
-
-				dbID, ok := update[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb update")
-				}
-				delete(update, idFieldDBName)
-
-				update[SystemCollectionID] = collectionName
-
-				updates := expression.UpdateBuilder{}
-
-				for name, value := range update {
-					updates = updates.Set(expression.Name(name), expression.Value(value))
-				}
-
-				expr, err := expression.NewBuilder().WithUpdate(updates).Build()
-				if err != nil {
-					return err
-				}
-
-				input := &dynamodb.UpdateItemInput{
-					Key: map[string]types.AttributeValue{
-						SystemID: &types.AttributeValueMemberS{Value: getSystemID(collectionName, dbID.(string))},
-					},
-					TableName:                 aws.String(SystemTable),
-					ExpressionAttributeNames:  expr.Names(),
-					ExpressionAttributeValues: expr.Values(),
-					ReturnValues:              "UPDATED_NEW",
-					UpdateExpression:          expr.Update(),
-				}
-
-				_, err = client.UpdateItem(ctx, input)
-
-				if err != nil {
-					return errors.New("Update failed DynamoDB:" + err.Error())
-				}
-
-				return nil
-			},
 			// Insert Func
 			func(id interface{}, insert map[string]interface{}) error {
 				dbID, ok := insert[idFieldDBName]
@@ -191,30 +150,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					return errors.New("Update failed DynamoDB:" + err.Error())
 				}
 
-				return nil
-			},
-			// Insert Func
-			func(id interface{}, insert map[string]interface{}) error {
-				dbID, ok := insert[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb insert")
-				}
-
-				insert[SystemID] = getSystemID(collectionName, dbID.(string))
-				insert[SystemCollectionID] = collectionName
-
-				itemDb, err := attributevalue.MarshalMap(insert)
-				if err != nil {
-					return err
-				}
-				input := &dynamodb.PutItemInput{
-					Item:      itemDb,
-					TableName: aws.String(SystemTable),
-				}
-				_, err = client.PutItem(ctx, input)
-				if err != nil {
-					return err
-				}
 				return nil
 			},
 			// SetData Func

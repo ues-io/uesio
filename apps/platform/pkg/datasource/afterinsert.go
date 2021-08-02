@@ -9,15 +9,15 @@ import (
 
 // AfterInsertAPI type
 type AfterInsertAPI struct {
-	Changes *ChangesAPI `bot:"results"`
+	Inserts *InsertsAPI `bot:"results"`
 	errors  []string
 	session *sess.Session
 }
 
 func NewAfterInsertAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterInsertAPI {
 	return &AfterInsertAPI{
-		Changes: &ChangesAPI{
-			changes:  request.Changes,
+		Inserts: &InsertsAPI{
+			inserts:  request.Inserts,
 			metadata: metadata,
 		},
 		session: session,

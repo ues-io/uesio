@@ -9,15 +9,15 @@ import (
 
 // AfterUpdateAPI type
 type AfterUpdateAPI struct {
-	Changes *ChangesAPI `bot:"results"`
+	Updates *UpdatesAPI `bot:"results"`
 	errors  []string
 	session *sess.Session
 }
 
 func NewAfterUpdateAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterUpdateAPI {
 	return &AfterUpdateAPI{
-		Changes: &ChangesAPI{
-			changes:  request.Changes,
+		Updates: &UpdatesAPI{
+			updates:  request.Updates,
 			metadata: metadata,
 		},
 		session: session,

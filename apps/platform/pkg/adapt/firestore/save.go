@@ -72,19 +72,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		err = adapt.ProcessInserts(
 			&request,
 			metadata,
-			// Update Func
-			func(id interface{}, update map[string]interface{}) error {
-				updates := []firestore.Update{}
-				for fieldName, value := range update {
-					updates = append(updates, firestore.Update{
-						Path:  fieldName,
-						Value: value,
-					})
-				}
-
-				batch.Update(collection.Doc(id.(string)), updates)
-				return nil
-			},
 			// Insert Func
 			func(id interface{}, insert map[string]interface{}) error {
 				batch.Create(collection.Doc(id.(string)), insert)
@@ -126,11 +113,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				}
 
 				batch.Update(collection.Doc(id.(string)), updates)
-				return nil
-			},
-			// Insert Func
-			func(id interface{}, insert map[string]interface{}) error {
-				batch.Create(collection.Doc(id.(string)), insert)
 				return nil
 			},
 			// SetData Func

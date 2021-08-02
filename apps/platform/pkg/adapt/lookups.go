@@ -250,16 +250,17 @@ func mergeLookupResponses(request *SaveOp, responses []LoadOp, metadata *Metadat
 
 	for index, lookupResponse := range responses {
 		lookup := request.Options.Lookups[index]
-		//err := mergeReferenceLookupResponse(&lookupResponse, lookup, request.Changes, collectionMetadata, metadata)
 		err := mergeReferenceLookupResponse(&lookupResponse, lookup, request.Inserts, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}
-
+		err = mergeReferenceLookupResponse(&lookupResponse, lookup, request.Updates, collectionMetadata, metadata)
+		if err != nil {
+			return err
+		}
 	}
 
 	if upsertResponse != nil {
-		//err := mergeUpsertLookupResponse(upsertResponse, request.Changes, request.Options.Upsert, collectionMetadata, metadata)
 		err := mergeUpsertLookupResponse(upsertResponse, request.Inserts, request.Options.Upsert, collectionMetadata, metadata)
 		if err != nil {
 			return err
