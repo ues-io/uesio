@@ -11,7 +11,8 @@ import (
 type SaveOp struct {
 	CollectionName string
 	WireName       string
-	Changes        *ChangeItems
+	Inserts        *ChangeItems
+	Updates        *ChangeItems
 	Deletes        *ChangeItems
 	Options        *SaveOptions
 	Error          string

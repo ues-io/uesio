@@ -55,7 +55,67 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
-		err = adapt.ProcessChanges(
+		err = adapt.ProcessInserts(
+			&request,
+			metadata,
+			// Update Func
+			func(id interface{}, update map[string]interface{}) error {
+				dbID, ok := update[idFieldDBName]
+				if !ok {
+					return errors.New("No key found for dynamoDb update")
+				}
+				delete(update, idFieldDBName)
+				_, err = psql.Update(collectionName).SetMap(update).RunWith(db).Where(sq.Eq{
+					idFieldDBName: dbID,
+				}).Query()
+
+				if err != nil {
+					return errors.New("Failed to Update in SQL Adapter:" + err.Error())
+				}
+				return nil
+			},
+			// Insert Func
+			func(id interface{}, insert map[string]interface{}) error {
+				newID, ok := insert[idFieldDBName]
+				if !ok {
+					return errors.New("No key found for dynamoDb update")
+				}
+				result, err := psql.Insert(collectionName).SetMap(insert).RunWith(db).Query()
+				if err != nil {
+					return errors.New("Failed to insert in SQL Adapter:" + err.Error())
+				}
+				return result.Scan(newID)
+			},
+			// SetData Func
+			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+				if fieldMetadata.Type == "MAP" {
+					jsonValue, err := json.Marshal(value)
+					if err != nil {
+						return nil, errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())
+					}
+					return jsonValue, nil
+				}
+				if adapt.IsReference(fieldMetadata.Type) {
+					return adapt.SetReferenceData(value, fieldMetadata, metadata)
+				}
+				return value, nil
+			},
+			// FieldName Func
+			getDBFieldName,
+			// SearchField Func
+			func(searchableValues []string) (string, interface{}) {
+				return "", nil
+			},
+			// DefaultID Func
+			func() string {
+				return uuid.New().String()
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		err = adapt.ProcessUpdates(
 			&request,
 			metadata,
 			// Update Func

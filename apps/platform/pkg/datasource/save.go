@@ -138,12 +138,12 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		changes, deletes, err := PopulateAndValidate(request, collectionMetadata, session)
+		inserts, updates, deletes, err := PopulateAndValidate(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
-		err = RunBeforeSaveBots(changes, deletes, collectionMetadata, session)
+		err = RunBeforeSaveBots(inserts, deletes, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
@@ -159,7 +159,8 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		batch = append(batch, adapt.SaveOp{
 			CollectionName: request.Collection,
 			WireName:       request.Wire,
-			Changes:        changes,
+			Inserts:        inserts,
+			Updates:        updates,
 			Deletes:        deletes,
 			Options:        request.Options,
 		})
