@@ -9,6 +9,9 @@ views:
   web.preview: true
   web.privacy: true
   web.terms: true
+  web.team: true
+  web.contact: true
+  web.contactthanks: true
 routes:
   web.home: true
   web.earlyaccess: true
@@ -16,6 +19,9 @@ routes:
   web.preview: true
   web.privacy: true
   web.terms: true
+  web.team: true
+  web.contact: true
+  web.contactthanks: true
 files:
   web.logo: true
   web.piano: true
@@ -25,3 +31,12 @@ files:
   web.cssexample: true
   web.viewexample: true
   web.routeexample: true
+  web.osman: true
+  web.abel: true
+  web.albin: true
+  web.matti: true
+  web.primi: true
+  web.gregg: true
+  web.wessel: true
+  web.ben: true
+  web.james: true

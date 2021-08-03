@@ -23,8 +23,8 @@ definition:
                     file: uesio.logo
                     height: 34px
                     signals:
-                      - signal: "route/NAVIGATE"
-                        path: "home"
+                      - signal: "route/REDIRECT"
+                        path: "https://$Site{domain}"
           - io.griditem:
               uesio.styles:
                 root:
