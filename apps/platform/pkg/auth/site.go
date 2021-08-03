@@ -11,8 +11,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// GetSite key
-func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
+func getSite(siteid string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
 	err := datasource.PlatformLoadOne(
 		&s,
@@ -70,7 +69,7 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	site, err := GetSite(siteDomain.Site, headlessSession)
+	site, err := getSite(siteDomain.Site, headlessSession)
 	if err == nil {
 		localcache.SetCacheEntry("domain-site", domainType+":"+domain, site)
 		return site, nil

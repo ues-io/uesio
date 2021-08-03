@@ -8,6 +8,7 @@ import {
 	useLastModifiedNode,
 	useSelectedType,
 	useSelectedItem,
+	useSelectedYAML,
 } from "../bands/builder/selectors"
 import { Uesio } from "./hooks"
 import { useEffect } from "react"
@@ -33,7 +34,6 @@ import { Dispatcher, RootState } from "../store/store"
 import {
 	getViewDefinition,
 	useBuilderHasChanges,
-	useViewYAML,
 } from "../bands/viewdef/selectors"
 
 import { PlainComponentState } from "../bands/component/types"
@@ -83,14 +83,7 @@ class BuilderAPI {
 
 	useHasChanges = useBuilderHasChanges
 
-	useSelectedYAML = (metadataType: string) => {
-		// Check here for the selected item and get its yaml doc
-		if (metadataType === "viewdef") {
-			const viewDefId = this.uesio.getViewDefId()
-			return viewDefId ? useViewYAML(viewDefId) : undefined
-		}
-		return
-	}
+	useSelectedYAML = useSelectedYAML
 
 	setActiveNode = (
 		metadataType: string,
