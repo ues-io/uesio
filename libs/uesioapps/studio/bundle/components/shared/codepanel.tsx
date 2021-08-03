@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useEffect, CSSProperties } from "react"
+import { FunctionComponent, useRef, useEffect } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
 import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
@@ -24,7 +24,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const metadataType = uesio.builder.useSelectedType()
 	const metadataItem = uesio.builder.useSelectedItem()
-	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
+	const yamlDoc = uesio.builder.useSelectedYAML()
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
@@ -223,8 +223,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						)
 
 						// Check if text is selected, if so... stop
-						if (hasSelection)
-							return uesio.builder.clearSelectedNode()
+						if (hasSelection) return
 
 						const position = {
 							lineNumber: startLineNumber,
