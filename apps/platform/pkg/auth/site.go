@@ -11,10 +11,38 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getSite(siteid string, session *sess.Session) (*meta.Site, error) {
+func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
-	err := datasource.PlatformLoadOne(
+	err := datasource.PlatformLoadOneWithFields(
 		&s,
+		[]adapt.LoadRequestField{
+			{
+				ID: "uesio.id",
+			},
+			{
+				ID: "uesio.name",
+			},
+			{
+				ID: "uesio.appid",
+			},
+			{
+				ID: "uesio.bundle",
+				Fields: []adapt.LoadRequestField{
+					{
+						ID: "uesio.appid",
+					},
+					{
+						ID: "uesio.major",
+					},
+					{
+						ID: "uesio.minor",
+					},
+					{
+						ID: "uesio.patch",
+					},
+				},
+			},
+		},
 		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
@@ -69,7 +97,7 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	site, err := getSite(siteDomain.Site, headlessSession)
+	site, err := GetSite(siteDomain.Site, headlessSession)
 	if err == nil {
 		localcache.SetCacheEntry("domain-site", domainType+":"+domain, site)
 		return site, nil
@@ -80,7 +108,7 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 func GetHeadlessSession() (*sess.Session, error) {
 	site := &meta.Site{
 		ID:   "prod_studio",
-		Name: "prod_studio",
+		Name: "prod",
 		Bundle: &meta.Bundle{
 			AppID: "studio",
 			Major: "0",
