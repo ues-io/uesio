@@ -17,7 +17,7 @@ definition:
             path: home
         content:
           - io.text:
-              text: What is Uesio?
+              text: What is UESIO?
         avatar:
           - io.text:
               uesio.variant: io.icon

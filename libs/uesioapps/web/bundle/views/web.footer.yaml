@@ -23,6 +23,11 @@ definition:
                     items:
                       - io.griditem:
                           components:
+                            - io.image:
+                                file: web.logowhite
+                                uesio.styles:
+                                  root:
+                                    padding-bottom: 3px
                             - io.text:
                                 uesio.variant: web.footertext
                                 text: © 2020 - 2021 ues.io - All rights reserved.
@@ -41,7 +46,7 @@ definition:
                                           path: "https://www.thecloudmasters.com"
                                   - io.button:
                                       uesio.variant: web.footerlink
-                                      text: Our team
+                                      text: The team
                                       signals:
                                         - signal: route/NAVIGATE
                                           path: team

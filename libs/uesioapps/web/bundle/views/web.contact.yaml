@@ -38,7 +38,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.callout
-                                text: Contact Us.
+                                text: Contact Us
                             - io.text:
                                 uesio.variant: web.calloutsub
                                 text: If there is something you can not find on our site or you would like to know more about becoming a bundle vendor or a partner then feel free to complete this form for human attention.

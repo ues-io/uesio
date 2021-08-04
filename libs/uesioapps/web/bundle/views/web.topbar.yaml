@@ -48,7 +48,7 @@ definition:
                                   - io.group:
                                       components:
                                         - io.button:
-                                            uesio.variant: web.primary
+                                            uesio.variant: web.secondary
                                             text: Login
                                             signals:
                                               - signal: "route/REDIRECT"
