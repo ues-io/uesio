@@ -85,7 +85,7 @@ func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, sessi
 }
 
 // StoreItems function
-func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
+func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 

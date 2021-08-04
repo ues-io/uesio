@@ -136,7 +136,7 @@ func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode boo
 }
 
 // StoreItems function
-func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
+func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Cannot Write to System Bundle Store")
 }
 
