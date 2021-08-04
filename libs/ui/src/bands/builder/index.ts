@@ -114,14 +114,15 @@ const builderSlice = createSlice({
 			state.lastModifiedNode = fromPath(pathArr)
 		},
 		save: () => {
-			console.log("SAVING")
+			//console.log("SAVING")
 		},
 		cancel: (state) => {
 			state.selectedNode = ""
 			state.lastModifiedNode = ""
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		setYaml: (state, { payload }: PayloadAction<YamlUpdatePayload>) => {
-			state.lastModifiedNode = payload.path
+			//state.lastModifiedNode = payload.path
 		},
 		setActiveNode: (state, { payload }: PayloadAction<string>) => {
 			state.activeNode = payload

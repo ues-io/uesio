@@ -16,7 +16,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
-				backgroundColor: "pink",
+				backgroundColor: "rgb(255,238,240)",
 				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 			},
 		},
