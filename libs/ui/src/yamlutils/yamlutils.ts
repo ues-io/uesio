@@ -1,14 +1,28 @@
 import toPath from "lodash/toPath"
-import { Pair, Node, Collection, YAMLMap } from "yaml/types"
-import yaml from "yaml"
-
+import yaml, { Pair, Node, YAMLMap, ParsedNode } from "yaml"
 const YAML_OPTIONS = {
 	simpleKeys: true,
-	keepNodeTypes: false,
+	keepNodeTypes: false, // deprecated in yaml v2 I think
 }
 
+/**
+ * In order to work with YAML features not directly supported by native JavaScript data types, such as comments, anchors and aliases, yaml provides the Document API.
+ * more info:https://eemeli.org/yaml/#documents
+ */
 const newDoc = () => new yaml.Document(YAML_OPTIONS)
-const parse = (str: string) => yaml.parseDocument(str, YAML_OPTIONS)
+/**
+ * will directly produce native JavaScript If you'd like to retain the comments and other metadata use `parseDocument()` instead
+ */
+const parse = (str: string) => yaml.parse(str)
+/**
+ * will produce Document instances that allow for further processing.
+ */
+const parseDocument = (str: string) => yaml.parseDocument(str)
+/**
+ * Gives the path array for traversing the yamlDoc
+ */
+const makePathArray = (path: string | string[]): string[] =>
+	Array.isArray(path) ? path : toPath(path)
 
 const isInRange = (offset: number, node: Node) => {
 	if (!node.range) {
@@ -19,7 +33,7 @@ const isInRange = (offset: number, node: Node) => {
 
 const getNodeAtOffset = (
 	offset: number,
-	parentnode: Collection,
+	parentnode: any, // TODO: get proper type, it used to be "Collection" for the old yaml parser
 	path: string,
 	includeKey?: boolean
 ): [Node | null, string] => {
@@ -74,12 +88,15 @@ const getNodeAtOffset = (
 	return [null, path]
 }
 
-const getNodeAtPath = (
-	path: string | string[],
-	node: Node | null
-): Node | null => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	return (node as Collection)?.getIn(pathArray, true)
+/**
+ * Gives value at path from yaml Document
+ * @param path - string or string array
+ * @param Object - The yaml Document
+ * @return yaml Document
+ */
+const getNodeAtPath = (path: string | string[], node: yaml.Document): any => {
+	const pathArray = makePathArray(path)
+	return node?.getIn(pathArray, true)
 }
 
 const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
@@ -110,40 +127,41 @@ const getCommonAncestorPath = (
 
 const setNodeAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: yaml.Document,
 	setNode: Node | null
 ): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	const parentPath = pathArray.slice(0, -1)
-	const parentNode = node?.getIn(parentPath)
-	if (!parentNode && parentPath.length > 0) {
-		setNodeAtPath(parentPath, node, yaml.createNode({}))
-	}
-	node?.setIn(pathArray, setNode)
+	const pathArray = makePathArray(path)
+	node.setIn(pathArray, setNode)
+	// const parentPath = pathArray.slice(0, -1)
+	// const doc = new yaml.Document(node)
+	// const parentNode = node?.getIn(parentPath)
+
+	// if (!parentNode && parentPath.length > 0) {
+	// 	console.log("other scenario")
+	// 	setNodeAtPath(parentPath, node, doc.createNode({}))
+	// }
 }
 
+/**
+ * Adds a node to the yaml definition
+ */
 const addNodeAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: yaml.Document,
 	setNode: Node,
 	index: number
 ): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	let parentNode = node?.getIn(pathArray)
-	if (!parentNode && path.length > 0) {
-		setNodeAtPath(path, node, yaml.createNode([]))
-		parentNode = node?.getIn(pathArray)
-	}
-	parentNode.items.splice(index, 0, setNode)
+	const pathArray = makePathArray(path)
+	node.addIn([...pathArray, index], setNode)
 }
 
 const addNodePairAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: yaml.Document | null,
 	setNode: Node,
 	key: string
 ): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
+	const pathArray = makePathArray(path)
 	const hasParent = node?.hasIn(pathArray)
 	if (hasParent) {
 		const fullPathArray = pathArray.concat([key])
@@ -161,11 +179,14 @@ const addNodePairAtPath = (
 	node?.addIn(pathArray, new Pair(key, setNode))
 }
 
+/**
+ * Removes a node from the yaml definition
+ */
 const removeNodeAtPath = (
 	path: string | string[],
-	node: Collection | null
+	node: yaml.Document | null
 ): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
+	const pathArray = makePathArray(path)
 	node?.deleteIn(pathArray)
 }
 
@@ -179,5 +200,6 @@ export {
 	getCommonAncestorPath,
 	getPathFromPathArray,
 	parse,
+	parseDocument,
 	newDoc,
 }

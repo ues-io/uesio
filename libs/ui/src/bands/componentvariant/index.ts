@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
+import { parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
 
 const componentVariantSlice = createSlice({
@@ -9,13 +9,9 @@ const componentVariantSlice = createSlice({
 	initialState: componentVariantAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(loadOp.fulfilled, (state, action) => {
-			const yamlDoc = parse(action.payload)
-			const dependenciesDoc = getNodeAtPath(
-				["dependencies", "componentvariants"],
-				yamlDoc.contents
-			)?.toJSON()
-
+		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
+			const yamlDoc = parse(payload)
+			const dependenciesDoc = yamlDoc.dependencies.componentvariants
 			if (dependenciesDoc) {
 				componentVariantAdapter.upsertMany(state, dependenciesDoc)
 			}
@@ -26,7 +22,5 @@ const componentVariantSlice = createSlice({
 export const { selectAll } = componentVariantAdapter.getSelectors(
 	(state: RootState) => state.componentvariant
 )
-
-// export const { set } = componentVariantSlice.actions
 
 export default componentVariantSlice.reducer

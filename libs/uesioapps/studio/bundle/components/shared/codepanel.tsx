@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useEffect, CSSProperties } from "react"
+import { FunctionComponent, useRef, useEffect, useState } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
 import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
@@ -11,6 +11,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
+	const [syntaxErrors, setSyntaxErrors] = useState<any>([])
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const classes = styles.useStyles(
@@ -24,12 +25,12 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const metadataType = uesio.builder.useSelectedType()
 	const metadataItem = uesio.builder.useSelectedItem()
+
 	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
 	const currentYaml = yamlDoc?.toString() || ""
-	const lastModifiedNode = uesio.builder.useLastModifiedNode()
-
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
-	currentAST.current = util.yaml.parse(currentYaml)
+	currentAST.current = util.yaml.parseDocument(currentYaml)
+	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
 		undefined
@@ -44,22 +45,19 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		if (e && m && currentAST.current && lastModifiedNode) {
 			const node = util.yaml.getNodeAtPath(
 				lastModifiedNode,
-				currentAST.current.contents
+				currentAST.current
 			)
 			const model = e.getModel()
 			if (!node || !model) return
 			const range = node.range
 			if (!range || !range.length) return
-
 			const startLine = model.getPositionAt(range[0]).lineNumber
 			let endLine = model.getPositionAt(range[1]).lineNumber
-
 			// Technically the yaml node for maps ends on the next line
 			// but we don't want to highlight that line.
 			if (node.constructor.name === "YAMLMap" && endLine > startLine) {
 				endLine--
 			}
-
 			decorationsRef.current = e.deltaDecorations(
 				decorationsRef.current || [],
 				[
@@ -72,10 +70,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				]
 			)
-
 			// scroll to the changes
 			e.revealLineInCenter(startLine)
-
 			// we have to remove the decoration otherwise CSS style kicks in back while clicking on the editor
 			setTimeout(() => {
 				decorationsRef.current =
@@ -122,8 +118,17 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					//quickSuggestions: true,
 				}}
 				onChange={(newValue, event): void => {
-					const newAST = util.yaml.parse(newValue)
+					const newAST = util.yaml.parseDocument(newValue)
+					console.log("handling change", newAST, event.changes)
+					// currentAST.current = newAST
+					// setSyntaxErrors(newAST.errors)
 					if (newAST.errors.length > 0) {
+						// console.warn(newAST.errors)
+
+						return
+					}
+					if (!event.changes.every((t) => !t.text.includes("\n"))) {
+						currentAST.current = newAST
 						return
 					}
 					event.changes.forEach((change) => {
@@ -134,6 +139,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						) {
 							// If the change contains newlines, give up. Just parse the entire thing.
 							if (change.text.includes("\n")) {
+								console.log("with enters")
+								return
 								uesio.builder.setYaml(
 									component.path.makeFullPath(
 										metadataType,
@@ -143,6 +150,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									newAST
 								)
 							} else {
+								console.log("here")
 								// We need to find the first shared parent of the start offset and end offset
 								const [, startPath] = util.yaml.getNodeAtOffset(
 									change.rangeOffset,
@@ -151,10 +159,9 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								)
 								const [, endPath] = util.yaml.getNodeAtOffset(
 									change.rangeOffset + change.rangeLength,
-									currentAST.current.contents,
+									currentAST.current,
 									""
 								)
-
 								const commonPath =
 									util.yaml.getCommonAncestorPath(
 										startPath,
@@ -162,13 +169,12 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									)
 								const commonNode = util.yaml.getNodeAtPath(
 									commonPath,
-									currentAST.current.contents
+									currentAST?.current
 								)
-
 								if (commonNode && commonPath) {
 									const newNode = util.yaml.getNodeAtPath(
 										commonPath,
-										newAST.contents
+										newAST
 									)
 									if (newNode) {
 										const yamlDoc = util.yaml.newDoc()
@@ -188,7 +194,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							}
 						}
 					})
-
 					currentAST.current = newAST
 				}}
 				editorDidMount={(editor, monaco): void => {
@@ -196,7 +201,10 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					monacoRef.current = monaco
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
-					currentAST.current = util.yaml.parse(editor.getValue())
+					console.log("overwriting currentAST")
+					currentAST.current = util.yaml.parseDocument(
+						editor.getValue()
+					)
 					// We want to:
 					// Or set the selected node when clicking
 					// Or clear the selected node when selecting text
@@ -227,7 +235,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.current.contents,
+									currentAST.current,
 									"",
 									true
 								)
@@ -249,7 +257,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.current.contents,
+									currentAST.current,
 									"",
 									true
 								)
@@ -264,6 +272,18 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					})
 				}}
 			/>
+			{/* Error indicator */}
+			{/* <div
+				className={styles.css({
+					position: "absolute",
+					bottom: "1em",
+					left: "1em",
+					backgroundColor: syntaxErrors.length ? "red" : "green",
+					width: "1em",
+					height: "1em",
+					borderRadius: "50%",
+				})}
+			/> */}
 		</ScrollPanel>
 	)
 }
