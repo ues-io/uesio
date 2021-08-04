@@ -9,5 +9,4 @@ definition:
     root:
       textAlign: center
       margin: 20px
-  #height: 280px
   element: div
