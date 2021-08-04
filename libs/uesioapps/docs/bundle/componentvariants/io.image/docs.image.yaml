@@ -1,0 +1,13 @@
+name: image
+component: io.image
+label: Image
+definition:
+  uesio.styles:
+    inner:
+      borderRadius: 12px
+      border: 1px solid #555
+    root:
+      textAlign: center
+      margin: 20px
+  #height: 280px
+  element: div

@@ -47,10 +47,10 @@ definition:
                               padding: 180px
                           items:
                             - io.griditem:
-                            - io.griditem:
                                 uesio.styles:
                                   root:
-                                    width: 500px
+                                    width: 700px
+                                    padding-left: 200px
                                 components:
                                   - io.text:
                                       uesio.styles:

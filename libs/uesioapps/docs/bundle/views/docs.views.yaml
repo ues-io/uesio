@@ -26,6 +26,45 @@ definition:
                 - io.box:
                     uesio.variant: io.section
                     components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views - For Apps
                       - io.text:
                           uesio.variant: io.section
-                          text: More info soon.
+                          text: Create different views for your apps here.  You may want to create a list view to show rows of all data items from a particular data collection source or a form view to see more details of a specific row of data.  Here you will see a list of all views you have created in this workspace.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views - Create a new View
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Select this option to create a new View and start building immediately.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views - Select a View
+                      - io.text:
+                          uesio.variant: io.section
+                          text: Once you select a pre-created view then you will see a code window if you would like to edit the code that makes up the View or simply make adjustments to the View in the Build mode.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views - Preview
+                      - io.text:
+                          uesio.variant: io.section
+                          text: When you select a specific View you created then you will be able to preview your View in a separate window or if you would like to do this in Build mode then you can simply select the WYSIWYG icon or use a secret hotkey Option+U (for ues.io) for a quick preview.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.secondary
+                          title: Views - Build
+                      - io.text:
+                          uesio.variant: io.section
+                          text: This is where you enter the View builder directly for the selected view.

@@ -23,7 +23,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.callout
-                                text: Our Team.
+                                text: The team
                 - io.grid:
                     templateColumns:
                       sm: 1fr
@@ -67,7 +67,7 @@ definition:
                                 text: Ben Hubbard
                             - io.text:
                                 uesio.variant: web.teamtext
-                                text: Chief Technical Officer
+                                text: Lead Software Engineer
                       - io.box:
                           uesio.variant: web.phototext
                           components:
