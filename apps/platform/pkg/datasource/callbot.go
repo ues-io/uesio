@@ -64,7 +64,7 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 			Field: "uesio.appid",
 			Value: app,
 		},
-	}, sa.session)
+	}, sa.session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (sa *StudioAPI) GetBundleLastVersion(app string) string {
 			Field: "uesio.appid",
 			Value: app,
 		},
-	}, sa.session)
+	}, sa.session.RemoveWorkspaceContext())
 	if err != nil {
 		return ""
 	}

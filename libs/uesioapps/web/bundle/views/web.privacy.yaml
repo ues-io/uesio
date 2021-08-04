@@ -23,7 +23,7 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.callout
-                                text: Privacy Policy.
+                                text: Privacy Policy
                       - io.text:
                           components:
                             - io.text:

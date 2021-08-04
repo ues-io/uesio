@@ -32,6 +32,9 @@ definition:
                       - io.text:
                           uesio.variant: io.section
                           text: Select the "+" icon then add the name of your app, a description and then select the default color.
+                - io.image:
+                    uesio.variant: docs.image
+                    file: docs.appadmin
                 - io.box:
                     uesio.variant: io.section
                     components:
@@ -41,6 +44,9 @@ definition:
                       - io.text:
                           uesio.variant: io.section
                           text: Select an app to see the App Admin View were you can Edit or Delete your App and see Bundles, Teams, Workspaces and Sites settings.
+                - io.image:
+                    uesio.variant: docs.image
+                    file: docs.appadminview
                 - io.box:
                     uesio.variant: io.section
                     components:

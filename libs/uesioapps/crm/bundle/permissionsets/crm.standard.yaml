@@ -21,5 +21,6 @@ routes:
   crm.opportunity_details: true
   crm.leads: true
   crm.lead_details: true
+  crm.login: true
 files:
   crm.logo: true

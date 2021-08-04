@@ -61,6 +61,15 @@ definition:
                       - io.titlebar:
                           uesio.variant: io.main
                           title: Site - ${uesio.name}
+                          actions:
+                            - io.group:
+                                components:
+                                  - io.button:
+                                      text: "Edit"
+                                      uesio.variant: io.secondary
+                                      signals:
+                                        - signal: "panel/TOGGLE"
+                                          panel: "editSite"
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -105,3 +114,36 @@ definition:
                             - studio.configsecrets:
                                 valueType: secrets
   panels:
+    - io.dialog:
+        id: editSite
+        title: Edit a Site
+        width: 400px
+        height: 500px
+        components:
+          - io.list:
+              id: editsiteslist
+              wire: sites
+              mode: EDIT
+              components:
+                - io.field:
+                    fieldId: uesio.name
+                - io.field:
+                    fieldId: uesio.bundle
+        actions:
+          - io.button:
+              uesio.variant: "io.primary"
+              text: "Save"
+              signals:
+                - signal: wire/SAVE
+                  wires:
+                    - sites
+                - signal: "panel/TOGGLE"
+                  panel: "editSite"
+          - io.button:
+              uesio.variant: "io.secondary"
+              text: "Cancel"
+              signals:
+                - signal: "panel/TOGGLE"
+                  panel: "editSite"
+                - signal: wire/CANCEL
+                  wire: sites

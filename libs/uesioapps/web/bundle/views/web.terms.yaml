@@ -13,7 +13,7 @@ definition:
               area: main
               components:
                 - io.grid:
-                    templateColumns: 400px 1fr
+                    templateColumns: 800px 1fr
                     uesio.styles:
                       root:
                         marginTop: 120px

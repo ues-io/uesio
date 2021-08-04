@@ -70,6 +70,8 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		buildMode: buildMode && scriptResult.loaded,
 	})
 
+	if (buildMode === undefined) return null
+
 	return (
 		<>
 			<Route path={props.path} context={context} />

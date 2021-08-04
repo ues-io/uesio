@@ -49,12 +49,6 @@ definition:
                                       components:
                                         - io.button:
                                             uesio.variant: web.secondary
-                                            text: Blog
-                                        - io.button:
-                                            uesio.variant: web.secondary
-                                            text: Who we are
-                                        - io.button:
-                                            uesio.variant: web.secondary
                                             text: Login
                                             signals:
                                               - signal: "route/REDIRECT"

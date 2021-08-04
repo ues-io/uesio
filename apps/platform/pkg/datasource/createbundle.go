@@ -17,7 +17,7 @@ func StoreBundleAssets(namespace, sourceversion, destversion string, source bund
 	if err != nil {
 		return err
 	}
-	return dest.StoreItems(namespace, destversion, streams)
+	return dest.StoreItems(namespace, destversion, streams, session)
 }
 
 func CreateBundle(namespace, sourceversion, destversion, description string, source bundlestore.BundleStore, session *sess.Session) error {

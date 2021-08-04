@@ -3,6 +3,7 @@ package bundlestore
 import (
 	"errors"
 	"io"
+	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -10,6 +11,29 @@ import (
 )
 
 var bundleStoreMap = map[string]BundleStore{}
+
+// System variables
+var (
+	BundleStoreType string
+	SystemSetUp     error
+)
+
+func init() {
+	SystemSetUp = InitSystemEnv()
+}
+
+//InitSystemEnv inits System variables
+func InitSystemEnv() error {
+
+	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_TYPE")
+	if !ok {
+		return errors.New("Could not get environment variable: UESIO_BUNDLE_STORE_TYPE")
+	}
+	BundleStoreType = val
+
+	return nil
+
+}
 
 // RegisterBundleStore function
 func RegisterBundleStore(name string, store BundleStore) {
@@ -45,7 +69,7 @@ type BundleStore interface {
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
-	StoreItems(namespace, version string, itemStreams []ItemStream) error
+	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error)
 }
 
@@ -63,7 +87,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return getBundleStoreByType("system")
 	}
 
-	return getBundleStoreByType("local")
+	return getBundleStoreByType(BundleStoreType)
 }
 
 // DecodeYAML function

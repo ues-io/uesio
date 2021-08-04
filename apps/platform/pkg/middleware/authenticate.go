@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -113,45 +112,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		}
 
 		// Get the Workspace from the DB
-		var siteadmin meta.Site
-		err := datasource.PlatformLoadOneWithFields(
-			&siteadmin,
-			[]adapt.LoadRequestField{
-				{
-					ID: "uesio.id",
-				},
-				{
-					ID: "uesio.name",
-				},
-				{
-					ID: "uesio.appid",
-				},
-				{
-					ID: "uesio.bundle",
-					Fields: []adapt.LoadRequestField{
-						{
-							ID: "uesio.appid",
-						},
-						{
-							ID: "uesio.major",
-						},
-						{
-							ID: "uesio.minor",
-						},
-						{
-							ID: "uesio.patch",
-						},
-					},
-				},
-			},
-			[]adapt.LoadRequestCondition{
-				{
-					Field: "uesio.id",
-					Value: siteName + "_" + appName,
-				},
-			},
-			session,
-		)
+		siteadmin, err := auth.GetSite(siteName+"_"+appName, session)
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
@@ -165,7 +126,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 			return
 		}
 
-		session.SetSiteAdmin(&siteadmin)
+		session.SetSiteAdmin(siteadmin)
 
 		bundleDef, err := bundle.GetAppBundle(session)
 		if err != nil {

@@ -35,12 +35,9 @@ definition:
                       - io.titlebar:
                           uesio.variant: docs.tabbed
                           title: (u)ser (e)xperience (s)tud(io) - ues.io - (pronounced "yoo-zee-oh") is a web application builder where you work on configuration rather than code.
-                - io.box:
-                    uesio.variant: io.section
-                    components:
-                      - io.titlebar:
-                          uesio.variant: docs.tabbed
-                          title: Think specifying the desired outcome, not the individual instructions to the computer.
+                - io.image:
+                    uesio.variant: docs.image
+                    file: docs.whatis
                 - io.box:
                     uesio.variant: io.section
                     components:

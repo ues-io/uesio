@@ -17,7 +17,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
-				backgroundColor: "pink",
+				backgroundColor: "rgb(255,238,240)",
 				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 			},
 		},
@@ -25,12 +25,14 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const metadataType = uesio.builder.useSelectedType()
 	const metadataItem = uesio.builder.useSelectedItem()
-
-	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
+	const yamlDoc = uesio.builder.useSelectedYAML()
 	const currentYaml = yamlDoc?.toString() || ""
+	const lastModifiedNode = uesio.builder.useLastModifiedNode()
+	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
+		component.path.getFullPathParts(lastModifiedNode || "")
+
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	currentAST.current = util.yaml.parseDocument(currentYaml)
-	const lastModifiedNode = uesio.builder.useLastModifiedNode()
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
 		undefined
@@ -42,9 +44,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const m = monacoRef.current
 
 	useEffect(() => {
-		if (e && m && currentAST.current && lastModifiedNode) {
+		if (
+			e &&
+			m &&
+			currentAST.current &&
+			lastModifiedNode &&
+			lastModifiedType === metadataType &&
+			lastModifiedItem === metadataItem
+		) {
 			const node = util.yaml.getNodeAtPath(
-				lastModifiedNode,
+				lastModifiedLocalPath,
 				currentAST.current
 			)
 			const model = e.getModel()
@@ -222,8 +231,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						)
 
 						// Check if text is selected, if so... stop
-						if (hasSelection)
-							return uesio.builder.clearSelectedNode()
+						if (hasSelection) return
 
 						const position = {
 							lineNumber: startLineNumber,

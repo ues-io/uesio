@@ -64,7 +64,7 @@ class ComponentAPI {
 			}
 		})
 
-		return [state || initialState, setState]
+		return [state, setState]
 	}
 
 	getState = <T extends PlainComponentState>(

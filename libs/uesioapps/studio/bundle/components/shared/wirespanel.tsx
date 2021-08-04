@@ -9,8 +9,10 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context, className } = props
 	const uesio = hooks.useUesio(props)
-	const [metadataType, metadataItem, selectedNode] =
+	const [selectedMetadataType, selectedMetadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
+	const metadataType = "viewdef"
+	const metadataItem = uesio.getViewDefId() || ""
 	const localPath = '["wires"]'
 	const path = component.path.makeFullPath(
 		metadataType,
@@ -49,19 +51,23 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(def || {}).map((key: string, index) => {
 					const wirePath = `${localPath}["${key}"]`
-					const onClick = () =>
-						uesio.builder.setSelectedNode(
-							metadataType,
-							metadataItem,
-							wirePath
-						)
 					return (
 						<PropNodeTag
 							title={key}
-							onClick={onClick}
+							onClick={() =>
+								uesio.builder.setSelectedNode(
+									metadataType,
+									metadataItem,
+									wirePath
+								)
+							}
 							icon="power"
 							key={index}
-							selected={wirePath === selectedNode}
+							selected={
+								selectedMetadataType === metadataType &&
+								selectedMetadataItem === metadataItem &&
+								wirePath === selectedNode
+							}
 							context={context}
 						/>
 					)

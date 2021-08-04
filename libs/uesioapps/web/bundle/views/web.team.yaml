@@ -1,0 +1,145 @@
+name: team
+definition:
+  # Wires are how we pull in data
+  wires:
+  # Components are how we describe the layout of our view
+  components:
+    - uesio.view:
+        view: web.topbar
+    - io.grid:
+        uesio.variant: web.mainlayout
+        items:
+          - io.griditem:
+              area: main
+              components:
+                - io.grid:
+                    templateColumns: 400px 1fr
+                    uesio.styles:
+                      root:
+                        marginTop: 120px
+                        padding: 80px
+                    items:
+                      - io.griditem:
+                          components:
+                            - io.text:
+                                uesio.variant: web.callout
+                                text: The team
+                - io.grid:
+                    templateColumns:
+                      sm: 1fr
+                      md: 1fr 1fr
+                      lg: 1fr 1fr 1fr
+                      xl: 1fr 1fr 1fr 1fr
+                    columnGap: 50px
+                    items:
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.abel
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Abel Jimenez Molla
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Senior Software Engineer
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.albin
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Albin Duhanaj
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Senior Project Manager
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.ben
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Ben Hubbard
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Lead Software Engineer
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.gregg
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Gregg Baxter
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Product Manager
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.james
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: James Muir
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Solutions Engineer
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.matti
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Matthias Fankhauser
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Senior Solutions Engineer
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.primi
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Michael Primessnig
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Senior Program Manager
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.osman
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Osman Jakupi
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Professional Services Director
+                      - io.box:
+                          uesio.variant: web.phototext
+                          components:
+                            - io.image:
+                                uesio.variant: web.image
+                                file: web.wessel
+                            - io.text:
+                                uesio.variant: web.teamtextname
+                                text: Wessel van der Plas
+                            - io.text:
+                                uesio.variant: web.teamtext
+                                text: Senior Software Engineer
+
+    - uesio.view:
+        view: web.footer

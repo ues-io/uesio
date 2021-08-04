@@ -33,7 +33,7 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 
 	item.SetNamespace(session.GetWorkspaceApp())
 
-	return datasource.PlatformLoadOne(item, conditions, session)
+	return datasource.PlatformLoadOne(item, conditions, session.RemoveWorkspaceContext())
 }
 
 // GetItems function
@@ -56,13 +56,13 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 	return datasource.PlatformLoad(&WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  namespace,
-	}, loadConditions, session)
+	}, loadConditions, session.RemoveWorkspaceContext())
 
 }
 
 // GetFileStream function
 func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
-	stream, userFile, err := filesource.Download(file.Content.ID, session)
+	stream, userFile, err := filesource.Download(file.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 
 // GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
-	stream, _, err := filesource.Download(bot.Content.ID, session)
+	stream, _, err := filesource.Download(bot.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, sessi
 }
 
 // StoreItems function
-func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
+func (b *WorkspaceBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	return errors.New("Tried to store items in the workspace bundle store")
 }
 
@@ -129,7 +129,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 			},
 		},
 
-		session)
+		session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}

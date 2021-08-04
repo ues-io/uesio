@@ -77,7 +77,8 @@ definition:
                 - io.box:
                     uesio.styles:
                       root:
-                        backgroundColor: "#FF5E2F"
+                        backgroundSize: cover
+                        backgroundImage: $File{uesio.splash}
                         padding: 100px
                         color: "#FFFFFFC0"
                     components:
@@ -91,7 +92,16 @@ definition:
                                 text: "Get started with "
                             - io.text:
                                 color: white
-                                text: Uesio Studio.
+                                text: ues.io
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 25pt
+                                    padding-bottom: 5px
+                                color: white
+                                text: (u)ser (e)xperience (s)tud(.io)
+                                element: div
+
                       - io.box:
                           uesio.styles:
                             root:
@@ -127,25 +137,29 @@ definition:
                             root:
                               padding: 50px
                           components:
-                            - io.text:
-                                uesio.variant: io.smalltitle
-                                text: Latest Updates/News
-                                element: div
+                            - io.button:
+                                uesio.variant: io.secondary
+                                text: Latest Updates & News
                             - io.text:
                                 uesio.variant: io.smallcontent
-                                text: Still in progress! Updates, News, and feature releases will be here for you to see when they come out.
+                                text: Coming soom - Updates, News, and feature releases will be here for you to see when they come out.
+                                element: div
                       - io.griditem:
                           uesio.styles:
                             root:
                               padding: 50px
                           components:
-                            - io.text:
-                                uesio.variant: io.smalltitle
-                                text: Learn Uesio
-                                element: div
+                            - io.button:
+                                uesio.variant: io.secondary
+                                text: Learn ues.io
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://docs.$Site{domain}"
                             - io.text:
                                 uesio.variant: io.smallcontent
-                                text: More coming here soon! Learn the basic concepts of Uesio and how to navigate the studio.
+                                text: Documentation - Learn the basic concepts of ues.io and how to navigate the studio.
+                                element: div
+
   panels:
     - io.dialog:
         id: newApp
