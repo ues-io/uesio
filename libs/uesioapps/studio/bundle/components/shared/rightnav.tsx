@@ -50,30 +50,6 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				])}
 			/>
-			<IconButton
-				context={context}
-				variant="io.large"
-				label="View Detail"
-				tooltipPlacement="left"
-				icon="listalt"
-				onClick={() => {
-					const workspace = props.context.getWorkspace()
-					const route = props.context.getRoute()
-					if (!workspace || !route) {
-						return
-					}
-
-					const [, viewName] = component.path.parseKey(route.view)
-
-					uesio.signal.run(
-						{
-							signal: "route/REDIRECT",
-							path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`,
-						},
-						props.context
-					)
-				}}
-			/>
 		</ScrollPanel>
 	)
 }

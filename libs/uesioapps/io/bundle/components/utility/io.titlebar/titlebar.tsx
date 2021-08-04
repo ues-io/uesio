@@ -14,6 +14,7 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 		{
 			root: {
 				display: "flex",
+				columnGap: "20px",
 			},
 			content: {
 				flex: 1,

@@ -6,7 +6,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
-	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -82,10 +81,6 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 
 // GetSiteFromDomain function
 func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
-	entry, ok := localcache.GetCacheEntry("domain-site", domainType+":"+domain)
-	if ok {
-		return entry.(*meta.Site), nil
-	}
 	headlessSession, err := GetHeadlessSession()
 	if err != nil {
 		return nil, err
@@ -97,12 +92,7 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	site, err := GetSite(siteDomain.Site, headlessSession)
-	if err == nil {
-		localcache.SetCacheEntry("domain-site", domainType+":"+domain, site)
-		return site, nil
-	}
-	return site, err
+	return GetSite(siteDomain.Site, headlessSession)
 }
 
 func GetHeadlessSession() (*sess.Session, error) {

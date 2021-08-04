@@ -136,7 +136,10 @@ func ProcessChanges(
 			}
 
 			if fieldID == collectionMetadata.NameField {
-				searchableValues = append(searchableValues, value.(string))
+				searchValue := value.(string)
+				if searchValue != "" {
+					searchableValues = append(searchableValues, value.(string))
+				}
 			}
 
 			fieldName, err := fieldNameFunc(fieldMetadata)
@@ -156,14 +159,13 @@ func ProcessChanges(
 			return err
 		}
 
-		if searchFieldFunc != nil && len(searchableValues) > 0 {
-			searchIndexField, searchIndex := searchFieldFunc(searchableValues)
-			if searchIndexField != "" {
-				changeMap[searchIndexField] = searchIndex
-			}
-		}
-
 		if !change.IsNew && change.IDValue != nil {
+			if searchFieldFunc != nil && len(searchableValues) > 0 {
+				searchIndexField, searchIndex := searchFieldFunc(searchableValues)
+				if searchIndexField != "" {
+					changeMap[searchIndexField] = searchIndex
+				}
+			}
 			err := updateFunc(change.IDValue, changeMap)
 			if err != nil {
 				return err
@@ -194,6 +196,17 @@ func ProcessChanges(
 			err = change.FieldChanges.SetField(idFieldMetadata.GetFullName(), newID)
 			if err != nil {
 				return err
+			}
+
+			if collectionMetadata.IDField == collectionMetadata.NameField {
+				searchableValues = append(searchableValues, newID)
+			}
+
+			if searchFieldFunc != nil && len(searchableValues) > 0 {
+				searchIndexField, searchIndex := searchFieldFunc(searchableValues)
+				if searchIndexField != "" {
+					changeMap[searchIndexField] = searchIndex
+				}
 			}
 
 			err = insertFunc(newID, changeMap)
