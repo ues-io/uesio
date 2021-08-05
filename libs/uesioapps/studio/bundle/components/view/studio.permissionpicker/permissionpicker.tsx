@@ -47,11 +47,16 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 
 	if (!value) return null
 
+	const addPublicHack = (arr: string[]) =>
+		arr
+			.filter((thing: string, i: number) => thing !== "uesio.public")
+			.concat("uesio.public")
+
 	const handleToggle = (listRecord: string) => {
 		const hasProperty = getValue(listRecord)
 		if (!hasProperty) {
 			if (isArray) {
-				const updValue = value.concat(listRecord)
+				const updValue = addPublicHack(value.concat(listRecord))
 				record.update(fieldId, updValue)
 				return
 			}
@@ -60,13 +65,12 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 		} else {
 			if (isArray) {
 				// HACK
-				const updValue = value
-					.filter(
+				const updValue = addPublicHack(
+					value.filter(
 						(thing: any, i: number) =>
-							i !== value.indexOf(listRecord) &&
-							thing !== "uesio.public"
+							i !== value.indexOf(listRecord)
 					)
-					.concat("uesio.public")
+				)
 				record.update(fieldId, updValue)
 				return
 			}
