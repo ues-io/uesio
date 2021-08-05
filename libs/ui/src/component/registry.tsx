@@ -175,11 +175,7 @@ const getPropertiesDefinitionFromPath = (
 		if (pathArray[0] === "wires") {
 			return {
 				title: "Wire",
-				defaultDefinition: () => ({
-					color: "primary",
-					variant: "contained",
-					text: "New Button",
-				}),
+				defaultDefinition: () => ({}),
 				properties: [
 					{
 						name: "name",
@@ -191,6 +187,21 @@ const getPropertiesDefinitionFromPath = (
 						type: "METADATA",
 						metadataType: "COLLECTION",
 						label: "Collection",
+					},
+					{
+						name: "type",
+						type: "SELECT",
+						label: "Wire Type",
+						options: [
+							{
+								label: "Create",
+								value: "CREATE",
+							},
+							{
+								label: "Read",
+								value: "",
+							},
+						],
 					},
 				],
 				sections: [

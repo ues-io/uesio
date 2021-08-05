@@ -35,7 +35,10 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							onClick={() =>
 								uesio.builder.addDefinitionPair(
 									path,
-									null,
+									{
+										type: "",
+										fields: null,
+									},
 									"newwire" +
 										(Math.floor(Math.random() * 60) + 1),
 									"wire"
