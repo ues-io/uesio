@@ -110,6 +110,10 @@ definition:
                                       uesio.variant: io.icon
                                       color: "#ccc"
                                       text: verified_user
+                                signals:
+                                  - signal: "route/REDIRECT"
+                                    path: "https://${uesio.domain}.$Site{domain}"
+                                    newtab: true
   panels:
     - io.dialog:
         id: newDomain

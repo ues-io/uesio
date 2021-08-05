@@ -7,6 +7,7 @@ const ROUTE_BAND = "route"
 
 interface RedirectSignal extends SignalDefinition {
 	path: string
+	newtab?: boolean
 }
 
 interface NavigateSignal extends SignalDefinition {
@@ -18,7 +19,7 @@ interface NavigateSignal extends SignalDefinition {
 const signals: Record<string, SignalDescriptor> = {
 	[`${ROUTE_BAND}/REDIRECT`]: {
 		dispatcher: (signal: RedirectSignal, context: Context) =>
-			operations.redirect(context, signal.path),
+			operations.redirect(context, signal.path, signal.newtab),
 		label: "Redirect",
 		properties: () => [
 			{

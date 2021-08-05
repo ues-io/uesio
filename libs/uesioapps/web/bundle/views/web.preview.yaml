@@ -986,6 +986,7 @@ definition:
                           signals:
                             - signal: "route/REDIRECT"
                               path: "https://studio.$Site{domain}"
+                              newtab: true
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -996,6 +997,42 @@ definition:
                       - io.text:
                           uesio.variant: web.pitchtitle
                           text: Pricing
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: "Pay for usage, not users"
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: "Development is free"
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: "Learning from the early access beta"
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -1006,6 +1043,30 @@ definition:
                       - io.text:
                           uesio.variant: web.pitchtitle
                           text: Optimistic Timeline
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: "Fall 2021: Early access beta users"
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: "Spring 2022: Public beta launch"
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: check_circle
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -1016,6 +1077,19 @@ definition:
                       - io.text:
                           uesio.variant: web.pitchtitle
                           text: Our Team
+                      - io.image:
+                          uesio.styles:
+                            root:
+                              position: absolute
+                              top: -40
+                              right: 0
+                          file: uesio.logowhite
+                          height: 170px
+                          align: center
+                          signals:
+                            - signal: "route/REDIRECT"
+                              path: "https://$Site{domain}/team"
+                              newtab: true
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -1026,6 +1100,30 @@ definition:
                       - io.text:
                           uesio.variant: web.pitchtitle
                           text: Feedback
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: ben@ues.io
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: person
+                      - io.tile:
+                          uesio.variant: web.pitchitem
+                          content:
+                            - io.text:
+                                text: greg@ues.io
+                          avatar:
+                            - io.text:
+                                uesio.styles:
+                                  root:
+                                    fontSize: 34pt
+                                uesio.variant: io.icon
+                                text: person
                 - io.box:
                     uesio.variant: web.pitchbox
                     uesio.display:
@@ -1036,3 +1134,329 @@ definition:
                       - io.text:
                           uesio.variant: web.pitchtitle
                           text: Thank you!
+          - io.griditem:
+              uesio.styles:
+                root:
+                  textAlign: center
+                  paddingTop: 60px
+              components:
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "1"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/1"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "2"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/2"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "3"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/3"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "4"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/4"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "5"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/5"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "6"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/6"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "7"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/7"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "8"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/8"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "9"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/9"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "10"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/10"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "11"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/11"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "12"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/12"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "13"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/13"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "14"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/14"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "15"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/15"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "16"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/16"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "17"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/17"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "18"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/18"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "19"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/19"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "20"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/20"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "21"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/21"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "22"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/22"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "23"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/23"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "24"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/24"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "25"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/25"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "26"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/26"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "27"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/27"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "28"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/28"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "29"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/29"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "30"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/30"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "31"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/31"
+                - io.button:
+                    uesio.classes:
+                      selected:
+                        - type: paramIsValue
+                          param: step
+                          value: "32"
+                    uesio.variant: web.navdot
+                    signals:
+                      - signal: "route/NAVIGATE"
+                        path: "preview/32"
