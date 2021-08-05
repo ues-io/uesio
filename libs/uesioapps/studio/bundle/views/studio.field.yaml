@@ -48,6 +48,7 @@ definition:
         studio.collection:
         studio.workspaceid:
         studio.referencedCollection:
+        studio.filecollection:
         studio.autopopulate:
         studio.selectlist:
       conditions:
@@ -189,3 +190,12 @@ definition:
                                             fieldId: studio.selectlist
                                             metadataType: "SELECTLIST"
                                             label: "Select List"
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "FILE"
+                                      components:
+                                        - studio.metadatafield:
+                                            fieldId: studio.filecollection
+                                            metadataType: "FILECOLLECTION"
+                                            label: "File Collection"
