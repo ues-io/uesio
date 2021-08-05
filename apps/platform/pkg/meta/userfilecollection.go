@@ -22,12 +22,13 @@ func NewUserFileCollection(key string) (*UserFileCollection, error) {
 
 // UserFileCollection struct
 type UserFileCollection struct {
-	Name       string
-	Namespace  string
+	ID         string `yaml:"-" uesio:"studio.id"`
+	Name       string `yaml:"name" uesio:"studio.name"`
+	Namespace  string `yaml:"-" uesio:"-"`
 	FileSource string
-	Bucket     string `yaml:"bucket"`
-	PathFormat string `yaml:"pathFormat"`
-	Workspace  string
+	Bucket     string    `yaml:"bucket"`
+	PathFormat string    `yaml:"pathFormat"`
+	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
 }
 
