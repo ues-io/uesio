@@ -28,20 +28,19 @@ definition:
                           components:
                             - io.text:
                                 uesio.variant: web.privacytext
-                                text: This privacy policy (“Policy”) informs you of our practices when handling your Personal Information through the Services as defined below. In this Policy, “ues.io”, “we” or “us” refers to ues.io, Inc., a company wholly owned by The Cloud Masters GmbH Switzerland and registered in Delaware with its registered address located at 1309 Burgess Road, Chattanooga, Tennessee, 37419. We are the data controller under the applicable privacy laws.
+                                text: This privacy policy (“Policy”) informs you of our practices when handling your Personal Information through the Services as defined below. In this Policy, “ues.io”, “we” or “us” refers to ues.io software platform owned by The Cloud Masters GmbH Switzerland and registered in Delaware with its registered address located at Technoparkstrasse 1, Technopark, Zurich, Switzerland - CH8005. We are the data controller under the applicable privacy laws.
                       - io.griditem:
                           components:
                             - io.text:
                                 uesio.variant: web.privacytext
-                                text: Where we have an uesio enterprise service agreement in place with an enterprise customer who is asking you to use our Services (for example your employer), we obtain and process your Personal Information on behalf of and at the instructions of that customer. In that context, such enterprise customers are the data controllers and their privacy policies will apply to the processing of your Information.
+                                text: Where we have an enterprise service agreement in place with an enterprise customer who is asking you to use our Services (for example your employer), we obtain and process your Personal Information on behalf of and at the instructions of that customer. In that context, such enterprise customers are the data controllers and their privacy policies will apply to the processing of your Information.
 
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: For the purpose of this Policy, “Personal Information” means any information relating to an identified or identifiable individual. This includes Personal Information you provide or generate when you use https://ues.io, and any other dedicated ues.io websites (the “Website”) (collectively, the “Services”). When you use the Services, you accept and understand that we collect, process, use, and store your Personal Information as described in this Policy.
-
-                                  If you are a California resident, our Privacy Notice for California Residents includes additional information about your rights and how we collect, use, and share information.
-
-                                  If you do not agree with this Policy, you must not use any of the Services. If you change your mind in the future you must stop using the Services and you may exercise your rights concerning your Personal Information as set out in this Policy.
+                            - io.text:
+                                uesio.variant: web.privacytext
+                                text: If you do not agree with this Policy, you must not use any of the Services. If you change your mind in the future you must stop using the Services and you may exercise your rights concerning your Personal Information as set out in this Policy.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 1. INFORMATION WE COLLECT
