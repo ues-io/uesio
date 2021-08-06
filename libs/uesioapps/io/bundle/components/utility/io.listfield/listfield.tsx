@@ -9,7 +9,6 @@ import {
 } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
-const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
@@ -76,7 +75,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 					/>
 				)}
 			</Grid>
-			{value
+			{value ? value
 				.concat(autoAdd && editMode ? [{}] : [])
 				.map((item: wire.PlainWireRecord, index) => (
 					<Grid styles={rowStyles} context={context}>
@@ -112,7 +111,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 							/>
 						)}
 					</Grid>
-				))}
+				)): null }
 		</div>
 	) : null
 }
