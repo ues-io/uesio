@@ -75,7 +75,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 					/>
 				)}
 			</Grid>
-			{value ? value
+			{value
 				.concat(autoAdd && editMode ? [{}] : [])
 				.map((item: wire.PlainWireRecord, index) => (
 					<Grid styles={rowStyles} context={context}>
@@ -111,7 +111,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 							/>
 						)}
 					</Grid>
-				)): null }
+				))}
 		</div>
 	) : null
 }
