@@ -3,8 +3,13 @@ import { ThunkFunc } from "../../store/store"
 import { set as setRoute, setLoading } from "."
 import loadViewOp from "../view/operations/load"
 
-const redirect = (context: Context, path: string) => () => {
-	window.location.href = context.merge(path)
+const redirect = (context: Context, path: string, newTab?: boolean) => () => {
+	const mergedPath = context.merge(path)
+	if (newTab) {
+		window.open(mergedPath, "_blank")
+		return context
+	}
+	window.location.href = mergedPath
 	return context
 }
 

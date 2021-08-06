@@ -17,7 +17,9 @@ const LoginGoogle: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
 	const clientIdKey = definition.clientId
-	const clientIdValue = uesio.view.useConfigValue(clientIdKey)
+	//const clientIdValue = uesio.view.useConfigValue(clientIdKey)
+	const clientIdValue =
+		"326429742195-75u6chmqe4ue5lm1qg3aoa1tg070qj1e.apps.googleusercontent.com"
 	const buttonText = definition.text
 
 	const responseGoogle = (response: GoogleLoginResponse): void => {

@@ -27,6 +27,7 @@ const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	type: "component",
 }
 export { TitleBarProps, TitleBarDefinition }
 

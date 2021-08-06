@@ -35,6 +35,8 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
+	classes: ["root"],
+	type: "component",
 }
 export { TextProps, TextDefinition }
 

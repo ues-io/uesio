@@ -23,11 +23,24 @@ definition:
                     items:
                       - io.griditem:
                           components:
-                            - io.text:
-                                uesio.variant: web.footertext
-                                text: 2020 - 2021 ues.io - All rights reserved.
+                            - io.image:
+                                file: web.logowhite
+                                uesio.styles:
+                                  root:
+                                    padding-right: 15px
                       - io.griditem:
                           components:
+                            - io.text:
+                                uesio.variant: web.footertext
+                                text: ©2020-2021 ues.io is the property of:-
+                                element: div
+                                uesio.styles:
+                                  root:
+                                    padding-bottom: 5px
+                            - io.text:
+                                uesio.variant: web.footertext
+                                text: The Cloud Masters LLC Switzerland - All rights reserved
+                                element: div
                       - io.griditem:
                           components:
                             - io.group:
@@ -35,10 +48,37 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: web.footerlink
-                                      text: Legal notice
+                                      text: Who we are
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://www.thecloudmasters.com"
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: The team
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: team
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Contact us
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: contact
+                                  - io.button:
+                                      uesio.variant: web.footerlink
+                                      text: Resources
+                                      signals:
+                                        - signal: "route/REDIRECT"
+                                          path: "https://docs.$Site{domain}"
                                   - io.button:
                                       uesio.variant: web.footerlink
                                       text: Privacy policy
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: privacy
                                   - io.button:
                                       uesio.variant: web.footerlink
                                       text: Terms of use
+                                      signals:
+                                        - signal: route/NAVIGATE
+                                          path: terms

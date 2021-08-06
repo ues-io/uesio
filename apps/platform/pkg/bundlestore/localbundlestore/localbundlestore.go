@@ -136,7 +136,7 @@ func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool
 }
 
 // StoreItems function
-func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream) error {
+func (b *LocalBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
 	for _, itemStream := range itemStreams {
 		err := storeItem(namespace, version, itemStream)
 		if err != nil {

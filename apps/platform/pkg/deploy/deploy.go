@@ -136,7 +136,7 @@ func Deploy(body []byte, session *sess.Session) error {
 		}
 	}
 
-	err = datasource.PlatformSaves(saves, session)
+	err = datasource.PlatformSaves(saves, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
@@ -212,7 +212,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 		},
 	})
 
-	err = datasource.PlatformSaveOne(workspaceItem, nil, session)
+	err = datasource.PlatformSaveOne(workspaceItem, nil, session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 		Options: &adapt.SaveOptions{
 			Upsert: &adapt.UpsertOptions{},
 		},
-	}, session)
+	}, session.RemoveWorkspaceContext())
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

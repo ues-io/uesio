@@ -41,11 +41,7 @@ func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
 // PlatformLoads function
 func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 
-	_, err := Load(
-		ops,
-		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session.RemoveWorkspaceContext(),
-	)
+	_, err := Load(ops, session)
 	if err != nil {
 		return errors.New("Platform LoadFromSite Failed:" + err.Error())
 	}
@@ -164,11 +160,7 @@ func HandleSaveRequestErrors(requests []SaveRequest) error {
 }
 
 func DoPlatformSave(requests []SaveRequest, session *sess.Session) error {
-	err := Save(
-		requests,
-		// We always want to be in the site context when doing platform loads, NOT the workspace context
-		session.RemoveWorkspaceContext(),
-	)
+	err := Save(requests, session)
 	if err != nil {
 		return err
 	}

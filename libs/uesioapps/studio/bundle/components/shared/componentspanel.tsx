@@ -11,6 +11,8 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const isStructureView = uesio.builder.useIsStructureView()
+	const selectedItem = uesio.builder.useSelectedItem()
+	const selectedType = uesio.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type && isStructureView) {
@@ -52,24 +54,37 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 						>
 							{Object.entries(components).map(
-								([componentName, propDef], indexTag) =>
-									!isStructureView ? (
-										<PropNodeTag
-											title={componentName}
-											key={indexTag}
-											tooltip={propDef.description}
-											context={context}
-										/>
+								([componentName, propDef], indexTag) => {
+									const fullName = `${namespace}.${componentName}`
+									const isSelected =
+										selectedType === "componenttype" &&
+										selectedItem === fullName
+									const sharedProps = {
+										draggable: fullName,
+										title: componentName,
+										onClick: () =>
+											uesio.builder.setSelectedNode(
+												"componenttype",
+												fullName,
+												""
+											),
+										key: indexTag,
+										tooltip: propDef.description,
+										context,
+										selected: isSelected,
+									}
+									// Loop over the variants for this component
+
+									return !isStructureView ? (
+										<PropNodeTag {...sharedProps} />
 									) : (
 										<PropNodeTag
-											draggable={`${namespace}.${componentName}`}
-											title={componentName}
+											{...sharedProps}
+											draggable={fullName}
 											icon="drag_indicator"
-											key={indexTag}
-											tooltip={propDef.description}
-											context={context}
 										/>
 									)
+								}
 							)}
 						</ExpandPanel>
 					)

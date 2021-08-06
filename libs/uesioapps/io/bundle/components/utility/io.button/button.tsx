@@ -5,6 +5,7 @@ interface ButtonProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	width?: string
+	isSelected?: boolean
 }
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
@@ -18,12 +19,19 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				...(width && { width }),
 			},
 			label: {},
+			selected: {},
 		},
 		props
 	)
 	const { onClick, label } = props
 	return (
-		<button onClick={onClick} className={classes.root}>
+		<button
+			onClick={onClick}
+			className={styles.cx(
+				classes.root,
+				props.isSelected && classes.selected
+			)}
+		>
 			<div className={classes.label}>{label}</div>
 		</button>
 	)

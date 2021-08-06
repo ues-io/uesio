@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useEffect, CSSProperties } from "react"
+import { FunctionComponent, useRef, useEffect } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
 import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
@@ -16,7 +16,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useStyles(
 		{
 			highlightLines: {
-				backgroundColor: "pink",
+				backgroundColor: "rgb(255,238,240)",
 				animation: `lineshighlight ${ANIMATION_DURATION}ms ease-in-out`,
 			},
 		},
@@ -24,9 +24,11 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const metadataType = uesio.builder.useSelectedType()
 	const metadataItem = uesio.builder.useSelectedItem()
-	const yamlDoc = uesio.builder.useSelectedYAML(metadataType)
+	const yamlDoc = uesio.builder.useSelectedYAML()
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
+	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
+		component.path.getFullPathParts(lastModifiedNode || "")
 
 	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
 	currentAST.current = util.yaml.parse(currentYaml)
@@ -41,9 +43,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const m = monacoRef.current
 
 	useEffect(() => {
-		if (e && m && currentAST.current && lastModifiedNode) {
+		if (
+			e &&
+			m &&
+			currentAST.current &&
+			lastModifiedNode &&
+			lastModifiedType === metadataType &&
+			lastModifiedItem === metadataItem
+		) {
 			const node = util.yaml.getNodeAtPath(
-				lastModifiedNode,
+				lastModifiedLocalPath,
 				currentAST.current.contents
 			)
 			const model = e.getModel()
@@ -116,6 +125,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
+					fontSize: 11,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
 					//quickSuggestions: true,
@@ -196,10 +206,31 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
 					currentAST.current = util.yaml.parse(editor.getValue())
-					editor.onDidChangeCursorPosition((e) => {
+					// We want to:
+					// Or set the selected node when clicking
+					// Or clear the selected node when selecting text
+					editor.onDidChangeCursorSelection((e) => {
 						const model = editor.getModel()
-						const position = e.position
-						if (model && position && currentAST.current?.contents) {
+						const {
+							endColumn,
+							startColumn,
+							endLineNumber,
+							startLineNumber,
+						} = e.selection
+						const hasSelection = !(
+							endColumn === startColumn &&
+							endLineNumber === startLineNumber
+						)
+
+						// Check if text is selected, if so... stop
+						if (hasSelection) return
+
+						const position = {
+							lineNumber: startLineNumber,
+							column: startColumn,
+						}
+
+						if (model && currentAST.current?.contents) {
 							const offset = model.getOffsetAt(position)
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
@@ -208,15 +239,16 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									"",
 									true
 								)
-							if (relevantNode && nodePath) {
+
+							if (relevantNode && nodePath)
 								uesio.builder.setSelectedNode(
 									metadataType,
 									metadataItem,
 									nodePath
 								)
-							}
 						}
 					})
+
 					editor.onMouseMove((e) => {
 						const model = editor.getModel()
 						const position = e.target.position

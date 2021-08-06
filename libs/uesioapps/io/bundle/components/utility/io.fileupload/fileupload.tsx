@@ -34,7 +34,6 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const fileInput = useRef<HTMLInputElement>(null)
-	const [showTools, setShowTools] = useState<boolean>(false)
 
 	const userFile = record.getFieldReference(fieldId)
 	const userFileId = userFile?.["uesio.id"] as string
@@ -49,7 +48,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 		color: "white",
 		backdropFilter: "brightness(0.6)",
 		borderRadius: "4px",
-		display: "block",
+		display: "none",
 		position: "absolute",
 		top: "0",
 	}
@@ -58,6 +57,9 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 		{
 			root: {
 				position: "relative",
+				"&:hover .hovershow": {
+					display: "block",
+				},
 			},
 			image: {
 				width: "100%",
@@ -137,28 +139,29 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 			onDragOver={onDragOver}
 			onDragEnter={onDragEnter}
 			onDragLeave={onDragLeave}
-			onMouseEnter={() => setShowTools(true)}
-			onMouseLeave={() => setShowTools(false)}
 			className={classes.root}
 		>
-			{showTools && (
+			{
 				<>
 					<div
-						className={classes.editicon}
+						className={styles.cx(classes.editicon, "hovershow")}
 						onClick={() => fileInput.current?.click()}
 					>
 						<Icon context={context} icon="edit" />
 					</div>
 					{userFileId && (
 						<div
-							className={classes.deleteicon}
+							className={styles.cx(
+								classes.deleteicon,
+								"hovershow"
+							)}
 							onClick={() => deleteFile()}
 						>
 							<Icon context={context} icon="delete" />
 						</div>
 					)}
 				</>
-			)}
+			}
 			<input
 				className={classes.fileinput}
 				type="file"

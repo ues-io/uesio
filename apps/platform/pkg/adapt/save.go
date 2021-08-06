@@ -131,7 +131,10 @@ func ProcessUpdates(
 			}
 
 			if fieldID == collectionMetadata.NameField {
-				searchableValues = append(searchableValues, value.(string))
+				searchValue := value.(string)
+				if searchValue != "" {
+					searchableValues = append(searchableValues, value.(string))
+				}
 			}
 
 			fieldName, err := fieldNameFunc(fieldMetadata)
@@ -151,14 +154,13 @@ func ProcessUpdates(
 			return err
 		}
 
-		if searchFieldFunc != nil && len(searchableValues) > 0 {
-			searchIndexField, searchIndex := searchFieldFunc(searchableValues)
-			if searchIndexField != "" {
-				changeMap[searchIndexField] = searchIndex
-			}
-		}
-
 		if !change.IsNew && change.IDValue != nil {
+			if searchFieldFunc != nil && len(searchableValues) > 0 {
+				searchIndexField, searchIndex := searchFieldFunc(searchableValues)
+				if searchIndexField != "" {
+					changeMap[searchIndexField] = searchIndex
+				}
+			}
 			err := updateFunc(change.IDValue, changeMap)
 			if err != nil {
 				return err

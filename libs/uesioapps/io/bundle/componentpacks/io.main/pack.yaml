@@ -74,3 +74,4 @@ components:
     io.tooltip:
     io.userfield:
     io.listfield:
+    io.datefield:

@@ -58,3 +58,6 @@ routes:
   docs.profiles: true
   docs.secrets: true
 files:
+  docs.appadmin: true
+  docs.appadminview: true
+  docs.whatis: true

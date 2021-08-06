@@ -141,3 +141,4 @@ definition:
                                   - studio.permissionpicker:
                                       fieldId: studio.permissionsetsrefs
                                       wireName: permissionsets
+                                      dataType: array
