@@ -99,22 +99,25 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			if metadataType == "files" {
 				file := item.(*meta.File)
 
-				stream, err := bs.GetFileStream(version, file, session)
-				if err != nil {
-					return err
+				if file.Content != nil {
+					stream, err := bs.GetFileStream(version, file, session)
+					if err != nil {
+						return err
+					}
+
+					itemStream := bundlestore.ItemStream{
+						FileName: file.GetFilePath(),
+						Type:     metadataType,
+					}
+
+					_, err = io.Copy(&itemStream.Buffer, stream)
+					if err != nil {
+						return err
+					}
+
+					itemStreams = append(itemStreams, itemStream)
 				}
 
-				itemStream := bundlestore.ItemStream{
-					FileName: file.GetFilePath(),
-					Type:     metadataType,
-				}
-
-				_, err = io.Copy(&itemStream.Buffer, stream)
-				if err != nil {
-					return err
-				}
-
-				itemStreams = append(itemStreams, itemStream)
 			}
 
 			itemStream := bundlestore.ItemStream{
