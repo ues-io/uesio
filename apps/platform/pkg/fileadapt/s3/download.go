@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 
@@ -21,13 +22,17 @@ func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentia
 
 	ctx := context.Background()
 	downloader := manager.NewDownloader(client)
+
+	fmt.Println("bucket: " + bucket)
+	fmt.Println("path: " + path)
+
 	head, err := client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(path),
 	})
 
 	if err != nil {
-		return nil, errors.New("failed to retrieve object information")
+		return nil, errors.New("failed to retrieve object information: " + err.Error())
 	}
 
 	buf := make([]byte, head.ContentLength)

@@ -70,8 +70,7 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	fileStream, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
-		logger.LogError(err)
-		err := errors.New("unable to load file")
+		err := errors.New("unable to load file:" + err.Error())
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
