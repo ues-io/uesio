@@ -147,12 +147,12 @@ const setNodeAtPath = (
  */
 const addNodeAtPath = (
 	path: string | string[],
-	node: yaml.Document,
+	doc: yaml.Document,
 	setNode: Node,
 	index: number
 ): void => {
 	const pathArray = makePathArray(path)
-	node.addIn([...pathArray, index], setNode)
+	doc.addIn([...pathArray, index], setNode)
 }
 
 const addNodePairAtPath = (
