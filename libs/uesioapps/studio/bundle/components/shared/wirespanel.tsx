@@ -52,7 +52,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={className}
 		>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
-				{Object.keys(def || {}).map((key: string, index) => {
+				{Object.keys(def || {}).map((key: string) => {
 					const wirePath = `${localPath}["${key}"]`
 					return (
 						<PropNodeTag
@@ -65,7 +65,8 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								)
 							}
 							icon="power"
-							key={index}
+							key={key}
+							showIsSelected={true}
 							selected={
 								selectedMetadataType === metadataType &&
 								selectedMetadataItem === metadataItem &&
@@ -75,6 +76,22 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						/>
 					)
 				})}
+				<PropNodeTag
+					title={"New wire"}
+					onClick={() =>
+						uesio.builder.addDefinitionPair(
+							path,
+							{
+								collection: null,
+							},
+							"newwire" + (Math.floor(Math.random() * 60) + 1),
+							"wire"
+						)
+					}
+					icon="add"
+					style={{ textAlign: "center" }}
+					context={context}
+				/>
 			</div>
 		</ScrollPanel>
 	)

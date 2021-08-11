@@ -7,6 +7,7 @@ type Props = {
 	icon?: string
 	iconColor?: string
 	selected?: boolean
+	showIsSelected?: boolean
 	onClick?: () => void
 	draggable?: string
 	context: context.Context
@@ -28,6 +29,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		iconColor,
 		tooltip,
 		selected,
+		showIsSelected,
 		context,
 	} = props
 
@@ -51,6 +53,13 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			},
 			popperPaper: {
 				overflow: "hidden",
+			},
+			tile: {
+				border: `1px solid ${
+					selected && showIsSelected
+						? context.getTheme().definition.palette.primary
+						: "auto"
+				}`,
 			},
 			title: {
 				textTransform: "uppercase",
