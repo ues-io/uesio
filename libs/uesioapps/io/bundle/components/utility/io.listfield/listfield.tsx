@@ -9,7 +9,6 @@ import {
 } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
-const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")

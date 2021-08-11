@@ -171,7 +171,7 @@ func loadOne(
 
 			value, ok := lmap[dynamoFieldName]
 			if !ok {
-				return nil, nil
+				return nil, errors.New("not found error")
 			}
 			err = attributevalue.Unmarshal(value, &i)
 			if err != nil {
