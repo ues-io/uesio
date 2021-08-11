@@ -4,3 +4,5 @@ type: FILE
 label: Logo
 propertyName: logo
 filecollection: uesio.platform
+accept: "image/*"
+

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"mime"
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -37,6 +38,7 @@ import (
 
 func init() {
 	// Initialize Plugins
+	mime.AddExtensionType(".yaml", "application/x-yaml")
 
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.firestore", &firestore.Adapter{})

@@ -14,8 +14,6 @@ options:
     value: "REFERENCE"
   - label: "File"
     value: "FILE"
-  - label: "Image"
-    value: "IMAGE"
   - label: "Date"
     value: "DATE"
   - label: "Map"

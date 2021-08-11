@@ -14,6 +14,7 @@ class Field {
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
 	getOptions = () => this.source.options || null
+	getAccept = () => this.source.accept
 }
 
 export default Field

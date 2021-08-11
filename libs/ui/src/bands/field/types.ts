@@ -10,7 +10,6 @@ type FieldType =
 	| "SELECT"
 	| "CHECKBOX"
 	| "DATE"
-	| "IMAGE"
 	| "FILE"
 	| "MAP"
 	| "TIMESTAMP"
@@ -37,6 +36,7 @@ type FieldMetadata = {
 	options?: SelectOption[]
 	referencedCollection?: string
 	subfields?: SubField[]
+	accept?: string
 }
 
 export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }
