@@ -54,12 +54,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				onChange={(e) => setValue(e.target.value)}
 			>
 				{options?.map((option) => (
-					<option
-						value={option.value}
-						selected={option.value === value}
-					>
-						{option.label}
-					</option>
+					<option value={option.value}>{option.label}</option>
 				))}
 			</select>
 		</div>
