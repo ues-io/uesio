@@ -52,6 +52,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		OnDelete:             f.OnDelete,
 		FileCollection:       f.FileCollection,
 		SubFields:            GetSubFieldsMetadata(f.SubFields),
+		SubType:              f.SubType,
 	}
 }
 

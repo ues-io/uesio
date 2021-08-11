@@ -118,6 +118,7 @@ type FieldMetadata struct {
 	OnDelete             string                     `json:"ondelete"`
 	FileCollection       string                     `json:"fileCollection"`
 	SubFields            []SubField                 `json:"subfields"`
+	SubType              string                     `json:"subtype"`
 }
 
 // GetFullName function

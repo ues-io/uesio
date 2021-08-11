@@ -86,6 +86,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				<ListField
 					{...common}
 					subFields={fieldMetadata.source.subfields}
+					subType={fieldMetadata.source.subtype}
 				/>
 			)
 		default:

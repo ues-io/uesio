@@ -3,6 +3,7 @@ collection: studio.selectlists
 type: LIST
 label: Options
 propertyName: options
+subtype: MAP
 subfields:
   - name: label
   - name: value
