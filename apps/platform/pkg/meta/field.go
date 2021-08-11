@@ -54,6 +54,7 @@ type Field struct {
 	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
 	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
 	SubFields            []SubField `yaml:"subfields" uesio:"studio.subfields"`
+	SubType              string     `yaml:"subtype" uesio:"studio.subtype"`
 }
 
 // GetFieldTypes function
