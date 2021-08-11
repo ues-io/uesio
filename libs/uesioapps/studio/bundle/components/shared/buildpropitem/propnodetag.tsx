@@ -11,6 +11,7 @@ type Props = {
 	draggable?: string
 	context: context.Context
 	tooltip?: string
+	style?: { [key: string]: string }
 }
 
 const Icon = component.registry.getUtility("io.icon")
@@ -29,6 +30,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		tooltip,
 		selected,
 		context,
+		style,
 	} = props
 
 	const classes = styles.useStyles(
@@ -52,6 +54,13 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			popperPaper: {
 				overflow: "hidden",
 			},
+			tile: {
+				border: selected
+					? `1px solid ${
+							context.getTheme().definition.palette.primary
+					  }`
+					: "1px solid auto",
+			},
 			title: {
 				textTransform: "uppercase",
 			},
@@ -61,6 +70,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	return (
 		<div
+			style={style}
 			className={classes.root}
 			ref={setAnchorEl}
 			draggable={!!draggable}
@@ -71,6 +81,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
+				className={classes.tile}
 			>
 				<span className={classes.title}>{title}</span>
 
