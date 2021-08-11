@@ -40,6 +40,7 @@ const StylesListProp: FC<PropRendererProps> = (props) => {
 							},
 							{ name: "value" },
 						]}
+						subType="MAP"
 						setValue={(value: StyleValue[]) =>
 							valueAPI.set(
 								`${path}["${className}"]`,

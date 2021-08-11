@@ -1,5 +1,8 @@
 name: permissionsetsrefs
 collection: studio.profiles
-type: MAP
+type: LIST
 label: Permission sets refs
 propertyName: permissionsetsrefs
+subtype: TEXT
+subfields:
+  - name: permissionset

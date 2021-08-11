@@ -3,6 +3,7 @@ package google
 import (
 	verifier "github.com/futurenda/google-auth-id-token-verifier"
 	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -13,12 +14,12 @@ type Auth struct {
 // Verify function
 func (a *Auth) Verify(token string, session *sess.Session) error {
 	v := verifier.Verifier{}
-	/*
-		aud, err := configstore.GetValueFromKey("uesio.googleClientId", session)
-		if err != nil {
-			return err
-		}*/
-	aud := "326429742195-75u6chmqe4ue5lm1qg3aoa1tg070qj1e.apps.googleusercontent.com"
+
+	aud, err := configstore.GetValueFromKey("uesio.googleClientId", session)
+	if err != nil {
+		return err
+	}
+
 	return v.VerifyIDToken(token, []string{
 		aud,
 	})
