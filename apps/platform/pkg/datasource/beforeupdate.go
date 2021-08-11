@@ -9,7 +9,7 @@ import (
 
 // BeforeUpdateAPI type
 type BeforeUpdateAPI struct {
-	Updates *UpdatesAPI `bot:"changes"`
+	Updates *UpdatesAPI `bot:"updates"`
 	errors  []string
 	session *sess.Session
 }

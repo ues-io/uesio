@@ -69,6 +69,17 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
+		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+			if adapt.IsReference(fieldMetadata.Type) {
+				return adapt.SetReferenceData(value, fieldMetadata, metadata)
+			}
+			return value, nil
+		}
+
+		searchFieldFunc := func(searchableValues []string) (string, interface{}) {
+			return searchIndexField, getSearchIndex(searchableValues)
+		}
+
 		err = adapt.ProcessInserts(
 			&request,
 			metadata,
@@ -77,19 +88,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				batch.Create(collection.Doc(id.(string)), insert)
 				return nil
 			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return searchIndexField, getSearchIndex(searchableValues)
-			},
+			searchFieldFunc,
 			// DefaultID Func
 			func() string {
 				return collection.NewDoc().ID
@@ -115,23 +116,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				batch.Update(collection.Doc(id.(string)), updates)
 				return nil
 			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return searchIndexField, getSearchIndex(searchableValues)
-			},
-			// DefaultID Func
-			func() string {
-				return collection.NewDoc().ID
-			},
+			searchFieldFunc,
 		)
 		if err != nil {
 			return err

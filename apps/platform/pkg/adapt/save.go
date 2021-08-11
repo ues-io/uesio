@@ -111,7 +111,6 @@ func ProcessUpdates(
 	setDataFunc SetDataFunc,
 	fieldNameFunc FieldNameFunc,
 	searchFieldFunc SearchFieldFunc,
-	defaultIDFunc DefaultIDFunc,
 ) error {
 
 	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
@@ -193,6 +192,12 @@ func ProcessInserts(
 	}
 
 	for _, change := range *request.Inserts {
+
+		// With lookups, inserts could have been changed to an update. If the insert is no longer
+		// new, don't insert it
+		if !change.IsNew {
+			continue
+		}
 
 		changeMap := map[string]interface{}{}
 		searchableValues := []string{}

@@ -125,7 +125,7 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 	return lookupResult, nil
 }
 
-func mergeUpsertLookupResponse(op *LoadOp, changes *ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
+func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
 	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
 	lookupResult, err := getLookupResultMap(op, matchField)
@@ -144,7 +144,7 @@ func mergeUpsertLookupResponse(op *LoadOp, changes *ChangeItems, options *Upsert
 		return errors.New("Cannot upsert without id format metadata")
 	}
 
-	for index, change := range *changes {
+	for index, change := range *inserts {
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
@@ -164,7 +164,8 @@ func mergeUpsertLookupResponse(op *LoadOp, changes *ChangeItems, options *Upsert
 			}
 			change.IsNew = false
 			change.IDValue = idValue
-			(*changes)[index] = change
+			(*inserts)[index] = change
+			*updates = append(*updates, change)
 		}
 
 	}
@@ -261,7 +262,7 @@ func mergeLookupResponses(request *SaveOp, responses []LoadOp, metadata *Metadat
 	}
 
 	if upsertResponse != nil {
-		err := mergeUpsertLookupResponse(upsertResponse, request.Inserts, request.Options.Upsert, collectionMetadata, metadata)
+		err := mergeUpsertLookupResponse(upsertResponse, request.Inserts, request.Updates, request.Options.Upsert, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}

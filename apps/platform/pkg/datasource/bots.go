@@ -54,19 +54,16 @@ func hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-// RunBeforeInsertBots function
-func RunBeforeInsertBots(changes *adapt.ChangeItems, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func runBot(botType string, collectionMetadata *adapt.CollectionMetadata, dialectFunc func(BotDialect, *meta.Bot) error, session *sess.Session) error {
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
 		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "BEFOREINSERT",
+		"studio.type":       botType,
 	}, session)
 	if err != nil {
 		return err
 	}
-
-	botAPI := NewBeforeInsertAPI(changes, collectionMetadata, session)
 
 	for _, bot := range robots {
 		err := hydrateBot(&bot, session)
@@ -79,10 +76,26 @@ func RunBeforeInsertBots(changes *adapt.ChangeItems, collectionMetadata *adapt.C
 			return err
 		}
 
-		err = dialect.BeforeInsert(&bot, botAPI, session)
+		err = dialectFunc(dialect, &bot)
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+
+}
+
+// RunBeforeInsertBots function
+func RunBeforeInsertBots(changes *adapt.ChangeItems, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+
+	botAPI := NewBeforeInsertAPI(changes, collectionMetadata, session)
+
+	err := runBot("BEFOREINSERT", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.BeforeInsert(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {
@@ -94,33 +107,14 @@ func RunBeforeInsertBots(changes *adapt.ChangeItems, collectionMetadata *adapt.C
 
 // RunBeforeUpdateBots function
 func RunBeforeUpdateBots(changes *adapt.ChangeItems, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	var robots meta.BotCollection
-
-	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "BEFOREUPDATE",
-	}, session)
-	if err != nil {
-		return err
-	}
 
 	botAPI := NewBeforeUpdateAPI(changes, collectionMetadata, session)
 
-	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
-		if err != nil {
-			return err
-		}
-
-		dialect, err := getBotDialect(bot.Dialect)
-		if err != nil {
-			return err
-		}
-
-		err = dialect.BeforeUpdate(&bot, botAPI, session)
-		if err != nil {
-			return err
-		}
+	err := runBot("BEFOREUPDATE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.BeforeUpdate(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {
@@ -132,33 +126,14 @@ func RunBeforeUpdateBots(changes *adapt.ChangeItems, collectionMetadata *adapt.C
 
 // RunBeforeDeleteBots function
 func RunBeforeDeleteBots(deletes *adapt.ChangeItems, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	var robots meta.BotCollection
-
-	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "BEFOREDELETE",
-	}, session)
-	if err != nil {
-		return err
-	}
 
 	botAPI := NewBeforeDeleteAPI(deletes, collectionMetadata, session)
 
-	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
-		if err != nil {
-			return err
-		}
-
-		dialect, err := getBotDialect(bot.Dialect)
-		if err != nil {
-			return err
-		}
-
-		err = dialect.BeforeDelete(&bot, botAPI, session)
-		if err != nil {
-			return err
-		}
+	err := runBot("BEFOREDELETE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.BeforeDelete(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {
@@ -170,33 +145,14 @@ func RunBeforeDeleteBots(deletes *adapt.ChangeItems, collectionMetadata *adapt.C
 
 // RunAfterInsertBots function
 func RunAfterInsertBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	var robots meta.BotCollection
-
-	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "AFTERINSERT",
-	}, session)
-	if err != nil {
-		return err
-	}
 
 	botAPI := NewAfterInsertAPI(request, collectionMetadata, session)
 
-	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
-		if err != nil {
-			return err
-		}
-
-		dialect, err := getBotDialect(bot.Dialect)
-		if err != nil {
-			return err
-		}
-
-		err = dialect.AfterInsert(&bot, botAPI, session)
-		if err != nil {
-			return err
-		}
+	err := runBot("AFTERINSERT", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.AfterInsert(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {
@@ -208,33 +164,14 @@ func RunAfterInsertBots(request *adapt.SaveOp, collectionMetadata *adapt.Collect
 
 // RunAfterUpdateBots function
 func RunAfterUpdateBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	var robots meta.BotCollection
-
-	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "AFTERUPDATE",
-	}, session)
-	if err != nil {
-		return err
-	}
 
 	botAPI := NewAfterUpdateAPI(request, collectionMetadata, session)
 
-	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
-		if err != nil {
-			return err
-		}
-
-		dialect, err := getBotDialect(bot.Dialect)
-		if err != nil {
-			return err
-		}
-
-		err = dialect.AfterUpdate(&bot, botAPI, session)
-		if err != nil {
-			return err
-		}
+	err := runBot("AFTERUPDATE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.AfterUpdate(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {
@@ -246,33 +183,14 @@ func RunAfterUpdateBots(request *adapt.SaveOp, collectionMetadata *adapt.Collect
 
 // RunAfterDeleteBots function
 func RunAfterDeleteBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	var robots meta.BotCollection
-
-	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
-		"studio.type":       "AFTERDELETE",
-	}, session)
-	if err != nil {
-		return err
-	}
 
 	botAPI := NewAfterDeleteAPI(request, collectionMetadata, session)
 
-	for _, bot := range robots {
-		err := hydrateBot(&bot, session)
-		if err != nil {
-			return err
-		}
-
-		dialect, err := getBotDialect(bot.Dialect)
-		if err != nil {
-			return err
-		}
-
-		err = dialect.AfterDelete(&bot, botAPI, session)
-		if err != nil {
-			return err
-		}
+	err := runBot("AFTERDELETE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+		return dialect.AfterDelete(bot, botAPI, session)
+	}, session)
+	if err != nil {
+		return err
 	}
 
 	if botAPI.HasErrors() {

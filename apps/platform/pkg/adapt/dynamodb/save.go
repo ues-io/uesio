@@ -59,6 +59,17 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
+		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+			if adapt.IsReference(fieldMetadata.Type) {
+				return adapt.SetReferenceData(value, fieldMetadata, metadata)
+			}
+			return value, nil
+		}
+
+		searchFieldFunc := func(searchableValues []string) (string, interface{}) {
+			return "", nil
+		}
+
 		err = adapt.ProcessInserts(
 			&request,
 			metadata,
@@ -86,19 +97,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				}
 				return nil
 			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return "", nil
-			},
+			searchFieldFunc,
 			// DefaultID Func
 			func() string {
 				return uuid.New().String()
@@ -152,23 +153,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 				return nil
 			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return "", nil
-			},
-			// DefaultID Func
-			func() string {
-				return uuid.New().String()
-			},
+			searchFieldFunc,
 		)
 		if err != nil {
 			return err
