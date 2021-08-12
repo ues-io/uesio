@@ -1,15 +1,15 @@
 import toPath from "lodash/toPath"
 import yaml, { Pair, Node, YAMLMap, ParsedNode } from "yaml"
-const YAML_OPTIONS = {
-	simpleKeys: true,
-	keepNodeTypes: false, // deprecated in yaml v2 I think
-}
+// const YAML_OPTIONS = {
+// 	simpleKeys: true,
+// 	keepNodeTypes: false, // deprecated in yaml v2 I think
+// }
 
 /**
  * In order to work with YAML features not directly supported by native JavaScript data types, such as comments, anchors and aliases, yaml provides the Document API.
  * more info:https://eemeli.org/yaml/#documents
  */
-const newDoc = () => new yaml.Document(YAML_OPTIONS)
+const newDoc = (val: any) => new yaml.Document(val)
 /**
  * will directly produce native JavaScript If you'd like to retain the comments and other metadata use `parseDocument()` instead
  */
@@ -127,19 +127,11 @@ const getCommonAncestorPath = (
 
 const setNodeAtPath = (
 	path: string | string[],
-	node: yaml.Document,
+	doc: yaml.Document,
 	setNode: Node | null
 ): void => {
 	const pathArray = makePathArray(path)
-	node.setIn(pathArray, setNode)
-	// const parentPath = pathArray.slice(0, -1)
-	// const doc = new yaml.Document(node)
-	// const parentNode = node?.getIn(parentPath)
-
-	// if (!parentNode && parentPath.length > 0) {
-	// 	console.log("other scenario")
-	// 	setNodeAtPath(parentPath, node, doc.createNode({}))
-	// }
+	doc.setIn(pathArray, setNode)
 }
 
 /**
@@ -152,7 +144,18 @@ const addNodeAtPath = (
 	index: number
 ): void => {
 	const pathArray = makePathArray(path)
-	doc.addIn([...pathArray, index], setNode)
+	// Get the parent
+	const parentNode: any = doc.getIn([...pathArray])
+
+	// We're nesting the new node if
+	if (!parentNode) return doc.addIn([...pathArray, index], setNode)
+
+	// might be better solution here: https://eemeli.org/yaml/#modifying-nodes
+	const parent = parentNode.toJSON()
+	parent.splice(index, 0, setNode.toJSON())
+
+	const newNode = doc.createNode(parent)
+	doc.setIn([...pathArray], newNode)
 }
 
 const addNodePairAtPath = (
