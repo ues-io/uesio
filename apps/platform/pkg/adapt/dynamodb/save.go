@@ -3,6 +3,7 @@ package dynamodb
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -77,7 +78,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			func(id interface{}, insert map[string]interface{}) error {
 				dbID, ok := insert[idFieldDBName]
 				if !ok {
-					return errors.New("No key found for dynamoDb insert")
+					return errors.New("no key found for dynamodb insert")
 				}
 
 				insert[SystemID] = getSystemID(collectionName, dbID.(string))
@@ -87,12 +88,21 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				if err != nil {
 					return err
 				}
+
+				ean := make(map[string]string)
+				ean["#ID"] = idFieldDBName
+
 				input := &dynamodb.PutItemInput{
 					Item:      itemDb,
 					TableName: aws.String(SystemTable),
+					ConditionExpression:  aws.String("attribute_not_exists(#ID)"),
+					ExpressionAttributeNames: ean,
 				}
 				_, err = client.PutItem(ctx, input)
 				if err != nil {
+					if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
+						return errors.New("item already exists")
+					  }
 					return err
 				}
 				return nil
@@ -117,7 +127,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 				dbID, ok := update[idFieldDBName]
 				if !ok {
-					return errors.New("No key found for dynamoDb update")
+					return errors.New("no key found for dynamodb update")
 				}
 				delete(update, idFieldDBName)
 
