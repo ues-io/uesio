@@ -31,6 +31,41 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "TEXT",
 			label: "color",
 		},
+		{
+			name: "align",
+			label: "align",
+			type: "SELECT",
+			options: [
+				{
+					value: "start",
+					label: "start",
+				},
+				{
+					value: "end",
+					label: "end",
+				},
+				{
+					value: "left",
+					label: "left",
+				},
+				{
+					value: "right",
+					label: "right",
+				},
+				{
+					value: "center",
+					label: "center",
+				},
+				{
+					value: "justify",
+					label: "justify",
+				},
+				{
+					value: "match-parent",
+					label: "match-parent",
+				},
+			],
+		},
 	],
 	sections: [],
 	actions: [],
