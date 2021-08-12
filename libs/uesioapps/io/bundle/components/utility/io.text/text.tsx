@@ -5,7 +5,15 @@ interface TextProps extends definition.UtilityProps {
 	text?: string
 	element?: string
 	color?: string
-	align?: string
+	align?:
+		| "start"
+		| "end"
+		| "left"
+		| "right"
+		| "center"
+		| "justify"
+		| "match-parent"
+		| "inherit"
 }
 
 const Text: FunctionComponent<TextProps> = (props) => {
@@ -16,9 +24,9 @@ const Text: FunctionComponent<TextProps> = (props) => {
 				...(color && {
 					color: props.context.merge(color),
 				}),
+				textAlign: align,
 				verticalAlign: "inherit",
-				//...(align && { textAlign: align }),
-				textAlign: align ? align : "start",
+				display: "block",
 			},
 		},
 		props

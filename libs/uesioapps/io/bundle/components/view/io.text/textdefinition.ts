@@ -4,6 +4,7 @@ type TextDefinition = {
 	text?: string
 	element?: string
 	color?: string
+	align?: string
 } & definition.BaseDefinition
 
 interface TextProps extends definition.BaseProps {
@@ -36,6 +37,10 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "align",
 			type: "SELECT",
 			options: [
+				{
+					value: "",
+					label: "",
+				},
 				{
 					value: "start",
 					label: "start",
