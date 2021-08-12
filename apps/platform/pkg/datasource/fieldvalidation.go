@@ -177,17 +177,26 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 	}
 }
 
+// TODO:
+// 1. Split change items, populate data
+// 2. Hydrate update values with full info
+// 3. Run Before bots
+// 4. Run validations
+// 5. Check permissions
+
 //PopulateAndValidate function
-func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.ChangeItems, *adapt.ChangeItems, error) {
+func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.ChangeItems, *adapt.ChangeItems, *adapt.ChangeItems, error) {
 
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
-	changes := adapt.ChangeItems{}
+	inserts := adapt.ChangeItems{}
+	updates := adapt.ChangeItems{}
 	deletes := adapt.ChangeItems{}
+
 	fieldsInvolvedInAccess := getFieldsNeededFromRecordToDetermineWriteAccess(collectionMetadata)
 	userResponseTokens, err := GenerateResponseTokens(collectionMetadata, session)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item loadable.Item, recordKey interface{}) error {
@@ -221,12 +230,16 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 				}
 			}
 
-			changes = append(changes, changeItem)
+			if changeItem.IsNew {
+				inserts = append(inserts, changeItem)
+			} else {
+				updates = append(updates, changeItem)
+			}
 
 			return nil
 		})
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 	}
 
@@ -247,9 +260,9 @@ func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.Collect
 			return nil
 		})
 		if err != nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 	}
 
-	return &changes, &deletes, nil
+	return &inserts, &updates, &deletes, nil
 }

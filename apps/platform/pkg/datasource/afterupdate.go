@@ -7,22 +7,17 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// AfterSaveAPI type
-type AfterSaveAPI struct {
-	Changes *ChangesAPI `bot:"results"`
-	Deletes *DeletesAPI `bot:"deletes"`
+// AfterUpdateAPI type
+type AfterUpdateAPI struct {
+	Updates *UpdatesAPI `bot:"results"`
 	errors  []string
 	session *sess.Session
 }
 
-func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
-	return &AfterSaveAPI{
-		Changes: &ChangesAPI{
-			changes:  request.Changes,
-			metadata: metadata,
-		},
-		Deletes: &DeletesAPI{
-			deletes:  request.Deletes,
+func NewAfterUpdateAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterUpdateAPI {
+	return &AfterUpdateAPI{
+		Updates: &UpdatesAPI{
+			updates:  request.Updates,
 			metadata: metadata,
 		},
 		session: session,
@@ -30,22 +25,22 @@ func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, 
 }
 
 // AddError function
-func (as *AfterSaveAPI) AddError(message string) {
+func (as *AfterUpdateAPI) AddError(message string) {
 	as.errors = append(as.errors, message)
 }
 
 // HasErrors function
-func (as *AfterSaveAPI) HasErrors() bool {
+func (as *AfterUpdateAPI) HasErrors() bool {
 	return len(as.errors) > 0
 }
 
 // GetErrorString function
-func (as *AfterSaveAPI) GetErrorString() string {
+func (as *AfterUpdateAPI) GetErrorString() string {
 	return strings.Join(as.errors, ", ")
 }
 
 // Save function
-func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error {
+func (as *AfterUpdateAPI) Save(collection string, changes adapt.Collection) error {
 	requests := []SaveRequest{
 		{
 			Collection: collection,

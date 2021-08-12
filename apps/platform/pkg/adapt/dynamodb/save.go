@@ -59,7 +59,57 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
-		err = adapt.ProcessChanges(
+		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+			if adapt.IsReference(fieldMetadata.Type) {
+				return adapt.SetReferenceData(value, fieldMetadata, metadata)
+			}
+			return value, nil
+		}
+
+		searchFieldFunc := func(searchableValues []string) (string, interface{}) {
+			return "", nil
+		}
+
+		err = adapt.ProcessInserts(
+			&request,
+			metadata,
+			// Insert Func
+			func(id interface{}, insert map[string]interface{}) error {
+				dbID, ok := insert[idFieldDBName]
+				if !ok {
+					return errors.New("No key found for dynamoDb insert")
+				}
+
+				insert[SystemID] = getSystemID(collectionName, dbID.(string))
+				insert[SystemCollectionID] = collectionName
+
+				itemDb, err := attributevalue.MarshalMap(insert)
+				if err != nil {
+					return err
+				}
+				input := &dynamodb.PutItemInput{
+					Item:      itemDb,
+					TableName: aws.String(SystemTable),
+				}
+				_, err = client.PutItem(ctx, input)
+				if err != nil {
+					return err
+				}
+				return nil
+			},
+			setDataFunc,
+			getDBFieldName,
+			searchFieldFunc,
+			// DefaultID Func
+			func() string {
+				return uuid.New().String()
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		err = adapt.ProcessUpdates(
 			&request,
 			metadata,
 			// Update Func
@@ -103,47 +153,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 				return nil
 			},
-			// Insert Func
-			func(id interface{}, insert map[string]interface{}) error {
-				dbID, ok := insert[idFieldDBName]
-				if !ok {
-					return errors.New("No key found for dynamoDb insert")
-				}
-
-				insert[SystemID] = getSystemID(collectionName, dbID.(string))
-				insert[SystemCollectionID] = collectionName
-
-				itemDb, err := attributevalue.MarshalMap(insert)
-				if err != nil {
-					return err
-				}
-				input := &dynamodb.PutItemInput{
-					Item:      itemDb,
-					TableName: aws.String(SystemTable),
-				}
-				_, err = client.PutItem(ctx, input)
-				if err != nil {
-					return err
-				}
-				return nil
-			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return "", nil
-			},
-			// DefaultID Func
-			func() string {
-				return uuid.New().String()
-			},
+			searchFieldFunc,
 		)
 		if err != nil {
 			return err
