@@ -16,6 +16,8 @@ type FieldType =
 	| "LIST"
 	| "USER"
 
+type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
+
 type SelectOption = {
 	label: string
 	value: string
@@ -36,7 +38,7 @@ type FieldMetadata = {
 	options?: SelectOption[]
 	referencedCollection?: string
 	subfields?: SubField[]
-	accept?: string
+	accept?: AcceptTypes
 }
 
 export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }

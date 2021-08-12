@@ -1,14 +1,12 @@
-name: fieldtypes
+name: accepttypes
 options:
-  - label: "Images"
-    value: "image/*"
+  - label: "Image"
+    value: "IMAGE"
   - label: "Audio"
-    value: "audio/*"
+    value: "AUDIO"
   - label: "Video"
-    value: "video/*"
-  - label: "PDF"
-    value: ".pdf"
-  - label: "YAML"
-    value: ".yaml"
-  - label: "Text Document"
-    value: ".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    value: "VIDEO"
+  - label: "Document"
+    value: "DOCUMENT"
+  - label: "Any"
+    value: "ANY"
