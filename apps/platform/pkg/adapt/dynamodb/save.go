@@ -93,16 +93,16 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				ean["#ID"] = idFieldDBName
 
 				input := &dynamodb.PutItemInput{
-					Item:      itemDb,
-					TableName: aws.String(SystemTable),
-					ConditionExpression:  aws.String("attribute_not_exists(#ID)"),
+					Item:                     itemDb,
+					TableName:                aws.String(SystemTable),
+					ConditionExpression:      aws.String("attribute_not_exists(#ID)"),
 					ExpressionAttributeNames: ean,
 				}
 				_, err = client.PutItem(ctx, input)
 				if err != nil {
 					if strings.Contains(err.Error(), "ConditionalCheckFailedException") {
 						return errors.New("item already exists")
-					  }
+					}
 					return err
 				}
 				return nil
