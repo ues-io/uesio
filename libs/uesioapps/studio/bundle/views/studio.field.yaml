@@ -51,6 +51,7 @@ definition:
         studio.filecollection:
         studio.autopopulate:
         studio.selectlist:
+        studio.accept:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -199,3 +200,5 @@ definition:
                                             fieldId: studio.filecollection
                                             metadataType: "FILECOLLECTION"
                                             label: "File Collection"
+                                        - io.field:
+                                            fieldId: studio.accept

@@ -48,6 +48,8 @@ definition:
                     columnGap: 10px
                     items:
                       - io.field:
+                          fieldId: crm.logo
+                      - io.field:
                           fieldId: crm.id
                       - io.field:
                           fieldId: crm.name

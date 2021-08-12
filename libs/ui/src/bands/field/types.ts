@@ -10,12 +10,13 @@ type FieldType =
 	| "SELECT"
 	| "CHECKBOX"
 	| "DATE"
-	| "IMAGE"
 	| "FILE"
 	| "MAP"
 	| "TIMESTAMP"
 	| "LIST"
 	| "USER"
+
+type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
 type SelectOption = {
 	label: string
@@ -37,6 +38,7 @@ type FieldMetadata = {
 	options?: SelectOption[]
 	referencedCollection?: string
 	subfields?: SubField[]
+	accept?: AcceptTypes
 	subtype?: string
 }
 
