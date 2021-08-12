@@ -1,4 +1,4 @@
-import { FunctionComponent, DragEvent, useState, useEffect } from "react"
+import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 const Icon = component.registry.getUtility("io.icon")
 
@@ -64,12 +64,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	// Hide/show blank slate div
-	const [hasComponents, setHasComponents] = useState(false)
-	useEffect(() => {
-		setHasComponents(
-			!props.context.getViewDef()?.definition?.components?.length
-		)
-	}, [props.context])
+	const hasEmptyComponents =
+		!props.context.getViewDef()?.definition?.components?.length
 
 	const route = props.context.getRoute()
 	if (!route) {
@@ -122,7 +118,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					/>
 
 					{/* No content yet */}
-					{hasComponents && (
+					{hasEmptyComponents && (
 						<div className={classes.noContent}>
 							<div className="inner">
 								<Icon

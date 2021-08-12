@@ -9,7 +9,6 @@ import {
 } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
-const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
@@ -17,15 +16,17 @@ const FieldLabel = component.registry.getUtility("io.fieldlabel")
 interface Props extends definition.UtilityProps {
 	label?: string
 	mode: context.FieldMode
-	value: wire.PlainWireRecord[]
-	setValue: (value: wire.PlainWireRecord[]) => void
+	value: (wire.PlainWireRecord | wire.FieldValue)[]
+	setValue: (value: (wire.PlainWireRecord | wire.FieldValue)[]) => void
 	subFields: collection.SubField[]
+	subType: string
 	autoAdd?: boolean
 }
 
 const ListField: FunctionComponent<Props> = (props) => {
 	const {
 		subFields,
+		subType,
 		mode,
 		context,
 		value = [],
@@ -34,6 +35,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		autoAdd,
 	} = props
 	const editMode = mode === "EDIT"
+	const isText = subType === "TEXT"
 	const rowStyles = {
 		root: {
 			gridTemplateColumns: `repeat(${subFields.length},1fr)${
@@ -51,15 +53,39 @@ const ListField: FunctionComponent<Props> = (props) => {
 			},
 		},
 	}
+
+	const getDefaultValue = () => (isText ? "" : {})
+
+	const getNewValue = (
+		newFieldValue: wire.FieldValue,
+		subfield: collection.SubField,
+		index: number
+	) => {
+		const newValue = [...value]
+		newValue[index] = isText
+			? newFieldValue
+			: {
+					...(newValue[index] as wire.PlainWireRecord),
+					[subfield.name]: newFieldValue,
+			  }
+		return newValue
+	}
+
+	const getValue = (
+		item: wire.PlainWireRecord | wire.FieldValue,
+		subfield: collection.SubField
+	) => (isText ? item : (item as wire.PlainWireRecord)[subfield.name] || "")
+
 	return subFields ? (
 		<div>
 			<FieldLabel label={label} context={context} />
 			<Grid styles={rowStyles} context={context}>
-				{subFields.map((subfield) => (
-					<FieldLabel label={subfield.name} context={context}>
-						{subfield.name}
-					</FieldLabel>
-				))}
+				{!isText &&
+					subFields.map((subfield) => (
+						<FieldLabel label={subfield.name} context={context}>
+							{subfield.name}
+						</FieldLabel>
+					))}
 				{editMode && !autoAdd && (
 					<IconButton
 						label="add"
@@ -70,32 +96,31 @@ const ListField: FunctionComponent<Props> = (props) => {
 							// We have to do this in a way that doesn't mutate listValue
 							// since it can be readonly.
 							const newValue = [...value]
-							newValue.push({})
+							newValue.push(getDefaultValue())
 							setValue(newValue)
 						}}
 					/>
 				)}
 			</Grid>
 			{value
-				.concat(autoAdd && editMode ? [{}] : [])
-				.map((item: wire.PlainWireRecord, index) => (
+				.concat(autoAdd && editMode ? [getDefaultValue()] : [])
+				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
 					<Grid styles={rowStyles} context={context}>
 						{subFields.map((subfield) => (
 							<TextField
 								hideLabel
-								value={item[subfield.name] || ""}
+								value={getValue(item, subfield)}
 								mode={mode}
 								context={context}
-								setValue={(newFieldValue: wire.FieldValue) => {
-									// We have to do this in a way that doesn't mutate listValue
-									// since it can be readonly.
-									const newValue = [...value]
-									newValue[index] = {
-										...newValue[index],
-										[subfield.name]: newFieldValue,
-									}
-									setValue(newValue)
-								}}
+								setValue={(newFieldValue: wire.FieldValue) =>
+									setValue(
+										getNewValue(
+											newFieldValue,
+											subfield,
+											index
+										)
+									)
+								}
 							/>
 						))}
 						{editMode && (

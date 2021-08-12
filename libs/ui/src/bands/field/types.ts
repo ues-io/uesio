@@ -39,6 +39,7 @@ type FieldMetadata = {
 	referencedCollection?: string
 	subfields?: SubField[]
 	accept?: AcceptTypes
+	subtype?: string
 }
 
 export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }
