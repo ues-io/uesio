@@ -17,7 +17,7 @@ import (
 func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
 
 	ctx := context.Background()
-	client, err := getDynamoDB(credentials)
+	client, err := getDynamoDB(ctx, credentials)
 	if err != nil {
 		return err
 	}
