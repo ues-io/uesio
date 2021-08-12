@@ -1,0 +1,5 @@
+name: subtype
+collection: stuio.fields
+type: TEXT
+label: Subtype
+propertyName: subtype
