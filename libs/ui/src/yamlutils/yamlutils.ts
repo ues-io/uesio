@@ -1,5 +1,5 @@
 import toPath from "lodash/toPath"
-import yaml, { Pair, Node, YAMLMap, ParsedNode } from "yaml"
+import yaml, { Pair, Node, YAMLMap } from "yaml"
 // const YAML_OPTIONS = {
 // 	simpleKeys: true,
 // 	keepNodeTypes: false, // deprecated in yaml v2 I think
@@ -135,7 +135,7 @@ const setNodeAtPath = (
 }
 
 /**
- * Adds a node to the yaml definition
+ * Adds a node to the yaml definition.
  */
 const addNodeAtPath = (
 	path: string | string[],
@@ -144,18 +144,12 @@ const addNodeAtPath = (
 	index: number
 ): void => {
 	const pathArray = makePathArray(path)
-	// Get the parent
-	const parentNode: any = doc.getIn([...pathArray])
-
-	// We're nesting the new node if
-	if (!parentNode) return doc.addIn([...pathArray, index], setNode)
-
-	// might be better solution here: https://eemeli.org/yaml/#modifying-nodes
-	const parent = parentNode.toJSON()
-	parent.splice(index, 0, setNode.toJSON())
-
-	const newNode = doc.createNode(parent)
-	doc.setIn([...pathArray], newNode)
+	// Get the parent and insert node at desired position,
+	// if no parent.. ("components" or "items"). addIn will create it for us.
+	const parentNode = doc.getIn([...pathArray]) as yaml.YAMLSeq
+	parentNode
+		? parentNode.items.splice(index, 0, setNode)
+		: doc.addIn([...pathArray], [setNode])
 }
 
 const addNodePairAtPath = (
@@ -167,7 +161,7 @@ const addNodePairAtPath = (
 	const pathArray = makePathArray(path)
 	const hasParent = node?.hasIn(pathArray)
 	if (hasParent) {
-		const fullPathArray = pathArray.concat([key])
+		const fullPathArray = [...pathArray, key]
 		const alreadyExists = node?.hasIn(fullPathArray)
 		const parentNode = node?.getIn(pathArray)
 		if (!parentNode) {
