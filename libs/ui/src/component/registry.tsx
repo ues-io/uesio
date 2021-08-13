@@ -129,10 +129,12 @@ const BuildWrapper = getUtility("studio.buildwrapper")
 
 const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)
-	return (
+	return Loader ? (
 		<BuildWrapper {...props}>
 			<Loader {...props} />
 		</BuildWrapper>
+	) : (
+		<NotFound {...props} />
 	)
 }
 
