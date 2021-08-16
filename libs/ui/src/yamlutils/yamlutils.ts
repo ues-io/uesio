@@ -38,7 +38,8 @@ const getNodeAtOffset = (
 	includeKey?: boolean
 ): [Node | null, string] => {
 	if (isInRange(offset, parentnode)) {
-		const nodes = parentnode.items
+		if (parentnode.type === "PLAIN") return [parentnode, path]
+		const nodes = parentnode.items || parentnode.contents.items
 		let index = 0
 		if (!nodes) {
 			return [parentnode, path]
