@@ -12,6 +12,23 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [syntaxErrors, setSyntaxErrors] = useState<any>([])
+	const [codeFontSize, setCodeFontSize] = useState(11)
+
+	const changeFontSize = (action: "increment" | "decrement") => {
+		const min = 8
+		const max = 15
+
+		const operation = {
+			increment: codeFontSize + 1,
+			decrement: codeFontSize - 1,
+		}
+		let n = operation[action]
+		if (n > max) n = max
+		if (n < min) n = min
+		setCodeFontSize(n)
+		console.log({ codeFontSize })
+	}
+
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const classes = styles.useStyles(
@@ -114,6 +131,10 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			context={context}
 			className={className}
 		>
+			<div>
+				<button onClick={() => changeFontSize("increment")}>+</button>
+				<button onClick={() => changeFontSize("decrement")}>-</button>
+			</div>
 			<LazyMonaco
 				value={currentYaml}
 				options={{
@@ -121,14 +142,13 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
-					fontSize: 11,
+					fontSize: codeFontSize,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
 					//quickSuggestions: true,
 				}}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parseDocument(newValue)
-					console.log("handling change", newAST, event.changes)
 					// currentAST.current = newAST
 					// setSyntaxErrors(newAST.errors)
 					if (newAST.errors.length > 0) {
@@ -159,7 +179,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									newAST
 								)
 							} else {
-								console.log("here")
 								// We need to find the first shared parent of the start offset and end offset
 								const [, startPath] = util.yaml.getNodeAtOffset(
 									change.rangeOffset,
@@ -186,8 +205,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										newAST
 									)
 									if (newNode) {
-										const yamlDoc = util.yaml.newDoc()
-										yamlDoc.contents = newNode
+										const yamlDoc =
+											util.yaml.newDoc(newNode)
 										uesio.builder.setYaml(
 											component.path.makeFullPath(
 												metadataType,
@@ -210,7 +229,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					monacoRef.current = monaco
 					// Set currentAST again because sometimes monaco reformats the text
 					// (like removing trailing spaces and such)
-					console.log("overwriting currentAST")
 					currentAST.current = util.yaml.parseDocument(
 						editor.getValue()
 					)
