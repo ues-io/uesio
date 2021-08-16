@@ -6,11 +6,10 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // Adapter struct
@@ -33,6 +32,9 @@ func getSystemID(collectionName string, ID string) string {
 func init() {
 	SystemSetUp = InitSystemEnv()
 }
+
+// TODO: Figure out a way to clean up and close unused clients
+var clientPool = map[string]*dynamodb.Client{}
 
 //InitSystemEnv inits System variables for DynamoDB
 func InitSystemEnv() error {
@@ -67,33 +69,24 @@ func InitSystemEnv() error {
 
 }
 
-func getConfig(region, accessKeyID, secretAccessKey, sessionToken string) (aws.Config, error) {
-	if accessKeyID != "" && secretAccessKey != "" {
-		return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region), config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
-	}
-	return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
-}
+func getDynamoDB(ctx context.Context, dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
 
-func getDynamoDB(dbcreds *adapt.Credentials) (*dynamodb.Client, error) {
-
-	region, ok := (*dbcreds)["region"]
-	if !ok {
-		return nil, errors.New("No region provided in credentials")
+	hash := dbcreds.GetHash()
+	// Check the pool for a client
+	client, ok := clientPool[hash]
+	if ok {
+		return client, nil
 	}
 
-	accessKeyID := (*dbcreds)["accessKeyId"]
-	secretAccessKey := (*dbcreds)["secretAccessKey"]
-	sessionToken := (*dbcreds)["sessionToken"]
-
-	cfg, err := getConfig(region, accessKeyID, secretAccessKey, sessionToken)
+	cfg, err := creds.GetAWSConfig(ctx, dbcreds)
 	if err != nil {
 		return nil, err
 	}
 
 	svc := dynamodb.NewFromConfig(cfg)
 
+	clientPool[hash] = svc
 	return svc, nil
-
 }
 
 func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {
