@@ -1,9 +1,10 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { hooks, component } from "@uesio/ui"
+import { DialogProps } from "./dialogdefinition"
 
 const IODialog = component.registry.getUtility("io.dialog")
 
-const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
+const Dialog: FunctionComponent<DialogProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
