@@ -1,21 +1,10 @@
 import { FunctionComponent } from "react"
-import { definition, component, styles, hooks } from "@uesio/ui"
-
-type CodeFieldDefinition = {
-	language?: CodeFieldLanguage
-	label?: string
-	file: string
-}
-
-type CodeFieldLanguage = "yaml" | "json" | "javascript" | "html" | "css"
-
-interface Props extends definition.BaseProps {
-	definition: CodeFieldDefinition
-}
+import { component, styles, hooks } from "@uesio/ui"
+import { CodeProps } from "./codedefinition"
 
 const IOCodeField = component.registry.getUtility("io.codefield")
 
-const CodeField: FunctionComponent<Props> = (props) => {
+const CodeField: FunctionComponent<CodeProps> = (props) => {
 	const { definition, context } = props
 	const uesio = hooks.useUesio(props)
 	const classes = styles.useStyles(
