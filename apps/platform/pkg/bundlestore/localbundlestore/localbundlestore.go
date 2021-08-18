@@ -3,6 +3,7 @@ package localbundlestore
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -46,6 +47,10 @@ func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, ses
 	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
 
 	permSet := session.GetContextPermissions()
+
+	if permSet != nil {
+		fmt.Println("TEST")
+	}
 
 	hasPermission := permSet.HasPermission(item.GetPermChecker())
 	if !hasPermission {

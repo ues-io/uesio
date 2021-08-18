@@ -24,3 +24,6 @@ routes:
   crm.login: true
 files:
   crm.logo: true
+allowallviews: true
+allowallroutes: false
+allowallfiles: false
