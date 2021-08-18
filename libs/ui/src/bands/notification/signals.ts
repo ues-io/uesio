@@ -23,8 +23,8 @@ const signals: Record<string, SignalDescriptor> = {
 					addNotification({
 						id: shortid.generate(),
 						severity: signal.severity,
-						text: signal.text,
-						details: signal.details,
+						text: context.merge(signal.text),
+						details: context.merge(signal.details),
 						path: signal.path,
 					})
 				)

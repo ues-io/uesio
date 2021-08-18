@@ -1,4 +1,4 @@
-name: onchange
+name: addcontact
 collection: crm.accounts
-type: BEFORESAVE
+type: AFTERINSERT
 dialect: JAVASCRIPT

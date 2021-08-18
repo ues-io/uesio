@@ -11,13 +11,13 @@ import (
 
 func (a *FileAdapter) Delete(bucket string, path string, credentials *adapt.Credentials) error {
 
-	client, err := getS3Client(credentials)
-
+	ctx := context.TODO()
+	client, err := getS3Client(ctx, credentials)
 	if err != nil {
 		return errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
 
-	_, err = client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+	_, err = client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(path),
 	})

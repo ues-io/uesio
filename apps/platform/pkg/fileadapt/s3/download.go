@@ -14,20 +14,21 @@ import (
 )
 
 func (a *FileAdapter) Download(bucket, path string, credentials *adapt.Credentials) (io.ReadCloser, error) {
-	client, err := getS3Client(credentials)
+	ctx := context.Background()
+	client, err := getS3Client(ctx, credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
 
-	ctx := context.Background()
 	downloader := manager.NewDownloader(client)
+
 	head, err := client.HeadObject(ctx, &s3.HeadObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(path),
 	})
 
 	if err != nil {
-		return nil, errors.New("failed to retrieve object information")
+		return nil, errors.New("failed to retrieve object information: " + err.Error())
 	}
 
 	buf := make([]byte, head.ContentLength)

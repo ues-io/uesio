@@ -12,7 +12,7 @@ func (a *Adapter) Migrate(metadata *adapt.MetadataCache, credentials *adapt.Cred
 	fmt.Println("Migrating dynamoDB")
 
 	ctx := context.Background()
-	client, err := getDynamoDB(credentials)
+	client, err := getDynamoDB(ctx, credentials)
 	if err != nil {
 		return err
 	}

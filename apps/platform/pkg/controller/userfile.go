@@ -26,7 +26,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	contentLenHeader := r.Header.Get("Content-Length")
 	contentLen, err := strconv.ParseUint(contentLenHeader, 10, 64)
 	if err != nil {
-		err := errors.New("Must attach header 'Content-Length' with file upload")
+		err := errors.New("must attach header 'content-length' with file upload")
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -63,14 +63,14 @@ func DownloadUserFile(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	userFileID := r.URL.Query().Get("userfileid")
 	if userFileID == "" {
-		err := errors.New("No userfileid in the request URL query")
+		err := errors.New("no userfileid in the request url query")
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	fileStream, userFile, err := filesource.Download(userFileID, session)
 	if err != nil {
-		err := errors.New("Unable to load file")
+		err := errors.New("unable to load file:" + err.Error())
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

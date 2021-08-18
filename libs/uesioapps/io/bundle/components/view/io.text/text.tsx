@@ -21,6 +21,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 			text={definition.text}
 			element={definition.element}
 			color={definition.color}
+			align={definition.align}
 		/>
 	)
 }

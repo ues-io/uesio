@@ -2,19 +2,19 @@ package datasource
 
 import "github.com/thecloudmasters/uesio/pkg/adapt"
 
-// ChangesAPI type
-type ChangesAPI struct {
-	changes  *adapt.ChangeItems
+// UpdatesAPI type
+type UpdatesAPI struct {
+	updates  *adapt.ChangeItems
 	metadata *adapt.CollectionMetadata
 }
 
 // Get function
-func (c *ChangesAPI) Get() []*ChangeAPI {
+func (c *UpdatesAPI) Get() []*ChangeAPI {
 	changeAPIs := []*ChangeAPI{}
 
-	for _, change := range *c.changes {
+	for _, update := range *c.updates {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
-			change:   change,
+			change:   update,
 			metadata: c.metadata,
 		})
 	}

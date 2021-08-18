@@ -117,7 +117,9 @@ type FieldMetadata struct {
 	AutoPopulate         string                     `json:"autopopulate"`
 	OnDelete             string                     `json:"ondelete"`
 	FileCollection       string                     `json:"fileCollection"`
+	Accept               string                     `json:"accept"`
 	SubFields            []SubField                 `json:"subfields"`
+	SubType              string                     `json:"subtype"`
 }
 
 // GetFullName function

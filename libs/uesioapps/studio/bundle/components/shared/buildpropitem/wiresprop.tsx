@@ -6,14 +6,16 @@ const MultiSelectField = component.registry.getUtility("io.multiselectfield")
 
 const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
 	const { descriptor, context, valueAPI, path } = props
-	const wires = valueAPI.get(path) as wire.WireDefinitionMap
+	const selectedWires = (valueAPI.get(path) || []) as wire.WireDefinition
+	const availableWires = (valueAPI.get('["wires"]') ||
+		{}) as wire.WireDefinitionMap
 
 	return (
 		<MultiSelectField
-			value={wires}
+			value={selectedWires}
 			label={descriptor.label}
 			setValue={(value: string) => valueAPI.set(path, value)}
-			options={Object.keys(wires).map((wireId) => ({
+			options={Object.keys(availableWires).map((wireId) => ({
 				value: wireId,
 				label: wireId,
 			}))}

@@ -2,42 +2,35 @@ package s3
 
 import (
 	"context"
-	"errors"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/creds"
 )
 
 // FileAdapter struct
 type FileAdapter struct {
 }
 
-func getConfig(region, accessKeyID, secretAccessKey, sessionToken string) (aws.Config, error) {
-	if accessKeyID != "" && secretAccessKey != "" {
-		return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region), config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKeyID, secretAccessKey, sessionToken)))
-	}
-	return config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
-}
+// TODO: Figure out a way to clean up and close unused clients
+var clientPool = map[string]*s3.Client{}
 
-func getS3Client(dbcreds *adapt.Credentials) (*s3.Client, error) {
+func getS3Client(ctx context.Context, dbcreds *adapt.Credentials) (*s3.Client, error) {
 
-	region, ok := (*dbcreds)["region"]
-	if !ok {
-		return nil, errors.New("No region provided in credentials")
+	hash := dbcreds.GetHash()
+	// Check the pool for a client
+	client, ok := clientPool[hash]
+	if ok {
+		return client, nil
 	}
 
-	accessKeyID := (*dbcreds)["accessKeyId"]
-	secretAccessKey := (*dbcreds)["secretAccessKey"]
-	sessionToken := (*dbcreds)["sessionToken"]
-
-	cfg, err := getConfig(region, accessKeyID, secretAccessKey, sessionToken)
+	cfg, err := creds.GetAWSConfig(ctx, dbcreds)
 	if err != nil {
 		return nil, err
 	}
 
-	client := s3.NewFromConfig(cfg)
-	return client, nil
+	svc := s3.NewFromConfig(cfg)
+
+	clientPool[hash] = svc
+	return svc, nil
 }

@@ -51,7 +51,9 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		AutoPopulate:         f.AutoPopulate,
 		OnDelete:             f.OnDelete,
 		FileCollection:       f.FileCollection,
+		Accept:               f.Accept,
 		SubFields:            GetSubFieldsMetadata(f.SubFields),
+		SubType:              f.SubType,
 	}
 }
 

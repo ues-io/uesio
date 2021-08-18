@@ -48,12 +48,14 @@ type Field struct {
 	AutoPopulate         string     `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	OnDelete             string     `yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 	FileCollection       string     `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
+	Accept               string     `yaml:"accept,omitempty" uesio:"studio.accept"`
 	itemMeta             *ItemMeta  `yaml:"-" uesio:"-"`
 	CreatedBy            *User      `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy            *User      `yaml:"-" uesio:"studio.updatedby"`
 	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
 	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
 	SubFields            []SubField `yaml:"subfields" uesio:"studio.subfields"`
+	SubType              string     `yaml:"subtype" uesio:"studio.subtype"`
 }
 
 // GetFieldTypes function
@@ -67,7 +69,6 @@ func GetFieldTypes() map[string]bool {
 		"REFERENCE": true,
 		"FILE":      true,
 		"USER":      true,
-		"IMAGE":     true,
 		"LIST":      true,
 		"DATE":      true,
 		"MAP":       true,

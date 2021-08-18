@@ -13,13 +13,15 @@ import (
 
 func (a *FileAdapter) Upload(fileData io.Reader, bucket, path string, credentials *adapt.Credentials) error {
 
-	client, err := getS3Client(credentials)
+	ctx := context.TODO()
+
+	client, err := getS3Client(ctx, credentials)
 	if err != nil {
 		return errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}
 	uploader := manager.NewUploader(client)
 
-	_, err = uploader.Upload(context.TODO(), &s3.PutObjectInput{
+	_, err = uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(path),
 		Body:   fileData,
