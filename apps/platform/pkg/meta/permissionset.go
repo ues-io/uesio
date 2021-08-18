@@ -166,6 +166,9 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	viewPerms := map[string]bool{}
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
+	allowAllViews := false
+	allowAllRoutes := false
+	allowAllFiles := false
 
 	for _, permissionSet := range permissionSets {
 		for key, value := range permissionSet.NamedRefs {
@@ -188,12 +191,24 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 				filePerms[key] = true
 			}
 		}
+		if permissionSet.AllowAllViews {
+			allowAllViews = true
+		}
+		if permissionSet.AllowAllRoutes {
+			allowAllRoutes = true
+		}
+		if permissionSet.AllowAllFiles {
+			allowAllFiles = true
+		}
 	}
 
 	return &PermissionSet{
-		NamedRefs: namedPerms,
-		ViewRefs:  viewPerms,
-		RouteRefs: routePerms,
-		FileRefs:  filePerms,
+		NamedRefs:      namedPerms,
+		ViewRefs:       viewPerms,
+		RouteRefs:      routePerms,
+		FileRefs:       filePerms,
+		AllowAllViews:  allowAllViews,
+		AllowAllRoutes: allowAllRoutes,
+		AllowAllFiles:  allowAllFiles,
 	}
 }
