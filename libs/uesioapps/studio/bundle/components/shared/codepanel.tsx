@@ -11,24 +11,6 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
-	const [syntaxErrors, setSyntaxErrors] = useState<any>([])
-	const [codeFontSize, setCodeFontSize] = useState(11)
-
-	const changeFontSize = (action: "increment" | "decrement") => {
-		const min = 8
-		const max = 15
-
-		const operation = {
-			increment: codeFontSize + 1,
-			decrement: codeFontSize - 1,
-		}
-		let n = operation[action]
-		if (n > max) n = max
-		if (n < min) n = min
-		setCodeFontSize(n)
-		console.log({ codeFontSize })
-	}
-
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const classes = styles.useStyles(
@@ -131,10 +113,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			context={context}
 			className={className}
 		>
-			<div>
-				<button onClick={() => changeFontSize("increment")}>+</button>
-				<button onClick={() => changeFontSize("decrement")}>-</button>
-			</div>
 			<LazyMonaco
 				value={currentYaml}
 				options={{
@@ -142,7 +120,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
-					fontSize: codeFontSize,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
 					//quickSuggestions: true,
@@ -150,10 +127,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parseDocument(newValue)
 					// currentAST.current = newAST
-					// setSyntaxErrors(newAST.errors)
 					if (newAST.errors.length > 0) {
 						// console.warn(newAST.errors)
-
 						return
 					}
 					if (!event.changes.every((t) => !t.text.includes("\n"))) {
@@ -298,18 +273,6 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					})
 				}}
 			/>
-			{/* Error indicator */}
-			{/* <div
-				className={styles.css({
-					position: "absolute",
-					bottom: "1em",
-					left: "1em",
-					backgroundColor: syntaxErrors.length ? "red" : "green",
-					width: "1em",
-					height: "1em",
-					borderRadius: "50%",
-				})}
-			/> */}
 		</ScrollPanel>
 	)
 }

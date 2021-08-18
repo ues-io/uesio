@@ -1,5 +1,5 @@
 import { CSSInterpolation } from "@emotion/css"
-import yaml from "yaml"
+
 import { Context } from "../context/context"
 
 export type BaseDefinition = {
