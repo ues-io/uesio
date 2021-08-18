@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useEffect } from "react"
+import { FunctionComponent, useRef, useEffect, useState } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
 import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
@@ -11,6 +11,22 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
+	const [codeFontSize, setCodeFontSize] = useState(11)
+	const changeFontSize = (action: "increment" | "decrement") => {
+		const min = 8
+		const max = 15
+
+		const operation = {
+			increment: codeFontSize + 1,
+			decrement: codeFontSize - 1,
+		}
+		let n = operation[action]
+		if (n > max) n = max
+		if (n < min) n = min
+		setCodeFontSize(n)
+		console.log({ codeFontSize })
+	}
+
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const classes = styles.useStyles(
@@ -118,6 +134,10 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			context={context}
 			className={className}
 		>
+			<div>
+				<button onClick={() => changeFontSize("increment")}>+</button>
+				<button onClick={() => changeFontSize("decrement")}>-</button>
+			</div>
 			<LazyMonaco
 				value={currentYaml}
 				options={{
@@ -125,7 +145,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
-					fontSize: 11,
+					fontSize: codeFontSize,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
 					//quickSuggestions: true,
