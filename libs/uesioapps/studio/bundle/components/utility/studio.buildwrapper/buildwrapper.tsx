@@ -1,18 +1,28 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
-import { definition, styles, component, hooks } from "@uesio/ui"
+import { definition, styles, component, hooks, util } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
+
+const Icon = component.registry.getUtility("io.icon")
+import DeleteAction from "../../shared/buildproparea/actions/deleteaction"
+import MoveAction from "../../shared/buildproparea/actions/moveactions"
+import valueAPIInit from "../../shared/valueAPI"
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
 }
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { children, path = "", index = 0 } = props
+	const { children, path = "", index = 0, context } = props
 	const [canDrag, setCanDrag] = useState(false)
 
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
+
+	const [metadataType, metadataItem, selectedPath] =
+		uesio.builder.useSelectedNode()
+
+	const valueAPI = valueAPIInit(uesio, metadataType, metadataItem)
 
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
@@ -130,7 +140,20 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 							setCanDrag(false)
 						}
 					>
-						{propDef?.title ?? "Unknown"}
+						{propDef?.title ?? "Unknown"}{" "}
+						<span className={classes.actionIconStyles}>
+							{" "}
+							<DeleteAction
+								valueAPI={valueAPI}
+								context={context}
+								path={path}
+							/>
+							<MoveAction
+								valueAPI={valueAPI}
+								context={context}
+								path={path}
+							/>
+						</span>
 					</div>
 				)}
 				<div className={classes.inner}>{children}</div>

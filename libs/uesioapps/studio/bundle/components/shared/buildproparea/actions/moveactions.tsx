@@ -30,14 +30,14 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	return (
 		<>
 			<ActionButton
-				title="Move Backward"
+				title=""
 				onClick={onClickBackward}
 				icon="arrow_upward"
 				disabled={!enableBackward}
 				context={context}
 			/>
 			<ActionButton
-				title="Move Forward"
+				title=""
 				onClick={onClickForward}
 				icon="arrow_downward"
 				disabled={!enableForward}

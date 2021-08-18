@@ -30,6 +30,9 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			groupingNodePath
 		) as definition.DefinitionMap
 
+		//TO-DO ASK Ben about it, if this is not there the builder breaks
+		if (!groupingNode) return undefined
+
 		if (getGroupingFromKey)
 			return component.path.getDefinitionKey(groupingNode)
 

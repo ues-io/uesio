@@ -8,7 +8,7 @@ const DeleteAction: FunctionComponent<ActionProps> = ({
 	context,
 }) => (
 	<ActionButton
-		title="Delete"
+		title=""
 		onClick={() => valueAPI.remove(path)}
 		icon="delete"
 		context={context}

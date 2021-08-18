@@ -74,6 +74,9 @@ export default (
 				right: "-8px",
 				bottom: "-8px",
 			}),
+			"&:hover span": {
+				display: "inline-block",
+			},
 		},
 		inner: {
 			...(isStructureView && {
@@ -81,6 +84,22 @@ export default (
 			}),
 			position: "relative",
 			overflow: "auto",
+		},
+		actionIconStyles: {
+			display: "none",
+			//position: "absolute",
+			float: "right",
+			top: "0",
+			button: {
+				display: "inline-block",
+				width: "unset",
+				cursor: "pointer",
+				padding: "1px",
+				margin: "1px",
+				color: "white",
+				backdropFilter: "brightness(0.6)",
+				borderRadius: "2px",
+			},
 		},
 	}
 }
