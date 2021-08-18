@@ -14,7 +14,6 @@ import {
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
 import { EntityPayload } from "../utils"
-// import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import builderOps from "../builder/operations"
@@ -99,6 +98,7 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
+
 	// Set the definition JS Object
 	setWith(state, ["definition", ...pathArray], definition)
 	if (state.yaml) {
@@ -134,7 +134,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
-			state.yaml = new yaml.Document(state.yaml.toJSON())
+			state.yaml = parse(state.yaml.toString())
 			removeNodeAtPath(pathArray.concat([index]), state.yaml.contents)
 		}
 	}
@@ -170,7 +170,6 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
 	const currentArray = get(state.definition, path)
-
 	let newIndex: number
 	if (!currentArray) {
 		newIndex = 0
@@ -179,14 +178,13 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 		newIndex = index === undefined ? currentArray.length : index
 		currentArray.splice(newIndex, 0, definition)
 	}
-
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = new yaml.Document(state.yaml.toJSON())
 		const doc = new yaml.Document()
 		const node = doc.createNode(definition)
 		if (node) {
-			addNodeAtPath(path, state.yaml, node, newIndex)
+			addNodeAtPath(path, state.yaml.contents, node, newIndex)
 		}
 	}
 }

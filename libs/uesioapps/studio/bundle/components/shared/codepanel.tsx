@@ -30,7 +30,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
 		component.path.getFullPathParts(lastModifiedNode || "")
 
-	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
 	currentAST.current = util.yaml.parse(currentYaml)
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
@@ -53,7 +53,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		) {
 			const node = util.yaml.getNodeAtPath(
 				lastModifiedLocalPath,
-				currentAST.current.contents as yaml.Node
+				currentAST.current.contents
 			)
 			const model = e.getModel()
 			if (!node || !model) return
@@ -125,21 +125,20 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
+					fontSize: 11,
 					scrollBeyondLastLine: false,
 					smoothScrolling: true,
-					fontSize: 11,
 					//quickSuggestions: true,
 				}}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
 
-					if (!currentAST.current) {
+					if (!currentAST.current || !currentAST.current.contents) {
 						currentAST.current = newAST
 						return
 					}
 
-					const curASTContents = currentAST.current
-						.contents as yaml.Node
+					const curASTContents = currentAST.current.contents
 					// If we have any parsing errors, don't continue.
 					if (newAST.errors.length > 0) {
 						currentAST.current = newAST
@@ -180,7 +179,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						if (commonNode && commonPath) {
 							const newNode = util.yaml.getNodeAtPath(
 								commonPath,
-								newAST.contents as yaml.Node
+								newAST.contents
 							)
 							if (newNode) {
 								const yamlDoc = util.yaml.newDoc()
@@ -235,7 +234,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.current.contents as yaml.Node,
+									currentAST.current.contents,
 									"",
 									true
 								)
@@ -257,7 +256,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							const [relevantNode, nodePath] =
 								util.yaml.getNodeAtOffset(
 									offset,
-									currentAST.current.contents as yaml.Node,
+									currentAST.current.contents,
 									"",
 									true
 								)

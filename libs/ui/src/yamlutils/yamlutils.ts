@@ -71,21 +71,9 @@ const getNodeAtOffset = (
 	return [null, path]
 }
 
-/**
- * Gives value at path from yaml Document
- * @param path - string or string array
- * @param Object - The yaml Document
- * @return yaml Document
- */
-const getNodeAtPath = (
-	path: string | string[],
-	node: Node | null
-): Node | null => {
-	if (!yaml.isCollection(node)) {
-		throw new Error("Node must be a collection")
-	}
-	const pathArray = makePathArray(path)
-	return (node?.getIn(pathArray, true) as Node) || (null as Node | null)
+const getNodeAtPath = (path: string | string[], node: Node | null) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	return (node?.getIn(makePathArray(path), true) as Node | null) || null
 }
 
 const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
@@ -118,30 +106,25 @@ const setNodeAtPath = (
 	path: string | string[],
 	node: Node | null,
 	setNode: Node | null
-): void => {
-	if (!yaml.isCollection(node)) {
-		throw new Error("Node must be a collection")
-	}
-	const pathArray = makePathArray(path)
-	node.setIn(pathArray, setNode)
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	node.setIn(makePathArray(path), setNode)
 }
 
-/**
- * Adds a node to the yaml definition.
- */
 const addNodeAtPath = (
 	path: string | string[],
-	doc: yaml.Document,
+	node: Node | null,
 	setNode: Node,
 	index: number
-): void => {
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 	const pathArray = makePathArray(path)
 	// Get the parent and insert node at desired position,
 	// if no parent.. ("components" or "items"). addIn will create it for us.
-	const parentNode = doc.getIn([...pathArray]) as yaml.YAMLSeq
+	const parentNode = node.getIn([...pathArray]) as yaml.YAMLSeq
 	parentNode
 		? parentNode.items.splice(index, 0, setNode)
-		: doc.addIn([...pathArray], [setNode])
+		: node.addIn([...pathArray], [setNode])
 }
 
 const addNodePairAtPath = (
@@ -149,10 +132,9 @@ const addNodePairAtPath = (
 	node: Node | null,
 	setNode: Node,
 	key: string
-): void => {
-	if (!yaml.isCollection(node)) {
-		throw new Error("Node must be a collection")
-	}
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+
 	const pathArray = makePathArray(path)
 	const hasParent = node?.hasIn(pathArray)
 	if (hasParent) {
@@ -171,15 +153,9 @@ const addNodePairAtPath = (
 	node?.addIn(pathArray, new Pair(key, setNode))
 }
 
-/**
- * Removes a node from the yaml definition
- */
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
-	if (!yaml.isCollection(node)) {
-		throw new Error("Node must be a collection")
-	}
-	const pathArray = makePathArray(path)
-	node?.deleteIn(pathArray)
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	node?.deleteIn(makePathArray(path))
 }
 
 export {
