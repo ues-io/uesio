@@ -28,6 +28,8 @@ type ValueMover = (
 	toPath: string | undefined
 ) => void
 
+type ValueCloner = (path: string | undefined) => void
+
 type ValueAPI = {
 	set: ValueSetter
 	get: ValueGetter
@@ -36,6 +38,7 @@ type ValueAPI = {
 	remove: ValueRemover
 	changeKey: KeyChanger
 	move: ValueMover
+	clone: ValueCloner
 }
 
 interface PropertiesPaneProps extends definition.UtilityProps {

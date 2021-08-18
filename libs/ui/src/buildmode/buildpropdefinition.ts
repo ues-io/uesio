@@ -156,12 +156,18 @@ type ActionDescriptor =
 	| RunSignalsAction
 	| LoadWireAction
 	| ToggleConditionAction
+	| CloneAction
 
 type AddAction = {
 	label: string
 	type: "ADD"
 	componentKey: string
 	slot: string
+}
+
+type CloneAction = {
+	label: string
+	type: "CLONE"
 }
 
 type LoadWireAction = {
@@ -196,6 +202,7 @@ export {
 	PropertySelectOption,
 	ActionDescriptor,
 	AddAction,
+	CloneAction,
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,

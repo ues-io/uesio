@@ -199,5 +199,6 @@ export {
 	getPathFromPathArray,
 	parse,
 	parseDocument,
+	makePathArray,
 	newDoc,
 }

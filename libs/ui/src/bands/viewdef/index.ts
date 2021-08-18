@@ -5,6 +5,7 @@ import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import yaml from "yaml"
 import {
 	addNodeAtPath,
+	makePathArray,
 	addNodePairAtPath,
 	getNodeAtPath,
 	removeNodeAtPath,
@@ -33,12 +34,17 @@ import {
 	changeDefinitionKey,
 	moveDefinition,
 	setYaml,
+	cloneDefinitionKey,
 	cancel,
 } from "../builder"
 
 type YamlUpdatePayload = {
 	path: string
 	yaml: YamlDoc
+} & EntityPayload
+
+type YamlClonePayload = {
+	path: string
 } & EntityPayload
 
 type RemoveDefinitionPayload = {
@@ -76,7 +82,6 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
 	const pathArray = toPath(path)
 	const definition = yamlDoc.toJSON()
-
 	// Set the definition JS Object from the yaml
 	setWith(state, ["definition", ...pathArray], definition)
 	if (!state.originalYaml) {
@@ -95,6 +100,28 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 
 	// We actually don't want components using useYaml to rerender
 	setNodeAtPath(path, state.yaml, yamlDoc)
+}
+
+/**
+ * Clone a yaml node. Currently only tested with viewdef components.
+ * We might want to extend the functionality to themes and variants.
+ *  * @param path - path of the cloned component, the new component will be a direct sibling
+ */
+const cloneDefKey = (state: PlainViewDef, payload: { path: string }) => {
+	const { path } = payload
+	const pathArray = makePathArray(path) as string[]
+	// We need 1 level up to include the component key
+	const clonePath = pathArray.slice(0, -1)
+	// We need another level up to get in the "components" array
+	const destinationPath = pathArray.slice(0, -2)
+	const newNode = getNodeAtPath(clonePath, state.yaml)
+	if (state.yaml) {
+		const doc = new yaml.Document(state.yaml.toJSON())
+		addNodeAtPath(destinationPath, doc, newNode, 1)
+		// Rerender canvas
+		setWith(state, ["definition"], doc.toJSON())
+		state.yaml = doc
+	}
 }
 
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
@@ -298,8 +325,6 @@ const viewDefSlice = createSlice({
 		builder.addCase(
 			loadOp.fulfilled,
 			(state, { payload }: PayloadAction<string>) => {
-				console.log({ payload })
-
 				const doc = parseDocument(payload)
 				const { namespace, name, dependencies, definition } =
 					doc.toJSON()
@@ -322,8 +347,6 @@ const viewDefSlice = createSlice({
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
 				if (metadataType === "viewdef") {
-					console.log("set def pair", payload.definition)
-
 					const entityState = state.entities[metadataItem]
 					entityState &&
 						setDef(entityState, {
@@ -335,12 +358,20 @@ const viewDefSlice = createSlice({
 			}
 		)
 		builder.addCase(
-			addDefinition,
-			(state, { payload }: PayloadAction<AddDefinitionPayload>) => {
-				console.log("SETTING YAML", payload)
-
+			cloneDefinitionKey,
+			(state, { payload }: PayloadAction<YamlClonePayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
+				const entityState = state.entities[metadataItem]
+				entityState && cloneDefKey(entityState, { path: localPath })
+			}
+		)
+		builder.addCase(
+			addDefinition,
+			(state, { payload }: PayloadAction<AddDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+
 				if (metadataType === "viewdef") {
 					const entityState = state.entities[metadataItem]
 					entityState &&
@@ -358,7 +389,6 @@ const viewDefSlice = createSlice({
 			(state, { payload }: PayloadAction<AddDefinitionPairPayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
-				console.log("add def pair", payload.definition)
 				if (metadataType === "viewdef") {
 					const entityState = state.entities[metadataItem]
 					entityState &&
@@ -429,12 +459,10 @@ const viewDefSlice = createSlice({
 		builder.addCase(
 			setYaml,
 			(state, { payload }: PayloadAction<YamlUpdatePayload>) => {
-				console.log({ setting: payload.yaml })
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
 				if (metadataType === "viewdef") {
 					const entityState = state.entities[metadataItem]
-					console.log({ settingWith: payload.yaml })
 					entityState &&
 						updateYaml(entityState, {
 							path: localPath,

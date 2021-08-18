@@ -19,6 +19,7 @@ import {
 	setDragNode,
 	setDropNode,
 	setSelectedNode,
+	cloneDefinitionKey,
 	setDefinition,
 	addDefinition,
 	addDefinitionPair,
@@ -149,6 +150,9 @@ class BuilderAPI {
 		)
 
 	cancel = () => this.dispatcher(cancel())
+
+	cloneDefinitionKey = (path: string) =>
+		this.dispatcher(cloneDefinitionKey({ path }))
 
 	setDefinition = (path: string, definition: Definition) =>
 		this.dispatcher(
