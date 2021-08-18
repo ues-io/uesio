@@ -216,7 +216,7 @@ class BuilderAPI {
 		)
 	}
 
-	setYaml(path: string, yamlDoc: yaml.Document) {
+	setYaml(path: string, yamlDoc: yaml.Document<yaml.Node>) {
 		this.dispatcher(
 			setYaml({
 				path,

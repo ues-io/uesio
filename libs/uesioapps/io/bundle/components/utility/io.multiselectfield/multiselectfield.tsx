@@ -60,9 +60,8 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 			>
 				{options?.map((option) => (
 					<option
-						// TODO: remove, selected is handled automatically by HTML and this gives an error
-						selected={value?.includes(option.value)}
 						value={option.value}
+						selected={value?.includes(option.value) || false}
 					>
 						{option.label}
 					</option>

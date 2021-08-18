@@ -1,4 +1,5 @@
 import { CSSInterpolation } from "@emotion/css"
+import yaml from "yaml"
 
 import { Context } from "../context/context"
 
@@ -7,7 +8,7 @@ export type BaseDefinition = {
 	"uesio.variant"?: string
 } & DefinitionMap
 
-export type YamlDoc = any // TODO: untill we figure out a something bettter
+export type YamlDoc = yaml.Document<yaml.Node>
 
 export type BaseProps = {
 	definition?: BaseDefinition
