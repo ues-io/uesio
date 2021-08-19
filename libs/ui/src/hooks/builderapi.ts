@@ -39,9 +39,8 @@ import {
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import { getFullPathParts, makeFullPath } from "../component/path"
-import { Definition } from "../definition/definition"
+import { Definition, YamlDoc } from "../definition/definition"
 import { useSelector } from "react-redux"
-import yaml from "yaml"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -216,7 +215,7 @@ class BuilderAPI {
 		)
 	}
 
-	setYaml(path: string, yamlDoc: yaml.Document) {
+	setYaml(path: string, yamlDoc: YamlDoc) {
 		this.dispatcher(
 			setYaml({
 				path,

@@ -14,7 +14,6 @@ import {
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
 import { EntityPayload } from "../utils"
-import type { Collection } from "yaml/types"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import builderOps from "../builder/operations"
@@ -77,8 +76,7 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const definition = yamlDoc.toJSON()
 
 	// Set the definition JS Object from the yaml
-	setWith(state, ["definition"].concat(pathArray), definition)
-
+	setWith(state, ["definition", ...pathArray], definition)
 	if (!state.originalYaml) {
 		state.originalYaml = yamlDoc
 	}
@@ -91,6 +89,7 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	if (state.yaml === state.originalYaml) {
 		state.originalYaml = parse(state.originalYaml.toString())
 	}
+	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
 
 	// We actually don't want components using useYaml to rerender
 	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
@@ -101,12 +100,11 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 	const pathArray = toPath(path)
 
 	// Set the definition JS Object
-	setWith(state, ["definition"].concat(pathArray), definition)
-
+	setWith(state, ["definition", ...pathArray], definition)
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = parse(state.yaml.toString())
-		const newNode = definition ? yaml.createNode(definition) : null
+		const newNode = definition ? state.yaml.createNode(definition) : null
 		setNodeAtPath(path, state.yaml.contents, newNode)
 	}
 }
@@ -125,12 +123,12 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 					parseInt(index, 10) !== itemIndex
 			)
 			if (state.definition) {
-				setWith(state, ["definition"].concat(pathArray), newParent)
+				setWith(state, ["definition", ...pathArray], newParent)
 			}
 		} else {
 			delete parent[index]
 			if (state.definition) {
-				setWith(state, ["definition"].concat(pathArray), parent)
+				setWith(state, ["definition", ...pathArray], parent)
 			}
 		}
 
@@ -175,7 +173,7 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	let newIndex: number
 	if (!currentArray) {
 		newIndex = 0
-		setWith(state, ["definition"].concat(pathArray), [definition])
+		setWith(state, ["definition", ...pathArray], [definition])
 	} else {
 		newIndex = index === undefined ? currentArray.length : index
 		currentArray.splice(newIndex, 0, definition)
@@ -183,7 +181,7 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = parse(state.yaml.toString())
-		const newNode = yaml.createNode(definition, true)
+		const newNode = state.yaml.createNode(definition)
 		if (newNode) {
 			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
 		}
@@ -194,12 +192,13 @@ const addDefPair = (state: PlainViewDef, payload: AddDefinitionPairPayload) => {
 	const { path, definition, key } = payload
 	const pathArray = toPath(path)
 
-	setWith(state, ["definition"].concat(pathArray).concat(key), definition)
+	setWith(state, ["definition", ...pathArray, key], definition)
 
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = parse(state.yaml.toString())
-		const newNode = yaml.createNode(definition, true)
+		const newNode = state.yaml.createNode(definition)
+
 		addNodePairAtPath(path, state.yaml.contents, newNode, key)
 	}
 }
@@ -224,19 +223,23 @@ const changeDefKey = (
 			{}
 		)
 
-		setWith(state, ["definition"].concat(pathArray), newParent)
+		setWith(state, ["definition", ...pathArray], newParent)
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
 			state.yaml = parse(state.yaml.toString())
+
 			const parent = getNodeAtPath(
 				pathArray,
 				state.yaml.contents
-			) as Collection
+			) as yaml.YAMLMap
+
 			const keyNode = parent?.items.find(
-				(item) => item.key.value === oldKey
+				(item) => yaml.isScalar(item.key) && item.key.value === oldKey
 			)
 
-			keyNode.key.value = newKey
+			if (keyNode && yaml.isScalar(keyNode.key)) {
+				keyNode.key.value = newKey
+			}
 		}
 	}
 }
@@ -291,6 +294,7 @@ const viewDefSlice = createSlice({
 	reducers: {
 		cancel: cancelAllDefs,
 	},
+
 	extraReducers: (builder) => {
 		builder.addCase(
 			loadOp.fulfilled,
@@ -304,8 +308,8 @@ const viewDefSlice = createSlice({
 				)
 
 				viewdefAdapter.upsertOne(state, {
-					namespace: yamlDoc.get("namespace"),
-					name: yamlDoc.get("name"),
+					name: yamlDoc.get("name") as string,
+					namespace: yamlDoc.get("namespace") as string,
 					dependencies: dependenciesDoc?.toJSON(),
 					yaml: defDoc,
 					originalYaml: defDoc,

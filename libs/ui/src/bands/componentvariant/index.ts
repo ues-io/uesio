@@ -9,13 +9,12 @@ const componentVariantSlice = createSlice({
 	initialState: componentVariantAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
-		builder.addCase(loadOp.fulfilled, (state, action) => {
-			const yamlDoc = parse(action.payload)
+		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
+			const yamlDoc = parse(payload)
 			const dependenciesDoc = getNodeAtPath(
 				["dependencies", "componentvariants"],
 				yamlDoc.contents
 			)?.toJSON()
-
 			if (dependenciesDoc) {
 				componentVariantAdapter.upsertMany(state, dependenciesDoc)
 			}
@@ -26,7 +25,5 @@ const componentVariantSlice = createSlice({
 export const { selectAll } = componentVariantAdapter.getSelectors(
 	(state: RootState) => state.componentvariant
 )
-
-// export const { set } = componentVariantSlice.actions
 
 export default componentVariantSlice.reducer

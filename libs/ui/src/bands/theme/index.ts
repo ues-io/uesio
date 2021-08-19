@@ -17,8 +17,8 @@ const themeSlice = createSlice({
 				const defDoc = newDoc()
 				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
 				return themeAdapter.upsertOne(state, {
-					namespace: yamlDoc.get("namespace"),
-					name: yamlDoc.get("name"),
+					namespace: yamlDoc.get("namespace") as string,
+					name: yamlDoc.get("name") as string,
 					definition: merge(
 						{},
 						defaultTheme.definition,

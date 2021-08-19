@@ -1,14 +1,14 @@
 import toPath from "lodash/toPath"
-import { Pair, Node, Collection, YAMLMap } from "yaml/types"
-import yaml from "yaml"
+import yaml, { Pair, Node, YAMLMap } from "yaml"
 
-const YAML_OPTIONS = {
-	simpleKeys: true,
-	keepNodeTypes: false,
-}
+const newDoc = () => new yaml.Document<yaml.Node>()
+const parse = (str: string) => yaml.parseDocument(str)
 
-const newDoc = () => new yaml.Document(YAML_OPTIONS)
-const parse = (str: string) => yaml.parseDocument(str, YAML_OPTIONS)
+/**
+ * Gives the path array for traversing the yamlDoc
+ */
+const makePathArray = (path: string | string[]): string[] =>
+	Array.isArray(path) ? path : toPath(path)
 
 const isInRange = (offset: number, node: Node) => {
 	if (!node.range) {
@@ -19,67 +19,71 @@ const isInRange = (offset: number, node: Node) => {
 
 const getNodeAtOffset = (
 	offset: number,
-	parentnode: Collection,
+	parentnode: Node,
 	path: string,
 	includeKey?: boolean
 ): [Node | null, string] => {
 	if (isInRange(offset, parentnode)) {
-		const nodes = parentnode.items
-		let index = 0
-		if (!nodes) {
-			return [parentnode, path]
-		}
-		for (const node of nodes) {
-			// I don't know what or how to handle merge pairs.
-			if (node.type === "MERGE_PAIR") {
+		if (yaml.isCollection(parentnode)) {
+			const nodes = parentnode.items
+			let index = 0
+			if (!nodes) {
 				return [parentnode, path]
 			}
-			if (node.key && isInRange(offset, node.key)) {
-				return includeKey
-					? [node.key, path + '["' + node.key + '"]']
-					: [parentnode, path]
-			}
-			if (node.key && node.value) {
-				const [
-					foundNode,
-					foundPath,
-					// eslint-disable-next-line @typescript-eslint/no-use-before-define
-				] = getNodeAtOffset(
-					offset,
-					node.value,
-					path + '["' + node.key + '"]',
-					includeKey
-				)
-				if (foundNode) {
-					return [foundNode, foundPath]
+			for (const node of nodes) {
+				if (yaml.isPair(node) && yaml.isScalar(node.key)) {
+					if (isInRange(offset, node.key)) {
+						return includeKey
+							? [node.key, path + '["' + node.key + '"]']
+							: [parentnode, path]
+					}
 				}
+
+				if (yaml.isPair(node) && yaml.isCollection(node.value)) {
+					const [foundNode, foundPath] = getNodeAtOffset(
+						offset,
+						node.value,
+						path + '["' + node.key + '"]',
+						includeKey
+					)
+					if (foundNode) {
+						return [foundNode, foundPath]
+					}
+				}
+				if (yaml.isMap(node)) {
+					const [foundNode, foundPath] = getNodeAtOffset(
+						offset,
+						node,
+						path + '["' + index + '"]',
+						includeKey
+					)
+					if (foundNode) {
+						return [foundNode, foundPath]
+					}
+				}
+				if (yaml.isSeq(node)) {
+					const [foundNode, foundPath] = getNodeAtOffset(
+						offset,
+						node,
+						path + '["' + index + '"]',
+						includeKey
+					)
+					if (foundNode) {
+						return [foundNode, foundPath]
+					}
+				}
+				index++
 			}
-			const [
-				foundNode,
-				foundPath,
-				// eslint-disable-next-line @typescript-eslint/no-use-before-define
-			] = getNodeAtOffset(
-				offset,
-				node,
-				path + '["' + index + '"]',
-				includeKey
-			)
-			if (foundNode) {
-				return [foundNode, foundPath]
-			}
-			index++
+			return [parentnode, path]
 		}
 		return [parentnode, path]
 	}
 	return [null, path]
 }
 
-const getNodeAtPath = (
-	path: string | string[],
-	node: Node | null
-): Node | null => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	return (node as Collection)?.getIn(pathArray, true)
+const getNodeAtPath = (path: string | string[], node: Node | null) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	return (node?.getIn(makePathArray(path), true) as Node | null) || null
 }
 
 const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
@@ -110,43 +114,41 @@ const getCommonAncestorPath = (
 
 const setNodeAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: Node | null,
 	setNode: Node | null
-): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	const parentPath = pathArray.slice(0, -1)
-	const parentNode = node?.getIn(parentPath)
-	if (!parentNode && parentPath.length > 0) {
-		setNodeAtPath(parentPath, node, yaml.createNode({}))
-	}
-	node?.setIn(pathArray, setNode)
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	node.setIn(makePathArray(path), setNode)
 }
 
 const addNodeAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: Node | null,
 	setNode: Node,
 	index: number
-): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	let parentNode = node?.getIn(pathArray)
-	if (!parentNode && path.length > 0) {
-		setNodeAtPath(path, node, yaml.createNode([]))
-		parentNode = node?.getIn(pathArray)
-	}
-	parentNode.items.splice(index, 0, setNode)
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	const pathArray = makePathArray(path)
+	// Get the parent and insert node at desired position,
+	// if no parent.. ("components" or "items"). addIn will create it for us.
+	const parentNode = node.getIn([...pathArray]) as yaml.YAMLSeq
+	parentNode
+		? parentNode.items.splice(index, 0, setNode)
+		: node.addIn([...pathArray], [setNode])
 }
 
 const addNodePairAtPath = (
 	path: string | string[],
-	node: Collection | null,
+	node: Node | null,
 	setNode: Node,
 	key: string
-): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
+) => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+
+	const pathArray = makePathArray(path)
 	const hasParent = node?.hasIn(pathArray)
 	if (hasParent) {
-		const fullPathArray = pathArray.concat([key])
+		const fullPathArray = [...pathArray, key]
 		const alreadyExists = node?.hasIn(fullPathArray)
 		const parentNode = node?.getIn(pathArray)
 		if (!parentNode) {
@@ -161,12 +163,9 @@ const addNodePairAtPath = (
 	node?.addIn(pathArray, new Pair(key, setNode))
 }
 
-const removeNodeAtPath = (
-	path: string | string[],
-	node: Collection | null
-): void => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	node?.deleteIn(pathArray)
+const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
+	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
+	node?.deleteIn(makePathArray(path))
 }
 
 export {

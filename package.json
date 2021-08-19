@@ -124,7 +124,7 @@
     "webpack": "^5.41.1",
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
-    "yaml": "^1.10.2"
+    "yaml": "2.0.0-7"
   },
   "bin": {
     "uesio": "/apps/cli/bin/run"

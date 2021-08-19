@@ -30,7 +30,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const [lastModifiedType, lastModifiedItem, lastModifiedLocalPath] =
 		component.path.getFullPathParts(lastModifiedNode || "")
 
-	const currentAST = useRef<yaml.Document | undefined>(yamlDoc)
+	const currentAST = useRef<definition.YamlDoc | undefined>(yamlDoc)
 	currentAST.current = util.yaml.parse(currentYaml)
 
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | undefined>(
@@ -132,72 +132,71 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				}}
 				onChange={(newValue, event): void => {
 					const newAST = util.yaml.parse(newValue)
-					if (newAST.errors.length > 0) {
+
+					if (!currentAST.current || !currentAST.current.contents) {
+						currentAST.current = newAST
 						return
 					}
+
+					const curASTContents = currentAST.current.contents
+					// If we have any parsing errors, don't continue.
+					if (newAST.errors.length > 0) {
+						currentAST.current = newAST
+						return
+					}
+
+					// If there was no actual change to the JSON output, don't continue
+					// We may be able to improve performance here with a different approach,
+					// but this works for now.
+					if (
+						JSON.stringify(newAST.toJSON()) ===
+						JSON.stringify(currentAST.current?.toJSON())
+					) {
+						currentAST.current = newAST
+						return
+					}
+
 					event.changes.forEach((change) => {
-						if (
-							currentAST.current?.contents &&
-							newAST &&
-							newAST.contents
-						) {
-							// If the change contains newlines, give up. Just parse the entire thing.
-							if (change.text.includes("\n")) {
+						// We need to find the first shared parent of the start offset and end offset
+						const [, startPath] = util.yaml.getNodeAtOffset(
+							change.rangeOffset,
+							curASTContents,
+							""
+						)
+						const [, endPath] = util.yaml.getNodeAtOffset(
+							change.rangeOffset + change.rangeLength,
+							curASTContents,
+							""
+						)
+						const commonPath = util.yaml.getCommonAncestorPath(
+							startPath,
+							endPath
+						)
+						const commonNode = util.yaml.getNodeAtPath(
+							commonPath,
+							curASTContents
+						)
+						if (commonNode && commonPath) {
+							const newNode = util.yaml.getNodeAtPath(
+								commonPath,
+								newAST.contents
+							)
+							if (newNode) {
+								const yamlDoc = util.yaml.newDoc()
+								yamlDoc.contents = newNode
 								uesio.builder.setYaml(
 									component.path.makeFullPath(
 										metadataType,
 										metadataItem,
-										""
-									),
-									newAST
-								)
-							} else {
-								// We need to find the first shared parent of the start offset and end offset
-								const [, startPath] = util.yaml.getNodeAtOffset(
-									change.rangeOffset,
-									currentAST.current.contents,
-									""
-								)
-								const [, endPath] = util.yaml.getNodeAtOffset(
-									change.rangeOffset + change.rangeLength,
-									currentAST.current.contents,
-									""
-								)
-
-								const commonPath =
-									util.yaml.getCommonAncestorPath(
-										startPath,
-										endPath
-									)
-								const commonNode = util.yaml.getNodeAtPath(
-									commonPath,
-									currentAST.current.contents
-								)
-
-								if (commonNode && commonPath) {
-									const newNode = util.yaml.getNodeAtPath(
-										commonPath,
-										newAST.contents
-									)
-									if (newNode) {
-										const yamlDoc = util.yaml.newDoc()
-										yamlDoc.contents = newNode
-										uesio.builder.setYaml(
-											component.path.makeFullPath(
-												metadataType,
-												metadataItem,
-												util.yaml.getPathFromPathArray(
-													commonPath
-												)
-											),
-											yamlDoc
+										util.yaml.getPathFromPathArray(
+											commonPath
 										)
-									}
-								}
+									),
+									yamlDoc
+								)
 							}
 						}
 					})
-
 					currentAST.current = newAST
 				}}
 				editorDidMount={(editor, monaco): void => {

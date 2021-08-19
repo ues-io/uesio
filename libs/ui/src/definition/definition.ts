@@ -7,7 +7,7 @@ export type BaseDefinition = {
 	"uesio.variant"?: string
 } & DefinitionMap
 
-export type YamlDoc = yaml.Document
+export type YamlDoc = yaml.Document<yaml.Node>
 
 export type BaseProps = {
 	definition?: BaseDefinition
