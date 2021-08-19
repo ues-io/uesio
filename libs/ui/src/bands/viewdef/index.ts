@@ -25,6 +25,8 @@ import {
 	calculateNewPathAheadOfTime,
 	fromPath,
 	getFullPathParts,
+	getParentPath,
+	getGrandParentPath,
 } from "../../component/path"
 import {
 	setDefinition,
@@ -109,15 +111,10 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
  */
 const cloneDefKey = (state: PlainViewDef, payload: { path: string }) => {
 	const { path } = payload
-	const pathArray = makePathArray(path) as string[]
-	// We need 1 level up to include the component key
-	const clonePath = pathArray.slice(0, -1)
-	// We need another level up to get in the "components" array
-	const destinationPath = pathArray.slice(0, -2)
-	const newNode = getNodeAtPath(clonePath, state.yaml)
 	if (state.yaml) {
+		const newNode = getNodeAtPath(getParentPath(path), state.yaml)
 		const doc = new yaml.Document(state.yaml.toJSON())
-		addNodeAtPath(destinationPath, doc, newNode, 1)
+		addNodeAtPath(getGrandParentPath(path), doc, newNode, 1)
 		// Rerender canvas
 		setWith(state, ["definition"], doc.toJSON())
 		state.yaml = doc
