@@ -71,6 +71,7 @@ const builderSlice = createSlice({
 			{ payload }: PayloadAction<YamlClonePayload>
 		) => {
 			// nothing actually happens here, just something for others to listen to.
+			state.lastModifiedNode = payload.path
 		},
 		addDefinition: (
 			state,
