@@ -4,6 +4,8 @@ import PropertiesPane from "./propertiespane"
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const viewDefId = uesio.getViewDefId()
+
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
 	// Trim the path to the closest namespaced component
@@ -40,6 +42,14 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						value
 					)
 				},
+				clone: (path: string) =>
+					uesio.builder.cloneDefinition(
+						component.path.makeFullPath(
+							"viewdef",
+							viewDefId || "",
+							path
+						)
+					),
 				add: (path: string, value: string, number?: number) => {
 					if (path === undefined) return
 					uesio.builder.addDefinition(
