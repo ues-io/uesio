@@ -15,6 +15,7 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Text",
 	defaultDefinition: () => ({
 		text: "Text Goes Here",
+		element: "div",
 	}),
 	properties: [
 		{
@@ -24,8 +25,18 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 		{
 			name: "element",
-			type: "TEXT",
 			label: "element",
+			type: "SELECT",
+			options: [
+				{
+					value: "div",
+					label: "div",
+				},
+				{
+					value: "span",
+					label: "span",
+				},
+			],
 		},
 		{
 			name: "color",
