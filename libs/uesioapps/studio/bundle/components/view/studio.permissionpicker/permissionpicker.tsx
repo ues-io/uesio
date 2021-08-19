@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
+import { values } from "lodash"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -36,17 +37,14 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
-	const value = record.getFieldReference(fieldId)
+	const value = record.getFieldReference(fieldId) || {}
 	const disabled = mode === "READ"
 	const data = wire.getData()
 
 	if (!value) return null
 
 	const handleToggle = (listRecord: string) => {
-		const hasProperty = Object.prototype.hasOwnProperty.call(
-			value,
-			listRecord
-		)
+		const hasProperty = getValue(listRecord)
 		if (!hasProperty) {
 			const updValue = { ...value, [listRecord]: true }
 			record.update(fieldId, updValue)
@@ -56,6 +54,8 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 			record.update(fieldId, updValue)
 		}
 	}
+
+	const getValue = (itemName: string) => (value[itemName] as boolean) || false
 
 	return (
 		<>
@@ -71,7 +71,7 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 								context={context}
 								disabled={disabled}
 								setValue={() => handleToggle(itemName)}
-								value={(value[itemName] as boolean) || false}
+								value={getValue(itemName)}
 								mode={mode}
 							/>
 						}

@@ -14,10 +14,12 @@ type Auth struct {
 // Verify function
 func (a *Auth) Verify(token string, session *sess.Session) error {
 	v := verifier.Verifier{}
+
 	aud, err := configstore.GetValueFromKey("uesio.googleClientId", session)
 	if err != nil {
 		return err
 	}
+
 	return v.VerifyIDToken(token, []string{
 		aud,
 	})

@@ -40,19 +40,21 @@ func getClient(credentials *adapt.Credentials) (*firestore.Client, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
 	client, ok := clientPool[hash]
-	if !ok {
-		// Get a Firestore client.
-		ctx := context.Background()
-
-		newClient, err := getNewClient(ctx, credentials)
-		if err != nil {
-			return nil, errors.New("Failed to create client:" + err.Error())
-		}
-
-		clientPool[hash] = newClient
-		return newClient, nil
+	if ok {
+		return client, nil
 	}
-	return client, nil
+
+	// Get a Firestore client.
+	ctx := context.Background()
+
+	newClient, err := getNewClient(ctx, credentials)
+	if err != nil {
+		return nil, errors.New("Failed to create client:" + err.Error())
+	}
+
+	clientPool[hash] = newClient
+	return newClient, nil
+
 }
 
 func getDBFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {

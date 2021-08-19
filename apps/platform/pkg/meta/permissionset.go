@@ -26,9 +26,9 @@ type PermissionSet struct {
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
 	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
 	Workspace      string          `yaml:"-" uesio:"studio.workspaceid"`
-	AllowAllViews  bool            `yaml:"-" uesio:"studio.allowallviews"`
-	AllowAllRoutes bool            `yaml:"-" uesio:"studio.allowallroutes"`
-	AllowAllFiles  bool            `yaml:"-" uesio:"studio.allowallfiles"`
+	AllowAllViews  bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
+	AllowAllRoutes bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
+	AllowAllFiles  bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
 	itemMeta       *ItemMeta       `yaml:"-" uesio:"-"`
 	CreatedBy      *User           `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy      *User           `yaml:"-" uesio:"studio.updatedby"`
@@ -166,6 +166,9 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	viewPerms := map[string]bool{}
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
+	allowAllViews := false
+	allowAllRoutes := false
+	allowAllFiles := false
 
 	for _, permissionSet := range permissionSets {
 		for key, value := range permissionSet.NamedRefs {
@@ -188,12 +191,24 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 				filePerms[key] = true
 			}
 		}
+		if permissionSet.AllowAllViews {
+			allowAllViews = true
+		}
+		if permissionSet.AllowAllRoutes {
+			allowAllRoutes = true
+		}
+		if permissionSet.AllowAllFiles {
+			allowAllFiles = true
+		}
 	}
 
 	return &PermissionSet{
-		NamedRefs: namedPerms,
-		ViewRefs:  viewPerms,
-		RouteRefs: routePerms,
-		FileRefs:  filePerms,
+		NamedRefs:      namedPerms,
+		ViewRefs:       viewPerms,
+		RouteRefs:      routePerms,
+		FileRefs:       filePerms,
+		AllowAllViews:  allowAllViews,
+		AllowAllRoutes: allowAllRoutes,
+		AllowAllFiles:  allowAllFiles,
 	}
 }

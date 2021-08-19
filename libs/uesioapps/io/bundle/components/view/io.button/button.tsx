@@ -11,8 +11,14 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		{
 			root: {},
 			label: {},
+			selected: {},
 		},
 		props
+	)
+	const isSelected = component.shouldHaveClass(
+		context,
+		"selected",
+		definition
 	)
 	const [handler, portals] = uesio.signal.useHandler(definition.signals)
 	return (
@@ -22,6 +28,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				label={definition.text}
 				onClick={handler}
 				context={context}
+				isSelected={isSelected}
 			/>
 			{portals}
 		</>

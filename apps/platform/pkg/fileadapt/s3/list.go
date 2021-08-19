@@ -11,7 +11,7 @@ import (
 
 func (a *FileAdapter) List(bucket, path string, credentials *adapt.Credentials) (*s3.ListObjectsV2Output, error) {
 	ctx := context.Background()
-	client, err := getS3Client(credentials)
+	client, err := getS3Client(ctx, credentials)
 	if err != nil {
 		return nil, errors.New("invalid FileAdapterCredentials specified: " + err.Error())
 	}

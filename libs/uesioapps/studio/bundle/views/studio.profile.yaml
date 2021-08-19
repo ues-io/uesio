@@ -138,6 +138,5 @@ definition:
                                   root:
                                     padding: 40px
                                 components:
-                                  - studio.permissionpicker:
+                                  - io.field:
                                       fieldId: studio.permissionsetsrefs
-                                      wireName: permissionsets

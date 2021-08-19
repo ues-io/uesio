@@ -61,7 +61,7 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		}
 		return filepath.Join(botType, parts[1]), nil
 	}
-	if botType == "beforesave" || botType == "aftersave" {
+	if botType == "beforeinsert" || botType == "beforeupdate" || botType == "beforedelete" || botType == "afterinsert" || botType == "afterupdate" || botType == "afterdelete" {
 		if partLength != 4 || parts[3] != "bot.yaml" {
 			return "", nil
 		}

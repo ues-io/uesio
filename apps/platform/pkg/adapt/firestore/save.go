@@ -69,7 +69,38 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
-		err = adapt.ProcessChanges(
+		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
+			if adapt.IsReference(fieldMetadata.Type) {
+				return adapt.SetReferenceData(value, fieldMetadata, metadata)
+			}
+			return value, nil
+		}
+
+		searchFieldFunc := func(searchableValues []string) (string, interface{}) {
+			return searchIndexField, getSearchIndex(searchableValues)
+		}
+
+		err = adapt.ProcessInserts(
+			&request,
+			metadata,
+			// Insert Func
+			func(id interface{}, insert map[string]interface{}) error {
+				batch.Create(collection.Doc(id.(string)), insert)
+				return nil
+			},
+			setDataFunc,
+			getDBFieldName,
+			searchFieldFunc,
+			// DefaultID Func
+			func() string {
+				return collection.NewDoc().ID
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		err = adapt.ProcessUpdates(
 			&request,
 			metadata,
 			// Update Func
@@ -85,28 +116,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				batch.Update(collection.Doc(id.(string)), updates)
 				return nil
 			},
-			// Insert Func
-			func(id interface{}, insert map[string]interface{}) error {
-				batch.Create(collection.Doc(id.(string)), insert)
-				return nil
-			},
-			// SetData Func
-			func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
-				if adapt.IsReference(fieldMetadata.Type) {
-					return adapt.SetReferenceData(value, fieldMetadata, metadata)
-				}
-				return value, nil
-			},
-			// FieldName Func
+			setDataFunc,
 			getDBFieldName,
-			// SearchField Func
-			func(searchableValues []string) (string, interface{}) {
-				return searchIndexField, getSearchIndex(searchableValues)
-			},
-			// DefaultID Func
-			func() string {
-				return collection.NewDoc().ID
-			},
+			searchFieldFunc,
 		)
 		if err != nil {
 			return err

@@ -118,11 +118,38 @@ definition:
                             root:
                               padding: 40px
                           components:
-                            - studio.datamanager:
-                                collectionId: $Param{collectionname}
-                                namespace: $Param{appname}
-                                fieldsWire: "fields"
+                            - io.box:
                                 uesio.context:
                                   workspace:
                                     name: $Param{workspacename}
                                     app: $Param{appname}
+                                components:
+                                  - io.titlebar:
+                                      uesio.variant: io.section
+                                      title:
+                                      actions:
+                                        - io.group:
+                                            components:
+                                              - io.button:
+                                                  uesio.variant: io.secondary
+                                                  text: "Save"
+                                                  signals:
+                                                    - signal: "wire/SAVE"
+                                                      wires:
+                                                        - "collectionData"
+                                              - io.button:
+                                                  uesio.variant: io.secondary
+                                                  text: "Cancel"
+                                                  signals:
+                                                    - signal: "wire/CANCEL"
+                                                      wire: "collectionData"
+                                              - io.button:
+                                                  uesio.variant: io.secondary
+                                                  text: "Create"
+                                                  signals:
+                                                    - signal: "wire/CREATE_RECORD"
+                                                      wire: "collectionData"
+                                  - studio.datamanager:
+                                      collectionId: $Param{collectionname}
+                                      namespace: $Param{appname}
+                                      fieldsWire: "fields"
