@@ -24,6 +24,7 @@ import {
 	getFullPathParts,
 	getParentPath,
 	getGrandParentPath,
+	getIndexFromPath,
 } from "../../component/path"
 import {
 	setDefinition,
@@ -110,12 +111,18 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 const cloneDefKey = (state: PlainViewDef, payload: { path: string }) => {
 	const { path } = payload
 	if (state.yaml) {
-		const newNode = getNodeAtPath(getParentPath(path), state.yaml)
-		const doc = new yaml.Document(state.yaml.toJSON())
-		addNodeAtPath(getGrandParentPath(path), doc, newNode, 1)
+		const newNode = getNodeAtPath(getParentPath(path), state.yaml.contents)
+		const index = getIndexFromPath(path)
+		if (!newNode || index === null) return
+
+		addNodeAtPath(
+			getGrandParentPath(path),
+			state.yaml.contents,
+			newNode,
+			index + 1
+		)
 		// Rerender canvas
-		setWith(state, ["definition"], doc.toJSON())
-		state.yaml = doc
+		setWith(state, ["definition"], state.yaml.toJSON())
 	}
 }
 
