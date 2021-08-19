@@ -150,7 +150,7 @@ class BuilderAPI {
 
 	cancel = () => this.dispatcher(cancel())
 
-	cloneDefinitionKey = (path: string) =>
+	cloneDefinition = (path: string) =>
 		this.dispatcher(cloneDefinition({ path }))
 
 	setDefinition = (path: string, definition: Definition) =>

@@ -43,7 +43,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					)
 				},
 				clone: (path: string) =>
-					uesio.builder.cloneDefinitionKey(
+					uesio.builder.cloneDefinition(
 						component.path.makeFullPath(
 							"viewdef",
 							viewDefId || "",
