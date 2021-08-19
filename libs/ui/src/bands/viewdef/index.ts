@@ -1,7 +1,7 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import setWith from "lodash/setWith"
 import toPath from "lodash/toPath"
-import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
+import { Definition, DefinitionMap } from "../../definition/definition"
 import yaml from "yaml"
 import {
 	addNodeAtPath,
@@ -13,7 +13,6 @@ import {
 	parse,
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
-import { EntityPayload } from "../utils"
 import { PlainViewDef } from "./types"
 import loadOp from "./operations/load"
 import builderOps from "../builder/operations"
@@ -22,9 +21,8 @@ import {
 	calculateNewPathAheadOfTime,
 	fromPath,
 	getFullPathParts,
-	getParentPath,
-	getGrandParentPath,
 	getIndexFromPath,
+	getParentPath,
 } from "../../component/path"
 import {
 	setDefinition,
@@ -33,50 +31,18 @@ import {
 	removeDefinition,
 	changeDefinitionKey,
 	moveDefinition,
-	cloneDefinitionKey,
+	cloneDefinition,
 	setYaml,
 	cancel,
+	CloneDefinitionPayload,
+	YamlUpdatePayload,
+	SetDefinitionPayload,
+	RemoveDefinitionPayload,
+	MoveDefinitionPayload,
+	AddDefinitionPayload,
+	AddDefinitionPairPayload,
+	ChangeDefinitionKeyPayload,
 } from "../builder"
-
-type YamlUpdatePayload = {
-	path: string
-	yaml: YamlDoc
-} & EntityPayload
-
-type RemoveDefinitionPayload = {
-	path: string
-} & EntityPayload
-
-type YamlClonePayload = {
-	path: string
-} & EntityPayload
-
-type SetDefinitionPayload = {
-	path: string
-	definition: Definition
-} & EntityPayload
-
-type MoveDefinitionPayload = {
-	fromPath: string
-	toPath: string
-} & EntityPayload
-
-type AddDefinitionPayload = {
-	path: string
-	definition: Definition
-	index?: number
-} & EntityPayload
-
-type AddDefinitionPairPayload = {
-	path: string
-	definition: Definition
-	key: string
-} & EntityPayload
-
-type ChangeDefinitionKeyPayload = {
-	path: string
-	key: string
-} & EntityPayload
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
@@ -108,22 +74,16 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
  * We might want to extend the functionality to themes and variants.
  *  * @param path - path of the cloned component, the new component will be a direct sibling
  */
-const cloneDefKey = (state: PlainViewDef, payload: { path: string }) => {
+const cloneDef = (state: PlainViewDef, payload: CloneDefinitionPayload) => {
 	const { path } = payload
-	if (state.yaml) {
-		const newNode = getNodeAtPath(getParentPath(path), state.yaml.contents)
-		const index = getIndexFromPath(path)
-		if (!newNode || index === null) return
-
-		addNodeAtPath(
-			getGrandParentPath(path),
-			state.yaml.contents,
-			newNode,
-			index + 1
-		)
-		// Rerender canvas
-		setWith(state, ["definition"], state.yaml.toJSON())
-	}
+	const parentPath = getParentPath(path)
+	const index = getIndexFromPath(parentPath)
+	if (!index && index !== 0) return
+	addDef(state, {
+		path: getParentPath(parentPath),
+		definition: get(state.definition, toPath(parentPath)),
+		index: index + 1,
+	})
 }
 
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
@@ -290,7 +250,6 @@ const saveAllDefs = (state: EntityState<PlainViewDef>) => {
 		delete defState.yaml
 
 		updateYaml(defState, {
-			entity: defKey,
 			path: "",
 			yaml: yamlDoc,
 		})
@@ -312,7 +271,6 @@ const cancelAllDefs = (state: EntityState<PlainViewDef>) => {
 		delete defState.yaml
 
 		updateYaml(defState, {
-			entity: defKey,
 			path: "",
 			yaml: originalYamlDoc,
 		})
@@ -360,19 +318,22 @@ const viewDefSlice = createSlice({
 						setDef(entityState, {
 							path: localPath,
 							definition: payload.definition,
-							entity: metadataItem,
 						})
 				}
 			}
 		)
 		builder.addCase(
-			cloneDefinitionKey,
-			(state, { payload }: PayloadAction<YamlClonePayload>) => {
-				const [, metadataItem, localPath] = getFullPathParts(
-					payload.path
-				)
-				const entityState = state.entities[metadataItem]
-				entityState && cloneDefKey(entityState, { path: localPath })
+			cloneDefinition,
+			(state, { payload }: PayloadAction<CloneDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+				if (metadataType === "viewdef") {
+					const entityState = state.entities[metadataItem]
+					entityState &&
+						cloneDef(entityState, {
+							path: localPath,
+						})
+				}
 			}
 		)
 		builder.addCase(
@@ -386,7 +347,6 @@ const viewDefSlice = createSlice({
 						addDef(entityState, {
 							path: localPath,
 							definition: payload.definition,
-							entity: metadataItem,
 							index: payload.index,
 						})
 				}
@@ -403,7 +363,6 @@ const viewDefSlice = createSlice({
 						addDefPair(entityState, {
 							path: localPath,
 							definition: payload.definition,
-							entity: metadataItem,
 							key: payload.key,
 						})
 				}
@@ -419,7 +378,6 @@ const viewDefSlice = createSlice({
 					entityState &&
 						removeDef(entityState, {
 							path: localPath,
-							entity: metadataItem,
 						})
 				}
 			}
@@ -434,7 +392,6 @@ const viewDefSlice = createSlice({
 					entityState &&
 						changeDefKey(entityState, {
 							path: localPath,
-							entity: metadataItem,
 							key: payload.key,
 						})
 				}
@@ -458,7 +415,6 @@ const viewDefSlice = createSlice({
 					entityState &&
 						moveDef(entityState, {
 							fromPath,
-							entity: toItem,
 							toPath,
 						})
 				}
@@ -475,7 +431,6 @@ const viewDefSlice = createSlice({
 						updateYaml(entityState, {
 							path: localPath,
 							yaml: payload.yaml,
-							entity: metadataItem,
 						})
 				}
 			}
