@@ -180,11 +180,10 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	}
 	if (state.yaml && definition) {
 		// create a new document so components using useYaml will rerender
-		state.yaml = new yaml.Document(state.yaml.toJSON())
-		const doc = new yaml.Document()
-		const node = doc.createNode(definition)
-		if (node) {
-			addNodeAtPath(path, state.yaml.contents, node, newIndex)
+		state.yaml = parse(state.yaml.toString())
+		const newNode = state.yaml.createNode(definition)
+		if (newNode) {
+			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
 		}
 	}
 }
@@ -197,7 +196,7 @@ const addDefPair = (state: PlainViewDef, payload: AddDefinitionPairPayload) => {
 
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
-		state.yaml = new yaml.Document(state.yaml.toJSON())
+		state.yaml = parse(state.yaml.toString())
 		const newNode = state.yaml.createNode(definition)
 
 		addNodePairAtPath(path, state.yaml.contents, newNode, key)
@@ -227,16 +226,18 @@ const changeDefKey = (
 		setWith(state, ["definition", ...pathArray], newParent)
 		if (state.yaml) {
 			// create a new document so components using useYaml will rerender
-			state.yaml = new yaml.Document(state.yaml.toJSON())
+			state.yaml = parse(state.yaml.toString())
 
 			const parent = getNodeAtPath(
 				pathArray,
 				state.yaml.contents
 			) as yaml.YAMLMap
 
-			const keyNode = parent?.items.find((item) => item.key === oldKey)
+			const keyNode = parent?.items.find(
+				(item) => yaml.isScalar(item.key) && item.key.value === oldKey
+			)
 
-			if (keyNode && yaml.isPair(keyNode.key)) {
+			if (keyNode && yaml.isScalar(keyNode.key)) {
 				keyNode.key.value = newKey
 			}
 		}

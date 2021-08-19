@@ -31,27 +31,26 @@ const getNodeAtOffset = (
 				return [parentnode, path]
 			}
 			for (const node of nodes) {
-				if (
-					yaml.isPair(node) &&
-					yaml.isScalar(node.key) &&
-					yaml.isNode(node.value)
-				) {
-					if (node.key && isInRange(offset, node.key)) {
+				if (yaml.isPair(node) && yaml.isScalar(node.key)) {
+					if (isInRange(offset, node.key)) {
 						return includeKey
 							? [node.key, path + '["' + node.key + '"]']
 							: [parentnode, path]
 					}
-					if (node.key && node.value) {
-						const [foundNode, foundPath] = getNodeAtOffset(
-							offset,
-							node.value,
-							path + '["' + node.key + '"]',
-							includeKey
-						)
-						if (foundNode) {
-							return [foundNode, foundPath]
-						}
+				}
+
+				if (yaml.isPair(node) && yaml.isCollection(node.value)) {
+					const [foundNode, foundPath] = getNodeAtOffset(
+						offset,
+						node.value,
+						path + '["' + node.key + '"]',
+						includeKey
+					)
+					if (foundNode) {
+						return [foundNode, foundPath]
 					}
+				}
+				if (yaml.isMap(node)) {
 					const [foundNode, foundPath] = getNodeAtOffset(
 						offset,
 						node,
@@ -61,8 +60,19 @@ const getNodeAtOffset = (
 					if (foundNode) {
 						return [foundNode, foundPath]
 					}
-					index++
 				}
+				if (yaml.isSeq(node)) {
+					const [foundNode, foundPath] = getNodeAtOffset(
+						offset,
+						node,
+						path + '["' + index + '"]',
+						includeKey
+					)
+					if (foundNode) {
+						return [foundNode, foundPath]
+					}
+				}
+				index++
 			}
 			return [parentnode, path]
 		}

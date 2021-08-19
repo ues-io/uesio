@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import themeAdapter from "./adapter"
 import ops from "./operations"
-import { parse, newDoc, getNodeAtPath } from "../../yamlutils/yamlutils"
+import { getNodeAtPath, parse, newDoc } from "../../yamlutils/yamlutils"
 import { defaultTheme } from "../../styles/styles"
 import merge from "lodash/merge"
 
