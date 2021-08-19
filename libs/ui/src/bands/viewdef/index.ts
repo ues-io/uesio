@@ -368,8 +368,9 @@ const viewDefSlice = createSlice({
 		builder.addCase(
 			cloneDefinitionKey,
 			(state, { payload }: PayloadAction<YamlClonePayload>) => {
-				const [metadataType, metadataItem, localPath] =
-					getFullPathParts(payload.path)
+				const [, metadataItem, localPath] = getFullPathParts(
+					payload.path
+				)
 				const entityState = state.entities[metadataItem]
 				entityState && cloneDefKey(entityState, { path: localPath })
 			}
