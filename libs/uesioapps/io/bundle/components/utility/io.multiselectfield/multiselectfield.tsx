@@ -59,12 +59,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				}}
 			>
 				{options?.map((option) => (
-					<option
-						value={option.value}
-						selected={value?.includes(option.value) || false}
-					>
-						{option.label}
-					</option>
+					<option value={option.value}>{option.label}</option>
 				))}
 			</select>
 		</div>
