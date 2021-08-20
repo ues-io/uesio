@@ -55,6 +55,12 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		path,
 	}
 
+	//For actions like Refresh or Run Signals we need a view on context
+	const viewDefId = props.context.getViewDefId()
+	const contextWithView = context.addFrame({
+		view: viewDefId + "()",
+	})
+
 	return (
 		<div className={classes.wrapper}>
 			<DeleteAction {...actionProps} />
@@ -67,6 +73,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 						{...actionProps}
 						key={index}
 						action={action}
+						context={contextWithView}
 					/>
 				)
 			})}
