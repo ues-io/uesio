@@ -19,7 +19,7 @@ const addBlankSelectOption = collection.addBlankSelectOption
 
 const Field: FunctionComponent<FieldProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId, hideLabel, id, displayAs } = definition
+	const { fieldId, hideLabel, id, displayAs, autoFocus } = definition
 
 	const record = context.getRecord()
 	const wire = context.getWire()
@@ -45,6 +45,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		fieldMetadata,
 		label,
 		hideLabel,
+		autoFocus,
 		id,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),

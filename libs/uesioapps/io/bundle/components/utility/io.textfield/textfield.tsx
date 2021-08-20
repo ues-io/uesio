@@ -10,13 +10,22 @@ interface TextFieldProps extends definition.UtilityProps {
 	hideLabel?: boolean
 	mode?: context.FieldMode
 	placeholder?: string
+	autoFocus?: boolean
 }
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel, context, label, placeholder } =
-		props
+	const {
+		setValue,
+		value,
+		mode,
+		hideLabel,
+		context,
+		label,
+		placeholder,
+		autoFocus = false,
+	} = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
@@ -39,6 +48,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 					classes.input,
 					readonly && classes.readonly
 				)}
+				autoFocus={autoFocus}
 				type="text"
 				disabled={readonly}
 				onChange={(event: ChangeEvent<HTMLInputElement>): void =>
