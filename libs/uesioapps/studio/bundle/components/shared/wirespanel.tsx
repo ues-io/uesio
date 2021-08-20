@@ -19,6 +19,16 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		localPath
 	)
+	const addWire = () =>
+		uesio.builder.addDefinitionPair(
+			path,
+			{
+				type: "",
+				fields: null,
+			},
+			"newwire" + (Math.floor(Math.random() * 60) + 1),
+			"wire"
+		)
 	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
 	return (
 		<ScrollPanel
@@ -32,18 +42,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 							variant="io.small"
 							icon="add"
-							onClick={() =>
-								uesio.builder.addDefinitionPair(
-									path,
-									{
-										type: "",
-										fields: null,
-									},
-									"newwire" +
-										(Math.floor(Math.random() * 60) + 1),
-									"wire"
-								)
-							}
+							onClick={() => addWire()}
 						/>
 					}
 				/>
@@ -75,6 +74,12 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						/>
 					)
 				})}
+				<PropNodeTag
+					icon="add"
+					context={context}
+					title="new"
+					onClick={() => addWire()}
+				/>
 			</div>
 		</ScrollPanel>
 	)
