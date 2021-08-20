@@ -121,6 +121,7 @@ definition:
               components:
                 - io.field:
                     fieldId: studio.name
+                    autoFocus: true
         actions:
           - io.button:
               uesio.variant: "io.primary"
