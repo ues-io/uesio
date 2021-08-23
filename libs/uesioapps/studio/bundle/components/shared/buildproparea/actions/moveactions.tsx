@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { hooks, component, definition, util } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 import { ValueAPI } from "../../propertiespaneldefinition"
@@ -150,6 +150,9 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const enableBackward = !!index
 	const enableForward = index !== null && size && index < size - 1
 
+	const viewDefID = context.getViewDefId()
+	if (!viewDefID) return null
+
 	const onClickBackward = () => {
 		index &&
 			moveToIndex(
@@ -166,7 +169,7 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 
 		uesio.builder.setSelectedNode(
 			"viewdef",
-			"crm.accounts",
+			viewDefID,
 			'["' + metadataType + '"]' + '["' + metadataItem + '"]'
 		)
 	}
@@ -186,7 +189,7 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 
 		uesio.builder.setSelectedNode(
 			"viewdef",
-			"crm.accounts",
+			viewDefID,
 			'["' + metadataType + '"]' + '["' + metadataItem + '"]'
 		)
 	}
