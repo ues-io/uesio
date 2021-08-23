@@ -9,6 +9,7 @@ import WiresPanel from "../../shared/wirespanel"
 import CodePanel from "../../shared/codepanel"
 import { BuilderState } from "./runtimebuilderdefinition"
 import ComponentsPanel from "../../shared/componentspanel"
+import ModalsPanel from "../../shared/modalspanel"
 
 const Grid = component.registry.getUtility("io.grid")
 import usePanels from "./usePanels"
@@ -31,6 +32,7 @@ component.registry.registerSignals("uesio.runtime", {
 				...state,
 				showComps: true,
 				showWires: false,
+				showModals: false,
 			})
 		},
 		target: "panels",
@@ -42,6 +44,19 @@ component.registry.registerSignals("uesio.runtime", {
 				...state,
 				showComps: false,
 				showWires: true,
+				showModals: false,
+			})
+		},
+		target: "panels",
+	},
+	SHOW_MODALS: {
+		dispatcher: (signal, context, getState, setState) => {
+			const state = getState() as BuilderState
+			setState({
+				...state,
+				showComps: false,
+				showWires: false,
+				showModals: true,
 			})
 		},
 		target: "panels",
@@ -67,6 +82,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		showCode: false,
 		showComps: true,
 		showWires: false,
+		showModals: false,
 	})
 
 	const { context } = props
@@ -132,6 +148,12 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 			)}
 			{state.showComps && (
 				<ComponentsPanel
+					context={builderContext}
+					className={styles.css({ gridRow: 2, gridColumn: 2 })}
+				/>
+			)}
+			{state.showModals && (
+				<ModalsPanel
 					context={builderContext}
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>

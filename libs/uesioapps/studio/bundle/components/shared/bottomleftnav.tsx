@@ -37,6 +37,18 @@ const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				tooltipPlacement="right"
 				icon="power"
 			/>
+			<IconButton
+				context={props.context}
+				variant="io.large"
+				onClick={uesio.signal.getHandler([
+					{
+						signal: "component/uesio.runtime/SHOW_MODALS",
+					},
+				])}
+				label="Modals"
+				tooltipPlacement="calculate"
+				icon="power"
+			/>
 		</ScrollPanel>
 	)
 }
