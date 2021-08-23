@@ -21,19 +21,14 @@ const processMaps = (
 	const parentDef = valueAPI.get(
 		'["' + metadataType + '"]'
 	) as definition.DefinitionMap
-	console.log("parentDef", parentDef)
+
 	const map = new Map(Object.entries(parentDef))
-	console.log("map", map)
 	const array = Array.from(map, ([key, value]) => ({ key, value }))
-	console.log("array", array)
-
 	const size = array.length
-
 	const getIndex = (element: { key: string; value: definition.Definition }) =>
 		element.key === metadataItem
 	const index = array.findIndex(getIndex)
 
-	console.log("index", index)
 	return [index, size, true, "", array]
 }
 
@@ -47,7 +42,6 @@ const moveToIndexComponents = (
 
 	const suffix = component.path.getPathSuffix(path)
 	const newSelectedPath = `${toPath}["${suffix}"]`
-	console.log("newSelectedPath", newSelectedPath)
 	valueAPI.move(path, newSelectedPath)
 }
 
@@ -77,7 +71,7 @@ const swapElement = (
 	key: string
 	value: definition.Definition
 }[] => {
-	var tmp = array[indexA]
+	const tmp = array[indexA]
 	array[indexA] = array[indexB]
 	array[indexB] = tmp
 	return array
@@ -92,16 +86,12 @@ const moveToIndexMaps = (
 		  }[]
 		| undefined,
 	metadataType: string,
+	metadataItem: string,
 	valueAPI: ValueAPI
 ) => {
 	if (mapArray) {
 		const newMapArray = swapElement(index, oldIndex, mapArray)
-		console.log("newMapArray", newMapArray)
-		console.log("metadataType", metadataType)
-
-		//valueAPI.remove('["' + metadataType + '"]')
-
-		newMapArray.forEach((element, index, array) => {
+		newMapArray.forEach((element) => {
 			valueAPI.remove(
 				'["' + metadataType + '"]' + '["' + element.key + '"]'
 			)
@@ -127,10 +117,18 @@ const moveToIndex = (
 				value: definition.Definition
 		  }[]
 		| undefined,
-	metadataType: string
+	metadataType: string,
+	metadataItem: string
 ) => {
 	if (isMap) {
-		moveToIndexMaps(index, oldIndex, mapArray, metadataType, valueAPI)
+		moveToIndexMaps(
+			index,
+			oldIndex,
+			mapArray,
+			metadataType,
+			metadataItem,
+			valueAPI
+		)
 	} else {
 		moveToIndexComponents(index, path, parentPath, valueAPI)
 	}
@@ -139,8 +137,6 @@ const moveToIndex = (
 const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { path = "", valueAPI, context } = props
-
-	console.log("PATH", path)
 
 	// Pop off the first item of the path and check to see if its a number
 
@@ -151,35 +147,49 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 			? processMaps(metadataType, metadataItem, valueAPI)
 			: processComponents(path, valueAPI)
 
-	//if (index == null) return null
-
 	const enableBackward = !!index
 	const enableForward = index !== null && size && index < size - 1
 
-	const onClickBackward = () =>
+	const onClickBackward = () => {
 		index &&
-		moveToIndex(
-			index - 1,
-			index,
-			isMap,
-			path,
-			parentPath,
-			valueAPI,
-			mapArray,
-			metadataType
+			moveToIndex(
+				index - 1,
+				index,
+				isMap,
+				path,
+				parentPath,
+				valueAPI,
+				mapArray,
+				metadataType,
+				metadataItem
+			)
+
+		uesio.builder.setSelectedNode(
+			"viewdef",
+			"crm.accounts",
+			'["' + metadataType + '"]' + '["' + metadataItem + '"]'
 		)
-	const onClickForward = () =>
+	}
+	const onClickForward = () => {
 		index !== null &&
-		moveToIndex(
-			index + 1,
-			index,
-			isMap,
-			path,
-			parentPath,
-			valueAPI,
-			mapArray,
-			metadataType
+			moveToIndex(
+				index + 1,
+				index,
+				isMap,
+				path,
+				parentPath,
+				valueAPI,
+				mapArray,
+				metadataType,
+				metadataItem
+			)
+
+		uesio.builder.setSelectedNode(
+			"viewdef",
+			"crm.accounts",
+			'["' + metadataType + '"]' + '["' + metadataItem + '"]'
 		)
+	}
 	return (
 		<>
 			<ActionButton

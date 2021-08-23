@@ -15,7 +15,7 @@ const Icon = component.registry.getUtility("io.icon")
 const Tooltip = component.registry.getUtility("io.tooltip")
 
 const IconButton: FunctionComponent<IconButtonProps> = (props) => {
-	const { context, icon, label, tooltipPlacement, onClick } = props
+	const { context, icon, label, tooltipPlacement, onClick, disabled } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -30,7 +30,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 		props
 	)
 	const button = (
-		<button onClick={onClick} className={classes.root}>
+		<button onClick={onClick} className={classes.root} disabled={disabled}>
 			<Icon size={props.size} context={context} icon={icon} />
 		</button>
 	)

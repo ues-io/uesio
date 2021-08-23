@@ -104,6 +104,7 @@ class BuilderAPI {
 		metadataItem: string,
 		path: string
 	) => {
+		console.log({ metadataType, metadataItem, path })
 		this.dispatcher(
 			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
