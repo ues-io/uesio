@@ -25,12 +25,13 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 				display: "block",
 				width: "100%",
 				background: "transparent",
+				...(disabled && { disabled }),
 			},
 		},
 		props
 	)
 	const button = (
-		<button onClick={onClick} className={classes.root} disabled={disabled}>
+		<button onClick={onClick} className={classes.root}>
 			<Icon size={props.size} context={context} icon={icon} />
 		</button>
 	)
