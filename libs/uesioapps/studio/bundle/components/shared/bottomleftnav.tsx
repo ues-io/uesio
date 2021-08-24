@@ -46,7 +46,7 @@ const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 					},
 				])}
 				label="Modals"
-				tooltipPlacement="calculate"
+				tooltipPlacement="right"
 				icon="power"
 			/>
 		</ScrollPanel>

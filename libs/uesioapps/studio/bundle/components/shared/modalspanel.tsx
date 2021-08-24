@@ -6,26 +6,27 @@ const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
-const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context, className } = props
 	const uesio = hooks.useUesio(props)
 	const [selectedMetadataType, selectedMetadataItem, selectedNode] =
 		uesio.builder.useSelectedNode()
 	const metadataType = "viewdef"
 	const metadataItem = uesio.getViewDefId() || ""
-	const localPath = '["modals"]'
+	const localPath = '["panes"]'
 	const path = component.path.makeFullPath(
 		metadataType,
 		metadataItem,
 		localPath
 	)
 	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
+	console.log({ def })
 	return (
 		<ScrollPanel
 			header={
 				<TitleBar
 					variant="io.primary"
-					title={"Modals"}
+					title={"Panes"}
 					context={context}
 					actions={
 						<IconButton
@@ -36,12 +37,12 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								uesio.builder.addDefinitionPair(
 									path,
 									{
-										type: "",
-										fields: null,
+										width: 400,
+										components: [],
 									},
-									"newmodal" +
+									"newpane" +
 										(Math.floor(Math.random() * 60) + 1),
-									"modal"
+									"pane"
 								)
 							}
 						/>
@@ -51,10 +52,10 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			context={context}
 			className={className}
 		>
-			hey
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(def || {}).map((key: string, index) => {
-					const modalPath = `${localPath}["${key}"]`
+					const panePath = `${localPath}["${key}"]`
+					console.log({ panePath })
 					return (
 						<PropNodeTag
 							title={key}
@@ -62,7 +63,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								uesio.builder.setSelectedNode(
 									metadataType,
 									metadataItem,
-									modalPath
+									panePath
 								)
 							}
 							icon="power"
@@ -70,7 +71,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							selected={
 								selectedMetadataType === metadataType &&
 								selectedMetadataItem === metadataItem &&
-								modalPath === selectedNode
+								panePath === selectedNode
 							}
 							context={context}
 						/>
@@ -80,6 +81,6 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		</ScrollPanel>
 	)
 }
-WiresPanel.displayName = "WiresPanel"
+PanesPanel.displayName = "PanesPanel"
 
-export default WiresPanel
+export default PanesPanel

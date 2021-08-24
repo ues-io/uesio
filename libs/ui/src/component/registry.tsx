@@ -36,6 +36,8 @@ const addToRegistry = <T extends unknown>(
 	registry[key] = item
 }
 
+import defs from "./definitions"
+
 const register = (
 	key: string,
 	componentType: FC<BaseProps>,
@@ -174,55 +176,12 @@ const getPropertiesDefinitionFromPath = (
 	}
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
+
 		if (pathArray[0] === "wires") {
-			return {
-				title: "Wire",
-				defaultDefinition: () => ({}),
-				properties: [
-					{
-						name: "name",
-						type: "KEY",
-						label: "Name",
-					},
-					{
-						name: "collection",
-						type: "METADATA",
-						metadataType: "COLLECTION",
-						label: "Collection",
-					},
-					{
-						name: "type",
-						type: "SELECT",
-						label: "Wire Type",
-						options: [
-							{
-								label: "Create",
-								value: "CREATE",
-							},
-							{
-								label: "Read",
-								value: "",
-							},
-						],
-					},
-				],
-				sections: [
-					{
-						title: "Fields",
-						type: "FIELDS",
-					},
-					{
-						title: "Conditions",
-						type: "CONDITIONS",
-					},
-				],
-				actions: [
-					{
-						type: "LOAD_WIRE",
-						label: "Refresh Wire",
-					},
-				],
-			}
+			return defs.wireDef
+		}
+		if (pathArray[0] === "panes") {
+			return defs.paneDef
 		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
