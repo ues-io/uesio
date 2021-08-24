@@ -9,10 +9,10 @@ const MoveActions: FunctionComponent<ActionProps> = (props) => {
 	const [metadataType] = component.path.getFullPathParts(path)
 
 	if (metadataType === "wires") {
-		return <MoveActionsMaps {...props}></MoveActionsMaps>
+		return <MoveActionsMaps {...props} />
 	}
 
-	return <MoveActionsComp {...props}></MoveActionsComp>
+	return <MoveActionsComp {...props} />
 }
 
 export default MoveActions
