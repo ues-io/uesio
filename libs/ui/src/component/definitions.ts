@@ -5,35 +5,13 @@ export const paneDef: BuildPropertiesDefinition = {
 	defaultDefinition: () => ({}),
 	properties: [
 		{
-			name: "name",
-			type: "KEY",
-			label: "Name",
-		},
-		{
-			name: "uesio.variant",
-			type: "METADATA",
-			metadataType: "COMPONENTVARIANT",
-			label: "Variant",
-			groupingParents: 1,
-			getGroupingFromKey: true,
+			name: "panelComponent",
+			type: "COMPONENT",
+			label: "Panel",
 		},
 	],
-	sections: [
-		{
-			title: "Fields",
-			type: "FIELDS",
-		},
-		{
-			title: "Conditions",
-			type: "CONDITIONS",
-		},
-	],
-	actions: [
-		{
-			type: "LOAD_WIRE",
-			label: "Refresh Wire",
-		},
-	],
+	sections: [],
+	actions: [],
 }
 
 export const wireDef: BuildPropertiesDefinition = {
