@@ -179,17 +179,11 @@ definition:
                                 text: If you have any questions, comments or concerns about our Privacy Policy, you may contact us by email at support@ues.io attn - Privacy Officer or by mail to -
                             - io.text:
                                 uesio.variant: web.privacytext
-                                text: uesio, Inc.
+                                text: The Cloud Masters
                                   Attn Legal Officer
-                                  1309 Burgess Road
-                                  Chattanooga
-                                  Tennessee 37419
-                            - io.text:
-                                uesio.variant: web.privacytext
-                                text: APPENDIX
-                                  ues.io Privacy Notice
-                                  Effective August 1, 2021
-
+                                  1 Technoparkstrasse
+                                  Zürich
+                                  Switzerland CH-8005
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: How we obtain Personal Information
