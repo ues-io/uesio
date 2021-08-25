@@ -23,7 +23,9 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDragNode()
 		uesio.builder.clearDropNode()
 	}
-	const builderComponents = component.registry.getBuilderComponents()
+	const builderComponents = component.registry.getItems({
+		trait: "uesio.standalone",
+	})
 
 	return (
 		<ScrollPanel

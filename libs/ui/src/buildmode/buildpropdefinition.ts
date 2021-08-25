@@ -74,6 +74,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| ComponentProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -136,6 +137,9 @@ interface MultiSelectProp extends BasePropDescriptor {
 
 interface KeyProp extends BasePropDescriptor {
 	type: "KEY"
+}
+interface ComponentProp extends BasePropDescriptor {
+	type: "COMPONENT"
 }
 
 interface WireProp extends DefinitionBasedPropDescriptor {
@@ -209,6 +213,7 @@ export {
 	NumberProp,
 	MetadataProp,
 	SelectProp,
+	ComponentProp,
 	BooleanProp,
 	BotProp,
 	MultiSelectProp,

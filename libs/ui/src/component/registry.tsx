@@ -1,4 +1,5 @@
 import { FC } from "react"
+
 import {
 	BaseProps,
 	DefinitionMap,
@@ -153,6 +154,11 @@ const getPropertiesDefinition = (key: string) => {
 	return propDef
 }
 
+/**
+ *
+ * @param path
+ * @returns property definition
+ */
 const getPropertiesDefinitionFromPath = (
 	path: string
 ): BuildPropertiesDefinition | undefined => {
@@ -181,6 +187,9 @@ const getPropertiesDefinitionFromPath = (
 			return defs.wireDef
 		}
 		if (pathArray[0] === "panes") {
+			// const builderComponents = component.registry.getItems({
+			// 	trait: "uesio.standalone",
+			// })
 			return defs.paneDef
 		}
 		const componentFullName = getPathSuffix(pathArray)
@@ -189,17 +198,26 @@ const getPropertiesDefinitionFromPath = (
 		}
 	}
 
+	console.warn("Property definition not found for path:", path)
+
 	return undefined
 }
-
-const getBuilderComponents = () =>
+/**
+ * Get definitions from the registry. Accepts trait string for filtering
+ * @param filter
+ *
+ */
+const getItems = ({ trait }: { trait: string }) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
 		if (!acc[namespace]) {
 			acc[namespace] = {}
 		}
+
 		const definition = getPropertiesDefinition(`${namespace}.${name}`)
-		if (definition?.traits?.includes("uesio.standalone")) {
+
+		// use traits param for filtering
+		if (definition?.traits?.includes(trait)) {
 			acc[namespace][name] = definition
 		}
 		return acc
@@ -217,5 +235,5 @@ export {
 	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
-	getBuilderComponents,
+	getItems,
 }

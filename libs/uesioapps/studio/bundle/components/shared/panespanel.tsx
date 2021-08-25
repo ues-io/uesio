@@ -20,7 +20,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		localPath
 	)
 	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
-	console.log({ def })
+
 	return (
 		<ScrollPanel
 			header={
@@ -55,7 +55,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(def || {}).map((key: string, index) => {
 					const panePath = `${localPath}["${key}"]`
-					console.log({ panePath })
+
 					return (
 						<PropNodeTag
 							title={key}
