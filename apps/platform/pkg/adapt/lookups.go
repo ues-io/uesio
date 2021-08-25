@@ -9,25 +9,116 @@ import (
 
 func HandleLookups(
 	loader Loader,
-	request *SaveOp,
+	batch []SaveOp,
 	metadata *MetadataCache,
 ) error {
-	lookupOps, err := getLookupOps(request, metadata)
-	if err != nil {
-		return err
-	}
+	for index, op := range batch {
+		// Go through the op and see if we have any info that could help us
+		// match reference lookups in other ops before this one
+		err := mergeBatchInfo(&op, index, batch, metadata)
+		if err != nil {
+			return err
+		}
 
-	if len(lookupOps) == 0 {
+		lookupOps, err := getLookupOps(&op, metadata)
+		if err != nil {
+			return err
+		}
+
+		if len(lookupOps) == 0 {
+			continue
+		}
+
+		err = loader(lookupOps)
+		if err != nil {
+			return err
+		}
+
+		err = mergeLookupResponses(&op, lookupOps, metadata)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+
+}
+
+func mergeBatchInfo(op *SaveOp, index int, batch []SaveOp, metadata *MetadataCache) error {
+
+	if op.Options == nil {
 		return nil
 	}
-
-	err = loader(lookupOps)
+	// First check to see if they have any reference options
+	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
 	}
 
-	return mergeLookupResponses(request, lookupOps, metadata)
+	for _, lookup := range op.Options.Lookups {
+		fieldMetadata, err := collectionMetadata.GetField(lookup.RefField)
+		if err != nil {
+			return err
+		}
 
+		if fieldMetadata.Type != "REFERENCE" {
+			return errors.New("Can only lookup on reference field: " + lookup.RefField)
+		}
+
+		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		if err != nil {
+			return err
+		}
+
+		refCollectionName := refCollectionMetadata.GetFullName()
+
+		matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
+
+		// Check to see if any of the ops in front of me have my ref's collection Name
+		for i := 0; i < index; i++ {
+			if batch[i].CollectionName == refCollectionName {
+				// Make a map of all the items that could be referenced by id template
+				template, err := NewFieldChanges(refCollectionMetadata.IDFormat, refCollectionMetadata, metadata)
+				if err != nil {
+					return err
+				}
+
+				if template == nil {
+					return errors.New("Cannot pre-merge without id format metadata")
+				}
+
+				lookupResult := map[string]bool{}
+
+				for _, item := range *batch[i].Inserts {
+					id, err := templating.Execute(template, item.FieldChanges)
+					if err != nil {
+						return err
+					}
+					lookupResult[id] = true
+				}
+
+				for _, change := range *op.Inserts {
+
+					keyRefInterface, err := change.FieldChanges.GetField(lookup.RefField)
+					if err != nil {
+						return err
+					}
+					keyRef := keyRefInterface.(map[string]interface{})
+					keyVal := keyRef[matchField].(string)
+					match, ok := lookupResult[keyVal]
+					if ok && match {
+						err = change.FieldChanges.SetField(fieldMetadata.GetFullName(), map[string]interface{}{
+							refCollectionMetadata.IDField: keyVal,
+						})
+						if err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+
+	}
+	return nil
 }
 
 func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*LoadOp, error) {
@@ -45,7 +136,51 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		return nil, err
 	}
 
-	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
+	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
+	matchTemplate := getStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
+
+	template, err := NewFieldChanges(matchTemplate, refCollectionMetadata, metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	if template == nil {
+		return nil, errors.New("Cannot get reference op without id format metadata")
+	}
+
+	// Go through all the changes and get a list of the upsert keys
+	ids := []string{}
+	for _, change := range *request.Inserts {
+		matchKeyValue, err := change.FieldChanges.GetField(lookup.RefField)
+		if err != nil {
+			continue
+		}
+
+		matchKeyValueItem := Item(matchKeyValue.(map[string]interface{}))
+
+		// check to see if this item already has its id field set.
+		// if so, we can just skip checking for it.
+		idFieldValue, err := matchKeyValueItem.GetField(refCollectionMetadata.IDField)
+		if err == nil && idFieldValue != "" {
+			continue
+		}
+
+		referenceKeyValue, err := templating.Execute(template, &matchKeyValueItem)
+		if err != nil {
+			return nil, err
+		}
+
+		if referenceKeyValue == "" {
+			continue
+		}
+
+		ids = append(ids, referenceKeyValue)
+	}
+
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	return &LoadOp{
 		CollectionName: fieldMetadata.ReferencedCollection,
 		WireName:       request.WireName,
@@ -58,9 +193,13 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 			},
 		},
 		Collection: &Collection{},
-		// TODO: This is incomplete. We need to set the load
-		// request conditions from the match fields
-		Conditions: []LoadRequestCondition{},
+		Conditions: []LoadRequestCondition{
+			{
+				Field:    matchField,
+				Operator: "IN",
+				Value:    ids,
+			},
+		},
 	}, nil
 }
 
@@ -77,29 +216,60 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 
 	if options.Upsert != nil {
 		// If we have a match field option, use that, otherwise, use the name field
-		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.NameField)
+		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.IDField)
+		matchTemplate := getStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
 
-		lookupRequests = append(lookupRequests, LoadOp{
-			CollectionName: request.CollectionName,
-			WireName:       request.WireName,
-			Fields: []LoadRequestField{
-				{
-					ID: collectionMetadata.IDField,
+		template, err := NewFieldChanges(matchTemplate, collectionMetadata, metadata)
+		if err != nil {
+			return nil, err
+		}
+
+		// Go through all the changes and get a list of the upsert keys
+		ids := []string{}
+		for _, change := range *request.Inserts {
+
+			upsertKeyStringValue, err := templating.Execute(template, change.FieldChanges)
+			if err != nil {
+				continue
+			}
+
+			if upsertKeyStringValue == "" {
+				continue
+			}
+			ids = append(ids, upsertKeyStringValue)
+		}
+
+		if len(ids) > 0 {
+
+			lookupRequests = append(lookupRequests, LoadOp{
+				CollectionName: request.CollectionName,
+				WireName:       request.WireName,
+				Fields: []LoadRequestField{
+					{
+						ID: collectionMetadata.IDField,
+					},
+					{
+						ID: upsertKey,
+					},
 				},
-				{
-					ID: upsertKey,
+				Collection: &Collection{},
+				Conditions: []LoadRequestCondition{
+					{
+						Field:    upsertKey,
+						Operator: "IN",
+						Value:    ids,
+					},
 				},
-			},
-			Collection: &Collection{},
-			// TODO: This is incomplete. We need to set the load
-			// request conditions from the match fields
-			Conditions: []LoadRequestCondition{},
-		})
+			})
+		}
 	}
 	for _, lookup := range request.Options.Lookups {
 		referenceLookup, err := getReferenceLookupOp(request, lookup, collectionMetadata, metadata)
 		if err != nil {
 			return nil, err
+		}
+		if referenceLookup == nil {
+			continue
 		}
 		lookupRequests = append(lookupRequests, *referenceLookup)
 	}
@@ -127,13 +297,13 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 
 func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
-	matchField := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
-	lookupResult, err := getLookupResultMap(op, matchField)
+	upsertKey := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
+	matchTemplate := getStringWithDefault(options.MatchTemplate, collectionMetadata.IDFormat)
+
+	lookupResult, err := getLookupResultMap(op, upsertKey)
 	if err != nil {
 		return err
 	}
-
-	matchTemplate := getStringWithDefault(options.MatchTemplate, collectionMetadata.IDFormat)
 
 	template, err := NewFieldChanges(matchTemplate, collectionMetadata, metadata)
 	if err != nil {
@@ -190,7 +360,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		return err
 	}
 
-	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.NameField)
+	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
 
 	lookupResult, err := getLookupResultMap(op, matchField)
 	if err != nil {

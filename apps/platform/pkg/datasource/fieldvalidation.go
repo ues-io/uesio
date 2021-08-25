@@ -178,11 +178,15 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 }
 
 // TODO:
-// 1. Split change items, populate data
+// 0. Perform lookups
+// 1. Split change items into updates/inserts/deletes, populate data
 // 2. Hydrate update values with full info
 // 3. Run Before bots
 // 4. Run validations
 // 5. Check permissions
+// 6. Actually do the save
+// 7. Run After bots
+// 8. Return results
 
 //PopulateAndValidate function
 func PopulateAndValidate(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.ChangeItems, *adapt.ChangeItems, *adapt.ChangeItems, error) {
