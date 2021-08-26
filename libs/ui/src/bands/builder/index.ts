@@ -51,6 +51,10 @@ type YamlUpdatePayload = {
 	yaml: YamlDoc
 }
 
+type CloneDefinitionPayload = {
+	path: string
+}
+
 const builderSlice = createSlice({
 	name: "builder",
 	initialState: {} as BuilderState,
@@ -59,6 +63,14 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<SetDefinitionPayload>
 		) => {
+			state.lastModifiedNode = payload.path
+		},
+		//
+		cloneDefinition: (
+			state,
+			{ payload }: PayloadAction<CloneDefinitionPayload>
+		) => {
+			// nothing actually happens here, just something for others to listen to.
 			state.lastModifiedNode = payload.path
 		},
 		addDefinition: (
@@ -201,6 +213,7 @@ export const {
 	setDragNode,
 	setDropNode,
 	setDefinition,
+	cloneDefinition,
 	addDefinition,
 	addDefinitionPair,
 	removeDefinition,
@@ -210,4 +223,14 @@ export const {
 	save,
 	cancel,
 } = builderSlice.actions
+export {
+	CloneDefinitionPayload,
+	SetDefinitionPayload,
+	AddDefinitionPayload,
+	AddDefinitionPairPayload,
+	RemoveDefinitionPayload,
+	MoveDefinitionPayload,
+	ChangeDefinitionKeyPayload,
+	YamlUpdatePayload,
+}
 export default builderSlice.reducer

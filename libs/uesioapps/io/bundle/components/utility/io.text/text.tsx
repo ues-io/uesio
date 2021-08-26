@@ -26,7 +26,6 @@ const Text: FunctionComponent<TextProps> = (props) => {
 				}),
 				textAlign: align,
 				verticalAlign: "inherit",
-				display: "block",
 			},
 		},
 		props
