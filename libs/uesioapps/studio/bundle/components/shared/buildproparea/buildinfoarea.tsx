@@ -1,7 +1,5 @@
 import { FunctionComponent } from "react"
-
-import { definition, builder, styles } from "@uesio/ui"
-import { component } from "@uesio/ui"
+import { definition, builder, styles, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	propsDef: builder.BuildPropertiesDefinition
