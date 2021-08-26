@@ -36,6 +36,10 @@ type ColumnDefinition = {
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
+	information: {
+		description: "Table",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
 	properties: [
 		{

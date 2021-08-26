@@ -230,6 +230,45 @@ const getPropertiesDefinitionFromPath = (
 		}
 	}
 
+	//TO-DO ABEL this added by me
+	if (metadataType === "componenttype") {
+		return getPropertiesDefinition(metadataItem)
+	}
+	// if (metadataType === "componenttype") {
+	// 	console.log("componenttype", metadataType)
+	// 	const BuildPropeDef = getPropertiesDefinition(metadataItem)
+	// 	console.log("BuildPropeDef", BuildPropeDef)
+	// 	if (BuildPropeDef.information) {
+	// 		const description = BuildPropeDef.information.description
+	// 			? BuildPropeDef.information.description
+	// 			: "No description found for this component."
+
+	// 		const link = BuildPropeDef.information.link
+	// 			? BuildPropeDef.information.link
+	// 			: "No link found for this component."
+
+	// 		return {
+	// 			title: BuildPropeDef.title,
+	// 			defaultDefinition: () => ({}),
+	// 			properties: [
+	// 				{
+	// 					name: "Description",
+	// 					type: "READONLY",
+	// 					label: "Description",
+	// 					value: description,
+	// 				},
+	// 				{
+	// 					name: "Documentation",
+	// 					type: "READONLY",
+	// 					label: "Documentation",
+	// 					value: link,
+	// 				},
+	// 			],
+	// 			sections: [],
+	// 		}
+	// 	}
+	// }
+
 	return undefined
 }
 

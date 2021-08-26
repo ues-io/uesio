@@ -18,6 +18,10 @@ interface ListProps extends definition.BaseProps {
 
 const ListPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "List",
+	information: {
+		description: "List",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
 	properties: [
 		{

@@ -12,6 +12,10 @@ interface DeckProps extends definition.BaseProps {
 
 const DeckPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Deck",
+	information: {
+		description: "Deck",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],

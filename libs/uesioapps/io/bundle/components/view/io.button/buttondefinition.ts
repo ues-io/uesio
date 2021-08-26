@@ -11,6 +11,10 @@ interface ButtonProps extends definition.BaseProps {
 
 const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Button",
+	information: {
+		description: "Just a button",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({
 		text: "New Button",
 	}),

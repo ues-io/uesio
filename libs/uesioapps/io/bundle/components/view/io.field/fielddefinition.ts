@@ -34,6 +34,10 @@ type RendererProps = {
 
 const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Field",
+	information: {
+		description: "Just a Field",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({}),
 	properties: [
 		{

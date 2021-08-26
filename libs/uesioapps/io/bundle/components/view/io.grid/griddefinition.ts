@@ -13,6 +13,10 @@ interface GridProps extends definition.BaseProps {
 
 const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Grid",
+	information: {
+		description: "Grid",
+		link: "https://docs.ues.io/",
+	},
 	defaultDefinition: () => ({}),
 	properties: [
 		{

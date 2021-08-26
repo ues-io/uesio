@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react"
 import { component, hooks } from "@uesio/ui"
 import BuildPropArea from "./buildproparea/buildproparea"
+import BuildInfoArea from "./buildproparea/buildinfoarea"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 
@@ -11,6 +12,7 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { propsDef, path, context, valueAPI, className } = props
+	const [metadataType] = uesio.builder.useSelectedNode()
 
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
@@ -50,14 +52,22 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			className={className}
 			context={context}
 		>
-			{propsDef && (
-				<BuildPropArea
-					path={path}
-					valueAPI={valueAPI}
-					context={context}
-					propsDef={propsDef}
-				/>
-			)}
+			{metadataType !== "componenttype"
+				? propsDef && (
+						<BuildPropArea
+							path={path}
+							valueAPI={valueAPI}
+							context={context}
+							propsDef={propsDef}
+						/>
+				  )
+				: propsDef && (
+						<BuildInfoArea
+							path={path}
+							context={context}
+							propsDef={propsDef}
+						/>
+				  )}
 		</ScrollPanel>
 	)
 }

@@ -69,7 +69,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												""
 											),
 										key: indexTag,
-										tooltip: propDef.description,
 										context,
 										selected: isSelected,
 									}
