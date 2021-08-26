@@ -44,9 +44,9 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 
 	tenantID := credentials.GetTenantID()
 
-	for _, request := range requests {
+	batch := client.Batch()
 
-		batch := client.Batch()
+	for _, request := range requests {
 
 		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 		if err != nil {
@@ -59,15 +59,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		}
 
 		collection := client.Collection(collectionName)
-
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return loadMany(ctx, client, ops, metadata, tenantID)
-		}, &request, metadata)
-		if err != nil {
-			return err
-		}
 
 		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 			if adapt.IsReference(fieldMetadata.Type) {
@@ -132,10 +123,11 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
-		_, err = batch.Commit(ctx)
-		if err != nil {
-			return err
-		}
+	}
+
+	_, err = batch.Commit(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil
