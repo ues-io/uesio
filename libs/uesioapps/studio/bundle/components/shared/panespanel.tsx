@@ -13,7 +13,8 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.useSelectedNode()
 	const metadataType = "viewdef"
 	const metadataItem = uesio.getViewDefId() || ""
-	const localPath = '["panes"]'
+	const localPath = '["panels"]'
+
 	const path = component.path.makeFullPath(
 		metadataType,
 		metadataItem,
@@ -26,7 +27,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			header={
 				<TitleBar
 					variant="io.primary"
-					title={"Panes"}
+					title={"Panels"}
 					context={context}
 					actions={
 						<IconButton
@@ -40,9 +41,9 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										width: 400,
 										components: [],
 									},
-									"newpane" +
+									"newpanel" +
 										(Math.floor(Math.random() * 60) + 1),
-									"pane"
+									"panel"
 								)
 							}
 						/>
@@ -54,7 +55,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{Object.keys(def || {}).map((key: string, index) => {
-					const panePath = `${localPath}["${key}"]`
+					const panelPath = `${localPath}["${key}"]`
 
 					return (
 						<PropNodeTag
@@ -63,7 +64,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								uesio.builder.setSelectedNode(
 									metadataType,
 									metadataItem,
-									panePath
+									panelPath
 								)
 							}
 							icon="power"
@@ -71,7 +72,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							selected={
 								selectedMetadataType === metadataType &&
 								selectedMetadataItem === metadataItem &&
-								panePath === selectedNode
+								panelPath === selectedNode
 							}
 							context={context}
 						/>

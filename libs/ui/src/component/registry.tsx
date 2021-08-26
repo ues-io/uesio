@@ -186,11 +186,8 @@ const getPropertiesDefinitionFromPath = (
 		if (pathArray[0] === "wires") {
 			return defs.wireDef
 		}
-		if (pathArray[0] === "panes") {
-			// const builderComponents = component.registry.getItems({
-			// 	trait: "uesio.standalone",
-			// })
-			return defs.paneDef
+		if (pathArray[0] === "panels") {
+			return defs.panelDef
 		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {

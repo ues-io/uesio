@@ -11,7 +11,7 @@ const trimPath = (pathArray: string[]): string[] => {
 	}
 	// Converts any path starting with ["wires|modals"] into just the first two
 	// elements of the path.
-	if (pathArray[0] === "wires" || pathArray[0] === "panes") {
+	if (pathArray[0] === "wires" || pathArray[0] === "panels") {
 		return pathArray.slice(0, 2)
 	}
 	const nextItem = pathArray[size - 1]
@@ -61,6 +61,9 @@ const trimPathToComponent = (path: string | string[]) => {
 	const trimmedPath = trimPath(pathArray)
 	return fromPath(trimmedPath)
 }
+
+const pathArray = (path: string | string[]): string[] =>
+	Array.isArray(path) ? path : toPath(path)
 
 // Unwraps a definition from its key
 const getDefinitionKey = (definition: DefinitionMap) =>
@@ -188,6 +191,7 @@ const getIndexFromPath = (path: string) => {
 }
 
 export {
+	pathArray,
 	calculateNewPathAheadOfTime,
 	parseKey,
 	parseVariantKey,

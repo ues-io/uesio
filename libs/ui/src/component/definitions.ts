@@ -1,6 +1,6 @@
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 
-export const paneDef: BuildPropertiesDefinition = {
+export const panelDef: BuildPropertiesDefinition = {
 	title: "Pane",
 	defaultDefinition: () => ({}),
 	properties: [
@@ -63,4 +63,4 @@ export const wireDef: BuildPropertiesDefinition = {
 	],
 }
 
-export default { paneDef, wireDef }
+export default { panelDef, wireDef }
