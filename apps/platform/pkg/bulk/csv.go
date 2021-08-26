@@ -51,8 +51,9 @@ func getLookups(mappings []meta.FieldMapping, collectionMetadata *adapt.Collecti
 		}
 		if fieldMetadata.Type == "REFERENCE" {
 			lookups = append(lookups, adapt.Lookup{
-				RefField:   mapping.FieldName,
-				MatchField: mapping.MatchField,
+				RefField:      mapping.FieldName,
+				MatchField:    mapping.MatchField,
+				MatchTemplate: "${" + mapping.MatchField + "}",
 			})
 		}
 	}

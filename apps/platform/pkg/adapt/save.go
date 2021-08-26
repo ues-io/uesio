@@ -30,8 +30,9 @@ type ChangeItem struct {
 
 // Lookup struct
 type Lookup struct {
-	RefField   string // The name of the reference field to lookup
-	MatchField string // The name of the field to use to match based on provided data
+	RefField      string // The name of the reference field to lookup
+	MatchField    string // The name of the field to use to match based on provided data
+	MatchTemplate string // The template to use against the provided change data to equal the match field
 }
 
 // UpsertOptions struct
@@ -286,7 +287,15 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 		}
 
 		if IsReference(fieldMetadata.Type) {
-			return SetReferenceData(val, fieldMetadata, metadata)
+			fk, err := SetReferenceData(val, fieldMetadata, metadata)
+			if err != nil {
+				return nil, err
+			}
+			fkString, ok := fk.(string)
+			if !ok || fkString == "" {
+				return nil, errors.New("Bad foreign key: " + key + " on collection: " + collectionMetadata.GetFullName() + " for template: " + templateString)
+			}
+			return fkString, nil
 		}
 
 		return val, nil
