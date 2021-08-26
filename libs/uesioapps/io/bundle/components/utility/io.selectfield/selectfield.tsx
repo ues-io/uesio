@@ -52,6 +52,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 			<select
 				className={classes.input}
 				onChange={(e) => setValue(e.target.value)}
+				value={value}
 			>
 				{options?.map((option) => (
 					<option value={option.value}>{option.label}</option>

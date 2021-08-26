@@ -57,6 +57,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 						)
 					)
 				}}
+				value={value}
 			>
 				{options?.map((option) => (
 					<option value={option.value}>{option.label}</option>
