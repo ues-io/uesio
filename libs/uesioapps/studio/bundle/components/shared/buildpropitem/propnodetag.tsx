@@ -49,9 +49,6 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 					},
 				},
 			},
-			popperPaper: {
-				overflow: "hidden",
-			},
 			title: {
 				textTransform: "uppercase",
 			},
@@ -71,6 +68,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
+				isSelected={selected}
 			>
 				<span className={classes.title}>{title}</span>
 
