@@ -72,7 +72,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										tooltip: propDef.description,
 										context,
 										selected: isSelected,
-										highlightWhenSelected: false,
 									}
 									// Loop over the variants for this component
 
