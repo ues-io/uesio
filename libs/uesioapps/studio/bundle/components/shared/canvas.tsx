@@ -1,13 +1,17 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent, useRef, RefObject } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 const Icon = component.registry.getUtility("io.icon")
 
+let panelsDomNodeBuilder: RefObject<HTMLDivElement> | undefined = undefined
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
+	panelsDomNodeBuilder = useRef<HTMLDivElement>(null)
+
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				overflowY: "scroll",
 				padding: "60px",
+				position: "relative",
 				...styles.getBackgroundStyles(
 					{
 						image: "uesio.whitesplash",
@@ -21,6 +25,16 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				minHeight: "100vh",
 				padding: "0.05px", // Hack to prevent margin collapse
 				position: "relative",
+			},
+
+			panelContainer: {
+				position: "absolute",
+				left: "0",
+				top: "0",
+				bottom: "0",
+				right: "0",
+				zIndex: 1,
+				pointerEvents: "none",
 			},
 
 			noContent: {
@@ -107,6 +121,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				onDragOver={onDragOver}
 				className={classes.root}
 			>
+				<div
+					className={classes.panelContainer}
+					id="builderPanelsContainer"
+				/>
+
 				<div className={classes.inner}>
 					<component.View
 						context={props.context}

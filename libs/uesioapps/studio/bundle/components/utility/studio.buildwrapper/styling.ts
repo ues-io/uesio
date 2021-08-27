@@ -23,7 +23,7 @@ export default (
 	return {
 		root: {
 			cursor: "pointer",
-			position: "relative",
+			// position: "relative",
 			userSelect: "none",
 			...(isStructureView && {
 				border: `1px solid ${borderColor}`,
@@ -79,8 +79,8 @@ export default (
 			...(isStructureView && {
 				padding: "8px",
 			}),
-			position: "relative",
-			overflow: "auto",
+			// position: "relative",
+			overflow: "initial",
 		},
 	}
 }

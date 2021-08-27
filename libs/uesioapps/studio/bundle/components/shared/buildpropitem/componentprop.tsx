@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import BuildPropArea from "../buildproparea/buildproparea"
 
@@ -8,11 +8,16 @@ const SelectField = component.registry.getUtility("io.selectfield")
 
 const ComponentProp: FC<PropRendererProps> = (props) => {
 	const { descriptor, valueAPI, context, path } = props
-
+	const uesio = hooks.useUesio(props)
 	const parentPath = component.path.getParentPath(path || "")
-	const selectedPanelComponent = valueAPI.get(parentPath) as string
-	const selectedPanelComponentName = Object.keys(selectedPanelComponent)[0]
-
+	const selectedPanelComponentContainer = valueAPI.get(parentPath) as string
+	const selectedPanelComponent = Object.values(
+		selectedPanelComponentContainer
+	)[0] as any
+	const selectedPanelComponentName = Object.keys(
+		selectedPanelComponentContainer
+	)[0]
+	console.log({ selectedPanelComponent })
 	const propsDef = component.registry.getPropertiesDefinition(
 		selectedPanelComponentName
 	)
@@ -26,6 +31,21 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 			label: `${namespace}.${name}`,
 		})
 	)
+
+	const panelId = selectedPanelComponent.id
+
+	const [togglePanel, portals] = uesio.signal.useHandler([
+		{
+			signal: "panel/TOGGLE",
+			panel: panelId,
+		},
+	])
+
+	useEffect(() => {
+		togglePanel && togglePanel()
+	}, [])
+
+	console.log({ portals })
 
 	const targetPath = [
 		...component.path.pathArray(path || "").slice(0, -1),
@@ -46,6 +66,9 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 			) : (
 				<p>No available panels found</p>
 			)}
+
+			<button onClick={togglePanel}>Open Panel</button>
+			{portals}
 
 			{propsDef ? (
 				<BuildPropArea

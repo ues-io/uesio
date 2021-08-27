@@ -4,6 +4,5 @@ import { createPortal } from "react-dom"
 import usePortal from "../hooks/useportal"
 
 const Panel: FunctionComponent<BaseProps> = (props) =>
-	createPortal(props.children, usePortal())
-
+	createPortal(props.children, usePortal(props.context.getBuildMode()))
 export default Panel

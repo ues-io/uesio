@@ -20,8 +20,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		localPath
 	)
-	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
-
+	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap[]
 	return (
 		<ScrollPanel
 			header={
@@ -54,12 +53,12 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={className}
 		>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
-				{Object.keys(def || {}).map((key: string, index) => {
-					const panelPath = `${localPath}["${key}"]`
-
+				{def.map((el, index) => {
+					const name = Object.keys(el)[0]
+					const panelPath = `${localPath}["${index}"]`
 					return (
 						<PropNodeTag
-							title={key}
+							title={name}
 							onClick={() =>
 								uesio.builder.setSelectedNode(
 									metadataType,
