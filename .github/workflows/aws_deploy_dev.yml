@@ -70,3 +70,6 @@ jobs:
             - name: Push image to Amazon ECR
               run: |
                   docker push ${{ secrets.ECR_REGISTRY }}/uesio:latest
+                  
+
+ 
