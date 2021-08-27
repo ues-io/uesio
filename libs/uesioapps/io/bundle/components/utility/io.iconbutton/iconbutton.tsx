@@ -25,22 +25,28 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 				display: "block",
 				width: "100%",
 				background: "transparent",
-				...(disabled && { disabled }),
+			},
+			disabled: {
+				opacity: 0.3,
+				cursor: "inherit",
 			},
 		},
 		props
 	)
 	const button = (
-		<button onClick={onClick} className={classes.root}>
+		<button
+			onClick={disabled ? undefined : onClick}
+			className={styles.cx(classes.root, disabled && classes.disabled)}
+		>
 			<Icon size={props.size} context={context} icon={icon} />
 		</button>
 	)
-	return label ? (
+	return label && !disabled ? (
 		<Tooltip text={label} context={context} placement={tooltipPlacement}>
 			{button}
 		</Tooltip>
 	) : (
-		button
+		<div>{button}</div>
 	)
 }
 

@@ -1,19 +1,19 @@
 import { FunctionComponent } from "react"
 import { ActionProps } from "./actiondefinition"
-import { component } from "@uesio/ui"
+import ActionButton from "./actionbutton"
 
-import CloneActionComp from "./componenets/cloneaction"
-import CloneActionMaps from "./maps/cloneaction"
-
-const CloneAction: FunctionComponent<ActionProps> = (props) => {
-	const { path = "" } = props
-	const [metadataType] = component.path.getFullPathParts(path)
-
-	if (metadataType === "wires") {
-		return <CloneActionMaps {...props} />
-	}
-
-	return <CloneActionComp {...props} />
-}
+const CloneAction: FunctionComponent<ActionProps> = ({
+	path = "",
+	valueAPI,
+	action = { label: "copy" },
+	context,
+}) => (
+	<ActionButton
+		title={action.label}
+		onClick={() => valueAPI.clone(path)}
+		icon="copy"
+		context={context}
+	/>
+)
 
 export default CloneAction
