@@ -1,0 +1,14 @@
+name: label
+component: io.text
+label: Label
+definition:
+  uesio.styles:
+    root:
+      color: "#555"
+      fontSize: 8pt
+      padding: "10px"
+      marginRight: "2px"
+      textTransform: uppercase
+      display: inline
+      backgroundColor: "#f5b584"
+      borderRadius: 1.5em

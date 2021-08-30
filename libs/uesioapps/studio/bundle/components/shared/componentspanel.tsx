@@ -1,11 +1,12 @@
 import { FunctionComponent, DragEvent } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component, styles, hooks } from "@uesio/ui"
 
 import ExpandPanel from "./expandpanel"
-import PropNodeTag from "./buildpropitem/propnodetag"
+import ExpandablePropNodeTag from "./buildpropitem/expandablepropnodetag"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const Text = component.registry.getUtility("io.text")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -24,6 +25,15 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 	const builderComponents = component.registry.getBuilderComponents()
+
+	const classes = styles.useUtilityStyles(
+		{
+			wrap: {
+				display: "inline",
+			},
+		},
+		props
+	)
 
 	return (
 		<ScrollPanel
@@ -73,13 +83,40 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										selected: isSelected,
 									}
 									// Loop over the variants for this component
+									const metadata =
+										uesio.builder.useMetadataList(
+											context,
+											"COMPONENTVARIANT",
+											namespace,
+											fullName
+										)
 
+									const variantLabels = Object.keys(
+										metadata || {}
+									).map((key) => {
+										return (
+											// <div
+											// 	draggable={true}
+											// 	data-type={key}
+											// 	className={classes.wrap}
+											// >
+											<Text
+												variant="io.label"
+												text={key}
+												context={context}
+											/>
+											//</div>
+										)
+									})
 									return !isStructureView ? (
-										<PropNodeTag {...sharedProps} />
+										<ExpandablePropNodeTag
+											{...sharedProps}
+										/>
 									) : (
-										<PropNodeTag
+										<ExpandablePropNodeTag
 											{...sharedProps}
 											draggable={fullName}
+											children={variantLabels}
 											icon="drag_indicator"
 										/>
 									)

@@ -6,9 +6,10 @@ interface Props extends definition.BaseProps {
 }
 
 const TextField = component.registry.getUtility("io.textfield")
+const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const BuildInfoArea: FunctionComponent<Props> = (props) => {
-	const { propsDef } = props
+	const { propsDef, context } = props
 	const classes = styles.useStyles(
 		{
 			wrapper: {
@@ -36,17 +37,18 @@ const BuildInfoArea: FunctionComponent<Props> = (props) => {
 		<div className={classes.wrapper}>
 			{!!propsDef?.information && (
 				<div className={classes.propList}>
+					<FieldLabel label={"Variants"} context={context} />
 					<TextField
 						value={propsDef.information?.description}
 						mode="READ"
 						label={"Description"}
-						context={props.context}
-					/>{" "}
+						context={context}
+					/>
 					<TextField
 						value={propsDef.information?.link}
 						mode="READ"
 						label={"Documentation"}
-						context={props.context}
+						context={context}
 					/>
 				</div>
 			)}
