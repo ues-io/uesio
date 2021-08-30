@@ -145,10 +145,51 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const parentPath = getParentPath(payload.toPath)
-	const isArrayClone = isNumberIndex(getKeyAtPath(parentPath))
+	const FromParentPath = getParentPath(payload.toPath)
+	const toParentPath = getParentPath(payload.toPath)
+	const isArrayClone = isNumberIndex(getKeyAtPath(toParentPath))
+
 	if (!isArrayClone) {
-		console.log("Placeholder for map moves")
+		const fromPathStr = payload.fromPath
+		const toPathStr = payload.toPath
+
+		if (FromParentPath !== toParentPath) return
+
+		const fromKey = getKeyAtPath(fromPathStr)
+		const toKey = getKeyAtPath(toPathStr)
+		const definition = get(state.definition, FromParentPath)
+
+		if (!definition || !fromKey || !toKey) return
+
+		const keys = Object.keys(definition)
+		const fromIndex = keys.indexOf(fromKey)
+		const toIndex = keys.indexOf(toKey)
+
+		const swap = (arr: string[], index1: number, index2: number) =>
+			arr.map((el, i) => {
+				if (i === index1) return arr[index2]
+				if (i === index2) return arr[index1]
+				return el
+			})
+
+		const newKeys = swap(keys, fromIndex, toIndex)
+
+		const convertArrayToObject = (array: string[]) => {
+			const initialValue = {}
+			return array.reduce((obj, item) => {
+				return {
+					...obj,
+					[item]: definition[item],
+				}
+			}, initialValue)
+		}
+		const newDefinition = convertArrayToObject(newKeys)
+
+		setDef(state, {
+			path: FromParentPath,
+			definition: newDefinition,
+		})
+
 		return
 	}
 
