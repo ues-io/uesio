@@ -6,9 +6,9 @@ definition:
     root:
       color: "#555"
       fontSize: 8pt
-      padding: "10px"
-      marginRight: "2px"
-      textTransform: uppercase
+      textTransform: "none"
+      padding: "3px"
+      margin: "0 5px 5px 0"
       display: inline
-      backgroundColor: "#f5b584"
+      backgroundColor: "#eee"
       borderRadius: 1.5em
