@@ -5,7 +5,7 @@ function usePortal(isBuilding: boolean) {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)
 	const domNode = {
 		current: isBuilding
-			? document.querySelector("#mamaForPanels")
+			? document.querySelector("#builderPanelsContainer")
 			: panelsDomNode?.current,
 	}
 	if (!domNode.current) console.warn("usePortal error: domNode not found")
