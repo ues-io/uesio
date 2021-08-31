@@ -20,3 +20,5 @@ definition:
     avatar:
       marginLeft: 8px
       color: "#aaa"
+    selected:
+      border: "1px solid $Theme{color.primary}"

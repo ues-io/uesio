@@ -51,15 +51,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			return err
 		}
 
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return loadMany(ctx, client, ops, metadata, tenantID)
-		}, &request, metadata)
-		if err != nil {
-			return err
-		}
-
 		setDataFunc := func(value interface{}, fieldMetadata *adapt.FieldMetadata) (interface{}, error) {
 			if adapt.IsReference(fieldMetadata.Type) {
 				return adapt.SetReferenceData(value, fieldMetadata, metadata)

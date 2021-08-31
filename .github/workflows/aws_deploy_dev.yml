@@ -1,4 +1,4 @@
-name: Deploy to AWS PRODUCTION
+name: Deploy to AWS DEV
 #on:
 #    push:
 #        branches:
@@ -57,15 +57,15 @@ jobs:
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v1
               with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ${{ secrets.AWS_REGION }}
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+                  aws-region: ${{ secrets.AWS_REGION_DEV }}
             - name: Login to Amazon ECR
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@v1
             - name: Tag image to Amazon ECR
               run: |
-                  docker tag uesio:latest ${{ secrets.ECR_REGISTRY }}/uesio:latest
+                  docker tag uesio:latest ${{ secrets.ECR_REGISTRY_DEV }}/uesio:latest
             - name: Push image to Amazon ECR
               run: |
-                  docker push ${{ secrets.ECR_REGISTRY }}/uesio:latest
+                  docker push ${{ secrets.ECR_REGISTRY_DEV }}/uesio:latest

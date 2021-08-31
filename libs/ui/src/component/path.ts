@@ -113,6 +113,13 @@ const calculateNewPathAheadOfTime = (
 	const fromPathArray = toPath(fromPathStr)
 	const toPathArray = toPath(toPathStr)
 
+	const toParentPath = getParentPath(toPathStr)
+	const isArray = isNumberIndex(getKeyAtPath(toParentPath))
+
+	if (!isArray) {
+		return fromPathStr // For the map type we keep the one selected
+	}
+
 	let index = 0
 	let foundDifferenceBeforeEnd = false
 	while (fromPathArray.length > index && toPathArray.length > index) {
@@ -171,12 +178,15 @@ const makeFullPath = (
 	path: string
 ) => `["${metadataType}"]["${metadataItem}"]${path}`
 
+const isNumberIndex = (index: string | null | undefined) =>
+	index && /^\d+$/.test(index)
+
 // Trims a path to the closest index segment
 const getIndexPath = (path: string) => {
 	const pathArray = toPath(path)
 	while (pathArray.length > 0) {
 		const segment = pathArray.pop()
-		const isIndex = segment && /^\d+$/.test(segment)
+		const isIndex = isNumberIndex(segment)
 		if (isIndex) {
 			return fromPath(pathArray) + `["${segment}"]`
 		}
@@ -208,4 +218,5 @@ export {
 	getDefinitionKey,
 	getFullPathParts,
 	makeFullPath,
+	isNumberIndex,
 }

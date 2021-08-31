@@ -171,11 +171,6 @@ func seed(cmd *cobra.Command, args []string) {
 			Collection: &sites,
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{},
-				Lookups: []adapt.Lookup{
-					{
-						RefField: "uesio.bundle",
-					},
-				},
 			},
 		},
 		{
@@ -190,7 +185,8 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &adapt.UpsertOptions{},
 				Lookups: []adapt.Lookup{
 					{
-						RefField: "studio.app",
+						RefField:   "studio.app",
+						MatchField: "uesio.name",
 					},
 				},
 			},

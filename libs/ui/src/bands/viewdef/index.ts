@@ -22,7 +22,9 @@ import {
 	fromPath,
 	getFullPathParts,
 	getIndexFromPath,
+	getKeyAtPath,
 	getParentPath,
+	isNumberIndex,
 } from "../../component/path"
 import {
 	setDefinition,
@@ -74,16 +76,27 @@ const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
  * We might want to extend the functionality to themes and variants.
  *  * @param path - path of the cloned component, the new component will be a direct sibling
  */
-const cloneDef = (state: PlainViewDef, payload: CloneDefinitionPayload) => {
-	const { path } = payload
+const cloneDef = (state: PlainViewDef, { path }: CloneDefinitionPayload) => {
 	const parentPath = getParentPath(path)
-	const index = getIndexFromPath(parentPath)
-	if (!index && index !== 0) return
-	addDef(state, {
-		path: getParentPath(parentPath),
-		definition: get(state.definition, toPath(parentPath)),
-		index: index + 1,
-	})
+	const isArrayClone = isNumberIndex(getKeyAtPath(parentPath))
+	if (isArrayClone) {
+		const index = getIndexFromPath(parentPath)
+		if (!index && index !== 0) return
+		addDef(state, {
+			path: getParentPath(parentPath),
+			definition: get(state.definition, toPath(parentPath)),
+			index: index + 1,
+		})
+	} else {
+		const newKey =
+			(getKeyAtPath(path) || "") + (Math.floor(Math.random() * 60) + 1)
+
+		addDefPair(state, {
+			path: parentPath,
+			definition: get(state.definition, toPath(path)),
+			key: newKey,
+		})
+	}
 }
 
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
@@ -132,6 +145,46 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
+	const fromParentPath = getParentPath(payload.toPath)
+	const toParentPath = getParentPath(payload.toPath)
+	const isArrayClone = isNumberIndex(getKeyAtPath(toParentPath))
+
+	if (!isArrayClone) {
+		const fromPathStr = payload.fromPath
+		const toPathStr = payload.toPath
+
+		if (fromParentPath !== toParentPath) return
+
+		const fromKey = getKeyAtPath(fromPathStr)
+		const toKey = getKeyAtPath(toPathStr)
+		const definition = get(state.definition, fromParentPath)
+
+		if (!definition || !fromKey || !toKey) return
+
+		const keys = Object.keys(definition)
+		const fromIndex = keys.indexOf(fromKey)
+		const toIndex = keys.indexOf(toKey)
+
+		const newKeys = keys.map((el, i) => {
+			if (i === fromIndex) return keys[toIndex]
+			if (i === toIndex) return keys[fromIndex]
+			return el
+		})
+
+		const newDefinition = newKeys.reduce(
+			(obj, item) => ({
+				...obj,
+				[item]: definition[item],
+			}),
+			{}
+		)
+
+		return setDef(state, {
+			path: fromParentPath,
+			definition: newDefinition,
+		})
+	}
+
 	const fromPathStr = payload.fromPath
 	const fromPathArray = toPath(fromPathStr)
 	fromPathArray.splice(-1)

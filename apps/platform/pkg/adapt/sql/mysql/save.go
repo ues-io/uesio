@@ -1,7 +1,6 @@
 package mysql
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 
@@ -13,8 +12,6 @@ import (
 
 // Save function
 func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
-
-	ctx := context.Background()
 
 	db, err := connect()
 	if err != nil {
@@ -42,15 +39,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		}
 
 		idFieldDBName, err := getDBFieldName(idFieldMetadata)
-		if err != nil {
-			return err
-		}
-
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return loadMany(ctx, db, ops, metadata)
-		}, &request, metadata)
 		if err != nil {
 			return err
 		}
