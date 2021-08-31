@@ -1,16 +1,15 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FC, DragEvent, useState } from "react"
 import { definition, component, styles, hooks } from "@uesio/ui"
 
 import ExpandPanel from "./expandpanel"
 import ExpandablePropNodeTag from "./buildpropitem/expandablepropnodetag"
-
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
-const Text = component.registry.getUtility("io.text")
 
-const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
+	const [expandedComponent, setExpandedComponent] = useState()
 	const isStructureView = uesio.builder.useIsStructureView()
 	const selectedItem = uesio.builder.useSelectedItem()
 	const selectedType = uesio.builder.useSelectedType()
@@ -24,12 +23,13 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDragNode()
 		uesio.builder.clearDropNode()
 	}
+
 	const builderComponents = component.registry.getBuilderComponents()
 
 	const classes = styles.useUtilityStyles(
 		{
 			wrap: {
-				display: "inline",
+				margin: "0 5px 5px 0",
 			},
 		},
 		props
@@ -69,8 +69,8 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									const isSelected =
 										selectedType === "componenttype" &&
 										selectedItem === fullName
+
 									const sharedProps = {
-										draggable: fullName,
 										title: componentName,
 										onClick: () =>
 											uesio.builder.setSelectedNode(
@@ -80,7 +80,13 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 											),
 										key: indexTag,
 										context,
+										icon: isStructureView
+											? "drag_indicator"
+											: "",
 										selected: isSelected,
+										draggable: isStructureView
+											? fullName
+											: undefined,
 									}
 									// Loop over the variants for this component
 									const metadata =
@@ -93,31 +99,28 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 									const variantLabels = Object.keys(
 										metadata || {}
-									).map((key) => {
-										return (
-											// <div
-											// 	draggable={true}
-											// 	data-type={key}
-											// 	className={classes.wrap}
-											// >
-											<Text
-												variant="io.label"
-												text={key}
-												context={context}
+									).map((key) => (
+										<div
+											draggable={true}
+											data-type={key}
+											className={classes.wrap}
+										>
+											<ExpandablePropNodeTag
+												{...sharedProps}
+												title={
+													key
+														.split(".")
+														.splice(-2)
+														.join(".") || ""
+												}
 											/>
-											//</div>
-										)
-									})
-									return !isStructureView ? (
-										<ExpandablePropNodeTag
-											{...sharedProps}
-										/>
-									) : (
+										</div>
+									))
+									return (
 										<ExpandablePropNodeTag
 											{...sharedProps}
 											draggable={fullName}
 											children={variantLabels}
-											icon="drag_indicator"
 										/>
 									)
 								}
