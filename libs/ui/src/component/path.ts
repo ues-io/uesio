@@ -113,6 +113,13 @@ const calculateNewPathAheadOfTime = (
 	const fromPathArray = toPath(fromPathStr)
 	const toPathArray = toPath(toPathStr)
 
+	const toParentPath = getParentPath(toPathStr)
+	const isArray = isNumberIndex(getKeyAtPath(toParentPath))
+
+	if (!isArray) {
+		return fromPathStr // For the map type we keep the one selected
+	}
+
 	let index = 0
 	let foundDifferenceBeforeEnd = false
 	while (fromPathArray.length > index && toPathArray.length > index) {
