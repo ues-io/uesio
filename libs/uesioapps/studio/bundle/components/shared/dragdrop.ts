@@ -1,21 +1,14 @@
 import { hooks, component } from "@uesio/ui"
 
-const deconstructPath = (dragNode: string): boolean => {
-	return true
-}
-
 const handleDrop = (
 	dragNode: string,
 	dropNode: string,
 	dropIndex: number,
 	uesio: hooks.Uesio
 ): void => {
-	console.log("DRAG&DROP")
-	console.log({ dragNode, dropNode, dropIndex })
-
 	const [metadataType, metadataItemWithVariant] =
 		component.path.getFullPathParts(dragNode)
-	//const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
+
 	const [componentNamespace, componentName, variantNamespace, variantName] =
 		component.path.parseVariantKey(metadataItemWithVariant)
 
@@ -33,8 +26,6 @@ const handleDrop = (
 		console.log("No prop def found")
 		return
 	}
-
-	//const [metadataType] = component.path.getFullPathParts(dragNode)
 
 	switch (metadataType) {
 		case "field": {
@@ -94,37 +85,18 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	console.log("dragNode", dragNode)
-
 	const [metadataType, metadataItemWithVariant] =
 		component.path.getFullPathParts(dragNode)
 
-	console.log("isDropAllowed", { metadataType, metadataItemWithVariant })
-
-	// const [componentNamespace, componentName, variantNamespace, variantName] =
-	// 	metadataItemWithVariant.split(".")
-
 	const [componentNamespace, componentName, variantNamespace, variantName] =
 		component.path.parseVariantKey(metadataItemWithVariant)
-
-	console.log("split", {
-		componentNamespace,
-		componentName,
-		variantNamespace,
-		variantName,
-	})
 
 	const fullPath = component.path.makeFullPath(
 		metadataType,
 		componentNamespace + "." + componentName,
 		""
 	)
-
-	console.log("fullPath", fullPath)
-
 	const propDef = component.registry.getPropertiesDefinitionFromPath(fullPath)
-
-	console.log("propDef", propDef)
 
 	if (propDef) {
 		// The component should always have the trait of its name

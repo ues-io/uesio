@@ -1,16 +1,14 @@
-import React, { FC, useState, useEffect, useRef } from "react"
+import React, { FC, useState, useRef } from "react"
 import { component, context, styles } from "@uesio/ui"
 
 type Props = {
 	title: string
 	icon?: string
 	iconColor?: string
-	selected?: boolean
 	onClick?: () => void
 	draggable?: string
 	context: context.Context
 	tooltip?: string
-	// children: React.ReactNode[]
 }
 
 const Icon = component.registry.getUtility("io.icon")
@@ -18,18 +16,10 @@ const Tile = component.registry.getUtility("io.tile")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const ExpandablePropNodeTag: FC<Props> = (props) => {
-	const {
-		title,
-		onClick,
-		draggable,
-		icon,
-		iconColor,
-		tooltip,
-		selected,
-		context,
-	} = props
+	const { title, onClick, draggable, icon, context } = props
 	const children = props.children as React.ReactNode[]
 	const expandBox = useRef<HTMLDivElement>(null)
+	const [expanded, setExpanded] = useState(false)
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -40,7 +30,6 @@ const ExpandablePropNodeTag: FC<Props> = (props) => {
 				border: "1px solid #eee",
 				borderRadius: "4px",
 				marginBottom: "4px",
-
 				".icon": {
 					cursor: "initial",
 					opacity: 0,
@@ -48,7 +37,7 @@ const ExpandablePropNodeTag: FC<Props> = (props) => {
 					"&:hover": {
 						opacity: 1,
 					},
-					transform: `rotate(${selected ? "18" : ""}0deg)`,
+					transform: `rotate(${expanded ? "18" : ""}0deg)`,
 				},
 			},
 			title: {
@@ -58,32 +47,37 @@ const ExpandablePropNodeTag: FC<Props> = (props) => {
 			badgeContainer: {
 				display: "flex",
 				padding: "0 8px",
-				opacity: selected ? "1" : "0",
+				opacity: expanded ? "1" : "0",
 				flexFlow: "row wrap",
-				maxHeight: selected ? "300px" : "0px",
+				maxHeight: expanded ? "300px" : "0px",
 				transition: "opacity 0.125s ease, max-height 0.3s ease",
 			},
 		},
 		props
 	)
-
 	const expandable = children && children.length > 0
+
+	const triggerState = () => {
+		setExpanded(!expanded)
+		onClick && onClick()
+	}
+
 	return (
 		<div
 			className={classes.root}
-			draggable={!selected && !!draggable}
-			data-type={draggable}
+			draggable={!expanded && !!draggable}
+			data-type={!expanded && draggable}
 		>
 			<Tile
 				variant="io.tile.studio.expandablepropnodetag"
 				avatar={
 					<Icon
-						icon={selected && expandable ? "invert_colors" : icon}
+						icon={expanded && expandable ? "invert_colors" : icon}
 						context={context}
 					/>
 				}
 				context={context}
-				onClick={onClick}
+				onClick={triggerState}
 			>
 				<span className={classes.title}>{title}</span>
 				{expandable && (
@@ -98,7 +92,7 @@ const ExpandablePropNodeTag: FC<Props> = (props) => {
 			</Tile>
 
 			<div ref={expandBox} className={classes.badgeContainer}>
-				{selected && expandable && children}
+				{expanded && children}
 			</div>
 		</div>
 	)

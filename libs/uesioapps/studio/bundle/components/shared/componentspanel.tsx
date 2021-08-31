@@ -1,4 +1,4 @@
-import { FC, DragEvent, useState } from "react"
+import { FC, DragEvent } from "react"
 import { definition, component, styles, hooks } from "@uesio/ui"
 
 import ExpandPanel from "./expandpanel"
@@ -9,7 +9,6 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
-	const [expandedComponent, setExpandedComponent] = useState()
 	const isStructureView = uesio.builder.useIsStructureView()
 	const selectedItem = uesio.builder.useSelectedItem()
 	const selectedType = uesio.builder.useSelectedType()
@@ -66,10 +65,6 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 							{Object.entries(components).map(
 								([componentName, propDef], indexTag) => {
 									const fullName = `${namespace}.${componentName}`
-									const isSelected =
-										selectedType === "componenttype" &&
-										selectedItem === fullName
-
 									const sharedProps = {
 										title: componentName,
 										onClick: () =>
@@ -83,7 +78,6 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 										icon: isStructureView
 											? "drag_indicator"
 											: "",
-										selected: isSelected,
 										draggable: isStructureView
 											? fullName
 											: undefined,
@@ -100,26 +94,21 @@ const ComponentsPanel: FC<definition.UtilityProps> = (props) => {
 									const variantLabels = Object.keys(
 										metadata || {}
 									).map((key) => (
-										<div
-											draggable={true}
-											data-type={key}
-											className={classes.wrap}
-										>
-											<ExpandablePropNodeTag
-												{...sharedProps}
-												title={
-													key
-														.split(".")
-														.splice(-2)
-														.join(".") || ""
-												}
-											/>
-										</div>
+										<ExpandablePropNodeTag
+											{...sharedProps}
+											draggable={key}
+											//onClick= TO-DO add OnClick for the kids, something like SetSelectedVariant(key)
+											title={
+												key
+													.split(".")
+													.splice(-2)
+													.join(".") || ""
+											}
+										/>
 									))
 									return (
 										<ExpandablePropNodeTag
 											{...sharedProps}
-											draggable={fullName}
 											children={variantLabels}
 										/>
 									)
