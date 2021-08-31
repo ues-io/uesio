@@ -145,7 +145,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const FromParentPath = getParentPath(payload.toPath)
+	const fromParentPath = getParentPath(payload.toPath)
 	const toParentPath = getParentPath(payload.toPath)
 	const isArrayClone = isNumberIndex(getKeyAtPath(toParentPath))
 
@@ -153,11 +153,11 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 		const fromPathStr = payload.fromPath
 		const toPathStr = payload.toPath
 
-		if (FromParentPath !== toParentPath) return
+		if (fromParentPath !== toParentPath) return
 
 		const fromKey = getKeyAtPath(fromPathStr)
 		const toKey = getKeyAtPath(toPathStr)
-		const definition = get(state.definition, FromParentPath)
+		const definition = get(state.definition, fromParentPath)
 
 		if (!definition || !fromKey || !toKey) return
 
@@ -165,32 +165,24 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 		const fromIndex = keys.indexOf(fromKey)
 		const toIndex = keys.indexOf(toKey)
 
-		const swap = (arr: string[], index1: number, index2: number) =>
-			arr.map((el, i) => {
-				if (i === index1) return arr[index2]
-				if (i === index2) return arr[index1]
-				return el
-			})
-
-		const newKeys = swap(keys, fromIndex, toIndex)
-
-		const convertArrayToObject = (array: string[]) => {
-			const initialValue = {}
-			return array.reduce((obj, item) => {
-				return {
-					...obj,
-					[item]: definition[item],
-				}
-			}, initialValue)
-		}
-		const newDefinition = convertArrayToObject(newKeys)
-
-		setDef(state, {
-			path: FromParentPath,
-			definition: newDefinition,
+		const newKeys = keys.map((el, i) => {
+			if (i === fromIndex) return keys[toIndex]
+			if (i === toIndex) return keys[fromIndex]
+			return el
 		})
 
-		return
+		const newDefinition = newKeys.reduce(
+			(obj, item) => ({
+				...obj,
+				[item]: definition[item],
+			}),
+			{}
+		)
+
+		return setDef(state, {
+			path: fromParentPath,
+			definition: newDefinition,
+		})
 	}
 
 	const fromPathStr = payload.fromPath
