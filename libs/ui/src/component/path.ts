@@ -171,12 +171,15 @@ const makeFullPath = (
 	path: string
 ) => `["${metadataType}"]["${metadataItem}"]${path}`
 
+const isNumberIndex = (index: string | null | undefined) =>
+	index && /^\d+$/.test(index)
+
 // Trims a path to the closest index segment
 const getIndexPath = (path: string) => {
 	const pathArray = toPath(path)
 	while (pathArray.length > 0) {
 		const segment = pathArray.pop()
-		const isIndex = segment && /^\d+$/.test(segment)
+		const isIndex = isNumberIndex(segment)
 		if (isIndex) {
 			return fromPath(pathArray) + `["${segment}"]`
 		}
@@ -208,4 +211,5 @@ export {
 	getDefinitionKey,
 	getFullPathParts,
 	makeFullPath,
+	isNumberIndex,
 }
