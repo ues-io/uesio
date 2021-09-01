@@ -77,7 +77,7 @@ func GetBotTypes() map[string]string {
 	return map[string]string{
 		"BEFORESAVE": "beforesave",
 		"AFTERSAVE":  "aftersave",
-		"LISTENER":     "listener",
+		"LISTENER":   "listener",
 	}
 }
 
