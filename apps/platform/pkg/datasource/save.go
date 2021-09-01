@@ -221,15 +221,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = RunBeforeInsertBots(op.Inserts, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunBeforeUpdateBots(op.Updates, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunBeforeDeleteBots(op.Deletes, collectionMetadata, session)
+			err = runBeforeSaveBots(&op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
@@ -268,15 +260,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = RunAfterInsertBots(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunAfterUpdateBots(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunAfterDeleteBots(&op, collectionMetadata, session)
+			err = runAfterSaveBots(&op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}

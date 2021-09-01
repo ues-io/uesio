@@ -22,6 +22,9 @@ func (c *ChangeAPI) Get(fieldName string) interface{} {
 
 // GetOld function
 func (c *ChangeAPI) GetOld(fieldName string) interface{} {
+	if c.change.OldValues == nil {
+		return nil
+	}
 	val, err := c.change.OldValues.GetField(fieldName)
 	if err != nil {
 		return nil

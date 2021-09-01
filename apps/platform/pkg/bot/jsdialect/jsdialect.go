@@ -53,26 +53,11 @@ func runBot(contents string, api interface{}, errorFunc func(string)) error {
 	return nil
 }
 
-func (b *JSDialect) BeforeInsert(bot *meta.Bot, botAPI *datasource.BeforeInsertAPI, session *sess.Session) error {
+func (b *JSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI, session *sess.Session) error {
 	return runBot(bot.FileContents, botAPI, botAPI.AddError)
 }
 
-func (b *JSDialect) BeforeUpdate(bot *meta.Bot, botAPI *datasource.BeforeUpdateAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
-}
-
-func (b *JSDialect) BeforeDelete(bot *meta.Bot, botAPI *datasource.BeforeDeleteAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
-}
-
-func (b *JSDialect) AfterInsert(bot *meta.Bot, botAPI *datasource.AfterInsertAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
-}
-
-func (b *JSDialect) AfterUpdate(bot *meta.Bot, botAPI *datasource.AfterUpdateAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
-}
-func (b *JSDialect) AfterDelete(bot *meta.Bot, botAPI *datasource.AfterDeleteAPI, session *sess.Session) error {
+func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI, session *sess.Session) error {
 	return runBot(bot.FileContents, botAPI, botAPI.AddError)
 }
 

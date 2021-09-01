@@ -1,4 +1,4 @@
-name: oninsert
+name: onsave
 collection: crm.accounts
-type: BEFOREINSERT
+type: BEFORESAVE
 dialect: JAVASCRIPT
