@@ -15,17 +15,16 @@ type SaveOp struct {
 	Updates        *ChangeItems
 	Deletes        *ChangeItems
 	Options        *SaveOptions
-	Error          string
 }
 
 type ChangeItems []ChangeItem
 
 type ChangeItem struct {
 	FieldChanges loadable.Item
-	IsNew        bool
 	IDValue      interface{}
-	Error        string
+	Error        error
 	RecordKey    interface{}
+	OldValues    loadable.Item
 }
 
 // Lookup struct
@@ -154,7 +153,7 @@ func ProcessUpdates(
 			return err
 		}
 
-		if !change.IsNew && change.IDValue != nil {
+		if change.IDValue != nil {
 			if searchFieldFunc != nil && len(searchableValues) > 0 {
 				searchIndexField, searchIndex := searchFieldFunc(searchableValues)
 				if searchIndexField != "" {
@@ -193,12 +192,6 @@ func ProcessInserts(
 	}
 
 	for _, change := range *request.Inserts {
-
-		// With lookups, inserts could have been changed to an update. If the insert is no longer
-		// new, don't insert it
-		if !change.IsNew {
-			continue
-		}
 
 		changeMap := map[string]interface{}{}
 		searchableValues := []string{}

@@ -61,6 +61,7 @@ const Alert: FunctionComponent<AlertProps> = (props) => {
 					fontSize: "9pt",
 					lineHeight: "14pt",
 					color: "rgb(68, 68, 68)",
+					overflowWrap: "anywhere",
 				},
 
 				"&.visible": {

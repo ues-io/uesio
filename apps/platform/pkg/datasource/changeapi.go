@@ -15,6 +15,15 @@ type ChangeAPI struct {
 func (c *ChangeAPI) Get(fieldName string) interface{} {
 	val, err := c.change.FieldChanges.GetField(fieldName)
 	if err != nil {
+		return c.GetOld(fieldName)
+	}
+	return val
+}
+
+// GetOld function
+func (c *ChangeAPI) GetOld(fieldName string) interface{} {
+	val, err := c.change.OldValues.GetField(fieldName)
+	if err != nil {
 		return nil
 	}
 	return val
@@ -28,9 +37,4 @@ func (c *ChangeAPI) Set(fieldName string, value interface{}) {
 // AddError function
 func (c *ChangeAPI) AddError(message string) {
 	c.errors = append(c.errors, message)
-}
-
-// IsNew function
-func (c *ChangeAPI) IsNew() bool {
-	return c.change.IsNew
 }

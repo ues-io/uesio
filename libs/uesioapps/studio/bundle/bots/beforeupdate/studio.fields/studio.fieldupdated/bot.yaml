@@ -1,0 +1,4 @@
+name: fieldupdated
+collection: studio.fields
+dialect: "JAVASCRIPT"
+type: "BEFOREUPDATE"
