@@ -5,11 +5,9 @@ definition:
   uesio.styles:
     root:
       margin: "0 0 0 0"
-      #border: "1px solid #eee"
       fontSize: "9pt"
       color: "#444"
       backgroundColor: white
-      #borderRadius: 4px
       alignItems: center
     content:
       verticalAlign: middle

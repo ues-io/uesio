@@ -88,8 +88,9 @@ const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
 	const [metadataType, metadataItemWithVariant] =
 		component.path.getFullPathParts(dragNode)
 
-	const [componentNamespace, componentName, variantNamespace, variantName] =
-		component.path.parseVariantKey(metadataItemWithVariant)
+	const [componentNamespace, componentName] = component.path.parseVariantKey(
+		metadataItemWithVariant
+	)
 
 	const fullPath = component.path.makeFullPath(
 		metadataType,
