@@ -9,9 +9,13 @@ const trimPath = (pathArray: string[]): string[] => {
 	if (size === 0) {
 		return pathArray
 	}
-	// Converts any path starting with ["wires|modals"] into just the first two
+	// Converts any path starting with ["wires"] into just the first two
 	// elements of the path.
-	if (pathArray[0] === "wires" || pathArray[0] === "panels") {
+
+	if (
+		pathArray[0] === "wires" ||
+		(pathArray[0] === "panels" && pathArray.length === 2)
+	) {
 		return pathArray.slice(0, 2)
 	}
 	const nextItem = pathArray[size - 1]
@@ -48,7 +52,10 @@ const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
 }
 
-// Trims a path and then returns the last element of the path.
+/**
+ * Trims a path and then returns the last element of the path.
+ * @param path
+ */
 const getPathSuffix = (path: string | string[]) => {
 	const pathArray = Array.isArray(path) ? path : toPath(path)
 	const trimmedPath = trimPath(pathArray)

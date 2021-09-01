@@ -13,6 +13,14 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			panel: panelId,
 		},
 	])
+
+	// Dialogs are using the component name as key in the path,
+	// This requires changing for the component slots.
+	const slotPathArray = [
+		...component.path.pathArray(path || "").slice(0, -1),
+		definition?.id,
+	] as string[]
+
 	return (
 		<IODialog
 			onClose={onClose}
@@ -25,7 +33,7 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 					<component.Slot
 						definition={definition}
 						listName="actions"
-						path={path}
+						path={component.path.fromPath(slotPathArray)}
 						accepts={["uesio.standalone"]}
 						context={context}
 					/>
@@ -35,7 +43,7 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			<component.Slot
 				definition={definition}
 				listName="components"
-				path={path}
+				path={component.path.fromPath(slotPathArray)}
 				accepts={["uesio.standalone"]}
 				context={context}
 			/>

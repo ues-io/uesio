@@ -130,7 +130,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 							setCanDrag(false)
 						}
 					>
-						{propDef?.title ?? "Unknown"}
+						<span>{propDef?.title ?? "Unknown"}</span>
 					</div>
 				)}
 				<div className={classes.inner}>{children}</div>

@@ -21,6 +21,20 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		localPath
 	)
 	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap[]
+	const newPanel = () => {
+		// If there is no panels key, create it first.
+		// Currently this is the case when creating new views
+		if (!def) {
+			uesio.builder.setDefinition(path, [])
+		}
+		uesio.builder.addDefinition(path, {
+			newpanel: {
+				id: "",
+				components: [],
+			},
+		})
+	}
+
 	return (
 		<ScrollPanel
 			header={
@@ -33,18 +47,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 							variant="io.small"
 							icon="add"
-							onClick={() =>
-								uesio.builder.addDefinitionPair(
-									path,
-									{
-										width: 400,
-										components: [],
-									},
-									"newpanel" +
-										(Math.floor(Math.random() * 60) + 1),
-									"panel"
-								)
-							}
+							onClick={() => newPanel()}
 						/>
 					}
 				/>
@@ -53,7 +56,8 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={className}
 		>
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
-				{def.map((el, index) => {
+				{def?.map((el, index) => {
+					if (!el) return null
 					const name = Object.keys(el)[0]
 					const panelPath = `${localPath}["${index}"]`
 					return (
@@ -66,8 +70,8 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									panelPath
 								)
 							}
-							icon="power"
-							key={index}
+							icon={uesio.getTheme().definition.icons.panels}
+							key={panelPath}
 							selected={
 								selectedMetadataType === metadataType &&
 								selectedMetadataItem === metadataItem &&
@@ -78,6 +82,12 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					)
 				})}
 			</div>
+			<PropNodeTag
+				title={"new panel"}
+				onClick={() => newPanel()}
+				icon="plus"
+				context={context}
+			/>
 		</ScrollPanel>
 	)
 }

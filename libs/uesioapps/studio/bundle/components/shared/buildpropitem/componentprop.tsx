@@ -17,7 +17,6 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 	const selectedPanelComponentName = Object.keys(
 		selectedPanelComponentContainer
 	)[0]
-	console.log({ selectedPanelComponent })
 	const propsDef = component.registry.getPropertiesDefinition(
 		selectedPanelComponentName
 	)
@@ -45,12 +44,16 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 		togglePanel && togglePanel()
 	}, [])
 
-	console.log({ portals })
-
 	const targetPath = [
 		...component.path.pathArray(path || "").slice(0, -1),
 		selectedPanelComponentName,
 	]
+	useEffect(() => {
+		valueAPI.set(
+			component.path.fromPath([...targetPath, "id"]),
+			selectedPanelComponentName
+		)
+	}, [selectedPanelComponentName])
 	return (
 		<>
 			{selectOptions ? (

@@ -163,6 +163,7 @@ const getPropertiesDefinitionFromPath = (
 	path: string
 ): BuildPropertiesDefinition | undefined => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
+
 	if (metadataType === "component")
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "field") {
@@ -180,15 +181,15 @@ const getPropertiesDefinitionFromPath = (
 			name,
 		}
 	}
+
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 
-		if (pathArray[0] === "wires") {
-			return defs.wireDef
-		}
-		if (pathArray[0] === "panels") {
+		if (pathArray[0] === "wires") return defs.wireDef
+		// PropDef for propertiespanel for panels (this is not a joke)
+		if (pathArray[0] === "panels" && pathArray.length === 2)
 			return defs.panelDef
-		}
+
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
 			return getPropertiesDefinition(componentFullName)

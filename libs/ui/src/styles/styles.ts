@@ -169,6 +169,9 @@ const defaultTheme: ThemeState = {
 		},
 		variantOverrides: {},
 		spacing: 8,
+		icons: {
+			panels: "call_to_action",
+		},
 	},
 }
 

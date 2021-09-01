@@ -218,7 +218,11 @@ class BuilderAPI {
 			})
 		)
 	}
-
+	/**
+	 * Takes in a Yaml Document and sets it at the path
+	 * @param path
+	 * @param yamlDoc
+	 */
 	setYaml(path: string, yamlDoc: YamlDoc) {
 		this.dispatcher(
 			setYaml({
