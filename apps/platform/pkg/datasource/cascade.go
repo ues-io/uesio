@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -37,76 +36,30 @@ func getCascadeDeletes(
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
 						continue
 					}
-
-					ids := []string{}
 					for _, deletion := range *wire.Deletes {
-
-						idField, err := collectionMetadata.GetIDField()
-						if err != nil {
-							return nil, err
-						}
-
-						idValue, err := deletion.FieldChanges.GetField(idField.GetFullName())
-						if err != nil {
-							return nil, err
-						}
-						ids = append(ids, idValue.(string))
-					}
-
-					if len(ids) == 0 {
-						continue
-					}
-
-					collection := adapt.Collection{}
-					err := adapter.Load([]adapt.LoadOp{
-						{
-							CollectionName: collectionKey,
-							WireName:       "CascadeLoad",
-							Collection:     &collection,
-							Conditions: []adapt.LoadRequestCondition{
-								{
-									Field:    collectionMetadata.IDField,
-									Operator: "IN",
-									Value:    ids,
-								},
-							},
-							Fields: []adapt.LoadRequestField{
-								{
-									ID: collectionMetadata.IDField,
-								},
-								{
-									ID: field.GetFullName(),
-								},
-							},
-						},
-					}, metadata, credentials)
-					if err != nil {
-						return nil, err
-					}
-
-					err = collection.Loop(func(item loadable.Item, _ interface{}) error {
+						item := deletion.OldValues
 						refInterface, err := item.GetField(field.GetFullName())
 						if err != nil {
-							return nil
+							continue
 						}
 
 						if refInterface == nil {
-							return nil
+							continue
 						}
 
 						refItem, ok := refInterface.(adapt.Item)
 						if !ok {
-							return nil
+							continue
 						}
 
 						refKey, err := refItem.GetField(referencedCollectionMetadata.IDField)
 						if err != nil {
-							return err
+							continue
 						}
 
 						fkString, ok := refKey.(string)
 						if !ok {
-							return errors.New("Delete id must be a string")
+							return nil, errors.New("Delete id must be a string")
 						}
 						currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
 						if !ok {
@@ -117,11 +70,6 @@ func getCascadeDeletes(
 							referencedCollectionMetadata.IDField: fkString,
 						})
 						cascadeDeleteFKs[referencedCollection] = currentCollectionIds
-
-						return nil
-					})
-					if err != nil {
-						return nil, err
 					}
 				}
 			}

@@ -1,0 +1,4 @@
+name: onupdate
+collection: crm.accounts
+type: BEFOREUPDATE
+dialect: JAVASCRIPT

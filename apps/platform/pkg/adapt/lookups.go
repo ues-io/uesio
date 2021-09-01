@@ -25,19 +25,83 @@ func HandleLookups(
 			return err
 		}
 
-		if len(lookupOps) == 0 {
+		if len(lookupOps) > 0 {
+			err = loader(lookupOps)
+			if err != nil {
+				return err
+			}
+
+			err = mergeLookupResponses(&op, lookupOps, metadata)
+			if err != nil {
+				return err
+			}
+		}
+
+		collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+		if err != nil {
+			return err
+		}
+
+		allFields := []LoadRequestField{}
+
+		for fieldID := range collectionMetadata.Fields {
+			allFields = append(allFields, LoadRequestField{
+				ID: fieldID,
+			})
+		}
+
+		// Go through all the changes and get a list of the upsert keys
+		ids := []string{}
+		for _, change := range *op.Updates {
+			ids = append(ids, change.IDValue.(string))
+		}
+		for _, change := range *op.Deletes {
+			ids = append(ids, change.IDValue.(string))
+		}
+
+		if len(ids) == 0 {
 			continue
 		}
 
-		err = loader(lookupOps)
+		oldValuesOp := LoadOp{
+			CollectionName: op.CollectionName,
+			WireName:       op.WireName,
+			Fields:         allFields,
+			Collection:     &Collection{},
+			Conditions: []LoadRequestCondition{
+				{
+					Field:    collectionMetadata.IDField,
+					Operator: "IN",
+					Value:    ids,
+				},
+			},
+		}
+
+		err = loader([]LoadOp{oldValuesOp})
 		if err != nil {
 			return err
 		}
 
-		err = mergeLookupResponses(&op, lookupOps, metadata)
+		oldValuesLookup, err := getLookupResultMap(&oldValuesOp, collectionMetadata.IDField)
 		if err != nil {
 			return err
 		}
+
+		for index, change := range *op.Updates {
+			oldValues, ok := oldValuesLookup[change.IDValue.(string)]
+			if !ok {
+				return err
+			}
+			(*op.Updates)[index].OldValues = oldValues
+		}
+		for index, change := range *op.Deletes {
+			oldValues, ok := oldValuesLookup[change.IDValue.(string)]
+			if !ok {
+				return err
+			}
+			(*op.Deletes)[index].OldValues = oldValues
+		}
+
 	}
 	return nil
 
@@ -314,7 +378,8 @@ func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *Change
 		return errors.New("Cannot upsert without id format metadata")
 	}
 
-	for index, change := range *inserts {
+	newInserts := ChangeItems{}
+	for _, change := range *inserts {
 
 		keyVal, err := templating.Execute(template, change.FieldChanges)
 		if err != nil || keyVal == "" {
@@ -332,13 +397,14 @@ func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *Change
 			if err != nil {
 				return err
 			}
-			change.IsNew = false
 			change.IDValue = idValue
-			(*inserts)[index] = change
 			*updates = append(*updates, change)
+		} else {
+			newInserts = append(newInserts, change)
 		}
 
 	}
+	*inserts = newInserts
 	return nil
 }
 
