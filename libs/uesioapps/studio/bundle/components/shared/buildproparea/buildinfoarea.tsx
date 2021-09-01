@@ -35,17 +35,16 @@ const BuildInfoArea: FunctionComponent<Props> = (props) => {
 
 	return (
 		<div className={classes.wrapper}>
-			{!!propsDef?.information && (
+			{!!propsDef && (
 				<div className={classes.propList}>
-					<FieldLabel label={"Variants"} context={context} />
 					<TextField
-						value={propsDef.information?.description}
+						value={propsDef?.description}
 						mode="READ"
 						label={"Description"}
 						context={context}
 					/>
 					<TextField
-						value={propsDef.information?.link}
+						value={propsDef?.link}
 						mode="READ"
 						label={"Documentation"}
 						context={context}

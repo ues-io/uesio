@@ -5,7 +5,8 @@ import { MetadataType } from "../bands/builder/types"
 
 type BuildPropertiesDefinition = {
 	title: string
-	information?: ComponentInformation
+	description?: string
+	link?: string
 	properties?: PropDescriptor[]
 	sections: PropertySection[]
 	actions?: ActionDescriptor[]
@@ -32,11 +33,6 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
-
-type ComponentInformation = {
-	description: string
-	link: string
-}
 
 type BasePropSection = {
 	title: string

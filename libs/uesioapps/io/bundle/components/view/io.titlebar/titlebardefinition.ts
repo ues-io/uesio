@@ -11,10 +11,8 @@ interface TitleBarProps extends definition.BaseProps {
 
 const TitleBarPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Title Bar",
-	information: {
-		description: "Title Bar",
-		link: "https://docs.ues.io/",
-	},
+	description: "Title Bar",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ title: "New Title" }),
 	properties: [
 		{

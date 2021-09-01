@@ -84,7 +84,6 @@ const ExpandablePropNodeTag: FC<Props> = (props) => {
 					<IconButton
 						size="small"
 						icon="expand_more"
-						label={"Expand"}
 						className="icon"
 						context={context}
 					/>

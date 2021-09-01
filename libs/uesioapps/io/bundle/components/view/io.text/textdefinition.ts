@@ -13,10 +13,8 @@ interface TextProps extends definition.BaseProps {
 
 const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Text",
-	information: {
-		description: "Text",
-		link: "https://docs.ues.io/",
-	},
+	description: "Text",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		text: "Text Goes Here",
 		element: "div",

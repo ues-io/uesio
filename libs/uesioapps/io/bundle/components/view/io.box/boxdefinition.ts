@@ -10,10 +10,8 @@ interface BoxProps extends definition.BaseProps {
 
 const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Box",
-	information: {
-		description: "Used for grouping elements",
-		link: "https://docs.ues.io/",
-	},
+	description: "Used for grouping elements",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],

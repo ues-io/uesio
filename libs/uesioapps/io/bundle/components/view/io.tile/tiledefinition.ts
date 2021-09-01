@@ -12,10 +12,8 @@ interface TileProps extends definition.BaseProps {
 
 const TilePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Tile",
-	information: {
-		description: "Title",
-		link: "https://docs.ues.io/",
-	},
+	description: "Title",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [],
 	sections: [],

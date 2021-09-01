@@ -14,10 +14,8 @@ interface CodeProps extends definition.BaseProps {
 
 const CodePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Code",
-	information: {
-		description: "Code editor",
-		link: "https://docs.ues.io/",
-	},
+	description: "Code editor",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	properties: [
 		{

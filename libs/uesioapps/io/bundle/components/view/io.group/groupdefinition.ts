@@ -11,10 +11,8 @@ interface GroupProps extends definition.BaseProps {
 
 const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Group",
-	information: {
-		description: "Group",
-		link: "https://docs.ues.io/",
-	},
+	description: "Group",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({ columnGap: "10px" }),
 	properties: [
 		{

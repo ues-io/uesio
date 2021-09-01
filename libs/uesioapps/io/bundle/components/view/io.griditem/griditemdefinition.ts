@@ -11,10 +11,8 @@ interface GridItemProps extends definition.BaseProps {
 
 const GridItemPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Grid Item",
-	information: {
-		description: "Grid Item",
-		link: "https://docs.ues.io/",
-	},
+	description: "Grid Item",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		components: [],
 	}),
