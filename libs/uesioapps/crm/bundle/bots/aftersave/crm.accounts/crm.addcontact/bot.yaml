@@ -1,4 +1,4 @@
-name: onupdate
+name: addcontact
 collection: crm.accounts
-type: BEFOREUPDATE
+type: AFTERSAVE
 dialect: JAVASCRIPT

@@ -1,4 +1,4 @@
-name: fieldupdated
+name: fieldcheck
 collection: studio.fields
 dialect: "JAVASCRIPT"
-type: "BEFOREUPDATE"
+type: BEFORESAVE

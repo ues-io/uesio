@@ -129,6 +129,11 @@ func ProcessUpdates(
 				return err
 			}
 
+			// Never update autopopulated fields set to CREATE
+			if fieldMetadata.AutoPopulate == "CREATE" {
+				return nil
+			}
+
 			if fieldID == collectionMetadata.NameField {
 				searchValue := value.(string)
 				if searchValue != "" {

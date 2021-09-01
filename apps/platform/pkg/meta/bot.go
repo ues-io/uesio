@@ -18,7 +18,7 @@ func NewBot(key string) (*Bot, error) {
 	if err != nil {
 		return nil, err
 	}
-	if keySize == 3 && botType == "AFTERINSERT" || botType == "AFTERUPDATE" || botType == "AFTERDELETE" || botType == "BEFOREINSERT" || botType == "BEFOREUPDATE" || botType == "BEFOREDELETE" {
+	if keySize == 3 && botType == "AFTERSAVE" || botType == "BEFORESAVE" {
 		namespace, name, err := ParseKey(keyArray[2])
 		if err != nil {
 			return nil, err
@@ -75,13 +75,9 @@ type Bot struct {
 // GetBotTypes function
 func GetBotTypes() map[string]string {
 	return map[string]string{
-		"BEFOREINSERT": "beforeinsert",
-		"BEFOREUPDATE": "beforeupdate",
-		"BEFOREDELETE": "beforedelete",
-		"AFTERINSERT":  "afterinsert",
-		"AFTERUPDATE":  "afterupdate",
-		"AFTERDELETE":  "afterdelete",
-		"LISTENER":     "listener",
+		"BEFORESAVE": "beforesave",
+		"AFTERSAVE":  "aftersave",
+		"LISTENER":   "listener",
 	}
 }
 
