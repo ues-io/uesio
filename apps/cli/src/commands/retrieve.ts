@@ -32,14 +32,14 @@ export default class Retrieve extends Command {
 			user.cookie
 		)
 
-		response.body.pipe(fs.createWriteStream(tmp)).on("close", function () {
+		response.body.pipe(fs.createWriteStream(tmp)).on("close", () => {
 			fs.createReadStream(tmp)
 				.pipe(
 					unzipper.Extract({
 						path: "bundle",
 					})
 				)
-				.on("close", function () {
+				.on("close", () => {
 					console.log("New bundle extracted!")
 					fs.unlink("./" + tmp, () => {
 						console.log("erased temporary data")
