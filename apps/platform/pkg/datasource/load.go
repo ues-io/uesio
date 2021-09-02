@@ -141,11 +141,11 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 	}
 }
 
-func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkCollectionAccess bool) (*adapt.MetadataCache, error) {
+func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
 	collated := map[string][]adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
 	//Indexed by collection name
-	responseTokens := map[string][]string{}
+	//responseTokens := map[string][]string{}
 	// Loop over the ops and batch per data source
 	for i := range ops {
 		op := ops[i]
@@ -160,17 +160,19 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 			return nil, err
 		}
 
-		if checkCollectionAccess && collectionMetadata.Access == "protected" {
-			responseTokensForCollection, ok := responseTokens[collectionMetadata.Name]
-			if !ok {
-				responseTokensForCollection, err = GenerateResponseTokens(collectionMetadata, session)
-				if err != nil {
-					return nil, err
+		/*
+			if checkCollectionAccess && collectionMetadata.Access == "protected" {
+				responseTokensForCollection, ok := responseTokens[collectionMetadata.Name]
+				if !ok {
+					responseTokensForCollection, err = GenerateResponseTokens(collectionMetadata, session)
+					if err != nil {
+						return nil, err
+					}
+					responseTokens[collectionMetadata.Name] = responseTokensForCollection
 				}
-				responseTokens[collectionMetadata.Name] = responseTokensForCollection
+				op.UserResponseTokens = responseTokensForCollection
 			}
-			op.UserResponseTokens = responseTokensForCollection
-		}
+		*/
 
 		//Set default order by: id - asc
 		if op.Order == nil {
@@ -227,35 +229,37 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 		if err != nil {
 			return nil, err
 		}
-		for i := range batch {
-			if !checkCollectionAccess {
-				break
-			}
-			op := batch[i]
-			if op.Collection == nil {
-				continue
-			}
-			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-			if err != nil {
-				return nil, err
-			}
-			if collectionMetadata.Access != "protected" {
-				continue
-			}
-			err = op.Collection.Filter(func(record loadable.Item) (bool, error) {
-				access, err := DetermineAccessFromChallengeTokens(collectionMetadata, op.UserResponseTokens, record, session)
+		/*
+			for i := range batch {
+				if !checkCollectionAccess {
+					break
+				}
+				op := batch[i]
+				if op.Collection == nil {
+					continue
+				}
+				collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
 				if err != nil {
-					return false, err
+					return nil, err
 				}
-				if access == "read" || access == "read-write" {
-					return true, nil
+				if collectionMetadata.Access != "protected" {
+					continue
 				}
-				return false, nil
-			})
-			if err != nil {
-				return nil, err
+				err = op.Collection.Filter(func(record loadable.Item) (bool, error) {
+					access, err := DetermineAccessFromChallengeTokens(collectionMetadata, op.UserResponseTokens, record, session)
+					if err != nil {
+						return false, err
+					}
+					if access == "read" || access == "read-write" {
+						return true, nil
+					}
+					return false, nil
+				})
+				if err != nil {
+					return nil, err
+				}
 			}
-		}
+		*/
 
 		// Now do our supplemental reference loads
 		for i := range batch {
@@ -334,9 +338,4 @@ func loadWithRecordPermissions(ops []adapt.LoadOp, session *sess.Session, checkC
 
 	}
 	return &metadataResponse, nil
-}
-
-// Load function
-func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	return loadWithRecordPermissions(ops, session, true)
 }

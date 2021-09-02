@@ -138,28 +138,10 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		inserts, updates, deletes, err := PopulateAndValidate(request, collectionMetadata, session)
+		// Split changes into inserts, updates, and deletes
+		inserts, updates, deletes, err := SplitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
-		}
-
-		err = RunBeforeInsertBots(inserts, collectionMetadata, session)
-		if err != nil {
-			return err
-		}
-		err = RunBeforeUpdateBots(updates, collectionMetadata, session)
-		if err != nil {
-			return err
-		}
-		err = RunBeforeDeleteBots(deletes, collectionMetadata, session)
-		if err != nil {
-			return err
-		}
-
-		if len(requests[index].Errors) > 0 {
-			// Don't return an error here because it's just expect validation errors
-			// and Bot errors. However, we don't want to go any further with processing the request.
-			return nil
 		}
 
 		dsKey := collectionMetadata.DataSource
@@ -202,10 +184,16 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		cascadeDeletes, err := getCascadeDeletes(batch, metadataResponse.Collections, &metadataResponse, adapter, credentials)
-		if err != nil {
-			return err
-		}
+		// TODO:
+		// 0. Perform lookups
+		// 1. Split change items into updates/inserts/deletes, populate data
+		// 2. Hydrate update values with full info
+		// 3. Run Before bots
+		// 4. Run validations
+		// 5. Check permissions
+		// 6. Actually do the save
+		// 7. Run After bots
+		// 8. Return results
 
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
@@ -214,6 +202,45 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}, batch, &metadataResponse)
 		if err != nil {
 			return err
+		}
+
+		cascadeDeletes, err := getCascadeDeletes(batch, metadataResponse.Collections, &metadataResponse, adapter, credentials)
+		if err != nil {
+			return err
+		}
+
+		for _, op := range batch {
+
+			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+			if err != nil {
+				return err
+			}
+
+			err = Populate(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
+
+			err = runBeforeSaveBots(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
+
+			err = Validate(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
+
+			/*
+				// TODO:
+				// Finally check for record level permissions and ability to do the save.
+				tokens, err := GenerateResponseTokens(collectionMetadata, session)
+				if err != nil {
+					return err
+				}
+				fmt.Println("TOKENS")
+				fmt.Println(tokens)
+			*/
 		}
 
 		err = adapter.Save(batch, &metadataResponse, credentials)
@@ -233,15 +260,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = RunAfterInsertBots(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunAfterUpdateBots(&op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-			err = RunAfterDeleteBots(&op, collectionMetadata, session)
+			err = runAfterSaveBots(&op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}

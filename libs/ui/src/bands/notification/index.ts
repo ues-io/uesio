@@ -3,6 +3,7 @@ import notificationAdapter from "./adapter"
 import saveOp from "../wire/operations/save"
 import shortid from "shortid"
 import callBot from "../bot/operations/call"
+import { set as setRoute } from "../route"
 import { NotificationState } from "./types"
 
 const notificationSlice = createSlice({
@@ -56,6 +57,9 @@ const notificationSlice = createSlice({
 				})
 			}
 		})
+		builder.addCase(setRoute, (state) =>
+			notificationAdapter.removeAll(state)
+		)
 	},
 })
 

@@ -1,4 +1,4 @@
 name: viewcreated
 collection: studio.views
 dialect: "JAVASCRIPT"
-type: "BEFOREINSERT"
+type: BEFORESAVE

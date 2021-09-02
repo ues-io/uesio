@@ -3,3 +3,4 @@ collection: studio.themes
 type: TEXT
 label: Workspace ID
 propertyName: workspaceid
+readOnly: true
