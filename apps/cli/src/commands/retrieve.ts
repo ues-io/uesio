@@ -15,7 +15,6 @@ export default class Retrieve extends Command {
 		const app = await getApp()
 		const workspace = await getWorkspace()
 		const user = await authorize()
-		const tmp = "tmp.zip"
 
 		console.log(
 			`Retrieving app: ${chalk.magenta(app)} from workspace ${chalk.green(
