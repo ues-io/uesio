@@ -148,6 +148,9 @@ const builderSlice = createSlice({
 		setDropNode: (state, { payload }: PayloadAction<string>) => {
 			state.droppingNode = payload
 		},
+		setOpenedPanel: (state, { payload }: PayloadAction<string>) => {
+			state.openedPanel = payload
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(
@@ -216,6 +219,7 @@ export const {
 	cloneDefinition,
 	addDefinition,
 	addDefinitionPair,
+	setOpenedPanel,
 	removeDefinition,
 	moveDefinition,
 	changeDefinitionKey,

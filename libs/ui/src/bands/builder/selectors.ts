@@ -40,6 +40,9 @@ const useNodeState = (
 const useLastModifiedNode = () =>
 	useSelector(({ builder }: RootState) => builder?.lastModifiedNode || "")
 
+const useOpenedPanel = () =>
+	useSelector(({ builder }: RootState) => builder?.openedPanel || "")
+
 const useSelectedNode = () =>
 	useSelector(({ builder }: RootState) => builder?.selectedNode || "")
 
@@ -100,6 +103,7 @@ export {
 	useSelectedItem,
 	useSelectedYAML,
 	useLastModifiedNode,
+	useOpenedPanel,
 	useDragNode,
 	useDropNode,
 	useMetadataList,

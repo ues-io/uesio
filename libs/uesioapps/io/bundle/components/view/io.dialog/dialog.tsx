@@ -16,9 +16,10 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 
 	// Dialogs are using the component name as key in the path,
 	// This requires changing for the component slots.
+	// ["panels", "0", "io.dialog"]
 	const slotPathArray = [
-		...component.path.pathArray(path || "").slice(0, -1),
-		definition?.id,
+		...component.path.pathArray(uesio.builder.useOpenedPanel()),
+		panelId,
 	] as string[]
 
 	return (

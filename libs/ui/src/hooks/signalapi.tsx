@@ -71,6 +71,7 @@ class SignalAPI {
 							break
 						}
 					}
+					console.log({ panelDef })
 					if (componentType && panelDef) {
 						return [
 							<Panel context={context}>

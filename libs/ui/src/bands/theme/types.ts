@@ -19,7 +19,7 @@ interface ThemeState {
 		palette: Palette
 		variantOverrides: Record<string, DefinitionMap>
 		icons: {
-			panels: "call_to_action"
+			panels: string
 		}
 	}
 }

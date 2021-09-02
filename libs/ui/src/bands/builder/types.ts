@@ -37,6 +37,7 @@ type BuilderState = {
 		status: "PENDING" | "FULFILLED"
 		data: MetadataListStore
 	} | null
+	openedPanel?: string
 }
 
 type MetadataListResponse = {

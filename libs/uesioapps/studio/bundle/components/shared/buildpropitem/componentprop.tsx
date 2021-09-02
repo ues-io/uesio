@@ -31,19 +31,6 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 		})
 	)
 
-	const panelId = selectedPanelComponent.id
-
-	const [togglePanel, portals] = uesio.signal.useHandler([
-		{
-			signal: "panel/TOGGLE",
-			panel: panelId,
-		},
-	])
-
-	useEffect(() => {
-		togglePanel && togglePanel()
-	}, [])
-
 	const targetPath = [
 		...component.path.pathArray(path || "").slice(0, -1),
 		selectedPanelComponentName,
@@ -69,9 +56,6 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 			) : (
 				<p>No available panels found</p>
 			)}
-
-			<button onClick={togglePanel}>Open Panel</button>
-			{portals}
 
 			{propsDef ? (
 				<BuildPropArea
