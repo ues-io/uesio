@@ -3,7 +3,6 @@ package systembundlestore
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -138,17 +137,15 @@ func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode boo
 
 // StoreItems function
 func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
-	fmt.Println("you shouldn't be writing in a system bundle store")
-	if namespace == "docs" || namespace == "web" {
-		for _, itemStream := range itemStreams {
-			err := storeItem(namespace, version, itemStream)
-			if err != nil {
-				return err
-			}
+
+	for _, itemStream := range itemStreams {
+		err := storeItem(namespace, version, itemStream)
+		if err != nil {
+			return err
 		}
 	}
-	return nil
 
+	return nil
 }
 
 func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
