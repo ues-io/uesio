@@ -3,6 +3,7 @@ package systembundlestore
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -137,7 +138,39 @@ func (b *SystemBundleStore) GetComponentPackStream(version string, buildMode boo
 
 // StoreItems function
 func (b *SystemBundleStore) StoreItems(namespace string, version string, itemStreams []bundlestore.ItemStream, session *sess.Session) error {
-	return errors.New("Cannot Write to System Bundle Store")
+	fmt.Println("you shouldn't be writing in a system bundle store")
+	if namespace == "docs" || namespace == "web" {
+		for _, itemStream := range itemStreams {
+			err := storeItem(namespace, version, itemStream)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+
+}
+
+func storeItem(namespace string, version string, itemStream bundlestore.ItemStream) error {
+	fullFilePath := filepath.Join(filepath.Join("localbundlestore", namespace, version), itemStream.Type, itemStream.FileName)
+	directory := filepath.Dir(fullFilePath)
+
+	err := os.MkdirAll(directory, 0744)
+	if err != nil {
+		return err
+	}
+
+	outFile, err := os.Create(fullFilePath)
+	if err != nil {
+		return errors.New("Error Creating File: " + err.Error())
+	}
+	defer outFile.Close()
+	_, err = io.Copy(outFile, &itemStream.Buffer)
+	if err != nil {
+		return errors.New("Error Writing File: " + err.Error())
+	}
+
+	return nil
 }
 
 // GetBundleDef function
