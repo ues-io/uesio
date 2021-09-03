@@ -63,10 +63,12 @@ const getMapMoveParams = (
 }
 
 const MoveActions: FunctionComponent<ActionProps> = ({
-	path = "",
+	path,
 	valueAPI,
 	context,
 }) => {
+	if (!path) return null
+
 	const isArrayMove = component.path.isNumberIndex(
 		component.path.getKeyAtPath(component.path.getParentPath(path))
 	)
