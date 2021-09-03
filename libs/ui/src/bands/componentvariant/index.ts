@@ -3,6 +3,7 @@ import { RootState } from "../../store/store"
 import loadOp from "../viewdef/operations/load"
 import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
+import { parseVariantKey } from "../../component/path"
 
 const componentVariantSlice = createSlice({
 	name: "componentVariant",
@@ -11,12 +12,16 @@ const componentVariantSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
 			const yamlDoc = parse(payload)
-			const dependenciesDoc = getNodeAtPath(
+			const variants = getNodeAtPath(
 				["dependencies", "componentvariants"],
 				yamlDoc.contents
 			)?.toJSON()
-			if (dependenciesDoc) {
-				componentVariantAdapter.upsertMany(state, dependenciesDoc)
+			if (variants) {
+				Object.keys(variants).forEach((key) => {
+					const [, , variantNamespace] = parseVariantKey(key)
+					variants[key].namespace = variantNamespace
+				})
+				componentVariantAdapter.upsertMany(state, variants)
 			}
 		})
 	},
