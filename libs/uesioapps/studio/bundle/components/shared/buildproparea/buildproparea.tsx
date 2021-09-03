@@ -19,17 +19,9 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 				flex: 1,
 			},
 			propList: {
-				padding: "10px 6px 0 6px",
+				padding: "10px 8px 0 8px",
 				position: "relative",
-				"&::after": {
-					content: "''",
-					position: "absolute",
-					left: "6px",
-					right: "6px",
-					height: "1px",
-					backgroundColor: "#eee",
-					bottom: "0",
-				},
+				borderBottom: "1px solid #eee",
 			},
 		},
 		props

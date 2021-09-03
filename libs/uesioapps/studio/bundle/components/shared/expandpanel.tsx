@@ -12,6 +12,7 @@ interface Props extends definition.BaseProps {
 }
 
 const IOExpandPanel = component.registry.getUtility("io.expandpanel")
+const TitleBar = component.registry.getUtility("io.titlebar")
 
 const ExpandPanel: FunctionComponent<Props> = ({
 	children,
@@ -25,18 +26,25 @@ const ExpandPanel: FunctionComponent<Props> = ({
 		label={title}
 		defaultExpanded={defaultExpanded}
 		context={context}
-		actions={
-			action && (
-				<IconButton
-					onClick={(event: SyntheticEvent): void => {
-						event.stopPropagation()
-						actionOnClick?.()
-					}}
-					size="small"
-					icon={action}
-					context={context}
-				/>
-			)
+		toggle={
+			<TitleBar
+				title={title}
+				context={context}
+				actions={
+					action && (
+						<IconButton
+							onClick={(event: SyntheticEvent): void => {
+								event.stopPropagation()
+								actionOnClick?.()
+							}}
+							size="small"
+							icon={action}
+							context={context}
+						/>
+					)
+				}
+				variant="studio.expandpanel"
+			/>
 		}
 	>
 		{children}

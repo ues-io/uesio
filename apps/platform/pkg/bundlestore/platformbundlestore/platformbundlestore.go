@@ -109,6 +109,9 @@ func (b *PlatformBundleStore) GetItems(group meta.BundleableGroup, namespace, ve
 	}
 
 	s3Result, err := fileAdapter.List(BundleStoreBucketName, basePath, credentials)
+	if err != nil {
+		return err
+	}
 
 	for _, fileMetadata := range s3Result.Contents {
 		path := *fileMetadata.Key
