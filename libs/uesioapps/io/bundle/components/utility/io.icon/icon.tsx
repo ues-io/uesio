@@ -3,6 +3,7 @@ import { definition, styles } from "@uesio/ui"
 
 interface IconProps extends definition.UtilityProps {
 	icon?: string
+	size?: "small"
 }
 
 const Icon: FunctionComponent<IconProps> = (props) => {
@@ -12,7 +13,7 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 				fontFamily: "Material Icons",
 				fontWeight: "normal",
 				fontStyle: "normal",
-				fontSize: "18px" /* Preferred icon size */,
+				fontSize: props.size === "small" ? "14px" : "18px",
 				display: "inline-block",
 				lineHeight: 1,
 				textTransform: "none",
