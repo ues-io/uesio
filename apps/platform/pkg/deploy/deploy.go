@@ -117,7 +117,8 @@ func Deploy(body []byte, session *sess.Session) error {
 		}
 		fileStreams = append(fileStreams, bundlestore.ReadItemStream{
 			Type:     metadataType,
-			FileName: path,
+			FileName: fileName,
+			Path:     path,
 			Data:     f,
 		})
 		defer f.Close()
@@ -144,7 +145,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	// Read the filestreams
 	for _, fileStream := range fileStreams {
 
-		recordID, ok := fileNameMap[fileStream.Type+":"+fileStream.FileName]
+		recordID, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
 		if !ok {
 			continue
 		}
