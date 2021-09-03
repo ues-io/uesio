@@ -17,6 +17,7 @@ const ActionButton: FunctionComponent<Props> = (props) => {
 		<IconButton
 			onClick={onClick}
 			size="small"
+			color="#444"
 			disabled={disabled}
 			icon={icon}
 			label={title}

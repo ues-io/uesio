@@ -16,6 +16,7 @@ type ItemStream struct {
 type ReadItemStream struct {
 	Type     string
 	FileName string
+	Path     string
 	Data     io.ReadCloser
 }
 

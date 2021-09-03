@@ -4,16 +4,7 @@ label: Expand Panel
 definition:
   uesio.styles:
     root:
-      margin: "0 0 4px 0"
-      border: "1px solid #eee"
-      textTransform: "uppercase"
-      fontSize: "9pt"
-      color: "#444"
-      backgroundColor: white
-      borderRadius: 4px
     content:
-      verticalAlign: middle
-      padding: 8px 8px 8px 0px
-    avatar:
-      marginLeft: 8px
-      color: "#aaa"
+      fontSize: 10pt
+      color: "#444"
+      fontWeight: 300
