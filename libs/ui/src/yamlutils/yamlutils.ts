@@ -1,14 +1,9 @@
 import toPath from "lodash/toPath"
 import yaml, { Pair, Node, YAMLMap } from "yaml"
+import { pathArray as toPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
 const parse = (str: string) => yaml.parseDocument(str)
-
-/**
- * Gives the path array for traversing the yamlDoc
- */
-const makePathArray = (path: string | string[]): string[] =>
-	Array.isArray(path) ? path : toPath(path)
 
 const isInRange = (offset: number, node: Node) => {
 	if (!node.range) {
@@ -83,7 +78,7 @@ const getNodeAtOffset = (
 
 const getNodeAtPath = (path: string | string[], node: Node | null) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
-	return (node?.getIn(makePathArray(path), true) as Node | null) || null
+	return (node?.getIn(toPathArray(path), true) as Node | null) || null
 }
 
 const getCommonPath = (startPath: string[], endPath: string[]): string[] => {
@@ -118,7 +113,7 @@ const setNodeAtPath = (
 	setNode: Node | null
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
-	node.setIn(makePathArray(path), setNode)
+	node.setIn(toPathArray(path), setNode)
 }
 
 const addNodeAtPath = (
@@ -128,7 +123,7 @@ const addNodeAtPath = (
 	index: number
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
-	const pathArray = makePathArray(path)
+	const pathArray = toPathArray(path)
 	// Get the parent and insert node at desired position,
 	// if no parent.. ("components" or "items"). addIn will create it for us.
 	const parentNode = node.getIn([...pathArray]) as yaml.YAMLSeq
@@ -145,7 +140,7 @@ const addNodePairAtPath = (
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 
-	const pathArray = makePathArray(path)
+	const pathArray = toPathArray(path)
 	const hasParent = node?.hasIn(pathArray)
 	if (hasParent) {
 		const fullPathArray = [...pathArray, key]
@@ -165,7 +160,7 @@ const addNodePairAtPath = (
 
 const removeNodeAtPath = (path: string | string[], node: Node | null): void => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
-	node?.deleteIn(makePathArray(path))
+	node?.deleteIn(toPathArray(path))
 }
 
 export {

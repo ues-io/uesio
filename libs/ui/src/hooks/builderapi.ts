@@ -5,7 +5,6 @@ import {
 	useNamespaces,
 	useNodeState,
 	useSelectedNode,
-	useOpenedPanel,
 	useLastModifiedNode,
 	useSelectedType,
 	useSelectedItem,
@@ -19,7 +18,6 @@ import {
 	setActiveNode,
 	setDragNode,
 	setDropNode,
-	setOpenedPanel,
 	setSelectedNode,
 	cloneDefinition,
 	setDefinition,
@@ -71,7 +69,6 @@ class BuilderAPI {
 		return [metadataType, metadataItem, localPath]
 	}
 	useSelectedType = () => useSelectedType() || "viewdef"
-	useOpenedPanel = () => useOpenedPanel()
 
 	useSelectedItem = () => useSelectedItem() || this.uesio.getViewDefId() || ""
 
@@ -96,9 +93,6 @@ class BuilderAPI {
 		this.dispatcher(
 			setActiveNode(makeFullPath(metadataType, metadataItem, path))
 		)
-	}
-	setOpenedPanel = (path: string) => {
-		this.dispatcher(setOpenedPanel(path))
 	}
 
 	clearActiveNode = () => {

@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react"
+import { FC } from "react"
 import { PropRendererProps } from "./proprendererdefinition"
 import BuildPropArea from "../buildproparea/buildproparea"
 
@@ -11,9 +11,7 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const parentPath = component.path.getParentPath(path || "")
 	const selectedPanelComponentContainer = valueAPI.get(parentPath) as string
-	const selectedPanelComponent = Object.values(
-		selectedPanelComponentContainer
-	)[0] as any
+
 	const selectedPanelComponentName = Object.keys(
 		selectedPanelComponentContainer
 	)[0]
@@ -21,7 +19,7 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 		selectedPanelComponentName
 	)
 
-	const options = component.registry.getItems({
+	const options = component.registry.getComponents({
 		trait: "uesio.panel",
 	})
 	const selectOptions = Object.values(options.io).map(
@@ -35,12 +33,7 @@ const ComponentProp: FC<PropRendererProps> = (props) => {
 		...component.path.pathArray(path || "").slice(0, -1),
 		selectedPanelComponentName,
 	]
-	useEffect(() => {
-		valueAPI.set(
-			component.path.fromPath([...targetPath, "id"]),
-			selectedPanelComponentName
-		)
-	}, [selectedPanelComponentName])
+
 	return (
 		<>
 			{selectOptions ? (

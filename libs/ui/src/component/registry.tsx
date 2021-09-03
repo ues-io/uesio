@@ -205,7 +205,8 @@ const getPropertiesDefinitionFromPath = (
  * @param filter
  *
  */
-const getItems = ({ trait }: { trait: string }) =>
+// TODO renamte to getComponents
+const getComponents = ({ trait }: { trait: string }) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
 		if (!acc[namespace]) {
@@ -233,5 +234,5 @@ export {
 	getSignal,
 	getPropertiesDefinition,
 	getPropertiesDefinitionFromPath,
-	getItems,
+	getComponents,
 }

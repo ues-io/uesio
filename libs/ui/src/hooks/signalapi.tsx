@@ -57,6 +57,7 @@ class SignalAPI {
 				const panel = usePanel(panelId)
 				const context = this.uesio.getContext()
 				const path = this.uesio.getPath()
+
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
 					const panels = viewDef?.definition?.panels
@@ -71,7 +72,6 @@ class SignalAPI {
 							break
 						}
 					}
-					console.log({ panelDef })
 					if (componentType && panelDef) {
 						return [
 							<Panel context={context}>

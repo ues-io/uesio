@@ -1,12 +1,13 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
+import { DefinitionMap } from "libs/ui/src/definition/definition"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
-const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context, className } = props
 	const uesio = hooks.useUesio(props)
 	const [selectedMetadataType, selectedMetadataItem, selectedNode] =
@@ -29,8 +30,8 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		}
 		uesio.builder.addDefinition(path, {
 			newpanel: {
-				id: "",
 				components: [],
+				id: Math.floor(Math.random() * 60),
 			},
 		})
 	}
@@ -58,11 +59,11 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{def?.map((el, index) => {
 					if (!el) return null
-					const name = Object.keys(el)[0]
+					const { id } = Object.values(el)[0] as DefinitionMap
 					const panelPath = `${localPath}["${index}"]`
 					return (
 						<PropNodeTag
-							title={name}
+							title={`${id}` || "missing ID"}
 							onClick={() =>
 								uesio.builder.setSelectedNode(
 									metadataType,
@@ -71,7 +72,7 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								)
 							}
 							icon={uesio.getTheme().definition.icons.panels}
-							key={panelPath}
+							key={index}
 							selected={
 								selectedMetadataType === metadataType &&
 								selectedMetadataItem === metadataItem &&
@@ -91,6 +92,6 @@ const PanesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		</ScrollPanel>
 	)
 }
-PanesPanel.displayName = "PanesPanel"
+PanelsPanel.displayName = "PanelsPanel"
 
-export default PanesPanel
+export default PanelsPanel

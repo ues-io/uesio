@@ -23,7 +23,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDragNode()
 		uesio.builder.clearDropNode()
 	}
-	const builderComponents = component.registry.getItems({
+	const builderComponents = component.registry.getComponents({
 		trait: "uesio.standalone",
 	})
 

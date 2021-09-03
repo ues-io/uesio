@@ -2,22 +2,18 @@ import React, { FC, useLayoutEffect } from "react"
 import { definition, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 
-type T = {
-	panel: string
-	uesio: hooks.Uesio
-}
-
 // We need this to load and open panels
-const PanelLoader: FC<T> = ({ panel, uesio }) => {
+const PanelLoader: FC<definition.UtilityProps> = (props) => {
+	const uesio = hooks.useUesio(props)
 	const [togglePanel, portals] = uesio.signal.useHandler([
 		{
-			signal: "panel/TOGGLE",
-			panel,
+			signal: "panel/OPEN",
+			panel: props.panelId as string,
 		},
 	])
 	useLayoutEffect(() => {
 		togglePanel && togglePanel()
-	}, [])
+	}, [props.panelId])
 	return <>{portals}</>
 }
 
@@ -42,20 +38,21 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
-	const handlePanel = (): string | null => {
+	const handlePanel = ():
+		| [null, null]
+		| [panelId: string, panelPath: string] => {
 		const pathArray = component.path.pathArray(selectedPath)
-		if (pathArray[0] !== "panels") return null
+		if (pathArray[0] !== "panels") return [null, null]
 
 		// ["panels", "0"]
-		const panelPath = pathArray.slice(0, 2)
-		const panelKeyAtIndex = util.get(definition, panelPath) as any
-		const panelDef = Object.values(panelKeyAtIndex)[0] as any
-
-		uesio.builder.setOpenedPanel(selectedPath)
-		return panelDef.id
+		const panelPathBegin = pathArray.slice(0, 2)
+		// {io.box: {...}}
+		const panelKeyAtIndex = util.get(definition, panelPathBegin) as any
+		const { id: panelId } = Object.values(panelKeyAtIndex)[0] as any
+		const panelPath = [...panelPathBegin, Object.keys(panelKeyAtIndex)[0]]
+		return [panelId, component.path.fromPath(panelPath)]
 	}
-
-	const panelId = handlePanel()
+	const [panelId, panelPath] = handlePanel()
 
 	return (
 		<>
@@ -148,7 +145,9 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 					},
 				}}
 			/>
-			{panelId && <PanelLoader panel={panelId} uesio={uesio} />}
+			{panelId && panelPath && (
+				<PanelLoader {...props} path={panelPath} panelId={panelId} />
+			)}
 		</>
 	)
 }

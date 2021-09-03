@@ -9,7 +9,7 @@ import WiresPanel from "../../shared/wirespanel"
 import CodePanel from "../../shared/codepanel"
 import { BuilderState } from "./runtimebuilderdefinition"
 import ComponentsPanel from "../../shared/componentspanel"
-import PanesPanel from "../../shared/panespanel"
+import PanelsPanel from "../../shared/panelspanel"
 
 const Grid = component.registry.getUtility("io.grid")
 import usePanels from "./usePanels"
@@ -153,7 +153,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 				/>
 			)}
 			{state.showModals && (
-				<PanesPanel
+				<PanelsPanel
 					context={builderContext}
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
