@@ -11,6 +11,8 @@ interface IconButtonProps extends definition.BaseProps {
 
 const IconButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Button",
+	description: "Icon Button",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		icon: "add",
 	}),

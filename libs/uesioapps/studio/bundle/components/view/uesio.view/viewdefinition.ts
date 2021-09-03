@@ -2,6 +2,8 @@ import { builder } from "@uesio/ui"
 
 const ViewPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "View",
+	description: "View",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		color: "primary",
 		variant: "contained",
