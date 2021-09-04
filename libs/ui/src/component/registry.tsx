@@ -10,6 +10,7 @@ import {
 	getPathSuffix,
 	getFullPathParts,
 	parseFieldKey,
+	parseVariantKey,
 } from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
@@ -19,6 +20,12 @@ import {
 	mergeDefinitionMaps,
 	renderUtility,
 } from "./component"
+import { css } from "@emotion/css"
+import {
+	getComponentTypePropsDef,
+	getFieldPropsDef,
+	getWirePropsDef,
+} from "./builtinpropsdefs"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -157,72 +164,27 @@ const getPropertiesDefinitionFromPath = (
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	if (metadataType === "component")
 		return getPropertiesDefinition(metadataItem)
+	if (metadataType === "componentvariant") {
+		const [namespace, name] = parseVariantKey(metadataItem)
+		return getPropertiesDefinition(`${namespace}.${name}`)
+	}
+	if (metadataType === "componenttype") {
+		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
+	}
 	if (metadataType === "field") {
 		const [namespace, name, collectionNamespace, collectionName] =
 			parseFieldKey(metadataItem)
-		return {
-			title: name,
-			sections: [],
-			defaultDefinition: () => ({}),
-			traits: [
-				"uesio.field",
-				"wire." + collectionNamespace + "." + collectionName,
-			],
+		return getFieldPropsDef(
 			namespace,
 			name,
-		}
+			collectionNamespace,
+			collectionName
+		)
 	}
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 		if (pathArray[0] === "wires") {
-			return {
-				title: "Wire",
-				defaultDefinition: () => ({}),
-				properties: [
-					{
-						name: "name",
-						type: "KEY",
-						label: "Name",
-					},
-					{
-						name: "collection",
-						type: "METADATA",
-						metadataType: "COLLECTION",
-						label: "Collection",
-					},
-					{
-						name: "type",
-						type: "SELECT",
-						label: "Wire Type",
-						options: [
-							{
-								label: "Create",
-								value: "CREATE",
-							},
-							{
-								label: "Read",
-								value: "",
-							},
-						],
-					},
-				],
-				sections: [
-					{
-						title: "Fields",
-						type: "FIELDS",
-					},
-					{
-						title: "Conditions",
-						type: "CONDITIONS",
-					},
-				],
-				actions: [
-					{
-						type: "LOAD_WIRE",
-						label: "Refresh Wire",
-					},
-				],
-			}
+			return getWirePropsDef()
 		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {

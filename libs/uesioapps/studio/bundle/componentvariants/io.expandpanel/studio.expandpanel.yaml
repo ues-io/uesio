@@ -1,0 +1,7 @@
+name: expandpanel
+component: io.expandpanel
+label: Expand Panel
+definition:
+  uesio.styles:
+    root:
+      borderBottom: "1px solid #eee"

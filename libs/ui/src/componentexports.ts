@@ -7,6 +7,7 @@ import * as registry from "./component/registry"
 import { Component } from "./component/component"
 import SlotRuntime from "./components/slotruntime"
 import { shouldHaveClass } from "./component/display"
+import { ComponentVariant } from "./bands/componentvariant/types"
 
 export {
 	Slot,
@@ -15,6 +16,7 @@ export {
 	path,
 	registry,
 	Component,
+	ComponentVariant,
 	Panel,
 	NotificationArea,
 	shouldHaveClass,

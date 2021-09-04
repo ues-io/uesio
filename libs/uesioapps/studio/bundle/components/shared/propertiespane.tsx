@@ -44,6 +44,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						context={context}
 						valueAPI={valueAPI}
 						actions={propsDef.actions}
+						propsDef={propsDef}
 					/>
 				)
 			}

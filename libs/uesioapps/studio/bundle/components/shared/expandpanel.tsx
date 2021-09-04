@@ -23,7 +23,6 @@ const ExpandPanel: FunctionComponent<Props> = ({
 	context,
 }) => (
 	<IOExpandPanel
-		label={title}
 		defaultExpanded={defaultExpanded}
 		context={context}
 		toggle={
@@ -46,6 +45,7 @@ const ExpandPanel: FunctionComponent<Props> = ({
 				variant="studio.expandpanel"
 			/>
 		}
+		variant="studio.expandpanel"
 	>
 		{children}
 	</IOExpandPanel>

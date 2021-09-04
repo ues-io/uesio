@@ -52,6 +52,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 							)
 						}
 						context={context}
+						popChildren
 					>
 						{
 							<PropertiesPane

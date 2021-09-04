@@ -16,7 +16,10 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type && isStructureView) {
-			uesio.builder.setDragNode("component", target.dataset.type, "")
+			const typeArray = target.dataset.type.split(".")
+			const metadataType =
+				typeArray.length === 4 ? "componentvariant" : "component"
+			uesio.builder.setDragNode(metadataType, target.dataset.type, "")
 		}
 	}
 	const onDragEnd = () => {
@@ -24,6 +27,23 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 	const builderComponents = component.registry.getBuilderComponents()
+	const variants = uesio.component.useAllVariants()
+	// loop over variants and group by component
+	const variantsMap: Record<string, component.ComponentVariant[]> = {}
+	Object.keys(variants).forEach((key) => {
+		const [
+			componentNamespace,
+			componentName,
+			variantNamespace,
+			variantName,
+		] = component.path.parseVariantKey(key)
+		const componentKey = `${componentNamespace}.${componentName}`
+		if (!variantsMap[componentKey]) variantsMap[componentKey] = []
+		const variant = variants[key]
+		if (variant) {
+			variantsMap[componentKey].push(variant)
+		}
+	})
 
 	return (
 		<ScrollPanel
@@ -54,13 +74,12 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							context={context}
 						>
 							{Object.entries(components).map(
-								([componentName, propDef], indexTag) => {
+								([componentName, propDef]) => {
 									const fullName = `${namespace}.${componentName}`
 									const isSelected =
 										selectedType === "componenttype" &&
 										selectedItem === fullName
 									const sharedProps = {
-										draggable: fullName,
 										title: componentName,
 										onClick: () =>
 											uesio.builder.setSelectedNode(
@@ -68,21 +87,35 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												fullName,
 												""
 											),
-										key: indexTag,
+										key: fullName,
 										tooltip: propDef.description,
 										context,
 										selected: isSelected,
+										expandChildren: true,
+										...(isStructureView && {
+											draggable: fullName,
+											icon: "drag_indicator",
+										}),
 									}
-									// Loop over the variants for this component
+									const variants = variantsMap[fullName]
 
-									return !isStructureView ? (
-										<PropNodeTag {...sharedProps} />
-									) : (
-										<PropNodeTag
-											{...sharedProps}
-											draggable={fullName}
-											icon="drag_indicator"
-										/>
+									// Loop over the variants for this component
+									return (
+										<PropNodeTag {...sharedProps}>
+											{variants &&
+												variants.map((variant) => {
+													const variantFullName = `${variant.namespace}.${variant.name}`
+													return (
+														<PropNodeTag
+															title={
+																variantFullName
+															}
+															draggable={`${fullName}.${variantFullName}`}
+															context={context}
+														/>
+													)
+												})}
+										</PropNodeTag>
 									)
 								}
 							)}

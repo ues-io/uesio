@@ -14,6 +14,7 @@ import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
 import StylesListProp from "../buildpropitem/styleslistprop"
 import BotProp from "../buildpropitem/botprop"
+import CustomProp from "../buildpropitem/customprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -47,6 +48,8 @@ function getPropHandler(type?: string) {
 			return StylesListProp
 		case "TEXT":
 			return TextProp
+		case "CUSTOM":
+			return CustomProp
 		default:
 			console.log(`type not recognized in buildPropItem: ${type}`)
 			return TextProp
