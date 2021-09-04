@@ -8,6 +8,7 @@ interface ExpandPanelProps extends definition.UtilityProps {
 	defaultExpanded?: boolean
 	toggle?: ReactNode
 	showArrow?: boolean
+	expandState?: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
 }
 
 const IconButton = component.registry.getUtility("io.iconbutton")
@@ -20,15 +21,14 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 		children,
 		defaultExpanded = true,
 		toggle,
+		expandState,
 	} = props
-	const [expanded, setExpanded] = useState<boolean>(defaultExpanded)
+	const [expanded, setExpanded] =
+		expandState || useState<boolean>(defaultExpanded)
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				borderTop: "none",
-				borderBottom: "1px solid #eee",
-			},
+			root: {},
 			titlebar: {
 				cursor: "pointer",
 			},

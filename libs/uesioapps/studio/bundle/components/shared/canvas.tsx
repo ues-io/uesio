@@ -63,9 +63,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
+	const viewDef = props.context.getViewDef()
 	// Hide/show blank slate div
 	const hasEmptyComponents =
-		!props.context.getViewDef()?.definition?.components?.length
+		viewDef && !viewDef.definition?.components?.length
 
 	const route = props.context.getRoute()
 	if (!route) {

@@ -14,6 +14,7 @@ import { ValueAPI } from "../propertiespaneldefinition"
 interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
 	valueAPI: ValueAPI
+	propsDef: builder.BuildPropertiesDefinition
 }
 
 const ACTION_TO_COMPONENT: {
@@ -39,7 +40,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		},
 		props
 	)
-	const { actions, path, context, valueAPI } = props
+	const { actions, path, context, valueAPI, propsDef } = props
 
 	const actionProps = {
 		valueAPI,
@@ -52,12 +53,13 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 	const contextWithView = context.addFrame({
 		view: viewDefId + "()",
 	})
+	const readOnly = !!propsDef.readOnly
 
 	return (
 		<div className={classes.wrapper}>
-			<DeleteAction {...actionProps} />
-			<MoveActions {...actionProps} />
-			<CloneAction {...actionProps} />
+			{!readOnly && <DeleteAction {...actionProps} />}
+			{!readOnly && <MoveActions {...actionProps} />}
+			{!readOnly && <CloneAction {...actionProps} />}
 			{actions?.map?.((action, index) => {
 				const ActionHandler = ACTION_TO_COMPONENT[action.type]
 				return (

@@ -103,6 +103,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									conditionPath
 								)
 							}}
+							popChildren
 							context={context}
 						>
 							{

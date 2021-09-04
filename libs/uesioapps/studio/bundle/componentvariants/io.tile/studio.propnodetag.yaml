@@ -10,10 +10,11 @@ definition:
       color: "#444"
       borderRadius: 4px
       alignItems: center
+      overflow: hidden
+      backgroundColor: white
+      userSelect: none
     content:
       verticalAlign: middle
-      padding: 8px 8px 8px 0px
-      display: flex
       alignItems: center
       justifyContent: space-between
     avatar:
