@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useState, useEffect } from "react"
+import { FunctionComponent, ReactNode, useState, Children } from "react"
 
 import { CSSTransition } from "react-transition-group"
 
@@ -26,6 +26,8 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	const [expanded, setExpanded] =
 		expandState || useState<boolean>(defaultExpanded)
 
+	const hasChildren = Children.count(children) > 0
+
 	const classes = styles.useUtilityStyles(
 		{
 			root: {},
@@ -44,9 +46,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 				padding: "8px",
 			},
 			content: {
-				fontSize: "9pt",
-				color: "#444",
-				padding: "0 6px",
 				willChange: "max-height",
 				boxSizing: "border-box",
 				"&.expand-enter": {
@@ -64,6 +63,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 					transition: "all 0.3s ease",
 				},
 			},
+			innerContent: {},
 		},
 		props
 	)
@@ -78,10 +78,10 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			<IOGrid
 				context={context}
 				className={classes.grid}
-				onClick={() => setExpanded(!expanded)}
+				onClick={hasChildren ? () => setExpanded(!expanded) : undefined}
 			>
 				{toggle}
-				{showArrow && (
+				{showArrow && hasChildren && (
 					<IconButton
 						className={classes.icon}
 						size="small"
@@ -91,19 +91,23 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 					/>
 				)}
 			</IOGrid>
-			<CSSTransition
-				unmountOnExit={true}
-				mountOnEnter={true}
-				in={expanded}
-				timeout={300}
-				classNames={"expand"}
-				onEnter={unsetMaxHeight}
-				onEntering={setMaxHeight}
-				onExit={setMaxHeight}
-				onExiting={unsetMaxHeight}
-			>
-				<div className={classes.content}>{children}</div>
-			</CSSTransition>
+			{hasChildren && (
+				<CSSTransition
+					unmountOnExit={true}
+					mountOnEnter={true}
+					in={expanded}
+					timeout={300}
+					classNames={"expand"}
+					onEnter={unsetMaxHeight}
+					onEntering={setMaxHeight}
+					onExit={setMaxHeight}
+					onExiting={unsetMaxHeight}
+				>
+					<div className={classes.content}>
+						<div className={classes.innerContent}>{children}</div>
+					</div>
+				</CSSTransition>
+			)}
 		</div>
 	)
 }

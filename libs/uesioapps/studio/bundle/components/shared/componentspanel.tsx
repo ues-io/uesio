@@ -6,6 +6,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const Grid = component.registry.getUtility("io.grid")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -72,6 +73,12 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							defaultExpanded={true}
 							key={index}
 							context={context}
+							styles={{
+								innerContent: {
+									display: "grid",
+									rowGap: "8px",
+								},
+							}}
 						>
 							{Object.entries(components).map(
 								([componentName, propDef]) => {
@@ -102,19 +109,35 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									// Loop over the variants for this component
 									return (
 										<PropNodeTag {...sharedProps}>
-											{variants &&
-												variants.map((variant) => {
-													const variantFullName = `${variant.namespace}.${variant.name}`
-													return (
-														<PropNodeTag
-															title={
-																variantFullName
-															}
-															draggable={`${fullName}.${variantFullName}`}
-															context={context}
-														/>
-													)
-												})}
+											{variants && (
+												<Grid
+													styles={{
+														root: {
+															gridTemplateColumns:
+																"1fr 1fr",
+															columnGap: "8px",
+															rowGap: "8px",
+															padding: "8px",
+														},
+													}}
+													context={context}
+												>
+													{variants.map((variant) => {
+														const variantFullName = `${variant.namespace}.${variant.name}`
+														return (
+															<PropNodeTag
+																title={
+																	variantFullName
+																}
+																draggable={`${fullName}.${variantFullName}`}
+																context={
+																	context
+																}
+															/>
+														)
+													})}
+												</Grid>
+											)}
 										</PropNodeTag>
 									)
 								}

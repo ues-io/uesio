@@ -3,7 +3,7 @@ import { FunctionComponent, SyntheticEvent } from "react"
 const IconButton = component.registry.getUtility("io.iconbutton")
 import { component, definition } from "@uesio/ui"
 
-interface Props extends definition.BaseProps {
+interface Props extends definition.UtilityProps {
 	title: string
 	defaultExpanded: boolean
 	action?: string
@@ -21,10 +21,12 @@ const ExpandPanel: FunctionComponent<Props> = ({
 	defaultExpanded,
 	actionOnClick,
 	context,
+	styles,
 }) => (
 	<IOExpandPanel
 		defaultExpanded={defaultExpanded}
 		context={context}
+		styles={styles}
 		toggle={
 			<TitleBar
 				title={title}

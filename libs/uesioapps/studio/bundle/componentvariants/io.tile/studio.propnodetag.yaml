@@ -4,7 +4,6 @@ label: Property Node Tag
 definition:
   uesio.styles:
     root:
-      margin: "0 0 8px 0"
       border: "1px solid #eee"
       fontSize: "9pt"
       color: "#444"
