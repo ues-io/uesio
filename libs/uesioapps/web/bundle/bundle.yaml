@@ -5,9 +5,9 @@ defaultProfile: web.public
 defaultTheme: crm.default
 publicProfile: web.public
 dependencies:
-  uesio:
+  crm:
     version: v0.0.1
   io:
     version: v0.0.1
-  crm:
+  uesio:
     version: v0.0.1

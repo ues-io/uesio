@@ -107,6 +107,5 @@ definition:
                                                         - newlead
                                                     - signal: route/NAVIGATE
                                                       path: "contactthanks"
-
     - uesio.view:
         view: web.footer
