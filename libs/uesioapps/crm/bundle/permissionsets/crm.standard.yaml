@@ -1,27 +1,27 @@
 name: standard
-named:
+named: {}
 views:
+  crm.account_details: true
+  crm.accounts: true
+  crm.contact_details: true
+  crm.contacts: true
   crm.home: true
+  crm.lead_details: true
+  crm.leads: true
+  crm.opportunities: true
+  crm.opportunity_details: true
   crm.topbar: true
-  crm.accounts: true
-  crm.account_details: true
-  crm.contacts: true
-  crm.contact_details: true
-  crm.opportunities: true
-  crm.opportunity_details: true
-  crm.leads: true
-  crm.lead_details: true
 routes:
-  crm.home: true
-  crm.accounts: true
   crm.account_details: true
-  crm.contacts: true
+  crm.accounts: true
   crm.contact_details: true
+  crm.contacts: true
+  crm.home: true
+  crm.lead_details: true
+  crm.leads: true
+  crm.login: true
   crm.opportunities: true
   crm.opportunity_details: true
-  crm.leads: true
-  crm.lead_details: true
-  crm.login: true
 files:
   crm.logo: true
 allowallviews: true
