@@ -1,0 +1,5 @@
+name: company
+collection: crm.leads
+type: TEXT
+label: Company
+propertyName: company

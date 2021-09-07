@@ -1,0 +1,5 @@
+name: owner
+collection: crm.leads
+type: USER
+label: Owner
+propertyName: owner

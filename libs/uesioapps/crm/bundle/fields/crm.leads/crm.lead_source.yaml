@@ -1,0 +1,5 @@
+name: lead_source
+collection: crm.leads
+type: TEXT
+label: Lead Source
+propertyName: lead_source

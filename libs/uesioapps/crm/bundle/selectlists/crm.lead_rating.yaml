@@ -1,0 +1,8 @@
+name: lead_rating
+options:
+  - label: Hot
+    value: Hot
+  - label: Warm
+    value: Warm
+  - label: Cold
+    value: Cold

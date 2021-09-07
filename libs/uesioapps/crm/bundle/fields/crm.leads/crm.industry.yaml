@@ -1,0 +1,5 @@
+name: industry
+collection: crm.leads
+type: TEXT
+label: Industry
+propertyName: industry

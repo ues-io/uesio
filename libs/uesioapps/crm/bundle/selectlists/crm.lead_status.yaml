@@ -1,0 +1,10 @@
+name: lead_status
+options:
+  - label: Open
+    value: Open
+  - label: Closed
+    value: Closed
+  - label: Qualified
+    value: Qualified
+  - label: Disqualified
+    value: Disqualified

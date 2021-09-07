@@ -13,57 +13,116 @@ definition:
                     signals:
                       - signal: wire/CREATE_RECORD
                         wire: leads
-                    text: Create
-                    uesio.variant: io.secondary
+                    text: New
+                    uesio.variant: io.primary
+                    uesio.styles:
+                      root:
+                        background-color: green
                 - io.button:
                     signals:
                       - signal: wire/SAVE
                         wires:
                           - leads
                     text: Save
-                    uesio.variant: io.secondary
+                    uesio.variant: io.primary
+                    uesio.styles:
+                      root:
+                        background-color: blue
                 - io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: leads
                     text: Cancel
                     uesio.variant: io.secondary
+                    uesio.styles:
+                      root:
+                        background-color: red
+                        color: white
                 - io.button:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: leadsTable
-                    text: Mode
+                    text: List or Detail View
                     uesio.variant: io.secondary
+    - io.image: {file: crm.leadsgraph, align: center, uesio.variant: null, uesio.styles: {root: {padding-bottom: 15px}}}
     - io.box:
         uesio.styles:
-          root:
-            padding: 40px
+          root: {}
         components:
+          - io.text:
+              text: Open
+              element: div
+              uesio.variant: io.
+              align: center
+              uesio.styles:
+                root:
+                  padding: 20px
+                  background-color: lightgreen
+                  font-size: 20px
+              color: white
           - io.table:
               rowactions:
-                - text: Edit
+                - text: View
                   signals:
                     - path: lead/${crm.id}
                       signal: route/NAVIGATE
-                - text: Delete
-                  signals:
-                    - signal: wire/TOGGLE_DELETE_STATUS
-                - text: Convert Lead
-                  signals:
-                    - bot: crm.convertlead
-                      signal: bot/CALL
               columns:
+                - io.column:
+                    field: crm.company
                 - io.column:
                     field: crm.firstname
                 - io.column:
                     field: crm.lastname
                 - io.column:
-                    field: crm.updated
+                    field: crm.phone_business
                 - io.column:
-                    field: crm.created
+                    field: crm.annual_revenue
+                - io.column:
+                    field: crm.industry
+                - io.column:
+                    field: crm.lead_source
+                - io.column:
+                    field: crm.mailing_city
+                - io.column:
+                    field: crm.mailing_country
+                - io.column:
+                    field: crm.status
+                - io.column:
+                    field: crm.rating
               id: leadsTable
               mode: EDIT
               wire: leads
+              uesio.variant: io.default
+              uesio.styles:
+                root:
+                  padding: 8px
+          - io.text:
+              text: Closed
+              element: div
+              uesio.variant: null
+              uesio.styles:
+                root:
+                  padding: 20px
+                  background-color: lightgrey
+                  font-size: 20px
+              color: white
+              align: center
+          - io.table:
+              id: NewId
+              mode: READ
+              wire: closedleads
+              columns:
+                - io.column:
+                    field: crm.status
+                - io.column:
+                    field: crm.firstname
+                - io.column:
+                    field: crm.lastname
+                - io.column:
+                    field: crm.company
+              uesio.styles:
+                root:
+                  padding: 8px
   wires:
     leads:
       collection: crm.leads
@@ -71,5 +130,29 @@ definition:
         crm.firstname: null
         crm.id: null
         crm.lastname: null
-        crm.updated:
-        crm.created:
+        crm.description: null
+        crm.email: null
+        crm.annual_revenue: null
+        crm.industry: null
+        crm.lead_source: null
+        crm.mailing_city: null
+        crm.mailing_country: null
+        crm.modified: null
+        crm.no_of_employees: null
+        crm.owner: null
+        crm.phone_business: null
+        crm.phone_mobile: null
+        crm.rating: null
+        crm.status: null
+        crm.title: null
+        crm.website: null
+        crm.created: null
+        crm.company: null
+    closedleads:
+      type: ""
+      fields:
+        crm.company: null
+        crm.firstname: null
+        crm.lastname: null
+        crm.status: null
+      collection: crm.leads

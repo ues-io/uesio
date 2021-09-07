@@ -1,0 +1,6 @@
+name: status
+collection: crm.leads
+type: SELECT
+label: Status
+propertyName: status
+selectList: crm.lead_status

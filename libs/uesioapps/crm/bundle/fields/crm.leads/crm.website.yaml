@@ -1,0 +1,5 @@
+name: website
+collection: crm.leads
+type: TEXT
+label: Website
+propertyName: website

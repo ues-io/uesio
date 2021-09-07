@@ -1,0 +1,5 @@
+name: mailing_country
+collection: crm.leads
+type: TEXT
+label: Mailing Country
+propertyName: mailing_country

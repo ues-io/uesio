@@ -1,0 +1,5 @@
+name: annual_revenue
+collection: crm.leads
+type: NUMBER
+label: Annual Revenue
+propertyName: annual_revenue

@@ -1,0 +1,6 @@
+name: rating
+collection: crm.leads
+type: SELECT
+label: Rating
+propertyName: rating
+selectList: crm.lead_rating

@@ -1,6 +1,6 @@
-name: updated
+name: modified
 collection: crm.leads
 type: TIMESTAMP
-label: Updated
-propertyName: updated
+label: Modified
+propertyName: modified
 autopopulate: UPDATE

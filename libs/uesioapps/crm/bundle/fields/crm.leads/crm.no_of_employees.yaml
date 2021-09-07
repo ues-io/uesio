@@ -1,0 +1,5 @@
+name: no_of_employees
+collection: crm.leads
+type: NUMBER
+label: No. Employees
+propertyName: no_of_employees

@@ -1,0 +1,5 @@
+name: mailing_city
+collection: crm.leads
+type: TEXT
+label: Mailing City
+propertyName: mailing_city
