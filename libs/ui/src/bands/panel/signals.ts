@@ -38,7 +38,7 @@ const signals: Record<string, SignalDescriptor> = {
 	},
 	[`${PANEL_BAND}/CLOSE`]: {
 		dispatcher: (signal: ToggleSignal, context: Context) =>
-			operations.close(context, signal.panel, signal.path),
+			operations.close(context, signal.panel),
 		label: "Close",
 		properties: () => [
 			{
