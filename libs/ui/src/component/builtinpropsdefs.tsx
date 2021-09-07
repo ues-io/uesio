@@ -1,5 +1,6 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
+import { parseVariantKey } from "./path"
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -97,37 +98,14 @@ const getFieldPropsDef = (
 })
 
 const getComponentVariantPropsDef = (
-	componentNamespace: string,
-	componentName: string,
-	variantNamespace: string,
-	variantName: string
-	//variant: ComponentVariant | undefined
-): BuildPropertiesDefinition => ({
-	title: "Component Variant",
-	defaultDefinition: () => ({}),
-	properties: [
-		{
-			name: "description",
-			type: "CUSTOM",
-			label: "Description",
-			renderFunc: () => (
-				<div
-					className={css({
-						fontSize: "10pt",
-						marginBottom: "8px",
-					})}
-				>
-					<div>
-						{componentNamespace}.{componentName}.{variantNamespace}.
-						{variantName}
-					</div>
-				</div>
-			),
-		},
-	],
-	sections: [],
-	readOnly: true,
-})
+	compPropsDef: BuildPropertiesDefinition,
+	metadataItem: string
+): BuildPropertiesDefinition => {
+	const [componentNamespace, componentName, variantNamespace, variantName] =
+		parseVariantKey(metadataItem)
+	//we can override the props in here
+	return compPropsDef
+}
 
 export {
 	getComponentTypePropsDef,

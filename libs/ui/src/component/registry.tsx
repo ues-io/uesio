@@ -165,20 +165,14 @@ const getPropertiesDefinitionFromPath = (
 	path: string
 ): BuildPropertiesDefinition | undefined => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
-	const [componentNamespace, componentName, variantNamespace, variantName] =
-		parseVariantKey(metadataItem)
-	//const variant = useVariant(metadataItem)
-	//console.log("ONe Variant", variant)
 
 	if (metadataType === "component")
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "componentvariant") {
+		const [namespace, name] = parseVariantKey(metadataItem)
 		return getComponentVariantPropsDef(
-			componentNamespace,
-			componentName,
-			variantNamespace,
-			variantName
-			//variant
+			getPropertiesDefinition(`${namespace}.${name}`),
+			metadataItem
 		)
 	}
 	if (metadataType === "componenttype") {

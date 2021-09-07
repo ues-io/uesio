@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, MouseEvent } from "react"
 
 import { component, context, styles } from "@uesio/ui"
 
@@ -9,7 +9,7 @@ type Props = {
 	icon?: string
 	iconColor?: string
 	selected?: boolean
-	onClick?: () => void
+	onClick?: (e: MouseEvent) => void
 	draggable?: string
 	context: context.Context
 	tooltip?: string
@@ -75,7 +75,9 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				variant="io.tile.studio.propnodetag"
 				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
-				onClick={onClick}
+				onClick={(e: MouseEvent<Element, globalThis.MouseEvent>) =>
+					onClick && onClick(e)
+				}
 				isSelected={selected}
 			>
 				<IOExpandPanel
