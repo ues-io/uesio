@@ -96,4 +96,42 @@ const getFieldPropsDef = (
 	name,
 })
 
-export { getComponentTypePropsDef, getWirePropsDef, getFieldPropsDef }
+const getComponentVariantPropsDef = (
+	componentNamespace: string,
+	componentName: string,
+	variantNamespace: string,
+	variantName: string
+	//variant: ComponentVariant | undefined
+): BuildPropertiesDefinition => ({
+	title: "Component Variant",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "description",
+			type: "CUSTOM",
+			label: "Description",
+			renderFunc: () => (
+				<div
+					className={css({
+						fontSize: "10pt",
+						marginBottom: "8px",
+					})}
+				>
+					<div>
+						{componentNamespace}.{componentName}.{variantNamespace}.
+						{variantName}
+					</div>
+				</div>
+			),
+		},
+	],
+	sections: [],
+	readOnly: true,
+})
+
+export {
+	getComponentTypePropsDef,
+	getWirePropsDef,
+	getFieldPropsDef,
+	getComponentVariantPropsDef,
+}

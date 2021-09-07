@@ -88,12 +88,12 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										selectedItem === fullName
 									const sharedProps = {
 										title: componentName,
-										onClick: () =>
-											uesio.builder.setSelectedNode(
-												"componenttype",
-												fullName,
-												""
-											),
+										// onClick: () =>
+										// 	uesio.builder.setSelectedNode(
+										// 		"componenttype",
+										// 		fullName,
+										// 		""
+										// 	),
 										key: fullName,
 										tooltip: propDef.description,
 										context,
@@ -130,6 +130,13 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 																	variantFullName
 																}
 																draggable={`${fullName}.${variantFullName}`}
+																onClick={() =>
+																	uesio.builder.setSelectedNode(
+																		"componentvariant",
+																		`${fullName}.${variantFullName}`,
+																		""
+																	)
+																}
 																context={
 																	context
 																}

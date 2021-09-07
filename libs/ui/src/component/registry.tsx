@@ -25,7 +25,10 @@ import {
 	getComponentTypePropsDef,
 	getFieldPropsDef,
 	getWirePropsDef,
+	getComponentVariantPropsDef,
 } from "./builtinpropsdefs"
+import { useVariant } from "../bands/componentvariant/selectors"
+import { ComponentVariant } from "../componentexports"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -162,11 +165,21 @@ const getPropertiesDefinitionFromPath = (
 	path: string
 ): BuildPropertiesDefinition | undefined => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
+	const [componentNamespace, componentName, variantNamespace, variantName] =
+		parseVariantKey(metadataItem)
+	//const variant = useVariant(metadataItem)
+	//console.log("ONe Variant", variant)
+
 	if (metadataType === "component")
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "componentvariant") {
-		const [namespace, name] = parseVariantKey(metadataItem)
-		return getPropertiesDefinition(`${namespace}.${name}`)
+		return getComponentVariantPropsDef(
+			componentNamespace,
+			componentName,
+			variantNamespace,
+			variantName
+			//variant
+		)
 	}
 	if (metadataType === "componenttype") {
 		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))

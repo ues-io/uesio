@@ -1,8 +1,11 @@
 import { useSelector } from "react-redux"
 import { RootState } from "../../store/store"
-import { selectEntities } from "./adapter"
+import { selectEntities, selectById } from "./adapter"
 
 const useAllVariants = () =>
 	useSelector((state: RootState) => selectEntities(state))
 
-export { useAllVariants }
+const useVariant = (variantId: string) =>
+	useSelector((state: RootState) => selectById(state, variantId))
+
+export { useAllVariants, useVariant }
