@@ -28,7 +28,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		CollectionName:        e.CollectionName,
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
-		UserResponseTokens:    e.UserResponseTokens,
 		RecordChallengeTokens: e.RecordChallengeTokens,
 	}
 }

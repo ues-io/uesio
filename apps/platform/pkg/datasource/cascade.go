@@ -9,14 +9,11 @@ import (
 
 func getCascadeDeletes(
 	wires []adapt.SaveOp,
-	collections map[string]*adapt.CollectionMetadata,
 	metadata *adapt.MetadataCache,
-	adapter adapt.Adapter,
-	credentials *adapt.Credentials,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
 
-	for _, collectionMetadata := range collections {
+	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
 		for _, field := range collectionMetadata.Fields {
 			if adapt.IsReference(field.Type) && field.OnDelete == "CASCADE" {
@@ -78,7 +75,12 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(deletes map[string]adapt.Collection, session *sess.Session) error {
+func performCascadeDeletes(batch []adapt.SaveOp, metadata *adapt.MetadataCache, session *sess.Session) error {
+	deletes, err := getCascadeDeletes(batch, metadata)
+	if err != nil {
+		return err
+	}
+
 	if len(deletes) == 0 {
 		return nil
 	}
