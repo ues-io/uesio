@@ -2,6 +2,8 @@ import { FunctionComponent, useState } from "react"
 
 import { component, context, styles } from "@uesio/ui"
 
+const IOExpandPanel = component.registry.getUtility("io.expandpanel")
+
 type Props = {
 	title: string
 	icon?: string
@@ -11,6 +13,8 @@ type Props = {
 	draggable?: string
 	context: context.Context
 	tooltip?: string
+	expandChildren?: boolean
+	popChildren?: boolean
 }
 
 const Icon = component.registry.getUtility("io.icon")
@@ -29,8 +33,11 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		tooltip,
 		selected,
 		context,
+		popChildren,
+		expandChildren,
 	} = props
 
+	const [expanded, setExpanded] = useState<boolean>(false)
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -49,9 +56,6 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 					},
 				},
 			},
-			popperPaper: {
-				overflow: "hidden",
-			},
 			title: {
 				textTransform: "uppercase",
 			},
@@ -59,32 +63,32 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		props
 	)
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+
 	return (
 		<div
 			className={classes.root}
 			ref={setAnchorEl}
-			draggable={!!draggable}
+			draggable={!!draggable && !expanded}
 			data-type={draggable}
 		>
 			<Tile
 				variant="io.tile.studio.propnodetag"
-				avatar={<Icon icon={icon} context={context} />}
+				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
+				isSelected={selected}
 			>
-				<span className={classes.title}>{title}</span>
-
-				{tooltip && (
-					<IconButton
-						size="small"
-						icon="help"
-						label={tooltip}
-						className="tooltip"
-						context={context}
-					/>
-				)}
+				<IOExpandPanel
+					defaultExpanded={false}
+					context={context}
+					toggle={<span className={classes.title}>{title}</span>}
+					showArrow={false}
+					expandState={[expanded, setExpanded]}
+				>
+					{expandChildren && children}
+				</IOExpandPanel>
 			</Tile>
-			{selected && anchorEl && children && (
+			{selected && popChildren && anchorEl && children && (
 				<Popper
 					referenceEl={anchorEl}
 					context={context}

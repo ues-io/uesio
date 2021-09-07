@@ -15,6 +15,8 @@ interface ImageProps extends definition.BaseProps {
 
 const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Image",
+	description: "Visible impression obtained by a camera",
+	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	sections: [
 		{

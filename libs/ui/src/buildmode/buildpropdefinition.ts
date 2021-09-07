@@ -1,11 +1,13 @@
-import { DefinitionMap } from "../definition/definition"
+import { DefinitionMap, UtilityProps } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
+import { FunctionComponent } from "react"
 
 type BuildPropertiesDefinition = {
 	title: string
 	description?: string
+	link?: string
 	properties?: PropDescriptor[]
 	sections: PropertySection[]
 	actions?: ActionDescriptor[]
@@ -24,6 +26,7 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
+	readOnly?: boolean
 }
 
 type PropertySection =
@@ -62,6 +65,7 @@ interface StylesSection extends BasePropSection {
 type PropDescriptor =
 	| TextProp
 	| NumberProp
+	| CustomProp
 	| SelectProp
 	| BooleanProp
 	| MetadataProp
@@ -105,6 +109,11 @@ interface StylesListProp extends BasePropDescriptor {
 
 interface NumberProp extends BasePropDescriptor {
 	type: "NUMBER"
+}
+
+interface CustomProp extends BasePropDescriptor {
+	type: "CUSTOM"
+	renderFunc: FunctionComponent<UtilityProps>
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -211,6 +220,7 @@ export {
 	LoadWireAction,
 	TextProp,
 	NumberProp,
+	CustomProp,
 	MetadataProp,
 	SelectProp,
 	ComponentProp,

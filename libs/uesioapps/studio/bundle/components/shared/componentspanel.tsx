@@ -6,6 +6,7 @@ import PropNodeTag from "./buildpropitem/propnodetag"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const Grid = component.registry.getUtility("io.grid")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -16,7 +17,10 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
 		if (target && target.dataset.type && isStructureView) {
-			uesio.builder.setDragNode("component", target.dataset.type, "")
+			const typeArray = target.dataset.type.split(".")
+			const metadataType =
+				typeArray.length === 4 ? "componentvariant" : "component"
+			uesio.builder.setDragNode(metadataType, target.dataset.type, "")
 		}
 	}
 	const onDragEnd = () => {
@@ -26,6 +30,24 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const builderComponents = component.registry.getComponents({
 		trait: "uesio.standalone",
 	})
+
+
+	const variants = uesio.component.useAllVariants()
+	// loop over variants and group by component
+	const variantsMap: Record<string, component.ComponentVariant[]> = {}
+	Object.keys(variants).forEach((key) => {
+		const [
+			componentNamespace,
+			componentName,
+			variantNamespace,
+			variantName,
+		] = component.path.parseVariantKey(key)
+		const componentKey = `${componentNamespace}.${componentName}`
+		if (!variantsMap[componentKey]) variantsMap[componentKey] = []
+		const variant = variants[key]
+		if (variant) {
+			variantsMap[componentKey].push(variant)
+		}
 
 	return (
 		<ScrollPanel
@@ -54,15 +76,20 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							defaultExpanded={true}
 							key={index}
 							context={context}
+							styles={{
+								innerContent: {
+									display: "grid",
+									rowGap: "8px",
+								},
+							}}
 						>
 							{Object.entries(components).map(
-								([componentName, propDef], indexTag) => {
+								([componentName, propDef]) => {
 									const fullName = `${namespace}.${componentName}`
 									const isSelected =
 										selectedType === "componenttype" &&
 										selectedItem === fullName
 									const sharedProps = {
-										draggable: fullName,
 										title: componentName,
 										onClick: () =>
 											uesio.builder.setSelectedNode(
@@ -70,21 +97,51 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												fullName,
 												""
 											),
-										key: indexTag,
+										key: fullName,
 										tooltip: propDef.description,
 										context,
 										selected: isSelected,
+										expandChildren: true,
+										...(isStructureView && {
+											draggable: fullName,
+											icon: "drag_indicator",
+										}),
 									}
-									// Loop over the variants for this component
+									const variants = variantsMap[fullName]
 
-									return !isStructureView ? (
-										<PropNodeTag {...sharedProps} />
-									) : (
-										<PropNodeTag
-											{...sharedProps}
-											draggable={fullName}
-											icon="drag_indicator"
-										/>
+									// Loop over the variants for this component
+									return (
+										<PropNodeTag {...sharedProps}>
+											{variants && (
+												<Grid
+													styles={{
+														root: {
+															gridTemplateColumns:
+																"1fr 1fr",
+															columnGap: "8px",
+															rowGap: "8px",
+															padding: "8px",
+														},
+													}}
+													context={context}
+												>
+													{variants.map((variant) => {
+														const variantFullName = `${variant.namespace}.${variant.name}`
+														return (
+															<PropNodeTag
+																title={
+																	variantFullName
+																}
+																draggable={`${fullName}.${variantFullName}`}
+																context={
+																	context
+																}
+															/>
+														)
+													})}
+												</Grid>
+											)}
+										</PropNodeTag>
 									)
 								}
 							)}

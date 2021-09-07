@@ -89,7 +89,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	})
 
 	return (
-		<>
+		<div style={{ position: "relative" }}>
 			<div className={classes.root} {...getComboboxProps()}>
 				<FieldLabel label={label} hide={hideLabel} context={context} />
 				<input className={classes.input} {...getInputProps()} />
@@ -113,7 +113,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 						</div>
 					))}
 			</div>
-		</>
+		</div>
 	)
 }
 

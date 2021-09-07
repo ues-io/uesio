@@ -1,4 +1,4 @@
-name: onchange
+name: onsave
 collection: crm.accounts
-type: BEFOREUPDATE
+type: BEFORESAVE
 dialect: JAVASCRIPT

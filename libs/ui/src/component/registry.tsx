@@ -11,6 +11,7 @@ import {
 	getPathSuffix,
 	getFullPathParts,
 	parseFieldKey,
+	parseVariantKey,
 } from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
@@ -20,6 +21,13 @@ import {
 	mergeDefinitionMaps,
 	renderUtility,
 } from "./component"
+import { css } from "@emotion/css"
+import {
+	getComponentTypePropsDef,
+	getFieldPropsDef,
+	getWirePropsDef,
+	getPanelPropsDef,
+} from "./builtinpropsdefs"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -36,8 +44,6 @@ const addToRegistry = <T extends unknown>(
 ) => {
 	registry[key] = item
 }
-
-import defs from "./definitions"
 
 const register = (
 	key: string,
@@ -166,30 +172,33 @@ const getPropertiesDefinitionFromPath = (
 
 	if (metadataType === "component")
 		return getPropertiesDefinition(metadataItem)
+	if (metadataType === "componentvariant") {
+		const [namespace, name] = parseVariantKey(metadataItem)
+		return getPropertiesDefinition(`${namespace}.${name}`)
+	}
+	if (metadataType === "componenttype") {
+		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
+	}
 	if (metadataType === "field") {
 		const [namespace, name, collectionNamespace, collectionName] =
 			parseFieldKey(metadataItem)
-		return {
-			title: name,
-			sections: [],
-			defaultDefinition: () => ({}),
-			traits: [
-				"uesio.field",
-				"wire." + collectionNamespace + "." + collectionName,
-			],
+		return getFieldPropsDef(
 			namespace,
 			name,
-		}
+			collectionNamespace,
+			collectionName
+		)
 	}
 
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 
-		if (pathArray[0] === "wires") return defs.wireDef
-		// PropDef for propertiespanel for panels (this is not a joke)
 		if (pathArray[0] === "panels" && pathArray.length === 2)
-			return defs.panelDef
+			return getPanelPropsDef()
 
+		if (pathArray[0] === "wires") {
+			return getWirePropsDef()
+		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
 			return getPropertiesDefinition(componentFullName)

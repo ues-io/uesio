@@ -9,17 +9,27 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-// BeforeDeleteAPI type
-type BeforeDeleteAPI struct {
+// BeforeSaveAPI type
+type BeforeSaveAPI struct {
+	Inserts *InsertsAPI `bot:"inserts"`
+	Updates *UpdatesAPI `bot:"updates"`
 	Deletes *DeletesAPI `bot:"deletes"`
 	errors  []string
 	session *sess.Session
 }
 
-func NewBeforeDeleteAPI(deletes *adapt.ChangeItems, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeDeleteAPI {
-	return &BeforeDeleteAPI{
+func NewBeforeSaveAPI(op *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
+	return &BeforeSaveAPI{
+		Inserts: &InsertsAPI{
+			inserts:  op.Inserts,
+			metadata: metadata,
+		},
+		Updates: &UpdatesAPI{
+			updates:  op.Updates,
+			metadata: metadata,
+		},
 		Deletes: &DeletesAPI{
-			deletes:  deletes,
+			deletes:  op.Deletes,
 			metadata: metadata,
 		},
 		session: session,
@@ -27,22 +37,22 @@ func NewBeforeDeleteAPI(deletes *adapt.ChangeItems, metadata *adapt.CollectionMe
 }
 
 // AddError function
-func (bs *BeforeDeleteAPI) AddError(message string) {
+func (bs *BeforeSaveAPI) AddError(message string) {
 	bs.errors = append(bs.errors, message)
 }
 
 // HasErrors function
-func (bs *BeforeDeleteAPI) HasErrors() bool {
+func (bs *BeforeSaveAPI) HasErrors() bool {
 	return len(bs.errors) > 0
 }
 
 // GetErrorString function
-func (bs *BeforeDeleteAPI) GetErrorString() string {
+func (bs *BeforeSaveAPI) GetErrorString() string {
 	return strings.Join(bs.errors, ", ")
 }
 
 // DeleteFile function
-func (bs *BeforeDeleteAPI) DeleteFiles(ids []string) error {
+func (bs *BeforeSaveAPI) DeleteFiles(ids []string) error {
 	if len(ids) == 0 {
 		return nil
 	}

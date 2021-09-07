@@ -1,4 +1,4 @@
 name: addcontact
 collection: crm.accounts
-type: AFTERINSERT
+type: AFTERSAVE
 dialect: JAVASCRIPT

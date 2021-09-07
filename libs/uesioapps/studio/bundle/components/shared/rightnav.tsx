@@ -42,7 +42,6 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				variant="io.large"
 				label="Code"
 				tooltipPlacement="left"
-				disabled={!hasChanges}
 				icon="code"
 				onClick={uesio.signal.getHandler([
 					{

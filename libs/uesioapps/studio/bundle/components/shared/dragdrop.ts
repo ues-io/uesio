@@ -16,7 +16,8 @@ const handleDrop = (
 		return
 	}
 
-	const [metadataType] = component.path.getFullPathParts(dragNode)
+	const [metadataType, metadataItem] =
+		component.path.getFullPathParts(dragNode)
 
 	switch (metadataType) {
 		case "field": {
@@ -34,6 +35,25 @@ const handleDrop = (
 				{
 					[`${propDef.namespace}.${propDef.name}`]:
 						propDef.defaultDefinition(),
+				},
+				dropIndex,
+				metadataType
+			)
+			break
+		}
+		case "componentvariant": {
+			const [, , variantNamespace, variantName] =
+				component.path.parseVariantKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					[`${propDef.namespace}.${propDef.name}`]: {
+						...propDef.defaultDefinition(),
+						...{
+							[`uesio.variant`]:
+								variantNamespace + "." + variantName,
+						},
+					},
 				},
 				dropIndex,
 				metadataType

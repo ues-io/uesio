@@ -7,8 +7,9 @@ export const componentVariantAdapter = createEntityAdapter<ComponentVariant>({
 		`${component}.${namespace}.${name}`,
 })
 
-export const { selectById } = componentVariantAdapter.getSelectors(
-	(state: RootState) => state.componentvariant
-)
+export const { selectById, selectEntities } =
+	componentVariantAdapter.getSelectors(
+		(state: RootState) => state.componentvariant
+	)
 
 export default componentVariantAdapter

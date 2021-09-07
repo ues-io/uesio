@@ -4,19 +4,20 @@ label: Property Node Tag
 definition:
   uesio.styles:
     root:
-      margin: "0 0 4px 0"
       border: "1px solid #eee"
       fontSize: "9pt"
       color: "#444"
-      backgroundColor: white
       borderRadius: 4px
       alignItems: center
+      overflow: hidden
+      backgroundColor: white
+      userSelect: none
     content:
       verticalAlign: middle
-      padding: 8px 8px 8px 0px
-      display: flex
       alignItems: center
       justifyContent: space-between
     avatar:
       marginLeft: 8px
       color: "#aaa"
+    selected:
+      border: "1px solid $Theme{color.primary}"

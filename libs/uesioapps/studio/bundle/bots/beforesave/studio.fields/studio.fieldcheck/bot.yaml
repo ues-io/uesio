@@ -1,0 +1,4 @@
+name: fieldcheck
+collection: studio.fields
+dialect: "JAVASCRIPT"
+type: BEFORESAVE
