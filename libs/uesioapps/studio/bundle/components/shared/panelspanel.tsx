@@ -55,7 +55,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			context={context}
 			className={className}
 		>
-			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
+			<div>
 				{def?.map((el, index) => {
 					if (!el) return null
 					const { id } = Object.values(el)[0] as Record<

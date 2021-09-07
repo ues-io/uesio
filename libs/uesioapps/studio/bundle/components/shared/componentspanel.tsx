@@ -31,7 +31,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		trait: "uesio.standalone",
 	})
 
-
 	const variants = uesio.component.useAllVariants()
 	// loop over variants and group by component
 	const variantsMap: Record<string, component.ComponentVariant[]> = {}
@@ -48,6 +47,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		if (variant) {
 			variantsMap[componentKey].push(variant)
 		}
+	})
 
 	return (
 		<ScrollPanel

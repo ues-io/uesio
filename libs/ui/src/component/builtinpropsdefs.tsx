@@ -96,4 +96,23 @@ const getFieldPropsDef = (
 	name,
 })
 
-export { getComponentTypePropsDef, getWirePropsDef, getFieldPropsDef }
+const getPanelPropsDef = (): BuildPropertiesDefinition => ({
+	title: "Component",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "panelComponent",
+			type: "COMPONENT",
+			label: "Panel",
+		},
+	],
+	sections: [],
+	actions: [],
+})
+
+export {
+	getComponentTypePropsDef,
+	getWirePropsDef,
+	getFieldPropsDef,
+	getPanelPropsDef,
+}
