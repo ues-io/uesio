@@ -5,14 +5,6 @@ idFormat: "${studio.appid}_${studio.name}"
 nameField: studio.name
 collectionName: teams
 access: "protected"
-userResponseTokens:
-  - type: "lookup"
-    collection: studio.teammembers
-    conditions:
-      - field: "studio.memberid"
-        value: "${user.ID}"
-    token: "${studio.teamid}"
-    match: "team"
 recordChallengeTokens:
   - type: "lookup"
     collection: studio.teampermissions
@@ -22,8 +14,8 @@ recordChallengeTokens:
       - field: "studio.appid"
         value: "${studio.appid}"
     token: "${studio.teamid}"
-    match: "team"
-    access: read-write
+    userAccessToken: "studio.teammember"
+    access: readwrite
   - type: "lookup"
     collection: studio.teampermissions
     conditions:
@@ -32,5 +24,5 @@ recordChallengeTokens:
       - field: "studio.appid"
         value: "${studio.appid}"
     token: "${studio.teamid}"
-    match: "team"
+    userAccessToken: "studio.teammember"
     access: read
