@@ -205,7 +205,6 @@ const getPropertiesDefinitionFromPath = (
  * @param filter
  *
  */
-// TODO renamte to getComponents
 const getComponents = ({ trait }: { trait: string }) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
@@ -216,9 +215,9 @@ const getComponents = ({ trait }: { trait: string }) =>
 		const definition = getPropertiesDefinition(`${namespace}.${name}`)
 
 		// use traits param for filtering
-		if (definition?.traits?.includes(trait)) {
+		if (definition?.traits?.includes(trait))
 			acc[namespace][name] = definition
-		}
+
 		return acc
 	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
 

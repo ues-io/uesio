@@ -34,7 +34,7 @@ const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 			slot: "signals",
 		},
 	],
-	traits: ["uesio.standalone", "uesio.panel"],
+	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
 }

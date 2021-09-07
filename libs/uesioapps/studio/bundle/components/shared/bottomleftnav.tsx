@@ -47,7 +47,7 @@ const BottomLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				])}
 				label="Modals"
 				tooltipPlacement="right"
-				icon={uesio.getTheme().definition.icons.panels}
+				icon="call_to_action"
 			/>
 		</ScrollPanel>
 	)

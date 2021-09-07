@@ -13,7 +13,6 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			panel: panelId,
 		},
 	])
-
 	return (
 		<IODialog
 			onClose={onClose}

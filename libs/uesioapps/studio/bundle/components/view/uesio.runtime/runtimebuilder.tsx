@@ -32,7 +32,7 @@ component.registry.registerSignals("uesio.runtime", {
 				...state,
 				showComps: true,
 				showWires: false,
-				showModals: false,
+				showPanels: false,
 			})
 		},
 		target: "panels",
@@ -44,7 +44,7 @@ component.registry.registerSignals("uesio.runtime", {
 				...state,
 				showComps: false,
 				showWires: true,
-				showModals: false,
+				showPanels: false,
 			})
 		},
 		target: "panels",
@@ -56,7 +56,7 @@ component.registry.registerSignals("uesio.runtime", {
 				...state,
 				showComps: false,
 				showWires: false,
-				showModals: true,
+				showPanels: true,
 			})
 		},
 		target: "panels",
@@ -82,7 +82,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		showCode: false,
 		showComps: true,
 		showWires: false,
-		showModals: false,
+		showPanels: false,
 	})
 
 	const { context } = props
@@ -152,7 +152,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}
 				/>
 			)}
-			{state.showModals && (
+			{state.showPanels && (
 				<PanelsPanel
 					context={builderContext}
 					className={styles.css({ gridRow: 2, gridColumn: 2 })}

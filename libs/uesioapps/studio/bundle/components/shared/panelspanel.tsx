@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
-import { DefinitionMap } from "libs/ui/src/definition/definition"
 
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
@@ -59,11 +58,14 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
 				{def?.map((el, index) => {
 					if (!el) return null
-					const { id } = Object.values(el)[0] as DefinitionMap
+					const { id } = Object.values(el)[0] as Record<
+						string,
+						unknown
+					>
 					const panelPath = `${localPath}["${index}"]`
 					return (
 						<PropNodeTag
-							title={`${id}` || "missing ID"}
+							title={`${id || "missing ID"}`}
 							onClick={() =>
 								uesio.builder.setSelectedNode(
 									metadataType,
@@ -71,7 +73,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									panelPath
 								)
 							}
-							icon={uesio.getTheme().definition.icons.panels}
+							icon="call_to_action"
 							key={index}
 							selected={
 								selectedMetadataType === metadataType &&

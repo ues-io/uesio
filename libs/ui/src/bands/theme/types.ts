@@ -18,9 +18,6 @@ interface ThemeState {
 		spacing: number
 		palette: Palette
 		variantOverrides: Record<string, DefinitionMap>
-		icons: {
-			panels: string
-		}
 	}
 }
 

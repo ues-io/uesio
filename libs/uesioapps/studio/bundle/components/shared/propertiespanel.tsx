@@ -38,6 +38,7 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
+	// Check if the path includes "panels" and give back panel ID and path
 	const handlePanel = ():
 		| [null, null]
 		| [panelId: string, panelPath: string] => {
