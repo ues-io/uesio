@@ -1,11 +1,14 @@
 import { CSSInterpolation } from "@emotion/css"
+import { initial } from "lodash"
+import React from "react"
 
 export default (
 	isSelected: boolean,
 	isActive: boolean,
 	isStructureView: boolean,
 	isContentView: boolean,
-	isDraggingMe: boolean
+	isDraggingMe: boolean,
+	extraStyles?: React.CSSProperties
 ): Record<string, CSSInterpolation> => {
 	const ACTIVE_COLOR = "#eee"
 	const SELECTED_COLOR = "#aaa"
@@ -25,6 +28,7 @@ export default (
 			cursor: "pointer",
 			position: "relative",
 			userSelect: "none",
+			...extraStyles,
 			...(isStructureView && {
 				border: `1px solid ${borderColor}`,
 				marginTop: "-1px",

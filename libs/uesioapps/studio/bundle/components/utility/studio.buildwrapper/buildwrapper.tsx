@@ -1,4 +1,9 @@
-import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
+import React, {
+	FunctionComponent,
+	SyntheticEvent,
+	DragEvent,
+	useState,
+} from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
@@ -77,6 +82,11 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		},
 	}
 
+	const flexRatio = (): string => {
+		if (!React.isValidElement(children)) return "initial"
+		return children.props.definition?.flexRatio || "initial"
+	}
+
 	const wrapperPath = component.path.getGrandParentPath(path)
 	const addBeforePlaceholder =
 		`${wrapperPath}["${index}"]` === dragger.dropNode
@@ -88,7 +98,10 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 			isActive,
 			isStructureView,
 			isContentView,
-			dragger.isDragging
+			dragger.isDragging,
+			{
+				flex: flexRatio(),
+			}
 		),
 		props
 	)
