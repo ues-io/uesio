@@ -44,10 +44,14 @@ definition:
                         target: leadsTable
                     text: List or Detail View
                     uesio.variant: io.secondary
-    - io.image: {file: crm.leadsgraph, align: center, uesio.variant: null, uesio.styles: {root: {padding-bottom: 15px}}}
-    - io.box:
+    - io.image:
+        file: crm.leadsgraph
+        align: center
+        uesio.variant: null
         uesio.styles:
-          root: {}
+          root:
+            padding-bottom: 15px
+    - io.box:
         components:
           - io.text:
               text: Open
