@@ -135,12 +135,8 @@ definition:
                                       uesio.variant: io.secondary
                                       text: "Delete"
                                       signals:
-                                        - signal: wire/MARK_FOR_DELETE
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "fields"
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                                        - signal: panel/TOGGLE
+                                          panel: deleteField
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -202,3 +198,35 @@ definition:
                                             label: "File Collection"
                                         - io.field:
                                             fieldId: studio.accept
+  panels:
+    - io.dialog:
+        id: deleteField
+        title: Delete Field
+        width: 400px
+        height: 300px
+        components:
+          - io.text:
+              text: Are you sure you want to delete this field?
+              element: div
+              uesio.variant: io.smalltitle
+          - io.text:
+              text: You will never be able to access the information associated with this field again.
+              element: div
+              uesio.variant: io.smallcontent
+        actions:
+          - io.button:
+              text: Delete
+              uesio.variant: io.primary
+              signals:
+                - signal: wire/MARK_FOR_DELETE
+                - signal: wire/SAVE
+                  wires:
+                    - "fields"
+                - signal: "route/NAVIGATE"
+                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+          - io.button:
+              text: Cancel
+              uesio.variant: io.secondary
+              signals:
+                - signal: panel/TOGGLE
+                  panel: deleteField
