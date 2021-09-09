@@ -7,6 +7,7 @@ import React, {
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
+
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
 }
@@ -82,10 +83,9 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		},
 	}
 
-	const flexRatio = (): string => {
-		if (!React.isValidElement(children)) return "initial"
-		return children.props.definition?.flexRatio || "initial"
-	}
+	// Flexbox options so the buildwrapper doesn't break the layout
+	const responsiveLayoutOverrides =
+		propDef?.getFlexStyles && propDef.getFlexStyles(children)
 
 	const wrapperPath = component.path.getGrandParentPath(path)
 	const addBeforePlaceholder =
@@ -100,7 +100,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 			isContentView,
 			dragger.isDragging,
 			{
-				flex: flexRatio(),
+				...responsiveLayoutOverrides,
 			}
 		),
 		props

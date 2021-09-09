@@ -11,12 +11,15 @@ const responsiveLayout: FunctionComponent<ResponsiveLayoutProps> = (props) => {
 		columnGap: definition.columnGap,
 	}
 
+	console.log({ definition })
+
 	const classes = styles.useStyles(
 		{
 			root: {
 				...columnGap,
 				display: "flex",
-				justifyContent: "space-between",
+				justifyContent: definition.justifyContent || "initial",
+				alignItems: definition.alignItems || "initial",
 				flexFlow: "row wrap",
 			},
 		},

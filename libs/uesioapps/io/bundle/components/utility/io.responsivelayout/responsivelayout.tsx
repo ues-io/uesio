@@ -15,7 +15,6 @@ const Grid: FC<T> = (props) => {
 		props
 	)
 
-	console.log({ def: props })
 	return (
 		<div onClick={props.onClick} className={classes.root}>
 			{props.children}

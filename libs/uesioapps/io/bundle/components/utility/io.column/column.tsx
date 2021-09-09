@@ -9,9 +9,6 @@ const Column: FunctionComponent<ColumnProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				background: "rgba(56, 163, 245, 0.349)",
-				border: "1px solid #eee",
-				flex: 1,
 				minHeight: "4em", //DELETE
 			},
 		},
