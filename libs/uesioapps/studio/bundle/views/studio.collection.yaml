@@ -353,8 +353,16 @@ definition:
                 - signal: wire/SAVE
                   wires:
                     - "newfield"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}/fields/${studio.name}"
+                - signal: wire/LOAD
+                  wires:
+                    - "workspaces"
+                    - "fields"
+                    - "newfield"
+                - signal: "panel/TOGGLE"
+                  panel: "newField"
+                - signal: notification/ADD
+                  text: Field created!
+                  severity: success
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"
