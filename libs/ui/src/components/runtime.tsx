@@ -8,6 +8,7 @@ import Route from "./route"
 import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
+import { useBeforeunload } from "react-beforeunload"
 
 let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
@@ -24,6 +25,13 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	// This tells us to load in the studio main component pack if we're in buildmode
 	const deps = buildMode ? ["studio.main", "io.main"] : []
 	const scriptResult = uesio.component.usePacks(deps, !!buildMode)
+	const hasChanges = uesio.builder.useHasChanges()
+
+	useBeforeunload((event) => {
+		if (hasChanges) {
+			event.preventDefault()
+		}
+	})
 
 	useEffect(() => {
 		const toggleFunc = (event: KeyboardEvent) => {
