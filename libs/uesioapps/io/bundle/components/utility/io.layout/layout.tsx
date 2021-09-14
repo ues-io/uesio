@@ -5,7 +5,7 @@ interface T extends definition.UtilityProps {
 	onClick?: () => void
 }
 
-const Grid: FC<T> = (props) => {
+const Layout: FC<T> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -22,4 +22,4 @@ const Grid: FC<T> = (props) => {
 	)
 }
 
-export default Grid
+export default Layout

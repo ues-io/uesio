@@ -12,7 +12,7 @@ components:
       variants:
         - io.titlebar.io.dialog
     io.dialogplain:
-    io.responsivelayout:
+    io.layout:
     io.column:
     io.field:
       variants:
@@ -68,7 +68,7 @@ components:
     io.popper:
     io.referencefield:
     io.column:
-    io.responsivelayout:
+    io.layout:
     io.row:
     io.scrollpanel:
     io.selectfield:

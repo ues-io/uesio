@@ -5,7 +5,7 @@ import ActionButton from "./actionbutton"
 
 const AddAction: FunctionComponent<ActionProps> = (props) => {
 	const action = props.action as builder.AddAction
-	console.log("mounted", action)
+
 	if (!action) {
 		return null
 	}

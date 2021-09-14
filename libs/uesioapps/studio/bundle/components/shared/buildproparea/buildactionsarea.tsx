@@ -54,7 +54,6 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		view: viewDefId + "()",
 	})
 	const readOnly = !!propsDef.readOnly
-	console.log({ actions })
 	return (
 		<div className={classes.wrapper}>
 			{!readOnly && <DeleteAction {...actionProps} />}
@@ -62,7 +61,6 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 			{!readOnly && <CloneAction {...actionProps} />}
 			{actions?.map?.((action, index) => {
 				const ActionHandler = ACTION_TO_COMPONENT[action.type]
-				console.log({ action })
 				return (
 					<ActionHandler
 						{...actionProps}

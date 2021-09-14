@@ -1,4 +1,5 @@
 import { definition, builder, signal } from "@uesio/ui"
+
 import React from "react"
 type ColumnDefinition = {
 	flexRatio: string | number
@@ -18,38 +19,27 @@ const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 		flexRatio: 1,
 	}),
 
-	sections: [
-		{
-			title: "Display",
-			type: "PROPLIST",
-			properties: [
-				{
-					name: "flexRatio",
-					type: "TEXT",
-					label: "flex",
-				},
-				{
-					name: "minWidth",
-					type: "TEXT",
-					label: "minWidth",
-				},
-				{
-					name: "order",
-					type: "TEXT",
-					label: "Order",
-				},
-			],
-		},
-	],
-	traits: ["uesio.standalone"],
+	sections: [],
+	traits: [],
 	classes: ["root"],
 	type: "component",
+	actions: [],
 	getFlexStyles: (
-		children?: React.ReactChild
+		input: React.ReactChild | builder.BuildPropertiesDefinition
 	): React.CSSProperties | null => {
-		if (!React.isValidElement(children) || !children.props.definition)
+		// Get the definition from the children if called in Buildwrapper
+		const definition = React.isValidElement(input)
+			? input.props.definition
+			: input
+
+		if (!definition) {
+			console.warn(
+				"No valid inputs received to create flex styles",
+				input
+			)
 			return null
-		const { flexRatio, minWidth, order } = children.props.definition
+		}
+		const { flexRatio, minWidth, order } = definition
 
 		const flex = flexRatio || "initial"
 		const defFlexBasis = minWidth || "0%"

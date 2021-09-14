@@ -1,25 +1,31 @@
 import { FunctionComponent } from "react"
 import { component, styles } from "@uesio/ui"
-import { ResponsiveLayoutProps } from "./responsiveLayoutdefinition"
+import { LayoutProps } from "./Layoutdefinition"
 
-const IOresponsiveLayout = component.registry.getUtility("io.responsivelayout")
+const IOLayout = component.registry.getUtility("io.layout")
 
-const responsiveLayout: FunctionComponent<ResponsiveLayoutProps> = (props) => {
+const Layout: FunctionComponent<LayoutProps> = (props) => {
 	const { definition, context, path } = props
 
 	const columnGap = definition.columnGap && {
 		columnGap: definition.columnGap,
 	}
 
-	console.log({ definition })
+	const breakpoint = definition.breakpoint && {
+		[`@media (max-width: ${definition.breakpoint})`]: {
+			flexFlow: "column",
+		},
+	}
 
 	const classes = styles.useStyles(
 		{
 			root: {
 				...columnGap,
 				display: "flex",
+				...breakpoint,
 				justifyContent: definition.justifyContent || "initial",
 				alignItems: definition.alignItems || "initial",
+				gap: definition.columnGutterSize || "initial",
 				flexFlow: "row wrap",
 			},
 		},
@@ -27,7 +33,7 @@ const responsiveLayout: FunctionComponent<ResponsiveLayoutProps> = (props) => {
 	)
 
 	return (
-		<IOresponsiveLayout classes={classes} {...props}>
+		<IOLayout classes={classes} {...props}>
 			<component.Slot
 				definition={definition}
 				listName="columns"
@@ -35,8 +41,8 @@ const responsiveLayout: FunctionComponent<ResponsiveLayoutProps> = (props) => {
 				accepts={["io.column"]}
 				context={context}
 			/>
-		</IOresponsiveLayout>
+		</IOLayout>
 	)
 }
 
-export default responsiveLayout
+export default Layout
