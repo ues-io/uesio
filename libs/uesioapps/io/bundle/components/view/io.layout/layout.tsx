@@ -1,10 +1,11 @@
-import { FunctionComponent } from "react"
+import { FC, createContext } from "react"
 import { component, styles } from "@uesio/ui"
 import { LayoutProps } from "./Layoutdefinition"
+export const LayoutContext = createContext([0])
 
 const IOLayout = component.registry.getUtility("io.layout")
 
-const Layout: FunctionComponent<LayoutProps> = (props) => {
+const Layout: FC<LayoutProps> = (props) => {
 	const { definition, context, path } = props
 
 	const columnGap = definition.columnGap && {
@@ -34,13 +35,15 @@ const Layout: FunctionComponent<LayoutProps> = (props) => {
 
 	return (
 		<IOLayout classes={classes} {...props}>
-			<component.Slot
-				definition={definition}
-				listName="columns"
-				path={path}
-				accepts={["io.column"]}
-				context={context}
-			/>
+			<LayoutContext.Provider value={definition.template}>
+				<component.Slot
+					definition={definition}
+					listName="columns"
+					path={path}
+					accepts={["io.column"]}
+					context={context}
+				/>
+			</LayoutContext.Provider>
 		</IOLayout>
 	)
 }

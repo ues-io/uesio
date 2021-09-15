@@ -1,5 +1,5 @@
 import { definition, builder, component } from "@uesio/ui"
-import LayoutPresetProp from "./layoutpresetprop"
+import LayoutTemplateProp from "./layouttemplateprop"
 
 type LayoutDefinition = {
 	columnGap?: string
@@ -7,6 +7,8 @@ type LayoutDefinition = {
 	alignItems: string
 	columnGutterSize: string
 	breakpoint: string
+	columns: any[]
+	template: number[]
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition
@@ -34,6 +36,7 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Layout",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
+		template: "1,1",
 		columns: [
 			{
 				"io.column": {
@@ -50,9 +53,9 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 	properties: [
 		{
 			type: "CUSTOM",
-			name: "layoutPreset",
-			label: "Layout Templates",
-			renderFunc: LayoutPresetProp,
+			name: "template",
+			label: "Layout Template",
+			renderFunc: LayoutTemplateProp,
 		},
 		{
 			name: "alignItems",

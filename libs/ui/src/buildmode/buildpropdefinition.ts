@@ -22,9 +22,7 @@ type BuildPropertiesDefinition = {
 		propDef: BuildPropertiesDefinition,
 		uesio: Uesio
 	) => void
-	getFlexStyles?: (
-		children?: React.ReactChild | React.ReactNode
-	) => React.CSSProperties | null
+	getFlexStyles?: (template: number[], path: string) => React.CSSProperties
 	name?: string // auto-populated
 	namespace?: string // auto-populated
 	type?: string

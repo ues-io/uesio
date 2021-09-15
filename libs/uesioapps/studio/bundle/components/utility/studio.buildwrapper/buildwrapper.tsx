@@ -3,7 +3,6 @@ import React, {
 	SyntheticEvent,
 	DragEvent,
 	useState,
-	useMemo,
 } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
@@ -31,12 +30,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
 	const accepts = propDef?.accepts
-
-	// Take the flexbox options from the reponsive columns so the buildwrapper doesn't break the layout
-	const layoutOverrides = useMemo(
-		() => propDef?.getFlexStyles && propDef.getFlexStyles(children),
-		[children]
-	)
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const fullDragPath = component.path.makeFullPath(
@@ -101,10 +94,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 			isActive,
 			isStructureView,
 			isContentView,
-			dragger.isDragging,
-			{
-				...layoutOverrides,
-			}
+			dragger.isDragging
 		),
 		props
 	)
