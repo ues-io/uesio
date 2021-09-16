@@ -44,7 +44,7 @@ const Layout: FC<LayoutProps> = (props) => {
 		<IOLayout classes={classes} {...props}>
 			<LayoutContext.Provider value={template}>
 				<component.Slot
-					definition={definition}
+					definition={props.definition}
 					listName="columns"
 					path={path}
 					accepts={["io.column"]}
