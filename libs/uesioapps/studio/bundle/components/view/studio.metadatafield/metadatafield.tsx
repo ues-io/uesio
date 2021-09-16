@@ -39,7 +39,13 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	if (!fieldMetadata) return null
 
-	if (context.getFieldMode() !== "EDIT") {
+	const canEdit = record.isNew()
+		? fieldMetadata.getCreateable()
+		: fieldMetadata.getUpdateable()
+
+	const mode = (canEdit && context.getFieldMode()) || "READ"
+
+	if (mode !== "EDIT") {
 		return <component.Component {...props} componentType="io.field" />
 	}
 

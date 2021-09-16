@@ -1,43 +1,46 @@
 name: public
-named:
+named: {}
 views:
-  web.home: true
-  web.topbar: true
+  web.contact: true
+  web.contactthanks: true
+  web.earlyaccess: true
+  web.earlyaccessthanks: true
   web.footer: true
-  web.earlyaccess: true
-  web.earlyaccessthanks: true
-  web.preview: true
-  web.privacy: true
-  web.terms: true
-  web.team: true
-  web.contact: true
-  web.contactthanks: true
-routes:
   web.home: true
-  web.earlyaccess: true
-  web.earlyaccessthanks: true
   web.preview: true
   web.privacy: true
-  web.terms: true
   web.team: true
+  web.terms: true
+  web.topbar: true
+routes:
   web.contact: true
   web.contactthanks: true
+  web.earlyaccess: true
+  web.earlyaccessthanks: true
+  web.home: true
+  web.preview: true
+  web.privacy: true
+  web.team: true
+  web.terms: true
 files:
-  web.logo: true
-  web.piano: true
-  web.accordion: true
-  web.dryer: true
-  web.htmlexample: true
-  web.cssexample: true
-  web.viewexample: true
-  web.routeexample: true
-  web.osman: true
   web.abel: true
+  web.accordion: true
   web.albin: true
-  web.matti: true
-  web.primi: true
-  web.gregg: true
-  web.wessel: true
   web.ben: true
+  web.cssexample: true
+  web.dryer: true
+  web.gregg: true
+  web.htmlexample: true
   web.james: true
+  web.logo: true
   web.logowhite: true
+  web.matti: true
+  web.osman: true
+  web.piano: true
+  web.primi: true
+  web.routeexample: true
+  web.viewexample: true
+  web.wessel: true
+allowallviews: false
+allowallroutes: false
+allowallfiles: false

@@ -140,6 +140,5 @@ definition:
                             - io.text:
                                 uesio.variant: web.teamtext
                                 text: Senior Software Engineer
-
     - uesio.view:
         view: web.footer

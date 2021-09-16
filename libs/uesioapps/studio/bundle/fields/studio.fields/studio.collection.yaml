@@ -3,3 +3,4 @@ collection: studio.fields
 type: TEXT
 label: Collection
 propertyName: collection
+createOnly: true

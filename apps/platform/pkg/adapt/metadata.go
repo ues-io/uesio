@@ -56,7 +56,6 @@ type CollectionMetadata struct {
 	CollectionName        string                                 `json:"-"`
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
-	UserResponseTokens    []*meta.UserResponseTokenDefinition    `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 }
 
