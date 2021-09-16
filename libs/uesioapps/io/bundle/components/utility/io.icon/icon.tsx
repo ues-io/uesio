@@ -29,7 +29,7 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 		return <span className={classes.root}>{props.icon}</span>
 	}
 
-	return <span className={classes.root}></span>
+	return <span className={classes.root} />
 }
 
 export default Icon
