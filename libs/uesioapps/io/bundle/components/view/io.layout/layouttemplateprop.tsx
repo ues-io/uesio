@@ -90,7 +90,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 	const handler = (values: number[]) => {
 		let currentColumns: ColumnArrayKey[] = definition.columns
 
-		// If preset columncount < current collumncount --> delete empty columnds
+		// If new columncount < current collumncount --> delete empty columns
 		if (values.length < currentColumns.length) {
 			const numberOfColumsToDelete = currentColumns.length - values.length
 			const indexesUpForDelete = currentColumns
@@ -100,7 +100,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 						? null
 						: i
 				)
-				.filter((el) => !!el)
+				.filter((el) => el !== null)
 
 			// Stop if We need to delete more columns then we can
 			if (numberOfColumsToDelete > indexesUpForDelete.length) {
@@ -158,6 +158,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 				{layoutPresets.map((el, i) => (
 					<LayoutTemplateButton
 						{...el}
+						key={el.value.toString()}
 						context={context}
 						selected={definition.template === el.value.toString()}
 						onClick={() => handler(el.value)}
