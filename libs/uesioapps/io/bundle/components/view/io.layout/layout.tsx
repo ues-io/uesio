@@ -6,28 +6,35 @@ export const LayoutContext = createContext([0])
 const IOLayout = component.registry.getUtility("io.layout")
 
 const Layout: FC<LayoutProps> = (props) => {
-	const { definition, context, path } = props
-
-	const columnGap = definition.columnGap && {
-		columnGap: definition.columnGap,
-	}
-
-	const breakpoint = definition.breakpoint && {
-		[`@media (max-width: ${definition.breakpoint})`]: {
-			flexFlow: "column",
+	const {
+		definition: {
+			columnGap,
+			justifyContent,
+			alignItems,
+			breakpoint,
+			template,
 		},
-	}
+		context,
+		path,
+	} = props
+
+	const mediaQueryForBreakpoint = breakpoint
+		? {
+				[`@media (max-width: ${breakpoint})`]: {
+					flexFlow: "column",
+				},
+		  }
+		: {}
 
 	const classes = styles.useStyles(
 		{
 			root: {
-				...columnGap,
+				justifyContent: justifyContent || "initial",
+				alignItems: alignItems || "initial",
+				gap: columnGap || "initial",
 				display: "flex",
-				...breakpoint,
-				justifyContent: definition.justifyContent || "initial",
-				alignItems: definition.alignItems || "initial",
-				gap: definition.columnGutterSize || "initial",
 				flexFlow: "row wrap",
+				...mediaQueryForBreakpoint,
 			},
 		},
 		props
@@ -35,7 +42,7 @@ const Layout: FC<LayoutProps> = (props) => {
 
 	return (
 		<IOLayout classes={classes} {...props}>
-			<LayoutContext.Provider value={definition.template}>
+			<LayoutContext.Provider value={template}>
 				<component.Slot
 					definition={definition}
 					listName="columns"

@@ -5,7 +5,6 @@ type LayoutDefinition = {
 	columnGap?: string
 	justifyContent: string
 	alignItems: string
-	columnGutterSize: string
 	breakpoint: string
 	columns: any[]
 	template: number[]
@@ -64,9 +63,9 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Align Items",
 		},
 		{
-			name: "columnGutterSize",
+			name: "columnGap",
 			type: "TEXT",
-			label: "Column gutter",
+			label: "Column gap",
 		},
 		{
 			name: "breakpoint",
