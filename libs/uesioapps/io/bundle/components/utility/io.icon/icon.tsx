@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, materialIcons, context } from "@uesio/ui"
 
 interface IconProps extends definition.UtilityProps {
 	icon?: string
-	size?: "small"
 }
 
 const Icon: FunctionComponent<IconProps> = (props) => {
@@ -13,7 +12,6 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 				fontFamily: "Material Icons",
 				fontWeight: "normal",
 				fontStyle: "normal",
-				fontSize: props.size === "small" ? "14px" : "18px",
 				display: "inline-block",
 				lineHeight: 1,
 				textTransform: "none",
@@ -26,7 +24,12 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 		},
 		props
 	)
-	return <span className={classes.root}>{props.icon}</span>
+
+	if (props.icon && materialIcons.includes(props.icon)) {
+		return <span className={classes.root}>{props.icon}</span>
+	}
+
+	return <span className={classes.root}></span>
 }
 
 export default Icon

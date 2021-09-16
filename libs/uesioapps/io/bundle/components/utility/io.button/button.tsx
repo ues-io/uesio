@@ -1,11 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
 
 interface ButtonProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	width?: string
 	isSelected?: boolean
+	icon?: React.Component
 }
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
@@ -32,7 +33,8 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				props.isSelected && classes.selected
 			)}
 		>
-			<div className={classes.label}>{label}</div>
+			{props.icon && props.icon}
+			<span className={classes.label}>{label}</span>
 		</button>
 	)
 }
