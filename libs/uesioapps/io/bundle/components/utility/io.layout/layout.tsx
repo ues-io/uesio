@@ -1,11 +1,7 @@
 import { FC } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface T extends definition.UtilityProps {
-	onClick?: () => void
-}
-
-const Layout: FC<T> = (props) => {
+const Layout: FC<definition.UtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -15,11 +11,7 @@ const Layout: FC<T> = (props) => {
 		props
 	)
 
-	return (
-		<div onClick={props.onClick} className={classes.root}>
-			{props.children}
-		</div>
-	)
+	return <div className={classes.root}>{props.children}</div>
 }
 
 export default Layout

@@ -15,7 +15,6 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 		const componentKey = action.componentKey
 		const propDef = registry.getPropertiesDefinition(componentKey)
 
-		console.log({ propDef })
 		if (propDef) {
 			props.valueAPI.add(`${props.path}["${action.slot}"]`, {
 				[componentKey]: propDef.defaultDefinition(),

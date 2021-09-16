@@ -69,7 +69,6 @@ components:
     io.referencefield:
     io.column:
     io.layout:
-    io.row:
     io.scrollpanel:
     io.selectfield:
     io.text:

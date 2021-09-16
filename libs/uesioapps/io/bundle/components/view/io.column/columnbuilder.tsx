@@ -1,11 +1,10 @@
 import { FC } from "react"
-import { styles, component } from "@uesio/ui"
-import { ColumnProps } from "./columndefinition"
+import { definition, styles, component } from "@uesio/ui"
 import Column, { getColumnFlexStyles } from "./column"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
-const ColumnBuilder: FC<ColumnProps> = (props) => {
+const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 	const { path = "", context } = props
 
 	// Get template val set on parent layout def

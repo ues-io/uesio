@@ -1,14 +1,4 @@
-import { definition, builder } from "@uesio/ui"
-
-type ColumnDefinition = {
-	flexRatio: string | number
-	minWidth: number
-	order: number
-}
-
-interface ColumnProps extends definition.BaseProps {
-	definition: ColumnDefinition
-}
+import { builder } from "@uesio/ui"
 
 const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",
@@ -21,6 +11,5 @@ const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	actions: [],
 }
-export { ColumnProps }
 
 export default ColumnPropertyDefinition

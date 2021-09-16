@@ -40,12 +40,12 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 		columns: [
 			{
 				"io.column": {
-					flexRatio: 1,
+					components: [],
 				},
 			},
 			{
 				"io.column": {
-					flexRatio: 1,
+					components: [],
 				},
 			},
 		],

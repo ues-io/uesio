@@ -1,6 +1,5 @@
 import { FC, useContext } from "react"
-import { component, styles } from "@uesio/ui"
-import { ColumnProps } from "./columndefinition"
+import { definition, component, styles } from "@uesio/ui"
 import toPath from "lodash/toPath"
 import { LayoutContext } from "../io.layout/layout"
 
@@ -18,13 +17,13 @@ export const getColumnFlexStyles = (
 	}
 }
 
-const Column: FC<ColumnProps> = (props) => {
-	const { definition, context, path } = props
+const Column: FC<definition.BaseProps> = (props) => {
+	const { definition, context, path = "" } = props
 	const sharedProps = { context }
-	const layoutTemplate = useContext(LayoutContext)
-	const flexStyles =
-		!context.getBuildMode() &&
-		getColumnFlexStyles(layoutTemplate, path || "")
+
+	const flexStyles = !context.getBuildMode()
+		? getColumnFlexStyles(useContext(LayoutContext), path)
+		: {}
 
 	const classes = styles.useStyles(
 		{
