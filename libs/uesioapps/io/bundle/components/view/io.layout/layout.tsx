@@ -1,6 +1,6 @@
 import { FC, createContext } from "react"
 import { component, styles } from "@uesio/ui"
-import { LayoutProps } from "./Layoutdefinition"
+import { LayoutProps } from "./layoutdefinition"
 export const LayoutContext = createContext([0])
 
 const IOLayout = component.registry.getUtility("io.layout")
