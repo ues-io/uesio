@@ -175,6 +175,11 @@ func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
 }
 
+// Len function
+func (b *Bot) Len() int {
+	return StandardItemLen(b)
+}
+
 // GetItemMeta function
 func (b *Bot) GetItemMeta() *ItemMeta {
 	return b.itemMeta

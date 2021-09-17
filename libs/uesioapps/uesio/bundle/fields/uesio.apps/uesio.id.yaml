@@ -2,5 +2,4 @@ name: id
 collection: uesio.apps
 type: TEXT
 label: App ID
-propertyName: id
 readOnly: true

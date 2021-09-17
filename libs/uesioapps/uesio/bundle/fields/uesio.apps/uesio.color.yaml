@@ -2,4 +2,3 @@ name: color
 collection: uesio.apps
 type: TEXT
 label: Color
-propertyName: color

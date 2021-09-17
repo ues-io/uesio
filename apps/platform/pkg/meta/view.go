@@ -111,6 +111,11 @@ func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
 }
 
+// Len function
+func (v *View) Len() int {
+	return StandardItemLen(v)
+}
+
 // GetItemMeta function
 func (v *View) GetItemMeta() *ItemMeta {
 	return v.itemMeta

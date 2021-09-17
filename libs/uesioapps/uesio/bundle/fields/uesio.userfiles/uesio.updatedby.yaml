@@ -2,5 +2,4 @@ name: updatedby
 collection: uesio.userfiles
 type: USER
 label: Updated By
-propertyName: updatedby
 autopopulate: UPDATE

@@ -105,6 +105,11 @@ func (c *Credential) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
+// Len function
+func (c *Credential) Len() int {
+	return StandardItemLen(c)
+}
+
 // GetItemMeta function
 func (c *Credential) GetItemMeta() *ItemMeta {
 	return c.itemMeta

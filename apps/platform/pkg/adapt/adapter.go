@@ -11,7 +11,7 @@ import (
 type Adapter interface {
 	Load([]LoadOp, *MetadataCache, *Credentials) error
 	Save([]SaveOp, *MetadataCache, *Credentials) error
-	Migrate(*MetadataCache, *Credentials) error
+	Migrate(*Credentials) error
 }
 
 var adapterMap = map[string]Adapter{}

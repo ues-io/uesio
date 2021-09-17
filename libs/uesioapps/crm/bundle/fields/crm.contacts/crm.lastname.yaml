@@ -2,4 +2,3 @@ name: lastname
 collection: crm.contacts
 type: TEXT
 label: Last Name
-propertyName: last_name

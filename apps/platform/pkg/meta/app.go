@@ -39,6 +39,11 @@ func (a *App) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(a, iter)
 }
 
+// Len function
+func (a *App) Len() int {
+	return StandardItemLen(a)
+}
+
 // GetItemMeta function
 func (a *App) GetItemMeta() *ItemMeta {
 	return a.itemMeta

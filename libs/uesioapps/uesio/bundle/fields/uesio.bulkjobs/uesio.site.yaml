@@ -2,4 +2,3 @@ name: site
 collection: uesio.bulkjobs
 type: "TEXT"
 label: "Site"
-propertyName: "site"

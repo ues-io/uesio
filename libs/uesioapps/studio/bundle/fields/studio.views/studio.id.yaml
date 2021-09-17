@@ -2,5 +2,4 @@ name: id
 collection: studio.views
 type: TEXT
 label: View ID
-propertyName: id
 readOnly: true

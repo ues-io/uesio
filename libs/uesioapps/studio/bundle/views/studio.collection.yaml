@@ -7,12 +7,11 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -47,7 +46,6 @@ definition:
         studio.name:
         studio.type:
         studio.label:
-        studio.propertyname:
         studio.collection:
         studio.workspaceid:
         studio.referencedCollection:
@@ -76,7 +74,6 @@ definition:
         studio.name:
         studio.type:
         studio.label:
-        studio.propertyname:
       type: CREATE
       defaults:
         - field: studio.collection
@@ -223,8 +220,6 @@ definition:
                             - io.column:
                                 field: studio.label
                             - io.column:
-                                field: studio.propertyname
-                            - io.column:
                                 field: studio.collection
   panels:
     - io.dialog:
@@ -318,8 +313,6 @@ definition:
                     fieldId: studio.type
                 - io.field:
                     fieldId: studio.label
-                - io.field:
-                    fieldId: studio.propertyname
                 - io.box:
                     uesio.display:
                       - field: studio.type

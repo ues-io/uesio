@@ -2,5 +2,4 @@ name: updatedby
 collection: uesio.bulkbatches
 type: USER
 label: Updated By
-propertyName: updatedby
 autopopulate: UPDATE

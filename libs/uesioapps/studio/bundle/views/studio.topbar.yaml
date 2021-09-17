@@ -116,7 +116,7 @@ definition:
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: v${uesio.appid}.${uesio.major}.${uesio.minor}.${uesio.patch}
+                                text: v${["uesio.app"]["uesio.id"]}.${uesio.major}.${uesio.minor}.${uesio.patch}
                                 element: div
                           avatar:
                             - io.text:

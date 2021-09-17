@@ -1,6 +1,0 @@
-name: appid
-collection: uesio.bundles
-type: "TEXT"
-label: "App"
-propertyName: "appid"
-readOnly: true

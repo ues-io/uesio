@@ -2,5 +2,4 @@ name: createdat
 collection: uesio.bulkbatches
 type: TIMESTAMP
 label: Created At
-propertyName: createdat
 autopopulate: CREATE

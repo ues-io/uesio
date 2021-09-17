@@ -5,7 +5,7 @@ type Site struct {
 	ID        string  `uesio:"uesio.id"`
 	Name      string  `uesio:"uesio.name"`
 	Bundle    *Bundle `uesio:"uesio.bundle"`
-	AppID     string  `uesio:"uesio.appid"`
+	App       *App    `uesio:"uesio.app"`
 	bundleDef *BundleDef
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `uesio:"uesio.createdby"`
@@ -17,7 +17,7 @@ type Site struct {
 }
 
 func (s *Site) GetFullName() string {
-	return s.Name + "_" + s.AppID
+	return s.Name + "_" + s.App.ID
 }
 
 // SetAppBundle function
@@ -54,6 +54,11 @@ func (s *Site) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (s *Site) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// Len function
+func (s *Site) Len() int {
+	return StandardItemLen(s)
 }
 
 // GetItemMeta function

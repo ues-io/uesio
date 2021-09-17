@@ -2,5 +2,4 @@ name: createdby
 collection: studio.filecollections
 type: USER
 label: Created By
-propertyName: createdby
 autopopulate: CREATE

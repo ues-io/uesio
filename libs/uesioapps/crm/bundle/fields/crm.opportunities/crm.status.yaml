@@ -2,5 +2,4 @@ name: status
 collection: crm.opportunities
 type: SELECT
 label: Status
-propertyName: status
 selectList: crm.status

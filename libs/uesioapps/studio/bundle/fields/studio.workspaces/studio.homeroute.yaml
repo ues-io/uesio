@@ -2,4 +2,3 @@ name: homeroute
 collection: studio.workspaces
 type: TEXT
 label: Home Route
-propertyName: homeroute

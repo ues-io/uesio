@@ -108,6 +108,11 @@ func (r *Route) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(r, iter)
 }
 
+// Len function
+func (r *Route) Len() int {
+	return StandardItemLen(r)
+}
+
 // GetItemMeta function
 func (r *Route) GetItemMeta() *ItemMeta {
 	return r.itemMeta

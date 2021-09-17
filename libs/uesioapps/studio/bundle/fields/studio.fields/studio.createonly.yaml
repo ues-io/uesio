@@ -1,5 +1,4 @@
 name: createonly
 collection: studio.fields
-type: BOOLEAN
+type: CHECKBOX
 label: CreateOnly
-propertyName: createonly

@@ -100,6 +100,11 @@ func (c *ComponentVariant) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
+// Len function
+func (c *ComponentVariant) Len() int {
+	return StandardItemLen(c)
+}
+
 // GetItemMeta function
 func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 	return c.itemMeta

@@ -2,5 +2,4 @@ name: workspaceid
 collection: studio.profiles
 type: TEXT
 label: Workspace ID
-propertyName: workspaceid
 readOnly: true

@@ -133,6 +133,11 @@ func StandardItemLoop(item CollectionableItem, iter func(string, interface{}) er
 	return nil
 }
 
+// StandardItemLen function
+func StandardItemLen(item CollectionableItem) int {
+	return len(StandardGetFields(item))
+}
+
 // BundleableFactory function type
 type BundleableFactory func() BundleableGroup
 

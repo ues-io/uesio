@@ -2,4 +2,3 @@ name: workspaceid
 collection: studio.filecollections
 type: TEXT
 label: Workspace ID
-propertyName: workspaceid

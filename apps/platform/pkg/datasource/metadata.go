@@ -42,7 +42,6 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Updateable:           !f.ReadOnly && !f.CreateOnly,
 		Type:                 f.Type,
 		Label:                f.Label,
-		PropertyName:         f.PropertyName,
 		ReferencedCollection: f.ReferencedCollection,
 		SelectListName:       f.SelectList,
 		Required:             f.Required,

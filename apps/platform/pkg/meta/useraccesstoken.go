@@ -98,6 +98,11 @@ func (uat *UserAccessToken) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(uat, iter)
 }
 
+// Len function
+func (uat *UserAccessToken) Len() int {
+	return StandardItemLen(uat)
+}
+
 // GetItemMeta function
 func (uat *UserAccessToken) GetItemMeta() *ItemMeta {
 	return uat.itemMeta

@@ -2,5 +2,4 @@ name: updatedat
 collection: uesio.bundles
 type: TIMESTAMP
 label: Updated At
-propertyName: updatedat
 autopopulate: UPDATE

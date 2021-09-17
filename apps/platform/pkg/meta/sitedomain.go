@@ -39,6 +39,11 @@ func (s *SiteDomain) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
 }
 
+// Len function
+func (s *SiteDomain) Len() int {
+	return StandardItemLen(s)
+}
+
 // GetItemMeta function
 func (s *SiteDomain) GetItemMeta() *ItemMeta {
 	return s.itemMeta

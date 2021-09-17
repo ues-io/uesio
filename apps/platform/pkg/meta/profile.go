@@ -100,6 +100,11 @@ func (p *Profile) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(p, iter)
 }
 
+// Len function
+func (p *Profile) Len() int {
+	return StandardItemLen(p)
+}
+
 // GetItemMeta function
 func (p *Profile) GetItemMeta() *ItemMeta {
 	return p.itemMeta

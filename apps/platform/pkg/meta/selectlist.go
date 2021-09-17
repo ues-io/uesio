@@ -89,6 +89,11 @@ func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sl, iter)
 }
 
+// Len function
+func (sl *SelectList) Len() int {
+	return StandardItemLen(sl)
+}
+
 // GetItemMeta function
 func (sl *SelectList) GetItemMeta() *ItemMeta {
 	return sl.itemMeta

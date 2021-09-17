@@ -20,3 +20,5 @@ const CustomProp: FunctionComponent<CustomPropRendererProps> = ({
 	})
 
 export default CustomProp
+
+export { CustomPropRendererProps }

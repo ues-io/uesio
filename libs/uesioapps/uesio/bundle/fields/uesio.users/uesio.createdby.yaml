@@ -2,5 +2,4 @@ name: createdby
 collection: uesio.users
 type: USER
 label: Created By
-propertyName: createdby
 autopopulate: CREATE

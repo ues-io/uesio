@@ -28,7 +28,7 @@ func (b *BundleDependency) GetBundleName() string {
 	if b.Bundle == nil {
 		return ""
 	}
-	return b.Bundle.AppID
+	return b.Bundle.App.ID
 }
 
 // GetCollectionName function
@@ -55,6 +55,11 @@ func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// Len function
+func (b *BundleDependency) Len() int {
+	return StandardItemLen(b)
 }
 
 // GetItemMeta function

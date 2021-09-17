@@ -19,7 +19,7 @@ definition:
         studio.id:
         studio.name:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     bundles:
@@ -31,7 +31,7 @@ definition:
         uesio.patch:
         uesio.description:
       conditions:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: PARAM
           param: appname
     sites:
@@ -40,7 +40,7 @@ definition:
         uesio.id:
         uesio.name:
       conditions:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: PARAM
           param: appname
     teams:
@@ -70,11 +70,10 @@ definition:
       fields:
         uesio.id:
         uesio.name:
-        uesio.appid:
         uesio.bundle:
       type: CREATE
       defaults:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id

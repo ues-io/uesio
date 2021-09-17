@@ -2,5 +2,4 @@ name: createdat
 collection: studio.teammembers
 type: TIMESTAMP
 label: Created At
-propertyName: createdat
 autopopulate: CREATE

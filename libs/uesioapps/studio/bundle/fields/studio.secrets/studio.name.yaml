@@ -2,7 +2,6 @@ name: name
 collection: studio.secrets
 type: TEXT
 label: Secret name
-propertyName: name
 required: true
 createOnly: true
 validate:

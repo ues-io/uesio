@@ -2,5 +2,4 @@ name: id
 collection: studio.profiles
 type: TEXT
 label: Profile ID
-propertyName: id
 readOnly: true

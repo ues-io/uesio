@@ -37,7 +37,6 @@ type Field struct {
 	Namespace            string     `yaml:"-" uesio:"-"`
 	Type                 string     `yaml:"type" uesio:"studio.type"`
 	Label                string     `yaml:"label" uesio:"studio.label"`
-	PropertyName         string     `yaml:"propertyName" uesio:"studio.propertyname"`
 	ReadOnly             bool       `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
 	CreateOnly           bool       `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
 	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
@@ -144,6 +143,11 @@ func (f *Field) SetWorkspace(workspace string) {
 // Loop function
 func (f *Field) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
+}
+
+// Len function
+func (f *Field) Len() int {
+	return StandardItemLen(f)
 }
 
 // GetItemMeta function
