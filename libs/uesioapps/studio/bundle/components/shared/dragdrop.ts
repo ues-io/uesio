@@ -24,6 +24,7 @@ const handleDrop = (
 			const dropPropDef =
 				component.registry.getPropertiesDefinitionFromPath(dropNode)
 			const handler = dropPropDef?.handleFieldDrop
+			console.log("field", handler)
 			if (handler) {
 				handler(dragNode, dropNode, dropIndex, propDef, uesio)
 			}

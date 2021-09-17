@@ -1,4 +1,4 @@
-import { builder } from "@uesio/ui"
+import { builder, component } from "@uesio/ui"
 
 const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",
@@ -9,7 +9,23 @@ const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	traits: [],
 	classes: ["root"],
 	type: "component",
-	actions: [],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					"io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
+					},
+				},
+				dropIndex
+			)
+		}
+	},
 }
 
 export default ColumnPropertyDefinition

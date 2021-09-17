@@ -40,7 +40,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
+				accepts={["uesio.standalone", "uesio.field"]}
 				context={context}
 			/>
 		</IOcolumn>
