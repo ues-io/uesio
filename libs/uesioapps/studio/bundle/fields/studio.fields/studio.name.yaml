@@ -3,5 +3,6 @@ collection: studio.fields
 type: TEXT
 label: Name
 required: true
+createOnly: true
 validate:
   type: METADATA
