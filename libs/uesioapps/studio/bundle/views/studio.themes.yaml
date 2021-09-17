@@ -7,12 +7,11 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name

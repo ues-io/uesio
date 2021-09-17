@@ -47,6 +47,11 @@ func (ufm *UserFileMetadata) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ufm, iter)
 }
 
+// Len function
+func (ufm *UserFileMetadata) Len() int {
+	return StandardItemLen(ufm)
+}
+
 // GetItemMeta function
 func (ufm *UserFileMetadata) GetItemMeta() *ItemMeta {
 	return ufm.itemMeta

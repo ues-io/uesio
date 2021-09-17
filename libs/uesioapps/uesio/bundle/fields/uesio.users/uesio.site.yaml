@@ -2,4 +2,3 @@ name: site
 collection: uesio.users
 type: "TEXT"
 label: "Site"
-propertyName: "site"

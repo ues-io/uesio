@@ -2,5 +2,4 @@ name: id
 collection: studio.bots
 type: TEXT
 label: Field ID
-propertyName: id
 readOnly: true

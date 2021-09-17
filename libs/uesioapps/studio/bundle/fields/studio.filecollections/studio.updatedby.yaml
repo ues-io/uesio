@@ -2,5 +2,4 @@ name: updatedby
 collection: studio.filecollections
 type: USER
 label: Updated By
-propertyName: updatedby
 autopopulate: UPDATE

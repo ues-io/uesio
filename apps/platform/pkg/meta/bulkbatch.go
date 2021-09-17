@@ -38,6 +38,11 @@ func (bb *BulkBatch) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bb, iter)
 }
 
+// Len function
+func (bb *BulkBatch) Len() int {
+	return StandardItemLen(bb)
+}
+
 // GetItemMeta function
 func (bb *BulkBatch) GetItemMeta() *ItemMeta {
 	return bb.itemMeta

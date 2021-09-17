@@ -50,6 +50,11 @@ func (u *User) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(u, iter)
 }
 
+// Len function
+func (u *User) Len() int {
+	return StandardItemLen(u)
+}
+
 // GetItemMeta function
 func (u *User) GetItemMeta() *ItemMeta {
 	return u.itemMeta

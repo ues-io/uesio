@@ -2,5 +2,4 @@ name: id
 collection: uesio.sites
 type: "TEXT"
 label: "ID"
-propertyName: "id"
 readOnly: true

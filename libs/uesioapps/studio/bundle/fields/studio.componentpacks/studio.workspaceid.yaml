@@ -2,5 +2,4 @@ name: workspaceid
 collection: studio.componentpacks
 type: TEXT
 label: Workspace ID
-propertyName: workspaceid
 readOnly: true

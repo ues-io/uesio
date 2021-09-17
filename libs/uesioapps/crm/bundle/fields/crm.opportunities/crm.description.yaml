@@ -2,4 +2,3 @@ name: description
 collection: crm.opportunities
 type: LONGTEXT
 label: Description
-propertyName: description

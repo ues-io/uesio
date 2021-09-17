@@ -2,5 +2,4 @@ name: created
 collection: crm.leads
 type: TIMESTAMP
 label: Created
-propertyName: created
 autopopulate: CREATE

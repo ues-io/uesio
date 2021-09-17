@@ -107,7 +107,6 @@ type FieldMetadata struct {
 	Updateable           bool                       `json:"updateable"`
 	Type                 string                     `json:"type"`
 	Label                string                     `json:"label"`
-	PropertyName         string                     `json:"-"`
 	SelectListOptions    []SelectListOptionMetadata `json:"options"`
 	SelectListName       string                     `json:"-"`
 	ReferencedCollection string                     `json:"referencedCollection"`

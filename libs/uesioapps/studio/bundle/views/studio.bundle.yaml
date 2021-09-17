@@ -27,7 +27,7 @@ definition:
             uesio.name:
             uesio.color:
       conditions:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: PARAM
           param: appname
         - field: uesio.major

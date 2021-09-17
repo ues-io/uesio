@@ -100,6 +100,11 @@ func (ds *DataSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ds, iter)
 }
 
+// Len function
+func (ds *DataSource) Len() int {
+	return StandardItemLen(ds)
+}
+
 // GetItemMeta function
 func (ds *DataSource) GetItemMeta() *ItemMeta {
 	return ds.itemMeta

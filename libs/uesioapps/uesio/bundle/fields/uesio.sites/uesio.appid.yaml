@@ -1,6 +1,0 @@
-name: appid
-collection: uesio.sites
-type: "TEXT"
-label: "Referenced App Namespace"
-propertyName: "appid"
-createOnly: true

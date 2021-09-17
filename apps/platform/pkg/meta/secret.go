@@ -98,6 +98,11 @@ func (s *Secret) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
 }
 
+// Len function
+func (s *Secret) Len() int {
+	return StandardItemLen(s)
+}
+
 // GetItemMeta function
 func (s *Secret) GetItemMeta() *ItemMeta {
 	return s.itemMeta

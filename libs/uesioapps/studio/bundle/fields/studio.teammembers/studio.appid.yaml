@@ -2,4 +2,3 @@ name: appid
 collection: studio.teammembers
 type: TEXT
 label: App ID
-propertyName: appid

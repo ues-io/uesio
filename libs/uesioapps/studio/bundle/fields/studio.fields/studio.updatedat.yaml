@@ -2,5 +2,4 @@ name: updatedat
 collection: studio.felds
 type: TIMESTAMP
 label: Updated At
-propertyName: updatedat
 autopopulate: UPDATE

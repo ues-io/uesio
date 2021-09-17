@@ -2,5 +2,4 @@ name: id
 collection: uesio.configstorevalues
 type: "TEXT"
 label: "Key"
-propertyName: "id"
 readOnly: true

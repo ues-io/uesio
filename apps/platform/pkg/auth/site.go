@@ -22,13 +22,13 @@ func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 				ID: "uesio.name",
 			},
 			{
-				ID: "uesio.appid",
+				ID: "uesio.app",
 			},
 			{
 				ID: "uesio.bundle",
 				Fields: []adapt.LoadRequestField{
 					{
-						ID: "uesio.appid",
+						ID: "uesio.app",
 					},
 					{
 						ID: "uesio.major",
@@ -100,12 +100,16 @@ func GetHeadlessSession() (*sess.Session, error) {
 		ID:   "prod_studio",
 		Name: "prod",
 		Bundle: &meta.Bundle{
-			AppID: "studio",
+			App: &meta.App{
+				ID: "studio",
+			},
 			Major: "0",
 			Minor: "0",
 			Patch: "1",
 		},
-		AppID: "studio",
+		App: &meta.App{
+			ID: "studio",
+		},
 	}
 	bundleDef, err := bundle.GetSiteAppBundle(site)
 	if err != nil {

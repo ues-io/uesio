@@ -38,6 +38,11 @@ func (c *ConfigStoreValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
+// Len function
+func (c *ConfigStoreValue) Len() int {
+	return StandardItemLen(c)
+}
+
 // GetItemMeta function
 func (c *ConfigStoreValue) GetItemMeta() *ItemMeta {
 	return c.itemMeta

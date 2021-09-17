@@ -61,7 +61,7 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 		},
 	}, []adapt.LoadRequestCondition{
 		{
-			Field: "uesio.appid",
+			Field: "uesio.app",
 			Value: app,
 		},
 	}, sa.session.RemoveWorkspaceContext())
@@ -113,7 +113,7 @@ func (sa *StudioAPI) GetBundleLastVersion(app string) string {
 		},
 	}, []adapt.LoadRequestCondition{
 		{
-			Field: "uesio.appid",
+			Field: "uesio.app",
 			Value: app,
 		},
 	}, sa.session.RemoveWorkspaceContext())

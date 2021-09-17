@@ -111,6 +111,11 @@ func (f *File) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
 }
 
+// Len function
+func (f *File) Len() int {
+	return StandardItemLen(f)
+}
+
 // GetItemMeta function
 func (f *File) GetItemMeta() *ItemMeta {
 	return f.itemMeta

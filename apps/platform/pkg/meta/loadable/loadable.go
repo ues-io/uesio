@@ -18,4 +18,5 @@ type Item interface {
 	SetField(string, interface{}) error
 	GetField(string) (interface{}, error)
 	Loop(iter func(string, interface{}) error) error
+	Len() int
 }

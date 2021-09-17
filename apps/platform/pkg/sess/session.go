@@ -272,9 +272,9 @@ func (s *Session) GetContextAppName() string {
 		return s.workspace.GetAppID()
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.AppID
+		return s.siteadmin.App.ID
 	}
-	return s.site.AppID
+	return s.site.App.ID
 }
 
 // GetContextVersionName returns the appversion in context

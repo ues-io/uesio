@@ -63,6 +63,11 @@ func (w *Workspace) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(w, iter)
 }
 
+// Len function
+func (w *Workspace) Len() int {
+	return StandardItemLen(w)
+}
+
 // GetItemMeta function
 func (w *Workspace) GetItemMeta() *ItemMeta {
 	return w.itemMeta

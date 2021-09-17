@@ -100,6 +100,11 @@ func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(fs, iter)
 }
 
+// Len function
+func (fs *FileSource) Len() int {
+	return StandardItemLen(fs)
+}
+
 // GetItemMeta function
 func (fs *FileSource) GetItemMeta() *ItemMeta {
 	return fs.itemMeta

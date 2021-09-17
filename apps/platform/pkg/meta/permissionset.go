@@ -105,6 +105,11 @@ func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ps, iter)
 }
 
+// Len function
+func (ps *PermissionSet) Len() int {
+	return StandardItemLen(ps)
+}
+
 // GetItemMeta function
 func (ps *PermissionSet) GetItemMeta() *ItemMeta {
 	return ps.itemMeta

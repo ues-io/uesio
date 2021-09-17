@@ -2,5 +2,4 @@ name: updated
 collection: crm.accounts
 type: TIMESTAMP
 label: Updated
-propertyName: updated
 autopopulate: UPDATE

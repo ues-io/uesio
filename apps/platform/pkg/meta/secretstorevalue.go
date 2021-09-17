@@ -38,6 +38,11 @@ func (s *SecretStoreValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
 }
 
+// Len function
+func (s *SecretStoreValue) Len() int {
+	return StandardItemLen(s)
+}
+
 // GetItemMeta function
 func (s *SecretStoreValue) GetItemMeta() *ItemMeta {
 	return s.itemMeta

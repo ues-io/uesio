@@ -123,6 +123,11 @@ func (ufc *UserFileCollection) Loop(iter func(string, interface{}) error) error 
 	return StandardItemLoop(ufc, iter)
 }
 
+// Len function
+func (ufc *UserFileCollection) Len() int {
+	return StandardItemLen(ufc)
+}
+
 // GetItemMeta function
 func (ufc *UserFileCollection) GetItemMeta() *ItemMeta {
 	return ufc.itemMeta

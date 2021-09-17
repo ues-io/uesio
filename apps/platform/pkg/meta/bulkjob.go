@@ -52,6 +52,11 @@ func (bj *BulkJob) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bj, iter)
 }
 
+// Len function
+func (bj *BulkJob) Len() int {
+	return StandardItemLen(bj)
+}
+
 // GetItemMeta function
 func (bj *BulkJob) GetItemMeta() *ItemMeta {
 	return bj.itemMeta

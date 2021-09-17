@@ -100,11 +100,10 @@ nx g @nrwl/workspace:library NEW_LIB
 
 ---
 
--   _Optional_. If you'd like to work with firestore on your local machine, do follow the instructions [here](#local-firestore).
--   _Optional_. If you work with firestore locally, you may use the following script for bootstrapping your dev environment :
     ```
     npm run dev
     ```
+
 -   _Optional_. Create a file called `launch.json` located in `apps/.vscode` for the uesio server debugger in Go and paste the following :
 
 ```
@@ -256,7 +255,6 @@ Do define the following environment variables in `~/.zshenv`. (If you are using 
 | UESIO_USE_HTTPS              | Use ssl or not                                                                             | true or false                                                                           |
 | GOOGLE_CLOUD_PROJECT         | Google Cloud project ID                                                                    | test-cf94a                                                                              |
 | GOOGLE_CLOUD_API_KEY         | (Not needed for emulator use) The stringified JSON content of the application credentials  | (https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication)      |
-| FIRESTORE_EMULATOR_HOST      | Emulator host and port                                                                     |                                                                                         |
 | UESIO_SESSION_STORE          | Allows you to specify a storage location for user sessions.                                | filesystem or "" (Can be either empty, or "filesystem" if you want sessions to persist) |
 | UESIO_PLATFORM_BUCKET        | The Bucket in GCP file uploads will be populated to if using the useio.platform filesource |                                                                                         |
 | UESIO_ALLOW_INSECURE_COOKIES | Allows cookies without the secure flag (Useful in local docker envirnments)                | true                                                                                    |
@@ -284,31 +282,6 @@ In a browser visit
 
 ```
 https://uesio-dev.com:3000
-```
-
-# <a id="local-firestore"></a> Local Development with the Firestore Emulator
-
-0. First off, the firebase emulator is written in Java, so you need to install the [JRE](https://java.com/en/download).
-1. ```
-   npm install -g firebase-tools
-   ```
-2. ```
-   cd PATH_TO_UESIO // go to the uesio project folder
-   ```
-3. ```
-   firebase login
-   ```
-4. ```
-   firebase init firestore
-   ```
-5. In the firebase cli, select `Don't set up a default project`, and hit enter in the further questions.
-6. ```
-   firebase emulators:start
-   ```
-7. In a browser visit
-
-```
-  http://localhost:4000/firestore/
 ```
 
 # Local Development with a database in Docker
@@ -357,18 +330,6 @@ https://uesio-dev.com:3000
 ```
   docker rm -f CONTAINER_NAME
 ```
-
-# Connecting to a real Firestore instance
-
-1. First set up your google cloud SDK and your first project (see above)
-2. Initialize Firestore to be "Native Firestore"
-3. Follow the steps laid out here to get a application credentials json file.
-   https://cloud.google.com/firestore/docs/quickstart-servers#set_up_authentication
-4. Place this JSON content of this file in the GOOGLE_CLOUD_API_KEY environment variable wrapped in `''`, example: `export GOOGLE_CLOUD_API_KEY='{ JSON CONTENT }'`
-5. Make sure that the FIRESTORE_EMULATOR_HOST variable is either an empty string or not set.
-6. `firebase emulators:start`
-7. Try to run seeds
-8. If seeds were successful - enjoy your cloud based firestore instance.
 
 # npm dependencies
 
@@ -427,3 +388,9 @@ Most of commmands you might run related to npm modules.
 2. `docker tag uesio:latest us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
 
 3. `docker push us-east1-docker.pkg.dev/uesio-317517/uesio/uesio:latest`
+
+# Running postgres locally
+
+```
+docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres
+```

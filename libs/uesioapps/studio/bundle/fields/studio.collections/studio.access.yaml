@@ -2,4 +2,3 @@ name: access
 collection: studio.collections
 type: TEXT
 label: Access
-propertyName: access

@@ -1,5 +1,4 @@
 name: readonly
 collection: studio.fields
-type: BOOLEAN
+type: CHECKBOX
 label: ReadOnly
-propertyName: readonly

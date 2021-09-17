@@ -2,4 +2,3 @@ name: birthdate
 collection: crm.contacts
 type: DATE
 label: Birth date
-propertyName: birthdate

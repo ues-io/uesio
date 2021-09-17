@@ -2,5 +2,4 @@ name: bundle
 collection: uesio.sites
 type: REFERENCE
 label: Bundle
-propertyName: bundleid
 referencedCollection: uesio.bundles

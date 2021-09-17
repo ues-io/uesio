@@ -34,7 +34,9 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 		return nil, err
 	}
 	return &Bundle{
-		AppID:       namespace,
+		App: &App{
+			ID: namespace,
+		},
 		Major:       strconv.Itoa(versionParts[0]),
 		Minor:       strconv.Itoa(versionParts[1]),
 		Patch:       strconv.Itoa(versionParts[2]),
@@ -48,7 +50,7 @@ type Bundle struct {
 	Major       string    `uesio:"uesio.major"`
 	Minor       string    `uesio:"uesio.minor"`
 	Patch       string    `uesio:"uesio.patch"`
-	AppID       string    `uesio:"uesio.appid"`
+	App         *App      `uesio:"uesio.app"`
 	Description string    `uesio:"uesio.description"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `uesio:"uesio.createdby"`
@@ -93,6 +95,11 @@ func (b *Bundle) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// Len function
+func (b *Bundle) Len() int {
+	return StandardItemLen(b)
 }
 
 // GetItemMeta function

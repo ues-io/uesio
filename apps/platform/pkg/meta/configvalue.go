@@ -100,6 +100,11 @@ func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cv, iter)
 }
 
+// Len function
+func (cv *ConfigValue) Len() int {
+	return StandardItemLen(cv)
+}
+
 // GetItemMeta function
 func (cv *ConfigValue) GetItemMeta() *ItemMeta {
 	return cv.itemMeta

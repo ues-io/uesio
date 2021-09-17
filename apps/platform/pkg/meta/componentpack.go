@@ -106,6 +106,11 @@ func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cp, iter)
 }
 
+// Len function
+func (cp *ComponentPack) Len() int {
+	return StandardItemLen(cp)
+}
+
 // GetItemMeta function
 func (cp *ComponentPack) GetItemMeta() *ItemMeta {
 	return cp.itemMeta

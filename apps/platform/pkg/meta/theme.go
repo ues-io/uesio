@@ -103,6 +103,11 @@ func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
 }
 
+// Len function
+func (t *Theme) Len() int {
+	return StandardItemLen(t)
+}
+
 // GetItemMeta function
 func (t *Theme) GetItemMeta() *ItemMeta {
 	return t.itemMeta

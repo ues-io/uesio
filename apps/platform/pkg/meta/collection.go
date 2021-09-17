@@ -120,6 +120,11 @@ func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
+// Len function
+func (c *Collection) Len() int {
+	return StandardItemLen(c)
+}
+
 // GetItemMeta function
 func (c *Collection) GetItemMeta() *ItemMeta {
 	return c.itemMeta
