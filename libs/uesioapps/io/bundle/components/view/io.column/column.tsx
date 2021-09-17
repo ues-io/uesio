@@ -21,9 +21,9 @@ const Column: FC<definition.BaseProps> = (props) => {
 	const { definition, context, path = "" } = props
 	const sharedProps = { context }
 
-	const flexStyles = !context.getBuildMode()
-		? getColumnFlexStyles(useContext(LayoutContext), path)
-		: {}
+	const flexStyles = context.getBuildMode()
+		? {}
+		: getColumnFlexStyles(useContext(LayoutContext), path)
 
 	const classes = styles.useStyles(
 		{

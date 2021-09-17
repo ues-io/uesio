@@ -57,6 +57,12 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 			renderFunc: LayoutTemplateProp,
 		},
 		{
+			name: "justifyContent",
+			type: "SELECT",
+			options: spacingOptions,
+			label: "Justify Content",
+		},
+		{
 			name: "alignItems",
 			type: "SELECT",
 			options: spacingOptions,
