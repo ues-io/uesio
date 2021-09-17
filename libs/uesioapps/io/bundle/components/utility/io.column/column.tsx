@@ -1,8 +1,14 @@
 import { FC } from "react"
-import { definition } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
-const Column: FC<definition.UtilityProps> = ({ children }) => (
-	<div>{children}</div>
-)
+const Column: FC<definition.UtilityProps> = (props) => {
+	const classes = styles.useUtilityStyles(
+		{
+			root: {},
+		},
+		props
+	)
+	return <div className={classes.root}>{props.children}</div>
+}
 
 export default Column
