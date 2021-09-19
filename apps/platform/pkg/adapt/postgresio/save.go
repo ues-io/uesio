@@ -44,6 +44,8 @@ func getPGType(field *adapt.FieldMetadata) string {
 		return "jsonb"
 	case "TIMESTAMP":
 		return "bigint"
+	case "CHECKBOX":
+		return "boolean"
 	default:
 		return "text"
 	}

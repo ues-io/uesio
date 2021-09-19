@@ -58,16 +58,13 @@ func (fm *FieldsMap) GetKeys() []string {
 	return fieldIDs
 }
 
-func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) (string, error)) ([]string, error) {
+func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {
 		return nil, errors.New("No fields selected")
 	}
 	dbNamesMap := map[string]bool{}
 	for _, fieldMetadata := range *fm {
-		dbFieldName, err := getDBFieldName(fieldMetadata)
-		if err != nil {
-			return nil, err
-		}
+		dbFieldName := getDBFieldName(fieldMetadata)
 		dbNamesMap[dbFieldName] = true
 	}
 	i := 0
