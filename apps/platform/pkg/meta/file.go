@@ -23,7 +23,7 @@ type File struct {
 	Name      string            `yaml:"name" uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	Content   *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy *User             `yaml:"-" uesio:"studio.createdby"`
@@ -103,7 +103,9 @@ func (f *File) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (f *File) SetWorkspace(workspace string) {
-	f.Workspace = workspace
+	f.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

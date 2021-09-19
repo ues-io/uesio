@@ -25,7 +25,7 @@ type Route struct {
 	Path      string            `yaml:"path" uesio:"studio.path"`
 	ViewRef   string            `yaml:"view" uesio:"studio.view"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	ThemeRef  string            `yaml:"theme" uesio:"studio.theme"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy *User             `yaml:"-" uesio:"studio.createdby"`
@@ -100,7 +100,9 @@ func (r *Route) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (r *Route) SetWorkspace(workspace string) {
-	r.Workspace = workspace
+	r.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

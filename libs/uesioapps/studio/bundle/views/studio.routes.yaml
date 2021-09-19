@@ -25,7 +25,7 @@ definition:
         studio.path:
         studio.view:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -34,19 +34,18 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.workspaceid:
         studio.workspace:
         studio.path:
         studio.view:
         studio.theme:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
       type: CREATE
       defaults:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

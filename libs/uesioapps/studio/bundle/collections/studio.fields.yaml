@@ -1,6 +1,6 @@
 name: fields
 dataSource: uesio.platform
 idField: studio.id
-idFormat: "${studio.workspaceid}_${studio.collection}_${studio.name}"
+idFormat: "${studio.workspace}_${studio.collection}_${studio.name}"
 nameField: studio.name
 collectionName: fields

@@ -28,7 +28,7 @@ type Credential struct {
 	Namespace string                     `yaml:"-" uesio:"-"`
 	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
 	TypeRef   string                     `yaml:"type" uesio:"studio.type"`
-	Workspace string                     `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace                 `yaml:"-" uesio:"studio.workspace"`
 	itemMeta  *ItemMeta                  `yaml:"-" uesio:"-"`
 	CreatedBy *User                      `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy *User                      `yaml:"-" uesio:"studio.updatedby"`
@@ -97,7 +97,9 @@ func (c *Credential) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (c *Credential) SetWorkspace(workspace string) {
-	c.Workspace = workspace
+	c.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

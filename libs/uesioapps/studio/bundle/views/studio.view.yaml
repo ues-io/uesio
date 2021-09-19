@@ -23,10 +23,9 @@ definition:
         studio.id:
         studio.name:
         studio.definition:
-        studio.workspaceid:
         studio.workspace:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

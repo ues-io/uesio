@@ -23,7 +23,6 @@ definition:
         studio.id:
         studio.name:
         studio.workspace:
-        studio.workspaceid:
         studio.allowallfiles:
         studio.allowallroutes:
         studio.allowallviews:
@@ -32,7 +31,7 @@ definition:
         studio.routerefs:
         studio.viewrefs:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -48,7 +47,7 @@ definition:
         studio.view:
         studio.theme:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -58,10 +57,9 @@ definition:
         studio.id:
         studio.name:
         studio.definition:
-        studio.workspaceid:
         studio.workspace:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -72,7 +70,7 @@ definition:
         studio.name:
         studio.content:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

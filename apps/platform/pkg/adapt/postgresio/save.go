@@ -194,7 +194,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					Data:     value,
 					Field:    fieldMetadata,
 					Metadata: metadata,
-				}, "text")
+				}, getPGType(fieldMetadata))
 				return nil
 			})
 			if err != nil {

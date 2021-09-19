@@ -26,10 +26,10 @@ type UserFileCollection struct {
 	Name       string `yaml:"name" uesio:"studio.name"`
 	Namespace  string `yaml:"-" uesio:"-"`
 	FileSource string
-	Bucket     string    `yaml:"bucket"`
-	PathFormat string    `yaml:"pathFormat"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
+	Bucket     string     `yaml:"bucket"`
+	PathFormat string     `yaml:"pathFormat"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
 }
 
 // GetFileSource function
@@ -100,7 +100,9 @@ func (ufc *UserFileCollection) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ufc *UserFileCollection) SetWorkspace(workspace string) {
-	ufc.Workspace = workspace
+	ufc.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // GetKey function

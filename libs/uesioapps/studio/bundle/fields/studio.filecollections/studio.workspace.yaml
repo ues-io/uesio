@@ -1,5 +1,5 @@
 name: workspace
-collection: studio.secrets
+collection: studio.filecollections
 type: REFERENCE
 label: Workspace
 referencedCollection: studio.workspaces

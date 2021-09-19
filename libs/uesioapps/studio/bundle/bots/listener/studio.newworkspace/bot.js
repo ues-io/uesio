@@ -20,13 +20,13 @@ function newworkspace(bot) {
 			"studio.bundle": {
 				"uesio.id": UesioVersion,
 			},
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.bundle": {
 				"uesio.id": IoVersion,
 			},
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 	])
 }

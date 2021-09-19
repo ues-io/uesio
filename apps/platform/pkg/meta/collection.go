@@ -41,7 +41,7 @@ type Collection struct {
 	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
 	CollectionName        string                            `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace             string                            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
 	CreatedBy             *User                             `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy             *User                             `yaml:"-" uesio:"studio.updatedby"`
 	UpdatedAt             int64                             `yaml:"-" uesio:"studio.updatedat"`
@@ -112,7 +112,9 @@ func (c *Collection) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (c *Collection) SetWorkspace(workspace string) {
-	c.Workspace = workspace
+	c.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

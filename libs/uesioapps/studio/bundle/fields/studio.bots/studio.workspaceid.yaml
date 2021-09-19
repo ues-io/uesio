@@ -1,5 +1,0 @@
-name: workspaceid
-collection: studio.bots
-type: TEXT
-label: Workspace ID
-readOnly: true

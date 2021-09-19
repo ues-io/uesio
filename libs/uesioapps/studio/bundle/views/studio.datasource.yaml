@@ -22,12 +22,11 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.workspaceid:
         studio.workspace:
         studio.type:
         studio.credentials:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

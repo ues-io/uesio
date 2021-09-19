@@ -4,17 +4,17 @@ import "errors"
 
 // Secret struct
 type Secret struct {
-	ID        string    `yaml:"-" uesio:"studio.id"`
-	Name      string    `yaml:"name" uesio:"studio.name"`
-	Namespace string    `yaml:"-" uesio:"-"`
-	Store     string    `yaml:"store,omitempty" uesio:"studio.store"`
-	ManagedBy string    `yaml:"managedBy" uesio:"studio.managedby"`
-	Workspace string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"studio.createdat"`
+	ID        string     `yaml:"-" uesio:"studio.id"`
+	Name      string     `yaml:"name" uesio:"studio.name"`
+	Namespace string     `yaml:"-" uesio:"-"`
+	Store     string     `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string     `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy *User      `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy *User      `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"studio.createdat"`
 }
 
 // NewSecret function
@@ -90,7 +90,9 @@ func (s *Secret) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (s *Secret) SetWorkspace(workspace string) {
-	s.Workspace = workspace
+	s.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

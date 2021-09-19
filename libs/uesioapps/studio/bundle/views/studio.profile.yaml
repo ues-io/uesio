@@ -24,7 +24,7 @@ definition:
         studio.name:
         studio.permissionsetsrefs:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -37,9 +37,8 @@ definition:
         studio.id:
         studio.name:
         studio.workspace:
-        studio.workspaceid:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

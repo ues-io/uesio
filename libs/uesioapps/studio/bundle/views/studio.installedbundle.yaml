@@ -27,7 +27,7 @@ definition:
             uesio.minor:
             uesio.patch:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
         - field: studio.id
           value: $Param{bundledep}

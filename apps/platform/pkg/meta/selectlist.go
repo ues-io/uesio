@@ -12,7 +12,7 @@ type SelectList struct {
 	Name      string             `yaml:"name" uesio:"studio.name"`
 	Namespace string             `yaml:"-" uesio:"-"`
 	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`
-	Workspace string             `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace         `yaml:"-" uesio:"studio.workspace"`
 	CreatedBy *User              `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy *User              `yaml:"-" uesio:"studio.updatedby"`
 	UpdatedAt int64              `yaml:"-" uesio:"studio.updatedat"`
@@ -81,7 +81,9 @@ func (sl *SelectList) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (sl *SelectList) SetWorkspace(workspace string) {
-	sl.Workspace = workspace
+	sl.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

@@ -36,7 +36,7 @@ definition:
             uesio.minor:
             uesio.patch:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
   # Components are how we describe the layout of our view
   components:

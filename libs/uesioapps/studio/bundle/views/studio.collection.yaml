@@ -24,7 +24,6 @@ definition:
         studio.name:
         studio.namefield:
         studio.idfield:
-        studio.workspaceid:
         studio.workspace:
         studio.collectionname:
         studio.datasource:
@@ -33,7 +32,7 @@ definition:
         studio.createdat:
         studio.createdby:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -47,14 +46,13 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.workspaceid:
         studio.referencedCollection:
         studio.selectlist:
         studio.autopopulate:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -63,7 +61,7 @@ definition:
           valueSource: LOOKUP
           lookupWire: collections
           lookupTemplate: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -80,7 +78,7 @@ definition:
           valueSource: LOOKUP
           lookupWire: collections
           lookupTemplate: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

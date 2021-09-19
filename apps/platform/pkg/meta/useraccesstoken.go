@@ -21,7 +21,7 @@ type UserAccessToken struct {
 	Collection string            `yaml:"collection" uesio:"studio.collection"`
 	Conditions []*TokenCondition `yaml:"conditions"`
 	Token      string            `yaml:"token"`
-	Workspace  string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace  *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy  *User             `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy  *User             `yaml:"-" uesio:"studio.updatedby"`
@@ -90,7 +90,9 @@ func (uat *UserAccessToken) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (uat *UserAccessToken) SetWorkspace(workspace string) {
-	uat.Workspace = workspace
+	uat.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
