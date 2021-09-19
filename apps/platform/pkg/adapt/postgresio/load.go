@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -30,7 +29,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 
 	if fieldMetadata.Type == "MAP" {
 		var mapdata map[string]interface{}
-		err := json.Unmarshal([]byte(src.(string)), &mapdata)
+		err := json.Unmarshal(src.([]byte), &mapdata)
 		if err != nil {
 			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
@@ -38,23 +37,11 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	}
 	if fieldMetadata.Type == "LIST" {
 		var arraydata []interface{}
-		err := json.Unmarshal([]byte(src.(string)), &arraydata)
+		err := json.Unmarshal(src.([]byte), &arraydata)
 		if err != nil {
 			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), arraydata)
-	}
-
-	if fieldMetadata.Type == "CHECKBOX" {
-		return nil
-	}
-
-	if fieldMetadata.Type == "DATE" {
-		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src.(time.Time).Format("2006-01-02"))
-	}
-
-	if fieldMetadata.Type == "TIMESTAMP" {
-		return nil
 	}
 
 	if adapt.IsReference(fieldMetadata.Type) {
@@ -97,16 +84,25 @@ func GetBytes(key interface{}) ([]byte, error) {
 	return buf, nil
 }
 
-func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) (string, error) {
-	fieldName, err := getFieldName(fieldMetadata)
-	if err != nil {
-		return "", err
-	}
-	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\"", nil
+func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
+	fieldName := getFieldName(fieldMetadata)
+	return fieldName + " AS \"" + fieldMetadata.GetFullName() + "\""
 }
 
-func getFieldName(fieldMetadata *adapt.FieldMetadata) (string, error) {
-	return "fields->>'" + fieldMetadata.GetFullName() + "'", nil
+func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
+	fieldName := fieldMetadata.GetFullName()
+	switch fieldMetadata.Type {
+	case "CHECKBOX":
+		return "(fields->>'" + fieldName + "')::boolean"
+	case "TIMESTAMP":
+		return "(fields->>'" + fieldName + "')::bigint"
+	case "MAP", "LIST":
+		// Return just as bytes
+		return "fields->'" + fieldName + "'"
+	default:
+		// Cast to string
+		return "fields->>'" + fieldName + "'"
+	}
 }
 
 func loadOne(
@@ -127,10 +123,7 @@ func loadOne(
 		return err
 	}
 
-	nameFieldDB, err := getFieldName(nameFieldMetadata)
-	if err != nil {
-		return err
-	}
+	nameFieldDB := getFieldName(nameFieldMetadata)
 
 	fieldMap, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
@@ -173,10 +166,7 @@ func loadOne(
 		if err != nil {
 			return err
 		}
-		fieldName, err := getFieldName(fieldMetadata)
-		if err != nil {
-			return err
-		}
+		fieldName := getFieldName(fieldMetadata)
 
 		conditionValue, err := adapt.GetConditionValue(condition, op, metadata, ops)
 		if err != nil {
@@ -225,11 +215,11 @@ func loadOne(
 		}
 	*/
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
-
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error())
 	}
+	defer rows.Close()
 
 	cols, err := rows.Columns()
 	if err != nil {
@@ -257,7 +247,10 @@ func loadOne(
 		}
 		index++
 	}
-	rows.Close()
+	err = rows.Err()
+	if err != nil {
+		return err
+	}
 
 	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
 		return loadMany(ctx, db, ops, metadata, tenantID)
