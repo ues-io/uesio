@@ -1,6 +1,6 @@
 name: componentvariants
 dataSource: uesio.platform
 idField: studio.id
-idFormat: "${studio.workspaceid}_${studio.component}_${studio.name}"
+idFormat: "${studio.workspace}_${studio.component}_${studio.name}"
 nameField: studio.name
 collectionName: componentvariants

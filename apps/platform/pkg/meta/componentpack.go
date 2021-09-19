@@ -9,7 +9,7 @@ type ComponentPack struct {
 	ID         string             `yaml:"-" uesio:"studio.id"`
 	Name       string             `yaml:"name" uesio:"studio.name"`
 	Namespace  string             `yaml:"namespace" uesio:"-"`
-	Workspace  string             `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace  *Workspace         `yaml:"-" uesio:"studio.workspace"`
 	Components ComponentsRegistry `yaml:"components" uesio:"studio.components"`
 	itemMeta   *ItemMeta          `yaml:"-" uesio:"-"`
 	CreatedBy  *User              `yaml:"-" uesio:"studio.createdby"`
@@ -98,7 +98,9 @@ func (cp *ComponentPack) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (cp *ComponentPack) SetWorkspace(workspace string) {
-	cp.Workspace = workspace
+	cp.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

@@ -24,7 +24,7 @@ definition:
         studio.name:
         studio.updatedat:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
@@ -33,7 +33,6 @@ definition:
       fields:
         studio.id:
         studio.name:
-        studio.workspaceid:
         studio.workspace:
         studio.datasource:
         studio.collectionname:
@@ -41,13 +40,13 @@ definition:
         studio.idfield:
         studio.createdat:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id
       type: CREATE
       defaults:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: studio.id

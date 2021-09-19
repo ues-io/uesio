@@ -64,7 +64,7 @@ type Bot struct {
 	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	CreatedBy     *User             `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy     *User             `yaml:"-" uesio:"studio.updatedby"`
 	UpdatedAt     int64             `yaml:"-" uesio:"studio.updatedat"`
@@ -167,7 +167,9 @@ func (b *Bot) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (b *Bot) SetWorkspace(workspace string) {
-	b.Workspace = workspace
+	b.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

@@ -18,17 +18,17 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID          string    `yaml:"-" uesio:"studio.id"`
-	Name        string    `uesio:"studio.name"`
-	Namespace   string    `yaml:"-" uesio:"-"`
-	Type        string    `yaml:"type,omitempty" uesio:"-"`
-	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string    `uesio:"studio.workspaceid"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy   *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"studio.createdat"`
+	ID          string     `yaml:"-" uesio:"studio.id"`
+	Name        string     `uesio:"studio.name"`
+	Namespace   string     `yaml:"-" uesio:"-"`
+	Type        string     `yaml:"type,omitempty" uesio:"-"`
+	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy   *User      `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy   *User      `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"studio.createdat"`
 }
 
 // GetCollectionName function
@@ -92,7 +92,9 @@ func (fs *FileSource) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (fs *FileSource) SetWorkspace(workspace string) {
-	fs.Workspace = workspace
+	fs.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

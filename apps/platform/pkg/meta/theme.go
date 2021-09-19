@@ -6,16 +6,16 @@ import (
 
 // Theme struct
 type Theme struct {
-	ID         string    `yaml:"-" uesio:"studio.id"`
-	Name       string    `yaml:"name" uesio:"studio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
+	ID         string     `yaml:"-" uesio:"studio.id"`
+	Name       string     `yaml:"name" uesio:"studio.name"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy  *User      `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"studio.createdat"`
 }
 
 // GetCollectionName function
@@ -95,7 +95,9 @@ func (t *Theme) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (t *Theme) SetWorkspace(workspace string) {
-	t.Workspace = workspace
+	t.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

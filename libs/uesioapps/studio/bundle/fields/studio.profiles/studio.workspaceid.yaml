@@ -1,5 +1,0 @@
-name: workspaceid
-collection: studio.profiles
-type: TEXT
-label: Workspace ID
-readOnly: true

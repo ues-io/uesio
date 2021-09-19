@@ -25,7 +25,7 @@ type PermissionSet struct {
 	ViewRefs       map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
 	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
-	Workspace      string          `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace      *Workspace      `yaml:"-" uesio:"studio.workspace"`
 	AllowAllViews  bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
 	AllowAllRoutes bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
 	AllowAllFiles  bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
@@ -97,7 +97,9 @@ func (ps *PermissionSet) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ps *PermissionSet) SetWorkspace(workspace string) {
-	ps.Workspace = workspace
+	ps.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

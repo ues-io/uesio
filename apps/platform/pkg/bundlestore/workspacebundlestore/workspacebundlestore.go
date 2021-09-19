@@ -20,7 +20,7 @@ type WorkspaceBundleStore struct {
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	conditionsMap := item.GetConditions()
 	// Add the workspace id as a condition
-	conditionsMap["studio.workspaceid"] = session.GetWorkspaceID()
+	conditionsMap["studio.workspace"] = session.GetWorkspaceID()
 
 	conditions := []adapt.LoadRequestCondition{}
 
@@ -41,7 +41,7 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
-			Field: "studio.workspaceid",
+			Field: "studio.workspace",
 			Value: session.GetWorkspaceID(),
 		},
 	}
@@ -101,7 +101,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 				ID: "studio.id",
 			},
 			{
-				ID: "studio.workspaceid",
+				ID: "studio.workspace",
 			},
 			{
 				ID: "studio.bundle",
@@ -123,7 +123,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		},
 		[]adapt.LoadRequestCondition{
 			{
-				Field:    "studio.workspaceid",
+				Field:    "studio.workspace",
 				Value:    namespace + "_" + version,
 				Operator: "=",
 			},

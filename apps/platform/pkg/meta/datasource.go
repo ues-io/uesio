@@ -18,17 +18,17 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string    `yaml:"-" uesio:"studio.id"`
-	Name        string    `yaml:"name" uesio:"studio.name"`
-	Namespace   string    `yaml:"-" uesio:"-"`
-	Type        string    `yaml:"type" uesio:"studio.type"`
-	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy   *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"studio.createdat"`
+	ID          string     `yaml:"-" uesio:"studio.id"`
+	Name        string     `yaml:"name" uesio:"studio.name"`
+	Namespace   string     `yaml:"-" uesio:"-"`
+	Type        string     `yaml:"type" uesio:"studio.type"`
+	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy   *User      `yaml:"-" uesio:"studio.createdby"`
+	UpdatedBy   *User      `yaml:"-" uesio:"studio.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"studio.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"studio.createdat"`
 }
 
 // GetCollectionName function
@@ -92,7 +92,9 @@ func (ds *DataSource) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ds *DataSource) SetWorkspace(workspace string) {
-	ds.Workspace = workspace
+	ds.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

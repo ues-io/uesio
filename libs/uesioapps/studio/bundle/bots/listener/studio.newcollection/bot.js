@@ -10,7 +10,7 @@ function newcollection(bot) {
 			"studio.name": collection,
 			"studio.datasource": datasource,
 			"studio.collectionname": collection,
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 			"studio.idfield": app + ".id",
 			"studio.namefield": app + ".name",
 		},
@@ -21,14 +21,14 @@ function newcollection(bot) {
 			"studio.label": "Name",
 			"studio.name": "name",
 			"studio.type": "TEXT",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.collection": app + "." + collection,
 			"studio.label": "Id",
 			"studio.name": "id",
 			"studio.type": "TEXT",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.collection": app + "." + collection,
@@ -36,7 +36,7 @@ function newcollection(bot) {
 			"studio.name": "createdby",
 			"studio.type": "USER",
 			"studio.autopopulate": "CREATE",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.collection": app + "." + collection,
@@ -44,7 +44,7 @@ function newcollection(bot) {
 			"studio.name": "updatedby",
 			"studio.type": "USER",
 			"studio.autopopulate": "UPDATE",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.collection": app + "." + collection,
@@ -52,7 +52,7 @@ function newcollection(bot) {
 			"studio.name": "createdat",
 			"studio.type": "TIMESTAMP",
 			"studio.autopopulate": "CREATE",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 		{
 			"studio.collection": app + "." + collection,
@@ -60,7 +60,7 @@ function newcollection(bot) {
 			"studio.name": "updatedat",
 			"studio.type": "TIMESTAMP",
 			"studio.autopopulate": "UPDATE",
-			"studio.workspaceid": workspaceId,
+			"studio.workspace": workspaceId,
 		},
 	])
 }

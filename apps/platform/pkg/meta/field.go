@@ -41,7 +41,7 @@ type Field struct {
 	CreateOnly           bool       `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
 	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
 	SelectList           string     `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
-	Workspace            string     `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace            *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Required             bool       `yaml:"required,omitempty" uesio:"studio.required"`
 	Validate             Validate   `yaml:"validate,omitempty" uesio:"studio.validate"`
 	AutoPopulate         string     `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
@@ -137,7 +137,9 @@ func (f *Field) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (f *Field) SetWorkspace(workspace string) {
-	f.Workspace = workspace
+	f.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

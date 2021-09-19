@@ -23,7 +23,7 @@ type Profile struct {
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" uesio:"-"`
-	Workspace         string          `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace         *Workspace      `yaml:"-" uesio:"studio.workspace"`
 	itemMeta          *ItemMeta       `yaml:"-" uesio:"-"`
 	CreatedBy         *User           `yaml:"-" uesio:"studio.createdby"`
 	UpdatedBy         *User           `yaml:"-" uesio:"studio.updatedby"`
@@ -92,7 +92,9 @@ func (p *Profile) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (p *Profile) SetWorkspace(workspace string) {
-	p.Workspace = workspace
+	p.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function

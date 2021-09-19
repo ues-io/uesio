@@ -184,7 +184,9 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
 		deps = append(deps, meta.BundleDependency{
-			WorkspaceID: workspace,
+			Workspace: &meta.Workspace{
+				ID: workspace,
+			},
 			Bundle: &meta.Bundle{
 				ID: key + "_" + dep.Version,
 			},
