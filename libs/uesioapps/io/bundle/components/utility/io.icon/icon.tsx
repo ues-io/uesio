@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, materialIcons, context } from "@uesio/ui"
+import { definition, styles, materialIcons } from "@uesio/ui"
 
 interface IconProps extends definition.UtilityProps {
 	icon?: string
@@ -29,7 +29,7 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 		return <span className={classes.root}>{props.icon}</span>
 	}
 
-	return <span className={classes.root} />
+	return null
 }
 
 export default Icon

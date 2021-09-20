@@ -31,11 +31,13 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				context={context}
 				isSelected={isSelected}
 				icon={
-					<Icon
-						context={context}
-						icon={definition.icon}
-						variant="studio.buttonicon"
-					/>
+					definition.icon && (
+						<Icon
+							context={context}
+							icon={definition.icon}
+							variant="studio.buttonicon"
+						/>
+					)
 				}
 			/>
 			{portals}

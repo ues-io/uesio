@@ -4,4 +4,5 @@ label: Icon Button Grid
 definition:
   uesio.styles:
     root:
-      fontSize: xx-large
+      fontSize: x-large
+      color: "#333"

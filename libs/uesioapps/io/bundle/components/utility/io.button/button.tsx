@@ -19,7 +19,9 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				cursor: "pointer",
 				...(width && { width }),
 			},
-			label: {},
+			label: {
+				verticalAlign: "middle",
+			},
 			selected: {},
 		},
 		props
@@ -33,7 +35,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				props.isSelected && classes.selected
 			)}
 		>
-			{props.icon && props.icon}
+			{props.icon}
 			<span className={classes.label}>{label}</span>
 		</button>
 	)

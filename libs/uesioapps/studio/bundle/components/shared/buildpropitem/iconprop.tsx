@@ -37,10 +37,13 @@ const IconProp: FunctionComponent<PropRendererProps> = (props) => {
 				alignItems: "center",
 			},
 			icons: {
-				display: "flex",
+				display: "grid",
 				flexWrap: "wrap",
 				overflow: "scroll",
-				maxHeight: "400px",
+				maxHeight: "350px",
+				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+				padding: "16px",
+				rowGap: "14px",
 			},
 			buttons: {
 				marginTop: "20px",
@@ -51,6 +54,7 @@ const IconProp: FunctionComponent<PropRendererProps> = (props) => {
 				height: "30px",
 				outline: 0,
 				borderWidth: "0 0 1px",
+				padding: "16px 8px",
 			},
 		},
 		null
