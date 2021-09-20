@@ -54,8 +54,8 @@ func connect(credentials *adapt.Credentials) (*sql.DB, error) {
 }
 
 func getDBCollectionName(collectionMetadata *adapt.CollectionMetadata, tenantID string) (string, error) {
-	if collectionMetadata.CollectionName == "" {
+	if collectionMetadata.Name == "" {
 		return "", errors.New("Could not get DB Collection Name: Missing important collection metadata: " + collectionMetadata.Name)
 	}
-	return collectionMetadata.Namespace + ":" + collectionMetadata.CollectionName + ":" + tenantID, nil
+	return collectionMetadata.Namespace + ":" + collectionMetadata.Name + ":" + tenantID, nil
 }

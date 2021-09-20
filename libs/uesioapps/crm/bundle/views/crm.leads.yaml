@@ -43,7 +43,7 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: lead/${crm.id}
+                    - path: lead/${uesio.id}
                       signal: route/NAVIGATE
                 - text: Delete
                   signals:
@@ -68,8 +68,8 @@ definition:
     leads:
       collection: crm.leads
       fields:
-        crm.firstname: null
-        crm.id: null
-        crm.lastname: null
+        crm.firstname:
+        uesio.id:
+        crm.lastname:
         uesio.updatedat:
         uesio.createdat:

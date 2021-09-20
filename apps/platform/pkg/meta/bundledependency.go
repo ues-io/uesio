@@ -4,7 +4,7 @@ import "fmt"
 
 // BundleDependency struct
 type BundleDependency struct {
-	ID        string     `uesio:"studio.id"`
+	ID        string     `uesio:"uesio.id"`
 	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Bundle    *Bundle    `uesio:"studio.bundle"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`

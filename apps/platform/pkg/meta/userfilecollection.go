@@ -22,7 +22,7 @@ func NewUserFileCollection(key string) (*UserFileCollection, error) {
 
 // UserFileCollection struct
 type UserFileCollection struct {
-	ID         string `yaml:"-" uesio:"studio.id"`
+	ID         string `yaml:"-" uesio:"uesio.id"`
 	Name       string `yaml:"name" uesio:"studio.name"`
 	Namespace  string `yaml:"-" uesio:"-"`
 	FileSource string

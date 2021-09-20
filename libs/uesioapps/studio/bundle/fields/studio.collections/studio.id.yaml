@@ -1,5 +1,0 @@
-name: id
-collection: studio.collections
-type: TEXT
-label: Collection ID
-readOnly: true

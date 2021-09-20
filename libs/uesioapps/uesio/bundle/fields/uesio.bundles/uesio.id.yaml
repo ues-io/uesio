@@ -1,5 +1,0 @@
-name: id
-collection: uesio.bundles
-type: "TEXT"
-label: "Bundle ID"
-readOnly: true

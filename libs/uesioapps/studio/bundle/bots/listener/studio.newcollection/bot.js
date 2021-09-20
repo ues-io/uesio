@@ -11,7 +11,6 @@ function newcollection(bot) {
 			"studio.datasource": datasource,
 			"studio.collectionname": collection,
 			"studio.workspace": workspaceId,
-			"studio.idfield": app + ".id",
 			"studio.namefield": app + ".name",
 		},
 	])
@@ -20,13 +19,6 @@ function newcollection(bot) {
 			"studio.collection": app + "." + collection,
 			"studio.label": "Name",
 			"studio.name": "name",
-			"studio.type": "TEXT",
-			"studio.workspace": workspaceId,
-		},
-		{
-			"studio.collection": app + "." + collection,
-			"studio.label": "Id",
-			"studio.name": "id",
 			"studio.type": "TEXT",
 			"studio.workspace": workspaceId,
 		},

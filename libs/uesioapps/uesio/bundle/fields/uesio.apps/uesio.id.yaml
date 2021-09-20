@@ -1,5 +1,0 @@
-name: id
-collection: uesio.apps
-type: TEXT
-label: App ID
-readOnly: true

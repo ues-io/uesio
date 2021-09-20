@@ -1,9 +1,7 @@
 name: teams
 dataSource: uesio.platform
-idField: studio.id
 idFormat: "${studio.appid}_${studio.name}"
 nameField: studio.name
-collectionName: teams
 access: "protected"
 recordChallengeTokens:
   - type: "lookup"

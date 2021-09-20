@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,7 +20,7 @@ definition:
     installedapp:
       collection: studio.bundledependencies
       fields:
-        studio.id:
+        uesio.id:
         studio.bundle:
           fields:
             uesio.major:
@@ -29,7 +29,7 @@ definition:
       conditions:
         - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
-        - field: studio.id
+        - field: uesio.id
           value: $Param{bundledep}
     versions:
       collection: uesio.bundles

@@ -1,5 +1,0 @@
-name: id
-collection: crm.accounts
-type: TEXT
-label: Account ID
-readOnly: true

@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -25,7 +25,7 @@ definition:
     installedapps:
       collection: studio.bundledependencies
       fields:
-        studio.id:
+        uesio.id:
         studio.bundle:
           fields:
             uesio.major:
@@ -168,7 +168,7 @@ definition:
                                             uesio.variant: io.item
                                             signals:
                                               - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${uesio.id}"
                                             content:
                                               - io.text:
                                                   text: ${["studio.bundle"]["uesio.app"]["uesio.id"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}

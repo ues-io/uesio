@@ -1,5 +1,0 @@
-name: id
-collection: studio.themes
-type: TEXT
-label: View ID
-readOnly: true

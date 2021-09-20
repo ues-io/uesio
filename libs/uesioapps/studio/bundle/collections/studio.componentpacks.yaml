@@ -1,6 +1,4 @@
 name: componentpacks
 dataSource: uesio.platform
-idField: studio.id
 idFormat: "${studio.workspace}_${studio.name}"
 nameField: studio.name
-collectionName: componentpacks

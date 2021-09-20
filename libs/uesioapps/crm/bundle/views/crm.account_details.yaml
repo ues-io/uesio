@@ -50,7 +50,7 @@ definition:
                       - io.field:
                           fieldId: crm.logo
                       - io.field:
-                          fieldId: crm.id
+                          fieldId: uesio.id
                       - io.field:
                           fieldId: crm.name
                       - io.field:
@@ -63,11 +63,11 @@ definition:
     accounts:
       collection: crm.accounts
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: accountid
           valueSource: PARAM
       fields:
-        crm.id:
+        uesio.id:
         crm.name:
         crm.logo:
         crm.description:

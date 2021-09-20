@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,12 +20,10 @@ definition:
     collections:
       collection: studio.collections
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.namefield:
-        studio.idfield:
         studio.workspace:
-        studio.collectionname:
         studio.datasource:
         uesio.updatedat:
         uesio.updatedby:
@@ -35,13 +33,13 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           value: $Param{collectionname}
     fields:
       collection: studio.fields
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
         studio.label:
@@ -55,7 +53,7 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
@@ -64,11 +62,11 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     newfield:
       collection: studio.fields
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
         studio.label:
@@ -81,7 +79,7 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -154,10 +152,6 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                                  - studio.metadatafield:
-                                      fieldId: studio.idfield
-                                      metadataType: "FIELD"
-                                      label: "ID Field"
                                   - studio.metadatafield:
                                       fieldId: studio.namefield
                                       metadataType: "FIELD"
@@ -258,12 +252,6 @@ definition:
               components:
                 - io.field:
                     fieldId: studio.name
-                - studio.metadatafield:
-                    fieldId: studio.idfield
-                    metadataType: "FIELD"
-                    label: "ID Field"
-                    grouping: $Param{appname}.$Param{collectionname}
-                    namespace: $Param{appname}
                 - studio.metadatafield:
                     fieldId: studio.namefield
                     metadataType: "FIELD"

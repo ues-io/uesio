@@ -1,5 +1,0 @@
-name: updated
-collection: crm.opportunities
-type: TIMESTAMP
-label: Updated
-autopopulate: UPDATE

@@ -17,7 +17,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	return &adapt.CollectionMetadata{
 		Name:                  e.Name,
 		Namespace:             e.Namespace,
-		IDField:               e.IDField,
+		IDField:               "uesio.id",
 		IDFormat:              e.IDFormat,
 		NameField:             e.NameField,
 		Createable:            !e.ReadOnly,
@@ -25,7 +25,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Updateable:            !e.ReadOnly,
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
-		CollectionName:        e.CollectionName,
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
 		RecordChallengeTokens: e.RecordChallengeTokens,
@@ -113,6 +112,15 @@ func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	collectionMetadata = GetCollectionMetadata(collection)
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "id",
+		Namespace:  "uesio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Id",
+	})
 	collectionMetadata.SetField(&adapt.FieldMetadata{
 		Name:         "owner",
 		Namespace:    "uesio",

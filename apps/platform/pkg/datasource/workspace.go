@@ -15,7 +15,7 @@ func AddContextWorkspace(appName, workspaceName string, session *sess.Session) e
 		&workspace,
 		[]adapt.LoadRequestCondition{
 			{
-				Field: "studio.id",
+				Field: "uesio.id",
 				Value: appName + "_" + workspaceName,
 			},
 		},

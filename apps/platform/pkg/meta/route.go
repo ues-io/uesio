@@ -19,7 +19,7 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
-	ID        string            `yaml:"-" uesio:"studio.id"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Path      string            `yaml:"path" uesio:"studio.path"`

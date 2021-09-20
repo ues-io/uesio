@@ -1,5 +1,0 @@
-name: id
-collection: studio.secrets
-type: TEXT
-label: Secret ID
-readOnly: true

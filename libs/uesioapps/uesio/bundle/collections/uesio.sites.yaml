@@ -1,6 +1,4 @@
 name: sites
 dataSource: uesio.platform
-idField: uesio.id
 idFormat: "${uesio.name}_${uesio.app}"
 nameField: uesio.name
-collectionName: sites

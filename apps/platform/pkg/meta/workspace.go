@@ -2,7 +2,7 @@ package meta
 
 // Workspace struct
 type Workspace struct {
-	ID             string         `uesio:"studio.id"`
+	ID             string         `uesio:"uesio.id"`
 	Name           string         `uesio:"studio.name"`
 	Namespace      string         `uesio:"-"`
 	LoginRoute     string         `uesio:"studio.loginroute"`

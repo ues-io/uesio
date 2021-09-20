@@ -58,12 +58,12 @@ definition:
     leads:
       collection: crm.leads
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: leadid
           valueSource: PARAM
       fields:
-        crm.firstname: null
-        crm.id: null
-        crm.lastname: null
+        crm.firstname:
+        uesio.id:
+        crm.lastname:
         uesio.updatedat:
         uesio.createdat:

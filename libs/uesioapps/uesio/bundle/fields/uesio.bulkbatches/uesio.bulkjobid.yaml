@@ -1,0 +1,4 @@
+name: bulkjobid
+collection: uesio.bulkbatches
+type: "TEXT"
+label: "Bulk job id"

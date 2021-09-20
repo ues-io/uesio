@@ -18,7 +18,7 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string     `yaml:"-" uesio:"studio.id"`
+	ID          string     `yaml:"-" uesio:"uesio.id"`
 	Name        string     `yaml:"name" uesio:"studio.name"`
 	Namespace   string     `yaml:"-" uesio:"-"`
 	Type        string     `yaml:"type" uesio:"studio.type"`

@@ -6,7 +6,7 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID         string             `yaml:"-" uesio:"studio.id"`
+	ID         string             `yaml:"-" uesio:"uesio.id"`
 	Name       string             `yaml:"name" uesio:"studio.name"`
 	Namespace  string             `yaml:"namespace" uesio:"-"`
 	Workspace  *Workspace         `yaml:"-" uesio:"studio.workspace"`

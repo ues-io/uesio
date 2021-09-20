@@ -4,7 +4,7 @@ import "errors"
 
 // Secret struct
 type Secret struct {
-	ID        string     `yaml:"-" uesio:"studio.id"`
+	ID        string     `yaml:"-" uesio:"uesio.id"`
 	Name      string     `yaml:"name" uesio:"studio.name"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Store     string     `yaml:"store,omitempty" uesio:"studio.store"`

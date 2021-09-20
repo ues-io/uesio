@@ -19,7 +19,7 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
-	ID        string            `yaml:"-" uesio:"studio.id"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `yaml:"name" uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`

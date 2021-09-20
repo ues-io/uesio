@@ -1,5 +1,0 @@
-name: id
-collection: uesio.configstorevalues
-type: "TEXT"
-label: "Key"
-readOnly: true

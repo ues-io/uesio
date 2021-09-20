@@ -43,7 +43,7 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: contact/${crm.id}
+                    - path: contact/${uesio.id}
                       signal: route/NAVIGATE
                 - text: Delete
                   signals:
@@ -77,12 +77,12 @@ definition:
         crm.account:
           fields:
             crm.name:
-        crm.birthdate: null
-        crm.deceased: null
-        crm.firstname: null
-        crm.gender: null
-        crm.id: null
-        crm.lastname: null
-        crm.email: null
+        crm.birthdate:
+        crm.deceased:
+        crm.firstname:
+        crm.gender:
+        uesio.id:
+        crm.lastname:
+        crm.email:
         uesio.updatedat:
         uesio.createdat:

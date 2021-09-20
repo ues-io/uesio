@@ -1,5 +1,0 @@
-name: id
-collection: crm.leads
-type: TEXT
-label: Lead ID
-readOnly: true
