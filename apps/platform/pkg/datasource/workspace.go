@@ -15,7 +15,7 @@ func AddContextWorkspace(appName, workspaceName string, session *sess.Session) e
 		&workspace,
 		[]adapt.LoadRequestCondition{
 			{
-				Field: "studio.id",
+				Field: "uesio.id",
 				Value: appName + "_" + workspaceName,
 			},
 		},
@@ -29,7 +29,7 @@ func AddContextWorkspace(appName, workspaceName string, session *sess.Session) e
 	perms := session.GetPermissions()
 
 	// 1. Make sure we're in a site that can read/modify workspaces
-	if site.AppID != "studio" {
+	if site.App.ID != "studio" {
 		return errors.New("this site does not allow working with workspaces")
 	}
 	// 2. we should have a profile that allows modifying workspaces

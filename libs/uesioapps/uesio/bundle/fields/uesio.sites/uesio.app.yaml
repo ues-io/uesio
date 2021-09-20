@@ -2,5 +2,4 @@ name: app
 collection: uesio.sites
 type: REFERENCE
 label: App
-propertyName: appid
 referencedCollection: uesio.apps

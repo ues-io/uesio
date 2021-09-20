@@ -9,16 +9,17 @@ import (
 
 // View struct
 type View struct {
-	ID         string    `yaml:"-" uesio:"studio.id"`
-	Name       string    `yaml:"name" uesio:"studio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
+	Name       string     `yaml:"name" uesio:"studio.name"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -103,12 +104,19 @@ func (v *View) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (v *View) SetWorkspace(workspace string) {
-	v.Workspace = workspace
+	v.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
+}
+
+// Len function
+func (v *View) Len() int {
+	return StandardItemLen(v)
 }
 
 // GetItemMeta function

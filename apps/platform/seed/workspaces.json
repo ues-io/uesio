@@ -2,18 +2,21 @@
 	{
 		"name": "dev",
 		"app": {
+			"id": "crm",
 			"name": "crm"
 		}
 	},
 	{
 		"name": "test",
 		"app": {
+			"id": "crm",
 			"name": "crm"
 		}
 	},
 	{
 		"name": "dev",
 		"app": {
+			"id": "sample",
 			"name": "sample"
 		}
 	}

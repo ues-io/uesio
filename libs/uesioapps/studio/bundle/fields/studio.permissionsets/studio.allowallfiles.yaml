@@ -2,4 +2,3 @@ name: allowallfiles
 collection: studio.permissionsets
 type: CHECKBOX
 label: Allow all files
-propertyName: allowallfiles

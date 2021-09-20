@@ -56,7 +56,7 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 
 // Bot struct
 type Bot struct {
-	ID            string            `yaml:"-" uesio:"studio.id"`
+	ID            string            `yaml:"-" uesio:"uesio.id"`
 	Name          string            `yaml:"name" uesio:"studio.name"`
 	CollectionRef string            `yaml:"collection,omitempty" uesio:"studio.collection"`
 	Namespace     string            `yaml:"-" uesio:"-"`
@@ -64,11 +64,12 @@ type Bot struct {
 	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
-	Workspace     string            `yaml:"-" uesio:"studio.workspaceid"`
-	CreatedBy     *User             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy     *User             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt     int64             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt     int64             `yaml:"-" uesio:"studio.createdat"`
+	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
+	CreatedBy     *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner         *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy     *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt     int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt     int64             `yaml:"-" uesio:"uesio.createdat"`
 	itemMeta      *ItemMeta         `yaml:"-" uesio:"-"`
 }
 
@@ -167,12 +168,19 @@ func (b *Bot) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (b *Bot) SetWorkspace(workspace string) {
-	b.Workspace = workspace
+	b.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (b *Bot) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// Len function
+func (b *Bot) Len() int {
+	return StandardItemLen(b)
 }
 
 // GetItemMeta function

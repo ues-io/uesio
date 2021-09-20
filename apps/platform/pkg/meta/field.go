@@ -31,18 +31,17 @@ type SubField struct {
 
 // Field struct
 type Field struct {
-	ID                   string     `yaml:"-" uesio:"studio.id"`
+	ID                   string     `yaml:"-" uesio:"uesio.id"`
 	Name                 string     `yaml:"name" uesio:"studio.name"`
 	CollectionRef        string     `yaml:"collection" uesio:"studio.collection"`
 	Namespace            string     `yaml:"-" uesio:"-"`
 	Type                 string     `yaml:"type" uesio:"studio.type"`
 	Label                string     `yaml:"label" uesio:"studio.label"`
-	PropertyName         string     `yaml:"propertyName" uesio:"studio.propertyname"`
 	ReadOnly             bool       `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
 	CreateOnly           bool       `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
 	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
 	SelectList           string     `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
-	Workspace            string     `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace            *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Required             bool       `yaml:"required,omitempty" uesio:"studio.required"`
 	Validate             Validate   `yaml:"validate,omitempty" uesio:"studio.validate"`
 	AutoPopulate         string     `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
@@ -50,10 +49,11 @@ type Field struct {
 	FileCollection       string     `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
 	Accept               string     `yaml:"accept,omitempty" uesio:"studio.accept"`
 	itemMeta             *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy            *User      `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy            *User      `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy            *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner                *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy            *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt            int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt            int64      `yaml:"-" uesio:"uesio.createdat"`
 	SubFields            []SubField `yaml:"subfields,omitempty" uesio:"studio.subfields"`
 	SubType              string     `yaml:"subtype,omitempty" uesio:"studio.subtype"`
 }
@@ -138,12 +138,19 @@ func (f *Field) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (f *Field) SetWorkspace(workspace string) {
-	f.Workspace = workspace
+	f.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (f *Field) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
+}
+
+// Len function
+func (f *Field) Len() int {
+	return StandardItemLen(f)
 }
 
 // GetItemMeta function

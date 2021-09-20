@@ -1,6 +1,0 @@
-name: workspaceid
-collection: studio.bundledependencies
-type: "TEXT"
-label: Workspace ID
-propertyName: workspaceid
-readOnly: true

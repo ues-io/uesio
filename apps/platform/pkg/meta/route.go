@@ -19,19 +19,20 @@ func NewRoute(key string) (*Route, error) {
 
 // Route struct
 type Route struct {
-	ID        string            `yaml:"-" uesio:"studio.id"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Path      string            `yaml:"path" uesio:"studio.path"`
 	ViewRef   string            `yaml:"view" uesio:"studio.view"`
 	Params    map[string]string `yaml:"-" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	ThemeRef  string            `yaml:"theme" uesio:"studio.theme"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -100,12 +101,19 @@ func (r *Route) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (r *Route) SetWorkspace(workspace string) {
-	r.Workspace = workspace
+	r.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (r *Route) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(r, iter)
+}
+
+// Len function
+func (r *Route) Len() int {
+	return StandardItemLen(r)
 }
 
 // GetItemMeta function

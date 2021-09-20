@@ -46,230 +46,35 @@ type SaveOptions struct {
 	Lookups []Lookup
 }
 
-type SearchFieldFunc func([]string) (string, interface{})
-
-type DefaultIDFunc func() string
-
-type DeleteFunc func(interface{}) error
-
-type ChangeFunc func(interface{}, map[string]interface{}) error
-
-type SetDataFunc func(value interface{}, fieldMetadata *FieldMetadata) (interface{}, error)
-
-// ProcessDeletes function
-func ProcessDeletes(request *SaveOp, metadata *MetadataCache, deleteFunc DeleteFunc) error {
-	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
-	if err != nil {
-		return err
-	}
-	idFieldName := collectionMetadata.IDField
-
-	for _, delete := range *request.Deletes {
-		dbID, err := delete.FieldChanges.GetField(idFieldName)
-		if err != nil {
-			return err
-		}
-
-		err = deleteFunc(dbID)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func SetReferenceData(value interface{}, fieldMetadata *FieldMetadata, metadata *MetadataCache) (interface{}, error) {
+func GetReferenceKey(value interface{}, fieldMetadata *FieldMetadata, metadata *MetadataCache) (string, error) {
 	if value == nil {
-		return nil, nil
+		return "", nil
 	}
 
 	valueMap, ok := value.(map[string]interface{})
 	if !ok {
-		return nil, nil
+		return "", nil
 	}
 
 	referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	refIDField, err := referencedCollectionMetadata.GetIDField()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	fk, ok := valueMap[refIDField.GetFullName()]
 	if !ok {
-		return nil, errors.New("bad change map for ref field " + fieldMetadata.GetFullName() + " -> " + refIDField.GetFullName())
-	}
-	return fk, nil
-}
-
-func ProcessUpdates(
-	request *SaveOp,
-	metadata *MetadataCache,
-	updateFunc ChangeFunc,
-	setDataFunc SetDataFunc,
-	fieldNameFunc FieldNameFunc,
-	searchFieldFunc SearchFieldFunc,
-) error {
-
-	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
-	if err != nil {
-		return err
+		return "", errors.New("bad change map for ref field " + fieldMetadata.GetFullName() + " -> " + refIDField.GetFullName())
 	}
 
-	for _, change := range *request.Updates {
-
-		changeMap := map[string]interface{}{}
-		searchableValues := []string{}
-
-		err := change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-			fieldMetadata, err := collectionMetadata.GetField(fieldID)
-			if err != nil {
-				return err
-			}
-
-			// Never update autopopulated fields set to CREATE
-			if fieldMetadata.AutoPopulate == "CREATE" {
-				return nil
-			}
-
-			if fieldID == collectionMetadata.NameField {
-				searchValue := value.(string)
-				if searchValue != "" {
-					searchableValues = append(searchableValues, value.(string))
-				}
-			}
-
-			fieldName, err := fieldNameFunc(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			updateValue, err := setDataFunc(value, fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			changeMap[fieldName] = updateValue
-			return nil
-		})
-		if err != nil {
-			return err
-		}
-
-		if change.IDValue != nil {
-			if searchFieldFunc != nil && len(searchableValues) > 0 {
-				searchIndexField, searchIndex := searchFieldFunc(searchableValues)
-				if searchIndexField != "" {
-					changeMap[searchIndexField] = searchIndex
-				}
-			}
-			err := updateFunc(change.IDValue, changeMap)
-			if err != nil {
-				return err
-			}
-		}
-
+	fkString, ok := fk.(string)
+	if !ok {
+		return "", errors.New("Bad foreign key")
 	}
-	return nil
-
-}
-
-func ProcessInserts(
-	request *SaveOp,
-	metadata *MetadataCache,
-	insertFunc ChangeFunc,
-	setDataFunc SetDataFunc,
-	fieldNameFunc FieldNameFunc,
-	searchFieldFunc SearchFieldFunc,
-	defaultIDFunc DefaultIDFunc,
-) error {
-
-	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
-	if err != nil {
-		return err
-	}
-
-	idTemplate, err := NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
-	if err != nil {
-		return err
-	}
-
-	for _, change := range *request.Inserts {
-
-		changeMap := map[string]interface{}{}
-		searchableValues := []string{}
-
-		err := change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-			fieldMetadata, err := collectionMetadata.GetField(fieldID)
-			if err != nil {
-				return err
-			}
-
-			if fieldID == collectionMetadata.NameField {
-				searchableValues = append(searchableValues, value.(string))
-			}
-
-			fieldName, err := fieldNameFunc(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			updateValue, err := setDataFunc(value, fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			changeMap[fieldName] = updateValue
-			return nil
-		})
-		if err != nil {
-			return err
-		}
-
-		if searchFieldFunc != nil && len(searchableValues) > 0 {
-			searchIndexField, searchIndex := searchFieldFunc(searchableValues)
-			if searchIndexField != "" {
-				changeMap[searchIndexField] = searchIndex
-			}
-		}
-
-		newID, err := templating.Execute(idTemplate, change.FieldChanges)
-		if err != nil {
-			return err
-		}
-
-		if newID == "" {
-			newID = defaultIDFunc()
-		}
-
-		// Make sure to set the id field
-		idFieldMetadata, err := collectionMetadata.GetIDField()
-		if err != nil {
-			return err
-		}
-
-		idFieldName, err := fieldNameFunc(idFieldMetadata)
-		if err != nil {
-			return err
-		}
-
-		changeMap[idFieldName] = newID
-
-		err = change.FieldChanges.SetField(idFieldMetadata.GetFullName(), newID)
-		if err != nil {
-			return err
-		}
-
-		err = insertFunc(newID, changeMap)
-		if err != nil {
-			return err
-		}
-
-	}
-	return nil
-
+	return fkString, nil
 }
 
 // NewFieldChanges function returns a template that can merge field changes
@@ -281,21 +86,18 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 		}
 		val, err := item.GetField(key)
 		if err != nil {
-			return nil, errors.New("missing key " + key)
+			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
 		}
-
 		if IsReference(fieldMetadata.Type) {
-			fk, err := SetReferenceData(val, fieldMetadata, metadata)
+			key, err := GetReferenceKey(val, fieldMetadata, metadata)
 			if err != nil {
 				return nil, err
 			}
-			fkString, ok := fk.(string)
-			if !ok || fkString == "" {
-				return nil, errors.New("Bad foreign key: " + key + " on collection: " + collectionMetadata.GetFullName() + " for template: " + templateString)
+			if key == "" {
+				return nil, errors.New("Bad Reference Key in template")
 			}
-			return fkString, nil
+			return key, nil
 		}
-
 		return val, nil
 	})
 }

@@ -2,4 +2,3 @@ name: path
 collection: studio.routes
 type: TEXT
 label: Path
-propertyName: path

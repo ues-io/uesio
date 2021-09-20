@@ -6,10 +6,11 @@ type BulkJob struct {
 	Spec      JobSpec   `uesio:"uesio.spec"`
 	Site      string    `uesio:"uesio.site"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `uesio:"uesio.createdby"`
-	UpdatedBy *User     `uesio:"uesio.updatedby"`
-	UpdatedAt int64     `uesio:"uesio.updatedat"`
-	CreatedAt int64     `uesio:"uesio.createdat"`
+	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // JobSpec struct
@@ -50,6 +51,11 @@ func (bj *BulkJob) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (bj *BulkJob) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(bj, iter)
+}
+
+// Len function
+func (bj *BulkJob) Len() int {
+	return StandardItemLen(bj)
 }
 
 // GetItemMeta function

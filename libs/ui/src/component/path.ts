@@ -89,6 +89,9 @@ const getParentPath = (path: string) => {
 	pathArray.pop()
 	return fromPath(pathArray)
 }
+
+const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
+
 function isInt(str: string) {
 	let i = 0
 	if (str.length === 0) return false
@@ -210,6 +213,7 @@ export {
 	fromPath,
 	toPath,
 	getParentPath,
+	getParentPathArray,
 	getGrandParentPath,
 	getAncestorPath,
 	getKeyAtPath,

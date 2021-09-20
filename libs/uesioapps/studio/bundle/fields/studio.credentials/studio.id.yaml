@@ -1,6 +1,0 @@
-name: id
-collection: studio.credentials
-type: TEXT
-label: Credential ID
-propertyName: id
-readOnly: true

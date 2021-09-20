@@ -2,4 +2,3 @@ name: filerefs
 collection: studio.permissionsets
 type: MAP
 label: File refs
-propertyName: filerefs

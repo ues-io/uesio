@@ -148,7 +148,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 		Site: &SiteMergeData{
 			Name:      site.Name,
 			Version:   site.Bundle.GetVersionString(),
-			App:       site.AppID,
+			App:       site.App.ID,
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},

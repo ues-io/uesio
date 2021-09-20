@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -22,14 +21,14 @@ definition:
       collection: uesio.bundles
       fields:
         uesio.id:
-        uesio.appid:
+        uesio.app:
         uesio.major:
         uesio.minor:
         uesio.patch:
     dependencies:
       collection: studio.bundledependencies
       fields:
-        studio.id:
+        uesio.id:
         studio.bundle:
           fields:
             uesio.appid:
@@ -37,7 +36,7 @@ definition:
             uesio.minor:
             uesio.patch:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
   # Components are how we describe the layout of our view
   components:

@@ -1,6 +1,0 @@
-name: created
-collection: crm.accounts
-type: TIMESTAMP
-label: Created
-propertyName: created
-autopopulate: CREATE

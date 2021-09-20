@@ -5,9 +5,9 @@ definition:
     newlead:
       collection: crm.leads
       fields:
-        crm.firstname: null
-        crm.id: null
-        crm.lastname: null
+        crm.firstname:
+        uesio.id:
+        crm.lastname:
         crm.title:
         crm.email:
         crm.phone:

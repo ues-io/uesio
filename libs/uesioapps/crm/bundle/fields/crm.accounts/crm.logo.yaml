@@ -2,6 +2,5 @@ name: logo
 collection: crm.accounts
 type: FILE
 label: Logo
-propertyName: logo
 filecollection: uesio.platform
 accept: IMAGE

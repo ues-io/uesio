@@ -2,6 +2,5 @@ name: name
 collection: studio.teams
 type: TEXT
 label: Name
-propertyName: name
 validate:
   type: METADATA

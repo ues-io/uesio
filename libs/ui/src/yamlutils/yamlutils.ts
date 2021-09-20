@@ -1,6 +1,6 @@
 import toPath from "lodash/toPath"
 import yaml, { Pair, Node, YAMLMap } from "yaml"
-import { fromPath, getParentPath } from "../component/path"
+import { fromPath, getParentPath, getParentPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
 const parse = (str: string) => yaml.parseDocument(str)
@@ -113,6 +113,19 @@ const getCommonAncestorPath = (
 	return getCommonPath(startPathArray, endPathArray)
 }
 
+const fixFlow = (
+	pathArray: string[],
+	node: yaml.YAMLMap<unknown, unknown> | yaml.YAMLSeq<unknown>
+) => {
+	if (pathArray.length) {
+		const fixNode = node.getIn(pathArray) as
+			| yaml.YAMLMap<unknown, unknown>
+			| yaml.YAMLSeq<unknown>
+		fixNode && fixNode.flow && (fixNode.flow = false)
+		fixFlow(getParentPathArray(pathArray), node)
+	}
+}
+
 const setNodeAtPath = (
 	path: string | string[],
 	node: Node | null,
@@ -120,10 +133,7 @@ const setNodeAtPath = (
 ) => {
 	if (!yaml.isCollection(node)) throw new Error("Node must be a collection")
 	const pathArray = makePathArray(path)
-	const parentNode = node.getIn(
-		makePathArray(getParentPath(fromPath(pathArray)))
-	) as yaml.YAMLSeq
-	parentNode && (parentNode.flow = false)
+	fixFlow(pathArray, node)
 	node.setIn(makePathArray(path), setNode)
 }
 
@@ -138,12 +148,7 @@ const addNodeAtPath = (
 	// Get the parent and insert node at desired position,
 	// if no parent.. ("components" or "items"). addIn will create it for us.
 	const parentNode = node.getIn(pathArray) as yaml.YAMLSeq
-	const grandParentNode = node.getIn(
-		makePathArray(getParentPath(fromPath(pathArray)))
-	) as yaml.YAMLSeq
-
-	parentNode && (parentNode.flow = false)
-	grandParentNode && (grandParentNode.flow = false)
+	fixFlow(pathArray, node)
 
 	parentNode
 		? parentNode.items.splice(index, 0, setNode)

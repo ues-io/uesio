@@ -1,6 +1,0 @@
-name: id
-collection: uesio.userfiles
-type: "TEXT"
-label: "Id"
-propertyName: "id"
-readOnly: true

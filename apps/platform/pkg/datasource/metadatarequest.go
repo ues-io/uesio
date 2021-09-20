@@ -17,6 +17,20 @@ func ParseSelectListKey(key string) (string, string, string) {
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 
+func (fm *FieldsMap) merge(newFields *FieldsMap) {
+	if newFields == nil {
+		return
+	}
+	for field, subFields := range *newFields {
+		existing := (*fm)[field]
+		if existing == nil {
+			(*fm)[field] = FieldsMap{}
+		} else {
+			existing.merge(&subFields)
+		}
+	}
+}
+
 // MetadataRequestOptions struct
 type MetadataRequestOptions struct {
 	LoadAllFields bool
@@ -61,10 +75,12 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 	if mr.Collections[collectionName] == nil {
 		mr.Collections[collectionName] = FieldsMap{}
 	}
-	if subFields == nil {
-		subFields = &FieldsMap{}
+	existingFields := mr.Collections[collectionName][fieldName]
+	if existingFields == nil {
+		existingFields = FieldsMap{}
 	}
-	mr.Collections[collectionName][fieldName] = *subFields
+	existingFields.merge(subFields)
+	mr.Collections[collectionName][fieldName] = existingFields
 	return nil
 }
 

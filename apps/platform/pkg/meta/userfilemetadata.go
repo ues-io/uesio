@@ -15,6 +15,7 @@ type UserFileMetadata struct {
 	RecordID         string    `uesio:"uesio.recordid" json:"-"`
 	Type             string    `uesio:"uesio.type" json:"-"`
 	CreatedBy        *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner            *User     `yaml:"-" uesio:"uesio.owner"`
 	UpdatedBy        *User     `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt        int64     `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt        int64     `yaml:"-" uesio:"uesio.createdat"`
@@ -45,6 +46,11 @@ func (ufm *UserFileMetadata) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (ufm *UserFileMetadata) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ufm, iter)
+}
+
+// Len function
+func (ufm *UserFileMetadata) Len() int {
+	return StandardItemLen(ufm)
 }
 
 // GetItemMeta function

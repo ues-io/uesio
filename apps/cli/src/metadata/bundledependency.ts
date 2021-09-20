@@ -14,7 +14,7 @@ class BundleDependency {
 	static getFields() {
 		return [
 			{
-				id: "studio.id",
+				id: "uesio.id",
 			},
 			{
 				id: "studio.bundlename",

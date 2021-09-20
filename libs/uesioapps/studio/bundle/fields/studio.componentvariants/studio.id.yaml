@@ -1,6 +1,0 @@
-name: id
-collection: studio.componentvariants
-type: TEXT
-label: Variant ID
-propertyName: id
-readOnly: true

@@ -74,6 +74,10 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 					operator = "IN"
 				}
 
+				fields = append(fields, adapt.LoadRequestField{
+					ID: condition.Field,
+				})
+
 				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 					Field:    condition.Field,
 					Value:    conditionValue,
@@ -215,6 +219,9 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 
 			loadConditions := []adapt.LoadRequestCondition{}
 			for _, condition := range uat.Conditions {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: condition.Field,
+				})
 				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 					Field:    condition.Field,
 					Value:    session.GetUserInfo().ID,

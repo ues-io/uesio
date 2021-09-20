@@ -3,5 +3,4 @@ collection: studio.datasources
 type: SELECT
 selectList: studio.datasourcetypes
 label: Type
-propertyName: type
 required: true

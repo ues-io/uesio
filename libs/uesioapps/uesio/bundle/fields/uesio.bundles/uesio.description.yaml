@@ -2,5 +2,4 @@ name: description
 collection: uesio.bundles
 type: "TEXT"
 label: "Bundle Description"
-propertyName: "description"
 readOnly: true
