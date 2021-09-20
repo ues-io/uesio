@@ -56,9 +56,9 @@ definition:
                       - io.field:
                           fieldId: crm.description
                       - io.field:
-                          fieldId: crm.created
+                          fieldId: uesio.createdat
                       - io.field:
-                          fieldId: crm.updated
+                          fieldId: uesio.updatedat
   wires:
     accounts:
       collection: crm.accounts
@@ -71,5 +71,5 @@ definition:
         crm.name:
         crm.logo:
         crm.description:
-        crm.created:
-        crm.updated:
+        uesio.createdat:
+        uesio.updatedat:

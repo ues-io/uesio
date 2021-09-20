@@ -1,5 +1,0 @@
-name: createdby
-collection: uesio.secretstorevalues
-type: USER
-label: Created By
-autopopulate: CREATE

@@ -27,10 +27,10 @@ definition:
         studio.workspace:
         studio.collectionname:
         studio.datasource:
-        studio.updatedat:
-        studio.updatedby:
-        studio.createdat:
-        studio.createdby:
+        uesio.updatedat:
+        uesio.updatedby:
+        uesio.createdat:
+        uesio.createdby:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -176,13 +176,13 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - io.field:
-                                      fieldId: studio.createdby
+                                      fieldId: uesio.createdby
                                   - io.field:
-                                      fieldId: studio.createdat
+                                      fieldId: uesio.createdat
                                   - io.field:
-                                      fieldId: studio.updatedby
+                                      fieldId: uesio.updatedby
                                   - io.field:
-                                      fieldId: studio.updatedat
+                                      fieldId: uesio.updatedat
                 - io.box:
                     uesio.variant: io.section
                     components:

@@ -1,5 +1,0 @@
-name: createdby
-collection: studio.teams
-type: USER
-label: Created By
-autopopulate: CREATE

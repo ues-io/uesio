@@ -42,10 +42,11 @@ type Collection struct {
 	CollectionName        string                            `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy             *User                             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`

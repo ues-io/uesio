@@ -1,5 +1,0 @@
-name: updatedby
-collection: studio.views
-type: USER
-label: Updated By
-autopopulate: UPDATE

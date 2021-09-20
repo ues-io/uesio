@@ -81,10 +81,10 @@ definition:
       fields:
         crm.id:
         crm.name:
-        crm.updated:
+        uesio.updatedat:
       limit: 4
       order:
-        - field: crm.updated
+        - field: uesio.updatedat
           desc: true
     contacts:
       collection: crm.contacts
@@ -92,10 +92,10 @@ definition:
         crm.id:
         crm.firstname:
         crm.lastname:
-        crm.updated:
+        uesio.updatedat:
       limit: 4
       order:
-        - field: crm.updated
+        - field: uesio.updatedat
           desc: true
     leads:
       collection: crm.leads
@@ -103,8 +103,8 @@ definition:
         crm.id:
         crm.firstname:
         crm.lastname:
-        crm.updated:
+        uesio.updatedat:
       limit: 4
       order:
-        - field: crm.updated
+        - field: uesio.updatedat
           desc: true

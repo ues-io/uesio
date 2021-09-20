@@ -1,5 +1,0 @@
-name: createdat
-collection: uesio.userfiles
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

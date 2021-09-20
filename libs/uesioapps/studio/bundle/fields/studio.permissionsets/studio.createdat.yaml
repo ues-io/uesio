@@ -1,5 +1,0 @@
-name: createdat
-collection: studio.permissionsets
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

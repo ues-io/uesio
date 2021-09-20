@@ -49,10 +49,11 @@ type Field struct {
 	FileCollection       string     `yaml:"filecollection,omitempty" uesio:"studio.filecollection"`
 	Accept               string     `yaml:"accept,omitempty" uesio:"studio.accept"`
 	itemMeta             *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy            *User      `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy            *User      `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt            int64      `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt            int64      `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy            *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner                *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy            *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt            int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt            int64      `yaml:"-" uesio:"uesio.createdat"`
 	SubFields            []SubField `yaml:"subfields,omitempty" uesio:"studio.subfields"`
 	SubType              string     `yaml:"subtype,omitempty" uesio:"studio.subtype"`
 }

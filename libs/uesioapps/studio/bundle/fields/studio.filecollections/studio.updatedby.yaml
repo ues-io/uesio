@@ -1,5 +1,0 @@
-name: updatedby
-collection: studio.filecollections
-type: USER
-label: Updated By
-autopopulate: UPDATE

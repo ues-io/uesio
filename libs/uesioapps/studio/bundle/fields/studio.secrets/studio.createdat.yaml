@@ -1,5 +1,0 @@
-name: createdat
-collection: studio.route
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

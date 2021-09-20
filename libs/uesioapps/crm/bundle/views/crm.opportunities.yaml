@@ -58,9 +58,9 @@ definition:
                 - io.column:
                     field: crm.account
                 - io.column:
-                    field: crm.updated
+                    field: uesio.updatedat
                 - io.column:
-                    field: crm.created
+                    field: uesio.createdat
               id: opportunitiesTable
               mode: EDIT
               wire: opportunities
@@ -75,5 +75,5 @@ definition:
         crm.account:
           fields:
             crm.name:
-        crm.updated:
-        crm.created:
+        uesio.updatedat:
+        uesio.createdat:

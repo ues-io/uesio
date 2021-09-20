@@ -15,6 +15,7 @@ type UserFileMetadata struct {
 	RecordID         string    `uesio:"uesio.recordid" json:"-"`
 	Type             string    `uesio:"uesio.type" json:"-"`
 	CreatedBy        *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner            *User     `yaml:"-" uesio:"uesio.owner"`
 	UpdatedBy        *User     `yaml:"-" uesio:"uesio.updatedby"`
 	UpdatedAt        int64     `yaml:"-" uesio:"uesio.updatedat"`
 	CreatedAt        int64     `yaml:"-" uesio:"uesio.createdat"`

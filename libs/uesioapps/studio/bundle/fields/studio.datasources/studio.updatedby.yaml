@@ -1,5 +1,0 @@
-name: updatedby
-collection: studio.datasources
-type: USER
-label: Updated By
-autopopulate: UPDATE

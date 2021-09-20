@@ -1,5 +1,0 @@
-name: createdat
-collection: uesio.bulkbatches
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

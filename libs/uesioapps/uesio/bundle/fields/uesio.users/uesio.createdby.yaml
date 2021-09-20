@@ -1,5 +1,0 @@
-name: createdby
-collection: uesio.users
-type: USER
-label: Created By
-autopopulate: CREATE
