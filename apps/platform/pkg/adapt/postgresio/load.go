@@ -156,7 +156,7 @@ func loadOne(
 			searchToken := condition.Value.(string)
 			colValeStr := ""
 			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE ? ")
+			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE $"+strconv.Itoa(paramCounter))
 			values = append(values, colValeStr)
 			paramCounter++
 			continue
@@ -217,7 +217,7 @@ func loadOne(
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
-		return errors.New("Failed to load rows in PostgreSQL:" + err.Error())
+		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
 	}
 	defer rows.Close()
 
