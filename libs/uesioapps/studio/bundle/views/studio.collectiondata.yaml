@@ -27,10 +27,10 @@ definition:
         studio.workspace:
         studio.collectionname:
         studio.datasource:
-        studio.updatedat:
-        studio.updatedby:
-        studio.createdat:
-        studio.createdby:
+        uesio.updatedat:
+        uesio.updatedby:
+        uesio.createdat:
+        uesio.createdby:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP

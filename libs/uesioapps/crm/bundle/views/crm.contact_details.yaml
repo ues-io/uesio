@@ -62,9 +62,9 @@ definition:
                       - io.field:
                           fieldId: crm.birthdate
                       - io.field:
-                          fieldId: crm.updated
+                          fieldId: uesio.updatedat
                       - io.field:
-                          fieldId: crm.created
+                          fieldId: uesio.createdat
   wires:
     contacts:
       collection: crm.contacts
@@ -82,5 +82,5 @@ definition:
         crm.gender: null
         crm.id: null
         crm.lastname: null
-        crm.updated:
-        crm.created:
+        uesio.updatedat:
+        uesio.createdat:

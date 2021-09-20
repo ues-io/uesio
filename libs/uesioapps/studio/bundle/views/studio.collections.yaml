@@ -38,7 +38,7 @@ definition:
         studio.collectionname:
         studio.namefield:
         studio.idfield:
-        studio.createdat:
+        uesio.createdat:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP

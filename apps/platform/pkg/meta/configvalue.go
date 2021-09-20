@@ -13,10 +13,11 @@ type ConfigValue struct {
 	ManagedBy string     `yaml:"managedBy" uesio:"studio.managedby"`
 	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
-	CreatedBy *User      `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User      `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64      `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64      `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // NewConfigValue function

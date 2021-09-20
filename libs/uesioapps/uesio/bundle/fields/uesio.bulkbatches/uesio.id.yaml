@@ -1,5 +1,0 @@
-name: id
-collection: uesio.bulkbatches
-type: "TEXT"
-label: "Batch ID"
-readOnly: true

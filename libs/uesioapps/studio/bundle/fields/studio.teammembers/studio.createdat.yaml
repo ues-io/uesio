@@ -1,5 +1,0 @@
-name: createdat
-collection: studio.teammembers
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

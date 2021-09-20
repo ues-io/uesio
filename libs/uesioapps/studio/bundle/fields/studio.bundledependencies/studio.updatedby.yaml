@@ -1,5 +1,0 @@
-name: updatedby
-collection: studio.bundledependencies
-type: USER
-label: Updated By
-autopopulate: UPDATE

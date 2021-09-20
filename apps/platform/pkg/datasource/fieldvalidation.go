@@ -30,6 +30,11 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value")
 		}
 
+		// Since we're autopopulating this, allow the update to go through
+		if field.AutoPopulate != "" {
+			return nil
+		}
+
 		if currentValue.(string) == oldValue.(string) {
 			// No change, we're ok
 			return nil

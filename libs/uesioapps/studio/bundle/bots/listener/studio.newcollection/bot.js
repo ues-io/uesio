@@ -30,37 +30,5 @@ function newcollection(bot) {
 			"studio.type": "TEXT",
 			"studio.workspace": workspaceId,
 		},
-		{
-			"studio.collection": app + "." + collection,
-			"studio.label": "Created By",
-			"studio.name": "createdby",
-			"studio.type": "USER",
-			"studio.autopopulate": "CREATE",
-			"studio.workspace": workspaceId,
-		},
-		{
-			"studio.collection": app + "." + collection,
-			"studio.label": "Updated By",
-			"studio.name": "updatedby",
-			"studio.type": "USER",
-			"studio.autopopulate": "UPDATE",
-			"studio.workspace": workspaceId,
-		},
-		{
-			"studio.collection": app + "." + collection,
-			"studio.label": "Created At",
-			"studio.name": "createdat",
-			"studio.type": "TIMESTAMP",
-			"studio.autopopulate": "CREATE",
-			"studio.workspace": workspaceId,
-		},
-		{
-			"studio.collection": app + "." + collection,
-			"studio.label": "Updated At",
-			"studio.name": "updatedat",
-			"studio.type": "TIMESTAMP",
-			"studio.autopopulate": "UPDATE",
-			"studio.workspace": workspaceId,
-		},
 	])
 }

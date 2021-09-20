@@ -64,9 +64,9 @@ definition:
                 - io.column:
                     field: crm.email
                 - io.column:
-                    field: crm.updated
+                    field: uesio.updatedat
                 - io.column:
-                    field: crm.created
+                    field: uesio.createdat
               id: contactsTable
               mode: EDIT
               wire: contacts
@@ -84,5 +84,5 @@ definition:
         crm.id: null
         crm.lastname: null
         crm.email: null
-        crm.updated:
-        crm.created:
+        uesio.updatedat:
+        uesio.createdat:

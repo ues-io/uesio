@@ -98,20 +98,74 @@ func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.Selec
 func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
-	if err != nil {
-		collection, err := meta.NewCollection(key)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bundle.Load(collection, session)
-		if err != nil {
-			return nil, err
-		}
-
-		collectionMetadata = GetCollectionMetadata(collection)
-		metadataCache.AddCollection(key, collectionMetadata)
+	if err == nil {
+		return collectionMetadata, nil
 	}
+
+	collection, err := meta.NewCollection(key)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bundle.Load(collection, session)
+	if err != nil {
+		return nil, err
+	}
+
+	collectionMetadata = GetCollectionMetadata(collection)
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "owner",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Owner",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "createdby",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Created By",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "updatedby",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Updated By",
+		AutoPopulate: "UPDATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "createdat",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "TIMESTAMP",
+		Label:        "Created At",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "updatedat",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "TIMESTAMP",
+		Label:        "Updated At",
+		AutoPopulate: "UPDATE",
+	})
+
+	metadataCache.AddCollection(key, collectionMetadata)
+
 	return collectionMetadata, nil
 }
 

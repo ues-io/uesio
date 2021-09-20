@@ -56,9 +56,9 @@ definition:
                 - io.column:
                     field: crm.description
                 - io.column:
-                    field: crm.created
+                    field: uesio.createdat
                 - io.column:
-                    field: crm.updated
+                    field: uesio.updatedat
               id: accountsTable
               mode: EDIT
               wire: accounts
@@ -75,5 +75,5 @@ definition:
         crm.id:
         crm.name:
         crm.externalid:
-        crm.created:
-        crm.updated:
+        uesio.createdat:
+        uesio.updatedat:

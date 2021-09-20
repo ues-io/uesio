@@ -7,10 +7,11 @@ type SiteDomain struct {
 	Type      string    `uesio:"uesio.type"`
 	Domain    string    `uesio:"uesio.domain"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `uesio:"uesio.createdby"`
-	UpdatedBy *User     `uesio:"uesio.updatedby"`
-	UpdatedAt int64     `uesio:"uesio.updatedat"`
-	CreatedAt int64     `uesio:"uesio.createdat"`
+	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function

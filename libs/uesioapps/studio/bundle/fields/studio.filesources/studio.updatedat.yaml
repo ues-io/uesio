@@ -1,5 +1,0 @@
-name: updatedat
-collection: studio.filesources
-type: TIMESTAMP
-label: Updated At
-autopopulate: UPDATE

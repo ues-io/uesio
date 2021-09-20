@@ -1,5 +1,0 @@
-name: updatedat
-collection: uesio.bulkbatches
-type: TIMESTAMP
-label: Updated At
-autopopulate: UPDATE

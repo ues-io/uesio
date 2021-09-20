@@ -1,5 +1,0 @@
-name: createdat
-collection: studio.filesources
-type: TIMESTAMP
-label: Created At
-autopopulate: CREATE

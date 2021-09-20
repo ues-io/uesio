@@ -1,5 +1,0 @@
-name: createdby
-collection: studio.bots
-type: USER
-label: Created By
-autopopulate: CREATE
