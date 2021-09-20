@@ -22,7 +22,7 @@ definition:
       fields:
         uesio.id:
         studio.name:
-        studio.updatedat:
+        uesio.updatedat:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
