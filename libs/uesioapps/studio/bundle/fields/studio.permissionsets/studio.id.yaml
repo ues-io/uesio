@@ -1,5 +1,0 @@
-name: id
-collection: studio.permissionsets
-type: TEXT
-label: Permission Set ID
-readOnly: true

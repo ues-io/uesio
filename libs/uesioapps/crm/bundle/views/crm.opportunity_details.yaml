@@ -62,11 +62,11 @@ definition:
     opportunities:
       collection: crm.opportunities
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: opportunityid
           valueSource: PARAM
       fields:
-        crm.id:
+        uesio.id:
         crm.name:
         crm.account:
           fields:

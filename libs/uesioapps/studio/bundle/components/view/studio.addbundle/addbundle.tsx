@@ -21,7 +21,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
 	for (const record of records) {
-		if (record.source["studio.id"] === id) {
+		if (record.source["uesio.id"] === id) {
 			return record
 		}
 	}

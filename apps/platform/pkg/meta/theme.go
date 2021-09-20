@@ -6,7 +6,7 @@ import (
 
 // Theme struct
 type Theme struct {
-	ID         string     `yaml:"-" uesio:"studio.id"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
 	Name       string     `yaml:"name" uesio:"studio.name"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`

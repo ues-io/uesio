@@ -1,5 +1,0 @@
-name: id
-collection: studio.selectlists
-type: TEXT
-label: SelectList ID
-readOnly: true

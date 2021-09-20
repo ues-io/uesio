@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,7 +20,7 @@ definition:
     themes:
       collection: studio.themes
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.definition:
         studio.workspace:
@@ -28,7 +28,7 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: themename

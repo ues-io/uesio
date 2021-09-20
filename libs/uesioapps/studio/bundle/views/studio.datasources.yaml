@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,18 +20,18 @@ definition:
     datasources:
       collection: studio.datasources
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     newdatasource:
       collection: studio.datasources
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.workspace:
         studio.type:
@@ -39,13 +39,13 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
       type: CREATE
       defaults:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:

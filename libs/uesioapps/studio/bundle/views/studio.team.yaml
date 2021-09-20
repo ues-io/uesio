@@ -16,7 +16,7 @@ definition:
     teams:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.appid:
         studio.app:
@@ -34,7 +34,7 @@ definition:
     teammembers:
       collection: studio.teammembers
       fields:
-        studio.id:
+        uesio.id:
         studio.appid:
         studio.member:
         studio.teamid:
@@ -47,7 +47,7 @@ definition:
     teampermissions:
       collection: studio.teampermissions
       fields:
-        studio.id:
+        uesio.id:
         studio.appid:
         studio.role:
         studio.teamid:

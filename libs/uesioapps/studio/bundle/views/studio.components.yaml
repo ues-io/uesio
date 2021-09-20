@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:

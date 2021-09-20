@@ -1,5 +1,0 @@
-name: id
-collection: uesio.bulkjobs
-type: "TEXT"
-label: "Job ID"
-readOnly: true

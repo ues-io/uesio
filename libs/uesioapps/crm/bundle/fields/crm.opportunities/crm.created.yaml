@@ -1,5 +1,0 @@
-name: created
-collection: crm.opportunities
-type: TIMESTAMP
-label: Created
-autopopulate: CREATE

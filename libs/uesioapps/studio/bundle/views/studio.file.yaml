@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,14 +20,14 @@ definition:
     files:
       collection: studio.files
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.content:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: filename

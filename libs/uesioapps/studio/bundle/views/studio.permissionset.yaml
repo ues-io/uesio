@@ -5,7 +5,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
           fields:
@@ -20,7 +20,7 @@ definition:
     permissionsets:
       collection: studio.permissionsets
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.workspace:
         studio.allowallfiles:
@@ -34,14 +34,14 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: permissionsetname
     routes:
       collection: studio.routes
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.path:
         studio.view:
@@ -50,11 +50,11 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     views:
       collection: studio.views
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.definition:
         studio.workspace:
@@ -62,18 +62,18 @@ definition:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     files:
       collection: studio.files
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.content:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:

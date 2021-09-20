@@ -43,7 +43,7 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: opportunity/${crm.id}
+                    - path: opportunity/${uesio.id}
                       signal: route/NAVIGATE
                 - text: Delete
                   signals:
@@ -69,7 +69,7 @@ definition:
       collection: crm.opportunities
       fields:
         crm.name:
-        crm.id:
+        uesio.id:
         crm.status:
         crm.description:
         crm.account:

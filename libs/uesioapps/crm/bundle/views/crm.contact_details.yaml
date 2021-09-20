@@ -48,7 +48,7 @@ definition:
                     columnGap: 10px
                     items:
                       - io.field:
-                          fieldId: crm.id
+                          fieldId: uesio.id
                       - io.field:
                           fieldId: crm.firstname
                       - io.field:
@@ -69,18 +69,18 @@ definition:
     contacts:
       collection: crm.contacts
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: contactid
           valueSource: PARAM
       fields:
         crm.account:
           fields:
             crm.name:
-        crm.birthdate: null
-        crm.deceased: null
-        crm.firstname: null
-        crm.gender: null
-        crm.id: null
-        crm.lastname: null
+        crm.birthdate:
+        crm.deceased:
+        crm.firstname:
+        crm.gender:
+        uesio.id:
+        crm.lastname:
         uesio.updatedat:
         uesio.createdat:

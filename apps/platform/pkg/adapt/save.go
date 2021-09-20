@@ -86,7 +86,7 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 		}
 		val, err := item.GetField(key)
 		if err != nil {
-			return nil, errors.New("missing key " + key)
+			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
 		}
 		if IsReference(fieldMetadata.Type) {
 			key, err := GetReferenceKey(val, fieldMetadata, metadata)

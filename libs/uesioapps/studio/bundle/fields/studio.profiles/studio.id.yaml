@@ -1,5 +1,0 @@
-name: id
-collection: studio.profiles
-type: TEXT
-label: Profile ID
-readOnly: true

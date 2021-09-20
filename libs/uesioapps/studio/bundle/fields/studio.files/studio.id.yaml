@@ -1,5 +1,0 @@
-name: id
-collection: studio.files
-type: TEXT
-label: File ID
-readOnly: true

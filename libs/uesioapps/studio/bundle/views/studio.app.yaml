@@ -16,7 +16,7 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
       conditions:
         - field: studio.app
@@ -46,7 +46,7 @@ definition:
     teams:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.appid:
       conditions:
@@ -56,7 +56,7 @@ definition:
     newworkspace:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
       type: CREATE
@@ -84,7 +84,7 @@ definition:
     newteam:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.appid:
       type: CREATE

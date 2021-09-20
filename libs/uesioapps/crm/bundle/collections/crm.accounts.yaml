@@ -1,5 +1,3 @@
 name: accounts
 dataSource: uesio.platform
-idField: crm.id
 nameField: crm.name
-collectionName: accounts

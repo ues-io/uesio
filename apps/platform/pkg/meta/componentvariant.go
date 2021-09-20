@@ -8,7 +8,7 @@ import (
 
 // ComponentVariant struct
 type ComponentVariant struct {
-	ID         string     `yaml:"-" uesio:"studio.id"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
 	Namespace  string     `yaml:"-" uesio:"-"`
 	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Name       string     `yaml:"name" uesio:"studio.name"`

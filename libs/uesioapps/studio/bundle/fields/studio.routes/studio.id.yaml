@@ -1,5 +1,0 @@
-name: id
-collection: studio.routes
-type: TEXT
-label: Route ID
-readOnly: true

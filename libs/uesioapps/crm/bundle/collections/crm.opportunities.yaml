@@ -1,5 +1,3 @@
 name: opportunities
 dataSource: uesio.platform
-idField: crm.id
 nameField: crm.name
-collectionName: opportunities

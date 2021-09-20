@@ -1,5 +1,0 @@
-name: id
-collection: studio.fields
-type: TEXT
-label: Field ID
-readOnly: true

@@ -32,11 +32,10 @@ type TokenCondition struct {
 
 // Collection struct
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"studio.id"`
+	ID                    string                            `yaml:"-" uesio:"uesio.id"`
 	Name                  string                            `yaml:"name" uesio:"studio.name"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
-	IDField               string                            `yaml:"idField" uesio:"studio.idfield"`
 	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
 	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
 	CollectionName        string                            `yaml:"collectionName" uesio:"studio.collectionname"`

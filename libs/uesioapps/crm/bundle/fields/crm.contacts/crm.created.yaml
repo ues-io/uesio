@@ -1,5 +1,0 @@
-name: created
-collection: crm.contacts
-type: TIMESTAMP
-label: Created
-autopopulate: CREATE

@@ -43,7 +43,7 @@ definition:
               rowactions:
                 - text: Edit
                   signals:
-                    - path: account/${crm.id}
+                    - path: account/${uesio.id}
                       signal: route/NAVIGATE
                 - text: Delete
                   signals:
@@ -72,7 +72,7 @@ definition:
           desc: false
       fields:
         crm.description:
-        crm.id:
+        uesio.id:
         crm.name:
         crm.externalid:
         uesio.createdat:

@@ -8,7 +8,7 @@ type SelectListOption struct {
 
 // SelectList struct
 type SelectList struct {
-	ID        string             `yaml:"-" uesio:"studio.id"`
+	ID        string             `yaml:"-" uesio:"uesio.id"`
 	Name      string             `yaml:"name" uesio:"studio.name"`
 	Namespace string             `yaml:"-" uesio:"-"`
 	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`

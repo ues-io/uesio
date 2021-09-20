@@ -31,7 +31,7 @@ type SubField struct {
 
 // Field struct
 type Field struct {
-	ID                   string     `yaml:"-" uesio:"studio.id"`
+	ID                   string     `yaml:"-" uesio:"uesio.id"`
 	Name                 string     `yaml:"name" uesio:"studio.name"`
 	CollectionRef        string     `yaml:"collection" uesio:"studio.collection"`
 	Namespace            string     `yaml:"-" uesio:"-"`

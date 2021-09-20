@@ -206,7 +206,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 	// to overwrite the other fields
 	workspaceItem.SetItemMeta(&meta.ItemMeta{
 		ValidFields: map[string]bool{
-			"studio.id":             true,
+			"uesio.id":             true,
 			"studio.loginroute":     true,
 			"studio.homeroute":      true,
 			"studio.defaultprofile": true,

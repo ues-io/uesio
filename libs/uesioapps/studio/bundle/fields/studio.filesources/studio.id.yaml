@@ -1,5 +1,0 @@
-name: id
-collection: studio.filesources
-type: TEXT
-label: File Source ID
-readOnly: true
