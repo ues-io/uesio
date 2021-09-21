@@ -23,6 +23,7 @@ definition:
         uesio.id:
         studio.bundle:
           fields:
+            uesio.app:
             uesio.major:
             uesio.minor:
             uesio.patch:

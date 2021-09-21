@@ -18,14 +18,13 @@ definition:
       fields:
         uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.id:
             uesio.name:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -35,27 +34,27 @@ definition:
       collection: studio.teammembers
       fields:
         uesio.id:
-        studio.appid:
+        studio.app:
         studio.member:
-        studio.teamid:
+        studio.team:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: studio.teamid
+        - field: studio.team
           value: $Param{appname}_$Param{teamname}
     teampermissions:
       collection: studio.teampermissions
       fields:
         uesio.id:
-        studio.appid:
+        studio.app:
         studio.role:
-        studio.teamid:
+        studio.team:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: studio.teamid
+        - field: studio.team
           value: $Param{appname}_$Param{teamname}
   # Components are how we describe the layout of our view
   components:

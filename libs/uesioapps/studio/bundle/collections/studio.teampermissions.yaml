@@ -1,4 +1,4 @@
 name: teampermissions
 dataSource: uesio.platform
-idFormat: "${studio.teamid}_${studio.role}"
+idFormat: "${studio.team}_${studio.role}"
 nameField: uesio.id

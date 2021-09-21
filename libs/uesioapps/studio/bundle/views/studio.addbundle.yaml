@@ -31,7 +31,7 @@ definition:
         uesio.id:
         studio.bundle:
           fields:
-            uesio.appid:
+            uesio.app:
             uesio.major:
             uesio.minor:
             uesio.patch:

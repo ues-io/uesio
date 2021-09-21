@@ -38,7 +38,6 @@ type Collection struct {
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
 	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
 	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
-	CollectionName        string                            `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
 	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
 	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`

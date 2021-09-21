@@ -101,7 +101,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		?.getData()
 		.filter((record) => {
 			const source = record.source
-			const namespace = source["uesio.appid"]
+			const namespace = source["uesio.app"]
 			//We don't want to see ourselves, uesio or studio
 			if (namespace === appName) return false
 			if (namespace === "studio") return false
