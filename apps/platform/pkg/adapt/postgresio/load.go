@@ -112,6 +112,7 @@ func loadOne(
 	metadata *adapt.MetadataCache,
 	ops []adapt.LoadOp,
 	tenantID string,
+	userTokens []string,
 ) error {
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
@@ -182,7 +183,13 @@ func loadOne(
 			paramCounter++
 			values = append(values, conditionValue)
 		}
+	}
 
+	// UserTokens query
+	if collectionMetadata.Access == "protected" {
+		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY($"+strconv.Itoa(paramCounter)+"))")
+		paramCounter++
+		values = append(values, pq.Array(userTokens))
 	}
 	/*
 		for _, order := range op.Order {
@@ -253,12 +260,12 @@ func loadOne(
 	}
 
 	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-		return loadMany(ctx, db, ops, metadata, tenantID)
+		return loadMany(ctx, db, ops, metadata, tenantID, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
+func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
 
 	if len(ops) == 0 {
 		return nil
@@ -271,7 +278,7 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 		return errors.New("Failed to connect PostgreSQL:" + err.Error())
 	}
 
-	return loadMany(ctx, db, ops, metadata, credentials.GetTenantID())
+	return loadMany(ctx, db, ops, metadata, credentials.GetTenantID(), userTokens)
 }
 
 func loadMany(
@@ -280,9 +287,10 @@ func loadMany(
 	ops []adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	tenantID string,
+	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(ctx, db, &ops[i], metadata, ops, tenantID)
+		err := loadOne(ctx, db, &ops[i], metadata, ops, tenantID, userTokens)
 		if err != nil {
 			return err
 		}

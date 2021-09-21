@@ -1,5 +1,0 @@
-name: team
-collection: studio.teampermissions
-type: REFERENCE
-label: Team
-referencedCollection: studio.teams

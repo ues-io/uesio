@@ -1,5 +1,0 @@
-name: role
-collection: studio.teampermissions
-type: SELECT
-label: Role
-selectList: studio.role

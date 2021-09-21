@@ -20,11 +20,39 @@ type SaveOp struct {
 type ChangeItems []ChangeItem
 
 type ChangeItem struct {
-	FieldChanges loadable.Item
-	IDValue      interface{}
-	Error        error
-	RecordKey    interface{}
-	OldValues    loadable.Item
+	FieldChanges    loadable.Item
+	IDValue         interface{}
+	Error           error
+	RecordKey       interface{}
+	OldValues       loadable.Item
+	ReadTokens      []string
+	ReadWriteTokens []string
+}
+
+func (ci *ChangeItem) AddReadToken(token string) {
+	if ci.ReadTokens == nil {
+		ci.ReadTokens = []string{}
+	}
+	ci.ReadTokens = append(ci.ReadTokens, token)
+}
+
+func (ci *ChangeItem) AddReadWriteToken(token string) {
+	if ci.ReadWriteTokens == nil {
+		ci.ReadWriteTokens = []string{}
+	}
+	ci.ReadWriteTokens = append(ci.ReadWriteTokens, token)
+}
+
+func (ci *ChangeItem) GetOwnerID() (string, error) {
+	ownerChange, err := ci.FieldChanges.GetField("uesio.owner")
+	if err != nil {
+		oldOwner, err := ci.OldValues.GetField("uesio.owner")
+		if err != nil {
+			return "", err
+		}
+		return GetReferenceKey(oldOwner)
+	}
+	return GetReferenceKey(ownerChange)
 }
 
 // Lookup struct
@@ -46,43 +74,40 @@ type SaveOptions struct {
 	Lookups []Lookup
 }
 
-func GetReferenceKey(value interface{}, fieldMetadata *FieldMetadata, metadata *MetadataCache) (string, error) {
+func GetReferenceKey(value interface{}) (string, error) {
 	if value == nil {
 		return "", nil
 	}
 
+	valueString, ok := value.(string)
+	if ok {
+		return valueString, nil
+	}
+
 	valueMap, ok := value.(map[string]interface{})
-	if !ok {
-		fkString, ok := value.(string)
+	if ok {
+		fk, ok := valueMap["uesio.id"]
 		if !ok {
-			return "", nil
+			return "", errors.New("bad change map for ref field")
 		}
-		return fkString, nil
+		return GetReferenceKey(fk)
 	}
 
-	referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
-	if err != nil {
-		return "", err
-	}
-	refIDField, err := referencedCollectionMetadata.GetIDField()
-	if err != nil {
-		return "", err
+	valueItem, ok := value.(Item)
+	if ok {
+		fk, err := valueItem.GetField("uesio.id")
+		if err != nil {
+			return "", errors.New("bad change map for ref field")
+		}
+		return GetReferenceKey(fk)
+
 	}
 
-	fk, ok := valueMap[refIDField.GetFullName()]
-	if !ok {
-		return "", errors.New("bad change map for ref field " + fieldMetadata.GetFullName() + " -> " + refIDField.GetFullName())
-	}
-
-	fkString, ok := fk.(string)
-	if !ok {
-		return "", errors.New("Bad foreign key")
-	}
-	return fkString, nil
+	return "", errors.New("Bad foreign key")
 }
 
 // NewFieldChanges function returns a template that can merge field changes
-func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (*template.Template, error) {
+func NewFieldChanges(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
 	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
 		fieldMetadata, err := collectionMetadata.GetField(key)
 		if err != nil {
@@ -93,12 +118,12 @@ func NewFieldChanges(templateString string, collectionMetadata *CollectionMetada
 			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
 		}
 		if IsReference(fieldMetadata.Type) {
-			key, err := GetReferenceKey(val, fieldMetadata, metadata)
+			key, err := GetReferenceKey(val)
 			if err != nil {
 				return nil, err
 			}
 			if key == "" {
-				return nil, errors.New("Bad Reference Key in template")
+				return nil, errors.New("Bad Reference Key in template: " + templateString)
 			}
 			return key, nil
 		}
