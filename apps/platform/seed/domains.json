@@ -12,6 +12,11 @@
 	{
 		"site": "prod_web",
 		"type": "domain",
+		"domain": "ues-dev.io"
+	},
+	{
+		"site": "prod_web",
+		"type": "domain",
 		"domain": "uesio.com"
 	},
 	{
