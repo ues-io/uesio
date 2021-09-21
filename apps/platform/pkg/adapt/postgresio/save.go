@@ -86,7 +86,6 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 	if err != nil {
 		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
 	}
-	defer db.Close()
 
 	tenantID := credentials.GetTenantID()
 

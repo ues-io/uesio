@@ -270,7 +270,6 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 	if err != nil {
 		return errors.New("Failed to connect PostgreSQL:" + err.Error())
 	}
-	defer db.Close()
 
 	return loadMany(ctx, db, ops, metadata, credentials.GetTenantID())
 }

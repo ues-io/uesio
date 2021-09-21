@@ -53,7 +53,11 @@ func GetReferenceKey(value interface{}, fieldMetadata *FieldMetadata, metadata *
 
 	valueMap, ok := value.(map[string]interface{})
 	if !ok {
-		return "", nil
+		fkString, ok := value.(string)
+		if !ok {
+			return "", nil
+		}
+		return fkString, nil
 	}
 
 	referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)

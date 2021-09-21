@@ -1,4 +1,4 @@
 name: teammembers
 dataSource: uesio.platform
-idFormat: "${studio.teamid}_${studio.memberid}"
-nameField: studio.memberid
+idFormat: "${studio.team}_${studio.member}"
+nameField: studio.member

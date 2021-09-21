@@ -9,7 +9,6 @@ function newcollection(bot) {
 		{
 			"studio.name": collection,
 			"studio.datasource": datasource,
-			"studio.collectionname": collection,
 			"studio.workspace": workspaceId,
 			"studio.namefield": app + ".name",
 		},

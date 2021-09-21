@@ -156,8 +156,6 @@ definition:
                                       fieldId: studio.namefield
                                       metadataType: "FIELD"
                                       label: "Name Field"
-                                  - io.field:
-                                      fieldId: studio.collectionname
                                   - studio.metadatafield:
                                       fieldId: studio.datasource
                                       metadataType: "DATASOURCE"
@@ -258,8 +256,6 @@ definition:
                     label: "Name Field"
                     grouping: $Param{appname}.$Param{collectionname}
                     namespace: $Param{appname}
-                - io.field:
-                    fieldId: studio.collectionname
                 - studio.metadatafield:
                     fieldId: studio.datasource
                     metadataType: "DATASOURCE"

@@ -48,9 +48,9 @@ definition:
       fields:
         uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     newworkspace:
@@ -86,10 +86,10 @@ definition:
       fields:
         uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       type: CREATE
       defaults:
-        - field: studio.appid
+        - field: studio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id

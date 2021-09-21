@@ -14,7 +14,6 @@ func (a *Adapter) Migrate(credentials *adapt.Credentials) error {
 	if err != nil {
 		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
 	}
-	defer db.Close()
 
 	_, err = db.Exec(`
 		create table if not exists public.data

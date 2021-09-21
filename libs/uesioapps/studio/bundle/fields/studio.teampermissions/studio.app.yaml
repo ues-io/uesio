@@ -1,0 +1,5 @@
+name: app
+collection: studio.teampermissions
+type: REFERENCE
+label: App
+referencedCollection: uesio.apps
