@@ -1,6 +1,6 @@
 import toPath from "lodash/toPath"
 import yaml, { Pair, Node, YAMLMap } from "yaml"
-import { fromPath, getParentPath, getParentPathArray } from "../component/path"
+import { getParentPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
 const parse = (str: string) => yaml.parseDocument(str)

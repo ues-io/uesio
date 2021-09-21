@@ -15,6 +15,7 @@ import NamespaceProp from "../buildpropitem/namespaceprop"
 import StylesListProp from "../buildpropitem/styleslistprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
+import IconProp from "../buildpropitem/iconprop"
 
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
@@ -48,6 +49,8 @@ function getPropHandler(type?: string) {
 			return StylesListProp
 		case "TEXT":
 			return TextProp
+		case "ICON":
+			return IconProp
 		case "CUSTOM":
 			return CustomProp
 		default:
