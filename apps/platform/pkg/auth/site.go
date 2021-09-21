@@ -118,6 +118,7 @@ func GetHeadlessSession() (*sess.Session, error) {
 	site.SetAppBundle(bundleDef)
 
 	return sess.GetHeadlessSession(&meta.User{
+		ID:        "system",
 		FirstName: "Guest",
 		LastName:  "User",
 		Profile:   "uesio.public",

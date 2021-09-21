@@ -4,23 +4,6 @@ idFormat: "${studio.app}_${studio.name}"
 nameField: studio.name
 access: "protected"
 recordChallengeTokens:
-  - type: "lookup"
-    collection: studio.teampermissions
-    conditions:
-      - field: "studio.role"
-        value: "admin"
-      - field: "studio.app"
-        value: "${studio.app}"
-    token: "${studio.team}"
+  - token: "${studio.app}"
     userAccessToken: "studio.teammember"
     access: readwrite
-  - type: "lookup"
-    collection: studio.teampermissions
-    conditions:
-      - field: "studio.role"
-        value: "maintainer"
-      - field: "studio.app"
-        value: "${studio.app}"
-    token: "${studio.team}"
-    userAccessToken: "studio.teammember"
-    access: read

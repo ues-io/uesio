@@ -109,7 +109,11 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	adapter.Migrate(credentials)
+	err = adapter.Migrate(credentials)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
 
 	// Read files from seed folder
 	var apps meta.AppCollection
@@ -229,10 +233,6 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	err = seedCollection("studio.teams", "studio.teams.json", session)
-	if err != nil {
-		return
-	}
-	err = seedCollection("studio.teampermissions", "studio.teampermissions.json", session)
 	if err != nil {
 		return
 	}

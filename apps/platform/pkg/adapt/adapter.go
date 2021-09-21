@@ -9,8 +9,8 @@ import (
 
 // Adapter interface
 type Adapter interface {
-	Load([]LoadOp, *MetadataCache, *Credentials) error
-	Save([]SaveOp, *MetadataCache, *Credentials) error
+	Load([]LoadOp, *MetadataCache, *Credentials, []string) error
+	Save([]SaveOp, *MetadataCache, *Credentials, []string) error
 	Migrate(*Credentials) error
 }
 

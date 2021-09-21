@@ -43,19 +43,6 @@ definition:
           param: appname
         - field: studio.team
           value: $Param{appname}_$Param{teamname}
-    teampermissions:
-      collection: studio.teampermissions
-      fields:
-        uesio.id:
-        studio.app:
-        studio.role:
-        studio.team:
-      conditions:
-        - field: studio.app
-          valueSource: PARAM
-          param: appname
-        - field: studio.team
-          value: $Param{appname}_$Param{teamname}
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -98,19 +85,3 @@ definition:
                                 content:
                                   - io.text:
                                       text: ${["studio.member"]["uesio.firstname"]} ${["studio.member"]["uesio.lastname"]}
-                - io.box:
-                    uesio.variant: io.section
-                    components:
-                      - io.titlebar:
-                          uesio.variant: io.section
-                          title: Permissions
-                      - io.deck:
-                          id: teampermissionslist
-                          wire: teampermissions
-                          uesio.variant: io.section
-                          components:
-                            - io.tile:
-                                uesio.variant: io.item
-                                content:
-                                  - io.text:
-                                      text: ${studio.role}
