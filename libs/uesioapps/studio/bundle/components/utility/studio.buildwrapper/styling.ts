@@ -28,6 +28,7 @@ export default (
 			cursor: "pointer",
 			position: "relative",
 			userSelect: "none",
+			gap: "inherit",
 			...extraStyles,
 			...(isStructureView && {
 				border: `1px solid ${borderColor}`,
@@ -82,6 +83,7 @@ export default (
 		inner: {
 			...(isStructureView && {
 				padding: "8px",
+				gap: "inherit",
 			}),
 			position: "relative",
 			// overflow: "auto",

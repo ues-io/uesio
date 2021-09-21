@@ -27,8 +27,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		collectionKey
 	)
 
-	console.log({ context, namespace, collectionKey })
-
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 	const isStructureView = uesio.builder.useIsStructureView()
 

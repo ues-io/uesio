@@ -36,7 +36,6 @@ const Layout: FC<LayoutProps> = (props) => {
 				gap: columnGap || "inherit",
 				display: "flex",
 				flexFlow: "row wrap",
-				borderColor: "pink",
 				...mediaQueryForBreakpoint,
 			},
 		},

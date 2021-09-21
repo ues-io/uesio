@@ -9,25 +9,22 @@ const IOTitleBar = component.registry.getUtility("io.titlebar")
 const FormSection: FC<FormSectionProps> = (props) => {
 	const { definition, context, path } = props
 	const { title, subtitle } = definition
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useStyles(
 		{
 			root: {
-				display: "block",
+				gap: "inherit",
+				flex: "100%",
 			},
 			formArea: {
 				marginBottom: "1em",
-			},
-			actionsBar: {
-				textAlign: "right",
 			},
 		},
 		props
 	)
 
 	return (
-		<div>
+		<div className={classes.root}>
 			<IOTitleBar
 				context={context}
 				variant={definition["uesio.variant"]}

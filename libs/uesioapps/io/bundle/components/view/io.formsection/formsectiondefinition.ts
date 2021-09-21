@@ -6,7 +6,6 @@ import LayoutPropertyDefinition, {
 } from "../io.layout/layoutdefinition"
 
 interface FormSectionDefinition extends LayoutDefinition {
-	icon: string
 	[key: string]: any
 }
 interface FormSectionProps extends definition.BaseProps {

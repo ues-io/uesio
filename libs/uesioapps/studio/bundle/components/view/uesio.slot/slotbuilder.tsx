@@ -119,6 +119,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		{
 			root: {
 				display: "contents",
+				gap: "inherit",
 			},
 			coverall: {
 				...(size > 0 && {

@@ -22,6 +22,7 @@ const Form: FC<FormProps> = (props) => {
 		title,
 		subtitle,
 		id,
+		columnGap,
 		mode,
 	} = definition
 	const uesio = hooks.useUesio(props)
@@ -34,6 +35,13 @@ const Form: FC<FormProps> = (props) => {
 			},
 			formArea: {
 				marginBottom: "1em",
+				flexFlow: "row wrap",
+				gap: columnGap,
+				display: "flex",
+			},
+			formRow: {
+				flex: "100%",
+				gap: "inherit",
 			},
 			actionsBar: {
 				textAlign: "right",
@@ -74,7 +82,6 @@ const Form: FC<FormProps> = (props) => {
 	const ActionsBar: FC = () => (
 		<div className={classes.actionsBar}>
 			<IOButton
-				// classes={classes}
 				label={"Submit"}
 				variant={definition["uesio.variant"]}
 				onClick={() => handler && handler()}
@@ -102,7 +109,7 @@ const Form: FC<FormProps> = (props) => {
 				}
 			/>
 
-			<div className="formArea">
+			<div className={classes.formArea}>
 				{/* {showActionsBar.top && <ActionsBar />} */}
 
 				{data.map((record) => (

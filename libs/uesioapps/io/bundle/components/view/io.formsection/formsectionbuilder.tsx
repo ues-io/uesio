@@ -1,11 +1,12 @@
 import { FC, useState } from "react"
 import { definition, styles, component, util, hooks } from "@uesio/ui"
-import Column, { getColumnFlexStyles } from "./column"
-import FieldHints from "./fieldhints"
+import FormSection from "./formsection"
+import { getColumnFlexStyles } from "../io.column/column"
+import { FormSectionProps } from "./formsectiondefinition"
+
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
-const ColumnBuilder: FC<definition.BaseProps> = (props) => {
+const FormSectionBuilder: FC<FormSectionProps> = (props) => {
 	const { path = "", context } = props
-	const wire = context.getWire()
 
 	// Get template val set on parent layout def
 	const layoutOverrides = (() => {
@@ -24,13 +25,8 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 		{
 			root: {
 				...layoutOverrides,
-				"&:hover .fieldHint": {
-					opacity: 0.7,
-				},
+				flex: "100%",
 				gap: "inherit",
-			},
-			header: {
-				display: "none",
 			},
 		},
 		{
@@ -39,11 +35,10 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 	)
 
 	return (
-		<BuildWrapper {...props} classes={classes} className={classes.root}>
-			<Column {...props} />
-			{wire && <FieldHints {...props} wire={wire} />}
+		<BuildWrapper {...props} className={classes.root}>
+			<FormSection {...props} />
 		</BuildWrapper>
 	)
 }
 
-export default ColumnBuilder
+export default FormSectionBuilder
