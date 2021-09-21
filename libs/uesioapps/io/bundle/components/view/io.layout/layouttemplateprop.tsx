@@ -9,8 +9,8 @@ type ColumnArrayKey = {
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 interface T extends definition.UtilityProps {
-	onClick: (value: number[]) => void
-	value: number[]
+	onClick: (value: string) => void
+	value: string
 	selected: boolean
 }
 const LayoutTemplateButton: FC<T> = (props) => {
@@ -44,11 +44,12 @@ const LayoutTemplateButton: FC<T> = (props) => {
 
 	return (
 		<button className={classes.root} onClick={() => onClick(value)}>
-			{value.map((value) => (
+			{value.split(",").map((flex: string, i: number) => (
 				<div
+					key={value + "," + i}
 					className={classes.button}
 					style={{
-						flex: value,
+						flex,
 						minHeight: "4em",
 					}}
 				/>
@@ -57,41 +58,26 @@ const LayoutTemplateButton: FC<T> = (props) => {
 	)
 }
 
-interface Props extends definition.UtilityProps {
+interface WrapperProps extends definition.UtilityProps {
 	descriptor: builder.PropDescriptor
 }
+interface Props extends WrapperProps {
+	template?: string[]
+}
+
 const LayoutTemplateProp: FC<Props> = (props) => {
 	const valueAPI = props.valueAPI as any
 	const uesio = hooks.useUesio(props)
 	const { path: dirtyPath, context } = props
 	const path = component.path.getParentPath(dirtyPath || "")
 	const definition = valueAPI.get(path)
-	const layoutPresets = [
-		{
-			value: [1, 1],
-		},
-		{
-			value: [1, 2],
-		},
-		{
-			value: [1, 4],
-		},
-		{
-			value: [1, 1, 1],
-		},
-		{
-			value: [1, 4, 1],
-		},
-		{
-			value: [1, 1, 1, 1],
-		},
-	]
+	const layoutPresets = ["1", "1,1", "1,2", "1,1,1", "1,4,1", "1,1,1,1"]
 
-	const handler = (values: number[]) => {
+	const handler = (values: string) => {
 		let currentColumns: ColumnArrayKey[] = definition.columns
 
 		// If new columncount < current collumncount --> delete empty columns
-		if (values.length < currentColumns.length) {
+		if (currentColumns && values.length < currentColumns.length) {
 			const numberOfColumsToDelete = currentColumns.length - values.length
 			const indexesUpForDelete = currentColumns
 				.map((el: ColumnArrayKey, i: number) =>
@@ -116,8 +102,8 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 			)
 		}
 
-		const columnsToSet = values.map((val: number, i: number) => {
-			const columnKey = currentColumns[i]
+		const columnsToSet = values.split(",").map((val: string, i: number) => {
+			const columnKey = currentColumns && currentColumns[i]
 			const columnDef = columnKey
 				? columnKey["io.column"]
 				: component.registry.getPropertiesDefinition("io.column")
@@ -155,19 +141,25 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 		<div>
 			<FieldLabel label={props.descriptor.label} context={context} />
 			<div style={{ display: "flex", flexFlow: "row wrap", gap: "5px" }}>
-				{layoutPresets.map((el, i) => (
+				{(props.template || layoutPresets).map((el, i) => (
 					<LayoutTemplateButton
-						{...el}
-						key={el.value.toString()}
+						value={el}
+						key={el.toString()}
 						context={context}
-						selected={definition.template === el.value.toString()}
-						onClick={() => handler(el.value)}
+						selected={definition.template === el.toString()}
+						onClick={() => handler(el)}
 					/>
 				))}
 			</div>
 		</div>
 	)
 }
-;[]
 
-export default LayoutTemplateProp
+export default {
+	default: (props: WrapperProps) => <LayoutTemplateProp {...props} />,
+	form: (props: WrapperProps) => (
+		<LayoutTemplateProp template={["1", "1,1", "1,1,1"]} {...props} />
+	),
+}
+
+// export default LayoutTemplateProp

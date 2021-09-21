@@ -84,7 +84,7 @@ export default (
 				padding: "8px",
 			}),
 			position: "relative",
-			overflow: "auto",
+			// overflow: "auto",
 		},
 	}
 }

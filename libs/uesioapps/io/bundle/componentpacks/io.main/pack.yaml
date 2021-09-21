@@ -15,6 +15,7 @@ components:
     io.layout:
     io.column:
     io.form:
+    io.formsection:
     io.field:
       variants:
         - io.textfield.io.default
@@ -70,6 +71,7 @@ components:
     io.referencefield:
     io.column:
     io.form:
+    io.formsection:
     io.layout:
     io.scrollpanel:
     io.selectfield:

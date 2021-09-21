@@ -6,14 +6,15 @@ import { LayoutContext } from "../io.layout/layout"
 const IOcolumn = component.registry.getUtility("io.column")
 
 export const getColumnFlexStyles = (
-	template: number[],
+	template: string,
 	path: string
 ): React.CSSProperties => {
 	const columnIndex = parseInt(toPath(path).slice(-2)[0], 10)
-	const flexRatio = template[columnIndex]
+	const templateArr = template.split(",")
+	const flexRatio = templateArr[columnIndex]
 	return {
-		flexGrow: flexRatio || "initial",
-		flexShrink: flexRatio || "initial",
+		flex: flexRatio || "initial",
+		gap: "inherit",
 	}
 }
 
@@ -40,7 +41,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone", "uesio.field"]}
+				accepts={["uesio.standalone", "uesio.field", "io.field"]}
 				context={context}
 			/>
 		</IOcolumn>

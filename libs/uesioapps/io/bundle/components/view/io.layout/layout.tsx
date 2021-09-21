@@ -1,7 +1,8 @@
 import { FC, createContext } from "react"
 import { component, styles } from "@uesio/ui"
 import { LayoutProps } from "./layoutdefinition"
-export const LayoutContext = createContext([0])
+
+export const LayoutContext = createContext("0")
 
 const IOLayout = component.registry.getUtility("io.layout")
 
@@ -16,6 +17,7 @@ const Layout: FC<LayoutProps> = (props) => {
 		},
 		context,
 		path,
+		slot,
 	} = props
 
 	const mediaQueryForBreakpoint = breakpoint
@@ -31,9 +33,10 @@ const Layout: FC<LayoutProps> = (props) => {
 			root: {
 				justifyContent: justifyContent || "initial",
 				alignItems: alignItems || "initial",
-				gap: columnGap || "initial",
+				gap: columnGap || "inherit",
 				display: "flex",
 				flexFlow: "row wrap",
+				borderColor: "pink",
 				...mediaQueryForBreakpoint,
 			},
 		},
@@ -42,14 +45,16 @@ const Layout: FC<LayoutProps> = (props) => {
 
 	return (
 		<IOLayout classes={classes} {...props}>
-			<LayoutContext.Provider value={template}>
-				<component.Slot
-					definition={props.definition}
-					listName="columns"
-					path={path}
-					accepts={["io.column"]}
-					context={context}
-				/>
+			<LayoutContext.Provider value={template.toString()}>
+				{slot || (
+					<component.Slot
+						definition={props.definition}
+						listName="columns"
+						path={path}
+						accepts={["io.column"]}
+						context={context}
+					/>
+				)}
 			</LayoutContext.Provider>
 		</IOLayout>
 	)

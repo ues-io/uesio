@@ -1,7 +1,10 @@
 import { definition, builder } from "@uesio/ui"
-import FormActionBarProp from "./formActionBarProp"
+import LayoutPropertyDefinition, {
+	LayoutDefinition,
+	LayoutTemplateProp,
+} from "../io.layout/layoutdefinition"
 
-type FormDefinition = {
+interface FormDefinition extends LayoutDefinition {
 	icon: string
 	[key: string]: any
 }
@@ -14,37 +17,14 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Form",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
-		components: [
-			{
-				"io.layout": {
-					template: "1,1",
-					columns: [
-						{
-							"io.column": {
-								components: [],
-							},
-						},
-						{
-							"io.column": {
-								components: [],
-							},
-						},
-					],
-				},
-			},
-		],
+		wire: "newwire53",
+		sections: [],
 	}),
 	properties: [
 		{
-			type: "CUSTOM",
-			name: "template",
-			label: "Default Actions Bar",
-			renderFunc: FormActionBarProp,
-		},
-		{
-			name: "defaultActionsBar",
-			type: "BOOLEAN",
-			label: "Default Save & Submit",
+			type: "TEXT",
+			name: "title",
+			label: "Title",
 		},
 		{
 			name: "wire",
@@ -67,8 +47,57 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 			],
 		},
 	],
-	sections: [],
-	actions: [],
+	sections: [
+		{
+			title: "layout",
+			type: "PROPLIST",
+			properties:
+				LayoutPropertyDefinition.properties?.map(
+					(el: builder.PropDescriptor) => {
+						if (el.type === "CUSTOM")
+							return {
+								...el,
+								renderFunc: LayoutTemplateProp.form,
+							}
+						return el
+					}
+				) || [],
+		},
+		{
+			title: "submit",
+			type: "PROPLIST",
+			properties: [
+				{
+					name: "defaultActionsBar",
+					type: "BOOLEAN",
+					label: "Default Save & Submit",
+				},
+				{
+					name: "actionsBarPosition",
+					type: "SELECT",
+					label: "Position",
+					options: [
+						{
+							value: "top",
+							label: "Top",
+						},
+						{
+							value: "bottom",
+							label: "Bottom",
+						},
+					],
+				},
+			],
+		},
+	],
+	actions: [
+		{
+			label: "Add Section",
+			type: "ADD",
+			componentKey: "io.formsection",
+			slot: "sections",
+		},
+	],
 	type: "component",
 	traits: ["uesio.standalone"],
 }

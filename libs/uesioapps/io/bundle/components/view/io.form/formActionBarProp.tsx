@@ -13,7 +13,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 	const { path: dirtyPath, context } = props
 	const path = component.path.getParentPath(dirtyPath || "")
 	const definition = valueAPI.get(path)
-	const { wire } = definition
+	const { wire, template } = definition
 
 	const handler = () => {
 		console.log({ path, definition })
@@ -37,16 +37,36 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 				"components",
 			])
 		)
+		console.log(
+			component.path.fromPath([
+				...component.path.toPath(path),
+				"template",
+			]),
+			template
+		)
 		// Set the columns def
+		valueAPI.set(
+			component.path.fromPath([
+				...component.path.toPath(path),
+				"template",
+			]),
+			`${template},100%`
+		)
 		valueAPI.add(
 			component.path.fromPath([
 				...component.path.toPath(path),
-				"components",
+				"columns",
 			]),
 			{
-				"io.button": {
-					text: "Submit",
-					signals,
+				"io.column": {
+					components: [
+						{
+							"io.button": {
+								text: "Submit",
+								signals,
+							},
+						},
+					],
 				},
 			}
 		)

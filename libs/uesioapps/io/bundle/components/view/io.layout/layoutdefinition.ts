@@ -1,4 +1,4 @@
-import { definition, builder, component } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 import LayoutTemplateProp from "./layouttemplateprop"
 
 type LayoutDefinition = {
@@ -11,6 +11,7 @@ type LayoutDefinition = {
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition
+	slot?: JSX.Element | JSX.Element[]
 }
 
 const spacingOptionsMap = [
@@ -54,7 +55,7 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "CUSTOM",
 			name: "template",
 			label: "Layout Template",
-			renderFunc: LayoutTemplateProp,
+			renderFunc: LayoutTemplateProp.default,
 		},
 		{
 			name: "justifyContent",
@@ -84,6 +85,7 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	traits: ["uesio.standalone"],
 }
-export { LayoutProps, LayoutDefinition }
+
+export { LayoutProps, LayoutDefinition, LayoutTemplateProp }
 
 export default LayoutPropertyDefinition
