@@ -159,6 +159,14 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	// Read files from seed folder
+	var configstorevalues meta.ConfigStoreValueCollection
+	err = GetSeedDataFile(&configstorevalues, "configstorevalues.json")
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
 	// Install Default Bundles
 	// This takes code from the /libs/uesioapps code in the repo
 	// and installs it into the localbundlestore.
@@ -218,6 +226,12 @@ func seed(cmd *cobra.Command, args []string) {
 		},
 		{
 			Collection: &users,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: &configstorevalues,
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{},
 			},
