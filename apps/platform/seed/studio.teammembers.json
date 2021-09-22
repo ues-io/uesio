@@ -1,7 +1,7 @@
 [
 	{
 		"studio.app": "crm",
-		"studio.team": "crm_admins",
+		"studio.team": "crm_maintainers",
 		"studio.member": "prod_studio_mock_MockBen"
 	},
 	{
@@ -13,5 +13,10 @@
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
 		"studio.member": "prod_studio_mock_MockWessel"
+	},
+	{
+		"studio.app": "crm",
+		"studio.team": "crm_maintainers",
+		"studio.member": "prod_studio_mock_MockGregg"
 	}
 ]
