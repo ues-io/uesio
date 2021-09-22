@@ -43,3 +43,20 @@ definition:
                 - io.text:
                     uesio.variant: io.icon
                     text: verified_user
+          - io.tile:
+              uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: data
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["uesio.app"]["uesio.id"]}/site/${uesio.name}/data
+              content:
+                - io.text:
+                    text: Data
+              avatar:
+                - io.text:
+                    uesio.variant: io.icon
+                    text: storage
