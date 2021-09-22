@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles, component, hooks } from "@uesio/ui"
 import Form from "./form"
 import { FormProps } from "./formdefinition"
 
@@ -7,15 +7,16 @@ const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
 const ColumnBuilder: FC<FormProps> = (props) => {
 	const { path = "", context } = props
+	const uesio = hooks.useUesio(props)
 
-	// Get template val set on parent layout def
+	const wire = context.getWire()
+	// if(!wire) {
+
+	// }
 
 	const classes = styles.useStyles(
 		{
 			root: {},
-			header: {
-				display: "none",
-			},
 		},
 		{
 			context: props.context,

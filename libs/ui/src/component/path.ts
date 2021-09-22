@@ -1,4 +1,4 @@
-import toPath from "lodash/toPath"
+import { toPath } from "lodash"
 import { DefinitionMap } from "../definition/definition"
 
 // Trims any path to the last element that is fully namespaced
@@ -76,6 +76,26 @@ const unWrapDefinition = (
 	return [componentType, definition[componentType] as DefinitionMap]
 }
 
+/**
+ * Returns the values from all matching keys in an object
+ * @example
+ * const test = {
+ *  field: 'crm.logo',
+ *  beta: {
+ *    field: 'crm.name',
+ *    lambda: 'baz'
+ *  }
+ * }
+ * findAllByKey(test, 'field') // ['crm.logo', 'crm.name']
+ * @returns array of field values
+ */
+const findAllByKey = (obj: any, keyToFind: string): any =>
+	Object.entries(obj).reduce((acc, [key, value]) => {
+		if (key === keyToFind) return [...acc, value]
+		if (typeof value === "object")
+			return [...acc, ...findAllByKey(value, keyToFind)]
+		return acc
+	}, [])
 // Return the string representation of a path array.
 const fromPath = (pathArray: string[]) => {
 	if (!pathArray.length) {
@@ -172,6 +192,17 @@ const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))
 
 const getAncestorPath = (path: string, parents: number): string =>
 	path && parents ? getAncestorPath(getParentPath(path), parents - 1) : path
+/**
+ * Get the path until the first parent key that matches the key argument
+ * @param path
+ * @param key
+ * @returns path
+ */
+const getNearestAncestorPathByKey = (path: string | string[], key: string) => {
+	const pathArray = toPath(path)
+	const index = pathArray.indexOf(key) + 1
+	return pathArray.slice(0, index)
+}
 
 const getKeyAtPath = (path: string) => toPath(path).pop() || null
 
@@ -216,9 +247,11 @@ export {
 	parseFieldKey,
 	getPathSuffix,
 	trimPathToComponent,
+	getNearestAncestorPathByKey,
 	unWrapDefinition,
 	fromPath,
 	toPath,
+	findAllByKey,
 	getParentPath,
 	getGrandParentPath,
 	getAncestorPath,

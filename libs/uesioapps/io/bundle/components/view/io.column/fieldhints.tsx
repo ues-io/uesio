@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useState, useMemo, useEffect } from "react"
 import { definition, styles, component, util, hooks } from "@uesio/ui"
 import { Transition } from "react-transition-group"
 
@@ -27,56 +27,51 @@ const transitionStyles = {
 const FieldHints: FC<T> = (props) => {
 	const [open, setOpen] = useState<boolean>(false)
 	const { wire, path, context } = props
-	const uesio = hooks.useUesio(props)
-	const { fromPath, toPath, makeFullPath } = component.path
-	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
 
-	const formPath = toPath(path).slice(0, -3)
+	const uesio = hooks.useUesio(props)
+	const {
+		fromPath,
+		toPath,
+		makeFullPath,
+		getNearestAncestorPathByKey,
+		findAllByKey,
+	} = component.path
+	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
+	const [fieldSuggestions, setFieldSuggestions] = useState<
+		FieldHint[] | null
+	>(null)
+	const formPath = getNearestAncestorPathByKey(toPath(path), "io.form")
 	const formDef = uesio.builder.useDefinition(
 		makeFullPath(metadataType, metadataItem, fromPath(formPath))
-	) as any
-	const getFieldSuggestions = (): FieldHint[] => {
-		// Idenitfy used fields in context
-		const getUsedFields = (): string[] =>
-			formDef?.columns.reduce((acc: string[], col: any) => {
-				const columnData = Object.values(col)[0] as any
-				if (!columnData.components) return []
-				const fields = columnData.components.filter(
-					(el: any) => Object.keys(el)[0] === "io.field"
-				)
-				const fieldNames = fields.map(
-					(el: any) => el["io.field"].fieldId
-				)
-				return [...acc, ...fieldNames]
-			}, [])
+	) as Record<string, unknown>
+	const collectionKey = wire.getCollection().getFullName() || ""
+	const wireId = context.getWire()?.getId()
+	const [namespace] = component.path.parseKey(collectionKey)
+	const fieldsInWire = Object.keys(
+		uesio.builder.useMetadataList(
+			context,
+			"FIELD",
+			namespace,
+			collectionKey
+		) || {}
+	)
 
-		const fieldHints = (): FieldHint[] => {
-			const collectionKey = wire.getCollection().getFullName() || ""
-			const [namespace] = component.path.parseKey(collectionKey)
-			const usedFields = getUsedFields()
-			const fieldsInWire = Object.keys(
-				uesio.builder.useMetadataList(
-					context,
-					"FIELD",
-					namespace,
-					collectionKey
-				) || {}
-			)
+	// We only want the code for fieldsuggestions to run when fieldsInWire has data
+	useEffect(() => {
+		if (!fieldsInWire.length) return
+		const usedFields = findAllByKey(formDef, "fieldId")
 
-			const fields = fieldsInWire.map((el) => ({
-				used: getUsedFields().includes(el), // Used for sorting and greying out
-				id: el,
-			}))
+		const fields = fieldsInWire.map((el) => ({
+			used: usedFields.includes(el), // Used for sorting and greying out
+			id: el,
+		}))
 
-			return fields.sort((a) => (a.used ? 1 : -1))
-		}
-		return fieldHints()
-	}
-
-	const fieldSuggestions = getFieldSuggestions()
+		const sortedFields = fields.sort(({ used }) => (used ? 1 : -1))
+		setFieldSuggestions(sortedFields)
+	}, [fieldsInWire.length, formDef])
 
 	const handleAddField = (fieldId: string) => {
-		const wireId = context.getWire()?.getId()
+		// const wireId = context.getWire()?.getId()
 		if (!wireId) return
 		// 1. Add field to wire
 		uesio.builder.addDefinitionPair(
@@ -89,7 +84,7 @@ const FieldHints: FC<T> = (props) => {
 			fieldId
 		)
 
-		// 3. Add field to column
+		// 3. Add field to column definition
 		uesio.builder.addDefinition(
 			makeFullPath(
 				metadataType,
@@ -109,7 +104,7 @@ const FieldHints: FC<T> = (props) => {
 			fromPath([...toPath(path), "components"])
 		)
 
-		// 4. Refresh the wire
+		// 4. Refresh the wire definition
 		const wireUpdate = uesio.signal.getHandler([
 			{
 				signal: "wire/LOAD",
@@ -181,7 +176,7 @@ const FieldHints: FC<T> = (props) => {
 		}
 	)
 
-	return (
+	return fieldSuggestions ? (
 		<div onMouseLeave={() => setOpen(false)} className={classes.root}>
 			<div
 				onMouseEnter={() => setOpen(true)}
@@ -201,22 +196,19 @@ const FieldHints: FC<T> = (props) => {
 						{open && (
 							<div className={classes.fieldOptions}>
 								<div className={classes.fieldOptionslist}>
-									{fieldSuggestions &&
-										fieldSuggestions.map((field, index) => (
-											<div
-												onClick={() =>
-													handleAddField(field.id)
-												}
-												className={classes.fieldOption}
-												style={{
-													opacity: field.used
-														? "0.6"
-														: 1,
-												}}
-											>
-												{field.id}
-											</div>
-										))}
+									{fieldSuggestions.map((field, index) => (
+										<div
+											onClick={() =>
+												handleAddField(field.id)
+											}
+											className={classes.fieldOption}
+											style={{
+												opacity: field.used ? "0.6" : 1,
+											}}
+										>
+											{field.id}
+										</div>
+									))}
 								</div>
 							</div>
 						)}
@@ -224,6 +216,8 @@ const FieldHints: FC<T> = (props) => {
 				)}
 			</Transition>
 		</div>
+	) : (
+		<span />
 	)
 }
 

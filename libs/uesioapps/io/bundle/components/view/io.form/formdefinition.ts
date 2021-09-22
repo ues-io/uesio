@@ -17,7 +17,7 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Form",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
-		wire: "newwire53",
+		wire: "",
 		sections: [],
 	}),
 	properties: [
