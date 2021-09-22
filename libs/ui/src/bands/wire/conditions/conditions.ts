@@ -147,7 +147,9 @@ const getLoadRequestConditions = (
 			throw new Error("Invalid condition type")
 		})
 
-const getInitializedConditions = (definitions: WireConditionDefinition[]) =>
+const getInitializedConditions = (
+	definitions: WireConditionDefinition[] | undefined
+) =>
 	definitions
 		? definitions.map((definition) => {
 				const initializer =

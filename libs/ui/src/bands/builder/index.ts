@@ -39,6 +39,7 @@ type RemoveDefinitionPayload = {
 type MoveDefinitionPayload = {
 	toPath: string
 	fromPath: string
+	selectKey?: string // Optionally select one level deeper
 }
 
 type ChangeDefinitionKeyPayload = {
@@ -116,14 +117,10 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<MoveDefinitionPayload>
 		) => {
-			const updatedPath = calculateNewPathAheadOfTime(
-				payload.fromPath,
-				payload.toPath
-			)
-			state.selectedNode = updatedPath
-			const pathArr = toPath(updatedPath)
-			pathArr.splice(-1) //We just want the index, not the key level
-			state.lastModifiedNode = fromPath(pathArr)
+			state.selectedNode =
+				payload.toPath +
+				(payload.selectKey ? `["${payload.selectKey}"]` : "")
+			state.lastModifiedNode = payload.toPath
 		},
 		save: () => {
 			//console.log("SAVING")

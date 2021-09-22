@@ -36,7 +36,7 @@ type PlainViewDefMap = {
 }
 
 type ViewDefinition = {
-	components: DefinitionMap
+	components: DefinitionList
 	wires: WireDefinitionMap
 	panels: DefinitionList
 }
