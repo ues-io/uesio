@@ -1,10 +1,6 @@
 [
 	{
 		"studio.app": "crm",
-		"studio.name": "admins"
-	},
-	{
-		"studio.app": "crm",
 		"studio.name": "maintainers"
 	}
 ]

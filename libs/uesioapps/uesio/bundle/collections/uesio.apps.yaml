@@ -2,3 +2,8 @@ name: apps
 dataSource: uesio.platform
 idFormat: "${uesio.name}"
 nameField: uesio.name
+access: "protected"
+recordChallengeTokens:
+  - token: "${uesio.name}"
+    userAccessToken: "studio.teammember"
+    access: readwrite

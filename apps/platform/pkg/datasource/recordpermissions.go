@@ -1,8 +1,6 @@
 package datasource
 
 import (
-	"fmt"
-
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
@@ -19,7 +17,6 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 	for i := range *op.Inserts {
 		insert := &(*op.Inserts)[i]
-		fmt.Println("Added write token")
 		insert.AddReadWriteToken("uesio.owner:" + session.GetUserInfo().ID)
 	}
 
@@ -29,7 +26,6 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 		if err != nil {
 			return err
 		}
-		fmt.Println("Added write token2")
 		update.AddReadWriteToken("uesio.owner:" + ownerID)
 	}
 
