@@ -115,9 +115,6 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 
 const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 	const pathArray = toPath(payload.path)
-	if (pathArray.length > 0 && pathArray[0] === "components") {
-		pathArray.pop() // Remove the component name
-	}
 	const index = pathArray.pop() // Get the index
 	const parent = get(state.definition, pathArray)
 	if (index) {
@@ -145,19 +142,17 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 }
 
 const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const fromParentPath = getParentPath(payload.toPath)
-	const toParentPath = getParentPath(payload.toPath)
-	const isArrayClone = isNumberIndex(getKeyAtPath(toParentPath))
+	const isArrayMove = isNumberIndex(getKeyAtPath(payload.toPath))
 
-	if (!isArrayClone) {
+	if (!isArrayMove) {
 		const fromPathStr = payload.fromPath
 		const toPathStr = payload.toPath
 
-		if (fromParentPath !== toParentPath) return
+		if (payload.fromPath !== payload.toPath) return
 
 		const fromKey = getKeyAtPath(fromPathStr)
 		const toKey = getKeyAtPath(toPathStr)
-		const definition = get(state.definition, fromParentPath)
+		const definition = get(state.definition, payload.fromPath)
 
 		if (!definition || !fromKey || !toKey) return
 
@@ -180,27 +175,27 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 		)
 
 		return setDef(state, {
-			path: fromParentPath,
+			path: payload.fromPath,
 			definition: newDefinition,
 		})
 	}
 
 	const fromPathStr = payload.fromPath
 	const fromPathArray = toPath(fromPathStr)
-	fromPathArray.splice(-1)
+	//fromPathArray.splice(-1)
 	//Grab current definition
 	const definition = get(state.definition, fromPathArray)
 	//Remove the original
 	removeDef(state, { ...payload, path: fromPathStr })
 	const toPathStr = payload.toPath
 	const pathArray = toPath(toPathStr)
-	const index = parseInt(pathArray[pathArray.length - 2], 10)
+	const index = parseInt(pathArray[pathArray.length - 1], 10)
 	const updatedPathStr = calculateNewPathAheadOfTime(
 		payload.fromPath,
 		payload.toPath
 	)
 	const updatePathArr = toPath(updatedPathStr)
-	updatePathArr.splice(-2)
+	updatePathArr.splice(-1)
 	//Add back in the intended spot
 	addDef(state, {
 		...payload,
