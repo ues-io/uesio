@@ -209,11 +209,12 @@ class BuilderAPI {
 		)
 	}
 
-	moveDefinition(fromPath: string, toPath: string) {
+	moveDefinition(fromPath: string, toPath: string, selectKey?: string) {
 		this.dispatcher(
 			moveDefinition({
 				fromPath,
 				toPath,
+				selectKey,
 			})
 		)
 	}

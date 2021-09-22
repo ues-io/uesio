@@ -25,7 +25,8 @@ type KeyChanger = (path: string | undefined, key: string) => void
 
 type ValueMover = (
 	fromPath: string | undefined,
-	toPath: string | undefined
+	toPath: string | undefined,
+	selectKey?: string
 ) => void
 
 type ValueCloner = (path: string | undefined) => void
