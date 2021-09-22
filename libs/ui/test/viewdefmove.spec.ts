@@ -97,6 +97,100 @@ test("viewdef move wire", () => {
 	)
 })
 
+test("viewdef move component different parent", () => {
+	testMove(
+		{
+			name: "name",
+			namespace: "namespace",
+			definition: {
+				components: [
+					{
+						"io.group": {
+							components: [
+								{
+									"io.button": {
+										text: "button1",
+									},
+								},
+								{
+									"io.button": {
+										text: "button2",
+									},
+								},
+							],
+						},
+					},
+					{
+						"io.group": {
+							components: [
+								{
+									"io.button": {
+										text: "button3",
+									},
+								},
+								{
+									"io.button": {
+										text: "button4",
+									},
+								},
+							],
+						},
+					},
+				],
+				wires: {},
+				panels: [],
+			},
+		},
+		{
+			toPath: `["components"]["1"]["io.group"]["components"]["0"]`,
+			fromPath: `["components"]["0"]["io.group"]["components"]["0"]`,
+			selectKey: "io.button",
+		},
+		{
+			name: "name",
+			namespace: "namespace",
+			definition: {
+				components: [
+					{
+						"io.group": {
+							components: [
+								{
+									"io.button": {
+										text: "button2",
+									},
+								},
+							],
+						},
+					},
+					{
+						"io.group": {
+							components: [
+								{
+									"io.button": {
+										text: "button1",
+									},
+								},
+								{
+									"io.button": {
+										text: "button3",
+									},
+								},
+								{
+									"io.button": {
+										text: "button4",
+									},
+								},
+							],
+						},
+					},
+				],
+				wires: {},
+				panels: [],
+			},
+		}
+	)
+})
+
 const testMove = (
 	initial: PlainViewDef,
 	payload: MoveDefinitionPayload,

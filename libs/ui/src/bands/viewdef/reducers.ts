@@ -18,7 +18,6 @@ import {
 	SetDefinitionPayload,
 } from "../builder"
 import {
-	calculateNewPathAheadOfTime,
 	fromPath,
 	getKeyAtPath,
 	getParentPath,
@@ -138,19 +137,22 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 	//Grab current definition
 	const definition = get(state.definition, fromPathArray)
 	//Remove the original
-	removeDef(state, { ...payload, path: fromPathStr })
+	removeDef(state, { path: fromPathStr })
 	const toPathStr = payload.toPath
 	const pathArray = toPath(toPathStr)
 	const index = parseInt(pathArray[pathArray.length - 1], 10)
+	/*
 	const updatedPathStr = calculateNewPathAheadOfTime(
 		payload.fromPath,
 		payload.toPath
 	)
+	*/
+	const updatedPathStr = payload.toPath
 	const updatePathArr = toPath(updatedPathStr)
 	updatePathArr.splice(-1)
 	//Add back in the intended spot
+
 	addDef(state, {
-		...payload,
 		definition,
 		index,
 		path: fromPath(updatePathArr),

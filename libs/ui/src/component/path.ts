@@ -109,6 +109,8 @@ function isInt(str: string) {
  * @param fromPathStr
  * @param toPathStr
  */
+
+/*
 const calculateNewPathAheadOfTime = (
 	fromPathStr: string,
 	toPathStr: string
@@ -116,8 +118,8 @@ const calculateNewPathAheadOfTime = (
 	const fromPathArray = toPath(fromPathStr)
 	const toPathArray = toPath(toPathStr)
 
-	const toParentPath = getParentPath(toPathStr)
-	const isArray = isNumberIndex(getKeyAtPath(toParentPath))
+	//const toParentPath = getParentPath(toPathStr)
+	const isArray = isNumberIndex(getKeyAtPath(toPathStr))
 
 	if (!isArray) {
 		return fromPathStr // For the map type we keep the one selected
@@ -136,6 +138,11 @@ const calculateNewPathAheadOfTime = (
 		index++
 	}
 	if (!foundDifferenceBeforeEnd) {
+		return toPathStr
+	}
+
+	// We went far back enough, that the thing we're moving isn't actually being displaced
+	if (index > 1) {
 		return toPathStr
 	}
 	//If we got here we shifted indexes between from and to path - so we need to handle edge cases
@@ -160,6 +167,7 @@ const calculateNewPathAheadOfTime = (
 	//Covert it back to the stringified path
 	return fromPath(toPathArray)
 }
+*/
 
 const getGrandParentPath = (path: string) => getParentPath(getParentPath(path))
 
@@ -203,7 +211,7 @@ const getIndexFromPath = (path: string) => {
 }
 
 export {
-	calculateNewPathAheadOfTime,
+	//calculateNewPathAheadOfTime,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,

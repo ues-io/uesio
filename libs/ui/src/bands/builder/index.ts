@@ -5,12 +5,7 @@ import { Definition, DefinitionMap, YamlDoc } from "../../definition/definition"
 import builderOps from "./operations"
 
 import { getMetadataListKey } from "./selectors"
-import {
-	calculateNewPathAheadOfTime,
-	fromPath,
-	getParentPath,
-	toPath,
-} from "../../component/path"
+import { getParentPath } from "../../component/path"
 import { set as setRoute } from "../route"
 
 type SetDefinitionPayload = {
