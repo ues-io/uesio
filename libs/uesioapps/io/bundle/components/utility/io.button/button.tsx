@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
 interface ButtonProps extends definition.UtilityProps {
 	onClick?: () => void
@@ -7,6 +7,7 @@ interface ButtonProps extends definition.UtilityProps {
 	width?: string
 	isSelected?: boolean
 	icon?: React.Component
+	disabled?: boolean
 }
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
@@ -26,9 +27,10 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 		},
 		props
 	)
-	const { onClick, label } = props
+	const { onClick, label, disabled } = props
 	return (
 		<button
+			disabled={disabled}
 			onClick={onClick}
 			className={styles.cx(
 				classes.root,
