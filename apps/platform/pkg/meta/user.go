@@ -8,7 +8,6 @@ type User struct {
 	Profile        string            `uesio:"uesio.profile"`
 	FederationID   string            `uesio:"uesio.federationId"`
 	FederationType string            `uesio:"uesio.federationType"`
-	Site           string            `uesio:"uesio.site"`
 	Picture        *UserFileMetadata `uesio:"uesio.picture"`
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy      *User             `yaml:"-" uesio:"uesio.createdby"`

@@ -21,7 +21,6 @@ definition:
       collection: uesio.bulkjobs
       fields:
         uesio.id:
-        uesio.site:
         uesio.spec:
       conditions:
         - field: uesio.id

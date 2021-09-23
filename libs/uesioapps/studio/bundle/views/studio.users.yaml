@@ -38,10 +38,6 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.federationId:
-      conditions:
-        - field: uesio.site
-          valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
   # Components are how we describe the layout of our view
   components:
     - io.grid:
