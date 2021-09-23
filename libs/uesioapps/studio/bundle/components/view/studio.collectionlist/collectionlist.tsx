@@ -87,7 +87,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 				{Object.keys(namespaces).map((namespace) => (
 					<Collection
 						definition={{
-							namespace: namespace,
+							namespace,
 						}}
 						context={newContext}
 					/>

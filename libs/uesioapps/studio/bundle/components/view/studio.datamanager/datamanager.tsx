@@ -69,7 +69,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		uesio.builder.addDefinitionPair(
 			basePath,
 			{
-				collection: collection,
+				collection,
 				fields,
 			},
 			"collectionData"
