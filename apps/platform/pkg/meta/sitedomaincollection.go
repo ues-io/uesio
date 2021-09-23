@@ -13,7 +13,7 @@ func (sdc *SiteDomainCollection) Filter(iter func(item loadable.Item) (bool, err
 
 // GetName function
 func (sdc *SiteDomainCollection) GetName() string {
-	return "uesio.sitedomains"
+	return "studio.sitedomains"
 }
 
 // GetFields function
