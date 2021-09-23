@@ -6,7 +6,7 @@ import { getApp } from "../config/config"
 
 class SiteDomain {
 	static getCollectionName(): string {
-		return "uesio.sitedomains"
+		return "studio.sitedomains"
 	}
 	static getFields() {
 		return [
@@ -14,13 +14,13 @@ class SiteDomain {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.domain",
+				id: "studio.domain",
 			},
 			{
-				id: "uesio.site",
+				id: "studio.site",
 			},
 			{
-				id: "uesio.type",
+				id: "studio.type",
 			},
 		]
 	}
@@ -55,9 +55,9 @@ class SiteDomain {
 			this,
 			createChange([
 				{
-					"uesio.site": responses.siteName + "_" + app,
-					"uesio.domain": responses.domain,
-					"uesio.type": responses.type,
+					"studio.site": responses.siteName + "_" + app,
+					"studio.domain": responses.domain,
+					"studio.type": responses.type,
 				},
 			])
 		)

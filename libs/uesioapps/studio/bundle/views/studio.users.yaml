@@ -3,32 +3,32 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     sites:
-      collection: uesio.sites
+      collection: studio.sites
       fields:
         uesio.id:
-        uesio.name:
-        uesio.bundle:
-        uesio.app:
+        studio.name:
+        studio.bundle:
+        studio.app:
           fields:
             uesio.id:
-            uesio.name:
-            uesio.color:
+            studio.name:
+            studio.color:
       conditions:
-        - field: uesio.app
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: sitename
     users:
