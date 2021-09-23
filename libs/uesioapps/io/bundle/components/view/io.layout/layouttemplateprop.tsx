@@ -1,9 +1,10 @@
 import { FC } from "react"
 import { builder, component, definition, hooks, styles } from "@uesio/ui"
+import { LayoutDefinition } from "./layoutdefinition"
 
 type ColumnArrayKey = {
 	"io.column": {
-		components: { [key: string]: any }[]
+		components: definition.DefinitionList
 	}
 }
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
@@ -57,15 +58,12 @@ const LayoutTemplateButton: FC<T> = (props) => {
 	)
 }
 
-interface Props extends definition.UtilityProps {
-	descriptor: builder.PropDescriptor
-}
-const LayoutTemplateProp: FC<Props> = (props) => {
-	const valueAPI = props.valueAPI as any
+const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
+	const valueAPI = props.valueAPI
 	const uesio = hooks.useUesio(props)
 	const { path: dirtyPath, context } = props
 	const path = component.path.getParentPath(dirtyPath || "")
-	const definition = valueAPI.get(path)
+	const definition = valueAPI.get(path) as LayoutDefinition
 	const layoutPresets = [
 		{
 			value: [1, 1],
@@ -88,7 +86,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 	]
 
 	const handler = (values: number[]) => {
-		let currentColumns: ColumnArrayKey[] = definition.columns
+		let currentColumns = definition.columns
 
 		// If new columncount < current collumncount --> delete empty columns
 		if (values.length < currentColumns.length) {
@@ -119,9 +117,10 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 		const columnsToSet = values.map((val: number, i: number) => {
 			const columnKey = currentColumns[i]
 			const columnDef = columnKey
-				? columnKey["io.column"]
-				: component.registry.getPropertiesDefinition("io.column")
-						.defaultDefinition
+				? (columnKey["io.column"] as definition.DefinitionMap)
+				: (component.registry
+						.getPropertiesDefinition("io.column")
+						.defaultDefinition() as definition.DefinitionMap)
 			return {
 				["io.column"]: {
 					...columnDef,
@@ -160,7 +159,7 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 						{...el}
 						key={el.value.toString()}
 						context={context}
-						selected={definition.template === el.value.toString()}
+						selected={definition?.template === el.value.toString()}
 						onClick={() => handler(el.value)}
 					/>
 				))}

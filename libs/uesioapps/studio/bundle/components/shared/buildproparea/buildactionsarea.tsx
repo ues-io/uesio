@@ -9,11 +9,10 @@ import RunSignalsAction from "./actions/runsignalsaction"
 import LoadWireAction from "./actions/loadwireaction"
 import ToggleConditionAction from "./actions/toggleconditionaction"
 import { ActionProps } from "./actions/actiondefinition"
-import { ValueAPI } from "../propertiespaneldefinition"
 
 interface Props extends definition.BaseProps {
 	actions?: builder.ActionDescriptor[]
-	valueAPI: ValueAPI
+	valueAPI: builder.ValueAPI
 	propsDef: builder.BuildPropertiesDefinition
 }
 

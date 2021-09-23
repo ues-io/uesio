@@ -17,24 +17,20 @@ export const getColumnFlexStyles = (
 
 const Column: FC<definition.BaseProps> = (props) => {
 	const { definition, context, path = "", index = 0 } = props
-	const sharedProps = { context }
 	const template = context.getParentComponentDef(path)?.template
-
-	const flexStyles = context.getBuildMode()
-		? {}
-		: getColumnFlexStyles(template, index)
 
 	const classes = styles.useStyles(
 		{
 			root: {
-				...flexStyles,
+				...(!context.getBuildMode() &&
+					getColumnFlexStyles(template, index)),
 			},
 		},
 		props
 	)
 
 	return (
-		<IOColumn classes={classes} {...sharedProps}>
+		<IOColumn classes={classes} context={context}>
 			<component.Slot
 				definition={definition}
 				listName="components"

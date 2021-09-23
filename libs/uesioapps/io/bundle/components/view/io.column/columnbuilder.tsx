@@ -15,9 +15,7 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 				...getColumnFlexStyles(template, index),
 			},
 		},
-		{
-			context: props.context,
-		}
+		{ context }
 	)
 
 	return (

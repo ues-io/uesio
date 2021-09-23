@@ -1,12 +1,11 @@
 import { FunctionComponent } from "react"
-import { component, definition } from "@uesio/ui"
+import { component, definition, builder } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
-import { ValueAPI } from "../../propertiespaneldefinition"
 
 const getArrayMoveParams = (
 	path: string,
-	valueAPI: ValueAPI,
+	valueAPI: builder.ValueAPI,
 	selectKey?: string
 ): [boolean, boolean, () => void, () => void] => {
 	const index = component.path.getIndexFromPath(path)
@@ -36,7 +35,7 @@ const getArrayMoveParams = (
 
 const getMapMoveParams = (
 	path: string,
-	valueAPI: ValueAPI,
+	valueAPI: builder.ValueAPI,
 	selectKey?: string
 ): [boolean, boolean, () => void, () => void] => {
 	const parentPath = component.path.getParentPath(path)

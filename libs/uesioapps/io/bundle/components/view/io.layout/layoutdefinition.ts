@@ -1,4 +1,4 @@
-import { definition, builder, component } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 import LayoutTemplateProp from "./layouttemplateprop"
 
 type LayoutDefinition = {
@@ -6,8 +6,8 @@ type LayoutDefinition = {
 	justifyContent: string
 	alignItems: string
 	breakpoint: string
-	columns: any[]
-	template: number[]
+	columns: definition.DefinitionList
+	template: string
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition
