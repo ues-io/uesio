@@ -1,4 +1,4 @@
-import { DefinitionMap, UtilityProps } from "../definition/definition"
+import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
