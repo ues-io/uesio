@@ -1,0 +1,4 @@
+name: mailing_zip_postal
+collection: crm.leads
+type: TEXT
+label: Mailing Code

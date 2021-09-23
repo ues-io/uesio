@@ -25,19 +25,7 @@ definition:
                 - io.group:
                     components:
                       - io.button:
-                          signals:
-                            - path: accounts
-                              signal: route/NAVIGATE
-                          text: Accounts
-                          uesio.variant: io.nav
-                          uesio.styles:
-                            root:
-                              color: "#EEE"
-                      - io.button:
-                          signals:
-                            - path: contacts
-                              signal: route/NAVIGATE
-                          text: Contacts
+                          text: Dashboard
                           uesio.variant: io.nav
                           uesio.styles:
                             root:
@@ -53,9 +41,33 @@ definition:
                               color: "#EEE"
                       - io.button:
                           signals:
+                            - path: contacts
+                              signal: route/NAVIGATE
+                          text: Contacts
+                          uesio.variant: io.nav
+                          uesio.styles:
+                            root:
+                              color: "#EEE"
+                      - io.button:
+                          signals:
+                            - path: accounts
+                              signal: route/NAVIGATE
+                          text: Accounts
+                          uesio.variant: io.nav
+                          uesio.styles:
+                            root:
+                              color: "#EEE"
+                      - io.button:
+                          signals:
                             - path: opportunities
                               signal: route/NAVIGATE
                           text: Opportunities
+                          uesio.variant: io.nav
+                          uesio.styles:
+                            root:
+                              color: "#EEE"
+                      - io.button:
+                          text: Products
                           uesio.variant: io.nav
                           uesio.styles:
                             root:

@@ -1,0 +1,4 @@
+name: description
+collection: crm.leads
+type: TEXT
+label: Description
