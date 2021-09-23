@@ -155,6 +155,9 @@ func (s *Session) GetTenantID() string {
 	if s.workspace != nil {
 		return "workspace:" + s.workspace.ID
 	}
+	if s.siteadmin != nil {
+		return "site:" + s.siteadmin.ID
+	}
 	return "site:" + s.site.ID
 }
 

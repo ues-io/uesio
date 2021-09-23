@@ -146,4 +146,4 @@ definition:
                                   - studio.datamanager:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{appname}
-                                      fieldsWire: "fields"
+                                      usage: workspace

@@ -1,0 +1,68 @@
+name: sitecollectiondata
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: uesio.apps
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.description:
+        uesio.color:
+      conditions:
+        - field: uesio.name
+          valueSource: PARAM
+          param: appname
+    sites:
+      collection: uesio.sites
+      fields:
+        uesio.id:
+        uesio.name:
+        uesio.bundle:
+        uesio.app:
+          fields:
+            uesio.id:
+            uesio.name:
+            uesio.color:
+      conditions:
+        - field: uesio.app
+          valueSource: PARAM
+          param: appname
+        - field: uesio.name
+          valueSource: PARAM
+          param: sitename
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: sites
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    view: studio.sitenav
+                    uesio.context:
+                      wire: sites
+                    params:
+                      selected: sitecollections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Collections
+                    subtitle: insert data into the collections that are available for you.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - studio.datamanager:
+                          collectionId: $Param{collectionname}
+                          namespace: $Param{appname}
+                          usage: site
