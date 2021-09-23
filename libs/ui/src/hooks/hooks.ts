@@ -69,6 +69,7 @@ class Uesio {
 	getViewDefId = () => this.getContext().getViewDefId()
 	addContextFrame = (frame: ContextFrame) =>
 		(this._context = this._context.addFrame(frame))
+	setContext = (context: Context) => (this._context = context)
 }
 
 const useUesio = (props: BaseProps) => new Uesio(getDispatcher(), props)

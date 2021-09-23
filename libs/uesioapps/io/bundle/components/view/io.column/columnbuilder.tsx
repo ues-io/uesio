@@ -1,6 +1,7 @@
 import { FC, useState } from "react"
 import { definition, styles, component, util, hooks } from "@uesio/ui"
 import Column, { getColumnFlexStyles } from "./column"
+
 import FieldHints from "./fieldhints"
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 const ColumnBuilder: FC<definition.BaseProps> = (props) => {
@@ -20,12 +21,23 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 		return getColumnFlexStyles(template, path)
 	})()
 
+	const transitionIn = "all 0.6s ease"
+	const transitionOut = "all 0.3s ease"
+	const maxHeight = "100px"
+	const opacity = 1
 	const classes = styles.useStyles(
 		{
 			root: {
 				...layoutOverrides,
-				"&:hover .fieldHint": {
-					opacity: 0.7,
+				".hint": {
+					maxHeight: "0px",
+					opacity: 0,
+					willChange: "max-height",
+					transition: transitionIn,
+				},
+				"&:hover .hint": {
+					opacity,
+					maxHeight,
 				},
 				gap: "inherit",
 			},
@@ -33,16 +45,24 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 				display: "none",
 			},
 		},
+
 		{
 			context: props.context,
 		}
 	)
 
 	return (
-		<BuildWrapper {...props} classes={classes} className={classes.root}>
-			<Column {...props} />
-			{wire && <FieldHints {...props} wire={wire} />}
-		</BuildWrapper>
+		<div className={classes.root}>
+			<BuildWrapper {...props} classes={classes}>
+				<Column {...props} />
+
+				{wire && (
+					<div className="hint">
+						<FieldHints {...props} wire={wire} />
+					</div>
+				)}
+			</BuildWrapper>
+		</div>
 	)
 }
 

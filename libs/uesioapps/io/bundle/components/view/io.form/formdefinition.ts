@@ -18,7 +18,25 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		wire: "",
-		sections: [],
+		sections: [
+			{
+				"io.formsection": {
+					template: "1,1",
+					columns: [
+						{
+							"io.column": {
+								components: [],
+							},
+						},
+						{
+							"io.column": {
+								components: [],
+							},
+						},
+					],
+				},
+			},
+		],
 	}),
 	properties: [
 		{

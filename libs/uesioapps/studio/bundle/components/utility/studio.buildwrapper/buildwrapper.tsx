@@ -10,6 +10,7 @@ import styling from "./styling"
 
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
+	subtitle: string
 }
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
@@ -136,7 +137,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 							setCanDrag(false)
 						}
 					>
-						{propDef?.title ?? "Unknown"}
+						{propDef?.title ?? "Unknown"} {props.subtitle}
 					</div>
 				)}
 				<div className={classes.inner}>{children}</div>

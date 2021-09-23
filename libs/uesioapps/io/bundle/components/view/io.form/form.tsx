@@ -128,13 +128,7 @@ const Form: FC<FormProps> = (props) => {
 			</div>
 		</div>
 	) : (
-		<div>
-			<p>
-				{!wire
-					? "please select a wire"
-					: !data && "no data in the wire"}
-			</p>
-		</div>
+		<div />
 	)
 }
 

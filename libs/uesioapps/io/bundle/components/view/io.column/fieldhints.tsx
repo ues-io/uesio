@@ -24,18 +24,18 @@ const transitionStyles = {
 	unmounted: { opacity: 0 },
 }
 
+const {
+	fromPath,
+	toPath,
+	makeFullPath,
+	getNearestAncestorPathByKey,
+	findAllByKey,
+} = component.path
+
 const FieldHints: FC<T> = (props) => {
 	const [open, setOpen] = useState<boolean>(false)
 	const { wire, path, context } = props
-
 	const uesio = hooks.useUesio(props)
-	const {
-		fromPath,
-		toPath,
-		makeFullPath,
-		getNearestAncestorPathByKey,
-		findAllByKey,
-	} = component.path
 	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
 	const [fieldSuggestions, setFieldSuggestions] = useState<
 		FieldHint[] | null
@@ -132,7 +132,8 @@ const FieldHints: FC<T> = (props) => {
 					position: "relative",
 					display: "flex",
 					alignItems: "center",
-					opacity: open ? 1 : 0,
+					opacity: 1,
+					// opacity: open ? 1 : 0,
 					optionsContainer: {},
 					fontSize: "0.8em",
 					option: {},
