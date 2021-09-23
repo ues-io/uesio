@@ -9,10 +9,10 @@ definition:
         mode: EDIT
         components:
           - io.field:
-              fieldId: uesio.name
+              fieldId: studio.name
           - io.field:
-              fieldId: uesio.description
+              fieldId: studio.description
           - io.field:
-              fieldId: uesio.color
+              fieldId: studio.color
           - studio.colorpicker:
-              fieldId: uesio.color
+              fieldId: studio.color

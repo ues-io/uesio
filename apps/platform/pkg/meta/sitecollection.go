@@ -13,7 +13,7 @@ func (sc *SiteCollection) Filter(iter func(item loadable.Item) (bool, error)) er
 
 // GetName function
 func (sc *SiteCollection) GetName() string {
-	return "uesio.sites"
+	return "studio.sites"
 }
 
 // GetFields function

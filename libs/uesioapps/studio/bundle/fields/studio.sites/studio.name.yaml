@@ -1,5 +1,5 @@
 name: name
-collection: uesio.sites
+collection: studio.sites
 type: "TEXT"
 label: "Name"
 createOnly: true

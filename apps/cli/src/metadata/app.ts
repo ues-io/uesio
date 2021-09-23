@@ -17,7 +17,7 @@ const colors = [
 
 class App {
 	static getCollectionName(): string {
-		return "uesio.apps"
+		return "studio.apps"
 	}
 	static getFields() {
 		return [
@@ -25,13 +25,13 @@ class App {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.description",
+				id: "studio.description",
 			},
 			{
-				id: "uesio.color",
+				id: "studio.color",
 			},
 		]
 	}
@@ -41,13 +41,13 @@ class App {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.description",
+				id: "studio.description",
 			},
 			{
-				id: "uesio.color",
+				id: "studio.color",
 				type: "COLOR",
 			},
 		]
@@ -82,9 +82,9 @@ class App {
 			this,
 			createChange([
 				{
-					"uesio.name": responses.name,
-					"uesio.description": responses.description,
-					"uesio.color": responses.color,
+					"studio.name": responses.name,
+					"studio.description": responses.description,
+					"studio.color": responses.color,
 				},
 			])
 		)

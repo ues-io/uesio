@@ -3,22 +3,22 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       order:
-        - field: uesio.name
+        - field: studio.name
           desc: false
     newapp:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       type: CREATE
   # Components are how we describe the layout of our view
   components:
@@ -50,16 +50,16 @@ definition:
                           uesio.variant: io.nav
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/${uesio.name}"
+                              path: "app/${studio.name}"
                           content:
                             - io.text:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio.name}
+                                text: ${studio.name}
                                 element: div
                             - io.text:
-                                text: ${uesio.description}
+                                text: ${studio.description}
                                 element: div
                                 uesio.styles:
                                   root:
@@ -69,7 +69,7 @@ definition:
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: "${uesio.color}"
+                                color: "${studio.color}"
                                 text: circle
           - io.griditem:
               uesio.variant: studio.content
@@ -180,7 +180,7 @@ definition:
                   wires:
                     - "newapp"
                 - signal: "route/NAVIGATE"
-                  path: "app/${uesio.name}"
+                  path: "app/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

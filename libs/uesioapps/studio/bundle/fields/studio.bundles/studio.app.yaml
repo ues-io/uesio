@@ -1,6 +1,5 @@
 name: app
-collection: studio.teammembers
+collection: studio.bundles
 type: REFERENCE
 label: App
 referencedCollection: studio.apps
-required: true
