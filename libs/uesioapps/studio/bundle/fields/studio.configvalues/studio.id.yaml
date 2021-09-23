@@ -1,6 +1,0 @@
-name: id
-collection: studio.configvalues
-type: TEXT
-label: Config Value ID
-propertyName: id
-readOnly: true

@@ -46,6 +46,7 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 		valueAPI,
 		context,
 		path,
+		propsDef,
 	}
 
 	//For actions like Refresh or Run Signals we need a view on context

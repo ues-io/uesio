@@ -1,6 +1,0 @@
-name: memberid
-collection: studio.teammembers
-type: TEXT
-label: Member ID
-propertyName: memberid
-readOnly: true

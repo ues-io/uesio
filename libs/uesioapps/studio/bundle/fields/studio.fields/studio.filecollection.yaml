@@ -2,5 +2,4 @@ name: filecollection
 collection: studio.fields
 type: TEXT
 label: File Collection
-propertyName: filecollection
 readOnly: false

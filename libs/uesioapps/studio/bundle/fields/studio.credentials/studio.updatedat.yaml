@@ -1,6 +1,0 @@
-name: updatedat
-collection: studio.credentials
-type: TIMESTAMP
-label: Updated At
-propertyName: updatedat
-autopopulate: UPDATE

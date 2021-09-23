@@ -4,14 +4,15 @@ import "fmt"
 
 // BundleDependency struct
 type BundleDependency struct {
-	ID          string    `uesio:"studio.id"`
-	WorkspaceID string    `uesio:"studio.workspaceid"`
-	Bundle      *Bundle   `uesio:"studio.bundle"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy   *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"studio.createdat"`
+	ID        string     `uesio:"uesio.id"`
+	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Bundle    *Bundle    `uesio:"studio.bundle"`
+	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -28,7 +29,7 @@ func (b *BundleDependency) GetBundleName() string {
 	if b.Bundle == nil {
 		return ""
 	}
-	return b.Bundle.AppID
+	return b.Bundle.App.ID
 }
 
 // GetCollectionName function
@@ -55,6 +56,11 @@ func (b *BundleDependency) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *BundleDependency) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// Len function
+func (b *BundleDependency) Len() int {
+	return StandardItemLen(b)
 }
 
 // GetItemMeta function

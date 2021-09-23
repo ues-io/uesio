@@ -5,9 +5,8 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
@@ -17,7 +16,7 @@ definition:
         studio.publicprofile:
         studio.defaulttheme:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -26,15 +25,15 @@ definition:
     installedapps:
       collection: studio.bundledependencies
       fields:
-        studio.id:
+        uesio.id:
         studio.bundle:
           fields:
-            uesio.appid:
+            uesio.app:
             uesio.major:
             uesio.minor:
             uesio.patch:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
   # Components are how we describe the layout of our view
   components:
@@ -170,10 +169,10 @@ definition:
                                             uesio.variant: io.item
                                             signals:
                                               - signal: "route/NAVIGATE"
-                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${studio.id}"
+                                                path: "app/$Param{appname}/workspace/$Param{workspacename}/installed/${uesio.id}"
                                             content:
                                               - io.text:
-                                                  text: ${["studio.bundle"]["uesio.appid"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                                                  text: ${["studio.bundle"]["uesio.app"]["uesio.id"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
                                             avatar:
                                               - io.text:
                                                   uesio.variant: io.icon

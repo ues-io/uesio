@@ -1,5 +1,0 @@
-name: appid
-collection: studio.workspaces
-type: TEXT
-label: App ID
-propertyName: appid

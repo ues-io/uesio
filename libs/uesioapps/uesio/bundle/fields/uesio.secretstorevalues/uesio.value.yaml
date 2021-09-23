@@ -1,5 +1,4 @@
 name: value
 collection: uesio.secretstorevalues
-type: TEXT
+type: "TEXT"
 label: Value
-propertyName: value

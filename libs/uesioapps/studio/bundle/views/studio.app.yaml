@@ -16,10 +16,10 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     bundles:
@@ -31,7 +31,7 @@ definition:
         uesio.patch:
         uesio.description:
       conditions:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: PARAM
           param: appname
     sites:
@@ -40,23 +40,23 @@ definition:
         uesio.id:
         uesio.name:
       conditions:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: PARAM
           param: appname
     teams:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     newworkspace:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
       type: CREATE
@@ -70,11 +70,10 @@ definition:
       fields:
         uesio.id:
         uesio.name:
-        uesio.appid:
         uesio.bundle:
       type: CREATE
       defaults:
-        - field: uesio.appid
+        - field: uesio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id
@@ -85,12 +84,12 @@ definition:
     newteam:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       type: CREATE
       defaults:
-        - field: studio.appid
+        - field: studio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id

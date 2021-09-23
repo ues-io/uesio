@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name

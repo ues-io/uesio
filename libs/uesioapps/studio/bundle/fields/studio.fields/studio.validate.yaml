@@ -2,4 +2,3 @@ name: validate
 collection: studio.fields
 type: MAP
 label: Validate
-propertyName: validate

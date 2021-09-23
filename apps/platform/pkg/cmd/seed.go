@@ -74,9 +74,50 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
+	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
+	if platformDSType == "" {
+		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
+	}
+
+	platformDSCredentials := os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS")
+	if platformDSCredentials == "" {
+		logger.Log("No Platform Data Source Credentials Specified", logger.ERROR)
+	}
+
+	session, err := auth.GetHeadlessSession()
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllViews:  true,
+		AllowAllRoutes: true,
+		AllowAllFiles:  true,
+	})
+
+	// Get the adapter for the platform DS Type
+	adapter, err := adapt.GetAdapter(platformDSType, session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	credentials, err := adapt.GetCredentials(platformDSCredentials, session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	err = adapter.Migrate(credentials)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
 	// Read files from seed folder
 	var apps meta.AppCollection
-	err := GetSeedDataFile(&apps, "apps.json")
+	err = GetSeedDataFile(&apps, "apps.json")
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -122,17 +163,13 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	session, err := auth.GetHeadlessSession()
+	// Read files from seed folder
+	var configstorevalues meta.ConfigStoreValueCollection
+	err = GetSeedDataFile(&configstorevalues, "configstorevalues.json")
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
-
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllViews:  true,
-		AllowAllRoutes: true,
-		AllowAllFiles:  true,
-	})
 
 	// Install Default Bundles
 	// This takes code from the /libs/uesioapps code in the repo
@@ -197,6 +234,12 @@ func seed(cmd *cobra.Command, args []string) {
 				Upsert: &adapt.UpsertOptions{},
 			},
 		},
+		{
+			Collection: &configstorevalues,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
 	}, session)
 	if err != nil {
 		logger.LogError(err)
@@ -204,10 +247,6 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	err = seedCollection("studio.teams", "studio.teams.json", session)
-	if err != nil {
-		return
-	}
-	err = seedCollection("studio.teampermissions", "studio.teampermissions.json", session)
 	if err != nil {
 		return
 	}

@@ -2,7 +2,6 @@ package datasource
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -161,12 +160,10 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	tokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+	userTokens, err := GenerateUserAccessTokens(&metadataResponse, session)
 	if err != nil {
 		return err
 	}
-	fmt.Println("SAVE TOKENS")
-	fmt.Println(tokens)
 
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
@@ -210,7 +207,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
 		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials)
+			return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 		}, batch, &metadataResponse)
 		if err != nil {
 			return err
@@ -244,7 +241,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials)
+		err = adapter.Save(batch, &metadataResponse, credentials, userTokens)
 		if err != nil {
 			return err
 		}

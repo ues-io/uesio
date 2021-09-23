@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,72 +20,66 @@ definition:
     collections:
       collection: studio.collections
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.namefield:
-        studio.idfield:
-        studio.workspaceid:
         studio.workspace:
-        studio.collectionname:
         studio.datasource:
-        studio.updatedat:
-        studio.updatedby:
-        studio.createdat:
-        studio.createdby:
+        uesio.updatedat:
+        uesio.updatedby:
+        uesio.createdat:
+        uesio.createdby:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           value: $Param{collectionname}
     fields:
       collection: studio.fields
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
         studio.label:
-        studio.propertyname:
         studio.collection:
-        studio.workspaceid:
         studio.referencedCollection:
         studio.selectlist:
         studio.autopopulate:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
           lookupWire: collections
           lookupTemplate: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     newfield:
       collection: studio.fields
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
         studio.label:
-        studio.propertyname:
       type: CREATE
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
           lookupWire: collections
           lookupTemplate: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -160,15 +153,9 @@ definition:
                                   - io.field:
                                       fieldId: studio.name
                                   - studio.metadatafield:
-                                      fieldId: studio.idfield
-                                      metadataType: "FIELD"
-                                      label: "ID Field"
-                                  - studio.metadatafield:
                                       fieldId: studio.namefield
                                       metadataType: "FIELD"
                                       label: "Name Field"
-                                  - io.field:
-                                      fieldId: studio.collectionname
                                   - studio.metadatafield:
                                       fieldId: studio.datasource
                                       metadataType: "DATASOURCE"
@@ -181,13 +168,13 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - io.field:
-                                      fieldId: studio.createdby
+                                      fieldId: uesio.createdby
                                   - io.field:
-                                      fieldId: studio.createdat
+                                      fieldId: uesio.createdat
                                   - io.field:
-                                      fieldId: studio.updatedby
+                                      fieldId: uesio.updatedby
                                   - io.field:
-                                      fieldId: studio.updatedat
+                                      fieldId: uesio.updatedat
                 - io.box:
                     uesio.variant: io.section
                     components:
@@ -222,8 +209,6 @@ definition:
                                 field: studio.type
                             - io.column:
                                 field: studio.label
-                            - io.column:
-                                field: studio.propertyname
                             - io.column:
                                 field: studio.collection
   panels:
@@ -266,19 +251,11 @@ definition:
                 - io.field:
                     fieldId: studio.name
                 - studio.metadatafield:
-                    fieldId: studio.idfield
-                    metadataType: "FIELD"
-                    label: "ID Field"
-                    grouping: $Param{appname}.$Param{collectionname}
-                    namespace: $Param{appname}
-                - studio.metadatafield:
                     fieldId: studio.namefield
                     metadataType: "FIELD"
                     label: "Name Field"
                     grouping: $Param{appname}.$Param{collectionname}
                     namespace: $Param{appname}
-                - io.field:
-                    fieldId: studio.collectionname
                 - studio.metadatafield:
                     fieldId: studio.datasource
                     metadataType: "DATASOURCE"
@@ -318,8 +295,6 @@ definition:
                     fieldId: studio.type
                 - io.field:
                     fieldId: studio.label
-                - io.field:
-                    fieldId: studio.propertyname
                 - io.box:
                     uesio.display:
                       - field: studio.type

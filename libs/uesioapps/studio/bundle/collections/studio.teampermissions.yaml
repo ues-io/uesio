@@ -1,6 +1,0 @@
-name: teampermissions
-dataSource: uesio.platform
-idField: studio.id
-idFormat: "${studio.teamid}_${studio.role}"
-nameField: studio.id
-collectionName: teampermissions

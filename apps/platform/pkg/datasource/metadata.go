@@ -17,7 +17,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	return &adapt.CollectionMetadata{
 		Name:                  e.Name,
 		Namespace:             e.Namespace,
-		IDField:               e.IDField,
+		IDField:               "uesio.id",
 		IDFormat:              e.IDFormat,
 		NameField:             e.NameField,
 		Createable:            !e.ReadOnly,
@@ -25,7 +25,6 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		Updateable:            !e.ReadOnly,
 		Deleteable:            !e.ReadOnly,
 		Fields:                fieldMetadata,
-		CollectionName:        e.CollectionName,
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
 		RecordChallengeTokens: e.RecordChallengeTokens,
@@ -42,7 +41,6 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Updateable:           !f.ReadOnly && !f.CreateOnly,
 		Type:                 f.Type,
 		Label:                f.Label,
-		PropertyName:         f.PropertyName,
 		ReferencedCollection: f.ReferencedCollection,
 		SelectListName:       f.SelectList,
 		Required:             f.Required,
@@ -99,20 +97,83 @@ func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.Selec
 func LoadCollectionMetadata(key string, metadataCache *adapt.MetadataCache, session *sess.Session) (*adapt.CollectionMetadata, error) {
 	// Check to see if the collection is already in our metadata cache
 	collectionMetadata, err := metadataCache.GetCollection(key)
-	if err != nil {
-		collection, err := meta.NewCollection(key)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bundle.Load(collection, session)
-		if err != nil {
-			return nil, err
-		}
-
-		collectionMetadata = GetCollectionMetadata(collection)
-		metadataCache.AddCollection(key, collectionMetadata)
+	if err == nil {
+		return collectionMetadata, nil
 	}
+
+	collection, err := meta.NewCollection(key)
+	if err != nil {
+		return nil, err
+	}
+
+	err = bundle.Load(collection, session)
+	if err != nil {
+		return nil, err
+	}
+
+	collectionMetadata = GetCollectionMetadata(collection)
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:       "id",
+		Namespace:  "uesio",
+		Createable: false,
+		Accessible: true,
+		Updateable: false,
+		Type:       "TEXT",
+		Label:      "Id",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "owner",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Owner",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "createdby",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Created By",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "updatedby",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "USER",
+		Label:        "Updated By",
+		AutoPopulate: "UPDATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "createdat",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "TIMESTAMP",
+		Label:        "Created At",
+		AutoPopulate: "CREATE",
+	})
+	collectionMetadata.SetField(&adapt.FieldMetadata{
+		Name:         "updatedat",
+		Namespace:    "uesio",
+		Createable:   false,
+		Accessible:   true,
+		Updateable:   false,
+		Type:         "TIMESTAMP",
+		Label:        "Updated At",
+		AutoPopulate: "UPDATE",
+	})
+
+	metadataCache.AddCollection(key, collectionMetadata)
+
 	return collectionMetadata, nil
 }
 

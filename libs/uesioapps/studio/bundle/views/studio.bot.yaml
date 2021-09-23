@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,22 +20,21 @@ definition:
     bots:
       collection: studio.bots
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.workspaceid:
         studio.type:
         studio.dialect:
         studio.collection:
         studio.content:
-        studio.updatedat:
-        studio.updatedby:
-        studio.createdat:
-        studio.createdby:
+        uesio.updatedat:
+        uesio.updatedby:
+        uesio.createdat:
+        uesio.createdby:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: botname
@@ -131,13 +129,13 @@ definition:
                                       metadataType: "COLLECTION"
                                       label: "Collection"
                                   - io.field:
-                                      fieldId: studio.createdby
+                                      fieldId: uesio.createdby
                                   - io.field:
-                                      fieldId: studio.createdat
+                                      fieldId: uesio.createdat
                                   - io.field:
-                                      fieldId: studio.updatedby
+                                      fieldId: uesio.updatedby
                                   - io.field:
-                                      fieldId: studio.updatedat
+                                      fieldId: uesio.updatedat
                             - io.field:
                                 fieldId: studio.content
                                 id: botcontent

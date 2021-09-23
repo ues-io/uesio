@@ -53,7 +53,6 @@ type CollectionMetadata struct {
 	Updateable            bool                                   `json:"updateable"`
 	Deleteable            bool                                   `json:"deleteable"`
 	Fields                map[string]*FieldMetadata              `json:"fields"`
-	CollectionName        string                                 `json:"-"`
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
@@ -107,7 +106,6 @@ type FieldMetadata struct {
 	Updateable           bool                       `json:"updateable"`
 	Type                 string                     `json:"type"`
 	Label                string                     `json:"label"`
-	PropertyName         string                     `json:"-"`
 	SelectListOptions    []SelectListOptionMetadata `json:"options"`
 	SelectListName       string                     `json:"-"`
 	ReferencedCollection string                     `json:"referencedCollection"`

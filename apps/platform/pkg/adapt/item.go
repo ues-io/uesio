@@ -52,3 +52,7 @@ func (i *Item) Loop(iter func(string, interface{}) error) error {
 	}
 	return nil
 }
+
+func (i *Item) Len() int {
+	return len(*i)
+}

@@ -1,0 +1,6 @@
+name: app
+collection: studio.teammembers
+type: REFERENCE
+label: App
+referencedCollection: uesio.apps
+required: true

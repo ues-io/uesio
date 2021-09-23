@@ -1,6 +1,0 @@
-name: updatedby
-collection: uesio.sites
-type: USER
-label: Updated By
-propertyName: updatedby
-autopopulate: UPDATE

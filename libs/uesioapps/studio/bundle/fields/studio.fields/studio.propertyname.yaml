@@ -1,6 +1,0 @@
-name: propertyname
-collection: studio.fields
-type: TEXT
-label: Property Name
-propertyName: propertyname
-createOnly: true

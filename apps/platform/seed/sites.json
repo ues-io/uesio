@@ -4,34 +4,44 @@
 		"bundle": {
 			"id": "studio_v0.0.1"
 		},
-		"appid": "studio"
+		"app": {
+			"id": "studio"
+		}
 	},
 	{
 		"name": "prod",
 		"bundle": {
 			"id": "docs_v0.0.1"
 		},
-		"appid": "docs"
+		"app": {
+			"id": "docs"
+		}
 	},
 	{
 		"name": "prod",
 		"bundle": {
 			"id": "crm_v0.0.1"
 		},
-		"appid": "crm"
+		"app": {
+			"id": "crm"
+		}
 	},
 	{
 		"name": "prod",
 		"bundle": {
 			"id": "web_v0.0.1"
 		},
-		"appid": "web"
+		"app": {
+			"id": "web"
+		}
 	},
 	{
 		"name": "uat",
 		"bundle": {
 			"id": "crm_v0.0.1"
 		},
-		"appid": "crm"
+		"app": {
+			"id": "crm"
+		}
 	}
 ]

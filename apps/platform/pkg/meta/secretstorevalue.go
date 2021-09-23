@@ -6,10 +6,11 @@ type SecretStoreValue struct {
 	Key       string    `uesio:"uesio.key"`
 	Value     string    `uesio:"uesio.value"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `uesio:"uesio.createdby"`
-	UpdatedBy *User     `uesio:"uesio.updatedby"`
-	UpdatedAt int64     `uesio:"uesio.updatedat"`
-	CreatedAt int64     `uesio:"uesio.createdat"`
+	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -36,6 +37,11 @@ func (s *SecretStoreValue) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (s *SecretStoreValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(s, iter)
+}
+
+// Len function
+func (s *SecretStoreValue) Len() int {
+	return StandardItemLen(s)
 }
 
 // GetItemMeta function

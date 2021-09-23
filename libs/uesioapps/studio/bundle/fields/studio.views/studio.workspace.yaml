@@ -2,5 +2,4 @@ name: workspace
 collection: studio.views
 type: REFERENCE
 label: Workspace
-propertyName: workspaceid
 referencedCollection: studio.workspaces

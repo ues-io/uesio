@@ -62,9 +62,13 @@ const handleDrop = (
 		}
 		case "viewdef": {
 			const key = component.path.getKeyAtPath(dragNode)
-			const toPath = `${dropNode}["${dropIndex}"]["${key}"]`
+			const toPath = `${dropNode}["${dropIndex}"]`
 			// Selection Handling
-			uesio.builder.moveDefinition(dragNode, toPath)
+			uesio.builder.moveDefinition(
+				component.path.getParentPath(dragNode),
+				toPath,
+				key || undefined
+			)
 			break
 		}
 	}

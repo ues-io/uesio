@@ -1,17 +1,22 @@
 [
 	{
-		"studio.appid": "crm",
-		"studio.teamid": "crm_admins",
-		"studio.memberid": "prod_studio_mock_MockBen"
+		"studio.app": "crm",
+		"studio.team": "crm_maintainers",
+		"studio.member": "prod_studio_mock_MockBen"
 	},
 	{
-		"studio.appid": "crm",
-		"studio.teamid": "crm_maintainers",
-		"studio.memberid": "prod_studio_mock_MockAbel"
+		"studio.app": "crm",
+		"studio.team": "crm_maintainers",
+		"studio.member": "prod_studio_mock_MockAbel"
 	},
 	{
-		"studio.appid": "crm",
-		"studio.teamid": "crm_maintainers",
-		"studio.memberid": "prod_studio_mock_MockWessel"
+		"studio.app": "crm",
+		"studio.team": "crm_maintainers",
+		"studio.member": "prod_studio_mock_MockWessel"
+	},
+	{
+		"studio.app": "crm",
+		"studio.team": "crm_maintainers",
+		"studio.member": "prod_studio_mock_MockGregg"
 	}
 ]

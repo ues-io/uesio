@@ -1,0 +1,5 @@
+name: workspace
+collection: studio.componentvariants
+type: REFERENCE
+label: Workspace
+referencedCollection: studio.workspaces

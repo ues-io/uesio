@@ -2,4 +2,3 @@ name: name
 collection: studio.componentvariants
 type: TEXT
 label: Name
-propertyName: name

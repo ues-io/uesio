@@ -5,10 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodb"
-	"github.com/thecloudmasters/uesio/pkg/adapt/firestore"
-	"github.com/thecloudmasters/uesio/pkg/adapt/sql/mysql"
-	"github.com/thecloudmasters/uesio/pkg/adapt/sql/postgresql"
+	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
@@ -40,10 +37,7 @@ func init() {
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 
 	// Data Adapters
-	adapt.RegisterAdapter("uesio.firestore", &firestore.Adapter{})
-	adapt.RegisterAdapter("uesio.dynamodb", &dynamodb.Adapter{})
-	adapt.RegisterAdapter("uesio.postgresql", &postgresql.Adapter{})
-	adapt.RegisterAdapter("uesio.mysql", &mysql.Adapter{})
+	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})

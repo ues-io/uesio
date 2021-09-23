@@ -19,17 +19,18 @@ func NewFile(key string) (*File, error) {
 
 // File struct
 type File struct {
-	ID        string            `yaml:"-" uesio:"studio.id"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Name      string            `yaml:"name" uesio:"studio.name"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	FileName  string            `yaml:"fileName" uesio:"-"`
-	Workspace string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	Content   *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy *User             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64             `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -103,12 +104,19 @@ func (f *File) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (f *File) SetWorkspace(workspace string) {
-	f.Workspace = workspace
+	f.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (f *File) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(f, iter)
+}
+
+// Len function
+func (f *File) Len() int {
+	return StandardItemLen(f)
 }
 
 // GetItemMeta function

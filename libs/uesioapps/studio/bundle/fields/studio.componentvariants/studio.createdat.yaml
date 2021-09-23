@@ -1,6 +1,0 @@
-name: createdat
-collection: studio.componentvariants
-type: TIMESTAMP
-label: Created At
-propertyName: createdat
-autopopulate: CREATE

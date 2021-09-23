@@ -1,5 +1,3 @@
 name: bulkjobs
 dataSource: uesio.platform
-idField: uesio.id
 nameField: uesio.id
-collectionName: bulkjobs

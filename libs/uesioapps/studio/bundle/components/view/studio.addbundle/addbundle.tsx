@@ -21,7 +21,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 function getRecordByStudioId(id: string, wire: wire.Wire) {
 	const records = wire.getData()
 	for (const record of records) {
-		if (record.source["studio.id"] === id) {
+		if (record.source["uesio.id"] === id) {
 			return record
 		}
 	}
@@ -101,7 +101,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		?.getData()
 		.filter((record) => {
 			const source = record.source
-			const namespace = source["uesio.appid"]
+			const namespace = source["uesio.app"]
 			//We don't want to see ourselves, uesio or studio
 			if (namespace === appName) return false
 			if (namespace === "studio") return false

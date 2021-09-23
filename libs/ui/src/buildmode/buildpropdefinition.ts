@@ -79,6 +79,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| IconProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -103,6 +104,11 @@ interface NamespaceProp extends BasePropDescriptor {
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
+
+interface IconProp extends BasePropDescriptor {
+	type: "ICON"
+}
+
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
 }
@@ -216,6 +222,7 @@ export {
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	IconProp,
 	NumberProp,
 	CustomProp,
 	MetadataProp,

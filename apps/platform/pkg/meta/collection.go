@@ -32,20 +32,19 @@ type TokenCondition struct {
 
 // Collection struct
 type Collection struct {
-	ID                    string                            `yaml:"-" uesio:"studio.id"`
+	ID                    string                            `yaml:"-" uesio:"uesio.id"`
 	Name                  string                            `yaml:"name" uesio:"studio.name"`
 	Namespace             string                            `yaml:"-" uesio:"-"`
 	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
-	IDField               string                            `yaml:"idField" uesio:"studio.idfield"`
 	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
 	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
-	CollectionName        string                            `yaml:"collectionName" uesio:"studio.collectionname"`
 	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace             string                            `yaml:"-" uesio:"studio.workspaceid"`
-	CreatedBy             *User                             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy             *User                             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt             int64                             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt             int64                             `yaml:"-" uesio:"studio.createdat"`
+	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio.createdat"`
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
@@ -112,12 +111,19 @@ func (c *Collection) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (c *Collection) SetWorkspace(workspace string) {
-	c.Workspace = workspace
+	c.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
+}
+
+// Len function
+func (c *Collection) Len() int {
+	return StandardItemLen(c)
 }
 
 // GetItemMeta function

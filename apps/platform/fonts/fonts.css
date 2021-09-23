@@ -44,7 +44,7 @@
 	font-style: normal;
 	font-weight: 400;
 	src: local("Material Icons"), local("MaterialIcons-Sharp"),
-		url("/fonts/material-icons-sharp.woff2") format("woff2");
+		url("/fonts/MaterialIconsSharp-Regular.otf") format("opentype");
 }
 
 @font-face {

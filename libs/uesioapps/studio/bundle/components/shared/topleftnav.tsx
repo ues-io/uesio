@@ -34,7 +34,7 @@ const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 				variant="io.large"
 				label="View Detail"
 				tooltipPlacement="left"
-				icon="listalt"
+				icon="list"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()
 					const route = props.context.getRoute()

@@ -14,19 +14,20 @@ func NewUserAccessToken(key string) (*UserAccessToken, error) {
 }
 
 type UserAccessToken struct {
-	ID         string            `yaml:"-" uesio:"studio.id"`
+	ID         string            `yaml:"-" uesio:"uesio.id"`
 	Name       string            `yaml:"name" uesio:"studio.name"`
 	Namespace  string            `yaml:"-" uesio:"-"`
 	Type       string            `yaml:"type" uesio:"studio.type"`
 	Collection string            `yaml:"collection" uesio:"studio.collection"`
 	Conditions []*TokenCondition `yaml:"conditions"`
 	Token      string            `yaml:"token"`
-	Workspace  string            `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace  *Workspace        `yaml:"-" uesio:"studio.workspace"`
 	itemMeta   *ItemMeta         `yaml:"-" uesio:"-"`
-	CreatedBy  *User             `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User             `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64             `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64             `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy  *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner      *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy  *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt  int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt  int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -90,12 +91,19 @@ func (uat *UserAccessToken) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (uat *UserAccessToken) SetWorkspace(workspace string) {
-	uat.Workspace = workspace
+	uat.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (uat *UserAccessToken) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(uat, iter)
+}
+
+// Len function
+func (uat *UserAccessToken) Len() int {
+	return StandardItemLen(uat)
 }
 
 // GetItemMeta function

@@ -20,6 +20,7 @@ interface UserFieldProps extends definition.UtilityProps {
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const Tile = component.registry.getUtility("io.tile")
 const Avatar = component.registry.getUtility("io.avatar")
+const ReferenceField = component.registry.getUtility("io.referencefield")
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { label, mode, hideLabel, record, fieldMetadata, context } = props
@@ -40,6 +41,10 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 		},
 		props
 	)
+
+	if (!readonly) {
+		return <ReferenceField {...props} />
+	}
 
 	return (
 		<div className={classes.root}>

@@ -2,5 +2,4 @@ name: account
 collection: crm.opportunities
 type: REFERENCE
 label: Account
-propertyName: account
 referencedCollection: crm.accounts

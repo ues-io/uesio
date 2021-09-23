@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
             uesio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,32 +20,27 @@ definition:
     collections:
       collection: studio.collections
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.namefield:
-        studio.idfield:
-        studio.workspaceid:
         studio.workspace:
-        studio.collectionname:
         studio.datasource:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: collectionname
     fields:
       collection: studio.fields
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.type:
         studio.label:
-        studio.propertyname:
         studio.collection:
-        studio.workspaceid:
         studio.referencedCollection:
         studio.filecollection:
         studio.autopopulate:
@@ -55,10 +49,10 @@ definition:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: fieldname
@@ -67,10 +61,10 @@ definition:
           valueSource: LOOKUP
           lookupWire: collections
           lookupTemplate: $Param{appname}.$Param{collectionname}
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -156,8 +150,6 @@ definition:
                                       fieldId: studio.type
                                   - io.field:
                                       fieldId: studio.label
-                                  - io.field:
-                                      fieldId: studio.propertyname
                                   - studio.metadatafield:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
