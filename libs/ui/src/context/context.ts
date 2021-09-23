@@ -11,6 +11,8 @@ import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
+import get from "lodash/get"
+import { getAncestorPath } from "../component/path"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -38,14 +40,6 @@ type ContextFrame = {
 }
 
 const ANCESTOR_INDICATOR = "Parent."
-
-/**
- * Returns the value nested in Objects or Arrays at the path it's given
- * @param Object
- * @param Path
- */
-const getInObject = (o: Record<string, unknown>, pathArray: string[]) =>
-	pathArray.reduce((a, v) => a[v], o)
 
 const getFromContext = (
 	mergeType: string,
@@ -185,12 +179,10 @@ class Context {
 			: undefined
 	}
 
-	getInViewDef = (pathArray: string[]) => {
-		const viewDef = this.getViewDef() as any
-		return getInObject(viewDef?.definition, pathArray)
-	}
-
 	getViewDef = () => getViewDef(this.getViewDefId())
+
+	getParentComponentDef = (path: string) =>
+		get(this.getViewDef()?.definition, getAncestorPath(path, 3))
 
 	getTheme = () =>
 		themeSelectors.selectById(

@@ -1,16 +1,14 @@
-import { FC, useContext } from "react"
+import { FC } from "react"
 import { definition, component, styles } from "@uesio/ui"
-import toPath from "lodash/toPath"
-import { LayoutContext } from "../io.layout/layout"
 
-const IOcolumn = component.registry.getUtility("io.column")
+const IOColumn = component.registry.getUtility("io.column")
 
 export const getColumnFlexStyles = (
-	template: number[],
-	path: string
+	template: string,
+	columnIndex: number
 ): React.CSSProperties => {
-	const columnIndex = parseInt(toPath(path).slice(-2)[0], 10)
-	const flexRatio = template[columnIndex]
+	const templateArray = template.split(",")
+	const flexRatio = parseInt(templateArray[columnIndex], 10)
 	return {
 		flexGrow: flexRatio || "initial",
 		flexShrink: flexRatio || "initial",
@@ -18,12 +16,13 @@ export const getColumnFlexStyles = (
 }
 
 const Column: FC<definition.BaseProps> = (props) => {
-	const { definition, context, path = "" } = props
+	const { definition, context, path = "", index = 0 } = props
 	const sharedProps = { context }
+	const template = context.getParentComponentDef(path)?.template
 
 	const flexStyles = context.getBuildMode()
 		? {}
-		: getColumnFlexStyles(useContext(LayoutContext), path)
+		: getColumnFlexStyles(template, index)
 
 	const classes = styles.useStyles(
 		{
@@ -35,7 +34,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 	)
 
 	return (
-		<IOcolumn classes={classes} {...sharedProps}>
+		<IOColumn classes={classes} {...sharedProps}>
 			<component.Slot
 				definition={definition}
 				listName="components"
@@ -43,7 +42,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
 				context={context}
 			/>
-		</IOcolumn>
+		</IOColumn>
 	)
 }
 

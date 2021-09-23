@@ -2,7 +2,7 @@ import { DefinitionMap, UtilityProps } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -22,7 +22,6 @@ type BuildPropertiesDefinition = {
 		propDef: BuildPropertiesDefinition,
 		uesio: Uesio
 	) => void
-	getFlexStyles?: (template: number[], path: string) => React.CSSProperties
 	name?: string // auto-populated
 	namespace?: string // auto-populated
 	type?: string
