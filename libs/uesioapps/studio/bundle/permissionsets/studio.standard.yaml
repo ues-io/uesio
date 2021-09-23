@@ -49,7 +49,8 @@ views:
   studio.workspace: true
   studio.workspaceconfig: true
   studio.workspacenav: true
-  studio.data: true
+  studio.sitecollections: true
+  studio.sitecollectiondata: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
@@ -95,5 +96,6 @@ routes:
   studio.views: true
   studio.workspaceconfig: true
   studio.workspace: true
-  studio.data: true
+  studio.sitecollections: true
+  studio.sitecollectiondata: true
 files:

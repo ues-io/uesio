@@ -49,14 +49,14 @@ definition:
                 selected:
                   - type: paramIsValue
                     param: selected
-                    value: data
+                    value: sitecollections
               signals:
                 - signal: "route/NAVIGATE"
-                  path: app/${["uesio.app"]["uesio.id"]}/site/${uesio.name}/data
+                  path: app/${["uesio.app"]["uesio.id"]}/site/${uesio.name}/collections
               content:
                 - io.text:
-                    text: Data
+                    text: Collections
               avatar:
                 - io.text:
                     uesio.variant: io.icon
-                    text: storage
+                    text: list
