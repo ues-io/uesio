@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { hooks, wire, component } from "@uesio/ui"
+import { wire, component, builder } from "@uesio/ui"
 
 const MultiSelectField = component.registry.getUtility("io.multiselectfield")
 
-const WiresProp: FunctionComponent<PropRendererProps> = (props) => {
+const WiresProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, context, valueAPI, path } = props
 	const selectedWires = (valueAPI.get(path) || []) as wire.WireDefinition
 	const availableWires = (valueAPI.get('["wires"]') ||

@@ -11,6 +11,8 @@ import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
+import get from "lodash/get"
+import { getAncestorPath } from "../component/path"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -178,6 +180,9 @@ class Context {
 	}
 
 	getViewDef = () => getViewDef(this.getViewDefId())
+
+	getParentComponentDef = (path: string) =>
+		get(this.getViewDef()?.definition, getAncestorPath(path, 3))
 
 	getTheme = () =>
 		themeSelectors.selectById(

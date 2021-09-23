@@ -1,11 +1,10 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
 
-import { component } from "@uesio/ui"
+import { component, builder } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 
-const NumberProp: FunctionComponent<PropRendererProps> = ({
+const NumberProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
 	valueAPI,
 	context,

@@ -1,24 +1,19 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { builder, component } from "@uesio/ui"
+import { builder } from "@uesio/ui"
 
-interface CustomPropRendererProps extends PropRendererProps {
-	descriptor: builder.CustomProp
-}
-
-const CustomProp: FunctionComponent<CustomPropRendererProps> = ({
+const CustomProp: FunctionComponent<builder.CustomPropRendererProps> = ({
 	descriptor,
 	valueAPI,
 	context,
 	path,
+	propsDef,
 }) =>
 	descriptor.renderFunc({
 		descriptor,
 		valueAPI,
 		context,
 		path,
+		propsDef,
 	})
 
 export default CustomProp
-
-export { CustomPropRendererProps }

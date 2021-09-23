@@ -1,15 +1,13 @@
 import { FunctionComponent, useState } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
 
-import { hooks, component, styles, materialIcons } from "@uesio/ui"
-//import { materialIcons } from "./materialicons"
+import { hooks, component, styles, materialIcons, builder } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const Popper = component.registry.getUtility("io.popper")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const TitleBar = component.registry.getUtility("io.titlebar")
 
-const IconProp: FunctionComponent<PropRendererProps> = (props) => {
+const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem, selectedNode] =

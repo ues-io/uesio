@@ -1,8 +1,8 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
 import DefinitionSelectorProp from "./definitionselectorprop"
+import { builder } from "@uesio/ui"
 
-const WireProp: FunctionComponent<PropRendererProps> = (props) => {
+const WireProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	if (props.descriptor.type !== "WIRE") {
 		return null
 	}

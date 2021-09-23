@@ -92,6 +92,7 @@ const getParentPath = (path: string) => {
 
 const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
 
+/*
 function isInt(str: string) {
 	let i = 0
 	if (str.length === 0) return false
@@ -101,6 +102,7 @@ function isInt(str: string) {
 	}
 	return true
 }
+*/
 
 /**
  * Predicts what to toPath will be assuming the fromPath content vanishes.

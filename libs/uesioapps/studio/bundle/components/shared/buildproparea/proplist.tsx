@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
 import { definition, builder, component } from "@uesio/ui"
-import { ValueAPI } from "../propertiespaneldefinition"
 
 import TextProp from "../buildpropitem/textprop"
 import SelectProp from "../buildpropitem/selectprop"
@@ -20,7 +19,7 @@ import IconProp from "../buildpropitem/iconprop"
 interface Props extends definition.BaseProps {
 	properties: builder.PropDescriptor[]
 	propsDef: builder.BuildPropertiesDefinition
-	valueAPI: ValueAPI
+	valueAPI: builder.ValueAPI
 }
 
 function getPropHandler(type?: string) {
