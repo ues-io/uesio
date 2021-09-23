@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
 import DefinitionSelectorProp from "./definitionselectorprop"
-import { wire } from "@uesio/ui"
+import { wire, builder } from "@uesio/ui"
 
-const ConditionPropComponent: FunctionComponent<PropRendererProps> = (
+const ConditionPropComponent: FunctionComponent<builder.PropRendererProps> = (
 	props
 ) => {
 	const descriptor = props.descriptor

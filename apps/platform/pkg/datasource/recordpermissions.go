@@ -40,7 +40,10 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 			update := &(*op.Updates)[i]
 			tokenValue, err := templating.Execute(tokenTemplate, update.FieldChanges)
 			if err != nil {
-				return err
+				tokenValue, err = templating.Execute(tokenTemplate, update.OldValues)
+				if err != nil {
+					return err
+				}
 			}
 
 			fullTokenString := challengeToken.UserAccessToken + ":" + tokenValue

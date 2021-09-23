@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
 import { hooks, builder } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-interface BotPropRendererProps extends PropRendererProps {
+interface BotPropRendererProps extends builder.PropRendererProps {
 	descriptor: builder.BotProp
 }
 

@@ -3,11 +3,10 @@ import { FunctionComponent } from "react"
 import { definition, builder, styles } from "@uesio/ui"
 import BuildSection from "./buildsection"
 import PropList from "./proplist"
-import { ValueAPI } from "../propertiespaneldefinition"
 
 interface Props extends definition.BaseProps {
 	propsDef: builder.BuildPropertiesDefinition
-	valueAPI: ValueAPI
+	valueAPI: builder.ValueAPI
 }
 
 const BuildPropArea: FunctionComponent<Props> = (props) => {

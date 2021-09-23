@@ -1,9 +1,7 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { context, hooks } from "@uesio/ui"
+import { hooks, builder } from "@uesio/ui"
 import SelectProp from "./selectprop"
-interface NamespaceRendererProps extends PropRendererProps {
-	context: context.Context
+interface NamespaceRendererProps extends builder.PropRendererProps {
 	path: string
 }
 const NamespaceProp: FunctionComponent<NamespaceRendererProps> = (props) => {

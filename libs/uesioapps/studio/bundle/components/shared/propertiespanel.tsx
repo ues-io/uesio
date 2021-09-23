@@ -95,7 +95,11 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						key
 					)
 				},
-				move: (fromPath: string, toPath: string) => {
+				move: (
+					fromPath: string,
+					toPath: string,
+					selectKey?: string
+				) => {
 					if (fromPath === undefined || toPath === undefined) return
 					uesio.builder.moveDefinition(
 						component.path.makeFullPath(
@@ -107,7 +111,8 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 							metadataType,
 							metadataItem,
 							toPath
-						)
+						),
+						selectKey
 					)
 				},
 			}}
