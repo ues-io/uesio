@@ -42,9 +42,6 @@ definition:
         uesio.profile:
         uesio.picture:
       conditions:
-        - field: uesio.site
-          valueSource: VALUE
-          value: $Param{sitename}_$Param{appname}
         - field: uesio.federationId
           valueSource: VALUE
           value: $Param{userid}
