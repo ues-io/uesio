@@ -1,8 +1,4 @@
-import {
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
+import { DefinitionList, YamlDoc } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
 
 type ConfigValueDependencies = {

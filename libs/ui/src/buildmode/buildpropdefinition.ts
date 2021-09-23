@@ -1,4 +1,4 @@
-import { DefinitionMap, UtilityProps } from "../definition/definition"
+import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
@@ -129,6 +129,7 @@ interface CustomProp extends BasePropDescriptor {
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
+	groupingValue?: string
 	groupingParents?: number
 	groupingProperty?: string
 	getGroupingFromKey?: boolean
