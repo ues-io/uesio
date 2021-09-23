@@ -1,7 +1,7 @@
 import { FC, createContext } from "react"
 import { component, styles, hooks, signal } from "@uesio/ui"
 import { FormProps } from "./formdefinition"
-import Layout from "../io.layout/layout"
+import ActionsBar from "./formActionBar"
 export const FormStylesContext = createContext({})
 
 type ListMode = "READ" | "EDIT"
@@ -11,7 +11,6 @@ type ListState = {
 }
 
 const IOTitleBar = component.registry.getUtility("io.titlebar")
-const IOButton = component.registry.getUtility("io.button")
 
 const Form: FC<FormProps> = (props) => {
 	const { definition, context, path } = props
@@ -21,12 +20,13 @@ const Form: FC<FormProps> = (props) => {
 		wire: wireName,
 		title,
 		subtitle,
+		defaultButtons,
 		id,
 		columnGap,
 		mode,
 	} = definition
 	const uesio = hooks.useUesio(props)
-	const wire = uesio.wire.useWire(wireName)
+	const wire = wireName ? uesio.wire.useWire(wireName) : context.getWire()
 
 	const classes = styles.useStyles(
 		{
@@ -57,20 +57,12 @@ const Form: FC<FormProps> = (props) => {
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<ListState>(id, {
-		mode: mode || "READ",
-	})
-
-	const signals: signal.SignalDefinition[] = [
-		{ signal: "wire/SAVE", wires: [wireName] },
+	const [componentState] = uesio.component.useState<ListState>(
+		definition.id,
 		{
-			signal: "notification/ADD",
-			text: "successfully submitted",
-		},
-		{ signal: "wire/EMPTY", wire: wireName },
-		{ signal: "wire/CREATE_RECORD", wire: wireName },
-	]
-	const [handler, portals] = uesio.signal.useHandler(signals)
+			mode: definition.mode || "READ",
+		}
+	)
 
 	const data = wire?.getData()
 
@@ -78,18 +70,6 @@ const Form: FC<FormProps> = (props) => {
 		top: defaultActionsBar && actionsBarPosition === "top",
 		bottom: defaultActionsBar && actionsBarPosition === "bottom",
 	}
-
-	const ActionsBar: FC = () => (
-		<div className={classes.actionsBar}>
-			<IOButton
-				label={"Submit"}
-				variant={definition["uesio.variant"]}
-				onClick={() => handler && handler()}
-				context={context}
-			/>
-			{portals}
-		</div>
-	)
 
 	return wire && data ? (
 		<div>
@@ -110,7 +90,9 @@ const Form: FC<FormProps> = (props) => {
 			/>
 
 			<div className={classes.formArea}>
-				{/* {showActionsBar.top && <ActionsBar />} */}
+				{defaultButtons.length && showActionsBar.top && (
+					<ActionsBar {...props} />
+				)}
 
 				{data.map((record) => (
 					<component.Slot
@@ -124,7 +106,9 @@ const Form: FC<FormProps> = (props) => {
 						})}
 					/>
 				))}
-				{showActionsBar.bottom && <ActionsBar />}
+				{defaultButtons.length && showActionsBar.bottom && (
+					<ActionsBar {...props} />
+				)}
 			</div>
 		</div>
 	) : (

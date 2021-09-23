@@ -179,7 +179,7 @@ const WireLink: FC<{
 		<span
 			role="button"
 			tabIndex={0}
-			title="Some title"
+			title="Edit Wire"
 			className={classes.root}
 			onClick={(e: React.MouseEvent<HTMLElement>) => props.onClick(e)}
 		>

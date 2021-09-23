@@ -4,13 +4,24 @@ import LayoutPropertyDefinition, {
 	LayoutTemplateProp,
 } from "../io.layout/layoutdefinition"
 
+type FormAction = "save" | "delete" | "cancel" | "edit"
+type FormMode = "READ" | "EDIT"
+type FormState = {
+	mode: FormMode
+}
+
 interface FormDefinition extends LayoutDefinition {
 	icon: string
+	id: string
+	wire?: string
+	defaultButtons: FormAction[]
 	[key: string]: any
 }
 interface FormProps extends definition.BaseProps {
 	definition: FormDefinition
 }
+
+const formActions = ["Save", "Edit", "Delete", "Cancel"]
 
 const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Form",
@@ -39,6 +50,11 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 		],
 	}),
 	properties: [
+		{
+			type: "TEXT",
+			name: "id",
+			label: "ID",
+		},
 		{
 			type: "TEXT",
 			name: "title",
@@ -82,14 +98,26 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 				) || [],
 		},
 		{
-			title: "submit",
+			title: "Actions bar",
 			type: "PROPLIST",
 			properties: [
 				{
-					name: "defaultActionsBar",
-					type: "BOOLEAN",
-					label: "Default Save & Submit",
+					name: "buttonVariant",
+					type: "METADATA",
+					metadataType: "COMPONENTVARIANT",
+					label: "Variant",
+					groupingValue: "io.button",
 				},
+				{
+					name: "defaultButtons",
+					label: "Buttons",
+					type: "MULTISELECT",
+					options: formActions.map((label) => ({
+						value: label.toLowerCase(),
+						label,
+					})) as builder.PropertySelectOption[],
+				},
+
 				{
 					name: "actionsBarPosition",
 					type: "SELECT",
@@ -119,6 +147,6 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	traits: ["uesio.standalone"],
 }
-export { FormProps, FormDefinition }
+export { FormProps, FormDefinition, FormState }
 
 export default FormPropertyDefinition

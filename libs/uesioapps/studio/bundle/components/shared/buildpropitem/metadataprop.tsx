@@ -19,8 +19,10 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			groupingParents = 1,
 			groupingProperty,
 			getGroupingFromKey,
+			groupingValue,
 		} = descriptor
-
+		console.log({ groupingValue })
+		if (groupingValue) return groupingValue
 		const groupingNodePath = component.path.getAncestorPath(
 			path || "",
 			groupingParents + 1
@@ -37,6 +39,7 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 
 		if (groupingProperty) return groupingNode[groupingProperty] as string
 	}
+	console.log({ grouping: getGrouping() })
 
 	return (
 		<MetadataPicker

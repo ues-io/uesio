@@ -179,11 +179,7 @@ const FieldHints: FC<T> = (props) => {
 
 	return fieldSuggestions ? (
 		<div onMouseLeave={() => setOpen(false)} className={classes.root}>
-			<div
-				onMouseEnter={() => setOpen(true)}
-				onClick={() => setOpen(!open)}
-				className={"fieldHint"}
-			>
+			<div onClick={() => setOpen(!open)} className={"fieldHint"}>
 				<span>Add field</span>
 			</div>
 			<Transition in={open} timeout={duration}>

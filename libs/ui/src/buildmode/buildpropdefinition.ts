@@ -119,6 +119,7 @@ interface CustomProp extends BasePropDescriptor {
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
+	groupingValue?: string
 	groupingParents?: number
 	groupingProperty?: string
 	getGroupingFromKey?: boolean

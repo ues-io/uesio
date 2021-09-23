@@ -10,6 +10,7 @@ import WiresProp from "../buildpropitem/wiresprop"
 import MetadataProp from "../buildpropitem/metadataprop"
 import NumberProp from "../buildpropitem/numberprop"
 import BooleanProp from "../buildpropitem/booleanprop"
+import MultiSelectProp from "../buildpropitem/multiselectprop"
 import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
 import StylesListProp from "../buildpropitem/styleslistprop"
@@ -48,6 +49,8 @@ function getPropHandler(type?: string) {
 			return StylesListProp
 		case "TEXT":
 			return TextProp
+		case "MULTISELECT":
+			return MultiSelectProp
 		case "CUSTOM":
 			return CustomProp
 		default:
