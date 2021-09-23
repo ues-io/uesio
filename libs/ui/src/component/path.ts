@@ -83,16 +83,6 @@ const fromPath = (pathArray: string[]) => {
 	}
 	return `["${pathArray.join(`"]["`)}"]`
 }
-// Return the path representation of a string path.
-const fromArray = (path: string) => {
-	const arr = path.split('"]["')
-	const pathArray = arr.map((el: string, i: number) => {
-		if (i === 0) return el.replace('["', "")
-		if (i === arr.length - 1) return el.replace('"]', "")
-		return el
-	})
-	return pathArray
-}
 
 const getParentPath = (path: string) => {
 	const pathArray = toPath(path)
@@ -102,6 +92,7 @@ const getParentPath = (path: string) => {
 
 const getParentPathArray = (pathArray: string[]) => pathArray.slice(0, -1)
 
+/*
 function isInt(str: string) {
 	let i = 0
 	if (str.length === 0) return false
@@ -111,6 +102,7 @@ function isInt(str: string) {
 	}
 	return true
 }
+*/
 
 /**
  * Predicts what to toPath will be assuming the fromPath content vanishes.
@@ -238,7 +230,6 @@ export {
 	getIndexPath,
 	getIndexFromPath,
 	getDefinitionKey,
-	fromArray,
 	getFullPathParts,
 	makeFullPath,
 	isNumberIndex,

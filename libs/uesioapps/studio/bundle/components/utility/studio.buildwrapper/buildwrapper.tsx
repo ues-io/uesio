@@ -1,9 +1,4 @@
-import React, {
-	FunctionComponent,
-	SyntheticEvent,
-	DragEvent,
-	useState,
-} from "react"
+import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
