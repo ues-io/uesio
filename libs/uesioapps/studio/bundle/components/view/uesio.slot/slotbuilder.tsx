@@ -35,7 +35,6 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		dragItem,
 		dragPath
 	)
-	const isStructureView = uesio.builder.useIsStructureView()
 
 	const size = items.length
 
@@ -145,7 +144,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	return (
 		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
-			{isDragging && isStructureView && (
+			{isDragging && (
 				<div className={classes.coverall} data-coverall="true" />
 			)}
 			{items.map((itemDef, index) => {

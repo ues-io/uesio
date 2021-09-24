@@ -46,13 +46,6 @@ component.registry.registerSignals("uesio.runtime", {
 		},
 		target: "panels",
 	},
-	TOGGLE_VIEW: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as string
-			setState(state !== "content" ? "content" : "structure")
-		},
-		target: "buildview",
-	},
 })
 
 const NAV_WIDTH = 50
