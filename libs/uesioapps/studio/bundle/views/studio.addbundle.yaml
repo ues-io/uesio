@@ -9,7 +9,7 @@ definition:
         studio.name:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
         - field: studio.app
           valueSource: PARAM
@@ -18,23 +18,23 @@ definition:
           valueSource: PARAM
           param: workspacename
     installablebundles:
-      collection: uesio.bundles
+      collection: studio.bundles
       fields:
         uesio.id:
-        uesio.app:
-        uesio.major:
-        uesio.minor:
-        uesio.patch:
+        studio.app:
+        studio.major:
+        studio.minor:
+        studio.patch:
     dependencies:
       collection: studio.bundledependencies
       fields:
         uesio.id:
         studio.bundle:
           fields:
-            uesio.appid:
-            uesio.major:
-            uesio.minor:
-            uesio.patch:
+            studio.app:
+            studio.major:
+            studio.minor:
+            studio.patch:
       conditions:
         - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}

@@ -1,5 +1,0 @@
-name: minor
-collection: uesio.bundles
-type: "TEXT"
-label: "Minor version"
-readOnly: true

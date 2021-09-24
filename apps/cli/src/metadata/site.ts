@@ -7,7 +7,7 @@ import { throwIfBadFormat } from "../validation/version"
 
 class Site {
 	static getCollectionName(): string {
-		return "uesio.sites"
+		return "studio.sites"
 	}
 	static getFields() {
 		return [
@@ -15,13 +15,13 @@ class Site {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.appid",
+				id: "studio.app",
 			},
 			{
-				id: "uesio.bundle",
+				id: "studio.bundle",
 			},
 		]
 	}
@@ -52,11 +52,11 @@ class Site {
 			this,
 			createChange([
 				{
-					"uesio.name": responses.name,
-					"uesio.bundle": {
+					"studio.name": responses.name,
+					"studio.bundle": {
 						"uesio.id": `${app}_${responses.version}`,
 					},
-					"uesio.appid": app,
+					"studio.app": app,
 				},
 			])
 		)

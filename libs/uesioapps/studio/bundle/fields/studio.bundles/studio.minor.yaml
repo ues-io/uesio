@@ -1,0 +1,5 @@
+name: minor
+collection: studio.bundles
+type: "TEXT"
+label: "Minor version"
+readOnly: true

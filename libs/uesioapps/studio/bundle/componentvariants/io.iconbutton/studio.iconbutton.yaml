@@ -1,0 +1,7 @@
+name: iconbutton
+component: io.iconbutton
+label: Icon Button Grid
+definition:
+  uesio.styles:
+    root:
+      fontSize: "18px"

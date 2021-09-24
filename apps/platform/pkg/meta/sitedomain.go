@@ -3,9 +3,9 @@ package meta
 // SiteDomain struct
 type SiteDomain struct {
 	ID        string    `uesio:"uesio.id"`
-	Site      string    `uesio:"uesio.site"`
-	Type      string    `uesio:"uesio.type"`
-	Domain    string    `uesio:"uesio.domain"`
+	Site      string    `uesio:"studio.site"`
+	Type      string    `uesio:"studio.type"`
+	Domain    string    `uesio:"studio.domain"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner     *User     `yaml:"-" uesio:"uesio.owner"`

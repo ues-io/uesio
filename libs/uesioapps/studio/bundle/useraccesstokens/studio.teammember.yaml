@@ -2,5 +2,5 @@ name: teammember
 type: "lookup"
 collection: studio.teammembers
 conditions:
-  - field: "studio.memberid"
-token: "${studio.teamid}"
+  - field: "studio.member"
+token: "${studio.app}"

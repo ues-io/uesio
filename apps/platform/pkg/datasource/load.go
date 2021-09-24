@@ -194,10 +194,6 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		}
 		userTokens = tokens
 	}
-	if len(userTokens) > 0 {
-		fmt.Println("LOAD TOKENS")
-		fmt.Println(userTokens)
-	}
 
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
@@ -226,41 +222,10 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 			return nil, err
 		}
 
-		err = adapter.Load(batch, &metadataResponse, credentials)
+		err = adapter.Load(batch, &metadataResponse, credentials, userTokens)
 		if err != nil {
 			return nil, err
 		}
-		/*
-			for i := range batch {
-				if !checkCollectionAccess {
-					break
-				}
-				op := batch[i]
-				if op.Collection == nil {
-					continue
-				}
-				collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-				if err != nil {
-					return nil, err
-				}
-				if collectionMetadata.Access != "protected" {
-					continue
-				}
-				err = op.Collection.Filter(func(record loadable.Item) (bool, error) {
-					access, err := DetermineAccessFromChallengeTokens(collectionMetadata, op.UserResponseTokens, record, session)
-					if err != nil {
-						return false, err
-					}
-					if access == "read" || access == "readwrite" {
-						return true, nil
-					}
-					return false, nil
-				})
-				if err != nil {
-					return nil, err
-				}
-			}
-		*/
 
 		// Now do our supplemental reference loads
 		for i := range batch {
@@ -326,7 +291,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 				}
 
 				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-					return adapter.Load(ops, &metadataResponse, credentials)
+					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})

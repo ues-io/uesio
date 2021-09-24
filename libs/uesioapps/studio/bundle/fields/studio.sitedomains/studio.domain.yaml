@@ -1,0 +1,4 @@
+name: domain
+collection: studio.sitedomains
+type: TEXT
+label: domain

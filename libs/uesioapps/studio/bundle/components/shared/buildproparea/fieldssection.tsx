@@ -41,11 +41,10 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	)
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
-	const isStructureView = uesio.builder.useIsStructureView()
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && isStructureView) {
+		if (target && target.dataset.type) {
 			uesio.builder.setDragNode("field", target.dataset.type, "")
 		}
 	}

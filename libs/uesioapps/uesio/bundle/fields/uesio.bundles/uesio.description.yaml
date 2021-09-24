@@ -1,5 +1,0 @@
-name: description
-collection: uesio.bundles
-type: "TEXT"
-label: "Bundle Description"
-readOnly: true

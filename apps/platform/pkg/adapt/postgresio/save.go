@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -52,9 +53,8 @@ func getPGType(field *adapt.FieldMetadata) string {
 }
 
 type DataValuer struct {
-	Data     interface{}
-	Field    *adapt.FieldMetadata
-	Metadata *adapt.MetadataCache
+	Data  interface{}
+	Field *adapt.FieldMetadata
 }
 
 func (dv DataValuer) Value() (driver.Value, error) {
@@ -67,7 +67,7 @@ func (dv DataValuer) Value() (driver.Value, error) {
 		return jsonValue, nil
 	}
 	if adapt.IsReference(fieldMetadata.Type) {
-		refValue, err := adapt.GetReferenceKey(dv.Data, fieldMetadata, dv.Metadata)
+		refValue, err := adapt.GetReferenceKey(dv.Data)
 		if err != nil {
 			return nil, errors.New("Error converting reference field: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
@@ -80,15 +80,16 @@ func (dv DataValuer) Value() (driver.Value, error) {
 }
 
 // Save function
-func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials) error {
+func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
 
 	db, err := connect(credentials)
 	if err != nil {
 		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
 	}
-	defer db.Close()
 
 	tenantID := credentials.GetTenantID()
+
+	recordsIDsList := map[string][]string{}
 
 	for _, request := range requests {
 
@@ -110,7 +111,7 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 		idFieldDBName := idFieldMetadata.GetFullName()
 
 		// Process Inserts
-		idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata, metadata)
+		idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
 		if err != nil {
 			return err
 		}
@@ -138,9 +139,8 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					return nil
 				}
 				builder.add(fieldID, DataValuer{
-					Data:     value,
-					Field:    fieldMetadata,
-					Metadata: metadata,
+					Data:  value,
+					Field: fieldMetadata,
 				}, getPGType(fieldMetadata))
 				return nil
 			})
@@ -156,16 +156,20 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			builder.add(idFieldDBName, newID, "text")
 
 			query := fmt.Sprintf("INSERT INTO public.data (id,collection,fields) VALUES ($1,$2,jsonb_build_object(%s))", builder.build())
-			fmt.Println(query)
+			fullRecordID := collectionName + ":" + newID
 
 			params := append([]interface{}{
-				collectionName + ":" + newID,
+				fullRecordID,
 				collectionName,
 			}, builder.Values...)
 
 			_, err = db.Exec(query, params...)
 			if err != nil {
 				return err
+			}
+
+			if collectionMetadata.Access == "protected" {
+				recordsIDsList[fullRecordID] = change.ReadWriteTokens
 			}
 
 		}
@@ -191,9 +195,8 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 					return nil
 				}
 				builder.add(fieldID, DataValuer{
-					Data:     value,
-					Field:    fieldMetadata,
-					Metadata: metadata,
+					Data:  value,
+					Field: fieldMetadata,
 				}, getPGType(fieldMetadata))
 				return nil
 			})
@@ -201,19 +204,22 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 				return err
 			}
 
+			fullRecordID := collectionName + ":" + change.IDValue.(string)
+
 			params := append([]interface{}{
-				collectionName + ":" + change.IDValue.(string),
+				fullRecordID,
 				collectionName,
 			}, builder.Values...)
 
 			query := fmt.Sprintf("UPDATE public.data SET fields = fields || jsonb_build_object(%s) WHERE id = $1 and collection = $2", builder.build())
-			fmt.Println(query)
 			_, err = db.Exec(query, params...)
 			if err != nil {
 				return err
 			}
-			return nil
 
+			if collectionMetadata.Access == "protected" {
+				recordsIDsList[fullRecordID] = change.ReadWriteTokens
+			}
 		}
 
 		for _, delete := range *request.Deletes {
@@ -223,13 +229,40 @@ func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, c
 			}
 
 			query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
-			fmt.Println(query)
 			_, err = db.Exec(query, []interface{}{
 				collectionName + ":" + delete.IDValue.(string),
 				collectionName,
-			})
+			}...)
 			if err != nil {
 				return err
+			}
+		}
+	}
+
+	if len(recordsIDsList) > 0 {
+		deleteIDs := []string{}
+		for key := range recordsIDsList {
+			deleteIDs = append(deleteIDs, key)
+		}
+		query := "DELETE FROM public.tokens WHERE recordid = ANY($1)"
+		_, err = db.Exec(query, []interface{}{
+			pq.Array(deleteIDs),
+		}...)
+		if err != nil {
+			return err
+		}
+
+		for key, tokens := range recordsIDsList {
+			for _, token := range tokens {
+				query := "INSERT INTO public.tokens (recordid,token,readonly) VALUES ($1,$2,$3)"
+				_, err = db.Exec(query, []interface{}{
+					key,
+					token,
+					false,
+				}...)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}

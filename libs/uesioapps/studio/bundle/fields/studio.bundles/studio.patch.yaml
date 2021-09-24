@@ -1,0 +1,5 @@
+name: patch
+collection: studio.bundles
+type: "TEXT"
+label: "Patch version"
+readOnly: true

@@ -1,0 +1,5 @@
+name: bundle
+collection: studio.sites
+type: REFERENCE
+label: Bundle
+referencedCollection: studio.bundles

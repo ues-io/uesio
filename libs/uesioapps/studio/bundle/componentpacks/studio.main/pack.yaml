@@ -46,6 +46,11 @@ components:
         - io.table.io.default
       utilities:
         - io.table
+    studio.collectionlist:
+      variants:
+        - io.tile.studio.item
+      utilities:
+        - io.tile
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.slot:

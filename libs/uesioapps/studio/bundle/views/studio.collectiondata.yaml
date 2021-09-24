@@ -9,7 +9,7 @@ definition:
         studio.name:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
         - field: studio.app
           valueSource: PARAM
@@ -146,4 +146,4 @@ definition:
                                   - studio.datamanager:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{appname}
-                                      fieldsWire: "fields"
+                                      usage: workspace

@@ -1,4 +1,0 @@
-name: apps
-dataSource: uesio.platform
-idFormat: "${uesio.name}"
-nameField: uesio.name

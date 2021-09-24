@@ -1,4 +1,4 @@
 name: users
 dataSource: uesio.platform
-idFormat: "${uesio.site}_${uesio.federationType}_${uesio.federationId}"
+idFormat: "${uesio.federationType}_${uesio.federationId}"
 nameField: uesio.lastname

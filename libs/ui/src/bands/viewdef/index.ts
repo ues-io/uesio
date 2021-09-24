@@ -1,13 +1,11 @@
 import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
 import setWith from "lodash/setWith"
 import toPath from "lodash/toPath"
-import { Definition, DefinitionMap } from "../../definition/definition"
+import { DefinitionMap } from "../../definition/definition"
 import yaml from "yaml"
 import {
-	addNodeAtPath,
 	addNodePairAtPath,
 	getNodeAtPath,
-	removeNodeAtPath,
 	setNodeAtPath,
 	newDoc,
 	parse,
@@ -18,8 +16,6 @@ import loadOp from "./operations/load"
 import builderOps from "../builder/operations"
 import viewdefAdapter from "./adapter"
 import {
-	calculateNewPathAheadOfTime,
-	fromPath,
 	getFullPathParts,
 	getIndexFromPath,
 	getKeyAtPath,
@@ -45,6 +41,7 @@ import {
 	AddDefinitionPairPayload,
 	ChangeDefinitionKeyPayload,
 } from "../builder"
+import { removeDef, addDef, setDef, moveDef } from "./reducers"
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
@@ -96,139 +93,6 @@ const cloneDef = (state: PlainViewDef, { path }: CloneDefinitionPayload) => {
 			definition: get(state.definition, toPath(path)),
 			key: newKey,
 		})
-	}
-}
-
-const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
-	const { path, definition } = payload
-	const pathArray = toPath(path)
-
-	// Set the definition JS Object
-	setWith(state, ["definition", ...pathArray], definition)
-	if (state.yaml) {
-		// create a new document so components using useYaml will rerender
-		state.yaml = parse(state.yaml.toString())
-		const newNode = definition ? state.yaml.createNode(definition) : null
-		setNodeAtPath(path, state.yaml.contents, newNode)
-	}
-}
-
-const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
-	const pathArray = toPath(payload.path)
-	if (pathArray.length > 0 && pathArray[0] === "components") {
-		pathArray.pop() // Remove the component name
-	}
-	const index = pathArray.pop() // Get the index
-	const parent = get(state.definition, pathArray)
-	if (index) {
-		if (Array.isArray(parent)) {
-			const newParent = parent.filter(
-				(item: Definition, itemIndex: number) =>
-					parseInt(index, 10) !== itemIndex
-			)
-			if (state.definition) {
-				setWith(state, ["definition", ...pathArray], newParent)
-			}
-		} else {
-			delete parent[index]
-			if (state.definition) {
-				setWith(state, ["definition", ...pathArray], parent)
-			}
-		}
-
-		if (state.yaml) {
-			// create a new document so components using useYaml will rerender
-			state.yaml = parse(state.yaml.toString())
-			removeNodeAtPath(pathArray.concat([index]), state.yaml.contents)
-		}
-	}
-}
-
-const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
-	const fromParentPath = getParentPath(payload.toPath)
-	const toParentPath = getParentPath(payload.toPath)
-	const isArrayClone = isNumberIndex(getKeyAtPath(toParentPath))
-
-	if (!isArrayClone) {
-		const fromPathStr = payload.fromPath
-		const toPathStr = payload.toPath
-
-		if (fromParentPath !== toParentPath) return
-
-		const fromKey = getKeyAtPath(fromPathStr)
-		const toKey = getKeyAtPath(toPathStr)
-		const definition = get(state.definition, fromParentPath)
-
-		if (!definition || !fromKey || !toKey) return
-
-		const keys = Object.keys(definition)
-		const fromIndex = keys.indexOf(fromKey)
-		const toIndex = keys.indexOf(toKey)
-
-		const newKeys = keys.map((el, i) => {
-			if (i === fromIndex) return keys[toIndex]
-			if (i === toIndex) return keys[fromIndex]
-			return el
-		})
-
-		const newDefinition = newKeys.reduce(
-			(obj, item) => ({
-				...obj,
-				[item]: definition[item],
-			}),
-			{}
-		)
-
-		return setDef(state, {
-			path: fromParentPath,
-			definition: newDefinition,
-		})
-	}
-
-	const fromPathStr = payload.fromPath
-	const fromPathArray = toPath(fromPathStr)
-	fromPathArray.splice(-1)
-	//Grab current definition
-	const definition = get(state.definition, fromPathArray)
-	//Remove the original
-	removeDef(state, { ...payload, path: fromPathStr })
-	const toPathStr = payload.toPath
-	const pathArray = toPath(toPathStr)
-	const index = parseInt(pathArray[pathArray.length - 2], 10)
-	const updatedPathStr = calculateNewPathAheadOfTime(
-		payload.fromPath,
-		payload.toPath
-	)
-	const updatePathArr = toPath(updatedPathStr)
-	updatePathArr.splice(-2)
-	//Add back in the intended spot
-	addDef(state, {
-		...payload,
-		definition,
-		index,
-		path: fromPath(updatePathArr),
-	})
-}
-
-const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
-	const { path, definition, index } = payload
-	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path)
-	let newIndex: number
-	if (!currentArray) {
-		newIndex = 0
-		setWith(state, ["definition", ...pathArray], [definition])
-	} else {
-		newIndex = index === undefined ? currentArray.length : index
-		currentArray.splice(newIndex, 0, definition)
-	}
-	if (state.yaml && definition) {
-		// create a new document so components using useYaml will rerender
-		state.yaml = parse(state.yaml.toString())
-		const newNode = state.yaml.createNode(definition)
-		if (newNode) {
-			addNodeAtPath(path, state.yaml.contents, newNode, newIndex)
-		}
 	}
 }
 

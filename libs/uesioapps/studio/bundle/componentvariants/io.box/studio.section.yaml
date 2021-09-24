@@ -1,0 +1,12 @@
+name: section
+component: io.box
+label: Section
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: white
+      margin: 40px
+      padding: 40px
+      borderRadius: 8px
+      fontSize: 10pt
+      boxShadow: rgb(0 0 0 / 3%) 0px 0px 4px

@@ -11,7 +11,7 @@ const UESIO_STUDIO_WORKSPACE = "workspace"
 const UESIO_BUNDLE_CREATE_ENDPOINT = "metadata/storebundle"
 class Bundle {
 	static getCollectionName(): string {
-		return "uesio.bundles"
+		return "studio.bundles"
 	}
 	static getFields() {
 		return [
@@ -19,16 +19,16 @@ class Bundle {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.appid",
+				id: "studio.app",
 			},
 			{
-				id: "uesio.major",
+				id: "studio.major",
 			},
 			{
-				id: "uesio.minor",
+				id: "studio.minor",
 			},
 			{
-				id: "uesio.patch",
+				id: "studio.patch",
 			},
 		]
 	}

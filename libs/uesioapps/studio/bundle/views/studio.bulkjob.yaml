@@ -9,7 +9,7 @@ definition:
         studio.name:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
         - field: studio.app
           valueSource: PARAM
@@ -21,7 +21,6 @@ definition:
       collection: uesio.bulkjobs
       fields:
         uesio.id:
-        uesio.site:
         uesio.spec:
       conditions:
         - field: uesio.id

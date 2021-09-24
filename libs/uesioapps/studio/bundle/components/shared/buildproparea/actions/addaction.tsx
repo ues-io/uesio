@@ -4,9 +4,8 @@ import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
 const AddAction: FunctionComponent<ActionProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-
 	const action = props.action as builder.AddAction
+
 	if (!action) {
 		return null
 	}

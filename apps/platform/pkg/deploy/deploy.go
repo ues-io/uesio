@@ -195,6 +195,7 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 	// Upload workspace properties like homeRoute and loginRoute
 	workspaceItem := (&meta.Workspace{
 		ID:             workspace,
+		App:            session.GetSite().App,
 		LoginRoute:     by.LoginRoute,
 		HomeRoute:      by.HomeRoute,
 		DefaultProfile: by.DefaultProfile,

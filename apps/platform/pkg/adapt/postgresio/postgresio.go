@@ -13,7 +13,17 @@ import (
 type Adapter struct {
 }
 
+// TODO: Figure out a way to clean up and close unused clients
+var clientPool = map[string]*sql.DB{}
+
 func connect(credentials *adapt.Credentials) (*sql.DB, error) {
+	hash := credentials.GetHash()
+	// Check the pool for a client
+	client, ok := clientPool[hash]
+	if ok {
+		return client, nil
+	}
+
 	host, ok := (*credentials)["host"]
 	if !ok {
 		return nil, errors.New("No host provided in credentials")
@@ -49,6 +59,8 @@ func connect(credentials *adapt.Credentials) (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
+
+	clientPool[hash] = db
 
 	return db, nil
 }

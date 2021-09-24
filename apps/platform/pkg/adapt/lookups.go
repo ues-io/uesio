@@ -141,7 +141,7 @@ func mergeBatchInfo(op *SaveOp, index int, batch []SaveOp, metadata *MetadataCac
 		for i := 0; i < index; i++ {
 			if batch[i].CollectionName == refCollectionName {
 				// Make a map of all the items that could be referenced by id template
-				template, err := NewFieldChanges(refCollectionMetadata.IDFormat, refCollectionMetadata, metadata)
+				template, err := NewFieldChanges(refCollectionMetadata.IDFormat, refCollectionMetadata)
 				if err != nil {
 					return err
 				}
@@ -203,7 +203,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
 	matchTemplate := getStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
 
-	template, err := NewFieldChanges(matchTemplate, refCollectionMetadata, metadata)
+	template, err := NewFieldChanges(matchTemplate, refCollectionMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.IDField)
 		matchTemplate := getStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
 
-		template, err := NewFieldChanges(matchTemplate, collectionMetadata, metadata)
+		template, err := NewFieldChanges(matchTemplate, collectionMetadata)
 		if err != nil {
 			return nil, err
 		}
@@ -369,7 +369,7 @@ func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *Change
 		return err
 	}
 
-	template, err := NewFieldChanges(matchTemplate, collectionMetadata, metadata)
+	template, err := NewFieldChanges(matchTemplate, collectionMetadata)
 	if err != nil {
 		return err
 	}

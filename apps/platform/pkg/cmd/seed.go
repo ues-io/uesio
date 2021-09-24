@@ -109,7 +109,11 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	adapter.Migrate(credentials)
+	err = adapter.Migrate(credentials)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
 
 	// Read files from seed folder
 	var apps meta.AppCollection
@@ -154,6 +158,14 @@ func seed(cmd *cobra.Command, args []string) {
 	// Read files from seed folder
 	var users meta.UserCollection
 	err = GetSeedDataFile(&users, "users.json")
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	// Read files from seed folder
+	var configstorevalues meta.ConfigStoreValueCollection
+	err = GetSeedDataFile(&configstorevalues, "configstorevalues.json")
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -211,13 +223,19 @@ func seed(cmd *cobra.Command, args []string) {
 				Lookups: []adapt.Lookup{
 					{
 						RefField:   "studio.app",
-						MatchField: "uesio.name",
+						MatchField: "studio.name",
 					},
 				},
 			},
 		},
 		{
 			Collection: &users,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+		{
+			Collection: &configstorevalues,
 			Options: &adapt.SaveOptions{
 				Upsert: &adapt.UpsertOptions{},
 			},
@@ -229,10 +247,6 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	err = seedCollection("studio.teams", "studio.teams.json", session)
-	if err != nil {
-		return
-	}
-	err = seedCollection("studio.teampermissions", "studio.teampermissions.json", session)
 	if err != nil {
 		return
 	}

@@ -2,6 +2,7 @@ import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
+
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
 }
@@ -17,9 +18,6 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
-	const isStructureView = uesio.builder.useIsStructureView()
-	const isContentView = !isStructureView
-	const showHeader = isStructureView || (isContentView && isSelected)
 	const propDef = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
@@ -31,7 +29,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		dragItem,
 		dragPath
 	)
-	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const [, , dropPath] = uesio.builder.useDropNode()
 	const dragger = {
 		fullDragPath,
 		dropNode: dropPath,
@@ -83,13 +81,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const addAfterPlaceholder =
 		`${wrapperPath}["${index + 1}"]` === dragger.dropNode
 	const classes = styles.useUtilityStyles(
-		styling(
-			isSelected,
-			isActive,
-			isStructureView,
-			isContentView,
-			dragger.isDragging
-		),
+		styling(isSelected, isActive, dragger.isDragging),
 		props
 	)
 	return (
@@ -120,19 +112,15 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
-				{showHeader && (
+				{
 					<div
 						className={classes.header}
-						onMouseDown={() => isStructureView && setCanDrag(true)}
-						onMouseUp={() =>
-							isStructureView &&
-							dragger.dragNode &&
-							setCanDrag(false)
-						}
+						onMouseDown={() => setCanDrag(true)}
+						onMouseUp={() => dragger.dragNode && setCanDrag(false)}
 					>
 						{propDef?.title ?? "Unknown"}
 					</div>
-				)}
+				}
 				<div className={classes.inner}>{children}</div>
 			</div>
 			{addAfterPlaceholder && (

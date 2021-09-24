@@ -2,4 +2,4 @@ name: bundle
 collection: studio.bundledependencies
 type: REFERENCE
 label: Bundle
-referencedCollection: uesio.bundles
+referencedCollection: studio.bundles

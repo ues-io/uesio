@@ -5,6 +5,7 @@ definition:
   uesio.styles:
     root:
       padding: "8px"
+      fontSize: "18px"
       color: "#555"
       "&:focus":
         background: "#ddd"
