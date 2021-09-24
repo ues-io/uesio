@@ -32,8 +32,6 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 		definition.namespace
 	)
 
-	console.log("collections", collections)
-
 	if (collections) {
 		return (
 			<>
@@ -80,7 +78,6 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 	})
 
 	const namespaces = uesio.builder.useAvailableNamespaces(newContext)
-	console.log(namespaces)
 	if (namespaces) {
 		return (
 			<>

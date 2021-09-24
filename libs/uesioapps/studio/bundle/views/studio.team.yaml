@@ -3,14 +3,14 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     teams:
@@ -21,8 +21,8 @@ definition:
         studio.app:
           fields:
             uesio.id:
-            uesio.name:
-            uesio.color:
+            studio.name:
+            studio.color:
       conditions:
         - field: studio.app
           valueSource: PARAM

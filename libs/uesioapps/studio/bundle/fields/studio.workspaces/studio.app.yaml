@@ -2,4 +2,4 @@ name: app
 collection: studio.workspaces
 type: REFERENCE
 label: App
-referencedCollection: uesio.apps
+referencedCollection: studio.apps

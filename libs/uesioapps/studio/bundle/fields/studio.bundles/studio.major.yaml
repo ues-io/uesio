@@ -1,5 +1,5 @@
 name: major
-collection: uesio.bundles
+collection: studio.bundles
 type: "TEXT"
 label: "Major version"
 readOnly: true

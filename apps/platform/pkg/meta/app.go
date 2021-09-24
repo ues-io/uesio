@@ -3,9 +3,9 @@ package meta
 // App struct
 type App struct {
 	ID          string    `uesio:"uesio.id"`
-	Name        string    `uesio:"uesio.name"`
-	Description string    `uesio:"uesio.description"`
-	Color       string    `uesio:"uesio.color"`
+	Name        string    `uesio:"studio.name"`
+	Description string    `uesio:"studio.description"`
+	Color       string    `uesio:"studio.color"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner       *User     `yaml:"-" uesio:"uesio.owner"`

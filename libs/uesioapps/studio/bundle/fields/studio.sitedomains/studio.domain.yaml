@@ -1,4 +1,4 @@
 name: domain
-collection: uesio.sitedomains
+collection: studio.sitedomains
 type: TEXT
 label: domain

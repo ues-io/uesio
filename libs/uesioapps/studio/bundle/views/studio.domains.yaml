@@ -3,56 +3,56 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     sites:
-      collection: uesio.sites
+      collection: studio.sites
       fields:
         uesio.id:
-        uesio.name:
-        uesio.bundle:
-        uesio.app:
+        studio.name:
+        studio.bundle:
+        studio.app:
           fields:
             uesio.id:
-            uesio.name:
-            uesio.color:
+            studio.name:
+            studio.color:
       conditions:
-        - field: uesio.app
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: sitename
     domains:
-      collection: uesio.sitedomains
+      collection: studio.sitedomains
       fields:
         uesio.id:
-        uesio.type:
-        uesio.domain:
+        studio.type:
+        studio.domain:
       conditions:
-        - field: uesio.site
+        - field: studio.site
           valueSource: VALUE
           value: $Param{sitename}_$Param{appname}
     newdomain:
-      collection: uesio.sitedomains
+      collection: studio.sitedomains
       fields:
         uesio.id:
-        uesio.type:
-        uesio.domain:
+        studio.type:
+        studio.domain:
       type: CREATE
       defaults:
-        - field: uesio.site
+        - field: studio.site
           valueSource: VALUE
           value: $Param{sitename}_$Param{appname}
-        - field: uesio.type
+        - field: studio.type
           valueSource: VALUE
           value: subdomain
   # Components are how we describe the layout of our view
@@ -104,7 +104,7 @@ definition:
                                 uesio.variant: io.item
                                 content:
                                   - io.text:
-                                      text: ${uesio.type} ${uesio.domain}
+                                      text: ${studio.type} ${studio.domain}
                                 avatar:
                                   - io.text:
                                       uesio.variant: io.icon
@@ -112,7 +112,7 @@ definition:
                                       text: verified_user
                                 signals:
                                   - signal: "route/REDIRECT"
-                                    path: "https://${uesio.domain}.$Site{domain}"
+                                    path: "https://${studio.domain}.$Site{domain}"
                                     newtab: true
   panels:
     - io.dialog:
@@ -127,7 +127,7 @@ definition:
               mode: EDIT
               components:
                 - io.field:
-                    fieldId: uesio.domain
+                    fieldId: studio.domain
         actions:
           - io.button:
               uesio.variant: "io.primary"

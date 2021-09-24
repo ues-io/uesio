@@ -9,11 +9,8 @@ import (
 // NewJob func
 func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 
-	site := session.GetSite()
-
 	job := meta.BulkJob{
 		Spec: *spec,
-		Site: site.GetFullName(),
 	}
 
 	err := datasource.PlatformSaveOne(&job, nil, session)

@@ -33,54 +33,54 @@ definition:
                 - io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio.apps
+                        collection: studio.apps
                     id: appslist
                     components:
                       - io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${uesio.name}
+                              path: app/${studio.name}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: ${uesio.name}
+                                text: ${studio.name}
                                 element: div
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: "${uesio.color}"
+                                color: "${studio.color}"
                                 text: circle
                 - io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio.sites
+                        collection: studio.sites
                     id: sitestag
                     components:
                       - io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio.app"]["uesio.id"]}
+                              path: app/${["studio.app"]["uesio.id"]}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: ${["uesio.app"]["uesio.id"]}
+                                text: ${["studio.app"]["uesio.id"]}
                                 element: div
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: ${["uesio.app"]["uesio.color"]}
+                                color: ${["studio.app"]["studio.color"]}
                                 text: circle
                       - io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio.app"]["uesio.id"]}/site/${uesio.name}
+                              path: app/${["studio.app"]["uesio.id"]}/site/${studio.name}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: ${uesio.name}
+                                text: ${studio.name}
                                 element: div
                           avatar:
                             - io.text:
@@ -90,33 +90,33 @@ definition:
                 - io.list:
                     uesio.display:
                       - type: collectionContext
-                        collection: uesio.bundles
+                        collection: studio.bundles
                     id: sitestag
                     components:
                       - io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio.app"]["uesio.id"]}
+                              path: app/${["studio.app"]["uesio.id"]}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: ${["uesio.app"]["uesio.id"]}
+                                text: ${["studio.app"]["uesio.id"]}
                                 element: div
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: ${["uesio.app"]["uesio.color"]}
+                                color: ${["studio.app"]["studio.color"]}
                                 text: circle
                       - io.tile:
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: app/${["uesio.app"]["uesio.id"]}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}
+                              path: app/${["studio.app"]["uesio.id"]}/bundle/${studio.major}/${studio.minor}/${studio.patch}
                           uesio.variant: io.tag
                           content:
                             - io.text:
                                 uesio.variant: io.tag
-                                text: v${["uesio.app"]["uesio.id"]}.${uesio.major}.${uesio.minor}.${uesio.patch}
+                                text: v${["studio.app"]["uesio.id"]}.${studio.major}.${studio.minor}.${studio.patch}
                                 element: div
                           avatar:
                             - io.text:
@@ -142,7 +142,7 @@ definition:
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: ${["studio.app"]["uesio.color"]}
+                                color: ${["studio.app"]["studio.color"]}
                                 text: circle
                       - io.tile:
                           signals:
@@ -178,7 +178,7 @@ definition:
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
-                                color: ${["studio.app"]["uesio.color"]}
+                                color: ${["studio.app"]["studio.color"]}
                                 text: circle
                       - io.tile:
                           signals:

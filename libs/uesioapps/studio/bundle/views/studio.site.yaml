@@ -3,32 +3,32 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     sites:
-      collection: uesio.sites
+      collection: studio.sites
       fields:
         uesio.id:
-        uesio.name:
-        uesio.bundle:
-        uesio.app:
+        studio.name:
+        studio.bundle:
+        studio.app:
           fields:
             uesio.id:
-            uesio.name:
-            uesio.color:
+            studio.name:
+            studio.color:
       conditions:
-        - field: uesio.app
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: sitename
   # Components are how we describe the layout of our view
@@ -60,7 +60,7 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: Site - ${uesio.name}
+                          title: Site - ${studio.name}
                           actions:
                             - io.group:
                                 components:
@@ -84,9 +84,9 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - io.field:
-                                      fieldId: uesio.name
+                                      fieldId: studio.name
                                   - io.field:
-                                      fieldId: uesio.bundle
+                                      fieldId: studio.bundle
                 - io.box:
                     uesio.variant: io.section
                     components:
@@ -126,9 +126,9 @@ definition:
               mode: EDIT
               components:
                 - io.field:
-                    fieldId: uesio.name
+                    fieldId: studio.name
                 - io.field:
-                    fieldId: uesio.bundle
+                    fieldId: studio.bundle
         actions:
           - io.button:
               uesio.variant: "io.primary"
