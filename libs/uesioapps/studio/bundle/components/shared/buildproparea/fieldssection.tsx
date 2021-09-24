@@ -56,8 +56,8 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const fieldKeys = fields && Object.keys(fields)
 
 	const [searchTerm, setSearchTerm] = useState("")
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setSearchTerm(event.target.value)
+	const handleChange = (value: string) => {
+		setSearchTerm(value)
 	}
 
 	const results = !searchTerm
@@ -72,15 +72,17 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			defaultExpanded={false}
 			title={section.title}
 			context={context}
+			searchValue={searchTerm}
+			onSearch={handleChange}
 		>
-			<input
-				className={classes.search}
-				value={searchTerm}
-				onChange={handleChange}
-				type="search"
-				placeholder="Search..."
-			/>
-			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
+			<div
+				style={{
+					display: "grid",
+					rowGap: "8px",
+				}}
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+			>
 				{collectionKey &&
 					results &&
 					results.map((fieldId, index) => {
