@@ -37,7 +37,6 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		grouping
 	)
 
-	console.log({ metadataType, namespace, metadata })
 	const getMetadataName = (key: string) => {
 		if (metadataType === "COMPONENTVARIANT") {
 			const [, , , name] = component.path.parseVariantKey(key)

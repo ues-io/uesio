@@ -6,6 +6,8 @@ interface ButtonProps extends definition.UtilityProps {
 	label?: string
 	width?: string
 	isSelected?: boolean
+	icon?: React.Component
+	disabled?: boolean
 }
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
@@ -18,21 +20,25 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				cursor: "pointer",
 				...(width && { width }),
 			},
-			label: {},
+			label: {
+				verticalAlign: "middle",
+			},
 			selected: {},
 		},
 		props
 	)
-	const { onClick, label } = props
+	const { onClick, label, disabled } = props
 	return (
 		<button
+			disabled={disabled}
 			onClick={onClick}
 			className={styles.cx(
 				classes.root,
 				props.isSelected && classes.selected
 			)}
 		>
-			<div className={classes.label}>{label}</div>
+			{props.icon}
+			<span className={classes.label}>{label}</span>
 		</button>
 	)
 }

@@ -1,29 +1,19 @@
 import { FC, createContext } from "react"
 import { component, styles, hooks, signal } from "@uesio/ui"
-import { FormProps } from "./formdefinition"
+import { FormProps, FormState } from "./formdefinition"
 import ActionsBar from "./formActionBar"
 export const FormStylesContext = createContext({})
-
-type ListMode = "READ" | "EDIT"
-
-type ListState = {
-	mode: ListMode
-}
 
 const IOTitleBar = component.registry.getUtility("io.titlebar")
 
 const Form: FC<FormProps> = (props) => {
 	const { definition, context, path } = props
 	const {
-		defaultActionsBar,
-		actionsBarPosition,
 		wire: wireName,
 		title,
 		subtitle,
 		defaultButtons,
-		id,
 		columnGap,
-		mode,
 	} = definition
 	const uesio = hooks.useUesio(props)
 	const wire = wireName ? uesio.wire.useWire(wireName) : context.getWire()
@@ -50,14 +40,14 @@ const Form: FC<FormProps> = (props) => {
 		props
 	)
 
-	// If we got a wire from the definition, add it to context
+	// If we receive a wire from the definition, add it to context
 	const newContext = wireName
 		? context.addFrame({
 				wire: wireName,
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<ListState>(
+	const [componentState] = uesio.component.useState<FormState>(
 		definition.id,
 		{
 			mode: definition.mode || "READ",
@@ -65,11 +55,6 @@ const Form: FC<FormProps> = (props) => {
 	)
 
 	const data = wire?.getData()
-
-	const showActionsBar = {
-		top: defaultActionsBar && actionsBarPosition === "top",
-		bottom: defaultActionsBar && actionsBarPosition === "bottom",
-	}
 
 	return wire && data ? (
 		<div>
@@ -89,12 +74,8 @@ const Form: FC<FormProps> = (props) => {
 				}
 			/>
 
-			<div className={classes.formArea}>
-				{defaultButtons.length && showActionsBar.top && (
-					<ActionsBar {...props} />
-				)}
-
-				{data.map((record) => (
+			{data.map((record) => (
+				<div className={classes.formArea}>
 					<component.Slot
 						definition={definition}
 						listName="sections"
@@ -105,11 +86,17 @@ const Form: FC<FormProps> = (props) => {
 							fieldMode: componentState?.mode,
 						})}
 					/>
-				))}
-				{defaultButtons.length && showActionsBar.bottom && (
-					<ActionsBar {...props} />
-				)}
-			</div>
+					{defaultButtons.length && (
+						<ActionsBar
+							{...props}
+							context={newContext.addFrame({
+								record: record.getId(),
+								fieldMode: componentState?.mode,
+							})}
+						/>
+					)}
+				</div>
+			))}
 		</div>
 	) : (
 		<div />

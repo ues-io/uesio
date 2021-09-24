@@ -1,20 +1,8 @@
 import { FC } from "react"
-import {
-	builder,
-	component,
-	definition,
-	hooks,
-	styles,
-	signal,
-} from "@uesio/ui"
-import FormSection from "../io.formsection/formsection"
+import { component, definition, hooks, styles, signal } from "@uesio/ui"
 import { FormDefinition } from "./formdefinition"
-import { defaultTo } from "lodash"
 
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const IOButton = component.registry.getUtility("io.button")
-const IOFormSection = component.registry.getUtility("io.formsection")
-
 interface T extends definition.BaseProps {
 	definition: FormDefinition
 }
@@ -28,8 +16,8 @@ type Signals = {
 
 const FormActionsBar: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { path, context, definition } = props
-	const { wire, template, defaultButtons, id } = definition
+	const { context, definition } = props
+	const { wire, defaultButtons, id, actionsBarPosition } = definition
 
 	const signals: Signals = {
 		save: [
@@ -43,7 +31,10 @@ const FormActionsBar: FC<T> = (props) => {
 		],
 		edit: [{ signal: "component/io.form/TOGGLE_MODE", target: id }],
 		cancel: [{ signal: "wire/CANCEL", wire }],
-		delete: [{ signal: "wire/CANCEL", wire }],
+		delete: [
+			{ signal: "wire/MARK_FOR_DELETE", wire },
+			{ signal: "wire/SAVE", wire },
+		],
 	}
 
 	const classes = styles.useStyles(
@@ -51,6 +42,7 @@ const FormActionsBar: FC<T> = (props) => {
 			root: {
 				textAlign: "right",
 				flex: "100%",
+				order: actionsBarPosition === "top" ? -1 : "initial",
 			},
 			buttonGroup: {
 				display: "inline-flex",
@@ -65,6 +57,17 @@ const FormActionsBar: FC<T> = (props) => {
 		handler && handler()
 	}
 
+	const Wire = context.getWire()
+	const wireHasChanges = false
+	// const wireHasChanges =
+	// 	Wire && Object.keys(Object.values(Wire.source.changes)[0]).length !== 0
+	const disableChecks = {
+		save: !wireHasChanges, // Disable Save button when wire has no changes
+		cancel: !wireHasChanges, // Disable Save button when wire has no changes
+		edit: false,
+		delete: false,
+	}
+
 	return (
 		<div className={classes.root}>
 			<div className={classes.buttonGroup}>
@@ -73,6 +76,7 @@ const FormActionsBar: FC<T> = (props) => {
 						variant={definition.buttonVariant}
 						label={text.charAt(0).toUpperCase() + text.slice(1)}
 						onClick={() => fireSignals(signals[text])}
+						disabled={disableChecks[text]}
 						context={context}
 					/>
 				))}

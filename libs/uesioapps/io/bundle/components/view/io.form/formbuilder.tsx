@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect, useMemo, useState } from "react"
 import { definition, styles, component, hooks, context as ctx } from "@uesio/ui"
 import Form from "./form"
 import { FormProps } from "./formdefinition"
@@ -21,12 +21,28 @@ const FormBuilder: FC<FormProps> = (props) => {
 	const wiresInDef = uesio.builder.useDefinition(
 		defWiresPath
 	) as definition.DefinitionMap
-	const availableWires = wiresInDef && Object.keys(wiresInDef)
 
 	const formDef = uesio.builder.useDefinition(
 		component.path.makeFullPath(metadataType, metadataItem, path)
 	) as definition.DefinitionMap
-	const wire = formDef.wire || context.getWire()?.source.name
+	const wire = uesio.wire.useWire(formDef.wire as string)
+	const wireId = wire?.getId() as string
+
+	// We the wire name changes, we want to set the new name in the formDef
+	const [savedWireId, setSavedWireId] = useState<string | null>(wireId)
+	const [defWireHistory, setDefWireHistory] = useState<any>([wiresInDef])
+	useEffect(() => {
+		setDefWireHistory([...defWireHistory, wiresInDef])
+
+		if (defWireHistory.length < 2) return
+		const newArr = Object.keys(wiresInDef)
+		const prevArr = Object.keys(defWireHistory[defWireHistory.length - 2])
+		const changedKey = newArr.filter((el) => !prevArr.includes(el))[0]
+		if (changedKey === undefined) return
+
+		if (changedKey && !wire && !newArr.includes(`${savedWireId}`))
+			return setWire(changedKey)
+	}, [wiresInDef])
 
 	const onWireClick = (
 		e: React.MouseEvent<HTMLElement>,
@@ -36,6 +52,7 @@ const FormBuilder: FC<FormProps> = (props) => {
 		const wireName =
 			wireId || "newwire" + (Math.floor(Math.random() * 60) + 1)
 
+		// Create new wire
 		if (!wireId) {
 			uesio.builder.addDefinitionPair(
 				defWiresPath,
@@ -53,7 +70,7 @@ const FormBuilder: FC<FormProps> = (props) => {
 			)
 
 			uesio.setContext(new ctx.Context([{ view: "$root" }]))
-			console.log({ uesio })
+
 			const showWires = uesio.signal.getHandler([
 				{
 					signal: "component/uesio.runtime/SHOW_WIRES",
@@ -68,6 +85,7 @@ const FormBuilder: FC<FormProps> = (props) => {
 			wireName,
 			"wire"
 		)
+		setWire(wireName)
 	}
 
 	const classes = styles.useStyles(
@@ -96,21 +114,57 @@ const FormBuilder: FC<FormProps> = (props) => {
 		}
 	)
 
+	const wireHelpMessage = (() => {
+		if (!formDef.wire)
+			return "Forms need to be connected to a wire, select one."
+		if (formDef.wire && !wire)
+			return `Wire "${formDef.wire}" does not exist`
+		return "Something went wrong"
+	})()
+
+	useEffect(() => {
+		if (wire?.getData().length === 0) {
+			wire.setRecord("1", {})
+		}
+	}, [wire])
+
+	const setWire = (w: string) => {
+		uesio.builder.setDefinition(
+			component.path.makeFullPath(
+				metadataType,
+				metadataItem,
+				component.path.fromPath([
+					...component.path.toPath(path),
+					"wire",
+				])
+			),
+			w
+		)
+		const wireUpdate = uesio.signal.getHandler([
+			{
+				signal: "wire/LOAD",
+				wires: [w],
+			},
+		])
+
+		wireUpdate && wireUpdate()
+	}
+
 	return (
 		<BuildWrapper
 			{...props}
 			classes={classes}
 			subtitle={
-				formDef.wire ? (
+				wire ? (
 					<WireLink
 						context={context}
-						wire={formDef.wire as string}
+						wire={wireId}
 						onClick={(e: React.MouseEvent<HTMLElement>) => {
 							e.stopPropagation()
 							uesio.builder.setSelectedNode(
 								metadataType,
 								metadataItem,
-								`["wires"]["${formDef.wire}"]`
+								`["wires"]["${wireId}"]`
 							)
 						}}
 					/>
@@ -123,9 +177,9 @@ const FormBuilder: FC<FormProps> = (props) => {
 						<p>
 							<Icon icon="power" context={props.context} />
 						</p>
-						<p>Forms need to be connected to a wire, select one.</p>
+						<p>{wireHelpMessage}</p>
 						<div className={classes.wireButtonGroup}>
-							{availableWires.map((wire) => (
+							{Object.keys(wiresInDef).map((wire) => (
 								<Button
 									icon="power"
 									onClick={(
