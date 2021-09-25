@@ -2,21 +2,21 @@
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "prod_studio_mock_MockBen"
+		"studio.member": "mock_MockBen"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "prod_studio_mock_MockAbel"
+		"studio.member": "mock_MockAbel"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "prod_studio_mock_MockWessel"
+		"studio.member": "mock_MockWessel"
 	},
 	{
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
-		"studio.member": "prod_studio_mock_MockGregg"
+		"studio.member": "mock_MockGregg"
 	}
 ]
