@@ -1,0 +1,5 @@
+name: status
+collection: crm.leads
+type: SELECT
+label: Status
+selectList: crm.status

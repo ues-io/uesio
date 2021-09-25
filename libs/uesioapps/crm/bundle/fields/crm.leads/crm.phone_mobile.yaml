@@ -1,0 +1,4 @@
+name: phone_mobile
+collection: crm.leads
+type: TEXT
+label: Phone Mobile
