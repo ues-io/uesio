@@ -1,5 +1,5 @@
 name: externalid
 collection: crm.contacts
 type: TEXT
-label: exzernalid
+label: External ID
 readOnly: true
