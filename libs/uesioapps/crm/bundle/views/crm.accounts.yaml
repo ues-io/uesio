@@ -32,7 +32,7 @@ definition:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: accountsTable
-                    text: Mode 3
+                    text: Mode
                     uesio.variant: io.secondary
     - io.box:
         uesio.styles:
