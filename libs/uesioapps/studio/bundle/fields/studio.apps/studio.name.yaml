@@ -1,5 +1,5 @@
 name: name
-collection: uesio.apps
+collection: studio.apps
 type: TEXT
 label: Name
 createOnly: true

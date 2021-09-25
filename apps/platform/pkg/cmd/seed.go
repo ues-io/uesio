@@ -223,7 +223,7 @@ func seed(cmd *cobra.Command, args []string) {
 				Lookups: []adapt.Lookup{
 					{
 						RefField:   "studio.app",
-						MatchField: "uesio.name",
+						MatchField: "studio.name",
 					},
 				},
 			},

@@ -4,7 +4,6 @@ package meta
 type BulkJob struct {
 	ID        string    `uesio:"uesio.id"`
 	Spec      JobSpec   `uesio:"uesio.spec"`
-	Site      string    `uesio:"uesio.site"`
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner     *User     `yaml:"-" uesio:"uesio.owner"`

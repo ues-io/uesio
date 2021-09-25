@@ -47,11 +47,11 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 // Bundle struct
 type Bundle struct {
 	ID          string    `uesio:"uesio.id"`
-	Major       string    `uesio:"uesio.major"`
-	Minor       string    `uesio:"uesio.minor"`
-	Patch       string    `uesio:"uesio.patch"`
-	App         *App      `uesio:"uesio.app"`
-	Description string    `uesio:"uesio.description"`
+	Major       string    `uesio:"studio.major"`
+	Minor       string    `uesio:"studio.minor"`
+	Patch       string    `uesio:"studio.patch"`
+	App         *App      `uesio:"studio.app"`
+	Description string    `uesio:"studio.description"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy   *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner       *User     `yaml:"-" uesio:"uesio.owner"`

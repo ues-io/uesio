@@ -1,0 +1,4 @@
+name: bundles
+dataSource: uesio.platform
+idFormat: "${studio.app}_v${studio.major}.${studio.minor}.${studio.patch}"
+nameField: uesio.id

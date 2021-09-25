@@ -19,25 +19,25 @@ func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 				ID: "uesio.id",
 			},
 			{
-				ID: "uesio.name",
+				ID: "studio.name",
 			},
 			{
-				ID: "uesio.app",
+				ID: "studio.app",
 			},
 			{
-				ID: "uesio.bundle",
+				ID: "studio.bundle",
 				Fields: []adapt.LoadRequestField{
 					{
-						ID: "uesio.app",
+						ID: "studio.app",
 					},
 					{
-						ID: "uesio.major",
+						ID: "studio.major",
 					},
 					{
-						ID: "uesio.minor",
+						ID: "studio.minor",
 					},
 					{
-						ID: "uesio.patch",
+						ID: "studio.patch",
 					},
 				},
 			},
@@ -63,11 +63,11 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 		&sd,
 		[]adapt.LoadRequestCondition{
 			{
-				Field: "uesio.domain",
+				Field: "studio.domain",
 				Value: domain,
 			},
 			{
-				Field: "uesio.type",
+				Field: "studio.type",
 				Value: domainType,
 			},
 		},

@@ -1,5 +1,5 @@
 name: minor
-collection: uesio.bundles
+collection: studio.bundles
 type: "TEXT"
 label: "Minor version"
 readOnly: true
