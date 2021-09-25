@@ -56,8 +56,6 @@ definition:
                       - io.field:
                           fieldId: crm.gender
                       - io.field:
-                          fieldId: crm.deceased
-                      - io.field:
                           fieldId: crm.account
                       - io.field:
                           fieldId: crm.birthdate
@@ -77,7 +75,6 @@ definition:
           fields:
             crm.name:
         crm.birthdate:
-        crm.deceased:
         crm.firstname:
         crm.gender:
         uesio.id:

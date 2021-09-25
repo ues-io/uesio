@@ -34,55 +34,72 @@ definition:
                         target: contactsTable
                     text: Mode
                     uesio.variant: io.secondary
+    - io.layout:
+        template: 1,1
+        columns:
+          - io.column:
+              components: []
+          - io.column:
+              components: []
     - io.box:
-        uesio.styles:
-          root:
-            padding: 40px
         components:
-          - io.table:
-              rowactions:
-                - text: Edit
-                  signals:
-                    - path: contact/${uesio.id}
-                      signal: route/NAVIGATE
-                - text: Delete
-                  signals:
-                    - signal: wire/TOGGLE_DELETE_STATUS
-              columns:
-                - io.column:
-                    field: crm.firstname
-                - io.column:
-                    field: crm.lastname
-                - io.column:
-                    field: crm.gender
-                - io.column:
-                    field: crm.deceased
-                - io.column:
-                    field: crm.account
-                - io.column:
-                    field: crm.birthdate
-                - io.column:
-                    field: crm.email
-                - io.column:
-                    field: uesio.updatedat
-                - io.column:
-                    field: uesio.createdat
-              id: contactsTable
-              mode: EDIT
+          - io.deck:
+              id: NewId
+              mode: READ
               wire: contacts
+              templateColumns: 1fr 1fr 1fr 1fr
+              uesio.styles:
+                root:
+                  columnGap: 10px
+                  padding: 10px
+              components:
+                - io.box:
+                    uesio.styles:
+                      root:
+                        marginTop: 20px
+                        marginBottom: 20px
+                        alignItems: flex-start
+                        border: "1px solid #ccc"
+                        boxShadow: "0 0 6px #00000033"
+                        padding: 15px
+                        min-height: 240px
+                    templateColumns: 180px 1fr 1fr
+                    columnGap: 10px
+                    components:
+                      - io.field:
+                          fieldId: crm.image
+                          uesio.styles:
+                            root:
+                              max-height: 200px
+                          uesio.variant: io.
+                          label: null
+                          hideLabel: true
+                      - io.field:
+                          fieldId: crm.firstname
+                      - io.field:
+                          fieldId: crm.lastname
+                      - io.field:
+                          fieldId: crm.email
+                      - io.button:
+                          text: View
+                          icon: arrow_forward
+                          uesio.variant: io.secondary
+                          uesio.styles:
+                            root: {}
+                    uesio.variant: io.section
   wires:
     contacts:
       collection: crm.contacts
       fields:
         crm.account:
           fields:
-            crm.name:
-        crm.birthdate:
-        crm.deceased:
-        crm.firstname:
-        crm.gender:
-        uesio.id:
-        crm.lastname:
-        crm.email:
-        uesio.updatedat:
-        uesio.createdat:
+            crm.name: null
+        crm.birthdate: null
+        crm.firstname: null
+        crm.gender: null
+        uesio.id: null
+        crm.lastname: null
+        crm.email: null
+        uesio.updatedat: null
+        uesio.createdat: null
+        crm.image: null
