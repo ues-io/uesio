@@ -1,0 +1,4 @@
+name: discount
+collection: crm.opportunity_items
+type: NUMBER
+label: Discount

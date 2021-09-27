@@ -1,0 +1,3 @@
+name: pricebooks
+dataSource: crm.
+nameField: crm.name

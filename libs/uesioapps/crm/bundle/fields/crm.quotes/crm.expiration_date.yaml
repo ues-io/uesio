@@ -1,0 +1,4 @@
+name: expiration_date
+collection: crm.quotes
+type: DATE
+label: Expiration Date

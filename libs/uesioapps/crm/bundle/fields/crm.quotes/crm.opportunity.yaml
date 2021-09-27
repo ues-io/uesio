@@ -1,0 +1,5 @@
+name: opportunity
+collection: crm.quotes
+type: REFERENCE
+label: Opportunity
+referencedCollection: crm.opportunities

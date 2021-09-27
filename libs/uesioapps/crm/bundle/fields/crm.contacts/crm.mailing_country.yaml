@@ -1,0 +1,4 @@
+name: mailing_country
+collection: crm.contacts
+type: TEXT
+label: Mailing Country

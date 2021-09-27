@@ -1,0 +1,6 @@
+name: workme
+definition:
+  # Wires connect to data in collections
+  wires: {}
+  # Components determine the layout and composition of your view
+  components: []

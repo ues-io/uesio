@@ -1,0 +1,4 @@
+name: close_date
+collection: crm.opportunities
+type: DATE
+label: Close Date

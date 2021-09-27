@@ -1,0 +1,5 @@
+name: related_contact
+collection: crm.commnents
+type: REFERENCE
+label: Related Contact
+referencedCollection: crm.contacts

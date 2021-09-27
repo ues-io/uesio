@@ -1,0 +1,4 @@
+name: quantity_ordered
+collection: crm.products
+type: NUMBER
+label: Quantity Ordered

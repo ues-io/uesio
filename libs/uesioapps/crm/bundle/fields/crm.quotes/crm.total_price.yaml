@@ -1,0 +1,4 @@
+name: total_price
+collection: crm.quotes
+type: NUMBER
+label: Total Price

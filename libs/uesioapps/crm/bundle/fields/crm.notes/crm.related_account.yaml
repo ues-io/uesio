@@ -1,0 +1,5 @@
+name: related_account
+collection: crm.notes
+type: REFERENCE
+label: Related Account
+referencedCollection: crm.accounts

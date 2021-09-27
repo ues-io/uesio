@@ -1,0 +1,4 @@
+name: text_area
+collection: crm.stationary
+type: LONGTEXT
+label: Text Area

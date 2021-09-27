@@ -1,0 +1,4 @@
+name: type
+collection: crm.stationary
+type: TEXT
+label: Type

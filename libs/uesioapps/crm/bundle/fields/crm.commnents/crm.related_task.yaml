@@ -1,0 +1,5 @@
+name: related_task
+collection: crm.commnents
+type: REFERENCE
+label: Related Task
+referencedCollection: crm.tasks
