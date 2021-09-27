@@ -2,4 +2,3 @@ name: name
 collection: studio.componentpacks
 type: TEXT
 label: Name
-propertyName: name

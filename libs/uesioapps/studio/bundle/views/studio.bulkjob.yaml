@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -22,7 +21,6 @@ definition:
       collection: uesio.bulkjobs
       fields:
         uesio.id:
-        uesio.site:
         uesio.spec:
       conditions:
         - field: uesio.id

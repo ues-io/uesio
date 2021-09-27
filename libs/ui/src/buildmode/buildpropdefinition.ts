@@ -1,8 +1,9 @@
-import { DefinitionMap, UtilityProps } from "../definition/definition"
+import { DefinitionMap } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
+import ValueAPI from "./valueapi"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -79,6 +80,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| IconProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -89,6 +91,10 @@ type BasePropDescriptor = {
 
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 	filter?: (def: definition.Definition, id: string) => boolean
+}
+
+interface CustomPropRendererProps extends PropRendererProps {
+	descriptor: CustomProp
 }
 
 interface ConditionProp extends DefinitionBasedPropDescriptor {
@@ -103,6 +109,11 @@ interface NamespaceProp extends BasePropDescriptor {
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
+
+interface IconProp extends BasePropDescriptor {
+	type: "ICON"
+}
+
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
 }
@@ -113,7 +124,7 @@ interface NumberProp extends BasePropDescriptor {
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FunctionComponent<UtilityProps>
+	renderFunc: FunctionComponent<CustomPropRendererProps>
 }
 
 interface MetadataProp extends BasePropDescriptor {
@@ -206,7 +217,16 @@ type SignalProperties = {
 	name: string
 }
 
+interface PropRendererProps extends definition.BaseProps {
+	descriptor: PropDescriptor
+	propsDef: BuildPropertiesDefinition
+	valueAPI: ValueAPI
+}
+
 export {
+	ValueAPI,
+	PropRendererProps,
+	CustomPropRendererProps,
 	BuildPropertiesDefinition,
 	PropertySection,
 	PropDescriptor,
@@ -217,6 +237,7 @@ export {
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	IconProp,
 	NumberProp,
 	CustomProp,
 	MetadataProp,

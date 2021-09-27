@@ -1,6 +1,0 @@
-name: createdat
-collection: studio.views
-type: TIMESTAMP
-label: Created At
-propertyName: createdat
-autopopulate: CREATE

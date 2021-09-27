@@ -55,23 +55,23 @@ definition:
                       - io.field:
                           fieldId: crm.account
                       - io.field:
-                          fieldId: crm.updated
+                          fieldId: uesio.updatedat
                       - io.field:
-                          fieldId: crm.created
+                          fieldId: uesio.createdat
   wires:
     opportunities:
       collection: crm.opportunities
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: opportunityid
           valueSource: PARAM
       fields:
-        crm.id:
+        uesio.id:
         crm.name:
         crm.account:
           fields:
             crm.name:
         crm.description:
         crm.status:
-        crm.updated:
-        crm.created:
+        uesio.updatedat:
+        uesio.createdat:

@@ -191,7 +191,7 @@ func ServeLocalRoute(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	site := session.GetSite()
 
-	route, err := getRoute(r, site.AppID, path, "/", session)
+	route, err := getRoute(r, site.App.ID, path, "/", session)
 	if err != nil {
 		HandleMissingRoute(w, r, session, path, err)
 		return

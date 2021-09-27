@@ -2,4 +2,3 @@ name: loginroute
 collection: studio.workspaces
 type: TEXT
 label: Login Route
-propertyName: loginroute

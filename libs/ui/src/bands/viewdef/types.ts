@@ -1,8 +1,4 @@
-import {
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
+import { DefinitionList, YamlDoc } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
 
 type ConfigValueDependencies = {
@@ -36,7 +32,7 @@ type PlainViewDefMap = {
 }
 
 type ViewDefinition = {
-	components: DefinitionMap
+	components: DefinitionList
 	wires: WireDefinitionMap
 	panels: DefinitionList
 }

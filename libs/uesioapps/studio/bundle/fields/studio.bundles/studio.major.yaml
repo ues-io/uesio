@@ -1,0 +1,5 @@
+name: major
+collection: studio.bundles
+type: "TEXT"
+label: "Major version"
+readOnly: true

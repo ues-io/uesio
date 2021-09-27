@@ -2,4 +2,3 @@ name: component
 collection: studio.component
 type: TEXT
 label: Component ID
-propertyName: component

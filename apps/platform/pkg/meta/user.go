@@ -8,13 +8,13 @@ type User struct {
 	Profile        string            `uesio:"uesio.profile"`
 	FederationID   string            `uesio:"uesio.federationId"`
 	FederationType string            `uesio:"uesio.federationType"`
-	Site           string            `uesio:"uesio.site"`
 	Picture        *UserFileMetadata `uesio:"uesio.picture"`
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy      *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner          *User             `yaml:"-" uesio:"uesio.owner"`
 	UpdatedBy      *User             `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt      int64             `uesio:"uesio.updatedat"`
-	CreatedAt      int64             `uesio:"uesio.createdat"`
+	UpdatedAt      int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt      int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 func (u *User) GetPictureID() string {
@@ -48,6 +48,11 @@ func (u *User) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (u *User) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(u, iter)
+}
+
+// Len function
+func (u *User) Len() int {
+	return StandardItemLen(u)
 }
 
 // GetItemMeta function

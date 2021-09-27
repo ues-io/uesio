@@ -48,7 +48,7 @@ definition:
                     columnGap: 10px
                     items:
                       - io.field:
-                          fieldId: crm.id
+                          fieldId: uesio.id
                       - io.field:
                           fieldId: crm.firstname
                       - io.field:
@@ -56,31 +56,28 @@ definition:
                       - io.field:
                           fieldId: crm.gender
                       - io.field:
-                          fieldId: crm.deceased
-                      - io.field:
                           fieldId: crm.account
                       - io.field:
                           fieldId: crm.birthdate
                       - io.field:
-                          fieldId: crm.updated
+                          fieldId: uesio.updatedat
                       - io.field:
-                          fieldId: crm.created
+                          fieldId: uesio.createdat
   wires:
     contacts:
       collection: crm.contacts
       conditions:
-        - field: crm.id
+        - field: uesio.id
           param: contactid
           valueSource: PARAM
       fields:
         crm.account:
           fields:
             crm.name:
-        crm.birthdate: null
-        crm.deceased: null
-        crm.firstname: null
-        crm.gender: null
-        crm.id: null
-        crm.lastname: null
-        crm.updated:
-        crm.created:
+        crm.birthdate:
+        crm.firstname:
+        crm.gender:
+        uesio.id:
+        crm.lastname:
+        uesio.updatedat:
+        uesio.createdat:

@@ -1,28 +1,9 @@
 name: teams
 dataSource: uesio.platform
-idField: studio.id
-idFormat: "${studio.appid}_${studio.name}"
+idFormat: "${studio.app}_${studio.name}"
 nameField: studio.name
-collectionName: teams
 access: "protected"
 recordChallengeTokens:
-  - type: "lookup"
-    collection: studio.teampermissions
-    conditions:
-      - field: "studio.role"
-        value: "admin"
-      - field: "studio.appid"
-        value: "${studio.appid}"
-    token: "${studio.teamid}"
+  - token: "${studio.app}"
     userAccessToken: "studio.teammember"
     access: readwrite
-  - type: "lookup"
-    collection: studio.teampermissions
-    conditions:
-      - field: "studio.role"
-        value: "maintainer"
-      - field: "studio.appid"
-        value: "${studio.appid}"
-    token: "${studio.teamid}"
-    userAccessToken: "studio.teammember"
-    access: read

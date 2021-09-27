@@ -6,12 +6,11 @@ type LayoutDefinition = {
 	justifyContent: string
 	alignItems: string
 	breakpoint: string
-	columns: any[]
+	columns: definition.DefinitionList
 	template: string
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition
-	slot?: JSX.Element | JSX.Element[]
 }
 
 const spacingOptionsMap = [

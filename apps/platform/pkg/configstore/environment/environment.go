@@ -22,6 +22,8 @@ var configValues = map[string]string{
 	"uesio:platformFileSourceCredentials": os.Getenv("UESIO_PLATFORM_FILESOURCE_CREDENTIALS"),
 	"uesio:awsRegion":                     os.Getenv("AWS_REGION"),
 	"uesio:userfilesBucketName":           os.Getenv("UESIO_USERFILES_BUCKET_NAME"),
+	"uesio:dbHost":                        os.Getenv("UESIO_DB_HOST"),
+	"uesio:dbPort":                        os.Getenv("UESIO_DB_PORT"),
 }
 
 // Get function

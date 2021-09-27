@@ -1,6 +1,0 @@
-name: createdby
-collection: studio.routes
-type: USER
-label: Created By
-propertyName: createdby
-autopopulate: CREATE

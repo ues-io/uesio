@@ -1,0 +1,5 @@
+name: description
+collection: studio.bundles
+type: "TEXT"
+label: "Bundle Description"
+readOnly: true

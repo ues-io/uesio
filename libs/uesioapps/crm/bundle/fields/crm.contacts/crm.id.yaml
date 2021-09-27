@@ -1,6 +1,0 @@
-name: id
-collection: crm.contacts
-type: TEXT
-label: Contact ID
-propertyName: id
-readOnly: true

@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,31 +20,30 @@ definition:
     installedapp:
       collection: studio.bundledependencies
       fields:
-        studio.id:
+        uesio.id:
         studio.bundle:
           fields:
-            uesio.appid:
-            uesio.major:
-            uesio.minor:
-            uesio.patch:
+            studio.app:
+            studio.major:
+            studio.minor:
+            studio.patch:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           value: $Param{appname}_$Param{workspacename}
-        - field: studio.id
+        - field: uesio.id
           value: $Param{bundledep}
     versions:
-      collection: uesio.bundles
+      collection: studio.bundles
       fields:
         uesio.id:
-        uesio.appid:
-        uesio.major:
-        uesio.minor:
-        uesio.patch:
+        studio.major:
+        studio.minor:
+        studio.patch:
       conditions:
-        - field: uesio.appid
+        - field: studio.app
           valueSource: LOOKUP
           lookupWire: installedapp
-          lookupField: studio.bundle->uesio.appid
+          lookupField: studio.bundle->studio.app->uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -79,7 +77,7 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: Bundle - ${["studio.bundle"]["uesio.appid"]} v${["studio.bundle"]["uesio.major"]}.${["studio.bundle"]["uesio.minor"]}.${["studio.bundle"]["uesio.patch"]}
+                          title: Bundle - ${["studio.bundle"]["studio.app"]["uesio.id"]} v${["studio.bundle"]["studio.major"]}.${["studio.bundle"]["studio.minor"]}.${["studio.bundle"]["studio.patch"]}
                           actions:
                             - io.group:
                                 components:
@@ -123,4 +121,4 @@ definition:
                                 uesio.variant: io.item
                                 content:
                                   - io.text:
-                                      text: "v${uesio.major}.${uesio.minor}.${uesio.patch}"
+                                      text: "v${studio.major}.${studio.minor}.${studio.patch}"

@@ -1,5 +1,0 @@
-name: description
-collection: uesio.apps
-type: TEXT
-label: Description
-propertyName: description

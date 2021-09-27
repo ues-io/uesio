@@ -1,15 +1,12 @@
-import { FC, useContext } from "react"
+import { FC } from "react"
 import { definition, component, styles } from "@uesio/ui"
-import toPath from "lodash/toPath"
-import { LayoutContext } from "../io.layout/layout"
 
 export const getColumnFlexStyles = (
 	template: string,
-	path: string
+	columnIndex: number
 ): React.CSSProperties => {
-	const columnIndex = parseInt(toPath(path).slice(-2)[0], 10)
-	const templateArr = template.split(",")
-	const flexRatio = templateArr[columnIndex]
+	const templateArray = template.split(",")
+	const flexRatio = parseInt(templateArray[columnIndex], 10)
 	return {
 		flex: flexRatio || "initial",
 		gap: "inherit",
@@ -17,16 +14,14 @@ export const getColumnFlexStyles = (
 }
 
 const Column: FC<definition.BaseProps> = (props) => {
-	const { definition, context, path = "" } = props
-
-	const flexStyles = context.getBuildMode()
-		? {}
-		: getColumnFlexStyles(useContext(LayoutContext), path)
+	const { definition, context, path = "", index = 0 } = props
+	const template = context.getParentComponentDef(path)?.template
 
 	const classes = styles.useStyles(
 		{
 			root: {
-				...flexStyles,
+				...(!context.getBuildMode() &&
+					getColumnFlexStyles(template, index)),
 			},
 		},
 		props
@@ -38,7 +33,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.standalone", "uesio.field", "io.field"]}
+				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
 				context={context}
 			/>
 		</div>

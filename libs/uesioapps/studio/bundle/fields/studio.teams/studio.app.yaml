@@ -2,5 +2,4 @@ name: app
 collection: studio.teams
 type: REFERENCE
 label: App
-propertyName: appid
-referencedCollection: uesio.apps
+referencedCollection: studio.apps

@@ -1,5 +1,0 @@
-name: id
-collection: crm.opportunities
-type: TEXT
-label: Id
-propertyName: id

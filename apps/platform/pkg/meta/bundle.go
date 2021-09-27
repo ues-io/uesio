@@ -34,7 +34,9 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 		return nil, err
 	}
 	return &Bundle{
-		AppID:       namespace,
+		App: &App{
+			ID: namespace,
+		},
 		Major:       strconv.Itoa(versionParts[0]),
 		Minor:       strconv.Itoa(versionParts[1]),
 		Patch:       strconv.Itoa(versionParts[2]),
@@ -45,16 +47,17 @@ func NewBundle(namespace, version, description string) (*Bundle, error) {
 // Bundle struct
 type Bundle struct {
 	ID          string    `uesio:"uesio.id"`
-	Major       string    `uesio:"uesio.major"`
-	Minor       string    `uesio:"uesio.minor"`
-	Patch       string    `uesio:"uesio.patch"`
-	AppID       string    `uesio:"uesio.appid"`
-	Description string    `uesio:"uesio.description"`
+	Major       string    `uesio:"studio.major"`
+	Minor       string    `uesio:"studio.minor"`
+	Patch       string    `uesio:"studio.patch"`
+	App         *App      `uesio:"studio.app"`
+	Description string    `uesio:"studio.description"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `uesio:"uesio.createdby"`
-	UpdatedBy   *User     `uesio:"uesio.updatedby"`
-	UpdatedAt   int64     `uesio:"uesio.updatedat"`
-	CreatedAt   int64     `uesio:"uesio.createdat"`
+	CreatedBy   *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner       *User     `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy   *User     `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt   int64     `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt   int64     `yaml:"-" uesio:"uesio.createdat"`
 }
 
 func (b *Bundle) GetVersionString() string {
@@ -93,6 +96,11 @@ func (b *Bundle) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (b *Bundle) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(b, iter)
+}
+
+// Len function
+func (b *Bundle) Len() int {
+	return StandardItemLen(b)
 }
 
 // GetItemMeta function

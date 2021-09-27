@@ -1,6 +1,5 @@
 import { FC } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { hooks, component, definition } from "@uesio/ui"
+import { component, definition, builder } from "@uesio/ui"
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const ListField = component.registry.getUtility("io.listfield")
@@ -10,7 +9,7 @@ type StyleValue = {
 	value: string
 }
 
-const StylesListProp: FC<PropRendererProps> = (props) => {
+const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 	const { context, path, propsDef, valueAPI } = props
 
 	const styleData = valueAPI.get(path) as definition.DefinitionMap

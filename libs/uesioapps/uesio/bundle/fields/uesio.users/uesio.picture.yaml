@@ -2,5 +2,4 @@ name: picture
 collection: uesio.users
 type: FILE
 label: Profile picture
-propertyName: picture
 filecollection: uesio.platform

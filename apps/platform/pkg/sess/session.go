@@ -155,6 +155,9 @@ func (s *Session) GetTenantID() string {
 	if s.workspace != nil {
 		return "workspace:" + s.workspace.ID
 	}
+	if s.siteadmin != nil {
+		return "site:" + s.siteadmin.ID
+	}
 	return "site:" + s.site.ID
 }
 
@@ -190,7 +193,6 @@ func (s *Session) GetUserInfo() *meta.User {
 		FirstName: s.getBrowserSessionAttribute("FirstName"),
 		LastName:  s.getBrowserSessionAttribute("LastName"),
 		Profile:   s.getBrowserSessionAttribute("Profile"),
-		Site:      s.site.GetFullName(),
 		Picture: &meta.UserFileMetadata{
 			ID: s.getBrowserSessionAttribute("Picture"),
 		},
@@ -272,9 +274,9 @@ func (s *Session) GetContextAppName() string {
 		return s.workspace.GetAppID()
 	}
 	if s.siteadmin != nil {
-		return s.siteadmin.AppID
+		return s.siteadmin.App.ID
 	}
-	return s.site.AppID
+	return s.site.App.ID
 }
 
 // GetContextVersionName returns the appversion in context

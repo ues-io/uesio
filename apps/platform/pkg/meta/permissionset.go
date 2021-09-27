@@ -18,22 +18,23 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	ID             string          `yaml:"-" uesio:"studio.id"`
+	ID             string          `yaml:"-" uesio:"uesio.id"`
 	Name           string          `yaml:"name" uesio:"studio.name"`
 	Namespace      string          `yaml:"-" uesio:"-"`
 	NamedRefs      map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
 	ViewRefs       map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
 	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
-	Workspace      string          `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace      *Workspace      `yaml:"-" uesio:"studio.workspace"`
 	AllowAllViews  bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
 	AllowAllRoutes bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
 	AllowAllFiles  bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
 	itemMeta       *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy      *User           `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy      *User           `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt      int64           `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt      int64           `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy      *User           `yaml:"-" uesio:"uesio.createdby"`
+	Owner          *User           `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy      *User           `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt      int64           `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt      int64           `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -97,12 +98,19 @@ func (ps *PermissionSet) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ps *PermissionSet) SetWorkspace(workspace string) {
-	ps.Workspace = workspace
+	ps.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (ps *PermissionSet) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ps, iter)
+}
+
+// Len function
+func (ps *PermissionSet) Len() int {
+	return StandardItemLen(ps)
 }
 
 // GetItemMeta function

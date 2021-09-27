@@ -1,0 +1,5 @@
+name: app
+collection: studio.bundles
+type: REFERENCE
+label: App
+referencedCollection: studio.apps

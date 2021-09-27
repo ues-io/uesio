@@ -1,6 +1,0 @@
-name: id
-collection: studio.componentpacks
-type: TEXT
-label: ComponentPack ID
-propertyName: id
-readOnly: true

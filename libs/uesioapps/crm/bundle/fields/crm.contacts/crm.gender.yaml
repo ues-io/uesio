@@ -2,5 +2,4 @@ name: gender
 collection: crm.contacts
 type: SELECT
 label: Gender
-propertyName: gender
 selectList: crm.gender

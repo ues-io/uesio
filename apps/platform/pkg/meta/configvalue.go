@@ -6,17 +6,18 @@ import (
 
 // ConfigValue struct
 type ConfigValue struct {
-	ID        string    `yaml:"-" uesio:"studio.id"`
-	Name      string    `yaml:"name" uesio:"studio.name"`
-	Namespace string    `yaml:"-" uesio:"-"`
-	Store     string    `yaml:"store,omitempty" uesio:"studio.store"`
-	ManagedBy string    `yaml:"managedBy" uesio:"studio.managedby"`
-	Workspace string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"studio.createdat"`
+	ID        string     `yaml:"-" uesio:"uesio.id"`
+	Name      string     `yaml:"name" uesio:"studio.name"`
+	Namespace string     `yaml:"-" uesio:"-"`
+	Store     string     `yaml:"store,omitempty" uesio:"studio.store"`
+	ManagedBy string     `yaml:"managedBy" uesio:"studio.managedby"`
+	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // NewConfigValue function
@@ -92,12 +93,19 @@ func (cv *ConfigValue) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (cv *ConfigValue) SetWorkspace(workspace string) {
-	cv.Workspace = workspace
+	cv.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (cv *ConfigValue) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cv, iter)
+}
+
+// Len function
+func (cv *ConfigValue) Len() int {
+	return StandardItemLen(cv)
 }
 
 // GetItemMeta function

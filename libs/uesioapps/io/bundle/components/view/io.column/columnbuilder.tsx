@@ -1,28 +1,18 @@
 import { FC } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import Column, { getColumnFlexStyles } from "./column"
-import { LayoutDefinition } from "../io.layout/layoutdefinition"
-
 import FieldHints from "./fieldhints"
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
-const ColumnBuilder: FC<definition.BaseProps> = (props) => {
-	const { path = "", context } = props
-	const wire = context.getWire()
 
-	const layoutOverrides = (() => {
-		if (!path) return {}
-		const pathArray = component.path.fromArray(path)
-		const pathToLayout = pathArray.slice(0, -3)
-		const { template } =
-			context.getInViewDef<LayoutDefinition>(pathToLayout)
-		return template ? getColumnFlexStyles(template, path) : {}
-	})()
+const ColumnBuilder: FC<definition.BaseProps> = (props) => {
+	const { path = "", context, index = 0 } = props
+	const wire = context.getWire()
+	const template: string = context.getParentComponentDef(path)?.template
 
 	const classes = styles.useStyles(
 		{
 			root: {
-				...layoutOverrides,
-
+				...getColumnFlexStyles(template, index),
 				".hint": {
 					maxHeight: "0px",
 					opacity: 0,
@@ -40,9 +30,7 @@ const ColumnBuilder: FC<definition.BaseProps> = (props) => {
 			},
 		},
 
-		{
-			context: props.context,
-		}
+		{ context }
 	)
 
 	return (

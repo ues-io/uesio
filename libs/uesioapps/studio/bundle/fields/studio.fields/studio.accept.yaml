@@ -1,6 +1,5 @@
 name: accept
 collection: studio.fields
 label: Accept
-propertyName: accept
 type: SELECT
 selectList: studio.accepttypes

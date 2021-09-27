@@ -1,6 +1,0 @@
-name: updatedby
-collection: studio.credentials
-type: USER
-label: Updated By
-propertyName: updatedby
-autopopulate: UPDATE

@@ -1,8 +1,0 @@
-name: name
-collection: uesio.apps
-type: TEXT
-label: Name
-propertyName: name
-createOnly: true
-validate:
-  type: METADATA

@@ -11,7 +11,7 @@ class Workspace {
 	static getFields() {
 		return [
 			{
-				id: "studio.id",
+				id: "uesio.id",
 			},
 			{
 				id: "studio.name",
@@ -21,7 +21,7 @@ class Workspace {
 	static getColumns(): TableColumn[] {
 		return [
 			{
-				id: "studio.id",
+				id: "uesio.id",
 			},
 			{
 				id: "studio.name",

@@ -1,50 +1,88 @@
 import { FunctionComponent, useEffect } from "react"
-import { definition, styles, wire, hooks, component } from "@uesio/ui"
+import { definition, styles, wire, hooks, component, context } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
 	namespace: string
-	fieldsWire: string
+	usage: "site" | "workspace"
 }
 
 interface Props extends definition.BaseProps {
 	definition: DataManagerDefinition
 }
 
+const init = (
+	usage: string,
+	collectionMrg: string,
+	namespaceMrg: string,
+	context: context.Context
+): [string, string, context.Context] => {
+	if (usage === "site") {
+		const view = context.getView()
+		const appName = view?.params?.appname
+		const siteName = view?.params?.sitename
+		const [namespace, name] = component.path.parseKey(collectionMrg)
+		return [
+			namespace,
+			collectionMrg,
+			context.addFrame({
+				siteadmin: {
+					name: siteName || "",
+					app: appName || "",
+				},
+			}),
+		]
+	}
+	return [namespaceMrg, `${namespaceMrg}.${collectionMrg}`, context]
+}
+
 const DataManager: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	const collectionId = context.merge(definition.collectionId)
-	const namespace = context.merge(definition.namespace)
-	const fieldsWire = uesio.wire.useWire(definition.fieldsWire)
+	const collectionMrg = context.merge(definition.collectionId)
+	const namespaceMrg = context.merge(definition.namespace)
+	const usage = definition.usage
+
+	const [namespace, collection, newContext] = init(
+		usage,
+		collectionMrg,
+		namespaceMrg,
+		context
+	)
+
+	const fieldsMeta = uesio.builder.useMetadataList(
+		newContext,
+		"FIELD",
+		namespace,
+		collection
+	)
 
 	// Get Field info
 	useEffect(() => {
 		// Create on-the-fly wire
-		if (!fieldsWire) return
+		if (!fieldsMeta) return
 		const fields: wire.WireFieldDefinitionMap = {}
-		fieldsWire.getData().forEach((record) => {
-			fields[`${namespace}.${record.getFieldString("studio.name")}`] =
-				null
+		Object.keys(fieldsMeta).forEach((record) => {
+			fields[`${record}`] = null
 		})
-		const basePath = `["viewdef"]["${context.getViewDefId()}"]["wires"]`
+		const basePath = `["viewdef"]["${newContext.getViewDefId()}"]["wires"]`
 		uesio.builder.addDefinitionPair(
 			basePath,
 			{
-				collection: `${namespace}.${collectionId}`,
+				collection,
 				fields,
 			},
 			"collectionData"
 		)
 
-		uesio.wire.loadWires(context, ["collectionData"])
+		uesio.wire.loadWires(newContext, ["collectionData"])
 
 		return () => {
 			uesio.builder.removeDefinition(`${basePath}["collectionData"]`)
 		}
-	}, [])
+	}, [fieldsMeta])
 
-	if (!fieldsWire) return null
+	if (!fieldsMeta) return null
 
 	return (
 		<component.Component
@@ -53,16 +91,14 @@ const DataManager: FunctionComponent<Props> = (props) => {
 				id: "collectionDataTable",
 				wire: "collectionData",
 				mode: "EDIT",
-				columns: fieldsWire.getData().map((record) => ({
+				columns: Object.keys(fieldsMeta).map((record) => ({
 					["io.column"]: {
-						field: `${namespace}.${record.getFieldString(
-							"studio.name"
-						)}`,
+						field: `${record}`,
 					},
 				})),
 			}}
 			path={props.path}
-			context={context}
+			context={newContext}
 		/>
 	)
 }

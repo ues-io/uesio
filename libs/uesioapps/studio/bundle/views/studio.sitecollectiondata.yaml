@@ -1,0 +1,68 @@
+name: sitecollectiondata
+definition:
+  # Wires are how we pull in data
+  wires:
+    apps:
+      collection: studio.apps
+      fields:
+        uesio.id:
+        studio.name:
+        studio.description:
+        studio.color:
+      conditions:
+        - field: studio.name
+          valueSource: PARAM
+          param: appname
+    sites:
+      collection: studio.sites
+      fields:
+        uesio.id:
+        studio.name:
+        studio.bundle:
+        studio.app:
+          fields:
+            uesio.id:
+            studio.name:
+            studio.color:
+      conditions:
+        - field: studio.app
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: sitename
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: sites
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    view: studio.sitenav
+                    uesio.context:
+                      wire: sites
+                    params:
+                      selected: sitecollections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Collections
+                    subtitle: insert data into the collections that are available for you.
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - studio.datamanager:
+                          collectionId: $Param{collectionname}
+                          namespace: $Param{appname}
+                          usage: site

@@ -155,11 +155,7 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wire",
 				type: "WIRE",
 				filter: (def: Definition) =>
-					Boolean(
-						def &&
-							(<WireDefinition>def).conditions &&
-							(<WireDefinition>def).conditions.length
-					),
+					Boolean(def && (<WireDefinition>def).conditions?.length),
 				label: "Wire",
 			},
 			{

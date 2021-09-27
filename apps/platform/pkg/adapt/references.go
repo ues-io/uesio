@@ -108,7 +108,7 @@ func HandleReferences(
 	}
 	err := loader(ops)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	for i := range ops {

@@ -2,4 +2,3 @@ name: collection
 collection: studio.bots
 type: TEXT
 label: Collection
-propertyName: collection

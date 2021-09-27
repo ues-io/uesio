@@ -3,10 +3,10 @@ import { WireType } from "../definition/wire"
 
 type LoadRequest = {
 	wire: string
-	type: WireType
+	type?: WireType
 	collection: string
 	fields: LoadRequestField[]
-	conditions: WireConditionState[]
+	conditions?: WireConditionState[]
 	order?: OrderDescription[]
 	limit?: number
 	offset?: number

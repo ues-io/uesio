@@ -78,8 +78,6 @@ class BuilderAPI {
 	useDropNode = (): [string, string, string] =>
 		getFullPathParts(useDropNode())
 
-	useIsStructureView = () => this.useBuilderState("buildview") !== "content"
-
 	useHasChanges = useBuilderHasChanges
 
 	useSelectedYAML = useSelectedYAML
@@ -209,11 +207,12 @@ class BuilderAPI {
 		)
 	}
 
-	moveDefinition(fromPath: string, toPath: string) {
+	moveDefinition(fromPath: string, toPath: string, selectKey?: string) {
 		this.dispatcher(
 			moveDefinition({
 				fromPath,
 				toPath,
+				selectKey,
 			})
 		)
 	}

@@ -2,4 +2,3 @@ name: components
 collection: studio.componentpacks
 type: TEXT
 label: "(TODO: Should be a map)"
-propertyName: components

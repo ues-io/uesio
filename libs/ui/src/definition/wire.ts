@@ -9,12 +9,12 @@ type WireDefinitionMap = {
 type WireDefinition = {
 	collection: string
 	fields: WireFieldDefinitionMap
-	conditions: WireConditionDefinition[]
-	defaults: WireDefault[]
-	type: WireType
-	order: WireOrderDescription[]
-	limit: number
-	offset: number
+	conditions?: WireConditionDefinition[]
+	defaults?: WireDefault[]
+	type?: WireType
+	order?: WireOrderDescription[]
+	limit?: number
+	offset?: number
 }
 
 type WireFieldDefinitionMap = {

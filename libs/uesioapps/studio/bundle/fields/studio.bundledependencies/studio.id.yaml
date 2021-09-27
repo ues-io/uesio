@@ -1,6 +1,0 @@
-name: id
-collection: studio.bundledependencies
-type: "TEXT"
-label: "Bundle ID"
-propertyName: "id"
-readOnly: true

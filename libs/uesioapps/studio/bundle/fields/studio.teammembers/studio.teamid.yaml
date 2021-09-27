@@ -1,6 +1,0 @@
-name: teamid
-collection: studio.teammembers
-type: TEXT
-label: ID
-propertyName: teamid
-readOnly: true

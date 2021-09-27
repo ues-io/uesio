@@ -1,7 +1,7 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent, useState } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
-import { hooks, component, definition } from "@uesio/ui"
+import { hooks, component, definition, styles } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
@@ -12,6 +12,19 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	if (!collectionKey) {
 		return null
 	}
+
+	const classes = styles.useUtilityStyles(
+		{
+			search: {
+				marginBottom: "2px",
+				width: "100%",
+				height: "30px",
+				outline: 0,
+				borderWidth: "0 0 1px",
+			},
+		},
+		null
+	)
 
 	// Limit the fields to just the same namespace as the collection for now.
 	// In theory, you could have fields from a different namespace attached to
@@ -28,11 +41,10 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	)
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
-	const isStructureView = uesio.builder.useIsStructureView()
 
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && isStructureView) {
+		if (target && target.dataset.type) {
 			uesio.builder.setDragNode("field", target.dataset.type, "")
 		}
 	}
@@ -41,16 +53,39 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		uesio.builder.clearDropNode()
 	}
 
+	const fieldKeys = fields && Object.keys(fields)
+
+	const [searchTerm, setSearchTerm] = useState("")
+	const handleChange = (value: string) => {
+		setSearchTerm(value)
+	}
+
+	const results = !searchTerm
+		? fieldKeys
+		: fieldKeys &&
+		  fieldKeys.filter((field) =>
+				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+		  )
+
 	return (
 		<ExpandPanel
 			defaultExpanded={false}
 			title={section.title}
 			context={context}
+			searchValue={searchTerm}
+			onSearch={handleChange}
 		>
-			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
-				{fields &&
-					collectionKey &&
-					Object.keys(fields).map((fieldId, index) => {
+			<div
+				style={{
+					display: "grid",
+					rowGap: "8px",
+				}}
+				onDragStart={onDragStart}
+				onDragEnd={onDragEnd}
+			>
+				{collectionKey &&
+					results &&
+					results.map((fieldId, index) => {
 						const fieldDef = fieldsDef?.[fieldId]
 						const selected = fieldDef !== undefined
 						const onClick = (): void =>

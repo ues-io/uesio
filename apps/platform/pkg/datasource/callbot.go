@@ -48,20 +48,20 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 
 	err = PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
 		{
-			Field: "uesio.major",
+			Field: "studio.major",
 			Desc:  true,
 		},
 		{
-			Field: "uesio.minor",
+			Field: "studio.minor",
 			Desc:  true,
 		},
 		{
-			Field: "uesio.patch",
+			Field: "studio.patch",
 			Desc:  true,
 		},
 	}, []adapt.LoadRequestCondition{
 		{
-			Field: "uesio.appid",
+			Field: "studio.app",
 			Value: app,
 		},
 	}, sa.session.RemoveWorkspaceContext())
@@ -100,20 +100,20 @@ func (sa *StudioAPI) GetBundleLastVersion(app string) string {
 
 	err := PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
 		{
-			Field: "uesio.major",
+			Field: "studio.major",
 			Desc:  true,
 		},
 		{
-			Field: "uesio.minor",
+			Field: "studio.minor",
 			Desc:  true,
 		},
 		{
-			Field: "uesio.patch",
+			Field: "studio.patch",
 			Desc:  true,
 		},
 	}, []adapt.LoadRequestCondition{
 		{
-			Field: "uesio.appid",
+			Field: "studio.app",
 			Value: app,
 		},
 	}, sa.session.RemoveWorkspaceContext())

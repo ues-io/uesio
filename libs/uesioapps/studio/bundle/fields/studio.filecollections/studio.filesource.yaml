@@ -2,4 +2,3 @@ name: filesource
 collection: studio.filecollections
 type: TEXT
 label: File Source
-propertyName: filesource
