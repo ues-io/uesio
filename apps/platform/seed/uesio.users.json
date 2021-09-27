@@ -1,38 +1,37 @@
 [
 	{
+		"federationId": "system",
+		"federationType": "system",
+		"firstname": "Super",
+		"lastname": "Admin",
+		"profile": "studio.standard"
+	},
+	{
 		"federationId": "MockBen",
 		"federationType": "mock",
 		"firstname": "Ben",
 		"lastname": "Hubbard",
-		"profile": "studio.standard",
-		"site": "prod_studio",
-		"uiDescriptor": "Maintainer"
+		"profile": "studio.standard"
 	},
 	{
 		"federationId": "MockAbel",
 		"federationType": "mock",
 		"firstname": "Abel",
 		"lastname": "Jimenez Molla",
-		"profile": "studio.standard",
-		"site": "prod_studio",
-		"uiDescriptor": "Team Member"
+		"profile": "studio.standard"
 	},
 	{
 		"federationId": "MockWessel",
 		"federationType": "mock",
 		"firstname": "Wessel",
 		"lastname": "van der Plas",
-		"profile": "studio.standard",
-		"site": "prod_studio",
-		"uiDescriptor": "Team Member"
+		"profile": "studio.standard"
 	},
 	{
 		"federationId": "MockGregg",
 		"federationType": "mock",
 		"firstname": "Gregg",
 		"lastname": "Baxter",
-		"profile": "studio.standard",
-		"site": "prod_studio",
-		"uiDescriptor": "Team Member"
+		"profile": "studio.standard"
 	}
 ]

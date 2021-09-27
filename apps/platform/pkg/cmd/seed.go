@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"time"
@@ -27,45 +28,61 @@ func init() {
 
 }
 
-// GetSeedDataFile function
-func GetSeedDataFile(v interface{}, fileName string) error {
+func getSeedDataFile(v interface{}, fileName string) error {
 	filePath := filepath.Join("seed", fileName)
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}
-	reader := bufio.NewReader(file)
 	defer file.Close()
-
+	reader := bufio.NewReader(file)
 	decoder := json.NewDecoder(reader)
-
-	err = decoder.Decode(v)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return decoder.Decode(v)
 }
 
-func seedCollection(name, filename string, session *sess.Session) error {
-	// Read files from seed folder
-	changes := adapt.Collection{}
-	err := GetSeedDataFile(&changes, filename)
-	if err != nil {
-		logger.LogError(err)
-		return err
-	}
-	err = datasource.Save([]datasource.SaveRequest{{
-		Collection: name,
-		Wire:       name,
-		Changes:    &changes,
+func getPlatformSeedSR(collection meta.CollectionableGroup) datasource.SaveRequest {
+	return datasource.GetSaveRequestFromPlatformSave(datasource.PlatformSaveRequest{
+		Collection: collection,
 		Options: &adapt.SaveOptions{
 			Upsert: &adapt.UpsertOptions{},
 		},
-	}}, session)
-	if err != nil {
-		logger.LogError(err)
-		return err
+	})
+}
+
+func getSeedSR(collectionName string, collection *adapt.Collection) datasource.SaveRequest {
+	return datasource.SaveRequest{
+		Collection: collectionName,
+		Wire:       collectionName,
+		Changes:    collection,
+		Options: &adapt.SaveOptions{
+			Upsert: &adapt.UpsertOptions{},
+		},
+	}
+}
+
+func populateSeedData(collections ...meta.CollectionableGroup) error {
+	for i := range collections {
+		err := getSeedDataFile(collections[i], collections[i].GetName()+".json")
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func installBundles(session *sess.Session, bundleNames ...string) error {
+	sysbs := &systembundlestore.SystemBundleStore{}
+
+	for _, bundleName := range bundleNames {
+		err := datasource.CreateBundle(bundleName, "v0.0.1", "v0.0.1", "Seed Install: "+bundleName, sysbs, session)
+		if err != nil {
+			logger.LogError(errors.New("Bundle already installed: " + bundleName))
+			// Don't return error here because we're ok with this error
+		}
+		err = datasource.StoreBundleAssets(bundleName, "v0.0.1", "v0.0.1", sysbs, session)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -115,143 +132,57 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	// Read files from seed folder
-	var apps meta.AppCollection
-	err = GetSeedDataFile(&apps, "apps.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var bundles meta.BundleCollection
-	err = GetSeedDataFile(&bundles, "bundles.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var workspaces meta.WorkspaceCollection
-	err = GetSeedDataFile(&workspaces, "workspaces.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var sites meta.SiteCollection
-	err = GetSeedDataFile(&sites, "sites.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var siteDomains meta.SiteDomainCollection
-	err = GetSeedDataFile(&siteDomains, "domains.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var users meta.UserCollection
-	err = GetSeedDataFile(&users, "users.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Read files from seed folder
-	var configstorevalues meta.ConfigStoreValueCollection
-	err = GetSeedDataFile(&configstorevalues, "configstorevalues.json")
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
 	// Install Default Bundles
 	// This takes code from the /libs/uesioapps code in the repo
 	// and installs it into the localbundlestore.
-	sysbs := &systembundlestore.SystemBundleStore{}
-
-	err = datasource.CreateBundle("sample", "v0.0.1", "v0.0.1", "Sample Bundle", sysbs, session)
-	if err != nil {
-		err = datasource.StoreBundleAssets("sample", "v0.0.1", "v0.0.1", sysbs, session)
-		if err != nil {
-			logger.Log("Error Creating/Refreshing sample bundle.", logger.INFO)
-		}
-	}
-	err = datasource.CreateBundle("crm", "v0.0.1", "v0.0.1", "Customer Relationship Management", sysbs, session)
-	if err != nil {
-		err = datasource.StoreBundleAssets("crm", "v0.0.1", "v0.0.1", sysbs, session)
-		if err != nil {
-			logger.Log("Error Creating/Refreshing crm bundle.", logger.INFO)
-		}
-	}
-
-	err = datasource.PlatformSaves([]datasource.PlatformSaveRequest{
-		{
-			Collection: &apps,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &bundles,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &sites,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &siteDomains,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &workspaces,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-				Lookups: []adapt.Lookup{
-					{
-						RefField:   "studio.app",
-						MatchField: "studio.name",
-					},
-				},
-			},
-		},
-		{
-			Collection: &users,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-		{
-			Collection: &configstorevalues,
-			Options: &adapt.SaveOptions{
-				Upsert: &adapt.UpsertOptions{},
-			},
-		},
-	}, session)
+	err = installBundles(session, "sample", "crm")
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
 
-	err = seedCollection("studio.teams", "studio.teams.json", session)
+	var apps meta.AppCollection
+	var bundles meta.BundleCollection
+	var workspaces meta.WorkspaceCollection
+	var sites meta.SiteCollection
+	var sitedomains meta.SiteDomainCollection
+	var users meta.UserCollection
+	var configstorevalues meta.ConfigStoreValueCollection
+
+	err = populateSeedData(&apps, &bundles, &workspaces, &sites, &sitedomains, &users, &configstorevalues)
 	if err != nil {
+		logger.Log(err.Error(), logger.INFO)
 		return
 	}
-	err = seedCollection("studio.teammembers", "studio.teammembers.json", session)
+
+	var teams adapt.Collection
+	var teammembers adapt.Collection
+
+	err = getSeedDataFile(&teams, "studio.teams.json")
 	if err != nil {
+		logger.Log(err.Error(), logger.INFO)
+		return
+	}
+
+	err = getSeedDataFile(&teammembers, "studio.teammembers.json")
+	if err != nil {
+		logger.Log(err.Error(), logger.INFO)
+		return
+	}
+
+	err = datasource.Save([]datasource.SaveRequest{
+		getPlatformSeedSR(&apps),
+		getPlatformSeedSR(&bundles),
+		getPlatformSeedSR(&workspaces),
+		getPlatformSeedSR(&sites),
+		getPlatformSeedSR(&sitedomains),
+		getPlatformSeedSR(&users),
+		getPlatformSeedSR(&configstorevalues),
+		getSeedSR("studio.teams", &teams),
+		getSeedSR("studio.teammembers", &teammembers),
+	}, session)
+	if err != nil {
+		logger.LogError(err)
 		return
 	}
 
