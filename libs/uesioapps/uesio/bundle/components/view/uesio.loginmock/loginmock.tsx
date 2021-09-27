@@ -1,8 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import LoginWrapper from "../../shared/loginwrapper"
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import users from "../../../../../../../apps/platform/seed/users.json"
 type LoginDefinition = {
 	clientId: string
 	align: "left" | "center" | "right"
@@ -11,6 +9,13 @@ type LoginDefinition = {
 interface LoginProps extends definition.BaseProps {
 	definition: LoginDefinition
 }
+
+const mockUsers = [
+	{ firstname: "Ben", lastname: "Hubbard" },
+	{ firstname: "Abel", lastname: "Jimenez Molla" },
+	{ firstname: "Wessel", lastname: "van der Plas" },
+	{ firstname: "Gregg", lastname: "Baxter" },
+]
 
 const Button = component.registry.getUtility("io.button")
 
@@ -35,12 +40,12 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 
 	return (
 		<>
-			{users.map((user) => {
+			{mockUsers.map((user) => {
 				const value = JSON.stringify({
-					authType: user.federationType,
+					authType: "mock",
 					lastname: user.lastname,
 					firstname: user.firstname,
-					subject: user.federationId,
+					subject: "Mock" + user.firstname,
 					email:
 						user.firstname.toLowerCase() + "@thecloudmasters.com",
 				})
