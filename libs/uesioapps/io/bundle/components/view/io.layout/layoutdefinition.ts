@@ -7,7 +7,7 @@ type LayoutDefinition = {
 	alignItems: string
 	breakpoint: string
 	columns: any[]
-	template: number[]
+	template: string
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition

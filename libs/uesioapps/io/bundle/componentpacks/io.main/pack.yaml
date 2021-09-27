@@ -71,7 +71,6 @@ components:
     io.referencefield:
     io.column:
     io.form:
-    io.formsection:
     io.layout:
     io.scrollpanel:
     io.selectfield:

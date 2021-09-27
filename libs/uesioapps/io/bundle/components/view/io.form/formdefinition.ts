@@ -145,7 +145,7 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	type: "component",
-	traits: ["uesio.standalone"],
+	traits: [""],
 }
 export { FormProps, FormDefinition, FormState }
 

@@ -1,9 +1,10 @@
-import React, { FC, useState, useMemo, useEffect } from "react"
-import { definition, styles, component, util, hooks } from "@uesio/ui"
+import { FC, useState, useEffect } from "react"
+import { definition, styles, component, util, hooks, wire } from "@uesio/ui"
 import { Transition } from "react-transition-group"
+import { FormDefinition } from "../io.form/formdefinition"
 
-interface T extends definition.BaseProps {
-	wire: any // TODO
+interface Props extends definition.BaseProps {
+	wire: wire.Wire
 }
 
 type FieldHint = {
@@ -30,9 +31,10 @@ const {
 	makeFullPath,
 	getNearestAncestorPathByKey,
 	findAllByKey,
+	parseKey,
 } = component.path
 
-const FieldHints: FC<T> = (props) => {
+const FieldHints: FC<Props> = (props) => {
 	const [open, setOpen] = useState<boolean>(false)
 	const { wire, path, context } = props
 	const uesio = hooks.useUesio(props)
@@ -43,10 +45,10 @@ const FieldHints: FC<T> = (props) => {
 	const formPath = getNearestAncestorPathByKey(toPath(path), "io.form")
 	const formDef = uesio.builder.useDefinition(
 		makeFullPath(metadataType, metadataItem, fromPath(formPath))
-	) as Record<string, unknown>
+	) as FormDefinition
 	const collectionKey = wire.getCollection().getFullName() || ""
 	const wireId = context.getWire()?.getId()
-	const [namespace] = component.path.parseKey(collectionKey)
+	const [namespace] = parseKey(collectionKey)
 	const fieldsInWire = Object.keys(
 		uesio.builder.useMetadataList(
 			context,
@@ -61,7 +63,7 @@ const FieldHints: FC<T> = (props) => {
 		if (!fieldsInWire.length) return
 		const usedFields = findAllByKey(formDef, "fieldId")
 
-		const fields = fieldsInWire.map((el) => ({
+		const fields: FieldHint[] = fieldsInWire.map((el) => ({
 			used: usedFields.includes(el), // Used for sorting and greying out
 			id: el,
 		}))
@@ -71,7 +73,6 @@ const FieldHints: FC<T> = (props) => {
 	}, [fieldsInWire.length, formDef])
 
 	const handleAddField = (fieldId: string) => {
-		// const wireId = context.getWire()?.getId()
 		if (!wireId) return
 		// 1. Add field to wire
 		uesio.builder.addDefinitionPair(
@@ -179,7 +180,12 @@ const FieldHints: FC<T> = (props) => {
 
 	return fieldSuggestions ? (
 		<div onMouseLeave={() => setOpen(false)} className={classes.root}>
-			<div onClick={() => setOpen(!open)} className={"fieldHint"}>
+			<div
+				role="button"
+				tabIndex={0}
+				onClick={() => setOpen(!open)}
+				className="fieldHint"
+			>
 				<span>Add field</span>
 			</div>
 			<Transition in={open} timeout={duration}>
@@ -192,9 +198,13 @@ const FieldHints: FC<T> = (props) => {
 					>
 						{open && (
 							<div className={classes.fieldOptions}>
-								<div className={classes.fieldOptionslist}>
+								<div
+									role="list"
+									className={classes.fieldOptionslist}
+								>
 									{fieldSuggestions.map((field, index) => (
 										<div
+											key={field.id}
 											onClick={() =>
 												handleAddField(field.id)
 											}
@@ -202,6 +212,7 @@ const FieldHints: FC<T> = (props) => {
 											style={{
 												opacity: field.used ? "0.6" : 1,
 											}}
+											role="listitem"
 										>
 											{field.id}
 										</div>

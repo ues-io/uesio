@@ -2,7 +2,7 @@ import { builder, component } from "@uesio/ui"
 
 const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",
-	description: "Visible impression obtained by a camera",
+	description: "The backbone for layouts",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	sections: [],

@@ -1,10 +1,11 @@
 import { FC } from "react"
-import { component, definition, hooks, styles, signal } from "@uesio/ui"
+import { component, definition, hooks, styles, signal, wire } from "@uesio/ui"
 import { FormDefinition } from "./formdefinition"
 
 const IOButton = component.registry.getUtility("io.button")
 interface T extends definition.BaseProps {
 	definition: FormDefinition
+	wire: wire.Wire
 }
 
 type Signals = {
@@ -17,23 +18,23 @@ type Signals = {
 const FormActionsBar: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const { wire, defaultButtons, id, actionsBarPosition } = definition
+	const { wire: wireId, defaultButtons, id, actionsBarPosition } = definition
 
 	const signals: Signals = {
 		save: [
-			{ signal: "wire/SAVE", wires: [wire] },
+			{ signal: "wire/SAVE", wires: [wireId] },
 			{
 				signal: "notification/ADD",
 				text: "saved",
 			},
-			{ signal: "wire/EMPTY", wire },
-			{ signal: "wire/CREATE_RECORD", wire },
+			{ signal: "wire/EMPTY", wireId },
+			{ signal: "wire/CREATE_RECORD", wireId },
 		],
 		edit: [{ signal: "component/io.form/TOGGLE_MODE", target: id }],
-		cancel: [{ signal: "wire/CANCEL", wire }],
+		cancel: [{ signal: "wire/CANCEL", wireId }],
 		delete: [
-			{ signal: "wire/MARK_FOR_DELETE", wire },
-			{ signal: "wire/SAVE", wire },
+			{ signal: "wire/MARK_FOR_DELETE", wireId },
+			{ signal: "wire/SAVE", wireId },
 		],
 	}
 
@@ -57,10 +58,9 @@ const FormActionsBar: FC<T> = (props) => {
 		handler && handler()
 	}
 
-	const Wire = context.getWire()
-	const wireHasChanges = false
-	// const wireHasChanges =
-	// 	Wire && Object.keys(Object.values(Wire.source.changes)[0]).length !== 0
+	const changes = Object.values(wire.source.changes)[0]
+	console.log({ changes })
+	// const wireHasChanges = Wire && Object.keys().length !== 0
 	const disableChecks = {
 		save: !wireHasChanges, // Disable Save button when wire has no changes
 		cancel: !wireHasChanges, // Disable Save button when wire has no changes

@@ -3,8 +3,6 @@ import { definition, component, styles } from "@uesio/ui"
 import toPath from "lodash/toPath"
 import { LayoutContext } from "../io.layout/layout"
 
-const IOcolumn = component.registry.getUtility("io.column")
-
 export const getColumnFlexStyles = (
 	template: string,
 	path: string
@@ -20,7 +18,6 @@ export const getColumnFlexStyles = (
 
 const Column: FC<definition.BaseProps> = (props) => {
 	const { definition, context, path = "" } = props
-	const sharedProps = { context }
 
 	const flexStyles = context.getBuildMode()
 		? {}
@@ -36,7 +33,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 	)
 
 	return (
-		<IOcolumn classes={classes} {...sharedProps}>
+		<div className={classes.root}>
 			<component.Slot
 				definition={definition}
 				listName="components"
@@ -44,7 +41,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				accepts={["uesio.standalone", "uesio.field", "io.field"]}
 				context={context}
 			/>
-		</IOcolumn>
+		</div>
 	)
 }
 

@@ -60,7 +60,6 @@ const Form: FC<FormProps> = (props) => {
 		<div>
 			<IOTitleBar
 				context={context}
-				variant={definition["uesio.variant"]}
 				title={title}
 				subtitle={subtitle}
 				actions={
@@ -75,7 +74,7 @@ const Form: FC<FormProps> = (props) => {
 			/>
 
 			{data.map((record) => (
-				<div className={classes.formArea}>
+				<form className={classes.formArea}>
 					<component.Slot
 						definition={definition}
 						listName="sections"
@@ -89,13 +88,14 @@ const Form: FC<FormProps> = (props) => {
 					{defaultButtons.length && (
 						<ActionsBar
 							{...props}
+							wire={wire}
 							context={newContext.addFrame({
 								record: record.getId(),
 								fieldMode: componentState?.mode,
 							})}
 						/>
 					)}
-				</div>
+				</form>
 			))}
 		</div>
 	) : (

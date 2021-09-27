@@ -185,9 +185,9 @@ class Context {
 			: undefined
 	}
 
-	getInViewDef = (pathArray: string[]) => {
+	getInViewDef = <T>(pathArray: string[]): T => {
 		const viewDef = this.getViewDef() as any
-		return getInObject(viewDef?.definition, pathArray)
+		return getInObject(viewDef?.definition, pathArray) as T
 	}
 
 	getViewDef = () => getViewDef(this.getViewDefId())
