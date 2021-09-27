@@ -147,6 +147,6 @@ const FormPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	traits: [""],
 }
-export { FormProps, FormDefinition, FormState }
+export { FormProps, FormDefinition, FormState, FormAction }
 
 export default FormPropertyDefinition

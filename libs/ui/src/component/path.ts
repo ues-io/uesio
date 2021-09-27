@@ -197,6 +197,10 @@ const getAncestorPath = (path: string, parents: number): string =>
  * @param path
  * @param key
  * @returns path
+ * @example
+ * const path = ['components'][0]['io.form']['columns'][0]
+ * const key = 'io.form'
+ * getNearestAncestorPathByKey(path, key) // ['components'][0]['io.form']
  */
 const getNearestAncestorPathByKey = (path: string | string[], key: string) => {
 	const pathArray = toPath(path)

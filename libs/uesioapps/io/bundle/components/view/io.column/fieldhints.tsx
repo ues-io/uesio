@@ -85,7 +85,7 @@ const FieldHints: FC<Props> = (props) => {
 			fieldId
 		)
 
-		// 3. Add field to column definition
+		// 2. Add field to column definition & set selected node
 		uesio.builder.addDefinition(
 			makeFullPath(
 				metadataType,
@@ -98,21 +98,19 @@ const FieldHints: FC<Props> = (props) => {
 				},
 			}
 		)
-
 		uesio.builder.setSelectedNode(
 			metadataType,
 			metadataItem,
 			fromPath([...toPath(path), "components"])
 		)
 
-		// 4. Refresh the wire definition
+		// 3. Refresh the wire definition
 		const wireUpdate = uesio.signal.getHandler([
 			{
 				signal: "wire/LOAD",
 				wires: [wireId],
 			},
 		])
-
 		wireUpdate && wireUpdate()
 	}
 
@@ -121,7 +119,7 @@ const FieldHints: FC<Props> = (props) => {
 			root: {
 				position: "relative",
 				"&:hover .fieldHint": {
-					opacity: 0.7,
+					opacity: 1,
 				},
 
 				".fieldHint": {
@@ -133,7 +131,7 @@ const FieldHints: FC<Props> = (props) => {
 					position: "relative",
 					display: "flex",
 					alignItems: "center",
-					opacity: 1,
+					opacity: 0.7,
 					// opacity: open ? 1 : 0,
 					optionsContainer: {},
 					fontSize: "0.8em",

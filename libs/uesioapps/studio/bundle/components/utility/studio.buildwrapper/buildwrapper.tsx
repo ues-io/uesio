@@ -10,7 +10,7 @@ import styling from "./styling"
 
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
-	subtitle: string
+	subtitle: string | React.Component
 }
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {

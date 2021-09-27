@@ -1,6 +1,6 @@
 import { FC } from "react"
 import { component, definition, hooks, styles, signal, wire } from "@uesio/ui"
-import { FormDefinition } from "./formdefinition"
+import { FormDefinition, FormAction } from "./formdefinition"
 
 const IOButton = component.registry.getUtility("io.button")
 interface T extends definition.BaseProps {
@@ -9,15 +9,12 @@ interface T extends definition.BaseProps {
 }
 
 type Signals = {
-	save: signal.SignalDefinition[]
-	delete: signal.SignalDefinition[]
-	cancel: signal.SignalDefinition[]
-	edit: signal.SignalDefinition[]
+	[key in FormAction]: signal.SignalDefinition[]
 }
 
 const FormActionsBar: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context, definition } = props
+	const { context, definition, wire } = props
 	const { wire: wireId, defaultButtons, id, actionsBarPosition } = definition
 
 	const signals: Signals = {
@@ -58,15 +55,8 @@ const FormActionsBar: FC<T> = (props) => {
 		handler && handler()
 	}
 
-	const changes = Object.values(wire.source.changes)[0]
-	console.log({ changes })
-	// const wireHasChanges = Wire && Object.keys().length !== 0
-	const disableChecks = {
-		save: !wireHasChanges, // Disable Save button when wire has no changes
-		cancel: !wireHasChanges, // Disable Save button when wire has no changes
-		edit: false,
-		delete: false,
-	}
+	const wireHasChanges =
+		wire && Object.keys(Object.values(wire.source.changes)[0]).length !== 0
 
 	return (
 		<div className={classes.root}>
@@ -76,7 +66,7 @@ const FormActionsBar: FC<T> = (props) => {
 						variant={definition.buttonVariant}
 						label={text.charAt(0).toUpperCase() + text.slice(1)}
 						onClick={() => fireSignals(signals[text])}
-						disabled={disableChecks[text]}
+						disabled={text === "save" && !wireHasChanges}
 						context={context}
 					/>
 				))}
