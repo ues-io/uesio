@@ -9,13 +9,17 @@ type FormMode = "READ" | "EDIT"
 type FormState = {
 	mode: FormMode
 }
-
 interface FormDefinition extends LayoutDefinition {
 	icon: string
 	id: string
 	wire?: string
 	defaultButtons: FormAction[]
-	[key: string]: any
+	buttonVariant?: string
+	mode: FormMode
+	[key: string]: definition.Definition
+}
+interface FormProps extends definition.BaseProps {
+	definition: FormDefinition
 }
 interface FormProps extends definition.BaseProps {
 	definition: FormDefinition

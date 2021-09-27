@@ -29,8 +29,8 @@ const FormBuilder: FC<FormProps> = (props) => {
 	const wireId = wire?.getId() as string
 
 	// We the wire name changes, we want to set the new name in the formDef
-	const [savedWireId, setSavedWireId] = useState<string | null>(wireId)
-	const [defWireHistory, setDefWireHistory] = useState<any>([wiresInDef])
+	const [savedWireId] = useState<string | null>(wireId)
+	const [defWireHistory, setDefWireHistory] = useState([wiresInDef])
 	useEffect(() => {
 		setDefWireHistory([...defWireHistory, wiresInDef])
 

@@ -6,25 +6,9 @@ import { FormSectionProps } from "./formsectiondefinition"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 const FormSectionBuilder: FC<FormSectionProps> = (props) => {
-	const { path = "", context } = props
-
-	// Get template val set on parent layout def
-	const layoutOverrides = (() => {
-		if (!path) return {}
-		const pathArray = component.path.fromArray(path)
-
-		const pathToLayout = pathArray.slice(0, -3)
-		const layoutDef = context.getInViewDef(pathToLayout) as any
-		if (!layoutDef.template) return {}
-		const template = layoutDef.template
-
-		return getColumnFlexStyles(template, path)
-	})()
-
 	const classes = styles.useStyles(
 		{
 			root: {
-				...layoutOverrides,
 				flex: "100%",
 				gap: "inherit",
 			},

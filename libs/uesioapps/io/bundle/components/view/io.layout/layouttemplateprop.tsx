@@ -1,11 +1,7 @@
 import { FC } from "react"
 import { builder, component, definition, hooks, styles } from "@uesio/ui"
+import { LayoutDefinition } from "./layoutdefinition"
 
-type ColumnArrayKey = {
-	"io.column": {
-		components: { [key: string]: any }[]
-	}
-}
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 interface T extends definition.UtilityProps {
@@ -58,29 +54,27 @@ const LayoutTemplateButton: FC<T> = (props) => {
 	)
 }
 
-interface WrapperProps extends definition.UtilityProps {
-	descriptor: builder.PropDescriptor
-}
-interface Props extends WrapperProps {
+interface Props extends builder.CustomPropRendererProps {
 	template?: string[]
+	[key: string]: unknown
 }
 
 const LayoutTemplateProp: FC<Props> = (props) => {
-	const valueAPI = props.valueAPI as any
+	const valueAPI = props.valueAPI as builder.PropRendererProps["valueAPI"]
 	const uesio = hooks.useUesio(props)
 	const { path: dirtyPath, context } = props
 	const path = component.path.getParentPath(dirtyPath || "")
-	const definition = valueAPI.get(path)
+	const definition = valueAPI.get(path) as LayoutDefinition
 	const layoutPresets = ["1", "1,1", "1,2", "1,1,1", "1,4,1", "1,1,1,1"]
 
 	const handler = (values: string) => {
-		let currentColumns: ColumnArrayKey[] = definition.columns
+		let currentColumns = definition?.columns
 
 		// If new columncount < current collumncount --> delete empty columns
 		if (currentColumns && values.length < currentColumns.length) {
 			const numberOfColumsToDelete = currentColumns.length - values.length
 			const indexesUpForDelete = currentColumns
-				.map((el: ColumnArrayKey, i: number) =>
+				.map((el, i) =>
 					"components" in el["io.column"] &&
 					el["io.column"].components.length > 0
 						? null
@@ -156,10 +150,9 @@ const LayoutTemplateProp: FC<Props> = (props) => {
 }
 
 export default {
-	default: (props: WrapperProps) => <LayoutTemplateProp {...props} />,
-	form: (props: WrapperProps) => (
-		<LayoutTemplateProp template={["1", "1,1", "1,1,1"]} {...props} />
-	),
+	default: (props: Props) => LayoutTemplateProp(props),
+	form: (props: Props) =>
+		LayoutTemplateProp({ ...props, template: ["1", "1,1", "1,1,1"] }),
 }
 
 // export default LayoutTemplateProp

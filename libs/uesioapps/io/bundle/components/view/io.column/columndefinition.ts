@@ -1,4 +1,8 @@
-import { builder, component } from "@uesio/ui"
+import { builder, component, definition } from "@uesio/ui"
+
+export type ColumnDefinition = {
+	components: definition.DefinitionValue[]
+}
 
 const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",

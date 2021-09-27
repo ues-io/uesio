@@ -1,13 +1,14 @@
 import { definition, builder } from "@uesio/ui"
 import LayoutTemplateProp from "./layouttemplateprop"
+import { ColumnDefinition } from "../io.column/columndefinition"
 
 type LayoutDefinition = {
 	columnGap?: string
 	justifyContent: string
 	alignItems: string
 	breakpoint: string
-	columns: definition.DefinitionList
 	template: string
+	columns: { "io.column": ColumnDefinition }[]
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition

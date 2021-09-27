@@ -89,10 +89,14 @@ const unWrapDefinition = (
  * findAllByKey(test, 'field') // ['crm.logo', 'crm.name']
  * @returns array of field values
  */
-const findAllByKey = (obj: any, keyToFind: string): any =>
+const findAllByKey = (
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	obj: Record<string, any>,
+	keyToFind: string
+): unknown[] =>
 	Object.entries(obj).reduce((acc, [key, value]) => {
 		if (key === keyToFind) return [...acc, value]
-		if (typeof value === "object")
+		if (value && typeof value === "object")
 			return [...acc, ...findAllByKey(value, keyToFind)]
 		return acc
 	}, [])

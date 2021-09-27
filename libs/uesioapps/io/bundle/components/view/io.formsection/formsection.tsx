@@ -41,19 +41,7 @@ const FormSection: FC<FormSectionProps> = (props) => {
 				}
 			/>
 
-			<Layout
-				definition={definition}
-				context={context}
-				slot={
-					<component.Slot
-						definition={props.definition}
-						listName="columns"
-						path={path}
-						accepts={["io.column"]}
-						context={context}
-					/>
-				}
-			/>
+			<Layout definition={definition} context={context} />
 		</div>
 	)
 }
