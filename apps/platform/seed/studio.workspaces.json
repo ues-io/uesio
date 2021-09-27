@@ -2,22 +2,19 @@
 	{
 		"name": "dev",
 		"app": {
-			"id": "crm",
-			"name": "crm"
+			"id": "crm"
 		}
 	},
 	{
 		"name": "test",
 		"app": {
-			"id": "crm",
-			"name": "crm"
+			"id": "crm"
 		}
 	},
 	{
 		"name": "dev",
 		"app": {
-			"id": "sample",
-			"name": "sample"
+			"id": "sample"
 		}
 	}
 ]

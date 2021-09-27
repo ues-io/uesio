@@ -130,21 +130,21 @@ func PlatformDeleteOne(item meta.CollectionableItem, session *sess.Session) erro
 	return PlatformDelete(collection, session)
 }
 
+func GetSaveRequestFromPlatformSave(psr PlatformSaveRequest) SaveRequest {
+	return SaveRequest{
+		Collection: psr.Collection.GetName(),
+		Wire:       "AnyKey",
+		Changes:    psr.Collection,
+		Options:    psr.Options,
+	}
+}
+
 // PlatformSaves function
 func PlatformSaves(psrs []PlatformSaveRequest, session *sess.Session) error {
-
-	requests := []SaveRequest{}
-
-	for _, psr := range psrs {
-		collection := psr.Collection
-		requests = append(requests, SaveRequest{
-			Collection: collection.GetName(),
-			Wire:       "AnyKey",
-			Changes:    collection,
-			Options:    psr.Options,
-		})
+	requests := make([]SaveRequest, len(psrs))
+	for i := range psrs {
+		requests[i] = GetSaveRequestFromPlatformSave(psrs[i])
 	}
-
 	return DoPlatformSave(requests, session)
 }
 
