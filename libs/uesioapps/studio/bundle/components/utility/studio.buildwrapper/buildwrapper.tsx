@@ -1,4 +1,13 @@
-import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
+import React, {
+	FC,
+	SyntheticEvent,
+	DragEvent,
+	useState,
+	useRef,
+	useEffect,
+} from "react"
+import { createPortal } from "react-dom"
+
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
@@ -7,7 +16,7 @@ interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
 }
 
-const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
+const BuildWrapper: FC<BuildWrapperProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { children, path = "", index = 0 } = props
 	const [canDrag, setCanDrag] = useState(false)
@@ -84,53 +93,95 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 		styling(isSelected, isActive, dragger.isDragging),
 		props
 	)
+
+	const [target, setTarget] = useState<Element | null>(null)
+	const siblingRef = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		if (!siblingRef.current) return
+		// The component we want to wrap
+		const target = siblingRef.current.nextElementSibling as HTMLElement
+		if (!target) return
+
+		const styles: Record<string, string> = {
+			position: "relative",
+		}
+
+		const style = target.style as any
+		Object.keys(styles).forEach((k: string) => {
+			console.log({ style: k })
+			style[k] = styles[k]
+		})
+
+		setTarget(target)
+	}, [siblingRef])
+
 	return (
 		<>
-			{addBeforePlaceholder && <div className={classes.placeholder} />}
-			<div
-				data-index={index}
-				onDragStart={dragger.start}
-				onDragEnd={dragger.end}
-				onDragOver={dragger.over}
-				onDrop={dragger.drop}
-				className={classes.root}
-				onClick={(event: SyntheticEvent) => {
-					!isSelected &&
-						uesio.builder.setSelectedNode(
-							"viewdef",
-							viewDefId,
-							path
-						)
-					event.stopPropagation()
-				}}
-				onMouseEnter={() => {
-					!isActive &&
-						uesio.builder.setActiveNode("viewdef", viewDefId, path)
-				}}
-				onMouseLeave={() => {
-					isActive && uesio.builder.clearActiveNode()
-				}}
-				draggable={canDrag}
-			>
-				{
-					<div
-						className={classes.header}
-						onMouseDown={() => setCanDrag(true)}
-						onMouseUp={() => dragger.dragNode && setCanDrag(false)}
-					>
-						{propDef?.title ?? "Unknown"}
-					</div>
-				}
-				<div className={classes.inner}>{children}</div>
-			</div>
-			{addAfterPlaceholder && (
-				<div
-					className={styles.cx(
-						classes.placeholder,
-						classes.afterPlaceholder
-					)}
-				/>
-			)}
+			{!target && <span style={{ display: "none" }} ref={siblingRef} />}
+			{children}
+			{target &&
+				createPortal(
+					<>
+						{addBeforePlaceholder && (
+							<div className={classes.placeholder} />
+						)}
+						<div
+							data-index={index}
+							onDragStart={dragger.start}
+							onDragEnd={dragger.end}
+							onDragOver={dragger.over}
+							onDrop={dragger.drop}
+							className={classes.root}
+							onClick={(event: SyntheticEvent) => {
+								!isSelected &&
+									uesio.builder.setSelectedNode(
+										"viewdef",
+										viewDefId,
+										path
+									)
+								event.stopPropagation()
+							}}
+							onMouseEnter={() => {
+								!isActive &&
+									uesio.builder.setActiveNode(
+										"viewdef",
+										viewDefId,
+										path
+									)
+							}}
+							onMouseLeave={() => {
+								isActive && uesio.builder.clearActiveNode()
+							}}
+							draggable={canDrag}
+						>
+							{
+								<span
+									className={classes.header}
+									onMouseDown={() => setCanDrag(true)}
+									onMouseUp={() =>
+										dragger.dragNode && setCanDrag(false)
+									}
+									style={{
+										padding: "4px",
+										backgroundColor: "#000",
+										color: "#fff",
+									}}
+								>
+									{propDef?.title ?? "Unknown"}
+								</span>
+							}
+						</div>
+						{addAfterPlaceholder && (
+							<div
+								className={styles.cx(
+									classes.placeholder,
+									classes.afterPlaceholder
+								)}
+							/>
+						)}
+					</>,
+					target
+				)}
 		</>
 	)
 }
