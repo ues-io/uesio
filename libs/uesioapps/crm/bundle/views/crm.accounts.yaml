@@ -15,6 +15,7 @@ definition:
                         wire: accounts
                     text: Create
                     uesio.variant: io.secondary
+                    icon: add
                 - io.button:
                     signals:
                       - signal: wire/SAVE
@@ -22,18 +23,21 @@ definition:
                           - accounts
                     text: Save
                     uesio.variant: io.secondary
+                    icon: check_circle_outline
                 - io.button:
                     signals:
                       - signal: wire/CANCEL
                         wire: accounts
                     text: Cancel
                     uesio.variant: io.secondary
+                    icon: cancel
                 - io.button:
                     signals:
                       - signal: component/io.table/TOGGLE_MODE
                         target: accountsTable
-                    text: Mode
+                    text: List/Detail View
                     uesio.variant: io.secondary
+                    icon: view_list
     - io.box:
         uesio.styles:
           root:
@@ -56,9 +60,23 @@ definition:
                 - io.column:
                     field: crm.description
                 - io.column:
+                    field: crm.account_type
+                - io.column:
+                    field: crm.industry
+                - io.column:
+                    field: crm.no_of_employees
+                - io.column:
+                    field: crm.billing_city
+                - io.column:
+                    field: crm.billing_country
+                - io.column:
+                    field: crm.rating
+                - io.column:
                     field: uesio.createdat
                 - io.column:
                     field: uesio.updatedat
+                - io.column:
+                    field: uesio.createdby
               id: accountsTable
               mode: EDIT
               wire: accounts
@@ -77,3 +95,9 @@ definition:
         crm.externalid: null
         uesio.createdat: null
         uesio.updatedat: null
+        crm.account_type: null
+        crm.industry: null
+        crm.billing_city: null
+        crm.no_of_employees: null
+        crm.rating: null
+        crm.billing_country: null
