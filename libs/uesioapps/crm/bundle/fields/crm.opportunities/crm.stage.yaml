@@ -1,0 +1,4 @@
+name: stage
+collection: crm.opportunities
+type: TEXT
+label: Stage

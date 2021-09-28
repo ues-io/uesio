@@ -1,0 +1,4 @@
+name: shipping_street
+collection: crm.accounts
+type: TEXT
+label: Shipping Street

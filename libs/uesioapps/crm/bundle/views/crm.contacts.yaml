@@ -34,18 +34,11 @@ definition:
                         target: contactsTable
                     text: Mode
                     uesio.variant: io.secondary
-    - io.layout:
-        template: 1,1
-        columns:
-          - io.column:
-              components: []
-          - io.column:
-              components: []
     - io.box:
         components:
           - io.deck:
               id: NewId
-              mode: READ
+              mode: EDIT
               wire: contacts
               templateColumns: 1fr 1fr 1fr 1fr
               uesio.styles:

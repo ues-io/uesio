@@ -1,0 +1,4 @@
+name: quote_number
+collection: crm.quotes
+type: NUMBER
+label: Quote Number

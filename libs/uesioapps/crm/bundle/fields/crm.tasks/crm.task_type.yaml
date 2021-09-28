@@ -1,0 +1,4 @@
+name: task_type
+collection: crm.tasks
+type: TEXT
+label: Task Type

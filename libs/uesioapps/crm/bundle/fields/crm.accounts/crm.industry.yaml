@@ -1,0 +1,4 @@
+name: industry
+collection: crm.accounts
+type: TEXT
+label: Industry

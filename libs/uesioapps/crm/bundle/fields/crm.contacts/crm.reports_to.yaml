@@ -1,0 +1,5 @@
+name: reports_to
+collection: crm.contacts
+type: REFERENCE
+label: Reports To
+referencedCollection: crm.contacts

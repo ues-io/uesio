@@ -1,0 +1,4 @@
+name: taxable
+collection: crm.quotes
+type: CHECKBOX
+label: Taxable

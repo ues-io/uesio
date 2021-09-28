@@ -1,0 +1,4 @@
+name: tax_rate
+collection: crm.services
+type: NUMBER
+label: Tax Rate

@@ -1,0 +1,4 @@
+name: service_code
+collection: crm.services
+type: TEXT
+label: Service Code

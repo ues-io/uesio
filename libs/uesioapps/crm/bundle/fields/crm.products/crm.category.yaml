@@ -1,0 +1,4 @@
+name: category
+collection: crm.products
+type: TEXT
+label: Category

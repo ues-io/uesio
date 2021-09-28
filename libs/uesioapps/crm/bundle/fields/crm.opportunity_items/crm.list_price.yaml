@@ -1,0 +1,4 @@
+name: list_price
+collection: crm.opportunity_items
+type: NUMBER
+label: List Price

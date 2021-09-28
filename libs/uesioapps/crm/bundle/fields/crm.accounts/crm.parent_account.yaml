@@ -1,0 +1,5 @@
+name: parent_account
+collection: crm.accounts
+type: REFERENCE
+label: Parent Account
+referencedCollection: crm.accounts

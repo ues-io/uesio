@@ -1,0 +1,4 @@
+name: email
+collection: crm.quotes
+type: TEXT
+label: Email
