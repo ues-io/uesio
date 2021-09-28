@@ -1,0 +1,5 @@
+name: priority
+collection: crm.tasks
+type: SELECT
+label: priority
+selectList: crm.task_priority

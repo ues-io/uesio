@@ -1,2 +1,12 @@
 name: salutation
-options: []
+options:
+  - label: Sir
+    value: Sir
+  - label: Madam
+    value: Madam
+  - label: Mr
+    value: Mr
+  - label: Mrs
+    value: Mrs
+  - label: Miss
+    value: Miss
