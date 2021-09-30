@@ -32,17 +32,17 @@ definition:
                         path: "https://$Site{domain}"
                 - uesio.logingoogle:
                     text: Sign in with Google
-                    clientId: uesio.googleClientId
+                    clientId: uesio.google_client_id
                     align: center
                 - uesio.loginmock:
                     text: Sign in with Mock
                     align: center
                 - uesio.loginfacebook:
                     text: Sign in with Facebook
-                    clientId: uesio.facebookAppId
+                    clientId: uesio.facebook_app_id
                     align: center
                 - uesio.logincognito:
                     text: Sign in with Email
-                    clientId: uesio.cognitoClientId
-                    poolId: uesio.cognitoPoolId
+                    clientId: uesio.cognito_client_id
+                    poolId: uesio.cognito_pool_id
                     align: center

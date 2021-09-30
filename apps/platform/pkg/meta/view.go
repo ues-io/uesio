@@ -1,10 +1,9 @@
 package meta
 
 import (
-	"fmt"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // View struct
@@ -129,18 +128,12 @@ func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
 }
 
-func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
-	if node.Kind != yaml.MappingNode {
-		return nil, fmt.Errorf("Definition is not a mapping node.")
+func (v *View) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, v.Name)
+	if err != nil {
+		return err
 	}
-
-	for i := range node.Content {
-		if node.Content[i].Value == key {
-			return node.Content[i+1], nil
-		}
-	}
-
-	return nil, fmt.Errorf("Node not found of key: " + key)
+	return node.Decode(v)
 }
 
 func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {

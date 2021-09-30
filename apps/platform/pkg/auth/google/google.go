@@ -15,7 +15,7 @@ type Auth struct {
 func (a *Auth) Verify(token string, session *sess.Session) error {
 	v := verifier.Verifier{}
 
-	aud, err := configstore.GetValueFromKey("uesio.googleClientId", session)
+	aud, err := configstore.GetValueFromKey("uesio.google_client_id", session)
 	if err != nil {
 		return err
 	}

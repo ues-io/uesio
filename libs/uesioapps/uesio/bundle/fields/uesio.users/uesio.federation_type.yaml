@@ -1,4 +1,4 @@
-name: federationType
+name: federation_type
 collection: uesio.users
 type: "TEXT"
 label: "Federation Type"

@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/logger"
-	"gopkg.in/yaml.v3"
 )
 
 func respondJSON(w http.ResponseWriter, r *http.Request, v interface{}) {
