@@ -5,12 +5,12 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
 // Retrieve func

@@ -3,6 +3,8 @@ package meta
 import (
 	"errors"
 	"path/filepath"
+
+	"github.com/humandad/yaml"
 )
 
 // NewFile function
@@ -127,4 +129,12 @@ func (f *File) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (f *File) SetItemMeta(itemMeta *ItemMeta) {
 	f.itemMeta = itemMeta
+}
+
+func (f *File) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, f.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(f)
 }

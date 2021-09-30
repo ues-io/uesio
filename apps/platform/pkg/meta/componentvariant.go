@@ -3,7 +3,7 @@ package meta
 import (
 	"path/filepath"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // ComponentVariant struct
@@ -116,4 +116,12 @@ func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cv.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cv)
 }

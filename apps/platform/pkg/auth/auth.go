@@ -161,11 +161,11 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 		&user,
 		[]adapt.LoadRequestCondition{
 			{
-				Field: "uesio.federationType",
+				Field: "uesio.federation_type",
 				Value: claims.AuthType,
 			},
 			{
-				Field: "uesio.federationId",
+				Field: "uesio.federation_id",
 				Value: claims.Subject,
 			},
 		},

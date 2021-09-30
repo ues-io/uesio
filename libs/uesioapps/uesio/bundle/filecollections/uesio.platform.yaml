@@ -1,4 +1,4 @@
 name: platform
-bucket: uesio.userfilesBucketName
+bucket: uesio.userfiles_bucket_name
 pathFormat: "${collectionid}/${recordid}/${type}/${name}"
 filesource: uesio.platform

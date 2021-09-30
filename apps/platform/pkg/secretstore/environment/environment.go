@@ -10,13 +10,13 @@ type SecretStore struct {
 }
 
 var secretValues = map[string]string{
-	"uesio:googleGCPAPIKey":    os.Getenv("GOOGLE_CLOUD_API_KEY"),
-	"uesio:awsAccessKeyId":     os.Getenv("AWS_ACCESS_KEY_ID"),
-	"uesio:awsSecretAccessKey": os.Getenv("AWS_SECRET_ACCESS_KEY"),
-	"uesio:awsSessionToken":    os.Getenv("AWS_SESSION_TOKEN"),
-	"uesio:dbUser":             os.Getenv("UESIO_DB_USER"),
-	"uesio:dbPassword":         os.Getenv("UESIO_DB_PASSWORD"),
-	"uesio:dbDatabase":         os.Getenv("UESIO_DB_DATABASE"),
+	"uesio:google_gcp_api_key":    os.Getenv("GOOGLE_CLOUD_API_KEY"),
+	"uesio:aws_access_key_id":     os.Getenv("AWS_ACCESS_KEY_ID"),
+	"uesio:aws_secret_access_key": os.Getenv("AWS_SECRET_ACCESS_KEY"),
+	"uesio:aws_session_token":     os.Getenv("AWS_SESSION_TOKEN"),
+	"uesio:dbuser":                os.Getenv("UESIO_DB_USER"),
+	"uesio:dbpassword":            os.Getenv("UESIO_DB_PASSWORD"),
+	"uesio:dbdatabase":            os.Getenv("UESIO_DB_DATABASE"),
 }
 
 // Get function

@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // Theme struct
@@ -119,4 +119,12 @@ func (t *Theme) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
 	t.itemMeta = itemMeta
+}
+
+func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, t.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(t)
 }

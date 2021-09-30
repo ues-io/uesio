@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewCredential function
@@ -121,4 +123,12 @@ func (c *Credential) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *Credential) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (c *Credential) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, c.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(c)
 }
