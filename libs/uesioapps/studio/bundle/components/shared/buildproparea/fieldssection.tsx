@@ -1,4 +1,10 @@
-import { FunctionComponent, DragEvent, useState, useRef } from "react"
+import {
+	FunctionComponent,
+	DragEvent,
+	useState,
+	useRef,
+	useEffect,
+} from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import { hooks, component, definition, styles } from "@uesio/ui"
@@ -24,6 +30,26 @@ function flattenObj(
 	return res
 }
 
+const useHighlightedFields = () => {
+	const [highlightedFields, setHighlightedFields] = useState<
+		NodeListOf<HTMLDivElement> | []
+	>([])
+
+	const updateHighlightedFields = (fieldId: string) => {
+		// Remove border from currently highlighted fields
+		if (highlightedFields.length)
+			highlightedFields.forEach((el) => (el.style.border = ""))
+
+		const fields = document.querySelectorAll<HTMLDivElement>(
+			`[data-fieldid="${fieldId}"]`
+		)
+		setHighlightedFields(fields)
+		fields.forEach((el) => (el.style.border = "1px solid red"))
+	}
+
+	return updateHighlightedFields
+}
+
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
@@ -31,6 +57,8 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	// Field deletion \
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [affectedPaths, setAffectedPaths] = useState<string[][]>([])
+	const [fieldToRemove, setFieldToRemove] = useState<string | null>(null)
+	const updateHighlightedFields = useHighlightedFields()
 	const [showWarning, setShowWarning] = useState(false)
 	// Field deletion /
 
@@ -97,7 +125,35 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				field.toLowerCase().includes(searchTerm.toLocaleLowerCase())
 		  )
 
+	const handleFieldClick = (fieldId: string) => {
+		const selected = fieldsDef?.[fieldId] !== undefined
+
+		return selected
+			? fieldRemover.handleFieldRemove(fieldId)
+			: valueAPI.addPair(`${path}["fields"]`, null, fieldId)
+	}
+
 	const fieldRemover = {
+		handleFieldRemove: (fieldId: string) => {
+			setAffectedPaths([])
+			setFieldToRemove(fieldId)
+			setShowWarning(false)
+			const brokenPaths = fieldRemover.getDeprecatedFields(fieldId)
+
+			// Field is used in viewDef
+			if (brokenPaths.length) {
+				const affectedPaths = brokenPaths.map((p) =>
+					p.split("_").slice(0, -2)
+				)
+				setAffectedPaths(affectedPaths)
+				updateHighlightedFields(fieldId)
+				setShowWarning(true)
+				return
+			}
+
+			valueAPI.remove(`${path}["fields"]["${fieldId}"]`)
+		},
+
 		getDeprecatedFields: (fieldId: string) => {
 			const flatObject = flattenObj(viewDef.components, "components")
 			return Object.entries(flatObject)
@@ -109,39 +165,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 			paths.forEach((pathArray) =>
 				valueAPI.remove(component.path.fromPath(pathArray))
 			),
-
-		handleRemoveField: (fieldId: string) => {
-			setAffectedPaths([])
-			const brokenPaths = fieldRemover.getDeprecatedFields(fieldId)
-
-			// Field is used in viewDef
-			if (brokenPaths.length) {
-				const affectedPaths = brokenPaths.map((p) =>
-					p.split("_").slice(0, -2)
-				)
-				setAffectedPaths(affectedPaths)
-				fieldRemover.highlightBrokenFields(fieldId)
-				setShowWarning(true)
-				return
-			}
-
-			valueAPI.remove(`${path}["fields"]["${fieldId}"]`)
-		},
-
-		handleFieldClick: (fieldId: string) => {
-			const selected = fieldsDef?.[fieldId] !== undefined
-
-			return selected
-				? fieldRemover.handleRemoveField(fieldId)
-				: valueAPI.addPair(`${path}["fields"]`, null, fieldId)
-		},
-
-		highlightBrokenFields: (fieldId: string) => {
-			const fields = document.querySelectorAll<HTMLDivElement>(
-				`[data-fieldid="${fieldId}"]`
-			)
-			fields.forEach((f) => (f.style.border = "1px solid red"))
-		},
 	}
 
 	//
@@ -170,10 +193,10 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						placement="right"
 					>
 						<div style={{ padding: "8px", fontSize: "14px" }}>
-							<p style={{ fontWeight: 700 }}>crm.name</p>
+							<p style={{ fontWeight: 700 }}>{fieldToRemove}</p>
 							<p>
 								Do you want to delete the field and{" "}
-								{affectedPaths.length > 1 ? "the" : ""}
+								{affectedPaths.length > 1 ? "the " : ""}
 								{affectedPaths.length} element
 								{affectedPaths.length > 1 ? "s" : ""} using this
 								field?
