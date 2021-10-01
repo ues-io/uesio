@@ -1,0 +1,6 @@
+name: main
+components:
+  view:
+    lab.layout:
+  utility:
+    lab.layout:
