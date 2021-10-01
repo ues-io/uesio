@@ -8,12 +8,19 @@ import {
 	context,
 } from "@uesio/ui"
 
+type LResponse = {
+	[key: string]: {
+		[key: string]: string | number | null
+	}
+}
+
 type DataImportItemDefinition = {
 	namespace: string
 	record: string
 	options: collection.SelectOption[]
 	selOption: string
 	collectionId: string
+	fieldsMeta: LResponse
 }
 
 interface Props extends definition.BaseProps {
@@ -29,7 +36,8 @@ const SelectField = component.registry.getUtility("io.selectfield")
 const DataImportItem: FunctionComponent<Props> = (props) => {
 	const { context, definition, handleSelection } = props
 	const uesio = hooks.useUesio(props)
-	const { namespace, record, options, selOption, collectionId } = definition
+	const { namespace, record, options, selOption, collectionId, fieldsMeta } =
+		definition
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -65,8 +73,18 @@ const DataImportItem: FunctionComponent<Props> = (props) => {
 					value={selValue}
 					options={options}
 					setValue={(value: string) => {
+						if (
+							fieldsMeta[value] &&
+							fieldsMeta[value].Type === "REFERENCE"
+						) {
+							//GET the reference account fields
+							//fieldsMeta[value].REFERENCECOLLECTION
+							setrefField({ display: true, options: [] })
+						} else {
+							setrefField({ display: false, options: [] })
+						}
+						handleSelection(record, value)
 						setSelValue(value)
-						//setrefField({ display: true, options: options })
 					}}
 				/>
 			</div>

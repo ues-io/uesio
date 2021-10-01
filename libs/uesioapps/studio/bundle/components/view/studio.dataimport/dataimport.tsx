@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useState } from "react"
+import { FunctionComponent, useRef, useState, useEffect } from "react"
 import {
 	definition,
 	styles,
@@ -253,12 +253,40 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		null
 	)
 
-	const fieldsMeta = uesio.builder.useMetadataList(
-		newContext,
-		"FIELD",
-		namespace,
-		collectionId
-	)
+	///PLAY-STATION
+
+	type LResponse = {
+		[key: string]: {
+			[key: string]: string | number | null
+		}
+	}
+
+	const [fieldsMeta, setNodes] = useState<LResponse>({})
+
+	// useEffect(() => {
+	// 	getAllNodes()
+	// }, [])
+
+	//const getAllNodes = () => {
+	// 	const fieldsMeta = uesio.collection.getMetadata<LResponse>(
+	// 		newContext,
+	// 		"FIELD",
+	// 		namespace,
+	// 		collectionId
+	// 	)
+
+	// 	fieldsMeta.then((response) => {
+	// 		setNodes(response)
+	// 	})
+	// }
+	///END PLAY-STATION
+
+	// const fieldsMeta = uesio.builder.useMetadataList(
+	// 	newContext,
+	// 	"FIELD",
+	// 	namespace,
+	// 	collectionId
+	// )
 
 	if (!fieldsMeta) return null
 
@@ -345,6 +373,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 							options: CmpState.options,
 							selOption: findMatch(record),
 							collectionId,
+							fieldsMeta,
 						}}
 						handleSelection={handleSelection}
 						context={newContext}

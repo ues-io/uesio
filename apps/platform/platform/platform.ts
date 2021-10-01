@@ -160,7 +160,6 @@ window.uesioLoader = (mergeData) => {
 			const buildModeSuffix = buildMode ? "/builder" : ""
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
-
 		getMetadataList: async (context, metadataType, namespace, grouping) => {
 			const prefix = getPrefix(context)
 			const mdType = metadata.METADATA[metadataType]
