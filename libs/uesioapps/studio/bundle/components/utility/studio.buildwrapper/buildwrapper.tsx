@@ -1,5 +1,5 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
-import { definition, styles, component, hooks } from "@uesio/ui"
+import { definition, styles, component, hooks, util } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
 
@@ -21,6 +21,15 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const propDef = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
+
+	const fieldId = (() => {
+		if (component.path.toPath(path).pop() !== "io.field") return ""
+		const { fieldId } = uesio.builder.useDefinition(
+			component.path.makeFullPath("viewdef", viewDefId, path)
+		) as any
+		return fieldId
+	})()
+
 	const accepts = propDef?.accepts
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
@@ -94,6 +103,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				onDragOver={dragger.over}
 				onDrop={dragger.drop}
 				className={classes.root}
+				{...(fieldId ? { "data-fieldid": fieldId } : "")}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected &&
 						uesio.builder.setSelectedNode(

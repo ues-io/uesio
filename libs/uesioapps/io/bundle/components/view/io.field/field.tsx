@@ -53,49 +53,45 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		variant: definition["uesio.variant"],
 	}
 
-	const field = () => {
-		switch (true) {
-			case type === "DATE":
-				return <DateField {...common} />
-			case type === "NUMBER" || type === "LONGTEXT" || type === "TEXT":
-				return <TextField {...common} />
-			case type === "SELECT":
-				return (
-					<SelectField
-						{...common}
-						options={addBlankSelectOption(
-							fieldMetadata.getOptions() || []
-						)}
-					/>
-				)
-			case type === "CHECKBOX" && displayAs === "TOGGLE":
-				return <ToggleField {...common} />
-			case type === "CHECKBOX":
-				return <CheckboxField {...common} />
-			case type === "REFERENCE":
-				return <ReferenceField {...common} />
-			case type === "TIMESTAMP":
-				return <TimestampField {...common} />
-			case type === "FILE" && displayAs === "TEXT":
-				return <FileText {...common} />
-			case type === "FILE":
-				return <FileDynamic {...common} />
-			case type === "USER":
-				return <UserField {...common} />
-			case type === "LIST":
-				return (
-					<ListField
-						{...common}
-						subFields={fieldMetadata.source.subfields}
-						subType={fieldMetadata.source.subtype}
-					/>
-				)
-			default:
-				return null
-		}
+	switch (true) {
+		case type === "DATE":
+			return <DateField {...common} />
+		case type === "NUMBER" || type === "LONGTEXT" || type === "TEXT":
+			return <TextField {...common} />
+		case type === "SELECT":
+			return (
+				<SelectField
+					{...common}
+					options={addBlankSelectOption(
+						fieldMetadata.getOptions() || []
+					)}
+				/>
+			)
+		case type === "CHECKBOX" && displayAs === "TOGGLE":
+			return <ToggleField {...common} />
+		case type === "CHECKBOX":
+			return <CheckboxField {...common} />
+		case type === "REFERENCE":
+			return <ReferenceField {...common} />
+		case type === "TIMESTAMP":
+			return <TimestampField {...common} />
+		case type === "FILE" && displayAs === "TEXT":
+			return <FileText {...common} />
+		case type === "FILE":
+			return <FileDynamic {...common} />
+		case type === "USER":
+			return <UserField {...common} />
+		case type === "LIST":
+			return (
+				<ListField
+					{...common}
+					subFields={fieldMetadata.source.subfields}
+					subType={fieldMetadata.source.subtype}
+				/>
+			)
+		default:
+			return null
 	}
-
-	return <div data-fieldid={fieldId}>{field()}</div>
 }
 
 export default Field
