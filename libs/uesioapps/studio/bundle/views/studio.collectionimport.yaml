@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referencedCollection:
+        studio.referenced_collection:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
