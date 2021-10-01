@@ -4,16 +4,17 @@ label: Primary
 definition:
   uesio.styles:
     root:
-      backgroundColor: "$Theme{color.primary}"
-      color: "#FFFFFFee"
+      backgroundColor: "#fff"
+      color: "rgb(68, 68, 68)"
       fontWeight: 500
-      border: "1px solid rgb(200,74, 37)"
-      boxShadow: "0 0 4px #00000033"
-      minWidth: 100px
+      border: "1px solid rgb(238, 238, 238)"
+      boxShadow: "0 0 2px #00000033"
       borderRadius: 4px
-      padding: 10px
+      padding: "8px 12px"
+      boxShadow: "0 0 2px #00000033"
+      transition: all 0.125s ease-in-out
       "&:focus":
         outline: none
-        boxShadow: "0 0 6px #00000093"
-    label:
-      textTransform: uppercase
+      '&:hover':
+        boxShadow: "0 0 4px #00000063"
+
