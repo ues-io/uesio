@@ -18,7 +18,13 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				fontFamily: "inherit",
 				border: "none",
 				cursor: "pointer",
+				display: "flex",
+				justifyContent: "center",
 				...(width && { width }),
+			},
+			icon: {
+				fontFamily: "Material Icons",
+				paddingRight: "0.25em",
 			},
 			label: {
 				verticalAlign: "middle",
@@ -37,7 +43,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				props.isSelected && classes.selected
 			)}
 		>
-			{props.icon}
+			{props.icon && <span className={classes.icon}>{props.icon}</span>}
 			<span className={classes.label}>{label}</span>
 		</button>
 	)
