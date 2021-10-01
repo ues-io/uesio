@@ -11,6 +11,7 @@ import { hooks, component, definition, styles } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 const Popper = component.registry.getUtility("io.popper")
 const Button = component.registry.getUtility("io.button")
+const Icon = component.registry.getUtility("io.icon")
 
 const { makeFullPath, parseKey } = component.path
 
@@ -191,9 +192,15 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						referenceEl={anchorEl}
 						context={context}
 						placement="right"
+						onOutsideClick={() => setShowWarning(false)}
 					>
 						<div style={{ padding: "8px", fontSize: "14px" }}>
-							<p style={{ fontWeight: 700 }}>{fieldToRemove}</p>
+							<p style={{ fontWeight: 700 }}>
+								<span style={{ color: "red" }}>
+									<Icon context={context} icon={"error"} />{" "}
+								</span>
+								{fieldToRemove}
+							</p>
 							<p>
 								Do you want to delete the field and{" "}
 								{affectedPaths.length > 1 ? "the " : ""}
@@ -237,26 +244,32 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						const selected = fieldDef !== undefined
 
 						return (
-							// <div ref={setAnchorEl}>
-							<PropNodeTag
-								draggable={`${collectionKey}.${fieldId}`}
-								title={fieldId}
-								icon={
-									selected
-										? "check_box"
-										: "check_box_outline_blank"
+							<div
+								ref={
+									fieldId === fieldToRemove
+										? setAnchorEl
+										: null
 								}
-								iconColor={
-									selected
-										? theme.definition.palette.primary
-										: undefined
-								}
-								key={index}
-								onClick={() => handleFieldClick(fieldId)}
-								selected={selected}
-								context={context}
-							/>
-							// </div>
+							>
+								<PropNodeTag
+									draggable={`${collectionKey}.${fieldId}`}
+									title={fieldId}
+									icon={
+										selected
+											? "check_box"
+											: "check_box_outline_blank"
+									}
+									iconColor={
+										selected
+											? theme.definition.palette.primary
+											: undefined
+									}
+									key={index}
+									onClick={() => handleFieldClick(fieldId)}
+									selected={selected}
+									context={context}
+								/>
+							</div>
 						)
 					})}
 			</div>
