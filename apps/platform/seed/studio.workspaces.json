@@ -1,0 +1,20 @@
+[
+	{
+		"name": "dev",
+		"app": {
+			"id": "crm"
+		}
+	},
+	{
+		"name": "test",
+		"app": {
+			"id": "crm"
+		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"id": "sample"
+		}
+	}
+]

@@ -37,7 +37,7 @@ definition:
         uesio.id:
         uesio.firstname:
         uesio.lastname:
-        uesio.federationId:
+        uesio.federation_id:
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -80,7 +80,7 @@ definition:
                                       text: ${uesio.firstname} ${uesio.lastname}
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.federationId}"
+                                    path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.federation_id}"
                                 avatar:
                                   - io.text:
                                       uesio.variant: io.icon

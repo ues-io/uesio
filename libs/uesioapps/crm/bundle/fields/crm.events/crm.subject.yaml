@@ -1,0 +1,4 @@
+name: subject
+collection: crm.events
+type: TEXT
+label: Subject

@@ -17,6 +17,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/huandu/facebook/v2 v2.5.3
+	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9
 	github.com/icza/mighty v0.0.0-20210726202234-1719e2dcca1b // indirect
 	github.com/icza/session v1.2.0
 	github.com/jinzhu/copier v0.3.2
@@ -24,5 +25,4 @@ require (
 	github.com/spf13/cobra v1.1.3
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	google.golang.org/api v0.50.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

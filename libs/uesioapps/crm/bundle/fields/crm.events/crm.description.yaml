@@ -1,0 +1,4 @@
+name: description
+collection: crm.events
+type: LONGTEXT
+label: Description

@@ -1,0 +1,4 @@
+name: expected_revenue
+collection: crm.opportunities
+type: NUMBER
+label: Expected Revenue

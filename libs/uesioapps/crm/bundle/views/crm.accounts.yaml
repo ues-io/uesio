@@ -71,9 +71,9 @@ definition:
         - field: crm.created
           desc: false
       fields:
-        crm.description:
-        uesio.id:
-        crm.name:
-        crm.externalid:
-        uesio.createdat:
-        uesio.updatedat:
+        crm.description: null
+        uesio.id: null
+        crm.name: null
+        crm.externalid: null
+        uesio.createdat: null
+        uesio.updatedat: null

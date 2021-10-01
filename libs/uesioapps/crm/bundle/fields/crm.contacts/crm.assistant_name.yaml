@@ -1,0 +1,5 @@
+name: assistant_name
+collection: crm.contacts
+type: REFERENCE
+label: Assistant Name
+referencedCollection: crm.contacts

@@ -1,0 +1,4 @@
+name: description
+collection: crm.services
+type: TEXT
+label: Description

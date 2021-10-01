@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewProfile function
@@ -127,4 +129,12 @@ func (p *Profile) HasPermission(check *PermissionSet) bool {
 // of all permissions for that profile
 func (p *Profile) FlattenPermissions() *PermissionSet {
 	return FlattenPermissions(p.PermissionSets)
+}
+
+func (p *Profile) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, p.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(p)
 }

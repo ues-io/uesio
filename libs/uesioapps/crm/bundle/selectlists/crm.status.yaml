@@ -1,10 +1,10 @@
 name: status
 options:
-  - label: Qualify
-    value: QUALIFY
-  - label: Develop
-    value: DEVELOP
-  - label: Propose
-    value: PROPOSE
+  - label: Qualified
+    value: QUALIFIED
+  - label: Open
+    value: OPEN
+  - label: Disqualified
+    value: DISQUALIFIED
   - label: Closed
     value: CLOSED

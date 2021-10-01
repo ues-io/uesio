@@ -1,0 +1,4 @@
+name: available_end_date
+collection: crm.products
+type: DATE
+label: Available End Date

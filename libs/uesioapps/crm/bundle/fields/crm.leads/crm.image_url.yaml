@@ -1,0 +1,4 @@
+name: image_url
+collection: crm.leads
+type: TEXT
+label: Image URL

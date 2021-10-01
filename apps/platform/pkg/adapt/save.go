@@ -45,7 +45,7 @@ func (ci *ChangeItem) AddReadWriteToken(token string) {
 
 func (ci *ChangeItem) GetOwnerID() (string, error) {
 	ownerChange, err := ci.FieldChanges.GetField("uesio.owner")
-	if err != nil {
+	if err != nil || ownerChange == nil {
 		oldOwner, err := ci.OldValues.GetField("uesio.owner")
 		if err != nil {
 			return "", err

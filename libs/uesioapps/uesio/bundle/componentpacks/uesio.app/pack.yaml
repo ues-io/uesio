@@ -3,21 +3,21 @@ components:
   view:
     uesio.loginmock:
       configvalues:
-        - uesio.mockAuth
+        - uesio.mock_auth
       utilities:
         - io.button
       variants:
         - io.button.io.secondary
     uesio.loginfacebook:
       configvalues:
-        - uesio.facebookAppId
+        - uesio.facebook_app_id
       utilities:
         - io.button
       variants:
         - io.button.io.secondary
     uesio.logingoogle:
       configvalues:
-        - uesio.googleClientId
+        - uesio.google_client_id
       utilities:
         - io.button
       variants:
@@ -33,5 +33,5 @@ components:
         - io.link.io.default
         - io.fieldlabel.io.default
       configvalues:
-        - uesio.cognitoPoolId
-        - uesio.cognitoClientId
+        - uesio.cognito_pool_id
+        - uesio.cognito_client_id

@@ -1,0 +1,4 @@
+name: converted_date
+collection: crm.leads
+type: DATE
+label: Converted Date

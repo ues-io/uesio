@@ -1,0 +1,4 @@
+name: description
+collection: crm.quotes
+type: TEXT
+label: Description

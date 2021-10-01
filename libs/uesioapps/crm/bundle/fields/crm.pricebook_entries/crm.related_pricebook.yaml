@@ -1,0 +1,5 @@
+name: related_pricebook
+collection: crm.pricebook_entries
+type: REFERENCE
+label: Related Pricebook
+referencedCollection: crm.pricebooks

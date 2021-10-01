@@ -1,0 +1,4 @@
+name: billing_street
+collection: crm.accounts
+type: TEXT
+label: Billing Street

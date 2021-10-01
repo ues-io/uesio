@@ -1,0 +1,4 @@
+name: name
+collection: crm.opportunity_items
+type: TEXT
+label: Name

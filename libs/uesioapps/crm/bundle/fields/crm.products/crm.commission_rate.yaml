@@ -1,0 +1,4 @@
+name: commission_rate
+collection: crm.products
+type: NUMBER
+label: Commission Rate

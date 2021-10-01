@@ -1,0 +1,5 @@
+name: related_contact
+collection: crm.events
+type: REFERENCE
+label: Related Contact
+referencedCollection: crm.contacts

@@ -1,0 +1,4 @@
+name: email
+collection: crm.accounts
+type: TEXT
+label: Email

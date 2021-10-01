@@ -78,8 +78,6 @@ class BuilderAPI {
 	useDropNode = (): [string, string, string] =>
 		getFullPathParts(useDropNode())
 
-	useIsStructureView = () => this.useBuilderState("buildview") !== "content"
-
 	useHasChanges = useBuilderHasChanges
 
 	useSelectedYAML = useSelectedYAML

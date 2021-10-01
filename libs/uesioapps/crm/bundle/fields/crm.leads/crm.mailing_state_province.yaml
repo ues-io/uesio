@@ -1,0 +1,4 @@
+name: mailing_state_province
+collection: crm.leads
+type: TEXT
+label: Mailing State

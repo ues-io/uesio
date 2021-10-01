@@ -3,6 +3,8 @@ package meta
 import (
 	"errors"
 	"strings"
+
+	"github.com/humandad/yaml"
 )
 
 // NewRoute function
@@ -124,4 +126,12 @@ func (r *Route) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (r *Route) SetItemMeta(itemMeta *ItemMeta) {
 	r.itemMeta = itemMeta
+}
+
+func (r *Route) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, r.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(r)
 }

@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // ConfigValue struct
@@ -116,4 +118,12 @@ func (cv *ConfigValue) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (cv *ConfigValue) SetItemMeta(itemMeta *ItemMeta) {
 	cv.itemMeta = itemMeta
+}
+
+func (cv *ConfigValue) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cv.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cv)
 }

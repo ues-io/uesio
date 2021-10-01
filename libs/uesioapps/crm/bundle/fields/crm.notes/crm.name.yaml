@@ -1,0 +1,4 @@
+name: name
+collection: crm.notes
+type: TEXT
+label: Name

@@ -1,0 +1,4 @@
+name: available_start_date
+collection: crm.products
+type: DATE
+label: Available Start Date

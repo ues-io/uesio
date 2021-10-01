@@ -1,0 +1,5 @@
+name: account
+collection: crm.quotes
+type: REFERENCE
+label: Account
+referencedCollection: crm.accounts

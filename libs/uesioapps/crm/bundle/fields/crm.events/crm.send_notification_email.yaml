@@ -1,0 +1,4 @@
+name: send_notification_email
+collection: crm.events
+type: CHECKBOX
+label: Send Notification Email

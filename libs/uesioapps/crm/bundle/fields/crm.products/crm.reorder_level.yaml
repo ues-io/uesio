@@ -1,0 +1,4 @@
+name: reorder_level
+collection: crm.products
+type: NUMBER
+label: Reorder Level

@@ -1,0 +1,4 @@
+name: description
+collection: crm.pricebook_entries
+type: TEXT
+label: Description

@@ -1,0 +1,4 @@
+name: no_of_employees
+collection: crm.accounts
+type: NUMBER
+label: No. of Employees
