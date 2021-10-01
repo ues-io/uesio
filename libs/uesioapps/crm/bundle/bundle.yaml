@@ -7,6 +7,8 @@ publicProfile: crm.public
 dependencies:
   io:
     version: v0.0.1
+  lab:
+    version: v0.0.1
   sample:
     version: v0.0.1
   uesio:
