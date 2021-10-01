@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useEffect, MouseEvent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import { usePopper } from "react-popper"
 import type { Placement } from "@popperjs/core"
@@ -6,6 +6,7 @@ import type { Placement } from "@popperjs/core"
 interface TooltipProps extends definition.UtilityProps {
 	placement?: Placement
 	referenceEl: HTMLDivElement | null
+	onOutsideClick?: () => void
 }
 
 const Popper: FunctionComponent<TooltipProps> = (props) => {
@@ -13,6 +14,24 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	const popper = usePopper(props.referenceEl, popperEl, {
 		placement: props.placement,
 		modifiers: [{ name: "offset", options: { offset: [0, 8] } }],
+	})
+
+	useEffect(() => {
+		const checkIfClickedOutside = (e: globalThis.MouseEvent) => {
+			// If the clicked target is outside the popper element
+			if (popperEl && !popperEl.contains(e.target as Element)) {
+				console.log("outside")
+				props.onOutsideClick && props.onOutsideClick()
+			}
+		}
+
+		document.addEventListener("mousedown", (e) => checkIfClickedOutside(e))
+
+		return () => {
+			document.removeEventListener("mousedown", (e) =>
+				checkIfClickedOutside(e)
+			)
+		}
 	})
 
 	const classes = styles.useUtilityStyles(
