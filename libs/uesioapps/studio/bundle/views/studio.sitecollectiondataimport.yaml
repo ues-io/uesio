@@ -1,4 +1,4 @@
-name: sitecollectiondata
+name: sitecollectiondataimport
 definition:
   # Wires are how we pull in data
   wires:
@@ -59,19 +59,10 @@ definition:
                     uesio.variant: io.main
                     title: Collections
                     subtitle: insert data into the collections that are available for you.
-                    actions:
-                      - io.group:
-                          components:
-                            - io.button:
-                                signals:
-                                  - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/site/$Param{sitename}/import/$Param{collectionname}"
-                                text: Import Data
-                                uesio.variant: io.secondary
                 - io.box:
                     uesio.variant: io.section
                     components:
-                      - studio.datamanager:
+                      - studio.dataimport:
                           collectionId: $Param{collectionname}
                           namespace: $Param{appname}
                           usage: site

@@ -1,4 +1,4 @@
-name: collectiondata
+name: collectionimport
 definition:
   # Wires are how we pull in data
   wires:
@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
+        studio.referencedCollection:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -102,12 +102,6 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Import Data"
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/import/$Param{collectionname}"
-                                  - io.button:
-                                      uesio.variant: io.secondary
                                       text: "Collection Configuration"
                                       signals:
                                         - signal: "route/NAVIGATE"
@@ -124,32 +118,7 @@ definition:
                                     name: $Param{workspacename}
                                     app: $Param{appname}
                                 components:
-                                  - io.titlebar:
-                                      uesio.variant: io.section
-                                      title:
-                                      actions:
-                                        - io.group:
-                                            components:
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: "Save"
-                                                  signals:
-                                                    - signal: "wire/SAVE"
-                                                      wires:
-                                                        - "collectionData"
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: "Cancel"
-                                                  signals:
-                                                    - signal: "wire/CANCEL"
-                                                      wire: "collectionData"
-                                              - io.button:
-                                                  uesio.variant: io.secondary
-                                                  text: "Create"
-                                                  signals:
-                                                    - signal: "wire/CREATE_RECORD"
-                                                      wire: "collectionData"
-                                  - studio.datamanager:
+                                  - studio.dataimport:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{appname}
                                       usage: workspace

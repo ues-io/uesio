@@ -82,6 +82,7 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
 
+	workspaceAPI(wr, "/metadata/types/{type}/item/{key}", controller.MetadataValue).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
@@ -106,6 +107,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
+	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
+	siteAdminAPI(sar, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
 
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")

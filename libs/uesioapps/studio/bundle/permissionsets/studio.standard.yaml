@@ -7,7 +7,6 @@ views:
   studio.appedit: true
   studio.bot: true
   studio.bots: true
-  studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
   studio.collectiondata: true
@@ -51,12 +50,13 @@ views:
   studio.workspacenav: true
   studio.sitecollections: true
   studio.sitecollectiondata: true
+  studio.collectionimport: true
+  studio.sitecollectiondataimport: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
   studio.bot: true
   studio.bots: true
-  studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
   studio.collectiondata: true
@@ -98,4 +98,6 @@ routes:
   studio.workspace: true
   studio.sitecollections: true
   studio.sitecollectiondata: true
+  studio.collectionimport: true
+  studio.sitecollectiondataimport: true
 files:

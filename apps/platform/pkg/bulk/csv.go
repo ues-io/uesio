@@ -23,9 +23,7 @@ func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session
 	for _, columnName := range columnNames {
 		mapping, ok := spec.Mappings[columnName]
 		if !ok {
-			mapping = meta.FieldMapping{
-				FieldName: columnName,
-			}
+			continue
 		}
 		mappings = append(mappings, mapping)
 		err := collections.AddField(spec.Collection, mapping.FieldName, nil)
