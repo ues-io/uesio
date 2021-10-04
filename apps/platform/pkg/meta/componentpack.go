@@ -2,6 +2,8 @@ package meta
 
 import (
 	"path/filepath"
+
+	"github.com/humandad/yaml"
 )
 
 // ComponentPack struct
@@ -122,4 +124,12 @@ func (cp *ComponentPack) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (cp *ComponentPack) SetItemMeta(itemMeta *ItemMeta) {
 	cp.itemMeta = itemMeta
+}
+
+func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cp.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cp)
 }

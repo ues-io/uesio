@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -68,8 +69,8 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
-	regex, ok := isValidRegex(field.Validate.Regex)
-	if !ok {
+	regex, err := regexp.Compile(field.Validate.Regex)
+	if err != nil {
 		return func(change adapt.ChangeItem, isNew bool) error {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
@@ -84,15 +85,9 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	regex, ok := isValidRegex("^[a-z0-9_]+$")
-	if !ok {
-		return func(change adapt.ChangeItem, isNew bool) error {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
-		}
-	}
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
+		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
 		}
 		return nil

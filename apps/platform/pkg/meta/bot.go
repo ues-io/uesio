@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/humandad/yaml"
 )
 
 // NewBot function
@@ -191,4 +193,12 @@ func (b *Bot) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (b *Bot) SetItemMeta(itemMeta *ItemMeta) {
 	b.itemMeta = itemMeta
+}
+
+func (b *Bot) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, b.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(b)
 }

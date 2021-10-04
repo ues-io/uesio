@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewPermissionSet function
@@ -121,6 +123,14 @@ func (ps *PermissionSet) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (ps *PermissionSet) SetItemMeta(itemMeta *ItemMeta) {
 	ps.itemMeta = itemMeta
+}
+
+func (ps *PermissionSet) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, ps.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(ps)
 }
 
 // HasPermission method

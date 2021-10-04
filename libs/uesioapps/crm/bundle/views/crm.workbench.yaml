@@ -13,7 +13,7 @@ definition:
       collection: crm.contacts
   # Components determine the layout and composition of your view
   components:
-    - io.layout:
+    - lab.layout:
         template: 1,1
         columns:
           - io.column:

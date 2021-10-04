@@ -1,5 +1,9 @@
 package meta
 
+import (
+	"github.com/humandad/yaml"
+)
+
 // SelectListOption struct
 type SelectListOption struct {
 	Label string `uesio:"label"`
@@ -105,4 +109,12 @@ func (sl *SelectList) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (sl *SelectList) SetItemMeta(itemMeta *ItemMeta) {
 	sl.itemMeta = itemMeta
+}
+
+func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, sl.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(sl)
 }

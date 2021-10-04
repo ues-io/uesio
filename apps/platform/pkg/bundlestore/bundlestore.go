@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
 var bundleStoreMap = map[string]BundleStore{}
@@ -83,7 +83,7 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 	if session.GetWorkspaceApp() == namespace {
 		return getBundleStoreByType("workspace")
 	}
-	if namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "docs" || namespace == "web" {
+	if namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "lab" || namespace == "docs" || namespace == "web" {
 		return getBundleStoreByType("system")
 	}
 

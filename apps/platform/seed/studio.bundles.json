@@ -28,6 +28,15 @@
 	},
 	{
 		"app": {
+			"id": "lab"
+		},
+		"description": "Experimental Components",
+		"major": "0",
+		"minor": "0",
+		"patch": "1"
+	},
+	{
+		"app": {
 			"id": "docs"
 		},
 		"description": "Uesio Docs",

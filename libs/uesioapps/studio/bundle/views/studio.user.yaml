@@ -37,12 +37,12 @@ definition:
         uesio.id:
         uesio.firstname:
         uesio.lastname:
-        uesio.federationId:
-        uesio.federationType:
+        uesio.federation_id:
+        uesio.federation_type:
         uesio.profile:
         uesio.picture:
       conditions:
-        - field: uesio.federationId
+        - field: uesio.federation_id
           valueSource: VALUE
           value: $Param{userid}
   # Components are how we describe the layout of our view
@@ -101,9 +101,9 @@ definition:
                                         - io.field:
                                             fieldId: uesio.lastname
                                         - io.field:
-                                            fieldId: uesio.federationId
+                                            fieldId: uesio.federation_id
                                         - io.field:
-                                            fieldId: uesio.federationType
+                                            fieldId: uesio.federation_type
                                         - io.field:
                                             fieldId: uesio.profile
   panels:

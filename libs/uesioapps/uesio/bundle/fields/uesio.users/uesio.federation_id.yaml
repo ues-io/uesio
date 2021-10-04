@@ -1,4 +1,4 @@
-name: federationId
+name: federation_id
 collection: uesio.users
 type: "TEXT"
 label: "Federation ID"

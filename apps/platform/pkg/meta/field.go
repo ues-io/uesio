@@ -3,6 +3,8 @@ package meta
 import (
 	"errors"
 	"path/filepath"
+
+	"github.com/humandad/yaml"
 )
 
 // NewField function
@@ -39,7 +41,7 @@ type Field struct {
 	Label                string     `yaml:"label" uesio:"studio.label"`
 	ReadOnly             bool       `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
 	CreateOnly           bool       `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
-	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referencedCollection"`
+	ReferencedCollection string     `yaml:"referencedCollection,omitempty" uesio:"studio.referenced_collection"`
 	SelectList           string     `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
 	Workspace            *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Required             bool       `yaml:"required,omitempty" uesio:"studio.required"`
@@ -161,4 +163,12 @@ func (f *Field) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (f *Field) SetItemMeta(itemMeta *ItemMeta) {
 	f.itemMeta = itemMeta
+}
+
+func (f *Field) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, f.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(f)
 }
