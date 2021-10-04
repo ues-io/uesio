@@ -1,18 +1,12 @@
-import {
-	FunctionComponent,
-	DragEvent,
-	useState,
-	useRef,
-	useEffect,
-} from "react"
+import { FunctionComponent, DragEvent, useState, useRef } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
 import { hooks, component, definition, styles } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
 const Popper = component.registry.getUtility("io.popper")
-const Button = component.registry.getUtility("io.button")
-const Icon = component.registry.getUtility("io.icon")
-
+const IOButton = component.registry.getUtility("io.button")
+const IOIcon = component.registry.getUtility("io.icon")
+import FieldDelete from "./fieldDelete"
 const { makeFullPath, parseKey } = component.path
 
 function flattenObj(
@@ -57,21 +51,22 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 
 	// Field deletion \
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const [affectedPaths, setAffectedPaths] = useState<string[][]>([])
 	const [fieldToRemove, setFieldToRemove] = useState<string | null>(null)
-	const updateHighlightedFields = useHighlightedFields()
-	const [showWarning, setShowWarning] = useState(false)
-	// Field deletion /
-
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
+	// Limit the fields to just the same namespace as the collection for now.
+	// In theory, you could have fields from a different namespace attached to
+	// this collection.
+	const collectionKey = wireDef?.collection as string | undefined
+	const [namespace] = parseKey(collectionKey || "")
+	const fields = uesio.builder.useMetadataList(
+		context,
+		"FIELD",
+		namespace,
+		collectionKey
+	)
 	const viewDef = uesio.builder.useDefinition(
 		makeFullPath("viewdef", context.getViewDefId() || "", "")
 	) as any
-	const collectionKey = wireDef?.collection as string | undefined
-
-	if (!collectionKey) {
-		return null
-	}
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -86,18 +81,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		null
 	)
 
-	// Limit the fields to just the same namespace as the collection for now.
-	// In theory, you could have fields from a different namespace attached to
-	// this collection.
-	const [namespace] = parseKey(collectionKey)
-
 	const theme = uesio.getTheme()
-	const fields = uesio.builder.useMetadataList(
-		context,
-		"FIELD",
-		namespace,
-		collectionKey
-	)
 
 	const fieldsDef = wireDef?.fields as definition.DefinitionMap
 
@@ -130,45 +114,9 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		const selected = fieldsDef?.[fieldId] !== undefined
 
 		return selected
-			? fieldRemover.handleFieldRemove(fieldId)
+			? setFieldToRemove(fieldId)
 			: valueAPI.addPair(`${path}["fields"]`, null, fieldId)
 	}
-
-	const fieldRemover = {
-		handleFieldRemove: (fieldId: string) => {
-			setAffectedPaths([])
-			setFieldToRemove(fieldId)
-			setShowWarning(false)
-			const brokenPaths = fieldRemover.getDeprecatedFields(fieldId)
-
-			// Field is used in viewDef
-			if (brokenPaths.length) {
-				const affectedPaths = brokenPaths.map((p) =>
-					p.split("_").slice(0, -2)
-				)
-				setAffectedPaths(affectedPaths)
-				updateHighlightedFields(fieldId)
-				setShowWarning(true)
-				return
-			}
-
-			valueAPI.remove(`${path}["fields"]["${fieldId}"]`)
-		},
-
-		getDeprecatedFields: (fieldId: string) => {
-			const flatObject = flattenObj(viewDef.components, "components")
-			return Object.entries(flatObject)
-				.filter(([key, value]) => value === fieldId)
-				.map(([key]) => key)
-		},
-
-		removePathsFromDef: (paths: string[][]) =>
-			paths.forEach((pathArray) =>
-				valueAPI.remove(component.path.fromPath(pathArray))
-			),
-	}
-
-	//
 
 	return (
 		<ExpandPanel
@@ -187,55 +135,14 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				onDragEnd={onDragEnd}
 				ref={setAnchorEl}
 			>
-				{affectedPaths.length && showWarning && (
-					<Popper
-						referenceEl={anchorEl}
+				{fieldToRemove && (
+					<FieldDelete
+						valueAPI={valueAPI}
+						anchorEl={anchorEl}
+						fieldId={fieldToRemove}
+						path={path}
 						context={context}
-						placement="right"
-						onOutsideClick={() => setShowWarning(false)}
-					>
-						<div style={{ padding: "8px", fontSize: "14px" }}>
-							<p style={{ fontWeight: 700 }}>
-								<span style={{ color: "red" }}>
-									<Icon context={context} icon={"error"} />{" "}
-								</span>
-								{fieldToRemove}
-							</p>
-							<p>
-								Do you want to delete the field and{" "}
-								{affectedPaths.length > 1 ? "the " : ""}
-								{affectedPaths.length} element
-								{affectedPaths.length > 1 ? "s" : ""} using this
-								field?
-							</p>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-								}}
-							>
-								<Button
-									variant="io.primary"
-									label="Cancel"
-									context={context}
-									icon="arrow_back"
-									onClick={() => setShowWarning(false)}
-								/>
-								<Button
-									variant="io.primary"
-									label="Delete "
-									context={context}
-									icon="delete"
-									onClick={() => {
-										fieldRemover.removePathsFromDef(
-											affectedPaths
-										)
-										setShowWarning(false)
-									}}
-								/>
-							</div>
-						</div>
-					</Popper>
+					/>
 				)}
 				{collectionKey &&
 					results &&
