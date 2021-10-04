@@ -73,7 +73,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		>
 			<Tile
 				variant="io.tile.studio.propnodetag"
-				//avatar={<Icon icon={icon} context={context} />}
+				avatar={<Icon icon={icon} context={context} />}
 				context={context}
 				onClick={onClick}
 				isSelected={selected}

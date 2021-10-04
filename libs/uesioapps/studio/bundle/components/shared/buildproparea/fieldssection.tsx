@@ -1,72 +1,30 @@
-import { FunctionComponent, DragEvent, useState, useRef } from "react"
+import { FunctionComponent, DragEvent, useState } from "react"
+import { hooks, component, definition, styles } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
-import { hooks, component, definition, styles } from "@uesio/ui"
+import FieldRemove from "./fieldRemove"
 import PropNodeTag from "../buildpropitem/propnodetag"
-const Popper = component.registry.getUtility("io.popper")
-const IOButton = component.registry.getUtility("io.button")
-const IOIcon = component.registry.getUtility("io.icon")
-import FieldDelete from "./fieldDelete"
-const { makeFullPath, parseKey } = component.path
-
-function flattenObj(
-	obj: any,
-	parent?: string,
-	res: { [key: string]: any } = {}
-) {
-	for (const key in obj) {
-		const propName = parent ? parent + "_" + key : key
-		if (typeof obj[key] === "object") {
-			flattenObj(obj[key], propName, res)
-		} else {
-			res[propName] = obj[key]
-		}
-	}
-	return res
-}
-
-const useHighlightedFields = () => {
-	const [highlightedFields, setHighlightedFields] = useState<
-		NodeListOf<HTMLDivElement> | []
-	>([])
-
-	const updateHighlightedFields = (fieldId: string) => {
-		// Remove border from currently highlighted fields
-		if (highlightedFields.length)
-			highlightedFields.forEach((el) => (el.style.border = ""))
-
-		const fields = document.querySelectorAll<HTMLDivElement>(
-			`[data-fieldid="${fieldId}"]`
-		)
-		setHighlightedFields(fields)
-		fields.forEach((el) => (el.style.border = "1px solid red"))
-	}
-
-	return updateHighlightedFields
-}
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 
-	// Field deletion \
+	// Field removal
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 	const [fieldToRemove, setFieldToRemove] = useState<string | null>(null)
+
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	// Limit the fields to just the same namespace as the collection for now.
 	// In theory, you could have fields from a different namespace attached to
 	// this collection.
 	const collectionKey = wireDef?.collection as string | undefined
-	const [namespace] = parseKey(collectionKey || "")
+	const [namespace] = component.path.parseKey(collectionKey || "")
 	const fields = uesio.builder.useMetadataList(
 		context,
 		"FIELD",
 		namespace,
 		collectionKey
 	)
-	const viewDef = uesio.builder.useDefinition(
-		makeFullPath("viewdef", context.getViewDefId() || "", "")
-	) as any
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -136,7 +94,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				ref={setAnchorEl}
 			>
 				{fieldToRemove && (
-					<FieldDelete
+					<FieldRemove
 						valueAPI={valueAPI}
 						anchorEl={anchorEl}
 						fieldId={fieldToRemove}
@@ -173,7 +131,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 									}
 									key={index}
 									onClick={() => handleFieldClick(fieldId)}
-									selected={selected}
 									context={context}
 								/>
 							</div>

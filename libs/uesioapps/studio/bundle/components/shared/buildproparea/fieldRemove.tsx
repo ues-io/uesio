@@ -1,5 +1,4 @@
 import { FC, useState, useEffect } from "react"
-import { SectionRendererProps } from "./sectionrendererdefinition"
 
 import { hooks, component, definition, builder } from "@uesio/ui"
 interface T extends definition.BaseProps {
@@ -7,14 +6,13 @@ interface T extends definition.BaseProps {
 	valueAPI: builder.ValueAPI
 	anchorEl: HTMLDivElement | null
 }
+
 const Popper = component.registry.getUtility("io.popper")
 const IOButton = component.registry.getUtility("io.button")
 const IOIcon = component.registry.getUtility("io.icon")
 
-const { makeFullPath, parseKey } = component.path
-
 function flattenObj(
-	obj: any,
+	obj: Record<string, any>,
 	parent?: string,
 	res: { [key: string]: any } = {}
 ) {
@@ -49,22 +47,19 @@ const useHighlightedFields = () => {
 	return updateHighlightedFields
 }
 
-const FieldDelete: FC<T> = (props) => {
+const FieldRemove: FC<T> = (props) => {
 	const { path, context, valueAPI, anchorEl, fieldId } = props
 	const uesio = hooks.useUesio(props)
 
-	// Field deletion \
 	const [affectedPaths, setAffectedPaths] = useState<string[][]>([])
 	const updateHighlightedFields = useHighlightedFields()
 	const [showWarning, setShowWarning] = useState(false)
-	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
-	// Limit the fields to just the same namespace as the collection for now.
-	// In theory, you could have fields from a different namespace attached to
-	// this collection.
 
 	const viewDef = uesio.builder.useDefinition(
-		makeFullPath("viewdef", context.getViewDefId() || "", "")
-	) as any
+		component.path.makeFullPath("viewdef", context.getViewDefId() || "", "")
+	) as {
+		components: definition.DefinitionMap[]
+	}
 
 	useEffect(() => {
 		fieldRemover.handleFieldRemove(fieldId)
@@ -92,7 +87,7 @@ const FieldDelete: FC<T> = (props) => {
 		},
 
 		getDeprecatedFields: (fieldId: string) => {
-			const flatObject = flattenObj(viewDef.components, "components")
+			const flatObject = flattenObj(viewDef?.components, "components")
 			return Object.entries(flatObject)
 				.filter(([key, value]) => value === fieldId)
 				.map(([key]) => key)
@@ -122,7 +117,7 @@ const FieldDelete: FC<T> = (props) => {
 					{fieldId} is referenced in this view.
 				</p>
 				<p>
-					Do you want to delete the field and{" "}
+					Do you wanRemove the field and{" "}
 					{affectedPaths.length > 1 ? "the " : ""}
 					{affectedPaths.length} element
 					{affectedPaths.length > 1 ? "s" : ""} using this field?
@@ -168,4 +163,4 @@ const FieldDelete: FC<T> = (props) => {
 	) : null
 }
 
-export default FieldDelete
+export default FieldRemove

@@ -31,11 +31,11 @@ const useViewConfigValue = (viewDefId: string, key: string) =>
 		return viewDef?.dependencies?.configvalues[key] || ""
 	})
 
-const getViewDefinition = (
+const getViewDefinition = <T extends Definition>(
 	state: RootState,
 	viewDefId: string,
 	path?: string
-): Definition => {
+): T => {
 	const viewDef = selectors.selectById(state, viewDefId)
 	const definition = viewDef?.definition
 	return path ? get(definition, path || "") : definition
