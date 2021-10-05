@@ -2,5 +2,6 @@ name: main
 components:
   view:
     lab.layout:
+    lab.table:
   utility:
     lab.layout:
