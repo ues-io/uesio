@@ -27,7 +27,7 @@ class CollectionAPI {
 					})
 				)
 			}
-		})
+		}, [])
 
 		return plainCollection && new Collection(plainCollection)
 	}
