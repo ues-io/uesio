@@ -349,5 +349,3 @@ definition:
                   wire: newfield
                 - signal: wire/CREATE_RECORD
                   wire: newfield
-                - signal: "panel/TOGGLE"
-                  panel: "newField"
