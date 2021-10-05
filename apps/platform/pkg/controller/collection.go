@@ -15,7 +15,6 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	collectionName := vars["collectionname"]
 
-	// Keep a running tally of all requested collections
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
 			LoadAllFields: true,
@@ -33,9 +32,7 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, r, &LoadResponseBatch{
-		//Wires:       ops,
 		Collections: metadataResponse.Collections,
 	})
 
-	//respondJSON(w, r, &metadataResponse)
 }

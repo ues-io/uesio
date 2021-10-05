@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { PlainCollection, PlainCollectionMap, CollectionState } from "./types"
+import { PlainCollection, PlainCollectionMap } from "./types"
 import wireLoadOp from "../wire/operations/load"
 import get from "./operations/get"
 import { PlainWire } from "../wire/types"
