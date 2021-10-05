@@ -10,19 +10,19 @@ export default (context: Context, wirename: string): ThunkFunc =>
 		if (!viewId) return context
 		const recordId = shortid.generate()
 		const state = getState()
-		dispatch(
-			createRecord({
-				recordId,
-				record: getDefaultRecord(
-					context,
-					state.wire.entities,
-					state.collection,
-					viewId,
-					wirename
-				),
-				entity: `${viewId}/${wirename}`,
-			})
-		)
+		// dispatch(
+		// 	createRecord({
+		// 		recordId,
+		// 		record: getDefaultRecord(
+		// 			context,
+		// 			state.wire.entities,
+		// 			state.collection,
+		// 			viewId,
+		// 			wirename
+		// 		),
+		// 		entity: `${viewId}/${wirename}`,
+		// 	})
+		// )
 		return context.addFrame({
 			record: recordId,
 			wire: wirename,

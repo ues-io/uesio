@@ -169,6 +169,13 @@ window.uesioLoader = (mergeData) => {
 			)
 			return response.json()
 		},
+		getCollectionMetadata: async (context, collectionName) => {
+			const prefix = getPrefix(context)
+			const response = await fetch(
+				`${prefix}/collections/meta/${collectionName}`
+			)
+			return response.json()
+		},
 
 		getAvailableNamespaces: async (context) => {
 			const prefix = getPrefix(context)

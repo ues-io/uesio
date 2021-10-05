@@ -50,6 +50,15 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		context
 	)
 
+	const fieldsMeta2 = uesio.collection.useCollection(
+		newContext,
+		"crm.opportunities"
+	)
+
+	const test = fieldsMeta2?.getNameField()?.getLabel()
+
+	console.log("ddddasdasdsa", fieldsMeta2)
+
 	const fieldsMeta = uesio.builder.useMetadataList(
 		newContext,
 		"FIELD",

@@ -56,6 +56,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
+		context,
 		fieldMetadata.source.referencedCollection || ""
 	)
 
