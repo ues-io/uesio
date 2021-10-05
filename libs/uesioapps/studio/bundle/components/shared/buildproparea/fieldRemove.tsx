@@ -71,13 +71,12 @@ const FieldRemove: FC<T> = (props) => {
 			setShowWarning(false)
 			const brokenPaths = fieldRemover.getDeprecatedFields(fieldId)
 
-			// Field is used in viewDef
+			// If field is used in viewDef
 			if (brokenPaths.length) {
 				const affectedPaths = brokenPaths.map((p) =>
 					p.split("_").slice(0, -2)
 				)
 				setAffectedPaths(affectedPaths)
-				console.log({ affectedPaths })
 				updateHighlightedFields(fieldId)
 				setShowWarning(true)
 				return
@@ -85,7 +84,6 @@ const FieldRemove: FC<T> = (props) => {
 
 			valueAPI.remove(`${path}["fields"]["${fieldId}"]`)
 		},
-
 		getDeprecatedFields: (fieldId: string) => {
 			const flatObject = flattenObj(viewDef?.components, "components")
 			return Object.entries(flatObject)
@@ -93,9 +91,7 @@ const FieldRemove: FC<T> = (props) => {
 				.map(([key]) => key)
 		},
 		removePathsFromDef: (paths: string[][]) => {
-			console.log({ path })
 			valueAPI.remove(`${path}["fields"]["${fieldId}"]`)
-
 			paths.forEach((pathArray) =>
 				valueAPI.remove(component.path.fromPath(pathArray))
 			)
