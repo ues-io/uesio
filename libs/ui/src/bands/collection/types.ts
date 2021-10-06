@@ -19,8 +19,12 @@ type CollectionState = {
 	}
 }
 
+type CollectionStore = {
+	[key: string]: PlainCollection // CollectionState
+}
+
 type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
-export { PlainCollectionMap, PlainCollection, CollectionState }
+export { PlainCollectionMap, PlainCollection, CollectionState, CollectionStore }

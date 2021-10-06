@@ -1,15 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { PlainCollection, PlainCollectionMap } from "./types"
+import { PlainCollection } from "./types"
 import wireLoadOp from "../wire/operations/load"
 import get from "./operations/get"
 import { PlainWire } from "../wire/types"
 import { wire } from "@uesio/ui"
-
-const initialState: PlainCollectionMap = {}
+import collectionAdapter from "./adapter"
 
 const collectionSlice = createSlice({
 	name: "collection",
-	initialState,
+	initialState: collectionAdapter.getInitialState(),
 	reducers: {},
 	extraReducers: (builder) => {
 		builder.addCase(
@@ -19,10 +18,7 @@ const collectionSlice = createSlice({
 				{
 					payload: { collections },
 				}: PayloadAction<wire.LoadResponseBatch>
-			) => ({
-				...state,
-				...collections,
-			})
+			) => collectionAdapter.upsertMany(state, collections)
 		)
 
 		builder.addCase(
@@ -32,10 +28,7 @@ const collectionSlice = createSlice({
 				{
 					payload: [, collections],
 				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => ({
-				...state,
-				...collections,
-			})
+			) => collectionAdapter.upsertMany(state, collections)
 		)
 
 		// builder.addCase(
