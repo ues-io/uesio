@@ -338,7 +338,10 @@ definition:
                   wires:
                     - "workspaces"
                     - "fields"
-                    - "newfield"
+                - signal: wire/EMPTY
+                  wire: newfield
+                - signal: wire/CREATE_RECORD
+                  wire: newfield
                 - signal: "panel/TOGGLE"
                   panel: "newField"
                 - signal: notification/ADD
@@ -352,5 +355,3 @@ definition:
                   wire: newfield
                 - signal: wire/CREATE_RECORD
                   wire: newfield
-                - signal: "panel/TOGGLE"
-                  panel: "newField"

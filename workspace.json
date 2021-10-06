@@ -261,6 +261,40 @@
         }
       }
     },
+    "uesioapps-lab": {
+      "root": "libs/uesioapps/lab",
+      "sourceRoot": "libs/uesioapps/studio/bundle",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "libs/uesioapps/lab/bundle/componentpacks/lab.main/builder.bundle.js",
+            "libs/uesioapps/lab/bundle/componentpacks/lab.main/runtime.bundle.js"
+          ],
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/lab"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop &",
+            "cwd": "libs/uesioapps/lab"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/uesioapps/lab/**/*.ts*"
+            ]
+          }
+        }
+      }
+    },
     "uesioapps-docs": {
       "root": "libs/uesioapps/docs",
       "sourceRoot": "libs/uesioapps/studio/bundle",

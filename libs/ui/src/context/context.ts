@@ -3,6 +3,7 @@ import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
+import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectById as selectVariant } from "../bands/componentvariant/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
@@ -232,9 +233,12 @@ class Context {
 		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
-		const collection = new Collection(
-			state?.collection?.[wireDef.collection] || null
+		const plainCollection = collectionSelectors.selectById(
+			state,
+			wireDef.collection
 		)
+		if (!plainCollection) return undefined
+		const collection = new Collection(plainCollection)
 		wire.attachCollection(collection.source)
 		return wire
 	}

@@ -5,8 +5,5 @@
 		"types": []
 	},
 	"exclude": ["**/*.spec.ts"],
-	"include": [
-		"**/*.ts*",
-		"../lab/bundle/components/view/lab.layout/layout.tsx"
-	]
+	"include": ["**/*.ts*"]
 }
