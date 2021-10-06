@@ -15,5 +15,5 @@ export default createAsyncThunk<
 >("bot/call", async ({ botname, context, params }, api) => {
 	const [namespace, name] = parseKey(botname)
 	const mergedParams = context.mergeMap(params)
-	return await api.extra.callBot(context, namespace, name, mergedParams || {})
+	return api.extra.callBot(context, namespace, name, mergedParams || {})
 })

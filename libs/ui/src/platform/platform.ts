@@ -74,6 +74,10 @@ interface Platform {
 		namespace: string,
 		grouping?: string
 	): Promise<MetadataListStore>
+	getCollectionMetadata(
+		context: Context,
+		collectionName: string
+	): Promise<LoadResponseBatch>
 	getAvailableNamespaces(context: Context): Promise<MetadataListStore>
 	getConfigValues(context: Context): Promise<ConfigValueResponse[]>
 	setConfigValue(
