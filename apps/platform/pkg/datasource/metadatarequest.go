@@ -105,6 +105,7 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
 	additionalRequests := MetadataRequest{}
+	additionalRequests.Options = mr.Options
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
 		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session)

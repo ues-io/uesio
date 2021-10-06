@@ -31,6 +31,20 @@ func GetCollectionMetadata(w http.ResponseWriter, r *http.Request) {
 		println(err)
 	}
 
+	//Work-arround
+	// for key := range metadataResponse.Collections {
+	// 	err := collections.AddCollection(key)
+	// 	if err != nil {
+	// 		println(err)
+	// 	}
+	// }
+	// //LOAD it again with all the fields
+	// err = collections.Load(&metadataResponse, session)
+	// if err != nil {
+	// 	println(err)
+	// }
+	//End work-arround
+
 	respondJSON(w, r, &LoadResponseBatch{
 		Collections: metadataResponse.Collections,
 	})
