@@ -52,11 +52,6 @@ const DataImport: FunctionComponent<Props> = (props) => {
 	const namespaceMrg = context.merge(definition.namespace)
 	const usage = definition.usage
 
-	//INIT() to get the right context site/workspace
-	//Show and hide the button
-	//GET the collection metadata & send it to other components
-	//Send down the CSV fields
-
 	const [, collectionId, newContext] = init(
 		usage,
 		collectionMrg,
@@ -77,8 +72,6 @@ const DataImport: FunctionComponent<Props> = (props) => {
 	): void => {
 		setUploaded({ success, csvFields, file })
 	}
-
-	console.log("collectionId", collectionId)
 
 	const collection = uesio.collection.useCollection(newContext, collectionId)
 	if (!collection) return null

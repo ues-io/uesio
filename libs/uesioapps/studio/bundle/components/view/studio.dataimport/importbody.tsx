@@ -1,12 +1,5 @@
 import { FunctionComponent, useState } from "react"
-import {
-	definition,
-	styles,
-	collection,
-	hooks,
-	component,
-	context,
-} from "@uesio/ui"
+import { definition, styles, collection, hooks, component } from "@uesio/ui"
 import ImportBodyItem from "./importbodyitem"
 
 interface Props extends definition.BaseProps {
@@ -64,8 +57,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		mappings: getAllMatch(csvFields, collectionFields),
 	})
 
-	console.log("Body - CmpState", CmpState.mappings)
-
 	const upload = async (file: File, upsertkey: string | undefined) => {
 		const jobResponse = await uesio.collection.createImportJob(
 			context,
@@ -118,7 +109,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		uesioField: string,
 		matchfield?: string
 	): void => {
-		//remove the mapping if blank is selected
 		if (uesioField === "") {
 			const { [csvField]: remove, ...rest } = CmpState.mappings
 

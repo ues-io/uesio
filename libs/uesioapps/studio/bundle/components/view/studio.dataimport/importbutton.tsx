@@ -47,18 +47,11 @@ const getHeaderString = (data: ArrayBuffer): string => {
 	return headerString
 }
 
-const isValidCSV = (arr: string[], target: string[]) =>
-	target.every((v) => arr.includes(v))
-
 const Button = component.registry.getUtility("io.button")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded } = props
 	const uesio = hooks.useUesio(props)
-
-	//Upload the CSV
-	// if right change the changeUploaded to true and send the CSV fields to the parent
-
 	const fileInput = useRef<HTMLInputElement>(null)
 	const classes = styles.useUtilityStyles(
 		{
