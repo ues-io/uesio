@@ -51,6 +51,9 @@ components:
     studio.dataimport:
       variants:
         - io.tile.studio.item
+        - io.selectfield.io.default
+        - io.fieldlabel.io.default
+        - io.textfield.io.default
       utilities:
         - io.tile
         - io.selectfield
