@@ -22,10 +22,11 @@ func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session
 	}
 	for index, columnName := range columnNames {
 		mapping, ok := spec.Mappings[columnName]
-		mapping.OriginalIndex = index
 		if !ok {
+			// If a mapping wasn't provided for a field, then ignore it.
 			continue
 		}
+		mapping.ColumnIndex = index
 		mappings = append(mappings, mapping)
 		err := collections.AddField(spec.Collection, mapping.FieldName, nil)
 		if err != nil {
@@ -93,12 +94,13 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 
 		for _, mapping := range mappings {
 			fieldName := mapping.FieldName
+			columnIndex := mapping.ColumnIndex
 			fieldMetadata, err := collectionMetadata.GetField(fieldName)
 			if err != nil {
 				return nil, err
 			}
 			if fieldMetadata.Type == "CHECKBOX" {
-				changeRequest[mapping.FieldName] = record[mapping.OriginalIndex] == "true"
+				changeRequest[mapping.FieldName] = record[columnIndex] == "true"
 			} else if fieldMetadata.Type == "REFERENCE" {
 
 				refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
@@ -113,10 +115,10 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 				}
 
 				changeRequest[mapping.FieldName] = map[string]interface{}{
-					matchField: record[mapping.OriginalIndex],
+					matchField: record[columnIndex],
 				}
 			} else {
-				changeRequest[mapping.FieldName] = record[mapping.OriginalIndex]
+				changeRequest[mapping.FieldName] = record[columnIndex]
 			}
 		}
 
