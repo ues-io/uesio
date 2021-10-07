@@ -1,43 +1,33 @@
 import { FunctionComponent } from "react"
 import { TableProps } from "./tabledefinition"
 import Table from "./table"
-import { styles, component, hooks, definition, wire } from "@uesio/ui"
+import { styles, component, hooks } from "@uesio/ui"
+import WireHelper from "../../wirehelper"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
-import WireHelper from "./wirehelper"
+
 const TableBuilder: FunctionComponent<TableProps> = (props) => {
-	const { context, path = "" } = props
+	const { context, path = "", definition } = props
 	const uesio = hooks.useUesio(props)
 
-	// get wire
-	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
-	const formDef = uesio.builder.useDefinition(
-		component.path.makeFullPath(metadataType, metadataItem, path)
-	) as { wire: string }
-	const wire: wire.Wire | undefined = uesio.wire.useWire(formDef.wire)
-	console.log({ wire })
+	// const { fitToContent } = context.getParentComponentDef(path)
+	const wire = uesio.wire.useWire(definition.wire)
+
 	const classes = styles.useStyles(
 		{
-			inner: {
-				".rowaction": {
-					pointerEvents: "none",
-				},
-			},
+			root: {},
+			header: {},
 		},
 		{
 			context,
 		}
 	)
 
+	console.log({ wire })
+
 	return (
 		<BuildWrapper {...props} classes={classes}>
-			<Table
-				{...props}
-				context={context.addFrame({
-					buildMode: false,
-				})}
-			/>
-			{!wire && <WireHelper {...props} />}
+			{!wire ? <WireHelper {...props} /> : <Table {...props} />}
 		</BuildWrapper>
 	)
 }

@@ -3,5 +3,8 @@ components:
   view:
     lab.layout:
     lab.table:
+    lab.tablecolumn:
   utility:
+
+    lab.tablecolumn:
     lab.layout:

@@ -1,5 +1,5 @@
 import { definition, builder, signal, component } from "@uesio/ui"
-
+import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
 type TableMode = "READ" | "EDIT"
 
 type TableClasses = Record<
@@ -15,8 +15,10 @@ type TableDefinition = {
 	id: string
 	wire: string
 	mode: TableMode
-	columns: definition.DefinitionList
+	columns: TableColumnDefinition[]
 	rowactions: RowAction[]
+	shortName: boolean
+	fitToContent: boolean
 }
 
 interface TableProps extends definition.BaseProps {
@@ -26,12 +28,6 @@ interface TableProps extends definition.BaseProps {
 type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
-}
-
-type ColumnDefinition = {
-	field: string
-	label: string
-	components: definition.DefinitionList
 }
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
@@ -65,6 +61,16 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+		{
+			name: "shortName",
+			type: "BOOLEAN",
+			label: "Exclude namespace from column names",
+		},
+		{
+			name: "fitToContent",
+			type: "BOOLEAN",
+			label: "Fit to content",
+		},
 	],
 	sections: [],
 	actions: [],
@@ -77,26 +83,36 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			const [, , fieldNamespace, fieldName] =
 				component.path.parseFieldKey(metadataItem)
 			uesio.builder.addDefinition(
-				dropNode + '["columns"]',
+				dropNode,
 				{
-					"io.column": {
-						field: `${fieldNamespace}.${fieldName}`,
+					"io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
 					},
 				},
 				dropIndex
 			)
 		}
 	},
+	// handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+	// 	const [metadataType, metadataItem] =
+	// 		component.path.getFullPathParts(dragNode)
+	// 	if (metadataType === "field") {
+	// 		const [, , fieldNamespace, fieldName] =
+	// 			component.path.parseFieldKey(metadataItem)
+	// 		uesio.builder.addDefinition(
+	// 			dropNode + '["columns"]',
+	// 			{
+	// 				"io.column": {
+	// 					field: `${fieldNamespace}.${fieldName}`,
+	// 				},
+	// 			},
+	// 			dropIndex
+	// 		)
+	// 	}
+	// },
 	type: "component",
 	classes: ["root"],
 }
-export {
-	TableProps,
-	TableState,
-	TableDefinition,
-	ColumnDefinition,
-	TableClasses,
-	RowAction,
-}
+export { TableProps, TableState, TableDefinition, TableClasses, RowAction }
 
 export default TablePropertyDefinition

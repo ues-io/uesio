@@ -1,13 +1,11 @@
-import { hooks, styles } from "@uesio/ui"
 import { FunctionComponent } from "react"
+import { TableProps } from "./tabledefinition"
+import { component, styles, hooks } from "@uesio/ui"
+const LabLayout = component.registry.getUtility("lab.layout")
 
-import { TableProps, TableState } from "./tabledefinition"
-import TableHeader from "./tableheader"
-import TableBody from "./tablebody"
-
-const Table: FunctionComponent<TableProps> = (props) => {
-	const { path, context, definition } = props
+const Grid: FunctionComponent<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const { definition, context, path = "" } = props
 	const wire = uesio.wire.useWire(definition.wire)
 
 	// If we got a wire from the definition, add it to context
@@ -17,67 +15,81 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<TableState>(
-		definition.id,
-		{
-			mode: definition.mode || "READ",
-		}
-	)
-
 	const classes = styles.useStyles(
 		{
 			root: {},
-			table: {
-				width: "100%",
-				overflow: "hidden",
+			column: {
+				flex: 1,
 			},
-			header: {},
-			headerCell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			cell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			row: {
-				"&:last-child>td": {
-					borderBottom: 0,
-				},
-			},
-			rowDeleted: {},
 		},
 		props
 	)
-
-	if (!wire || !componentState || !path) return null
-
-	const collection = wire.getCollection()
+	const records = wire?.getData() || []
 
 	return (
 		<div className={classes.root}>
-			<table className={classes.table}>
-				<TableHeader
-					classes={classes}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					collection={collection}
-				/>
-				<TableBody
-					classes={classes}
-					wire={wire}
-					collection={collection}
-					state={componentState}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					path={path}
-					context={newContext}
-				/>
-			</table>
+			{/* row */}
+			{/* row column */}
+			<LabLayout classes={classes} context={props.context}>
+				{definition.columns.map((c) => {
+					const column = Object.values(c)[0]
+					return (
+						<div
+							className={classes.column}
+							style={{
+								order: column.order || "initial",
+								padding: "10px",
+								backgroundColor: "#eee",
+							}}
+						>
+							{column.name ||
+								(definition.shortName
+									? column.field.replace(/.*\./, "")
+									: column.field)}
+						</div>
+					)
+				})}
+			</LabLayout>
+
+			{records.map((record) => {
+				const rowContext = context.addFrame({
+					record: record.getId(),
+					wire: wire?.getId() || "",
+					fieldMode: "READ",
+				})
+
+				return (
+					<LabLayout
+						key={record.getId()}
+						classes={classes}
+						context={props.context}
+					>
+						<component.Slot
+							definition={definition}
+							listName="columns"
+							path={path}
+							accepts={["uesio.tablecolumn"]}
+							context={rowContext}
+						/>
+						{/* {definition.columns.map((column, index) => {
+							console.log({ column })
+							return (
+								// <div className={classes.column}>
+								<component.Slot
+									definition={column}
+									listName="columns"
+									path={path}
+									accepts={["uesio.tablecolumn"]}
+									context={rowContext}
+								/>
+								// </div>
+							)
+						})} */}
+					</LabLayout>
+				)
+			})}
 		</div>
 	)
 }
 
-export default Table
+export default Grid

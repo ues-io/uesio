@@ -126,7 +126,6 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 		},
 		{
 			context: props.context,
-		}
 	)
 
 	return (
