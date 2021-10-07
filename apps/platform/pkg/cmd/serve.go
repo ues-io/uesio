@@ -104,6 +104,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/secrets", controller.Secret).Methods("GET")
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
+	siteAdminAPI(sar, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
 	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")

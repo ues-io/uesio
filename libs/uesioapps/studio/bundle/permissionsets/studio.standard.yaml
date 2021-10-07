@@ -23,7 +23,6 @@ views:
   studio.file: true
   studio.files: true
   studio.home: true
-  studio.import: true
   studio.installedbundle: true
   studio.permissionset: true
   studio.permissionsets: true
@@ -73,7 +72,6 @@ routes:
   studio.file: true
   studio.files: true
   studio.home: true
-  studio.import: true
   studio.installedbundle: true
   studio.login: true
   studio.permissionset: true

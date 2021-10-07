@@ -83,26 +83,19 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			jobResponse.id
 		)
 
-		if (batchResponse.status === 200) {
-			uesio.notification.addNotification(
-				"import successful",
-				"success",
-				context
-			)
-		} else {
+		if (batchResponse.status !== 200) {
 			const error = await batchResponse.text()
 			uesio.notification.addError("Import error: " + error, context)
+			return
 		}
 
-		//RESET the component to initial state or redirect to manage data view
-		//setCmpState({ mappings: {} })
 		if (usage === "site") {
 			uesio.signal.run(
 				{
 					signal: "route/REDIRECT",
 					path: `/app/${context.getSiteAdmin()?.app}/site/${
 						context.getSiteAdmin()?.name
-					}/data/${collection}`,
+					}/data/${collection.getFullName()}`,
 				},
 				context
 			)
@@ -113,7 +106,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 				signal: "route/REDIRECT",
 				path: `/app/${context.getWorkspace()?.app}/workspace/${
 					context.getWorkspace()?.name
-				}/data/${collection}`,
+				}/data/${collection.getId()}`,
 			},
 			context
 		)

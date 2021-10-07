@@ -78,6 +78,8 @@ const DataImport: FunctionComponent<Props> = (props) => {
 		setUploaded({ success, csvFields, file })
 	}
 
+	console.log("collectionId", collectionId)
+
 	const collection = uesio.collection.useCollection(newContext, collectionId)
 	if (!collection) return null
 
