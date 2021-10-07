@@ -24,7 +24,6 @@ class WireAPI {
 		const plainWire = useWire(view, name)
 		const wireDef = getWireDef(plainWire)
 		const collectionName = wireDef?.collection
-		if (!collectionName) return undefined
 		const plainCollection = useCollection(collectionName)
 		if (!plainCollection) return undefined
 		return new Wire(plainWire).attachCollection(plainCollection)
