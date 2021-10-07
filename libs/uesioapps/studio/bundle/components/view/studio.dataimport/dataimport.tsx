@@ -19,14 +19,12 @@ const init = (
 	collectionMrg: string,
 	namespaceMrg: string,
 	context: context.Context
-): [string, string, context.Context] => {
+): [string, context.Context] => {
 	if (usage === "site") {
 		const view = context.getView()
 		const appName = view?.params?.appname
 		const siteName = view?.params?.sitename
-		const [namespace, name] = component.path.parseKey(collectionMrg)
 		return [
-			namespace,
 			collectionMrg,
 			context.addFrame({
 				siteadmin: {
@@ -36,7 +34,7 @@ const init = (
 			}),
 		]
 	}
-	return [namespaceMrg, `${namespaceMrg}.${collectionMrg}`, context]
+	return [`${namespaceMrg}.${collectionMrg}`, context]
 }
 
 interface State {
@@ -52,7 +50,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 	const namespaceMrg = context.merge(definition.namespace)
 	const usage = definition.usage
 
-	const [, collectionId, newContext] = init(
+	const [collectionId, newContext] = init(
 		usage,
 		collectionMrg,
 		namespaceMrg,

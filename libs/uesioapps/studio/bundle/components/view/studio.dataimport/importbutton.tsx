@@ -6,20 +6,17 @@ interface Props extends definition.BaseProps {
 }
 
 const getHeaderFields = async (files: FileList | null): Promise<string[]> => {
-	if (files && files.length > 0) {
-		const file = files[0]
-		const arrayBuffer = await readCSV(file)
-		if (arrayBuffer) {
-			const csvHeader = getHeaderString(arrayBuffer)
-			const csvFields = csvHeader.split(",")
-			return csvFields
-		}
-	}
-	return []
+	if (!files || files.length === 0) return []
+	const file = files[0]
+	const arrayBuffer = await readCSV(file)
+	if (!arrayBuffer) return []
+	const csvHeader = getHeaderString(arrayBuffer)
+	const csvFields = csvHeader.split(",")
+	return csvFields
 }
 
-const readCSV = async (file: File): Promise<ArrayBuffer | null> => {
-	const pm = new Promise<ArrayBuffer | null>((resolve, reject) => {
+const readCSV = async (file: File): Promise<ArrayBuffer | null> =>
+	new Promise<ArrayBuffer | null>((resolve, reject) => {
 		const reader = new FileReader()
 		reader.readAsArrayBuffer(file)
 		reader.onload = function (e) {
@@ -28,9 +25,6 @@ const readCSV = async (file: File): Promise<ArrayBuffer | null> => {
 			}
 		}
 	})
-
-	return pm
-}
 
 const getHeaderString = (data: ArrayBuffer): string => {
 	const byteLength = data.byteLength
