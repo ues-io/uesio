@@ -26,7 +26,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const classes = styles.useStyles(
 		{
-			root: {},
+			root: {
+				display: "grid",
+				overflow: "auto",
+			},
 			table: {
 				width: "100%",
 				overflow: "hidden",

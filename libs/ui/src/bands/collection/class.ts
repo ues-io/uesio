@@ -1,5 +1,7 @@
+import { getStore } from "../../store/store"
 import Field from "../field/class"
 import { PlainCollection } from "./types"
+import { selectors as collectionSelectors } from "./adapter"
 
 class Collection {
 	constructor(source: PlainCollection) {
@@ -19,6 +21,16 @@ class Collection {
 
 	getIdField = () => this.getField(this.source.idField)
 	getNameField = () => this.getField(this.source.nameField)
+	getRefCollection = (refCollectionName: string) => {
+		const state = getStore().getState()
+		const plainCollection = collectionSelectors.selectById(
+			state,
+			refCollectionName
+		)
+		if (!plainCollection) return undefined
+		const collection = new Collection(plainCollection)
+		return collection
+	}
 }
 
 export default Collection
