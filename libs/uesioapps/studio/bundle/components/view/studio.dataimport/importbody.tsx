@@ -99,6 +99,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 				},
 				context
 			)
+			return
 		}
 
 		uesio.signal.run(
