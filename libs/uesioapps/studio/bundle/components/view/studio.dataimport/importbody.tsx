@@ -10,6 +10,7 @@ import {
 import ImportBodyItem from "./importbodyitem"
 
 interface Props extends definition.BaseProps {
+	usage: "site" | "workspace"
 	collection: collection.Collection
 	csvFields: string[]
 	file: File | null
@@ -27,20 +28,13 @@ interface CmpState {
 	mappings: SpecMapping
 }
 
-const initialState = {
-	success: false,
-	mappings: {},
-}
-
 const addBlankSelectOption = collection.addBlankSelectOption
 const Button = component.registry.getUtility("io.button")
 const SelectField = component.registry.getUtility("io.selectfield")
 
 const ImportBody: FunctionComponent<Props> = (props) => {
-	const { context, collection, csvFields, file } = props
+	const { context, usage, collection, csvFields, file } = props
 	const uesio = hooks.useUesio(props)
-
-	const [CmpState, setCmpState] = useState<CmpState>(initialState)
 
 	if (!collection?.source.fields) return null
 	const collectionFields = Object.keys(collection?.source.fields)
@@ -51,11 +45,32 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		}))
 	)
 
+	const getAllMatch = (
+		csvFields: string[],
+		collectionFields: string[]
+	): SpecMapping => {
+		let mappings = {}
+
+		for (const key of csvFields) {
+			if (collectionFields.includes(key)) {
+				mappings = { ...mappings, [key]: { fieldname: key } }
+			}
+		}
+
+		return mappings
+	}
+
+	const [CmpState, setCmpState] = useState<CmpState>({
+		mappings: getAllMatch(csvFields, collectionFields),
+	})
+
+	console.log("Body - CmpState", CmpState.mappings)
+
 	const upload = async (file: File, upsertkey: string | undefined) => {
 		const jobResponse = await uesio.collection.createImportJob(
 			context,
 			"csv",
-			collection.getFullName(), //TO-DO check if this is the expected ID
+			collection.getFullName(),
 			upsertkey,
 			CmpState.mappings
 		)
@@ -80,13 +95,34 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		}
 
 		//RESET the component to initial state or redirect to manage data view
-		setCmpState(initialState)
+		//setCmpState({ mappings: {} })
+		if (usage === "site") {
+			uesio.signal.run(
+				{
+					signal: "route/REDIRECT",
+					path: `/app/${context.getSiteAdmin()?.app}/site/${
+						context.getSiteAdmin()?.name
+					}/data/${collection}`,
+				},
+				context
+			)
+		}
+
+		uesio.signal.run(
+			{
+				signal: "route/REDIRECT",
+				path: `/app/${context.getWorkspace()?.app}/workspace/${
+					context.getWorkspace()?.name
+				}/data/${collection}`,
+			},
+			context
+		)
 	}
 
 	const handleSelection = (
 		csvField: string,
 		uesioField: string,
-		matchfield: string
+		matchfield?: string
 	): void => {
 		//remove the mapping if blank is selected
 		if (uesioField === "") {
@@ -115,21 +151,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			return record
 		}
 		return options[0].value
-	}
-
-	const getAllMatch = (
-		csvFields: string[],
-		collectionFields: string[]
-	): SpecMapping => {
-		let mappings = {}
-
-		for (const key of csvFields) {
-			if (collectionFields.includes(key)) {
-				mappings = { ...mappings, [key]: { fieldname: key } }
-			}
-		}
-
-		return mappings
 	}
 
 	const classes = styles.useUtilityStyles(

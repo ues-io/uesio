@@ -1,5 +1,6 @@
 import { FunctionComponent, useState } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
+import ImportBodyItemRef from "./importbodyitemref"
 
 type DataImportItemDefinition = {
 	record: string
@@ -12,15 +13,15 @@ interface Props extends definition.BaseProps {
 	handleSelection: (
 		csvField: string,
 		uesioField: string,
-		matchfield: string
+		matchfield?: string
 	) => void
 	collection: collection.Collection
 }
 
-const initialState = { display: false, options: [] }
+const initialState = { display: false, refCollection: "" }
 interface State {
 	display: boolean
-	options: collection.SelectOption[]
+	refCollection: string
 }
 
 const TextField = component.registry.getUtility("io.textfield")
@@ -46,24 +47,13 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 		if (field?.getType() === "REFERENCE") {
 			const refCollectionId = field.source.referencedCollection
 			if (refCollectionId) {
-				const refCollection =
-					collection.getRefCollection(refCollectionId)
-
-				const refCollectionFields =
-					refCollection && Object.keys(refCollection?.source.fields)
-
-				if (refCollectionFields) {
-					return {
-						display: true,
-						options: refCollectionFields.map((key) => ({
-							value: key,
-							label: key,
-						})),
-					}
+				return {
+					display: true,
+					refCollection: refCollectionId,
 				}
 			}
 		}
-		return { display: false, options: [] }
+		return { display: false, refCollection: "" }
 	}
 
 	const [selValue, setSelValue] = useState(selOption)
@@ -87,21 +77,19 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 					options={options}
 					setValue={(value: string) => {
 						setrefField(handleReference(value))
-						handleSelection(record, value, "")
+						handleSelection(record, value)
 						setSelValue(value)
 					}}
 				/>
 			</div>
 			{refField.display && (
 				<div className={classes.headerItem}>
-					<SelectField
+					<ImportBodyItemRef
+						handleSelection={handleSelection}
+						refCollectionId={refField.refCollection}
+						csvField={record}
+						uesioField={selValue}
 						context={context}
-						label={"Ref. Field:"}
-						//value={selValue}
-						options={refField.options}
-						setValue={(value: string) => {
-							handleSelection(record, selValue, value)
-						}}
 					/>
 				</div>
 			)}

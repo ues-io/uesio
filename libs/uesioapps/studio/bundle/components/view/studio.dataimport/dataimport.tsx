@@ -90,6 +90,7 @@ const DataImport: FunctionComponent<Props> = (props) => {
 				namespace: "",
 				usage: "site",
 			}}
+			usage={usage}
 			collection={collection}
 			csvFields={uploaded.csvFields}
 			file={uploaded.file}
