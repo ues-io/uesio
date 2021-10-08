@@ -129,14 +129,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		}
 	}
 
-	const findMatch = (record: string): string => {
-		const opt = options.find((option) => option.value === record)
-		if (opt) {
-			return record
-		}
-		return options[0].value
-	}
-
 	const classes = styles.useUtilityStyles(
 		{
 			header: { display: "flex", justifyContent: "space-between" },
@@ -179,7 +171,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						definition={{
 							record,
 							options,
-							selOption: findMatch(record),
 						}}
 						handleSelection={handleSelection}
 						context={context}
