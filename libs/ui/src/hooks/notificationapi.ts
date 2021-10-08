@@ -23,6 +23,23 @@ class NotificationAPI {
 			context || this.uesio.getContext()
 		)
 	}
+
+	addNotification(
+		text: string,
+		severity: string,
+		context?: Context,
+		path?: string
+	) {
+		return this.uesio.signal.run(
+			{
+				signal: "notification/ADD",
+				severity,
+				text,
+				path,
+			},
+			context || this.uesio.getContext()
+		)
+	}
 }
 
 export { NotificationAPI }

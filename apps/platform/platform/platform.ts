@@ -1,4 +1,5 @@
 import { loader, metadata, state, context } from "@uesio/ui"
+import { MetadataType } from "libs/ui/src/metadataexports"
 
 declare global {
 	interface Window {
@@ -159,7 +160,6 @@ window.uesioLoader = (mergeData) => {
 			const buildModeSuffix = buildMode ? "/builder" : ""
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
-
 		getMetadataList: async (context, metadataType, namespace, grouping) => {
 			const prefix = getPrefix(context)
 			const mdType = metadata.METADATA[metadataType]
@@ -219,6 +219,47 @@ window.uesioLoader = (mergeData) => {
 		logout: async () => {
 			const response = await postJSON("/site/auth/logout")
 			return response.json()
+		},
+		createImportJob: async (
+			context,
+			filetype,
+			collection,
+			upsertkey,
+			mappings
+		) => {
+			const prefix = getPrefix(context)
+			const url = `${prefix}/bulk/job`
+			const spec = JSON.stringify({
+				"uesio.filetype": filetype,
+				"uesio.collection": collection,
+				"uesio.upsertkey": upsertkey,
+				"uesio.mappings": mappings,
+			})
+
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: spec,
+			})
+
+			return response.json()
+		},
+
+		importData: async (context, fileData, jobId) => {
+			const prefix = getPrefix(context)
+			const url = `${prefix}/bulk/job/${jobId}/batch`
+
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/octet-stream",
+				},
+				body: fileData,
+			})
+
+			return response
 		},
 	}).load(document.querySelector("#root"), mergeData)
 }

@@ -1,11 +1,12 @@
 import { Uesio } from "./hooks"
 import { useCollection } from "../bands/collection/selectors"
 import { Context } from "../context/context"
-import { Dispatcher } from "../store/store"
+import { Dispatcher, getPlatform } from "../store/store"
 import { AnyAction } from "redux"
 import { useEffect } from "react"
 import get from "../bands/collection/operations/get"
 import { Collection } from "../collectionexports"
+import { JobMappingParams } from "../platform/platform"
 class CollectionAPI {
 	constructor(uesio: Uesio) {
 		this.uesio = uesio
@@ -30,6 +31,25 @@ class CollectionAPI {
 		}, [])
 
 		return plainCollection && new Collection(plainCollection)
+	}
+
+	createImportJob(
+		context: Context,
+		filetype: string,
+		collection: string,
+		upsertkey?: string,
+		mappings?: JobMappingParams
+	) {
+		return getPlatform().createImportJob(
+			context,
+			filetype,
+			collection,
+			upsertkey,
+			mappings
+		)
+	}
+	importData(context: Context, fileData: File, jobId: string) {
+		return getPlatform().importData(context, fileData, jobId)
 	}
 }
 

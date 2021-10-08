@@ -10,60 +10,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getMappings(columnNames []string, spec *meta.JobSpec, session *sess.Session) ([]meta.FieldMapping, *adapt.MetadataCache, error) {
-
-	metadataResponse := adapt.MetadataCache{}
-	mappings := []meta.FieldMapping{}
-	// Keep a running tally of all requested collections
-	collections := datasource.MetadataRequest{}
-	err := collections.AddCollection(spec.Collection)
-	if err != nil {
-		return nil, nil, err
-	}
-	for _, columnName := range columnNames {
-		mapping, ok := spec.Mappings[columnName]
-		if !ok {
-			mapping = meta.FieldMapping{
-				FieldName: columnName,
-			}
-		}
-		mappings = append(mappings, mapping)
-		err := collections.AddField(spec.Collection, mapping.FieldName, nil)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	err = collections.Load(&metadataResponse, session)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return mappings, &metadataResponse, nil
-}
-
-func getLookups(mappings []meta.FieldMapping, collectionMetadata *adapt.CollectionMetadata) ([]adapt.Lookup, error) {
-	lookups := []adapt.Lookup{}
-	for _, mapping := range mappings {
-		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
-		if err != nil {
-			return nil, err
-		}
-		if fieldMetadata.Type == "REFERENCE" {
-			lookups = append(lookups, adapt.Lookup{
-				RefField:      mapping.FieldName,
-				MatchField:    mapping.MatchField,
-				MatchTemplate: "${" + mapping.MatchField + "}",
-			})
-		}
-	}
-	return lookups, nil
-}
-
-func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) ([]datasource.SaveRequest, error) {
+func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session) ([]datasource.SaveRequest, error) {
 
 	r := csv.NewReader(body)
 	changes := adapt.Collection{}
+	lookups := []adapt.Lookup{}
 
 	// Handle the header row
 	headerRow, err := r.Read()
@@ -71,14 +22,62 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 		return nil, err
 	}
 
-	mappings, metadata, err := getMappings(headerRow, spec, session)
+	collectionMetadata, err := metadata.GetCollection(spec.Collection)
 	if err != nil {
 		return nil, err
 	}
 
-	collectionMetadata, err := metadata.GetCollection(spec.Collection)
-	if err != nil {
-		return nil, err
+	loaderFuncs := []loaderFunc{}
+
+	getValue := func(data interface{}, mapping *meta.FieldMapping, index int) string {
+		record := data.([]string)
+		return record[index]
+	}
+
+	for index, columnName := range headerRow {
+		// First check to see if there is a mapping defined for this column
+		mapping, ok := spec.Mappings[columnName]
+		if !ok {
+			// If a mapping wasn't provided for a field, check to see if it is an exact match
+			_, err := collectionMetadata.GetField(columnName)
+			if err != nil {
+				// Skip this column
+				continue
+			}
+			mapping = meta.FieldMapping{
+				FieldName: columnName,
+			}
+		}
+
+		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
+		if err != nil {
+			return nil, err
+		}
+
+		if fieldMetadata.Type == "CHECKBOX" {
+			loaderFuncs = append(loaderFuncs, getBooleanLoader(index, &mapping, fieldMetadata, getValue))
+		} else if fieldMetadata.Type == "REFERENCE" {
+			if mapping.MatchField != "" {
+				lookups = append(lookups, adapt.Lookup{
+					RefField:      mapping.FieldName,
+					MatchField:    mapping.MatchField,
+					MatchTemplate: "${" + mapping.MatchField + "}",
+				})
+			}
+			refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+			if err != nil {
+				return nil, err
+			}
+
+			if mapping.MatchField == "" {
+				mapping.MatchField = refCollectionMetadata.NameField
+			}
+
+			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, getValue))
+		} else {
+			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, getValue))
+		}
+
 	}
 
 	for {
@@ -92,43 +91,14 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, session *sess.Session) (
 
 		changeRequest := adapt.Item{}
 
-		for index, mapping := range mappings {
-			fieldName := mapping.FieldName
-			fieldMetadata, err := collectionMetadata.GetField(fieldName)
-			if err != nil {
-				return nil, err
-			}
-			if fieldMetadata.Type == "CHECKBOX" {
-				changeRequest[mapping.FieldName] = record[index] == "true"
-			} else if fieldMetadata.Type == "REFERENCE" {
-
-				refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
-				if err != nil {
-					return nil, err
-				}
-
-				matchField := refCollectionMetadata.NameField
-
-				if mapping.MatchField != "" {
-					matchField = mapping.MatchField
-				}
-
-				changeRequest[mapping.FieldName] = map[string]interface{}{
-					matchField: record[index],
-				}
-			} else {
-				changeRequest[mapping.FieldName] = record[index]
-			}
+		for _, loaderFunc := range loaderFuncs {
+			loaderFunc(changeRequest, record)
 		}
 
 		changes = append(changes, changeRequest)
 
 	}
 
-	lookups, err := getLookups(mappings, collectionMetadata)
-	if err != nil {
-		return nil, err
-	}
 	return []datasource.SaveRequest{
 		{
 			Collection: spec.Collection,

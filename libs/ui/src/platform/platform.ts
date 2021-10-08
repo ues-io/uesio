@@ -30,6 +30,17 @@ type SecretResponse = {
 	value: string
 }
 
+type JobMappingParams = {
+	[key: string]: {
+		fieldname: string
+		matchfield?: string
+	}
+}
+
+type JobResponse = {
+	id: string
+}
+
 interface Platform {
 	getView(context: Context, namespace: string, name: string): Promise<string>
 	getTheme(context: Context, namespace: string, name: string): Promise<string>
@@ -93,6 +104,25 @@ interface Platform {
 	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
+	createImportJob(
+		context: Context,
+		filetype: string,
+		collection: string,
+		upsertkey?: string,
+		mappings?: JobMappingParams
+	): Promise<JobResponse>
+	importData(
+		context: Context,
+		fileData: File,
+		jobId: string
+	): Promise<Response>
 }
 
-export { Platform, BotResponse, BotParams, ConfigValueResponse, SecretResponse }
+export {
+	Platform,
+	BotResponse,
+	BotParams,
+	ConfigValueResponse,
+	SecretResponse,
+	JobMappingParams,
+}
