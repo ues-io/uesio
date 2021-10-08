@@ -12,17 +12,18 @@ type SelectListOption struct {
 
 // SelectList struct
 type SelectList struct {
-	ID        string             `yaml:"-" uesio:"uesio.id"`
-	Name      string             `yaml:"name" uesio:"studio.name"`
-	Namespace string             `yaml:"-" uesio:"-"`
-	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`
-	Workspace *Workspace         `yaml:"-" uesio:"studio.workspace"`
-	CreatedBy *User              `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User              `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User              `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64              `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64              `yaml:"-" uesio:"uesio.createdat"`
-	itemMeta  *ItemMeta          `yaml:"-" uesio:"-"`
+	ID          string             `yaml:"-" uesio:"uesio.id"`
+	Name        string             `yaml:"name" uesio:"studio.name"`
+	Namespace   string             `yaml:"-" uesio:"-"`
+	Options     []SelectListOption `yaml:"options" uesio:"studio.options"`
+	BlankOption string             `yaml:"blankOption" uesio:"studio.blank_option"`
+	Workspace   *Workspace         `yaml:"-" uesio:"studio.workspace"`
+	CreatedBy   *User              `yaml:"-" uesio:"uesio.createdby"`
+	Owner       *User              `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy   *User              `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt   int64              `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt   int64              `yaml:"-" uesio:"uesio.createdat"`
+	itemMeta    *ItemMeta          `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function

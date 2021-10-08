@@ -24,6 +24,7 @@ definition:
         studio.name:
         studio.workspace:
         studio.options:
+        studio.blank_option:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -108,5 +109,7 @@ definition:
                           components:
                             - io.field:
                                 fieldId: studio.name
+                            - io.field:
+                                fieldId: studio.blank_option
                             - io.field:
                                 fieldId: studio.options

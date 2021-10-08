@@ -63,7 +63,8 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 				<SelectField
 					{...common}
 					options={addBlankSelectOption(
-						fieldMetadata.getOptions() || []
+						fieldMetadata.getOptions() || [],
+						fieldMetadata
 					)}
 				/>
 			)

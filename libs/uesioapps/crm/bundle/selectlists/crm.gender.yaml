@@ -1,4 +1,5 @@
 name: gender
+blankOption: empty
 options:
   - label: Male
     value: MALE

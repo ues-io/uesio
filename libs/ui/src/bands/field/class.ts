@@ -14,6 +14,7 @@ class Field {
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
 	getOptions = () => this.source.options || null
+	getBlankOption = () => this.source.blankOption
 	getAccept = () => {
 		switch (this.source.accept) {
 			case "AUDIO":

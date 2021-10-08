@@ -36,10 +36,20 @@ type FieldMetadata = {
 	type: FieldType
 	label: string
 	options?: SelectOption[]
+	blankOption?: string
 	referencedCollection?: string
 	subfields?: SubField[]
 	accept?: AcceptTypes
 	subtype?: string
 }
 
-export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }
+const DefaultBlankValue = "blank"
+
+export {
+	FieldMetadata,
+	FieldMetadataMap,
+	SelectOption,
+	FieldType,
+	SubField,
+	DefaultBlankValue,
+}

@@ -76,8 +76,9 @@ func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
 // GetSelectListMetadata function
 func GetSelectListMetadata(sl *meta.SelectList) *adapt.SelectListMetadata {
 	return &adapt.SelectListMetadata{
-		Name:    sl.Name,
-		Options: GetSelectListOptionsMetadata(sl.Options),
+		Name:        sl.Name,
+		BlankOption: sl.BlankOption,
+		Options:     GetSelectListOptionsMetadata(sl.Options),
 	}
 }
 
@@ -259,6 +260,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 	}
 
 	fieldMetadata.SelectListOptions = (*selectListMetadata).Options
+	fieldMetadata.SelectListBlankOption = (*selectListMetadata).BlankOption
 
 	return nil
 }

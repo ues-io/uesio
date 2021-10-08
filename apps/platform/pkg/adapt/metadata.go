@@ -37,8 +37,9 @@ type SelectListOptionMetadata struct {
 
 // SelectListMetadata type
 type SelectListMetadata struct {
-	Name    string
-	Options []SelectListOptionMetadata
+	Name        string
+	Options     []SelectListOptionMetadata
+	BlankOption string
 }
 
 // CollectionMetadata struct
@@ -99,24 +100,25 @@ type SubField struct {
 
 // FieldMetadata struct
 type FieldMetadata struct {
-	Name                 string                     `json:"name"`
-	Namespace            string                     `json:"namespace"`
-	Createable           bool                       `json:"createable"`
-	Accessible           bool                       `json:"accessible"`
-	Updateable           bool                       `json:"updateable"`
-	Type                 string                     `json:"type"`
-	Label                string                     `json:"label"`
-	SelectListOptions    []SelectListOptionMetadata `json:"options"`
-	SelectListName       string                     `json:"-"`
-	ReferencedCollection string                     `json:"referencedCollection"`
-	Required             bool                       `json:"required"`
-	Validate             *ValidationMetadata        `json:"validate"`
-	AutoPopulate         string                     `json:"autopopulate"`
-	OnDelete             string                     `json:"ondelete"`
-	FileCollection       string                     `json:"fileCollection"`
-	Accept               string                     `json:"accept"`
-	SubFields            []SubField                 `json:"subfields"`
-	SubType              string                     `json:"subtype"`
+	Name                  string                     `json:"name"`
+	Namespace             string                     `json:"namespace"`
+	Createable            bool                       `json:"createable"`
+	Accessible            bool                       `json:"accessible"`
+	Updateable            bool                       `json:"updateable"`
+	Type                  string                     `json:"type"`
+	Label                 string                     `json:"label"`
+	SelectListOptions     []SelectListOptionMetadata `json:"options"`
+	SelectListBlankOption string                     `json:"blankOption"`
+	SelectListName        string                     `json:"-"`
+	ReferencedCollection  string                     `json:"referencedCollection"`
+	Required              bool                       `json:"required"`
+	Validate              *ValidationMetadata        `json:"validate"`
+	AutoPopulate          string                     `json:"autopopulate"`
+	OnDelete              string                     `json:"ondelete"`
+	FileCollection        string                     `json:"fileCollection"`
+	Accept                string                     `json:"accept"`
+	SubFields             []SubField                 `json:"subfields"`
+	SubType               string                     `json:"subtype"`
 }
 
 // GetFullName function

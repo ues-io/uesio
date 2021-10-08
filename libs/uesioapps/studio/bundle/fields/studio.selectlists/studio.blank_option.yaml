@@ -1,0 +1,4 @@
+name: blank_option
+collection: studio.selectlists
+type: TEXT
+label: Blank Option
