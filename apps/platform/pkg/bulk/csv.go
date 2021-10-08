@@ -10,9 +10,16 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session) ([]datasource.SaveRequest, error) {
+type CSVOptions struct {
+	Comma rune
+}
+
+func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session, options *CSVOptions) ([]datasource.SaveRequest, error) {
 
 	r := csv.NewReader(body)
+	if options != nil {
+		r.Comma = options.Comma
+	}
 	changes := adapt.Collection{}
 	lookups := []adapt.Lookup{}
 

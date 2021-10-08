@@ -20,6 +20,7 @@ interface Props {
 	collection: collection.Collection
 	columns: definition.DefinitionList
 	rowactions: RowAction[]
+	rownumbers: boolean
 	path: string
 	context: context.Context
 	state: TableState
@@ -31,6 +32,8 @@ interface RowProps {
 	path: string
 	columns: definition.DefinitionList
 	rowactions: RowAction[]
+	rownumbers: boolean
+	index: number
 	context: context.Context
 	mode: context.FieldMode
 	record: wire.WireRecord
@@ -97,6 +100,8 @@ const TableRow: FunctionComponent<RowProps> = ({
 	wire,
 	columns,
 	rowactions,
+	rownumbers,
+	index,
 	context,
 	mode,
 	record,
@@ -115,6 +120,14 @@ const TableRow: FunctionComponent<RowProps> = ({
 				record.isDeleted() && classes.rowDeleted
 			)}
 		>
+			{rownumbers && (
+				<td
+					className={styles.cx(classes.cell, classes.rowNumberCell)}
+					key="rownumbers"
+				>
+					<div className={classes.rowNumber}>{index + 1}</div>
+				</td>
+			)}
 			{columns?.map((columnDef, index) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				const Cell = column.components ? SlotCell : FieldCell
@@ -162,12 +175,13 @@ const TableBody: FunctionComponent<Props> = ({
 	path,
 	columns,
 	rowactions,
+	rownumbers,
 	context,
 	state: { mode },
 	classes,
 }) => (
 	<tbody>
-		{wire.getData().map((record) => (
+		{wire.getData().map((record, index) => (
 			<TableRow
 				classes={classes}
 				key={record.getId()}
@@ -175,6 +189,8 @@ const TableBody: FunctionComponent<Props> = ({
 				path={path}
 				columns={columns}
 				rowactions={rowactions}
+				rownumbers={rownumbers}
+				index={index}
 				context={context}
 				mode={mode}
 				record={record}
