@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { collection, definition } from "@uesio/ui"
+import { collection, definition, styles } from "@uesio/ui"
 import { ColumnDefinition, RowAction, TableClasses } from "./tabledefinition"
 
 type Props = {
@@ -7,23 +7,36 @@ type Props = {
 	collection: collection.Collection
 	classes: TableClasses
 	rowactions: RowAction[]
+	rownumbers: boolean
 }
 
-const TableHeader: FunctionComponent<Props> = (props) => (
-	<thead key={0} className={props.classes.header}>
+const TableHeader: FunctionComponent<Props> = ({
+	classes,
+	rowactions,
+	rownumbers,
+	columns,
+	collection,
+}) => (
+	<thead key={0} className={classes.header}>
 		<tr>
-			{props.columns?.map((columnDef) => {
+			{rownumbers && (
+				<th
+					className={styles.cx(classes.cell, classes.rowNumberCell)}
+					key="rownumbers"
+				/>
+			)}
+			{columns?.map((columnDef) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				const fieldId = column.field
-				const fieldMetadata = props.collection.getField(fieldId)
+				const fieldMetadata = collection.getField(fieldId)
 				return (
-					<th className={props.classes.headerCell} key={fieldId}>
+					<th className={classes.headerCell} key={fieldId}>
 						{column.label || fieldMetadata?.getLabel()}
 					</th>
 				)
 			})}
-			{props.rowactions && (
-				<th className={props.classes.headerCell} key="rowactions" />
+			{rowactions && (
+				<th className={classes.headerCell} key="rowactions" />
 			)}
 		</tr>
 	</thead>
