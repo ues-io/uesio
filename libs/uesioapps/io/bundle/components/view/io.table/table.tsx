@@ -44,7 +44,9 @@ const Table: FunctionComponent<TableProps> = (props) => {
 				width: "1%",
 				whiteSpace: "nowrap",
 			},
-			rowNumber: {},
+			rowNumber: {
+				textAlign: "center",
+			},
 			cell: {
 				"&:last-child": {
 					borderRight: 0,

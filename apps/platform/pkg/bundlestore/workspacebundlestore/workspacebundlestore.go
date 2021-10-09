@@ -72,7 +72,15 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 
 // GetComponentPackStream function
 func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	return nil, nil
+	fileID := componentPack.RuntimeBundle.ID
+	if buildMode {
+		fileID = componentPack.BuildTimeBundle.ID
+	}
+	stream, _, err := filesource.Download(fileID, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+	return stream, nil
 }
 
 // GetBotStream function

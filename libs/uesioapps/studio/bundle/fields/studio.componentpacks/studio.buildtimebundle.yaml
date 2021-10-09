@@ -1,0 +1,5 @@
+name: buildtimebundle
+collection: studio.componentpacks
+type: FILE
+label: Buildtime Bundle
+filecollection: uesio.platform
