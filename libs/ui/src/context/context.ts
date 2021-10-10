@@ -112,11 +112,13 @@ const getViewDef = (viewDefId: string | undefined) =>
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getStore().getState(), viewId, wireId)
 
-const getWireDef = (wire: PlainWire | undefined) => {
-	if (!wire) return undefined
-	const viewDefId = wire.view.split("(")[0]
+const getWireDef = (wire: PlainWire | undefined) =>
+	wire ? getWireDefFromWireName(wire.view, wire.name) : undefined
+
+const getWireDefFromWireName = (viewId: string, wirename: string) => {
+	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
-	return viewDef?.definition?.wires?.[wire.name]
+	return viewDef?.definition?.wires?.[wirename]
 }
 
 class Context {
@@ -300,5 +302,6 @@ export {
 	WorkspaceState,
 	SiteState,
 	getWireDef,
+	getWireDefFromWireName,
 	getWire,
 }

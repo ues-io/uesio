@@ -155,6 +155,9 @@ func loadOne(
 
 		if condition.Type == "SEARCH" {
 			searchToken := condition.Value.(string)
+			if searchToken == "" {
+				continue
+			}
 			colValeStr := ""
 			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
 			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE $"+strconv.Itoa(paramCounter))

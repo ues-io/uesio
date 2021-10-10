@@ -7,6 +7,7 @@ import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
+import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
 import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
@@ -52,6 +53,11 @@ interface LoadWiresSignal extends SignalDefinition {
 
 interface SaveWiresSignal extends SignalDefinition {
 	wires?: string[]
+}
+
+interface SearchWireSignal extends SignalDefinition {
+	wire: string
+	search: string
 }
 
 const getErrorStrings = (response: SaveResponse) =>
@@ -145,6 +151,23 @@ const signals: Record<string, SignalDescriptor> = {
 		],
 		dispatcher: (signal: EmptyWireSignal, context: Context) =>
 			emptyWireOp(context, signal.wire),
+	},
+	[`${WIRE_BAND}/SEARCH`]: {
+		label: "Search Wire",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "search",
+				type: "TEXT",
+				label: "Search",
+			},
+		],
+		dispatcher: (signal: SearchWireSignal, context: Context) =>
+			searchWireOp(context, signal.wire, signal.search),
 	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
+import { WireConditionState } from "../../wireexports"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
@@ -29,6 +30,14 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
+	conditionId: string
+} & EntityPayload
+
+type AddConditionPayload = {
+	condition: WireConditionState
+} & EntityPayload
+
+type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
@@ -94,12 +103,38 @@ const wireSlice = createSlice({
 			state.changes = {}
 			state.deletes = {}
 		}),
+		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
+			(state, { condition }) => {
+				const conditionIndex = state.conditions.findIndex(
+					(existingCondition) => existingCondition.id === condition.id
+				)
+				if (conditionIndex === -1) {
+					// Create a new condition
+					state.conditions.push(condition)
+					return
+				}
+				state.conditions = Object.assign([], state.conditions, {
+					[conditionIndex]: condition,
+				})
+			}
+		),
+		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
+			(state, { conditionId }) => {
+				const conditionIndex = state.conditions.findIndex(
+					(condition) => condition.id === conditionId
+				)
+				if (conditionIndex === -1) {
+					return
+				}
+				state.conditions.splice(conditionIndex, 1)
+			}
+		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
 				const conditionIndex = state.conditions.findIndex(
 					(condition) => condition.id === conditionId
 				)
-				if (!conditionIndex && conditionIndex !== 0) {
+				if (conditionIndex === -1) {
 					return
 				}
 				const oldCondition = state.conditions[conditionIndex]
@@ -224,5 +259,7 @@ export const {
 	cancel,
 	empty,
 	toggleCondition,
+	addCondition,
+	removeCondition,
 } = wireSlice.actions
 export default wireSlice.reducer

@@ -8,10 +8,7 @@ import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
-import {
-	getInitializedConditions,
-	getLoadRequestConditions,
-} from "../conditions/conditions"
+import { getLoadRequestConditions } from "../conditions/conditions"
 import { getDefaultRecord } from "../defaults/defaults"
 import { getWiresFromDefinitonOrContext } from "../adapter"
 
@@ -50,10 +47,7 @@ export default createAsyncThunk<
 				type: wiredef.type,
 				collection: wiredef.collection,
 				fields: getFieldsRequest(wiredef.fields) || [],
-				conditions: getLoadRequestConditions(
-					getInitializedConditions(wiredef.conditions),
-					context
-				),
+				conditions: getLoadRequestConditions(wire.conditions, context),
 				order: wiredef.order,
 				limit: wiredef.limit,
 				offset: wiredef.offset,
