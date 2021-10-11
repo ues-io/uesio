@@ -1,10 +1,9 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { TableProps } from "./tabledefinition"
 import { component, styles, hooks } from "@uesio/ui"
-import empty from "libs/ui/src/bands/wire/operations/empty"
 const LabLayout = component.registry.getUtility("lab.layout")
 
-const Grid: FC<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path = "" } = props
 	const wire = uesio.wire.useWire(definition.wire)
@@ -198,4 +197,4 @@ const Grid: FC<TableProps> = (props) => {
 	)
 }
 
-export default Grid
+export default Table

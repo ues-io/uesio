@@ -28,9 +28,9 @@ const TableBuilder: FunctionComponent<TableColumnProps> = (props) => {
 		<BuildWrapper {...props} classes={classes}>
 			<TableColumn
 				{...props}
-				context={context.addFrame({
-					buildMode: false,
-				})}
+				// context={context.addFrame({
+				// 	buildMode: false,
+				// })}
 			/>
 		</BuildWrapper>
 	)

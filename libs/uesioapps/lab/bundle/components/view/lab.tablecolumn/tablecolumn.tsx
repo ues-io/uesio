@@ -16,9 +16,11 @@ const Layout: FC<TableColumnProps> = (props) => {
 		props
 	)
 
+	console.log({ path })
+
 	return (
 		<div className={classes.root} {...props}>
-			{definition.field && (
+			{/* {definition.field && (
 				<component.Component
 					componentType="io.field"
 					definition={{
@@ -29,14 +31,14 @@ const Layout: FC<TableColumnProps> = (props) => {
 					path={path}
 					context={context}
 				/>
-			)}
-			{/* <component.Slot
+			)} */}
+			<component.Slot
 				definition={definition}
 				listName="components"
 				path={path}
-				accepts={["uesio.context"]}
+				accepts={["uesio.standalone", "uesio.field"]}
 				context={context}
-			/> */}
+			/>
 		</div>
 	)
 }
