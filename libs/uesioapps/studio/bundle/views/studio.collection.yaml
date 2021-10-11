@@ -215,8 +215,6 @@ definition:
                                 field: studio.type
                             - io.column:
                                 field: studio.label
-                            - io.column:
-                                field: studio.collection
   panels:
     - io.dialog:
         id: deleteCollection
