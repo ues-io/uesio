@@ -10,11 +10,12 @@ const wireAdapter = createEntityAdapter<PlainWire>({
 
 const selectors = wireAdapter.getSelectors((state: RootState) => state.wire)
 
-const initializeWire = (viewId: string, wirename: string) => {
+const initializeWire = (viewId: string, wirename: string): PlainWire => {
 	const wireDef = getWireDefFromWireName(viewId, wirename)
 	if (!wireDef) throw new Error("Cannot initialize invalid wire")
 	return {
 		view: viewId || "",
+		type: wireDef.type || "QUERY",
 		name: wirename,
 		conditions: getInitializedConditions(wireDef.conditions),
 		data: {},
