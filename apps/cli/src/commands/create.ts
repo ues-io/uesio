@@ -12,7 +12,7 @@ export default class Create extends Command {
 	async run(): Promise<void> {
 		const { args /*, flags */ } = this.parse(Create)
 
-		await authorize()
+		const user = await authorize()
 
 		if (!args.type) {
 			const metadataMap = getMetadataMap()
@@ -25,6 +25,6 @@ export default class Create extends Command {
 		}
 
 		const metadata = getMetadataByType(args.type)
-		await metadata.create()
+		await metadata.create(user)
 	}
 }

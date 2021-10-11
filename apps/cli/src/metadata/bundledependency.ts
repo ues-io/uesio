@@ -3,7 +3,7 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
 import { getApp, getWorkspace } from "../config/config"
 import { throwIfBadFormat } from "../validation/version"
-import { authorize } from "../auth/login"
+import { authorize, User } from "../auth/login"
 import { get } from "../request/request"
 const UESIO_STUDIO_WORKSPACE = "workspace"
 const UESIO_ADD_DEPENDENCY = "metadata/adddependency"
@@ -30,11 +30,11 @@ class BundleDependency {
 	static getColumns(): TableColumn[] {
 		return BundleDependency.getFields()
 	}
-	static async list(): Promise<void> {
-		const response = await load(this)
+	static async list(user: User): Promise<void> {
+		const response = await load(this, user)
 		wiretable(response.wires[0], response.collections, this.getColumns())
 	}
-	static async create(): Promise<void> {
+	static async create(user: User): Promise<void> {
 		const responses = await inquirer.prompt([
 			{
 				name: "bundle",
@@ -48,12 +48,11 @@ class BundleDependency {
 			},
 		])
 		throwIfBadFormat(responses.version)
-		const { cookie } = await authorize()
 
 		const [workspace, app] = await Promise.all([getWorkspace(), getApp()])
 		const url = `${UESIO_STUDIO_WORKSPACE}/${app}/${workspace}/${UESIO_ADD_DEPENDENCY}/${responses.bundle}/${responses.version}`
 		try {
-			const response = await get(url, cookie)
+			const response = await get(url, user.cookie)
 			console.log(await response.text())
 		} catch (e) {
 			console.log(e)

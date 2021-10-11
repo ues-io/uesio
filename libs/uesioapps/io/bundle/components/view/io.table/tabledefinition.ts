@@ -3,7 +3,15 @@ import { definition, builder, signal, component } from "@uesio/ui"
 type TableMode = "READ" | "EDIT"
 
 type TableClasses = Record<
-	"root" | "table" | "headerCell" | "header" | "cell" | "row" | "rowDeleted",
+	| "root"
+	| "table"
+	| "headerCell"
+	| "header"
+	| "cell"
+	| "row"
+	| "rowDeleted"
+	| "rowNumberCell"
+	| "rowNumber",
 	string
 >
 
@@ -17,6 +25,7 @@ type TableDefinition = {
 	mode: TableMode
 	columns: definition.DefinitionList
 	rowactions: RowAction[]
+	rownumbers: boolean
 }
 
 interface TableProps extends definition.BaseProps {

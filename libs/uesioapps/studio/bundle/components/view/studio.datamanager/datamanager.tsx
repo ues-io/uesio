@@ -91,6 +91,17 @@ const DataManager: FunctionComponent<Props> = (props) => {
 				id: "collectionDataTable",
 				wire: "collectionData",
 				mode: "EDIT",
+				rownumbers: true,
+				rowactions: [
+					{
+						text: "Delete",
+						signals: [
+							{
+								signal: "wire/TOGGLE_DELETE_STATUS",
+							},
+						],
+					},
+				],
 				columns: Object.keys(fieldsMeta).map((record) => ({
 					["io.column"]: {
 						field: `${record}`,

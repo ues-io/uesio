@@ -26,3 +26,7 @@ definition:
     row:
     rowDeleted:
       backgroundColor: "#ffe9e9"
+    rowNumber:
+      padding: 16px
+      color: "#777"
+      fontSize: 10pt

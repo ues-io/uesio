@@ -40,6 +40,13 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					borderRight: 0,
 				},
 			},
+			rowNumberCell: {
+				width: "1%",
+				whiteSpace: "nowrap",
+			},
+			rowNumber: {
+				textAlign: "center",
+			},
 			cell: {
 				"&:last-child": {
 					borderRight: 0,
@@ -66,6 +73,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					classes={classes}
 					columns={definition.columns}
 					rowactions={definition.rowactions}
+					rownumbers={definition.rownumbers}
 					collection={collection}
 				/>
 				<TableBody
@@ -75,6 +83,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					state={componentState}
 					columns={definition.columns}
 					rowactions={definition.rowactions}
+					rownumbers={definition.rownumbers}
 					path={path}
 					context={newContext}
 				/>

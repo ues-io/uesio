@@ -1,11 +1,10 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useEffect } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
 import ImportBodyItemRef from "./importbodyitemref"
 
 type DataImportItemDefinition = {
 	record: string
 	options: collection.SelectOption[]
-	selOption: string
 }
 
 interface Props extends definition.BaseProps {
@@ -29,7 +28,15 @@ const SelectField = component.registry.getUtility("io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
 	const { context, definition, handleSelection, collection } = props
-	const { record, options, selOption } = definition
+	const { record, options } = definition
+
+	const findMatch = (record: string): string => {
+		const opt = options.find((option) => option.value === record)
+		if (opt) {
+			return record
+		}
+		return options[0].value
+	}
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -56,7 +63,22 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 		return { display: false, refCollection: "" }
 	}
 
-	const [selValue, setSelValue] = useState(selOption)
+	useEffect(() => {
+		const match = findMatch(record)
+		const field = collection.getField(match)
+		if (field?.getType() === "REFERENCE") {
+			const refCollectionId = field.source.referencedCollection
+			if (refCollectionId) {
+				setrefField({
+					display: true,
+					refCollection: refCollectionId,
+				})
+			}
+		}
+		setSelValue(match)
+	}, [])
+
+	const [selValue, setSelValue] = useState("")
 	const [refField, setrefField] = useState<State>(initialState)
 
 	return (

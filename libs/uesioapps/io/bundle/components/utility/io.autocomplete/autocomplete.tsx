@@ -40,7 +40,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	const lastInputChange = useRef<number>(0)
 
 	const options = loading ? [{ value: "loading..." }] : inputItems
-	const debouncedRequest = debounce(getItems, 200)
+	const debouncedRequest = debounce(getItems, 250)
 
 	const {
 		isOpen,

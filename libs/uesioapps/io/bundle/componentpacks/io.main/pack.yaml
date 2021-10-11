@@ -29,6 +29,7 @@ components:
     io.iconbutton:
     io.image:
     io.list:
+    io.searchbox:
     io.table:
       variants:
         - io.textfield.io.table
