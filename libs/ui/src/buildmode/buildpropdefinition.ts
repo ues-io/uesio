@@ -23,6 +23,7 @@ type BuildPropertiesDefinition = {
 		propDef: BuildPropertiesDefinition,
 		uesio: Uesio
 	) => void
+	getFlexStyles?: (template: number[], path: string) => React.CSSProperties
 	name?: string // auto-populated
 	namespace?: string // auto-populated
 	type?: string

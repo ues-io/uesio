@@ -1,10 +1,16 @@
-import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
+import React, {
+	FunctionComponent,
+	SyntheticEvent,
+	DragEvent,
+	useState,
+} from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
 import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
 
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
+	subtitle: string | React.Component
 }
 
 const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
@@ -118,7 +124,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 						onMouseDown={() => setCanDrag(true)}
 						onMouseUp={() => dragger.dragNode && setCanDrag(false)}
 					>
-						{propDef?.title ?? "Unknown"}
+						{propDef?.title ?? "Unknown"} {props.subtitle}
 					</div>
 				}
 				<div className={classes.inner}>{children}</div>

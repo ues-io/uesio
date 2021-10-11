@@ -20,6 +20,7 @@ export default (
 			cursor: "pointer",
 			position: "relative",
 			userSelect: "none",
+			gap: "inherit",
 			border: `1px solid ${borderColor}`,
 			marginTop: "-1px",
 			zIndex: isSelected ? 1 : 0,
@@ -53,7 +54,8 @@ export default (
 		inner: {
 			padding: "8px",
 			position: "relative",
-			overflow: "auto",
+			gap: "inherit",
+			// overflow: "auto",
 		},
 	}
 }

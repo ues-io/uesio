@@ -179,6 +179,11 @@ class Context {
 			: undefined
 	}
 
+	getInViewDef = <T>(pathArray: string[]): T => {
+		const viewDef = this.getViewDef()
+		return get(viewDef?.definition, pathArray)
+	}
+
 	getViewDef = () => getViewDef(this.getViewDefId())
 
 	getParentComponentDef = (path: string) =>

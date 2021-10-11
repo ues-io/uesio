@@ -1,15 +1,35 @@
-import { builder } from "@uesio/ui"
+import { builder, component, definition } from "@uesio/ui"
+
+export type ColumnDefinition = {
+	components: definition.DefinitionValue[]
+}
 
 const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",
-	description: "Visible impression obtained by a camera",
+	description: "The backbone for layouts",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	sections: [],
 	traits: [],
 	classes: ["root"],
 	type: "component",
-	actions: [],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					"io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
+					},
+				},
+				dropIndex
+			)
+		}
+	},
 }
 
 export default ColumnPropertyDefinition

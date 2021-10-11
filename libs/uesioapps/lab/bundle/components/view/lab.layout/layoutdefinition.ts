@@ -1,13 +1,14 @@
 import { definition, builder } from "@uesio/ui"
 import LayoutTemplateProp from "./layouttemplateprop"
+import { ColumnDefinition } from "../io.column/columndefinition"
 
 type LayoutDefinition = {
 	columnGap?: string
 	justifyContent: string
 	alignItems: string
 	breakpoint: string
-	columns: definition.DefinitionList
 	template: string
+	columns: { "io.column": ColumnDefinition }[]
 }
 interface LayoutProps extends definition.BaseProps {
 	definition: LayoutDefinition
@@ -54,7 +55,7 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 			type: "CUSTOM",
 			name: "template",
 			label: "Layout Template",
-			renderFunc: LayoutTemplateProp,
+			renderFunc: LayoutTemplateProp.default,
 		},
 		{
 			name: "justifyContent",
@@ -84,6 +85,7 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	traits: ["uesio.standalone"],
 }
-export { LayoutProps, LayoutDefinition }
+
+export { LayoutProps, LayoutDefinition, LayoutTemplateProp }
 
 export default LayoutPropertyDefinition

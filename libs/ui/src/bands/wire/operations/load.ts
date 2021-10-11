@@ -42,24 +42,27 @@ export default createAsyncThunk<
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const batch = {
-		wires: wiresToLoad.map((wire) => {
-			const wiredef = getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-			return {
-				wire: getFullWireId(wire.view, wire.name),
-				type: wiredef.type,
-				collection: wiredef.collection,
-				fields: getFieldsRequest(wiredef.fields) || [],
-				conditions: getLoadRequestConditions(
-					getInitializedConditions(wiredef.conditions),
-					context
-				),
-				order: wiredef.order,
-				limit: wiredef.limit,
-				offset: wiredef.offset,
-			}
-		}),
+		wires: wiresToLoad
+			.map((wire) => {
+				const wiredef = getWireDef(wire)
+				if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+				return {
+					wire: getFullWireId(wire.view, wire.name),
+					type: wiredef.type,
+					collection: wiredef.collection,
+					fields: getFieldsRequest(wiredef.fields) || [],
+					conditions: getLoadRequestConditions(
+						getInitializedConditions(wiredef.conditions),
+						context
+					),
+					order: wiredef.order,
+					limit: wiredef.limit,
+					offset: wiredef.offset,
+				}
+			})
+			.filter((w) => !!w.collection || !!w.fields.length),
 	}
+
 	const response = await api.extra.loadData(context, batch)
 
 	// Add the local ids

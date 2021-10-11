@@ -1,8 +1,6 @@
 import { FC } from "react"
 import { definition, component, styles } from "@uesio/ui"
 
-const IOColumn = component.registry.getUtility("io.column")
-
 export const getColumnFlexStyles = (
 	template: string,
 	columnIndex: number
@@ -10,8 +8,8 @@ export const getColumnFlexStyles = (
 	const templateArray = template.split(",")
 	const flexRatio = parseInt(templateArray[columnIndex], 10)
 	return {
-		flexGrow: flexRatio || "initial",
-		flexShrink: flexRatio || "initial",
+		flex: flexRatio || "initial",
+		gap: "inherit",
 	}
 }
 
@@ -30,7 +28,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 	)
 
 	return (
-		<IOColumn classes={classes} context={context}>
+		<div className={classes.root}>
 			<component.Slot
 				definition={definition}
 				listName="components"
@@ -38,7 +36,7 @@ const Column: FC<definition.BaseProps> = (props) => {
 				accepts={["io.griditem", "uesio.standalone", "uesio.field"]}
 				context={context}
 			/>
-		</IOColumn>
+		</div>
 	)
 }
 

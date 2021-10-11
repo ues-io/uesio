@@ -24,7 +24,7 @@ const Layout: FC<LayoutProps> = (props) => {
 			root: {
 				justifyContent: justifyContent || "initial",
 				alignItems: alignItems || "initial",
-				gap: columnGap || "initial",
+				gap: columnGap || "inherit",
 				display: "flex",
 				flexFlow: "row wrap",
 				...mediaQueryForBreakpoint,
