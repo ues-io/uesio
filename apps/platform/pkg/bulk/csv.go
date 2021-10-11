@@ -45,15 +45,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 		// First check to see if there is a mapping defined for this column
 		mapping, ok := spec.Mappings[columnName]
 		if !ok {
-			// If a mapping wasn't provided for a field, check to see if it is an exact match
-			_, err := collectionMetadata.GetField(columnName)
-			if err != nil {
-				// Skip this column
-				continue
-			}
-			mapping = meta.FieldMapping{
-				FieldName: columnName,
-			}
+			continue
 		}
 
 		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
