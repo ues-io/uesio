@@ -22,11 +22,6 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Name",
 		},
 		{
-			name: "order",
-			type: "NUMBER",
-			label: "Order",
-		},
-		{
 			name: "field",
 			type: "TEXT",
 			label: "Wire Field",

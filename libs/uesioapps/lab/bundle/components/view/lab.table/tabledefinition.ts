@@ -62,11 +62,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			],
 		},
 		{
-			name: "shortName",
-			type: "BOOLEAN",
-			label: "Exclude namespace from column names",
-		},
-		{
 			name: "fitToContent",
 			type: "BOOLEAN",
 			label: "Fit to content",
