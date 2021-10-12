@@ -70,7 +70,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Fit to content",
 		},
 	],
-	sections: [actionsBarDefinition],
+	sections: [actionsBarDefinition("Table Actions")],
 	actions: [
 		{
 			label: "Add Section",

@@ -14,6 +14,7 @@ const TableBuilder: FunctionComponent<TableColumnProps> = (props) => {
 			root: {
 				flex: 1,
 				border: "none",
+
 				".hint": {
 					maxHeight: "0px",
 					opacity: 0,
@@ -28,6 +29,7 @@ const TableBuilder: FunctionComponent<TableColumnProps> = (props) => {
 			},
 			inner: {
 				padding: "0",
+				height: "100%",
 			},
 			header: {
 				display: "none",

@@ -15,56 +15,57 @@ export type ActionsBarDefinition = {
 	id: string
 }
 
-export default {
-	title: "Actions bar",
-	type: "PROPLIST",
-	properties: [
-		{
-			name: "buttonVariant",
-			type: "METADATA",
-			metadataType: "COMPONENTVARIANT",
-			label: "Variant",
-			groupingValue: "io.button",
-		},
-		{
-			name: "actions",
-			label: "Buttons",
-			type: "MULTISELECT",
-			options: actions.map((label) => ({
-				value: label.toLowerCase(),
-				label,
-			})) as builder.PropertySelectOption[],
-		},
+export default (title: string) =>
+	({
+		title,
+		type: "PROPLIST",
+		properties: [
+			{
+				name: "buttonVariant",
+				type: "METADATA",
+				metadataType: "COMPONENTVARIANT",
+				label: "Variant",
+				groupingValue: "io.button",
+			},
+			{
+				name: "actions",
+				label: "Buttons",
+				type: "MULTISELECT",
+				options: actions.map((label) => ({
+					value: label.toLowerCase(),
+					label,
+				})) as builder.PropertySelectOption[],
+			},
 
-		{
-			name: "actionsBarPosition",
-			type: "SELECT",
-			label: "Position",
-			options: [
-				{
-					value: "top",
-					label: "Top",
-				},
-				{
-					value: "bottom",
-					label: "Bottom",
-				},
-			],
-		},
-		{
-			name: "actionsBarAlignment",
-			type: "SELECT",
-			label: "Alignment",
-			options: [
-				{
-					value: "left",
-					label: "Left",
-				},
-				{
-					value: "right",
-					label: "Right",
-				},
-			],
-		},
-	],
-} as builder.PropertySection
+			{
+				name: "actionsBarPosition",
+				type: "SELECT",
+				label: "Position",
+				options: [
+					{
+						value: "top",
+						label: "Top",
+					},
+					{
+						value: "bottom",
+						label: "Bottom",
+					},
+				],
+			},
+			{
+				name: "actionsBarAlignment",
+				type: "SELECT",
+				label: "Alignment",
+				options: [
+					{
+						value: "left",
+						label: "Left",
+					},
+					{
+						value: "right",
+						label: "Right",
+					},
+				],
+			},
+		],
+	} as builder.PropertySection)

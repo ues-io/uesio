@@ -46,7 +46,7 @@ const TableHeader: FC<T> = (props) => {
 	useEffect(() => {
 		if (dragCol === null) return
 		let start = 0
-		const handler = (e) => {
+		const handler = (e: any) => {
 			const mouseX = e.clientX
 
 			if (start === 0) start = mouseX
