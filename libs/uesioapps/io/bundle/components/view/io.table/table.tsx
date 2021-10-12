@@ -26,21 +26,6 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		}
 	)
 
-	const classes = styles.useStyles(
-		{
-			root: {},
-			table: {},
-			header: {},
-			headerCell: {},
-			rowNumberCell: {},
-			rowNumber: {},
-			cell: {},
-			row: {},
-			rowDeleted: {},
-		},
-		props
-	)
-
 	if (!wire || !componentState || !path) return null
 
 	const collection = wire.getCollection()
@@ -115,7 +100,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	return (
 		<IOTable
-			classes={classes}
+			variant={definition["uesio.variant"]}
 			rows={rows}
 			columns={columns}
 			context={context}

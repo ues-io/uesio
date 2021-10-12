@@ -6,7 +6,7 @@ type TableState = {
 	mode: TableMode
 }
 
-type TableDefinition = {
+interface TableDefinition extends definition.BaseDefinition {
 	id: string
 	wire: string
 	mode: TableMode
