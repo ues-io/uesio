@@ -4,7 +4,8 @@ components:
     lab.layout:
     lab.table:
     lab.tablecolumn:
+    lab.actionsbar:
   utility:
-
+    lab.actionsbar:
     lab.tablecolumn:
     lab.layout:

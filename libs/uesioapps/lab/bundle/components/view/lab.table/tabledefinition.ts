@@ -1,5 +1,8 @@
 import { definition, builder, signal, component } from "@uesio/ui"
 import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import actionsBarDefinition, {
+	ActionsBarDefinition,
+} from "../../utility/lab.actionsbar/actionsbardefinition"
 type TableMode = "READ" | "EDIT"
 
 type TableClasses = Record<
@@ -22,7 +25,7 @@ type TableDefinition = {
 }
 
 interface TableProps extends definition.BaseProps {
-	definition: TableDefinition
+	definition: TableDefinition & ActionsBarDefinition
 }
 
 type RowAction = {
@@ -67,7 +70,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Fit to content",
 		},
 	],
-	sections: [],
+	sections: [actionsBarDefinition],
 	actions: [
 		{
 			label: "Add Section",

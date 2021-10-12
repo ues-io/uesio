@@ -32,7 +32,7 @@ const Layout: FC<TableColumnProps> = (props) => {
 	}
 
 	return (
-		<div className={classes.root} {...props}>
+		<div className={classes.root}>
 			{fieldComponentKey && (
 				<component.Component
 					componentType="io.field"

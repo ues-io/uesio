@@ -46,7 +46,7 @@ const TableHeader: FC<T> = (props) => {
 	useEffect(() => {
 		if (dragCol === null) return
 		let start = 0
-		const handler = (e: any) => {
+		const handler = (e) => {
 			const mouseX = e.clientX
 
 			if (start === 0) start = mouseX
@@ -57,6 +57,7 @@ const TableHeader: FC<T> = (props) => {
 				return { left, right, i }
 			})
 
+			// Figure out if the dragbox is within the bounds bounds of another column
 			const hoveredEl = leftRightBoundsOfColumns.find(
 				({ left, right }) => left < mouseX && right > mouseX
 			)
