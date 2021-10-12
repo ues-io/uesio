@@ -68,7 +68,14 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	sections: [],
-	actions: [],
+	actions: [
+		{
+			label: "Add Section",
+			type: "ADD",
+			componentKey: "lab.tablecolumn",
+			slot: "columns",
+		},
+	],
 	accepts: ["uesio.field"],
 	traits: ["uesio.standalone"],
 	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
@@ -88,23 +95,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			)
 		}
 	},
-	// handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
-	// 	const [metadataType, metadataItem] =
-	// 		component.path.getFullPathParts(dragNode)
-	// 	if (metadataType === "field") {
-	// 		const [, , fieldNamespace, fieldName] =
-	// 			component.path.parseFieldKey(metadataItem)
-	// 		uesio.builder.addDefinition(
-	// 			dropNode + '["columns"]',
-	// 			{
-	// 				"io.column": {
-	// 					field: `${fieldNamespace}.${fieldName}`,
-	// 				},
-	// 			},
-	// 			dropIndex
-	// 		)
-	// 	}
-	// },
 	type: "component",
 	classes: ["root"],
 }

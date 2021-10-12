@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react"
 import { definition, styles, component, util, hooks, wire } from "@uesio/ui"
 import { Transition } from "react-transition-group"
-import { FormDefinition } from "../io.form/formdefinition"
+import { FormDefinition } from "../lab.form/formdefinition"
 
 interface Props extends definition.BaseProps {
 	wire: wire.Wire
@@ -36,7 +36,7 @@ const {
 
 const FieldHints: FC<Props> = (props) => {
 	const [open, setOpen] = useState<boolean>(false)
-	const { wire, path, context } = props
+	const { wire, path = "", context } = props
 	const uesio = hooks.useUesio(props)
 	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
 	const [fieldSuggestions, setFieldSuggestions] = useState<
@@ -47,7 +47,8 @@ const FieldHints: FC<Props> = (props) => {
 		makeFullPath(metadataType, metadataItem, fromPath(formPath))
 	) as FormDefinition
 	const collectionKey = wire.getCollection().getFullName() || ""
-	const wireId = context.getWire()?.getId()
+	console.log({ wire })
+	const wireId = wire.getId()
 	const [namespace] = parseKey(collectionKey)
 	const fieldsInWire = Object.keys(
 		uesio.builder.useMetadataList(
@@ -73,6 +74,7 @@ const FieldHints: FC<Props> = (props) => {
 	}, [fieldsInWire.length, formDef])
 
 	const handleAddField = (fieldId: string) => {
+		console.log("running")
 		if (!wireId) return
 		// 1. Add field to wire
 		uesio.builder.addDefinitionPair(
@@ -85,24 +87,18 @@ const FieldHints: FC<Props> = (props) => {
 			fieldId
 		)
 
+		// console.log({ x: fromPath([...toPath(path), "components"]) })
+
 		// 2. Add field to column definition & set selected node
 		uesio.builder.addDefinition(
-			makeFullPath(
-				metadataType,
-				metadataItem,
-				fromPath([...toPath(path), "components"])
-			),
+			makeFullPath(metadataType, metadataItem, path),
 			{
 				"io.field": {
 					fieldId,
 				},
 			}
 		)
-		uesio.builder.setSelectedNode(
-			metadataType,
-			metadataItem,
-			fromPath([...toPath(path), "components"])
-		)
+		uesio.builder.setSelectedNode(metadataType, metadataItem, path)
 
 		// 3. Refresh the wire definition
 		const wireUpdate = uesio.signal.getHandler([
@@ -181,7 +177,10 @@ const FieldHints: FC<Props> = (props) => {
 			<div
 				role="button"
 				tabIndex={0}
-				onClick={() => setOpen(!open)}
+				onClick={(e) => {
+					e.stopPropagation()
+					setOpen(!open)
+				}}
 				className="fieldHint"
 			>
 				<span>Add field</span>

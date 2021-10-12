@@ -3,6 +3,7 @@ import { definition, builder } from "@uesio/ui"
 type TableColumnDefinition = {
 	name: string
 	items: any
+	components: any[]
 	order: number
 	field: string
 }
@@ -14,7 +15,9 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Column",
 	description: "Table Column",
 	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({}),
+	defaultDefinition: () => ({
+		components: [],
+	}),
 	properties: [
 		{
 			name: "name",

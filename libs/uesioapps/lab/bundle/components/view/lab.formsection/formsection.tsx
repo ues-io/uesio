@@ -1,7 +1,7 @@
 import { FC, createContext } from "react"
 import { component, styles, hooks, signal } from "@uesio/ui"
 import { FormSectionProps } from "./formsectiondefinition"
-import Layout from "../io.layout/layout"
+import Layout from "../lab.layout/layout"
 export const FormStylesContext = createContext({})
 
 const IOTitleBar = component.registry.getUtility("io.titlebar")

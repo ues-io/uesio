@@ -1,6 +1,6 @@
 import { definition, builder } from "@uesio/ui"
 import LayoutTemplateProp from "./layouttemplateprop"
-import { ColumnDefinition } from "../io.column/columndefinition"
+import { ColumnDefinition } from "../lab.column/columndefinition"
 
 type LayoutDefinition = {
 	columnGap?: string

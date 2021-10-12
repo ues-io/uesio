@@ -3,6 +3,7 @@ import { TableProps } from "./tabledefinition"
 import Table from "./table"
 import { styles, component, hooks } from "@uesio/ui"
 import WireHelper from "../../wirehelper"
+import FieldHints from "../lab.column/fieldhints"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 

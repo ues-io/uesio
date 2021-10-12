@@ -23,10 +23,10 @@ export default (
 			gap: "inherit",
 			border: `1px solid ${borderColor}`,
 			marginTop: "-1px",
-			zIndex: isSelected ? 1 : 0,
+			// zIndex: isSelected ? 1 : 0,
 			transition: "all 0.18s ease",
 			"&:hover": {
-				zIndex: 1,
+				zIndex: 0,
 			},
 			...(isDraggingMe && {
 				display: "none",

@@ -23,7 +23,7 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 		path,
 		context,
 	} = props
-	console.log({ path })
+
 	const items = props.definition.items || []
 
 	const uesio = hooks.useUesio(props)

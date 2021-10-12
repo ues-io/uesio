@@ -2,7 +2,7 @@ import { definition, builder } from "@uesio/ui"
 import LayoutPropertyDefinition, {
 	LayoutDefinition,
 	LayoutTemplateProp,
-} from "../io.layout/layoutdefinition"
+} from "../lab.layout/layoutdefinition"
 
 type FormAction = "save" | "delete" | "cancel" | "edit"
 type FormMode = "READ" | "EDIT"
