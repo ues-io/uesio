@@ -70,6 +70,7 @@ components:
     io.column:
     io.scrollpanel:
     io.selectfield:
+    io.table:
     io.text:
     io.textfield:
     io.tile:

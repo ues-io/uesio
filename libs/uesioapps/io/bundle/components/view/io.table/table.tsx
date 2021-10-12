@@ -1,9 +1,11 @@
-import { hooks, styles } from "@uesio/ui"
+import { hooks, styles, component } from "@uesio/ui"
 import { FunctionComponent } from "react"
 
-import { TableProps, TableState } from "./tabledefinition"
-import TableHeader from "./tableheader"
-import TableBody from "./tablebody"
+import { ColumnDefinition, TableProps, TableState } from "./tabledefinition"
+
+const Group = component.registry.getUtility("io.group")
+const Button = component.registry.getUtility("io.button")
+const IOTable = component.registry.getUtility("io.table")
 
 const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
@@ -26,37 +28,14 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const classes = styles.useStyles(
 		{
-			root: {
-				display: "grid",
-				overflow: "auto",
-			},
-			table: {
-				width: "100%",
-				overflow: "hidden",
-			},
+			root: {},
+			table: {},
 			header: {},
-			headerCell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			rowNumberCell: {
-				width: "1%",
-				whiteSpace: "nowrap",
-			},
-			rowNumber: {
-				textAlign: "center",
-			},
-			cell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			row: {
-				"&:last-child>td": {
-					borderBottom: 0,
-				},
-			},
+			headerCell: {},
+			rowNumberCell: {},
+			rowNumber: {},
+			cell: {},
+			row: {},
 			rowDeleted: {},
 		},
 		props
@@ -66,29 +45,83 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
+	const columns = definition.columns.map((columnDef) => {
+		const column = columnDef["io.column"] as ColumnDefinition
+		const fieldId = column.field
+		const fieldMetadata = collection.getField(fieldId)
+		return {
+			label: column.label || fieldMetadata?.getLabel() || "",
+		}
+	})
+
+	const rows = wire.getData().map((record, index) => {
+		const recordContext = newContext.addFrame({
+			record: record.getId(),
+			wire: wire.getId(),
+			fieldMode: componentState.mode,
+		})
+		return {
+			columns: definition.columns.map((columnDef) => {
+				const column = columnDef["io.column"] as ColumnDefinition
+				return column.components ? (
+					<component.Slot
+						definition={column}
+						listName="components"
+						path={`${path}["columns"]["${index}"]["io.column"]`}
+						accepts={["uesio.context"]}
+						direction="horizontal"
+						context={recordContext}
+					/>
+				) : (
+					<component.Component
+						componentType="io.field"
+						definition={{
+							fieldId: column.field,
+							hideLabel: true,
+							"uesio.variant": "io.table",
+						}}
+						index={index}
+						path={`${path}["columns"]["${index}"]`}
+						context={recordContext}
+					/>
+				)
+			}),
+			rowactions: definition.rowactions && (
+				<Group
+					styles={{ root: { padding: "0 16px" } }}
+					columnGap={0}
+					context={recordContext}
+				>
+					{definition.rowactions.map((action) => {
+						const [handler, portals] = uesio.signal.useHandler(
+							action.signals,
+							recordContext
+						)
+						return (
+							<Button
+								variant="io.nav"
+								className="rowaction"
+								label={action.text}
+								context={recordContext}
+								onClick={handler}
+							/>
+						)
+					})}
+				</Group>
+			),
+			isDeleted: record.isDeleted(),
+		}
+	})
+
 	return (
-		<div className={classes.root}>
-			<table className={classes.table}>
-				<TableHeader
-					classes={classes}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					rownumbers={definition.rownumbers}
-					collection={collection}
-				/>
-				<TableBody
-					classes={classes}
-					wire={wire}
-					collection={collection}
-					state={componentState}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					rownumbers={definition.rownumbers}
-					path={path}
-					context={newContext}
-				/>
-			</table>
-		</div>
+		<IOTable
+			classes={classes}
+			rows={rows}
+			columns={columns}
+			context={context}
+			showRowNumbers={definition.rownumbers}
+			showRowActions={!!definition.rowactions}
+		/>
 	)
 }
 
