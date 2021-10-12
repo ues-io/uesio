@@ -14,6 +14,9 @@ const Layout: FC<TableColumnProps> = (props) => {
 				border: "1px solid #eee",
 				padding: "5px",
 				height: "100%",
+				display: "flex",
+				flexFlow: "column",
+				justifyContent: definition.verticalAlignment,
 			},
 		},
 		props

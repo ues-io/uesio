@@ -47,7 +47,7 @@ const FieldHints: FC<Props> = (props) => {
 		makeFullPath(metadataType, metadataItem, fromPath(formPath))
 	) as FormDefinition
 	const collectionKey = wire.getCollection().getFullName() || ""
-	console.log({ wire })
+
 	const wireId = wire.getId()
 	const [namespace] = parseKey(collectionKey)
 	const fieldsInWire = Object.keys(
@@ -58,6 +58,7 @@ const FieldHints: FC<Props> = (props) => {
 			collectionKey
 		) || {}
 	)
+	console.log("mounted")
 
 	// We only want the code for fieldsuggestions to run when fieldsInWire has data
 	useEffect(() => {
@@ -74,7 +75,6 @@ const FieldHints: FC<Props> = (props) => {
 	}, [fieldsInWire.length, formDef])
 
 	const handleAddField = (fieldId: string) => {
-		console.log("running")
 		if (!wireId) return
 		// 1. Add field to wire
 		uesio.builder.addDefinitionPair(
@@ -86,8 +86,6 @@ const FieldHints: FC<Props> = (props) => {
 			null,
 			fieldId
 		)
-
-		// console.log({ x: fromPath([...toPath(path), "components"]) })
 
 		// 2. Add field to column definition & set selected node
 		uesio.builder.addDefinition(
@@ -123,7 +121,6 @@ const FieldHints: FC<Props> = (props) => {
 					borderRadius: "0.25em",
 					height: "2em",
 					padding: "5px",
-					margin: "1em 0",
 					position: "relative",
 					display: "flex",
 					alignItems: "center",
@@ -179,6 +176,7 @@ const FieldHints: FC<Props> = (props) => {
 				tabIndex={0}
 				onClick={(e) => {
 					e.stopPropagation()
+					console.log("go open!")
 					setOpen(!open)
 				}}
 				className="fieldHint"

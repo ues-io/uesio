@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react"
-import { hooks, component, builder, wire } from "@uesio/ui"
+import { hooks, component, wire } from "@uesio/ui"
 import { TableProps } from "./tabledefinition"
 import FieldHints from "../lab.column/fieldhints"
 
@@ -16,14 +16,14 @@ const TableHeader: FC<T> = (props) => {
 	const collection = wire.getCollection()
 
 	const [dragCol, setDragCol] = useState<number | null>(null)
-	const [slideX, setSlideX] = useState<number>(0)
-	const [showMarker, setShowMarker] = useState<number | null>(null)
+	const [deltaX, setDeltaX] = useState<number>(0)
+	const [markerPosition, setMarkerPosition] = useState<number | null>(null)
 
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
 
 	const mouseUp = () => {
-		if (showMarker !== null && dragCol !== null) {
+		if (markerPosition !== null && dragCol !== null) {
 			uesio.builder.moveDefinition(
 				component.path.makeFullPath(
 					metadataType,
@@ -33,7 +33,7 @@ const TableHeader: FC<T> = (props) => {
 				component.path.makeFullPath(
 					metadataType,
 					metadataItem,
-					`${path}["columns"]["${showMarker}"]`
+					`${path}["columns"]["${markerPosition}"]`
 				)
 			)
 		}
@@ -41,6 +41,13 @@ const TableHeader: FC<T> = (props) => {
 	}
 
 	const headerRefs = useRef<HTMLDivElement[]>([])
+
+	useEffect(() => {
+		window.addEventListener("mouseup", mouseUp)
+		return () => window.removeEventListener("mouseup", mouseUp)
+	}, [markerPosition])
+
+	console.log("header mounted")
 
 	// Rearranging  columns
 	useEffect(() => {
@@ -50,25 +57,25 @@ const TableHeader: FC<T> = (props) => {
 			const mouseX = e.clientX
 
 			if (start === 0) start = mouseX
-			setSlideX(mouseX - start)
+			setDeltaX(mouseX - start)
 
 			const leftRightBoundsOfColumns = headerRefs.current.map((el, i) => {
 				const { left, right } = el.getBoundingClientRect()
 				return { left, right, i }
 			})
 
-			// Figure out if the dragbox is within the bounds bounds of another column
+			// Figure out if the dragbox is within the bounds of a column
 			const hoveredEl = leftRightBoundsOfColumns.find(
 				({ left, right }) => left < mouseX && right > mouseX
 			)
 			if (!hoveredEl) return
-			setShowMarker(hoveredEl.i)
+			setMarkerPosition(hoveredEl.i)
 		}
 
 		window.addEventListener("mousemove", handler)
+
 		return () => {
 			window.removeEventListener("mousemove", handler)
-			setShowMarker(null)
 		}
 	}, [dragCol])
 
@@ -83,7 +90,7 @@ const TableHeader: FC<T> = (props) => {
 							className={classes.column}
 							style={{
 								borderLeft:
-									index === showMarker
+									index === markerPosition
 										? "8px solid orange"
 										: "initial",
 							}}
@@ -96,7 +103,6 @@ const TableHeader: FC<T> = (props) => {
 									`${path}["columns"]["${index}"]["lab.tablecolumn"]`
 								)
 							}}
-							onMouseUp={() => mouseUp()}
 							ref={(el) =>
 								el &&
 								!headerRefs.current.includes(el) &&
@@ -106,7 +112,7 @@ const TableHeader: FC<T> = (props) => {
 							<div
 								style={{
 									opacity: dragCol === index ? 1 : 0,
-									transform: `translateX(${slideX}px)`,
+									transform: `translateX(${deltaX}px)`,
 								}}
 								className={classes.dragIndicator}
 							/>

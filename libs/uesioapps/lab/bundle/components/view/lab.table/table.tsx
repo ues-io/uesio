@@ -38,6 +38,8 @@ const Table: FC<TableProps> = (props) => {
 				position: "absolute",
 				inset: "0 0 0 0",
 				backgroundColor: "rgba(0, 0, 0, 0.25)",
+				zIndex: 1,
+				pointerEvents: "none",
 			},
 		},
 		props

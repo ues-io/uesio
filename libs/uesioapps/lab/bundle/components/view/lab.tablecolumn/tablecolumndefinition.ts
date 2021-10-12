@@ -6,6 +6,8 @@ type TableColumnDefinition = {
 	components: any[]
 	order: number
 	field: string
+	verticalAlignment: "top" | "center" | "bottom"
+	horizontalAlignment: "left" | "center" | "right"
 }
 interface TableColumnProps extends definition.BaseProps {
 	definition: TableColumnDefinition
@@ -30,7 +32,33 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Wire Field",
 		},
 	],
-	sections: [],
+	sections: [
+		{
+			title: "Cell Options",
+			type: "PROPLIST",
+			properties: [
+				{
+					label: "Vertical Alignment",
+					type: "SELECT",
+					name: "verticalAlignment",
+					options: [
+						{
+							value: "top",
+							label: "Top",
+						},
+						{
+							value: "center",
+							label: "Center",
+						},
+						{
+							value: "bottom",
+							label: "Bottom",
+						},
+					],
+				},
+			],
+		},
+	],
 	actions: [],
 	type: "component",
 	traits: ["uesio.tablecolumn", "uesio.standalone"],

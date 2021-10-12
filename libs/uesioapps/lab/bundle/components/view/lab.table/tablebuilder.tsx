@@ -24,8 +24,6 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 		}
 	)
 
-	console.log({ wire })
-
 	return (
 		<BuildWrapper {...props} classes={classes}>
 			{!wire ? <WireHelper {...props} /> : <Table {...props} />}
