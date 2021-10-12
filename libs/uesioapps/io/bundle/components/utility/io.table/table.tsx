@@ -61,7 +61,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	return (
 		<div className={classes.root}>
 			<table className={classes.table}>
-				<thead key={0} className={classes.header}>
+				<thead className={classes.header}>
 					<tr>
 						{showRowNumbers && (
 							<th

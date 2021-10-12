@@ -61,7 +61,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			fieldMode: componentState.mode,
 		})
 		return {
-			columns: definition.columns.map((columnDef) => {
+			cells: definition.columns.map((columnDef) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				return column.components ? (
 					<component.Slot
