@@ -1,14 +1,20 @@
 import { definition, builder } from "@uesio/ui"
 
 type TableColumnDefinition = {
-	name: string
-	components: { [key: string]: definition.Definition }[]
-	order: number
-	verticalAlignment: "top" | "center" | "bottom"
-	horizontalAlignment: "left" | "center" | "right"
+	name?: string
+	components: {
+		[key: string]: {
+			[key: string]: definition.Definition
+		}
+	}[]
+	verticalAlignment?: "top" | "center" | "bottom"
+	horizontalAlignment?: "left" | "center" | "right"
+	id?: string
+	order?: number
 }
 interface TableColumnProps extends definition.BaseProps {
 	definition: TableColumnDefinition
+	style?: any
 }
 
 const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {

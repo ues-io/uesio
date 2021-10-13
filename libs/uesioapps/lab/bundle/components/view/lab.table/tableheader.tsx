@@ -16,7 +16,7 @@ const TableHeader: FC<T> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const collection = wire.getCollection()
 
-	const [dragCol, setDragCol] = useState<number | null>(null)
+	const [dragCol, setDragCol] = useState<any>(null)
 	const [deltaX, setDeltaX] = useState<number>(0)
 	const [markerPosition, setMarkerPosition] = useState<number | null>(null)
 
@@ -25,11 +25,20 @@ const TableHeader: FC<T> = (props) => {
 
 	const mouseUp = () => {
 		if (markerPosition !== null && dragCol !== null) {
+			if (dragCol["lab.tablecolumn"].id === "rowActions")
+				return uesio.builder.setDefinition(
+					component.path.makeFullPath(
+						metadataType,
+						metadataItem,
+						`${path}["rowActionsColumnPosition"]`
+					),
+					markerPosition + 1
+				)
 			uesio.builder.moveDefinition(
 				component.path.makeFullPath(
 					metadataType,
 					metadataItem,
-					`${path}["columns"]["${dragCol}"]`
+					`${path}["columns"]["${dragCol.index}"]`
 				),
 				component.path.makeFullPath(
 					metadataType,
@@ -108,7 +117,7 @@ const TableHeader: FC<T> = (props) => {
 										? "8px solid orange"
 										: "initial",
 							}}
-							onMouseDown={() => setDragCol(index)}
+							onMouseDown={() => setDragCol({ ...c, index })}
 							onClick={(e) => {
 								e.stopPropagation()
 								uesio.builder.setSelectedNode(

@@ -15,13 +15,17 @@ type TableState = {
 }
 
 type TableDefinition = {
-	id: string
+	id?: string
 	wire: string
 	mode: TableMode
 	columns: { [key: string]: TableColumnDefinition }[]
-	rowactions: RowAction[]
+	rowActions: string[]
 	shortName: boolean
 	fitToContent: boolean
+	tableActions: string[]
+	tableActionButtonVariant: string
+	rowActionButtonVariant: string
+	rowActionsColumnPosition: number
 }
 
 interface TableProps extends definition.BaseProps {
@@ -32,6 +36,8 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 }
+
+const rowActions = ["edit", "delete"]
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
@@ -70,7 +76,36 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Fit to content",
 		},
 	],
-	sections: [actionsBarDefinition("Table Actions")],
+	sections: [
+		actionsBarDefinition("Table Actions"),
+		{
+			title: "Row Actions",
+			type: "PROPLIST",
+			properties: [
+				{
+					name: "rowActionButtonVariant",
+					type: "METADATA",
+					metadataType: "COMPONENTVARIANT",
+					label: "Variant",
+					groupingValue: "io.button",
+				},
+				{
+					name: "rowActionsColumnPosition",
+					type: "NUMBER",
+					label: "Column Position",
+				},
+				{
+					name: "rowActions",
+					label: "Buttons",
+					type: "MULTISELECT",
+					options: rowActions.map((label) => ({
+						value: label.toLowerCase(),
+						label,
+					})) as builder.PropertySelectOption[],
+				},
+			],
+		},
+	],
 	actions: [
 		{
 			label: "Add Section",

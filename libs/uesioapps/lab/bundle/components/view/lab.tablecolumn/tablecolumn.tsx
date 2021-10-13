@@ -2,8 +2,8 @@ import { FC } from "react"
 import { component, styles } from "@uesio/ui"
 import { TableColumnProps } from "./tablecolumndefinition"
 
-const Layout: FC<TableColumnProps> = (props) => {
-	const { context, path = "", definition } = props
+const TableColumn: FC<TableColumnProps> = (props) => {
+	const { context, path = "", definition, style } = props
 
 	// const { fitToContent } = context.getParentComponentDef(path)
 	const classes = styles.useStyles(
@@ -17,6 +17,7 @@ const Layout: FC<TableColumnProps> = (props) => {
 				display: "flex",
 				flexFlow: "column",
 				justifyContent: definition.verticalAlignment,
+				// order: definition.order || "initial",
 			},
 		},
 		props
@@ -37,7 +38,7 @@ const Layout: FC<TableColumnProps> = (props) => {
 	}
 
 	return (
-		<div className={classes.root}>
+		<div style={style} className={classes.root}>
 			{fieldComponentKey && (
 				<component.Component
 					componentType="io.field"
@@ -66,4 +67,4 @@ const Layout: FC<TableColumnProps> = (props) => {
 	)
 }
 
-export default Layout
+export default TableColumn

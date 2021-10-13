@@ -1,8 +1,9 @@
-import { FC, useState, useEffect, useRef, useMemo } from "react"
+import { FC } from "react"
 import { TableProps } from "./tabledefinition"
 import { component, styles, hooks } from "@uesio/ui"
-import { Action } from "../../utility/lab.actionsbar/actionsbardefinition"
 import TableHeader from "./tableheader"
+
+import actions from "./actions"
 
 const LabLayout = component.registry.getUtility("lab.layout")
 const LabActionsBar = component.registry.getUtility("lab.actionsbar")
@@ -12,7 +13,8 @@ const Table: FC<TableProps> = (props) => {
 	const { definition, context, path = "" } = props
 	const wire = uesio.wire.useWire(definition.wire)
 	const wireId = wire?.getId()
-	const viewDefId = uesio.getViewDefId() || ""
+
+	const { tableActions, rowActions } = actions(wireId || "")
 
 	const classes = styles.useStyles(
 		{
@@ -46,42 +48,67 @@ const Table: FC<TableProps> = (props) => {
 	)
 	const records = wire?.getData() || []
 
-	const actions: Action[] = [
-		{
-			name: "save",
-			signals: [
-				{ signal: "wire/SAVE", wires: [wireId] },
-				{
-					signal: "notification/ADD",
-					text: "saved",
+	// We want a way to add a column with rowactions
+	// based on the row actions section of the table definition
+	const getTableColumns = () => {
+		const showActionsColumn =
+			definition.rowActions.length &&
+			definition.rowActionsColumnPosition !== undefined
+
+		if (!showActionsColumn) return definition.columns
+
+		const rowActionsColumnDef = {
+			"lab.tablecolumn": {
+				components: definition.rowActions.map((rowAction) => {
+					const action = rowActions.find(
+						({ name }) => name === rowAction
+					)
+					return {
+						"io.button": {
+							...action,
+							text: rowAction,
+							"uesio.variant": definition.rowActionButtonVariant,
+						},
+					}
+				}),
+				name: "",
+				id: "rowActions", // used for column reaarange logic in the header
+				"uesio.styles": {
+					root: {
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						flexFlow: "row wrap",
+						margin: "0 auto",
+						gap: "5px",
+					},
 				},
-				{ signal: "wire/EMPTY", wireId },
-				{ signal: "wire/CREATE_RECORD", wireId },
-			],
-		},
-		{
-			name: "cancel",
-			signals: [{ signal: "wire/CANCEL", wireId }],
-		},
-		{
-			name: "delete",
-			signals: [
-				{ signal: "wire/MARK_FOR_DELETE", wireId },
-				{ signal: "wire/SAVE", wireId },
-			],
-		},
-	]
+			},
+		}
+
+		// inject the actions column at the desired position
+		const position = definition.rowActionsColumnPosition - 1
+		return [
+			...definition.columns.slice(0, position),
+			rowActionsColumnDef,
+			...definition.columns.slice(position),
+		]
+	}
+
+	const def = {
+		...definition,
+		columns: getTableColumns(),
+	}
 
 	return (
 		<div className={classes.root} style={{ flexFlow: "column" }}>
 			<div className={classes.tableContainer}>
 				{/* Header Row */}
-
 				{wire && (
 					<TableHeader
 						wire={wire}
 						classes={classes}
-						definition={definition}
+						definition={def}
 						context={context}
 						path={path}
 					/>
@@ -102,33 +129,18 @@ const Table: FC<TableProps> = (props) => {
 							context={props.context}
 						>
 							<component.Slot
-								definition={definition}
+								definition={def}
 								listName="columns"
 								path={path}
 								accepts={["uesio.tablecolumn"]}
 								context={rowContext}
 							/>
-
-							{/* {definition.columns.map((column, index) => {
-							console.log({ column })
-							return (
-								// <div className={classes.column}>
-								<component.Slot
-									definition={column}
-									listName="columns"
-									path={path}
-									accepts={["uesio.tablecolumn"]}
-									context={rowContext}
-								/>
-								// </div>
-							)
-						})} */}
 						</LabLayout>
 					)
 				})}
 			</div>
 
-			{/* Actions bar */}
+			{/* Table Actions bar */}
 			{definition.actions && (
 				<div
 					className={classes.actionsContainer}
@@ -142,7 +154,7 @@ const Table: FC<TableProps> = (props) => {
 				>
 					<LabActionsBar
 						context={context}
-						actions={actions.filter(({ name }) =>
+						actions={tableActions.filter(({ name }) =>
 							definition.actions.includes(name)
 						)}
 						definition={definition}

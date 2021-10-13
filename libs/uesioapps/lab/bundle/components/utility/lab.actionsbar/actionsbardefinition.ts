@@ -12,7 +12,7 @@ export type ActionsBarDefinition = {
 	actionsBarPosition: "top" | "bottom"
 	actionsBarAlignment: "left" | "right"
 	buttonVariant: string
-	id: string
+	id?: string
 }
 
 export default (title: string) =>

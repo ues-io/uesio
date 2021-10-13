@@ -14,6 +14,7 @@ const TableBuilder: FunctionComponent<TableColumnProps> = (props) => {
 			root: {
 				flex: 1,
 				border: "none",
+				// order: definition.order || "initial",
 
 				".hint": {
 					maxHeight: "0px",
@@ -39,14 +40,17 @@ const TableBuilder: FunctionComponent<TableColumnProps> = (props) => {
 			context,
 		}
 	)
-
 	return (
 		<BuildWrapper {...props} classes={classes}>
 			<TableColumn
 				{...props}
-				// context={context.addFrame({
-				// 	buildMode: false,
-				// })}
+				context={
+					definition.id === "rowActions"
+						? context.addFrame({
+								buildMode: false,
+						  })
+						: context
+				}
 			/>
 		</BuildWrapper>
 	)
