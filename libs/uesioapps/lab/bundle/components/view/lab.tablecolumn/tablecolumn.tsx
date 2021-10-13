@@ -22,8 +22,10 @@ const Layout: FC<TableColumnProps> = (props) => {
 		props
 	)
 
-	const searchFields = (k: any) => Object.keys(k)[0] === "io.field"
-	const fieldComponentKey = definition.components.find(searchFields)
+	const searchFields = (k: any) => /(io.field)$/.test(Object.keys(k)[0])
+	const fieldComponentKey = definition.components.find(searchFields) as {
+		[key: string]: { fieldId: string }
+	}
 
 	const newDefinition = {
 		...definition,
@@ -40,7 +42,7 @@ const Layout: FC<TableColumnProps> = (props) => {
 				<component.Component
 					componentType="io.field"
 					definition={{
-						fieldId: fieldComponentKey["io.field"].fieldId,
+						fieldId: fieldComponentKey["io.field"]?.fieldId,
 						hideLabel: true,
 						"uesio.variant": "io.table",
 					}}

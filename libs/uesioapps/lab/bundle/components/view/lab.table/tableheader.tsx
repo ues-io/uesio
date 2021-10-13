@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect, useRef } from "react"
 import { hooks, component, wire } from "@uesio/ui"
 import { TableProps } from "./tabledefinition"
 import FieldHints from "../lab.column/fieldhints"
+import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
 
 const LabLayout = component.registry.getUtility("lab.layout")
 
@@ -47,8 +48,6 @@ const TableHeader: FC<T> = (props) => {
 		return () => window.removeEventListener("mouseup", mouseUp)
 	}, [markerPosition])
 
-	console.log("header mounted")
-
 	// Rearranging  columns
 	useEffect(() => {
 		if (dragCol === null) return
@@ -78,6 +77,21 @@ const TableHeader: FC<T> = (props) => {
 			window.removeEventListener("mousemove", handler)
 		}
 	}, [dragCol])
+
+	const getColumnLabel = (column: TableColumnDefinition): string => {
+		if (!collection) return ""
+		// Find the first component ending with '.field'
+		const field = column.components.find((c) => {
+			const componentName = Object.keys(c)[0]
+			return /(io.field)$/.test(componentName)
+		}) as {
+			"io.field": {
+				fieldId: string
+			}
+		}
+		if (!field) return ""
+		return collection.getField(field["io.field"]?.fieldId)?.getLabel() || ""
+	}
 
 	return (
 		<LabLayout classes={classes} context={props.context}>
@@ -116,11 +130,11 @@ const TableHeader: FC<T> = (props) => {
 								}}
 								className={classes.dragIndicator}
 							/>
-							{column.name ||
-								(collection &&
-									collection
-										.getField(column.field)
-										?.getLabel())}
+
+							{/* Column name or first field name */}
+							{column.name || getColumnLabel(column)}
+
+							{/* Fieldhint */}
 							{!column.name &&
 								wire &&
 								!column.components.length && (

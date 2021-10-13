@@ -2,10 +2,8 @@ import { definition, builder } from "@uesio/ui"
 
 type TableColumnDefinition = {
 	name: string
-	items: any
-	components: any[]
+	components: { [key: string]: definition.Definition }[]
 	order: number
-	field: string
 	verticalAlignment: "top" | "center" | "bottom"
 	horizontalAlignment: "left" | "center" | "right"
 }

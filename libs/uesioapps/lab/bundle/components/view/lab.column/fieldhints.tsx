@@ -58,7 +58,6 @@ const FieldHints: FC<Props> = (props) => {
 			collectionKey
 		) || {}
 	)
-	console.log("mounted")
 
 	// We only want the code for fieldsuggestions to run when fieldsInWire has data
 	useEffect(() => {
@@ -176,7 +175,6 @@ const FieldHints: FC<Props> = (props) => {
 				tabIndex={0}
 				onClick={(e) => {
 					e.stopPropagation()
-					console.log("go open!")
 					setOpen(!open)
 				}}
 				className="fieldHint"

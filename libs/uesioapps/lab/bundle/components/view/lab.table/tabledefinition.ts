@@ -18,7 +18,7 @@ type TableDefinition = {
 	id: string
 	wire: string
 	mode: TableMode
-	columns: TableColumnDefinition[]
+	columns: { [key: string]: TableColumnDefinition }[]
 	rowactions: RowAction[]
 	shortName: boolean
 	fitToContent: boolean
