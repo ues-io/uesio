@@ -1,42 +1,27 @@
 import { FunctionComponent, useState, useEffect } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
 import ImportBodyItemRef from "./importbodyitemref"
-
-type DataImportItemDefinition = {
-	record: string
-	options: collection.SelectOption[]
-}
+import ImportBodyItemHardCoded from "./importbodyitemhardcoded"
 
 interface Props extends definition.BaseProps {
-	definition: DataImportItemDefinition
+	csvOptions: collection.SelectOption[]
 	handleSelection: (
 		csvField: string,
 		uesioField: string,
 		matchfield?: string
 	) => void
-	collection: collection.Collection
-}
-
-const initialState = { display: false, refCollection: "" }
-interface State {
-	display: boolean
-	refCollection: string
+	field: collection.Field | undefined
+	match: string
 }
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
-	const { context, definition, handleSelection, collection } = props
-	const { record, options } = definition
+	const { context, csvOptions, handleSelection, field, match } = props
 
-	const findMatch = (record: string): string => {
-		const opt = options.find((option) => option.value === record)
-		if (opt) {
-			return record
-		}
-		return options[0].value
-	}
+	if (!field) return null
+	const uesioField = field?.getId()
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -49,72 +34,61 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 		null
 	)
 
-	const handleReference = (value: string): State => {
-		const field = collection.getField(value)
-		if (field?.getType() === "REFERENCE") {
-			const refCollectionId = field.source.referencedCollection
-			if (refCollectionId) {
-				return {
-					display: true,
-					refCollection: refCollectionId,
-				}
-			}
-		}
-		return { display: false, refCollection: "" }
-	}
-
-	useEffect(() => {
-		const match = findMatch(record)
-		const field = collection.getField(match)
-		if (field?.getType() === "REFERENCE") {
-			const refCollectionId = field.source.referencedCollection
-			if (refCollectionId) {
-				setrefField({
-					display: true,
-					refCollection: refCollectionId,
-				})
-			}
-		}
-		setSelValue(match)
-	}, [])
-
-	const [selValue, setSelValue] = useState("")
-	const [refField, setrefField] = useState<State>(initialState)
-
+	const [selValue, setSelValue] = useState(match)
 	return (
 		<div className={classes.gridItem}>
 			<div className={classes.headerItem}>
 				<TextField
 					context={context}
-					label={"csv:"}
-					value={record}
+					label={"uesio:"}
+					value={uesioField}
 					mode={"READ"}
 				/>
 			</div>
 			<div className={classes.headerItem}>
 				<SelectField
 					context={context}
-					label={"uesio:"}
+					label={"along with:"}
 					value={selValue}
-					options={options}
+					options={csvOptions}
 					setValue={(value: string) => {
-						setrefField(handleReference(value))
-						handleSelection(record, value)
+						handleSelection(value, uesioField)
 						setSelValue(value)
 					}}
 				/>
 			</div>
-			{refField.display && (
+			{field &&
+				field.getType() === "REFERENCE" &&
+				selValue !== "" &&
+				selValue !== "hardcoded" && (
+					<div className={classes.headerItem}>
+						<ImportBodyItemRef
+							handleSelection={handleSelection}
+							refCollectionId={field.source.referencedCollection}
+							csvField={selValue}
+							uesioField={uesioField}
+							context={context}
+						/>
+					</div>
+				)}
+			{selValue === "hardcoded" && (
 				<div className={classes.headerItem}>
-					<ImportBodyItemRef
+					<ImportBodyItemHardCoded
 						handleSelection={handleSelection}
-						refCollectionId={refField.refCollection}
-						csvField={record}
-						uesioField={selValue}
+						csvField={selValue}
+						uesioField={uesioField}
 						context={context}
 					/>
 				</div>
 			)}
+			{/* {field &&
+				field.getType() === "TIMESTAMP" &&
+				selValue !== "" &&
+				selValue !== "hardcoded" && (
+					<div className={classes.headerItem}>
+						<h1>Date options </h1>
+					</div>
+				)} */}
 		</div>
 	)
 }

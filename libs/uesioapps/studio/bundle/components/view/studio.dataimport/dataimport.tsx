@@ -1,5 +1,5 @@
 import { FunctionComponent, useState } from "react"
-import { definition, hooks, component, context } from "@uesio/ui"
+import { definition, hooks, context } from "@uesio/ui"
 
 import ImportBody from "./importbody"
 import ImportButton from "./importbutton"

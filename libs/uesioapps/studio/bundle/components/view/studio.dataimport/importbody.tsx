@@ -10,18 +10,33 @@ interface Props extends definition.BaseProps {
 }
 
 type SpecMapping = {
-	[key: string]: {
-		fieldname: string
+	[fieldname: string]: {
+		fieldtype: collection.FieldType
+		csvindex: number
+		csvfieldname: string
 		matchfield?: string
 	}
 }
 
-interface CmpState {
+interface State {
 	upsertkey?: string
 	mappings: SpecMapping
 }
 
 const addBlankSelectOption = collection.addBlankSelectOption
+const addExtraOptions = (
+	options: collection.SelectOption[] | undefined
+): collection.SelectOption[] =>
+	[
+		{
+			value: "",
+			label: "",
+		},
+		{
+			value: "hardcoded",
+			label: "Hardcoded value",
+		},
+	].concat(options || [])
 const Button = component.registry.getUtility("io.button")
 const SelectField = component.registry.getUtility("io.selectfield")
 
@@ -37,71 +52,91 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			label: key,
 		}))
 	)
+	const csvOptions = addExtraOptions(
+		csvFields.map((key, index) => ({
+			value: key,
+			label: key + " (" + index + ")",
+		}))
+	)
 
-	const getAllMatch = (
+	const getInitialMatch = (
 		csvFields: string[],
 		collectionFields: string[]
 	): SpecMapping => {
-		let mappings = {}
+		let mappings: SpecMapping = {}
 
-		for (const key of csvFields) {
+		csvFields.forEach((key, index) => {
 			if (collectionFields.includes(key)) {
-				mappings = { ...mappings, [key]: { fieldname: key } }
+				const field = collection.getField(key)
+
+				if (field) {
+					mappings = {
+						...mappings,
+						[field.getId()]: {
+							fieldtype: field.getType(),
+							csvindex: index,
+							csvfieldname: key,
+						},
+					}
+				}
 			}
-		}
+		})
 
 		return mappings
 	}
 
-	const [CmpState, setCmpState] = useState<CmpState>({
-		mappings: getAllMatch(csvFields, collectionFields),
+	const [State, setState] = useState<State>({
+		mappings: getInitialMatch(csvFields, collectionFields),
 	})
 
 	const upload = async (file: File, upsertkey: string | undefined) => {
-		const jobResponse = await uesio.collection.createImportJob(
-			context,
-			"csv",
-			collection.getFullName(),
-			upsertkey,
-			CmpState.mappings
-		)
+		console.log("upsertkey", State.upsertkey)
+		console.log("MAPPINGS", State.mappings)
 
-		if (!jobResponse.id) return
+		// const jobResponse = await uesio.collection.createImportJob(
+		// 	context,
+		// 	"csv",
+		// 	collection.getFullName(),
+		// 	upsertkey,
+		// 	State.mappings
+		// )
 
-		const batchResponse = await uesio.collection.importData(
-			context,
-			file,
-			jobResponse.id
-		)
+		// if (!jobResponse.id) return
 
-		if (batchResponse.status !== 200) {
-			const error = await batchResponse.text()
-			uesio.notification.addError("Import error: " + error, context)
-			return
-		}
+		// const batchResponse = await uesio.collection.importData(
+		// 	context,
+		// 	file,
+		// 	jobResponse.id
+		// )
 
-		if (usage === "site") {
-			uesio.signal.run(
-				{
-					signal: "route/REDIRECT",
-					path: `/app/${context.getSiteAdmin()?.app}/site/${
-						context.getSiteAdmin()?.name
-					}/data/${collection.getFullName()}`,
-				},
-				context
-			)
-			return
-		}
+		// if (batchResponse.status !== 200) {
+		// 	const error = await batchResponse.text()
+		// 	uesio.notification.addError("Import error: " + error, context)
+		// 	return
+		// }
 
-		uesio.signal.run(
-			{
-				signal: "route/REDIRECT",
-				path: `/app/${context.getWorkspace()?.app}/workspace/${
-					context.getWorkspace()?.name
-				}/data/${collection.getId()}`,
-			},
-			context
-		)
+		// if (usage === "site") {
+		// 	uesio.signal.run(
+		// 		{
+		// 			signal: "route/REDIRECT",
+		// 			path: `/app/${context.getSiteAdmin()?.app}/site/${
+		// 				context.getSiteAdmin()?.name
+		// 			}/data/${collection.getFullName()}`,
+		// 		},
+		// 		context
+		// 	)
+		// 	return
+		// }
+
+		// uesio.signal.run(
+		// 	{
+		// 		signal: "route/REDIRECT",
+		// 		path: `/app/${context.getWorkspace()?.app}/workspace/${
+		// 			context.getWorkspace()?.name
+		// 		}/data/${collection.getId()}`,
+		// 	},
+		// 	context
+		// )
 	}
 
 	const handleSelection = (
@@ -109,24 +144,50 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		uesioField: string,
 		matchfield?: string
 	): void => {
-		if (uesioField === "") {
-			const { [csvField]: remove, ...rest } = CmpState.mappings
+		if (csvField === "") {
+			const { [uesioField]: remove, ...rest } = State.mappings
 
-			setCmpState({
-				...CmpState,
+			setState({
+				...State,
 				mappings: {
 					...rest,
 				},
 			})
 		} else {
-			setCmpState({
-				...CmpState,
-				mappings: {
-					...CmpState.mappings,
-					[csvField]: { fieldname: uesioField, matchfield },
-				},
-			})
+			const field = collection.getField(uesioField)
+
+			if (field) {
+				setState({
+					...State,
+					mappings: {
+						...State.mappings,
+						[uesioField]: {
+							fieldtype: field.getType(),
+							csvindex: csvFields.indexOf(csvField),
+							csvfieldname: csvField,
+							matchfield,
+						},
+					},
+				})
+			}
 		}
+	}
+
+	const isValidMapping = (): boolean => {
+		const upsertkey = State.upsertkey
+
+		for (const [key, value] of Object.entries(State.mappings)) {
+			if (value.fieldtype === "REFERENCE" && !value.matchfield) {
+				alert("not valid: missing matchfield in the field: " + key)
+				return false
+			}
+			if (value.fieldtype === "REFERENCE" && !upsertkey) {
+				alert("not valid: missing upsertKey")
+				return false
+			}
+		}
+
+		return true
 	}
 
 	const classes = styles.useUtilityStyles(
@@ -147,8 +208,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						context={context}
 						options={options}
 						setValue={(value: string) => {
-							setCmpState({
-								...CmpState,
+							setState({
+								...State,
 								upsertkey: value,
 							})
 						}}
@@ -159,22 +220,26 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						context={context}
 						variant={"io.secondary"}
 						onClick={() => {
-							file && upload(file, CmpState.upsertkey)
+							isValidMapping() &&
+								file &&
+								upload(file, State.upsertkey)
 						}}
 						label={"start import"}
 					/>
 				</div>
 			</div>
 			<div className={classes.grid}>
-				{csvFields.map((record) => (
+				{collectionFields.map((fieldName) => (
 					<ImportBodyItem
-						definition={{
-							record,
-							options,
-						}}
-						handleSelection={handleSelection}
 						context={context}
-						collection={collection}
+						csvOptions={csvOptions}
+						handleSelection={handleSelection}
+						field={collection.getField(fieldName)}
+						match={
+							State.mappings[fieldName]?.csvfieldname
+								? State.mappings[fieldName].csvfieldname
+								: ""
+						}
 					/>
 				))}
 			</div>
