@@ -25,6 +25,7 @@ const TableHeader: FC<T> = (props) => {
 
 	const mouseUp = () => {
 		if (markerPosition !== null && dragCol !== null) {
+			// The row actions column logic is tied to the table properties, not the column
 			if (dragCol["lab.tablecolumn"].id === "rowActions")
 				return uesio.builder.setDefinition(
 					component.path.makeFullPath(
@@ -34,6 +35,7 @@ const TableHeader: FC<T> = (props) => {
 					),
 					markerPosition + 1
 				)
+
 			uesio.builder.moveDefinition(
 				component.path.makeFullPath(
 					metadataType,
@@ -81,7 +83,6 @@ const TableHeader: FC<T> = (props) => {
 		}
 
 		window.addEventListener("mousemove", handler)
-
 		return () => {
 			window.removeEventListener("mousemove", handler)
 		}
@@ -102,10 +103,15 @@ const TableHeader: FC<T> = (props) => {
 		return collection.getField(field["io.field"]?.fieldId)?.getLabel() || ""
 	}
 
+	const includesActionsCol = !!definition.columns.find(
+		(col) => col["lab.tablecolumn"].id === "rowActions"
+	)
+
 	return (
 		<LabLayout classes={classes} context={props.context}>
 			{definition.columns.length &&
 				definition.columns.map((c, index) => {
+					if (!c) return null
 					const column = Object.values(c)[0]
 					return (
 						<div
@@ -134,15 +140,16 @@ const TableHeader: FC<T> = (props) => {
 						>
 							<div
 								style={{
-									opacity: dragCol === index ? 1 : 0,
+									opacity:
+										dragCol && dragCol.index === index
+											? 1
+											: 0,
 									transform: `translateX(${deltaX}px)`,
 								}}
 								className={classes.dragIndicator}
 							/>
-
 							{/* Column name or first field name */}
 							{column.name || getColumnLabel(column)}
-
 							{/* Fieldhint */}
 							{!column.name &&
 								wire &&
@@ -150,7 +157,11 @@ const TableHeader: FC<T> = (props) => {
 									<FieldHints
 										{...props}
 										wire={wire}
-										path={`${path}["columns"]["${index}"]["lab.tablecolumn"]["components"]`}
+										path={`${path}["columns"]["${
+											includesActionsCol
+												? index - 1
+												: index
+										}"]["lab.tablecolumn"]["components"]`}
 									/>
 								)}
 						</div>
