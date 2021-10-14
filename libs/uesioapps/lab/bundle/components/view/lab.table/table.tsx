@@ -142,10 +142,10 @@ const Table: FC<TableProps> = (props) => {
 	}
 	console.log("mounted")
 	const [markerPosition, setMarkerPosition] = useState<number | null>(null)
-
+	const tableRef = useRef<HTMLDivElement | null>(null)
 	return (
 		<div className={classes.root} style={{ flexFlow: "column" }}>
-			<div className={classes.tableContainer}>
+			<div ref={tableRef} className={classes.tableContainer}>
 				{/* Header Row */}
 				{/* {wire && (
 					<TableHeader
@@ -170,6 +170,7 @@ const Table: FC<TableProps> = (props) => {
 								path={path}
 								markerPosition={markerPosition}
 								setMarkerPosition={setMarkerPosition}
+								tableRef={tableRef}
 							>
 								<div
 									style={{

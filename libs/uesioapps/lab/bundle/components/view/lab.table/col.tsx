@@ -2,6 +2,13 @@ import React, { FC, useRef, useEffect, useState } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 
 type T = any
+type LeftRightBound = {
+	left: number
+	right: number
+	min: number
+	max: number
+	i: number
+}
 
 const useColumnDrag = ({
 	metadataType,
@@ -11,6 +18,7 @@ const useColumnDrag = ({
 	columnRefs,
 	markerPosition,
 	setMarkerPosition,
+	tableRef,
 }: any) => {
 	const [dragCol, setDragCol] = useState<any>(null)
 	const [deltaX, setDeltaX] = useState<number>(0)
@@ -21,6 +29,21 @@ const useColumnDrag = ({
 		return () => window.removeEventListener("mouseup", onDragEnd)
 	}, [markerPosition])
 
+	const leftRightBoundsOfColumns: LeftRightBound[] = columnRefs.current.map(
+		(el: HTMLDivElement, i: number) => {
+			const { left, right } = el.getBoundingClientRect()
+			const { left: tableLeft, right: tableRight } =
+				tableRef.current.getBoundingClientRect()
+			return {
+				left,
+				right,
+				min: -(left - tableLeft),
+				max: tableRight - right,
+				i,
+			}
+		}
+	)
+
 	// Rearranging  columns
 	useEffect(() => {
 		if (dragCol === null) return
@@ -29,16 +52,13 @@ const useColumnDrag = ({
 			const mouseX = e.clientX
 
 			if (start === 0) start = mouseX
-			setDeltaX(mouseX - start)
 
-			const leftRightBoundsOfColumns: {
-				left: number
-				right: number
-				i: number
-			}[] = columnRefs.current.map((el: HTMLDivElement, i: number) => {
-				const { left, right } = el.getBoundingClientRect()
-				return { left, right, i }
-			})
+			// Ensure we don't slide too mugh left and right
+			const newPos = mouseX - start
+			const { min, max } = leftRightBoundsOfColumns[dragCol.index]
+			const firstPass = newPos < min ? min : newPos
+			const secondPass = firstPass < max ? firstPass : max
+			setDeltaX(secondPass)
 
 			// Figure out if the dragbox is within the bounds of a column
 			const hoveredEl = leftRightBoundsOfColumns.find(
@@ -57,20 +77,15 @@ const useColumnDrag = ({
 	const onDragEnd = () => {
 		if (markerPosition !== null && dragCol !== null) {
 			// The row actions column logic is tied to the table properties, not the column
-			// if (dragCol["lab.tablecolumn"].id === "rowActions")
-			// 	return uesio.builder.setDefinition(
-			// 		component.path.makeFullPath(
-			// 			metadataType,
-			// 			metadataItem,
-			// 			`${path}["rowActionsColumnPosition"]`
-			// 		),
-			// 		markerPosition + 1
-			// 	)
-
-			console.log({
-				from: `${path}["columns"]["${dragCol.index}"]`,
-				to: `${path}["columns"]["${markerPosition}"]`,
-			})
+			if (dragCol["lab.tablecolumn"].id === "rowActions")
+				return uesio.builder.setDefinition(
+					component.path.makeFullPath(
+						metadataType,
+						metadataItem,
+						`${path}["rowActionsColumnPosition"]`
+					),
+					markerPosition + 1
+				)
 
 			uesio.builder.moveDefinition(
 				component.path.makeFullPath(
@@ -100,8 +115,10 @@ const col: FC<T> = (props) => {
 		columnRefs,
 		markerPosition,
 		setMarkerPosition,
+		tableRef,
 	} = props
 	const uesio = hooks.useUesio(props)
+	const dragBox = useRef<HTMLDivElement>(null)
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
 
@@ -113,6 +130,7 @@ const col: FC<T> = (props) => {
 		columnRefs,
 		markerPosition,
 		setMarkerPosition,
+		tableRef,
 	})
 	return (
 		<div
@@ -124,6 +142,7 @@ const col: FC<T> = (props) => {
 			}}
 		>
 			<div
+				ref={dragBox}
 				style={{
 					opacity: dragCol && dragCol.index === index ? 1 : 0,
 					transform: `translateX(${deltaX}px)`,
