@@ -92,6 +92,14 @@ type ValidationMetadata struct {
 	Regex string `json:"regex"`
 }
 
+// NumberOptionsMetadata struct
+type NumberOptionsMetadata struct {
+	Decimals  float64 `json:"decimals"`
+	Max       float64 `json:"max"`
+	Min       float64 `json:"min"`
+	Increment float64 `json:"increment"`
+}
+
 // SubField struct
 type SubField struct {
 	Name string `json:"name"`
@@ -117,6 +125,7 @@ type FieldMetadata struct {
 	Accept               string                     `json:"accept"`
 	SubFields            []SubField                 `json:"subfields"`
 	SubType              string                     `json:"subtype"`
+	NumberOptions        *NumberOptionsMetadata     `json:"numberOptions"`
 }
 
 // GetFullName function

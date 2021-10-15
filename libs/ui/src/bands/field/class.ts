@@ -28,6 +28,7 @@ class Field {
 				return ""
 		}
 	}
+	getNumberOptions = () => this.source.numberOptions || null
 }
 
 export default Field

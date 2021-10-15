@@ -12,7 +12,9 @@ interface FileDynamicProps extends definition.UtilityProps {
 const FileDynamic: FC<FileDynamicProps> = (props) => {
 	const { fieldMetadata, record } = props
 	const fieldId = fieldMetadata.getId()
-	const userFile = record.getFieldReference(fieldId)
+	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
+		fieldId
+	)
 	const mimeType = userFile?.["uesio.mimetype"] as string
 
 	if (!mimeType) return <FileUpload {...props} />

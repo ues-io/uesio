@@ -51,6 +51,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Accept:               f.Accept,
 		SubFields:            GetSubFieldsMetadata(f.SubFields),
 		SubType:              f.SubType,
+		NumberOptions:        GetNumberOptionsMetadata(f.NumberOptions),
 	}
 }
 
@@ -70,6 +71,17 @@ func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
 	return &adapt.ValidationMetadata{
 		Type:  v.Type,
 		Regex: v.Regex,
+	}
+}
+
+// GetNumberOptionsMetadata function
+func GetNumberOptionsMetadata(n meta.NumberOptions) *adapt.NumberOptionsMetadata {
+
+	return &adapt.NumberOptionsMetadata{
+		Decimals:  n.Decimals,
+		Max:       n.Max,
+		Min:       n.Min,
+		Increment: n.Increment,
 	}
 }
 

@@ -94,7 +94,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	switch fieldMetadata.Type {
 	case "CHECKBOX":
 		return "(fields->>'" + fieldName + "')::boolean"
-	case "TIMESTAMP":
+	case "TIMESTAMP", "NUMBER":
 		return "(fields->>'" + fieldName + "')::bigint"
 	case "MAP", "LIST":
 		// Return just as bytes

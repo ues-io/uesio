@@ -26,6 +26,12 @@ type SelectOption = {
 type SubField = {
 	name: string
 }
+type NumberOptionsMetadata = {
+	decimals: number
+	max: number
+	min: number
+	increment: number
+}
 
 type FieldMetadata = {
 	name: string
@@ -40,6 +46,14 @@ type FieldMetadata = {
 	subfields?: SubField[]
 	accept?: AcceptTypes
 	subtype?: string
+	numberOptions?: NumberOptionsMetadata
 }
 
-export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }
+export {
+	FieldMetadata,
+	FieldMetadataMap,
+	SelectOption,
+	FieldType,
+	SubField,
+	NumberOptionsMetadata,
+}

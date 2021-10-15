@@ -43,7 +43,7 @@ func getPGType(field *adapt.FieldMetadata) string {
 	switch field.Type {
 	case "MAP", "LIST":
 		return "jsonb"
-	case "TIMESTAMP":
+	case "TIMESTAMP", "NUMBER":
 		return "bigint"
 	case "CHECKBOX":
 		return "boolean"

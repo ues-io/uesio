@@ -94,6 +94,26 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 	}
 }
 
+func validateNumber(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeItem, isNew bool) error {
+		options := field.NumberOptions
+		val, err := change.FieldChanges.GetField(field.GetFullName())
+		if err == nil && !isNumberValid(options, val.(float64)) {
+			min := fmt.Sprintf("%g", options.Min)
+			max := fmt.Sprintf("%g", options.Max)
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" out of range,  the valid range is: ["+min+" , "+max+"]")
+		}
+		return nil
+	}
+}
+
+func isNumberValid(options *adapt.NumberOptionsMetadata, value float64) bool {
+	if value < options.Min || value > options.Max {
+		return false
+	}
+	return true
+}
+
 func isEmailValid(e string) bool {
 	if len(e) < 3 && len(e) > 254 {
 		return false
@@ -129,6 +149,9 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		}
 		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
 			validations = append(validations, preventUpdate(field))
+		}
+		if field.NumberOptions != nil && field.Type == "NUMBER" {
+			validations = append(validations, validateNumber(field))
 		}
 	}
 
