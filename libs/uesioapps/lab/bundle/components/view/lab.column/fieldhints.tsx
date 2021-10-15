@@ -143,7 +143,7 @@ const FieldHints: FC<Props> = (props) => {
 				top: "26px",
 				left: 1,
 				zIndex: 1,
-				right: 1,
+				// right: 1,
 				background: "#fff",
 				boxShadow: "0px 0px 19px -7px rgb(0 0 0 / 20%)",
 				borderBottomLeftRadius: "1em",
@@ -169,7 +169,13 @@ const FieldHints: FC<Props> = (props) => {
 	)
 
 	return fieldSuggestions ? (
-		<div onMouseLeave={() => setOpen(false)} className={classes.root}>
+		<div
+			onMouseLeave={(e) => {
+				e.stopPropagation()
+				setOpen(false)
+			}}
+			className={classes.root}
+		>
 			<div
 				role="button"
 				tabIndex={0}

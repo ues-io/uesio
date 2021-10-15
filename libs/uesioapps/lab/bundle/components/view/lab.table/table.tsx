@@ -32,6 +32,10 @@ const Table: FC<TableProps> = (props) => {
 				display: "inline-flex",
 				gap: "1px",
 				backgroundColor: "#eee",
+				overflow: "scroll",
+				maxWidth: "100%",
+				border: "1px solid #eee",
+				borderRadius: "5px",
 			},
 			actionsContainer: {
 				margin: "1em 0",
@@ -47,7 +51,7 @@ const Table: FC<TableProps> = (props) => {
 				},
 			},
 			col: {
-				// flex: 1,
+				minWidth: "200px",
 				flexFlow: "column",
 				display: "flex",
 				gap: "1px",
@@ -56,6 +60,10 @@ const Table: FC<TableProps> = (props) => {
 			headerCell: {
 				backgroundColor: "#eee",
 				padding: "10px",
+				span: {
+					minHeight: "1.1em",
+					display: "block",
+				},
 			},
 			cell: {
 				backgroundColor: "#fff",
@@ -179,6 +187,7 @@ const Table: FC<TableProps> = (props) => {
 										style={{
 											position: "absolute",
 											inset: "0 0 0 0",
+											pointerEvents: "none",
 										}}
 										ref={(el) =>
 											el &&
@@ -189,20 +198,6 @@ const Table: FC<TableProps> = (props) => {
 								}
 							>
 								{/* Column head */}
-								<div
-									onClick={(e) => {
-										e.stopPropagation()
-										uesio.builder.setSelectedNode(
-											metadataType,
-											metadataItem,
-											`${path}["columns"]["${index}"]["lab.tablecolumn"]`
-										)
-									}}
-									className={classes.headerCell}
-								>
-									{columnDef.name ||
-										getColumnLabel(columnDef)}
-								</div>
 
 								{/* Rows */}
 								{records.map((record, index) => {
