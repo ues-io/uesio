@@ -1,4 +1,4 @@
-import { definition, builder, signal, component } from "@uesio/ui"
+import { definition, builder, signal, component, wire } from "@uesio/ui"
 import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
 import actionsBarDefinition, {
 	ActionsBarDefinition,
@@ -19,9 +19,9 @@ type TableDefinition = {
 	wire: string
 	mode: TableMode
 	columns: { [key: string]: TableColumnDefinition }[]
-	rowActions: string[]
 	shortName: boolean
 	fitToContent: boolean
+	rowActions: string[]
 	tableActions: string[]
 	tableActionButtonVariant: string
 	rowActionButtonVariant: string

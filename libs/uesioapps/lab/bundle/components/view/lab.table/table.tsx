@@ -25,10 +25,11 @@ const Table: FC<TableProps> = (props) => {
 		{
 			root: {
 				position: "relative",
-				display: "flex",
+				// display: "flex",
+				// background: "black",
 			},
 			tableContainer: {
-				display: "flex",
+				display: "inline-flex",
 				gap: "1px",
 				backgroundColor: "#eee",
 			},
@@ -46,7 +47,7 @@ const Table: FC<TableProps> = (props) => {
 				},
 			},
 			col: {
-				flex: 1,
+				// flex: 1,
 				flexFlow: "column",
 				display: "flex",
 				gap: "1px",
@@ -62,8 +63,8 @@ const Table: FC<TableProps> = (props) => {
 			dragIndicator: {
 				position: "absolute",
 				inset: "0 0 0 0",
-				backgroundColor: "rgba(0, 0, 0, 0.25)",
-				zIndex: 1,
+				backgroundColor: "rgba(0, 0, 0, 0.4)",
+				// zIndex: 99999,
 				pointerEvents: "none",
 			},
 		},
@@ -164,29 +165,45 @@ const Table: FC<TableProps> = (props) => {
 						return (
 							<Col
 								index={index}
-								definition={definition}
+								definition={columnDef}
 								classes={classes}
 								columnRefs={columnRefs}
 								path={path}
 								markerPosition={markerPosition}
 								setMarkerPosition={setMarkerPosition}
 								tableRef={tableRef}
+								context={context}
+								wire={wire}
+								refBox={
+									<div
+										style={{
+											position: "absolute",
+											inset: "0 0 0 0",
+										}}
+										ref={(el) =>
+											el &&
+											!columnRefs.current.includes(el) &&
+											columnRefs.current.push(el)
+										}
+									/>
+								}
 							>
+								{/* Column head */}
 								<div
-									style={{
-										position: "absolute",
-										inset: "0 0 0 0",
+									onClick={(e) => {
+										e.stopPropagation()
+										uesio.builder.setSelectedNode(
+											metadataType,
+											metadataItem,
+											`${path}["columns"]["${index}"]["lab.tablecolumn"]`
+										)
 									}}
-									ref={(el) =>
-										el &&
-										!columnRefs.current.includes(el) &&
-										columnRefs.current.push(el)
-									}
-								/>
-								<div className={classes.headerCell}>
+									className={classes.headerCell}
+								>
 									{columnDef.name ||
 										getColumnLabel(columnDef)}
 								</div>
+
 								{/* Rows */}
 								{records.map((record, index) => {
 									const rowContext = context.addFrame({
@@ -258,7 +275,6 @@ const Table: FC<TableProps> = (props) => {
 								})}
 							</Col>
 						)
-						// /////
 					})
 				}
 
@@ -266,7 +282,7 @@ const Table: FC<TableProps> = (props) => {
 			</div>
 
 			{/* Table Actions bar */}
-			{/* {definition.actions && (
+			{definition.actions && (
 				<div
 					className={classes.actionsContainer}
 					style={{
@@ -285,7 +301,7 @@ const Table: FC<TableProps> = (props) => {
 						definition={definition}
 					/>
 				</div>
-			)} */}
+			)}
 		</div>
 	)
 }

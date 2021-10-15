@@ -1,6 +1,6 @@
 import React, { FC, useRef, useEffect, useState } from "react"
 import { component, styles, hooks } from "@uesio/ui"
-
+import EmptyColumn from "./emptyColumn"
 type T = any
 type LeftRightBound = {
 	left: number
@@ -11,8 +11,6 @@ type LeftRightBound = {
 }
 
 const useColumnDrag = ({
-	metadataType,
-	metadataItem,
 	uesio,
 	path,
 	columnRefs,
@@ -22,6 +20,8 @@ const useColumnDrag = ({
 }: any) => {
 	const [dragCol, setDragCol] = useState<any>(null)
 	const [deltaX, setDeltaX] = useState<number>(0)
+	const [metadataType, metadataItem, selectedPath] =
+		uesio.builder.useSelectedNode()
 
 	useEffect(() => {
 		console.log({ markerPosition })
@@ -53,7 +53,7 @@ const useColumnDrag = ({
 
 			if (start === 0) start = mouseX
 
-			// Ensure we don't slide too mugh left and right
+			// Ensure we don't slide too much left or right
 			const newPos = mouseX - start
 			const { min, max } = leftRightBoundsOfColumns[dragCol.index]
 			const firstPass = newPos < min ? min : newPos
@@ -77,7 +77,7 @@ const useColumnDrag = ({
 	const onDragEnd = () => {
 		if (markerPosition !== null && dragCol !== null) {
 			// The row actions column logic is tied to the table properties, not the column
-			if (dragCol["lab.tablecolumn"].id === "rowActions")
+			if (dragCol.id === "rowActions")
 				return uesio.builder.setDefinition(
 					component.path.makeFullPath(
 						metadataType,
@@ -116,15 +116,14 @@ const col: FC<T> = (props) => {
 		markerPosition,
 		setMarkerPosition,
 		tableRef,
+		context,
+		wire,
+		refBox,
 	} = props
 	const uesio = hooks.useUesio(props)
 	const dragBox = useRef<HTMLDivElement>(null)
-	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
 
 	const { setDragCol, dragCol, deltaX } = useColumnDrag({
-		metadataType,
-		metadataItem,
 		uesio,
 		path,
 		columnRefs,
@@ -132,24 +131,38 @@ const col: FC<T> = (props) => {
 		setMarkerPosition,
 		tableRef,
 	})
+
 	return (
 		<div
 			onMouseDown={() => setDragCol({ ...definition, index })}
 			className={classes.col}
 			style={{
+				position: "relative",
+				opacity: dragCol && dragCol.index === index ? 0.6 : 1,
+				zIndex: dragCol && dragCol.index === index ? 1 : 0,
 				borderLeft:
 					markerPosition === index ? "2px solid orange" : "none",
 			}}
 		>
+			{refBox}
 			<div
 				ref={dragBox}
 				style={{
+					zIndex: dragCol && dragCol.index ? 10 : 0,
+
 					opacity: dragCol && dragCol.index === index ? 1 : 0,
 					transform: `translateX(${deltaX}px)`,
 				}}
 				className={classes.dragIndicator}
 			/>
-			{children}
+			{(definition.components.length > 0 && children) || (
+				<EmptyColumn
+					wire={wire}
+					index={index}
+					context={context}
+					path={path}
+				/>
+			)}
 		</div>
 	)
 }
