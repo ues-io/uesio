@@ -98,7 +98,7 @@ func validateNumber(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
 		options := field.NumberOptions
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil && !isNumberValid(options, val.(float64)) {
+		if err == nil && val != nil && !isNumberValid(options, val.(float64)) {
 			min := fmt.Sprintf("%g", options.Min)
 			max := fmt.Sprintf("%g", options.Max)
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" out of range,  the valid range is: ["+min+" , "+max+"]")
