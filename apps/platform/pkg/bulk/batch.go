@@ -15,19 +15,19 @@ type loaderFunc func(change adapt.Item, data interface{})
 
 func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		change[mapping.FieldName] = getValue(data, mapping, index) == "true"
+		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index) == "true"
 	}
 }
 
 func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		change[mapping.FieldName] = getValue(data, mapping, index)
+		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index)
 	}
 }
 
 func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
 	return func(change adapt.Item, data interface{}) {
-		change[mapping.FieldName] = map[string]interface{}{
+		change[fieldMetadata.GetFullName()] = map[string]interface{}{
 			mapping.MatchField: getValue(data, mapping, index),
 		}
 	}
