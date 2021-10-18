@@ -28,6 +28,10 @@ components:
         - io.checkboxfield
         - io.toggleswitch
         - io.titlebar
+    studio.fieldvalidate:
+      utilities:
+        - io.textfield
+        - io.selectfield
     studio.configsecrets:
       utilities:
         - io.titlebar

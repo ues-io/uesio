@@ -46,6 +46,7 @@ definition:
         studio.autopopulate:
         studio.selectlist:
         studio.accept:
+        studio.validate:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -190,6 +191,9 @@ definition:
                                             label: "File Collection"
                                         - io.field:
                                             fieldId: studio.accept
+                                  - studio.fieldvalidate:
+                                      fieldId: studio.validate
+                                      wireName: fields
   panels:
     - io.dialog:
         id: deleteField
