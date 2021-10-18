@@ -3,7 +3,7 @@ import { definition, styles, context, collection, component } from "@uesio/ui"
 
 interface NumberFieldProps extends definition.UtilityProps {
 	label?: string
-	setValue: (value: number) => void
+	setValue: (value: number | null) => void
 	value: number
 	width?: string
 	fieldMetadata: collection.Field
@@ -45,7 +45,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		props
 	)
 
-	const numberOptions = fieldMetadata.getNumberOptions()
+	const numberOptions = fieldMetadata?.getNumberOptions()
 	const min = numberOptions?.min ? numberOptions.min : Defaults.min
 	const max = numberOptions?.max ? numberOptions.max : Defaults.max
 	const increment = numberOptions?.increment
@@ -68,7 +68,11 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 				type="number"
 				disabled={readonly}
 				onChange={(event: ChangeEvent<HTMLInputElement>): void => {
-					setValue(parseFloat(event.target.value))
+					setValue(
+						event.target.value
+							? parseFloat(event.target.value)
+							: null
+					)
 				}}
 				placeholder={placeholder}
 				step={increment}
