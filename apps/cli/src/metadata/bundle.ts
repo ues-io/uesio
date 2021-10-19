@@ -3,7 +3,7 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
 import { getApp, getWorkspace } from "../config/config"
 import { get } from "../request/request"
-import { authorize, User } from "../auth/login"
+import { User } from "../auth/login"
 import { throwIfBadFormat } from "../validation/version"
 
 //TODO: probably don't want to leave it this way. :)

@@ -1,4 +1,4 @@
 name: email
 collection: crm.accounts
-type: TEXT
+type: EMAIL
 label: Email
