@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	handleSelection: (

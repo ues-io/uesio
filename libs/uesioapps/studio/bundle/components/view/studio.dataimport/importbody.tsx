@@ -53,9 +53,9 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		}))
 	)
 	const csvOptions = addExtraOptions(
-		csvFields.map((key, index) => ({
+		csvFields.map((key) => ({
 			value: key,
-			label: key + " (" + index + ")",
+			label: key,
 		}))
 	)
 
@@ -65,7 +65,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	): SpecMapping => {
 		let mappings: SpecMapping = {}
 
-		csvFields.forEach((key, index) => {
+		csvFields.forEach((key) => {
 			if (collectionFields.includes(key)) {
 				const field = collection.getField(key)
 
