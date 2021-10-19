@@ -194,41 +194,11 @@ func loadOne(
 		paramCounter++
 		values = append(values, pq.Array(userTokens))
 	}
-	/*
-		for _, order := range op.Order {
-
-			fieldMetadata, err := collectionMetadata.GetField(order.Field)
-			if err != nil {
-				return err
-			}
-			fieldName, err := getFieldName(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			if order.Desc {
-
-				loadQuery = loadQuery.OrderBy(fieldName + " desc")
-				continue
-			}
-
-			loadQuery = loadQuery.OrderBy(fieldName + " asc")
-
-		}
-
-		if op.Limit != 0 {
-			loadQuery = loadQuery.Limit(uint64(op.Limit))
-		}
-
-		if op.Offset != 0 {
-			loadQuery = loadQuery.Offset(uint64(op.Offset))
-		}
-	*/
 
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
 
-	for _, order := range op.Order {
-
+	orders := make([]string, len(op.Order))
+	for i, order := range op.Order {
 		fieldMetadata, err := collectionMetadata.GetField(order.Field)
 		if err != nil {
 			return err
@@ -237,18 +207,16 @@ func loadOne(
 		if err != nil {
 			return err
 		}
-
-		loadQuery = loadQuery + " order by "
-
 		if order.Desc {
-			loadQuery = loadQuery + fieldName + " desc"
+			orders[i] = fieldName + " desc"
 			continue
 		}
-
-		loadQuery = loadQuery + fieldName + " asc"
-
+		orders[i] = fieldName + " asc"
 	}
 
+	if len(op.Order) > 0 {
+		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
+	}
 	if op.Limit != 0 {
 		loadQuery = loadQuery + " limit " + strconv.Itoa(op.Limit)
 	}
