@@ -80,3 +80,4 @@ components:
     io.userfield:
     io.listfield:
     io.datefield:
+    io.emailfield:
