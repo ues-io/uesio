@@ -1,6 +1,4 @@
 name: email
 collection: crm.leads
-type: TEXT
+type: EMAIL
 label: Email
-validate:
-  type: EMAIL

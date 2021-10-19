@@ -118,7 +118,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		if field.Required {
 			validations = append(validations, validateRequired(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "EMAIL" {
+		if field.Type == "EMAIL" {
 			validations = append(validations, validateEmail(field))
 		}
 		if field.Validate != nil && field.Validate.Type == "REGEX" {
