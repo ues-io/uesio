@@ -224,7 +224,40 @@ func loadOne(
 			loadQuery = loadQuery.Offset(uint64(op.Offset))
 		}
 	*/
+
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
+
+	for _, order := range op.Order {
+
+		fieldMetadata, err := collectionMetadata.GetField(order.Field)
+		if err != nil {
+			return err
+		}
+		fieldName := getFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+
+		loadQuery = loadQuery + " order by "
+
+		if order.Desc {
+			loadQuery = loadQuery + fieldName + " desc"
+			continue
+		}
+
+		loadQuery = loadQuery + fieldName + " asc"
+
+	}
+
+	if op.Limit != 0 {
+		loadQuery = loadQuery + " limit " + strconv.Itoa(op.Limit)
+	}
+
+	if op.Offset != 0 {
+		loadQuery = loadQuery + " offset " + strconv.Itoa(op.Offset)
+	}
+
+	println(loadQuery)
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
