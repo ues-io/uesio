@@ -220,12 +220,10 @@ func loadOne(
 	if op.Limit != 0 {
 		loadQuery = loadQuery + " limit " + strconv.Itoa(op.Limit)
 	}
-
 	if op.Offset != 0 {
 		loadQuery = loadQuery + " offset " + strconv.Itoa(op.Offset)
 	}
 
-	println(loadQuery)
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
