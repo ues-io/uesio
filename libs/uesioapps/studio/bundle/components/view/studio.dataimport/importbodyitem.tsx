@@ -6,7 +6,7 @@ import ImportBodyItemHardCoded from "./importbodyitemhardcoded"
 interface Props extends definition.BaseProps {
 	csvOptions: collection.SelectOption[]
 	handleSelection: (
-		csvField: string,
+		columnname: string,
 		uesioField: string,
 		matchfield?: string
 	) => void
@@ -65,7 +65,7 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 						<ImportBodyItemRef
 							handleSelection={handleSelection}
 							refCollectionId={field.source.referencedCollection}
-							csvField={selValue}
+							columnname={selValue}
 							uesioField={uesioField}
 							context={context}
 						/>
@@ -75,20 +75,12 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 				<div className={classes.headerItem}>
 					<ImportBodyItemHardCoded
 						handleSelection={handleSelection}
-						csvField={selValue}
+						columnname={selValue}
 						uesioField={uesioField}
 						context={context}
 					/>
 				</div>
 			)}
-			{/* {field &&
-				field.getType() === "TIMESTAMP" &&
-				selValue !== "" &&
-				selValue !== "hardcoded" && (
-					<div className={classes.headerItem}>
-						<h1>Date options </h1>
-					</div>
-				)} */}
 		</div>
 	)
 }

@@ -3,23 +3,23 @@ import { definition, hooks, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	handleSelection: (
-		csvField: string,
+		columnname: string,
 		uesioField: string,
 		matchfield?: string
 	) => void
-	csvField: string
+	columnname: string
 	uesioField: string
 }
 
 const TextField = component.registry.getUtility("io.textfield")
 
 const ImportBodyItemHardCoded: FunctionComponent<Props> = (props) => {
-	const { context, csvField, uesioField, handleSelection } = props
+	const { context, columnname, uesioField, handleSelection } = props
 	const [State, setState] = useState<string>("")
 
 	useEffect(() => {
 		setState("")
-	}, [csvField])
+	}, [columnname])
 
 	return (
 		<TextField
@@ -29,7 +29,7 @@ const ImportBodyItemHardCoded: FunctionComponent<Props> = (props) => {
 			mode={"EDIT"}
 			setValue={(item: string) => {
 				setState(item)
-				handleSelection(csvField, uesioField, item)
+				handleSelection(columnname, uesioField, item)
 			}}
 		/>
 	)

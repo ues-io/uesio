@@ -11,10 +11,10 @@ interface Props extends definition.BaseProps {
 
 type SpecMapping = {
 	[fieldname: string]: {
-		fieldtype: collection.FieldType
-		csvindex: number
-		csvfieldname: string
+		columnname: string
+		type: "IMPORT" | "VALUE"
 		matchfield?: string
+		fieldtype: collection.FieldType
 	}
 }
 
@@ -74,8 +74,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						...mappings,
 						[field.getId()]: {
 							fieldtype: field.getType(),
-							csvindex: index,
-							csvfieldname: key,
+							columnname: key,
+							type: "IMPORT",
 						},
 					}
 				}
@@ -89,62 +89,62 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		mappings: getInitialMatch(csvFields, collectionFields),
 	})
 
-	const upload = async (file: File, upsertkey: string | undefined) => {
+	const upload = async (file: File) => {
 		console.log("upsertkey", State.upsertkey)
 		console.log("MAPPINGS", State.mappings)
 
-		// const jobResponse = await uesio.collection.createImportJob(
-		// 	context,
-		// 	"csv",
-		// 	collection.getFullName(),
-		// 	upsertkey,
-		// 	State.mappings
-		// )
+		const jobResponse = await uesio.collection.createImportJob(
+			context,
+			"csv",
+			collection.getFullName(),
+			State.upsertkey,
+			State.mappings
+		)
 
-		// if (!jobResponse.id) return
+		if (!jobResponse.id) return
 
-		// const batchResponse = await uesio.collection.importData(
-		// 	context,
-		// 	file,
-		// 	jobResponse.id
-		// )
+		const batchResponse = await uesio.collection.importData(
+			context,
+			file,
+			jobResponse.id
+		)
 
-		// if (batchResponse.status !== 200) {
-		// 	const error = await batchResponse.text()
-		// 	uesio.notification.addError("Import error: " + error, context)
-		// 	return
-		// }
+		if (batchResponse.status !== 200) {
+			const error = await batchResponse.text()
+			uesio.notification.addError("Import error: " + error, context)
+			return
+		}
 
-		// if (usage === "site") {
-		// 	uesio.signal.run(
-		// 		{
-		// 			signal: "route/REDIRECT",
-		// 			path: `/app/${context.getSiteAdmin()?.app}/site/${
-		// 				context.getSiteAdmin()?.name
-		// 			}/data/${collection.getFullName()}`,
-		// 		},
-		// 		context
-		// 	)
-		// 	return
-		// }
+		if (usage === "site") {
+			uesio.signal.run(
+				{
+					signal: "route/REDIRECT",
+					path: `/app/${context.getSiteAdmin()?.app}/site/${
+						context.getSiteAdmin()?.name
+					}/data/${collection.getFullName()}`,
+				},
+				context
+			)
+			return
+		}
 
-		// uesio.signal.run(
-		// 	{
-		// 		signal: "route/REDIRECT",
-		// 		path: `/app/${context.getWorkspace()?.app}/workspace/${
-		// 			context.getWorkspace()?.name
-		// 		}/data/${collection.getId()}`,
-		// 	},
-		// 	context
-		// )
+		uesio.signal.run(
+			{
+				signal: "route/REDIRECT",
+				path: `/app/${context.getWorkspace()?.app}/workspace/${
+					context.getWorkspace()?.name
+				}/data/${collection.getId()}`,
+			},
+			context
+		)
 	}
 
 	const handleSelection = (
-		csvField: string,
+		columnname: string,
 		uesioField: string,
 		matchfield?: string
 	): void => {
-		if (csvField === "") {
+		if (columnname === "") {
 			const { [uesioField]: remove, ...rest } = State.mappings
 
 			setState({
@@ -163,9 +163,10 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						...State.mappings,
 						[uesioField]: {
 							fieldtype: field.getType(),
-							csvindex: csvFields.indexOf(csvField),
-							csvfieldname: csvField,
+							columnname,
 							matchfield,
+							type:
+								columnname === "hardcoded" ? "VALUE" : "IMPORT",
 						},
 					},
 				})
@@ -178,11 +179,14 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 
 		for (const [key, value] of Object.entries(State.mappings)) {
 			if (value.fieldtype === "REFERENCE" && !value.matchfield) {
-				alert("not valid: missing matchfield in the field: " + key)
+				uesio.notification.addError(
+					"missing Ref. Field for row: " + key,
+					context
+				)
 				return false
 			}
 			if (value.fieldtype === "REFERENCE" && !upsertkey) {
-				alert("not valid: missing upsertKey")
+				uesio.notification.addError("missing upsertKey", context)
 				return false
 			}
 		}
@@ -220,9 +224,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						context={context}
 						variant={"io.secondary"}
 						onClick={() => {
-							isValidMapping() &&
-								file &&
-								upload(file, State.upsertkey)
+							isValidMapping() && file && upload(file)
 						}}
 						label={"start import"}
 					/>
@@ -236,8 +238,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						handleSelection={handleSelection}
 						field={collection.getField(fieldName)}
 						match={
-							State.mappings[fieldName]?.csvfieldname
-								? State.mappings[fieldName].csvfieldname
+							State.mappings[fieldName]?.columnname
+								? State.mappings[fieldName].columnname
 								: ""
 						}
 					/>

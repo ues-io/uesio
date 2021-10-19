@@ -31,8 +31,9 @@ type SecretResponse = {
 }
 
 type JobMappingParams = {
-	[key: string]: {
-		fieldname: string
+	[fieldname: string]: {
+		columnname: string
+		type: "IMPORT" | "VALUE"
 		matchfield?: string
 	}
 }
