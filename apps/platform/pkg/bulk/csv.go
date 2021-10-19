@@ -2,6 +2,7 @@ package bulk
 
 import (
 	"encoding/csv"
+	"errors"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -41,32 +42,63 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 		return record[index]
 	}
 
+	columnIndexes := map[string]int{}
+
+	// If no spec was provided, create a barebones spec based on columnNames
+	autoCreateMappings := spec.Mappings == nil
+	if autoCreateMappings {
+		spec.Mappings = map[string]meta.FieldMapping{}
+	}
+
 	for index, columnName := range headerRow {
-		// First check to see if there is a mapping defined for this column
-		mapping, ok := spec.Mappings[columnName]
-		if !ok {
-			// If a mapping wasn't provided for a field, check to see if it is an exact match
-			_, err := collectionMetadata.GetField(columnName)
+		if autoCreateMappings {
+			fieldMetadata, err := collectionMetadata.GetField(columnName)
 			if err != nil {
-				// Skip this column
 				continue
 			}
-			mapping = meta.FieldMapping{
-				FieldName: columnName,
+			spec.Mappings[fieldMetadata.GetFullName()] = meta.FieldMapping{
+				ColumnName: columnName,
 			}
 		}
+		columnIndexes[columnName] = index
+	}
 
-		fieldMetadata, err := collectionMetadata.GetField(mapping.FieldName)
+	for fieldName := range spec.Mappings {
+		mapping := spec.Mappings[fieldName]
+
+		var valueGetter valueFunc
+		index := 0
+
+		fieldMetadata, err := collectionMetadata.GetField(fieldName)
 		if err != nil {
 			return nil, err
 		}
 
+		if mapping.Type == "" || mapping.Type == "IMPORT" {
+			if mapping.ColumnName == "" {
+				mapping.ColumnName = fieldName
+			}
+			colIndex, ok := columnIndexes[mapping.ColumnName]
+			if !ok {
+				return nil, errors.New("Invalid Column Name for Import: " + mapping.ColumnName)
+			}
+			index = colIndex
+			valueGetter = getValue
+		} else if mapping.Type == "VALUE" {
+			if mapping.Value == "" {
+				return nil, errors.New("No Value Provided for mapping: " + fieldName)
+			}
+			valueGetter = func(data interface{}, mapping *meta.FieldMapping, index int) string {
+				return mapping.Value
+			}
+		}
+
 		if fieldMetadata.Type == "CHECKBOX" {
-			loaderFuncs = append(loaderFuncs, getBooleanLoader(index, &mapping, fieldMetadata, getValue))
+			loaderFuncs = append(loaderFuncs, getBooleanLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else if fieldMetadata.Type == "REFERENCE" {
 			if mapping.MatchField != "" {
 				lookups = append(lookups, adapt.Lookup{
-					RefField:      mapping.FieldName,
+					RefField:      fieldName,
 					MatchField:    mapping.MatchField,
 					MatchTemplate: "${" + mapping.MatchField + "}",
 				})
@@ -80,9 +112,9 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 				mapping.MatchField = refCollectionMetadata.NameField
 			}
 
-			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, getValue))
+			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
 		} else {
-			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, getValue))
+			loaderFuncs = append(loaderFuncs, getTextLoader(index, &mapping, fieldMetadata, valueGetter))
 		}
 
 	}
