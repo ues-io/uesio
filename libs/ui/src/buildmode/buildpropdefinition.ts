@@ -36,6 +36,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| OrderSection
 
 type BasePropSection = {
 	title: string
@@ -44,6 +45,10 @@ type BasePropSection = {
 
 interface FieldsSection extends BasePropSection {
 	type: "FIELDS"
+}
+
+interface OrderSection extends BasePropSection {
+	type: "ORDER"
 }
 
 interface ConditionsSection extends BasePropSection {
@@ -254,4 +259,5 @@ export {
 	SignalsSection,
 	PropListSection,
 	StylesListProp,
+	OrderSection,
 }
