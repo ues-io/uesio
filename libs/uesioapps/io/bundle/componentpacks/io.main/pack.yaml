@@ -77,6 +77,7 @@ components:
     io.timestampfield:
     io.titlebar:
     io.tooltip:
+    io.uploadarea:
     io.userfield:
     io.listfield:
     io.datefield:

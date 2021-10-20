@@ -1,5 +1,4 @@
 import { loader, metadata, state, context } from "@uesio/ui"
-import { MetadataType } from "libs/ui/src/metadataexports"
 
 declare global {
 	interface Window {
@@ -220,30 +219,21 @@ window.uesioLoader = (mergeData) => {
 			const response = await postJSON("/site/auth/logout")
 			return response.json()
 		},
-		createImportJob: async (
-			context,
-			filetype,
-			collection,
-			upsertkey,
-			mappings
-		) => {
+		createImportJob: async (context, spec) => {
 			const prefix = getPrefix(context)
 			const url = `${prefix}/bulk/job`
-			const spec = JSON.stringify({
-				"uesio.filetype": filetype,
-				"uesio.collection": collection,
-				"uesio.upsertkey": upsertkey,
-				"uesio.mappings": mappings,
-			})
-
 			const response = await fetch(url, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: spec,
+				body: JSON.stringify({
+					"uesio.filetype": spec.filetype,
+					"uesio.collection": spec.collection,
+					"uesio.upsertkey": spec.upsertkey,
+					"uesio.mappings": spec.mappings,
+				}),
 			})
-
 			return response.json()
 		},
 
