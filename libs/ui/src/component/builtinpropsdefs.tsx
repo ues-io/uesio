@@ -60,6 +60,11 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 				},
 			],
 		},
+		{
+			name: "limit",
+			type: "NUMBER",
+			label: "Limit",
+		},
 	],
 	sections: [
 		{
@@ -69,6 +74,10 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 		{
 			title: "Conditions",
 			type: "CONDITIONS",
+		},
+		{
+			title: "Order by",
+			type: "ORDER",
 		},
 	],
 	actions: [
