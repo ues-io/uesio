@@ -1,5 +1,5 @@
 import { FunctionComponent, useRef } from "react"
-import { definition, styles, hooks, component } from "@uesio/ui"
+import { definition, hooks, component } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	changeUploaded: (success: boolean, csvFields: string[], file: File) => void
@@ -42,49 +42,39 @@ const getHeaderString = (data: ArrayBuffer): string => {
 }
 
 const Button = component.registry.getUtility("io.button")
+const UploadArea = component.registry.getUtility("io.uploadarea")
 
 const ImportButton: FunctionComponent<Props> = (props) => {
 	const { context, changeUploaded } = props
 	const uesio = hooks.useUesio(props)
 	const fileInput = useRef<HTMLInputElement>(null)
-	const classes = styles.useUtilityStyles(
-		{
-			fileinput: {
-				display: "none",
-			},
-		},
-		null
-	)
 
 	return (
-		<>
+		<UploadArea
+			context={context}
+			inputRef={fileInput}
+			accept={".csv"}
+			upload={async (files: FileList | null) => {
+				if (files && files.length > 0) {
+					const csvFields = await getHeaderFields(files)
+					if (csvFields.length > 0) {
+						const file = files[0]
+						changeUploaded(true, csvFields, file)
+					} else {
+						uesio.notification.addError("Invalid CSV", context)
+					}
+				} else {
+					uesio.notification.addError("No file found", context)
+				}
+			}}
+		>
 			<Button
 				context={context}
 				variant={"io.secondary"}
 				onClick={() => fileInput.current?.click()}
 				label={"choose file"}
 			/>
-
-			<input
-				className={classes.fileinput}
-				type="file"
-				accept={".csv"}
-				onChange={async (e) => {
-					if (e.target.files && e.target.files.length > 0) {
-						const csvFields = await getHeaderFields(e.target.files)
-						if (csvFields.length > 0) {
-							const file = e.target.files[0]
-							changeUploaded(true, csvFields, file)
-						} else {
-							uesio.notification.addError("Invalid CSV", context)
-						}
-					} else {
-						uesio.notification.addError("No file found", context)
-					}
-				}}
-				ref={fileInput}
-			/>
-		</>
+		</UploadArea>
 	)
 }
 

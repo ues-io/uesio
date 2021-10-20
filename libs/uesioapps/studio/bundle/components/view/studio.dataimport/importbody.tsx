@@ -9,20 +9,6 @@ interface Props extends definition.BaseProps {
 	file: File | null
 }
 
-type SpecMapping = {
-	[fieldname: string]: {
-		columnname: string
-		type: "IMPORT" | "VALUE"
-		matchfield?: string
-		fieldtype: collection.FieldType
-	}
-}
-
-interface State {
-	upsertkey?: string
-	mappings: SpecMapping
-}
-
 const addBlankSelectOption = collection.addBlankSelectOption
 const addExtraOptions = (
 	options: collection.SelectOption[] | undefined
@@ -31,10 +17,6 @@ const addExtraOptions = (
 		{
 			value: "",
 			label: "",
-		},
-		{
-			value: "hardcoded",
-			label: "Hardcoded value",
 		},
 	].concat(options || [])
 const Button = component.registry.getUtility("io.button")
@@ -62,8 +44,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	const getInitialMatch = (
 		csvFields: string[],
 		collectionFields: string[]
-	): SpecMapping => {
-		let mappings: SpecMapping = {}
+	): Record<string, definition.ImportMapping> => {
+		let mappings: Record<string, definition.ImportMapping> = {}
 
 		csvFields.forEach((key) => {
 			if (collectionFields.includes(key)) {
@@ -73,7 +55,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 					mappings = {
 						...mappings,
 						[field.getId()]: {
-							fieldtype: field.getType(),
 							columnname: key,
 							type: "IMPORT",
 						},
@@ -85,20 +66,19 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		return mappings
 	}
 
-	const [State, setState] = useState<State>({
+	const [spec, setSpec] = useState<definition.ImportSpec>({
+		collection: collection.getFullName(),
+		upsertkey: "",
+		filetype: "csv",
 		mappings: getInitialMatch(csvFields, collectionFields),
 	})
 
 	const upload = async (file: File) => {
-		console.log("upsertkey", State.upsertkey)
-		console.log("MAPPINGS", State.mappings)
+		console.log("spec", spec)
 
 		const jobResponse = await uesio.collection.createImportJob(
 			context,
-			"csv",
-			collection.getFullName(),
-			State.upsertkey,
-			State.mappings
+			spec
 		)
 
 		if (!jobResponse.id) return
@@ -139,53 +119,20 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		)
 	}
 
-	const handleSelection = (
-		columnname: string,
-		uesioField: string,
-		matchfield?: string
-	): void => {
-		if (columnname === "") {
-			const { [uesioField]: remove, ...rest } = State.mappings
-
-			setState({
-				...State,
-				mappings: {
-					...rest,
-				},
-			})
-		} else {
-			const field = collection.getField(uesioField)
-
-			if (field) {
-				setState({
-					...State,
-					mappings: {
-						...State.mappings,
-						[uesioField]: {
-							fieldtype: field.getType(),
-							columnname,
-							matchfield,
-							type:
-								columnname === "hardcoded" ? "VALUE" : "IMPORT",
-						},
-					},
-				})
-			}
-		}
-	}
-
 	const isValidMapping = (): boolean => {
-		const upsertkey = State.upsertkey
+		const upsertkey = spec.upsertkey
 
-		for (const [key, value] of Object.entries(State.mappings)) {
-			if (value.fieldtype === "REFERENCE" && !value.matchfield) {
+		for (const [key, value] of Object.entries(spec.mappings)) {
+			const field = collection.getField(key)
+			const fieldType = field?.getType()
+			if (fieldType === "REFERENCE" && !value.matchfield) {
 				uesio.notification.addError(
 					"missing Ref. Field for row: " + key,
 					context
 				)
 				return false
 			}
-			if (value.fieldtype === "REFERENCE" && !upsertkey) {
+			if (fieldType === "REFERENCE" && !upsertkey) {
 				uesio.notification.addError("missing upsertKey", context)
 				return false
 			}
@@ -212,8 +159,8 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 						context={context}
 						options={options}
 						setValue={(value: string) => {
-							setState({
-								...State,
+							setSpec({
+								...spec,
 								upsertkey: value,
 							})
 						}}
@@ -231,19 +178,41 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 				</div>
 			</div>
 			<div className={classes.grid}>
-				{collectionFields.map((fieldName) => (
-					<ImportBodyItem
-						context={context}
-						csvOptions={csvOptions}
-						handleSelection={handleSelection}
-						field={collection.getField(fieldName)}
-						match={
-							State.mappings[fieldName]?.columnname
-								? State.mappings[fieldName].columnname
-								: ""
-						}
-					/>
-				))}
+				{collectionFields.map((fieldName) => {
+					const field = collection.getField(fieldName)
+					if (!field) return null
+					return (
+						<ImportBodyItem
+							context={context}
+							csvOptions={csvOptions}
+							mapping={spec.mappings[fieldName]}
+							removeMapping={() => {
+								const { [fieldName]: remove, ...rest } =
+									spec.mappings
+								setSpec({
+									...spec,
+									mappings: {
+										...rest,
+									},
+								})
+							}}
+							setMapping={(mapping) => {
+								const field = collection.getField(fieldName)
+
+								if (field) {
+									setSpec({
+										...spec,
+										mappings: {
+											...spec.mappings,
+											[fieldName]: mapping,
+										},
+									})
+								}
+							}}
+							field={field}
+						/>
+					)
+				})}
 			</div>
 		</>
 	)

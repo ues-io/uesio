@@ -1,27 +1,24 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles, collection, component } from "@uesio/ui"
 import ImportBodyItemRef from "./importbodyitemref"
-import ImportBodyItemHardCoded from "./importbodyitemhardcoded"
 
 interface Props extends definition.BaseProps {
 	csvOptions: collection.SelectOption[]
-	handleSelection: (
-		columnname: string,
-		uesioField: string,
-		matchfield?: string
-	) => void
-	field: collection.Field | undefined
-	match: string
+	mapping: definition.ImportMapping | undefined
+	setMapping: (mapping: definition.ImportMapping) => void
+	removeMapping: () => void
+	field: collection.Field
 }
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
 
 const ImportBodyItem: FunctionComponent<Props> = (props) => {
-	const { context, csvOptions, handleSelection, field, match } = props
+	const { context, csvOptions, setMapping, removeMapping, field, mapping } =
+		props
 
 	if (!field) return null
-	const uesioField = field?.getId()
+	const uesioField = field.getId()
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -34,51 +31,89 @@ const ImportBodyItem: FunctionComponent<Props> = (props) => {
 		null
 	)
 
-	const [selValue, setSelValue] = useState(match)
 	return (
 		<div className={classes.gridItem}>
 			<div className={classes.headerItem}>
 				<TextField
 					context={context}
-					label={"uesio:"}
+					label="Field"
 					value={uesioField}
-					mode={"READ"}
+					mode="READ"
 				/>
 			</div>
 			<div className={classes.headerItem}>
 				<SelectField
 					context={context}
-					label={"along with:"}
-					value={selValue}
-					options={csvOptions}
-					setValue={(value: string) => {
-						handleSelection(value, uesioField)
-						setSelValue(value)
+					label="Type"
+					value={mapping ? mapping.type : ""}
+					options={[
+						{
+							value: "",
+							label: "Do Not Import",
+						},
+						{
+							value: "IMPORT",
+							label: "Map Column",
+						},
+						{
+							value: "VALUE",
+							label: "Specify Value",
+						},
+					]}
+					setValue={(value: "IMPORT" | "VALUE") => {
+						value
+							? setMapping({
+									...(mapping || {}),
+									type: value,
+							  })
+							: removeMapping()
 					}}
 				/>
 			</div>
-			{field &&
-				field.getType() === "REFERENCE" &&
-				selValue !== "" &&
-				selValue !== "hardcoded" && (
+			{mapping && mapping.type === "IMPORT" && (
+				<>
 					<div className={classes.headerItem}>
-						<ImportBodyItemRef
-							handleSelection={handleSelection}
-							refCollectionId={field.source.referencedCollection}
-							columnname={selValue}
-							uesioField={uesioField}
+						<SelectField
 							context={context}
+							label={"Column"}
+							value={mapping?.columnname}
+							options={csvOptions}
+							setValue={(value: string) => {
+								setMapping({
+									...mapping,
+									columnname: value,
+								})
+							}}
 						/>
 					</div>
-				)}
-			{selValue === "hardcoded" && (
+					{field.getType() === "REFERENCE" && (
+						<div className={classes.headerItem}>
+							<ImportBodyItemRef
+								setMapping={setMapping}
+								mapping={mapping}
+								field={field}
+								context={context}
+							/>
+						</div>
+					)}
+				</>
+			)}
+			{mapping && mapping.type === "VALUE" && (
 				<div className={classes.headerItem}>
-					<ImportBodyItemHardCoded
-						handleSelection={handleSelection}
-						columnname={selValue}
-						uesioField={uesioField}
-						context={context}
-					/>
+					{
+						<TextField
+							context={context}
+							label={"Value"}
+							value={mapping?.value}
+							mode={"EDIT"}
+							setValue={(value: string) => {
+								setMapping({
+									...mapping,
+									value,
+								})
+							}}
+						/>
+					}
 				</div>
 			)}
 		</div>

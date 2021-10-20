@@ -6,6 +6,7 @@ import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataListStore, MetadataType } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
+import { ImportSpec } from "../definition/definition"
 
 type BotParams = {
 	[key: string]: string
@@ -28,14 +29,6 @@ type SecretResponse = {
 	namespace: string
 	managedby: string
 	value: string
-}
-
-type JobMappingParams = {
-	[fieldname: string]: {
-		columnname: string
-		type: "IMPORT" | "VALUE"
-		matchfield?: string
-	}
 }
 
 type JobResponse = {
@@ -105,13 +98,7 @@ interface Platform {
 	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
-	createImportJob(
-		context: Context,
-		filetype: string,
-		collection: string,
-		upsertkey?: string,
-		mappings?: JobMappingParams
-	): Promise<JobResponse>
+	createImportJob(context: Context, spec: ImportSpec): Promise<JobResponse>
 	importData(
 		context: Context,
 		fileData: File,
@@ -119,11 +106,4 @@ interface Platform {
 	): Promise<Response>
 }
 
-export {
-	Platform,
-	BotResponse,
-	BotParams,
-	ConfigValueResponse,
-	SecretResponse,
-	JobMappingParams,
-}
+export { Platform, BotResponse, BotParams, ConfigValueResponse, SecretResponse }
