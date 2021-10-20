@@ -15,6 +15,7 @@ const TimestampField = component.registry.getUtility("io.timestampfield")
 const ListField = component.registry.getUtility("io.listfield")
 const DateField = component.registry.getUtility("io.datefield")
 const NumberField = component.registry.getUtility("io.numberfield")
+const EmailField = component.registry.getUtility("io.emailfield")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -75,6 +76,15 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 					value={record.getFieldValue<number>(fieldId)}
 				/>
 			)
+
+		case type === "EMAIL":
+			return (
+				<EmailField
+					{...common}
+					value={record.getFieldValue<string>(fieldId)}
+				/>
+			)
+
 		case type === "SELECT":
 			return (
 				<SelectField

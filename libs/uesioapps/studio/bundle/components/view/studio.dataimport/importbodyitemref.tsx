@@ -1,43 +1,43 @@
-import { FunctionComponent, useEffect } from "react"
-import { definition, hooks, component } from "@uesio/ui"
+import { FunctionComponent, useEffect, useState } from "react"
+import { definition, hooks, component, collection } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
-	handleSelection: (
-		csvField: string,
-		uesioField: string,
-		matchfield?: string
-	) => void
-	refCollectionId: string
-	csvField: string
-	uesioField: string
+	mapping: definition.ImportMapping | undefined
+	setMapping: (mapping: definition.ImportMapping) => void
+	field: collection.Field
 }
 
 const SelectField = component.registry.getUtility("io.selectfield")
+const addBlankSelectOption = collection.addBlankSelectOption
 
 const ImportBodyItemRef: FunctionComponent<Props> = (props) => {
-	const { context, refCollectionId, csvField, uesioField, handleSelection } =
-		props
+	const { context, mapping, setMapping, field } = props
 	const uesio = hooks.useUesio(props)
-
-	const collection = uesio.collection.useCollection(context, refCollectionId)
-	if (!collection) return null
+	const refCollectionId = field.source.referencedCollection
+	const collection = uesio.collection.useCollection(
+		context,
+		refCollectionId || ""
+	)
+	if (!collection || !mapping) return null
 	const collectionFields = Object.keys(collection?.source.fields)
-	const options = collectionFields.map((key) => ({
-		value: key,
-		label: key,
-	}))
-
-	useEffect(() => {
-		handleSelection(csvField, uesioField, options[0].value)
-	}, [])
+	const options = addBlankSelectOption(
+		collectionFields.map((key) => ({
+			value: key,
+			label: key,
+		}))
+	)
 
 	return (
 		<SelectField
 			context={context}
-			label={"Ref. Field:"}
+			value={mapping?.matchfield}
+			label={"Reference Match Field"}
 			options={options}
 			setValue={(matchfield: string) => {
-				handleSelection(csvField, uesioField, matchfield)
+				setMapping({
+					...mapping,
+					matchfield,
+				})
 			}}
 		/>
 	)

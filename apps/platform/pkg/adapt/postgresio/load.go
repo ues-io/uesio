@@ -194,37 +194,36 @@ func loadOne(
 		paramCounter++
 		values = append(values, pq.Array(userTokens))
 	}
-	/*
-		for _, order := range op.Order {
 
-			fieldMetadata, err := collectionMetadata.GetField(order.Field)
-			if err != nil {
-				return err
-			}
-			fieldName, err := getFieldName(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			if order.Desc {
-
-				loadQuery = loadQuery.OrderBy(fieldName + " desc")
-				continue
-			}
-
-			loadQuery = loadQuery.OrderBy(fieldName + " asc")
-
-		}
-
-		if op.Limit != 0 {
-			loadQuery = loadQuery.Limit(uint64(op.Limit))
-		}
-
-		if op.Offset != 0 {
-			loadQuery = loadQuery.Offset(uint64(op.Offset))
-		}
-	*/
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
+
+	orders := make([]string, len(op.Order))
+	for i, order := range op.Order {
+		fieldMetadata, err := collectionMetadata.GetField(order.Field)
+		if err != nil {
+			return err
+		}
+		fieldName := getFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+		if order.Desc {
+			orders[i] = fieldName + " desc"
+			continue
+		}
+		orders[i] = fieldName + " asc"
+	}
+
+	if len(op.Order) > 0 {
+		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
+	}
+	if op.Limit != 0 {
+		loadQuery = loadQuery + " limit " + strconv.Itoa(op.Limit)
+	}
+	if op.Offset != 0 {
+		loadQuery = loadQuery + " offset " + strconv.Itoa(op.Offset)
+	}
+
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)

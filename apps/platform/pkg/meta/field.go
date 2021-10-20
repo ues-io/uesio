@@ -84,6 +84,7 @@ func GetFieldTypes() map[string]bool {
 		"DATE":      true,
 		"MAP":       true,
 		"TIMESTAMP": true,
+		"EMAIL":     true,
 	}
 }
 

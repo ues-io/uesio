@@ -15,6 +15,7 @@ type FieldType =
 	| "TIMESTAMP"
 	| "LIST"
 	| "USER"
+	| "EMAIL"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
