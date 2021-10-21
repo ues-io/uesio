@@ -35,7 +35,6 @@ const FieldValidate: FunctionComponent<Props> = (props) => {
 
 	const mode = context.getFieldMode() || "READ"
 	const value = record.getFieldReference(fieldId) || {}
-	console.log("DAta", { value })
 
 	if (!value) return null
 
@@ -45,27 +44,23 @@ const FieldValidate: FunctionComponent<Props> = (props) => {
 		switch (type) {
 			case "":
 				updValue = { ["Type"]: "", ["Regex"]: "" }
-				console.log("updValue", updValue)
 				record.update(fieldId, updValue)
 				setSelValue(updValue)
 				break
 			case "EMAIL":
 			case "METADATA":
 				updValue = { ["Type"]: type, ["Regex"]: "" }
-				console.log("updValue", updValue)
 				record.update(fieldId, updValue)
 				setSelValue(updValue)
 				break
 			default:
 				updValue = { ["Type"]: type }
-				console.log("updValue", updValue)
 				record.update(fieldId, updValue)
 				setSelValue(updValue)
 		}
 	}
 
 	const [selValue, setSelValue] = useState(value)
-	console.log("sel", selValue)
 
 	return (
 		<>
