@@ -10,15 +10,15 @@ interface NumberFieldProps extends definition.UtilityProps {
 	hideLabel?: boolean
 	mode?: context.FieldMode
 	placeholder?: string
+	max: number
+	min: number
+	increment: number
 }
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
-const Defaults: collection.NumberOptionsMetadata = {
+const Defaults: collection.NumberMetadata = {
 	decimals: 2,
-	max: 9999,
-	min: 0,
-	increment: 1,
 }
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
@@ -31,6 +31,9 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		label,
 		placeholder,
 		fieldMetadata,
+		min,
+		max,
+		increment,
 	} = props
 	const readonly = mode === "READ"
 	const width = props.definition?.width as string
@@ -45,15 +48,9 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		props
 	)
 
-	const numberOptions = fieldMetadata?.getNumberOptions()
-	const min = numberOptions?.min ? numberOptions.min : Defaults.min
-	const max = numberOptions?.max ? numberOptions.max : Defaults.max
-	const increment = numberOptions?.increment
-		? numberOptions?.increment
-		: Defaults.increment
-	const decimals = numberOptions?.decimals
-		? numberOptions.decimals
-		: Defaults.decimals
+	const numberOptions = fieldMetadata?.getNumberMetadata()
+
+	const decimals = numberOptions?.decimals ? numberOptions.decimals : 2
 	const lvalue = readonly ? value.toFixed(decimals) : value
 
 	return (

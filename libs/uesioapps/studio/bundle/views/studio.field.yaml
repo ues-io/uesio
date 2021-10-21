@@ -41,8 +41,8 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
-        studio.filecollection:
+        studio.reference:
+        studio.file:
         studio.autopopulate:
         studio.selectlist:
         studio.accept:

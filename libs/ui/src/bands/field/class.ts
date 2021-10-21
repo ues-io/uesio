@@ -13,9 +13,9 @@ class Field {
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getOptions = () => this.source.options || null
+	getOptions = () => this.source.selectlist?.options || null
 	getAccept = () => {
-		switch (this.source.accept) {
+		switch (this.source.file?.accept) {
 			case "AUDIO":
 				return "audio/*"
 			case "DOCUMENT":
@@ -28,7 +28,7 @@ class Field {
 				return ""
 		}
 	}
-	getNumberOptions = () => this.source.numberOptions || null
+	getNumberMetadata = () => this.source.number || null
 }
 
 export default Field

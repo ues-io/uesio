@@ -27,11 +27,22 @@ type SelectOption = {
 type SubField = {
 	name: string
 }
-type NumberOptionsMetadata = {
+type NumberMetadata = {
 	decimals: number
-	max: number
-	min: number
-	increment: number
+}
+
+type SelectListMetadata = {
+	name: string
+	options: SelectOption[]
+}
+
+type FileMetadata = {
+	accept: AcceptTypes
+	filecollection: string
+}
+
+type ReferenceMetadata = {
+	collection: string
 }
 
 type FieldMetadata = {
@@ -42,12 +53,12 @@ type FieldMetadata = {
 	updateable: boolean
 	type: FieldType
 	label: string
-	options?: SelectOption[]
-	referencedCollection?: string
+	selectlist?: SelectListMetadata
+	reference?: ReferenceMetadata
 	subfields?: SubField[]
-	accept?: AcceptTypes
+	file?: FileMetadata
 	subtype?: string
-	numberOptions?: NumberOptionsMetadata
+	number?: NumberMetadata
 }
 
 export {
@@ -56,5 +67,5 @@ export {
 	SelectOption,
 	FieldType,
 	SubField,
-	NumberOptionsMetadata,
+	NumberMetadata,
 }
