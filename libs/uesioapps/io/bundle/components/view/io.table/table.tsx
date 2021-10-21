@@ -28,6 +28,13 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	if (!wire || !componentState || !path) return null
 
+	const classes = styles.useStyles(
+		{
+			root: {},
+		},
+		props
+	)
+
 	const collection = wire.getCollection()
 
 	const columns = definition.columns.map((columnDef) => {
@@ -104,6 +111,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			rows={rows}
 			columns={columns}
 			context={context}
+			classes={classes}
 			showRowNumbers={definition.rownumbers}
 			showRowActions={!!definition.rowactions}
 		/>
