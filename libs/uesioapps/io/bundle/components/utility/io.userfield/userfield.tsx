@@ -26,7 +26,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { label, mode, hideLabel, record, fieldMetadata, context } = props
 	const readonly = mode === "READ"
 	const fieldId = fieldMetadata.getId()
-	const user = record.getFieldReference(fieldId)
+	const user = record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId)
 	const firstName = user?.["uesio.firstname"] as string
 	const lastName = user?.["uesio.lastname"] as string
 	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined

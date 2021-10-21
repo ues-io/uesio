@@ -1,6 +1,6 @@
 import setWith from "lodash/setWith"
 import toPath from "lodash/toPath"
-import { Definition } from "../../definition/definition"
+import { Definition, YamlDoc } from "../../definition/definition"
 
 import {
 	removeNodeAtPath,
@@ -24,6 +24,19 @@ import {
 	isNumberIndex,
 } from "../../component/path"
 
+const getNewNode = (yaml: YamlDoc, definition: Definition) => {
+	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
+	if (definition === 0) {
+		return yaml.createNode(definition)
+	}
+
+	if (!definition) {
+		return null
+	}
+
+	return yaml.createNode(definition)
+}
+
 const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
@@ -33,7 +46,7 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 	if (state.yaml) {
 		// create a new document so components using useYaml will rerender
 		state.yaml = parse(state.yaml.toString())
-		const newNode = definition ? state.yaml.createNode(definition) : null
+		const newNode = getNewNode(state.yaml, definition)
 		setNodeAtPath(path, state.yaml.contents, newNode)
 	}
 }

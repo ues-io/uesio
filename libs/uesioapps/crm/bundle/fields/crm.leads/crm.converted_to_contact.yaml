@@ -2,4 +2,5 @@ name: converted_to_contact
 collection: crm.leads
 type: REFERENCE
 label: Converted Contact
-referencedCollection: crm.contacts
+reference:
+  collection: crm.contacts

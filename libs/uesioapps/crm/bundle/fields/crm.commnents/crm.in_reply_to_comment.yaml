@@ -1,5 +1,0 @@
-name: in_reply_to_comment
-collection: crm.commnents
-type: REFERENCE
-label: In Reply To Comment
-referencedCollection: crm.commnents

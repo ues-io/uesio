@@ -1,0 +1,4 @@
+name: file
+collection: studio.fields
+type: MAP
+label: File Metadata

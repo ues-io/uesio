@@ -2,4 +2,5 @@ name: runtimebundle
 collection: studio.componentpacks
 type: FILE
 label: Runtime Bundle
-filecollection: uesio.platform
+file:
+  filecollection: uesio.platform

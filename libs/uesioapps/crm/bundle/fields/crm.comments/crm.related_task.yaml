@@ -2,4 +2,5 @@ name: related_task
 collection: crm.comments
 type: REFERENCE
 label: Related Task
-referencedCollection: crm.tasks
+reference:
+  collection: crm.tasks

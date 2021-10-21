@@ -2,4 +2,5 @@ name: bundle
 collection: studio.bundledependencies
 type: REFERENCE
 label: Bundle
-referencedCollection: studio.bundles
+reference:
+  collection: studio.bundles

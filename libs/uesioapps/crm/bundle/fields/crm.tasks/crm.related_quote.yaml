@@ -2,4 +2,5 @@ name: related_quote
 collection: crm.tasks
 type: REFERENCE
 label: Related Quote
-referencedCollection: crm.quotes
+reference:
+  collection: crm.quotes

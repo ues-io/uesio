@@ -31,7 +31,9 @@ const generateReferenceFieldDisplayValue = (
 	const nameFieldOfReferencedCollection = referencedCollection
 		.getNameField()
 		?.getId()
-	const referenceFieldValue = record.getFieldReference(fieldId)
+	const referenceFieldValue = record.getFieldValue<
+		wire.PlainWireRecord | undefined
+	>(fieldId)
 	if (
 		!referenceFieldValue ||
 		typeof referenceFieldValue !== "object" ||
