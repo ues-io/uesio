@@ -59,7 +59,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 
 	const referencedCollection = uesio.collection.useCollection(
 		context,
-		fieldMetadata.source.referencedCollection || ""
+		fieldMetadata.source.reference?.collection || ""
 	)
 
 	if (!referencedCollection) {

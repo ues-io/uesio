@@ -69,10 +69,10 @@ const getDefaultRecord = (
 		if (value && fieldMetadata) {
 			if (
 				fieldMetadata.type === "REFERENCE" &&
-				fieldMetadata.referencedCollection
+				fieldMetadata.reference?.collection
 			) {
 				const referenceMeta =
-					collections[fieldMetadata.referencedCollection]
+					collections[fieldMetadata.reference?.collection]
 				if (!referenceMeta) return
 				defaultRecord[defaultItem.field] = {
 					[referenceMeta.idField]: value,

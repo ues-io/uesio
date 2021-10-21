@@ -13,7 +13,7 @@ const addBlankSelectOption = collection.addBlankSelectOption
 const ImportBodyItemRef: FunctionComponent<Props> = (props) => {
 	const { context, mapping, setMapping, field } = props
 	const uesio = hooks.useUesio(props)
-	const refCollectionId = field.source.referencedCollection
+	const refCollectionId = field.source.reference?.collection
 	const collection = uesio.collection.useCollection(
 		context,
 		refCollectionId || ""

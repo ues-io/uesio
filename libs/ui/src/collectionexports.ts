@@ -2,7 +2,7 @@ import {
 	FieldType,
 	SelectOption,
 	SubField,
-	NumberOptionsMetadata,
+	NumberMetadata,
 } from "./bands/field/types"
 import Collection from "./bands/collection/class"
 import Field from "./bands/field/class"
@@ -16,6 +16,6 @@ export {
 	FieldType,
 	SelectOption,
 	SubField,
-	NumberOptionsMetadata,
+	NumberMetadata,
 	addBlankSelectOption,
 }

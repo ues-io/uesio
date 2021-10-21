@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
+        studio.reference:
         studio.selectlist:
         studio.autopopulate:
       conditions:
