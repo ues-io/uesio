@@ -3,6 +3,9 @@ import { definition, styles, component, util, hooks, wire } from "@uesio/ui"
 import { Transition } from "react-transition-group"
 import { FormDefinition } from "../lab.form/formdefinition"
 
+// TODO
+// We may want to have another prop for the popup to mount in.
+// Reason being, in the table componenent it's currently cut off because of the overflow property on the table
 interface Props extends definition.BaseProps {
 	wire: wire.Wire
 }

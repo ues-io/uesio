@@ -1,61 +1,106 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { TableProps } from "./tabledefinition"
 import { component, styles, hooks } from "@uesio/ui"
-import TableHeader from "./tableheader"
-import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import useCellHeight from "./hooks/useCellHeight"
+import useScroll from "./hooks/useScroll"
+import useLongPress from "./hooks/useLongPress"
+import useColumnDrag from "./hooks/useColumnDrag"
 import Col from "./col"
 import actions from "./actions"
-
-const LabLayout = component.registry.getUtility("lab.layout")
+import getActionsColumnDef from "./ActionsColumnDef"
 const LabActionsBar = component.registry.getUtility("lab.actionsbar")
+
+const useFreezePadding = (
+	hasFreeze: boolean | undefined,
+	columns: HTMLDivElement[]
+) => {
+	const [sidePadding, setSidePadding] = useState(0)
+	useEffect(() => {
+		if (!hasFreeze || !columns || !columns[0]) return setSidePadding(0)
+		setSidePadding(columns[0].offsetWidth)
+	}, [columns.length])
+
+	return `${sidePadding}px`
+}
 
 const Table: FC<TableProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path = "" } = props
+
 	const wire = uesio.wire.useWire(definition.wire)
 	const wireId = wire?.getId()
-	const columnRefs = useRef<HTMLDivElement[]>([])
+	const records = wire?.getData() || []
 
-	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+	const columnRefs = useRef<HTMLDivElement[]>([])
+	const tableRef = useRef<HTMLDivElement | null>(null)
+
+	const hasScrolled = useScroll(tableRef)
+	const tableFreezePadding = useFreezePadding(
+		definition.freezeColumn,
+		columnRefs.current
+	)
+	const dragIndicator = useRef<HTMLDivElement>(null)
+	const {
+		showDragCol,
+		setDragCol,
+		markerPosition,
+		deltaX,
+		dragCol,
+		dragColWidth,
+	} = useColumnDrag(columnRefs, tableRef, uesio, path, dragIndicator)
+
+	const [cellHeight, pushCellRef] = useCellHeight(true)
+	const [headerCellHeight, pushHeaderCellRef, resizeHeaderCells] =
+		useCellHeight()
 
 	const { tableActions, rowActions } = actions(wireId || "")
 
 	const classes = styles.useStyles(
 		{
 			root: {
+				display: "flex",
+				flexFlow: "column",
+			},
+			flexbox: {
 				position: "relative",
-				// display: "flex",
-				// background: "black",
 			},
 			tableContainer: {
+				overflow: "scroll",
+			},
+			table: {
+				overflow: "scroll",
 				display: "inline-flex",
 				gap: "1px",
 				backgroundColor: "#eee",
-				overflow: "scroll",
-				maxWidth: "100%",
 				border: "1px solid #eee",
 				borderRadius: "5px",
+
+				"&::-webkit-scrollbar": {
+					// display: "none",
+					// zIndex: 1,
+				},
+				"&::-webkit-scrollbar-track": {
+					display: "none",
+					zIndex: 999,
+				},
+				"&::-webkit-scrollbar-thumb": {
+					display: "none",
+					zIndex: 999,
+				},
 			},
 			actionsContainer: {
 				margin: "1em 0",
 			},
 
-			column: {
-				flex: 1,
-				position: "relative",
-				padding: "10px",
-				backgroundColor: "#eee",
-				"&.hint": {
-					flex: "initial",
-				},
-			},
 			col: {
-				minWidth: "200px",
 				flexFlow: "column",
 				display: "flex",
 				gap: "1px",
 				position: "relative",
+
+				"&.scrolled": {
+					boxShadow: "9px 0px 13px -12px rgb(0 0 0 / 27%)",
+				},
 			},
 			headerCell: {
 				backgroundColor: "#eee",
@@ -67,213 +112,224 @@ const Table: FC<TableProps> = (props) => {
 			},
 			cell: {
 				backgroundColor: "#fff",
+				display: "flex",
+				height: `${cellHeight}px`,
+				alignItems: "center",
 			},
 			dragIndicator: {
 				position: "absolute",
 				inset: "0 0 0 0",
 				backgroundColor: "rgba(0, 0, 0, 0.4)",
-				// zIndex: 99999,
 				pointerEvents: "none",
 			},
 		},
 		props
 	)
-	const records = wire?.getData() || []
 
-	// We want a way to add a column with rowactions
-	// based on the row actions section of the table definition
-	const getTableColumns = () => {
-		const showActionsColumn =
-			definition.rowActions.length &&
-			definition.rowActionsColumnPosition !== undefined
-
-		if (!showActionsColumn) return definition.columns
-
-		const rowActionsColumnDef = {
-			"lab.tablecolumn": {
-				components: definition.rowActions.map((rowAction) => {
-					const action = rowActions.find(
-						({ name }) => name === rowAction
-					)
-					return {
-						"io.button": {
-							...action,
-							text: rowAction,
-							"uesio.variant": definition.rowActionButtonVariant,
-						},
-					}
-				}),
-				name: "",
-				id: "rowActions", // used for column reaarange logic in the header
-				"uesio.styles": {
-					root: {
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						flexFlow: "row wrap",
-						margin: "0 auto",
-						gap: "5px",
-					},
-				},
-			},
-		}
-
-		// inject the actions column at the desired position
-		const position = definition.rowActionsColumnPosition - 1
-		return [
-			...definition.columns.slice(0, position),
-			rowActionsColumnDef,
-			...definition.columns.slice(position),
-		]
-	}
-
-	const def = {
+	// Inject (or not) rowactions column based on table definition
+	const tableDefinition = {
 		...definition,
-		columns: getTableColumns(),
+		columns: (() => {
+			const showActionsColumn =
+				definition.rowActions &&
+				definition.rowActions.length &&
+				definition.rowActionsColumnPosition !== undefined
+
+			if (!showActionsColumn) return definition.columns
+
+			const rowActionsColumnDef = getActionsColumnDef(
+				definition,
+				rowActions
+			)
+
+			// inject the actions column at the desired position
+			const position = definition.rowActionsColumnPosition - 1
+			const res = [
+				...definition.columns.slice(0, position),
+				rowActionsColumnDef,
+				...definition.columns.slice(position),
+			]
+			return res
+		})(),
 	}
 
-	const getColumnLabel = (column: TableColumnDefinition): string => {
-		if (!wire) return ""
-		const collection = wire.getCollection()
+	useEffect(() => {
+		resizeHeaderCells()
+	}, [tableDefinition.columns])
 
-		if (!collection) return ""
-		// Find the first component ending with '.field'
-		const field = column.components.find((c: any) => {
-			const componentName = Object.keys(c)[0]
-			return /(io.field)$/.test(componentName)
-		}) as {
-			"io.field": {
-				fieldId: string
-			}
-		}
-		if (!field) return ""
-		return collection.getField(field["io.field"]?.fieldId)?.getLabel() || ""
-	}
-	console.log("mounted")
-	const [markerPosition, setMarkerPosition] = useState<number | null>(null)
-	const tableRef = useRef<HTMLDivElement | null>(null)
 	return (
-		<div className={classes.root} style={{ flexFlow: "column" }}>
-			<div ref={tableRef} className={classes.tableContainer}>
-				{/* Header Row */}
-				{/* {wire && (
-					<TableHeader
-						wire={wire}
-						classes={classes}
-						definition={def}
-						context={context}
-						path={path}
-					/>
-				)} */}
-
-				{
-					// columns
-					definition.columns.map((x, index) => {
-						const columnDef = x["lab.tablecolumn"]
-						return (
-							<Col
-								index={index}
-								definition={columnDef}
-								classes={classes}
-								columnRefs={columnRefs}
-								path={path}
-								markerPosition={markerPosition}
-								setMarkerPosition={setMarkerPosition}
-								tableRef={tableRef}
-								context={context}
-								wire={wire}
-								refBox={
-									<div
-										style={{
-											position: "absolute",
-											inset: "0 0 0 0",
-											pointerEvents: "none",
-										}}
-										ref={(el) =>
-											el &&
-											!columnRefs.current.includes(el) &&
-											columnRefs.current.push(el)
-										}
-									/>
+		<div className={classes.root}>
+			<div className={classes.flexbox}>
+				<div ref={tableRef} className={classes.tableContainer}>
+					<div
+						style={{ paddingLeft: tableFreezePadding }}
+						className={classes.table}
+					>
+						{
+							// columns
+							tableDefinition.columns.map((x, index) => {
+								if (!x) {
+									console.log("error")
+									return null
 								}
-							>
-								{/* Column head */}
-
-								{/* Rows */}
-								{records.map((record, index) => {
-									const rowContext = context.addFrame({
-										record: record.getId(),
-										wire: wireId,
-										fieldMode: "READ",
-									})
-
-									const searchFields = (k: any) =>
-										/(io.field)$/.test(Object.keys(k)[0])
-
-									const fieldComponentKey =
-										columnDef.components.find(
-											searchFields
-										) as {
-											[key: string]: {
-												fieldId: string
-											}
-										}
-									const newDefinition = {
-										...columnDef,
-										components: [
-											...columnDef.components.filter(
-												(k: any) =>
-													Object.keys(k)[0] !==
-													"io.field"
-											),
-										],
-									}
-
-									return (
-										<div
-											className={classes.cell}
-											key={record.getId()}
-										>
-											{fieldComponentKey && (
-												<component.Component
-													componentType="io.field"
-													definition={{
-														fieldId:
-															fieldComponentKey[
-																"io.field"
-															]?.fieldId,
-														hideLabel: true,
-														"uesio.variant":
-															"io.table",
-													}}
-													path={path}
-													context={rowContext.addFrame(
-														{
-															buildMode: false,
-														}
-													)}
-												/>
-											)}
-
-											<component.Slot
-												definition={newDefinition}
-												listName="components"
-												path={path}
-												accepts={[
-													"uesio.standalone",
-													"uesio.field",
-												]}
-												context={rowContext}
+								const columnDef = x["lab.tablecolumn"]
+								if (!columnDef) return null
+								return (
+									<Col
+										index={index}
+										definition={columnDef}
+										classes={classes}
+										className={`${
+											hasScrolled ? "scrolled" : ""
+										}`}
+										columnRefs={columnRefs}
+										path={path}
+										onLongPress={useLongPress(() => {
+											setDragCol({ ...columnDef, index })
+										}, 50)}
+										markerPosition={markerPosition}
+										tableRef={tableRef}
+										context={context}
+										wire={wire}
+										dragCol={dragCol}
+										tableHasActionsCol={tableDefinition.columns.some(
+											(el) =>
+												el["lab.tablecolumn"].id ===
+												"rowActions"
+										)}
+										freezeColumn={definition.freezeColumn}
+										pushHeaderCellRef={pushHeaderCellRef}
+										headerCellHeight={headerCellHeight}
+										refBox={
+											<div
+												style={{
+													position: "absolute",
+													inset: "0 0 0 0",
+													pointerEvents: "none",
+												}}
+												ref={(el) =>
+													el &&
+													!columnRefs.current.includes(
+														el
+													) &&
+													columnRefs.current.push(el)
+												}
 											/>
-										</div>
-									)
-								})}
-							</Col>
-						)
-					})
-				}
+										}
+									>
+										{/* Rows 
+								We're seperating the fields from other components */}
+										{records.map((record, index) => {
+											if (!columnDef.components)
+												return null
+											const rowContext = context.addFrame(
+												{
+													record: record.getId(),
+													wire: wireId,
+													fieldMode: "READ",
+												}
+											)
 
-				{/* Data Rows */}
+											const ctx =
+												columnDef.id === "rowActions"
+													? rowContext.addFrame({
+															buildMode: false,
+													  })
+													: rowContext
+
+											const searchFields = (k: any) =>
+												/(io.field)$/.test(
+													Object.keys(k)[0]
+												)
+
+											const fieldComponentKey =
+												columnDef.components.find(
+													searchFields
+												) as {
+													[key: string]: {
+														fieldId: string
+													}
+												}
+
+											return (
+												<div
+													className={classes.cell}
+													key={record.getId()}
+													ref={(el) =>
+														el && pushCellRef(el)
+													}
+												>
+													{/* Fields */}
+													{fieldComponentKey && (
+														<component.Component
+															componentType="io.field"
+															definition={{
+																fieldId:
+																	fieldComponentKey[
+																		"io.field"
+																	]?.fieldId,
+																hideLabel: true,
+																"uesio.variant":
+																	"io.table",
+															}}
+															path={path}
+															context={rowContext.addFrame(
+																{
+																	buildMode:
+																		false,
+																}
+															)}
+														/>
+													)}
+
+													{/* Components */}
+													<component.Slot
+														definition={{
+															...columnDef,
+															components: [
+																...columnDef.components.filter(
+																	(k: any) =>
+																		Object.keys(
+																			k
+																		)[0] !==
+																		"io.field"
+																),
+															],
+														}}
+														listName="components"
+														path={path}
+														accepts={[
+															"uesio.standalone",
+															"uesio.field",
+														]}
+														context={ctx}
+													/>
+												</div>
+											)
+										})}
+									</Col>
+								)
+							})
+						}
+						{showDragCol && (
+							<div
+								ref={dragIndicator}
+								style={{
+									// zIndex: dragCol && dragCol.index ? 10 : 0,
+									pointerEvents: "none",
+									// opacity: dragCol && dragCol.index === index ? 1 : 0,
+									// transform: `translateX(${deltaX}px)`,
+									left: `${deltaX}px`,
+									top: 0,
+									zIndex: 1,
+									bottom: 0,
+									width: `${dragColWidth}px`,
+								}}
+								className={classes.dragIndicator}
+							/>
+						)}
+					</div>
+				</div>
 			</div>
 
 			{/* Table Actions bar */}

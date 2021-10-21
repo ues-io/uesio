@@ -31,9 +31,9 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Name",
 		},
 		{
-			name: "field",
+			name: "width",
 			type: "TEXT",
-			label: "Wire Field",
+			label: "Width",
 		},
 	],
 	sections: [

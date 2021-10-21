@@ -11,7 +11,6 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 	const { context, path = "", definition } = props
 	const uesio = hooks.useUesio(props)
 
-	// const { fitToContent } = context.getParentComponentDef(path)
 	const wire = uesio.wire.useWire(definition.wire)
 
 	const classes = styles.useStyles(

@@ -5,7 +5,6 @@ import { TableColumnProps } from "./tablecolumndefinition"
 const TableColumn: FC<TableColumnProps> = (props) => {
 	const { context, path = "", definition, style } = props
 
-	// const { fitToContent } = context.getParentComponentDef(path)
 	const classes = styles.useStyles(
 		{
 			root: {

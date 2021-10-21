@@ -20,12 +20,12 @@ type TableDefinition = {
 	mode: TableMode
 	columns: { [key: string]: TableColumnDefinition }[]
 	shortName: boolean
-	fitToContent: boolean
 	rowActions: string[]
 	tableActions: string[]
 	tableActionButtonVariant: string
 	rowActionButtonVariant: string
 	rowActionsColumnPosition: number
+	freezeColumn: boolean
 }
 
 interface TableProps extends definition.BaseProps {
@@ -43,7 +43,11 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",
 	description: "Table",
 	link: "https://docs.ues.io/",
-	defaultDefinition: () => ({ id: "NewId", mode: "READ" }),
+	defaultDefinition: () => ({
+		id: "NewId",
+		mode: "READ",
+		columns: [{ "lab.tablecolumn": { name: "your column" } }],
+	}),
 	properties: [
 		{
 			name: "id",
@@ -70,10 +74,11 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 				},
 			],
 		},
+
 		{
-			name: "fitToContent",
+			name: "freezeColumn",
 			type: "BOOLEAN",
-			label: "Fit to content",
+			label: "Freeze",
 		},
 	],
 	sections: [

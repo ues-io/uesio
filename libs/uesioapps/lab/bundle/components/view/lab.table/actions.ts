@@ -28,22 +28,18 @@ export default (
 		},
 	],
 	rowActions: [
-		{
-			name: "save",
-			signals: [
-				{ signal: "wire/SAVE", wires: [wireId] },
-				{
-					signal: "notification/ADD",
-					text: "saved",
-				},
-				{ signal: "wire/EMPTY", wireId },
-				{ signal: "wire/CREATE_RECORD", wireId },
-			],
-		},
-		{
-			name: "cancel",
-			signals: [{ signal: "wire/CANCEL", wireId }],
-		},
+		// {
+		// 	name: "save",
+		// 	signals: [
+		// 		{ signal: "wire/SAVE", wires: [wireId] },
+		// 		{
+		// 			signal: "notification/ADD",
+		// 			text: "saved",
+		// 		},
+		// 		{ signal: "wire/EMPTY", wireId },
+		// 		{ signal: "wire/CREATE_RECORD", wireId },
+		// 	],
+		// },
 		{
 			name: "delete",
 			signals: [
@@ -51,5 +47,12 @@ export default (
 				{ signal: "wire/SAVE", wireId },
 			],
 		},
+		// {
+		// 	name: "edit",
+		// 	signals: [
+		// 		{ signal: "wire/MARK_FOR_DELETE", path: `account/${uesio.id}` },
+		// 		{ signal: "wire/SAVE", wireId },
+		// 	],
+		// },
 	],
 })
