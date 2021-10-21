@@ -2,3 +2,5 @@ name: unit_price
 collection: crm.services
 type: NUMBER
 label: Unit Price
+number:
+  decimals: 0

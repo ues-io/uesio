@@ -47,7 +47,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	if adapt.IsReference(fieldMetadata.Type) {
 
 		// Handle foreign key value
-		reference, ok := (*ds.References)[fieldMetadata.ReferencedCollection]
+		reference, ok := (*ds.References)[fieldMetadata.ReferenceMetadata.Collection]
 		if !ok {
 			return nil
 		}
@@ -94,8 +94,10 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	switch fieldMetadata.Type {
 	case "CHECKBOX":
 		return "(fields->>'" + fieldName + "')::boolean"
-	case "TIMESTAMP", "NUMBER":
+	case "TIMESTAMP":
 		return "(fields->>'" + fieldName + "')::bigint"
+	case "NUMBER":
+		return "(fields->>'" + fieldName + "')::numeric"
 	case "MAP", "LIST":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"

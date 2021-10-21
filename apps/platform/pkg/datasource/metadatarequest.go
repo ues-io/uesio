@@ -135,12 +135,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 
 			specialRef, ok := specialRefs[fieldMetadata.Type]
 			if ok {
-				fieldMetadata.ReferencedCollection = specialRef.CollectionName
-				if specialRef.OnDelete != "" {
-					fieldMetadata.OnDelete = specialRef.OnDelete
-				}
+				fieldMetadata.ReferenceMetadata = specialRef.ReferenceMetadata
+				referenceMetadata := fieldMetadata.ReferenceMetadata
+
 				// Only add to additional requests if we don't already have that metadata
-				refCollection, _ := metadataResponse.GetCollection(specialRef.CollectionName)
+				refCollection, _ := metadataResponse.GetCollection(referenceMetadata.Collection)
 				for _, fieldID := range specialRef.Fields {
 					if refCollection != nil {
 						_, err := refCollection.GetField(fieldID)
@@ -148,7 +147,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 							continue
 						}
 					}
-					err = additionalRequests.AddField(specialRef.CollectionName, fieldID, nil)
+					err = additionalRequests.AddField(referenceMetadata.Collection, fieldID, nil)
 					if err != nil {
 						return err
 					}
@@ -156,10 +155,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 
 			if adapt.IsReference(fieldMetadata.Type) {
+				referenceMetadata := fieldMetadata.ReferenceMetadata
 				// Only add to additional requests if we don't already have that metadata
-				refCollection, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
+				refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
 				if err != nil {
-					err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+					err := additionalRequests.AddCollection(referenceMetadata.Collection)
 					if err != nil {
 						return err
 					}
@@ -172,7 +172,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 							continue
 						}
 					}
-					err := additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
+					err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &subsubFields)
 					if err != nil {
 						return err
 					}
@@ -180,8 +180,9 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 
 			if fieldMetadata.Type == "SELECT" {
-				if fieldMetadata.SelectListOptions == nil {
-					additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
+				selectListMetadata := fieldMetadata.SelectListMetadata
+				if selectListMetadata.Options == nil {
+					additionalRequests.AddSelectList(collectionKey, fieldKey, selectListMetadata.Name)
 				}
 			}
 

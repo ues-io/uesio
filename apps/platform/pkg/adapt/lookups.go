@@ -128,7 +128,7 @@ func mergeBatchInfo(op *SaveOp, index int, batch []SaveOp, metadata *MetadataCac
 			return errors.New("Can only lookup on reference field: " + lookup.RefField)
 		}
 
-		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 		if err != nil {
 			return err
 		}
@@ -195,7 +195,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		return nil, errors.New("Can only lookup on reference field: " + lookup.RefField)
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 	}
 
 	return &LoadOp{
-		CollectionName: fieldMetadata.ReferencedCollection,
+		CollectionName: fieldMetadata.ReferenceMetadata.Collection,
 		WireName:       request.WireName,
 		Fields: []LoadRequestField{
 			{
@@ -421,7 +421,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		return errors.New("Can only lookup on reference field: " + lookupField)
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 	if err != nil {
 		return err
 	}

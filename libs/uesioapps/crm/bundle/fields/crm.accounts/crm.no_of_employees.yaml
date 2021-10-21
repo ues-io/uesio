@@ -2,8 +2,5 @@ name: no_of_employees
 collection: crm.accounts
 type: NUMBER
 label: No. of Employees
-numberOptions:
-  decimals: 3
-  max: 400
-  min: 0
-  increment: 0.1
+number:
+  decimals: 0

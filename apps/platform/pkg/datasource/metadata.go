@@ -34,24 +34,24 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 // GetFieldMetadata function
 func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
-		Name:                 f.Name,
-		Namespace:            f.Namespace,
-		Createable:           !f.ReadOnly,
-		Accessible:           true,
-		Updateable:           !f.ReadOnly && !f.CreateOnly,
-		Type:                 f.Type,
-		Label:                f.Label,
-		ReferencedCollection: f.ReferencedCollection,
-		SelectListName:       f.SelectList,
-		Required:             f.Required,
-		Validate:             GetValidateMetadata(f.Validate),
-		AutoPopulate:         f.AutoPopulate,
-		OnDelete:             f.OnDelete,
-		FileCollection:       f.FileCollection,
-		Accept:               f.Accept,
-		SubFields:            GetSubFieldsMetadata(f.SubFields),
-		SubType:              f.SubType,
-		NumberOptions:        GetNumberOptionsMetadata(f.NumberOptions),
+		Name:               f.Name,
+		Namespace:          f.Namespace,
+		Createable:         !f.ReadOnly,
+		Accessible:         true,
+		Updateable:         !f.ReadOnly && !f.CreateOnly,
+		Type:               f.Type,
+		Label:              f.Label,
+		ReferenceMetadata:  f.ReferenceMetadata,
+		FileMetadata:       f.FileMetadata,
+		NumberMetadata:     f.NumberMetadata,
+		ValidationMetadata: f.ValidationMetadata,
+		SelectListMetadata: &adapt.SelectListMetadata{
+			Name: f.SelectList,
+		},
+		Required:     f.Required,
+		AutoPopulate: f.AutoPopulate,
+		SubFields:    GetSubFieldsMetadata(f.SubFields),
+		SubType:      f.SubType,
 	}
 }
 
@@ -64,25 +64,6 @@ func GetSubFieldsMetadata(subfields []meta.SubField) []adapt.SubField {
 		})
 	}
 	return subfieldsMetadata
-}
-
-// GetValidateMetadata function
-func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
-	return &adapt.ValidationMetadata{
-		Type:  v.Type,
-		Regex: v.Regex,
-	}
-}
-
-// GetNumberOptionsMetadata function
-func GetNumberOptionsMetadata(n meta.NumberOptions) *adapt.NumberOptionsMetadata {
-
-	return &adapt.NumberOptionsMetadata{
-		Decimals:  n.Decimals,
-		Max:       n.Max,
-		Min:       n.Min,
-		Increment: n.Increment,
-	}
 }
 
 // GetSelectListMetadata function
@@ -270,7 +251,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return errors.New("Field not Found for Select List: " + fieldKey)
 	}
 
-	fieldMetadata.SelectListOptions = (*selectListMetadata).Options
+	fieldMetadata.SelectListMetadata = selectListMetadata
 
 	return nil
 }

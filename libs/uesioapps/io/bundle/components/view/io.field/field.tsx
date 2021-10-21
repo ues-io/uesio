@@ -48,6 +48,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		label,
 		hideLabel,
 		id,
+		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
 		record,
 		wire,
@@ -56,35 +57,13 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 
 	switch (true) {
 		case type === "DATE":
-			return (
-				<DateField
-					{...common}
-					value={record.getFieldValue<string>(fieldId)}
-				/>
-			)
+			return <DateField {...common} />
 		case type === "LONGTEXT" || type === "TEXT":
-			return (
-				<TextField
-					{...common}
-					value={record.getFieldValue<string>(fieldId)}
-				/>
-			)
+			return <TextField {...common} />
 		case type === "NUMBER":
-			return (
-				<NumberField
-					{...common}
-					value={record.getFieldValue<number>(fieldId)}
-				/>
-			)
-
+			return <NumberField {...common} />
 		case type === "EMAIL":
-			return (
-				<EmailField
-					{...common}
-					value={record.getFieldValue<string>(fieldId)}
-				/>
-			)
-
+			return <EmailField {...common} />
 		case type === "SELECT":
 			return (
 				<SelectField
@@ -92,32 +71,16 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 					options={addBlankSelectOption(
 						fieldMetadata.getOptions() || []
 					)}
-					value={record.getFieldValue<string>(fieldId)}
 				/>
 			)
 		case type === "CHECKBOX" && displayAs === "TOGGLE":
-			return (
-				<ToggleField
-					{...common}
-					value={record.getFieldValue<wire.FieldValue>(fieldId)}
-				/>
-			)
+			return <ToggleField {...common} />
 		case type === "CHECKBOX":
-			return (
-				<CheckboxField
-					{...common}
-					value={record.getFieldValue<wire.FieldValue>(fieldId)}
-				/>
-			)
+			return <CheckboxField {...common} />
 		case type === "REFERENCE":
 			return <ReferenceField {...common} />
 		case type === "TIMESTAMP":
-			return (
-				<TimestampField
-					{...common}
-					value={record.getFieldValue<number>(fieldId)}
-				/>
-			)
+			return <TimestampField {...common} />
 		case type === "FILE" && displayAs === "TEXT":
 			return <FileText {...common} />
 		case type === "FILE":
@@ -130,7 +93,6 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 					{...common}
 					subFields={fieldMetadata.source.subfields}
 					subType={fieldMetadata.source.subtype}
-					value={record.getFieldValue(fieldId)}
 				/>
 			)
 		default:

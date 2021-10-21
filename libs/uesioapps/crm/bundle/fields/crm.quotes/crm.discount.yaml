@@ -2,3 +2,5 @@ name: discount
 collection: crm.quotes
 type: NUMBER
 label: Discount
+number:
+  decimals: 0

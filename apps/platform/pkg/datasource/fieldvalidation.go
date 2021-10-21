@@ -69,7 +69,7 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
-	regex, err := regexp.Compile(field.Validate.Regex)
+	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
 	if err != nil {
 		return func(change adapt.ChangeItem, isNew bool) error {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
@@ -78,7 +78,7 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.Validate.Regex)
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
 		}
 		return nil
 	}
@@ -96,22 +96,13 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
-		options := field.NumberOptions
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil && val != nil && !isNumberValid(options, val.(float64)) {
-			min := fmt.Sprintf("%g", options.Min)
-			max := fmt.Sprintf("%g", options.Max)
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" out of range,  the valid range is: ["+min+" , "+max+"]")
+		_, ok := val.(float64)
+		if err == nil && !ok {
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
 		}
 		return nil
 	}
-}
-
-func isNumberValid(options *adapt.NumberOptionsMetadata, value float64) bool {
-	if value < options.Min || value > options.Max {
-		return false
-	}
-	return true
 }
 
 func isEmailValid(e string) bool {
@@ -135,22 +126,23 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
+		validationMetadata := field.ValidationMetadata
 		if field.Required {
 			validations = append(validations, validateRequired(field))
 		}
 		if field.Type == "EMAIL" {
 			validations = append(validations, validateEmail(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "REGEX" {
+		if validationMetadata != nil && validationMetadata.Type == "REGEX" {
 			validations = append(validations, validateRegex(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "METADATA" {
+		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
 			validations = append(validations, validateMetadata(field))
 		}
 		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
 			validations = append(validations, preventUpdate(field))
 		}
-		if field.NumberOptions != nil && field.Type == "NUMBER" {
+		if field.Type == "NUMBER" {
 			validations = append(validations, validateNumber(field))
 		}
 	}

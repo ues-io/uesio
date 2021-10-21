@@ -2,3 +2,5 @@ name: quantity_ordered
 collection: crm.products
 type: NUMBER
 label: Quantity Ordered
+number:
+  decimals: 0
