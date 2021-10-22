@@ -8,6 +8,8 @@ import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
+import set from "lodash/set"
+import get from "lodash/get"
 
 type DeletePayload = {
 	recordId: string
@@ -22,6 +24,7 @@ type UpdateRecordPayload = {
 	idField: string
 	recordId: string
 	record: PlainWireRecord
+	path?: string[]
 } & EntityPayload
 
 type CreateRecordPayload = {
@@ -58,33 +61,38 @@ const wireSlice = createSlice({
 			}
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId }) => {
-				state.data[recordId] = {
-					...state.data[recordId],
+			(state, { idField, record, recordId, path }) => {
+				const usePath = path ? [recordId].concat(path) : [recordId]
+
+				set(state.data, usePath, {
+					...(get(state.data, usePath) as PlainWireRecord),
 					...record,
-				}
-				state.changes[recordId] = {
-					...state.changes[recordId],
-					...{
-						...record,
-						[idField]: state.data[recordId][idField],
-					},
-				}
+				})
+				set(state.changes, usePath, {
+					...(get(state.changes, usePath) as PlainWireRecord),
+					...record,
+				})
+
+				// Make sure the id field gets set.
+				state.changes[recordId][idField] = state.data[recordId][idField]
 			}
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId }) => {
-				state.data[recordId] = {
-					...state.data[recordId],
+			(state, { idField, record, recordId, path }) => {
+				const usePath = path ? [recordId].concat(path) : [recordId]
+
+				set(state.data, usePath, {
+					...(get(state.data, usePath) as PlainWireRecord),
 					...record,
-				}
-				state.original[recordId] = {
-					...state.original[recordId],
-					...{
-						...record,
-						[idField]: state.data[recordId][idField],
-					},
-				}
+				})
+				set(state.original, usePath, {
+					...(get(state.original, usePath) as PlainWireRecord),
+					...record,
+				})
+
+				// Make sure the id field gets set.
+				state.original[recordId][idField] =
+					state.data[recordId][idField]
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(

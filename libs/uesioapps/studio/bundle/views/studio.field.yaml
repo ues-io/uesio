@@ -45,7 +45,6 @@ definition:
         studio.file:
         studio.autopopulate:
         studio.selectlist:
-        studio.accept:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -160,7 +159,7 @@ definition:
                                           value: "REFERENCE"
                                       components:
                                         - studio.metadatafield:
-                                            fieldId: studio.referenced_collection
+                                            fieldId: studio.reference->studio.collection
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
                                   - io.box:
@@ -185,11 +184,11 @@ definition:
                                           value: "FILE"
                                       components:
                                         - studio.metadatafield:
-                                            fieldId: studio.filecollection
+                                            fieldId: studio.file->studio.filecollection
                                             metadataType: "FILECOLLECTION"
                                             label: "File Collection"
                                         - io.field:
-                                            fieldId: studio.accept
+                                            fieldId: studio.file->studio.accept
   panels:
     - io.dialog:
         id: deleteField

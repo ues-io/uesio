@@ -2,3 +2,7 @@ name: reference
 collection: studio.fields
 type: MAP
 label: Reference Metadata
+subfields:
+  - name: studio.collection
+    label: Collection
+    type: TEXT
