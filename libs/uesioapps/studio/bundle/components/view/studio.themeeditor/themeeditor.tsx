@@ -59,7 +59,7 @@ const ThemeEditor: FunctionComponent<Props> = (props) => {
 	}
 
 	return (
-		<div>
+		<div style={{ display: "flex", gap: "1em" }}>
 			{Object.entries(state.palette).map((item) => {
 				const [label, color] = item
 				return (

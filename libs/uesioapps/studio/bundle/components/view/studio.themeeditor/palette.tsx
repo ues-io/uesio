@@ -12,41 +12,46 @@ const Palette: FunctionComponent<Props> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			container: {
-				display: "inline-block",
-				margin: "5px",
+			swatch: {
+				background: "white",
+				boxShadow: "5px 5px 5px rgba(0, 0, 0, .1)",
+				display: "flex",
+				flexDirection: "column",
+				borderRadius: "5px",
 			},
 			input: {
 				MozAppearance: "none",
 				WebkitAppearance: "none",
 				appearance: "none",
-				padding: "0",
-				border: "none",
+				background: "none",
+				border: 0,
+				cursor: "pointer",
+				height: "10em",
+				padding: 0,
+				width: "10em",
 			},
-			label: { textTransform: "capitalize" },
-			divinput: {
-				padding: "10px 15px",
-				borderRadius: "5px",
-				border: "1px solid #ccc",
-				backgroundColor: "#f8f9f9",
+			label: { textTransform: "capitalize", margin: 0 },
+			info: {
+				padding: "1em",
 			},
 		},
 		null
 	)
 
 	return (
-		<div className={classes.container}>
-			<label className={classes.label}>{label}</label>
-			<div className={classes.divinput}>
-				<input
-					id="colorPicker"
-					className={classes.input}
-					type="color"
-					value={color}
-					onChange={(event: ChangeEvent<HTMLInputElement>): void =>
-						setState(label, event.target.value)
-					}
-				/>
+		<div className={classes.swatch}>
+			<input
+				id="colorPicker"
+				className={classes.input}
+				type="color"
+				value={color}
+				onChange={(event: ChangeEvent<HTMLInputElement>): void =>
+					setState(label, event.target.value)
+				}
+			/>
+			<div className={classes.info}>
+				<p className={classes.label}>{label}</p>
+				<p>{color}</p>
 			</div>
 		</div>
 	)
