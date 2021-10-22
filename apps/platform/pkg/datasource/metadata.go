@@ -34,63 +34,32 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 // GetFieldMetadata function
 func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
-		Name:                 f.Name,
-		Namespace:            f.Namespace,
-		Createable:           !f.ReadOnly,
-		Accessible:           true,
-		Updateable:           !f.ReadOnly && !f.CreateOnly,
-		Type:                 f.Type,
-		Label:                f.Label,
-		ReferencedCollection: f.ReferencedCollection,
-		SelectListName:       f.SelectList,
-		Required:             f.Required,
-		Validate:             GetValidateMetadata(f.Validate),
-		AutoPopulate:         f.AutoPopulate,
-		OnDelete:             f.OnDelete,
-		FileCollection:       f.FileCollection,
-		Accept:               f.Accept,
-		SubFields:            GetSubFieldsMetadata(f.SubFields),
-		SubType:              f.SubType,
+		Name:               f.Name,
+		Namespace:          f.Namespace,
+		Createable:         !f.ReadOnly,
+		Accessible:         true,
+		Updateable:         !f.ReadOnly && !f.CreateOnly,
+		Type:               f.Type,
+		Label:              f.Label,
+		ReferenceMetadata:  f.ReferenceMetadata,
+		FileMetadata:       f.FileMetadata,
+		NumberMetadata:     f.NumberMetadata,
+		ValidationMetadata: f.ValidationMetadata,
+		SelectListMetadata: GetSelectListMetadata(f),
+		Required:           f.Required,
+		AutoPopulate:       f.AutoPopulate,
+		SubFields:          f.SubFields,
+		SubType:            f.SubType,
 	}
 }
 
-// GetSubFieldsMetadata function
-func GetSubFieldsMetadata(subfields []meta.SubField) []adapt.SubField {
-	subfieldsMetadata := []adapt.SubField{}
-	for _, subfield := range subfields {
-		subfieldsMetadata = append(subfieldsMetadata, adapt.SubField{
-			Name: subfield.Name,
-		})
+func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
+	if f.Type == "SELECT" {
+		return &adapt.SelectListMetadata{
+			Name: f.SelectList,
+		}
 	}
-	return subfieldsMetadata
-}
-
-// GetValidateMetadata function
-func GetValidateMetadata(v meta.Validate) *adapt.ValidationMetadata {
-	return &adapt.ValidationMetadata{
-		Type:  v.Type,
-		Regex: v.Regex,
-	}
-}
-
-// GetSelectListMetadata function
-func GetSelectListMetadata(sl *meta.SelectList) *adapt.SelectListMetadata {
-	return &adapt.SelectListMetadata{
-		Name:    sl.Name,
-		Options: GetSelectListOptionsMetadata(sl.Options),
-	}
-}
-
-// GetSelectListOptionsMetadata function
-func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.SelectListOptionMetadata {
-	optionsMetadata := []adapt.SelectListOptionMetadata{}
-	for _, option := range options {
-		optionsMetadata = append(optionsMetadata, adapt.SelectListOptionMetadata{
-			Label: option.Label,
-			Value: option.Value,
-		})
-	}
-	return optionsMetadata
+	return nil
 }
 
 // LoadCollectionMetadata function
@@ -245,7 +214,10 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		if err != nil {
 			return err
 		}
-		selectListMetadata = GetSelectListMetadata(&selectList)
+		selectListMetadata = &adapt.SelectListMetadata{
+			Name:    selectList.Name,
+			Options: selectList.Options,
+		}
 	}
 
 	collectionMetadata, err := metadataCache.GetCollection(collectionKey)
@@ -258,7 +230,7 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		return errors.New("Field not Found for Select List: " + fieldKey)
 	}
 
-	fieldMetadata.SelectListOptions = (*selectListMetadata).Options
+	fieldMetadata.SelectListMetadata = selectListMetadata
 
 	return nil
 }

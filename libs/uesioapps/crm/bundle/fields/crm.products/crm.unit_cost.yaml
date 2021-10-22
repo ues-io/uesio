@@ -2,3 +2,5 @@ name: unit_cost
 collection: crm.products
 type: NUMBER
 label: Unit Cost
+number:
+  decimals: 0

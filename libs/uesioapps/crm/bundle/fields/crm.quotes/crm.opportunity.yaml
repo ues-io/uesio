@@ -2,4 +2,5 @@ name: opportunity
 collection: crm.quotes
 type: REFERENCE
 label: Opportunity
-referencedCollection: crm.opportunities
+reference:
+  collection: crm.opportunities

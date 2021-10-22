@@ -2,3 +2,5 @@ name: tax_amount
 collection: crm.quotes
 type: NUMBER
 label: Tax Amount
+number:
+  decimals: 2

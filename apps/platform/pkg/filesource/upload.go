@@ -140,7 +140,7 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 			return nil, errors.New("Can only attach files to FILE fields")
 		}
 
-		refMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
+		refMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 		if err != nil {
 			return nil, err
 		}

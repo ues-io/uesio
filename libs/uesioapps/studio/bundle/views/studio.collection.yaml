@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
+        studio.reference:
         studio.selectlist:
         studio.autopopulate:
       conditions:
@@ -305,7 +305,7 @@ definition:
                         value: "REFERENCE"
                     components:
                       - studio.metadatafield:
-                          fieldId: studio.referenced_collection
+                          fieldId: studio.reference->studio.collection
                           metadataType: "COLLECTION"
                           label: "Ref. Collection"
                 - io.box:
@@ -353,3 +353,5 @@ definition:
                   wire: newfield
                 - signal: wire/CREATE_RECORD
                   wire: newfield
+                - signal: "panel/TOGGLE"
+                  panel: "newField"

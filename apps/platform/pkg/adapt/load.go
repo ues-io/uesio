@@ -101,12 +101,14 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			continue
 		}
 
-		referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+
+		referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 		if err != nil {
-			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
+			return nil, nil, errors.New("No matching collection: " + referencedCollection + " for reference field: " + fieldMetadata.Name)
 		}
 
-		refReq := referencedCollections.Get(fieldMetadata.ReferencedCollection)
+		refReq := referencedCollections.Get(referencedCollection)
 		refReq.Metadata = referencedCollectionMetadata
 
 		if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {

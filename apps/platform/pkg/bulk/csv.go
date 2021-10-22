@@ -103,7 +103,7 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 					MatchTemplate: "${" + mapping.MatchField + "}",
 				})
 			}
-			refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+			refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
 				return nil, err
 			}

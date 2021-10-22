@@ -2,4 +2,5 @@ name: workspace
 collection: studio.credentials
 type: REFERENCE
 label: Workspace
-referencedCollection: studio.workspaces
+reference:
+  collection: studio.workspaces

@@ -1,5 +1,0 @@
-name: referenced_collection
-collection: studio.fields
-type: TEXT
-label: Referenced Collection
-readOnly: false

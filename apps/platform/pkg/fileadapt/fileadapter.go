@@ -63,10 +63,10 @@ func GetFileCollectionID(collectionMetadata *adapt.CollectionMetadata, fieldMeta
 	if fieldMetadata == nil {
 		return "", errors.New("No metadata setup for attachments yet: TODO!")
 	}
-	if fieldMetadata.FileCollection == "" {
+	if fieldMetadata.FileMetadata.FileCollection == "" {
 		return "", errors.New("No FileCollection specified for this field: " + collectionMetadata.GetFullName() + " : " + fieldMetadata.GetFullName())
 	}
-	return fieldMetadata.FileCollection, nil
+	return fieldMetadata.FileMetadata.FileCollection, nil
 }
 
 func GetAdapterForUserFile(userFile *meta.UserFileMetadata, session *sess.Session) (FileAdapter, string, *adapt.Credentials, error) {
