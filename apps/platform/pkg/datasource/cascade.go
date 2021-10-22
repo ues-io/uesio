@@ -16,12 +16,16 @@ func getCascadeDeletes(
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
 		for _, field := range collectionMetadata.Fields {
-			if adapt.IsReference(field.Type) && field.OnDelete == "CASCADE" {
+			if adapt.IsReference(field.Type) {
+				referenceMetadata := field.ReferenceMetadata
+				if referenceMetadata.OnDelete != "CASCADE" {
+					continue
+				}
 				// This is kind of a weird cascaded delete where we delete the parent
 				// if the child is deleted. This is not typical. Usually it's the
 				// other way around, but we're offering this feature because we
 				// need it ourselves for userfiles.
-				referencedCollection := field.ReferencedCollection
+				referencedCollection := referenceMetadata.Collection
 
 				referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 				if err != nil {

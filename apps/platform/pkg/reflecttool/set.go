@@ -103,17 +103,22 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 }
 
 func setPointer(to reflect.Value, from reflect.Value) error {
-	if from.IsNil() {
-		to.Set(from)
-		return nil
-	}
 	value := reflect.New(to.Type().Elem())
 	to.Set(value)
+	if from.IsNil() {
+		return nil
+	}
 	return setFieldReflect(value.Elem(), from)
 }
 
 func setPrimative(to reflect.Value, from reflect.Value) error {
-	if to.Type() != from.Type() {
+	fromType := from.Type()
+	toType := to.Type()
+	if !fromType.AssignableTo(toType) {
+		if from.CanConvert(toType) {
+			to.Set(from.Convert(toType))
+			return nil
+		}
 		return errors.New("Provided value type didn't match obj field type: " + to.Type().String() + " : " + from.Type().String())
 	}
 

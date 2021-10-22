@@ -16,16 +16,16 @@ export default class Work extends Command {
 	async run(): Promise<void> {
 		const { args /*, flags */ } = this.parse(Work)
 
-		await authorize()
+		const user = await authorize()
 
 		const app = await getApp()
 
 		let workspaceName = args.workspace
 
 		const workspaces = getMetadataByTypePlural("workspaces")
-		const response = await load(workspaces, [
+		const response = await load(workspaces, user, [
 			{
-				field: "studio.appid",
+				field: "studio.app",
 				valueSource: "VALUE",
 				value: app,
 				active: true,

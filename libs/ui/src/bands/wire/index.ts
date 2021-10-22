@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
+import { WireConditionState } from "../../wireexports"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
@@ -7,6 +8,8 @@ import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
+import set from "lodash/set"
+import get from "lodash/get"
 
 type DeletePayload = {
 	recordId: string
@@ -21,6 +24,7 @@ type UpdateRecordPayload = {
 	idField: string
 	recordId: string
 	record: PlainWireRecord
+	path?: string[]
 } & EntityPayload
 
 type CreateRecordPayload = {
@@ -29,6 +33,14 @@ type CreateRecordPayload = {
 } & EntityPayload
 
 type ToggleConditionPayload = {
+	conditionId: string
+} & EntityPayload
+
+type AddConditionPayload = {
+	condition: WireConditionState
+} & EntityPayload
+
+type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
@@ -49,33 +61,38 @@ const wireSlice = createSlice({
 			}
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId }) => {
-				state.data[recordId] = {
-					...state.data[recordId],
+			(state, { idField, record, recordId, path }) => {
+				const usePath = path ? [recordId].concat(path) : [recordId]
+
+				set(state.data, usePath, {
+					...(get(state.data, usePath) as PlainWireRecord),
 					...record,
-				}
-				state.changes[recordId] = {
-					...state.changes[recordId],
-					...{
-						...record,
-						[idField]: state.data[recordId][idField],
-					},
-				}
+				})
+				set(state.changes, usePath, {
+					...(get(state.changes, usePath) as PlainWireRecord),
+					...record,
+				})
+
+				// Make sure the id field gets set.
+				state.changes[recordId][idField] = state.data[recordId][idField]
 			}
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId }) => {
-				state.data[recordId] = {
-					...state.data[recordId],
+			(state, { idField, record, recordId, path }) => {
+				const usePath = path ? [recordId].concat(path) : [recordId]
+
+				set(state.data, usePath, {
+					...(get(state.data, usePath) as PlainWireRecord),
 					...record,
-				}
-				state.original[recordId] = {
-					...state.original[recordId],
-					...{
-						...record,
-						[idField]: state.data[recordId][idField],
-					},
-				}
+				})
+				set(state.original, usePath, {
+					...(get(state.original, usePath) as PlainWireRecord),
+					...record,
+				})
+
+				// Make sure the id field gets set.
+				state.original[recordId][idField] =
+					state.data[recordId][idField]
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(
@@ -94,12 +111,38 @@ const wireSlice = createSlice({
 			state.changes = {}
 			state.deletes = {}
 		}),
+		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
+			(state, { condition }) => {
+				const conditionIndex = state.conditions.findIndex(
+					(existingCondition) => existingCondition.id === condition.id
+				)
+				if (conditionIndex === -1) {
+					// Create a new condition
+					state.conditions.push(condition)
+					return
+				}
+				state.conditions = Object.assign([], state.conditions, {
+					[conditionIndex]: condition,
+				})
+			}
+		),
+		removeCondition: createEntityReducer<RemoveConditionPayload, PlainWire>(
+			(state, { conditionId }) => {
+				const conditionIndex = state.conditions.findIndex(
+					(condition) => condition.id === conditionId
+				)
+				if (conditionIndex === -1) {
+					return
+				}
+				state.conditions.splice(conditionIndex, 1)
+			}
+		),
 		toggleCondition: createEntityReducer<ToggleConditionPayload, PlainWire>(
 			(state, { conditionId }) => {
 				const conditionIndex = state.conditions.findIndex(
 					(condition) => condition.id === conditionId
 				)
-				if (!conditionIndex && conditionIndex !== 0) {
+				if (conditionIndex === -1) {
 					return
 				}
 				const oldCondition = state.conditions[conditionIndex]
@@ -224,5 +267,7 @@ export const {
 	cancel,
 	empty,
 	toggleCondition,
+	addCondition,
+	removeCondition,
 } = wireSlice.actions
 export default wireSlice.reducer

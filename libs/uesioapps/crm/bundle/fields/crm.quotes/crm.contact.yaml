@@ -2,4 +2,5 @@ name: contact
 collection: crm.quotes
 type: REFERENCE
 label: Contact
-referencedCollection: crm.contacts
+reference:
+  collection: crm.contacts

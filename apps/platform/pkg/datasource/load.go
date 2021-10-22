@@ -12,20 +12,23 @@ import (
 )
 
 type SpecialReferences struct {
-	OnDelete       string
-	CollectionName string
-	Fields         []string
+	ReferenceMetadata *meta.ReferenceMetadata
+	Fields            []string
 }
 
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
-		OnDelete:       "CASCADE",
-		CollectionName: "uesio.userfiles",
-		Fields:         []string{"uesio.mimetype", "uesio.name"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			OnDelete:   "CASCADE",
+			Collection: "uesio.userfiles",
+		},
+		Fields: []string{"uesio.mimetype", "uesio.name"},
 	},
 	"USER": {
-		CollectionName: "uesio.users",
-		Fields:         []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			Collection: "uesio.users",
+		},
+		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
 }
 
@@ -118,7 +121,7 @@ func getMetadataForLoad(
 			// need to do a whole new approach to reference fields.
 			if collectionMetadata.DataSource != "uesio.platform" {
 				op.ReferencedCollections = adapt.ReferenceRegistry{}
-				refCol := op.ReferencedCollections.Get(specialRef.CollectionName)
+				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
 				refCol.AddReference(fieldMetadata)
 				refCol.AddFields(fields)
 			} else {

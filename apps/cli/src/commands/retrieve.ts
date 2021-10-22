@@ -2,7 +2,7 @@ import { Command } from "@oclif/command"
 import { get } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
-import * as fs from "fs"
+import { rm } from "fs"
 import unzipper from "unzipper"
 import chalk from "chalk"
 
@@ -22,7 +22,7 @@ export default class Retrieve extends Command {
 			)}.`
 		)
 
-		fs.rmdir("bundle", { recursive: true }, () => {
+		rm("bundle", { recursive: true }, () => {
 			console.log("Local bundle deleted!")
 		})
 

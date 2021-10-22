@@ -191,7 +191,7 @@ func IsValidMetadataName(name string) bool {
 
 func validateNodeName(node *yaml.Node, expectedName string) error {
 	node.SkipCustom = true
-	name := getNodeValue(node, "name")
+	name := getNodeValueAsString(node, "name")
 	if name != expectedName {
 		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
 	}
@@ -201,9 +201,12 @@ func validateNodeName(node *yaml.Node, expectedName string) error {
 	return nil
 }
 
-func getNodeValue(node *yaml.Node, key string) string {
+func getNodeValueAsString(node *yaml.Node, key string) string {
 	keyNode, err := getMapNode(node, key)
 	if err != nil {
+		return ""
+	}
+	if keyNode.Kind != yaml.ScalarNode {
 		return ""
 	}
 	return keyNode.Value
@@ -215,7 +218,8 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	}
 
 	for i := range node.Content {
-		if node.Content[i].Value == key {
+		// Skip every other node to only get keys
+		if i%2 == 0 && node.Content[i].Value == key {
 			return node.Content[i+1], nil
 		}
 	}

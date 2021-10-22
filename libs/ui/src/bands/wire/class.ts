@@ -52,7 +52,11 @@ class Wire {
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
-	updateRecord = (recordId: string, record: PlainWireRecord) => {
+	updateRecord = (
+		recordId: string,
+		record: PlainWireRecord,
+		path?: string[]
+	) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -61,11 +65,16 @@ class Wire {
 				recordId,
 				record,
 				idField,
+				path,
 			})
 		)
 	}
 
-	setRecord = (recordId: string, record: PlainWireRecord) => {
+	setRecord = (
+		recordId: string,
+		record: PlainWireRecord,
+		path?: string[]
+	) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -74,6 +83,7 @@ class Wire {
 				recordId,
 				record,
 				idField,
+				path,
 			})
 		)
 	}

@@ -9,6 +9,20 @@ export type BaseDefinition = {
 
 export type YamlDoc = yaml.Document<yaml.Node>
 
+export type ImportMapping = {
+	type: "IMPORT" | "VALUE"
+	columnname?: string
+	matchfield?: string
+	value?: string
+}
+
+export type ImportSpec = {
+	filetype: string
+	collection: string
+	upsertkey: string
+	mappings: Record<string, ImportMapping>
+}
+
 export type BaseProps = {
 	definition?: BaseDefinition
 	index?: number

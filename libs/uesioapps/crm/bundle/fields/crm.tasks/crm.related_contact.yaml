@@ -2,4 +2,5 @@ name: related_contact
 collection: crm.tasks
 type: REFERENCE
 label: Related Contact
-referencedCollection: crm.contacts
+reference:
+  collection: crm.contacts

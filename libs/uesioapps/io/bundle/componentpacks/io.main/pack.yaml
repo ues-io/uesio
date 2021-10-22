@@ -25,12 +25,14 @@ components:
         - io.autocomplete.io.default
         - io.fieldlabel.io.default
         - io.tile.io.default
+        - io.numberfield.io.default
     io.grid:
     io.griditem:
     io.group:
     io.iconbutton:
     io.image:
     io.list:
+    io.searchbox:
     io.table:
       variants:
         - io.textfield.io.table
@@ -40,6 +42,7 @@ components:
         - io.table.io.default
         - io.button.io.nav
         - io.fileupload.io.table
+        - io.numberfield.io.table
     io.text:
     io.tile:
       variants:
@@ -73,12 +76,17 @@ components:
     io.layout:
     io.scrollpanel:
     io.selectfield:
+    io.table:
     io.text:
     io.textfield:
     io.tile:
     io.timestampfield:
     io.titlebar:
     io.tooltip:
+    io.uploadarea:
     io.userfield:
     io.listfield:
     io.datefield:
+    io.numberfield:
+    io.emailfield:
+

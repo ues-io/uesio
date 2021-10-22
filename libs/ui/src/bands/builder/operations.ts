@@ -85,4 +85,8 @@ const save = createAsyncThunk<
 	})
 })
 
-export default { getMetadataList, getAvailableNamespaces, save }
+export default {
+	getMetadataList,
+	getAvailableNamespaces,
+	save,
+}

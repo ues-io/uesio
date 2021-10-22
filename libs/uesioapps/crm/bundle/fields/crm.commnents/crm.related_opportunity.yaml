@@ -1,5 +1,0 @@
-name: related_opportunity
-collection: crm.commnents
-type: REFERENCE
-label: Related Opportunity
-referencedCollection: crm.opportunities

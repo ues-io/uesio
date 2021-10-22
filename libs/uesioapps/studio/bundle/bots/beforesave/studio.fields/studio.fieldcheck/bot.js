@@ -5,9 +5,7 @@ function onchange(bot) {
 			bot.addError("Field: Type is required")
 		}
 		if (type === "REFERENCE") {
-			var referencedCollection = change.get(
-				"studio.referenced_collection"
-			)
+			var referencedCollection = change.get("studio.reference")
 			if (!referencedCollection) {
 				bot.addError("Field: Referenced Collection is required")
 			}

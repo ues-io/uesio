@@ -159,13 +159,19 @@ window.uesioLoader = (mergeData) => {
 			const buildModeSuffix = buildMode ? "/builder" : ""
 			return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 		},
-
 		getMetadataList: async (context, metadataType, namespace, grouping) => {
 			const prefix = getPrefix(context)
 			const mdType = metadata.METADATA[metadataType]
 			const groupingUrl = grouping ? `/${grouping}` : ""
 			const response = await fetch(
 				`${prefix}/metadata/types/${mdType}/namespace/${namespace}/list${groupingUrl}`
+			)
+			return response.json()
+		},
+		getCollectionMetadata: async (context, collectionName) => {
+			const prefix = getPrefix(context)
+			const response = await fetch(
+				`${prefix}/collections/meta/${collectionName}`
 			)
 			return response.json()
 		},
@@ -212,6 +218,38 @@ window.uesioLoader = (mergeData) => {
 		logout: async () => {
 			const response = await postJSON("/site/auth/logout")
 			return response.json()
+		},
+		createImportJob: async (context, spec) => {
+			const prefix = getPrefix(context)
+			const url = `${prefix}/bulk/job`
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					"uesio.filetype": spec.filetype,
+					"uesio.collection": spec.collection,
+					"uesio.upsertkey": spec.upsertkey,
+					"uesio.mappings": spec.mappings,
+				}),
+			})
+			return response.json()
+		},
+
+		importData: async (context, fileData, jobId) => {
+			const prefix = getPrefix(context)
+			const url = `${prefix}/bulk/job/${jobId}/batch`
+
+			const response = await fetch(url, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/octet-stream",
+				},
+				body: fileData,
+			})
+
+			return response
 		},
 	}).load(document.querySelector("#root"), mergeData)
 }

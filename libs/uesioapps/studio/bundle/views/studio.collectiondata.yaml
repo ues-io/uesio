@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
+        studio.reference:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -100,6 +100,12 @@ definition:
                           actions:
                             - io.group:
                                 components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Import Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/import/$Param{collectionname}"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Collection Configuration"

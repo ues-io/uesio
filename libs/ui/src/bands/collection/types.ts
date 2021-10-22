@@ -12,8 +12,19 @@ type PlainCollection = {
 	fields: FieldMetadataMap
 }
 
+type CollectionState = {
+	[key: string]: {
+		status: "PENDING" | "FULFILLED"
+		data: PlainCollection
+	}
+}
+
+type CollectionStore = {
+	[key: string]: PlainCollection // CollectionState
+}
+
 type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
-export { PlainCollectionMap, PlainCollection }
+export { PlainCollectionMap, PlainCollection, CollectionState, CollectionStore }

@@ -35,7 +35,7 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
-	const value = record.getFieldString(fieldId)
+	const value = record.getFieldValue<string>(fieldId)
 
 	if (!fieldMetadata) return null
 

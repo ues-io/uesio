@@ -46,16 +46,16 @@ class SignalAPI {
 	dispatcher: Dispatcher<AnyAction>
 
 	useHandler = (
-		signals: SignalDefinition[] | undefined
+		signals: SignalDefinition[] | undefined,
+		context: Context = this.uesio.getContext()
 	): [(() => Promise<Context>) | undefined, ReactNode] => [
-		this.getHandler(signals),
+		this.getHandler(signals, context),
 		signals?.flatMap((signal) => {
 			// If this signal is a panel signal and we're controlling it from this
 			// path, then send the context from this path into a portal
 			if (isPanelSignal(signal)) {
 				const panelId = signal.panel as string
 				const panel = usePanel(panelId)
-				const context = this.uesio.getContext()
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
@@ -90,7 +90,10 @@ class SignalAPI {
 	]
 
 	// Returns a handler function for running a list of signals
-	getHandler = (signals: SignalDefinition[] | undefined) => {
+	getHandler = (
+		signals: SignalDefinition[] | undefined,
+		context: Context = this.uesio.getContext()
+	) => {
 		if (!signals) return undefined
 		return async () => {
 			/*
@@ -101,7 +104,6 @@ class SignalAPI {
 			)
 			*/
 
-			let context = this.uesio.getContext()
 			for (const signal of signals) {
 				// Special handling for panel signals
 				let useSignal = signal

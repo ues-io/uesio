@@ -6,6 +6,7 @@ import { SaveResponseBatch } from "../load/saveresponse"
 import { Context } from "../context/context"
 import { MetadataListStore, MetadataType } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
+import { ImportSpec } from "../definition/definition"
 
 type BotParams = {
 	[key: string]: string
@@ -28,6 +29,10 @@ type SecretResponse = {
 	namespace: string
 	managedby: string
 	value: string
+}
+
+type JobResponse = {
+	id: string
 }
 
 interface Platform {
@@ -74,6 +79,10 @@ interface Platform {
 		namespace: string,
 		grouping?: string
 	): Promise<MetadataListStore>
+	getCollectionMetadata(
+		context: Context,
+		collectionName: string
+	): Promise<LoadResponseBatch>
 	getAvailableNamespaces(context: Context): Promise<MetadataListStore>
 	getConfigValues(context: Context): Promise<ConfigValueResponse[]>
 	setConfigValue(
@@ -89,6 +98,12 @@ interface Platform {
 	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
+	createImportJob(context: Context, spec: ImportSpec): Promise<JobResponse>
+	importData(
+		context: Context,
+		fileData: File,
+		jobId: string
+	): Promise<Response>
 }
 
 export { Platform, BotResponse, BotParams, ConfigValueResponse, SecretResponse }

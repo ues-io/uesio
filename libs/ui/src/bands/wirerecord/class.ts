@@ -15,13 +15,14 @@ class WireRecord {
 
 	getId = () => this.id
 	getWire = () => this.wire
-	getFieldArray = (fieldName: string) =>
-		get(this.source, fieldName) as FieldValue[]
-	getFieldValue = (fieldName: string) => get(this.source, fieldName)
-	getFieldString = (fieldName: string) =>
-		get(this.source, fieldName) as string
-	getFieldReference = (fieldName: string) =>
-		get(this.source, fieldName) as PlainWireRecord | undefined
+	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
+		const fieldNameParts = fieldName?.split("->")
+		if (fieldNameParts.length === 1) {
+			return get(this.source, fieldName) as T
+		}
+		// Special handling for maps
+		return get(this.source, fieldNameParts) as T
+	}
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
@@ -31,15 +32,42 @@ class WireRecord {
 		return idField && this.getFieldValue(idField.getId())
 	}
 
-	update = (fieldId: string, value: FieldValue) =>
-		this.wire.updateRecord(this.id, {
-			[fieldId]: value,
-		})
+	update = (fieldId: string, value: FieldValue) => {
+		const fieldNameParts = fieldId?.split("->")
+		if (fieldNameParts.length === 1) {
+			return this.wire.updateRecord(this.id, {
+				[fieldId]: value,
+			})
+		}
+		// Special handling for maps
+		const topField = fieldNameParts.pop()
+		if (!topField) return
+		return this.wire.updateRecord(
+			this.id,
+			{
+				[topField]: value,
+			},
+			fieldNameParts
+		)
+	}
 
 	set = (fieldId: string, value: FieldValue) => {
-		this.wire.setRecord(this.id, {
-			[fieldId]: value,
-		})
+		const fieldNameParts = fieldId?.split("->")
+		if (fieldNameParts.length === 1) {
+			this.wire.setRecord(this.id, {
+				[fieldId]: value,
+			})
+		}
+		// Special handling for maps
+		const topField = fieldNameParts.pop()
+		if (!topField) return
+		return this.wire.setRecord(
+			this.id,
+			{
+				[topField]: value,
+			},
+			fieldNameParts
+		)
 	}
 }
 

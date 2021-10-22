@@ -31,7 +31,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			path={trimmedPath}
 			valueAPI={{
 				get: (path: string) => util.get(definition, path),
-				set: (path: string, value: string) => {
+				set: (path: string, value: string | number | null) => {
 					if (path === undefined) return
 					uesio.builder.setDefinition(
 						component.path.makeFullPath(

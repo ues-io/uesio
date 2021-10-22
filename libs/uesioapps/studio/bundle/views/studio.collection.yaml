@@ -44,7 +44,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referenced_collection:
+        studio.reference:
         studio.selectlist:
         studio.autopopulate:
       conditions:
@@ -119,6 +119,12 @@ definition:
                           actions:
                             - io.group:
                                 components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Import Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/import/$Param{collectionname}"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Manage Data"
@@ -209,8 +215,6 @@ definition:
                                 field: studio.type
                             - io.column:
                                 field: studio.label
-                            - io.column:
-                                field: studio.collection
   panels:
     - io.dialog:
         id: deleteCollection
@@ -301,7 +305,7 @@ definition:
                         value: "REFERENCE"
                     components:
                       - studio.metadatafield:
-                          fieldId: studio.referenced_collection
+                          fieldId: studio.reference->studio.collection
                           metadataType: "COLLECTION"
                           label: "Ref. Collection"
                 - io.box:
@@ -349,3 +353,5 @@ definition:
                   wire: newfield
                 - signal: wire/CREATE_RECORD
                   wire: newfield
+                - signal: "panel/TOGGLE"
+                  panel: "newField"

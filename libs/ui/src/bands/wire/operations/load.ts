@@ -8,10 +8,7 @@ import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
-import {
-	getInitializedConditions,
-	getLoadRequestConditions,
-} from "../conditions/conditions"
+import { getLoadRequestConditions } from "../conditions/conditions"
 import { getDefaultRecord } from "../defaults/defaults"
 import { getWiresFromDefinitonOrContext } from "../adapter"
 
@@ -41,26 +38,24 @@ export default createAsyncThunk<
 >("wire/load", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
+	const wiresRequestMap: Record<string, PlainWire> = {}
 	const batch = {
-		wires: wiresToLoad
-			.map((wire) => {
-				const wiredef = getWireDef(wire)
-				if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-				return {
-					wire: getFullWireId(wire.view, wire.name),
-					type: wiredef.type,
-					collection: wiredef.collection,
-					fields: getFieldsRequest(wiredef.fields) || [],
-					conditions: getLoadRequestConditions(
-						getInitializedConditions(wiredef.conditions),
-						context
-					),
-					order: wiredef.order,
-					limit: wiredef.limit,
-					offset: wiredef.offset,
-				}
-			})
-			.filter((w) => !!w.collection || !!w.fields.length),
+		wires: wiresToLoad.map((wire) => {
+			const fullWireId = getFullWireId(wire.view, wire.name)
+			wiresRequestMap[fullWireId] = wire
+			const wiredef = getWireDef(wire)
+			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+			return {
+				wire: fullWireId,
+				type: wiredef.type,
+				collection: wiredef.collection,
+				fields: getFieldsRequest(wiredef.fields) || [],
+				conditions: getLoadRequestConditions(wire.conditions, context),
+				order: wiredef.order,
+				limit: wiredef.limit,
+				offset: wiredef.offset,
+			}
+		}),
 	}
 
 	const response = await api.extra.loadData(context, batch)
@@ -68,57 +63,43 @@ export default createAsyncThunk<
 	// Add the local ids
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
+		const requestWire = wiresRequestMap[wire.wire]
+		const [view, name] = wire.wire.split("/")
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
+		const changes: Record<string, PlainWireRecord> = {}
+
+		if (requestWire.type === "CREATE") {
+			wire.data?.push(
+				getDefaultRecord(
+					context,
+					wiresResponse,
+					response.collections,
+					view,
+					name
+				)
+			)
+		}
+
 		wire.data?.forEach((item) => {
 			const localId = shortid.generate()
 			data[localId] = item
 			original[localId] = item
+
+			if (requestWire.type === "CREATE") {
+				changes[localId] = item
+			}
 		})
-		const [view, name] = wire.wire.split("/")
 		wiresResponse[wire.wire] = {
 			name,
 			view,
+			type: requestWire.type,
 			data,
 			original,
-			changes: {},
+			changes,
 			deletes: {},
 			error: undefined,
-			conditions: [],
-		}
-	}
-
-	// Add defaults to response
-	for (const wire of batch.wires) {
-		if (wire.type === "CREATE") {
-			const localId = shortid.generate()
-			const [view, name] = wire.wire.split("/")
-			wiresResponse[wire.wire] = {
-				name,
-				view,
-				data: {
-					[localId]: getDefaultRecord(
-						context,
-						wiresResponse,
-						response.collections,
-						view,
-						name
-					),
-				},
-				original: {},
-				changes: {
-					[localId]: getDefaultRecord(
-						context,
-						wiresResponse,
-						response.collections,
-						view,
-						name
-					),
-				},
-				deletes: {},
-				error: undefined,
-				conditions: [],
-			}
+			conditions: requestWire.conditions,
 		}
 	}
 
