@@ -37,6 +37,7 @@ type PropertySection =
 	| PropListSection
 	| StylesSection
 	| OrderSection
+	| ConditionalDisplaySection
 
 type BasePropSection = {
 	title: string
@@ -67,6 +68,9 @@ interface PropListSection extends BasePropSection {
 interface StylesSection extends BasePropSection {
 	type: "STYLES"
 }
+interface ConditionalDisplaySection extends BasePropSection {
+	type: "CONDITIONALDISPLAY"
+}
 
 type PropDescriptor =
 	| TextProp
@@ -84,6 +88,7 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| ConditionalDisplayProp
 	| IconProp
 
 type BasePropDescriptor = {
@@ -120,6 +125,9 @@ interface IconProp extends BasePropDescriptor {
 
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
+}
+interface ConditionalDisplayProp extends BasePropDescriptor {
+	type: "CONDITIONALDISPLAY"
 }
 
 interface NumberProp extends BasePropDescriptor {
@@ -259,5 +267,6 @@ export {
 	SignalsSection,
 	PropListSection,
 	StylesListProp,
+	ConditionalDisplayProp,
 	OrderSection,
 }

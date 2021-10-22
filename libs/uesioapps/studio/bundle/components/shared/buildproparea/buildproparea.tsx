@@ -26,14 +26,19 @@ const BuildPropArea: FunctionComponent<Props> = (props) => {
 		props
 	)
 
-	const sections =
+	const sections: builder.PropertySection[] =
 		propsDef.type === "component"
-			? propsDef.sections.concat([
+			? [
+					...propsDef.sections,
 					{
 						title: "Styles",
 						type: "STYLES",
 					},
-			  ])
+					{
+						title: "Display Conditions",
+						type: "CONDITIONALDISPLAY",
+					},
+			  ]
 			: propsDef.sections
 
 	return (
