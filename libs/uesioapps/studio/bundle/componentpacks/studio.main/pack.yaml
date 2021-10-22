@@ -60,6 +60,7 @@ components:
         - io.button
         - io.icon
         - io.grid
+    studio.themeeditor:
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.slot:

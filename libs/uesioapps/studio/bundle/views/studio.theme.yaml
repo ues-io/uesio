@@ -115,6 +115,8 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
+                            - studio.themeeditor:
+                                fieldId: studio.definition
                             - studio.codefield:
                                 fieldId: studio.definition
                                 height: 350px

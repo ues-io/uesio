@@ -10,15 +10,16 @@ interface Palette {
 	// Allow any key as well, but require a minimum of the above
 	[key: string]: string
 }
+interface ThemeStateDefinition {
+	spacing: number
+	palette: Palette
+	variantOverrides: Record<string, DefinitionMap>
+}
 
 interface ThemeState {
 	name: string
 	namespace: string
-	definition: {
-		spacing: number
-		palette: Palette
-		variantOverrides: Record<string, DefinitionMap>
-	}
+	definition: ThemeStateDefinition
 }
 
-export { Palette, ThemeState }
+export { Palette, ThemeState, ThemeStateDefinition }

@@ -1,7 +1,7 @@
 import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
-import { ThemeState } from "../bands/theme/types"
+import { ThemeState, ThemeStateDefinition, Palette } from "../bands/theme/types"
 import { BaseProps, UtilityProps } from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
 
@@ -239,6 +239,8 @@ export {
 	FloatDefinition,
 	CSSProperties,
 	ThemeState,
+	ThemeStateDefinition,
+	Palette,
 	getSpacing,
 	getColor,
 	getResponsiveStyles,
