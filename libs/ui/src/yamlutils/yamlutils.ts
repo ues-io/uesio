@@ -4,6 +4,7 @@ import { getParentPathArray } from "../component/path"
 
 const newDoc = () => new yaml.Document<yaml.Node>()
 const parse = (str: string) => yaml.parseDocument(str)
+const stringify = (value: unknown) => yaml.stringify(value)
 
 /**
  * Gives the path array for traversing the yamlDoc
@@ -198,4 +199,5 @@ export {
 	getPathFromPathArray,
 	parse,
 	newDoc,
+	stringify,
 }

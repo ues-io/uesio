@@ -1,7 +1,6 @@
-import { FunctionComponent, useEffect, useRef, useState } from "react"
-import { definition, hooks, context, styles, util } from "@uesio/ui"
+import { FunctionComponent, useEffect, useState } from "react"
+import { definition, hooks, styles, util } from "@uesio/ui"
 import Palette from "./palette"
-import { lab } from "chroma-js"
 
 type ThemeEditorDefinition = {
 	fieldId: string
@@ -27,7 +26,6 @@ const initialState = {
 const ThemeEditor: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const { fieldId } = definition
-	const uesio = hooks.useUesio(props)
 	const wire = context.getWire()
 	const record = context.getRecord()
 
@@ -41,7 +39,6 @@ const ThemeEditor: FunctionComponent<Props> = (props) => {
 		const themeDef: styles.ThemeStateDefinition = util.yaml
 			.parse(value)
 			.toJSON()
-		console.log("USEFF")
 		setState(themeDef)
 	}, [])
 
@@ -49,25 +46,21 @@ const ThemeEditor: FunctionComponent<Props> = (props) => {
 		useState<styles.ThemeStateDefinition>(initialState)
 
 	const changeColor = (label: string, color: string): void => {
-		console.log({ label, color })
-		setState({
+		const newState = {
 			...state,
 			palette: {
 				...state.palette,
 				[label]: color,
 			},
-		})
-		console.log("change color", state)
-
-		//wire to YAML
-		//const doc = util.yaml.newDoc()
-		const doc = util.yaml.parse(JSON.stringify(state))
+		}
+		setState(newState)
+		const doc = util.yaml.stringify(newState)
 		record.update(fieldId, doc.toString())
 	}
 
 	return (
 		<div>
-			{Object.entries(state.palette).map((item, index) => {
+			{Object.entries(state.palette).map((item) => {
 				const [label, color] = item
 				return (
 					<Palette

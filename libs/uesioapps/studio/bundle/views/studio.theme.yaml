@@ -117,7 +117,3 @@ definition:
                                       fieldId: studio.name
                             - studio.themeeditor:
                                 fieldId: studio.definition
-                            - studio.codefield:
-                                fieldId: studio.definition
-                                height: 350px
-                                language: "yaml"

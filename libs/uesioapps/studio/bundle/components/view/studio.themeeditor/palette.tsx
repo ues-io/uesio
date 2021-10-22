@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { component, definition, hooks, styles, util } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	label: string
@@ -8,7 +8,7 @@ interface Props extends definition.BaseProps {
 }
 
 const Palette: FunctionComponent<Props> = (props) => {
-	const { label, color, setState, context } = props
+	const { label, color, setState } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -16,16 +16,31 @@ const Palette: FunctionComponent<Props> = (props) => {
 				display: "inline-block",
 				margin: "5px",
 			},
-			label: { marginRight: "5px", textTransform: "capitalize" },
+			input: {
+				MozAppearance: "none",
+				WebkitAppearance: "none",
+				appearance: "none",
+				padding: "0",
+				border: "none",
+			},
+			label: { textTransform: "capitalize" },
+			divinput: {
+				padding: "10px 15px",
+				borderRadius: "5px",
+				border: "1px solid #ccc",
+				backgroundColor: "#f8f9f9",
+			},
 		},
 		null
 	)
 
 	return (
 		<div className={classes.container}>
-			<div>
-				<label className={classes.label}>{label}</label>
+			<label className={classes.label}>{label}</label>
+			<div className={classes.divinput}>
 				<input
+					id="colorPicker"
+					className={classes.input}
 					type="color"
 					value={color}
 					onChange={(event: ChangeEvent<HTMLInputElement>): void =>
