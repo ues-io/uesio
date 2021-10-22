@@ -67,6 +67,17 @@ const col: FC<T> = (props) => {
 		return collection.getField(field["io.field"]?.fieldId)?.getLabel() || ""
 	}
 
+	const onMouseDown =
+		setDragCol &&
+		useLongPress(
+			() =>
+				setDragCol({
+					...definition,
+					index,
+				}),
+			50
+		)
+
 	const getStyles = (): React.CSSProperties => {
 		const isFrozen = freezeColumn && index === 0
 		return {
@@ -87,20 +98,9 @@ const col: FC<T> = (props) => {
 		}
 	}
 
-	// use longpress to avoid accidental firing of drag if user clicks on a column
-	const handleDrag = () => {
-		useLongPress(() => {
-			setDragCol &&
-				setDragCol({
-					...definition,
-					index,
-				})
-		}, 50)
-	}
-
 	return (
 		<div
-			onMouseDown={() => handleDrag()}
+			onMouseDown={onMouseDown}
 			className={`${classes.col} ${className}`}
 			style={getStyles()}
 		>

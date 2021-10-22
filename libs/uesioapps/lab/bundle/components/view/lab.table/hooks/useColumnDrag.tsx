@@ -82,7 +82,6 @@ export default (
 		window.addEventListener("mousemove", handleDrag)
 		return () => {
 			mouseColumnOffset = 0
-			console.log("STOPPING")
 			setShowDragCol(false)
 			setMarkerPosition(null)
 			window.removeEventListener("mousemove", handleDrag)

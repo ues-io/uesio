@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 
-export default (cb: () => void, threshold: number) => {
+export default (cb: (...args: unknown[]) => unknown, threshold: number) => {
 	const [isDown, setIsDown] = useState(false)
 
 	const onMouseUp = () => setIsDown(false)

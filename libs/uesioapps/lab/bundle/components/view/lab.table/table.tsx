@@ -1,11 +1,13 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { TableProps } from "./tabledefinition"
-import { component, styles, hooks, wire } from "@uesio/ui"
+import { component, styles, hooks, wire, definition } from "@uesio/ui"
 import useCellHeight from "./hooks/useCellHeight"
 import useScroll from "./hooks/useScroll"
 import useColumnDrag from "./hooks/useColumnDrag"
 import Col from "./col"
 import actions from "./actions"
+import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+
 const LabActionsBar = component.registry.getUtility("lab.actionsbar")
 
 const useFreezePadding = (
@@ -156,11 +158,7 @@ const Table: FC<TableProps> = (props) => {
 										isDragging={isDragging}
 										columnRefs={columnRefs}
 										path={path}
-										setDragCol={
-											definition.columns.length > 2
-												? undefined
-												: setDragCol
-										}
+										setDragCol={setDragCol}
 										markerPosition={markerPosition}
 										tableRef={tableRef}
 										context={context}
