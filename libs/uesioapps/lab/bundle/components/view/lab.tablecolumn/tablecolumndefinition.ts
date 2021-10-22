@@ -11,6 +11,7 @@ type TableColumnDefinition = {
 	horizontalAlignment?: "left" | "center" | "right"
 	id?: string
 	order?: number
+	width: string
 }
 interface TableColumnProps extends definition.BaseProps {
 	definition: TableColumnDefinition
@@ -47,7 +48,7 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 					name: "verticalAlignment",
 					options: [
 						{
-							value: "top",
+							value: "start",
 							label: "Top",
 						},
 						{
@@ -55,7 +56,7 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 							label: "Center",
 						},
 						{
-							value: "bottom",
+							value: "end",
 							label: "Bottom",
 						},
 					],

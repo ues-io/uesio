@@ -1,17 +1,15 @@
-import React, { FC } from "react"
-import { hooks, styles, definition, wire } from "@uesio/ui"
+import { FC } from "react"
+import { component, styles, definition, wire } from "@uesio/ui"
 import FieldHints from "../lab.column/fieldhints"
-import { TableDefinition } from "./tabledefinition"
 
 interface T extends definition.BaseProps {
 	wire: wire.Wire
 	index: number
-	tableHasActionsCol: boolean
-	// definition: TableDefinition
+	isDragging?: boolean
 }
 
 const emptyColumn: FC<T> = (props) => {
-	const { path = "", wire, index, tableHasActionsCol } = props
+	const { path = "", wire, index, context, isDragging, definition } = props
 	const classes = styles.useStyles(
 		{
 			root: {
@@ -22,24 +20,29 @@ const emptyColumn: FC<T> = (props) => {
 				padding: "5px",
 				minWidth: "150px",
 				justifyContent: "center",
-				margin: "1px",
 				flex: 1,
 			},
 		},
 		props
 	)
+
 	return (
 		<div className={classes.root}>
-			<FieldHints
-				{...props}
-				wire={wire}
-				// path={`${path}["columns"]["${
-				// 	tableHasActionsCol ? index - 1 : index
-				// }"]["lab.tablecolumn"]["components"]`}
-				path={`${path}["columns"]["${
-					index - 1
-				}"]["lab.tablecolumn"]["components"]`}
-			/>
+			{isDragging ? (
+				<component.Slot
+					definition={{}}
+					listName="components"
+					path={`${path}["columns"]["${index}"]["lab.tablecolumn"]`}
+					accepts={["uesio.standalone", "uesio.field"]}
+					context={context}
+				/>
+			) : (
+				<FieldHints
+					{...props}
+					wire={wire}
+					path={`${path}["columns"]["${index}"]["lab.tablecolumn"]["components"]`}
+				/>
+			)}
 		</div>
 	)
 }

@@ -1,9 +1,29 @@
-import React, { FC, useRef, useEffect, useState } from "react"
-import { component, styles, hooks } from "@uesio/ui"
-import EmptyColumn from "./emptyColumn"
+import React, { FC } from "react"
+import { hooks, definition, wire } from "@uesio/ui"
 import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import EmptyColumn from "./emptyColumn"
+import useLongPress from "./hooks/useLongPress"
 
-type T = any
+interface DragCol extends TableColumnDefinition {
+	index: number
+}
+interface T extends definition.BaseProps {
+	classes: Record<string, string>
+	definition: TableColumnDefinition
+	dragCol: DragCol
+	columnRefs: React.MutableRefObject<HTMLDivElement[]>
+	index: number
+	markerPosition: null | number
+	wire: wire.Wire
+	refBox: React.ReactElement<any, any>
+	freezeColumn: boolean
+	className: string
+	pushHeaderCellRef: (el: HTMLDivElement) => void
+	headerCellHeight: number | null
+	isDragging?: boolean
+	setDragCol?: (arg0: DragCol) => void
+	tableRef: React.MutableRefObject<HTMLDivElement | null>
+}
 
 const col: FC<T> = (props) => {
 	const {
@@ -21,8 +41,8 @@ const col: FC<T> = (props) => {
 		className,
 		pushHeaderCellRef,
 		headerCellHeight,
-		onLongPress,
-		tableHasActionsCol,
+		isDragging,
+		setDragCol,
 	} = props
 
 	const uesio = hooks.useUesio(props)
@@ -31,7 +51,6 @@ const col: FC<T> = (props) => {
 
 	const getColumnLabel = (column: TableColumnDefinition): string => {
 		if (!wire) return ""
-		if (definition.id === "rowActions") return "actions"
 		const collection = wire.getCollection()
 
 		if (!collection || !column.components) return ""
@@ -50,7 +69,6 @@ const col: FC<T> = (props) => {
 
 	const getStyles = (): React.CSSProperties => {
 		const isFrozen = freezeColumn && index === 0
-
 		return {
 			borderLeft: markerPosition === index ? "2px solid orange" : "none",
 			maxWidth: `${definition.width}px` || "initial",
@@ -60,7 +78,6 @@ const col: FC<T> = (props) => {
 			...(isFrozen && {
 				top: 0,
 				left: "0",
-				height: refBox.innherHeight - 15,
 				zIndex: 1,
 				borderRight: "1px solid #eee",
 				transition: "all 0.3s ease",
@@ -70,9 +87,20 @@ const col: FC<T> = (props) => {
 		}
 	}
 
+	// use longpress to avoid accidental firing of drag if user clicks on a column
+	const handleDrag = () => {
+		useLongPress(() => {
+			setDragCol &&
+				setDragCol({
+					...definition,
+					index,
+				})
+		}, 50)
+	}
+
 	return (
 		<div
-			onMouseDown={() => onLongPress()}
+			onMouseDown={() => handleDrag()}
 			className={`${classes.col} ${className}`}
 			style={getStyles()}
 		>
@@ -92,8 +120,7 @@ const col: FC<T> = (props) => {
 					height: headerCellHeight
 						? `${headerCellHeight + 20}px`
 						: "initial",
-					borderBottom:
-						freezeColumn && index === 0 ? "1px solid #eee" : "none",
+					marginBottom: freezeColumn && index === 0 ? "1px" : "none",
 				}}
 				ref={(el) => el && pushHeaderCellRef(el)}
 				className={classes.headerCell}
@@ -110,7 +137,7 @@ const col: FC<T> = (props) => {
 					index={index}
 					context={context}
 					path={path}
-					tableHasActionsCol={tableHasActionsCol}
+					isDragging={isDragging}
 					definition={definition}
 				/>
 			)}

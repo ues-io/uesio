@@ -30,6 +30,7 @@ type TableDefinition = {
 
 interface TableProps extends definition.BaseProps {
 	definition: TableDefinition & ActionsBarDefinition
+	isDragging: boolean
 }
 
 type RowAction = {
@@ -81,36 +82,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Freeze",
 		},
 	],
-	sections: [
-		actionsBarDefinition("Table Actions"),
-		{
-			title: "Row Actions",
-			type: "PROPLIST",
-			properties: [
-				{
-					name: "rowActionButtonVariant",
-					type: "METADATA",
-					metadataType: "COMPONENTVARIANT",
-					label: "Variant",
-					groupingValue: "io.button",
-				},
-				{
-					name: "rowActionsColumnPosition",
-					type: "NUMBER",
-					label: "Column Position",
-				},
-				{
-					name: "rowActions",
-					label: "Buttons",
-					type: "MULTISELECT",
-					options: rowActions.map((label) => ({
-						value: label.toLowerCase(),
-						label,
-					})) as builder.PropertySelectOption[],
-				},
-			],
-		},
-	],
+	sections: [actionsBarDefinition("Table Actions")],
 	actions: [
 		{
 			label: "Add Section",

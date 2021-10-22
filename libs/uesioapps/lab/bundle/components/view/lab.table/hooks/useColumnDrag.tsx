@@ -11,7 +11,6 @@ type LeftRightBound = {
 
 // TODO
 // 1. Currently, the table and column are being rerendered abusively while dragging.
-// 2. When dragging a column to the position of the rowActionsColumn, things get messy
 
 export default (
 	columnRefs: any,
@@ -27,16 +26,10 @@ export default (
 	const [dragColWidth, setDragColWidth] = useState(200)
 	const [showDragCol, setShowDragCol] = useState(false)
 
-	useEffect(() => {
-		window.addEventListener("mouseup", onDragEnd)
-		return () => window.removeEventListener("mouseup", onDragEnd)
-	}, [markerPosition])
-
+	// Get the position of the column sides
 	const leftRightBoundsOfColumns: LeftRightBound[] = columnRefs.current.map(
 		(el: HTMLDivElement, i: number) => {
 			const { left, right } = el.getBoundingClientRect()
-			const { left: tableLeft, right: tableRight } =
-				tableRef.current.getBoundingClientRect()
 			return {
 				left,
 				right,
@@ -52,30 +45,30 @@ export default (
 		setDragColWidth(columnRefs.current[dragCol.index].offsetWidth)
 		const columnWidth = columnRefs.current[dragCol.index].offsetWidth
 		const columnLeft = leftRightBoundsOfColumns[dragCol.index].left
-		const columnRight = leftRightBoundsOfColumns[dragCol.index].right
+		const { left: tableLeft, right: tableRight } =
+			tableRef.current.getBoundingClientRect()
 
-		const handler = (e: any) => {
-			// Ensure we don't slide too much left or right
-			const { left: tableLeft, right: tableRight } =
-				tableRef.current.getBoundingClientRect()
-
-			// We want the ghost column to fix to mouse position on moment of drag start
+		const handleDrag = (e: any) => {
 			const mouseX = e.clientX
 
+			// We want the ghost column to fix to mouse position on moment of drag start
 			mouseColumnOffset =
 				mouseColumnOffset === 0
 					? mouseX - columnLeft
 					: mouseColumnOffset
 			const X = mouseX - mouseColumnOffset - tableLeft
 			setDeltaX(X)
-			// const mouseMove = mouseX - columnLeft - mouseColumnOffset
 
+			// Left side of the dragBox is over the left table edge
 			if (mouseX + (columnWidth - mouseColumnOffset) > tableRight) {
 				tableRef.current.scrollBy({ left: 50 })
 			}
+
+			// Right side of the dragBox is over the right table edge
 			if (mouseX - mouseColumnOffset < tableLeft) {
 				tableRef.current.scrollBy({ left: -50 })
 			}
+
 			// Figure out if the dragbox is within the bounds of a column
 			const hoveredEl = leftRightBoundsOfColumns.find(
 				({ left, right }) => left < mouseX && right > mouseX
@@ -86,14 +79,21 @@ export default (
 			if (!showDragCol) setShowDragCol(true)
 		}
 
-		window.addEventListener("mousemove", handler)
+		window.addEventListener("mousemove", handleDrag)
 		return () => {
 			mouseColumnOffset = 0
+			console.log("STOPPING")
 			setShowDragCol(false)
 			setMarkerPosition(null)
-			window.removeEventListener("mousemove", handler)
+			window.removeEventListener("mousemove", handleDrag)
 		}
 	}, [dragCol, columnRefs, tableRef, dragIndicator])
+
+	useEffect(() => {
+		if (!markerPosition) return
+		window.addEventListener("mouseup", onDragEnd)
+		return () => window.removeEventListener("mouseup", onDragEnd)
+	}, [markerPosition])
 
 	const onDragEnd = () => {
 		if (
@@ -101,20 +101,6 @@ export default (
 			dragCol !== null &&
 			markerPosition !== dragCol.index
 		) {
-			console.log({ dragCol })
-			// The row actions column logic is tied to the table properties, not the column
-			if (dragCol.id === "rowActions") {
-				console.log({ x: markerPosition + 1 })
-				return uesio.builder.setDefinition(
-					component.path.makeFullPath(
-						metadataType,
-						metadataItem,
-						`${path}["rowActionsColumnPosition"]`
-					),
-					markerPosition + 1
-				)
-			}
-
 			uesio.builder.moveDefinition(
 				component.path.makeFullPath(
 					metadataType,
@@ -127,10 +113,6 @@ export default (
 					`${path}["columns"]["${markerPosition}"]`
 				)
 			)
-			console.log({
-				from: `${path}["columns"]["${dragCol.index}"]`,
-				to: `${path}["columns"]["${markerPosition}"]`,
-			})
 		}
 		setDragCol(null)
 	}
