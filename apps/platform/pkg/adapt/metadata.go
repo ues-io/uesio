@@ -74,21 +74,10 @@ func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
-// SelectListOptionMetadata type
-type SelectListOptionMetadata struct {
-	Label string `json:"label"`
-	Value string `json:"value"`
-}
-
 // SelectListMetadata type
 type SelectListMetadata struct {
-	Name    string                     `json:"name"`
-	Options []SelectListOptionMetadata `json:"options"`
-}
-
-// SubField struct
-type SubField struct {
-	Name string `json:"name"`
+	Name    string                  `json:"name"`
+	Options []meta.SelectListOption `json:"options"`
 }
 
 // FieldMetadata struct
@@ -102,14 +91,14 @@ type FieldMetadata struct {
 	Length             int                      `json:"length"`
 	Type               string                   `json:"type"`
 	Label              string                   `json:"label"`
-	SelectListMetadata *SelectListMetadata      `json:"selectlist"`
-	NumberMetadata     *meta.NumberMetadata     `json:"number"`
-	ReferenceMetadata  *meta.ReferenceMetadata  `json:"reference"`
-	FileMetadata       *meta.FileMetadata       `json:"file"`
-	ValidationMetadata *meta.ValidationMetadata `json:"validate"`
-	AutoPopulate       string                   `json:"autopopulate"`
-	SubFields          []SubField               `json:"subfields"`
-	SubType            string                   `json:"subtype"`
+	SelectListMetadata *SelectListMetadata      `json:"selectlist,omitempty"`
+	NumberMetadata     *meta.NumberMetadata     `json:"number,omitempty"`
+	ReferenceMetadata  *meta.ReferenceMetadata  `json:"reference,omitempty"`
+	FileMetadata       *meta.FileMetadata       `json:"file,omitempty"`
+	ValidationMetadata *meta.ValidationMetadata `json:"validate,omitempty"`
+	AutoPopulate       string                   `json:"autopopulate,omitempty"`
+	SubFields          []meta.SubField          `json:"subfields,omitempty"`
+	SubType            string                   `json:"subtype,omitempty"`
 }
 
 // GetFullName function

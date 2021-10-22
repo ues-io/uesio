@@ -45,45 +45,21 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		FileMetadata:       f.FileMetadata,
 		NumberMetadata:     f.NumberMetadata,
 		ValidationMetadata: f.ValidationMetadata,
-		SelectListMetadata: &adapt.SelectListMetadata{
+		SelectListMetadata: GetSelectListMetadata(f),
+		Required:           f.Required,
+		AutoPopulate:       f.AutoPopulate,
+		SubFields:          f.SubFields,
+		SubType:            f.SubType,
+	}
+}
+
+func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
+	if f.Type == "SELECT" {
+		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
-		},
-		Required:     f.Required,
-		AutoPopulate: f.AutoPopulate,
-		SubFields:    GetSubFieldsMetadata(f.SubFields),
-		SubType:      f.SubType,
+		}
 	}
-}
-
-// GetSubFieldsMetadata function
-func GetSubFieldsMetadata(subfields []meta.SubField) []adapt.SubField {
-	subfieldsMetadata := []adapt.SubField{}
-	for _, subfield := range subfields {
-		subfieldsMetadata = append(subfieldsMetadata, adapt.SubField{
-			Name: subfield.Name,
-		})
-	}
-	return subfieldsMetadata
-}
-
-// GetSelectListMetadata function
-func GetSelectListMetadata(sl *meta.SelectList) *adapt.SelectListMetadata {
-	return &adapt.SelectListMetadata{
-		Name:    sl.Name,
-		Options: GetSelectListOptionsMetadata(sl.Options),
-	}
-}
-
-// GetSelectListOptionsMetadata function
-func GetSelectListOptionsMetadata(options []meta.SelectListOption) []adapt.SelectListOptionMetadata {
-	optionsMetadata := []adapt.SelectListOptionMetadata{}
-	for _, option := range options {
-		optionsMetadata = append(optionsMetadata, adapt.SelectListOptionMetadata{
-			Label: option.Label,
-			Value: option.Value,
-		})
-	}
-	return optionsMetadata
+	return nil
 }
 
 // LoadCollectionMetadata function
@@ -238,7 +214,10 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 		if err != nil {
 			return err
 		}
-		selectListMetadata = GetSelectListMetadata(&selectList)
+		selectListMetadata = &adapt.SelectListMetadata{
+			Name:    selectList.Name,
+			Options: selectList.Options,
+		}
 	}
 
 	collectionMetadata, err := metadataCache.GetCollection(collectionKey)

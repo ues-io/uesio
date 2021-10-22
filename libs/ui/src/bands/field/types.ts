@@ -26,6 +26,9 @@ type SelectOption = {
 
 type SubField = {
 	name: string
+	type: FieldType
+	label: string
+	subfields?: SubField[]
 }
 type NumberMetadata = {
 	decimals: number
