@@ -33,7 +33,7 @@ const ThemeEditor: FunctionComponent<Props> = (props) => {
 		return null
 	}
 
-	const value = record.getFieldString(fieldId)
+	const value = record.getFieldValue<string>(fieldId)
 
 	useEffect(() => {
 		const themeDef: styles.ThemeStateDefinition = util.yaml
