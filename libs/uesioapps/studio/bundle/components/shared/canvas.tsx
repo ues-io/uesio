@@ -1,6 +1,30 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
+import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
 const Icon = component.registry.getUtility("io.icon")
+
+const getIndex = (
+	target: Element | null,
+	prevTarget: Element | null,
+	e: DragEvent
+): number => {
+	if (!prevTarget) {
+		const dataInsertIndex = target?.getAttribute("data-insertindex")
+		return dataInsertIndex ? parseInt(dataInsertIndex, 10) : 0
+	}
+	const dataIndex = prevTarget.getAttribute("data-index")
+	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
+	const dataDirection = prevTarget.getAttribute("data-direction")
+	if (!dataIndex) return 0
+	const index = parseInt(dataIndex, 10)
+	if (dataPlaceholder === "true") {
+		return index
+	}
+	const bounds = prevTarget.getBoundingClientRect()
+	return isNextSlot(bounds, dataDirection || "vertical", e.pageX, e.pageY)
+		? index + 1
+		: index
+}
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
@@ -63,16 +87,23 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		props
 	)
 
+	const uesio = hooks.useUesio(props)
+	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
+	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const fullDragPath = component.path.makeFullPath(
+		dragType,
+		dragItem,
+		dragPath
+	)
+
+	const viewDefId = props.context.getViewDefId()
 	const viewDef = props.context.getViewDef()
-	// Hide/show blank slate div
-	const hasEmptyComponents =
-		viewDef && !viewDef.definition?.components?.length
+	const componentCount = viewDef?.definition?.components?.length
 
 	const route = props.context.getRoute()
-	if (!route) {
+	if (!route || !viewDefId) {
 		return null
 	}
-	const uesio = hooks.useUesio(props)
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -98,7 +129,56 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const onDragOver = (e: DragEvent) => {
 		e.preventDefault()
 		e.stopPropagation()
-		uesio.builder.clearDropNode()
+
+		let target = e.target as Element | null
+		let prevTarget = null as Element | null
+		let validPath = ""
+		while (target !== null && target !== e.currentTarget) {
+			const accepts = target.getAttribute("data-accepts")?.split(",")
+			if (accepts && isDropAllowed(accepts, fullDragPath)) {
+				validPath = target.getAttribute("data-path") || ""
+				break
+			}
+			prevTarget = target
+			target = target.parentElement || null
+		}
+
+		if (validPath) {
+			const index = getIndex(target, prevTarget, e)
+			let usePath = `${validPath}["${index}"]`
+			if (usePath === component.path.getParentPath(dragPath)) {
+				// Don't drop on ourselfs, just move to the next index
+				usePath = `${validPath}["${index + 1}"]`
+			}
+			if (dropPath !== usePath) {
+				uesio.builder.setDropNode("viewdef", viewDefId, usePath)
+			}
+			return
+		}
+
+		if (dropPath !== "") {
+			uesio.builder.clearDropNode()
+		}
+	}
+
+	const onDrop = (e: DragEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
+		if (!dropPath) {
+			return
+		}
+		const index = component.path.getIndexFromPath(dropPath) || 0
+		const fullDropPath = component.path.makeFullPath(
+			"viewdef",
+			viewDefId,
+			component.path.getParentPath(dropPath)
+		)
+		handleDrop(
+			fullDragPath,
+			fullDropPath,
+			getDropIndex(fullDragPath, fullDropPath, index),
+			uesio
+		)
 	}
 
 	return (
@@ -106,9 +186,15 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			<div
 				onDragLeave={onDragLeave}
 				onDragOver={onDragOver}
+				onDrop={onDrop}
 				className={classes.root}
 			>
-				<div className={classes.inner}>
+				<div
+					className={classes.inner}
+					data-accepts="uesio.standalone"
+					data-path={'["components"]'}
+					data-insertindex={componentCount}
+				>
 					<component.View
 						context={props.context}
 						path=""
@@ -119,7 +205,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					/>
 
 					{/* No content yet */}
-					{hasEmptyComponents && (
+					{!componentCount && (
 						<div className={classes.noContent}>
 							<div className="inner">
 								<Icon
