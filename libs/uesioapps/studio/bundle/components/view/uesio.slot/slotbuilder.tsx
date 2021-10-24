@@ -1,11 +1,6 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
-import { FunctionComponent, DragEvent } from "react"
-import {
-	handleDrop,
-	getDropIndex,
-	isDropAllowed,
-	isNextSlot,
-} from "../../shared/dragdrop"
+import { FunctionComponent } from "react"
+import { isDropAllowed } from "../../shared/dragdrop"
 
 type SlotDefinition = {
 	items: definition.DefinitionList
@@ -42,110 +37,33 @@ const SlotBuilder: FunctionComponent<SlotProps> = (props) => {
 
 	if (!path || !viewDefId) return null
 
-	const isDragging = !!dragType && !!dragItem
-
-	const onDragOver = (e: DragEvent) => {
-		let target = e.target as Element | null
-		if (!isDropAllowed(accepts, fullDragPath)) {
-			return
-		}
-		e.preventDefault()
-		e.stopPropagation()
-
-		while (
-			target !== null &&
-			target !== e.currentTarget &&
-			target?.parentElement !== e.currentTarget
-		) {
-			target = target?.parentElement || null
-		}
-
-		const isCoverall = !!target?.getAttribute("data-coverall")
-		// Find the direct child
-		if (target === e.currentTarget || isCoverall) {
-			if (size === 0) {
-				uesio.builder.setDropNode("viewdef", viewDefId, `${path}["0"]`)
-			}
-		}
-
-		const dataIndex = target?.getAttribute("data-index")
-
-		if (target?.parentElement === e.currentTarget && dataIndex) {
-			const index = parseInt(dataIndex, 10)
-			const bounds = target.getBoundingClientRect()
-			const dropIndex = isNextSlot(
-				bounds,
-				direction || "vertical",
-				e.pageX,
-				e.pageY
-			)
-				? index + 1
-				: index
-			let usePath = `${path}["${dropIndex}"]`
-
-			if (usePath === component.path.getParentPath(dragPath)) {
-				// Don't drop on ourselfs, just move to the next index
-				usePath = `${path}["${dropIndex + 1}"]`
-			}
-
-			if (usePath !== dropPath) {
-				uesio.builder.setDropNode("viewdef", viewDefId, usePath)
-			}
-		}
-	}
-
-	const onDrop = (e: DragEvent) => {
-		if (!isDropAllowed(accepts, fullDragPath)) {
-			return
-		}
-		e.preventDefault()
-		e.stopPropagation()
-		const index = component.path.getIndexFromPath(dropPath) || 0
-		const fullDropPath = component.path.makeFullPath(
-			"viewdef",
-			viewDefId,
-			path
-		)
-		handleDrop(
-			fullDragPath,
-			fullDropPath,
-			getDropIndex(fullDragPath, fullDropPath, index),
-			uesio
-		)
-	}
-
 	const classes = styles.useStyles(
 		{
 			root: {
 				display: "contents",
 			},
-			coverall: {
-				...(size > 0 && {
-					position: "absolute",
-					top: 0,
-					bottom: 0,
-					left: 0,
-					right: 0,
+			placeholder: {
+				...(dropPath === `${path}["0"]` && {
+					border: "1px dashed #ccc",
+					backgroundColor: "#e5e5e5",
 				}),
-				...(size === 0 &&
-					isDropAllowed(accepts, fullDragPath) && {
-						minWidth: "40px",
-						minHeight: "40px",
-					}),
-				...(size === 0 &&
-					dropPath === `${path}["0"]` && {
-						border: "1px dashed #ccc",
-						backgroundColor: "#e5e5e5",
-					}),
+				minWidth: "40px",
+				minHeight: "40px",
 			},
 		},
 		props
 	)
 
 	return (
-		<div onDragOver={onDragOver} onDrop={onDrop} className={classes.root}>
-			{isDragging && (
-				<div className={classes.coverall} data-coverall="true" />
+		<div
+			className={classes.root}
+			data-accepts={accepts.join(",")}
+			data-direction={direction}
+			data-path={path}
+			data-insertindex={size}
+		>
+			{size === 0 && isDropAllowed(accepts, fullDragPath) && (
+				<div className={classes.placeholder} />
 			)}
 			{items.map((itemDef, index) => {
 				const [componentType, unWrappedDef] =
