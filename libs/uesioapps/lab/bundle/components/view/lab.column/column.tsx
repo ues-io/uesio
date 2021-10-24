@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { definition, component, styles } from "@uesio/ui"
 
-const IOColumn = component.registry.getUtility("io.column")
+const IOColumn = component.registry.getUtility("lab.column")
 
 export const getColumnFlexStyles = (
 	template: string,

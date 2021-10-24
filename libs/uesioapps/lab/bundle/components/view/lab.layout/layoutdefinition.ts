@@ -38,12 +38,12 @@ const LayoutPropertyDefinition: builder.BuildPropertiesDefinition = {
 		template: "1,1",
 		columns: [
 			{
-				"io.column": {
+				"lab.column": {
 					components: [],
 				},
 			},
 			{
-				"io.column": {
+				"lab.column": {
 					components: [],
 				},
 			},
