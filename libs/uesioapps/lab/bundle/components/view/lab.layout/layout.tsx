@@ -39,7 +39,7 @@ const Layout: FC<LayoutProps> = (props) => {
 				definition={props.definition}
 				listName="columns"
 				path={path}
-				accepts={["io.column"]}
+				accepts={["lab.column"]}
 				context={context}
 			/>
 		</IOLayout>

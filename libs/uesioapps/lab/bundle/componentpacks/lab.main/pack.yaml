@@ -2,5 +2,7 @@ name: main
 components:
   view:
     lab.layout:
+    lab.column:
   utility:
     lab.layout:
+    lab.column:

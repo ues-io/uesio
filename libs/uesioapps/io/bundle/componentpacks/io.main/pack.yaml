@@ -12,7 +12,6 @@ components:
       variants:
         - io.titlebar.io.dialog
     io.dialogplain:
-    io.column:
     io.field:
       variants:
         - io.textfield.io.default
@@ -69,7 +68,6 @@ components:
     io.multiselectfield:
     io.popper:
     io.referencefield:
-    io.column:
     io.scrollpanel:
     io.selectfield:
     io.table:
