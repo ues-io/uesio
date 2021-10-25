@@ -12,14 +12,14 @@ import (
 
 // LoadRequest struct
 type LoadRequest struct {
-	Collection string                       `json:"collection"`
-	Wire       string                       `json:"wire"`
-	Type       string                       `json:"type"`
-	Fields     []adapt.LoadRequestField     `json:"fields"`
-	Conditions []adapt.LoadRequestCondition `json:"conditions"`
-	Order      []adapt.LoadRequestOrder     `json:"order"`
-	Limit      int                          `json:"limit"`
-	Offset     int                          `json:"offset"`
+	Collection  string                       `json:"collection"`
+	Wire        string                       `json:"wire"`
+	Type        string                       `json:"type"`
+	Fields      []adapt.LoadRequestField     `json:"fields"`
+	Conditions  []adapt.LoadRequestCondition `json:"conditions"`
+	Order       []adapt.LoadRequestOrder     `json:"order"`
+	BatchSize   int                          `json:"batchsize"`
+	BatchNumber int                          `json:"batchnumber"`
 }
 
 // LoadRequestBatch struct
@@ -60,8 +60,8 @@ func Load(w http.ResponseWriter, r *http.Request) {
 			Fields:         wire.Fields,
 			Order:          wire.Order,
 			Type:           wire.Type,
-			Limit:          wire.Limit,
-			Offset:         wire.Offset,
+			BatchSize:      wire.BatchSize,
+			BatchNumber:    wire.BatchNumber,
 		}
 	}
 
