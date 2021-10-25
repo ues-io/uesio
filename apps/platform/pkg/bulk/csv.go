@@ -18,6 +18,7 @@ type CSVOptions struct {
 func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.MetadataCache, session *sess.Session, options *CSVOptions) ([]datasource.SaveRequest, error) {
 
 	r := csv.NewReader(body)
+	r.LazyQuotes = true
 	if options != nil {
 		r.Comma = options.Comma
 	}
@@ -102,14 +103,6 @@ func processCSV(body io.ReadCloser, spec *meta.JobSpec, metadata *adapt.Metadata
 					MatchField:    mapping.MatchField,
 					MatchTemplate: "${" + mapping.MatchField + "}",
 				})
-			}
-			refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
-			if err != nil {
-				return nil, err
-			}
-
-			if mapping.MatchField == "" {
-				mapping.MatchField = refCollectionMetadata.NameField
 			}
 
 			loaderFuncs = append(loaderFuncs, getReferenceLoader(index, &mapping, fieldMetadata, valueGetter))
