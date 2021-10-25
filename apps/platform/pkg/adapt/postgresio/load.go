@@ -148,7 +148,7 @@ func loadOne(
 		"collection = $1",
 	}
 
-	paramCounter := 2
+	paramCounter := NewParamCounter(2)
 	values := []interface{}{
 		collectionName,
 	}
@@ -162,9 +162,8 @@ func loadOne(
 			}
 			colValeStr := ""
 			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE $"+strconv.Itoa(paramCounter))
+			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE "+paramCounter.get())
 			values = append(values, colValeStr)
-			paramCounter++
 			continue
 		}
 
@@ -180,20 +179,17 @@ func loadOne(
 		}
 
 		if condition.Operator == "IN" {
-			conditionStrings = append(conditionStrings, fieldName+" = ANY($"+strconv.Itoa(paramCounter)+")")
+			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
 			values = append(values, pq.Array(conditionValue))
-			paramCounter++
 		} else {
-			conditionStrings = append(conditionStrings, fieldName+" = $"+strconv.Itoa(paramCounter))
-			paramCounter++
+			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
 			values = append(values, conditionValue)
 		}
 	}
 
 	// UserTokens query
 	if collectionMetadata.Access == "protected" {
-		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY($"+strconv.Itoa(paramCounter)+"))")
-		paramCounter++
+		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
 		values = append(values, pq.Array(userTokens))
 	}
 
@@ -219,11 +215,12 @@ func loadOne(
 	if len(op.Order) > 0 {
 		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
 	}
-	if op.Limit != 0 {
-		loadQuery = loadQuery + " limit " + strconv.Itoa(op.Limit)
+	if op.BatchSize == 0 || op.BatchSize > 100 {
+		op.BatchSize = 100
 	}
-	if op.Offset != 0 {
-		loadQuery = loadQuery + " offset " + strconv.Itoa(op.Offset)
+	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
+	if op.BatchNumber != 0 {
+		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
 	}
 
 	rows, err := db.Query(loadQuery, values...)
@@ -261,6 +258,13 @@ func loadOne(
 	err = rows.Err()
 	if err != nil {
 		return err
+	}
+
+	// Check to see if we loaded in a full amount
+	if op.Collection.Len() == op.BatchSize+1 {
+		op.HasMoreBatches = true
+		// Remove the last item
+		op.Collection.Slice(0, op.BatchSize)
 	}
 
 	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {

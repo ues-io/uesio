@@ -12,6 +12,7 @@ type PlainWire = {
 	changes: Record<string, PlainWireRecord>
 	deletes: Record<string, PlainWireRecord>
 	error?: string
+	batchnumber?: number
 }
 
 export { PlainWire }
