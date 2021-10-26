@@ -1,4 +1,4 @@
-import { DefinitionMap } from "../definition/definition"
+import { DefinitionMap, DefinitionValue } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
@@ -91,7 +91,15 @@ type BasePropDescriptor = {
 	name: string
 	type: string
 	label: string
+	display?: DisplayCondition[]
 }
+
+type DisplayCondition = {
+	property: string
+} & (
+	| { values: DefinitionValue[]; value?: never }
+	| { value: DefinitionValue; values?: never }
+)
 
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 	filter?: (def: definition.Definition, id: string) => boolean
@@ -228,6 +236,7 @@ interface PropRendererProps extends definition.BaseProps {
 }
 
 export {
+	DisplayCondition,
 	ValueAPI,
 	PropRendererProps,
 	CustomPropRendererProps,
