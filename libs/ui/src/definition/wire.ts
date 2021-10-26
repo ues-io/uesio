@@ -13,8 +13,7 @@ type WireDefinition = {
 	defaults?: WireDefault[]
 	type?: WireType
 	order?: WireOrderDescription[]
-	limit?: number
-	offset?: number
+	batchsize?: number
 }
 
 type WireFieldDefinitionMap = {

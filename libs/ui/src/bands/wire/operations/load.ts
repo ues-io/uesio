@@ -52,8 +52,8 @@ export default createAsyncThunk<
 				fields: getFieldsRequest(wiredef.fields) || [],
 				conditions: getLoadRequestConditions(wire.conditions, context),
 				order: wiredef.order,
-				limit: wiredef.limit,
-				offset: wiredef.offset,
+				batchsize: wiredef.batchsize,
+				batchnumber: wire.batchnumber,
 			}
 		}),
 	}

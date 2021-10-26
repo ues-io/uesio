@@ -61,9 +61,9 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			],
 		},
 		{
-			name: "limit",
+			name: "batchsize",
 			type: "NUMBER",
-			label: "Limit",
+			label: "Batch Size",
 		},
 	],
 	sections: [
