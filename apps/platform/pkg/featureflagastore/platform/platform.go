@@ -1,0 +1,46 @@
+package environment
+
+import (
+	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/auth"
+	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+)
+
+// FeatureFlagStore struct
+type FeatureFlagStore struct {
+}
+
+// Get function
+func (cs *FeatureFlagStore) Get(key string) (string, error) {
+	var cv meta.ConfigStoreValue
+	headlessSession, err := auth.GetHeadlessSession()
+	if err != nil {
+		return "", err
+	}
+	err = datasource.PlatformLoadOne(&cv, []adapt.LoadRequestCondition{
+		{
+			Field: "uesio.id",
+			Value: key,
+		},
+	}, headlessSession)
+	if err != nil {
+		return "", nil
+	}
+	return cv.Value, nil
+}
+
+// Set function
+func (cs *FeatureFlagStore) Set(key, value string) error {
+	cv := meta.ConfigStoreValue{
+		Key:   key,
+		Value: value,
+	}
+	headlessSession, err := auth.GetHeadlessSession()
+	if err != nil {
+		return err
+	}
+	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
+		Upsert: &adapt.UpsertOptions{},
+	}, headlessSession)
+}

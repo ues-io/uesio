@@ -6,25 +6,25 @@ import (
 	"github.com/humandad/yaml"
 )
 
-type FeatureFlagOption struct {
-	Scope string `uesio:"studio.scope" json:"scope"`
-	Value string `uesio:"studio.value" json:"value"`
-}
+// type FeatureFlagOption struct {
+// 	Scope string `uesio:"studio.scope" json:"scope"`
+// 	Value string `uesio:"studio.value" json:"value"`
+// }
 
 // FeatureFlag struct
 type FeatureFlag struct {
-	ID        string              `yaml:"-" uesio:"uesio.id"`
-	Name      string              `yaml:"name" uesio:"studio.name"`
-	Namespace string              `yaml:"-" uesio:"-"`
-	Options   []FeatureFlagOption `yaml:"options" uesio:"studio.options"`
-	Restrict  []string            `yaml:"restrict" uesio:"studio.restrict"`
-	Workspace *Workspace          `yaml:"-" uesio:"studio.workspace"`
-	itemMeta  *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy *User               `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User               `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User               `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64               `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64               `yaml:"-" uesio:"uesio.createdat"`
+	ID        string `yaml:"-" uesio:"uesio.id"`
+	Name      string `yaml:"name" uesio:"studio.name"`
+	Namespace string `yaml:"-" uesio:"-"`
+	// Options   []FeatureFlagOption `yaml:"options" uesio:"studio.options"`
+	// Restrict  []string            `yaml:"restrict" uesio:"studio.restrict"`
+	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // NewFeatureFlag function

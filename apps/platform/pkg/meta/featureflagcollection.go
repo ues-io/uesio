@@ -9,7 +9,7 @@ type FeatureFlagCollection []FeatureFlag
 
 // GetName function
 func (cvc *FeatureFlagCollection) GetName() string {
-	return "studio.FeatureFlags"
+	return "studio.featureflags"
 }
 
 // GetFields function

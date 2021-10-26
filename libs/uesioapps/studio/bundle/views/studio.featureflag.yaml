@@ -23,8 +23,6 @@ definition:
         uesio.id:
         studio.name:
         studio.workspace:
-        studio.options:
-        studio.restrict:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP

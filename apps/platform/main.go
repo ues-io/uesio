@@ -30,6 +30,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
+	//ffsp "github.com/thecloudmasters/uesio/pkg/featureflagstore/platform"
 )
 
 func init() {
@@ -60,6 +61,9 @@ func init() {
 	// Secret Stores
 	secretstore.RegisterSecretStore("environment", &sse.SecretStore{})
 	secretstore.RegisterSecretStore("platform", &ssp.SecretStore{})
+
+	//Feature Flag Store "platform", &ffsp.FeatureFlagStore{}
+	featureflagstore.RegisterFeatureFlagStore()
 
 	// Bundle Stores
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})

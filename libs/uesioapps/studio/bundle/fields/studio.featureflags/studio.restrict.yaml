@@ -4,4 +4,6 @@ type: LIST
 label: Restrict
 subtype: TEXT
 subfields:
-  - name: restrict
+  - name: studio.restrict
+    label: Restrict
+    type: TEXT
