@@ -1,24 +1,28 @@
-import { FC, useState } from "react"
+import React, { FC, useState } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
 import ExpandPanel from "../expandpanel"
-import { builder, component } from "@uesio/ui"
+import { builder, component, definition, wire, styles } from "@uesio/ui"
 import PropList from "./proplist"
 import PropNodeTag from "../buildpropitem/propnodetag"
 
-const SelectField = component.registry.getUtility("io.selectfield")
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
-const TextField = component.registry.getUtility("io.textfield")
-
-//    - field: studio.type
-// 		value: "REFERENCE"
-
-//   - type: paramIsValue
-//     param: step
-//     value: "1"
+import ConditionProp, { Condition } from "./displayconditions/conditionprop"
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const { path, context, propsDef, valueAPI } = props
 	const section = props.section as builder.PropListSection
+
+	const classes = styles.useStyles(
+		{
+			root: {},
+			conditionProp: {
+				border: "1px solid red",
+				marginBottom: "1em",
+			},
+		},
+		props
+	)
+
+	const conditions = valueAPI.get(`${path}["uesio.display"]`) as Condition[]
 
 	const properties: builder.PropDescriptor[] = [
 		{
@@ -34,25 +38,12 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 
 	const comparisonOperators = ["=", "<", ">", "!="]
 
-	const [selectedField, setSelectedField] = useState<string>("")
 	const [comparisonOperator, setComparisonOperator] = useState<string>("")
-	const [compareValue, setCompareValue] = useState<string>("")
-	const availableFields = [
-		{
-			label: "crm.name",
-			value: "crm.name",
-		},
-		{
-			label: "crm.externalid",
-			value: "crm.externalid",
-		},
-	]
-	const updateDefinition = (field: string, value: string) => {
-		valueAPI.add(`${path}["uesio.display"]`, {
-			field,
-			value,
-		})
-	}
+
+	const def = valueAPI.get(path || "") as definition.DefinitionMap | undefined
+	const displayConditions: any[] = def
+		? (def["uesio.display"] as any[]) || []
+		: []
 
 	return (
 		<>
@@ -61,17 +52,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 			title={section.title}
 			context={context}
 		> */}
-
-			{/* // </ExpandPanel> */}
-			<pre>{JSON.stringify(path, null, 2)}</pre>
-			<SelectField
-				context={context}
-				label={"Field"}
-				value={selectedField}
-				options={availableFields}
-				setValue={(value: string) => setSelectedField(value)}
-			/>
-			<SelectField
+			{/* <SelectField
 				context={context}
 				label={""}
 				value={comparisonOperator}
@@ -80,18 +61,69 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 					label: x,
 				}))}
 				setValue={(value: string) => setComparisonOperator(value)}
-			/>
-			<TextField
-				value={compareValue}
-				label={"Compare value"}
-				setValue={(value: string): void => setCompareValue(value)}
-				context={context}
-			/>
-			<button
-				onClick={() => updateDefinition(selectedField, compareValue)}
-			>
-				submit
-			</button>
+			/> */}
+
+			{/* // </ExpandPanel> */}
+			<pre>{JSON.stringify(conditions, null, 2)}</pre>
+			{conditions?.length &&
+				conditions.map((c, index) => (
+					<ConditionProp
+						className={classes.conditionProp}
+						path={path}
+						index={index}
+						condition={c}
+						context={context}
+						valueAPI={valueAPI}
+					/>
+				))}
+
+			{/* {displayConditions.map(
+				(condition: wire.WireConditionDefinition, index) => {
+					const conditionPath = `${path}["conditions"]["${index}"]`
+					const selected = selectedNode.startsWith(conditionPath)
+
+					return (
+						<PropNodeTag
+							title={getConditionTitle(condition)}
+							icon={"filter_list"}
+							selected={selected}
+							iconColor={primaryColor}
+							key={index}
+							onClick={() => {
+								uesio.builder.setSelectedNode(
+									"viewdef",
+									viewDefId,
+									conditionPath
+								)
+							}}
+							popChildren
+							context={context}
+						>
+							{
+								<PropertiesPane
+									path={conditionPath}
+									index={0}
+									context={context}
+									propsDef={{
+										title: "Condition",
+										sections: [],
+										defaultDefinition: () => ({}),
+										properties:
+											getConditionProperties(condition),
+										actions: [
+											{
+												label: "Toggle Condition",
+												type: "TOGGLE_CONDITION",
+											},
+										],
+									}}
+									valueAPI={valueAPI}
+								/>
+							}
+						</PropNodeTag>
+					)
+				}
+			)} */}
 		</>
 	)
 }
