@@ -68,14 +68,13 @@ func GetValueFromKey(key string, session *sess.Session) (string, error) {
 }
 
 func GetValue(cv *meta.FeatureFlag, session *sess.Session) (string, error) {
-	// Only use the environment featureflagstore for now
-	// store, err := GetFeatureFlagStore(cv.Store)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// fullKey := getConfigKey(cv, session)
-	// return store.Get(fullKey)
-	return "", nil
+	// Only use platfrom
+	store, err := GetFeatureFlagStore("platfrom")
+	if err != nil {
+		return "", err
+	}
+	fullKey := getConfigKey(cv, session)
+	return store.Get(fullKey)
 }
 
 func SetValueFromKey(key, value string, session *sess.Session) error {
@@ -91,26 +90,25 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 }
 
 func SetValue(cv *meta.FeatureFlag, value string, session *sess.Session) error {
-	// Only use the environment featureflagstore for now
-	// store, err := GetFeatureFlagStore(cv.Store)
-	// if err != nil {
-	// 	return err
-	// }
-	// fullKey := getConfigKey(cv, session)
-	// return store.Set(fullKey, value)
-	return nil
+	// Only use platfrom
+	store, err := GetFeatureFlagStore("platfrom")
+	if err != nil {
+		return err
+	}
+	fullKey := getConfigKey(cv, session)
+	return store.Set(fullKey, value)
 }
 
 // Merge function
 func Merge(template string, session *sess.Session) (string, error) {
-	configTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
+	featureTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
 		return GetValueFromKey(key, session)
 	})
 	if err != nil {
 		return "", err
 	}
 
-	value, err := templating.Execute(configTemplate, nil)
+	value, err := templating.Execute(featureTemplate, nil)
 	if err != nil {
 		return "", err
 	}

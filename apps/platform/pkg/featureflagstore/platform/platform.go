@@ -12,13 +12,13 @@ type FeatureFlagStore struct {
 }
 
 // Get function
-func (cs *FeatureFlagStore) Get(key string) (string, error) {
-	var cv meta.ConfigStoreValue
+func (ffs *FeatureFlagStore) Get(key string) (string, error) {
+	var ffa meta.FeatureFlagAssignment
 	headlessSession, err := auth.GetHeadlessSession()
 	if err != nil {
 		return "", err
 	}
-	err = datasource.PlatformLoadOne(&cv, []adapt.LoadRequestCondition{
+	err = datasource.PlatformLoadOne(&ffa, []adapt.LoadRequestCondition{
 		{
 			Field: "uesio.id",
 			Value: key,
@@ -27,12 +27,12 @@ func (cs *FeatureFlagStore) Get(key string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	return cv.Value, nil
+	return ffa.Value, nil
 }
 
 // Set function
-func (cs *FeatureFlagStore) Set(key, value string) error {
-	cv := meta.ConfigStoreValue{
+func (ffs *FeatureFlagStore) Set(key, value string) error {
+	ffa := meta.FeatureFlagAssignment{
 		Key:   key,
 		Value: value,
 	}
@@ -40,7 +40,7 @@ func (cs *FeatureFlagStore) Set(key, value string) error {
 	if err != nil {
 		return err
 	}
-	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
+	return datasource.PlatformSaveOne(&ffa, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
 	}, headlessSession)
 }
