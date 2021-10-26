@@ -1,0 +1,88 @@
+package controller
+
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
+	"github.com/thecloudmasters/uesio/pkg/logger"
+	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/sess"
+)
+
+type FeatureFlagResponse struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+	Value     string `json:"value"`
+	ManagedBy string `json:"managedby"`
+}
+
+func getFeatureFlag(session *sess.Session) ([]FeatureFlagResponse, error) {
+	var featureFlags meta.FeatureFlagCollection
+	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
+	if err != nil {
+		return nil, err
+	}
+
+	response := []FeatureFlagResponse{}
+
+	for _, cv := range featureFlags {
+		value, err := featureflagstore.GetValue(&cv, session)
+		if err != nil {
+			return nil, err
+		}
+		response = append(response, FeatureFlagResponse{
+			Name:      cv.Name,
+			Namespace: cv.Namespace,
+			//ManagedBy: cv.ManagedBy,
+			Value: value,
+		})
+	}
+	return response, nil
+}
+
+//FeatureFlag function
+func FeatureFlag(w http.ResponseWriter, r *http.Request) {
+
+	session := middleware.GetSession(r)
+
+	response, err := getValues(session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(w, r, response)
+}
+
+type FeatureFlagSetRequest struct {
+	Value string `json:"value"`
+}
+
+//SetFeatureFlag function
+func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
+	session := middleware.GetSession(r)
+	vars := mux.Vars(r)
+	key := vars["key"]
+	var setRequest FeatureFlagSetRequest
+	err := json.NewDecoder(r.Body).Decode(&setRequest)
+	if err != nil {
+		msg := "Invalid request format: " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	err = featureflagstore.SetValueFromKey(key, setRequest.Value, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	respondJSON(w, r, &BotResponse{
+		Success: true,
+	})
+}
