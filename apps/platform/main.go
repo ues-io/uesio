@@ -22,6 +22,8 @@ import (
 	cse "github.com/thecloudmasters/uesio/pkg/configstore/environment"
 	csp "github.com/thecloudmasters/uesio/pkg/configstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
+	ffsp "github.com/thecloudmasters/uesio/pkg/featureflagstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
@@ -30,7 +32,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/secretstore"
 	sse "github.com/thecloudmasters/uesio/pkg/secretstore/environment"
 	ssp "github.com/thecloudmasters/uesio/pkg/secretstore/platform"
-	//ffsp "github.com/thecloudmasters/uesio/pkg/featureflagstore/platform"
 )
 
 func init() {
@@ -62,8 +63,8 @@ func init() {
 	secretstore.RegisterSecretStore("environment", &sse.SecretStore{})
 	secretstore.RegisterSecretStore("platform", &ssp.SecretStore{})
 
-	//Feature Flag Store "platform", &ffsp.FeatureFlagStore{}
-	featureflagstore.RegisterFeatureFlagStore()
+	//Feature Flag Store
+	featureflagstore.RegisterFeatureFlagStore("platform", &ffsp.FeatureFlagStore{})
 
 	// Bundle Stores
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})
