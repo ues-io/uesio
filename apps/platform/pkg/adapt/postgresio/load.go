@@ -19,9 +19,16 @@ type DataScanner struct {
 	Field      *adapt.FieldMetadata
 	References *adapt.ReferenceRegistry
 	Index      *int
+	BatchSize  int
 }
 
 func (ds *DataScanner) Scan(src interface{}) error {
+
+	// Skip the last one
+	if ds.BatchSize == *ds.Index {
+		return nil
+	}
+
 	fieldMetadata := ds.Field
 	if src == nil {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
@@ -215,8 +222,8 @@ func loadOne(
 	if len(op.Order) > 0 {
 		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
 	}
-	if op.BatchSize == 0 || op.BatchSize > 100 {
-		op.BatchSize = 100
+	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_BATCH_SIZE {
+		op.BatchSize = adapt.MAX_BATCH_SIZE
 	}
 	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
 	if op.BatchNumber != 0 {
@@ -244,6 +251,7 @@ func loadOne(
 			Field:      fieldMap[name],
 			References: &referencedCollections,
 			Index:      &index,
+			BatchSize:  op.BatchSize,
 		}
 	}
 
