@@ -201,7 +201,7 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 			return err
 		}
 	}
-	if fieldType == "SELECTLIST" {
+	if fieldType == "SELECT" {
 		err := validateSelectListField(node, f.GetKey())
 		if err != nil {
 			return err

@@ -83,9 +83,10 @@ const ListField: FunctionComponent<Props> = (props) => {
 			<Grid styles={rowStyles} context={context}>
 				{!isText &&
 					subFields.map((subfield) => (
-						<FieldLabel label={subfield.name} context={context}>
-							{subfield.name}
-						</FieldLabel>
+						<FieldLabel
+							label={subfield.label || subfield.name}
+							context={context}
+						/>
 					))}
 				{editMode && !autoAdd && (
 					<IconButton
