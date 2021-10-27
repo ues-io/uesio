@@ -68,8 +68,8 @@ func GetValueFromKey(key string, session *sess.Session) (string, error) {
 }
 
 func GetValue(cv *meta.FeatureFlag, session *sess.Session) (string, error) {
-	// Only use platfrom
-	store, err := GetFeatureFlagStore("platfrom")
+	// Only use platform
+	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return "", err
 	}
@@ -90,8 +90,8 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 }
 
 func SetValue(cv *meta.FeatureFlag, value string, session *sess.Session) error {
-	// Only use platfrom
-	store, err := GetFeatureFlagStore("platfrom")
+	// Only use platform
+	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return err
 	}

@@ -49,7 +49,7 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	response, err := getValues(session)
+	response, err := getFeatureFlag(session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

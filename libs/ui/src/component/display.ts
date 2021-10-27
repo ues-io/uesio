@@ -29,12 +29,19 @@ type CollectionContextCondition = {
 	collection: string
 }
 
+type FeatureFlag = {
+	type: "featureFlag"
+	field: string
+	value: string
+}
+
 type DisplayCondition =
 	| FieldEqualsValueCondition
 	| FieldNotEqualsValueCondition
 	| ParamIsSetCondition
 	| ParamIsValueCondition
 	| CollectionContextCondition
+	| FeatureFlag
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {

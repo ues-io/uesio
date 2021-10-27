@@ -31,6 +31,13 @@ type SecretResponse = {
 	value: string
 }
 
+type FeatureFlagResponse = {
+	name: string
+	namespace: string
+	managedby: string
+	value: string
+}
+
 type JobResponse = {
 	id: string
 }
@@ -96,6 +103,12 @@ interface Platform {
 		key: string,
 		value: string
 	): Promise<BotResponse>
+	getFeatureFlags(context: Context): Promise<SecretResponse[]>
+	setFeatureFlag(
+		context: Context,
+		key: string,
+		value: string
+	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>
 	createImportJob(context: Context, spec: ImportSpec): Promise<JobResponse>
@@ -106,4 +119,11 @@ interface Platform {
 	): Promise<Response>
 }
 
-export { Platform, BotResponse, BotParams, ConfigValueResponse, SecretResponse }
+export {
+	Platform,
+	BotResponse,
+	BotParams,
+	ConfigValueResponse,
+	SecretResponse,
+	FeatureFlagResponse,
+}
