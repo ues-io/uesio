@@ -4,7 +4,8 @@ import ExpandPanel from "../expandpanel"
 import { builder, component, definition, wire, styles } from "@uesio/ui"
 import PropList from "./proplist"
 import PropNodeTag from "../buildpropitem/propnodetag"
-
+import PropertiesPane from "../propertiespane"
+import conditionProperties from "./displayconditions/conditionProperties"
 import ConditionProp, { Condition } from "./displayconditions/conditionprop"
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
@@ -15,8 +16,7 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 		{
 			root: {},
 			conditionProp: {
-				border: "1px solid red",
-				marginBottom: "1em",
+				padding: "8px",
 			},
 		},
 		props
@@ -41,6 +41,9 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 	const [comparisonOperator, setComparisonOperator] = useState<string>("")
 
 	const def = valueAPI.get(path || "") as definition.DefinitionMap | undefined
+	const [selectedCondition, setSelectedCondition] = useState<number | null>(
+		null
+	)
 	const displayConditions: any[] = def
 		? (def["uesio.display"] as any[]) || []
 		: []
@@ -67,14 +70,47 @@ const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
 			<pre>{JSON.stringify(conditions, null, 2)}</pre>
 			{conditions?.length &&
 				conditions.map((c, index) => (
-					<ConditionProp
-						className={classes.conditionProp}
-						path={path}
-						index={index}
-						condition={c}
+					// <ConditionProp
+					// 	className={classes.conditionProp}
+					// 	path={path}
+					// 	index={index}
+					// 	condition={c}
+					// 	context={context}
+					// 	valueAPI={valueAPI}
+					// />
+					<PropNodeTag
+						title={`${c.type}`}
+						icon={"filter_list"}
+						selected={selectedCondition === index}
+						// iconColor={primaryColor}
+						key={index}
+						onClick={() => {
+							setSelectedCondition(index)
+						}}
+						popChildren
 						context={context}
-						valueAPI={valueAPI}
-					/>
+					>
+						{/* <ConditionProp
+							className={classes.conditionProp}
+							path={path}
+							index={index}
+							condition={c}
+							context={context}
+							valueAPI={valueAPI}
+						/> */}
+						<PropertiesPane
+							path={`${props.path}[${index}]`}
+							index={0}
+							context={context}
+							propsDef={{
+								title: "Condition",
+								sections: [],
+								defaultDefinition: () => ({}),
+								properties: conditionProperties[c.type],
+							}}
+							valueAPI={valueAPI}
+						/>
+					</PropNodeTag>
 				))}
 
 			{/* {displayConditions.map(

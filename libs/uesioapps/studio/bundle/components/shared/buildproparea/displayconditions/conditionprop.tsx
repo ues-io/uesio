@@ -41,7 +41,7 @@ const TypeSelector: FC<Y<Condition>> = (props) => {
 	return (
 		<SelectField
 			context={props.context}
-			label={"Field"}
+			label={"Type"}
 			value={props.condition.type}
 			options={options}
 			setValue={(val: string) =>
@@ -144,7 +144,8 @@ interface ValueCheckProps extends definition.BaseProps {
  */
 const FieldIsValue = (props: Y<IFieldIsValue>) => {
 	// as seen in YAML:
-	//    - field: studio.type
+	//    -  type:
+	//   field: studio.type
 	// 		value: "REFERENCE"
 
 	const options = [
