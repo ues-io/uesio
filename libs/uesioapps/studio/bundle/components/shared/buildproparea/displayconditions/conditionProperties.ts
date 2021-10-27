@@ -30,7 +30,7 @@ export const properties: builder.PropDescriptor[] = [
 		metadataType: "FIELD",
 		label: "Field",
 		groupingParents: 2,
-		groupingProperty: "collection",
+		groupingProperty: "collection", // Todo, needs a fix to work in the usecase here
 		display: [
 			{
 				property: "type",
@@ -40,8 +40,7 @@ export const properties: builder.PropDescriptor[] = [
 	},
 	{
 		name: "param",
-		type: "METADATA",
-		metadataType: "ROUTE",
+		type: "TEXT",
 		label: "Param",
 		display: [
 			{
