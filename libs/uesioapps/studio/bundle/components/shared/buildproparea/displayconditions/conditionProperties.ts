@@ -1,14 +1,26 @@
 import { builder } from "@uesio/ui"
 
-export const paramIsValue: builder.PropDescriptor[] = [
+export const properties: builder.PropDescriptor[] = [
 	{
 		name: "type",
 		type: "SELECT",
 		label: "Type",
 		options: [
 			{
+				label: "Select an option",
+				value: "",
+			},
+			{
 				label: "Param is set",
 				value: "paramIsSet",
+			},
+			{
+				label: "Field equals",
+				value: "fieldIsValue",
+			},
+			{
+				label: "Param equals",
+				value: "paramIsValue",
 			},
 		],
 	},
@@ -22,7 +34,19 @@ export const paramIsValue: builder.PropDescriptor[] = [
 		display: [
 			{
 				property: "type",
-				values: ["fieldHasValue", "ParamHasValue"],
+				values: ["fieldIsValue"],
+			},
+		],
+	},
+	{
+		name: "param",
+		type: "METADATA",
+		metadataType: "ROUTE",
+		label: "Param",
+		display: [
+			{
+				property: "type",
+				values: ["paramIsValue", "paramIsSet"],
 			},
 		],
 	},
@@ -30,10 +54,13 @@ export const paramIsValue: builder.PropDescriptor[] = [
 		name: "value",
 		type: "TEXT",
 		label: "Value",
+		display: [
+			{
+				property: "type",
+				values: ["paramIsValue", "fieldIsValue"],
+			},
+		],
 	},
 ]
 
-export const fieldIsValue = paramIsValue
-export const paramIsSet = paramIsValue
-
-export default { fieldIsValue, paramIsValue, paramIsSet }
+export default properties

@@ -49,7 +49,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			currentAST.current &&
 			lastModifiedNode &&
 			lastModifiedType === metadataType &&
-			lastModifiedItem === metadataItem
+			lastModifiedItem === metadataItem &&
+			currentAST.current.contents
 		) {
 			const node = util.yaml.getNodeAtPath(
 				lastModifiedLocalPath,
