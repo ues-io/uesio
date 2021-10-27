@@ -13,7 +13,7 @@ class Field {
 	getCreateable = () => this.source.createable
 	getUpdateable = () => this.source.updateable
 	getAccessible = () => this.source.accessible
-	getOptions = () => this.source.selectlist?.options || null
+	getSelectMetadata = () => this.source.selectlist || null
 	getAccept = () => {
 		switch (this.source.file?.accept) {
 			case "AUDIO":
