@@ -76,8 +76,9 @@ func (cm *CollectionMetadata) GetFullName() string {
 
 // SelectListMetadata type
 type SelectListMetadata struct {
-	Name    string                  `json:"name"`
-	Options []meta.SelectListOption `json:"options"`
+	Name             string                  `json:"name"`
+	Options          []meta.SelectListOption `json:"options"`
+	BlankOptionLabel string                  `json:"blank_option_label"`
 }
 
 // FieldMetadata struct

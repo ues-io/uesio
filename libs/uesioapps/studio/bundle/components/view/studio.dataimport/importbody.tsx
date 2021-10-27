@@ -10,15 +10,7 @@ interface Props extends definition.BaseProps {
 }
 
 const addBlankSelectOption = collection.addBlankSelectOption
-const addExtraOptions = (
-	options: collection.SelectOption[] | undefined
-): collection.SelectOption[] =>
-	[
-		{
-			value: "",
-			label: "",
-		},
-	].concat(options || [])
+
 const Button = component.registry.getUtility("io.button")
 const SelectField = component.registry.getUtility("io.selectfield")
 
@@ -34,7 +26,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 			label: key,
 		}))
 	)
-	const csvOptions = addExtraOptions(
+	const csvOptions = addBlankSelectOption(
 		csvFields.map((key) => ({
 			value: key,
 			label: key,
