@@ -17,6 +17,7 @@ const Grid: FunctionComponent<GroupProps> = (props) => {
 		<IOGroup
 			classes={classes}
 			columnGap={definition.columnGap}
+			alignItems={definition.alignItems}
 			context={context}
 		>
 			<component.Slot
