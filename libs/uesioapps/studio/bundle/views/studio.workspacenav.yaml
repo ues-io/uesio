@@ -10,6 +10,9 @@ definition:
               uesio.variant: io.nav
               title: Data
           - io.tile:
+              uesio.display:
+                - value: "BETA"
+                  type: "featureFlag"
               uesio.variant: io.nav
               uesio.classes:
                 selected:

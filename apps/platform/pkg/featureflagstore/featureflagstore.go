@@ -12,8 +12,8 @@ import (
 
 // FeatureFlagStore interface
 type FeatureFlagStore interface {
-	Get(key string) (string, error)
-	Set(key, value string) error
+	Get(key string) (*meta.FeatureFlagAssignment, error)
+	Set(key string, value bool) error
 }
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
@@ -50,34 +50,34 @@ func RegisterFeatureFlagStore(name string, store FeatureFlagStore) {
 }
 
 // Get key
-func GetValueFromKey(key string, session *sess.Session) (string, error) {
+func GetValueFromKey(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	if key == "" {
-		return "", nil
+		return nil, nil //TO-DO new error
 	}
 
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	err = bundle.Load(FeatureFlag, session)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	return GetValue(FeatureFlag, session)
 }
 
-func GetValue(cv *meta.FeatureFlag, session *sess.Session) (string, error) {
+func GetValue(cv *meta.FeatureFlag, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	fullKey := getConfigKey(cv, session)
 	return store.Get(fullKey)
 }
 
-func SetValueFromKey(key, value string, session *sess.Session) error {
+func SetValueFromKey(key string, value bool, session *sess.Session) error {
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func SetValueFromKey(key, value string, session *sess.Session) error {
 	return SetValue(FeatureFlag, value, session)
 }
 
-func SetValue(cv *meta.FeatureFlag, value string, session *sess.Session) error {
+func SetValue(cv *meta.FeatureFlag, value bool, session *sess.Session) error {
 	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {

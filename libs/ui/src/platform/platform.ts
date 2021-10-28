@@ -34,8 +34,9 @@ type SecretResponse = {
 type FeatureFlagResponse = {
 	name: string
 	namespace: string
-	managedby: string
-	value: string
+	value: boolean
+	scope: string
+	user: string
 }
 
 type JobResponse = {
@@ -103,11 +104,11 @@ interface Platform {
 		key: string,
 		value: string
 	): Promise<BotResponse>
-	getFeatureFlags(context: Context): Promise<SecretResponse[]>
+	getFeatureFlags(context: Context): Promise<FeatureFlagResponse[]>
 	setFeatureFlag(
 		context: Context,
 		key: string,
-		value: string
+		value: boolean
 	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>

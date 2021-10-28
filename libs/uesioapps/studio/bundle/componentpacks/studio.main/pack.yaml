@@ -60,6 +60,16 @@ components:
         - io.button
         - io.icon
         - io.grid
+    studio.configfeatureflags:
+      utilities:
+        - io.titlebar
+        - io.button
+        - io.checkboxfield
+        - io.dialog
+      variants:
+        - io.button.io.secondary
+        - io.checkboxfield.io.default
+        - io.titlebar.io.default
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.slot:

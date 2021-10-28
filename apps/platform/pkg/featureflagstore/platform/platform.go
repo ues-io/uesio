@@ -12,11 +12,11 @@ type FeatureFlagStore struct {
 }
 
 // Get function
-func (ffs *FeatureFlagStore) Get(key string) (string, error) {
+func (ffs *FeatureFlagStore) Get(key string) (*meta.FeatureFlagAssignment, error) {
 	var ffa meta.FeatureFlagAssignment
 	headlessSession, err := auth.GetHeadlessSession()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	err = datasource.PlatformLoadOne(&ffa, []adapt.LoadRequestCondition{
 		{
@@ -25,13 +25,13 @@ func (ffs *FeatureFlagStore) Get(key string) (string, error) {
 		},
 	}, headlessSession)
 	if err != nil {
-		return "", nil
+		return nil, err
 	}
-	return ffa.Value, nil
+	return &ffa, nil
 }
 
 // Set function
-func (ffs *FeatureFlagStore) Set(key, value string) error {
+func (ffs *FeatureFlagStore) Set(key string, value bool) error {
 	ffa := meta.FeatureFlagAssignment{
 		Key:   key,
 		Value: value,

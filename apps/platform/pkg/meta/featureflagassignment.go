@@ -4,7 +4,9 @@ package meta
 type FeatureFlagAssignment struct {
 	ID        string    `uesio:"uesio.id"`
 	Key       string    `uesio:"uesio.key"`
-	Value     string    `uesio:"uesio.value"`
+	Value     bool      `uesio:"uesio.value"`
+	Scope     string    `uesio:"uesio.scope"`
+	User      string    `uesio:"uesio.user"` //TO-DO check the user type
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner     *User     `yaml:"-" uesio:"uesio.owner"`

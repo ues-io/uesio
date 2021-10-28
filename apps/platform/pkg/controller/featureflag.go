@@ -16,8 +16,9 @@ import (
 type FeatureFlagResponse struct {
 	Name      string `json:"name"`
 	Namespace string `json:"namespace"`
-	Value     string `json:"value"`
-	ManagedBy string `json:"managedby"`
+	Value     bool   `json:"value"`
+	Scope     string `json:"scope"`
+	User      string `json:"user"` //TO-DO check type
 }
 
 func getFeatureFlag(session *sess.Session) ([]FeatureFlagResponse, error) {
@@ -30,15 +31,25 @@ func getFeatureFlag(session *sess.Session) ([]FeatureFlagResponse, error) {
 	response := []FeatureFlagResponse{}
 
 	for _, cv := range featureFlags {
-		value, err := featureflagstore.GetValue(&cv, session)
+		ffa, err := featureflagstore.GetValue(&cv, session)
 		if err != nil {
-			return nil, err
+			//Item Not Found return empty ffr & continue
+			//return nil, err
+			response = append(response, FeatureFlagResponse{
+				Name:      cv.Name,
+				Namespace: cv.Namespace,
+				Scope:     "",
+				User:      "", // TO-DO merge the user ?? get other attributes not just the name
+				Value:     false,
+			})
+			continue
 		}
 		response = append(response, FeatureFlagResponse{
 			Name:      cv.Name,
 			Namespace: cv.Namespace,
-			//ManagedBy: cv.ManagedBy,
-			Value: value,
+			Scope:     ffa.Scope,
+			User:      ffa.User, //.FirstName, // TO-DO merge the user ?? get other attributes not just the name
+			Value:     ffa.Value,
 		})
 	}
 	return response, nil
@@ -60,7 +71,7 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 }
 
 type FeatureFlagSetRequest struct {
-	Value string `json:"value"`
+	Value bool `json:"value"`
 }
 
 //SetFeatureFlag function

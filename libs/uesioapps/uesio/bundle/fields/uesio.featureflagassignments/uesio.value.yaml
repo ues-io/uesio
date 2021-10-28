@@ -1,4 +1,4 @@
 name: value
 collection: uesio.featureflagassignments
-type: "TEXT"
+type: "CHECKBOX"
 label: Value

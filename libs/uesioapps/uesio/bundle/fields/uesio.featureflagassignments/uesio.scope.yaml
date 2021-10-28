@@ -1,4 +1,4 @@
-name: key
+name: scope
 collection: uesio.featureflagassignments
 type: "TEXT"
-label: Key
+label: Scope
