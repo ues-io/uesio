@@ -3,6 +3,7 @@ import {
 	BaseProps,
 	DefinitionMap,
 	UtilityProps,
+	UtilityPropsPlus,
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import {
@@ -28,7 +29,7 @@ import {
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
-const utilityRegistry: Registry<FC<UtilityProps>> = {}
+const utilityRegistry: Registry<FC<UtilityPropsPlus>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
@@ -125,11 +126,17 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility = (key: string) => (props: UtilityProps) => {
-	const loader = getUtilityLoader(key) || NotFound
-	const styles = getVariantStyleInfo(props, key)
-	return renderUtility(loader, { ...props, styles, componentType: key })
-}
+const getUtility =
+	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
+	(props: T) => {
+		const loader = getUtilityLoader(key) || NotFound
+		const styles = getVariantStyleInfo(props, key)
+		return renderUtility(loader, {
+			...(props as unknown as UtilityPropsPlus),
+			styles,
+			componentType: key,
+		})
+	}
 
 const BuildWrapper = getUtility("studio.buildwrapper")
 

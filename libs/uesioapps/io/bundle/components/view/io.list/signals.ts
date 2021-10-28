@@ -1,17 +1,8 @@
 import { signal } from "@uesio/ui"
-import { ListState } from "./listdefinition"
+import { modeDispatcher } from "../../shared/mode"
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
-	TOGGLE_MODE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as ListState
-			setState({
-				mode: state.mode === "READ" ? "EDIT" : "READ",
-			})
-		},
-		label: "Toggle Mode",
-		properties: () => [],
-	},
+	TOGGLE_MODE: modeDispatcher,
 }
 
 export default signals

@@ -1,15 +1,9 @@
-import { definition, builder, signal, component } from "@uesio/ui"
-
-type TableMode = "READ" | "EDIT"
-
-type TableState = {
-	mode: TableMode
-}
+import { definition, builder, signal, component, context } from "@uesio/ui"
 
 interface TableDefinition extends definition.BaseDefinition {
 	id: string
 	wire: string
-	mode: TableMode
+	mode: context.FieldMode
 	columns: definition.DefinitionList
 	rowactions?: RowAction[]
 	rownumbers: boolean
@@ -86,6 +80,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	classes: ["root"],
 }
-export { TableProps, TableState, TableDefinition, ColumnDefinition, RowAction }
+export { TableProps, TableDefinition, ColumnDefinition, RowAction }
 
 export default TablePropertyDefinition

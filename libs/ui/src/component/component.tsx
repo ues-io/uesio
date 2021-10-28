@@ -3,6 +3,7 @@ import {
 	DefinitionMap,
 	BaseProps,
 	UtilityProps,
+	UtilityPropsPlus,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
 import { getLoader, getRuntimeLoader, getUtility } from "./registry"
@@ -175,11 +176,11 @@ function render(
 }
 
 function renderUtility(
-	loader: FunctionComponent<UtilityProps>,
-	props: UtilityProps
+	loader: FunctionComponent<UtilityPropsPlus>,
+	props: UtilityPropsPlus
 ) {
 	const Loader = loader
-	loader.displayName = props.componentType
+	loader.displayName = props.componentType as string
 	return <Loader {...props} />
 }
 

@@ -1,7 +1,8 @@
 import { hooks, component } from "@uesio/ui"
 import { FunctionComponent } from "react"
+import { useMode } from "../../shared/mode"
 
-import { ListProps, ListState } from "./listdefinition"
+import { ListProps } from "./listdefinition"
 
 const List: FunctionComponent<ListProps> = (props) => {
 	const { path, context, definition } = props
@@ -15,14 +16,9 @@ const List: FunctionComponent<ListProps> = (props) => {
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<ListState>(
-		definition.id,
-		{
-			mode: definition.mode || "READ",
-		}
-	)
+	const [mode] = useMode(definition.id, definition.mode, props)
 
-	if (!wire || !componentState) return null
+	if (!wire || !mode) return null
 
 	const data = wire.getData()
 	return (
@@ -35,7 +31,7 @@ const List: FunctionComponent<ListProps> = (props) => {
 					accepts={["uesio.standalone"]}
 					context={newContext.addFrame({
 						record: record.getId(),
-						fieldMode: componentState.mode,
+						fieldMode: mode,
 					})}
 				/>
 			))}

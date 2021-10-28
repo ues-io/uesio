@@ -29,13 +29,10 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		const valueLabel = optionMatch?.label || ""
 		return <TextField {...props} value={valueLabel} />
 	}
-	const width = props.definition?.width as string
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {
 				appearance: "none",
 			},

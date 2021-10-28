@@ -5,7 +5,6 @@ interface NumberFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: number | null) => void
 	value: number
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -16,10 +15,6 @@ interface NumberFieldProps extends definition.UtilityProps {
 }
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
-
-const Defaults: collection.NumberMetadata = {
-	decimals: 2,
-}
 
 const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const {
@@ -36,12 +31,10 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		increment,
 	} = props
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
+
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {},
 			readonly: {},
 		},
