@@ -1,13 +1,16 @@
-import { hooks, styles, component } from "@uesio/ui"
-import { FunctionComponent } from "react"
+import { hooks, styles, component, wire } from "@uesio/ui"
+import { FC, useEffect, useState } from "react"
 
 import { ColumnDefinition, TableProps, TableState } from "./tabledefinition"
+
+// TODO
+import { usePagination } from "../../../../../lab/bundle/components/utility/lab.pagination/usePagination"
 
 const Group = component.registry.getUtility("io.group")
 const Button = component.registry.getUtility("io.button")
 const IOTable = component.registry.getUtility("io.table")
 
-const Table: FunctionComponent<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
@@ -25,6 +28,12 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			mode: definition.mode || "READ",
 		}
 	)
+
+	const { activeRecords, PaginationNavigation } = usePagination({
+		itemsPerPage: 1,
+		records: wire?.getData(),
+		context,
+	})
 
 	if (!wire || !componentState || !path) return null
 
@@ -46,75 +55,82 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		}
 	})
 
-	const rows = wire.getData().map((record, index) => {
-		const recordContext = newContext.addFrame({
-			record: record.getId(),
-			wire: wire.getId(),
-			fieldMode: componentState.mode,
-		})
-		return {
-			cells: definition.columns.map((columnDef) => {
-				const column = columnDef["io.column"] as ColumnDefinition
-				return column.components ? (
-					<component.Slot
-						definition={column}
-						listName="components"
-						path={`${path}["columns"]["${index}"]["io.column"]`}
-						accepts={["uesio.context"]}
-						direction="horizontal"
+	// const rows = wire?.getData().map(
+	const rows = [...(activeRecords ? activeRecords : wire?.getData())].map(
+		(record, index) => {
+			const recordContext = newContext.addFrame({
+				record: record.getId(),
+				wire: wire.getId(),
+				fieldMode: componentState.mode,
+			})
+			return {
+				cells: definition.columns.map((columnDef) => {
+					const column = columnDef["io.column"] as ColumnDefinition
+					return column.components ? (
+						<component.Slot
+							definition={column}
+							listName="components"
+							path={`${path}["columns"]["${index}"]["io.column"]`}
+							accepts={["uesio.context"]}
+							direction="horizontal"
+							context={recordContext}
+						/>
+					) : (
+						<component.Component
+							componentType="io.field"
+							definition={{
+								fieldId: column.field,
+								hideLabel: true,
+								"uesio.variant": "io.table",
+							}}
+							index={index}
+							path={`${path}["columns"]["${index}"]`}
+							context={recordContext}
+						/>
+					)
+				}),
+				rowactions: definition.rowactions && (
+					<Group
+						styles={{ root: { padding: "0 16px" } }}
+						columnGap={0}
 						context={recordContext}
-					/>
-				) : (
-					<component.Component
-						componentType="io.field"
-						definition={{
-							fieldId: column.field,
-							hideLabel: true,
-							"uesio.variant": "io.table",
-						}}
-						index={index}
-						path={`${path}["columns"]["${index}"]`}
-						context={recordContext}
-					/>
-				)
-			}),
-			rowactions: definition.rowactions && (
-				<Group
-					styles={{ root: { padding: "0 16px" } }}
-					columnGap={0}
-					context={recordContext}
-				>
-					{definition.rowactions.map((action) => {
-						const [handler, portals] = uesio.signal.useHandler(
-							action.signals,
-							recordContext
-						)
-						return (
-							<Button
-								variant="io.nav"
-								className="rowaction"
-								label={action.text}
-								context={recordContext}
-								onClick={handler}
-							/>
-						)
-					})}
-				</Group>
-			),
-			isDeleted: record.isDeleted(),
+					>
+						{definition.rowactions.map((action) => {
+							const [handler, portals] = uesio.signal.useHandler(
+								action.signals,
+								recordContext
+							)
+							return (
+								<Button
+									variant="io.nav"
+									className="rowaction"
+									label={action.text}
+									context={recordContext}
+									onClick={handler}
+								/>
+							)
+						})}
+					</Group>
+				),
+				isDeleted: record.isDeleted(),
+			}
 		}
-	})
+	)
 
 	return (
-		<IOTable
-			variant={definition["uesio.variant"]}
-			rows={rows}
-			columns={columns}
-			context={context}
-			classes={classes}
-			showRowNumbers={definition.rownumbers}
-			showRowActions={!!definition.rowactions}
-		/>
+		<>
+			<IOTable
+				variant={definition["uesio.variant"]}
+				rows={rows}
+				columns={columns}
+				context={context}
+				classes={classes}
+				showRowNumbers={definition.rownumbers}
+				showRowActions={!!definition.rowactions}
+			/>
+			<p />
+			<PaginationNavigation />
+		</>
 	)
 }
 

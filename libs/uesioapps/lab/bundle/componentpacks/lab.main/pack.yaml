@@ -4,5 +4,6 @@ components:
     lab.layout:
     lab.column:
   utility:
+    lab.pagination:
     lab.layout:
     lab.column:
