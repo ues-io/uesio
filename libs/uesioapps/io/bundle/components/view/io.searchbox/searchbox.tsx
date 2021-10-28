@@ -12,6 +12,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {
 		{
 			root: {
 				margin: "16px 0",
+				fontSize: "9pt",
 			},
 			input: {
 				padding: "8px",

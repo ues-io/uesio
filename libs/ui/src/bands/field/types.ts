@@ -37,6 +37,7 @@ type NumberMetadata = {
 type SelectListMetadata = {
 	name: string
 	options: SelectOption[]
+	blank_option_label?: string
 }
 
 type FileMetadata = {

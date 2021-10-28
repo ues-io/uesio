@@ -9,6 +9,7 @@ definition:
       padding: 10px
       color: "#555"
       border: "1px solid #00000044"
+      whiteSpace: nowrap
       boxShadow: "0 0 4px #00000033"
       minWidth: 100px
       borderRadius: 4px

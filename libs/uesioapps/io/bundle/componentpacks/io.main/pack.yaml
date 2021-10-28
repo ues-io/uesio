@@ -23,6 +23,9 @@ components:
         - io.fieldlabel.io.default
         - io.tile.io.default
         - io.numberfield.io.default
+    io.filter:
+      variants:
+        - io.selectfield.io.filter
     io.grid:
     io.griditem:
     io.group:
