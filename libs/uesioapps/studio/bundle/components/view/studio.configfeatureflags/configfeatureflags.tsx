@@ -1,10 +1,6 @@
-import { FunctionComponent, useState } from "react"
-import { definition, hooks, component } from "@uesio/ui"
-
-const TitleBar = component.registry.getUtility("io.titlebar")
-const Button = component.registry.getUtility("io.button")
-const Dialog = component.registry.getUtility("io.dialog")
-const CheckboxField = component.registry.getUtility("io.checkboxfield")
+import { FunctionComponent } from "react"
+import { definition, hooks } from "@uesio/ui"
+import ConfigFeatureFlagsItem from "./configfeatureflagsitem"
 
 const ConfigFeatureFlags: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -37,35 +33,12 @@ const ConfigFeatureFlags: FunctionComponent<definition.BaseProps> = (props) => {
 
 	const [values, resetValues] = uesio.featureflag.useFeatureFlags(newContext)
 
-	console.log("Values", values)
-
-	const [state, setState] = useState({
-		selected: "",
-		value: false,
-	})
-
 	if (!values) {
 		return null
 	}
 
-	const handleClickOpen = (key: string, value: boolean) => {
-		setState({
-			selected: key,
-			value,
-		})
-	}
-
-	const handleClose = () => {
-		setState({
-			selected: "",
-			value: false,
-		})
-	}
-
-	const handleSet = async () => {
-		await uesio.featureflag.set(newContext, state.selected, state.value)
-		resetValues()
-		handleClose()
+	const handleSet = async (key: string, value: boolean) => {
+		await uesio.featureflag.set(newContext, key, value)
 	}
 
 	return (
@@ -74,59 +47,14 @@ const ConfigFeatureFlags: FunctionComponent<definition.BaseProps> = (props) => {
 				const key = `${response.namespace}.${response.name}`
 				const value = response.value
 				return (
-					<TitleBar
+					<ConfigFeatureFlagsItem
 						title={key}
-						subtitle={value}
-						context={context}
-						styles={{
-							root: {
-								marginBottom: "20px",
-							},
-						}}
-						actions={
-							<Button
-								onClick={() => handleClickOpen(key, value)}
-								variant="io.secondary"
-								context={context}
-								label={`Set`}
-							/>
-						}
+						value={value}
+						context={newContext}
+						handleSet={handleSet}
 					/>
 				)
 			})}
-			{state.selected !== "" && (
-				<component.Panel context={context}>
-					<Dialog
-						width="400px"
-						height="300px"
-						onClose={handleClose}
-						context={context}
-						title={"Set Feature Flag "}
-						actions={
-							<Button
-								label="Set"
-								onClick={handleSet}
-								variant="io.secondary"
-								context={context}
-							/>
-						}
-					>
-						{state.selected}
-
-						<CheckboxField
-							context={context}
-							label="Value"
-							value={state.value}
-							setValue={(value: boolean) =>
-								setState({
-									...state,
-									value,
-								})
-							}
-						/>
-					</Dialog>
-				</component.Panel>
-			)}
 		</>
 	)
 }
