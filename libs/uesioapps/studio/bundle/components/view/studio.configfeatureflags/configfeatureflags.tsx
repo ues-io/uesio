@@ -13,13 +13,12 @@ interface Props extends definition.BaseProps {
 const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const { site, user } = definition
+	const site = definition?.site
+	const user = definition?.user
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
 	const siteName = view?.params?.sitename
-
-	console.log({ site, user })
 
 	let newContext = props.context
 
