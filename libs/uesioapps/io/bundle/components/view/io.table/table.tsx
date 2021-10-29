@@ -28,7 +28,11 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		: context
 
 	const [mode] = useMode(definition.id, definition.mode, props)
-	const [currentPage, setCurrentPage] = usePagination(definition.id, props)
+	const [currentPage, setCurrentPage] = usePagination(
+		definition.id,
+		wire?.getBatchId(),
+		props
+	)
 	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
@@ -52,7 +56,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	})
 
 	const data = wire.getData()
-	const maxPages = pageSize ? data.length / pageSize : 1
+	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
 
 	const paginated = paginate(data, currentPage, pageSize)
 

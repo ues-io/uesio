@@ -31,6 +31,7 @@ class Wire {
 	getFullId = () => `${this.source.view}/${this.source.name}`
 	getCollection = () => this.collection
 	isMarkedForDeletion = (recordId: string) => !!this.source.deletes[recordId]
+	getBatchId = () => this.source.batchid
 
 	getData = () =>
 		this.source?.data

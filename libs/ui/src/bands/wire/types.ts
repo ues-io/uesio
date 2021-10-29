@@ -7,6 +7,7 @@ type PlainWire = {
 	type: WireType
 	conditions: WireConditionState[]
 	data: Record<string, PlainWireRecord>
+	batchid: string
 	view: string
 	original: Record<string, PlainWireRecord>
 	changes: Record<string, PlainWireRecord>
