@@ -3,12 +3,12 @@ import { definition, styles, component } from "@uesio/ui"
 
 const IOGrid = component.registry.getUtility("io.grid")
 
-interface GroupProps extends definition.UtilityProps {
-	columnGap: string | number
-	alignItems: string
+interface GroupUtilityProps extends definition.UtilityProps {
+	columnGap?: string | number
+	alignItems?: string
 }
 
-const Group: FunctionComponent<GroupProps> = (props) => {
+const Group: FunctionComponent<GroupUtilityProps> = (props) => {
 	const { columnGap, context, children, alignItems } = props
 	const childCount = Children.count(children)
 	const classes = styles.useUtilityStyles(
@@ -28,5 +28,7 @@ const Group: FunctionComponent<GroupProps> = (props) => {
 		</IOGrid>
 	)
 }
+
+export { GroupUtilityProps }
 
 export default Group

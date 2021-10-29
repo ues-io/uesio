@@ -1,4 +1,5 @@
 import { CSSInterpolation } from "@emotion/css"
+import { ReactNode } from "react"
 import yaml from "yaml"
 import { Context } from "../context/context"
 
@@ -29,13 +30,21 @@ export type BaseProps = {
 	path?: string
 	componentType?: string
 	context: Context
+	children?: ReactNode
 }
 
-export interface UtilityProps extends BaseProps {
+export interface UtilityProps {
+	index?: number
+	path?: string
 	variant?: string
 	styles?: Record<string, CSSInterpolation>
 	classes?: Record<string, string>
 	className?: string
+	context: Context
+	children?: ReactNode
+}
+
+export interface UtilityPropsPlus extends UtilityProps {
 	[x: string]: unknown
 }
 

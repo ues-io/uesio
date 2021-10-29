@@ -6,7 +6,6 @@ interface SelectFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
 	value: string
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -23,11 +22,10 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		const valueLabel = optionMatch?.label || ""
 		return <TextField {...props} value={valueLabel} />
 	}
-	const width = props.definition?.width as string
+
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				...(width && { width }),
 				position: "relative",
 				"&:after": {
 					content: '"expand_more"',

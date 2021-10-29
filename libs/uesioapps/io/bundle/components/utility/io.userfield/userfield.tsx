@@ -30,12 +30,9 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const firstName = user?.["uesio.firstname"] as string
 	const lastName = user?.["uesio.lastname"] as string
 	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined
-	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {},
 			readonly: {},
 		},

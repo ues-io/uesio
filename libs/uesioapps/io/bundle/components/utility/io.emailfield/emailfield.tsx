@@ -5,7 +5,6 @@ interface EmailFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
 	value: string
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -18,12 +17,9 @@ const EmailField: FunctionComponent<EmailFieldProps> = (props) => {
 	const { setValue, value, mode, hideLabel, context, label, placeholder } =
 		props
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {},
 			readonly: {},
 		},

@@ -25,17 +25,12 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 		context,
 		hideLabel,
 		label,
-		definition,
 		lineNumbers,
 		lineNumbersMinChars,
 	} = props
-	const readonly = mode === "READ"
-	const width = definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {
 				height: "320px",
 			},

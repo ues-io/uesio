@@ -1,11 +1,15 @@
-import { hooks, styles, component } from "@uesio/ui"
+import { hooks, styles, component, context } from "@uesio/ui"
 import { FunctionComponent } from "react"
+import { useMode } from "../../shared/mode"
+import { ButtonUtilityProps } from "../../utility/io.button/button"
+import { GroupUtilityProps } from "../../utility/io.group/group"
+import { TableUtilityProps } from "../../utility/io.table/table"
 
-import { ColumnDefinition, TableProps, TableState } from "./tabledefinition"
+import { ColumnDefinition, TableProps } from "./tabledefinition"
 
-const Group = component.registry.getUtility("io.group")
-const Button = component.registry.getUtility("io.button")
-const IOTable = component.registry.getUtility("io.table")
+const Group = component.registry.getUtility<GroupUtilityProps>("io.group")
+const Button = component.registry.getUtility<ButtonUtilityProps>("io.button")
+const IOTable = component.registry.getUtility<TableUtilityProps>("io.table")
 
 const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
@@ -19,14 +23,9 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<TableState>(
-		definition.id,
-		{
-			mode: definition.mode || "READ",
-		}
-	)
+	const [mode] = useMode(definition.id, definition.mode, props)
 
-	if (!wire || !componentState || !path) return null
+	if (!wire || !mode || !path) return null
 
 	const classes = styles.useStyles(
 		{
@@ -37,7 +36,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = definition.columns.map((columnDef) => {
+	const columns = definition.columns?.map((columnDef) => {
 		const column = columnDef["io.column"] as ColumnDefinition
 		const fieldId = column.field
 		const fieldMetadata = collection.getField(fieldId)
@@ -50,10 +49,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),
 			wire: wire.getId(),
-			fieldMode: componentState.mode,
+			fieldMode: mode,
 		})
 		return {
-			cells: definition.columns.map((columnDef) => {
+			cells: definition.columns?.map((columnDef) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				return column.components ? (
 					<component.Slot
