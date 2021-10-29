@@ -20,11 +20,22 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 			root: {
 				display: "grid",
 				justifyItems: "center",
-				padding: "10px",
+				padding: "16px",
 			},
-			button: {},
-			current: {
+			pagebutton: {
 				display: "inline-block",
+				borderRadius: "50%",
+				lineHeight: "28px",
+				width: "28px",
+				textAlign: "center",
+				fontSize: "9pt",
+				color: "#777",
+				cursor: "pointer",
+			},
+			currentpage: {
+				color: "white",
+				cursor: "default",
+				backgroundColor: context.getTheme().definition.palette.primary,
 			},
 		},
 		props
@@ -38,6 +49,16 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 		if (currentPage > 0) setPage(currentPage - 1)
 	}
 
+	const pageButtonCount = 5
+
+	const displayStartPage = Math.max(
+		0,
+		Math.min(
+			currentPage - Math.floor(pageButtonCount / 2),
+			maxPages - pageButtonCount
+		)
+	)
+
 	return (
 		<div className={classes.root}>
 			<Group alignItems="center" context={context}>
@@ -45,12 +66,33 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 					icon="navigate_before"
 					onClick={prevPage}
 					context={context}
+					disabled={currentPage <= 0}
 				/>
-				<div className={classes.current}>{currentPage + 1}</div>
+				{[...Array(pageButtonCount).keys()].map((index) => {
+					const pageNum = index + displayStartPage
+					if (pageNum >= maxPages) return null
+					const isCurrent = pageNum === currentPage
+
+					return (
+						<div
+							className={styles.cx(
+								classes.pagebutton,
+								isCurrent && classes.currentpage
+							)}
+							onClick={
+								!isCurrent ? () => setPage(pageNum) : undefined
+							}
+						>
+							{pageNum + 1}
+						</div>
+					)
+				})}
+
 				<IconButton
 					icon="navigate_next"
 					onClick={nextPage}
 					context={context}
+					disabled={currentPage >= maxPages - 1}
 				/>
 			</Group>
 		</div>
