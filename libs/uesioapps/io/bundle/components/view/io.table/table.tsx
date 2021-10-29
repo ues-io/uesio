@@ -1,8 +1,10 @@
 import { hooks, styles, component, context } from "@uesio/ui"
 import { FunctionComponent } from "react"
 import { useMode } from "../../shared/mode"
+import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/io.button/button"
 import { GroupUtilityProps } from "../../utility/io.group/group"
+import { PaginatorUtilityProps } from "../../utility/io.paginator/paginator"
 import { TableUtilityProps } from "../../utility/io.table/table"
 
 import { ColumnDefinition, TableProps } from "./tabledefinition"
@@ -10,6 +12,8 @@ import { ColumnDefinition, TableProps } from "./tabledefinition"
 const Group = component.registry.getUtility<GroupUtilityProps>("io.group")
 const Button = component.registry.getUtility<ButtonUtilityProps>("io.button")
 const IOTable = component.registry.getUtility<TableUtilityProps>("io.table")
+const Paginator =
+	component.registry.getUtility<PaginatorUtilityProps>("io.paginator")
 
 const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
@@ -24,8 +28,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		: context
 
 	const [mode] = useMode(definition.id, definition.mode, props)
+	const [currentPage, setCurrentPage] = usePagination(definition.id, props)
+	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
-	if (!wire || !mode || !path) return null
+	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyles(
 		{
@@ -45,7 +51,12 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		}
 	})
 
-	const rows = wire.getData().map((record, index) => {
+	const data = wire.getData()
+	const maxPages = pageSize ? data.length / pageSize : 1
+
+	const paginated = paginate(data, currentPage, pageSize)
+
+	const rows = paginated.map((record, index) => {
 		const recordContext = newContext.addFrame({
 			record: record.getId(),
 			wire: wire.getId(),
@@ -105,15 +116,26 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	})
 
 	return (
-		<IOTable
-			variant={definition["uesio.variant"]}
-			rows={rows}
-			columns={columns}
-			context={context}
-			classes={classes}
-			showRowNumbers={definition.rownumbers}
-			showRowActions={!!definition.rowactions}
-		/>
+		<>
+			<IOTable
+				variant={definition["uesio.variant"]}
+				rows={rows}
+				columns={columns}
+				context={context}
+				classes={classes}
+				showRowNumbers={definition.rownumbers}
+				rowNumberStart={pageSize * currentPage}
+				showRowActions={!!definition.rowactions}
+			/>
+			{pageSize && (
+				<Paginator
+					setPage={setCurrentPage}
+					currentPage={currentPage}
+					maxPages={maxPages}
+					context={context}
+				/>
+			)}
+		</>
 	)
 }
 

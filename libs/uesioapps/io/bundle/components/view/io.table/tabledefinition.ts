@@ -7,6 +7,7 @@ interface TableDefinition extends definition.BaseDefinition {
 	columns: definition.DefinitionList
 	rowactions?: RowAction[]
 	rownumbers: boolean
+	pagesize: string
 }
 
 interface TableProps extends definition.BaseProps {

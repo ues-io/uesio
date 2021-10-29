@@ -1,8 +1,8 @@
 import { signal } from "@uesio/ui"
-import { modeDispatcher } from "../../shared/mode"
+import { toggleMode } from "../../shared/mode"
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
-	TOGGLE_MODE: modeDispatcher,
+	TOGGLE_MODE: toggleMode,
 }
 
 export default signals

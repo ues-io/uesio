@@ -16,10 +16,17 @@ interface TableUtilityProps extends definition.UtilityProps {
 	rows: RowDef[]
 	showRowNumbers?: boolean
 	showRowActions?: boolean
+	rowNumberStart?: number
 }
 
 const Table: FunctionComponent<TableUtilityProps> = (props) => {
-	const { columns, rows, showRowNumbers, showRowActions, context } = props
+	const {
+		columns,
+		rows,
+		showRowNumbers,
+		showRowActions,
+		rowNumberStart = 0,
+	} = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -102,7 +109,7 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 									key="rownumbers"
 								>
 									<div className={classes.rowNumber}>
-										{index + 1}
+										{rowNumberStart + index + 1}
 									</div>
 								</td>
 							)}

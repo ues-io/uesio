@@ -1,13 +1,15 @@
 import { hooks, signal, context, definition } from "@uesio/ui"
 
-const modeDispatcher: signal.ComponentSignalDescriptor = {
+const MODE_SLICE = "mode"
+
+const toggleMode: signal.ComponentSignalDescriptor = {
 	dispatcher: (signal, context, getState, setState) => {
 		const mode = getState() as string
 		setState(mode === "READ" ? "EDIT" : "READ")
 	},
 	label: "Toggle Mode",
 	properties: () => [],
-	slice: "mode",
+	slice: MODE_SLICE,
 }
 
 const useMode = (
@@ -19,8 +21,8 @@ const useMode = (
 	return uesio.component.useState<context.FieldMode>(
 		id || props.path || "",
 		initialMode || "READ",
-		"mode"
+		MODE_SLICE
 	)
 }
 
-export { modeDispatcher, useMode }
+export { toggleMode, useMode }
