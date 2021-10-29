@@ -1,4 +1,4 @@
-name: scope
+name: site
 collection: uesio.featureflagassignments
 type: "TEXT"
-label: Scope
+label: Site

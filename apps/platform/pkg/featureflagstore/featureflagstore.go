@@ -13,7 +13,7 @@ import (
 // FeatureFlagStore interface
 type FeatureFlagStore interface {
 	Get(key string) (*meta.FeatureFlagAssignment, error)
-	Set(key string, value bool) error
+	Set(key string, value bool, site string, user string) error
 }
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
@@ -77,7 +77,7 @@ func GetValue(cv *meta.FeatureFlag, session *sess.Session) (*meta.FeatureFlagAss
 	return store.Get(fullKey)
 }
 
-func SetValueFromKey(key string, value bool, session *sess.Session) error {
+func SetValueFromKey(key string, value bool, site string, user string, session *sess.Session) error {
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -86,17 +86,17 @@ func SetValueFromKey(key string, value bool, session *sess.Session) error {
 	if err != nil {
 		return err
 	}
-	return SetValue(FeatureFlag, value, session)
+	return SetValue(FeatureFlag, value, site, user, session)
 }
 
-func SetValue(cv *meta.FeatureFlag, value bool, session *sess.Session) error {
+func SetValue(cv *meta.FeatureFlag, value bool, site string, user string, session *sess.Session) error {
 	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return err
 	}
 	fullKey := getConfigKey(cv, session)
-	return store.Set(fullKey, value)
+	return store.Set(fullKey, value, site, user)
 }
 
 // Merge function

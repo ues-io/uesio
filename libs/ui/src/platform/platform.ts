@@ -35,7 +35,7 @@ type FeatureFlagResponse = {
 	name: string
 	namespace: string
 	value: boolean
-	scope: string
+	site: string
 	user: string
 }
 
@@ -108,7 +108,9 @@ interface Platform {
 	setFeatureFlag(
 		context: Context,
 		key: string,
-		value: boolean
+		value: boolean,
+		site?: string,
+		user?: string
 	): Promise<BotResponse>
 	login(request: LoginRequest): Promise<LoginResponse>
 	logout(): Promise<LoginResponse>

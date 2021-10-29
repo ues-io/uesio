@@ -113,18 +113,6 @@ definition:
                           components:
                             - studio.configsecrets:
                                 valueType: secrets
-                - io.box:
-                    uesio.variant: io.section
-                    components:
-                      - io.titlebar:
-                          uesio.variant: io.section
-                          title: Feature Flags
-                      - io.box:
-                          uesio.styles:
-                            root:
-                              padding: 40px
-                          components:
-                            - studio.configfeatureflags:
   panels:
     - io.dialog:
         id: editSite

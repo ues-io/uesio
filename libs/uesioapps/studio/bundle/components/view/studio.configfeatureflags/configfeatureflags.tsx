@@ -2,13 +2,24 @@ import { FunctionComponent } from "react"
 import { definition, hooks } from "@uesio/ui"
 import ConfigFeatureFlagsItem from "./configfeatureflagsitem"
 
-const ConfigFeatureFlags: FunctionComponent<definition.BaseProps> = (props) => {
+type ConfigFeatureFlagsDefinition = {
+	site: string
+	user: string
+}
+interface Props extends definition.BaseProps {
+	definition: ConfigFeatureFlagsDefinition
+}
+
+const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context } = props
+	const { context, definition } = props
+	const { site, user } = definition
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
 	const siteName = view?.params?.sitename
+
+	console.log({ site, user })
 
 	let newContext = props.context
 
@@ -31,14 +42,14 @@ const ConfigFeatureFlags: FunctionComponent<definition.BaseProps> = (props) => {
 		}
 	}
 
-	const [values, resetValues] = uesio.featureflag.useFeatureFlags(newContext)
+	const [values] = uesio.featureflag.useFeatureFlags(newContext)
 
 	if (!values) {
 		return null
 	}
 
 	const handleSet = async (key: string, value: boolean) => {
-		await uesio.featureflag.set(newContext, key, value)
+		await uesio.featureflag.set(newContext, key, value, site, user)
 	}
 
 	return (

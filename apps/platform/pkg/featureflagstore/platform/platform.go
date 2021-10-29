@@ -31,10 +31,12 @@ func (ffs *FeatureFlagStore) Get(key string) (*meta.FeatureFlagAssignment, error
 }
 
 // Set function
-func (ffs *FeatureFlagStore) Set(key string, value bool) error {
+func (ffs *FeatureFlagStore) Set(key string, value bool, site string, user string) error {
 	ffa := meta.FeatureFlagAssignment{
 		Key:   key,
 		Value: value,
+		Site:  site,
+		User:  user,
 	}
 	headlessSession, err := auth.GetHeadlessSession()
 	if err != nil {

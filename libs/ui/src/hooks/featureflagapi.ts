@@ -36,9 +36,15 @@ class FeatureFlagAPI {
 		]
 	}
 
-	set(context: Context, key: string, value: boolean) {
+	set(
+		context: Context,
+		key: string,
+		value: boolean,
+		site?: string,
+		user?: string
+	) {
 		return this.dispatcher((dispatch, getState, platform) =>
-			platform.setFeatureFlag(context, key, value)
+			platform.setFeatureFlag(context, key, value, site, user)
 		)
 	}
 }
