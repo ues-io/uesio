@@ -53,7 +53,7 @@ class ComponentAPI {
 			viewId
 		)
 		const state = slice
-			? ((fullState as PlainWireRecord)?.[slice] as T) || undefined
+			? ((fullState as PlainWireRecord)?.[slice] as T) ?? undefined
 			: fullState
 
 		const setState = (state: T) => {
