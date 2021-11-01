@@ -60,7 +60,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	)
 
 	return (
-		<div className={classes.root}>
+		<nav aria-label="pagination" className={classes.root}>
 			<Group alignItems="center" context={context}>
 				<IconButton
 					icon="navigate_before"
@@ -74,17 +74,24 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 					const isCurrent = pageNum === currentPage
 
 					return (
-						<div
+						<span
 							className={styles.cx(
 								classes.pagebutton,
 								isCurrent && classes.currentpage
 							)}
+							role="button"
+							aria-current={isCurrent}
+							aria-label={
+								isCurrent
+									? `Current Page, Page ${pageNum + 1}`
+									: `Page ${pageNum + 1}`
+							}
 							onClick={
 								!isCurrent ? () => setPage(pageNum) : undefined
 							}
 						>
 							{pageNum + 1}
-						</div>
+						</span>
 					)
 				})}
 
@@ -95,7 +102,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 					disabled={currentPage >= maxPages - 1}
 				/>
 			</Group>
-		</div>
+		</nav>
 	)
 }
 

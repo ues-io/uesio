@@ -131,7 +131,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 				rowNumberStart={pageSize * currentPage}
 				showRowActions={!!definition.rowactions}
 			/>
-			{pageSize && (
+			{pageSize > 0 && (
 				<Paginator
 					setPage={setCurrentPage}
 					currentPage={currentPage}
