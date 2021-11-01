@@ -33,8 +33,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		wire?.getBatchId(),
 		props
 	)
-	// const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
-	const pageSize = 1
+	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
