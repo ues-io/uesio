@@ -33,7 +33,8 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		wire?.getBatchId(),
 		props
 	)
-	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
+	// const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
+	const pageSize = 1
 
 	if (!wire || !mode || !path || currentPage === undefined) return null
 
@@ -131,7 +132,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 				rowNumberStart={pageSize * currentPage}
 				showRowActions={!!definition.rowactions}
 			/>
-			{pageSize && (
+			{pageSize > 0 && (
 				<Paginator
 					setPage={setCurrentPage}
 					currentPage={currentPage}
