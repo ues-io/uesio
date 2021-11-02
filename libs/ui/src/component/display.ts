@@ -29,10 +29,9 @@ type CollectionContextCondition = {
 	collection: string
 }
 
-type FeatureFlag = {
+type FeatureFlagCondition = {
 	type: "featureFlag"
-	field: string
-	value: string
+	name: string
 }
 
 type DisplayCondition =
@@ -41,7 +40,7 @@ type DisplayCondition =
 	| ParamIsSetCondition
 	| ParamIsValueCondition
 	| CollectionContextCondition
-	| FeatureFlag
+	| FeatureFlagCondition
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -56,6 +55,7 @@ function should(condition: DisplayCondition, context: Context) {
 		return context.getView()?.params?.[condition.param] === condition.value
 	}
 	if (condition.type === "featureFlag") {
+		//console.log(context.getView()?.)
 		return false //TO-DO use condition.value to check if exists after reading all the featureFlags from the context??
 	}
 	const record = context.getRecord()

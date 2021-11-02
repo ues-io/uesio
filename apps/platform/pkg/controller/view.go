@@ -24,10 +24,10 @@ type ViewResponse struct {
 }
 
 type ViewDependencies struct {
-	ComponentPacks    map[string]bool                        `yaml:"componentpacks,omitempty"`
-	ConfigValues      map[string]string                      `yaml:"configvalues,omitempty"`
-	ComponentVariants map[string]*meta.ComponentVariant      `yaml:"componentvariants,omitempty"`
-	FeatureFlags      map[string]*meta.FeatureFlagAssignment `yaml:"featureflags,omitempty"`
+	ComponentPacks    map[string]bool                   `yaml:"componentpacks,omitempty"`
+	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
+	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
+	FeatureFlags      map[string]*FeatureFlagResponse   `yaml:"featureflags,omitempty"`
 }
 
 // ViewPreview is also good
@@ -131,7 +131,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
-		FeatureFlags:      map[string]*meta.FeatureFlagAssignment{},
+		FeatureFlags:      map[string]*FeatureFlagResponse{},
 	}
 
 	for _, packs := range packsByNamespace {
@@ -244,14 +244,24 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		return nil, err
 	}
 
+	//Get FeatureFlags Dep
+	ffr, err := getFeatureFlags(session)
+	if err != nil {
+		return nil, err
+	}
+
 	deps := ViewDependencies{
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
-		FeatureFlags:      map[string]*meta.FeatureFlagAssignment{},
+		FeatureFlags:      map[string]*FeatureFlagResponse{},
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
+
+	for key := range ffr {
+		deps.FeatureFlags[ffr[key].Name] = &ffr[key]
+	}
 
 	for key := range variantsUsed {
 		variantDep, err := loadVariant(key, session)

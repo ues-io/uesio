@@ -11,8 +11,8 @@ definition:
               title: Data
           - io.tile:
               uesio.display:
-                - value: "BETA"
-                  type: "featureFlag"
+                - name: dos
+                  type: featureFlag
               uesio.variant: io.nav
               uesio.classes:
                 selected:

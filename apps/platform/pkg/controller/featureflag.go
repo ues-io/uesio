@@ -21,7 +21,7 @@ type FeatureFlagResponse struct {
 	User      string `json:"user"` //TO-DO check type
 }
 
-func getFeatureFlag(session *sess.Session) ([]FeatureFlagResponse, error) {
+func getFeatureFlags(session *sess.Session) ([]FeatureFlagResponse, error) {
 	var featureFlags meta.FeatureFlagCollection
 	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
 	if err != nil {
@@ -60,7 +60,7 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	response, err := getFeatureFlag(session)
+	response, err := getFeatureFlags(session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
