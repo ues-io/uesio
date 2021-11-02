@@ -151,6 +151,12 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		deps.ComponentVariants[variant.GetKey()] = &variant
 	}
 
+	ffr, _ := getFeatureFlags(session)
+	for i := range ffr {
+		featureFlag := ffr[i]
+		deps.FeatureFlags[featureFlag.Name] = &featureFlag
+	}
+
 	return &deps, nil
 }
 
@@ -244,12 +250,6 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		return nil, err
 	}
 
-	//Get FeatureFlags Dep
-	ffr, err := getFeatureFlags(session)
-	if err != nil {
-		return nil, err
-	}
-
 	deps := ViewDependencies{
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
@@ -258,10 +258,6 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
-
-	for key := range ffr {
-		deps.FeatureFlags[ffr[key].Name] = &ffr[key]
-	}
 
 	for key := range variantsUsed {
 		variantDep, err := loadVariant(key, session)
@@ -276,6 +272,12 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	ffr, _ := getFeatureFlags(session)
+	for i := range ffr {
+		featureFlag := ffr[i]
+		deps.FeatureFlags[featureFlag.Name] = &featureFlag
 	}
 
 	return &deps, nil

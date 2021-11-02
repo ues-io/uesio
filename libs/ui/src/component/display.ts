@@ -55,8 +55,11 @@ function should(condition: DisplayCondition, context: Context) {
 		return context.getView()?.params?.[condition.param] === condition.value
 	}
 	if (condition.type === "featureFlag") {
-		//console.log(context.getView()?.)
-		return false //TO-DO use condition.value to check if exists after reading all the featureFlags from the context??
+		const featureflags = context.getViewDef()?.dependencies?.featureflags
+		const featureFlag = featureflags && featureflags[condition.name]
+
+		console.log(condition.name, featureFlag?.value)
+		return featureFlag ? featureFlag?.value : true
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
