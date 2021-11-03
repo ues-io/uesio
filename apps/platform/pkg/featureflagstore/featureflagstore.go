@@ -12,8 +12,8 @@ import (
 
 // FeatureFlagStore interface
 type FeatureFlagStore interface {
-	Get(key string) (*meta.FeatureFlagAssignment, error)
-	Set(key string, value bool, site string, user string) error
+	Get(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error)
+	Set(key string, value bool, user string, session *sess.Session) error
 }
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
@@ -27,8 +27,8 @@ func getKeyParts(cv *meta.FeatureFlag, user string, session *sess.Session) []str
 	if workspace != nil {
 		return append(parts, "workspace", workspace.GetAppID(), workspace.Name)
 	}
-	site := session.GetSite()
-	return append(parts, "site", site.GetFullName())
+	//site := session.GetSite()
+	return parts //append(parts, "site", site.GetFullName())
 }
 
 func getKey(cv *meta.FeatureFlag, user string, session *sess.Session) string {
@@ -76,10 +76,10 @@ func GetValue(cv *meta.FeatureFlag, user string, session *sess.Session) (*meta.F
 	}
 	fullKey := getKey(cv, user, session) //TO-DO check user
 	println("KEY", fullKey)
-	return store.Get(fullKey)
+	return store.Get(fullKey, session)
 }
 
-func SetValueFromKey(key string, value bool, site string, user string, session *sess.Session) error {
+func SetValueFromKey(key string, value bool, user string, session *sess.Session) error {
 	FeatureFlag, err := meta.NewFeatureFlag(key)
 	if err != nil {
 		return err
@@ -88,10 +88,10 @@ func SetValueFromKey(key string, value bool, site string, user string, session *
 	if err != nil {
 		return err
 	}
-	return SetValue(FeatureFlag, value, site, user, session)
+	return SetValue(FeatureFlag, value, user, session)
 }
 
-func SetValue(cv *meta.FeatureFlag, value bool, site string, user string, session *sess.Session) error {
+func SetValue(cv *meta.FeatureFlag, value bool, user string, session *sess.Session) error {
 	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
@@ -99,7 +99,7 @@ func SetValue(cv *meta.FeatureFlag, value bool, site string, user string, sessio
 	}
 	fullKey := getKey(cv, user, session)
 	println("KEY", fullKey)
-	return store.Set(fullKey, value, site, user)
+	return store.Set(fullKey, value, user, session)
 }
 
 // Merge function

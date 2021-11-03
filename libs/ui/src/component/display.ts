@@ -61,7 +61,7 @@ function should(condition: DisplayCondition, context: Context) {
 
 		//a FeatureFlag that don't exists old or new one without assigment
 		if (!featureFlag) {
-			return true
+			return false
 		}
 
 		console.log(

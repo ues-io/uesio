@@ -17,7 +17,6 @@ type FeatureFlagResponse struct {
 	Name      string `json:"name"`
 	Namespace string `json:"namespace"`
 	Value     bool   `json:"value"`
-	Site      string `json:"site"`
 	User      string `json:"user"` //TO-DO check type
 }
 
@@ -38,7 +37,6 @@ func getFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse,
 			response = append(response, FeatureFlagResponse{
 				Name:      cv.Name,
 				Namespace: cv.Namespace,
-				Site:      "",
 				User:      "", // TO-DO merge the user ?? get other attributes not just the name
 				Value:     false,
 			})
@@ -47,7 +45,6 @@ func getFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse,
 		response = append(response, FeatureFlagResponse{
 			Name:      cv.Name,
 			Namespace: cv.Namespace,
-			Site:      ffa.Site,
 			User:      ffa.User, //.FirstName, // TO-DO merge the user ?? get other attributes not just the name
 			Value:     ffa.Value,
 		})
@@ -61,7 +58,6 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	vars := mux.Vars(r)
 	user := vars["user"]
-	println("eee", user)
 
 	response, err := getFeatureFlags(session, user)
 	if err != nil {
@@ -75,7 +71,6 @@ func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 type FeatureFlagSetRequest struct {
 	Value bool   `json:"value"`
-	Site  string `json:"site"`
 	User  string `json:"user"`
 }
 
@@ -92,7 +87,7 @@ func SetFeatureFlag(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
-	err = featureflagstore.SetValueFromKey(key, setRequest.Value, setRequest.Site, setRequest.User, session)
+	err = featureflagstore.SetValueFromKey(key, setRequest.Value, setRequest.User, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

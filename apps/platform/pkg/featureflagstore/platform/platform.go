@@ -2,9 +2,9 @@ package environment
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 // FeatureFlagStore struct
@@ -12,18 +12,14 @@ type FeatureFlagStore struct {
 }
 
 // Get function
-func (ffs *FeatureFlagStore) Get(key string) (*meta.FeatureFlagAssignment, error) {
+func (ffs *FeatureFlagStore) Get(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	var ffa meta.FeatureFlagAssignment
-	headlessSession, err := auth.GetHeadlessSession()
-	if err != nil {
-		return nil, err
-	}
-	err = datasource.PlatformLoadOne(&ffa, []adapt.LoadRequestCondition{
+	err := datasource.PlatformLoadOne(&ffa, []adapt.LoadRequestCondition{
 		{
 			Field: "uesio.id",
 			Value: key,
 		},
-	}, headlessSession)
+	}, session)
 	if err != nil {
 		return nil, err
 	}
@@ -31,18 +27,14 @@ func (ffs *FeatureFlagStore) Get(key string) (*meta.FeatureFlagAssignment, error
 }
 
 // Set function
-func (ffs *FeatureFlagStore) Set(key string, value bool, site string, user string) error {
+func (ffs *FeatureFlagStore) Set(key string, value bool, user string, session *sess.Session) error {
 	ffa := meta.FeatureFlagAssignment{
 		Key:   key,
 		Value: value,
-		Site:  site,
 		User:  user,
 	}
-	headlessSession, err := auth.GetHeadlessSession()
-	if err != nil {
-		return err
-	}
+
 	return datasource.PlatformSaveOne(&ffa, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, headlessSession)
+	}, session)
 }
