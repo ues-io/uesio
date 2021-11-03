@@ -57,21 +57,12 @@ function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "featureFlag") {
 		const featureflags = context.getViewDef()?.dependencies?.featureflags
 		const featureFlag = featureflags && featureflags[condition.name]
-		console.log("featureFlag -->", featureFlag)
 
-		//a FeatureFlag that don't exists old or new one without assigment
 		if (!featureFlag) {
 			return false
 		}
 
-		console.log(
-			"Condition:",
-			condition.name,
-			"Display:",
-			!featureFlag?.value
-		)
-		//return featureFlag ? featureFlag?.value : true
-		return featureFlag && !featureFlag?.value
+		return featureFlag && featureFlag?.value
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)

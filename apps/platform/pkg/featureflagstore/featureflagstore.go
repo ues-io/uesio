@@ -53,7 +53,7 @@ func RegisterFeatureFlagStore(name string, store FeatureFlagStore) {
 // Get key
 func GetValueFromKey(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	if key == "" {
-		return nil, nil //TO-DO new error
+		return nil, nil
 	}
 
 	FeatureFlag, err := meta.NewFeatureFlag(key)
@@ -74,8 +74,7 @@ func GetValue(cv *meta.FeatureFlag, user string, session *sess.Session) (*meta.F
 	if err != nil {
 		return nil, err
 	}
-	fullKey := getKey(cv, user, session) //TO-DO check user
-	println("KEY", fullKey)
+	fullKey := getKey(cv, user, session)
 	return store.Get(fullKey, session)
 }
 
@@ -98,7 +97,6 @@ func SetValue(cv *meta.FeatureFlag, value bool, user string, session *sess.Sessi
 		return err
 	}
 	fullKey := getKey(cv, user, session)
-	println("KEY", fullKey)
 	return store.Set(fullKey, value, user, session)
 }
 
