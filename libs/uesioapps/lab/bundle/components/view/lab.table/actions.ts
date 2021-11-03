@@ -1,4 +1,4 @@
-import { Action } from "../../utility/lab.actionsbar/actionsbardefinition"
+import { Action } from "../lab.actionsbar/actionsbardefinition"
 export default (wireId: string): { tableActions: Action[] } => ({
 	tableActions: [
 		{

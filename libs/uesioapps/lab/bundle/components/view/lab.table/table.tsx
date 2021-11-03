@@ -6,9 +6,9 @@ import useScroll from "./hooks/useScroll"
 import useColumnDrag from "./hooks/useColumnDrag"
 import TableColumn from "./tablecolumn"
 import actions from "./actions"
-import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import { TableColumnDefinition } from "./tablecolumndefinition"
 
-const LabActionsBar = component.registry.getUtility("lab.actionsbar")
+import ActionsBar from "../lab.actionsbar/actionsbar"
 
 const useFreezePadding = (
 	hasFreeze: boolean | undefined,
@@ -308,7 +308,7 @@ const Table: FC<TableProps> = (props) => {
 			</div>
 
 			{/* Table Actions bar */}
-			{definition.actions && (
+			{definition.actions && wire && (
 				<div
 					className={classes.actionsContainer}
 					style={{
@@ -319,11 +319,12 @@ const Table: FC<TableProps> = (props) => {
 								: "initial",
 					}}
 				>
-					<LabActionsBar
+					<ActionsBar
 						context={context}
 						actions={tableActions.filter(({ name }) =>
 							definition.actions.includes(name)
 						)}
+						wire={wire}
 						definition={definition}
 					/>
 				</div>

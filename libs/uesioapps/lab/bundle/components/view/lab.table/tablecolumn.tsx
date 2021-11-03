@@ -1,6 +1,6 @@
 import React, { FC } from "react"
 import { hooks, definition, wire } from "@uesio/ui"
-import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import { TableColumnDefinition } from "./tablecolumndefinition"
 import EmptyColumn from "./emptycolumn"
 import useLongPress from "./hooks/useLongPress"
 

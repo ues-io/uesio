@@ -1,53 +1,45 @@
-import { useState, useRef, useEffect, useMemo, useCallback } from "react"
+import { FC } from "react"
+import { component, styles, definition, wire } from "@uesio/ui"
 
-type CellRef = HTMLDivElement
-
-// Identify and return heighest element from an array of elements
-// Used for uqualizing cell heights in table body and header
-
-// Todo:
-// 1. when window gets bigger and text unwraps, the cellheight doesn't decrease
-// 2. The handler runs too often, for instance when you drag columns around.
-
-export default (
-	eager?: boolean
-): [number | null, (arg0: CellRef) => void, () => void] => {
-	const [cellHeight, setCellHeight] = useState<number | null>(null)
-	const cellRefs = useRef<CellRef[]>([])
-
-	const pushCellRef = (el: CellRef) => {
-		const { current } = cellRefs
-		!current.includes(el) && current.push(el)
-	}
-
-	const getHeighestCell = (nodes: CellRef[]) =>
-		Math.max(
-			...nodes.map((n) => {
-				// We want the height of the content because the parent will never change size if we hardcode the height.
-				const child = n.firstElementChild as HTMLElement
-				return child?.offsetHeight
-			})
-		)
-
-	// Idea: debounce.. this is running too often
-	const handler = () => {
-		if (!cellRefs.current.length) return
-		const x = getHeighestCell(cellRefs.current)
-		if (x !== cellHeight) return setCellHeight(x)
-	}
-
-	useEffect(() => {
-		window.addEventListener("resize", handler)
-
-		if (eager) {
-			const x = getHeighestCell(cellRefs.current)
-			if (x !== cellHeight) return setCellHeight(x)
-		}
-
-		return () => {
-			window.removeEventListener("resize", handler)
-		}
-	}, [cellRefs.current.length])
-
-	return [cellHeight, pushCellRef, handler]
+interface T extends definition.BaseProps {
+	wire: wire.Wire
+	index: number
+	isDragging?: boolean
 }
+
+const emptyColumn: FC<T> = (props) => {
+	const { path = "", wire, index, context, isDragging, definition } = props
+	const classes = styles.useStyles(
+		{
+			root: {
+				backgroundColor: "#fff",
+				height: "100%",
+				display: "flex",
+				alignItems: "center",
+				padding: "5px",
+				minWidth: "150px",
+				justifyContent: "center",
+				flex: 1,
+			},
+		},
+		props
+	)
+
+	return (
+		<div className={classes.root}>
+			{isDragging ? (
+				<component.Slot
+					definition={{}}
+					listName="components"
+					path={`${path}["columns"]["${index}"]["lab.tablecolumn"]`}
+					accepts={["uesio.standalone", "uesio.field"]}
+					context={context}
+				/>
+			) : (
+				<p>Drop a field or component</p>
+			)}
+		</div>
+	)
+}
+
+export default emptyColumn

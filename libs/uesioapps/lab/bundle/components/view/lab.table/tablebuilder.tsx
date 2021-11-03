@@ -2,8 +2,7 @@ import { FunctionComponent } from "react"
 import { TableProps } from "./tabledefinition"
 import Table from "./table"
 import { styles, component, hooks } from "@uesio/ui"
-import WireHelper from "../../wirehelper"
-import FieldHints from "../lab.column/fieldhints"
+import WireHelper from "../../utility/lab.wirehelper/wirehelper"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
