@@ -262,9 +262,6 @@ const getWebpackConfig = (
 			path: path.resolve("./bundle/componentpacks"),
 			filename: "[name].bundle.js",
 		},
-		infrastructureLogging: {
-			level: "none",
-		},
 		node: false,
 		externals: {
 			react: "React",
