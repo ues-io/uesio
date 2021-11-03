@@ -119,5 +119,5 @@ definition:
                                 components:
                                   - studio.configfeatureflags:
                                       site: $Param{sitename}
-                                      user: $Param{userid}
+                                      user: ${uesio.id}
   panels:

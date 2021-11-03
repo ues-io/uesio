@@ -274,7 +274,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		}
 	}
 
-	ffr, _ := getFeatureFlags(session, "MockAbel") //session.GetUserInfo().ID) //TO-DO check this
+	ffr, _ := getFeatureFlags(session, session.GetUserInfo().ID) //TO-DO check this
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
