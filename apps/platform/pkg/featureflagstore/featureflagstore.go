@@ -18,11 +18,11 @@ type FeatureFlagStore interface {
 
 var featureFlagStoreMap = map[string]FeatureFlagStore{}
 
-func getConfigKeyParts(cv *meta.FeatureFlag, session *sess.Session) []string {
+func getKeyParts(cv *meta.FeatureFlag, user string, session *sess.Session) []string {
 	parts := []string{cv.Namespace, cv.Name}
-	// if cv.ManagedBy == "app" {
-	// 	return parts
-	// }
+	if user != "" {
+		parts = append(parts, user)
+	}
 	workspace := session.GetWorkspace()
 	if workspace != nil {
 		return append(parts, "workspace", workspace.GetAppID(), workspace.Name)
@@ -31,8 +31,9 @@ func getConfigKeyParts(cv *meta.FeatureFlag, session *sess.Session) []string {
 	return append(parts, "site", site.GetFullName())
 }
 
-func getConfigKey(cv *meta.FeatureFlag, session *sess.Session) string {
-	return strings.Join(getConfigKeyParts(cv, session), ":")
+func getKey(cv *meta.FeatureFlag, user string, session *sess.Session) string {
+	key := strings.Join(getKeyParts(cv, user, session), ":")
+	return key
 }
 
 // GetFeatureFlagStore gets an adapter of a certain type
@@ -64,16 +65,17 @@ func GetValueFromKey(key string, session *sess.Session) (*meta.FeatureFlagAssign
 		return nil, err
 	}
 
-	return GetValue(FeatureFlag, session)
+	return GetValue(FeatureFlag, "", session)
 }
 
-func GetValue(cv *meta.FeatureFlag, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
+func GetValue(cv *meta.FeatureFlag, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return nil, err
 	}
-	fullKey := getConfigKey(cv, session)
+	fullKey := getKey(cv, user, session) //TO-DO check user
+	println("KEY", fullKey)
 	return store.Get(fullKey)
 }
 
@@ -95,7 +97,8 @@ func SetValue(cv *meta.FeatureFlag, value bool, site string, user string, sessio
 	if err != nil {
 		return err
 	}
-	fullKey := getConfigKey(cv, session)
+	fullKey := getKey(cv, user, session)
+	println("KEY", fullKey)
 	return store.Set(fullKey, value, site, user)
 }
 

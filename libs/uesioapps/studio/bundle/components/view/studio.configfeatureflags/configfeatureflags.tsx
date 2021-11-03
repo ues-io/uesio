@@ -14,7 +14,7 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
 	const site = definition?.site
-	const user = definition?.user
+	const user = definition?.user ? definition?.user : ""
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
@@ -41,7 +41,7 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 		}
 	}
 
-	const [values] = uesio.featureflag.useFeatureFlags(newContext)
+	const [values] = uesio.featureflag.useFeatureFlags(newContext, user)
 
 	if (!values) {
 		return null

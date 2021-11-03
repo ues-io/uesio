@@ -151,7 +151,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		deps.ComponentVariants[variant.GetKey()] = &variant
 	}
 
-	ffr, _ := getFeatureFlags(session)
+	ffr, _ := getFeatureFlags(session, "") //TO-DO check this
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
@@ -274,7 +274,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		}
 	}
 
-	ffr, _ := getFeatureFlags(session)
+	ffr, _ := getFeatureFlags(session, "MockAbel") //session.GetUserInfo().ID) //TO-DO check this
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag

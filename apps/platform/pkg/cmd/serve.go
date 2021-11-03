@@ -105,7 +105,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
 	siteAdminAPI(sar, "/secrets", controller.Secret).Methods("GET")
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
-	siteAdminAPI(sar, "/featureflags", controller.FeatureFlag).Methods("GET")
+	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
 	siteAdminAPI(sar, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
 	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
 	siteAdminAPI(sar, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")

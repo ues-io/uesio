@@ -14,7 +14,7 @@ class FeatureFlagAPI {
 	uesio: Uesio
 	dispatcher: Dispatcher<AnyAction>
 
-	useFeatureFlags(context: Context) {
+	useFeatureFlags(context: Context, user: string) {
 		const [featureflags, setFeatureFlags] = useState<
 			FeatureFlagResponse[] | null
 		>(null)
@@ -23,7 +23,7 @@ class FeatureFlagAPI {
 			if (!featureflags && !loading.current) {
 				loading.current = true
 				this.dispatcher((dispatch, getState, platform) =>
-					platform.getFeatureFlags(context)
+					platform.getFeatureFlags(context, user)
 				)
 					.then(setFeatureFlags)
 					.finally(() => (loading.current = false))

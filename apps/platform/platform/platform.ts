@@ -210,9 +210,10 @@ window.uesioLoader = (mergeData) => {
 			return response.json()
 		},
 
-		getFeatureFlags: async (context) => {
+		getFeatureFlags: async (context, user) => {
 			const prefix = getPrefix(context)
-			const response = await fetch(`${prefix}/featureflags`)
+			const userUrl = user ? `/${user}` : ""
+			const response = await fetch(`${prefix}/featureflags${userUrl}`)
 			return response.json()
 		},
 

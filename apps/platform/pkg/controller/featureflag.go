@@ -21,7 +21,7 @@ type FeatureFlagResponse struct {
 	User      string `json:"user"` //TO-DO check type
 }
 
-func getFeatureFlags(session *sess.Session) ([]FeatureFlagResponse, error) {
+func getFeatureFlags(session *sess.Session, user string) ([]FeatureFlagResponse, error) {
 	var featureFlags meta.FeatureFlagCollection
 	err := bundle.LoadAllFromAny(&featureFlags, nil, session)
 	if err != nil {
@@ -31,7 +31,7 @@ func getFeatureFlags(session *sess.Session) ([]FeatureFlagResponse, error) {
 	response := []FeatureFlagResponse{}
 
 	for _, cv := range featureFlags {
-		ffa, err := featureflagstore.GetValue(&cv, session)
+		ffa, err := featureflagstore.GetValue(&cv, user, session)
 		if err != nil {
 			//Item Not Found return empty ffr & continue
 			//return nil, err
@@ -59,8 +59,11 @@ func getFeatureFlags(session *sess.Session) ([]FeatureFlagResponse, error) {
 func FeatureFlag(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
+	vars := mux.Vars(r)
+	user := vars["user"]
+	println("eee", user)
 
-	response, err := getFeatureFlags(session)
+	response, err := getFeatureFlags(session, user)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

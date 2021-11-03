@@ -104,7 +104,10 @@ interface Platform {
 		key: string,
 		value: string
 	): Promise<BotResponse>
-	getFeatureFlags(context: Context): Promise<FeatureFlagResponse[]>
+	getFeatureFlags(
+		context: Context,
+		user?: string
+	): Promise<FeatureFlagResponse[]>
 	setFeatureFlag(
 		context: Context,
 		key: string,
