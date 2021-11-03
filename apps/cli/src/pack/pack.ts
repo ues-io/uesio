@@ -208,7 +208,9 @@ const getWebpackConfig = (
 							options: {
 								silent: true,
 								errorFormatter: function customErrorFormatter(
+									// eslint-disable-next-line @typescript-eslint/no-explicit-any
 									error: any,
+									// eslint-disable-next-line @typescript-eslint/no-explicit-any
 									colors: any
 								) {
 									const path = error.file
