@@ -3,6 +3,8 @@ components:
   view:
     lab.layout:
     lab.column:
+    lab.table:
+    lab.actionsbar:
   utility:
     lab.layout:
     lab.column:

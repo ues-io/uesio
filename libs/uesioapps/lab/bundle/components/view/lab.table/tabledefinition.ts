@@ -1,8 +1,8 @@
 import { definition, builder, signal, component, wire } from "@uesio/ui"
-import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
+import { TableColumnDefinition } from "./tablecolumndefinition"
 import actionsBarDefinition, {
 	ActionsBarDefinition,
-} from "../../utility/lab.actionsbar/actionsbardefinition"
+} from "../lab.actionsbar/actionsbardefinition"
 type TableMode = "READ" | "EDIT"
 
 type TableClasses = Record<
