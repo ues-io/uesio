@@ -3,6 +3,7 @@ import { definition, builder, component } from "@uesio/ui"
 
 import TextProp from "../buildpropitem/textprop"
 import SelectProp from "../buildpropitem/selectprop"
+import MultiSelectProp from "../buildpropitem/multiselectprop"
 import KeyProp from "../buildpropitem/keyprop"
 import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
@@ -28,6 +29,8 @@ function getPropHandler(type?: string) {
 			return MetadataProp
 		case "SELECT":
 			return SelectProp
+		case "MULTISELECT":
+			return MultiSelectProp
 		case "KEY":
 			return KeyProp
 		case "WIRE":
