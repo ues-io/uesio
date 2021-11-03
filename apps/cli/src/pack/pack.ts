@@ -2,6 +2,7 @@ import { fileExists, getApp } from "../config/config"
 import * as path from "path"
 import { promises as fs } from "fs"
 import * as yaml from "yaml"
+
 import webpack, { RuleSetRule } from "webpack"
 
 type ComponentMap = {
@@ -204,6 +205,42 @@ const getWebpackConfig = (
 					use: [
 						{
 							loader: getLoaderPath("ts-loader"),
+							options: {
+								silent: true,
+								errorFormatter: function customErrorFormatter(
+									error: any,
+									colors: any
+								) {
+									const path = error.file
+										.split("/")
+										.splice(-2)
+										.join("/")
+
+									console.log(
+										`
+										`
+									)
+									console.log(
+										`🚨  ${colors.bold.bgRed(
+											" E R R O R "
+										)} | ${path} - ${error.line} `
+									)
+									console.log(``)
+
+									console.log(
+										`%c  ${colors.bold.redBright(
+											error.content
+										)}`,
+										``
+									)
+									console.log(
+										`
+										`
+									)
+
+									return error.content
+								},
+							},
 						},
 					],
 				},
@@ -224,6 +261,9 @@ const getWebpackConfig = (
 		output: {
 			path: path.resolve("./bundle/componentpacks"),
 			filename: "[name].bundle.js",
+		},
+		infrastructureLogging: {
+			level: "none",
 		},
 		node: false,
 		externals: {
