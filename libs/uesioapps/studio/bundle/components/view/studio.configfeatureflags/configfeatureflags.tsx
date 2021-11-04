@@ -3,7 +3,6 @@ import { definition, hooks } from "@uesio/ui"
 import ConfigFeatureFlagsItem from "./configfeatureflagsitem"
 
 type ConfigFeatureFlagsDefinition = {
-	site: string
 	user: string
 }
 interface Props extends definition.BaseProps {
@@ -13,7 +12,6 @@ interface Props extends definition.BaseProps {
 const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const site = definition?.site
 	const user = definition?.user ? definition?.user : ""
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
@@ -48,7 +46,7 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 	}
 
 	const handleSet = async (key: string, value: boolean) => {
-		await uesio.featureflag.set(newContext, key, value, site, user)
+		await uesio.featureflag.set(newContext, key, value, user)
 	}
 
 	return (

@@ -118,6 +118,5 @@ definition:
                                     padding: 40px
                                 components:
                                   - studio.configfeatureflags:
-                                      site: $Param{sitename}
                                       user: ${uesio.id}
   panels:

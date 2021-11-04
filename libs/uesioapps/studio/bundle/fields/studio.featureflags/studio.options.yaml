@@ -1,8 +1,0 @@
-name: options
-collection: studio.featureflags
-type: LIST
-label: Options
-subtype: MAP
-subfields:
-  - name: scope
-  - name: value

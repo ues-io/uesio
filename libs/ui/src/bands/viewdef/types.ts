@@ -17,7 +17,6 @@ type FeatureFlagDependency = {
 	name: string
 	namespace: string
 	value: boolean
-	site: string
 	user: string
 }
 

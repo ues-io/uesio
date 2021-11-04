@@ -32,95 +32,95 @@ func NewFeatureFlag(key string) (*FeatureFlag, error) {
 }
 
 // GetCollectionName function
-func (cv *FeatureFlag) GetCollectionName() string {
-	return cv.GetBundleGroup().GetName()
+func (ff *FeatureFlag) GetCollectionName() string {
+	return ff.GetBundleGroup().GetName()
 }
 
 // GetCollection function
-func (cv *FeatureFlag) GetCollection() CollectionableGroup {
-	var cvc FeatureFlagCollection
-	return &cvc
+func (ff *FeatureFlag) GetCollection() CollectionableGroup {
+	var ffc FeatureFlagCollection
+	return &ffc
 }
 
 // GetConditions function
-func (cv *FeatureFlag) GetConditions() map[string]string {
+func (ff *FeatureFlag) GetConditions() map[string]string {
 	return map[string]string{
-		"studio.name": cv.Name,
+		"studio.name": ff.Name,
 	}
 }
 
 // GetBundleGroup function
-func (cv *FeatureFlag) GetBundleGroup() BundleableGroup {
-	var cvc FeatureFlagCollection
-	return &cvc
+func (ff *FeatureFlag) GetBundleGroup() BundleableGroup {
+	var ffc FeatureFlagCollection
+	return &ffc
 }
 
 // GetKey function
-func (cv *FeatureFlag) GetKey() string {
-	return cv.Namespace + "." + cv.Name
+func (ff *FeatureFlag) GetKey() string {
+	return ff.Namespace + "." + ff.Name
 }
 
 // GetPath function
-func (cv *FeatureFlag) GetPath() string {
-	return cv.GetKey() + ".yaml"
+func (ff *FeatureFlag) GetPath() string {
+	return ff.GetKey() + ".yaml"
 }
 
 // GetPermChecker function
-func (cv *FeatureFlag) GetPermChecker() *PermissionSet {
+func (ff *FeatureFlag) GetPermChecker() *PermissionSet {
 	return nil
 }
 
 // SetField function
-func (cv *FeatureFlag) SetField(fieldName string, value interface{}) error {
-	return StandardFieldSet(cv, fieldName, value)
+func (ff *FeatureFlag) SetField(fieldName string, value interface{}) error {
+	return StandardFieldSet(ff, fieldName, value)
 }
 
 // GetField function
-func (cv *FeatureFlag) GetField(fieldName string) (interface{}, error) {
-	return StandardFieldGet(cv, fieldName)
+func (ff *FeatureFlag) GetField(fieldName string) (interface{}, error) {
+	return StandardFieldGet(ff, fieldName)
 }
 
 // GetNamespace function
-func (cv *FeatureFlag) GetNamespace() string {
-	return cv.Namespace
+func (ff *FeatureFlag) GetNamespace() string {
+	return ff.Namespace
 }
 
 // SetNamespace function
-func (cv *FeatureFlag) SetNamespace(namespace string) {
-	cv.Namespace = namespace
+func (ff *FeatureFlag) SetNamespace(namespace string) {
+	ff.Namespace = namespace
 }
 
 // SetWorkspace function
-func (cv *FeatureFlag) SetWorkspace(workspace string) {
-	cv.Workspace = &Workspace{
+func (ff *FeatureFlag) SetWorkspace(workspace string) {
+	ff.Workspace = &Workspace{
 		ID: workspace,
 	}
 }
 
 // Loop function
-func (cv *FeatureFlag) Loop(iter func(string, interface{}) error) error {
-	return StandardItemLoop(cv, iter)
+func (ff *FeatureFlag) Loop(iter func(string, interface{}) error) error {
+	return StandardItemLoop(ff, iter)
 }
 
 // Len function
-func (cv *FeatureFlag) Len() int {
-	return StandardItemLen(cv)
+func (ff *FeatureFlag) Len() int {
+	return StandardItemLen(ff)
 }
 
 // GetItemMeta function
-func (cv *FeatureFlag) GetItemMeta() *ItemMeta {
-	return cv.itemMeta
+func (ff *FeatureFlag) GetItemMeta() *ItemMeta {
+	return ff.itemMeta
 }
 
 // SetItemMeta function
-func (cv *FeatureFlag) SetItemMeta(itemMeta *ItemMeta) {
-	cv.itemMeta = itemMeta
+func (ff *FeatureFlag) SetItemMeta(itemMeta *ItemMeta) {
+	ff.itemMeta = itemMeta
 }
 
-func (cv *FeatureFlag) UnmarshalYAML(node *yaml.Node) error {
-	err := validateNodeName(node, cv.Name)
+func (ff *FeatureFlag) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, ff.Name)
 	if err != nil {
 		return err
 	}
-	return node.Decode(cv)
+	return node.Decode(ff)
 }

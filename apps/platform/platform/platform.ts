@@ -217,11 +217,10 @@ window.uesioLoader = (mergeData) => {
 			return response.json()
 		},
 
-		setFeatureFlag: async (context, key, value, site, user) => {
+		setFeatureFlag: async (context, key, value, user) => {
 			const prefix = getPrefix(context)
 			const response = await postJSON(`${prefix}/featureflags/${key}`, {
 				value,
-				site,
 				user,
 			})
 			return response.json()

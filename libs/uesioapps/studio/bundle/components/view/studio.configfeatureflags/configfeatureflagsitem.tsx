@@ -17,7 +17,7 @@ const ConfigFeatureFlagsItem: FunctionComponent<Props> = (props) => {
 	return (
 		<TitleBar
 			title={title}
-			subtitle={state ? "on" : "off"}
+			subtitle={state ? "revealing" : "hiding"}
 			context={context}
 			styles={{
 				root: {

@@ -10,9 +10,6 @@ definition:
               uesio.variant: io.nav
               title: Data
           - io.tile:
-              uesio.display:
-                - name: display_bots
-                  type: featureFlag
               uesio.variant: io.nav
               uesio.classes:
                 selected:
@@ -47,9 +44,6 @@ definition:
                     uesio.variant: io.icon
                     text: list
           - io.tile:
-              uesio.display:
-                - name: display_datasources
-                  type: featureFlag
               uesio.variant: io.nav
               uesio.classes:
                 selected:
@@ -87,9 +81,6 @@ definition:
               uesio.variant: io.nav
               title: User Interface
           - io.tile:
-              uesio.display:
-                - name: display_componenets
-                  type: featureFlag
               uesio.variant: io.nav
               uesio.classes:
                 selected:

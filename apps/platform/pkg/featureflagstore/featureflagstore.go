@@ -7,7 +7,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 // FeatureFlagStore interface
@@ -23,17 +22,11 @@ func getKeyParts(cv *meta.FeatureFlag, user string, session *sess.Session) []str
 	if user != "" {
 		parts = append(parts, user)
 	}
-	workspace := session.GetWorkspace()
-	if workspace != nil {
-		return append(parts, "workspace", workspace.GetAppID(), workspace.Name)
-	}
-	//site := session.GetSite()
-	return parts //append(parts, "site", site.GetFullName())
+	return parts
 }
 
 func getKey(cv *meta.FeatureFlag, user string, session *sess.Session) string {
-	key := strings.Join(getKeyParts(cv, user, session), ":")
-	return key
+	return strings.Join(getKeyParts(cv, user, session), ":")
 }
 
 // GetFeatureFlagStore gets an adapter of a certain type
@@ -69,7 +62,6 @@ func GetValueFromKey(key string, session *sess.Session) (*meta.FeatureFlagAssign
 }
 
 func GetValue(cv *meta.FeatureFlag, user string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
-	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return nil, err
@@ -91,27 +83,10 @@ func SetValueFromKey(key string, value bool, user string, session *sess.Session)
 }
 
 func SetValue(cv *meta.FeatureFlag, value bool, user string, session *sess.Session) error {
-	// Only use platform
 	store, err := GetFeatureFlagStore("platform")
 	if err != nil {
 		return err
 	}
 	fullKey := getKey(cv, user, session)
 	return store.Set(fullKey, value, user, session)
-}
-
-// Merge function
-func Merge(template string, session *sess.Session) (string, error) {
-	featureTemplate, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
-		return GetValueFromKey(key, session)
-	})
-	if err != nil {
-		return "", err
-	}
-
-	value, err := templating.Execute(featureTemplate, nil)
-	if err != nil {
-		return "", err
-	}
-	return value, nil
 }
