@@ -2,6 +2,7 @@ import { fileExists, getApp } from "../config/config"
 import * as path from "path"
 import { promises as fs } from "fs"
 import * as yaml from "yaml"
+import chalk from "chalk"
 
 import webpack, { RuleSetRule } from "webpack"
 
@@ -211,28 +212,38 @@ const getWebpackConfig = (
 									error: any,
 									colors: any
 								) {
-									const path = error.file
-										.split("/")
-										.splice(-2)
-										.join("/")
+									const pathArray = error.file.split("/")
+									const path = pathArray.splice(-4).join("/")
+
+									const namespace =
+										pathArray[
+											pathArray.indexOf("uesioapps") + 1
+										]
 
 									console.log(
 										`
 										`
 									)
+
 									console.log(
-										`🚨  ${colors.bold.bgRed(
-											" E R R O R "
-										)} | ${path} - ${error.line} `
+										`${colors.bold.bgRed(
+											` E R R O R `
+										)} ${colors.bold.bgBlue(
+											` ${namespace.toUpperCase()} `
+										)}  ${path} `
 									)
+
 									console.log(``)
 
 									console.log(
-										`%c  ${colors.bold.redBright(
+										`${colors.bold(
+											` Line ${error.line}: `
+										)} ${colors.bold.redBright(
 											error.content
 										)}`,
 										``
 									)
+
 									console.log(
 										`
 										`
@@ -298,12 +309,16 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors?.forEach((message) => console.error(message))
+			// Left this here in case we want to unmute standard errors
+			// info.errors?.forEach((message) => console.error(message))
 
 			// force the build process to fail upon compilation error, except for the watcher on dev mode
 			if (!dev) {
 				process.exit(1)
 			}
+		}
+		if (!stats.hasErrors()) {
+			console.log(chalk`{greenBright No errors :) }`)
 		}
 		if (stats.hasWarnings()) {
 			info.warnings?.forEach((message) => console.warn(message))
