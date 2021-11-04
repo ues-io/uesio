@@ -1,4 +1,4 @@
-import { forwardRef, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 const minPagePadding = "40px"
@@ -9,10 +9,7 @@ interface DialogPlainUtilityProps extends definition.UtilityProps {
 	height?: string
 }
 
-const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = forwardRef<
-	HTMLDivElement,
-	DialogPlainUtilityProps
->((props, ref) => {
+const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
@@ -53,13 +50,11 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = forwardRef<
 		<>
 			<div className={classes.blocker} onClick={props.onClose} />
 			<div className={classes.root}>
-				<div className={classes.inner} ref={ref}>
-					{props.children}
-				</div>
+				<div className={classes.inner}>{props.children}</div>
 			</div>
 		</>
 	)
-})
+}
 
 export { DialogPlainUtilityProps }
 
