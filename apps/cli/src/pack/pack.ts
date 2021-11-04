@@ -2,8 +2,9 @@ import { fileExists, getApp } from "../config/config"
 import * as path from "path"
 import { promises as fs } from "fs"
 import * as yaml from "yaml"
+import chalk from "chalk"
 
-import webpack, { RuleSetRule } from "webpack"
+import webpack, { RuleSetRule, StatsError } from "webpack"
 
 type ComponentMap = {
 	[key: string]: unknown
@@ -167,6 +168,7 @@ interface Flags {
 	develop: boolean
 	stats: boolean
 }
+
 const getLoaderPath = (loaderName: string): string =>
 	path.resolve(
 		__dirname,
@@ -207,41 +209,8 @@ const getWebpackConfig = (
 							loader: getLoaderPath("ts-loader"),
 							options: {
 								silent: true,
-								errorFormatter: function customErrorFormatter(
-									// eslint-disable-next-line @typescript-eslint/no-explicit-any
-									error: any,
-									// eslint-disable-next-line @typescript-eslint/no-explicit-any
-									colors: any
-								) {
-									const path = error.file
-										.split("/")
-										.splice(-2)
-										.join("/")
-
-									console.log(
-										`
-										`
-									)
-									console.log(
-										`🚨  ${colors.bold.bgRed(
-											" E R R O R "
-										)} | ${path} - ${error.line} `
-									)
-									console.log(``)
-
-									console.log(
-										`%c  ${colors.bold.redBright(
-											error.content
-										)}`,
-										``
-									)
-									console.log(
-										`
-										`
-									)
-
-									return error.content
-								},
+								errorFormatter: (error: StatsError) =>
+									error.content,
 							},
 						},
 					],
@@ -276,6 +245,51 @@ const getWebpackConfig = (
 	}
 }
 
+const handleErrors = (errors: webpack.StatsError[]) => {
+	// Try to print errors nicely and just print everything if it fails
+	try {
+		// Group errors by file
+		const perFile = errors.reduce(
+			(acc: Record<string, webpack.StatsError[]>, error) => {
+				if (!error || !error.file) return acc
+				const pathArray = error.file.split("/")
+				const path = pathArray.splice(-4).join("/")
+				return {
+					...acc,
+					[path]: [...(path in acc ? acc[path] : []), error],
+				}
+			},
+			{}
+		)
+
+		Object.keys(perFile).forEach((file) => {
+			// File
+			const pathArray = perFile[file][0].file?.split("/") || []
+			const path = pathArray.splice(-4).join("/")
+			const namespace = pathArray[pathArray.indexOf("uesioapps") + 1]
+			console.log(
+				chalk`{bold.bgRed  E R R O R } {bold.bgBlue  ${namespace.toUpperCase()} } ${path} `
+			)
+			console.log(``)
+
+			perFile[file].forEach((error) => {
+				// Individual error
+				if (!error.loc) return
+				console.log(
+					chalk`> {bold Line: ${
+						error.loc.split(":")[0]
+					}} {bold.redBright ${error.message}}`
+				)
+				console.log(``)
+			})
+			console.log(``)
+		})
+	} catch (fail) {
+		console.log(`Error while processing webpack errors: ${fail}`)
+		console.log(errors)
+	}
+}
+
 const getWebpackComplete = (
 	flags: Flags
 ): ((err: WebpackError, stats: webpack.Stats) => void) => {
@@ -300,12 +314,18 @@ const getWebpackComplete = (
 		}
 
 		if (stats.hasErrors()) {
-			info.errors?.forEach((message) => console.error(message))
+			// Left this here in case we want to use standardized errors again
+			// info.errors?.forEach((message) => console.error(message))
+
+			if (info.errors) handleErrors(info.errors)
 
 			// force the build process to fail upon compilation error, except for the watcher on dev mode
 			if (!dev) {
 				process.exit(1)
 			}
+		}
+		if (!stats.hasErrors()) {
+			console.log(chalk`{greenBright No errors :) }`)
 		}
 		if (stats.hasWarnings()) {
 			info.warnings?.forEach((message) => console.warn(message))
