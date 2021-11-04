@@ -186,6 +186,10 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 				}
 			}
 
+			if fieldMetadata.Type == "MAP" {
+				// Process Map Metadata here.
+			}
+
 		}
 	}
 

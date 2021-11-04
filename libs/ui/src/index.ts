@@ -1,4 +1,3 @@
-import SlotRuntime from "./components/slotruntime"
 import RunMode from "./components/runmode"
 import View from "./components/view"
 
@@ -21,7 +20,6 @@ import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
 // Register with the component registry so that it's not an explicit dependency
-register("uesio.slot", SlotRuntime)
 register("uesio.runtime", RunMode)
 register("uesio.view", View)
 
