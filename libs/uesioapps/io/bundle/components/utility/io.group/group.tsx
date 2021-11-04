@@ -1,4 +1,4 @@
-import { FunctionComponent, Children } from "react"
+import { FunctionComponent, forwardRef } from "react"
 import { definition, styles, component } from "@uesio/ui"
 
 const IOGrid = component.registry.getUtility("io.grid")
@@ -8,26 +8,28 @@ interface GroupUtilityProps extends definition.UtilityProps {
 	alignItems?: string
 }
 
-const Group: FunctionComponent<GroupUtilityProps> = (props) => {
+const Group: FunctionComponent<GroupUtilityProps> = forwardRef<
+	HTMLDivElement,
+	GroupUtilityProps
+>((props, ref) => {
 	const { columnGap, context, children, alignItems } = props
-	const childCount = Children.count(children)
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
 				gridAutoFlow: "column",
 				columnGap: columnGap || columnGap === 0 ? columnGap : "10px",
 				alignItems,
-				gridTemplateColumns: `repeat(${childCount},min-content)`,
+				gridAutoColumns: "min-content",
 			},
 		},
 		props
 	)
 	return (
-		<IOGrid classes={classes} context={context}>
+		<IOGrid ref={ref} classes={classes} context={context}>
 			{children}
 		</IOGrid>
 	)
-}
+})
 
 export { GroupUtilityProps }
 

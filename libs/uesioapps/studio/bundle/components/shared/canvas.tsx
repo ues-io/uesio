@@ -14,7 +14,8 @@ const getIndex = (
 	}
 	const dataIndex = prevTarget.getAttribute("data-index")
 	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
-	const dataDirection = prevTarget.getAttribute("data-direction")
+	const dataDirection = target?.getAttribute("data-direction")
+
 	if (!dataIndex) return 0
 	const index = parseInt(dataIndex, 10)
 	if (dataPlaceholder === "true") {

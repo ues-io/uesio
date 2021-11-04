@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useRef } from "react"
 import { BaseProps } from "../definition/definition"
 import { useUesio } from "../hooks/hooks"
 import Slot from "./slot"
@@ -52,10 +52,13 @@ const View: FunctionComponent<Props> = (props) => {
 		viewContext
 	)
 
+	const ref = useRef<HTMLDivElement>(null)
+
 	if (!viewDef || !view || !view.loaded || !scriptResult.loaded) return null
 
 	const slot = (
 		<Slot
+			parentRef={ref}
 			definition={viewDef.definition}
 			listName="components"
 			path=""

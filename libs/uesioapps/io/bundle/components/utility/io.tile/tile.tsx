@@ -1,13 +1,16 @@
-import { FunctionComponent, ReactNode } from "react"
+import { forwardRef, FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TileProps extends definition.UtilityProps {
+interface TileUtilityProps extends definition.UtilityProps {
 	avatar?: ReactNode
 	onClick?: () => void
 	isSelected: boolean
 }
 
-const Tile: FunctionComponent<TileProps> = (props) => {
+const Tile: FunctionComponent<TileUtilityProps> = forwardRef<
+	HTMLDivElement,
+	TileUtilityProps
+>((props, ref) => {
 	const { avatar, children, onClick, isSelected } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -33,6 +36,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 
 	return (
 		<div
+			ref={ref}
 			className={styles.cx(classes.root, isSelected && classes.selected)}
 			onClick={onClick}
 		>
@@ -40,6 +44,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			{children && <div className={classes.content}>{children}</div>}
 		</div>
 	)
-}
+})
 
+export { TileUtilityProps }
 export default Tile
