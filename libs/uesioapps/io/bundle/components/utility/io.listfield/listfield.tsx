@@ -29,7 +29,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		subType,
 		mode,
 		context,
-		value = [],
+		value,
 		label,
 		setValue,
 		autoAdd,
@@ -61,6 +61,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		subfield: collection.SubField,
 		index: number
 	) => {
+		if (!value) return value
 		const newValue = [...value]
 		newValue[index] = isText
 			? newFieldValue
@@ -82,9 +83,10 @@ const ListField: FunctionComponent<Props> = (props) => {
 			<Grid styles={rowStyles} context={context}>
 				{!isText &&
 					subFields.map((subfield) => (
-						<FieldLabel label={subfield.name} context={context}>
-							{subfield.name}
-						</FieldLabel>
+						<FieldLabel
+							label={subfield.label || subfield.name}
+							context={context}
+						/>
 					))}
 				{editMode && !autoAdd && (
 					<IconButton
@@ -95,7 +97,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 						onClick={() => {
 							// We have to do this in a way that doesn't mutate listValue
 							// since it can be readonly.
-							const newValue = [...value]
+							const newValue = value ? [...value] : []
 							newValue.push(getDefaultValue())
 							setValue(newValue)
 						}}
@@ -103,7 +105,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 				)}
 			</Grid>
 			{value
-				.concat(autoAdd && editMode ? [getDefaultValue()] : [])
+				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
 				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
 					<Grid styles={rowStyles} context={context}>
 						{subFields.map((subfield) => (

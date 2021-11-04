@@ -29,6 +29,7 @@ type ComponentSignalDescriptor = {
 	properties?: (signal: SignalDefinition) => PropDescriptor[]
 	dispatcher: ComponentSignalDispatcher
 	target?: string
+	slice?: string
 }
 
 type SignalDefinition = {

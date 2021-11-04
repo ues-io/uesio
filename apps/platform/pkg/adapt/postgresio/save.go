@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -13,17 +14,32 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
+type ParamCounter struct {
+	Counter int
+}
+
+func (pc *ParamCounter) get() string {
+	count := "$" + strconv.Itoa(pc.Counter)
+	pc.Counter++
+	return count
+}
+
+func NewParamCounter(start int) *ParamCounter {
+	return &ParamCounter{
+		Counter: start,
+	}
+}
+
 type ValueBuilder struct {
-	Start      int
-	QueryParts []string
-	Values     []interface{}
-	Counter    int
+	Start        int
+	QueryParts   []string
+	Values       []interface{}
+	ParamCounter *ParamCounter
 }
 
 func (vb *ValueBuilder) add(key string, value interface{}, pgType string) {
-	vb.QueryParts = append(vb.QueryParts, fmt.Sprintf("'%s',$%d::%s", key, vb.Counter+vb.Start, pgType))
+	vb.QueryParts = append(vb.QueryParts, fmt.Sprintf("'%s',%s::%s", key, vb.ParamCounter.get(), pgType))
 	vb.Values = append(vb.Values, value)
-	vb.Counter++
 }
 
 func (vb *ValueBuilder) build() string {
@@ -32,10 +48,9 @@ func (vb *ValueBuilder) build() string {
 
 func NewValueBuilder(start int) *ValueBuilder {
 	return &ValueBuilder{
-		QueryParts: []string{},
-		Values:     []interface{}{},
-		Counter:    0,
-		Start:      start,
+		QueryParts:   []string{},
+		Values:       []interface{}{},
+		ParamCounter: NewParamCounter(start),
 	}
 }
 

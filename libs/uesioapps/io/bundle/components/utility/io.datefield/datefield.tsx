@@ -5,7 +5,6 @@ interface DateFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: string) => void
 	value: string
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -15,7 +14,7 @@ const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const TextField = component.registry.getUtility("io.textfield")
 
 const DateField: FunctionComponent<DateFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel, options, label, context } = props
+	const { setValue, value, mode, hideLabel, label, context } = props
 
 	const readonly = mode === "READ"
 
@@ -29,11 +28,9 @@ const DateField: FunctionComponent<DateFieldProps> = (props) => {
 		return <TextField {...props} mode="READ" />
 	}
 
-	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				...(width && { width }),
 				padding: "16px",
 			},
 			input: {},

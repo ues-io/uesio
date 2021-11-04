@@ -71,8 +71,8 @@ components:
         - io.titlebar.io.default
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
-    uesio.slot:
     uesio.view:
   utility:
     studio.buildwrapper:
+    studio.slotbuilder:
 

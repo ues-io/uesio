@@ -11,15 +11,22 @@ type RowDef = {
 	isDeleted?: boolean
 }
 
-interface TableProps extends definition.UtilityProps {
+interface TableUtilityProps extends definition.UtilityProps {
 	columns: ColumnDef[]
 	rows: RowDef[]
 	showRowNumbers?: boolean
 	showRowActions?: boolean
+	rowNumberStart?: number
 }
 
-const Table: FunctionComponent<TableProps> = (props) => {
-	const { columns, rows, showRowNumbers, showRowActions, context } = props
+const Table: FunctionComponent<TableUtilityProps> = (props) => {
+	const {
+		columns,
+		rows,
+		showRowNumbers,
+		showRowActions,
+		rowNumberStart = 0,
+	} = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -102,7 +109,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 									key="rownumbers"
 								>
 									<div className={classes.rowNumber}>
-										{index + 1}
+										{rowNumberStart + index + 1}
 									</div>
 								</td>
 							)}
@@ -121,5 +128,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		</div>
 	)
 }
+
+export { TableUtilityProps }
 
 export default Table

@@ -1,11 +1,11 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, ForwardedRef } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
-	UtilityProps,
+	UtilityPropsPlus,
 } from "../definition/definition"
 import { Context, ContextFrame } from "../context/context"
-import { getLoader, getRuntimeLoader, getUtility } from "./registry"
+import { getLoader } from "./registry"
 import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
@@ -175,12 +175,13 @@ function render(
 }
 
 function renderUtility(
-	loader: FunctionComponent<UtilityProps>,
-	props: UtilityProps
+	loader: FunctionComponent<UtilityPropsPlus>,
+	props: UtilityPropsPlus,
+	ref?: ForwardedRef<HTMLElement>
 ) {
 	const Loader = loader
-	loader.displayName = props.componentType
-	return <Loader {...props} />
+	loader.displayName = props.componentType as string
+	return <Loader ref={ref} {...props} />
 }
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {

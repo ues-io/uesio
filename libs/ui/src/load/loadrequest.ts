@@ -8,8 +8,8 @@ type LoadRequest = {
 	fields: LoadRequestField[]
 	conditions?: WireConditionState[]
 	order?: OrderDescription[]
-	limit?: number
-	offset?: number
+	batchsize?: number
+	batchnumber?: number
 }
 
 type OrderDescription = {

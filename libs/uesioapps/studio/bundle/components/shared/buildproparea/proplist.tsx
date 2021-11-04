@@ -3,6 +3,7 @@ import { definition, builder, component } from "@uesio/ui"
 
 import TextProp from "../buildpropitem/textprop"
 import SelectProp from "../buildpropitem/selectprop"
+import MultiSelectProp from "../buildpropitem/multiselectprop"
 import KeyProp from "../buildpropitem/keyprop"
 import WireProp from "../buildpropitem/wireprop"
 import WiresProp from "../buildpropitem/wiresprop"
@@ -28,6 +29,8 @@ function getPropHandler(type?: string) {
 			return MetadataProp
 		case "SELECT":
 			return SelectProp
+		case "MULTISELECT":
+			return MultiSelectProp
 		case "KEY":
 			return KeyProp
 		case "WIRE":
@@ -64,33 +67,49 @@ const PropList: FunctionComponent<Props> = ({
 	context,
 	properties,
 	valueAPI,
-}) => (
-	<>
-		{properties.map((descriptor, index) => {
-			const newPath =
-				descriptor.type === "KEY"
-					? path
-					: path + '["' + descriptor.name + '"]'
+}) => {
+	const displayConditionsAreMet = (conditions: builder.DisplayCondition[]) =>
+		conditions.some(({ property, value, values }) => {
+			const key = valueAPI.get(
+				`${path}['${property}']`
+			) as definition.DefinitionValue
 
-			const key =
-				descriptor.type === "KEY"
-					? component.path.getParentPath(path || "") + "keyprop"
-					: newPath
+			return [...(values ? values : [value])].includes(key)
+		})
+	return (
+		<>
+			{properties.map((descriptor, index) => {
+				if (
+					descriptor.display &&
+					!displayConditionsAreMet(descriptor.display)
+				)
+					return null
 
-			const PropHandler = getPropHandler(descriptor.type)
-			return (
-				<PropHandler
-					key={key}
-					path={newPath}
-					propsDef={propsDef}
-					descriptor={descriptor}
-					index={index}
-					context={context}
-					valueAPI={valueAPI}
-				/>
-			)
-		})}
-	</>
-)
+				const newPath =
+					descriptor.type === "KEY"
+						? path
+						: path + '["' + descriptor.name + '"]'
+
+				const key =
+					descriptor.type === "KEY"
+						? component.path.getParentPath(path || "") + "keyprop"
+						: newPath
+
+				const PropHandler = getPropHandler(descriptor.type)
+				return (
+					<PropHandler
+						key={key}
+						path={newPath}
+						propsDef={propsDef}
+						descriptor={descriptor}
+						index={index}
+						context={context}
+						valueAPI={valueAPI}
+					/>
+				)
+			})}
+		</>
+	)
+}
 
 export default PropList

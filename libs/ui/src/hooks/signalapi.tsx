@@ -95,34 +95,28 @@ class SignalAPI {
 		context: Context = this.uesio.getContext()
 	) => {
 		if (!signals) return undefined
-		return async () => {
-			/*
-			// More confusing alternative using reduce
-			return signals.reduce<Promise<Context>>(
-				async (context, signal) => this.run(signal, await context),
-				Promise.resolve(this.uesio.getContext())
-			)
-			*/
+		return async () => this.runMany(signals, context)
+	}
 
-			for (const signal of signals) {
-				// Special handling for panel signals
-				let useSignal = signal
-				if (isPanelSignal(signal)) {
-					useSignal = {
-						...signal,
-						path: getPanelKey(this.uesio.getPath(), context),
-					}
-				}
-				// Keep adding to context as each signal is run
-				context = await this.run(useSignal, context)
-				// STOP running the rest of signals if there is an error
-				const errors = context.getErrors()
-				if (errors && errors.length) {
-					break
+	runMany = async (signals: SignalDefinition[], context: Context) => {
+		for (const signal of signals) {
+			// Special handling for panel signals
+			let useSignal = signal
+			if (isPanelSignal(signal)) {
+				useSignal = {
+					...signal,
+					path: getPanelKey(this.uesio.getPath(), context),
 				}
 			}
-			return context
+			// Keep adding to context as each signal is run
+			context = await this.run(useSignal, context)
+			// STOP running the rest of signals if there is an error
+			const errors = context.getErrors()
+			if (errors && errors.length) {
+				break
+			}
 		}
+		return context
 	}
 
 	run = (signal: SignalDefinition, context: Context) => {

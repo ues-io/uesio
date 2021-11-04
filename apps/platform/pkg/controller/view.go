@@ -51,9 +51,15 @@ func ViewPreview(buildMode bool) http.HandlerFunc {
 			return
 		}
 
+		params := map[string]string{}
+
+		for key, value := range r.URL.Query() {
+			params[key] = strings.Join(value, ",")
+		}
+
 		route := &meta.Route{
 			ViewRef:  view.GetKey(),
-			Params:   map[string]string{},
+			Params:   params,
 			ThemeRef: session.GetDefaultTheme(),
 		}
 

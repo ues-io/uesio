@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import type { Placement } from "@popperjs/core"
 
-interface IconButtonProps extends definition.UtilityProps {
+interface IconButtonUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	icon?: string
@@ -14,7 +14,7 @@ interface IconButtonProps extends definition.UtilityProps {
 const Icon = component.registry.getUtility("io.icon")
 const Tooltip = component.registry.getUtility("io.tooltip")
 
-const IconButton: FunctionComponent<IconButtonProps> = (props) => {
+const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 	const { context, icon, label, tooltipPlacement, onClick, disabled, color } =
 		props
 	const classes = styles.useUtilityStyles(
@@ -54,5 +54,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 		<div>{button}</div>
 	)
 }
+
+export { IconButtonUtilityProps }
 
 export default IconButton

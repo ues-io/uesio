@@ -139,21 +139,14 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}
 
 		// Split changes into inserts, updates, and deletes
-		inserts, updates, deletes, err := SplitSave(request, collectionMetadata, session)
+		ops, err := SplitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch = append(batch, adapt.SaveOp{
-			CollectionName: request.Collection,
-			WireName:       request.Wire,
-			Inserts:        inserts,
-			Updates:        updates,
-			Deletes:        deletes,
-			Options:        request.Options,
-		})
+		batch = append(batch, ops...)
 		collated[dsKey] = batch
 	}
 
