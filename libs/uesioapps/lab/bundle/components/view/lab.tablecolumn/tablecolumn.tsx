@@ -1,8 +1,8 @@
 import React, { FC } from "react"
 import { hooks, definition, wire } from "@uesio/ui"
 import { TableColumnDefinition } from "./tablecolumndefinition"
-import EmptyColumn from "./emptycolumn"
-import useLongPress from "./hooks/useLongPress"
+import EmptyColumn from "../lab.table/emptycolumn"
+import useLongPress from "../lab.table/hooks/useLongPress"
 
 interface DragCol extends TableColumnDefinition {
 	index: number
@@ -10,7 +10,7 @@ interface DragCol extends TableColumnDefinition {
 interface T extends definition.BaseProps {
 	classes: Record<string, string>
 	definition: TableColumnDefinition
-	dragCol: DragCol
+	dragCol: DragCol | null
 	columnRefs: React.MutableRefObject<HTMLDivElement[]>
 	index: number
 	markerPosition: null | number
@@ -25,7 +25,7 @@ interface T extends definition.BaseProps {
 	tableRef: React.MutableRefObject<HTMLDivElement | null>
 }
 
-const col: FC<T> = (props) => {
+const TableColumn: FC<T> = (props) => {
 	const {
 		path,
 		children,
@@ -75,7 +75,7 @@ const col: FC<T> = (props) => {
 					...definition,
 					index,
 				}),
-			50
+			100
 		)
 
 	const getStyles = (): React.CSSProperties => {
@@ -99,11 +99,7 @@ const col: FC<T> = (props) => {
 	}
 
 	return (
-		<div
-			onMouseDown={onMouseDown}
-			className={`${classes.col} ${className}`}
-			style={getStyles()}
-		>
+		<div className={`${classes.col} ${className}`} style={getStyles()}>
 			{refBox}
 
 			{/* Header cell */}
@@ -116,6 +112,7 @@ const col: FC<T> = (props) => {
 						`${path}["columns"]["${index}"]["lab.tablecolumn"]`
 					)
 				}}
+				onMouseDown={onMouseDown}
 				style={{
 					height: headerCellHeight
 						? `${headerCellHeight + 20}px`
@@ -145,4 +142,4 @@ const col: FC<T> = (props) => {
 	)
 }
 
-export default col
+export default TableColumn

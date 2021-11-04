@@ -1,5 +1,4 @@
 import { builder, signal } from "@uesio/ui"
-const actions = ["Save", "Edit", "Delete", "Cancel"]
 
 type ActionType = "save" | "delete" | "cancel" | "edit"
 
@@ -15,7 +14,7 @@ export type ActionsBarDefinition = {
 	id?: string
 }
 
-export default (title: string) =>
+export default (title: string, actions: string[]) =>
 	({
 		title,
 		type: "PROPLIST",

@@ -5,7 +5,7 @@ import { ActionsBarDefinition, Action } from "./actionsbardefinition"
 interface T extends definition.UtilityProps {
 	definition: ActionsBarDefinition
 	actions: Action[]
-	// wire: wire.Wire
+	wire: wire.Wire
 }
 
 const IOButton = component.registry.getUtility("io.button")
@@ -30,8 +30,9 @@ const ActionsBar: FC<T> = (props) => {
 		const [handler] = uesio.signal.useHandler(signals)
 		handler && handler()
 	}
+
 	const wireHasChanges =
-		wire && Object.keys(Object.values(wire.source.changes)[0]).length !== 0
+		wire && Object.keys(Object.values(wire.source.changes)).length !== 0
 
 	return (
 		<div className={classes.root}>

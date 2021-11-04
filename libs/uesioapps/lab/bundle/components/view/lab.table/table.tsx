@@ -1,14 +1,12 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { TableProps } from "./tabledefinition"
-import { component, styles, hooks, wire, definition } from "@uesio/ui"
+import { component, styles, hooks, wire } from "@uesio/ui"
 import useCellHeight from "./hooks/useCellHeight"
 import useScroll from "./hooks/useScroll"
 import useColumnDrag from "./hooks/useColumnDrag"
-import TableColumn from "./tablecolumn"
-import actions from "./actions"
-import { TableColumnDefinition } from "./tablecolumndefinition"
-
-import ActionsBar from "../lab.actionsbar/actionsbar"
+import TableColumn from "../lab.tablecolumn/tablecolumn"
+import tableActions from "./actions"
+import ActionsBar from "../../utility/lab.actionsbar/actionsbar"
 
 const useFreezePadding = (
 	hasFreeze: boolean | undefined,
@@ -47,13 +45,11 @@ const Table: FC<TableProps> = (props) => {
 		deltaX,
 		dragCol,
 		dragColWidth,
-	} = useColumnDrag(columnRefs, tableRef, uesio, path, dragIndicator)
+	} = useColumnDrag(columnRefs.current, tableRef, uesio, path, dragIndicator)
 
 	const [cellHeight, pushCellRef] = useCellHeight(true)
 	const [headerCellHeight, pushHeaderCellRef, resizeHeaderCells] =
 		useCellHeight()
-
-	const { tableActions } = actions(wireId || "")
 
 	const classes = styles.useStyles(
 		{
@@ -308,7 +304,7 @@ const Table: FC<TableProps> = (props) => {
 			</div>
 
 			{/* Table Actions bar */}
-			{definition.actions && wire && (
+			{definition.actions && wire && wireId && (
 				<div
 					className={classes.actionsContainer}
 					style={{
@@ -321,7 +317,7 @@ const Table: FC<TableProps> = (props) => {
 				>
 					<ActionsBar
 						context={context}
-						actions={tableActions.filter(({ name }) =>
+						actions={tableActions(wireId).filter(({ name }) =>
 							definition.actions.includes(name)
 						)}
 						wire={wire}

@@ -1,8 +1,9 @@
 import { definition, builder, signal, component, wire } from "@uesio/ui"
-import { TableColumnDefinition } from "./tablecolumndefinition"
+import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
 import actionsBarDefinition, {
 	ActionsBarDefinition,
-} from "../lab.actionsbar/actionsbardefinition"
+} from "../../utility/lab.actionsbar/actionsbardefinition"
+import { actionTypes } from "./actions"
 type TableMode = "READ" | "EDIT"
 
 type TableClasses = Record<
@@ -47,7 +48,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	defaultDefinition: () => ({
 		id: "NewId",
 		mode: "READ",
-		columns: [{ "lab.tablecolumn": { name: "your column" } }],
+		columns: [{ "lab.tablecolumn": { name: "" } }],
 	}),
 	properties: [
 		{
@@ -82,7 +83,7 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Freeze",
 		},
 	],
-	sections: [actionsBarDefinition("Table Actions")],
+	sections: [actionsBarDefinition("Table Actions", actionTypes)],
 	actions: [
 		{
 			label: "Add Section",

@@ -24,6 +24,7 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({
 		components: [],
+		verticalAlignment: "center",
 	}),
 	properties: [
 		{
