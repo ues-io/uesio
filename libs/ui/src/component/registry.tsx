@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, forwardRef, ForwardedRef } from "react"
 import {
 	BaseProps,
 	DefinitionMap,
@@ -126,17 +126,20 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility =
-	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
-	(props: T) => {
+const getUtility = <T extends UtilityProps = UtilityPropsPlus>(key: string) =>
+	forwardRef((props: T, ref: ForwardedRef<HTMLElement>) => {
 		const loader = getUtilityLoader(key) || NotFound
 		const styles = getVariantStyleInfo(props, key)
-		return renderUtility(loader, {
-			...(props as unknown as UtilityPropsPlus),
-			styles,
-			componentType: key,
-		})
-	}
+		return renderUtility(
+			loader,
+			{
+				...(props as unknown as UtilityPropsPlus),
+				styles,
+				componentType: key,
+			},
+			ref
+		)
+	})
 
 const BuildWrapper = getUtility("studio.buildwrapper")
 

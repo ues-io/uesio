@@ -1,5 +1,5 @@
 import { hooks, styles, component, context } from "@uesio/ui"
-import { FunctionComponent } from "react"
+import { FunctionComponent, useRef } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
 import { ButtonUtilityProps } from "../../utility/io.button/button"
@@ -19,6 +19,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
+	const ref = useRef<HTMLDivElement>(null)
 
 	// If we got a wire from the definition, add it to context
 	const newContext = definition.wire
@@ -71,6 +72,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				return column.components ? (
 					<component.Slot
+						parentRef={ref}
 						definition={column}
 						listName="components"
 						path={`${path}["columns"]["${index}"]["io.column"]`}

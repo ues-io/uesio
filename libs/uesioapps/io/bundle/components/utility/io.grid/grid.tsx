@@ -1,11 +1,14 @@
-import { FunctionComponent } from "react"
+import { forwardRef, FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface GridProps extends definition.UtilityProps {
 	onClick?: () => void
 }
 
-const Grid: FunctionComponent<GridProps> = (props) => {
+const Grid: FunctionComponent<GridProps> = forwardRef<
+	HTMLDivElement,
+	GridProps
+>((props, ref) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -15,10 +18,10 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 		props
 	)
 	return (
-		<div onClick={props.onClick} className={classes.root}>
+		<div ref={ref} onClick={props.onClick} className={classes.root}>
 			{props.children}
 		</div>
 	)
-}
+})
 
 export default Grid
