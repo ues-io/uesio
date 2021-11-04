@@ -1,4 +1,4 @@
-import { forwardRef, FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, ReactNode } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import { GroupUtilityProps } from "../io.group/group"
 import { DialogPlainUtilityProps } from "../io.dialogplain/dialogplain"
@@ -20,10 +20,7 @@ interface DialogUtilityProps extends definition.UtilityProps {
 	actions?: ReactNode
 }
 
-const Dialog: FunctionComponent<DialogUtilityProps> = forwardRef<
-	HTMLDivElement,
-	DialogUtilityProps
->((props, ref) => {
+const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -58,9 +55,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = forwardRef<
 						/>
 					}
 				/>
-				<div ref={ref} className={classes.content}>
-					{children}
-				</div>
+				<div className={classes.content}>{children}</div>
 				<Group
 					styles={{
 						root: {
@@ -75,7 +70,7 @@ const Dialog: FunctionComponent<DialogUtilityProps> = forwardRef<
 			</Grid>
 		</IODialogPlain>
 	)
-})
+}
 export { DialogUtilityProps }
 
 export default Dialog

@@ -1,4 +1,4 @@
-import { FunctionComponent, ForwardedRef } from "react"
+import { FunctionComponent } from "react"
 import {
 	DefinitionMap,
 	BaseProps,
@@ -176,12 +176,11 @@ function render(
 
 function renderUtility(
 	loader: FunctionComponent<UtilityPropsPlus>,
-	props: UtilityPropsPlus,
-	ref?: ForwardedRef<HTMLElement>
+	props: UtilityPropsPlus
 ) {
 	const Loader = loader
 	loader.displayName = props.componentType as string
-	return <Loader ref={ref} {...props} />
+	return <Loader {...props} />
 }
 
 const ComponentInternal: FunctionComponent<BaseProps> = (props) => {

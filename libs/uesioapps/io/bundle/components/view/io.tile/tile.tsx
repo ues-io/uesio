@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
@@ -17,7 +17,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 		props
 	)
 	const uesio = hooks.useUesio(props)
-	const ref = useRef<HTMLDivElement>(null)
 	const { definition, context, path } = props
 	const [handler, portals] = uesio.signal.useHandler(definition.signals)
 	const isSelected = component.shouldHaveClass(
@@ -35,7 +34,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			avatar={
 				definition.avatar && (
 					<component.Slot
-						parentRef={ref}
 						definition={definition}
 						listName="avatar"
 						path={path}
@@ -46,7 +44,6 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 			}
 		>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="content"
 				path={path}
