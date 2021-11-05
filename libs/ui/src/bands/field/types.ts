@@ -28,6 +28,7 @@ type SubField = {
 	name: string
 	type: FieldType
 	label: string
+	selectlist?: SelectListMetadata
 	subfields?: SubField[]
 }
 type NumberMetadata = {

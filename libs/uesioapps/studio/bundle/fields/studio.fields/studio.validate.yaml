@@ -2,3 +2,11 @@ name: validate
 collection: studio.fields
 type: MAP
 label: Validate
+subfields:
+  - name: studio.type
+    label: Type
+    type: SELECT
+    selectList: studio.fieldtypes
+  - name: studio.regex
+    label: Regex
+    type: TEXT

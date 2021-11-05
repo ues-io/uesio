@@ -45,6 +45,7 @@ definition:
         studio.file:
         studio.autopopulate:
         studio.selectlist:
+        studio.validate:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -189,6 +190,24 @@ definition:
                                             label: "File Collection"
                                         - io.field:
                                             fieldId: studio.file->studio.accept
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.validate->studio.type
+                                  - io.field:
+                                      fieldId: studio.validate->studio.regex
+
   panels:
     - io.dialog:
         id: deleteField
