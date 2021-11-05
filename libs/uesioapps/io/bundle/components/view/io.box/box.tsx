@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { BoxProps } from "./boxdefinition"
@@ -10,12 +10,10 @@ const Box: FunctionComponent<BoxProps> = (props) => {
 		},
 		props
 	)
-	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
 	const { definition, context, path } = props
 	return (
 		<div
-			ref={ref}
 			className={classes.root}
 			onClick={
 				definition?.signals &&
@@ -23,7 +21,6 @@ const Box: FunctionComponent<BoxProps> = (props) => {
 			}
 		>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="components"
 				path={path}

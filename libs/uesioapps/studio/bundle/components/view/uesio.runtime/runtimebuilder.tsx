@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react"
+import { FC, useRef } from "react"
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"

@@ -1,15 +1,15 @@
 import Field from "../field/class"
-import { SubField } from "../field/types"
+import { FieldMetadata } from "../field/types"
+
 import { PlainCollection } from "./types"
 
 function getSubFieldMetadata(
 	fieldNameParts: string[],
-	subfield: SubField
-): SubField | undefined {
+	subfield: FieldMetadata
+): FieldMetadata | undefined {
 	const subFieldName = fieldNameParts.shift()
-	const found = subfield?.subfields?.find(
-		(field) => field.name === subFieldName
-	)
+	if (!subFieldName) return undefined
+	const found = subfield?.subfields?.[subFieldName]
 	if (!found) return undefined
 	if (fieldNameParts.length === 0) {
 		return found
@@ -40,21 +40,12 @@ class Collection {
 
 			if (!baseFieldMetadata || !baseFieldMetadata.subfields)
 				return undefined
-			const subFieldMetadata = getSubFieldMetadata(fieldNameParts, {
-				name: baseFieldMetadata.name,
-				label: baseFieldMetadata.label,
-				type: baseFieldMetadata.type,
-				subfields: baseFieldMetadata.subfields,
-				selectlist: baseFieldMetadata.selectlist,
-			})
+			const subFieldMetadata = getSubFieldMetadata(
+				fieldNameParts,
+				baseFieldMetadata
+			)
 			if (!subFieldMetadata) return undefined
-			return new Field({
-				namespace: baseFieldMetadata.namespace,
-				accessible: baseFieldMetadata.accessible,
-				createable: baseFieldMetadata.createable,
-				updateable: baseFieldMetadata.updateable,
-				...subFieldMetadata,
-			})
+			return new Field(subFieldMetadata)
 		}
 		const fieldMetadata = fieldName ? this.source.fields[fieldName] : null
 		if (!fieldMetadata) return undefined

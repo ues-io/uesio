@@ -1,5 +1,5 @@
 import { hooks, component } from "@uesio/ui"
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 import { useMode } from "../../shared/mode"
 
 import { ListProps } from "./listdefinition"
@@ -17,16 +17,13 @@ const List: FunctionComponent<ListProps> = (props) => {
 		: context
 
 	const [mode] = useMode(definition.id, definition.mode, props)
-	const ref = useRef<HTMLDivElement>(null)
 
 	if (!wire || !mode) return null
 
-	const data = wire.getData()
 	return (
-		<div ref={ref}>
-			{data.map((record) => (
+		<>
+			{wire.getData().map((record) => (
 				<component.Slot
-					parentRef={ref}
 					definition={definition}
 					listName="components"
 					path={path}
@@ -37,7 +34,7 @@ const List: FunctionComponent<ListProps> = (props) => {
 					})}
 				/>
 			))}
-		</div>
+		</>
 	)
 }
 

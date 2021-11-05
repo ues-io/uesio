@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
 import { DialogUtilityProps } from "../../utility/io.dialog/dialog"
 
@@ -6,7 +6,6 @@ const IODialog = component.registry.getUtility<DialogUtilityProps>("io.dialog")
 
 const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const ref = useRef<HTMLDivElement>(null)
 	const { context, definition, path } = props
 	const panelId = definition?.id as string
 	const onClose = uesio.signal.getHandler([
@@ -18,7 +17,6 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 	if (!definition) return null
 	return (
 		<IODialog
-			ref={ref}
 			onClose={onClose}
 			context={context}
 			width={definition.width as string | undefined}
@@ -27,7 +25,6 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			actions={
 				definition?.actions && (
 					<component.Slot
-						parentRef={ref}
 						definition={definition}
 						listName="actions"
 						path={path}
@@ -38,7 +35,6 @@ const Dialog: FunctionComponent<definition.BaseProps> = (props) => {
 			}
 		>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="components"
 				path={path}

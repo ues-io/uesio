@@ -10,7 +10,6 @@ import { getUtility } from "../component/registry"
 
 interface SlotUtilityProps extends UtilityProps {
 	listName: string
-	parentRef: RefObject<HTMLDivElement>
 	definition?: BaseDefinition
 	accepts: string[]
 	direction?: string

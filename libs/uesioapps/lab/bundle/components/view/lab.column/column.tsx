@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import { FC } from "react"
 import { definition, component, styles } from "@uesio/ui"
 
 const IOColumn = component.registry.getUtility("lab.column")
@@ -18,7 +18,6 @@ export const getColumnFlexStyles = (
 const Column: FC<definition.BaseProps> = (props) => {
 	const { definition, context, path = "", index = 0 } = props
 	const template = context.getParentComponentDef(path)?.template
-	const ref = useRef<HTMLDivElement>(null)
 
 	const classes = styles.useStyles(
 		{
@@ -31,9 +30,8 @@ const Column: FC<definition.BaseProps> = (props) => {
 	)
 
 	return (
-		<IOColumn ref={ref} classes={classes} context={context}>
+		<IOColumn classes={classes} context={context}>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="components"
 				path={path}

@@ -24,13 +24,6 @@ type SelectOption = {
 	value: string
 }
 
-type SubField = {
-	name: string
-	type: FieldType
-	label: string
-	selectlist?: SelectListMetadata
-	subfields?: SubField[]
-}
 type NumberMetadata = {
 	decimals: number
 }
@@ -60,7 +53,7 @@ type FieldMetadata = {
 	label: string
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
-	subfields?: SubField[]
+	subfields?: FieldMetadataMap
 	file?: FileMetadata
 	subtype?: string
 	number?: NumberMetadata
@@ -71,6 +64,5 @@ export {
 	FieldMetadataMap,
 	SelectOption,
 	FieldType,
-	SubField,
 	NumberMetadata,
 }

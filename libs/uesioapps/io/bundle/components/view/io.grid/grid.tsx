@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 
 import { component, styles } from "@uesio/ui"
 import { GridProps } from "./griddefinition"
@@ -7,7 +7,6 @@ const IOGrid = component.registry.getUtility("io.grid")
 
 const Grid: FunctionComponent<GridProps> = (props) => {
 	const { definition, context } = props
-	const ref = useRef<HTMLDivElement>(null)
 	const gridCols = styles.getResponsiveStyles(
 		"gridTemplateColumns",
 		definition.templateColumns,
@@ -40,9 +39,8 @@ const Grid: FunctionComponent<GridProps> = (props) => {
 		props
 	)
 	return (
-		<IOGrid ref={ref} classes={classes} context={props.context}>
+		<IOGrid classes={classes} context={props.context}>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="items"
 				path={props.path}

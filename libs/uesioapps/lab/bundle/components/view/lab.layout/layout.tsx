@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import { FC } from "react"
 import { component, styles } from "@uesio/ui"
 import { LayoutProps } from "./layoutdefinition"
 
@@ -10,8 +10,6 @@ const Layout: FC<LayoutProps> = (props) => {
 		context,
 		path,
 	} = props
-
-	const ref = useRef<HTMLDivElement>(null)
 
 	const mediaQueryForBreakpoint = breakpoint
 		? {
@@ -36,9 +34,8 @@ const Layout: FC<LayoutProps> = (props) => {
 	)
 
 	return (
-		<IOLayout ref={ref} classes={classes} {...props}>
+		<IOLayout classes={classes} {...props}>
 			<component.Slot
-				parentRef={ref}
 				definition={props.definition}
 				listName="columns"
 				path={path}

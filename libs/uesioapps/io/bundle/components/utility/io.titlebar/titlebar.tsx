@@ -1,4 +1,4 @@
-import { forwardRef, FunctionComponent, ReactNode } from "react"
+import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface TitleBarUtilityProps extends definition.UtilityProps {
@@ -8,10 +8,7 @@ interface TitleBarUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
 }
 
-const TitleBar: FunctionComponent<TitleBarUtilityProps> = forwardRef<
-	HTMLDivElement,
-	TitleBarUtilityProps
->((props, ref) => {
+const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	const { context, title, subtitle, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -43,12 +40,10 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = forwardRef<
 					</div>
 				)}
 			</div>
-			<div ref={ref} className={classes.actions}>
-				{actions}
-			</div>
+			<div className={classes.actions}>{actions}</div>
 		</div>
 	)
-})
+}
 
 export { TitleBarUtilityProps }
 

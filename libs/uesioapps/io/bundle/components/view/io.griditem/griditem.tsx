@@ -1,10 +1,9 @@
-import { FunctionComponent, useRef } from "react"
+import { FunctionComponent } from "react"
 import { component, styles } from "@uesio/ui"
 import { GridItemProps } from "./griditemdefinition"
 
 const GridItem: FunctionComponent<GridItemProps> = (props) => {
 	const { definition, context, path } = props
-	const ref = useRef<HTMLDivElement>(null)
 	if (!definition) return <div />
 	const classes = styles.useStyles(
 		{
@@ -16,9 +15,8 @@ const GridItem: FunctionComponent<GridItemProps> = (props) => {
 		props
 	)
 	return (
-		<div ref={ref} className={classes.root}>
+		<div className={classes.root}>
 			<component.Slot
-				parentRef={ref}
 				definition={definition}
 				listName="components"
 				path={path}

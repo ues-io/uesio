@@ -13,9 +13,21 @@ type ComponentPackDependencies = {
 	[key: string]: ComponentPackDependency
 }
 
+type FeatureFlagDependency = {
+	name: string
+	namespace: string
+	value: boolean
+	user: string
+}
+
+type FeatureFlagDependencies = {
+	[key: string]: FeatureFlagDependency
+}
+
 type Dependencies = {
 	configvalues: ConfigValueDependencies
 	componentpacks: ComponentPackDependencies
+	featureflags: FeatureFlagDependencies
 }
 
 type PlainViewDef = {

@@ -1,17 +1,17 @@
 import { definition, component, hooks, styles } from "@uesio/ui"
-import { FunctionComponent, useEffect } from "react"
+import { FunctionComponent, useEffect, useRef } from "react"
 import { isDropAllowed } from "../../shared/dragdrop"
 
 const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
-	const { parentRef, accepts, definition, listName, path, direction } = props
-
+	const { accepts, definition, listName, path, direction } = props
+	const ref = useRef<HTMLDivElement>(null)
 	const uesio = hooks.useUesio(props)
 	const listDef = (definition?.[listName] || []) as definition.DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
 	const size = listDef.length
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const [, , dropPath] = uesio.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
 		dragType,
 		dragItem,
@@ -33,7 +33,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 	)
 
 	useEffect(() => {
-		const parentElem = parentRef?.current
+		const parentElem = ref?.current?.parentElement
 		if (parentElem) {
 			parentElem.setAttribute("data-accepts", accepts.join(","))
 			parentElem.setAttribute("data-direction", direction || "")
@@ -44,6 +44,7 @@ const SlotBuilder: FunctionComponent<component.SlotUtilityProps> = (props) => {
 
 	return (
 		<>
+			<div ref={ref} style={{ display: "contents" }} />
 			{size === 0 && isDropAllowed(accepts, fullDragPath) && (
 				<div className={classes.placeholder} />
 			)}

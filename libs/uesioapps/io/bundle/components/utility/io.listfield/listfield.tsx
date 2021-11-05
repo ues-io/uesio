@@ -18,7 +18,7 @@ interface Props extends definition.UtilityProps {
 	mode: context.FieldMode
 	value: (wire.PlainWireRecord | wire.FieldValue)[]
 	setValue: (value: (wire.PlainWireRecord | wire.FieldValue)[]) => void
-	subFields: collection.SubField[]
+	subFields: collection.FieldMetadataMap
 	subType: string
 	autoAdd?: boolean
 }
@@ -58,7 +58,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 
 	const getNewValue = (
 		newFieldValue: wire.FieldValue,
-		subfield: collection.SubField,
+		subfield: collection.FieldMetadata,
 		index: number
 	) => {
 		if (!value) return value
@@ -74,7 +74,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 
 	const getValue = (
 		item: wire.PlainWireRecord | wire.FieldValue,
-		subfield: collection.SubField
+		subfield: collection.FieldMetadata
 	) => (isText ? item : (item as wire.PlainWireRecord)[subfield.name] || "")
 
 	return subFields ? (
@@ -82,12 +82,16 @@ const ListField: FunctionComponent<Props> = (props) => {
 			<FieldLabel label={label} context={context} />
 			<Grid styles={rowStyles} context={context}>
 				{!isText &&
-					subFields.map((subfield) => (
-						<FieldLabel
-							label={subfield.label || subfield.name}
-							context={context}
-						/>
-					))}
+					subFields &&
+					Object.keys(subFields).map((subfieldId) => {
+						const subfield = subFields[subfieldId]
+						return (
+							<FieldLabel
+								label={subfield.label || subfield.name}
+								context={context}
+							/>
+						)
+					})}
 				{editMode && !autoAdd && (
 					<IconButton
 						label="add"
@@ -108,23 +112,29 @@ const ListField: FunctionComponent<Props> = (props) => {
 				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
 				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
 					<Grid styles={rowStyles} context={context}>
-						{subFields.map((subfield) => (
-							<TextField
-								hideLabel
-								value={getValue(item, subfield)}
-								mode={mode}
-								context={context}
-								setValue={(newFieldValue: wire.FieldValue) =>
-									setValue(
-										getNewValue(
-											newFieldValue,
-											subfield,
-											index
-										)
-									)
-								}
-							/>
-						))}
+						{subFields &&
+							Object.keys(subFields).map((subfieldId) => {
+								const subfield = subFields[subfieldId]
+								return (
+									<TextField
+										hideLabel
+										value={getValue(item, subfield)}
+										mode={mode}
+										context={context}
+										setValue={(
+											newFieldValue: wire.FieldValue
+										) =>
+											setValue(
+												getNewValue(
+													newFieldValue,
+													subfield,
+													index
+												)
+											)
+										}
+									/>
+								)
+							})}
 						{editMode && (
 							<IconButton
 								label="delete"
