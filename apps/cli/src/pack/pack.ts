@@ -227,7 +227,7 @@ const getWebpackConfig = (
 					},
 			  }
 			: {}),
-		mode: "production",
+		mode: dev ? "development" : "production",
 		entry: entries,
 		output: {
 			path: path.resolve("./bundle/componentpacks"),
