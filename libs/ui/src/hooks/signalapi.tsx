@@ -16,7 +16,7 @@ import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
 import { unWrapDefinition } from "../component/path"
-import { DefinitionMap } from "../definition/definition"
+import { BaseDefinition, DefinitionMap } from "../definition/definition"
 import Panel from "../components/panel"
 
 const registry: Record<string, SignalDescriptor> = {
@@ -59,30 +59,44 @@ class SignalAPI {
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
-					const panels = viewDef?.definition?.panels
-					if (!panels) return []
-					let componentType = ""
-					let panelDef: DefinitionMap = {}
-					for (const wrappedPanelDef of panels) {
-						const [cType, def] = unWrapDefinition(wrappedPanelDef)
-						if (def.id === panelId) {
-							componentType = cType
-							panelDef = def
-							break
-						}
-					}
-					if (componentType && panelDef) {
-						return [
-							<Panel context={context}>
-								<ComponentInternal
-									definition={panelDef}
-									path={path}
-									context={context}
-									componentType={componentType}
-								/>
-							</Panel>,
-						]
-					}
+
+					const panels = viewDef?.definition?.panels as any
+
+					const panelDef = Object.values(
+						panels[panelId][0]
+					)[0] as BaseDefinition
+
+					const componentType = Object.keys(panels[panelId][0])[0]
+
+					console.log({
+						panelDef,
+						componentType,
+					})
+
+					// const panels = {
+					// 	coolPanel: [
+					// 		{
+					// 			'io.dialog': {}
+					// 		}
+					// 	],
+					// 	notSoCoolPanel: {}
+					// }
+					// const rightPanel = Object.values(panelsX)
+
+					// const componentType c
+
+					// if (componentType && panelDef) {
+					return [
+						<Panel context={context}>
+							<ComponentInternal
+								definition={panelDef}
+								path={path}
+								context={context}
+								componentType={componentType}
+							/>
+						</Panel>,
+					]
+					// }
 				}
 			}
 			return []
