@@ -6,6 +6,6 @@ export type PanelDefinition = {
 	components: DefinitionMap[]
 }
 
-export type PanelFieldDefinitionMap = {
+export type PanelDefinitionMap = {
 	[key: string]: Record<string, PanelDefinition>[]
 }

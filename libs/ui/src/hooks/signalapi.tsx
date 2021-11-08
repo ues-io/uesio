@@ -3,7 +3,7 @@ import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 
-import { PanelFieldDefinitionMap } from "../definition/panel"
+import { PanelDefinitionMap } from "../definition/panel"
 
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
@@ -60,7 +60,7 @@ class SignalAPI {
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
-					const panels: PanelFieldDefinitionMap | undefined =
+					const panels: PanelDefinitionMap | undefined =
 						viewDef?.definition?.panels
 					if (!panels) return null
 
