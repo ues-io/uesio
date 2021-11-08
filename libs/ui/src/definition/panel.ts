@@ -7,5 +7,5 @@ export type PanelDefinition = {
 }
 
 export type PanelFieldDefinitionMap = {
-	[x: string]: Record<string, PanelDefinition>[]
+	[key: string]: Record<string, PanelDefinition>[]
 }
