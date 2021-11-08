@@ -106,32 +106,32 @@ definition:
                                       color: "#ccc"
                                       text: playlist_add_check
   panels:
-    - io.dialog:
-        id: newSelectlist
-        title: Create a New Select List
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newselectlistlist
-              wire: newselectlist
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newselectlist"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newSelectlist"
+    newSelectlist:
+      - io.dialog:
+          title: Create a New Select List
+          width: 400px
+          height: 500px
+          components:
+            - io.list:
+                id: newselectlistlist
+                wire: newselectlist
+                mode: EDIT
+                components:
+                  - io.field:
+                      fieldId: studio.name
+          actions:
+            - io.button:
+                uesio.variant: "io.primary"
+                text: "Save"
+                signals:
+                  - signal: wire/SAVE
+                    wires:
+                      - "newselectlist"
+                  - signal: "route/NAVIGATE"
+                    path: "app/$Param{appname}/workspace/$Param{workspacename}/selectlists/${studio.name}"
+            - io.button:
+                uesio.variant: "io.secondary"
+                text: "Cancel"
+                signals:
+                  - signal: "panel/TOGGLE"
+                    panel: "newSelectlist"
