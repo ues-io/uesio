@@ -66,12 +66,12 @@ class SignalAPI {
 
 					const panelDef = Object.values(panels[panelId][0])[0] // For now, we only support one panel in a panelId
 					const componentType = Object.keys(panels[panelId][0])[0] // For now, we only support one panel in a panelId
-					console.log({ panelDef, componentType })
+
 					if (componentType && panelDef) {
 						return [
 							<Panel context={context}>
 								<ComponentInternal
-									definition={panelDef}
+									definition={{ ...panelDef, id: panelId }}
 									path={path}
 									context={context}
 									componentType={componentType}
