@@ -51,11 +51,12 @@ const ConfigFeatureFlags: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			{values?.map((response) => {
+			{values?.map((response, i) => {
 				const key = `${response.namespace}.${response.name}`
 				const value = response.value
 				return (
 					<ConfigFeatureFlagsItem
+						key={`${key}.${i}`}
 						title={key}
 						value={value}
 						context={newContext}

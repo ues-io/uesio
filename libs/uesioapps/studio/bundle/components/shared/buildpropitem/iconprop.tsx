@@ -122,6 +122,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 					<div className={classes.icons}>
 						{results.map((iconName) => (
 							<IconButton
+								key={iconName}
 								icon={iconName}
 								context={context}
 								variant="studio.iconbuttongrid"
