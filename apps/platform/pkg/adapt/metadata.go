@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
@@ -48,11 +49,24 @@ type CollectionMetadata struct {
 
 // GetField function
 func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
-	fieldMetadata, ok := cm.Fields[key]
-	if !ok {
+
+	names := strings.Split(key, "->")
+	if len(names) == 1 {
+		fieldMetadata, ok := cm.Fields[key]
+		if !ok {
+			return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
+		}
+		return fieldMetadata, nil
+	}
+
+	fieldMetadata, err := cm.GetField(names[0])
+	if err != nil {
+		//TO-DO FIX this error
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 	}
-	return fieldMetadata, nil
+
+	return fieldMetadata.GetSubField(strings.Join(names[1:], "->"))
+
 }
 
 func (cm *CollectionMetadata) SetField(metadata *FieldMetadata) {
@@ -105,4 +119,24 @@ type FieldMetadata struct {
 // GetFullName function
 func (fm *FieldMetadata) GetFullName() string {
 	return fm.Namespace + "." + fm.Name
+}
+
+func (fm *FieldMetadata) GetSubField(key string) (*FieldMetadata, error) {
+	names := strings.Split(key, "->")
+	if len(names) == 1 {
+		fieldMetadata, ok := fm.SubFields[key]
+		if !ok {
+			return nil, errors.New("No metadata provided for field: " + key + " in collection: " + fm.Name)
+		}
+		return fieldMetadata, nil
+	}
+
+	fieldMetadata, err := fm.GetSubField(names[0])
+	if err != nil {
+		//TO-DO FIX this error
+		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + fm.Name)
+	}
+
+	return fieldMetadata.GetSubField(strings.Join(names[1:], "->"))
+
 }
