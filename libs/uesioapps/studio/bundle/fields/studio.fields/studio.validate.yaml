@@ -4,9 +4,9 @@ type: MAP
 label: Validate
 subfields:
   - name: studio.type
-    label: Type
+    label: Validation
     type: SELECT
-    selectList: studio.fieldtypes
+    selectList: studio.fieldvalidatetypes
   - name: studio.regex
     label: Regex
     type: TEXT

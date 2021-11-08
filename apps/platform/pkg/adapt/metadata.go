@@ -61,7 +61,6 @@ func (cm *CollectionMetadata) GetField(key string) (*FieldMetadata, error) {
 
 	fieldMetadata, err := cm.GetField(names[0])
 	if err != nil {
-		//TO-DO FIX this error
 		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + cm.Name)
 	}
 
@@ -126,15 +125,14 @@ func (fm *FieldMetadata) GetSubField(key string) (*FieldMetadata, error) {
 	if len(names) == 1 {
 		fieldMetadata, ok := fm.SubFields[key]
 		if !ok {
-			return nil, errors.New("No metadata provided for field: " + key + " in collection: " + fm.Name)
+			return nil, errors.New("No metadata provided for sub-field: " + key + " in collection: " + fm.Name)
 		}
 		return fieldMetadata, nil
 	}
 
 	fieldMetadata, err := fm.GetSubField(names[0])
 	if err != nil {
-		//TO-DO FIX this error
-		return nil, errors.New("No metadata provided for field: " + key + " in collection: " + fm.Name)
+		return nil, errors.New("No metadata provided for sub-field: " + key + " in collection: " + fm.Name)
 	}
 
 	return fieldMetadata.GetSubField(strings.Join(names[1:], "->"))
