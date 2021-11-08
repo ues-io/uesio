@@ -1,0 +1,4 @@
+name: user
+collection: uesio.featureflagassignments
+type: "TEXT"
+label: User

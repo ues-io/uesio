@@ -1,0 +1,4 @@
+name: phone
+collection: crm.accounts
+type: TEXT
+label: Phone

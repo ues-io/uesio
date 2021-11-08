@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react"
+import { FC, useRef } from "react"
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
 import TopLeftNav from "../../shared/topleftnav"
@@ -45,13 +45,6 @@ component.registry.registerSignals("uesio.runtime", {
 			})
 		},
 		target: "panels",
-	},
-	TOGGLE_VIEW: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as string
-			setState(state !== "content" ? "content" : "structure")
-		},
-		target: "buildview",
 	},
 })
 

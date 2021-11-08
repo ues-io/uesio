@@ -1,3 +1,0 @@
-name: cognitoPoolId
-managedBy: app
-store: environment

@@ -1,24 +1,24 @@
 package meta
 
 import (
-	"fmt"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // View struct
 type View struct {
-	ID         string    `yaml:"-" uesio:"studio.id"`
-	Name       string    `yaml:"name" uesio:"studio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
+	Name       string     `yaml:"name" uesio:"studio.name"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -103,12 +103,19 @@ func (v *View) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (v *View) SetWorkspace(workspace string) {
-	v.Workspace = workspace
+	v.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (v *View) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(v, iter)
+}
+
+// Len function
+func (v *View) Len() int {
+	return StandardItemLen(v)
 }
 
 // GetItemMeta function
@@ -121,18 +128,12 @@ func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
 }
 
-func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
-	if node.Kind != yaml.MappingNode {
-		return nil, fmt.Errorf("Definition is not a mapping node.")
+func (v *View) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, v.Name)
+	if err != nil {
+		return err
 	}
-
-	for i := range node.Content {
-		if node.Content[i].Value == key {
-			return node.Content[i+1], nil
-		}
-	}
-
-	return nil, fmt.Errorf("Node not found of key: " + key)
+	return node.Decode(v)
 }
 
 func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {

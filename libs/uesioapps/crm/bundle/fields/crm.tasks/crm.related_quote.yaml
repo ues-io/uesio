@@ -1,0 +1,6 @@
+name: related_quote
+collection: crm.tasks
+type: REFERENCE
+label: Related Quote
+reference:
+  collection: crm.quotes

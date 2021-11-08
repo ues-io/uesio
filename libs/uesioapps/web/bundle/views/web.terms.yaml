@@ -324,7 +324,6 @@ definition:
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: IN NO EVENT SHALL THE AGGREGATE LIABILITY OF EACH PARTY TOGETHER WITH ALL OF ITS AFFILIATES ARISING OUT OF OR RELATED TO THIS AGREEMENT EXCEED THE TOTAL AMOUNT PAID BY CUSTOMER AND ITS AFFILIATES HEREUNDER FOR THE SERVICES GIVING RISE TO THE LIABILITY IN THE TWELVE MONTHS PRECEDING THE FIRST INCIDENT OUT OF WHICH THE LIABILITY AROSE. THE FOREGOING LIMITATION WILL APPLY WHETHER AN ACTION IS IN CONTRACT OR TORT AND REGARDLESS OF THE THEORY OF LIABILITY BUT WILL NOT LIMIT CUSTOMER'S AND ITS AFFILIATES’ PAYMENT OBLIGATIONS UNDER THE “FEES AND PAYMENT” SECTION ABOVE.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 11.2 Exclusion of Consequential and Related Damages.
@@ -340,21 +339,18 @@ definition:
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: This Agreement commences on the date Customer first accepts it and continues until all subscriptions hereunder have expired or have been terminated.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 12.2 Term of Purchased Subscriptions.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: The term of each subscription shall be as specified in the applicable Order Form. Except as otherwise specified in an Order Form, subscriptions will automatically renew for additional periods equal to the expiring subscription term or one year (whichever is shorter), unless either party gives the other written notice (email acceptable) at least 30 days before the end of the relevant subscription term. Except as expressly provided in the applicable Order Form, renewal of promotional or one-time priced subscriptions will be at UESIO’s applicable list price in effect at the time of the applicable renewal. Notwithstanding anything to the contrary, any renewal in which subscription volume or subscription length for any Services has decreased from the prior term will result in re-pricing at renewal without regard to the prior term’s per-unit pricing.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 12.3 Termination.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: A party may terminate this Agreement for cause (i) upon 30 days written notice to the other party of a material breach if such breach remains uncured at the expiration of such period, or (ii) if the other party becomes the subject of a petition in bankruptcy or any other proceeding relating to insolvency, receivership, liquidation or assignment for the benefit of creditors.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 12.4 Refund or Payment upon Termination.
@@ -388,49 +384,42 @@ definition:
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: The parties are independent contractors. This Agreement does not create a partnership, franchise, joint venture, agency, fiduciary or employment relationship between the parties. Each party will be solely responsible for payment of all compensation owed to its employees, as well as all employment-related taxes.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 13.5 Third-Party Beneficiaries.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: There are no third-party beneficiaries under this Agreement.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 13.6 Waiver.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: No failure or delay by either party in exercising any right under this Agreement will constitute a waiver of that right.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 13.7 Severability.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: If any provision of this Agreement is held by a court of competent jurisdiction to be contrary to law, the provision will be deemed null and void, and the remaining provisions of this Agreement will remain in effect.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 13.8 Assignment.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: Neither party may assign any of its rights or obligations hereunder, whether by operation of law or otherwise, without the other party’s prior written consent (not to be unreasonably withheld); provided, however, either party may assign this Agreement in its entirety (including all Order Forms), without the other party’s consent to its Affiliate or in connection with a merger, acquisition, corporate reorganization, or sale of all or substantially all of its assets. Notwithstanding the foregoing, if a party is acquired by, sells substantially all of its assets to, or undergoes a change of control in favor of, a direct competitor of the other party, then such other party may terminate this Agreement upon written notice. In the event of such a termination, ues.io will refund Customer any prepaid fees covering the remainder of the term of all subscriptions for the period after the effective date of such termination. Subject to the foregoing, this Agreement will bind and inure to the benefit of the parties, their respective successors and permitted assigns.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 14. Contracting Entity, Notices, Governing Law, and Venue.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: ues.io is owned by The Cloud Masters LLC (hereinafter referred to as TCM) a Swiss legal entity with offices held at No.1 Technoparkstrasse, Zürich, Switzerland, CH8005 and is domiciled in Switzerland.  The contracting entity will be TCM as mandated and managed by TCM and all notices should be addressed to The Cloud Masters, No.1 Technoparkstrasse, Zürich, Switzerland where the governing law will be Swiss and the venue for any legal proceedings will be performed in the jurisdiction of Zürich city.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 15. Manner of Giving Notice.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: Except as otherwise specified in this Agreement, all notices related to this Agreement will be in writing and will be effective upon (a) personal delivery, (b) the second business day after mailing, or (c), except for notices of termination or an indemnifiable claim (“Legal Notices”), which shall clearly be identifiable as Legal Notices, the day of sending by email. Billing-related notices to Customer will be addressed to the relevant billing contact designated by Customer.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 15.1 All other notices to Customer will be addressed to the relevant Services system administrator designated by Customer.
@@ -443,13 +432,11 @@ definition:
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: Neither party has received or been offered any illegal or improper bribe, kickback, payment, gift, or thing of value from an employee or agent of the other party in connection with this Agreement. Reasonable gifts and entertainment provided in the ordinary course of business do not violate the above restriction.
-
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: 16.1 Code of Conduct and Organization, Management and Control Model.
                             - io.text:
                                 uesio.variant: web.privacytext
                                 text: Customer acknowledges that TCM has adopted an Organization, Management and Control Model pursuant to Legislative Decree 231/2001 to prevent crimes provided for therein and commits to comply with the principles contained in the above Legislative Decree 231/2001 and in the ues.io Code of Conduct. Customer also acknowledges and agrees that the violation of the principles and the provisions contained in Legislative Decree 231/2001 and in the ues.io Code of Conduct by Customer may entitle ues.io, based on the severity of the violation, to terminate this Agreement for cause as set out in Section 11.3(i) above.
-
     - uesio.view:
         view: web.footer

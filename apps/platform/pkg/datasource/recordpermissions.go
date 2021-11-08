@@ -2,205 +2,157 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
-func getUserMerge(session *sess.Session) map[string]interface{} {
-	userInfo := session.GetUserInfo()
-	return map[string]interface{}{
-		"user.ID":      userInfo.ID,
-		"user.Profile": userInfo.Profile,
-	}
-}
-func getUserTokenUserTypeValue(tokenDefinition *meta.UserResponseTokenDefinition, session *sess.Session) (string, error) {
-	userMerges := getUserMerge(session)
-	return mergeTokenValue(tokenDefinition.Token, userMerges)
-}
+func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 
-func mergeTokenValue(tokenTemplate string, mergeData interface{}) (string, error) {
-	valueTemplate, err := templating.NewTemplateWithValidKeysOnly(tokenTemplate)
-	if err != nil {
-		return "", err
-	}
-	return templating.Execute(valueTemplate, mergeData)
-}
-func getTokenLookupTypeValues(lookupCollection string, conditions []*meta.TokenCondition, tokenTemplate string, mergeData interface{}, session *sess.Session) ([]string, error) {
-	fieldKeys := templating.ExtractKeys(tokenTemplate)
-	fields := make([]adapt.LoadRequestField, len(fieldKeys))
-	for i, fieldKey := range fieldKeys {
-		fields[i] = adapt.LoadRequestField{
-			ID: fieldKey,
-		}
+	if collectionMetadata.Access != "protected" {
+		return nil
 	}
 
-	loadConditions := make([]adapt.LoadRequestCondition, len(conditions))
-	for i, condition := range conditions {
-		valueTemplate, err := templating.NewTemplateWithValidKeysOnly(condition.Value)
-		if err != nil {
-			return nil, err
-		}
-		value, err := templating.Execute(valueTemplate, mergeData)
-		if err != nil {
-			return nil, err
-		}
-		loadConditions[i] = adapt.LoadRequestCondition{
-			Field:    condition.Field,
-			Value:    value,
-			Operator: "=",
-		}
+	for i := range *op.Inserts {
+		insert := &(*op.Inserts)[i]
+		insert.AddReadWriteToken("uesio.owner:" + session.GetUserInfo().ID)
 	}
 
-	/*
-		var loadOps = []adapt.LoadOp{{
-			CollectionName: lookupCollection,
-			WireName:       "foo",
-			Collection:     &adapt.Collection{},
-			Conditions:     loadConditions,
-			Fields:         fields,
-		}}
-		_, err := loadWithRecordPermissions(loadOps, session, false)
+	for i := range *op.Updates {
+		update := &(*op.Updates)[i]
+		ownerID, err := update.GetOwnerID()
 		if err != nil {
-			return nil, err
+			return err
 		}
-		records := loadOps[0].Collection
-		if records == nil {
-			return []string{}, nil
-		}
-		tokens := make([]string, records.Len())
-		template, err := templating.NewTemplateWithValidKeysOnly(tokenTemplate)
+		update.AddReadWriteToken("uesio.owner:" + ownerID)
+	}
+
+	for _, challengeToken := range collectionMetadata.RecordChallengeTokens {
+
+		tokenTemplate, err := adapt.NewFieldChanges(challengeToken.Token, collectionMetadata)
 		if err != nil {
-			return tokens, nil
+			return err
 		}
-		i := 0
-		err = records.Loop(func(record loadable.Item, _ interface{}) error {
-			tokenValue, err := templating.Execute(template, record)
+		// Loop over each insert and update and fill in token values
+		for i := range *op.Updates {
+			update := &(*op.Updates)[i]
+			tokenValue, err := templating.Execute(tokenTemplate, update.FieldChanges)
+			if err != nil {
+				tokenValue, err = templating.Execute(tokenTemplate, update.OldValues)
+				if err != nil {
+					return err
+				}
+			}
+
+			fullTokenString := challengeToken.UserAccessToken + ":" + tokenValue
+			if challengeToken.Access == "readwrite" {
+				update.AddReadWriteToken(fullTokenString)
+			} else if challengeToken.Access == "read" {
+				update.AddReadToken(fullTokenString)
+			}
+		}
+
+		for i := range *op.Inserts {
+			insert := &(*op.Inserts)[i]
+			tokenValue, err := templating.Execute(tokenTemplate, insert.FieldChanges)
 			if err != nil {
 				return err
 			}
-			tokens[i] = tokenValue
-			i++
-			return nil
-		})
 
-
-		return tokens, err
-	*/
-	return []string{}, nil
-}
-
-func makeMap(elements []string) map[string]bool {
-	elementMap := make(map[string]bool)
-	for _, element := range elements {
-		elementMap[element] = true
-	}
-	return elementMap
-}
-
-func DetermineAccessFromChallengeTokens(metadata *adapt.CollectionMetadata, userResponseTokens []string, record loadable.Item, session *sess.Session) (string, error) {
-	access := "none"
-	challengeTokenDefinitions := metadata.RecordChallengeTokens
-	userResponseTokenMap := makeMap(userResponseTokens)
-	for _, tokenDefinition := range challengeTokenDefinitions {
-		if tokenDefinition.Type == "lookup" {
-			tokenValues, err := getTokenLookupTypeValues(tokenDefinition.Collection, tokenDefinition.Conditions, tokenDefinition.Token, record, session)
-			if err != nil {
-				return access, err
-			}
-			for _, token := range tokenValues {
-				ok := userResponseTokenMap[tokenDefinition.Match+":"+token]
-				if ok {
-					if tokenDefinition.Access == "read-write" {
-						// Max permission, short circuit
-						return "read-write", nil
-					} else if tokenDefinition.Access == "read" && access == "none" {
-						access = tokenDefinition.Access
-					}
-				}
-			}
-		} else if tokenDefinition.Type == "record" {
-			token, err := mergeTokenValue(tokenDefinition.Token, record)
-			if err != nil {
-				return access, err
-			}
-			ok := userResponseTokenMap[tokenDefinition.Match+":"+token]
-			if ok {
-				if tokenDefinition.Access == "read-write" {
-					// Max permission, short circuit
-					return "read-write", nil
-				} else if tokenDefinition.Access == "read" && access == "none" {
-					access = tokenDefinition.Access
-				}
+			fullTokenString := challengeToken.UserAccessToken + ":" + tokenValue
+			if challengeToken.Access == "readwrite" {
+				insert.AddReadWriteToken(fullTokenString)
+			} else if challengeToken.Access == "read" {
+				insert.AddReadToken(fullTokenString)
 			}
 		}
 	}
-	return access, nil
+
+	return nil
 }
 
-func hasWriteAccess(metadata *adapt.CollectionMetadata, recordId interface{}, fieldsNeeded []string, userResponseTokens []string, session *sess.Session) bool {
-	if metadata.Access != "protected" {
-		return true
-	}
-	/*
-		fields := make([]adapt.LoadRequestField, len(fieldsNeeded))
-		for i, fieldKey := range fieldsNeeded {
-			fields[i] = adapt.LoadRequestField{
-				ID: fieldKey,
+func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) ([]string, error) {
+
+	tokenStrings := []string{"uesio.owner:" + session.GetUserInfo().ID}
+
+	userAccessTokenNames := map[string]bool{}
+	for _, collectionMetadata := range metadata.Collections {
+		if collectionMetadata.Access != "protected" {
+			continue
+		}
+		for _, challengeToken := range collectionMetadata.RecordChallengeTokens {
+			if challengeToken.UserAccessToken != "" {
+				userAccessTokenNames[challengeToken.UserAccessToken] = true
 			}
 		}
-		loadOp := adapt.LoadOp{
-			CollectionName: metadata.GetFullName(),
-			WireName:       "foo",
-			Collection:     &adapt.Collection{},
-			Conditions: []adapt.LoadRequestCondition{
-				{
-					Field: metadata.IDField,
-					Value: recordId,
-				},
-			},
-			Fields: fields,
-		}
-		var loadOps = []adapt.LoadOp{loadOp}
-		_, err := loadWithRecordPermissions(loadOps, session, false)
+	}
+
+	for key := range userAccessTokenNames {
+		uat, err := meta.NewUserAccessToken(key)
 		if err != nil {
-			return false
+			return nil, err
 		}
-		if loadOp.Collection == nil || loadOp.Collection.Len() != 1 {
-			return false
+		err = bundle.Load(uat, session)
+		if err != nil {
+			return nil, err
 		}
-		access, err := DetermineAccessFromChallengeTokens(metadata, userResponseTokens, loadOp.Collection.GetItem(0), session)
-		if err != nil || access != "read-write" {
-			return false
-		}
-	*/
-	return true
-}
+		if uat.Type == "lookup" {
+			fieldKeys := templating.ExtractKeys(uat.Token)
+			fields := []adapt.LoadRequestField{}
+			for _, fieldKey := range fieldKeys {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: fieldKey,
+				})
+			}
 
-func GenerateResponseTokens(metadata *adapt.CollectionMetadata, session *sess.Session) ([]string, error) {
+			loadConditions := []adapt.LoadRequestCondition{}
+			for _, condition := range uat.Conditions {
+				fields = append(fields, adapt.LoadRequestField{
+					ID: condition.Field,
+				})
+				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
+					Field:    condition.Field,
+					Value:    session.GetUserInfo().ID,
+					Operator: "=",
+				})
+			}
+			lookupResults := &adapt.Collection{}
+			var loadOps = []adapt.LoadOp{{
+				CollectionName: uat.Collection,
+				WireName:       "foo",
+				Collection:     lookupResults,
+				Conditions:     loadConditions,
+				Fields:         fields,
+			}}
+			loadMetadata, err := LoadWithOptions(loadOps, session, false)
+			if err != nil {
+				return nil, err
+			}
 
-	tokenDefinitions := metadata.UserResponseTokens
-	tokens := []string{}
-	if tokenDefinitions == nil || metadata.Access != "protected" {
-		return tokens, nil
-	}
-	for _, tokenDefinition := range tokenDefinitions {
-		if tokenDefinition.Type == "lookup" {
-			tokenValues, err := getTokenLookupTypeValues(tokenDefinition.Collection, tokenDefinition.Conditions, tokenDefinition.Token, getUserMerge(session), session)
+			loadCollectionMetadata, err := loadMetadata.GetCollection(uat.Collection)
 			if err != nil {
-				return tokens, err
+				return nil, err
 			}
-			for _, token := range tokenValues {
-				tokens = append(tokens, tokenDefinition.Match+":"+token)
-			}
-		} else if tokenDefinition.Type == "user" {
-			token, err := getUserTokenUserTypeValue(tokenDefinition, session)
+
+			template, err := adapt.NewFieldChanges(uat.Token, loadCollectionMetadata)
 			if err != nil {
-				return tokens, err
+				return nil, err
 			}
-			tokens = append(tokens, tokenDefinition.Match+":"+token)
+			err = lookupResults.Loop(func(record loadable.Item, _ interface{}) error {
+				tokenValue, err := templating.Execute(template, record)
+				if err != nil {
+					return err
+				}
+				tokenStrings = append(tokenStrings, uat.GetKey()+":"+tokenValue)
+				return nil
+			})
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
-	return tokens, nil
+
+	return tokenStrings, nil
 }

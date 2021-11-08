@@ -1,4 +1,0 @@
-name: import
-path: app/{appname}/workspace/{workspacename}/import
-view: studio.import
-theme: studio.default

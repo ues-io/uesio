@@ -1,0 +1,4 @@
+name: mailing_zip
+collection: crm.contacts
+type: TEXT
+label: Mailing ZIP Code

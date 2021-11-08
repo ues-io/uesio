@@ -31,7 +31,9 @@ const generateReferenceFieldDisplayValue = (
 	const nameFieldOfReferencedCollection = referencedCollection
 		.getNameField()
 		?.getId()
-	const referenceFieldValue = record.getFieldReference(fieldId)
+	const referenceFieldValue = record.getFieldValue<
+		wire.PlainWireRecord | undefined
+	>(fieldId)
 	if (
 		!referenceFieldValue ||
 		typeof referenceFieldValue !== "object" ||
@@ -56,7 +58,8 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
-		fieldMetadata.source.referencedCollection || ""
+		context,
+		fieldMetadata.source.reference?.collection || ""
 	)
 
 	if (!referencedCollection) {

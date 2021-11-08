@@ -7,7 +7,6 @@ views:
   studio.appedit: true
   studio.bot: true
   studio.bots: true
-  studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
   studio.collectiondata: true
@@ -24,7 +23,6 @@ views:
   studio.file: true
   studio.files: true
   studio.home: true
-  studio.import: true
   studio.installedbundle: true
   studio.permissionset: true
   studio.permissionsets: true
@@ -49,12 +47,17 @@ views:
   studio.workspace: true
   studio.workspaceconfig: true
   studio.workspacenav: true
+  studio.sitecollections: true
+  studio.sitecollectiondata: true
+  studio.collectionimport: true
+  studio.sitecollectiondataimport: true
+  studio.featureflags: true
+  studio.featureflag: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
   studio.bot: true
   studio.bots: true
-  studio.bulkjob: true
   studio.bundle: true
   studio.collection: true
   studio.collectiondata: true
@@ -71,7 +74,6 @@ routes:
   studio.file: true
   studio.files: true
   studio.home: true
-  studio.import: true
   studio.installedbundle: true
   studio.login: true
   studio.permissionset: true
@@ -94,4 +96,10 @@ routes:
   studio.views: true
   studio.workspaceconfig: true
   studio.workspace: true
+  studio.sitecollections: true
+  studio.sitecollectiondata: true
+  studio.collectionimport: true
+  studio.sitecollectiondataimport: true
+  studio.featureflags: true
+  studio.featureflag: true
 files:

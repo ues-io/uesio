@@ -2,4 +2,3 @@ name: defaultprofile
 collection: studio.workspaces
 type: TEXT
 label: Default Profile
-propertyName: defaultprofile

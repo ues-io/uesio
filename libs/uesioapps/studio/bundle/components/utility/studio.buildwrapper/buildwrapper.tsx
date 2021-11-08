@@ -1,7 +1,7 @@
 import { FunctionComponent, SyntheticEvent, DragEvent, useState } from "react"
 import { definition, styles, component, hooks } from "@uesio/ui"
-import { handleDrop, isDropAllowed } from "../../shared/dragdrop"
 import styling from "./styling"
+
 interface BuildWrapperProps extends definition.UtilityProps {
 	test?: string
 }
@@ -17,90 +17,52 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
-	const isStructureView = uesio.builder.useIsStructureView()
-	const isContentView = !isStructureView
-	const showHeader = isStructureView || (isContentView && isSelected)
 	const propDef = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
 	const accepts = propDef?.accepts
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const fullDragPath = component.path.makeFullPath(
-		dragType,
-		dragItem,
-		dragPath
-	)
-	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
-	const dragger = {
-		fullDragPath,
-		dropNode: dropPath,
-		dragNode: dragPath,
-		isDragging:
-			path === dragPath &&
-			dragType === "viewdef" &&
-			dragItem === viewDefId,
-		start: (e: DragEvent) => {
-			e.stopPropagation()
-			setTimeout(() => {
-				if (dragPath !== path) {
-					uesio.builder.setDragNode("viewdef", viewDefId, path)
-				}
-			})
-		},
-		end: () => {
-			uesio.builder.clearDragNode()
-			uesio.builder.clearDropNode()
-		},
-		over: (e: DragEvent) => {
-			if (!accepts) return
-			if (!isDropAllowed(accepts, fullDragPath)) {
-				return
-			}
-			e.preventDefault()
-			e.stopPropagation()
-			uesio.builder.setDropNode("viewdef", viewDefId, path)
-		},
-		drop: (e: DragEvent) => {
-			if (!accepts) return
-			if (!isDropAllowed(accepts, fullDragPath)) {
-				return
-			}
-			e.preventDefault()
-			e.stopPropagation()
-			handleDrop(
-				fullDragPath,
-				component.path.makeFullPath("viewdef", viewDefId, path),
-				0,
-				uesio
-			)
-		},
-	}
+	const [, , dropPath] = uesio.builder.useDropNode()
+	const isDragging =
+		path === dragPath && dragType === "viewdef" && dragItem === viewDefId
 
 	const wrapperPath = component.path.getGrandParentPath(path)
-	const addBeforePlaceholder =
-		`${wrapperPath}["${index}"]` === dragger.dropNode
-	const addAfterPlaceholder =
-		`${wrapperPath}["${index + 1}"]` === dragger.dropNode
+	const addBeforePlaceholder = `${wrapperPath}["${index}"]` === dropPath
+	const addAfterPlaceholder = `${wrapperPath}["${index + 1}"]` === dropPath
 	const classes = styles.useUtilityStyles(
-		styling(
-			isSelected,
-			isActive,
-			isStructureView,
-			isContentView,
-			dragger.isDragging
-		),
+		styling(isSelected, isActive, isDragging),
 		props
 	)
 	return (
 		<>
-			{addBeforePlaceholder && <div className={classes.placeholder} />}
+			{addBeforePlaceholder && (
+				<div
+					data-placeholder="true"
+					data-index={index}
+					className={classes.placeholder}
+				/>
+			)}
 			<div
 				data-index={index}
-				onDragStart={dragger.start}
-				onDragEnd={dragger.end}
-				onDragOver={dragger.over}
-				onDrop={dragger.drop}
+				data-accepts={accepts?.join(",")}
+				data-path={path}
+				onDragStart={(e: DragEvent) => {
+					e.stopPropagation()
+					setTimeout(() => {
+						if (dragPath !== path) {
+							uesio.builder.setDragNode(
+								"viewdef",
+								viewDefId,
+								path
+							)
+						}
+					})
+				}}
+				onDragEnd={() => {
+					uesio.builder.clearDragNode()
+					uesio.builder.clearDropNode()
+				}}
 				className={classes.root}
 				onClick={(event: SyntheticEvent) => {
 					!isSelected &&
@@ -120,23 +82,21 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 				}}
 				draggable={canDrag}
 			>
-				{showHeader && (
+				{
 					<div
 						className={classes.header}
-						onMouseDown={() => isStructureView && setCanDrag(true)}
-						onMouseUp={() =>
-							isStructureView &&
-							dragger.dragNode &&
-							setCanDrag(false)
-						}
+						onMouseDown={() => setCanDrag(true)}
+						onMouseUp={() => dragPath && setCanDrag(false)}
 					>
 						{propDef?.title ?? "Unknown"}
 					</div>
-				)}
+				}
 				<div className={classes.inner}>{children}</div>
 			</div>
 			{addAfterPlaceholder && (
 				<div
+					data-placeholder="true"
+					data-index={index + 1}
 					className={styles.cx(
 						classes.placeholder,
 						classes.afterPlaceholder

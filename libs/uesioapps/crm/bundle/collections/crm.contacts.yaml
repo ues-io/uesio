@@ -1,5 +1,3 @@
 name: contacts
 dataSource: uesio.platform
-idField: crm.id
 nameField: crm.lastname
-collectionName: contacts

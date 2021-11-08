@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { definition, component, hooks, builder } from "@uesio/ui"
+import { definition, component, builder } from "@uesio/ui"
 import MetadataPicker from "../../utility/studio.metadatapicker/metadatapicker"
 
-interface MetadataPropRendererProps extends PropRendererProps {
+interface MetadataPropRendererProps extends builder.PropRendererProps {
 	descriptor: builder.MetadataProp
 }
 
@@ -19,7 +18,10 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			groupingParents = 1,
 			groupingProperty,
 			getGroupingFromKey,
+			groupingValue,
 		} = descriptor
+
+		if (groupingValue) return groupingValue
 
 		const groupingNodePath = component.path.getAncestorPath(
 			path || "",

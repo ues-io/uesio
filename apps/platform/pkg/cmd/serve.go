@@ -81,8 +81,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/migrate", controller.Migrate).Methods("POST")
 
+	workspaceAPI(wr, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
 	workspaceAPI(wr, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
@@ -98,11 +98,22 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
 	workspaceAPI(wr, "/secrets", controller.Secret).Methods("GET")
 	workspaceAPI(wr, "/secrets/{key}", controller.SetSecret).Methods("POST")
+	workspaceAPI(wr, "/featureflags", controller.FeatureFlag).Methods("GET")
+	workspaceAPI(wr, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValue).Methods("GET")
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
 	siteAdminAPI(sar, "/secrets", controller.Secret).Methods("GET")
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
+	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
+	siteAdminAPI(sar, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
+	siteAdminAPI(sar, "/metadata/namespaces", controller.NamespaceList).Methods("GET")
+	siteAdminAPI(sar, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/metadata/types/{type}/namespace/{namespace}/list/{grouping}", controller.MetadataList).Methods("GET")
+	siteAdminAPI(sar, "/wires/load", controller.Load).Methods("POST")
+	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
+	siteAdminAPI(sar, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
 
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")

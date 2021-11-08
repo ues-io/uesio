@@ -1,13 +1,18 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles, component } from "@uesio/ui"
+import { GroupUtilityProps } from "../io.group/group"
+import { DialogPlainUtilityProps } from "../io.dialogplain/dialogplain"
+import { IconButtonUtilityProps } from "../io.iconbutton/iconbutton"
 
 const TitleBar = component.registry.getUtility("io.titlebar")
-const IconButton = component.registry.getUtility("io.iconbutton")
+const IconButton =
+	component.registry.getUtility<IconButtonUtilityProps>("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
-const Group = component.registry.getUtility("io.group")
-const IODialogPlain = component.registry.getUtility("io.dialogplain")
+const Group = component.registry.getUtility<GroupUtilityProps>("io.group")
+const IODialogPlain =
+	component.registry.getUtility<DialogPlainUtilityProps>("io.dialogplain")
 
-interface DialogProps extends definition.UtilityProps {
+interface DialogUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
@@ -15,7 +20,7 @@ interface DialogProps extends definition.UtilityProps {
 	actions?: ReactNode
 }
 
-const Dialog: FunctionComponent<DialogProps> = (props) => {
+const Dialog: FunctionComponent<DialogUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -66,5 +71,6 @@ const Dialog: FunctionComponent<DialogProps> = (props) => {
 		</IODialogPlain>
 	)
 }
+export { DialogUtilityProps }
 
 export default Dialog

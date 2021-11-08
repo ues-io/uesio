@@ -3,29 +3,18 @@ import { post } from "../request/request"
 import * as fs from "fs"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
-
-type Spec = {
-	filetype: string
-	collection: string
-	upsertkey: string
-	mappings: {
-		[key: string]: {
-			fieldname: string
-			matchfield?: string
-		}
-	}
-}
+import { definition } from "@uesio/ui"
 
 async function getSpec(
 	specFile?: string,
 	collection?: string,
 	upsertKey?: string
-): Promise<Spec> {
+): Promise<definition.ImportSpec> {
 	const specData = specFile
 		? JSON.parse(await fs.promises.readFile(specFile, "utf8"))
 		: {}
 
-	const spec: Spec = {
+	const spec: definition.ImportSpec = {
 		filetype: specData["uesio.filetype"] || "csv",
 		collection: specData["uesio.collection"],
 		upsertkey: specData["uesio.upsertkey"],
@@ -42,7 +31,7 @@ async function getSpec(
 	return spec
 }
 
-function getSpecString(spec: Spec) {
+function getSpecString(spec: definition.ImportSpec) {
 	return JSON.stringify({
 		"uesio.filetype": spec.filetype,
 		"uesio.collection": spec.collection,

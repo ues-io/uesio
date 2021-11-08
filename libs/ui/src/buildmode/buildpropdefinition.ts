@@ -1,8 +1,9 @@
-import { DefinitionMap, UtilityProps } from "../definition/definition"
+import { DefinitionMap, DefinitionValue } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
 import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
 import { FunctionComponent } from "react"
+import ValueAPI from "./valueapi"
 
 type BuildPropertiesDefinition = {
 	title: string
@@ -35,6 +36,7 @@ type PropertySection =
 	| SignalsSection
 	| PropListSection
 	| StylesSection
+	| OrderSection
 
 type BasePropSection = {
 	title: string
@@ -43,6 +45,10 @@ type BasePropSection = {
 
 interface FieldsSection extends BasePropSection {
 	type: "FIELDS"
+}
+
+interface OrderSection extends BasePropSection {
+	type: "ORDER"
 }
 
 interface ConditionsSection extends BasePropSection {
@@ -78,16 +84,29 @@ type PropDescriptor =
 	| NamespaceProp
 	| ComponentTargetProp
 	| StylesListProp
+	| IconProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
 	name: string
 	type: string
 	label: string
+	display?: DisplayCondition[]
 }
+
+type DisplayCondition = {
+	property: string
+} & (
+	| { values: DefinitionValue[]; value?: never }
+	| { value: DefinitionValue; values?: never }
+)
 
 interface DefinitionBasedPropDescriptor extends BasePropDescriptor {
 	filter?: (def: definition.Definition, id: string) => boolean
+}
+
+interface CustomPropRendererProps extends PropRendererProps {
+	descriptor: CustomProp
 }
 
 interface ConditionProp extends DefinitionBasedPropDescriptor {
@@ -102,6 +121,11 @@ interface NamespaceProp extends BasePropDescriptor {
 interface TextProp extends BasePropDescriptor {
 	type: "TEXT"
 }
+
+interface IconProp extends BasePropDescriptor {
+	type: "ICON"
+}
+
 interface StylesListProp extends BasePropDescriptor {
 	type: "STYLESLIST"
 }
@@ -112,12 +136,13 @@ interface NumberProp extends BasePropDescriptor {
 
 interface CustomProp extends BasePropDescriptor {
 	type: "CUSTOM"
-	renderFunc: FunctionComponent<UtilityProps>
+	renderFunc: FunctionComponent<CustomPropRendererProps>
 }
 
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
+	groupingValue?: string
 	groupingParents?: number
 	groupingProperty?: string
 	getGroupingFromKey?: boolean
@@ -204,7 +229,17 @@ type SignalProperties = {
 	name: string
 }
 
+interface PropRendererProps extends definition.BaseProps {
+	descriptor: PropDescriptor
+	propsDef: BuildPropertiesDefinition
+	valueAPI: ValueAPI
+}
+
 export {
+	DisplayCondition,
+	ValueAPI,
+	PropRendererProps,
+	CustomPropRendererProps,
 	BuildPropertiesDefinition,
 	PropertySection,
 	PropDescriptor,
@@ -215,6 +250,7 @@ export {
 	RunSignalsAction,
 	LoadWireAction,
 	TextProp,
+	IconProp,
 	NumberProp,
 	CustomProp,
 	MetadataProp,
@@ -232,4 +268,5 @@ export {
 	SignalsSection,
 	PropListSection,
 	StylesListProp,
+	OrderSection,
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -28,6 +29,11 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		oldValue, err := change.FieldChanges.GetField(field.GetFullName())
 		if err != nil {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" has no old value")
+		}
+
+		// Since we're autopopulating this, allow the update to go through
+		if field.AutoPopulate != "" {
+			return nil
 		}
 
 		if currentValue.(string) == oldValue.(string) {
@@ -63,8 +69,8 @@ func validateEmail(field *adapt.FieldMetadata) validationFunc {
 }
 
 func validateRegex(field *adapt.FieldMetadata) validationFunc {
-	regex, ok := isValidRegex(field.Validate.Regex)
-	if !ok {
+	regex, err := regexp.Compile(field.ValidationMetadata.Regex)
+	if err != nil {
 		return func(change adapt.ChangeItem, isNew bool) error {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
 		}
@@ -72,23 +78,28 @@ func validateRegex(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
 		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.Validate.Regex)
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" don't match regex: "+field.ValidationMetadata.Regex)
 		}
 		return nil
 	}
 }
 
 func validateMetadata(field *adapt.FieldMetadata) validationFunc {
-	regex, ok := isValidRegex("^[a-z0-9_]+$")
-	if !ok {
-		return func(change adapt.ChangeItem, isNew bool) error {
-			return NewSaveError(change.RecordKey, field.GetFullName(), "Regex for the field: "+field.Label+" is not valid")
-		}
-	}
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		if err == nil && !regex.MatchString(fmt.Sprintf("%v", val)) {
+		if err == nil && !meta.IsValidMetadataName(fmt.Sprintf("%v", val)) {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" failed metadata validation, no capital letters or special characters allowed")
+		}
+		return nil
+	}
+}
+
+func validateNumber(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeItem, isNew bool) error {
+		val, err := change.FieldChanges.GetField(field.GetFullName())
+		_, ok := val.(float64)
+		if err == nil && !ok {
+			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
 		}
 		return nil
 	}
@@ -115,20 +126,24 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 
 	validations := []validationFunc{}
 	for _, field := range collectionMetadata.Fields {
+		validationMetadata := field.ValidationMetadata
 		if field.Required {
 			validations = append(validations, validateRequired(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "EMAIL" {
+		if field.Type == "EMAIL" {
 			validations = append(validations, validateEmail(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "REGEX" {
+		if validationMetadata != nil && validationMetadata.Type == "REGEX" {
 			validations = append(validations, validateRegex(field))
 		}
-		if field.Validate != nil && field.Validate.Type == "METADATA" {
+		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
 			validations = append(validations, validateMetadata(field))
 		}
 		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
 			validations = append(validations, preventUpdate(field))
+		}
+		if field.Type == "NUMBER" {
+			validations = append(validations, validateNumber(field))
 		}
 	}
 

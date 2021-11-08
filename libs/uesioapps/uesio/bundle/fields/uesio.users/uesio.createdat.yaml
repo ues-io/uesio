@@ -1,6 +1,0 @@
-name: createdat
-collection: uesio.users
-type: TIMESTAMP
-label: Created At
-propertyName: createdat
-autopopulate: CREATE

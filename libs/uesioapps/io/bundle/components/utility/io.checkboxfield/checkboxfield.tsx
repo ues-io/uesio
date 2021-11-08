@@ -12,7 +12,6 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -24,13 +23,11 @@ const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	const { setValue, value, mode, hideLabel, context, label } = props
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
+
 	const checked = value === true
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			native: {
 				opacity: "0",
 				position: "absolute",

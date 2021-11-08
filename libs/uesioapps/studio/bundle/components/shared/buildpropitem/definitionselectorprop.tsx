@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react"
-import { PropRendererProps } from "./proprendererdefinition"
-import { hooks, definition } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 import SelectProp from "./selectprop"
 
-type DefinitionSelectorProps = PropRendererProps & {
+type DefinitionSelectorProps = builder.PropRendererProps & {
 	definitionPath: string
 	noValueLabel: string
 	filter?: (def: definition.Definition, index: string | number) => boolean

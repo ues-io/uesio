@@ -3,6 +3,7 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
 import { save, createChange } from "../wire/save"
 import { getApp } from "../config/config"
+import { User } from "../auth/login"
 
 class Workspace {
 	static getCollectionName(): string {
@@ -11,7 +12,7 @@ class Workspace {
 	static getFields() {
 		return [
 			{
-				id: "studio.id",
+				id: "uesio.id",
 			},
 			{
 				id: "studio.name",
@@ -21,18 +22,18 @@ class Workspace {
 	static getColumns(): TableColumn[] {
 		return [
 			{
-				id: "studio.id",
+				id: "uesio.id",
 			},
 			{
 				id: "studio.name",
 			},
 		]
 	}
-	static async list(): Promise<void> {
-		const response = await load(this)
+	static async list(user: User): Promise<void> {
+		const response = await load(this, user)
 		wiretable(response.wires[0], response.collections, this.getColumns())
 	}
-	static async create(): Promise<void> {
+	static async create(user: User): Promise<void> {
 		const app = await getApp()
 		const responses = await inquirer.prompt([
 			{
@@ -43,10 +44,11 @@ class Workspace {
 		])
 		await save(
 			this,
+			user,
 			createChange([
 				{
 					"studio.name": responses.name,
-					"studio.appid": app,
+					"studio.app": app,
 				},
 			])
 		)

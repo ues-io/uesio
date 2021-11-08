@@ -12,20 +12,23 @@ import (
 )
 
 type SpecialReferences struct {
-	OnDelete       string
-	CollectionName string
-	Fields         []string
+	ReferenceMetadata *meta.ReferenceMetadata
+	Fields            []string
 }
 
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
-		OnDelete:       "CASCADE",
-		CollectionName: "uesio.userfiles",
-		Fields:         []string{"uesio.mimetype", "uesio.name"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			OnDelete:   "CASCADE",
+			Collection: "uesio.userfiles",
+		},
+		Fields: []string{"uesio.mimetype", "uesio.name"},
 	},
 	"USER": {
-		CollectionName: "uesio.users",
-		Fields:         []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			Collection: "uesio.users",
+		},
+		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
 }
 
@@ -118,7 +121,7 @@ func getMetadataForLoad(
 			// need to do a whole new approach to reference fields.
 			if collectionMetadata.DataSource != "uesio.platform" {
 				op.ReferencedCollections = adapt.ReferenceRegistry{}
-				refCol := op.ReferencedCollections.Get(specialRef.CollectionName)
+				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
 				refCol.AddReference(fieldMetadata)
 				refCol.AddFields(fields)
 			} else {
@@ -142,10 +145,12 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 }
 
 func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
+	return LoadWithOptions(ops, session, true)
+}
+
+func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
 	collated := map[string][]adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
-	//Indexed by collection name
-	//responseTokens := map[string][]string{}
 	// Loop over the ops and batch per data source
 	for i := range ops {
 		op := ops[i]
@@ -159,20 +164,6 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 		if err != nil {
 			return nil, err
 		}
-
-		/*
-			if checkCollectionAccess && collectionMetadata.Access == "protected" {
-				responseTokensForCollection, ok := responseTokens[collectionMetadata.Name]
-				if !ok {
-					responseTokensForCollection, err = GenerateResponseTokens(collectionMetadata, session)
-					if err != nil {
-						return nil, err
-					}
-					responseTokens[collectionMetadata.Name] = responseTokensForCollection
-				}
-				op.UserResponseTokens = responseTokensForCollection
-			}
-		*/
 
 		//Set default order by: id - asc
 		if op.Order == nil {
@@ -196,6 +187,15 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 			batch = append(batch, op)
 		}
 		collated[dsKey] = batch
+	}
+
+	var userTokens []string = nil
+	if checkPermissions {
+		tokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+		if err != nil {
+			return nil, err
+		}
+		userTokens = tokens
 	}
 
 	// 3. Get metadata for each datasource and collection
@@ -225,41 +225,10 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 			return nil, err
 		}
 
-		err = adapter.Load(batch, &metadataResponse, credentials)
+		err = adapter.Load(batch, &metadataResponse, credentials, userTokens)
 		if err != nil {
 			return nil, err
 		}
-		/*
-			for i := range batch {
-				if !checkCollectionAccess {
-					break
-				}
-				op := batch[i]
-				if op.Collection == nil {
-					continue
-				}
-				collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-				if err != nil {
-					return nil, err
-				}
-				if collectionMetadata.Access != "protected" {
-					continue
-				}
-				err = op.Collection.Filter(func(record loadable.Item) (bool, error) {
-					access, err := DetermineAccessFromChallengeTokens(collectionMetadata, op.UserResponseTokens, record, session)
-					if err != nil {
-						return false, err
-					}
-					if access == "read" || access == "read-write" {
-						return true, nil
-					}
-					return false, nil
-				})
-				if err != nil {
-					return nil, err
-				}
-			}
-		*/
 
 		// Now do our supplemental reference loads
 		for i := range batch {
@@ -325,7 +294,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 				}
 
 				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
-					return adapter.Load(ops, &metadataResponse, credentials)
+					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})

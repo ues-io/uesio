@@ -1,8 +1,4 @@
-import {
-	DefinitionList,
-	DefinitionMap,
-	YamlDoc,
-} from "../../definition/definition"
+import { DefinitionList, YamlDoc } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
 
 type ConfigValueDependencies = {
@@ -17,9 +13,21 @@ type ComponentPackDependencies = {
 	[key: string]: ComponentPackDependency
 }
 
+type FeatureFlagDependency = {
+	name: string
+	namespace: string
+	value: boolean
+	user: string
+}
+
+type FeatureFlagDependencies = {
+	[key: string]: FeatureFlagDependency
+}
+
 type Dependencies = {
 	configvalues: ConfigValueDependencies
 	componentpacks: ComponentPackDependencies
+	featureflags: FeatureFlagDependencies
 }
 
 type PlainViewDef = {
@@ -36,7 +44,7 @@ type PlainViewDefMap = {
 }
 
 type ViewDefinition = {
-	components: DefinitionMap
+	components: DefinitionList
 	wires: WireDefinitionMap
 	panels: DefinitionList
 }

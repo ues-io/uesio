@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -72,3 +71,15 @@ definition:
                           components:
                             - studio.configsecrets:
                                 valueType: secrets
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.section
+                          title: Feature Flags
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - studio.configfeatureflags:

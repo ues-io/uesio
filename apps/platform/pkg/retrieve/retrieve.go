@@ -5,12 +5,12 @@ import (
 	"io"
 	"path/filepath"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
 
 // Retrieve func
@@ -107,6 +107,49 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 
 					itemStream := bundlestore.ItemStream{
 						FileName: file.GetFilePath(),
+						Type:     metadataType,
+					}
+
+					_, err = io.Copy(&itemStream.Buffer, stream)
+					if err != nil {
+						return err
+					}
+
+					itemStreams = append(itemStreams, itemStream)
+				}
+
+			}
+
+			// Special handling for componentpacks
+			if metadataType == "componentpacks" {
+				cpack := item.(*meta.ComponentPack)
+
+				if cpack.RuntimeBundle != nil {
+					stream, err := bs.GetComponentPackStream(version, false, cpack, session)
+					if err != nil {
+						return err
+					}
+
+					itemStream := bundlestore.ItemStream{
+						FileName: cpack.GetComponentPackFilePath(),
+						Type:     metadataType,
+					}
+
+					_, err = io.Copy(&itemStream.Buffer, stream)
+					if err != nil {
+						return err
+					}
+
+					itemStreams = append(itemStreams, itemStream)
+				}
+				if cpack.BuildTimeBundle != nil {
+					stream, err := bs.GetComponentPackStream(version, true, cpack, session)
+					if err != nil {
+						return err
+					}
+
+					itemStream := bundlestore.ItemStream{
+						FileName: cpack.GetBuilderComponentPackFilePath(),
 						Type:     metadataType,
 					}
 

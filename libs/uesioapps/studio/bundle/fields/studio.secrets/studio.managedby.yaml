@@ -2,4 +2,3 @@ name: managedby
 collection: studio.secrets
 type: TEXT
 label: Managed By
-propertyName: managedby

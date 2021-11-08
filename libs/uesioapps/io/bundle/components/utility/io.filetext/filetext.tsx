@@ -27,7 +27,9 @@ const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const { fieldMetadata, record, wire, context, id, path } = props
 	const fieldId = fieldMetadata.getId()
 
-	const userFile = record.getFieldReference(fieldId)
+	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
+		fieldId
+	)
 	const fileName = userFile?.["uesio.name"] as string
 	const mimeType = userFile?.["uesio.mimetype"] as string
 

@@ -1,23 +1,29 @@
 package meta
 
+import (
+	"github.com/humandad/yaml"
+)
+
 // SelectListOption struct
 type SelectListOption struct {
-	Label string `uesio:"label"`
-	Value string `uesio:"value"`
+	Label string `uesio:"studio.label" json:"label"`
+	Value string `uesio:"studio.value" json:"value"`
 }
 
 // SelectList struct
 type SelectList struct {
-	ID        string             `yaml:"-" uesio:"studio.id"`
-	Name      string             `yaml:"name" uesio:"studio.name"`
-	Namespace string             `yaml:"-" uesio:"-"`
-	Options   []SelectListOption `yaml:"options" uesio:"studio.options"`
-	Workspace string             `yaml:"-" uesio:"studio.workspaceid"`
-	CreatedBy *User              `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy *User              `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt int64              `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt int64              `yaml:"-" uesio:"studio.createdat"`
-	itemMeta  *ItemMeta          `yaml:"-" uesio:"-"`
+	ID               string             `yaml:"-" uesio:"uesio.id"`
+	Name             string             `yaml:"name" uesio:"studio.name"`
+	Namespace        string             `yaml:"-" uesio:"-"`
+	Options          []SelectListOption `yaml:"options" uesio:"studio.options"`
+	BlankOptionLabel string             `yaml:"blank_option_label,omitempty" uesio:"studio.blank_option_label"`
+	Workspace        *Workspace         `yaml:"-" uesio:"studio.workspace"`
+	CreatedBy        *User              `yaml:"-" uesio:"uesio.createdby"`
+	Owner            *User              `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy        *User              `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt        int64              `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt        int64              `yaml:"-" uesio:"uesio.createdat"`
+	itemMeta         *ItemMeta          `yaml:"-" uesio:"-"`
 }
 
 // GetCollectionName function
@@ -81,12 +87,19 @@ func (sl *SelectList) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (sl *SelectList) SetWorkspace(workspace string) {
-	sl.Workspace = workspace
+	sl.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (sl *SelectList) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(sl, iter)
+}
+
+// Len function
+func (sl *SelectList) Len() int {
+	return StandardItemLen(sl)
 }
 
 // GetItemMeta function
@@ -97,4 +110,12 @@ func (sl *SelectList) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (sl *SelectList) SetItemMeta(itemMeta *ItemMeta) {
 	sl.itemMeta = itemMeta
+}
+
+func (sl *SelectList) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, sl.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(sl)
 }

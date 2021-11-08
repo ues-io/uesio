@@ -2,11 +2,10 @@ import { FunctionComponent } from "react"
 import { definition, styles, component } from "@uesio/ui"
 import type { Placement } from "@popperjs/core"
 
-interface IconButtonProps extends definition.UtilityProps {
+interface IconButtonUtilityProps extends definition.UtilityProps {
 	onClick?: () => void
 	label?: string
 	icon?: string
-	size?: "small"
 	color?: string
 	disabled?: boolean
 	tooltipPlacement?: Placement
@@ -15,17 +14,9 @@ interface IconButtonProps extends definition.UtilityProps {
 const Icon = component.registry.getUtility("io.icon")
 const Tooltip = component.registry.getUtility("io.tooltip")
 
-const IconButton: FunctionComponent<IconButtonProps> = (props) => {
-	const {
-		context,
-		icon,
-		label,
-		tooltipPlacement,
-		onClick,
-		disabled,
-		size,
-		color,
-	} = props
+const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
+	const { context, icon, label, tooltipPlacement, onClick, disabled, color } =
+		props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -52,7 +43,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 			onClick={disabled ? undefined : onClick}
 			className={styles.cx(classes.root, disabled && classes.disabled)}
 		>
-			<Icon size={size} context={context} icon={icon} color={color} />
+			<Icon context={context} icon={icon} color={color} />
 		</button>
 	)
 	return label && !disabled ? (
@@ -63,5 +54,7 @@ const IconButton: FunctionComponent<IconButtonProps> = (props) => {
 		<div>{button}</div>
 	)
 }
+
+export { IconButtonUtilityProps }
 
 export default IconButton

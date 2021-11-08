@@ -1,5 +1,0 @@
-name: appid
-collection: studio.collections
-type: TEXT
-label: App ID
-propertyName: appid

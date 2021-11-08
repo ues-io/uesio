@@ -1,0 +1,4 @@
+name: description
+collection: crm.contacts
+type: TEXT
+label: Description

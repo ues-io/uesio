@@ -33,6 +33,12 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					signal: "NEW_SIGNAL",
 				})
 			}
+			styles={{
+				innerContent: {
+					display: "grid",
+					rowGap: "8px",
+				},
+			}}
 		>
 			{signalsDef?.map((signal: signal.SignalDefinition, index) => {
 				const signalPath = `${path}["signals"]["${index}"]`
@@ -59,7 +65,6 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								path={signalPath}
 								index={0}
 								context={context}
-								definition={signal}
 								propsDef={{
 									title: "Signal",
 									sections: [],

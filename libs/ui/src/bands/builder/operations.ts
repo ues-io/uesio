@@ -68,7 +68,7 @@ const save = createAsyncThunk<
 			if (defState?.yaml) {
 				changes[defKey] = {
 					"studio.definition": defState.yaml.toString(),
-					"studio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
+					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
 				}
 			}
 		}
@@ -85,4 +85,8 @@ const save = createAsyncThunk<
 	})
 })
 
-export default { getMetadataList, getAvailableNamespaces, save }
+export default {
+	getMetadataList,
+	getAvailableNamespaces,
+	save,
+}

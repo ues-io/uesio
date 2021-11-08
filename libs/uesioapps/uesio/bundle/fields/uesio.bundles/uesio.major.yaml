@@ -1,6 +1,0 @@
-name: major
-collection: uesio.bundles
-type: "TEXT"
-label: "Major version"
-propertyName: "major"
-readOnly: true

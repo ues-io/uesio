@@ -29,18 +29,6 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 	return collectionMetadata, nil
 }
 
-// SelectListOptionMetadata type
-type SelectListOptionMetadata struct {
-	Label string `json:"label"`
-	Value string `json:"value"`
-}
-
-// SelectListMetadata type
-type SelectListMetadata struct {
-	Name    string
-	Options []SelectListOptionMetadata
-}
-
 // CollectionMetadata struct
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
@@ -53,10 +41,8 @@ type CollectionMetadata struct {
 	Updateable            bool                                   `json:"updateable"`
 	Deleteable            bool                                   `json:"deleteable"`
 	Fields                map[string]*FieldMetadata              `json:"fields"`
-	CollectionName        string                                 `json:"-"`
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
-	UserResponseTokens    []*meta.UserResponseTokenDefinition    `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
 }
 
@@ -88,38 +74,32 @@ func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name
 }
 
-// ValidationMetadata struct
-type ValidationMetadata struct {
-	Type  string `json:"type"`
-	Regex string `json:"regex"`
-}
-
-// SubField struct
-type SubField struct {
-	Name string `json:"name"`
+// SelectListMetadata type
+type SelectListMetadata struct {
+	Name             string                  `json:"name"`
+	Options          []meta.SelectListOption `json:"options"`
+	BlankOptionLabel string                  `json:"blank_option_label"`
 }
 
 // FieldMetadata struct
 type FieldMetadata struct {
-	Name                 string                     `json:"name"`
-	Namespace            string                     `json:"namespace"`
-	Createable           bool                       `json:"createable"`
-	Accessible           bool                       `json:"accessible"`
-	Updateable           bool                       `json:"updateable"`
-	Type                 string                     `json:"type"`
-	Label                string                     `json:"label"`
-	PropertyName         string                     `json:"-"`
-	SelectListOptions    []SelectListOptionMetadata `json:"options"`
-	SelectListName       string                     `json:"-"`
-	ReferencedCollection string                     `json:"referencedCollection"`
-	Required             bool                       `json:"required"`
-	Validate             *ValidationMetadata        `json:"validate"`
-	AutoPopulate         string                     `json:"autopopulate"`
-	OnDelete             string                     `json:"ondelete"`
-	FileCollection       string                     `json:"fileCollection"`
-	Accept               string                     `json:"accept"`
-	SubFields            []SubField                 `json:"subfields"`
-	SubType              string                     `json:"subtype"`
+	Name               string                    `json:"name"`
+	Namespace          string                    `json:"namespace"`
+	Createable         bool                      `json:"createable"`
+	Accessible         bool                      `json:"accessible"`
+	Updateable         bool                      `json:"updateable"`
+	Required           bool                      `json:"required"`
+	Length             int                       `json:"length"`
+	Type               string                    `json:"type"`
+	Label              string                    `json:"label"`
+	SelectListMetadata *SelectListMetadata       `json:"selectlist,omitempty"`
+	NumberMetadata     *meta.NumberMetadata      `json:"number,omitempty"`
+	ReferenceMetadata  *meta.ReferenceMetadata   `json:"reference,omitempty"`
+	FileMetadata       *meta.FileMetadata        `json:"file,omitempty"`
+	ValidationMetadata *meta.ValidationMetadata  `json:"validate,omitempty"`
+	AutoPopulate       string                    `json:"autopopulate,omitempty"`
+	SubFields          map[string]*FieldMetadata `json:"subfields,omitempty"`
+	SubType            string                    `json:"subtype,omitempty"`
 }
 
 // GetFullName function

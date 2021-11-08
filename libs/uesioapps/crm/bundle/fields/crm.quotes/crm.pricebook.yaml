@@ -1,0 +1,6 @@
+name: pricebook
+collection: crm.quotes
+type: REFERENCE
+label: Pricebook
+reference:
+  collection: crm.pricebooks

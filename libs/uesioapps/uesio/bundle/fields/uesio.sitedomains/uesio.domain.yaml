@@ -1,5 +1,0 @@
-name: domain
-collection: uesio.sitedomains
-type: TEXT
-label: domain
-propertyName: domain

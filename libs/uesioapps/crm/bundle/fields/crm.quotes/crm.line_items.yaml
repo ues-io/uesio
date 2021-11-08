@@ -1,0 +1,6 @@
+name: line_items
+collection: crm.quotes
+type: NUMBER
+label: Line Items
+number:
+  decimals: 0

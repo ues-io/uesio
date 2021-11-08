@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,15 +20,14 @@ definition:
     configvalues:
       collection: studio.configvalues
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.workspaceid:
         studio.workspace:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
         - field: studio.name
           valueSource: PARAM
           param: configvaluename

@@ -4,10 +4,11 @@ import inquirer from "inquirer"
 import { save, createChange } from "../wire/save"
 import { getApp } from "../config/config"
 import { throwIfBadFormat } from "../validation/version"
+import { User } from "../auth/login"
 
 class Site {
 	static getCollectionName(): string {
-		return "uesio.sites"
+		return "studio.sites"
 	}
 	static getFields() {
 		return [
@@ -15,24 +16,24 @@ class Site {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.appid",
+				id: "studio.app",
 			},
 			{
-				id: "uesio.bundle",
+				id: "studio.bundle",
 			},
 		]
 	}
 	static getColumns(): TableColumn[] {
 		return Site.getFields()
 	}
-	static async list(): Promise<void> {
-		const response = await load(this)
+	static async list(user: User): Promise<void> {
+		const response = await load(this, user)
 		wiretable(response.wires[0], response.collections, this.getColumns())
 	}
-	static async create(): Promise<void> {
+	static async create(user: User): Promise<void> {
 		const app = await getApp()
 
 		const responses = await inquirer.prompt([
@@ -50,13 +51,14 @@ class Site {
 		throwIfBadFormat(responses.version)
 		await save(
 			this,
+			user,
 			createChange([
 				{
-					"uesio.name": responses.name,
-					"uesio.bundle": {
+					"studio.name": responses.name,
+					"studio.bundle": {
 						"uesio.id": `${app}_${responses.version}`,
 					},
-					"uesio.appid": app,
+					"studio.app": app,
 				},
 			])
 		)

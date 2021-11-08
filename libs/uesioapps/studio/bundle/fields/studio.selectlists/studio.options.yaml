@@ -2,8 +2,11 @@ name: options
 collection: studio.selectlists
 type: LIST
 label: Options
-propertyName: options
 subtype: MAP
 subfields:
-  - name: label
-  - name: value
+  - name: studio.label
+    type: TEXT
+    label: Label
+  - name: studio.value
+    type: TEXT
+    label: Value

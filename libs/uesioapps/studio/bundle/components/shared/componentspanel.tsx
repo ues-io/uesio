@@ -11,12 +11,11 @@ const Grid = component.registry.getUtility("io.grid")
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
-	const isStructureView = uesio.builder.useIsStructureView()
 	const selectedItem = uesio.builder.useSelectedItem()
 	const selectedType = uesio.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {
 		const target = e.target as HTMLDivElement
-		if (target && target.dataset.type && isStructureView) {
+		if (target && target.dataset.type) {
 			const typeArray = target.dataset.type.split(".")
 			const metadataType =
 				typeArray.length === 4 ? "componentvariant" : "component"
@@ -99,10 +98,8 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 										context,
 										selected: isSelected,
 										expandChildren: true,
-										...(isStructureView && {
-											draggable: fullName,
-											icon: "drag_indicator",
-										}),
+										draggable: fullName,
+										icon: "drag_indicator",
 									}
 									const variants = variantsMap[fullName]
 

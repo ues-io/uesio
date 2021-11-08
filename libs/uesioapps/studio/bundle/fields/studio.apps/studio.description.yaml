@@ -1,0 +1,4 @@
+name: description
+collection: studio.apps
+type: TEXT
+label: Description

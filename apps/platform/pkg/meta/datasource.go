@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewDataSource function
@@ -18,17 +20,18 @@ func NewDataSource(key string) (*DataSource, error) {
 
 // DataSource struct
 type DataSource struct {
-	ID          string    `yaml:"-" uesio:"studio.id"`
-	Name        string    `yaml:"name" uesio:"studio.name"`
-	Namespace   string    `yaml:"-" uesio:"-"`
-	Type        string    `yaml:"type" uesio:"studio.type"`
-	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy   *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"studio.createdat"`
+	ID          string     `yaml:"-" uesio:"uesio.id"`
+	Name        string     `yaml:"name" uesio:"studio.name"`
+	Namespace   string     `yaml:"-" uesio:"-"`
+	Type        string     `yaml:"type" uesio:"studio.type"`
+	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy   *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner       *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy   *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -92,12 +95,19 @@ func (ds *DataSource) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (ds *DataSource) SetWorkspace(workspace string) {
-	ds.Workspace = workspace
+	ds.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (ds *DataSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(ds, iter)
+}
+
+// Len function
+func (ds *DataSource) Len() int {
+	return StandardItemLen(ds)
 }
 
 // GetItemMeta function
@@ -108,4 +118,12 @@ func (ds *DataSource) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (ds *DataSource) SetItemMeta(itemMeta *ItemMeta) {
 	ds.itemMeta = itemMeta
+}
+
+func (ds *DataSource) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, ds.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(ds)
 }

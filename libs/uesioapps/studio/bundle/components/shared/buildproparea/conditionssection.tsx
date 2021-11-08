@@ -84,6 +84,12 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				})
 			}}
 			context={context}
+			styles={{
+				innerContent: {
+					display: "grid",
+					rowGap: "8px",
+				},
+			}}
 		>
 			{conditionsDef?.map(
 				(condition: wire.WireConditionDefinition, index) => {

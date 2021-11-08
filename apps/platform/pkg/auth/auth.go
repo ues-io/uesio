@@ -87,7 +87,6 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 		FederationType: claims.AuthType,
 		FederationID:   claims.Subject,
 		Profile:        defaultSiteProfile,
-		Site:           site.GetFullName(),
 	}, nil, session)
 }
 
@@ -162,16 +161,12 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 		&user,
 		[]adapt.LoadRequestCondition{
 			{
-				Field: "uesio.federationType",
+				Field: "uesio.federation_type",
 				Value: claims.AuthType,
 			},
 			{
-				Field: "uesio.federationId",
+				Field: "uesio.federation_id",
 				Value: claims.Subject,
-			},
-			{
-				Field: "uesio.site",
-				Value: site.GetFullName(),
 			},
 		},
 		session,

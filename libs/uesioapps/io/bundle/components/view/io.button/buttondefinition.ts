@@ -2,6 +2,7 @@ import { definition, builder, signal } from "@uesio/ui"
 
 type ButtonDefinition = {
 	text?: string
+	icon?: string
 	signals?: signal.SignalDefinition[]
 }
 
@@ -21,6 +22,11 @@ const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "text",
 			type: "TEXT",
 			label: "Text",
+		},
+		{
+			name: "icon",
+			type: "ICON",
+			label: "Icon",
 		},
 	],
 	sections: [

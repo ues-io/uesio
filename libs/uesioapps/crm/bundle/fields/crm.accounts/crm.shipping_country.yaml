@@ -1,0 +1,4 @@
+name: shipping_country
+collection: crm.accounts
+type: TEXT
+label: Shipping Country

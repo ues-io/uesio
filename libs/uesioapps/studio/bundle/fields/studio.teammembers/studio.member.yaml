@@ -2,4 +2,4 @@ name: member
 collection: studio.teammembers
 type: USER
 label: Member
-propertyName: memberid
+required: true

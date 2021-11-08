@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewFileSource function
@@ -18,17 +20,18 @@ func NewFileSource(key string) (*FileSource, error) {
 
 // FileSource struct
 type FileSource struct {
-	ID          string    `yaml:"-" uesio:"studio.id"`
-	Name        string    `uesio:"studio.name"`
-	Namespace   string    `yaml:"-" uesio:"-"`
-	Type        string    `yaml:"type,omitempty" uesio:"-"`
-	Credentials string    `yaml:"credentials" uesio:"studio.credentials"`
-	Workspace   string    `uesio:"studio.workspaceid"`
-	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy   *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt   int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt   int64     `yaml:"-" uesio:"studio.createdat"`
+	ID          string     `yaml:"-" uesio:"uesio.id"`
+	Name        string     `uesio:"studio.name"`
+	Namespace   string     `yaml:"-" uesio:"-"`
+	Type        string     `yaml:"type,omitempty" uesio:"-"`
+	Credentials string     `yaml:"credentials" uesio:"studio.credentials"`
+	Workspace   *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta    *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy   *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner       *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy   *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt   int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt   int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -92,12 +95,19 @@ func (fs *FileSource) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (fs *FileSource) SetWorkspace(workspace string) {
-	fs.Workspace = workspace
+	fs.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (fs *FileSource) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(fs, iter)
+}
+
+// Len function
+func (fs *FileSource) Len() int {
+	return StandardItemLen(fs)
 }
 
 // GetItemMeta function
@@ -108,4 +118,12 @@ func (fs *FileSource) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (fs *FileSource) SetItemMeta(itemMeta *ItemMeta) {
 	fs.itemMeta = itemMeta
+}
+
+func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, fs.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(fs)
 }

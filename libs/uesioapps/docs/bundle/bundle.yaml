@@ -5,7 +5,7 @@ defaultProfile: docs.public
 defaultTheme: uesio.default
 publicProfile: docs.public
 dependencies:
-  uesio:
-    version: "v0.0.1"
   io:
-    version: "v0.0.1"
+    version: v0.0.1
+  uesio:
+    version: v0.0.1

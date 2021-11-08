@@ -1,8 +1,5 @@
 name: email
 collection: crm.contacts
-type: TEXT
+type: EMAIL
 label: Email
-propertyName: email
 required: true
-validate:
-  type: EMAIL

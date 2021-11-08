@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"gopkg.in/yaml.v3"
 	"net/http"
+
+	"github.com/humandad/yaml"
 
 	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/bundle"

@@ -1,0 +1,8 @@
+name: iconbuttongrid
+component: io.iconbutton
+label: Icon Button Grid
+definition:
+  uesio.styles:
+    root:
+      fontSize: x-large
+      color: "#333"

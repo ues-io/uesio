@@ -20,7 +20,7 @@ type WorkspaceBundleStore struct {
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	conditionsMap := item.GetConditions()
 	// Add the workspace id as a condition
-	conditionsMap["studio.workspaceid"] = session.GetWorkspaceID()
+	conditionsMap["studio.workspace"] = session.GetWorkspaceID()
 
 	conditions := []adapt.LoadRequestCondition{}
 
@@ -41,7 +41,7 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
-			Field: "studio.workspaceid",
+			Field: "studio.workspace",
 			Value: session.GetWorkspaceID(),
 		},
 	}
@@ -72,7 +72,15 @@ func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, se
 
 // GetComponentPackStream function
 func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
-	return nil, nil
+	fileID := componentPack.RuntimeBundle.ID
+	if buildMode {
+		fileID = componentPack.BuildTimeBundle.ID
+	}
+	stream, _, err := filesource.Download(fileID, session.RemoveWorkspaceContext())
+	if err != nil {
+		return nil, err
+	}
+	return stream, nil
 }
 
 // GetBotStream function
@@ -98,32 +106,32 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		&bdc,
 		[]adapt.LoadRequestField{
 			{
-				ID: "studio.id",
+				ID: "uesio.id",
 			},
 			{
-				ID: "studio.workspaceid",
+				ID: "studio.workspace",
 			},
 			{
 				ID: "studio.bundle",
 				Fields: []adapt.LoadRequestField{
 					{
-						ID: "uesio.appid",
+						ID: "studio.app",
 					},
 					{
-						ID: "uesio.major",
+						ID: "studio.major",
 					},
 					{
-						ID: "uesio.minor",
+						ID: "studio.minor",
 					},
 					{
-						ID: "uesio.patch",
+						ID: "studio.patch",
 					},
 				},
 			},
 		},
 		[]adapt.LoadRequestCondition{
 			{
-				Field:    "studio.workspaceid",
+				Field:    "studio.workspace",
 				Value:    namespace + "_" + version,
 				Operator: "=",
 			},

@@ -15,8 +15,9 @@ type LoadOp struct {
 	Fields                []LoadRequestField     `json:"-"`
 	Type                  string                 `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
-	Limit                 int                    `json:"-"`
-	Offset                int                    `json:"-"`
+	BatchSize             int                    `json:"-"`
+	BatchNumber           int                    `json:"-"`
+	HasMoreBatches        bool                   `json:"-"`
 	ReferencedCollections ReferenceRegistry      `json:"-"`
 	UserResponseTokens    []string               `json:"-"`
 }
@@ -58,16 +59,13 @@ func (fm *FieldsMap) GetKeys() []string {
 	return fieldIDs
 }
 
-func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) (string, error)) ([]string, error) {
+func (fm *FieldsMap) GetUniqueDBFieldNames(getDBFieldName func(*FieldMetadata) string) ([]string, error) {
 	if len(*fm) == 0 {
 		return nil, errors.New("No fields selected")
 	}
 	dbNamesMap := map[string]bool{}
 	for _, fieldMetadata := range *fm {
-		dbFieldName, err := getDBFieldName(fieldMetadata)
-		if err != nil {
-			return nil, err
-		}
+		dbFieldName := getDBFieldName(fieldMetadata)
 		dbNamesMap[dbFieldName] = true
 	}
 	i := 0
@@ -104,12 +102,14 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			continue
 		}
 
-		referencedCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+
+		referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
 		if err != nil {
-			return nil, nil, errors.New("No matching collection: " + fieldMetadata.ReferencedCollection + " for reference field: " + fieldMetadata.Name)
+			return nil, nil, errors.New("No matching collection: " + referencedCollection + " for reference field: " + fieldMetadata.Name)
 		}
 
-		refReq := referencedCollections.Get(fieldMetadata.ReferencedCollection)
+		refReq := referencedCollections.Get(referencedCollection)
 		refReq.Metadata = referencedCollectionMetadata
 
 		if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
@@ -119,69 +119,4 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 		refReq.AddReference(fieldMetadata)
 	}
 	return fieldIDMap, referencedCollections, nil
-}
-
-func HydrateItem(
-	op *LoadOp,
-	collectionMetadata *CollectionMetadata,
-	fieldMap *FieldsMap,
-	references *ReferenceRegistry,
-	itemID string,
-	index int,
-	dataFunc DataFunc,
-) error {
-	item := op.Collection.NewItem()
-
-	for fieldID, fieldMetadata := range *fieldMap {
-		fieldData, err := dataFunc(fieldMetadata)
-		if err != nil {
-			continue
-		}
-
-		if IsReference(fieldMetadata.Type) {
-			if fieldData == nil {
-				err = item.SetField(fieldID, fieldData)
-				if err != nil {
-					return err
-				}
-				continue
-			}
-			// Handle foreign key value
-			reference, ok := (*references)[fieldMetadata.ReferencedCollection]
-			if !ok {
-				continue
-			}
-			if len(reference.Fields) == 0 {
-				refItem := Item{}
-				err := refItem.SetField(reference.Metadata.IDField, fieldData)
-				if err != nil {
-					return err
-				}
-				err = item.SetField(fieldID, refItem)
-				if err != nil {
-					return err
-				}
-			} else {
-				reference.AddID(fieldData, ReferenceLocator{
-					RecordIndex: index,
-					Field:       fieldMetadata,
-				})
-			}
-			continue
-		}
-
-		err = item.SetField(fieldID, fieldData)
-		if err != nil {
-			return err
-		}
-	}
-
-	if itemID != "" {
-		err := item.SetField(collectionMetadata.IDField, itemID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

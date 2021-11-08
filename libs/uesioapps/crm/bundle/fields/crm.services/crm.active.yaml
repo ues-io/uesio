@@ -1,0 +1,4 @@
+name: active
+collection: crm.services
+type: CHECKBOX
+label: Active

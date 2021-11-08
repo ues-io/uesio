@@ -5,14 +5,13 @@ definition:
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
         studio.app:
           fields:
-            uesio.color:
+            studio.color:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
         - field: studio.name
@@ -21,37 +20,36 @@ definition:
     files:
       collection: studio.files
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.content:
         studio.workspace:
           fields:
             studio.app:
               fields:
-                uesio.color:
+                studio.color:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
     newfile:
       collection: studio.files
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.workspaceid:
         studio.content:
       conditions:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
       type: CREATE
       defaults:
-        - field: studio.workspaceid
+        - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
-          lookupField: studio.id
+          lookupField: uesio.id
   # Components are how we describe the layout of our view
   components:
     - io.grid:

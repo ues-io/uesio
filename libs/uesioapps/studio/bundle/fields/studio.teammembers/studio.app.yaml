@@ -1,0 +1,7 @@
+name: app
+collection: studio.teammembers
+type: REFERENCE
+label: App
+reference:
+  collection: studio.apps
+required: true

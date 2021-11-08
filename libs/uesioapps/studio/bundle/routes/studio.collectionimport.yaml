@@ -1,0 +1,4 @@
+name: collectionimport
+path: app/{appname}/workspace/{workspacename}/import/{collectionname}
+view: studio.collectionimport
+theme: studio.default

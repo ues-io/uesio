@@ -1,0 +1,6 @@
+name: unit_price
+collection: crm.products
+type: NUMBER
+label: Unit Price
+number:
+  decimals: 0

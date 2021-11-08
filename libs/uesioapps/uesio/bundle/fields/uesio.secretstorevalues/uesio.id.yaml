@@ -1,6 +1,0 @@
-name: id
-collection: uesio.secretstorevalues
-type: "TEXT"
-label: "ID"
-propertyName: "id"
-readOnly: true

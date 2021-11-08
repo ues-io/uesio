@@ -3,60 +3,60 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     workspaces:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     bundles:
-      collection: uesio.bundles
+      collection: studio.bundles
       fields:
         uesio.id:
-        uesio.major:
-        uesio.minor:
-        uesio.patch:
-        uesio.description:
+        studio.major:
+        studio.minor:
+        studio.patch:
+        studio.description:
       conditions:
-        - field: uesio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     sites:
-      collection: uesio.sites
+      collection: studio.sites
       fields:
         uesio.id:
-        uesio.name:
+        studio.name:
       conditions:
-        - field: uesio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     teams:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       conditions:
-        - field: studio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
     newworkspace:
       collection: studio.workspaces
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
         studio.app:
       type: CREATE
@@ -66,31 +66,30 @@ definition:
           lookupWire: apps
           lookupField: uesio.id
     newsite:
-      collection: uesio.sites
+      collection: studio.sites
       fields:
         uesio.id:
-        uesio.name:
-        uesio.appid:
-        uesio.bundle:
+        studio.name:
+        studio.bundle:
       type: CREATE
       defaults:
-        - field: uesio.appid
+        - field: studio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id
-        - field: uesio.bundle
+        - field: studio.bundle
           valueSource: LOOKUP
           lookupWire: bundles
           lookupField: uesio.id
     newteam:
       collection: studio.teams
       fields:
-        studio.id:
+        uesio.id:
         studio.name:
-        studio.appid:
+        studio.app:
       type: CREATE
       defaults:
-        - field: studio.appid
+        - field: studio.app
           valueSource: LOOKUP
           lookupWire: apps
           lookupField: uesio.id
@@ -155,13 +154,13 @@ definition:
                           uesio.variant: io.nav
                           signals:
                             - signal: "route/NAVIGATE"
-                              path: "app/$Param{appname}/site/${uesio.name}"
+                              path: "app/$Param{appname}/site/${studio.name}"
                           content:
                             - io.text:
                                 uesio.styles:
                                   root:
                                     color: "#21242D"
-                                text: ${uesio.name}
+                                text: ${studio.name}
                           avatar:
                             - io.text:
                                 uesio.variant: io.icon
@@ -175,8 +174,8 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: ${uesio.name}
-                          subtitle: ${uesio.description}
+                          title: ${studio.name}
+                          subtitle: ${studio.description}
                           actions:
                             - io.group:
                                 components:
@@ -208,10 +207,10 @@ definition:
                                       uesio.variant: io.item
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/bundle/${uesio.major}/${uesio.minor}/${uesio.patch}"
+                                          path: "app/$Param{appname}/bundle/${studio.major}/${studio.minor}/${studio.patch}"
                                       content:
                                         - io.text:
-                                            text: "v$Record{uesio.major}.$Record{uesio.minor}.$Record{uesio.patch}"
+                                            text: "v$Record{studio.major}.$Record{studio.minor}.$Record{studio.patch}"
                                       avatar:
                                         - io.text:
                                             uesio.variant: io.icon
@@ -347,9 +346,9 @@ definition:
               mode: EDIT
               components:
                 - io.field:
-                    fieldId: uesio.name
+                    fieldId: studio.name
                 - io.field:
-                    fieldId: uesio.bundle
+                    fieldId: studio.bundle
         actions:
           - io.button:
               uesio.variant: "io.primary"
@@ -359,7 +358,7 @@ definition:
                   wires:
                     - "newsite"
                 - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/site/${uesio.name}"
+                  path: "app/$Param{appname}/site/${studio.name}"
           - io.button:
               uesio.variant: "io.secondary"
               text: "Cancel"

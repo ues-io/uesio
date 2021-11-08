@@ -1,0 +1,4 @@
+name: site
+collection: studio.sitedomains
+type: TEXT
+label: Site ID

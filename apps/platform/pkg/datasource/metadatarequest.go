@@ -17,6 +17,20 @@ func ParseSelectListKey(key string) (string, string, string) {
 // FieldsMap type a recursive type to store an arbitrary list of nested fields
 type FieldsMap map[string]FieldsMap
 
+func (fm *FieldsMap) merge(newFields *FieldsMap) {
+	if newFields == nil {
+		return
+	}
+	for field, subFields := range *newFields {
+		existing := (*fm)[field]
+		if existing == nil {
+			(*fm)[field] = FieldsMap{}
+		} else {
+			existing.merge(&subFields)
+		}
+	}
+}
+
 // MetadataRequestOptions struct
 type MetadataRequestOptions struct {
 	LoadAllFields bool
@@ -61,10 +75,12 @@ func (mr *MetadataRequest) AddField(collectionName, fieldName string, subFields 
 	if mr.Collections[collectionName] == nil {
 		mr.Collections[collectionName] = FieldsMap{}
 	}
-	if subFields == nil {
-		subFields = &FieldsMap{}
+	existingFields := mr.Collections[collectionName][fieldName]
+	if existingFields == nil {
+		existingFields = FieldsMap{}
 	}
-	mr.Collections[collectionName][fieldName] = *subFields
+	existingFields.merge(subFields)
+	mr.Collections[collectionName][fieldName] = existingFields
 	return nil
 }
 
@@ -88,7 +104,9 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 // Load function
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
-	additionalRequests := MetadataRequest{}
+	additionalRequests := MetadataRequest{
+		Options: mr.Options,
+	}
 	// Implement the old way to make sure it still works
 	for collectionKey, collection := range mr.Collections {
 		metadata, err := LoadCollectionMetadata(collectionKey, metadataResponse, session)
@@ -117,12 +135,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 
 			specialRef, ok := specialRefs[fieldMetadata.Type]
 			if ok {
-				fieldMetadata.ReferencedCollection = specialRef.CollectionName
-				if specialRef.OnDelete != "" {
-					fieldMetadata.OnDelete = specialRef.OnDelete
-				}
+				fieldMetadata.ReferenceMetadata = specialRef.ReferenceMetadata
+				referenceMetadata := fieldMetadata.ReferenceMetadata
+
 				// Only add to additional requests if we don't already have that metadata
-				refCollection, _ := metadataResponse.GetCollection(specialRef.CollectionName)
+				refCollection, _ := metadataResponse.GetCollection(referenceMetadata.Collection)
 				for _, fieldID := range specialRef.Fields {
 					if refCollection != nil {
 						_, err := refCollection.GetField(fieldID)
@@ -130,7 +147,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 							continue
 						}
 					}
-					err = additionalRequests.AddField(specialRef.CollectionName, fieldID, nil)
+					err = additionalRequests.AddField(referenceMetadata.Collection, fieldID, nil)
 					if err != nil {
 						return err
 					}
@@ -138,10 +155,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 
 			if adapt.IsReference(fieldMetadata.Type) {
+				referenceMetadata := fieldMetadata.ReferenceMetadata
 				// Only add to additional requests if we don't already have that metadata
-				refCollection, err := metadataResponse.GetCollection(fieldMetadata.ReferencedCollection)
+				refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
 				if err != nil {
-					err := additionalRequests.AddCollection(fieldMetadata.ReferencedCollection)
+					err := additionalRequests.AddCollection(referenceMetadata.Collection)
 					if err != nil {
 						return err
 					}
@@ -154,7 +172,7 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 							continue
 						}
 					}
-					err := additionalRequests.AddField(fieldMetadata.ReferencedCollection, fieldKey, &subsubFields)
+					err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &subsubFields)
 					if err != nil {
 						return err
 					}
@@ -162,9 +180,14 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 
 			if fieldMetadata.Type == "SELECT" {
-				if fieldMetadata.SelectListOptions == nil {
-					additionalRequests.AddSelectList(collectionKey, fieldKey, fieldMetadata.SelectListName)
+				selectListMetadata := fieldMetadata.SelectListMetadata
+				if selectListMetadata.Options == nil {
+					additionalRequests.AddSelectList(collectionKey, fieldKey, selectListMetadata.Name)
 				}
+			}
+
+			if fieldMetadata.Type == "MAP" {
+				// Process Map Metadata here.
 			}
 
 		}

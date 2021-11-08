@@ -1,0 +1,6 @@
+name: related_contact
+collection: crm.tasks
+type: REFERENCE
+label: Related Contact
+reference:
+  collection: crm.contacts

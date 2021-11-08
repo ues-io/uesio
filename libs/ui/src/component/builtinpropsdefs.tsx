@@ -61,6 +61,11 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 				},
 			],
 		},
+		{
+			name: "batchsize",
+			type: "NUMBER",
+			label: "Batch Size",
+		},
 	],
 	sections: [
 		{
@@ -70,6 +75,10 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 		{
 			title: "Conditions",
 			type: "CONDITIONS",
+		},
+		{
+			title: "Order by",
+			type: "ORDER",
 		},
 	],
 	actions: [

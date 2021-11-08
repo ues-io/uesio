@@ -1,21 +1,22 @@
 package meta
 
 import (
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // Theme struct
 type Theme struct {
-	ID         string    `yaml:"-" uesio:"studio.id"`
-	Name       string    `yaml:"name" uesio:"studio.name"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
+	Name       string     `yaml:"name" uesio:"studio.name"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -95,12 +96,19 @@ func (t *Theme) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (t *Theme) SetWorkspace(workspace string) {
-	t.Workspace = workspace
+	t.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (t *Theme) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(t, iter)
+}
+
+// Len function
+func (t *Theme) Len() int {
+	return StandardItemLen(t)
 }
 
 // GetItemMeta function
@@ -111,4 +119,12 @@ func (t *Theme) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (t *Theme) SetItemMeta(itemMeta *ItemMeta) {
 	t.itemMeta = itemMeta
+}
+
+func (t *Theme) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, t.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(t)
 }

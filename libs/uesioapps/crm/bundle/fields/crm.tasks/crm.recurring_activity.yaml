@@ -1,0 +1,4 @@
+name: recurring_activity
+collection: crm.tasks
+type: CHECKBOX
+label: Recurring Activity

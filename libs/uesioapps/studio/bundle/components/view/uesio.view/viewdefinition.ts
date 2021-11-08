@@ -18,6 +18,7 @@ const ViewPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	sections: [],
+	type: "component",
 	actions: [],
 	traits: ["uesio.standalone"],
 }

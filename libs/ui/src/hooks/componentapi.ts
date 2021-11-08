@@ -7,6 +7,7 @@ import { AnyAction } from "@reduxjs/toolkit"
 import useScripts from "./usescripts"
 import { parseKey } from "../component/path"
 import { useAllVariants } from "../bands/componentvariant/selectors"
+import { FieldValue, PlainWireRecord } from "../bands/wirerecord/types"
 
 class ComponentAPI {
 	constructor(uesio: Uesio) {
@@ -39,13 +40,21 @@ class ComponentAPI {
 			}) || []
 		)
 
-	useState = <T extends PlainComponentState>(
+	useState = <T extends FieldValue>(
 		componentId: string,
-		initialState?: T
+		initialState?: T,
+		slice?: string
 	): [T | undefined, (state: T) => void] => {
 		const viewId = this.uesio.getViewId()
 		const componentType = this.uesio.getComponentType()
-		const state = useComponentState<T>(componentType, componentId, viewId)
+		const fullState = useComponentState<T>(
+			componentType,
+			componentId,
+			viewId
+		)
+		const state = slice
+			? ((fullState as PlainWireRecord)?.[slice] as T) ?? undefined
+			: fullState
 
 		const setState = (state: T) => {
 			this.dispatcher({
@@ -54,7 +63,17 @@ class ComponentAPI {
 					id: componentId,
 					componentType,
 					view: viewId,
-					state,
+					state: slice
+						? {
+								...(selectState<T>(
+									getStore().getState(),
+									componentType,
+									componentId,
+									viewId
+								) as PlainWireRecord),
+								[slice]: state,
+						  }
+						: state,
 				},
 			})
 		}

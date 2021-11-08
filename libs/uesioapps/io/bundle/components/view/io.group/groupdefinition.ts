@@ -2,6 +2,7 @@ import { definition, builder } from "@uesio/ui"
 
 type GroupDefinition = {
 	columnGap: string
+	alignItems: string
 	components?: definition.DefinitionList
 }
 
@@ -19,6 +20,11 @@ const GroupPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "columnGap",
 			type: "TEXT",
 			label: "Column Gap",
+		},
+		{
+			name: "alignItems",
+			type: "TEXT",
+			label: "Align Items",
 		},
 	],
 	sections: [],

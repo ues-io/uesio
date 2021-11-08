@@ -139,22 +139,23 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}
 
 		// Split changes into inserts, updates, and deletes
-		inserts, updates, deletes, err := SplitSave(request, collectionMetadata, session)
+		ops, err := SplitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch = append(batch, adapt.SaveOp{
-			CollectionName: request.Collection,
-			WireName:       request.Wire,
-			Inserts:        inserts,
-			Updates:        updates,
-			Deletes:        deletes,
-			Options:        request.Options,
-		})
+		batch = append(batch, ops...)
 		collated[dsKey] = batch
+	}
+
+	// Get all the user access tokens that we'll need for this request
+	// TODO:
+	// Finally check for record level permissions and ability to do the save.
+	userTokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+	if err != nil {
+		return err
 	}
 
 	// 3. Get metadata for each datasource and collection
@@ -185,26 +186,22 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}
 
 		// TODO:
-		// 0. Perform lookups
-		// 1. Split change items into updates/inserts/deletes, populate data
+		// 0. Split change items into updates/inserts/deletes
+		// 1. Perform Lookups
 		// 2. Hydrate update values with full info
-		// 3. Run Before bots
-		// 4. Run validations
-		// 5. Check permissions
-		// 6. Actually do the save
-		// 7. Run After bots
-		// 8. Return results
+		// 3. AutoPopulate data like dates and users
+		// 4. Run Before bots
+		// 5. Run validations
+		// 6. Check permissions
+		// 7. Actually do the save
+		// 8. Run After bots
+		// 9. Return results
 
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
 		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials)
+			return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 		}, batch, &metadataResponse)
-		if err != nil {
-			return err
-		}
-
-		cascadeDeletes, err := getCascadeDeletes(batch, metadataResponse.Collections, &metadataResponse, adapter, credentials)
 		if err != nil {
 			return err
 		}
@@ -231,24 +228,18 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			/*
-				// TODO:
-				// Finally check for record level permissions and ability to do the save.
-				tokens, err := GenerateResponseTokens(collectionMetadata, session)
-				if err != nil {
-					return err
-				}
-				fmt.Println("TOKENS")
-				fmt.Println(tokens)
-			*/
+			err = GenerateRecordChallengeTokens(&op, collectionMetadata, session)
+			if err != nil {
+				return err
+			}
 		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials)
+		err = adapter.Save(batch, &metadataResponse, credentials, userTokens)
 		if err != nil {
 			return err
 		}
 
-		err = performCascadeDeletes(cascadeDeletes, session)
+		err = performCascadeDeletes(batch, &metadataResponse, session)
 		if err != nil {
 			return err
 		}

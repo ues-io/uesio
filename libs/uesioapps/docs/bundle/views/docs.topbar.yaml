@@ -52,7 +52,6 @@ definition:
                     text: Log Out
                     signals:
                       - signal: "user/LOGOUT"
-
           # Avatar
           - io.griditem:
               components:

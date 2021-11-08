@@ -3,40 +3,40 @@ definition:
   # Wires are how we pull in data
   wires:
     apps:
-      collection: uesio.apps
+      collection: studio.apps
       fields:
         uesio.id:
-        uesio.name:
-        uesio.description:
-        uesio.color:
+        studio.name:
+        studio.description:
+        studio.color:
       conditions:
-        - field: uesio.name
+        - field: studio.name
           valueSource: PARAM
           param: appname
     bundles:
-      collection: uesio.bundles
+      collection: studio.bundles
       fields:
         uesio.id:
-        uesio.major:
-        uesio.minor:
-        uesio.patch:
-        uesio.description:
-        uesio.app:
+        studio.major:
+        studio.minor:
+        studio.patch:
+        studio.description:
+        studio.app:
           fields:
             uesio.id:
-            uesio.name:
-            uesio.color:
+            studio.name:
+            studio.color:
       conditions:
-        - field: uesio.appid
+        - field: studio.app
           valueSource: PARAM
           param: appname
-        - field: uesio.major
+        - field: studio.major
           valueSource: PARAM
           param: major
-        - field: uesio.minor
+        - field: studio.minor
           valueSource: PARAM
           param: minor
-        - field: uesio.patch
+        - field: studio.patch
           valueSource: PARAM
           param: patch
   # Components are how we describe the layout of our view
@@ -64,7 +64,7 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: Bundle - v${uesio.major}.${uesio.minor}.${uesio.patch}
+                          title: Bundle - v${studio.major}.${studio.minor}.${studio.patch}
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -79,10 +79,10 @@ definition:
                                 columnGap: 10px
                                 items:
                                   - io.field:
-                                      fieldId: uesio.major
+                                      fieldId: studio.major
                                   - io.field:
-                                      fieldId: uesio.minor
+                                      fieldId: studio.minor
                                   - io.field:
-                                      fieldId: uesio.patch
+                                      fieldId: studio.patch
                                   - io.field:
-                                      fieldId: uesio.description
+                                      fieldId: studio.description

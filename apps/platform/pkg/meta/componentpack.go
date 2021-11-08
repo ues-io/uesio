@@ -2,20 +2,25 @@ package meta
 
 import (
 	"path/filepath"
+
+	"github.com/humandad/yaml"
 )
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID         string             `yaml:"-" uesio:"studio.id"`
-	Name       string             `yaml:"name" uesio:"studio.name"`
-	Namespace  string             `yaml:"namespace" uesio:"-"`
-	Workspace  string             `yaml:"-" uesio:"studio.workspaceid"`
-	Components ComponentsRegistry `yaml:"components" uesio:"studio.components"`
-	itemMeta   *ItemMeta          `yaml:"-" uesio:"-"`
-	CreatedBy  *User              `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User              `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64              `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64              `yaml:"-" uesio:"studio.createdat"`
+	ID              string             `yaml:"-" uesio:"uesio.id"`
+	Name            string             `yaml:"name" uesio:"studio.name"`
+	Namespace       string             `yaml:"-" uesio:"-"`
+	Workspace       *Workspace         `yaml:"-" uesio:"studio.workspace"`
+	Components      ComponentsRegistry `yaml:"components" uesio:"-"`
+	RuntimeBundle   *UserFileMetadata  `yaml:"-" uesio:"studio.runtimebundle"`
+	BuildTimeBundle *UserFileMetadata  `yaml:"-" uesio:"studio.buildtimebundle"`
+	itemMeta        *ItemMeta          `yaml:"-" uesio:"-"`
+	CreatedBy       *User              `yaml:"-" uesio:"uesio.createdby"`
+	Owner           *User              `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy       *User              `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt       int64              `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt       int64              `yaml:"-" uesio:"uesio.createdat"`
 }
 
 type ComponentsRegistry struct {
@@ -98,12 +103,19 @@ func (cp *ComponentPack) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (cp *ComponentPack) SetWorkspace(workspace string) {
-	cp.Workspace = workspace
+	cp.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (cp *ComponentPack) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(cp, iter)
+}
+
+// Len function
+func (cp *ComponentPack) Len() int {
+	return StandardItemLen(cp)
 }
 
 // GetItemMeta function
@@ -114,4 +126,12 @@ func (cp *ComponentPack) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (cp *ComponentPack) SetItemMeta(itemMeta *ItemMeta) {
 	cp.itemMeta = itemMeta
+}
+
+func (cp *ComponentPack) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cp.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cp)
 }

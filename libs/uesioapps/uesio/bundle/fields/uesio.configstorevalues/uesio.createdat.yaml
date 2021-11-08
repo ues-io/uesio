@@ -1,6 +1,0 @@
-name: createdat
-collection: uesio.configstorevalues
-type: TIMESTAMP
-label: Created At
-propertyName: createdat
-autopopulate: CREATE

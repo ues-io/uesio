@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewCollection function
@@ -16,21 +18,13 @@ func NewCollection(key string) (*Collection, error) {
 	}, nil
 }
 
-type UserResponseTokenDefinition struct {
-	Type       string            `yaml:"type"`
-	Collection string            `yaml:"collection"`
-	Token      string            `yaml:"token"`
-	Match      string            `yaml:"match"`
-	Conditions []*TokenCondition `yaml:"conditions"`
-}
-
 type RecordChallengeTokenDefinition struct {
-	Type       string            `yaml:"type"`
-	Collection string            `yaml:"collection"`
-	Token      string            `yaml:"token"`
-	Match      string            `yaml:"match"`
-	Access     string            `yaml:"access"`
-	Conditions []*TokenCondition `yaml:"conditions"`
+	Type            string            `yaml:"type"`
+	Collection      string            `yaml:"collection"`
+	Token           string            `yaml:"token"`
+	UserAccessToken string            `yaml:"userAccessToken"`
+	Access          string            `yaml:"access"`
+	Conditions      []*TokenCondition `yaml:"conditions"`
 }
 
 type TokenCondition struct {
@@ -40,24 +34,21 @@ type TokenCondition struct {
 
 // Collection struct
 type Collection struct {
-	ID             string    `yaml:"-" uesio:"studio.id"`
-	Name           string    `yaml:"name" uesio:"studio.name"`
-	Namespace      string    `yaml:"-" uesio:"-"`
-	DataSourceRef  string    `yaml:"dataSource" uesio:"studio.datasource"`
-	IDField        string    `yaml:"idField" uesio:"studio.idfield"`
-	IDFormat       string    `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
-	NameField      string    `yaml:"nameField" uesio:"studio.namefield"`
-	CollectionName string    `yaml:"collectionName" uesio:"studio.collectionname"`
-	ReadOnly       bool      `yaml:"readOnly,omitempty" uesio:"-"`
-	Workspace      string    `yaml:"-" uesio:"studio.workspaceid"`
-	CreatedBy      *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy      *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt      int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt      int64     `yaml:"-" uesio:"studio.createdat"`
-	itemMeta       *ItemMeta `yaml:"-" uesio:"-"`
-	Access         string    `yaml:"access,omitempty" uesio:"studio.access"`
-	//TODO:: JAS Figure out if we want/how we want to handle a uesio encoding
-	UserResponseTokens    []*UserResponseTokenDefinition    `yaml:"userResponseTokens,omitempty" uesio:"-"`
+	ID                    string                            `yaml:"-" uesio:"uesio.id"`
+	Name                  string                            `yaml:"name" uesio:"studio.name"`
+	Namespace             string                            `yaml:"-" uesio:"-"`
+	DataSourceRef         string                            `yaml:"dataSource" uesio:"studio.datasource"`
+	IDFormat              string                            `yaml:"idFormat,omitempty" uesio:"studio.idformat"`
+	NameField             string                            `yaml:"nameField" uesio:"studio.namefield"`
+	ReadOnly              bool                              `yaml:"readOnly,omitempty" uesio:"-"`
+	Workspace             *Workspace                        `yaml:"-" uesio:"studio.workspace"`
+	CreatedBy             *User                             `yaml:"-" uesio:"uesio.createdby"`
+	Owner                 *User                             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy             *User                             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt             int64                             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt             int64                             `yaml:"-" uesio:"uesio.createdat"`
+	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
+	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
 }
 
@@ -122,12 +113,19 @@ func (c *Collection) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (c *Collection) SetWorkspace(workspace string) {
-	c.Workspace = workspace
+	c.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (c *Collection) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
+}
+
+// Len function
+func (c *Collection) Len() int {
+	return StandardItemLen(c)
 }
 
 // GetItemMeta function
@@ -138,4 +136,12 @@ func (c *Collection) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, c.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(c)
 }

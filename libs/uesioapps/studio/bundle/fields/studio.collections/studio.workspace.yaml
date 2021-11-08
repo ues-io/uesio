@@ -2,5 +2,5 @@ name: workspace
 collection: studio.collections
 type: REFERENCE
 label: Workspace
-propertyName: workspaceid
-referencedCollection: studio.workspaces
+reference:
+  collection: studio.workspaces

@@ -1,0 +1,4 @@
+name: type
+collection: crm.opportunities
+type: TEXT
+label: Type

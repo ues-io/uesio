@@ -1,0 +1,6 @@
+name: teammember
+type: "lookup"
+collection: studio.teammembers
+conditions:
+  - field: "studio.member"
+token: "${studio.app}"

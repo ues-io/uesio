@@ -1,0 +1,6 @@
+name: annual_revenue
+collection: crm.accounts
+type: NUMBER
+label: Annual Revenue
+number:
+  decimals: 0

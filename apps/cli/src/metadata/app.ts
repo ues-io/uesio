@@ -3,6 +3,7 @@ import { wiretable, TableColumn } from "../print/wiretable"
 import inquirer from "inquirer"
 import chalk from "chalk"
 import { save, createChange } from "../wire/save"
+import { User } from "../auth/login"
 
 const colors = [
 	"#003f5c",
@@ -17,7 +18,7 @@ const colors = [
 
 class App {
 	static getCollectionName(): string {
-		return "uesio.apps"
+		return "studio.apps"
 	}
 	static getFields() {
 		return [
@@ -25,13 +26,13 @@ class App {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.description",
+				id: "studio.description",
 			},
 			{
-				id: "uesio.color",
+				id: "studio.color",
 			},
 		]
 	}
@@ -41,22 +42,22 @@ class App {
 				id: "uesio.id",
 			},
 			{
-				id: "uesio.name",
+				id: "studio.name",
 			},
 			{
-				id: "uesio.description",
+				id: "studio.description",
 			},
 			{
-				id: "uesio.color",
+				id: "studio.color",
 				type: "COLOR",
 			},
 		]
 	}
-	static async list(): Promise<void> {
-		const response = await load(this)
+	static async list(user: User): Promise<void> {
+		const response = await load(this, user)
 		wiretable(response.wires[0], response.collections, this.getColumns())
 	}
-	static async create(): Promise<void> {
+	static async create(user: User): Promise<void> {
 		const responses = await inquirer.prompt([
 			{
 				name: "name",
@@ -80,11 +81,12 @@ class App {
 		])
 		await save(
 			this,
+			user,
 			createChange([
 				{
-					"uesio.name": responses.name,
-					"uesio.description": responses.description,
-					"uesio.color": responses.color,
+					"studio.name": responses.name,
+					"studio.description": responses.description,
+					"studio.color": responses.color,
 				},
 			])
 		)

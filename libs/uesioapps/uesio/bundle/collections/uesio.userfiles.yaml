@@ -1,6 +1,4 @@
 name: userfiles
 dataSource: uesio.platform
-idField: uesio.id
 idFormat: "${uesio.collectionid}_${uesio.recordid}_${uesio.type}_${uesio.name}"
 nameField: uesio.name
-collectionName: userfiles

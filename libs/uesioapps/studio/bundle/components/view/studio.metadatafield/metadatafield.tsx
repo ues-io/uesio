@@ -35,11 +35,17 @@ const MetadataField: FunctionComponent<Props> = (props) => {
 
 	const collection = wire.getCollection()
 	const fieldMetadata = collection.getField(fieldId)
-	const value = record.getFieldString(fieldId)
+	const value = record.getFieldValue<string>(fieldId)
 
 	if (!fieldMetadata) return null
 
-	if (context.getFieldMode() !== "EDIT") {
+	const canEdit = record.isNew()
+		? fieldMetadata.getCreateable()
+		: fieldMetadata.getUpdateable()
+
+	const mode = (canEdit && context.getFieldMode()) || "READ"
+
+	if (mode !== "EDIT") {
 		return <component.Component {...props} componentType="io.field" />
 	}
 

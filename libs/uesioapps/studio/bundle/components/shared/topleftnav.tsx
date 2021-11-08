@@ -6,10 +6,6 @@ const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 
 const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const isStructureView = uesio.builder.useIsStructureView()
-	const [label, icon] = isStructureView
-		? ["Switch to Content View", "border_outer"]
-		: ["Switch to Structure View", "border_clear"]
 
 	return (
 		<ScrollPanel
@@ -20,21 +16,9 @@ const TopLeftNav: FunctionComponent<definition.UtilityProps> = (props) => {
 			<IconButton
 				context={props.context}
 				variant="io.large"
-				onClick={uesio.signal.getHandler([
-					{
-						signal: "component/uesio.runtime/TOGGLE_VIEW",
-					},
-				])}
-				label={label}
-				tooltipPlacement="right"
-				icon={icon}
-			/>
-			<IconButton
-				context={props.context}
-				variant="io.large"
 				label="View Detail"
 				tooltipPlacement="left"
-				icon="listalt"
+				icon="list"
 				onClick={() => {
 					const workspace = props.context.getWorkspace()
 					const route = props.context.getRoute()

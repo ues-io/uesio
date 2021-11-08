@@ -2,4 +2,3 @@ name: defaulttheme
 collection: studio.workspaces
 type: TEXT
 label: Default Theme
-propertyName: defaulttheme

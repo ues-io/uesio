@@ -2,5 +2,4 @@ name: mimetype
 collection: uesio.userfiles
 type: "TEXT"
 label: "Mime Type"
-propertyName: "mimetype"
 readOnly: true

@@ -1,0 +1,6 @@
+name: supplier
+collection: crm.products
+type: REFERENCE
+label: Supplier
+reference:
+  collection: crm.accounts

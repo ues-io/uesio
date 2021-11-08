@@ -3,14 +3,15 @@ package meta
 // App struct
 type App struct {
 	ID          string    `uesio:"uesio.id"`
-	Name        string    `uesio:"uesio.name"`
-	Description string    `uesio:"uesio.description"`
-	Color       string    `uesio:"uesio.color"`
+	Name        string    `uesio:"studio.name"`
+	Description string    `uesio:"studio.description"`
+	Color       string    `uesio:"studio.color"`
 	itemMeta    *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy   *User     `uesio:"uesio.createdby"`
-	UpdatedBy   *User     `uesio:"uesio.updatedby"`
-	UpdatedAt   int64     `uesio:"uesio.updatedat"`
-	CreatedAt   int64     `uesio:"uesio.createdat"`
+	CreatedBy   *User     `yaml:"-" uesio:"uesio.createdby"`
+	Owner       *User     `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy   *User     `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt   int64     `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt   int64     `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -37,6 +38,11 @@ func (a *App) GetField(fieldName string) (interface{}, error) {
 // Loop function
 func (a *App) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(a, iter)
+}
+
+// Len function
+func (a *App) Len() int {
+	return StandardItemLen(a)
 }
 
 // GetItemMeta function

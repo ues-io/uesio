@@ -1,0 +1,6 @@
+name: related_opportunity
+collection: crm.comments
+type: REFERENCE
+label: Related Opportunity
+reference:
+  collection: crm.opportunities

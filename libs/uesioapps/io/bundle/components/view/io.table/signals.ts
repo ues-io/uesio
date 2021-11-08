@@ -1,17 +1,11 @@
 import { signal } from "@uesio/ui"
-import { TableState } from "./tabledefinition"
+import { toggleMode } from "../../shared/mode"
+import { nextPage, prevPage } from "../../shared/pagination"
 
 const signals: Record<string, signal.ComponentSignalDescriptor> = {
-	TOGGLE_MODE: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as TableState
-			setState({
-				mode: state.mode === "READ" ? "EDIT" : "READ",
-			})
-		},
-		label: "Toggle Mode",
-		properties: () => [],
-	},
+	TOGGLE_MODE: toggleMode,
+	NEXT_PAGE: nextPage,
+	PREV_PAGE: prevPage,
 }
 
 export default signals

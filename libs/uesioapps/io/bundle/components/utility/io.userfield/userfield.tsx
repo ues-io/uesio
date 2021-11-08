@@ -20,26 +20,28 @@ interface UserFieldProps extends definition.UtilityProps {
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const Tile = component.registry.getUtility("io.tile")
 const Avatar = component.registry.getUtility("io.avatar")
+const ReferenceField = component.registry.getUtility("io.referencefield")
 
 const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const { label, mode, hideLabel, record, fieldMetadata, context } = props
 	const readonly = mode === "READ"
 	const fieldId = fieldMetadata.getId()
-	const user = record.getFieldReference(fieldId)
+	const user = record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId)
 	const firstName = user?.["uesio.firstname"] as string
 	const lastName = user?.["uesio.lastname"] as string
 	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined
-	const width = props.definition?.width as string
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {},
 			readonly: {},
 		},
 		props
 	)
+
+	if (!readonly) {
+		return <ReferenceField {...props} />
+	}
 
 	return (
 		<div className={classes.root}>

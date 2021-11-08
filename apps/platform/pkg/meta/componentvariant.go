@@ -3,23 +3,24 @@ package meta
 import (
 	"path/filepath"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // ComponentVariant struct
 type ComponentVariant struct {
-	ID         string    `yaml:"-" uesio:"studio.id"`
-	Namespace  string    `yaml:"-" uesio:"-"`
-	Workspace  string    `yaml:"-" uesio:"studio.workspaceid"`
-	Name       string    `yaml:"name" uesio:"studio.name"`
-	Component  string    `yaml:"component" uesio:"studio.component"`
-	Label      string    `yaml:"label" uesio:"studio.label"`
-	Definition yaml.Node `yaml:"definition" uesio:"studio.definition"`
-	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy  *User     `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy  *User     `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt  int64     `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt  int64     `yaml:"-" uesio:"studio.createdat"`
+	ID         string     `yaml:"-" uesio:"uesio.id"`
+	Namespace  string     `yaml:"-" uesio:"-"`
+	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
+	Name       string     `yaml:"name" uesio:"studio.name"`
+	Component  string     `yaml:"component" uesio:"studio.component"`
+	Label      string     `yaml:"label" uesio:"studio.label"`
+	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
+	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
+	CreatedBy  *User      `yaml:"-" uesio:"uesio.createdby"`
+	Owner      *User      `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy  *User      `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt  int64      `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt  int64      `yaml:"-" uesio:"uesio.createdat"`
 }
 
 func (c *ComponentVariant) GetBundleGroup() BundleableGroup {
@@ -55,7 +56,9 @@ func (c *ComponentVariant) GetNamespace() string {
 }
 
 func (c *ComponentVariant) SetWorkspace(workspace string) {
-	c.Workspace = workspace
+	c.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // GetCollectionName function
@@ -100,6 +103,11 @@ func (c *ComponentVariant) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(c, iter)
 }
 
+// Len function
+func (c *ComponentVariant) Len() int {
+	return StandardItemLen(c)
+}
+
 // GetItemMeta function
 func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 	return c.itemMeta
@@ -108,4 +116,12 @@ func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cv.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cv)
 }

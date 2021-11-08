@@ -1,0 +1,4 @@
+name: service_family
+collection: crm.services
+type: TEXT
+label: Service Family

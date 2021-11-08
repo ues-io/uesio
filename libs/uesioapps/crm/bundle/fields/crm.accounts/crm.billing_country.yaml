@@ -1,0 +1,4 @@
+name: billing_country
+collection: crm.accounts
+type: TEXT
+label: Billing Country

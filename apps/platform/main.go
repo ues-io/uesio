@@ -5,10 +5,7 @@ import (
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/adapt/dynamodb"
-	"github.com/thecloudmasters/uesio/pkg/adapt/firestore"
-	"github.com/thecloudmasters/uesio/pkg/adapt/sql/mysql"
-	"github.com/thecloudmasters/uesio/pkg/adapt/sql/postgresql"
+	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
@@ -25,6 +22,8 @@ import (
 	cse "github.com/thecloudmasters/uesio/pkg/configstore/environment"
 	csp "github.com/thecloudmasters/uesio/pkg/configstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/featureflagstore"
+	ffsp "github.com/thecloudmasters/uesio/pkg/featureflagstore/platform"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/gcpstorage"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt/localfiles"
@@ -40,10 +39,7 @@ func init() {
 	mime.AddExtensionType(".yaml", "application/x-yaml")
 
 	// Data Adapters
-	adapt.RegisterAdapter("uesio.firestore", &firestore.Adapter{})
-	adapt.RegisterAdapter("uesio.dynamodb", &dynamodb.Adapter{})
-	adapt.RegisterAdapter("uesio.postgresql", &postgresql.Adapter{})
-	adapt.RegisterAdapter("uesio.mysql", &mysql.Adapter{})
+	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})
@@ -66,6 +62,9 @@ func init() {
 	// Secret Stores
 	secretstore.RegisterSecretStore("environment", &sse.SecretStore{})
 	secretstore.RegisterSecretStore("platform", &ssp.SecretStore{})
+
+	//Feature Flag Store
+	featureflagstore.RegisterFeatureFlagStore("platform", &ffsp.FeatureFlagStore{})
 
 	// Bundle Stores
 	bundlestore.RegisterBundleStore("local", &localbundlestore.LocalBundleStore{})

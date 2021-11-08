@@ -1,0 +1,6 @@
+name: related_service
+collection: crm.pricebook_entries
+type: REFERENCE
+label: Related Service
+reference:
+  collection: crm.services

@@ -14,7 +14,6 @@ interface ToggleFieldProps extends definition.UtilityProps {
 	label?: string
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	width?: string
 	fieldMetadata: collection.Field
 	hideLabel?: boolean
 	mode?: context.FieldMode
@@ -33,12 +32,10 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 	} = uesio.getTheme()
 
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
 	const checked = value === true
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				...(width && { width }),
 				...toggleStyles(primaryColor, mode),
 			},
 			native: {},

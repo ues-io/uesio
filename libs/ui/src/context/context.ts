@@ -3,6 +3,7 @@ import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
+import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectById as selectVariant } from "../bands/componentvariant/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
@@ -11,6 +12,8 @@ import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
 import { getURLFromFullName } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
+import get from "lodash/get"
+import { getAncestorPath } from "../component/path"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -109,11 +112,13 @@ const getViewDef = (viewDefId: string | undefined) =>
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getStore().getState(), viewId, wireId)
 
-const getWireDef = (wire: PlainWire | undefined) => {
-	if (!wire) return undefined
-	const viewDefId = wire.view.split("(")[0]
+const getWireDef = (wire: PlainWire | undefined) =>
+	wire ? getWireDefFromWireName(wire.view, wire.name) : undefined
+
+const getWireDefFromWireName = (viewId: string, wirename: string) => {
+	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
-	return viewDef?.definition?.wires?.[wire.name]
+	return viewDef?.definition?.wires?.[wirename]
 }
 
 class Context {
@@ -179,6 +184,9 @@ class Context {
 
 	getViewDef = () => getViewDef(this.getViewDefId())
 
+	getParentComponentDef = (path: string) =>
+		get(this.getViewDef()?.definition, getAncestorPath(path, 3))
+
 	getTheme = () =>
 		themeSelectors.selectById(
 			getStore().getState(),
@@ -227,9 +235,12 @@ class Context {
 		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
-		const collection = new Collection(
-			state?.collection?.[wireDef.collection] || null
+		const plainCollection = collectionSelectors.selectById(
+			state,
+			wireDef.collection
 		)
+		if (!plainCollection) return undefined
+		const collection = new Collection(plainCollection)
 		wire.attachCollection(collection.source)
 		return wire
 	}
@@ -291,5 +302,6 @@ export {
 	WorkspaceState,
 	SiteState,
 	getWireDef,
+	getWireDefFromWireName,
 	getWire,
 }

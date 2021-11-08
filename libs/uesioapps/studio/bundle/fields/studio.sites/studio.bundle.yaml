@@ -1,0 +1,6 @@
+name: bundle
+collection: studio.sites
+type: REFERENCE
+label: Bundle
+reference:
+  collection: studio.bundles

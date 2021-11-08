@@ -3,6 +3,7 @@ import { hooks, styles, component } from "@uesio/ui"
 import { ButtonProps } from "./buttondefinition"
 
 const IOButton = component.registry.getUtility("io.button")
+const Icon = component.registry.getUtility("io.icon")
 
 const Button: FunctionComponent<ButtonProps> = (props) => {
 	const { definition, context } = props
@@ -29,6 +30,15 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				onClick={handler}
 				context={context}
 				isSelected={isSelected}
+				icon={
+					definition.icon && (
+						<Icon
+							context={context}
+							icon={definition.icon}
+							variant="studio.buttonicon"
+						/>
+					)
+				}
 			/>
 			{portals}
 		</>

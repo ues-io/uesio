@@ -2,4 +2,3 @@ name: allowallroutes
 collection: studio.permissionsets
 type: CHECKBOX
 label: Allow all routes
-propertyName: allowallroutes

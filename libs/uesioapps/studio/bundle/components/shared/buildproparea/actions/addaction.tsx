@@ -1,12 +1,11 @@
 import { FunctionComponent } from "react"
-import { hooks, builder, component } from "@uesio/ui"
+import { builder, component } from "@uesio/ui"
 import { ActionProps } from "./actiondefinition"
 import ActionButton from "./actionbutton"
 
 const AddAction: FunctionComponent<ActionProps> = (props) => {
-	const uesio = hooks.useUesio(props)
-
 	const action = props.action as builder.AddAction
+
 	if (!action) {
 		return null
 	}
@@ -15,12 +14,12 @@ const AddAction: FunctionComponent<ActionProps> = (props) => {
 		const { registry } = component
 		const componentKey = action.componentKey
 		const propDef = registry.getPropertiesDefinition(componentKey)
+		if (!propDef)
+			throw new Error(`no propdef found in registry for: ${componentKey}`)
 
-		if (propDef) {
-			props.valueAPI.add(`${props.path}["${action.slot}"]`, {
-				[componentKey]: propDef.defaultDefinition(),
-			})
-		}
+		props.valueAPI.add(`${props.path}["${action.slot}"]`, {
+			[componentKey]: propDef.defaultDefinition(),
+		})
 	}
 
 	return (

@@ -1,10 +1,4 @@
-import {
-	FunctionComponent,
-	DragEvent,
-	useRef,
-	CSSProperties,
-	useState,
-} from "react"
+import { FunctionComponent, useRef, CSSProperties } from "react"
 import {
 	definition,
 	styles,
@@ -27,6 +21,7 @@ interface FileUploadProps extends definition.UtilityProps {
 }
 
 const Icon = component.registry.getUtility("io.icon")
+const UploadArea = component.registry.getUtility("io.uploadarea")
 
 const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -35,7 +30,9 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 
 	const fileInput = useRef<HTMLInputElement>(null)
 
-	const userFile = record.getFieldReference(fieldId)
+	const userFile = record.getFieldValue<wire.PlainWireRecord | undefined>(
+		fieldId
+	)
 	const userFileId = userFile?.["uesio.id"] as string
 	const fileName = userFile?.["uesio.name"] as string
 	const mimeType = userFile?.["uesio.mimetype"] as string
@@ -74,9 +71,6 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 				left: "0",
 				...actionIconStyles,
 			},
-			fileinput: {
-				display: "none",
-			},
 			nofile: {
 				display: "flex",
 				backgroundColor: "#f5f5f5",
@@ -113,33 +107,12 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 		record.set(fieldId, "")
 	}
 
-	const onDrop = (e: DragEvent) => {
-		e.preventDefault()
-		e.stopPropagation()
-		upload(e.dataTransfer.files)
-	}
-
-	const onDragOver = (e: DragEvent) => {
-		e.preventDefault()
-		e.stopPropagation()
-	}
-
-	const onDragEnter = (e: DragEvent) => {
-		e.preventDefault()
-		e.stopPropagation()
-	}
-
-	const onDragLeave = (e: DragEvent) => {
-		e.preventDefault()
-		e.stopPropagation()
-	}
-
 	return (
-		<div
-			onDrop={onDrop}
-			onDragOver={onDragOver}
-			onDragEnter={onDragEnter}
-			onDragLeave={onDragLeave}
+		<UploadArea
+			context={context}
+			inputRef={fileInput}
+			upload={upload}
+			accept={accept}
 			className={classes.root}
 		>
 			{
@@ -163,15 +136,6 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 					)}
 				</>
 			}
-			<input
-				className={classes.fileinput}
-				type="file"
-				accept={accept}
-				onChange={(e) => {
-					upload(e.target.files)
-				}}
-				ref={fileInput}
-			/>
 			{userFileId ? (
 				<img className={classes.image} src={fileUrl} />
 			) : (
@@ -183,7 +147,7 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 					/>
 				</div>
 			)}
-		</div>
+		</UploadArea>
 	)
 }
 

@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewProfile function
@@ -18,17 +20,18 @@ func NewProfile(key string) (*Profile, error) {
 
 // Profile struct
 type Profile struct {
-	ID                string          `yaml:"-" uesio:"studio.id"`
+	ID                string          `yaml:"-" uesio:"uesio.id"`
 	Name              string          `yaml:"name" uesio:"studio.name"`
 	Namespace         string          `yaml:"-" uesio:"-"`
 	PermissionSetRefs []string        `yaml:"permissionSets" uesio:"studio.permissionsetsrefs"`
 	PermissionSets    []PermissionSet `yaml:"-" uesio:"-"`
-	Workspace         string          `yaml:"-" uesio:"studio.workspaceid"`
+	Workspace         *Workspace      `yaml:"-" uesio:"studio.workspace"`
 	itemMeta          *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy         *User           `yaml:"-" uesio:"studio.createdby"`
-	UpdatedBy         *User           `yaml:"-" uesio:"studio.updatedby"`
-	UpdatedAt         int64           `yaml:"-" uesio:"studio.updatedat"`
-	CreatedAt         int64           `yaml:"-" uesio:"studio.createdat"`
+	CreatedBy         *User           `yaml:"-" uesio:"uesio.createdby"`
+	Owner             *User           `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy         *User           `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt         int64           `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt         int64           `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -92,12 +95,19 @@ func (p *Profile) SetNamespace(namespace string) {
 
 // SetWorkspace function
 func (p *Profile) SetWorkspace(workspace string) {
-	p.Workspace = workspace
+	p.Workspace = &Workspace{
+		ID: workspace,
+	}
 }
 
 // Loop function
 func (p *Profile) Loop(iter func(string, interface{}) error) error {
 	return StandardItemLoop(p, iter)
+}
+
+// Len function
+func (p *Profile) Len() int {
+	return StandardItemLen(p)
 }
 
 // GetItemMeta function
@@ -119,4 +129,12 @@ func (p *Profile) HasPermission(check *PermissionSet) bool {
 // of all permissions for that profile
 func (p *Profile) FlattenPermissions() *PermissionSet {
 	return FlattenPermissions(p.PermissionSets)
+}
+
+func (p *Profile) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, p.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(p)
 }

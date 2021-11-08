@@ -1,5 +1,4 @@
 name: required
 collection: studio.fields
-type: BOOLEAN
+type: CHECKBOX
 label: Required
-propertyName: required

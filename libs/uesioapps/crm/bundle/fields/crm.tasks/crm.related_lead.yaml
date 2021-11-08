@@ -1,0 +1,6 @@
+name: related_lead
+collection: crm.tasks
+type: REFERENCE
+label: Related Lead
+reference:
+  collection: crm.leads

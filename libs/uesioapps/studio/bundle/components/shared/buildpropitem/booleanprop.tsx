@@ -1,11 +1,10 @@
 import { FunctionComponent } from "react"
 import { builder, component } from "@uesio/ui"
-import { PropRendererProps } from "./proprendererdefinition"
 
 const SelectField = component.registry.getUtility("io.selectfield")
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
 
-const BooleanProp: FunctionComponent<PropRendererProps> = ({
+const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
 	valueAPI,
 	context,
