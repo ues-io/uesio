@@ -11,6 +11,7 @@ components:
     io.dialog:
       variants:
         - io.titlebar.io.dialog
+        - io.button.io.primary
     io.dialogplain:
     io.field:
       variants:
