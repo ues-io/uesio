@@ -112,7 +112,7 @@ definition:
                     uesio.variant: io.nav
                     title: Workspaces
                     actions:
-                      - io.iconbutton:
+                      - io.button:
                           icon: add
                           signals:
                             - signal: panel/TOGGLE
@@ -141,7 +141,7 @@ definition:
                     uesio.variant: io.nav
                     title: Sites
                     actions:
-                      - io.iconbutton:
+                      - io.button:
                           icon: add
                           signals:
                             - signal: panel/TOGGLE

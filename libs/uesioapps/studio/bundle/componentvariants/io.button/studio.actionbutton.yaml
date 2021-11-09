@@ -1,0 +1,15 @@
+name: actionbutton
+component: io.button
+label: Navigation
+definition:
+  uesio.styles:
+    root:
+      color: "444"
+      padding: 4px
+      fontSize: 8pt
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      textTransform: uppercase
+      "&:focus":
+        outline: none
+        color: $Theme{color.primary.darken}
