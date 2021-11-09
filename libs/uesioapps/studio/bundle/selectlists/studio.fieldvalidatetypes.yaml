@@ -1,0 +1,6 @@
+name: fieldvalidatetypes
+options:
+  - label: "Regex"
+    value: "REGEX"
+  - label: "Metadata"
+    value: "METADATA"

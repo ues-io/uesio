@@ -101,6 +101,81 @@ func GetSelectListKey(collectionName, fieldName, selectListName string) string {
 	return collectionName + ":" + fieldName + ":" + selectListName
 }
 
+func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey string, collection FieldsMap, metadataResponse *adapt.MetadataCache, additionalRequests *MetadataRequest, prefix string) error {
+
+	for fieldKey, fieldMetadata := range fields {
+
+		newKey := fieldKey
+		if prefix != "" {
+			newKey = prefix + "->" + fieldKey
+		}
+
+		specialRef, ok := specialRefs[fieldMetadata.Type]
+		if ok {
+			fieldMetadata.ReferenceMetadata = specialRef.ReferenceMetadata
+			referenceMetadata := fieldMetadata.ReferenceMetadata
+
+			// Only add to additional requests if we don't already have that metadata
+			refCollection, _ := metadataResponse.GetCollection(referenceMetadata.Collection)
+			for _, fieldID := range specialRef.Fields {
+				if refCollection != nil {
+					_, err := refCollection.GetField(fieldID)
+					if err == nil {
+						continue
+					}
+				}
+				err := additionalRequests.AddField(referenceMetadata.Collection, fieldID, nil)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		if adapt.IsReference(fieldMetadata.Type) {
+			referenceMetadata := fieldMetadata.ReferenceMetadata
+			// Only add to additional requests if we don't already have that metadata
+			refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
+			if err != nil {
+				err := additionalRequests.AddCollection(referenceMetadata.Collection)
+				if err != nil {
+					return err
+				}
+			}
+
+			for fieldKey, subsubFields := range collection[fieldKey] {
+				if refCollection != nil {
+					_, err := refCollection.GetField(fieldKey)
+					if err == nil {
+						continue
+					}
+				}
+				err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &subsubFields)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		if fieldMetadata.Type == "SELECT" {
+			selectListMetadata := fieldMetadata.SelectListMetadata
+			if selectListMetadata.Options == nil {
+				additionalRequests.AddSelectList(collectionKey, newKey, selectListMetadata.Name)
+			}
+		}
+
+		if fieldMetadata.Type == "MAP" {
+			err := ProcessFieldsMetadata(fieldMetadata.SubFields, collectionKey, collection, metadataResponse, additionalRequests, newKey)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+
+}
+
 // Load function
 func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *sess.Session) error {
 	// Keep a list of additional metadata that we need to request in a subsequent call
@@ -131,66 +206,11 @@ func (mr *MetadataRequest) Load(metadataResponse *adapt.MetadataCache, session *
 			}
 		}
 
-		for fieldKey, fieldMetadata := range metadata.Fields {
-
-			specialRef, ok := specialRefs[fieldMetadata.Type]
-			if ok {
-				fieldMetadata.ReferenceMetadata = specialRef.ReferenceMetadata
-				referenceMetadata := fieldMetadata.ReferenceMetadata
-
-				// Only add to additional requests if we don't already have that metadata
-				refCollection, _ := metadataResponse.GetCollection(referenceMetadata.Collection)
-				for _, fieldID := range specialRef.Fields {
-					if refCollection != nil {
-						_, err := refCollection.GetField(fieldID)
-						if err == nil {
-							continue
-						}
-					}
-					err = additionalRequests.AddField(referenceMetadata.Collection, fieldID, nil)
-					if err != nil {
-						return err
-					}
-				}
-			}
-
-			if adapt.IsReference(fieldMetadata.Type) {
-				referenceMetadata := fieldMetadata.ReferenceMetadata
-				// Only add to additional requests if we don't already have that metadata
-				refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
-				if err != nil {
-					err := additionalRequests.AddCollection(referenceMetadata.Collection)
-					if err != nil {
-						return err
-					}
-				}
-
-				for fieldKey, subsubFields := range collection[fieldKey] {
-					if refCollection != nil {
-						_, err := refCollection.GetField(fieldKey)
-						if err == nil {
-							continue
-						}
-					}
-					err := additionalRequests.AddField(referenceMetadata.Collection, fieldKey, &subsubFields)
-					if err != nil {
-						return err
-					}
-				}
-			}
-
-			if fieldMetadata.Type == "SELECT" {
-				selectListMetadata := fieldMetadata.SelectListMetadata
-				if selectListMetadata.Options == nil {
-					additionalRequests.AddSelectList(collectionKey, fieldKey, selectListMetadata.Name)
-				}
-			}
-
-			if fieldMetadata.Type == "MAP" {
-				// Process Map Metadata here.
-			}
-
+		err = ProcessFieldsMetadata(metadata.Fields, collectionKey, collection, metadataResponse, &additionalRequests, "")
+		if err != nil {
+			return err
 		}
+
 	}
 
 	for selectListKey := range mr.SelectLists {
