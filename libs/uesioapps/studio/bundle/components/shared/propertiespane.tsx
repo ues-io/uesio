@@ -19,7 +19,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		: "No Element Selected"
 
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
-		"propertiespanel",
+		"propertiespanel:" + path,
 		"",
 		undefined,
 		"uesio.runtime"
@@ -31,6 +31,10 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 					{
 						title: "Styles",
 						type: "STYLES",
+					},
+					{
+						title: "Display",
+						type: "CONDITIONALDISPLAY",
 					},
 			  ])
 			: propsDef?.sections) || []
