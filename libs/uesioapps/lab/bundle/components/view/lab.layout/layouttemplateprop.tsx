@@ -45,8 +45,9 @@ const LayoutTemplateButton: FC<T> = (props) => {
 
 	return (
 		<button className={classes.root} onClick={() => onClick(value)}>
-			{value.map((value) => (
+			{value.map((value, i) => (
 				<div
+					key={value + i}
 					className={classes.button}
 					style={{
 						flex: value,

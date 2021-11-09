@@ -22,8 +22,9 @@ const List: FunctionComponent<ListProps> = (props) => {
 
 	return (
 		<>
-			{wire.getData().map((record) => (
+			{wire.getData().map((record, i) => (
 				<component.Slot
+					key={record.getId() || i}
 					definition={definition}
 					listName="components"
 					path={path}
