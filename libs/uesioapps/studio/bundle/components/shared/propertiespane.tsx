@@ -32,6 +32,10 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						title: "Styles",
 						type: "STYLES",
 					},
+					{
+						title: "Display",
+						type: "CONDITIONALDISPLAY",
+					},
 			  ])
 			: propsDef?.sections) || []
 
