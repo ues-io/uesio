@@ -17,7 +17,6 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 		>
 			<IconButton
 				context={context}
-				variant="io.large"
 				label="Save"
 				tooltipPlacement="left"
 				disabled={!hasChanges}
@@ -28,7 +27,6 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 			/>
 			<IconButton
 				context={context}
-				variant="io.large"
 				label="Cancel"
 				tooltipPlacement="left"
 				disabled={!hasChanges}
@@ -39,7 +37,6 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 			/>
 			<IconButton
 				context={context}
-				variant="io.large"
 				label="Code"
 				tooltipPlacement="left"
 				icon="code"
@@ -48,6 +45,29 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 						signal: "component/uesio.runtime/TOGGLE_CODE",
 					},
 				])}
+			/>
+			<IconButton
+				context={props.context}
+				label="View Detail"
+				tooltipPlacement="left"
+				icon="list"
+				onClick={() => {
+					const workspace = props.context.getWorkspace()
+					const route = props.context.getRoute()
+					if (!workspace || !route) {
+						return
+					}
+
+					const [, viewName] = component.path.parseKey(route.view)
+
+					uesio.signal.run(
+						{
+							signal: "route/REDIRECT",
+							path: `/app/${workspace.app}/workspace/${workspace.name}/views/${viewName}`,
+						},
+						props.context
+					)
+				}}
 			/>
 		</ScrollPanel>
 	)

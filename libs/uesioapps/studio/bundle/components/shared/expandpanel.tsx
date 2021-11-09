@@ -43,7 +43,6 @@ const ExpandPanel: FunctionComponent<Props> = ({
 									event.stopPropagation()
 									actionOnClick?.()
 								}}
-								size="small"
 								icon={action}
 								context={context}
 							/>
