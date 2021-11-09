@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react"
 import { definition, component, styles, hooks } from "@uesio/ui"
 import WiresPanel from "./wirespanel"
+import PanelsPanel from "./panelspanel"
 import ComponentsPanel from "./componentspanel"
 import WiresActions from "./wiresactions"
 
@@ -49,6 +50,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			{selectedTab === "components" && (
 				<ComponentsPanel context={context} />
 			)}
+			{selectedTab === "panels" && <PanelsPanel context={context} />}
 		</ScrollPanel>
 	)
 }
