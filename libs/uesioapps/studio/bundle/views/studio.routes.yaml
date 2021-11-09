@@ -111,42 +111,42 @@ definition:
                                       color: "#ccc"
                                       text: map
   panels:
-    - io.dialog:
-        id: newRoute
-        title: Create a New Route
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newroutelist
-              wire: newroute
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - io.field:
-                    fieldId: studio.path
-                - studio.metadatafield:
-                    fieldId: studio.view
-                    metadataType: "VIEW"
-                    label: "View"
-                - studio.metadatafield:
-                    fieldId: studio.theme
-                    metadataType: "THEME"
-                    label: "Theme"
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newroute"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/routes/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newRoute"
+    newRoute:
+      - io.dialog:
+          title: Create a New Route
+          width: 400px
+          height: 500px
+          components:
+            - io.list:
+                id: newroutelist
+                wire: newroute
+                mode: EDIT
+                components:
+                  - io.field:
+                      fieldId: studio.name
+                  - io.field:
+                      fieldId: studio.path
+                  - studio.metadatafield:
+                      fieldId: studio.view
+                      metadataType: "VIEW"
+                      label: "View"
+                  - studio.metadatafield:
+                      fieldId: studio.theme
+                      metadataType: "THEME"
+                      label: "Theme"
+          actions:
+            - io.button:
+                uesio.variant: "io.primary"
+                text: "Save"
+                signals:
+                  - signal: wire/SAVE
+                    wires:
+                      - "newroute"
+                  - signal: "route/NAVIGATE"
+                    path: "app/$Param{appname}/workspace/$Param{workspacename}/routes/${studio.name}"
+            - io.button:
+                uesio.variant: "io.secondary"
+                text: "Cancel"
+                signals:
+                  - signal: "panel/TOGGLE"
+                    panel: "newRoute"

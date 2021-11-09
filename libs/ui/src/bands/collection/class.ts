@@ -35,6 +35,7 @@ class Collection {
 			// Get the metadata for the base field
 			const baseFieldMetadata =
 				this.source.fields[fieldNameParts.shift() || ""]
+
 			if (!baseFieldMetadata || !baseFieldMetadata.subfields)
 				return undefined
 			const subFieldMetadata = getSubFieldMetadata(

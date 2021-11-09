@@ -32,7 +32,7 @@ type SubField struct {
 	Name       string `yaml:"name,omitempty" uesio:"studio.name"`
 	Label      string `yaml:"label,omitempty" uesio:"studio.label"`
 	Type       string `yaml:"type,omitempty" uesio:"studio.type"`
-	SelectList string `yaml:"selectlist,omitempty" uesio:"studio.selectlist"`
+	SelectList string `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
 }
 
 // NumberMetadata struct

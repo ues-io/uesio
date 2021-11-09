@@ -43,10 +43,11 @@ class ComponentAPI {
 	useState = <T extends FieldValue>(
 		componentId: string,
 		initialState?: T,
-		slice?: string
+		slice?: string,
+		cType?: string
 	): [T | undefined, (state: T) => void] => {
 		const viewId = this.uesio.getViewId()
-		const componentType = this.uesio.getComponentType()
+		const componentType = cType || this.uesio.getComponentType()
 		const fullState = useComponentState<T>(
 			componentType,
 			componentId,

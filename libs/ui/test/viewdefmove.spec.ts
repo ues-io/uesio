@@ -22,7 +22,7 @@ test("viewdef move component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -46,7 +46,7 @@ test("viewdef move component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		}
 	)
@@ -69,7 +69,7 @@ test("viewdef move wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -91,7 +91,7 @@ test("viewdef move wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		}
 	)
@@ -138,7 +138,7 @@ test("viewdef move component different parent", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -185,7 +185,7 @@ test("viewdef move component different parent", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		}
 	)
