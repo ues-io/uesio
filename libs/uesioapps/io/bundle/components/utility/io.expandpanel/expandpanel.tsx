@@ -25,6 +25,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	} = props
 	const [expanded, setExpanded] =
 		expandState || useState<boolean>(defaultExpanded)
+	const nodeRef = useRef<HTMLDivElement>(null)
 
 	const hasChildren = Children.count(children) > 0
 
@@ -80,7 +81,6 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 
 		node.style.maxHeight = "0"
 	}
-	const nodeRef = useRef<HTMLDivElement>(null)
 
 	return (
 		<div className={classes.root}>
