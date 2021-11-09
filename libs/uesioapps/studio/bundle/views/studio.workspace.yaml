@@ -173,79 +173,79 @@ definition:
                                                   color: "#ccc"
                                                   text: circle
   panels:
-    - io.dialog:
-        id: deleteWorkspace
-        title: Delete Workspace
-        width: 400px
-        height: 300px
-        components:
-          - io.text:
-              text: Are you sure you want to delete this workspace?
-        actions:
-          - io.button:
-              text: Delete
-              uesio.variant: io.primary
-              signals:
-                - signal: wire/MARK_FOR_DELETE
-                - signal: wire/SAVE
-                  wires:
-                    - "workspaces"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}"
-          - io.button:
-              text: Cancel
-              uesio.variant: io.secondary
-              signals:
-                - signal: panel/TOGGLE
-                  panel: deleteWorkspace
-    - io.dialog:
-        id: editWorkspace
-        title: Edit Workspace
-        width: 400px
-        height: 560px
-        components:
-          - io.list:
-              id: editWorkspaceList
-              wire: workspaces
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - studio.metadatafield:
-                    fieldId: studio.homeroute
-                    metadataType: "ROUTE"
-                    label: "Home Route"
-                - studio.metadatafield:
-                    fieldId: studio.loginroute
-                    metadataType: "ROUTE"
-                    label: "Login Route"
-                - studio.metadatafield:
-                    fieldId: studio.defaultprofile
-                    metadataType: "PROFILE"
-                    label: "Default Profile"
-                - studio.metadatafield:
-                    fieldId: studio.publicprofile
-                    metadataType: "PROFILE"
-                    label: "Public Profile"
-                - studio.metadatafield:
-                    fieldId: studio.defaulttheme
-                    metadataType: "THEME"
-                    label: "Default Theme"
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - workspaces
-                - signal: "panel/TOGGLE"
-                  panel: "editWorkspace"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: wire/CANCEL
-                  wire: workspaces
-                - signal: "panel/TOGGLE"
-                  panel: "editWorkspace"
+    deleteWorkspace:
+      - io.dialog:
+          title: Delete Workspace
+          width: 400px
+          height: 300px
+          components:
+            - io.text:
+                text: Are you sure you want to delete this workspace?
+          actions:
+            - io.button:
+                text: Delete
+                uesio.variant: io.primary
+                signals:
+                  - signal: wire/MARK_FOR_DELETE
+                  - signal: wire/SAVE
+                    wires:
+                      - "workspaces"
+                  - signal: "route/NAVIGATE"
+                    path: "app/$Param{appname}"
+            - io.button:
+                text: Cancel
+                uesio.variant: io.secondary
+                signals:
+                  - signal: panel/TOGGLE
+                    panel: deleteWorkspace
+      - io.dialog:
+          id: editWorkspace
+          title: Edit Workspace
+          width: 400px
+          height: 560px
+          components:
+            - io.list:
+                id: editWorkspaceList
+                wire: workspaces
+                mode: EDIT
+                components:
+                  - io.field:
+                      fieldId: studio.name
+                  - studio.metadatafield:
+                      fieldId: studio.homeroute
+                      metadataType: "ROUTE"
+                      label: "Home Route"
+                  - studio.metadatafield:
+                      fieldId: studio.loginroute
+                      metadataType: "ROUTE"
+                      label: "Login Route"
+                  - studio.metadatafield:
+                      fieldId: studio.defaultprofile
+                      metadataType: "PROFILE"
+                      label: "Default Profile"
+                  - studio.metadatafield:
+                      fieldId: studio.publicprofile
+                      metadataType: "PROFILE"
+                      label: "Public Profile"
+                  - studio.metadatafield:
+                      fieldId: studio.defaulttheme
+                      metadataType: "THEME"
+                      label: "Default Theme"
+          actions:
+            - io.button:
+                uesio.variant: "io.primary"
+                text: "Save"
+                signals:
+                  - signal: wire/SAVE
+                    wires:
+                      - workspaces
+                  - signal: "panel/TOGGLE"
+                    panel: "editWorkspace"
+            - io.button:
+                uesio.variant: "io.secondary"
+                text: "Cancel"
+                signals:
+                  - signal: wire/CANCEL
+                    wire: workspaces
+                  - signal: "panel/TOGGLE"
+                    panel: "editWorkspace"
