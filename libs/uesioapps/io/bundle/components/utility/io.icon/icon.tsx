@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react"
 import { definition, styles, materialIcons } from "@uesio/ui"
 
-interface IconProps extends definition.UtilityProps {
+interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
 }
 
-const Icon: FunctionComponent<IconProps> = (props) => {
+const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -32,4 +32,5 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 	return null
 }
 
+export { IconUtilityProps }
 export default Icon
