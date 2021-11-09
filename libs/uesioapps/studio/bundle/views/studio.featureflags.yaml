@@ -105,32 +105,32 @@ definition:
                                       color: "#ccc"
                                       text: tune
   panels:
-    - io.dialog:
-        id: newfeatureflag
-        title: Create a New Feature Flag
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newfeatureflaglist
-              wire: newfeatureflag
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newfeatureflag"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/featureflags/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newfeatureflag"
+    newfeatureflag:
+      - io.dialog:
+          title: Create a New Feature Flag
+          width: 400px
+          height: 500px
+          components:
+            - io.list:
+                id: newfeatureflaglist
+                wire: newfeatureflag
+                mode: EDIT
+                components:
+                  - io.field:
+                      fieldId: studio.name
+          actions:
+            - io.button:
+                uesio.variant: "io.primary"
+                text: "Save"
+                signals:
+                  - signal: wire/SAVE
+                    wires:
+                      - "newfeatureflag"
+                  - signal: "route/NAVIGATE"
+                    path: "app/$Param{appname}/workspace/$Param{workspacename}/featureflags/${studio.name}"
+            - io.button:
+                uesio.variant: "io.secondary"
+                text: "Cancel"
+                signals:
+                  - signal: "panel/TOGGLE"
+                    panel: "newfeatureflag"

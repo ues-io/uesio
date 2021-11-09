@@ -1,8 +1,0 @@
-name: buttonicon
-component: io.icon
-label: Button Icon
-definition:
-  uesio.styles:
-    root:
-      marginRight: 5px
-      fontSize: large

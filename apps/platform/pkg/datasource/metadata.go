@@ -57,9 +57,10 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 	fieldMetadata := map[string]*adapt.FieldMetadata{}
 	for _, subField := range f.SubFields {
 		fieldMetadata[subField.Name] = &adapt.FieldMetadata{
-			Name:  subField.Name,
-			Label: subField.Label,
-			Type:  subField.Type,
+			Name:       subField.Name,
+			Label:      subField.Label,
+			Type:       subField.Type,
+			Updateable: !f.ReadOnly && !f.CreateOnly,
 			SelectListMetadata: GetSelectListMetadata(&meta.Field{
 				Type:       subField.Type,
 				SelectList: subField.SelectList,
