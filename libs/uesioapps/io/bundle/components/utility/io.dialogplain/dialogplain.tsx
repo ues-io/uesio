@@ -3,13 +3,13 @@ import { definition, styles } from "@uesio/ui"
 
 const minPagePadding = "40px"
 
-interface DialogProps extends definition.UtilityProps {
+interface DialogPlainUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
 }
 
-const DialogPlain: FunctionComponent<DialogProps> = (props) => {
+const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
@@ -55,5 +55,7 @@ const DialogPlain: FunctionComponent<DialogProps> = (props) => {
 		</>
 	)
 }
+
+export { DialogPlainUtilityProps }
 
 export default DialogPlain

@@ -1,13 +1,13 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TileProps extends definition.UtilityProps {
+interface TileUtilityProps extends definition.UtilityProps {
 	avatar?: ReactNode
 	onClick?: () => void
 	isSelected: boolean
 }
 
-const Tile: FunctionComponent<TileProps> = (props) => {
+const Tile: FunctionComponent<TileUtilityProps> = (props) => {
 	const { avatar, children, onClick, isSelected } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -42,4 +42,5 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	)
 }
 
+export { TileUtilityProps }
 export default Tile

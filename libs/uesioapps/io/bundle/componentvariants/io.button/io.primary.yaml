@@ -8,6 +8,7 @@ definition:
       color: "#FFFFFFee"
       fontWeight: 500
       border: "1px solid rgb(200,74, 37)"
+      whiteSpace: nowrap
       boxShadow: "0 0 4px #00000033"
       minWidth: 100px
       borderRadius: 4px

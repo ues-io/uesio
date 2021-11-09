@@ -2,6 +2,7 @@ import { getSignal } from "../../component/registry"
 import { Context } from "../../context/context"
 import { SignalDefinition } from "../../definition/signal"
 import { ThunkFunc } from "../../store/store"
+import { PlainWireRecord } from "../wirerecord/types"
 import { selectState } from "./selectors"
 import { PlainComponentState } from "./types"
 
@@ -24,7 +25,17 @@ export default {
 			handler.dispatcher(
 				signal,
 				context,
-				() => selectState(getState(), scope, target, viewId),
+				() => {
+					const fullState = selectState(
+						getState(),
+						scope,
+						target,
+						viewId
+					)
+					return handler.slice
+						? (fullState as PlainWireRecord)?.[handler.slice]
+						: fullState
+				},
 				(state: PlainComponentState | undefined) => {
 					dispatch({
 						type: "component/set",
@@ -32,7 +43,17 @@ export default {
 							id: target,
 							componentType: scope,
 							view: viewId,
-							state,
+							state: handler.slice
+								? {
+										...(selectState(
+											getState(),
+											scope,
+											target,
+											viewId
+										) as PlainWireRecord),
+										[handler.slice]: state,
+								  }
+								: state,
 						},
 					})
 				},

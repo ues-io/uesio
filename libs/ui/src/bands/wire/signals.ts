@@ -9,13 +9,18 @@ import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
 import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
+import setConditionOp from "./operations/setcondition"
+import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
 import { AnyAction } from "redux"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { WireDefinition } from "../../definition/wire"
-import { WireConditionDefinition } from "./conditions/conditions"
+import {
+	WireConditionDefinition,
+	WireConditionState,
+} from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
@@ -45,6 +50,16 @@ interface EmptyWireSignal extends SignalDefinition {
 interface ToggleConditionSignal extends SignalDefinition {
 	wire: string
 	condition: string
+}
+
+interface RemoveConditionSignal extends SignalDefinition {
+	wire: string
+	condition: string
+}
+
+interface SetConditionSignal extends SignalDefinition {
+	wire: string
+	condition: WireConditionState
 }
 
 interface LoadWiresSignal extends SignalDefinition {
@@ -188,6 +203,30 @@ const signals: Record<string, SignalDescriptor> = {
 					Boolean(def && (<WireConditionDefinition>def).id),
 				wire: <string>signal.wire,
 				label: "condition",
+			},
+		],
+	},
+	[`${WIRE_BAND}/SET_CONDITION`]: {
+		label: "Set Wire Condition",
+		dispatcher: (signal: SetConditionSignal, context: Context) =>
+			setConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/REMOVE_CONDITION`]: {
+		label: "Remove Wire Condition",
+		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
+			removeConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
 			},
 		],
 	},

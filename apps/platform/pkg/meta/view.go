@@ -195,7 +195,15 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 	usedVariants := map[string]bool{}
 
 	getComponentsAndVariantsUsed(components, &usedComps, &usedVariants)
-	getComponentsAndVariantsUsed(panels, &usedComps, &usedVariants)
+
+	if panels != nil && panels.Kind == yaml.MappingNode {
+		for i := range panels.Content {
+			if i%2 != 0 {
+				comp := panels.Content[i]
+				getComponentsAndVariantsUsed(comp, &usedComps, &usedVariants)
+			}
+		}
+	}
 
 	return usedComps, usedVariants, nil
 }
