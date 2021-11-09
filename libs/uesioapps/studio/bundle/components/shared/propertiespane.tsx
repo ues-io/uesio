@@ -19,7 +19,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		: "No Element Selected"
 
 	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
-		"propertiespanel",
+		"propertiespanel:" + path,
 		"",
 		undefined,
 		"uesio.runtime"
