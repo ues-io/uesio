@@ -3,12 +3,12 @@ import { definition, styles } from "@uesio/ui"
 import { usePopper } from "react-popper"
 import type { Placement } from "@popperjs/core"
 
-interface TooltipProps extends definition.UtilityProps {
+interface TooltipUtilityProps extends definition.UtilityProps {
 	text: string
 	placement?: Placement
 }
 
-const Tooltip: FunctionComponent<TooltipProps> = (props) => {
+const Tooltip: FunctionComponent<TooltipUtilityProps> = (props) => {
 	const [referenceEl, setReferenceEl] = useState<HTMLDivElement | null>(null)
 	const [popperEl, setPopperEl] = useState<HTMLDivElement | null>(null)
 	const [arrowEl, setArrowEl] = useState<HTMLDivElement | null>(null)
@@ -89,5 +89,5 @@ const Tooltip: FunctionComponent<TooltipProps> = (props) => {
 		</>
 	)
 }
-
+export { TooltipUtilityProps }
 export default Tooltip

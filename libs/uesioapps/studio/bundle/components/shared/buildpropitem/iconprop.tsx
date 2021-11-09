@@ -67,17 +67,12 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 				context={context}
 			/>
 			<div className={classes.buttons}>
-				<IconButton
-					icon={valueAPI.get(path)}
-					context={context}
-					variant="studio.iconbutton"
-				/>
+				<IconButton icon={valueAPI.get(path)} context={context} />
 			</div>
 			<div className={classes.buttons}>
 				<IconButton
 					icon="launch"
 					context={context}
-					variant="studio.iconbutton"
 					onClick={(): void =>
 						uesio.builder.setSelectedNode(
 							metadataType,
@@ -124,7 +119,6 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 							<IconButton
 								icon={iconName}
 								context={context}
-								variant="studio.iconbuttongrid"
 								onClick={(): void =>
 									valueAPI.set(path, iconName)
 								}

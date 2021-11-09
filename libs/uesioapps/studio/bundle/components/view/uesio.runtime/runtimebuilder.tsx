@@ -1,50 +1,22 @@
 import { FC, useRef } from "react"
 import { definition, component, hooks, context as ctx, styles } from "@uesio/ui"
 import Canvas from "../../shared/canvas"
-import TopLeftNav from "../../shared/topleftnav"
-import BottomLeftNav from "../../shared/bottomleftnav"
 import RightNav from "../../shared/rightnav"
 import PropertiesPanel from "../../shared/propertiespanel"
-import WiresPanel from "../../shared/wirespanel"
 import CodePanel from "../../shared/codepanel"
-import { BuilderState } from "./runtimebuilderdefinition"
-import ComponentsPanel from "../../shared/componentspanel"
+import ViewInfoPanel from "../../shared/viewinfopanel"
 
 const Grid = component.registry.getUtility("io.grid")
+
 import usePanels from "./usePanels"
 
 component.registry.registerSignals("uesio.runtime", {
 	TOGGLE_CODE: {
 		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as BuilderState
-			setState({
-				...state,
-				showCode: !state.showCode,
-			})
+			const showCode = getState() as boolean
+			setState(!showCode)
 		},
-		target: "panels",
-	},
-	SHOW_COMPS: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as BuilderState
-			setState({
-				...state,
-				showComps: true,
-				showWires: false,
-			})
-		},
-		target: "panels",
-	},
-	SHOW_WIRES: {
-		dispatcher: (signal, context, getState, setState) => {
-			const state = getState() as BuilderState
-			setState({
-				...state,
-				showComps: false,
-				showWires: true,
-			})
-		},
-		target: "panels",
+		target: "codepanel",
 	},
 })
 
@@ -56,11 +28,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
 
-	const [state] = uesio.component.useState<BuilderState>("panels", {
-		showCode: false,
-		showComps: true,
-		showWires: false,
-	})
+	const [showCode] = uesio.component.useState<boolean>("codepanel")
 
 	const { context } = props
 
@@ -81,7 +49,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 		"studio.default",
 		new ctx.Context()
 	)
-	if (!scriptResult.loaded || !def || !builderTheme || !state)
+	if (!scriptResult.loaded || !def || !builderTheme)
 		return <Canvas context={context} />
 
 	const builderContext = context.addFrame({
@@ -89,9 +57,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	})
 	const canvasContext = context.addFrame({
 		mediaOffset:
-			NAV_WIDTH * 2 +
-			(state.showComps || state.showWires ? LEFT_PANEL_WIDTH : 0) +
-			(state.showCode ? codePanelWidth : 0),
+			NAV_WIDTH * 2 + LEFT_PANEL_WIDTH + (showCode ? codePanelWidth : 0),
 	})
 
 	return (
@@ -100,48 +66,32 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 			styles={{
 				root: {
 					height: "100vh",
-					gridTemplateColumns: `${NAV_WIDTH}px ${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth}px ${NAV_WIDTH}px`,
+					gridTemplateColumns: `${LEFT_PANEL_WIDTH}px 1fr ${codePanelWidth}px ${NAV_WIDTH}px`,
 					gridTemplateRows: "1fr 1fr",
 				},
 			}}
 		>
-			<TopLeftNav
+			<PropertiesPanel
 				context={builderContext}
 				className={styles.css({ gridRow: 1, gridColumn: 1 })}
 			/>
-			<BottomLeftNav
+			<ViewInfoPanel
 				context={builderContext}
 				className={styles.css({ gridRow: 2, gridColumn: 1 })}
 			/>
-			<PropertiesPanel
-				context={builderContext}
-				className={styles.css({ gridRow: 1, gridColumn: 2 })}
-			/>
-			{state.showWires && (
-				<WiresPanel
-					context={builderContext}
-					className={styles.css({ gridRow: 2, gridColumn: 2 })}
-				/>
-			)}
-			{state.showComps && (
-				<ComponentsPanel
-					context={builderContext}
-					className={styles.css({ gridRow: 2, gridColumn: 2 })}
-				/>
-			)}
 			<Canvas
 				className={styles.css({
 					gridRow: "1 / 3",
-					gridColumn: state.showCode ? "3" : "3 / 5",
+					gridColumn: showCode ? "2" : "2 / 4",
 				})}
 				context={canvasContext}
 			/>
-			{state.showCode && (
+			{showCode && (
 				<div
 					ref={slideRef}
 					className={styles.css({
 						gridRow: "1 / 3",
-						gridColumn: 4,
+						gridColumn: 3,
 						position: "relative",
 					})}
 				>
@@ -195,7 +145,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 
 			<RightNav
 				context={builderContext}
-				className={styles.css({ gridRow: "1 / 3", gridColumn: 5 })}
+				className={styles.css({ gridRow: "1 / 3", gridColumn: 4 })}
 			/>
 		</Grid>
 	)
