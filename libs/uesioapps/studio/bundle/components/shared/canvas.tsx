@@ -183,54 +183,51 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	}
 
 	return (
-		<>
+		<div
+			onDragLeave={onDragLeave}
+			onDragOver={onDragOver}
+			onDrop={onDrop}
+			className={classes.root}
+		>
 			<div
-				onDragLeave={onDragLeave}
-				onDragOver={onDragOver}
-				onDrop={onDrop}
-				className={classes.root}
+				className={classes.inner}
+				data-accepts="uesio.standalone"
+				data-path={'["components"]'}
+				data-insertindex={componentCount}
 			>
-				<div
-					className={classes.inner}
-					data-accepts="uesio.standalone"
-					data-path={'["components"]'}
-					data-insertindex={componentCount}
-				>
-					<component.View
-						context={props.context}
-						path=""
-						definition={{
-							view: route.view,
-							params: route.params,
-						}}
-					/>
+				<component.View
+					context={props.context}
+					path=""
+					definition={{
+						view: route.view,
+						params: route.params,
+					}}
+				/>
 
-					{/* No content yet */}
-					{!componentCount && (
-						<div className={classes.noContent}>
-							<div className="inner">
-								<Icon
-									className="icon"
-									icon={"flip_to_back"}
-									context={props.context}
-								/>
-								<h3 className="text">
-									Drag and drop any component here to get
-									started
-								</h3>
-								<div className="quote">
-									<h4>
-										What's better than a blank slate in the
-										right hands?
-									</h4>
-									<p>&mdash; Frank Underwood &mdash;</p>
-								</div>
+				{/* No content yet */}
+				{!componentCount && (
+					<div className={classes.noContent}>
+						<div className="inner">
+							<Icon
+								className="icon"
+								icon={"flip_to_back"}
+								context={props.context}
+							/>
+							<h3 className="text">
+								Drag and drop any component here to get started
+							</h3>
+							<div className="quote">
+								<h4>
+									What's better than a blank slate in the
+									right hands?
+								</h4>
+								<p>&mdash; Frank Underwood &mdash;</p>
 							</div>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
-		</>
+		</div>
 	)
 }
 Canvas.displayName = "Canvas"
