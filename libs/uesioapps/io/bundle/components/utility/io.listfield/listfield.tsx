@@ -83,10 +83,16 @@ const ListField: FunctionComponent<Props> = (props) => {
 			<Grid styles={rowStyles} context={context}>
 				{!isText &&
 					subFields &&
-					Object.keys(subFields).map((subfieldId) => {
+					Object.keys(subFields).map((subfieldId, index) => {
 						const subfield = subFields[subfieldId]
 						return (
 							<FieldLabel
+								key={
+									subfield.label ||
+									subfield.name ||
+									subfieldId ||
+									index
+								}
 								label={subfield.label || subfield.name}
 								context={context}
 							/>
@@ -111,14 +117,25 @@ const ListField: FunctionComponent<Props> = (props) => {
 			{value
 				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
 				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
-					<Grid styles={rowStyles} context={context}>
+					<Grid
+						key={
+							`${Object.values(value[index] || {})}.${index}` ||
+							index
+						}
+						styles={rowStyles}
+						context={context}
+					>
 						{subFields &&
-							Object.keys(subFields).map((subfieldId) => {
+							Object.keys(subFields).map((subfieldId, index) => {
 								const subfield = subFields[subfieldId]
+								const subfieldValue = getValue(item, subfield)
 								return (
 									<TextField
 										hideLabel
-										value={getValue(item, subfield)}
+										key={`${
+											subfieldValue || subfieldId || index
+										}`}
+										value={subfieldValue}
 										mode={mode}
 										context={context}
 										setValue={(

@@ -56,8 +56,10 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 				}}
 				value={value}
 			>
-				{options?.map((option) => (
-					<option value={option.value}>{option.label}</option>
+				{options?.map((option, index) => (
+					<option key={option.value} value={option.value}>
+						{option.label}
+					</option>
 				))}
 			</select>
 		</div>

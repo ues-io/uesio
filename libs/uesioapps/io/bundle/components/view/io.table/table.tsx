@@ -98,13 +98,14 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					columnGap={0}
 					context={recordContext}
 				>
-					{definition.rowactions.map((action) => {
+					{definition.rowactions.map((action, i) => {
 						const [handler, portals] = uesio.signal.useHandler(
 							action.signals,
 							recordContext
 						)
 						return (
 							<Button
+								key={action.text + i}
 								variant="io.nav"
 								className="rowaction"
 								label={action.text}

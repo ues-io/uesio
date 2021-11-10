@@ -79,6 +79,7 @@ const ConfigSecrets: FunctionComponent<definition.BaseProps> = (props) => {
 				const value = isSecret ? "*********" : response.value
 				return (
 					<TitleBar
+						key={key}
 						title={key}
 						subtitle={value}
 						context={context}

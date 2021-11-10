@@ -76,7 +76,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 											fullName,
 											""
 										),
-									key: fullName,
+
 									tooltip: propDef.description,
 									context,
 									selected: isSelected,
@@ -88,7 +88,10 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 								// Loop over the variants for this component
 								return (
-									<PropNodeTag {...sharedProps}>
+									<PropNodeTag
+										key={fullName}
+										{...sharedProps}
+									>
 										{variants && (
 											<Grid
 												styles={{
@@ -107,6 +110,9 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 													return (
 														<PropNodeTag
 															title={
+																variantFullName
+															}
+															key={
 																variantFullName
 															}
 															draggable={`${fullName}.${variantFullName}`}
