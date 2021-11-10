@@ -14,21 +14,6 @@ const getComponentVariantPropsDef = (
 		defaultDefinition: () => ({}),
 		properties: [
 			{
-				name: "description",
-				type: "CUSTOM",
-				label: "This is a custom prop for the component variant",
-				renderFunc: () => (
-					<div
-						className={css({
-							fontSize: "10pt",
-							marginBottom: "8px",
-						})}
-					>
-						<div>{metadataItem}</div>
-					</div>
-				),
-			},
-			{
 				name: "uesio.styles",
 				type: "STYLESLIST",
 				label: "Variant",
@@ -36,6 +21,7 @@ const getComponentVariantPropsDef = (
 		],
 		sections: [],
 		readOnly: true,
+		classes: compPropsDef.classes,
 	}
 }
 

@@ -43,7 +43,7 @@ const ButtonPropertyDefinition: builder.BuildPropertiesDefinition = {
 		},
 	],
 	traits: ["uesio.standalone"],
-	classes: ["root"],
+	classes: ["root", "label", "selected"],
 	type: "component",
 }
 export { ButtonProps, ButtonDefinition }

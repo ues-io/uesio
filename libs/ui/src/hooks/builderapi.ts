@@ -36,7 +36,7 @@ import {
 	getViewDefinition,
 	useBuilderHasChanges,
 } from "../bands/viewdef/selectors"
-
+import { getComponentVariantDef } from "../bands/componentvariantdef/selectors"
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import { getFullPathParts, makeFullPath } from "../component/path"
@@ -231,6 +231,10 @@ class BuilderAPI {
 		return useSelector((state: RootState) => {
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
+			}
+
+			if (metadataType === "componentvariant" && metadataItem) {
+				return getComponentVariantDef(state, metadataItem, localPath)
 			}
 		})
 	}
