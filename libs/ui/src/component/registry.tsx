@@ -23,6 +23,7 @@ import {
 } from "./component"
 import {
 	getComponentTypePropsDef,
+	getComponentVariantPropsDef,
 	getFieldPropsDef,
 	getWirePropsDef,
 } from "./builtinpropsdefs"
@@ -172,7 +173,10 @@ const getPropertiesDefinitionFromPath = (
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		return getPropertiesDefinition(`${namespace}.${name}`)
+		return getComponentVariantPropsDef(
+			getPropertiesDefinition(`${namespace}.${name}`),
+			metadataItem
+		)
 	}
 	if (metadataType === "componenttype") {
 		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))

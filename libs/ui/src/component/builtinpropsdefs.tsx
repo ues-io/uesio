@@ -1,5 +1,43 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
+import { parseVariantKey } from "./path"
+
+const getComponentVariantPropsDef = (
+	compPropsDef: BuildPropertiesDefinition,
+	metadataItem: string
+): BuildPropertiesDefinition => {
+	const [componentNamespace, componentName, variantNamespace, variantName] =
+		parseVariantKey(metadataItem)
+
+	return {
+		title: compPropsDef.title,
+		defaultDefinition: () => ({}),
+		properties: [
+			{
+				name: "description",
+				type: "CUSTOM",
+				label: "This is a custom prop for the component variant",
+				renderFunc: () => (
+					<div
+						className={css({
+							fontSize: "10pt",
+							marginBottom: "8px",
+						})}
+					>
+						<div>{metadataItem}</div>
+					</div>
+				),
+			},
+			{
+				name: "uesio.styles",
+				type: "STYLESLIST",
+				label: "Variant",
+			},
+		],
+		sections: [],
+		readOnly: true,
+	}
+}
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -105,4 +143,9 @@ const getFieldPropsDef = (
 	name,
 })
 
-export { getComponentTypePropsDef, getWirePropsDef, getFieldPropsDef }
+export {
+	getComponentTypePropsDef,
+	getWirePropsDef,
+	getFieldPropsDef,
+	getComponentVariantPropsDef,
+}

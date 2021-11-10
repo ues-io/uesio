@@ -2,7 +2,9 @@ import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
 import { selectors as viewSelectors } from "../viewdef/adapter"
+import { selectors as componentVariantSelectors } from "../componentvariant/adapter"
 import { MetadataType } from "./types"
+import { yaml } from "../../utilexports"
 
 const isMatch = (componentPath: string, testPath?: string) => {
 	if (testPath) {
@@ -63,6 +65,20 @@ const useSelectedYAML = () =>
 		if (metadataType === "viewdef") {
 			const viewDef = viewSelectors.selectById(state, metadataItem)
 			return viewDef?.yaml
+		}
+		if (metadataType === "componentvariant") {
+			console.log({ metadataType, metadataItem })
+			const ComponentVariant = componentVariantSelectors.selectById(
+				state,
+				metadataItem
+			)
+
+			console.log("ComponentVariant", ComponentVariant)
+
+			if (!ComponentVariant?.definition) return undefined
+			const doc = yaml.parse(JSON.stringify(ComponentVariant.definition))
+
+			return doc //ComponentVariant?.definition yaml.Document<yaml.Node>
 		}
 		return undefined
 	})

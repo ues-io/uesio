@@ -75,7 +75,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				variant="io.tile.studio.propnodetag"
 				//avatar={<Icon icon={icon} context={context} />}
 				context={context}
-				onClick={onClick}
+				onClick={!expanded ? onClick : undefined}
 				isSelected={selected}
 			>
 				<IOExpandPanel
