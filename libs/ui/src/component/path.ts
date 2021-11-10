@@ -9,8 +9,14 @@ const trimPath = (pathArray: string[]): string[] => {
 	if (size === 0) {
 		return pathArray
 	}
-	if (pathArray[0] === "wires") {
-		return trimPathToWire(pathArray)
+	// Converts any path starting with ["wires"] into just the first two
+	// elements of the path.
+
+	if (
+		pathArray[0] === "wires" ||
+		(pathArray[0] === "panels" && pathArray.length === 2)
+	) {
+		return pathArray.slice(0, 2)
 	}
 	const nextItem = pathArray[size - 1]
 	if (nextItem && nextItem.includes && nextItem.includes(".")) {

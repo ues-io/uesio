@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react"
-import { component, hooks } from "@uesio/ui"
+import { component, hooks, builder } from "@uesio/ui"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
-
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const Tabs = component.registry.getUtility("io.tabs")
@@ -12,7 +11,7 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { propsDef, path, context, valueAPI, className } = props
+	const { propsDef, path = "", context, valueAPI, className } = props
 
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
@@ -96,13 +95,48 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			context={context}
 		>
 			{selectedTab === "" && propsDef && propsDef.properties && (
-				<PropList
-					path={path}
-					propsDef={propsDef}
-					properties={propsDef.properties}
-					context={context}
-					valueAPI={valueAPI}
-				/>
+				<>
+					{/* Add panel component picker if the component is panel */}
+					{propsDef?.traits?.includes("uesio.panel") && (
+						<PropList
+							path={component.path.getParentPath(path || "")}
+							propsDef={propsDef}
+							properties={[
+								{
+									type: "SELECT",
+									name: "",
+									label: "Panel Component",
+									options: Object.entries(
+										component.registry.getComponents(
+											"uesio.panel"
+										)
+									).reduce((acc, [namespace, components]) => {
+										const namespaceComponents = Object.keys(
+											components
+										).map((cname) => ({
+											value: `${namespace}.${cname}`,
+											label: `${namespace}.${cname}`,
+										}))
+										return [...acc, ...namespaceComponents]
+									}, []),
+								},
+							]}
+							context={context}
+							valueAPI={{
+								...valueAPI,
+								set: (x, value: string) =>
+									valueAPI.changeKey(path, value),
+							}}
+						/>
+					)}
+					<PropList
+						path={path}
+						propsDef={propsDef}
+						properties={propsDef.properties}
+						context={context}
+						valueAPI={valueAPI}
+					/>
+				</>
 			)}
 			{selectedSection && propsDef && (
 				<BuildSection
