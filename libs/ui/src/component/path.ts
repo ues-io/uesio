@@ -64,6 +64,9 @@ const trimPathToComponent = (path: string | string[]) => {
 	return fromPath(trimmedPath)
 }
 
+const pathArray = (path: string | string[]): string[] =>
+	Array.isArray(path) ? path : toPath(path)
+
 // Unwraps a definition from its key
 const getDefinitionKey = (definition: DefinitionMap) =>
 	Object.keys(definition)[0]
@@ -214,6 +217,7 @@ const getIndexFromPath = (path: string) => {
 
 export {
 	//calculateNewPathAheadOfTime,
+	pathArray,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,

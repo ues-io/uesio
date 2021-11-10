@@ -90,6 +90,7 @@ type PropDescriptor =
 	| StylesListProp
 	| ConditionalDisplayProp
 	| IconProp
+	| ComponentProp
 
 type BasePropDescriptor = {
 	//TODO:: Needs placeholder text
@@ -147,6 +148,10 @@ interface CustomProp extends BasePropDescriptor {
 	renderFunc: FunctionComponent<CustomPropRendererProps>
 }
 
+interface ComponentProp extends BasePropDescriptor {
+	type: "COMPONENT"
+	trait: string
+}
 interface MetadataProp extends BasePropDescriptor {
 	type: "METADATA"
 	metadataType: MetadataType
@@ -267,6 +272,7 @@ export {
 	BotProp,
 	MultiSelectProp,
 	KeyProp,
+	ComponentProp,
 	WireProp,
 	WiresProp,
 	ComponentTargetProp,
