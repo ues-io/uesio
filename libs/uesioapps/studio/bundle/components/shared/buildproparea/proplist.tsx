@@ -14,7 +14,6 @@ import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
 import StylesListProp from "../buildpropitem/styleslistprop"
 import BotProp from "../buildpropitem/botprop"
-import ComponentProp from "../buildpropitem/componentprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
 
@@ -34,8 +33,6 @@ function getPropHandler(type?: string) {
 			return MultiSelectProp
 		case "KEY":
 			return KeyProp
-		case "COMPONENT":
-			return ComponentProp
 		case "WIRE":
 			return WireProp
 		case "BOT":
