@@ -107,31 +107,31 @@ definition:
                                       text: view_quilt
   panels:
     newView:
-      - io.dialog:
-          title: Create a New View
-          width: 400px
-          height: 500px
-          components:
-            - io.list:
-                id: newviewlist
-                wire: newview
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.name
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - "newview"
-                  - signal: "route/NAVIGATE"
-                    path: "app/$Param{appname}/workspace/$Param{workspacename}/views/${studio.name}"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newView"
+      type: dialog
+      title: Create a New View
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newviewlist
+            wire: newview
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newview"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/views/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newView"

@@ -252,145 +252,145 @@ definition:
                                             text: groups
   panels:
     deleteApp:
-      - io.dialog:
-          title: Delete App
-          width: 400px
-          height: 300px
-          components:
-            - io.text:
-                text: Are you sure you want to delete this app?
-          actions:
-            - io.button:
-                text: Delete
-                uesio.variant: io.primary
-                signals:
-                  - signal: wire/MARK_FOR_DELETE
-                  - signal: wire/SAVE
-                    wires:
-                      - "apps"
-                  - signal: "route/NAVIGATE"
-                    path: "home"
-            - io.button:
-                text: Cancel
-                uesio.variant: io.secondary
-                signals:
-                  - signal: panel/TOGGLE
-                    panel: deleteApp
+      type: io.dialog
+      title: Delete App
+      width: 400px
+      height: 300px
+      components:
+        - io.text:
+            text: Are you sure you want to delete this app?
+      actions:
+        - io.button:
+            text: Delete
+            uesio.variant: io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "apps"
+              - signal: "route/NAVIGATE"
+                path: "home"
+        - io.button:
+            text: Cancel
+            uesio.variant: io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteApp
     editApp:
-      - io.dialog:
-          title: Edit App
-          width: 400px
-          height: 500px
-          components:
-            - uesio.view:
-                view: studio.appedit
-                uesio.context:
-                  wire: apps
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                  - signal: "panel/TOGGLE"
-                    panel: "editApp"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: wire/CANCEL
-                  - signal: "panel/TOGGLE"
-                    panel: "editApp"
+      type: io.dialog
+      title: Edit App
+      width: 400px
+      height: 500px
+      components:
+        - uesio.view:
+            view: studio.appedit
+            uesio.context:
+              wire: apps
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+              - signal: "panel/TOGGLE"
+                panel: "editApp"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: wire/CANCEL
+              - signal: "panel/TOGGLE"
+                panel: "editApp"
     newWorkspace:
-      - io.dialog:
-          title: Create a New Workspace
-          width: 400px
-          height: 500px
-          components:
-            - io.list:
-                id: newworkspacelist
-                wire: newworkspace
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.name
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                uesio.context:
-                  wire: newworkspace
-                text: "Save"
-                signals:
-                  - signal: "bot/CALL"
-                    bot: "studio.newworkspace"
-                    params:
-                      name: ${studio.name}
-                      app: $Param{appname}
-                  - signal: "route/NAVIGATE"
-                    path: "app/$Param{appname}/workspace/${studio.name}"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newWorkspace"
+      type: io.dialog
+      title: Create a New Workspace
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newworkspacelist
+            wire: newworkspace
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            uesio.context:
+              wire: newworkspace
+            text: "Save"
+            signals:
+              - signal: "bot/CALL"
+                bot: "studio.newworkspace"
+                params:
+                  name: ${studio.name}
+                  app: $Param{appname}
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newWorkspace"
     newSite:
-      - io.dialog:
-          title: Create a New Site
-          width: 400px
-          height: 500px
-          components:
-            - io.list:
-                id: newsitelist
-                wire: newsite
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.name
-                  - io.field:
-                      fieldId: studio.bundle
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - "newsite"
-                  - signal: "route/NAVIGATE"
-                    path: "app/$Param{appname}/site/${studio.name}"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newSite"
+      type: io.dialog
+      title: Create a New Site
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newsitelist
+            wire: newsite
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - io.field:
+                  fieldId: studio.bundle
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newsite"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/site/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newSite"
     newTeam:
-      - io.dialog:
-          title: Create a New Team
-          width: 400px
-          height: 500px
-          components:
-            - io.list:
-                id: newteamlist
-                wire: newteam
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.name
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - "newteam"
-                  - signal: "route/NAVIGATE"
-                    path: "app/$Param{appname}/teams/${studio.name}"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newTeam"
+      type: io.dialog
+      title: Create a New Team
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newteamlist
+            wire: newteam
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newteam"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/teams/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newTeam"

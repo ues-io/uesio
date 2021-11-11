@@ -174,7 +174,7 @@ definition:
                                                   text: circle
   panels:
     deleteWorkspace:
-      - io.dialog:
+          type: dialog
           title: Delete Workspace
           width: 400px
           height: 300px
@@ -198,7 +198,7 @@ definition:
                 signals:
                   - signal: panel/TOGGLE
                     panel: deleteWorkspace
-      - io.dialog:
+          type: dialog
           id: editWorkspace
           title: Edit Workspace
           width: 400px
