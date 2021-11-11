@@ -40,6 +40,13 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					props.context.getTheme(),
 					props.context
 				),
+				position: "relative",
+			},
+			panelContainer: {
+				position: "absolute",
+				inset: "0",
+				zIndex: 10,
+				pointerEvents: "none",
 			},
 			inner: {
 				background: "white",
@@ -189,6 +196,10 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDrop={onDrop}
 			className={classes.root}
 		>
+			<div
+				className={classes.panelContainer}
+				id="builderPanelsContainer"
+			/>
 			<div
 				className={classes.inner}
 				data-accepts="uesio.standalone"

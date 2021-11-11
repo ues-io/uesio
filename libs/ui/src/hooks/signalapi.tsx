@@ -69,7 +69,16 @@ class SignalAPI {
 
 					if (componentType && panelDef) {
 						return [
-							<Panel context={context}>
+							<Panel
+								targetElement={
+									signal.querySelectorString
+										? document.querySelector(
+												`${signal.querySelectorString}`
+										  )
+										: null
+								}
+								context={context}
+							>
 								<ComponentInternal
 									definition={{ ...panelDef, id: panelId }}
 									path={path}
