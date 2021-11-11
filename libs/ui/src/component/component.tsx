@@ -115,26 +115,19 @@ function getDefinitionFromVariant(
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}
+	const def = variant.extends
+		? getDefinitionFromVariant(
+				context.getComponentVariant(variant.component, variant.extends),
+				context
+		  )
+		: variant.definition
+
 	const override = getThemeOverride(variant, context)
 	return mergeDefinitionMaps(
-		mergeDefinitionMaps({}, variant.definition, context),
+		mergeDefinitionMaps({}, def, context),
 		override ? { "uesio.styles": override } : {},
 		context
 	)
-}
-
-function getVariantStylesDef(
-	componentType: string,
-	variantName: string,
-	context: Context
-) {
-	const variant = context.getComponentVariant(componentType, variantName)
-	if (!variant) return {}
-	const variantStyles = variant.definition?.["uesio.styles"] as DefinitionMap
-	const override = getThemeOverride(variant, context)
-	return override
-		? mergeDefinitionMaps(variantStyles, override, context)
-		: variantStyles
 }
 
 function mergeContextVariants(
@@ -195,6 +188,6 @@ export {
 	ComponentInternal,
 	Component,
 	renderUtility,
-	getVariantStylesDef,
 	mergeDefinitionMaps,
+	getDefinitionFromVariant,
 }
