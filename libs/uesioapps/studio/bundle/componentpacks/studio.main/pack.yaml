@@ -45,12 +45,11 @@ components:
         - io.table
     studio.collectionlist:
       variants:
-        - io.tile.studio.item
+        - io.tile.io.item
       utilities:
         - io.tile
     studio.dataimport:
       variants:
-        - io.tile.studio.item
         - io.selectfield.io.default
         - io.fieldlabel.io.default
         - io.textfield.io.default
@@ -71,8 +70,6 @@ components:
         - io.titlebar.io.default
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
-        variants:
-          - io.tabs.io.mainsection
     uesio.view:
   utility:
     studio.buildwrapper:

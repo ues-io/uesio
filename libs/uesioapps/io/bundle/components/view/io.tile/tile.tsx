@@ -28,6 +28,7 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	return (
 		<IOTile
 			classes={classes}
+			variant={definition["uesio.variant"]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}

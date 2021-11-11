@@ -198,6 +198,7 @@ definition:
                 signals:
                   - signal: panel/TOGGLE
                     panel: deleteWorkspace
+    editWorkspace:
       - io.dialog:
           id: editWorkspace
           title: Edit Workspace

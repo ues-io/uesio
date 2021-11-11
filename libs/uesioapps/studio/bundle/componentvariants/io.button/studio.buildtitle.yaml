@@ -1,12 +1,12 @@
-name: actionbutton
+name: buildtitle
 component: io.button
-label: Action Button
+label: Build Title
 definition:
   uesio.styles:
     root:
-      color: "444"
-      padding: 4px
-      fontSize: 8pt
+      color: white
+      padding: 8px
+      fontSize: 9pt
       whiteSpace: nowrap
       backgroundColor: inherit
       textTransform: uppercase
