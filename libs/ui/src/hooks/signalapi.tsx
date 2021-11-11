@@ -64,8 +64,8 @@ class SignalAPI {
 						viewDef?.definition?.panels
 					if (!panels) return null
 
-					const panelDef = Object.values(panels[panelId][0])[0] // For now, we only support one panel in a panelId
-					const componentType = Object.keys(panels[panelId][0])[0] // For now, we only support one panel in a panelId
+					const panelDef = panels[panelId]
+					const componentType = panelDef.type
 
 					if (componentType && panelDef) {
 						return [

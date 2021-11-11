@@ -1,5 +1,6 @@
 import { DefinitionMap } from "./definition"
 export type PanelDefinition = {
+	type: string
 	title: string
 	width: string
 	height: string
@@ -7,5 +8,5 @@ export type PanelDefinition = {
 }
 
 export type PanelDefinitionMap = {
-	[key: string]: Record<string, PanelDefinition>[]
+	[key: string]: PanelDefinition
 }
