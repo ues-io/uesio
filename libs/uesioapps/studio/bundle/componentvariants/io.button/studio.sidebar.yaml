@@ -1,6 +1,6 @@
-name: large
-component: io.iconbutton
-label: Large
+name: sidebar
+component: io.button
+label: Side Bar
 definition:
   uesio.styles:
     root:
@@ -11,3 +11,5 @@ definition:
         background: "#ddd"
         outline: "none"
         borderRadius: "40px"
+    disabled:
+      opacity: 0.3

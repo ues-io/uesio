@@ -97,7 +97,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 							props.path && (
 								<IconButton
 									context={context}
-									variant="io.small"
+									variant="studio.buildtitle"
 									icon="close"
 									onClick={
 										() => uesio.builder.clearSelectedNode() //TO-DO keep the button (parent path selected)

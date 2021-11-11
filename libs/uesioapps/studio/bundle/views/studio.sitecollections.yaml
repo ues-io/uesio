@@ -60,6 +60,12 @@ definition:
                     title: Collections
                     subtitle: insert data into the collections that are available for you.
                 - io.box:
-                    uesio.variant: studio.section
+                    uesio.variant: io.section
                     components:
-                      - studio.collectionlist:
+                      - io.box:
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                              display: grid
+                          components:
+                            - studio.collectionlist:

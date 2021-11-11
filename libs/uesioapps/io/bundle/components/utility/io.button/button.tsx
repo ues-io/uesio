@@ -30,6 +30,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			},
 			label: {},
 			selected: {},
+			disabled: {},
 		},
 		props
 	)
@@ -48,7 +49,11 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 		<button
 			disabled={disabled}
 			onClick={onClick}
-			className={styles.cx(classes.root, isSelected && classes.selected)}
+			className={styles.cx(
+				classes.root,
+				disabled && classes.disabled,
+				isSelected && classes.selected
+			)}
 		>
 			{icon}
 			{label && <span className={classes.label}>{label}</span>}
