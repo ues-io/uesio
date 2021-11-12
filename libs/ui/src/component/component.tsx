@@ -10,6 +10,7 @@ import NotFound from "../components/notfound"
 import { parseKey } from "./path"
 import { shouldDisplay } from "./display"
 import { ComponentVariant } from "../bands/componentvariant/types"
+import { ComponentVariantDef } from "../bands/componentvariantdef/types"
 
 /**
  * Returns a new object that has a deep merge where source overrides
@@ -98,7 +99,7 @@ const Component: FunctionComponent<BaseProps> = (props) => {
 }
 
 function getThemeOverride(
-	variant: ComponentVariant,
+	variant: ComponentVariantDef,
 	context: Context
 ): DefinitionMap {
 	const componentType = variant.component
@@ -111,7 +112,7 @@ function getThemeOverride(
 }
 
 function getDefinitionFromVariant(
-	variant: ComponentVariant | undefined,
+	variant: ComponentVariantDef | undefined,
 	context: Context
 ): DefinitionMap {
 	if (!variant) return {}

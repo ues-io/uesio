@@ -1,29 +1,51 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
-import { parseVariantKey } from "./path"
 
 const getComponentVariantPropsDef = (
-	compPropsDef: BuildPropertiesDefinition,
-	metadataItem: string
+	compPropsDef: BuildPropertiesDefinition
 ): BuildPropertiesDefinition => {
-	const [componentNamespace, componentName, variantNamespace, variantName] =
-		parseVariantKey(metadataItem)
-
-	return {
+	const variantProps = addStylesSection({
 		title: compPropsDef.title,
-		defaultDefinition: () => ({}),
-		properties: [
-			{
-				name: "uesio.styles",
-				type: "STYLESLIST",
-				label: "Variant",
-			},
-		],
+		defaultDefinition: compPropsDef.defaultDefinition,
+		properties: compPropsDef.properties,
 		sections: [],
-		readOnly: true,
+		type: "componentvariant",
 		classes: compPropsDef.classes,
-	}
+	})
+
+	return variantProps
 }
+
+const addStylesSection = (
+	propsDef: BuildPropertiesDefinition
+): BuildPropertiesDefinition => ({
+	...propsDef,
+	sections: [
+		...propsDef.sections,
+		{
+			title: "Styles",
+			type: "STYLES",
+		},
+	],
+})
+
+const addDisplaySection = (
+	propsDef: BuildPropertiesDefinition
+): BuildPropertiesDefinition => ({
+	...propsDef,
+	sections: [
+		...propsDef.sections,
+		{
+			title: "Display",
+			type: "CONDITIONALDISPLAY",
+		},
+	],
+})
+
+const getComponentPropsDef = (
+	compPropsDef: BuildPropertiesDefinition
+): BuildPropertiesDefinition =>
+	addDisplaySection(addStylesSection(compPropsDef))
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -134,4 +156,5 @@ export {
 	getWirePropsDef,
 	getFieldPropsDef,
 	getComponentVariantPropsDef,
+	getComponentPropsDef,
 }

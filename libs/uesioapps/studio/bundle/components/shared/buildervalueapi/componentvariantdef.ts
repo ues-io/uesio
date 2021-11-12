@@ -15,8 +15,13 @@ export const ComponentVariantDefValueAPI = (
 	},
 	set: (path: string, value: string | number | null) => {
 		if (path === undefined) return
-		console.log("SET", { path, value })
-		uesio.builder.setDefinition(path, value)
+		const fullpath = component.path.makeFullPath(
+			metadataType,
+			metadataItem,
+			path
+		)
+		console.log("SET", { fullpath, value })
+		uesio.builder.setDefinition(fullpath, value)
 	},
 	clone: (path: string) =>
 		uesio.builder.cloneDefinition(

@@ -6,6 +6,11 @@ const componenetVariantDefAdapter = createEntityAdapter<ComponentVariantDef>({
 	selectId: (componentvariantdef) => `${componentvariantdef.name}`,
 })
 
+export const { selectById, selectEntities } =
+	componenetVariantDefAdapter.getSelectors(
+		(state: RootState) => state.componentvariantdef
+	)
+
 const selectors = componenetVariantDefAdapter.getSelectors(
 	(state: RootState) => state.componentvariantdef
 )

@@ -14,6 +14,8 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { propsDef, path, context, valueAPI, className } = props
 
+	console.log("BEST", { propsDef })
+
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
 		: "No Element Selected"
@@ -25,20 +27,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		"uesio.runtime"
 	)
 
-	const sections =
-		(propsDef?.type === "component"
-			? propsDef.sections.concat([
-					{
-						title: "Styles",
-						type: "STYLES",
-					},
-					{
-						title: "Display",
-						type: "CONDITIONALDISPLAY",
-					},
-			  ])
-			: propsDef?.sections) || []
-
+	const sections = propsDef?.sections
 	const selectedSection = sections?.find(
 		(section) => section.title === selectedTab
 	)
@@ -64,7 +53,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						}
 						context={context}
 					/>
-					{propsDef?.sections && (
+					{sections && (
 						<Tabs
 							variant="studio.mainsection"
 							selectedTab={selectedTab}

@@ -22,6 +22,7 @@ import {
 	renderUtility,
 } from "./component"
 import {
+	getComponentPropsDef,
 	getComponentTypePropsDef,
 	getComponentVariantPropsDef,
 	getFieldPropsDef,
@@ -169,13 +170,17 @@ const getPropertiesDefinitionFromPath = (
 	path: string
 ): BuildPropertiesDefinition | undefined => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
-	if (metadataType === "component")
-		return getPropertiesDefinition(metadataItem)
+	if (metadataType === "component") {
+		return getComponentPropsDef(getPropertiesDefinition(metadataItem))
+	}
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
+		console.log("Abel", `${namespace}.${name}`)
+		//const propDef =
+		//propDef.type = "componentvariant"
+		//return getPropertiesDefinition(`${namespace}.${name}`)
 		return getComponentVariantPropsDef(
-			getPropertiesDefinition(`${namespace}.${name}`),
-			metadataItem
+			getPropertiesDefinition(`${namespace}.${name}`)
 		)
 	}
 	if (metadataType === "componenttype") {
@@ -198,7 +203,9 @@ const getPropertiesDefinitionFromPath = (
 		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
-			return getPropertiesDefinition(componentFullName)
+			return getComponentPropsDef(
+				getPropertiesDefinition(componentFullName)
+			)
 		}
 	}
 

@@ -2,7 +2,10 @@ import { DefinitionMap, YamlDoc } from "../../definition/definition"
 
 type ComponentVariantDef = {
 	name: string
-	definition?: DefinitionMap
+	namespace: string
+	label: string
+	component: string
+	definition: DefinitionMap
 	yaml?: YamlDoc
 	originalYaml?: YamlDoc
 }

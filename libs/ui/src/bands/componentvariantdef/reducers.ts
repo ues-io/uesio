@@ -53,13 +53,13 @@ const setDef = (state: ComponentVariantDef, payload: SetDefinitionPayload) => {
 
 //TO-DO
 const addDef = (state: ComponentVariantDef, payload: AddDefinitionPayload) => {
-	// const { path, definition, index } = payload
-	// const pathArray = toPath(path)
-	// const currentArray = get(state.definition, path)
-	// let newIndex: number
+	const { path, definition } = payload
+	const pathArray = toPath(path)
+	//const currentArray = get(state.definition, path)
+	const newIndex = 0
 	// if (!currentArray) {
 	// 	newIndex = 0
-	// 	setWith(state, ["definition", ...pathArray], [definition])
+	setWith(state, ["definition", ...pathArray], [definition])
 	// } else {
 	// 	newIndex = index === undefined ? currentArray.length : index
 	// 	currentArray.splice(newIndex, 0, definition)

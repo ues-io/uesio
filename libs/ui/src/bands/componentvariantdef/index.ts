@@ -223,11 +223,21 @@ const ComponentVariantDefSlice = createSlice({
 						if (state.entities[key]) return
 						const defDoc = newDoc()
 						defDoc.contents = variants[key].definition
+
+						const [
+							componentNamespace,
+							compnentName,
+							variantNamespace,
+						] = parseVariantKey(key)
+
 						componenetVariantDefAdapter.upsertOne(state, {
 							name: key,
+							namespace: variantNamespace,
 							yaml: defDoc,
 							originalYaml: defDoc,
 							definition: defDoc.toJSON(),
+							component: `${componentNamespace}.${compnentName}`,
+							label: key, //TO-DO GET the label
 						})
 					})
 				}
@@ -239,13 +249,28 @@ const ComponentVariantDefSlice = createSlice({
 			(state, { payload }: PayloadAction<SetDefinitionPayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
-				if (metadataType === "componentvariantdef") {
+				console.log({
+					metadataType,
+					metadataItem,
+					localPath,
+				})
+
+				console.log("DEF", payload.definition)
+
+				if (metadataType === "componentvariant") {
 					const entityState = state.entities[metadataItem]
+
+					console.log("entityState", entityState)
+
 					entityState &&
 						setDef(entityState, {
 							path: localPath,
 							definition: payload.definition,
 						})
+					// addDef(entityState, {
+					// 	path: localPath,
+					// 	definition: payload.definition,
+					// })
 				}
 			}
 		)

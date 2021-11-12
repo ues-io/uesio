@@ -8,21 +8,37 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, propsDef, valueAPI } = props
 	const section = props.section as builder.PropListSection
 
-	const properties: builder.PropDescriptor[] = [
-		{
-			name: "uesio.variant",
-			type: "METADATA",
-			metadataType: "COMPONENTVARIANT",
-			label: "Variant",
-			groupingParents: 1,
-			getGroupingFromKey: true,
-		},
-		{
-			name: "uesio.styles",
-			type: "STYLESLIST",
-			label: "Variant",
-		},
-	]
+	//only add the variant if the propsDef is component !!! TO-DO
+
+	console.log("TYPE propDEf", propsDef.type)
+
+	const properties: builder.PropDescriptor[] =
+		propsDef.type !== "componentvariant"
+			? [
+					{
+						name: "uesio.variant",
+						type: "METADATA",
+						metadataType: "COMPONENTVARIANT",
+						label: "Variant",
+						groupingParents: 1,
+						getGroupingFromKey: true,
+						//display: [{}]
+					},
+					{
+						name: "uesio.styles",
+						type: "STYLESLIST",
+						label: "Variant",
+					},
+			  ]
+			: [
+					{
+						name: "uesio.styles",
+						type: "STYLESLIST",
+						label: "Variant",
+					},
+			  ]
+
+	console.log("properties", properties)
 
 	return (
 		<ExpandPanel

@@ -1,9 +1,9 @@
 import { DefinitionMap, DefinitionValue } from "../definition/definition"
 import { Uesio } from "../hooks/hooks"
-import { definition } from "@uesio/ui"
 import { MetadataType } from "../bands/builder/types"
 import { FunctionComponent } from "react"
 import ValueAPI from "./valueapi"
+import { definition } from ".."
 
 type BuildPropertiesDefinition = {
 	title: string
