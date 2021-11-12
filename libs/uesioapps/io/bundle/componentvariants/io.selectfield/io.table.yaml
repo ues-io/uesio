@@ -3,10 +3,6 @@ component: io.selectfield
 label: Table
 definition:
   uesio.styles:
-    root:
-      color: black
-      "&:after":
-        bottom: "16px"
     input:
       width: "100%"
       backgroundColor: transparent

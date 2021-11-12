@@ -21,6 +21,7 @@ components:
         - io.selectfield.io.default
         - io.autocomplete.io.default
         - io.fieldlabel.io.default
+        - io.fieldwrapper.io.default
         - io.tile.io.default
         - io.numberfield.io.default
     io.filter:
@@ -59,6 +60,7 @@ components:
     io.dialogplain:
     io.expandpanel:
     io.fieldlabel:
+    io.fieldwrapper:
     io.filetext:
     io.fileupload:
     io.filedynamic:

@@ -116,7 +116,7 @@ definition:
                                       items:
                                         - io.field:
                                             fieldId: studio.member
-                                            hideLabel: true
+                                            labelPosition: "none"
                                         - io.button:
                                             signals:
                                               - signal: wire/MARK_FOR_DELETE

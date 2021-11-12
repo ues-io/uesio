@@ -9,7 +9,7 @@ const addBlankSelectOption = collection.addBlankSelectOption
 
 const Field: FunctionComponent<FilterProps> = (props) => {
 	const { context, definition } = props
-	const { fieldId, hideLabel, id, displayAs } = definition
+	const { fieldId } = definition
 	const uesio = hooks.useUesio(props)
 	const wire = uesio.wire.useWire(definition.wire)
 	if (!wire) return null
@@ -27,7 +27,6 @@ const Field: FunctionComponent<FilterProps> = (props) => {
 			return (
 				<SelectField
 					context={context}
-					hideLabel
 					options={addBlankSelectOption(
 						fieldMetadata.getSelectMetadata()?.options || [],
 						"Any " + fieldMetadata.getLabel()

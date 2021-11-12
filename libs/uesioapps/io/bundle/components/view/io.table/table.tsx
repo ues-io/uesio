@@ -83,7 +83,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 						componentType="io.field"
 						definition={{
 							fieldId: column.field,
-							hideLabel: true,
+							labelPosition: "none",
 							"uesio.variant": "io.table",
 						}}
 						index={index}
