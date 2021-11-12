@@ -254,7 +254,7 @@ func addVariantDep(deps *ViewDependencies, key string, session *sess.Session) er
 		if err != nil {
 			return errors.New("Invalid variant key: " + key)
 		}
-		err = addVariantDep(deps, variantDep.Extends+"."+component, session)
+		err = addVariantDep(deps, component+"."+variantDep.Extends, session)
 		if err != nil {
 			return err
 		}
