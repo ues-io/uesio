@@ -116,8 +116,15 @@ function getDefinitionFromVariant(
 ): DefinitionMap {
 	if (!variant) return {}
 	const def = variant.extends
-		? getDefinitionFromVariant(
-				context.getComponentVariant(variant.component, variant.extends),
+		? mergeDefinitionMaps(
+				getDefinitionFromVariant(
+					context.getComponentVariant(
+						variant.component,
+						variant.extends
+					),
+					context
+				),
+				variant.definition,
 				context
 		  )
 		: variant.definition
