@@ -13,10 +13,8 @@ const TextField = component.registry.getUtility("io.textfield")
 const AutoComplete = component.registry.getUtility("io.autocomplete")
 
 interface ReferenceFieldProps extends definition.UtilityProps {
-	label?: string
 	fieldMetadata: collection.Field
 	mode: context.FieldMode
-	hideLabel: boolean
 	record: wire.WireRecord
 	wire: wire.Wire
 	variant: string
@@ -54,7 +52,7 @@ const generateReferenceFieldDisplayValue = (
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, hideLabel, mode, record, context, variant } = props
+	const { fieldMetadata, mode, record, context, variant } = props
 	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
@@ -75,9 +73,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		return (
 			<TextField
 				value={value}
-				{...(!hideLabel && {
-					label: fieldMetadata.getLabel(),
-				})}
 				context={context}
 				variant={variant}
 				mode={mode}
@@ -89,9 +84,6 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				context={context}
 				variant={variant}
 				value={value}
-				{...(!hideLabel && {
-					label: fieldMetadata.getLabel(),
-				})}
 				setValue={(value: string) => {
 					const idField = referencedCollection.getIdField()?.getId()
 					if (!idField) return

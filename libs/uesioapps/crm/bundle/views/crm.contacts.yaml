@@ -66,7 +66,7 @@ definition:
                               max-height: 200px
                           uesio.variant: io.
                           label: null
-                          hideLabel: true
+                          labelPosition: none
                       - io.field:
                           fieldId: crm.firstname
                       - io.field:

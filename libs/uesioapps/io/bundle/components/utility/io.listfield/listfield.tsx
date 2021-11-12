@@ -1,12 +1,5 @@
 import { FunctionComponent } from "react"
-import {
-	wire,
-	collection,
-	definition,
-	context,
-	component,
-	styles,
-} from "@uesio/ui"
+import { wire, collection, definition, context, component } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const IconButton = component.registry.getUtility("io.iconbutton")
@@ -14,7 +7,6 @@ const Grid = component.registry.getUtility("io.grid")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 interface Props extends definition.UtilityProps {
-	label?: string
 	mode: context.FieldMode
 	value: (wire.PlainWireRecord | wire.FieldValue)[]
 	setValue: (value: (wire.PlainWireRecord | wire.FieldValue)[]) => void
@@ -24,16 +16,8 @@ interface Props extends definition.UtilityProps {
 }
 
 const ListField: FunctionComponent<Props> = (props) => {
-	const {
-		subFields,
-		subType,
-		mode,
-		context,
-		value,
-		label,
-		setValue,
-		autoAdd,
-	} = props
+	const { subFields, subType, mode, context, value, setValue, autoAdd } =
+		props
 	const editMode = mode === "EDIT"
 	const isText = subType === "TEXT"
 	const rowStyles = {
@@ -79,7 +63,6 @@ const ListField: FunctionComponent<Props> = (props) => {
 
 	return subFields ? (
 		<div>
-			<FieldLabel label={label} context={context} />
 			<Grid styles={rowStyles} context={context}>
 				{!isText &&
 					subFields &&
@@ -131,7 +114,6 @@ const ListField: FunctionComponent<Props> = (props) => {
 								const subfieldValue = getValue(item, subfield)
 								return (
 									<TextField
-										hideLabel
 										key={`${
 											subfieldValue || subfieldId || index
 										}`}
