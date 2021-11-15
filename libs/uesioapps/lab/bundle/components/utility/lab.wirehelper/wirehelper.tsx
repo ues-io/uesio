@@ -139,6 +139,7 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 				<div className={classes.wireButtonGroup}>
 					{Object.keys(wiresInDef).map((wire) => (
 						<Button
+							key={wire}
 							icon={<Icon icon="power" context={props.context} />}
 							onClick={(e: React.MouseEvent<HTMLElement>) =>
 								onWireClick(e, wire)

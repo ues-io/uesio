@@ -38,6 +38,7 @@ const ActionsBar: FC<T> = (props) => {
 		<div className={classes.root}>
 			{props.actions.map(({ name, signals }) => (
 				<IOButton
+					key={name}
 					variant={definition.buttonVariant}
 					label={name.charAt(0).toUpperCase() + name.slice(1)}
 					onClick={() => fireSignals(signals)}
