@@ -6,7 +6,7 @@ const ColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
 	sections: [],
-	traits: [],
+	traits: ["uesio.standalone"],
 	classes: ["root"],
 	type: "component",
 	actions: [],
