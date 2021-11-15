@@ -155,7 +155,11 @@ const Table: FC<TableProps> = (props) => {
 										isDragging={isDragging}
 										columnRefs={columnRefs}
 										path={path}
-										setDragCol={setDragCol}
+										setDragCol={
+											definition.columns.length > 1
+												? setDragCol
+												: undefined
+										}
 										markerPosition={markerPosition}
 										tableRef={tableRef}
 										context={context}
