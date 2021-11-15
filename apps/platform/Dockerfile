@@ -1,4 +1,4 @@
-FROM golang:1.16-alpine AS multistage
+FROM golang:1.17-alpine AS multistage
 
 WORKDIR /src
 COPY ./apps/platform .
