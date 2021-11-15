@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 
 // [ React.MutableRefObject<HTMLDivElement | null>, boolean]
 export default (tableRef: React.MutableRefObject<HTMLDivElement | null>) => {

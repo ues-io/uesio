@@ -54,7 +54,7 @@ export default (
 		const { left: tableLeft, right: tableRight } =
 			tableRef.current.getBoundingClientRect()
 
-		const handleDrag = (e: any) => {
+		const handleDrag = (e: MouseEvent) => {
 			const mouseX = e.clientX
 			if (!tableRef || !tableRef.current) return
 
