@@ -7,11 +7,6 @@ import PropList from "./proplist"
 const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { path, context, propsDef, valueAPI } = props
 	const section = props.section as builder.PropListSection
-
-	//only add the variant if the propsDef is component !!! TO-DO
-
-	console.log("TYPE propDEf", propsDef.type)
-
 	const properties: builder.PropDescriptor[] =
 		propsDef.type !== "componentvariant"
 			? [
@@ -22,7 +17,7 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 						label: "Variant",
 						groupingParents: 1,
 						getGroupingFromKey: true,
-						//display: [{}]
+						//display: [{}] //TO-DO This can be done in anther way
 					},
 					{
 						name: "uesio.styles",
@@ -37,8 +32,6 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 						label: "Variant",
 					},
 			  ]
-
-	console.log("properties", properties)
 
 	return (
 		<ExpandPanel
