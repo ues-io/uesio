@@ -3,9 +3,6 @@ component: io.codefield
 label: Default
 definition:
   uesio.styles:
-    root:
-      color: black
-      padding: 10px 0
     input:
       width: "100%"
       backgroundColor: white

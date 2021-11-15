@@ -27,6 +27,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 	return (
 		<>
 			<IOButton
+				variant={definition["uesio.variant"]}
 				classes={classes}
 				label={definition.text}
 				onClick={handler}

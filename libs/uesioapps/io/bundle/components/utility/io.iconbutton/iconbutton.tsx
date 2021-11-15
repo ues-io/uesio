@@ -16,7 +16,15 @@ const Icon = component.registry.getUtility<IconUtilityProps>("io.icon")
 const Button = component.registry.getUtility<ButtonUtilityProps>("io.button")
 
 const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
-	const { context, icon, label, tooltipPlacement, onClick, disabled } = props
+	const {
+		context,
+		icon,
+		label,
+		tooltipPlacement,
+		onClick,
+		disabled,
+		variant,
+	} = props
 
 	return (
 		<Button
@@ -26,6 +34,7 @@ const IconButton: FunctionComponent<IconButtonUtilityProps> = (props) => {
 			tooltipPlacement={tooltipPlacement}
 			disabled={disabled}
 			icon={<Icon context={context} icon={icon} />}
+			variant={variant}
 		/>
 	)
 }

@@ -13,5 +13,6 @@ definition:
       alignItems: center
     content:
       verticalAlign: middle
+      fontSize: 10pt
     avatar:
       marginRight: 14px

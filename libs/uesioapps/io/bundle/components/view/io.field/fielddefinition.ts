@@ -1,12 +1,14 @@
-import { definition, collection, wire, builder, context } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 
 type FieldDefinition = {
 	fieldId: string
-	hideLabel: boolean
+	labelPosition?: LabelPosition
 	label?: string
 	id?: string
 	displayAs?: string
 } & definition.BaseDefinition
+
+type LabelPosition = "none" | "top" | "left"
 
 type FieldState = {
 	value: string
@@ -22,16 +24,6 @@ interface FieldProps extends definition.BaseProps {
 	definition: FieldDefinition
 }
 
-type RendererProps = {
-	fieldMetadata: collection.Field
-	mode: context.FieldMode
-	fieldId: string
-	hideLabel: boolean
-	record: wire.WireRecord
-	wire: wire.Wire
-	value?: string
-} & definition.BaseProps
-
 const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Field",
 	description: "Just a Field",
@@ -44,9 +36,23 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Label",
 		},
 		{
-			name: "hideLabel",
-			type: "BOOLEAN",
-			label: "Hide label",
+			name: "labelPosition",
+			type: "SELECT",
+			label: "Label Position",
+			options: [
+				{
+					label: "None",
+					value: "none",
+				},
+				{
+					label: "Top",
+					value: "top",
+				},
+				{
+					label: "Left",
+					value: "left",
+				},
+			],
 		},
 	],
 	sections: [],
@@ -55,6 +61,6 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	classes: ["root"],
 }
 
-export { FieldProps, FieldDefinition, RendererProps, FieldState }
+export { FieldProps, FieldDefinition, FieldState, LabelPosition }
 
 export default FieldPropertyDefinition

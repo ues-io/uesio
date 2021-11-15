@@ -4,7 +4,7 @@ type ButtonDefinition = {
 	text?: string
 	icon?: string
 	signals?: signal.SignalDefinition[]
-}
+} & definition.BaseDefinition
 
 interface ButtonProps extends definition.BaseProps {
 	definition: ButtonDefinition

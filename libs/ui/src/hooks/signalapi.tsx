@@ -69,7 +69,7 @@ class SignalAPI {
 
 					if (componentType && panelDef) {
 						return [
-							<Panel context={context}>
+							<Panel key={panelId} context={context}>
 								<ComponentInternal
 									definition={{ ...panelDef, id: panelId }}
 									path={path}

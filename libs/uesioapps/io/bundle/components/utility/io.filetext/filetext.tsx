@@ -13,7 +13,7 @@ interface FileTextProps extends definition.UtilityProps {
 	label?: string
 	width?: string
 	fieldMetadata: collection.Field
-	hideLabel?: boolean
+	labelPosition?: boolean
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord

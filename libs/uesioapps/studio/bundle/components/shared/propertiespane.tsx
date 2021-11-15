@@ -41,6 +41,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						actions={
 							props.path && (
 								<IconButton
+									variant="studio.buildtitle"
 									context={context}
 									icon="close"
 									onClick={() =>

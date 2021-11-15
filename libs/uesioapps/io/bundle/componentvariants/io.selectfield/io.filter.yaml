@@ -3,9 +3,6 @@ component: io.selectfield
 label: Filter
 definition:
   uesio.styles:
-    root:
-      color: "#444"
-      padding: 10px 0
     input:
       fontSize: 9pt
       width: auto

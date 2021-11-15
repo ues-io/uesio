@@ -201,6 +201,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				}
 				return (
 					<Tile
+						key={namespace}
 						context={context}
 						variant="io.item"
 						styles={{

@@ -3,6 +3,7 @@ import { FunctionComponent } from "react"
 import { component, builder } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const TextProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
@@ -10,13 +11,13 @@ const TextProp: FunctionComponent<builder.PropRendererProps> = ({
 	context,
 	path,
 }) => (
-	// Fall back to text component
-	<TextField
-		value={valueAPI.get(path)}
-		label={descriptor.label}
-		setValue={(value: string) => valueAPI.set(path, value)}
-		context={context}
-	/>
+	<FieldWrapper label={descriptor.label} context={context}>
+		<TextField
+			value={valueAPI.get(path)}
+			setValue={(value: string) => valueAPI.set(path, value)}
+			context={context}
+		/>
+	</FieldWrapper>
 )
 
 export default TextProp

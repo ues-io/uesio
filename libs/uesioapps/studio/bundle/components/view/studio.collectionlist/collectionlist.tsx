@@ -37,7 +37,8 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 			<>
 				{Object.keys(collections).map((collection) => (
 					<Tile
-						variant="io.tile.studio.item"
+						key={collection}
+						variant="io.tile.io.item"
 						onClick={(): void => {
 							uesio.signal.run(
 								{
@@ -64,7 +65,7 @@ const Collection: FunctionComponent<CollectionProps> = (props) => {
 }
 
 const CollectionList: FunctionComponent<Props> = (props) => {
-	const { context, definition } = props
+	const { context } = props
 	const uesio = hooks.useUesio(props)
 	const view = context.getView()
 	const appName = view?.params?.appname
@@ -83,6 +84,7 @@ const CollectionList: FunctionComponent<Props> = (props) => {
 			<>
 				{Object.keys(namespaces).map((namespace) => (
 					<Collection
+						key={namespace}
 						definition={{
 							namespace,
 						}}
