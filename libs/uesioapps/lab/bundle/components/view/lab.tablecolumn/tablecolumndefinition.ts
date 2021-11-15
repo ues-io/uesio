@@ -1,4 +1,4 @@
-import { definition, builder } from "@uesio/ui"
+import { definition, builder, component } from "@uesio/ui"
 
 type TableColumnDefinition = {
 	name?: string
@@ -68,6 +68,26 @@ const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
 	actions: [],
 	type: "component",
 	traits: ["uesio.tablecolumn", "uesio.standalone"],
+	handleFieldDrop: (dragNode, dropNode, dropIndex, propDef, uesio) => {
+		console.log("field drop in column")
+
+		const [metadataType, metadataItem] =
+			component.path.getFullPathParts(dragNode)
+
+		if (metadataType === "field") {
+			const [, , fieldNamespace, fieldName] =
+				component.path.parseFieldKey(metadataItem)
+			uesio.builder.addDefinition(
+				dropNode,
+				{
+					"io.field": {
+						fieldId: `${fieldNamespace}.${fieldName}`,
+					},
+				},
+				dropIndex
+			)
+		}
+	},
 }
 export { TableColumnProps, TableColumnDefinition }
 
