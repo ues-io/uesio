@@ -20,26 +20,40 @@ const addStylesSection = (
 	propsDef: BuildPropertiesDefinition
 ): BuildPropertiesDefinition => ({
 	...propsDef,
-	sections: [
-		...propsDef.sections,
-		{
-			title: "Styles",
-			type: "STYLES",
-		},
-	],
+	sections: propsDef?.sections
+		? [
+				...propsDef.sections,
+				{
+					title: "Styles",
+					type: "STYLES",
+				},
+		  ]
+		: [
+				{
+					title: "Styles",
+					type: "STYLES",
+				},
+		  ],
 })
 
 const addDisplaySection = (
 	propsDef: BuildPropertiesDefinition
 ): BuildPropertiesDefinition => ({
 	...propsDef,
-	sections: [
-		...propsDef.sections,
-		{
-			title: "Display",
-			type: "CONDITIONALDISPLAY",
-		},
-	],
+	sections: propsDef?.sections
+		? [
+				...propsDef.sections,
+				{
+					title: "Display",
+					type: "CONDITIONALDISPLAY",
+				},
+		  ]
+		: [
+				{
+					title: "Display",
+					type: "CONDITIONALDISPLAY",
+				},
+		  ],
 })
 
 const getComponentPropsDef = (

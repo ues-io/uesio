@@ -11,6 +11,7 @@ const TitleBar = component.registry.getUtility("io.titlebar")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
+	console.log("CP render")
 	const uesio = hooks.useUesio(props)
 	const { context, className } = props
 	const classes = styles.useStyles(
@@ -240,12 +241,18 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 									true
 								)
 
-							if (relevantNode && nodePath)
+							if (relevantNode && nodePath) {
+								console.log("click, ", {
+									metadataType,
+									metadataItem,
+									nodePath,
+								})
 								uesio.builder.setSelectedNode(
 									metadataType,
 									metadataItem,
 									nodePath
 								)
+							}
 						}
 					})
 

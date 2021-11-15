@@ -1,6 +1,6 @@
 import { definition, component, util, hooks } from "@uesio/ui"
 
-export const ComponentVariantDefValueAPI = (
+export const ComponentVariantValueAPI = (
 	metadataType: string,
 	metadataItem: string,
 	uesio: hooks.Uesio,
@@ -8,9 +8,7 @@ export const ComponentVariantDefValueAPI = (
 	definition: definition.DefinitionMap
 ) => ({
 	get: (path: string) => {
-		console.log("GET 1", { definition, path })
 		const test = util.get(definition, path)
-		console.log("GET", test)
 		return test
 	},
 	set: (path: string, value: string | number | null) => {
@@ -66,4 +64,4 @@ export const ComponentVariantDefValueAPI = (
 	},
 })
 
-export default ComponentVariantDefValueAPI
+export default ComponentVariantValueAPI

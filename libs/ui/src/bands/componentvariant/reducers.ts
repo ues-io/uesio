@@ -9,7 +9,7 @@ import {
 	addNodeAtPath,
 } from "../../yamlutils/yamlutils"
 import get from "lodash/get"
-import { ComponentVariantDef } from "./types"
+import { ComponentVariant } from "./types"
 
 import {
 	AddDefinitionPayload,
@@ -37,7 +37,7 @@ const getNewNode = (yaml: YamlDoc, definition: Definition) => {
 	return yaml.createNode(definition)
 }
 
-const setDef = (state: ComponentVariantDef, payload: SetDefinitionPayload) => {
+const setDef = (state: ComponentVariant, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
 
@@ -52,7 +52,7 @@ const setDef = (state: ComponentVariantDef, payload: SetDefinitionPayload) => {
 }
 
 //TO-DO
-const addDef = (state: ComponentVariantDef, payload: AddDefinitionPayload) => {
+const addDef = (state: ComponentVariant, payload: AddDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
 	//const currentArray = get(state.definition, path)
@@ -75,7 +75,7 @@ const addDef = (state: ComponentVariantDef, payload: AddDefinitionPayload) => {
 }
 
 const removeDef = (
-	state: ComponentVariantDef,
+	state: ComponentVariant,
 	payload: RemoveDefinitionPayload
 ) => {
 	const pathArray = toPath(payload.path)
@@ -105,10 +105,7 @@ const removeDef = (
 	}
 }
 
-const moveDef = (
-	state: ComponentVariantDef,
-	payload: MoveDefinitionPayload
-) => {
+const moveDef = (state: ComponentVariant, payload: MoveDefinitionPayload) => {
 	// const isArrayMove = isNumberIndex(getKeyAtPath(payload.toPath))
 	// if (!isArrayMove) {
 	// 	const fromPathStr = payload.fromPath

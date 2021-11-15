@@ -2,7 +2,7 @@ import { useSelector } from "react-redux"
 import { getFullPathParts } from "../../component/path"
 import { RootState } from "../../store/store"
 import { selectors as viewSelectors } from "../viewdef/adapter"
-import { selectors as componentVariantSelectors } from "../componentvariantdef/adapter"
+import { selectors as componentVariantSelectors } from "../componentvariant/adapter"
 import { MetadataType } from "./types"
 import { yaml } from "../../utilexports"
 
@@ -48,6 +48,7 @@ const useSelectedNode = () =>
 const useSelectedType = () =>
 	useSelector(({ builder }: RootState) => {
 		const [metadataType] = getFullPathParts(builder?.selectedNode || "")
+		console.log({ selectedNode: builder?.selectedNode })
 		return metadataType
 	})
 

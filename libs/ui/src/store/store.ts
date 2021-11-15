@@ -14,7 +14,6 @@ import viewdef from "../bands/viewdef"
 import theme from "../bands/theme"
 import component from "../bands/component"
 import componentvariant from "../bands/componentvariant"
-import componentvariantdef from "../bands/componentvariantdef"
 import wire from "../bands/wire"
 import view from "../bands/view"
 import site from "../bands/site"
@@ -57,7 +56,6 @@ const create = (plat: Platform, initialState: InitialState) => {
 			collection,
 			component,
 			componentvariant,
-			componentvariantdef,
 			route,
 			user,
 			builder,

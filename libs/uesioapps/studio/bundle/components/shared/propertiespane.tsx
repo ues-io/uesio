@@ -14,8 +14,6 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { propsDef, path, context, valueAPI, className } = props
 
-	console.log("BEST", { propsDef })
-
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
 		: "No Element Selected"

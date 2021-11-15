@@ -36,7 +36,7 @@ import {
 	getViewDefinition,
 	useBuilderHasChanges,
 } from "../bands/viewdef/selectors"
-import { getComponentVariantDef } from "../bands/componentvariantdef/selectors"
+import { getComponentVariant } from "../bands/componentvariant/selectors"
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import { getFullPathParts, makeFullPath } from "../component/path"
@@ -68,7 +68,13 @@ class BuilderAPI {
 			return ["viewdef", this.uesio.getViewDefId() || "", ""]
 		return [metadataType, metadataItem, localPath]
 	}
-	useSelectedType = () => useSelectedType() || "viewdef"
+	useSelectedType = () => {
+		const test = useSelectedType()
+
+		console.log("useSelectedType", test)
+
+		return test
+	}
 
 	useSelectedItem = () => useSelectedItem() || this.uesio.getViewDefId() || ""
 
@@ -234,7 +240,7 @@ class BuilderAPI {
 			}
 
 			if (metadataType === "componentvariant" && metadataItem) {
-				return getComponentVariantDef(state, metadataItem, localPath)
+				return getComponentVariant(state, metadataItem, localPath)
 			}
 		})
 	}

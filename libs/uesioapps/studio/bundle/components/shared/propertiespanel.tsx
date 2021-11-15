@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 import { definition, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 import { ViewDefValueAPI } from "./buildervalueapi/viewdef"
-import { ComponentVariantDefValueAPI } from "./buildervalueapi/componentvariantdef"
+import { ComponentVariantValueAPI } from "./buildervalueapi/componentvariant"
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -27,7 +27,7 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const valueAPI =
 		metadataType === "componentvariant"
-			? ComponentVariantDefValueAPI(
+			? ComponentVariantValueAPI(
 					metadataType,
 					metadataItem,
 					uesio,

@@ -66,7 +66,7 @@ const MoveActions: FunctionComponent<ActionProps> = ({
 	context,
 	propsDef,
 }) => {
-	if (!path) return null
+	if (!path || propsDef?.type === "componentvariant") return null //TO-DO better way of doing this
 
 	const trimmedPath =
 		propsDef.type === "component"

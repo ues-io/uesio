@@ -103,20 +103,19 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												context={context}
 											>
 												{variants.map((variant) => {
-													const variantFullName = `${variant.namespace}.${variant.name}`
-													const variantFullPath = `${fullName}.${variantFullName}`
+													const variantFullName = `${variant.name}`
 													const variantSharedProps = {
 														title: variantFullName,
 														onClick: () => {
 															uesio.builder.setSelectedNode(
 																"componentvariant",
-																variantFullPath,
+																variantFullName,
 																""
 															)
 														},
 														context,
 														draggable:
-															variantFullPath,
+															variantFullName,
 													}
 													return (
 														<PropNodeTag

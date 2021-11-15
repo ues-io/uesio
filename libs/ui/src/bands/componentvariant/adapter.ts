@@ -2,20 +2,19 @@ import { createEntityAdapter } from "@reduxjs/toolkit"
 import { RootState } from "../../store/store"
 import { ComponentVariant } from "./types"
 
-export const componentVariantAdapter = createEntityAdapter<ComponentVariant>({
-	selectId: ({ component, namespace, name }) =>
-		`${component}.${namespace}.${name}`,
+const componenetVariantAdapter = createEntityAdapter<ComponentVariant>({
+	selectId: (componentvariant) => `${componentvariant.name}`,
 })
 
 export const { selectById, selectEntities } =
-	componentVariantAdapter.getSelectors(
+	componenetVariantAdapter.getSelectors(
 		(state: RootState) => state.componentvariant
 	)
 
-const selectors = componentVariantAdapter.getSelectors(
+const selectors = componenetVariantAdapter.getSelectors(
 	(state: RootState) => state.componentvariant
 )
 
 export { selectors }
 
-export default componentVariantAdapter
+export default componenetVariantAdapter

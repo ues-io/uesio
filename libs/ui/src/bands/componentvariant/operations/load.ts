@@ -9,7 +9,7 @@ export default createAsyncThunk<
 		context: Context
 	},
 	UesioThunkAPI
->("componentvariantdef/load", async ({ context }, api) => {
+>("componentvariant/load", async ({ context }, api) => {
 	const viewDefId = context.getViewDefId() //TO-DO
 	if (!viewDefId) throw new Error("No View Definition in Context")
 	const [namespace, name] = parseKey(viewDefId)
