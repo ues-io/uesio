@@ -36,7 +36,10 @@ import {
 	getViewDefinition,
 	useBuilderHasChanges,
 } from "../bands/viewdef/selectors"
-import { getComponentVariant } from "../bands/componentvariant/selectors"
+import {
+	getComponentVariant,
+	useBuilderHasChangesCV,
+} from "../bands/componentvariant/selectors"
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
 import { getFullPathParts, makeFullPath } from "../component/path"
@@ -79,6 +82,8 @@ class BuilderAPI {
 		getFullPathParts(useDropNode())
 
 	useHasChanges = useBuilderHasChanges
+
+	useHasChangesCV = useBuilderHasChangesCV
 
 	useSelectedYAML = useSelectedYAML
 

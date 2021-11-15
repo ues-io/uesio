@@ -4,18 +4,23 @@ import { Definition } from "../../definition/definition"
 import { RootState } from "../../store/store"
 import { selectors, selectEntities } from "./adapter"
 
-const useBuilderHasChanges = () =>
-	useSelector(({ viewdef }: RootState) => {
-		const entities = viewdef?.entities
+const useBuilderHasChangesCV = () =>
+	useSelector(({ componentvariant }: RootState) => {
+		const entities = componentvariant?.entities
 		// Loop over view defs
 		if (entities) {
 			for (const defKey of Object.keys(entities)) {
-				const viewDef = entities[defKey]
-				if (viewDef && viewDef.yaml !== viewDef.originalYaml) {
+				const componentvariant = entities[defKey]
+				if (
+					componentvariant &&
+					componentvariant.yaml !== componentvariant.originalYaml
+				) {
+					console.log("THIS returns true")
 					return true
 				}
 			}
 		}
+		console.log("THIS returns false")
 		return false
 	})
 
@@ -32,4 +37,4 @@ const getComponentVariant = (
 	return path ? get(definition, path || "") : definition
 }
 
-export { useBuilderHasChanges, getComponentVariant, useAllVariants }
+export { useBuilderHasChangesCV, getComponentVariant, useAllVariants }

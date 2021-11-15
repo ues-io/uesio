@@ -7,7 +7,7 @@ const handleDrop = (
 	uesio: hooks.Uesio
 ): void => {
 	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
-
+	console.log({ dragNode, propDef })
 	uesio.builder.clearDragNode()
 	uesio.builder.clearDropNode()
 
@@ -42,6 +42,8 @@ const handleDrop = (
 			break
 		}
 		case "componentvariant": {
+			console.log({ dragNode, metadataType, metadataItem })
+
 			const [, , variantNamespace, variantName] =
 				component.path.parseVariantKey(metadataItem)
 			uesio.builder.addDefinition(

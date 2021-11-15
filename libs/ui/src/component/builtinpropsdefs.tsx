@@ -6,11 +6,14 @@ const getComponentVariantPropsDef = (
 ): BuildPropertiesDefinition => {
 	const variantProps = addStylesSection({
 		title: compPropsDef.title,
+		name: compPropsDef.name,
+		namespace: compPropsDef.namespace,
 		defaultDefinition: compPropsDef.defaultDefinition,
 		properties: compPropsDef.properties,
 		sections: [],
 		type: "componentvariant",
 		classes: compPropsDef.classes,
+		traits: compPropsDef.traits,
 	})
 
 	return variantProps
