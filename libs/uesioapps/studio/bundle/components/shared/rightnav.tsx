@@ -9,6 +9,11 @@ const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const hasChanges = uesio.builder.useHasChanges()
 
+	const [hasChanges, setHasChanges] = useState(false)
+	useEffect(() => {
+		setHasChanges(depA || depB)
+	}, [depA, depB])
+
 	return (
 		<ScrollPanel
 			context={context}
