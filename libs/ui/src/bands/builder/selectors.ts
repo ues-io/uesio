@@ -48,7 +48,6 @@ const useSelectedNode = () =>
 const useSelectedType = () =>
 	useSelector(({ builder }: RootState) => {
 		const [metadataType] = getFullPathParts(builder?.selectedNode || "")
-		console.log({ selectedNode: builder?.selectedNode })
 		return metadataType
 	})
 

@@ -175,10 +175,6 @@ const getPropertiesDefinitionFromPath = (
 	}
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		console.log("Abel", `${namespace}.${name}`)
-		//const propDef =
-		//propDef.type = "componentvariant"
-		//return getPropertiesDefinition(`${namespace}.${name}`)
 		return getComponentVariantPropsDef(
 			getPropertiesDefinition(`${namespace}.${name}`)
 		)

@@ -68,13 +68,7 @@ class BuilderAPI {
 			return ["viewdef", this.uesio.getViewDefId() || "", ""]
 		return [metadataType, metadataItem, localPath]
 	}
-	useSelectedType = () => {
-		const test = useSelectedType()
-
-		console.log("useSelectedType", test)
-
-		return test
-	}
+	useSelectedType = () => useSelectedType()
 
 	useSelectedItem = () => useSelectedItem() || this.uesio.getViewDefId() || ""
 

@@ -27,7 +27,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 	const slideRef = useRef<HTMLDivElement>(null)
 	const [setDragging, codePanelWidth] = usePanels(slideRef.current)
 	const uesio = hooks.useUesio(props)
-
+	const metadataType = uesio.builder.useSelectedType()
 	const [showCode] = uesio.component.useState<boolean>("codepanel")
 
 	const { context } = props
@@ -134,6 +134,7 @@ const Buildtime: FC<definition.BaseProps> = (props) => {
 						/>
 					</div>
 					<CodePanel
+						key={metadataType}
 						className={styles.css({
 							position: "relative",
 							boxShadow: "0 0 19px -6px rgb(0 0 0 / 20%)",

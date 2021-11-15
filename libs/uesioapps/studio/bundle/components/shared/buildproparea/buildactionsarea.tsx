@@ -53,7 +53,9 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 	const contextWithView = context.addFrame({
 		view: viewDefId + "()",
 	})
-	const readOnly = !!propsDef.readOnly
+	const readOnly =
+		!!propsDef.readOnly || propsDef?.type === "componentvariant" //TO-DO better way of doing this
+
 	return (
 		<div className={classes.wrapper}>
 			{!readOnly && <DeleteAction {...actionProps} />}
