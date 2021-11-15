@@ -145,6 +145,7 @@ const Table: FC<TableProps> = (props) => {
 								if (!columnDef) return null
 								return (
 									<TableColumn
+										key={null}
 										index={index}
 										definition={columnDef}
 										classes={classes}
@@ -235,8 +236,8 @@ const Table: FC<TableProps> = (props) => {
 																			"io.field"
 																		]
 																			?.fieldId,
-																	hideLabel:
-																		true,
+																	labelPosition:
+																		"none",
 																	"uesio.variant":
 																		"io.table",
 																}}
