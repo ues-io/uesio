@@ -29,9 +29,10 @@ type ValidationMetadata struct {
 
 // SubField struct
 type SubField struct {
-	Name  string `json:"name" yaml:"name,omitempty" uesio:"studio.name"`
-	Label string `json:"label" yaml:"label,omitempty" uesio:"studio.label"`
-	Type  string `json:"type" yaml:"type,omitempty" uesio:"studio.type"`
+	Name       string `yaml:"name,omitempty" uesio:"studio.name"`
+	Label      string `yaml:"label,omitempty" uesio:"studio.label"`
+	Type       string `yaml:"type,omitempty" uesio:"studio.type"`
+	SelectList string `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
 }
 
 // NumberMetadata struct

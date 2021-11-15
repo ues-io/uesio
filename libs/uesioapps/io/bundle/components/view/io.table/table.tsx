@@ -1,4 +1,4 @@
-import { hooks, styles, component, context } from "@uesio/ui"
+import { hooks, styles, component } from "@uesio/ui"
 import { FunctionComponent } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
@@ -83,7 +83,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 						componentType="io.field"
 						definition={{
 							fieldId: column.field,
-							hideLabel: true,
+							labelPosition: "none",
 							"uesio.variant": "io.table",
 						}}
 						index={index}
@@ -98,13 +98,14 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					columnGap={0}
 					context={recordContext}
 				>
-					{definition.rowactions.map((action) => {
+					{definition.rowactions.map((action, i) => {
 						const [handler, portals] = uesio.signal.useHandler(
 							action.signals,
 							recordContext
 						)
 						return (
 							<Button
+								key={action.text + i}
 								variant="io.nav"
 								className="rowaction"
 								label={action.text}

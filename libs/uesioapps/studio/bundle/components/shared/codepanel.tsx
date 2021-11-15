@@ -1,6 +1,5 @@
 import { FunctionComponent, useRef, useEffect } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
-import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -49,7 +48,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			currentAST.current &&
 			lastModifiedNode &&
 			lastModifiedType === metadataType &&
-			lastModifiedItem === metadataItem
+			lastModifiedItem === metadataItem &&
+			currentAST.current.contents
 		) {
 			const node = util.yaml.getNodeAtPath(
 				lastModifiedLocalPath,
@@ -103,7 +103,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					actions={
 						<IconButton
 							context={context}
-							variant="io.small"
+							variant="studio.buildtitle"
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{

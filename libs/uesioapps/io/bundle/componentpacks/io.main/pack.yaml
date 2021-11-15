@@ -21,6 +21,7 @@ components:
         - io.selectfield.io.default
         - io.autocomplete.io.default
         - io.fieldlabel.io.default
+        - io.fieldwrapper.io.default
         - io.tile.io.default
         - io.numberfield.io.default
     io.filter:
@@ -29,7 +30,6 @@ components:
     io.grid:
     io.griditem:
     io.group:
-    io.iconbutton:
     io.image:
     io.list:
     io.searchbox:
@@ -60,6 +60,7 @@ components:
     io.dialogplain:
     io.expandpanel:
     io.fieldlabel:
+    io.fieldwrapper:
     io.filetext:
     io.fileupload:
     io.filedynamic:
@@ -75,6 +76,7 @@ components:
     io.scrollpanel:
     io.selectfield:
     io.table:
+    io.tabs:
     io.text:
     io.textfield:
     io.tile:

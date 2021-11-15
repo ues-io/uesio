@@ -106,4 +106,17 @@ definition:
                                             fieldId: uesio.federation_type
                                         - io.field:
                                             fieldId: uesio.profile
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                uesio.variant: io.section
+                                title: Feature Flags
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.configfeatureflags:
+                                      user: ${uesio.id}
   panels:

@@ -17,7 +17,7 @@ import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import {
-	getVariantStylesDef,
+	getDefinitionFromVariant,
 	mergeDefinitionMaps,
 	renderUtility,
 } from "./component"
@@ -26,6 +26,7 @@ import {
 	getFieldPropsDef,
 	getWirePropsDef,
 } from "./builtinpropsdefs"
+import { Context } from "../context/context"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -98,6 +99,17 @@ const getVariantInfo = (
 	}
 	const [keyNamespace] = parseKey(key)
 	return [key, `${keyNamespace}.default`]
+}
+
+function getVariantStylesDef(
+	componentType: string,
+	variantName: string,
+	context: Context
+) {
+	const variant = context.getComponentVariant(componentType, variantName)
+	if (!variant) return {}
+	const variantDefinition = getDefinitionFromVariant(variant, context)
+	return variantDefinition?.["uesio.styles"] as DefinitionMap
 }
 
 const getVariantStyleInfo = (props: UtilityProps, key: string) => {

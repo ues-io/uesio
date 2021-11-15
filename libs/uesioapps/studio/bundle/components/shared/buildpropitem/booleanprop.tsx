@@ -3,6 +3,7 @@ import { builder, component } from "@uesio/ui"
 
 const SelectField = component.registry.getUtility("io.selectfield")
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
@@ -28,26 +29,28 @@ const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 			]
 
 			return (
-				<SelectField
-					value={selected}
-					label={descriptor.label}
-					setValue={(value: string) =>
-						valueAPI.set(path, value === "true")
-					}
-					options={optionslist}
-					context={context}
-				/>
+				<FieldWrapper label={descriptor.label} context={context}>
+					<SelectField
+						value={selected}
+						setValue={(value: string) =>
+							valueAPI.set(path, value === "true")
+						}
+						options={optionslist}
+						context={context}
+					/>
+				</FieldWrapper>
 			)
 		}
 		default:
 			//Checkbox as default
 			return (
-				<CheckBoxField
-					value={selected}
-					label={descriptor.label}
-					setValue={(value: boolean) => valueAPI.set(path, value)}
-					context={context}
-				/>
+				<FieldWrapper label={descriptor.label} context={context}>
+					<CheckBoxField
+						value={selected}
+						setValue={(value: boolean) => valueAPI.set(path, value)}
+						context={context}
+					/>
+				</FieldWrapper>
 			)
 	}
 }

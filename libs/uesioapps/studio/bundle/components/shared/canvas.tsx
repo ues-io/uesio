@@ -14,7 +14,8 @@ const getIndex = (
 	}
 	const dataIndex = prevTarget.getAttribute("data-index")
 	const dataPlaceholder = prevTarget.getAttribute("data-placeholder")
-	const dataDirection = prevTarget.getAttribute("data-direction")
+	const dataDirection = target?.getAttribute("data-direction")
+
 	if (!dataIndex) return 0
 	const index = parseInt(dataIndex, 10)
 	if (dataPlaceholder === "true") {
@@ -98,12 +99,27 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const viewDefId = props.context.getViewDefId()
 	const viewDef = props.context.getViewDef()
-	const componentCount = viewDef?.definition?.components?.length
-
 	const route = props.context.getRoute()
-	if (!route || !viewDefId) {
-		return null
+
+	if (!route || !viewDefId) return null
+
+	const viewComponent = (
+		<component.View
+			context={props.context}
+			path=""
+			definition={{
+				view: route.view,
+				params: route.params,
+			}}
+		/>
+	)
+
+	if (!viewDef) {
+		// Shortcut to get the view loaded
+		return viewComponent
 	}
+
+	const componentCount = viewDef?.definition?.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -182,54 +198,43 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	}
 
 	return (
-		<>
+		<div
+			onDragLeave={onDragLeave}
+			onDragOver={onDragOver}
+			onDrop={onDrop}
+			className={classes.root}
+		>
 			<div
-				onDragLeave={onDragLeave}
-				onDragOver={onDragOver}
-				onDrop={onDrop}
-				className={classes.root}
+				className={classes.inner}
+				data-accepts="uesio.standalone"
+				data-path={'["components"]'}
+				data-insertindex={componentCount}
 			>
-				<div
-					className={classes.inner}
-					data-accepts="uesio.standalone"
-					data-path={'["components"]'}
-					data-insertindex={componentCount}
-				>
-					<component.View
-						context={props.context}
-						path=""
-						definition={{
-							view: route.view,
-							params: route.params,
-						}}
-					/>
-
-					{/* No content yet */}
-					{!componentCount && (
-						<div className={classes.noContent}>
-							<div className="inner">
-								<Icon
-									className="icon"
-									icon={"flip_to_back"}
-									context={props.context}
-								/>
-								<h3 className="text">
-									Drag and drop any component here to get
-									started
-								</h3>
-								<div className="quote">
-									<h4>
-										What's better than a blank slate in the
-										right hands?
-									</h4>
-									<p>&mdash; Frank Underwood &mdash;</p>
-								</div>
+				{viewComponent}
+				{/* No content yet */}
+				{!componentCount && (
+					<div className={classes.noContent}>
+						<div className="inner">
+							<Icon
+								className="icon"
+								icon={"flip_to_back"}
+								context={props.context}
+							/>
+							<h3 className="text">
+								Drag and drop any component here to get started
+							</h3>
+							<div className="quote">
+								<h4>
+									What's better than a blank slate in the
+									right hands?
+								</h4>
+								<p>&mdash; Frank Underwood &mdash;</p>
 							</div>
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
-		</>
+		</div>
 	)
 }
 Canvas.displayName = "Canvas"

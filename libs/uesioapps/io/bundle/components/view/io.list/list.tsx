@@ -20,11 +20,11 @@ const List: FunctionComponent<ListProps> = (props) => {
 
 	if (!wire || !mode) return null
 
-	const data = wire.getData()
 	return (
 		<>
-			{data.map((record) => (
+			{wire.getData().map((record, i) => (
 				<component.Slot
+					key={record.getId() || i}
 					definition={definition}
 					listName="components"
 					path={path}

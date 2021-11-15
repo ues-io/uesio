@@ -80,7 +80,10 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 							/>
 						)}
 						{columns?.map((columnDef) => (
-							<th className={classes.headerCell}>
+							<th
+								key={columnDef.label}
+								className={classes.headerCell}
+							>
 								{columnDef.label}
 							</th>
 						))}
@@ -99,6 +102,7 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 								classes.row,
 								isDeleted && classes.rowDeleted
 							)}
+							key={rowNumberStart + index + 1}
 						>
 							{showRowNumbers && (
 								<td
@@ -113,8 +117,13 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 									</div>
 								</td>
 							)}
-							{cells?.map((columnNode) => (
-								<td className={classes.cell}>{columnNode}</td>
+							{cells?.map((columnNode, i) => (
+								<td
+									key={`${cells.length + i}`}
+									className={classes.cell}
+								>
+									{columnNode}
+								</td>
 							))}
 							{rowactions && (
 								<td key="rowactions" className={classes.cell}>

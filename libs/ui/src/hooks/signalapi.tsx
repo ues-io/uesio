@@ -3,6 +3,8 @@ import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 
+import { PanelDefinitionMap } from "../definition/panel"
+
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
@@ -15,9 +17,8 @@ import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
-import { unWrapDefinition } from "../component/path"
-import { DefinitionMap } from "../definition/definition"
 import Panel from "../components/panel"
+import component from "../bands/component"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -59,23 +60,18 @@ class SignalAPI {
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
-					const panels = viewDef?.definition?.panels
-					if (!panels) return []
-					let componentType = ""
-					let panelDef: DefinitionMap = {}
-					for (const wrappedPanelDef of panels) {
-						const [cType, def] = unWrapDefinition(wrappedPanelDef)
-						if (def.id === panelId) {
-							componentType = cType
-							panelDef = def
-							break
-						}
-					}
+					const panels: PanelDefinitionMap | undefined =
+						viewDef?.definition?.panels
+					if (!panels) return null
+
+					const panelDef = Object.values(panels[panelId][0])[0] // For now, we only support one panel in a panelId
+					const componentType = Object.keys(panels[panelId][0])[0] // For now, we only support one panel in a panelId
+
 					if (componentType && panelDef) {
 						return [
-							<Panel context={context}>
+							<Panel key={panelId} context={context}>
 								<ComponentInternal
-									definition={panelDef}
+									definition={{ ...panelDef, id: panelId }}
 									path={path}
 									context={context}
 									componentType={componentType}

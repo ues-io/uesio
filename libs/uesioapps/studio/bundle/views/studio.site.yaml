@@ -114,36 +114,36 @@ definition:
                             - studio.configsecrets:
                                 valueType: secrets
   panels:
-    - io.dialog:
-        id: editSite
-        title: Edit a Site
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: editsiteslist
-              wire: sites
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - io.field:
-                    fieldId: studio.bundle
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - sites
-                - signal: "panel/TOGGLE"
-                  panel: "editSite"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "editSite"
-                - signal: wire/CANCEL
-                  wire: sites
+    editSite:
+      - io.dialog:
+          title: Edit a Site
+          width: 400px
+          height: 500px
+          components:
+            - io.list:
+                id: editsiteslist
+                wire: sites
+                mode: EDIT
+                components:
+                  - io.field:
+                      fieldId: studio.name
+                  - io.field:
+                      fieldId: studio.bundle
+          actions:
+            - io.button:
+                uesio.variant: "io.primary"
+                text: "Save"
+                signals:
+                  - signal: wire/SAVE
+                    wires:
+                      - sites
+                  - signal: "panel/TOGGLE"
+                    panel: "editSite"
+            - io.button:
+                uesio.variant: "io.secondary"
+                text: "Cancel"
+                signals:
+                  - signal: "panel/TOGGLE"
+                    panel: "editSite"
+                  - signal: wire/CANCEL
+                    wire: sites

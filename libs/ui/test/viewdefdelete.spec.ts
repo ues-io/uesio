@@ -22,7 +22,7 @@ test("viewdef delete component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -40,7 +40,7 @@ test("viewdef delete component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		}
 	)
@@ -63,7 +63,7 @@ test("viewdef delete wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -80,7 +80,7 @@ test("viewdef delete wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		}
 	)

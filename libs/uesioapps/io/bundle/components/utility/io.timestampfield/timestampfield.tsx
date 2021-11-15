@@ -2,12 +2,10 @@ import { FunctionComponent } from "react"
 import { definition, context, collection, component } from "@uesio/ui"
 
 interface TimestampFieldProps extends definition.UtilityProps {
-	label?: string
 	setValue: (value: string) => void
 	value: number
 	width?: string
 	fieldMetadata: collection.Field
-	hideLabel?: boolean
 	mode?: context.FieldMode
 }
 

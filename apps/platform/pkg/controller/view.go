@@ -27,6 +27,7 @@ type ViewDependencies struct {
 	ComponentPacks    map[string]bool                   `yaml:"componentpacks,omitempty"`
 	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
 	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
+	FeatureFlags      map[string]*FeatureFlagResponse   `yaml:"featureflags,omitempty"`
 }
 
 // ViewPreview is also good
@@ -136,6 +137,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
+		FeatureFlags:      map[string]*FeatureFlagResponse{},
 	}
 
 	for _, packs := range packsByNamespace {
@@ -153,6 +155,12 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	for i := range variants {
 		variant := variants[i]
 		deps.ComponentVariants[variant.GetKey()] = &variant
+	}
+
+	ffr, _ := getFeatureFlags(session, "")
+	for i := range ffr {
+		featureFlag := ffr[i]
+		deps.FeatureFlags[featureFlag.Name] = &featureFlag
 	}
 
 	return &deps, nil
@@ -236,6 +244,25 @@ func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]me
 	return nil
 }
 
+func addVariantDep(deps *ViewDependencies, key string, session *sess.Session) error {
+	variantDep, err := loadVariant(key, session)
+	if err != nil {
+		return err
+	}
+	if variantDep.Extends != "" {
+		_, _, component, err := getVariantParts(key)
+		if err != nil {
+			return errors.New("Invalid variant key: " + key)
+		}
+		err = addVariantDep(deps, component+"."+variantDep.Extends, session)
+		if err != nil {
+			return err
+		}
+	}
+	deps.ComponentVariants[key] = variantDep
+	return nil
+}
+
 func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
 	workspace := session.GetWorkspaceID()
 	if workspace != "" {
@@ -252,16 +279,16 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
+		FeatureFlags:      map[string]*FeatureFlagResponse{},
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
 
 	for key := range variantsUsed {
-		variantDep, err := loadVariant(key, session)
+		err := addVariantDep(&deps, key, session)
 		if err != nil {
 			return nil, err
 		}
-		deps.ComponentVariants[key] = variantDep
 	}
 
 	for key := range componentsUsed {
@@ -269,6 +296,12 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	ffr, _ := getFeatureFlags(session, session.GetUserInfo().ID)
+	for i := range ffr {
+		featureFlag := ffr[i]
+		deps.FeatureFlags[featureFlag.Name] = &featureFlag
 	}
 
 	return &deps, nil

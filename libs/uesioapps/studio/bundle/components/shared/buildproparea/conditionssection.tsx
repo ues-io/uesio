@@ -71,6 +71,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| undefined
 
 	const primaryColor = theme.definition.palette.primary
+
 	return (
 		<ExpandPanel
 			defaultExpanded={false}
@@ -95,6 +96,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 				(condition: wire.WireConditionDefinition, index) => {
 					const conditionPath = `${path}["conditions"]["${index}"]`
 					const selected = selectedNode.startsWith(conditionPath)
+
 					return (
 						<PropNodeTag
 							title={getConditionTitle(condition)}

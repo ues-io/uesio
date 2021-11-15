@@ -75,6 +75,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 
 					return (
 						<span
+							key={pageNum}
 							className={styles.cx(
 								classes.pagebutton,
 								isCurrent && classes.currentpage
