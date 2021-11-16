@@ -18,7 +18,6 @@ export const ComponentVariantValueAPI = (
 			metadataItem,
 			path
 		)
-		console.log("SET", { fullpath, value })
 		uesio.builder.setDefinition(fullpath, value)
 	},
 	clone: (path: string) =>

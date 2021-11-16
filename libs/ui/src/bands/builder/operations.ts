@@ -52,33 +52,58 @@ const save = createAsyncThunk<
 	},
 	UesioThunkAPI
 >("builder/save", async ({ context }, api) => {
-	const changes: Record<string, PlainWireRecord> = {}
-	const state = api.getState().viewdef?.entities
+	const viewChanges: Record<string, PlainWireRecord> = {}
+	const viewDefState = api.getState().viewdef?.entities
 	const workspace = context.getWorkspace()
 
 	if (!workspace) throw new Error("No Workspace in context")
 
 	// Loop over view defs
-	if (state) {
-		for (const defKey of Object.keys(state)) {
-			const defState = state[defKey]
+	if (viewDefState) {
+		for (const defKey of Object.keys(viewDefState)) {
+			const defState = viewDefState[defKey]
 			if (defState?.yaml === defState?.originalYaml) {
 				continue
 			}
 			if (defState?.yaml) {
-				changes[defKey] = {
+				viewChanges[defKey] = {
 					"studio.definition": defState.yaml.toString(),
 					"uesio.id": `${workspace.app}_${workspace.name}_${defState.name}`,
 				}
 			}
 		}
 	}
+
+	const componentVariantState = api.getState().componentvariant?.entities
+	const componentVariantChanges: Record<string, PlainWireRecord> = {}
+	// Loop over componentvariants
+	if (componentVariantState) {
+		for (const defKey of Object.keys(componentVariantState)) {
+			const defState = componentVariantState[defKey]
+			if (defState?.yaml === defState?.originalYaml) {
+				continue
+			}
+			if (defState?.yaml) {
+				componentVariantChanges[defKey] = {
+					"studio.definition": defState.yaml.toString(),
+					"uesio.id": defKey, //`${workspace.app}_${workspace.name}_${defState.name}`,
+				}
+			}
+		}
+	}
+
 	return api.extra.saveData(new Context(), {
 		wires: [
 			{
 				wire: "saveview",
 				collection: "studio.views",
-				changes,
+				changes: viewChanges,
+				deletes: {},
+			},
+			{
+				wire: "savecomponentvariant",
+				collection: "studio.componentvariants",
+				changes: componentVariantChanges,
 				deletes: {},
 			},
 		],

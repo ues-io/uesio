@@ -15,12 +15,10 @@ const useBuilderHasChangesCV = () =>
 					componentvariant &&
 					componentvariant.yaml !== componentvariant.originalYaml
 				) {
-					console.log("THIS returns true")
 					return true
 				}
 			}
 		}
-		console.log("THIS returns false")
 		return false
 	})
 

@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useEffect, useState } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 
 const IconButton = component.registry.getUtility("io.iconbutton")
@@ -7,12 +7,15 @@ const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const RightNav: FunctionComponent<definition.UtilityProps> = (props) => {
 	const { context, className } = props
 	const uesio = hooks.useUesio(props)
-	const hasChanges = uesio.builder.useHasChanges()
+
+	const viewHasChanges = uesio.builder.useHasChanges()
+	const componenetVariantHasChanges = uesio.builder.useHasChangesCV()
 
 	const [hasChanges, setHasChanges] = useState(false)
+
 	useEffect(() => {
-		setHasChanges(depA || depB)
-	}, [depA, depB])
+		setHasChanges(viewHasChanges || componenetVariantHasChanges)
+	}, [viewHasChanges, componenetVariantHasChanges])
 
 	return (
 		<ScrollPanel

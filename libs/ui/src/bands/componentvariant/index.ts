@@ -66,6 +66,9 @@ const updateYaml = (state: ComponentVariant, payload: YamlUpdatePayload) => {
 	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
 
 	// We actually don't want components using useYaml to rerender
+
+	console.log({ path, state, yamlDoc })
+
 	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
 }
 
@@ -249,18 +252,9 @@ const ComponentVariantSlice = createSlice({
 			(state, { payload }: PayloadAction<SetDefinitionPayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
-				console.log({
-					metadataType,
-					metadataItem,
-					localPath,
-				})
-
-				console.log("DEF", payload.definition)
 
 				if (metadataType === "componentvariant") {
 					const entityState = state.entities[metadataItem]
-
-					console.log("entityState", entityState)
 
 					entityState &&
 						setDef(entityState, {
@@ -377,6 +371,12 @@ const ComponentVariantSlice = createSlice({
 			(state, { payload }: PayloadAction<YamlUpdatePayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
+
+				console.log("SET YAML CV", {
+					metadataType,
+					metadataItem,
+					localPath,
+				})
 				if (metadataType === "componentvariant") {
 					const entityState = state.entities[metadataItem]
 					entityState &&
