@@ -226,11 +226,11 @@ class BuilderAPI {
 		)
 	}
 
-	useDefinition = (path: string) => {
+	useDefinition = <T extends Definition>(path: string): T | undefined => {
 		const [metadataType, metadataItem, localPath] = getFullPathParts(path)
-		return useSelector((state: RootState) => {
+		return useSelector<any, T | undefined>((state: RootState) => {
 			if (metadataType === "viewdef" && metadataItem) {
-				return getViewDefinition(state, metadataItem, localPath)
+				return getViewDefinition(state, metadataItem, localPath) as T
 			}
 		})
 	}
