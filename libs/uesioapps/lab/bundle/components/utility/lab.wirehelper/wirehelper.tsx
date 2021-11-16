@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, useEffect } from "react"
 import {
 	definition,
 	hooks,
@@ -6,15 +6,11 @@ import {
 	context as ctx,
 	styles,
 	wire,
+	collection,
 } from "@uesio/ui"
 
 const Button = component.registry.getUtility("io.button")
 const Icon = component.registry.getUtility("io.icon")
-
-const CollectionPicker: FC<definition.BaseProps> = (props) => {
-	const fp = "s"
-	return <p>pick a collection</p>
-}
 
 interface T extends definition.BaseProps {
 	wire?: wire.Wire
@@ -30,7 +26,7 @@ const wireHelper: FC<T> = (props) => {
 		component.path.makeFullPath(metadataType, metadataItem, path)
 	) as ParentDef
 	const wireId = `${parentDef && parentDef.wire ? parentDef.wire : ""}`
-	const wire = uesio.wire.useWire(wireId)
+
 	const defWiresPath = component.path.makeFullPath(
 		metadataType,
 		metadataItem,
@@ -39,11 +35,14 @@ const wireHelper: FC<T> = (props) => {
 	const wiresInDef =
 		uesio.builder.useDefinition<wire.WireDefinitionMap>(defWiresPath)
 
-	React.useEffect(() => {
-		console.log({ wire, wiresInDef })
-	}, [wire])
+	const selectWire = (wireName: string) =>
+		uesio.builder.setSelectedNode(
+			metadataType,
+			metadataItem,
+			`["wires"]["${wireName}"]`
+		)
 
-	const updateWire = (w: string) => {
+	const refreshWire = (w: string) => {
 		uesio.builder.setDefinition(
 			component.path.makeFullPath(
 				metadataType,
@@ -78,17 +77,12 @@ const wireHelper: FC<T> = (props) => {
 			uesio.builder.addDefinitionPair(
 				defWiresPath,
 				{
-					type: "",
 					fields: null,
 				},
 				wireName,
 				"wire"
 			)
-			uesio.builder.setSelectedNode(
-				metadataType,
-				metadataItem,
-				`["wires"]["${wireName}"]`
-			)
+			selectWire(wireName)
 
 			uesio.setContext(new ctx.Context([{ view: "$root" }]))
 
@@ -107,20 +101,34 @@ const wireHelper: FC<T> = (props) => {
 			wireName,
 			"wire"
 		)
-		updateWire(wireName)
+		refreshWire(wireName)
 	}
 
 	const wireHelpMessage = (() => {
+		const copy = {
+			wire: "Tables need to be connected to a wire, select one.",
+			fields: "Add fields",
+			collection: "Choose a collection",
+			fallback: "Refresh the wire",
+		}
+		const collectionState = (str: string) => {
+			if (!str) return "missing"
+			if (str.endsWith(".")) return "incomplete"
+			return "correct"
+		}
 		if (!parentDef.wire)
 			return "Tables need to be connected to a wire, select one."
-		if (
-			parentDef.wire &&
-			wiresInDef &&
-			wiresInDef[parentDef.wire] &&
-			!wiresInDef[parentDef.wire]?.collection
+		const wireDef = wiresInDef && wiresInDef[parentDef.wire]
+		const collection = collectionState(
+			(wiresInDef && wireDef && wireDef?.collection) || ""
 		)
-			return <CollectionPicker context={context} />
-		return "Something went wrong"
+		if (collection === "missing" || collection === "incomplete")
+			return copy.collection
+
+		if (!wireDef?.fields || !Object.keys(wireDef.fields).length)
+			return copy.fields
+
+		return copy.fallback
 	})()
 
 	const classes = styles.useStyles(
@@ -140,7 +148,7 @@ const wireHelper: FC<T> = (props) => {
 					display: "inline-block",
 					border: "2px dashed #74a5f0",
 					borderRadius: "0.25em",
-					padding: "0 2em 2em 2em",
+					padding: "2em 2em 2em 2em",
 				},
 			},
 		},
@@ -152,9 +160,14 @@ const wireHelper: FC<T> = (props) => {
 	return (
 		<div className={classes.wireHelp}>
 			<div className="box">
-				<p>
-					<Icon icon="power" context={props.context} />
-				</p>
+				<div>
+					<Icon icon="power" context={props.context} />{" "}
+					{wireId && (
+						<span role="button" onClick={() => selectWire(wireId)}>
+							{wireId}
+						</span>
+					)}
+				</div>
 				<p>{wireHelpMessage}</p>
 				{!parentDef.wire && (
 					<div className={classes.wireButtonGroup}>

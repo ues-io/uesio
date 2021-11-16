@@ -10,7 +10,7 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 	const { context, path = "", definition } = props
 	const uesio = hooks.useUesio(props)
 
-	const [wire, setWire] = React.useState<undefined | wire.Wire>(undefined)
+	const wire = uesio.wire.useWire(definition.wire)
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const classes = styles.useStyles(
@@ -22,11 +22,11 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 			context,
 		}
 	)
-
+	console.log({ wire, def: definition.wire })
 	return (
 		<BuildWrapper {...props} classes={classes}>
 			{!wire ? (
-				<WireHelper {...props} key={definition.wire} />
+				<WireHelper {...props} wire={wire} />
 			) : (
 				<Table {...props} isDragging={!!dragType && !!dragItem} />
 			)}
