@@ -14,6 +14,8 @@ const HelloPropertyDefinition: builder.BuildPropertiesDefinition = {
 		greeting: "Yo!",
 		pink: false,
 	}),
+	description: "Just a button",
+	link: "https://docs.ues.io/",
 	title: "Hello Sample",
 	sections: [],
 	properties: [
@@ -28,7 +30,8 @@ const HelloPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Pink?",
 		},
 	],
-
+	classes: ["root"],
+	type: "component",
 	traits: ["uesio.standalone"],
 }
 export { HelloProps, HelloDefinition }

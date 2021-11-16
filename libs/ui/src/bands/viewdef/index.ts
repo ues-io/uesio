@@ -342,11 +342,6 @@ const viewDefSlice = createSlice({
 			(state, { payload }: PayloadAction<YamlUpdatePayload>) => {
 				const [metadataType, metadataItem, localPath] =
 					getFullPathParts(payload.path)
-				console.log("SET YAML VIEW", {
-					metadataType,
-					metadataItem,
-					localPath,
-				})
 				if (metadataType === "viewdef") {
 					const entityState = state.entities[metadataItem]
 					entityState &&

@@ -1,0 +1,19 @@
+name: primary
+component: io.button
+label: Primary
+extends: io.default
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: "$Theme{color.primary}"
+      color: red
+      fontWeight: 500
+      border: "1px solid rgb(200,74, 37)"
+      boxShadow: "0 0 4px #00000033"
+      minWidth: 100px
+      borderRadius: 4px
+      padding: 10px
+      "&:focus":
+        boxShadow: "0 0 6px #00000093"
+    label:
+      textTransform: uppercase
