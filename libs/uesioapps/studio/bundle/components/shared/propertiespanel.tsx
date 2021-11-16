@@ -1,6 +1,50 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks, util } from "@uesio/ui"
+import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
+
+const augmentPropsDef = (
+	propsDef: builder.BuildPropertiesDefinition | undefined,
+	definition: definition.DefinitionMap,
+	path: string
+): builder.BuildPropertiesDefinition => {
+	if (!propsDef) {
+		return {
+			title: "Nothing Selected",
+			defaultDefinition: () => ({}),
+			sections: [],
+		}
+	}
+	if (propsDef.type === "component") {
+		return {
+			...propsDef,
+			sections: propsDef.sections.concat([
+				{
+					title: "Styles",
+					type: "STYLES",
+				},
+				{
+					title: "Display",
+					type: "CONDITIONALDISPLAY",
+				},
+			]),
+		}
+	}
+	if (propsDef.type === "panel") {
+		const panelDef = util.get(definition, path) as definition.DefinitionMap
+		const componentType = panelDef["uesio.type"] as string | undefined
+		if (!componentType) return propsDef
+		const componentPropsDef =
+			component.registry.getPropertiesDefinition(componentType)
+		if (!componentPropsDef.properties) return propsDef
+		return {
+			...propsDef,
+			properties: propsDef?.properties?.concat(
+				componentPropsDef.properties
+			),
+		}
+	}
+	return propsDef
+}
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
@@ -15,13 +59,17 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const trimmedPath =
 		(selectedPath && component.path.trimPathToComponent(selectedPath)) || ""
 
-	const propsDef = component.registry.getPropertiesDefinitionFromPath(
-		component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
-	)
-
 	const definition = uesio.builder.useDefinition(
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
+
+	const propsDef = augmentPropsDef(
+		component.registry.getPropertiesDefinitionFromPath(
+			component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
+		),
+		definition,
+		trimmedPath
+	)
 
 	return (
 		<PropertiesPane

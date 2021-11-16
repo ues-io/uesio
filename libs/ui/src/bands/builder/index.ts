@@ -84,7 +84,7 @@ const builderSlice = createSlice({
 			state,
 			{ payload }: PayloadAction<AddDefinitionPairPayload>
 		) => {
-			if (payload.type === "wire") {
+			if (payload.type === "wire" || payload.type === "panel") {
 				state.selectedNode = `${payload.path}["${payload.key}"]`
 			}
 		},

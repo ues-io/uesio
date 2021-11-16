@@ -18,7 +18,6 @@ import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
 import Panel from "../components/panel"
-import component from "../bands/component"
 
 const registry: Record<string, SignalDescriptor> = {
 	...botSignals,
@@ -64,8 +63,8 @@ class SignalAPI {
 						viewDef?.definition?.panels
 					if (!panels) return null
 
-					const panelDef = Object.values(panels[panelId][0])[0] // For now, we only support one panel in a panelId
-					const componentType = Object.keys(panels[panelId][0])[0] // For now, we only support one panel in a panelId
+					const panelDef = panels[panelId]
+					const componentType = panelDef["uesio.type"]
 
 					if (componentType && panelDef) {
 						return [

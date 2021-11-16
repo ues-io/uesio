@@ -25,6 +25,7 @@ import {
 	getComponentTypePropsDef,
 	getFieldPropsDef,
 	getWirePropsDef,
+	getPanelPropsDef,
 } from "./builtinpropsdefs"
 import { Context } from "../context/context"
 
@@ -204,6 +205,9 @@ const getPropertiesDefinitionFromPath = (
 		if (pathArray[0] === "wires") {
 			return getWirePropsDef()
 		}
+		if (pathArray[0] === "panels" && pathArray.length === 2) {
+			return getPanelPropsDef()
+		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
 			return getPropertiesDefinition(componentFullName)
@@ -212,19 +216,20 @@ const getPropertiesDefinitionFromPath = (
 
 	return undefined
 }
-
-const getBuilderComponents = () =>
+const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
-		if (!acc[namespace]) {
-			acc[namespace] = {}
-		}
 		const definition = getPropertiesDefinition(`${namespace}.${name}`)
-		if (definition?.traits?.includes("uesio.standalone")) {
+		if (definition?.traits?.includes(trait)) {
+			if (!acc[namespace]) {
+				acc[namespace] = {}
+			}
 			acc[namespace][name] = definition
 		}
 		return acc
 	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
+
+const getBuilderComponents = () => getComponents("uesio.standalone")
 
 export {
 	register,
@@ -233,6 +238,7 @@ export {
 	registerSignals,
 	getUtility,
 	getLoader,
+	getComponents,
 	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,

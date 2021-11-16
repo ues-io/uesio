@@ -1,8 +1,10 @@
 import { FunctionComponent } from "react"
-import { definition, component, styles, hooks } from "@uesio/ui"
+import { definition, component, hooks } from "@uesio/ui"
 import WiresPanel from "./wirespanel"
+import PanelsPanel from "./panelspanel"
 import ComponentsPanel from "./componentspanel"
 import WiresActions from "./wiresactions"
+import PanelsActions from "./panelsactions"
 
 const Tabs = component.registry.getUtility("io.tabs")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
@@ -40,6 +42,9 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					{selectedTab === "wires" && (
 						<WiresActions context={context} />
 					)}
+					{selectedTab === "panels" && (
+						<PanelsActions context={context} />
+					)}
 				</>
 			}
 			context={context}
@@ -49,6 +54,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			{selectedTab === "components" && (
 				<ComponentsPanel context={context} />
 			)}
+			{selectedTab === "panels" && <PanelsPanel context={context} />}
 		</ScrollPanel>
 	)
 }

@@ -10,7 +10,10 @@ const trimPath = (pathArray: string[]): string[] => {
 		return pathArray
 	}
 	if (pathArray[0] === "wires") {
-		return trimPathToWire(pathArray)
+		return pathArray.slice(0, 2)
+	}
+	if (pathArray[0] === "panels" && pathArray.length === 2) {
+		return pathArray
 	}
 	const nextItem = pathArray[size - 1]
 	if (nextItem && nextItem.includes && nextItem.includes(".")) {
@@ -19,10 +22,6 @@ const trimPath = (pathArray: string[]): string[] => {
 	pathArray.pop()
 	return trimPath(pathArray)
 }
-
-// Converts any path starting with ["wires"] into just the first two
-// elements of the path.
-const trimPathToWire = (pathArray: string[]) => pathArray.slice(0, 2)
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {

@@ -162,28 +162,28 @@ definition:
 
   panels:
     newApp:
-      - io.dialog:
-          title: Create a New App
-          width: 400px
-          height: 500px
-          components:
-            - uesio.view:
-                view: studio.appedit
-                uesio.context:
-                  wire: newapp
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - "newapp"
-                  - signal: "route/NAVIGATE"
-                    path: "app/${studio.name}"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newApp"
+      uesio.type: io.dialog
+      title: Create a New App
+      width: 400px
+      height: 500px
+      components:
+        - uesio.view:
+            view: studio.appedit
+            uesio.context:
+              wire: newapp
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newapp"
+              - signal: "route/NAVIGATE"
+                path: "app/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newApp"
