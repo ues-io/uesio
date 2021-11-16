@@ -1,8 +1,9 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 
 type DialogDefinition = {
-	text?: string
-	signals?: signal.SignalDefinition[]
+	title?: string
+	width?: string
+	height?: string
 }
 
 interface DialogProps extends definition.BaseProps {
