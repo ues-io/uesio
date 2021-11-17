@@ -1,6 +1,6 @@
 name: actionbutton
 component: io.button
-label: Navigation
+label: Action Button
 definition:
   uesio.styles:
     root:

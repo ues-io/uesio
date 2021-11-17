@@ -244,6 +244,25 @@ func getDepsForComponent(key string, deps *ViewDependencies, packs map[string]me
 	return nil
 }
 
+func addVariantDep(deps *ViewDependencies, key string, session *sess.Session) error {
+	variantDep, err := loadVariant(key, session)
+	if err != nil {
+		return err
+	}
+	if variantDep.Extends != "" {
+		_, _, component, err := getVariantParts(key)
+		if err != nil {
+			return errors.New("Invalid variant key: " + key)
+		}
+		err = addVariantDep(deps, component+"."+variantDep.Extends, session)
+		if err != nil {
+			return err
+		}
+	}
+	deps.ComponentVariants[key] = variantDep
+	return nil
+}
+
 func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependencies, error) {
 	workspace := session.GetWorkspaceID()
 	if workspace != "" {
@@ -266,11 +285,10 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	packs := map[string]meta.ComponentPackCollection{}
 
 	for key := range variantsUsed {
-		variantDep, err := loadVariant(key, session)
+		err := addVariantDep(&deps, key, session)
 		if err != nil {
 			return nil, err
 		}
-		deps.ComponentVariants[key] = variantDep
 	}
 
 	for key := range componentsUsed {

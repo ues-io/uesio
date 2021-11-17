@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, component, hooks } from "@uesio/ui"
+import { definition, component, hooks, panel } from "@uesio/ui"
 import PropNodeTag from "../shared/buildpropitem/propnodetag"
 
 const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
@@ -15,19 +15,14 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		metadataItem,
 		localPath
 	)
-	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
-	// Temp solution, get first panel under panelId
-	// We might want to add some helper functions for traversing down
-	const panelArray = Object.values(def || {})[0] as any[]
-	const panelComponent = Object.keys(panelArray[0])[0]
-
+	const def = uesio.builder.useDefinition(path) as panel.PanelDefinition
 	return (
 		<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
-			{Object.keys(def || {}).map((key: string, index) => {
-				const panelPath = `${localPath}["${key}"]["0"]["${panelComponent}"]` // Temp hardcoded index
+			{Object.keys(def || {}).map((panelId: string) => {
+				const panelPath = `${localPath}["${panelId}"]`
 				return (
 					<PropNodeTag
-						title={key}
+						title={panelId}
 						onClick={() =>
 							uesio.builder.setSelectedNode(
 								metadataType,

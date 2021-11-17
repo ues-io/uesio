@@ -17,7 +17,7 @@ import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import {
-	getVariantStylesDef,
+	getDefinitionFromVariant,
 	mergeDefinitionMaps,
 	renderUtility,
 } from "./component"
@@ -25,7 +25,9 @@ import {
 	getComponentTypePropsDef,
 	getFieldPropsDef,
 	getWirePropsDef,
+	getPanelPropsDef,
 } from "./builtinpropsdefs"
+import { Context } from "../context/context"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
@@ -100,6 +102,17 @@ const getVariantInfo = (
 	return [key, `${keyNamespace}.default`]
 }
 
+function getVariantStylesDef(
+	componentType: string,
+	variantName: string,
+	context: Context
+) {
+	const variant = context.getComponentVariant(componentType, variantName)
+	if (!variant) return {}
+	const variantDefinition = getDefinitionFromVariant(variant, context)
+	return variantDefinition?.["uesio.styles"] as DefinitionMap
+}
+
 const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	const { variant, context, styles } = props
 	const [componentType, variantName] = getVariantInfo(variant, key)
@@ -172,7 +185,9 @@ const getPropertiesDefinitionFromPath = (
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		return getPropertiesDefinition(`${namespace}.${name}`)
+		const propDef = getPropertiesDefinition(`${namespace}.${name}`)
+		propDef.type = "componentvariant"
+		return propDef
 	}
 	if (metadataType === "componenttype") {
 		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
@@ -192,6 +207,9 @@ const getPropertiesDefinitionFromPath = (
 		if (pathArray[0] === "wires") {
 			return getWirePropsDef()
 		}
+		if (pathArray[0] === "panels" && pathArray.length === 2) {
+			return getPanelPropsDef()
+		}
 		const componentFullName = getPathSuffix(pathArray)
 		if (componentFullName) {
 			return getPropertiesDefinition(componentFullName)
@@ -203,11 +221,11 @@ const getPropertiesDefinitionFromPath = (
 const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
-		if (!acc[namespace]) {
-			acc[namespace] = {}
-		}
 		const definition = getPropertiesDefinition(`${namespace}.${name}`)
 		if (definition?.traits?.includes(trait)) {
+			if (!acc[namespace]) {
+				acc[namespace] = {}
+			}
 			acc[namespace][name] = definition
 		}
 		return acc

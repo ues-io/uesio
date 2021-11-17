@@ -9,14 +9,11 @@ const trimPath = (pathArray: string[]): string[] => {
 	if (size === 0) {
 		return pathArray
 	}
-	// Converts any path starting with ["wires"] into just the first two
-	// elements of the path.
-
-	if (
-		pathArray[0] === "wires" ||
-		(pathArray[0] === "panels" && pathArray.length === 2)
-	) {
+	if (pathArray[0] === "wires") {
 		return pathArray.slice(0, 2)
+	}
+	if (pathArray[0] === "panels" && pathArray.length === 2) {
+		return pathArray
 	}
 	const nextItem = pathArray[size - 1]
 	if (nextItem && nextItem.includes && nextItem.includes(".")) {
@@ -25,10 +22,6 @@ const trimPath = (pathArray: string[]): string[] => {
 	pathArray.pop()
 	return trimPath(pathArray)
 }
-
-// Converts any path starting with ["wires"] into just the first two
-// elements of the path.
-const trimPathToWire = (pathArray: string[]) => pathArray.slice(0, 2)
 
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
@@ -69,9 +62,6 @@ const trimPathToComponent = (path: string | string[]) => {
 	const trimmedPath = trimPath(pathArray)
 	return fromPath(trimmedPath)
 }
-
-const pathArray = (path: string | string[]): string[] =>
-	Array.isArray(path) ? path : toPath(path)
 
 // Unwraps a definition from its key
 const getDefinitionKey = (definition: DefinitionMap) =>
@@ -223,7 +213,6 @@ const getIndexFromPath = (path: string) => {
 
 export {
 	//calculateNewPathAheadOfTime,
-	pathArray,
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,

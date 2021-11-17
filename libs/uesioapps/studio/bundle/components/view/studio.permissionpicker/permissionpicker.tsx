@@ -59,11 +59,12 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			{data.map((record) => {
+			{data.map((record, i) => {
 				const itemName =
 					appName + "." + record.getFieldValue(nameNameField)
 				return (
 					<TitleBar
+						key={`${itemName}.${i}`}
 						context={context}
 						title={itemName}
 						actions={

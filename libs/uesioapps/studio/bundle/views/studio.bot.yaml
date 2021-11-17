@@ -142,72 +142,72 @@ definition:
                                 displayAs: TEXT
   panels:
     deleteBot:
-      - io.dialog:
-          title: Delete Bot
-          width: 400px
-          height: 300px
-          components:
-            - io.text:
-                text: Are you sure you want to delete this bot?
-          actions:
-            - io.button:
-                text: Delete
-                uesio.variant: io.primary
-                signals:
-                  - signal: wire/MARK_FOR_DELETE
-                  - signal: wire/SAVE
-                    wires:
-                      - "bots"
-                  - signal: "route/NAVIGATE"
-                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
-            - io.button:
-                text: Cancel
-                uesio.variant: io.secondary
-                signals:
-                  - signal: panel/TOGGLE
-                    panel: deleteBot
+      uesio.type: io.dialog
+      title: Delete Bot
+      width: 400px
+      height: 300px
+      components:
+        - io.text:
+            text: Are you sure you want to delete this bot?
+      actions:
+        - io.button:
+            text: Delete
+            uesio.variant: io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "bots"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots"
+        - io.button:
+            text: Cancel
+            uesio.variant: io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteBot
     editBot:
-      - io.dialog:
-          title: Edit Bot
-          width: 400px
-          height: 560px
-          components:
-            - io.list:
-                id: editBotList
+      uesio.type: io.dialog
+      title: Edit Bot
+      width: 400px
+      height: 560px
+      components:
+        - io.list:
+            id: editBotList
+            wire: bots
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - io.field:
+                  fieldId: studio.type
+              - io.field:
+                  fieldId: studio.dialect
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "LISTENER"
+                      type: "fieldNotEquals"
+                  components:
+                    - studio.metadatafield:
+                        fieldId: studio.collection
+                        metadataType: "COLLECTION"
+                        label: "Collection"
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - bots
+              - signal: "panel/TOGGLE"
+                panel: "editBot"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: wire/CANCEL
                 wire: bots
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.name
-                  - io.field:
-                      fieldId: studio.type
-                  - io.field:
-                      fieldId: studio.dialect
-                  - io.box:
-                      uesio.display:
-                        - field: studio.type
-                          value: "LISTENER"
-                          type: "fieldNotEquals"
-                      components:
-                        - studio.metadatafield:
-                            fieldId: studio.collection
-                            metadataType: "COLLECTION"
-                            label: "Collection"
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - bots
-                  - signal: "panel/TOGGLE"
-                    panel: "editBot"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: wire/CANCEL
-                    wire: bots
-                  - signal: "panel/TOGGLE"
-                    panel: "editBot"
+              - signal: "panel/TOGGLE"
+                panel: "editBot"

@@ -24,21 +24,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 		"uesio.runtime"
 	)
 
-	const sections =
-		(propsDef?.type === "component"
-			? propsDef.sections.concat([
-					{
-						title: "Styles",
-						type: "STYLES",
-					},
-					{
-						title: "Display",
-						type: "CONDITIONALDISPLAY",
-					},
-			  ])
-			: propsDef?.sections) || []
-
-	const selectedSection = sections?.find(
+	const selectedSection = propsDef.sections?.find(
 		(section) => section.title === selectedTab
 	)
 
@@ -47,12 +33,13 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			header={
 				<>
 					<TitleBar
-						title={propsDef?.title || "Properties"}
+						title={propsDef.title || "Properties"}
 						variant="io.primary"
 						subtitle={subtitle}
 						actions={
 							props.path && (
 								<IconButton
+									variant="studio.buildtitle"
 									context={context}
 									icon="close"
 									onClick={() =>
@@ -63,13 +50,13 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						}
 						context={context}
 					/>
-					{propsDef?.sections && (
+					{propsDef.sections && (
 						<Tabs
 							variant="studio.mainsection"
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={[{ id: "", label: "", icon: "home" }].concat(
-								sections.map((section) => ({
+								propsDef.sections.map((section) => ({
 									id: section.title,
 									label: section.title,
 									icon: "",

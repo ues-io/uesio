@@ -12,6 +12,7 @@ interface MetadataPickerProps extends definition.UtilityProps {
 
 const Grid = component.registry.getUtility("io.grid")
 const SelectField = component.registry.getUtility("io.selectfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -59,38 +60,44 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 			}}
 		>
 			{!defaultNamespace && (
+				<FieldWrapper label={label} context={context}>
+					<SelectField
+						context={context}
+						value={namespace}
+						options={addBlankSelectOption(
+							Object.keys(namespaces || {}).map((key) => ({
+								value: key,
+								label: key,
+							}))
+						)}
+						setValue={(value: string) => {
+							setValue(value ? `${value}.` : "")
+						}}
+					/>
+				</FieldWrapper>
+			)}
+
+			<FieldWrapper
+				label={defaultNamespace ? label : label && nbsp}
+				context={context}
+			>
 				<SelectField
 					context={context}
-					label={label}
-					value={namespace}
+					value={name}
 					options={addBlankSelectOption(
-						Object.keys(namespaces || {}).map((key) => ({
-							value: key,
-							label: key,
-						}))
+						Object.keys(metadata || {}).map((key) => {
+							const name = getMetadataName(key)
+							return {
+								value: name,
+								label: name,
+							}
+						})
 					)}
 					setValue={(value: string) => {
-						setValue(value ? `${value}.` : "")
+						setValue(`${namespace}.${value}`)
 					}}
 				/>
-			)}
-			<SelectField
-				context={context}
-				label={defaultNamespace ? label : label && nbsp}
-				value={name}
-				options={addBlankSelectOption(
-					Object.keys(metadata || {}).map((key) => {
-						const name = getMetadataName(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})
-				)}
-				setValue={(value: string) => {
-					setValue(`${namespace}.${value}`)
-				}}
-			/>
+			</FieldWrapper>
 		</Grid>
 	)
 }

@@ -106,12 +106,27 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const viewDefId = props.context.getViewDefId()
 	const viewDef = props.context.getViewDef()
-	const componentCount = viewDef?.definition?.components?.length
-
 	const route = props.context.getRoute()
-	if (!route || !viewDefId) {
-		return null
+
+	if (!route || !viewDefId) return null
+
+	const viewComponent = (
+		<component.View
+			context={props.context}
+			path=""
+			definition={{
+				view: route.view,
+				params: route.params,
+			}}
+		/>
+	)
+
+	if (!viewDef) {
+		// Shortcut to get the view loaded
+		return viewComponent
 	}
+
+	const componentCount = viewDef?.definition?.components?.length
 
 	// Handle the situation where a draggable leaves the canvas.
 	// If the cursor is outside of the canvas's bounds, then clear
@@ -206,15 +221,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				data-path={'["components"]'}
 				data-insertindex={componentCount}
 			>
-				<component.View
-					context={props.context}
-					path=""
-					definition={{
-						view: route.view,
-						params: route.params,
-					}}
-				/>
-
+				{viewComponent}
 				{/* No content yet */}
 				{!componentCount && (
 					<div className={classes.noContent}>

@@ -45,6 +45,7 @@ const Tabs: FunctionComponent<TabsUtilityProps> = (props) => {
 					onClick={() => {
 						setSelectedTab(tab.id)
 					}}
+					key={tab.id}
 					classes={{
 						root: classes.tab,
 						selected: classes.tabSelected,

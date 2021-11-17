@@ -6,6 +6,7 @@ const TextField = component.registry.getUtility("io.textfield")
 const Popper = component.registry.getUtility("io.popper")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
@@ -60,12 +61,14 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 
 	return (
 		<div ref={setAnchorEl} className={classes.root}>
-			<TextField
-				value={valueAPI.get(path)}
-				label={descriptor.label}
-				setValue={(value: string) => valueAPI.set(path, value)}
-				context={context}
-			/>
+			<FieldWrapper label={descriptor.label} context={context}>
+				<TextField
+					value={valueAPI.get(path)}
+					label={descriptor.label}
+					setValue={(value: string) => valueAPI.set(path, value)}
+					context={context}
+				/>
+			</FieldWrapper>
 			<div className={classes.buttons}>
 				<IconButton icon={valueAPI.get(path)} context={context} />
 			</div>
@@ -97,7 +100,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 							props.path && (
 								<IconButton
 									context={context}
-									variant="io.small"
+									variant="studio.buildtitle"
 									icon="close"
 									onClick={
 										() => uesio.builder.clearSelectedNode() //TO-DO keep the button (parent path selected)
@@ -117,6 +120,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 					<div className={classes.icons}>
 						{results.map((iconName) => (
 							<IconButton
+								key={iconName}
 								icon={iconName}
 								context={context}
 								onClick={(): void =>

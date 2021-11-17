@@ -170,11 +170,12 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 				</div>
 			</div>
 			<div className={classes.grid}>
-				{collectionFields.map((fieldName) => {
+				{collectionFields.map((fieldName, i) => {
 					const field = collection.getField(fieldName)
 					if (!field) return null
 					return (
 						<ImportBodyItem
+							key={`${fieldName}.${i}`}
 							context={context}
 							csvOptions={csvOptions}
 							mapping={spec.mappings[fieldName]}

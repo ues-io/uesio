@@ -76,7 +76,7 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 											fullName,
 											""
 										),
-									key: fullName,
+
 									tooltip: propDef.description,
 									context,
 									selected: isSelected,
@@ -88,7 +88,10 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 								// Loop over the variants for this component
 								return (
-									<PropNodeTag {...sharedProps}>
+									<PropNodeTag
+										key={fullName}
+										{...sharedProps}
+									>
 										{variants && (
 											<Grid
 												styles={{
@@ -103,13 +106,33 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												context={context}
 											>
 												{variants.map((variant) => {
-													const variantFullName = `${variant.namespace}.${variant.name}`
+													const variantName = `${variant.namespace}.${variant.name}`
+													const variantFullName = `${variant.component}.${variantName}`
+													const isVariantSelected =
+														selectedType ===
+															"componentvariant" &&
+														selectedItem ===
+															variantFullName
 													return (
 														<PropNodeTag
-															title={
+															title={variantName}
+															key={variantName}
+															onClick={(
+																e: MouseEvent
+															) => {
+																e.stopPropagation()
+																uesio.builder.setSelectedNode(
+																	"componentvariant",
+																	variantFullName,
+																	""
+																)
+															}}
+															selected={
+																isVariantSelected
+															}
+															draggable={
 																variantFullName
 															}
-															draggable={`${fullName}.${variantFullName}`}
 															context={context}
 														/>
 													)

@@ -50,7 +50,10 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						user.firstname.toLowerCase() + "@thecloudmasters.com",
 				})
 				return (
-					<LoginWrapper align={definition.align}>
+					<LoginWrapper
+						key={user.lastname + user.firstname}
+						align={definition.align}
+					>
 						<Button
 							context={context}
 							onClick={(): void => {

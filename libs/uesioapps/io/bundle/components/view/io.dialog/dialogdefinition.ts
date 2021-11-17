@@ -1,8 +1,9 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 
 type DialogDefinition = {
-	text?: string
-	signals?: signal.SignalDefinition[]
+	title?: string
+	width?: string
+	height?: string
 }
 
 interface DialogProps extends definition.BaseProps {
@@ -12,19 +13,9 @@ interface DialogProps extends definition.BaseProps {
 const DialogPropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Dialog",
 	defaultDefinition: () => ({
-		text: "New Dialog",
+		title: "New Dialog",
 	}),
 	properties: [
-		{
-			name: "text",
-			type: "TEXT",
-			label: "Text",
-		},
-		{
-			name: "id",
-			type: "TEXT",
-			label: "ID",
-		},
 		{
 			name: "title",
 			type: "TEXT",
@@ -41,19 +32,8 @@ const DialogPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "Height",
 		},
 	],
-	sections: [
-		{
-			title: "Signals",
-			type: "SIGNALS",
-		},
-	],
-	actions: [
-		{
-			label: "Run Signals",
-			type: "RUN_SIGNALS",
-			slot: "signals",
-		},
-	],
+	sections: [],
+	actions: [],
 	traits: ["uesio.panel"],
 	classes: ["root"],
 	type: "component",

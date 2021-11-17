@@ -116,7 +116,7 @@ definition:
                                       items:
                                         - io.field:
                                             fieldId: studio.member
-                                            hideLabel: true
+                                            labelPosition: "none"
                                         - io.button:
                                             signals:
                                               - signal: wire/MARK_FOR_DELETE
@@ -128,34 +128,34 @@ definition:
 
   panels:
     newMember:
-      - io.dialog:
-          title: Create a New Team Member
-          width: 400px
-          height: 500px
-          components:
-            - io.list:
-                id: newteamlist
-                wire: newteammember
-                mode: EDIT
-                components:
-                  - io.field:
-                      fieldId: studio.member
-          actions:
-            - io.button:
-                uesio.variant: "io.primary"
-                text: "Save"
-                signals:
-                  - signal: wire/SAVE
-                    wires:
-                      - "newteammember"
-                  - signal: wire/LOAD
-                    wires:
-                      - "teammembers"
-                  - signal: "panel/TOGGLE"
-                    panel: "newMember"
-            - io.button:
-                uesio.variant: "io.secondary"
-                text: "Cancel"
-                signals:
-                  - signal: "panel/TOGGLE"
-                    panel: "newMember"
+      uesio.type: io.dialog
+      title: Create a New Team Member
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newteamlist
+            wire: newteammember
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.member
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newteammember"
+              - signal: wire/LOAD
+                wires:
+                  - "teammembers"
+              - signal: "panel/TOGGLE"
+                panel: "newMember"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newMember"

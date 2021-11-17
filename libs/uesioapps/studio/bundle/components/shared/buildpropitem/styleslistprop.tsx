@@ -23,6 +23,7 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 				const data = styleData?.[className] as definition.DefinitionMap
 				return (
 					<ListField
+						key={className}
 						label={className}
 						value={
 							data
