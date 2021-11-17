@@ -63,12 +63,12 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route     *RouteMergeData      `json:"route"`
-	User      *UserMergeData       `json:"user"`
-	Site      *SiteMergeData       `json:"site"`
-	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component *ComponentsMergeData `json:"component,omitempty"`
-	ReactBundle			string	   `json:"-"`
+	Route       *RouteMergeData      `json:"route"`
+	User        *UserMergeData       `json:"user"`
+	Site        *SiteMergeData       `json:"site"`
+	Workspace   *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component   *ComponentsMergeData `json:"component,omitempty"`
+	ReactBundle string               `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -138,7 +138,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 	workspace := session.GetWorkspace()
 
 	ReactSrc := "production.min"
-	val,_ := os.LookupEnv("UESIO_DEV")
+	val, _ := os.LookupEnv("UESIO_DEV")
 	if val == "true" {
 		ReactSrc = "development"
 	}
@@ -160,7 +160,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		Component: GetComponentMergeData(buildMode),
+		Component:   GetComponentMergeData(buildMode),
 		ReactBundle: ReactSrc,
 	}
 
