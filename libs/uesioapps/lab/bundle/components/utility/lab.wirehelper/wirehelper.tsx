@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react"
+import React, { FC } from "react"
 import {
 	definition,
 	hooks,
@@ -6,17 +6,16 @@ import {
 	context as ctx,
 	styles,
 	wire,
-	collection,
 } from "@uesio/ui"
 
 const Button = component.registry.getUtility("io.button")
 const Icon = component.registry.getUtility("io.icon")
 
-interface T extends definition.BaseProps {
-	wire?: wire.Wire
-}
 interface ParentDef extends definition.DefinitionMap {
 	wire?: string
+}
+interface T extends definition.BaseProps {
+	wire?: wire.Wire
 }
 const wireHelper: FC<T> = (props) => {
 	const { path = "", context } = props
@@ -148,7 +147,7 @@ const wireHelper: FC<T> = (props) => {
 					display: "inline-block",
 					border: "2px dashed #74a5f0",
 					borderRadius: "0.25em",
-					padding: "2em 2em 2em 2em",
+					padding: "2em",
 				},
 			},
 		},
