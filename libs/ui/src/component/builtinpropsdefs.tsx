@@ -28,7 +28,6 @@ const getComponentTypePropsDef = (
 		},
 	],
 	sections: [],
-	readOnly: true,
 })
 
 const getPanelPropsDef = (): BuildPropertiesDefinition => {
@@ -112,9 +111,9 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 	actions: [
 		{
 			type: "LOAD_WIRE",
-			label: "Refresh Wire",
 		},
 	],
+	type: "wire",
 })
 
 const getFieldPropsDef = (

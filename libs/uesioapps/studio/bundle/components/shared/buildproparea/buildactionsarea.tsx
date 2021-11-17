@@ -24,6 +24,8 @@ const ACTION_TO_COMPONENT: {
 	RUN_SIGNALS: RunSignalsAction,
 	TOGGLE_CONDITION: ToggleConditionAction,
 	LOAD_WIRE: LoadWireAction,
+	DELETE: DeleteAction,
+	MOVE: MoveActions,
 }
 
 const BuildActionsArea: FunctionComponent<Props> = (props) => {
@@ -53,12 +55,9 @@ const BuildActionsArea: FunctionComponent<Props> = (props) => {
 	const contextWithView = context.addFrame({
 		view: viewDefId + "()",
 	})
-	const readOnly = !!propsDef.readOnly
+
 	return (
 		<div className={classes.wrapper}>
-			{!readOnly && <DeleteAction {...actionProps} />}
-			{!readOnly && <MoveActions {...actionProps} />}
-			{!readOnly && <CloneAction {...actionProps} />}
 			{actions?.map?.((action, index) => {
 				const ActionHandler = ACTION_TO_COMPONENT[action.type]
 				return (
