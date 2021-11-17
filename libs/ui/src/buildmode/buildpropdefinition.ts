@@ -27,7 +27,6 @@ type BuildPropertiesDefinition = {
 	namespace?: string // auto-populated
 	type?: string
 	classes?: string[]
-	readOnly?: boolean
 }
 
 type PropertySection =
@@ -199,6 +198,8 @@ type ActionDescriptor =
 	| LoadWireAction
 	| ToggleConditionAction
 	| CloneAction
+	| DeleteAction
+	| MoveAction
 
 type AddAction = {
 	label: string
@@ -207,13 +208,19 @@ type AddAction = {
 	slot: string
 }
 
+type DeleteAction = {
+	type: "DELETE"
+}
+
+type MoveAction = {
+	type: "MOVE"
+}
+
 type CloneAction = {
-	label: string
 	type: "CLONE"
 }
 
 type LoadWireAction = {
-	label: string
 	type: "LOAD_WIRE"
 }
 

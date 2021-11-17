@@ -106,16 +106,33 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 												context={context}
 											>
 												{variants.map((variant) => {
-													const variantFullName = `${variant.namespace}.${variant.name}`
+													const variantName = `${variant.namespace}.${variant.name}`
+													const variantFullName = `${variant.component}.${variantName}`
+													const isVariantSelected =
+														selectedType ===
+															"componentvariant" &&
+														selectedItem ===
+															variantFullName
 													return (
 														<PropNodeTag
-															title={
+															title={variantName}
+															key={variantName}
+															onClick={(
+																e: MouseEvent
+															) => {
+																e.stopPropagation()
+																uesio.builder.setSelectedNode(
+																	"componentvariant",
+																	variantFullName,
+																	""
+																)
+															}}
+															selected={
+																isVariantSelected
+															}
+															draggable={
 																variantFullName
 															}
-															key={
-																variantFullName
-															}
-															draggable={`${fullName}.${variantFullName}`}
 															context={context}
 														/>
 													)

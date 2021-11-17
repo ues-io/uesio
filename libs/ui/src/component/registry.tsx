@@ -185,7 +185,9 @@ const getPropertiesDefinitionFromPath = (
 		return getPropertiesDefinition(metadataItem)
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		return getPropertiesDefinition(`${namespace}.${name}`)
+		const propDef = getPropertiesDefinition(`${namespace}.${name}`)
+		propDef.type = "componentvariant"
+		return propDef
 	}
 	if (metadataType === "componenttype") {
 		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
