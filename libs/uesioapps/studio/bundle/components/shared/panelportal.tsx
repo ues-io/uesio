@@ -10,7 +10,6 @@ const PanelPortal: FC<Y> = (props) => {
 		{
 			signal: "panel/OPEN",
 			panel: props.panelId as string,
-			targetElement: "#builderPanelsContainer",
 		},
 	])
 	useEffect(() => {

@@ -42,12 +42,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				),
 				position: "relative",
 			},
-			panelContainer: {
-				position: "absolute",
-				inset: "0",
-				zIndex: 10,
-				pointerEvents: "none",
-			},
+
 			inner: {
 				background: "white",
 				minHeight: "100vh",
@@ -62,6 +57,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				inset: "15px",
 				justifyContent: "center",
 				alignItems: "center",
+				zIndex: 0,
 
 				".icon": {
 					fontFamily: "Material Icons",
@@ -212,16 +208,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			className={classes.root}
 		>
 			<div
-				className={classes.panelContainer}
-				id="builderPanelsContainer"
-			/>
-			<div
 				className={classes.inner}
 				data-accepts="uesio.standalone"
 				data-path={'["components"]'}
 				data-insertindex={componentCount}
 			>
-				{viewComponent}
 				{/* No content yet */}
 				{!componentCount && (
 					<div className={classes.noContent}>
@@ -244,6 +235,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 						</div>
 					</div>
 				)}
+				{viewComponent}
 			</div>
 		</div>
 	)

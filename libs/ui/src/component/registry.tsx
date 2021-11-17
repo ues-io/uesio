@@ -155,6 +155,11 @@ const BuildWrapper = getUtility("studio.buildwrapper")
 
 const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)
+
+	// Don't use the buildwrapper for a panel component
+	if (props.definition && "uesio.type" in props.definition)
+		return <Loader {...props} />
+
 	return Loader ? (
 		<BuildWrapper {...props}>
 			<Loader {...props} />

@@ -1,10 +1,10 @@
 import { useRef, useEffect } from "react"
-import { panelsDomNode } from "../components/runtime"
+import { panelsDomNode } from "../components/view"
 
-function usePortal(targetElement?: Element | null) {
+function usePortal() {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)
 	const domNode = {
-		current: targetElement || panelsDomNode?.current,
+		current: panelsDomNode?.current,
 	}
 
 	if (!domNode.current) console.warn("usePortal error: domNode not found")

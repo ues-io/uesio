@@ -7,7 +7,6 @@ interface T extends BaseProps {
 	targetElement?: Element | null
 }
 
-const Panel: FC<T> = (props) =>
-	createPortal(props.children, usePortal(props.targetElement))
+const Panel: FC<T> = (props) => createPortal(props.children, usePortal())
 
 export default Panel
