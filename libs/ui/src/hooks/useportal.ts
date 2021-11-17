@@ -3,15 +3,13 @@ import { panelsDomNode } from "../components/view"
 
 function usePortal() {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)
-	const domNode = {
-		current: panelsDomNode?.current,
-	}
 
-	if (!domNode.current) console.warn("usePortal error: domNode not found")
+	if (!panelsDomNode || !panelsDomNode.current)
+		console.warn("usePortal error: panelsDomNode not found")
 	useEffect(() => {
 		// Add the detached element to the parent
 		rootElemRef.current &&
-			domNode?.current?.appendChild(rootElemRef.current)
+			panelsDomNode?.current?.appendChild(rootElemRef.current)
 
 		return function removeElement() {
 			rootElemRef.current?.remove()

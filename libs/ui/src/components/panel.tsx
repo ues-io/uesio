@@ -3,10 +3,7 @@ import { BaseProps } from "../definition/definition"
 import { createPortal } from "react-dom"
 import usePortal from "../hooks/useportal"
 
-interface T extends BaseProps {
-	targetElement?: Element | null
-}
-
-const Panel: FC<T> = (props) => createPortal(props.children, usePortal())
+const Panel: FC<BaseProps> = (props) =>
+	createPortal(props.children, usePortal())
 
 export default Panel

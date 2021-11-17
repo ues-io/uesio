@@ -40,7 +40,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					props.context.getTheme(),
 					props.context
 				),
-				position: "relative",
 			},
 
 			inner: {
@@ -57,7 +56,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				inset: "15px",
 				justifyContent: "center",
 				alignItems: "center",
-				zIndex: 0,
 
 				".icon": {
 					fontFamily: "Material Icons",

@@ -64,16 +64,10 @@ class SignalAPI {
 					if (!panels) return null
 					const panelDef = panels[panelId]
 					const componentType = panelDef["uesio.type"]
-					const targetElement = document.querySelector(
-						signal.targetElement as string
-					)
+
 					if (componentType && panelDef) {
 						return [
-							<Panel
-								key={panelId}
-								context={context}
-								targetElement={targetElement}
-							>
+							<Panel key={panelId} context={context}>
 								<ComponentInternal
 									definition={{ ...panelDef, id: panelId }}
 									path={path}
