@@ -68,7 +68,7 @@ type MergeData struct {
 	Site      *SiteMergeData       `json:"site"`
 	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
 	Component *ComponentsMergeData `json:"component,omitempty"`
-	ReactBundle			string
+	ReactBundle			string	   `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -137,10 +137,10 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
-	src := "production.min"
+	ReactSrc := "production.min"
 	val,_ := os.LookupEnv("UESIO_DEV")
 	if val == "true" {
-		src = "development"
+		ReactSrc = "development"
 	}
 
 	mergeData := MergeData{
@@ -161,7 +161,7 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 			Domain:    site.Domain,
 		},
 		Component: GetComponentMergeData(buildMode),
-		ReactBundle: src,
+		ReactBundle: ReactSrc,
 	}
 
 	// Not checking this error for now.
