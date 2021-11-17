@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { FC, useEffect } from "react"
 import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 
@@ -70,7 +70,24 @@ const augmentPropsDef = (
 	return propsDef
 }
 
-const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
+interface Y extends definition.UtilityProps {
+	panelId: string
+}
+const PanelLoader: FC<Y> = (props) => {
+	const uesio = hooks.useUesio(props)
+	const [togglePanel, portals] = uesio.signal.useHandler([
+		{
+			signal: "panel/OPEN",
+			panel: props.panelId as string,
+		},
+	])
+	useEffect(() => {
+		togglePanel && togglePanel()
+	}, [props.panelId])
+	return <>{portals}</>
+}
+
+const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	const [metadataType, metadataItem, selectedPath] =
@@ -86,110 +103,117 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
-	const propsDef = augmentPropsDef(
-		component.registry.getPropertiesDefinitionFromPath(
-			component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
-		),
-		definition,
-		trimmedPath
+	const standardPropsDef = component.registry.getPropertiesDefinitionFromPath(
+		component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
 	)
 
-	console.log(propsDef)
+	const propsDef = augmentPropsDef(standardPropsDef, definition, trimmedPath)
+
+	console.log(propsDef, definition)
 
 	return (
-		<PropertiesPane
-			context={props.context}
-			className={props.className}
-			propsDef={propsDef}
-			path={trimmedPath}
-			valueAPI={{
-				get: (path: string) => util.get(definition, path),
-				set: (path: string, value: string | number | null) => {
-					if (path === undefined) return
-					uesio.builder.setDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						value
-					)
-				},
-				clone: (path: string) =>
-					uesio.builder.cloneDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
+		<>
+			{standardPropsDef?.type === "panel" && (
+				<PanelLoader
+					context={props.context}
+					panelId={component.path.getPathSuffix(selectedPath) || ""}
+				/>
+			)}
+			<PropertiesPane
+				context={props.context}
+				className={props.className}
+				propsDef={propsDef}
+				path={trimmedPath}
+				valueAPI={{
+					get: (path: string) => util.get(definition, path),
+					set: (path: string, value: string | number | null) => {
+						if (path === undefined) return
+						uesio.builder.setDefinition(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							),
+							value
 						)
-					),
-				add: (path: string, value: string, number?: number) => {
-					if (path === undefined) return
-					uesio.builder.addDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
+					},
+					clone: (path: string) =>
+						uesio.builder.cloneDefinition(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							)
 						),
-						value,
-						number
-					)
-				},
-				addPair: (path: string, value: string, key: string) => {
-					if (path === undefined) return
-					uesio.builder.addDefinitionPair(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						value,
-						key
-					)
-				},
-				remove: (path: string) => {
-					if (path === undefined) return
-					uesio.builder.removeDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
+					add: (path: string, value: string, number?: number) => {
+						if (path === undefined) return
+						uesio.builder.addDefinition(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							),
+							value,
+							number
 						)
-					)
-				},
-				changeKey: (path: string, key: string) => {
-					if (path === undefined) return
-					uesio.builder.changeDefinitionKey(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							path
-						),
-						key
-					)
-				},
-				move: (
-					fromPath: string,
-					toPath: string,
-					selectKey?: string
-				) => {
-					if (fromPath === undefined || toPath === undefined) return
-					uesio.builder.moveDefinition(
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							fromPath
-						),
-						component.path.makeFullPath(
-							metadataType,
-							metadataItem,
-							toPath
-						),
-						selectKey
-					)
-				},
-			}}
-		/>
+					},
+					addPair: (path: string, value: string, key: string) => {
+						if (path === undefined) return
+						uesio.builder.addDefinitionPair(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							),
+							value,
+							key
+						)
+					},
+					remove: (path: string) => {
+						if (path === undefined) return
+						uesio.builder.removeDefinition(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							)
+						)
+					},
+					changeKey: (path: string, key: string) => {
+						if (path === undefined) return
+						uesio.builder.changeDefinitionKey(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								path
+							),
+							key
+						)
+					},
+					move: (
+						fromPath: string,
+						toPath: string,
+						selectKey?: string
+					) => {
+						if (fromPath === undefined || toPath === undefined)
+							return
+						uesio.builder.moveDefinition(
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								fromPath
+							),
+							component.path.makeFullPath(
+								metadataType,
+								metadataItem,
+								toPath
+							),
+							selectKey
+						)
+					},
+				}}
+			/>
+		</>
 	)
 }
 
