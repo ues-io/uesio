@@ -31,8 +31,9 @@ const wireHelper: FC<T> = (props) => {
 		metadataItem,
 		"wires"
 	)
-	const wiresInDef =
-		uesio.builder.useDefinition<wire.WireDefinitionMap>(defWiresPath)
+	const wiresInDef = uesio.builder.useDefinition(
+		defWiresPath
+	) as wire.WireDefinitionMap
 
 	const selectWire = (wireName: string) =>
 		uesio.builder.setSelectedNode(
