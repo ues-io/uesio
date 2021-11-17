@@ -1,7 +1,7 @@
 import { FC, useEffect } from "react"
 import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
-
+import PanelPortal from "./panelportal"
 const standardActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
 	{ type: "MOVE" },
@@ -70,23 +70,6 @@ const augmentPropsDef = (
 	return propsDef
 }
 
-interface Y extends definition.UtilityProps {
-	panelId: string
-}
-const PanelLoader: FC<Y> = (props) => {
-	const uesio = hooks.useUesio(props)
-	const [togglePanel, portals] = uesio.signal.useHandler([
-		{
-			signal: "panel/OPEN",
-			panel: props.panelId as string,
-		},
-	])
-	useEffect(() => {
-		togglePanel && togglePanel()
-	}, [props.panelId])
-	return <>{portals}</>
-}
-
 const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
@@ -109,12 +92,10 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 
 	const propsDef = augmentPropsDef(standardPropsDef, definition, trimmedPath)
 
-	console.log(propsDef, definition)
-
 	return (
 		<>
 			{standardPropsDef?.type === "panel" && (
-				<PanelLoader
+				<PanelPortal
 					context={props.context}
 					panelId={component.path.getPathSuffix(selectedPath) || ""}
 				/>

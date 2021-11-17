@@ -62,13 +62,18 @@ class SignalAPI {
 					const panels: PanelDefinitionMap | undefined =
 						viewDef?.definition?.panels
 					if (!panels) return null
-
 					const panelDef = panels[panelId]
 					const componentType = panelDef["uesio.type"]
-
+					const targetElement = document.querySelector(
+						signal.targetElement as string
+					)
 					if (componentType && panelDef) {
 						return [
-							<Panel key={panelId} context={context}>
+							<Panel
+								key={panelId}
+								context={context}
+								targetElement={targetElement}
+							>
 								<ComponentInternal
 									definition={{ ...panelDef, id: panelId }}
 									path={path}
