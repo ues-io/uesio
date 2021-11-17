@@ -2,6 +2,12 @@ import { FunctionComponent } from "react"
 import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
 
+const standardActions: builder.ActionDescriptor[] = [
+	{ type: "DELETE" },
+	{ type: "MOVE" },
+	{ type: "CLONE" },
+]
+
 const augmentPropsDef = (
 	propsDef: builder.BuildPropertiesDefinition | undefined,
 	definition: definition.DefinitionMap,
@@ -12,6 +18,12 @@ const augmentPropsDef = (
 			title: "Nothing Selected",
 			defaultDefinition: () => ({}),
 			sections: [],
+		}
+	}
+	if (propsDef.type === "wire") {
+		return {
+			...propsDef,
+			actions: standardActions.concat(...(propsDef.actions || [])),
 		}
 	}
 	if (propsDef.type === "component") {
@@ -25,6 +37,18 @@ const augmentPropsDef = (
 				{
 					title: "Display",
 					type: "CONDITIONALDISPLAY",
+				},
+			]),
+			actions: standardActions.concat(...(propsDef.actions || [])),
+		}
+	}
+	if (propsDef.type === "componentvariant") {
+		return {
+			...propsDef,
+			sections: propsDef.sections.concat([
+				{
+					title: "Styles",
+					type: "STYLES",
 				},
 			]),
 		}
@@ -48,7 +72,6 @@ const augmentPropsDef = (
 
 const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const viewDefId = uesio.getViewDefId()
 
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
@@ -70,6 +93,8 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		definition,
 		trimmedPath
 	)
+
+	console.log(propsDef)
 
 	return (
 		<PropertiesPane
@@ -93,8 +118,8 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				clone: (path: string) =>
 					uesio.builder.cloneDefinition(
 						component.path.makeFullPath(
-							"viewdef",
-							viewDefId || "",
+							metadataType,
+							metadataItem,
 							path
 						)
 					),

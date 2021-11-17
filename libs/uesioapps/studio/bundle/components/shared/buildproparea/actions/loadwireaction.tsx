@@ -20,7 +20,7 @@ const LoadWireAction: FunctionComponent<ActionProps> = (props) => {
 	]
 	return (
 		<ActionButton
-			title={action.label}
+			title={"Refresh Wire"}
 			onClick={uesio.signal.getHandler(signals)}
 			icon="refresh"
 			context={context}
