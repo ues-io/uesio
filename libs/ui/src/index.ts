@@ -16,6 +16,7 @@ import * as util from "./utilexports"
 import * as wire from "./wireexports"
 import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
+import * as panel from "./panelexports"
 import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
@@ -33,6 +34,7 @@ export {
 	loader,
 	metadata,
 	notification,
+	panel,
 	signal,
 	state,
 	styles,

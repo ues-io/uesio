@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import { TableProps } from "./tabledefinition"
 import Table from "./table"
-import { styles, component, hooks, wire } from "@uesio/ui"
+import { styles, component, hooks } from "@uesio/ui"
 import WireHelper from "../../utility/lab.wirehelper/wirehelper"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
@@ -22,11 +22,11 @@ const TableBuilder: FunctionComponent<TableProps> = (props) => {
 			context,
 		}
 	)
-	console.log({ wire, def: definition.wire })
+
 	return (
 		<BuildWrapper {...props} classes={classes}>
 			{!wire ? (
-				<WireHelper {...props} wire={wire} />
+				<WireHelper {...props} />
 			) : (
 				<Table {...props} isDragging={!!dragType && !!dragItem} />
 			)}

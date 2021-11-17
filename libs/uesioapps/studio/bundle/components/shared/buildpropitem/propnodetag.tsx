@@ -9,7 +9,7 @@ type Props = {
 	icon?: string
 	iconColor?: string
 	selected?: boolean
-	onClick?: () => void
+	onClick?: (e: MouseEvent) => void
 	draggable?: string
 	context: context.Context
 	tooltip?: string
@@ -58,6 +58,8 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 			},
 			title: {
 				textTransform: "uppercase",
+				overflow: "hidden",
+				textOverflow: "ellipsis",
 			},
 		},
 		props
@@ -81,7 +83,7 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 				<IOExpandPanel
 					defaultExpanded={false}
 					context={context}
-					toggle={<span className={classes.title}>{title}</span>}
+					toggle={<div className={classes.title}>{title}</div>}
 					showArrow={false}
 					expandState={[expanded, setExpanded]}
 				>

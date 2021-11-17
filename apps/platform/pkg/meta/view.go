@@ -199,8 +199,20 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 	if panels != nil && panels.Kind == yaml.MappingNode {
 		for i := range panels.Content {
 			if i%2 != 0 {
-				comp := panels.Content[i]
-				getComponentsAndVariantsUsed(comp, &usedComps, &usedVariants)
+				panel := panels.Content[i]
+				panelType, err := getMapNode(panel, "uesio.type")
+				if err != nil {
+					return nil, nil, err
+				}
+				if panelType.Kind == yaml.ScalarNode {
+					usedComps[panelType.Value] = true
+				}
+				for i := range panel.Content {
+					if i%2 != 0 {
+						node := panel.Content[i]
+						getComponentsAndVariantsUsed(node, &usedComps, &usedVariants)
+					}
+				}
 			}
 		}
 	}
