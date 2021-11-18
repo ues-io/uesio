@@ -60,10 +60,11 @@ const ThemeEditor: FunctionComponent<Props> = (props) => {
 
 	return (
 		<div style={{ display: "flex", gap: "1em" }}>
-			{Object.entries(state.palette).map((item) => {
+			{Object.entries(state.palette).map((item, index) => {
 				const [label, color] = item
 				return (
 					<Palette
+						key={index}
 						label={label}
 						color={color}
 						context={context}
