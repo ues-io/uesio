@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	// Using text/template here instead of html/template
@@ -62,11 +63,12 @@ type ComponentsMergeData struct {
 
 // MergeData stuff to merge
 type MergeData struct {
-	Route     *RouteMergeData      `json:"route"`
-	User      *UserMergeData       `json:"user"`
-	Site      *SiteMergeData       `json:"site"`
-	Workspace *WorkspaceMergeData  `json:"workspace,omitempty"`
-	Component *ComponentsMergeData `json:"component,omitempty"`
+	Route       *RouteMergeData      `json:"route"`
+	User        *UserMergeData       `json:"user"`
+	Site        *SiteMergeData       `json:"site"`
+	Workspace   *WorkspaceMergeData  `json:"workspace,omitempty"`
+	Component   *ComponentsMergeData `json:"component,omitempty"`
+	ReactBundle string               `json:"-"`
 }
 
 var indexTemplate *template.Template
@@ -135,6 +137,12 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 	site := session.GetSite()
 	workspace := session.GetWorkspace()
 
+	ReactSrc := "production.min"
+	val, _ := os.LookupEnv("UESIO_DEV")
+	if val == "true" {
+		ReactSrc = "development"
+	}
+
 	mergeData := MergeData{
 		Route: &RouteMergeData{
 			View:      route.ViewRef,
@@ -152,7 +160,8 @@ func ExecuteIndexTemplate(w http.ResponseWriter, route *meta.Route, buildMode bo
 			Subdomain: site.Subdomain,
 			Domain:    site.Domain,
 		},
-		Component: GetComponentMergeData(buildMode),
+		Component:   GetComponentMergeData(buildMode),
+		ReactBundle: ReactSrc,
 	}
 
 	// Not checking this error for now.
