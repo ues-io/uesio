@@ -15,7 +15,6 @@ interface UserFieldProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const Tile = component.registry.getUtility("io.tile")
 const Avatar = component.registry.getUtility("io.avatar")
 const ReferenceField = component.registry.getUtility("io.referencefield")

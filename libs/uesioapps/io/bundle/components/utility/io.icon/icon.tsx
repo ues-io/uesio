@@ -25,11 +25,13 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 		props
 	)
 
-	if (props.icon && materialIcons.includes(props.icon)) {
-		return <span className={classes.root}>{props.icon}</span>
+	if (props.icon === undefined) return null
+
+	if (props.icon === "" || !materialIcons.includes(props.icon)) {
+		return <span className={classes.root}>&nbsp;</span>
 	}
 
-	return null
+	return <span className={classes.root}>{props.icon}</span>
 }
 
 export { IconUtilityProps }

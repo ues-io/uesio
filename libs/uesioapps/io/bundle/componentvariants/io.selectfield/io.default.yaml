@@ -3,6 +3,9 @@ component: io.selectfield
 label: Default
 definition:
   uesio.styles:
+    root:
+      "&:after":
+        right: "10px"
     input:
       width: "100%"
       backgroundColor: white
