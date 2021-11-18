@@ -97,6 +97,7 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 			{standardPropsDef?.type === "panel" && (
 				<PanelPortal
 					context={props.context}
+					path={trimmedPath}
 					panelId={component.path.getPathSuffix(selectedPath) || ""}
 				/>
 			)}
