@@ -11,19 +11,14 @@ import {
 import toggleStyles from "./togglestyles"
 
 interface ToggleFieldProps extends definition.UtilityProps {
-	label?: string
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	width?: string
 	fieldMetadata: collection.Field
-	hideLabel?: boolean
 	mode?: context.FieldMode
 }
 
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
-
 const ToggleField: FC<ToggleFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel, context, label } = props
+	const { setValue, value, mode, context } = props
 	const uesio = hooks.useUesio(props)
 
 	const {
@@ -33,12 +28,10 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 	} = uesio.getTheme()
 
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
 	const checked = value === true
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
-				...(width && { width }),
 				...toggleStyles(primaryColor, mode),
 			},
 			native: {},
@@ -49,8 +42,7 @@ const ToggleField: FC<ToggleFieldProps> = (props) => {
 	)
 
 	return (
-		<label title={`toggle ${label}`} className={classes.root}>
-			<FieldLabel label={label} hide={hideLabel} context={context} />
+		<label title={`toggle`} className={classes.root}>
 			<div className="switch">
 				<input
 					className={classes.native}

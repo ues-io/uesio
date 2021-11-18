@@ -48,9 +48,26 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		SelectListMetadata: GetSelectListMetadata(f),
 		Required:           f.Required,
 		AutoPopulate:       f.AutoPopulate,
-		SubFields:          f.SubFields,
+		SubFields:          GetSubFieldMetadata(f),
 		SubType:            f.SubType,
 	}
+}
+
+func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
+	fieldMetadata := map[string]*adapt.FieldMetadata{}
+	for _, subField := range f.SubFields {
+		fieldMetadata[subField.Name] = &adapt.FieldMetadata{
+			Name:       subField.Name,
+			Label:      subField.Label,
+			Type:       subField.Type,
+			Updateable: !f.ReadOnly && !f.CreateOnly,
+			SelectListMetadata: GetSelectListMetadata(&meta.Field{
+				Type:       subField.Type,
+				SelectList: subField.SelectList,
+			}),
+		}
+	}
+	return fieldMetadata
 }
 
 func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
@@ -215,8 +232,9 @@ func LoadSelectListMetadata(key string, metadataCache *adapt.MetadataCache, sess
 			return err
 		}
 		selectListMetadata = &adapt.SelectListMetadata{
-			Name:    selectList.Name,
-			Options: selectList.Options,
+			Name:             selectList.Name,
+			Options:          selectList.Options,
+			BlankOptionLabel: selectList.BlankOptionLabel,
 		}
 	}
 

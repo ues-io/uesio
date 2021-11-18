@@ -29,12 +29,18 @@ type CollectionContextCondition = {
 	collection: string
 }
 
+type FeatureFlagCondition = {
+	type: "featureFlag"
+	name: string
+}
+
 type DisplayCondition =
 	| FieldEqualsValueCondition
 	| FieldNotEqualsValueCondition
 	| ParamIsSetCondition
 	| ParamIsValueCondition
 	| CollectionContextCondition
+	| FeatureFlagCondition
 
 function should(condition: DisplayCondition, context: Context) {
 	if (condition.type === "collectionContext") {
@@ -47,6 +53,16 @@ function should(condition: DisplayCondition, context: Context) {
 	}
 	if (condition.type === "paramIsValue") {
 		return context.getView()?.params?.[condition.param] === condition.value
+	}
+	if (condition.type === "featureFlag") {
+		const featureflags = context.getViewDef()?.dependencies?.featureflags
+		const featureFlag = featureflags && featureflags[condition.name]
+
+		if (!featureFlag) {
+			return false
+		}
+
+		return featureFlag && featureFlag?.value
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)

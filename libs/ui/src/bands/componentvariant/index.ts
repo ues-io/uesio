@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit"
 import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
+import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
 import { parseVariantKey } from "../../component/path"
 import { ComponentVariant } from "./types"
+import { Scalar, YAMLMap } from "yaml"
 
 const componentVariantSlice = createSlice({
 	name: "componentVariant",
@@ -15,14 +16,27 @@ const componentVariantSlice = createSlice({
 			const variants = getNodeAtPath(
 				["dependencies", "componentvariants"],
 				yamlDoc.contents
-			)?.toJSON()
+			) as YAMLMap<Scalar<string>, YAMLMap>
+
 			if (variants) {
 				const variantsToAdd: Record<string, ComponentVariant> = {}
-				Object.keys(variants).forEach((key) => {
-					const [, , variantNamespace] = parseVariantKey(key)
-					variants[key].namespace = variantNamespace
+				variants.items.forEach((item) => {
+					const key = item.key.value
 					if (state.entities[key]) return
-					variantsToAdd[key] = variants[key]
+					const [, , variantNamespace] = parseVariantKey(key)
+					const definition = item.value?.get("definition") as YAMLMap
+					const defDoc = newDoc()
+					defDoc.contents = definition
+					variantsToAdd[key] = {
+						name: item.value?.get("name") as string,
+						label: item.value?.get("label") as string,
+						component: item.value?.get("component") as string,
+						extends: item.value?.get("extends") as string,
+						namespace: variantNamespace,
+						definition: definition.toJSON() || {},
+						yaml: defDoc,
+						originalYaml: defDoc,
+					}
 				})
 
 				if (!Object.keys(variantsToAdd).length) return

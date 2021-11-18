@@ -10,10 +10,8 @@ import {
 } from "@uesio/ui"
 
 interface FileUploadProps extends definition.UtilityProps {
-	label?: string
 	width?: string
 	fieldMetadata: collection.Field
-	hideLabel?: boolean
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord

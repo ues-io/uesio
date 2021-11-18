@@ -3,6 +3,8 @@ import { SignalDefinition, SignalDescriptor } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 
+import { PanelDefinitionMap } from "../definition/panel"
+
 import botSignals from "../bands/bot/signals"
 import routeSignals from "../bands/route/signals"
 import userSignals from "../bands/user/signals"
@@ -15,8 +17,6 @@ import { PropDescriptor } from "../buildmode/buildpropdefinition"
 import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
-import { unWrapDefinition } from "../component/path"
-import { DefinitionMap } from "../definition/definition"
 import Panel from "../components/panel"
 
 const registry: Record<string, SignalDescriptor> = {
@@ -59,23 +59,18 @@ class SignalAPI {
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
-					const panels = viewDef?.definition?.panels
-					if (!panels) return []
-					let componentType = ""
-					let panelDef: DefinitionMap = {}
-					for (const wrappedPanelDef of panels) {
-						const [cType, def] = unWrapDefinition(wrappedPanelDef)
-						if (def.id === panelId) {
-							componentType = cType
-							panelDef = def
-							break
-						}
-					}
+					const panels: PanelDefinitionMap | undefined =
+						viewDef?.definition?.panels
+					if (!panels) return null
+
+					const panelDef = panels[panelId]
+					const componentType = panelDef["uesio.type"]
+
 					if (componentType && panelDef) {
 						return [
-							<Panel context={context}>
+							<Panel key={panelId} context={context}>
 								<ComponentInternal
-									definition={panelDef}
+									definition={{ ...panelDef, id: panelId }}
 									path={path}
 									context={context}
 									componentType={componentType}
@@ -95,34 +90,28 @@ class SignalAPI {
 		context: Context = this.uesio.getContext()
 	) => {
 		if (!signals) return undefined
-		return async () => {
-			/*
-			// More confusing alternative using reduce
-			return signals.reduce<Promise<Context>>(
-				async (context, signal) => this.run(signal, await context),
-				Promise.resolve(this.uesio.getContext())
-			)
-			*/
+		return async () => this.runMany(signals, context)
+	}
 
-			for (const signal of signals) {
-				// Special handling for panel signals
-				let useSignal = signal
-				if (isPanelSignal(signal)) {
-					useSignal = {
-						...signal,
-						path: getPanelKey(this.uesio.getPath(), context),
-					}
-				}
-				// Keep adding to context as each signal is run
-				context = await this.run(useSignal, context)
-				// STOP running the rest of signals if there is an error
-				const errors = context.getErrors()
-				if (errors && errors.length) {
-					break
+	runMany = async (signals: SignalDefinition[], context: Context) => {
+		for (const signal of signals) {
+			// Special handling for panel signals
+			let useSignal = signal
+			if (isPanelSignal(signal)) {
+				useSignal = {
+					...signal,
+					path: getPanelKey(this.uesio.getPath(), context),
 				}
 			}
-			return context
+			// Keep adding to context as each signal is run
+			context = await this.run(useSignal, context)
+			// STOP running the rest of signals if there is an error
+			const errors = context.getErrors()
+			if (errors && errors.length) {
+				break
+			}
 		}
+		return context
 	}
 
 	run = (signal: SignalDefinition, context: Context) => {

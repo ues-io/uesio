@@ -18,5 +18,15 @@
 		"studio.app": "crm",
 		"studio.team": "crm_maintainers",
 		"studio.member": "mock_MockGregg"
+	},
+	{
+		"studio.app": "studio",
+		"studio.team": "studio_maintainers",
+		"studio.member": "mock_MockBen"
+	},
+	{
+		"studio.app": "studio",
+		"studio.team": "studio_maintainers",
+		"studio.member": "mock_MockAbel"
 	}
 ]

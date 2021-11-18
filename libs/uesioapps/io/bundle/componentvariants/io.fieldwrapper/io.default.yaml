@@ -1,0 +1,8 @@
+name: default
+component: io.fieldwrapper
+label: Default
+definition:
+  uesio.styles:
+    root:
+      color: black
+      padding: 10px 0

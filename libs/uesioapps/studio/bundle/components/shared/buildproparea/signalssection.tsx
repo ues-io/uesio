@@ -65,7 +65,6 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								path={signalPath}
 								index={0}
 								context={context}
-								definition={signal}
 								propsDef={{
 									title: "Signal",
 									sections: [],

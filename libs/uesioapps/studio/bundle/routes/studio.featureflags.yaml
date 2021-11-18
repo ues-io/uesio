@@ -1,0 +1,4 @@
+name: featureflags
+path: app/{appname}/workspace/{workspacename}/featureflags
+view: studio.featureflags
+theme: studio.default

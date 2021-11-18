@@ -106,32 +106,32 @@ definition:
                                       color: "#ccc"
                                       text: palette
   panels:
-    - io.dialog:
-        id: newTheme
-        title: Create a New Theme
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newthemelist
-              wire: newtheme
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newtheme"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/themes/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newTheme"
+    newTheme:
+      uesio.type: io.dialog
+      title: Create a New Theme
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newthemelist
+            wire: newtheme
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newtheme"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/themes/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newTheme"

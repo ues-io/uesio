@@ -43,6 +43,7 @@ const GridPropertyDefinition: builder.BuildPropertiesDefinition = {
 			)
 		}
 	},
+	type: "component",
 }
 export { GridProps, GridDefinition }
 

@@ -110,40 +110,40 @@ definition:
                                       color: "#ccc"
                                       text: smart_toy
   panels:
-    - io.dialog:
-        id: newBot
-        title: Create a New Bot
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newbotlist
-              wire: newbot
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - studio.metadatafield:
-                    fieldId: studio.collection
-                    metadataType: "COLLECTION"
-                    label: "Collection"
-                - io.field:
-                    fieldId: studio.dialect
-                - io.field:
-                    fieldId: studio.type
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newbot"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newBot"
+    newBot:
+      uesio.type: io.dialog
+      title: Create a New Bot
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newbotlist
+            wire: newbot
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - studio.metadatafield:
+                  fieldId: studio.collection
+                  metadataType: "COLLECTION"
+                  label: "Collection"
+              - io.field:
+                  fieldId: studio.dialect
+              - io.field:
+                  fieldId: studio.type
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newbot"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newBot"

@@ -3,7 +3,7 @@ import { builder, component, definition, hooks, styles } from "@uesio/ui"
 import { LayoutDefinition } from "./layoutdefinition"
 
 type ColumnArrayKey = {
-	"io.column": {
+	"lab.column": {
 		components: definition.DefinitionList
 	}
 }
@@ -45,8 +45,9 @@ const LayoutTemplateButton: FC<T> = (props) => {
 
 	return (
 		<button className={classes.root} onClick={() => onClick(value)}>
-			{value.map((value) => (
+			{value.map((value, i) => (
 				<div
+					key={value + i}
 					className={classes.button}
 					style={{
 						flex: value,
@@ -93,8 +94,8 @@ const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
 			const numberOfColumsToDelete = currentColumns.length - values.length
 			const indexesUpForDelete = currentColumns
 				.map((el: ColumnArrayKey, i: number) =>
-					"components" in el["io.column"] &&
-					el["io.column"].components.length > 0
+					"components" in el["lab.column"] &&
+					el["lab.column"].components.length > 0
 						? null
 						: i
 				)
@@ -117,12 +118,12 @@ const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
 		const columnsToSet = values.map((val: number, i: number) => {
 			const columnKey = currentColumns[i]
 			const columnDef = columnKey
-				? (columnKey["io.column"] as definition.DefinitionMap)
+				? (columnKey["lab.column"] as definition.DefinitionMap)
 				: (component.registry
-						.getPropertiesDefinition("io.column")
+						.getPropertiesDefinition("lab.column")
 						.defaultDefinition() as definition.DefinitionMap)
 			return {
-				["io.column"]: {
+				["lab.column"]: {
 					...columnDef,
 					"uesio.styles": {
 						root: {

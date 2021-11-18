@@ -1,10 +1,6 @@
-type PlainComponentState =
-	| {
-			[key: string]: string | boolean | number
-	  }
-	| string
-	| boolean
-	| number
+import { FieldValue } from "../wirerecord/types"
+
+type PlainComponentState = FieldValue
 
 type ComponentState = {
 	view: string

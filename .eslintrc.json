@@ -22,6 +22,7 @@
 				"eqeqeq": "error",
 				"radix": "error",
 				"no-new-wrappers": "error",
+				"react/jsx-key": "error",
 				"react/self-closing-comp": [
 					"error",
 					{

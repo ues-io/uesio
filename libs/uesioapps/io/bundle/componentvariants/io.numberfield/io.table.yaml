@@ -3,8 +3,6 @@ component: io.numberfield
 label: Table
 definition:
   uesio.styles:
-    root:
-      color: black
     input:
       width: "100%"
       backgroundColor: transparent

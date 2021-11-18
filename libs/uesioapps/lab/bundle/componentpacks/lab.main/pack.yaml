@@ -2,5 +2,7 @@ name: main
 components:
   view:
     lab.layout:
+    lab.tablecolumn:
+    lab.table:
   utility:
-    lab.layout:
+    lab.actionsbar:

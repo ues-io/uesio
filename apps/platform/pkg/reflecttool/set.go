@@ -103,11 +103,12 @@ func setStruct(to reflect.Value, from reflect.Value) error {
 }
 
 func setPointer(to reflect.Value, from reflect.Value) error {
-	value := reflect.New(to.Type().Elem())
-	to.Set(value)
 	if from.IsNil() {
+		to.Set(reflect.Zero(to.Type()))
 		return nil
 	}
+	value := reflect.New(to.Type().Elem())
+	to.Set(value)
 	return setFieldReflect(value.Elem(), from)
 }
 

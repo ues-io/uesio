@@ -112,32 +112,32 @@ definition:
                                       color: "#ccc"
                                       text: collections
   panels:
-    - io.dialog:
-        id: newFile
-        title: Create a New File
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newfilelist
-              wire: newfile
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newfile"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/files/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newFile"
+    newFile:
+      uesio.type: io.dialog
+      title: Create a New File
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newfilelist
+            wire: newfile
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newfile"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/files/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newFile"

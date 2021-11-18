@@ -11,15 +11,22 @@ type RowDef = {
 	isDeleted?: boolean
 }
 
-interface TableProps extends definition.UtilityProps {
+interface TableUtilityProps extends definition.UtilityProps {
 	columns: ColumnDef[]
 	rows: RowDef[]
 	showRowNumbers?: boolean
 	showRowActions?: boolean
+	rowNumberStart?: number
 }
 
-const Table: FunctionComponent<TableProps> = (props) => {
-	const { columns, rows, showRowNumbers, showRowActions, context } = props
+const Table: FunctionComponent<TableUtilityProps> = (props) => {
+	const {
+		columns,
+		rows,
+		showRowNumbers,
+		showRowActions,
+		rowNumberStart = 0,
+	} = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -73,7 +80,10 @@ const Table: FunctionComponent<TableProps> = (props) => {
 							/>
 						)}
 						{columns?.map((columnDef) => (
-							<th className={classes.headerCell}>
+							<th
+								key={columnDef.label}
+								className={classes.headerCell}
+							>
 								{columnDef.label}
 							</th>
 						))}
@@ -92,6 +102,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 								classes.row,
 								isDeleted && classes.rowDeleted
 							)}
+							key={rowNumberStart + index + 1}
 						>
 							{showRowNumbers && (
 								<td
@@ -102,12 +113,17 @@ const Table: FunctionComponent<TableProps> = (props) => {
 									key="rownumbers"
 								>
 									<div className={classes.rowNumber}>
-										{index + 1}
+										{rowNumberStart + index + 1}
 									</div>
 								</td>
 							)}
-							{cells?.map((columnNode) => (
-								<td className={classes.cell}>{columnNode}</td>
+							{cells?.map((columnNode, i) => (
+								<td
+									key={`${cells.length + i}`}
+									className={classes.cell}
+								>
+									{columnNode}
+								</td>
 							))}
 							{rowactions && (
 								<td key="rowactions" className={classes.cell}>
@@ -121,5 +137,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		</div>
 	)
 }
+
+export { TableUtilityProps }
 
 export default Table
