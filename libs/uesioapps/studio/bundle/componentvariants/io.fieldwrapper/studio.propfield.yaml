@@ -1,0 +1,12 @@
+name: propfield
+component: io.fieldwrapper
+extends: io.default
+label: Property Field
+definition:
+  uesio.styles:
+    root:
+      padding: 8px 8px 0 8px
+    label:
+      color: "#444"
+      fontSize: 9pt
+      padding: 0

@@ -27,7 +27,6 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 					content: '"expand_more"',
 					fontFamily: "Material Icons",
 					position: "absolute",
-					right: "10px",
 					top: "50%",
 					transform: "translateY(-50%)",
 					pointerEvents: "none",

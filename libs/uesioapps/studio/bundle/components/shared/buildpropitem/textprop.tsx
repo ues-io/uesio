@@ -11,8 +11,14 @@ const TextProp: FunctionComponent<builder.PropRendererProps> = ({
 	context,
 	path,
 }) => (
-	<FieldWrapper label={descriptor.label} context={context}>
+	<FieldWrapper
+		labelPosition="left"
+		label={descriptor.label}
+		context={context}
+		variant="studio.propfield"
+	>
 		<TextField
+			variant="studio.propfield"
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			context={context}

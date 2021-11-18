@@ -94,8 +94,6 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 		trimmedPath
 	)
 
-	console.log(propsDef)
-
 	return (
 		<PropertiesPane
 			context={props.context}
