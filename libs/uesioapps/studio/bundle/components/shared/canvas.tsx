@@ -204,6 +204,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDragOver={onDragOver}
 			onDrop={onDrop}
 			className={classes.root}
+			onMouseOver={(e: any) => console.log("mouseOver", e.target)}
 		>
 			<div
 				className={classes.inner}
