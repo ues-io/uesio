@@ -1,10 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import loadOp from "../viewdef/operations/load"
 import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
-import { parseVariantKey } from "../../component/path"
+import { getFullPathParts, parseVariantKey } from "../../component/path"
 import { ComponentVariant } from "./types"
 import { Scalar, YAMLMap } from "yaml"
+import { setDefinition, SetDefinitionPayload } from "../builder"
+import { setDef } from "./reducers"
 
 const componentVariantSlice = createSlice({
 	name: "componentVariant",
@@ -43,6 +45,23 @@ const componentVariantSlice = createSlice({
 				componentVariantAdapter.upsertMany(state, variantsToAdd)
 			}
 		})
+		builder.addCase(
+			setDefinition,
+			(state, { payload }: PayloadAction<SetDefinitionPayload>) => {
+				const [metadataType, metadataItem, localPath] =
+					getFullPathParts(payload.path)
+
+				if (metadataType === "componentvariant") {
+					const entityState = state.entities[metadataItem]
+
+					entityState &&
+						setDef(entityState, {
+							path: localPath,
+							definition: payload.definition,
+						})
+				}
+			}
+		)
 	},
 })
 
