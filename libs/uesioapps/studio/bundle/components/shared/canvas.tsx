@@ -244,7 +244,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				)}
 				{viewComponent}
 
-				{/* Not supporting nested panels for now */}
 				{pathArray[0] === "panels" && (
 					<PanelPortal
 						context={props.context}
