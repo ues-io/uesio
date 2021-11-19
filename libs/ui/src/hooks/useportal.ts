@@ -1,11 +1,11 @@
-import { useRef, useLayoutEffect } from "react"
+import { useRef, useEffect } from "react"
 import { panelsDomNode } from "../components/view"
 
 function usePortal() {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)
 	if (!panelsDomNode || !panelsDomNode.current)
 		console.warn("usePortal error: panelsDomNode not found")
-	useLayoutEffect(() => {
+	useEffect(() => {
 		// Add the detached element to the parent
 		rootElemRef.current &&
 			panelsDomNode?.current?.appendChild(rootElemRef.current)

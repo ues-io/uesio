@@ -62,13 +62,13 @@ class SignalAPI {
 					const viewDef = context.getViewDef()
 					const panels: PanelDefinitionMap | undefined =
 						viewDef?.definition?.panels
-					if (!panels) return null
-					if (!panelId) return null
+					if (!panels || !panelId) return null
+
 					const panelDef = panels[panelId]
 					if (!panelDef) return null
 					const componentType = panelDef["uesio.type"]
 
-					if (componentType && panelDef) {
+					if (componentType) {
 						return [
 							<Panel key={panelId} context={context}>
 								<ComponentInternal

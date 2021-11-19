@@ -4,6 +4,5 @@ components:
     lab.layout:
     lab.tablecolumn:
     lab.table:
-    lab.popup:
   utility:
     lab.actionsbar:
