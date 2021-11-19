@@ -1,6 +1,8 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
+import PanelPortal from "./panelportal"
+
 const Icon = component.registry.getUtility("io.icon")
 
 const getIndex = (
@@ -90,6 +92,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const uesio = hooks.useUesio(props)
+	const [metadataType, metadataItem, selectedPath] =
+		uesio.builder.useSelectedNode()
+	const trimmedPath =
+		(selectedPath && component.path.trimPathToComponent(selectedPath)) || ""
+
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
@@ -204,7 +211,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 			onDragOver={onDragOver}
 			onDrop={onDrop}
 			className={classes.root}
-			onMouseOver={(e: any) => console.log("mouseOver", e.target)}
 		>
 			<div
 				className={classes.inner}
@@ -235,6 +241,18 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					</div>
 				)}
 				{viewComponent}
+				{selectedPath.includes("panels") && (
+					<>
+						<p>panelPortal</p>
+						<PanelPortal
+							context={props.context}
+							path={trimmedPath}
+							panelId={
+								component.path.getPathSuffix(selectedPath) || ""
+							}
+						/>
+					</>
+				)}
 			</div>
 		</div>
 	)
