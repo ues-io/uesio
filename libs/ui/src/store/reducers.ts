@@ -54,7 +54,7 @@ const setDef = (state: CommonState, payload: SetDefinitionPayload) => {
 const addDef = (state: CommonState, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path) as any //TO-DO Fix this
+	const currentArray = get(state.definition, path) as Definition[]
 	let newIndex: number
 	if (!currentArray) {
 		newIndex = 0
@@ -116,7 +116,10 @@ const moveDef = (state: CommonState, payload: MoveDefinitionPayload) => {
 		const fromKey = getKeyAtPath(fromPathStr)
 		const toKey = getKeyAtPath(toPathStr)
 
-		const definition = get(state.definition, fromParentPath) as any //TO-DO Fix this
+		const definition = get(
+			state.definition,
+			fromParentPath
+		) as DefinitionMap
 
 		if (!definition || !fromKey || !toKey) return
 
