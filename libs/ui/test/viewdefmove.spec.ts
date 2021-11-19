@@ -1,7 +1,7 @@
-import { moveDef } from "../src/bands/viewdef/reducers"
 import { createNextState } from "@reduxjs/toolkit"
 import { PlainViewDef } from "../src/bands/viewdef/types"
 import { MoveDefinitionPayload } from "../src/bands/builder"
+import { moveDef } from "../src/store/reducers"
 
 test("viewdef move component", () => {
 	testMove(
