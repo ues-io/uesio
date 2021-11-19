@@ -205,6 +205,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		)
 	}
 
+	const pathArray = component.path.toPath(selectedPath)
+
 	return (
 		<div
 			onDragLeave={onDragLeave}
@@ -241,17 +243,14 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					</div>
 				)}
 				{viewComponent}
-				{selectedPath.includes("panels") && (
-					<>
-						<p>panelPortal</p>
-						<PanelPortal
-							context={props.context}
-							path={trimmedPath}
-							panelId={
-								component.path.getPathSuffix(selectedPath) || ""
-							}
-						/>
-					</>
+
+				{/* Not supporting nested panels for now */}
+				{pathArray[0] === "panels" && (
+					<PanelPortal
+						context={props.context}
+						path={trimmedPath}
+						panelId={pathArray[1] || ""}
+					/>
 				)}
 			</div>
 		</div>

@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react"
+import { FC, useEffect, useLayoutEffect } from "react"
 import { definition, hooks } from "@uesio/ui"
 
 interface Y extends definition.UtilityProps {
@@ -13,8 +13,10 @@ const PanelPortal: FC<Y> = (props) => {
 		},
 	])
 	useEffect(() => {
+		const { path, panelId } = props
+		console.log({ panelId, path })
 		togglePanel && togglePanel()
-	}, [props.panelId])
+	}, [props.panelId, props.path])
 	return <>{portals}</>
 }
 

@@ -67,7 +67,7 @@ class SignalAPI {
 					const panelDef = panels[panelId]
 					if (!panelDef) return null
 					const componentType = panelDef["uesio.type"]
-					console.log("working", { componentType, panelDef })
+
 					if (componentType && panelDef) {
 						return [
 							<Panel key={panelId} context={context}>

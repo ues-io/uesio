@@ -3,7 +3,6 @@ import { panelsDomNode } from "../components/view"
 
 function usePortal() {
 	const rootElemRef = useRef<HTMLDivElement | null>(null)
-	console.log("usePortal")
 	if (!panelsDomNode || !panelsDomNode.current)
 		console.warn("usePortal error: panelsDomNode not found")
 	useLayoutEffect(() => {
