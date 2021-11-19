@@ -24,7 +24,7 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 				cursor: "pointer",
 				display: "inline-grid",
 				gridAutoFlow: "column",
-				columnGap: "4px",
+				columnGap: "8px",
 				alignItems: "center",
 				background: "none",
 			},
