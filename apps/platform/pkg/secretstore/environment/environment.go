@@ -14,9 +14,9 @@ var secretValues = map[string]string{
 	"uesio:aws_access_key_id":     os.Getenv("AWS_ACCESS_KEY_ID"),
 	"uesio:aws_secret_access_key": os.Getenv("AWS_SECRET_ACCESS_KEY"),
 	"uesio:aws_session_token":     os.Getenv("AWS_SESSION_TOKEN"),
-	"uesio:dbuser":                os.Getenv("UESIO_DB_USER"),
-	"uesio:dbpassword":            os.Getenv("UESIO_DB_PASSWORD"),
-	"uesio:dbdatabase":            os.Getenv("UESIO_DB_DATABASE"),
+	"uesio:db_user":               os.Getenv("UESIO_DB_USER"),
+	"uesio:db_password":           os.Getenv("UESIO_DB_PASSWORD"),
+	"uesio:db_database":           os.Getenv("UESIO_DB_DATABASE"),
 }
 
 // Get function

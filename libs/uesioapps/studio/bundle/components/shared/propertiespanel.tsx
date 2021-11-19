@@ -1,6 +1,7 @@
-import { FC, useEffect } from "react"
+import { FunctionComponent } from "react"
 import { definition, builder, component, hooks, util } from "@uesio/ui"
 import PropertiesPane from "./propertiespane"
+
 const standardActions: builder.ActionDescriptor[] = [
 	{ type: "DELETE" },
 	{ type: "MOVE" },
@@ -69,11 +70,11 @@ const augmentPropsDef = (
 	return propsDef
 }
 
-const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
+const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
-
 	// Trim the path to the closest namespaced component
 	// For Example:
 	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
@@ -85,11 +86,13 @@ const PropertiesPanel: FC<definition.UtilityProps> = (props) => {
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
-	const standardPropsDef = component.registry.getPropertiesDefinitionFromPath(
-		component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
+	const propsDef = augmentPropsDef(
+		component.registry.getPropertiesDefinitionFromPath(
+			component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
+		),
+		definition,
+		trimmedPath
 	)
-
-	const propsDef = augmentPropsDef(standardPropsDef, definition, trimmedPath)
 
 	return (
 		<PropertiesPane

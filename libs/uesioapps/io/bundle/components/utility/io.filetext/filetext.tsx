@@ -7,13 +7,13 @@ import {
 	hooks,
 	wire,
 } from "@uesio/ui"
-import { FieldState } from "../../view/io.field/fielddefinition"
+import { FieldState, LabelPosition } from "../../view/io.field/fielddefinition"
 
 interface FileTextProps extends definition.UtilityProps {
 	label?: string
 	width?: string
 	fieldMetadata: collection.Field
-	labelPosition?: boolean
+	labelPosition?: LabelPosition
 	id?: string
 	mode?: context.FieldMode
 	record: wire.WireRecord
