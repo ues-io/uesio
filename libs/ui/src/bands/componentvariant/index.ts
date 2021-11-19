@@ -22,7 +22,7 @@ import {
 	setYaml,
 	YamlUpdatePayload,
 } from "../builder"
-import { addDef, moveDef, removeDef, setDef } from "./reducers"
+import { moveDef, addDef, setDef, removeDef } from "../../store/reducers"
 import { setWith } from "lodash"
 
 const updateYaml = (state: ComponentVariant, payload: YamlUpdatePayload) => {

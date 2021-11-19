@@ -41,7 +41,7 @@ import {
 	AddDefinitionPairPayload,
 	ChangeDefinitionKeyPayload,
 } from "../builder"
-import { removeDef, addDef, setDef, moveDef } from "./reducers"
+import { moveDef, addDef, setDef, removeDef } from "../../store/reducers"
 
 const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
 	const { path, yaml: yamlDoc } = payload
