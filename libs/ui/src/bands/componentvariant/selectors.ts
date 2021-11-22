@@ -12,8 +12,8 @@ const getComponentVariant = (
 	componentVariantDef: string,
 	path?: string
 ): Definition => {
-	const ComponentVariant = selectors.selectById(state, componentVariantDef)
-	const definition = ComponentVariant?.definition
+	const componentVariant = selectors.selectById(state, componentVariantDef)
+	const definition = componentVariant?.definition
 	return path ? get(definition, path || "") : definition
 }
 

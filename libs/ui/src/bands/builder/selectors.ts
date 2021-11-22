@@ -66,11 +66,11 @@ const useSelectedYAML = () =>
 			return viewDef?.yaml
 		}
 		if (metadataType === "componentvariant") {
-			const ComponentVariant = componentVariantSelectors.selectById(
+			const componentVariant = componentVariantSelectors.selectById(
 				state,
 				metadataItem
 			)
-			return ComponentVariant?.yaml
+			return componentVariant?.yaml
 		}
 		return undefined
 	})
