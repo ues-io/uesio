@@ -1,6 +1,8 @@
 import { FunctionComponent, DragEvent } from "react"
 import { definition, component, hooks, styles } from "@uesio/ui"
 import { getDropIndex, handleDrop, isDropAllowed, isNextSlot } from "./dragdrop"
+import PanelPortal from "./panelportal"
+
 const Icon = component.registry.getUtility("io.icon")
 
 const getIndex = (
@@ -28,6 +30,7 @@ const getIndex = (
 }
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
+	const context = props.context
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -37,10 +40,11 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					{
 						image: "uesio.whitesplash",
 					},
-					props.context.getTheme(),
-					props.context
+					context.getTheme(),
+					context
 				),
 			},
+
 			inner: {
 				background: "white",
 				minHeight: "100vh",
@@ -89,6 +93,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const uesio = hooks.useUesio(props)
+
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
@@ -97,15 +102,15 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		dragPath
 	)
 
-	const viewDefId = props.context.getViewDefId()
-	const viewDef = props.context.getViewDef()
-	const route = props.context.getRoute()
+	const viewDefId = context.getViewDefId()
+	const viewDef = context.getViewDef()
+	const route = context.getRoute()
 
 	if (!route || !viewDefId) return null
 
 	const viewComponent = (
 		<component.View
-			context={props.context}
+			context={context}
 			path=""
 			definition={{
 				view: route.view,
@@ -210,7 +215,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				data-path={'["components"]'}
 				data-insertindex={componentCount}
 			>
-				{viewComponent}
 				{/* No content yet */}
 				{!componentCount && (
 					<div className={classes.noContent}>
@@ -218,7 +222,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 							<Icon
 								className="icon"
 								icon={"flip_to_back"}
-								context={props.context}
+								context={context}
 							/>
 							<h3 className="text">
 								Drag and drop any component here to get started
@@ -233,6 +237,9 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 						</div>
 					</div>
 				)}
+				{viewComponent}
+
+				<PanelPortal context={context} />
 			</div>
 		</div>
 	)

@@ -16,6 +16,32 @@ const toggle =
 		return context
 	}
 
+const close =
+	(context: Context, panel: string): ThunkFunc =>
+	async (dispatch) => {
+		dispatch(
+			setPanel({
+				id: panel,
+				contextPath: "",
+			})
+		)
+		return context
+	}
+
+const open =
+	(context: Context, panel: string, contextPath: string): ThunkFunc =>
+	async (dispatch) => {
+		dispatch(
+			setPanel({
+				id: panel,
+				contextPath,
+			})
+		)
+		return context
+	}
+
 export default {
 	toggle,
+	open,
+	close,
 }
