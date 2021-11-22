@@ -1,22 +1,25 @@
-import { FC, useEffect, useLayoutEffect } from "react"
-import { definition, hooks } from "@uesio/ui"
+import { FC, useEffect } from "react"
+import { definition, hooks, component } from "@uesio/ui"
 
-interface Y extends definition.UtilityProps {
-	panelId: string
-}
-const PanelPortal: FC<Y> = (props) => {
+const PanelPortal: FC<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
+	const [metadataType, metadataItem, selectedPath] =
+		uesio.builder.useSelectedNode()
+
+	const pathArray = component.path.toPath(selectedPath)
+	const isPanel = metadataType === "viewdef" && pathArray[0] === "panels"
+	const panelId = pathArray[1]
 	const [togglePanel, portals] = uesio.signal.useHandler([
 		{
 			signal: "panel/OPEN",
-			panel: props.panelId as string,
+			panel: panelId,
 		},
 	])
 	useEffect(() => {
-		const { path, panelId } = props
-		console.log({ panelId, path })
-		togglePanel && togglePanel()
-	}, [props.panelId, props.path])
+		if (isPanel && togglePanel) {
+			togglePanel()
+		}
+	}, [selectedPath])
 	return <>{portals}</>
 }
 

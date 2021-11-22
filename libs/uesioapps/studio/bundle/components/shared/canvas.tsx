@@ -30,6 +30,7 @@ const getIndex = (
 }
 
 const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
+	const context = props.context
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -39,8 +40,8 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 					{
 						image: "uesio.whitesplash",
 					},
-					props.context.getTheme(),
-					props.context
+					context.getTheme(),
+					context
 				),
 			},
 
@@ -92,10 +93,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 
 	const uesio = hooks.useUesio(props)
-	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
-	const trimmedPath =
-		(selectedPath && component.path.trimPathToComponent(selectedPath)) || ""
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
 	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
@@ -105,15 +102,15 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		dragPath
 	)
 
-	const viewDefId = props.context.getViewDefId()
-	const viewDef = props.context.getViewDef()
-	const route = props.context.getRoute()
+	const viewDefId = context.getViewDefId()
+	const viewDef = context.getViewDef()
+	const route = context.getRoute()
 
 	if (!route || !viewDefId) return null
 
 	const viewComponent = (
 		<component.View
-			context={props.context}
+			context={context}
 			path=""
 			definition={{
 				view: route.view,
@@ -205,8 +202,6 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 		)
 	}
 
-	const pathArray = component.path.toPath(selectedPath)
-
 	return (
 		<div
 			onDragLeave={onDragLeave}
@@ -227,7 +222,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 							<Icon
 								className="icon"
 								icon={"flip_to_back"}
-								context={props.context}
+								context={context}
 							/>
 							<h3 className="text">
 								Drag and drop any component here to get started
@@ -244,13 +239,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 				)}
 				{viewComponent}
 
-				{pathArray[0] === "panels" && (
-					<PanelPortal
-						context={props.context}
-						path={trimmedPath}
-						panelId={pathArray[1] || ""}
-					/>
-				)}
+				<PanelPortal context={context} />
 			</div>
 		</div>
 	)

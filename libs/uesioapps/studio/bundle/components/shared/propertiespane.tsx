@@ -82,48 +82,13 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			context={context}
 		>
 			{selectedTab === "" && propsDef && propsDef.properties && (
-				<>
-					{/* Add panel component picker if the component is panel */}
-					{propsDef?.traits?.includes("uesio.panel") && (
-						<PropList
-							path={component.path.getParentPath(path || "")}
-							propsDef={propsDef}
-							properties={[
-								{
-									type: "SELECT",
-									name: "",
-									label: "Panel Component",
-									options: Object.entries(
-										component.registry.getComponents(
-											"uesio.panel"
-										)
-									).reduce((acc, [namespace, components]) => {
-										const namespaceComponents = Object.keys(
-											components
-										).map((cname) => ({
-											value: `${namespace}.${cname}`,
-											label: `${namespace}.${cname}`,
-										}))
-										return [...acc, ...namespaceComponents]
-									}, []),
-								},
-							]}
-							context={context}
-							valueAPI={{
-								...valueAPI,
-								set: (x, value: string) =>
-									valueAPI.changeKey(path, value),
-							}}
-						/>
-					)}
-					<PropList
-						path={path}
-						propsDef={propsDef}
-						properties={propsDef.properties}
-						context={context}
-						valueAPI={valueAPI}
-					/>
-				</>
+				<PropList
+					path={path}
+					propsDef={propsDef}
+					properties={propsDef.properties}
+					context={context}
+					valueAPI={valueAPI}
+				/>
 			)}
 			{selectedSection && propsDef && (
 				<BuildSection
