@@ -4,6 +4,7 @@ import {
 	MoveDefinitionPayload,
 	RemoveDefinitionPayload,
 	SetDefinitionPayload,
+	YamlUpdatePayload,
 } from "../bands/builder"
 import {
 	isNumberIndex,
@@ -12,6 +13,7 @@ import {
 	fromPath,
 } from "../component/path"
 import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
+import yaml from "yaml"
 import {
 	addNodeAtPath,
 	parse,
@@ -22,6 +24,7 @@ import {
 export type CommonState = {
 	definition: DefinitionMap
 	yaml?: YamlDoc
+	originalYaml?: YamlDoc | undefined
 }
 
 const getNewNode = (yaml: YamlDoc, definition: Definition) => {
@@ -175,4 +178,29 @@ const moveDef = (state: CommonState, payload: MoveDefinitionPayload) => {
 	})
 }
 
-export { removeDef, addDef, moveDef, setDef }
+const updateYaml = (state: CommonState, payload: YamlUpdatePayload) => {
+	const { path, yaml: yamlDoc } = payload
+	const pathArray = toPath(path)
+	const definition = yamlDoc.toJSON()
+
+	// Set the definition JS Object from the yaml
+	setWith(state, ["definition", ...pathArray], definition)
+	if (!state.originalYaml) {
+		state.originalYaml = yamlDoc
+	}
+
+	if (!state.yaml) {
+		state.yaml = yamlDoc
+		return
+	}
+
+	if (state.yaml === state.originalYaml) {
+		state.originalYaml = parse(state.originalYaml.toString())
+	}
+	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
+
+	// We actually don't want components using useYaml to rerender
+	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
+}
+
+export { removeDef, addDef, moveDef, setDef, updateYaml }

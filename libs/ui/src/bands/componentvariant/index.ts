@@ -1,15 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import loadOp from "../viewdef/operations/load"
-import {
-	getNodeAtPath,
-	newDoc,
-	parse,
-	setNodeAtPath,
-} from "../../yamlutils/yamlutils"
+import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
-import { getFullPathParts, parseVariantKey, toPath } from "../../component/path"
+import { getFullPathParts, parseVariantKey } from "../../component/path"
 import { ComponentVariant } from "./types"
-import yaml, { Scalar, YAMLMap } from "yaml"
+import { Scalar, YAMLMap } from "yaml"
 import {
 	addDefinition,
 	AddDefinitionPayload,
@@ -22,33 +17,13 @@ import {
 	setYaml,
 	YamlUpdatePayload,
 } from "../builder"
-import { moveDef, addDef, setDef, removeDef } from "../../store/reducers"
-import { setWith } from "lodash"
-
-const updateYaml = (state: ComponentVariant, payload: YamlUpdatePayload) => {
-	const { path, yaml: yamlDoc } = payload
-	const pathArray = toPath(path)
-	const definition = yamlDoc.toJSON()
-
-	// Set the definition JS Object from the yaml
-	setWith(state, ["definition", ...pathArray], definition)
-	if (!state.originalYaml) {
-		state.originalYaml = yamlDoc
-	}
-
-	if (!state.yaml) {
-		state.yaml = yamlDoc
-		return
-	}
-
-	if (state.yaml === state.originalYaml) {
-		state.originalYaml = parse(state.originalYaml.toString())
-	}
-	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
-
-	// We actually don't want components using useYaml to rerender
-	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
-}
+import {
+	moveDef,
+	addDef,
+	setDef,
+	removeDef,
+	updateYaml,
+} from "../../store/reducers"
 
 const componentVariantSlice = createSlice({
 	name: "componentVariant",
