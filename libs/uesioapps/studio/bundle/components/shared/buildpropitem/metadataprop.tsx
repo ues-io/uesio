@@ -44,10 +44,13 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 		<MetadataPicker
 			metadataType={metadataType}
 			label={descriptor.label}
+			labelPosition="left"
 			value={value}
 			setValue={(value) => valueAPI.set(path, value)}
 			context={context}
 			grouping={getGrouping()}
+			selectVariant="studio.propfield"
+			fieldWrapperVariant="studio.propfield"
 		/>
 	)
 }
