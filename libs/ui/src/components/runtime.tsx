@@ -1,4 +1,4 @@
-import { useEffect, FunctionComponent, useRef, RefObject } from "react"
+import { useEffect, FunctionComponent } from "react"
 
 import { BaseProps } from "../definition/definition"
 
@@ -8,8 +8,6 @@ import Route from "./route"
 import routeOps from "../bands/route/operations"
 import { css } from "@emotion/css"
 import NotificationArea from "./notificationarea"
-
-let panelsDomNode: RefObject<HTMLDivElement> | undefined = undefined
 
 const Runtime: FunctionComponent<BaseProps> = (props) => {
 	const uesio = useUesio(props)
@@ -64,8 +62,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 		}
 	}, [])
 
-	panelsDomNode = useRef<HTMLDivElement>(null)
-
 	const context = uesio.getContext().addFrame({
 		buildMode: buildMode && scriptResult.loaded,
 	})
@@ -75,7 +71,6 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	return (
 		<>
 			<Route path={props.path} context={context} />
-			<div ref={panelsDomNode} />
 			<div
 				className={css({
 					position: "fixed",
@@ -93,5 +88,4 @@ const Runtime: FunctionComponent<BaseProps> = (props) => {
 	)
 }
 
-export { panelsDomNode }
 export default Runtime
