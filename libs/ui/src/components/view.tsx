@@ -21,7 +21,7 @@ const View: FunctionComponent<Props> = (props) => {
 		context,
 		definition: { params, view: viewDefId },
 	} = props
-	panelsDomNode = useRef<HTMLDivElement>(null)
+	const newPanelsNode = useRef<HTMLDivElement>(null)
 
 	const viewId = `${viewDefId}(${path || ""})`
 	const viewDef = useViewDef(viewDefId)
@@ -66,17 +66,17 @@ const View: FunctionComponent<Props> = (props) => {
 		/>
 	)
 
-	const slotView =
-		isSubView && context.getBuildMode() ? (
-			<div className={subViewClass}>{slot}</div>
-		) : (
-			slot
-		)
-
+	if (isSubView) {
+		if (context.getBuildMode()) {
+			return <div className={subViewClass}>{slot}</div>
+		}
+		return <div>{slot}</div>
+	}
+	panelsDomNode = newPanelsNode
 	return (
 		<div>
-			{slotView}
-			<div ref={panelsDomNode} />
+			{slot}
+			<div ref={newPanelsNode} />
 		</div>
 	)
 }

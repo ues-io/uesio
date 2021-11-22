@@ -34,7 +34,7 @@ type Dependencies = {
 type PlainViewDef = {
 	name: string
 	namespace: string
-	definition?: ViewDefinition
+	definition: ViewDefinition
 	yaml?: YamlDoc
 	dependencies?: Dependencies
 	originalYaml?: YamlDoc

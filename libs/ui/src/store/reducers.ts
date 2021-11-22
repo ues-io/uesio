@@ -1,28 +1,31 @@
-import setWith from "lodash/setWith"
-import toPath from "lodash/toPath"
-import { Definition, YamlDoc } from "../../definition/definition"
-
-import {
-	removeNodeAtPath,
-	parse,
-	setNodeAtPath,
-	addNodeAtPath,
-} from "../../yamlutils/yamlutils"
-import get from "lodash/get"
-import { PlainViewDef } from "./types"
-
+import { get, setWith, toPath } from "lodash"
 import {
 	AddDefinitionPayload,
 	MoveDefinitionPayload,
 	RemoveDefinitionPayload,
 	SetDefinitionPayload,
-} from "../builder"
+	YamlUpdatePayload,
+} from "../bands/builder"
 import {
-	fromPath,
+	isNumberIndex,
 	getKeyAtPath,
 	getParentPath,
-	isNumberIndex,
-} from "../../component/path"
+	fromPath,
+} from "../component/path"
+import { Definition, DefinitionMap, YamlDoc } from "../definition/definition"
+import yaml from "yaml"
+import {
+	addNodeAtPath,
+	parse,
+	removeNodeAtPath,
+	setNodeAtPath,
+} from "../yamlutils/yamlutils"
+
+export type CommonState = {
+	definition: DefinitionMap
+	yaml?: YamlDoc
+	originalYaml?: YamlDoc | undefined
+}
 
 const getNewNode = (yaml: YamlDoc, definition: Definition) => {
 	//Keep this line on top; 0 is false in JS, but we want to write it to YAML
@@ -37,7 +40,7 @@ const getNewNode = (yaml: YamlDoc, definition: Definition) => {
 	return yaml.createNode(definition)
 }
 
-const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
+const setDef = (state: CommonState, payload: SetDefinitionPayload) => {
 	const { path, definition } = payload
 	const pathArray = toPath(path)
 
@@ -51,10 +54,10 @@ const setDef = (state: PlainViewDef, payload: SetDefinitionPayload) => {
 	}
 }
 
-const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
+const addDef = (state: CommonState, payload: AddDefinitionPayload) => {
 	const { path, definition, index } = payload
 	const pathArray = toPath(path)
-	const currentArray = get(state.definition, path)
+	const currentArray = get(state.definition, path) as Definition[]
 	let newIndex: number
 	if (!currentArray) {
 		newIndex = 0
@@ -73,7 +76,7 @@ const addDef = (state: PlainViewDef, payload: AddDefinitionPayload) => {
 	}
 }
 
-const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
+const removeDef = (state: CommonState, payload: RemoveDefinitionPayload) => {
 	const pathArray = toPath(payload.path)
 	const index = pathArray.pop() // Get the index
 	const parent = get(state.definition, pathArray)
@@ -101,7 +104,7 @@ const removeDef = (state: PlainViewDef, payload: RemoveDefinitionPayload) => {
 	}
 }
 
-const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
+const moveDef = (state: CommonState, payload: MoveDefinitionPayload) => {
 	const isArrayMove = isNumberIndex(getKeyAtPath(payload.toPath))
 
 	if (!isArrayMove) {
@@ -116,7 +119,10 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 		const fromKey = getKeyAtPath(fromPathStr)
 		const toKey = getKeyAtPath(toPathStr)
 
-		const definition = get(state.definition, fromParentPath)
+		const definition = get(
+			state.definition,
+			fromParentPath
+		) as DefinitionMap
 
 		if (!definition || !fromKey || !toKey) return
 
@@ -172,4 +178,29 @@ const moveDef = (state: PlainViewDef, payload: MoveDefinitionPayload) => {
 	})
 }
 
-export { removeDef, addDef, moveDef, setDef }
+const updateYaml = (state: CommonState, payload: YamlUpdatePayload) => {
+	const { path, yaml: yamlDoc } = payload
+	const pathArray = toPath(path)
+	const definition = yamlDoc.toJSON()
+
+	// Set the definition JS Object from the yaml
+	setWith(state, ["definition", ...pathArray], definition)
+	if (!state.originalYaml) {
+		state.originalYaml = yamlDoc
+	}
+
+	if (!state.yaml) {
+		state.yaml = yamlDoc
+		return
+	}
+
+	if (state.yaml === state.originalYaml) {
+		state.originalYaml = parse(state.originalYaml.toString())
+	}
+	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
+
+	// We actually don't want components using useYaml to rerender
+	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
+}
+
+export { removeDef, addDef, moveDef, setDef, updateYaml }

@@ -6,7 +6,6 @@ import yaml from "yaml"
 import {
 	addNodePairAtPath,
 	getNodeAtPath,
-	setNodeAtPath,
 	newDoc,
 	parse,
 } from "../../yamlutils/yamlutils"
@@ -41,32 +40,13 @@ import {
 	AddDefinitionPairPayload,
 	ChangeDefinitionKeyPayload,
 } from "../builder"
-import { removeDef, addDef, setDef, moveDef } from "./reducers"
-
-const updateYaml = (state: PlainViewDef, payload: YamlUpdatePayload) => {
-	const { path, yaml: yamlDoc } = payload
-	const pathArray = toPath(path)
-	const definition = yamlDoc.toJSON()
-
-	// Set the definition JS Object from the yaml
-	setWith(state, ["definition", ...pathArray], definition)
-	if (!state.originalYaml) {
-		state.originalYaml = yamlDoc
-	}
-
-	if (!state.yaml) {
-		state.yaml = yamlDoc
-		return
-	}
-
-	if (state.yaml === state.originalYaml) {
-		state.originalYaml = parse(state.originalYaml.toString())
-	}
-	if (!path) return (state.yaml = new yaml.Document(state.yaml.toJSON()))
-
-	// We actually don't want components using useYaml to rerender
-	setNodeAtPath(path, state.yaml.contents, yamlDoc.contents)
-}
+import {
+	moveDef,
+	addDef,
+	setDef,
+	removeDef,
+	updateYaml,
+} from "../../store/reducers"
 
 /**
  * Clone a yaml node. Currently only tested with viewdef components.
