@@ -11,14 +11,20 @@ import {
 const Button = component.registry.getUtility("io.button")
 const Icon = component.registry.getUtility("io.icon")
 
-const wireHelper: FC<definition.BaseProps> = (props) => {
+interface ParentDef extends definition.DefinitionMap {
+	wire?: string
+}
+interface T extends definition.BaseProps {
+	wire?: wire.Wire
+}
+const wireHelper: FC<T> = (props) => {
 	const { path = "", context } = props
 	const uesio = hooks.useUesio(props)
-
 	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
-	const formDef = uesio.builder.useDefinition(
+	const parentDef = uesio.builder.useDefinition(
 		component.path.makeFullPath(metadataType, metadataItem, path)
-	) as definition.DefinitionMap
+	) as ParentDef
+	const wireId = `${parentDef && parentDef.wire ? parentDef.wire : ""}`
 
 	const defWiresPath = component.path.makeFullPath(
 		metadataType,
@@ -27,9 +33,16 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 	)
 	const wiresInDef = uesio.builder.useDefinition(
 		defWiresPath
-	) as definition.DefinitionMap
+	) as wire.WireDefinitionMap
 
-	const updateWire = (w: string) => {
+	const selectWire = (wireName: string) =>
+		uesio.builder.setSelectedNode(
+			metadataType,
+			metadataItem,
+			`["wires"]["${wireName}"]`
+		)
+
+	const refreshWire = (w: string) => {
 		uesio.builder.setDefinition(
 			component.path.makeFullPath(
 				metadataType,
@@ -64,17 +77,12 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 			uesio.builder.addDefinitionPair(
 				defWiresPath,
 				{
-					type: "",
 					fields: null,
 				},
 				wireName,
 				"wire"
 			)
-			uesio.builder.setSelectedNode(
-				metadataType,
-				metadataItem,
-				`["wires"]["${wireName}"]`
-			)
+			selectWire(wireName)
 
 			uesio.setContext(new ctx.Context([{ view: "$root" }]))
 
@@ -87,20 +95,40 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 			showWires && showWires()
 		}
 
+		// Add wire to parent def
 		uesio.builder.addDefinitionPair(
 			component.path.makeFullPath(metadataType, metadataItem, path),
 			wireName,
 			"wire"
 		)
-		updateWire(wireName)
+		refreshWire(wireName)
 	}
 
 	const wireHelpMessage = (() => {
-		if (!formDef.wire)
+		const copy = {
+			wire: "Tables need to be connected to a wire, select one.",
+			fields: "Add fields",
+			collection: "Choose a collection",
+			fallback: "Refresh the wire",
+		}
+		const collectionState = (str: string) => {
+			if (!str) return "missing"
+			if (str.endsWith(".")) return "incomplete"
+			return "correct"
+		}
+		if (!parentDef.wire)
 			return "Tables need to be connected to a wire, select one."
-		if (formDef.wire && !wire)
-			return `Wire "${formDef.wire}" does not exist`
-		return "Something went wrong"
+		const wireDef = wiresInDef && wiresInDef[parentDef.wire]
+		const collection = collectionState(
+			(wiresInDef && wireDef && wireDef?.collection) || ""
+		)
+		if (collection === "missing" || collection === "incomplete")
+			return copy.collection
+
+		if (!wireDef?.fields || !Object.keys(wireDef.fields).length)
+			return copy.fields
+
+		return copy.fallback
 	})()
 
 	const classes = styles.useStyles(
@@ -120,7 +148,7 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 					display: "inline-block",
 					border: "2px dashed #74a5f0",
 					borderRadius: "0.25em",
-					padding: "0 2em 2em 2em",
+					padding: "2em",
 				},
 			},
 		},
@@ -132,31 +160,45 @@ const wireHelper: FC<definition.BaseProps> = (props) => {
 	return (
 		<div className={classes.wireHelp}>
 			<div className="box">
-				<p>
-					<Icon icon="power" context={props.context} />
-				</p>
+				<div>
+					<Icon icon="power" context={props.context} />{" "}
+					{wireId && (
+						<span role="button" onClick={() => selectWire(wireId)}>
+							{wireId}
+						</span>
+					)}
+				</div>
 				<p>{wireHelpMessage}</p>
-				<div className={classes.wireButtonGroup}>
-					{Object.keys(wiresInDef).map((wire) => (
+				{!parentDef.wire && (
+					<div className={classes.wireButtonGroup}>
+						{/* Show wires in page def */}
+						{Object.keys(wiresInDef || {}).map((wireId) => (
+							<Button
+								key={wireId}
+								icon={
+									<Icon
+										icon="power"
+										context={props.context}
+									/>
+								}
+								onClick={(e: React.MouseEvent<HTMLElement>) =>
+									onWireClick(e, wireId)
+								}
+								context={context}
+								label={wireId}
+							/>
+						))}
+						{/* New wire */}
 						<Button
-							key={wire}
 							icon={<Icon icon="power" context={props.context} />}
 							onClick={(e: React.MouseEvent<HTMLElement>) =>
-								onWireClick(e, wire)
+								onWireClick(e, null)
 							}
 							context={context}
-							label={wire}
+							label={"Create new Wire"}
 						/>
-					))}
-					<Button
-						icon={<Icon icon="power" context={props.context} />}
-						onClick={(e: React.MouseEvent<HTMLElement>) =>
-							onWireClick(e, null)
-						}
-						context={context}
-						label={"Create new Wire"}
-					/>
-				</div>
+					</div>
+				)}
 			</div>
 		</div>
 	)
