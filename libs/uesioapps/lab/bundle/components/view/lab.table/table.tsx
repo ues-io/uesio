@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, useRef } from "react"
 import { TableProps } from "./tabledefinition"
-import { component, styles, hooks, wire } from "@uesio/ui"
+import { component, styles, hooks, wire, definition } from "@uesio/ui"
 import useCellHeight from "./hooks/useCellHeight"
 import useScroll from "./hooks/useScroll"
 import useColumnDrag from "./hooks/useColumnDrag"
@@ -198,7 +198,9 @@ const Table: FC<TableProps> = (props) => {
 												}
 											)
 
-											const searchFields = (k: any) =>
+											const searchFields = (
+												k: definition.DefinitionMap
+											) =>
 												/(io.field)$/.test(
 													Object.keys(k)[0]
 												)
@@ -262,7 +264,7 @@ const Table: FC<TableProps> = (props) => {
 																components: [
 																	...columnDef.components.filter(
 																		(
-																			k: any
+																			k: definition.DefinitionMap
 																		) =>
 																			Object.keys(
 																				k

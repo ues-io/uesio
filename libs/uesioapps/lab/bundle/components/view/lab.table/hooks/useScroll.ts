@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 // [ React.MutableRefObject<HTMLDivElement | null>, boolean]
 export default (tableRef: React.MutableRefObject<HTMLDivElement | null>) => {
 	const [hasScrolled, setHasScrolled] = useState(false)
 
 	useEffect(() => {
-		const handleScroll = (e: any) => {
-			setHasScrolled(e.target.scrollLeft > 0)
+		const handleScroll = (e: Event) => {
+			const { scrollLeft } = e.target as HTMLDivElement
+			setHasScrolled(scrollLeft > 0)
 		}
 		tableRef.current?.addEventListener("scroll", handleScroll)
 		return () => {

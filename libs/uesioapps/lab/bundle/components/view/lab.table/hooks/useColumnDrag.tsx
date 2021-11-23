@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { TableColumnDefinition } from "../../lab.tablecolumn/tablecolumndefinition"
 
-import { component, definition } from "@uesio/ui"
+import { component, definition, hooks } from "@uesio/ui"
 
 type LeftRightBound = {
 	left: number
@@ -17,8 +17,7 @@ type LeftRightBound = {
 export default (
 	columnRefs: HTMLDivElement[],
 	tableRef: React.RefObject<HTMLDivElement>,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	uesio: any,
+	uesio: hooks.Uesio,
 	path: string,
 	dragIndicator: React.RefObject<HTMLDivElement>
 ) => {

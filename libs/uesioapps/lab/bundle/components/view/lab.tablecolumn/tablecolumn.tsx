@@ -15,7 +15,7 @@ interface T extends definition.BaseProps {
 	index: number
 	markerPosition: null | number
 	wire: wire.Wire
-	refBox: React.ReactElement<any, any>
+	refBox: React.ReactElement<HTMLDivElement>
 	freezeColumn: boolean
 	className: string
 	pushHeaderCellRef: (el: HTMLDivElement) => void
@@ -55,7 +55,7 @@ const TableColumn: FC<T> = (props) => {
 
 		if (!collection || !column.components) return ""
 		// Find the first component ending with '.field'
-		const field = column.components.find((c: any) => {
+		const field = column.components.find((c: definition.DefinitionMap) => {
 			const componentName = Object.keys(c)[0]
 			return /(io.field)$/.test(componentName)
 		}) as {
