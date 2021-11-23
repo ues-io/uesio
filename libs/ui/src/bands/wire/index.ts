@@ -6,6 +6,7 @@ import { createEntityReducer, EntityPayload } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
+import loadNextBatch from "./operations/loadnextbatch"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
@@ -160,6 +161,17 @@ const wireSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(
 			loadOp.fulfilled,
+			(
+				state,
+				{
+					payload: [wires],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
+			) => {
+				wireAdapter.upsertMany(state, wires)
+			}
+		)
+		builder.addCase(
+			loadNextBatch.fulfilled,
 			(
 				state,
 				{
