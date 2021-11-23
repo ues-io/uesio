@@ -31,8 +31,6 @@ export default createAsyncThunk<
 
 			const batchnumber = wire.batchnumber ? wire.batchnumber + 1 : 1
 
-			console.log("LOAD NEXT batchnumber", batchnumber)
-
 			return {
 				wire: fullWireId,
 				type: wiredef.type,
@@ -57,8 +55,6 @@ export default createAsyncThunk<
 		const changes: Record<string, PlainWireRecord> = {}
 
 		const wireStore = batch.wires.find((obj) => obj.wire === wire.wire)
-
-		console.log("requestWire", requestWire)
 
 		if (requestWire.type === "CREATE") {
 			wire.data?.push(
