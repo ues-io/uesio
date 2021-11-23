@@ -13,7 +13,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
-				position: "fixed",
+				position: "absolute",
 				top: 0,
 				bottom: 0,
 				height: "100%",
@@ -46,6 +46,7 @@ const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 		},
 		props
 	)
+
 	return (
 		<>
 			<div className={classes.blocker} onClick={props.onClose} />

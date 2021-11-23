@@ -14,12 +14,18 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	context,
 	path,
 }) => (
-	<FieldWrapper label={descriptor.label} context={context}>
+	<FieldWrapper
+		labelPosition="left"
+		label={descriptor.label}
+		context={context}
+		variant="studio.propfield"
+	>
 		<SelectField
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			options={descriptor.options}
 			context={context}
+			variant="studio.propfield"
 		/>
 	</FieldWrapper>
 )

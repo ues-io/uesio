@@ -45,6 +45,7 @@ const PanelsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						path,
 						{
 							"uesio.type": "io.dialog",
+							components: [],
 						},
 						"newpanel" + (Math.floor(Math.random() * 60) + 1),
 						"panel"

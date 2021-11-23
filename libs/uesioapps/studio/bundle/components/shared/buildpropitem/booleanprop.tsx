@@ -12,47 +12,47 @@ const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	path,
 }) => {
 	const selected = !!valueAPI.get(path)
-
-	switch ((descriptor as builder.BooleanProp).displaytype) {
-		case "switch":
-			return <div>Switch not supported yet</div>
-		case "select": {
-			const optionslist: builder.PropertySelectOption[] = [
-				{
-					value: "true",
-					label: "True",
-				},
-				{
-					value: "false",
-					label: "False",
-				},
-			]
-
-			return (
-				<FieldWrapper label={descriptor.label} context={context}>
+	const getInput = () => {
+		switch ((descriptor as builder.BooleanProp).displaytype) {
+			case "switch":
+				return <div>Switch not supported yet</div>
+			case "select": {
+				return (
 					<SelectField
 						value={selected}
 						setValue={(value: string) =>
 							valueAPI.set(path, value === "true")
 						}
-						options={optionslist}
+						options={[
+							{ value: "true", label: "True" },
+							{ value: "false", label: "False" },
+						]}
 						context={context}
+						variant="studio.propfield"
 					/>
-				</FieldWrapper>
-			)
-		}
-		default:
-			//Checkbox as default
-			return (
-				<FieldWrapper label={descriptor.label} context={context}>
+				)
+			}
+			default:
+				return (
 					<CheckBoxField
 						value={selected}
 						setValue={(value: boolean) => valueAPI.set(path, value)}
 						context={context}
 					/>
-				</FieldWrapper>
-			)
+				)
+		}
 	}
+
+	return (
+		<FieldWrapper
+			variant="studio.propfield"
+			labelPosition="left"
+			label={descriptor.label}
+			context={context}
+		>
+			{getInput()}
+		</FieldWrapper>
+	)
 }
 
 export default BooleanProp

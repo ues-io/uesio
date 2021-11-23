@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react"
-import { component, hooks } from "@uesio/ui"
+import { component, hooks, builder } from "@uesio/ui"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
-
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
 const Tabs = component.registry.getUtility("io.tabs")
@@ -12,7 +11,7 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { propsDef, path, context, valueAPI, className } = props
+	const { propsDef, path = "", context, valueAPI, className } = props
 
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")

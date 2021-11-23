@@ -55,18 +55,20 @@ class SignalAPI {
 			// path, then send the context from this path into a portal
 			if (isPanelSignal(signal)) {
 				const panelId = signal.panel as string
+
 				const panel = usePanel(panelId)
 				const path = this.uesio.getPath()
 				if (panel && panel.contextPath === getPanelKey(path, context)) {
 					const viewDef = context.getViewDef()
 					const panels: PanelDefinitionMap | undefined =
 						viewDef?.definition?.panels
-					if (!panels) return null
+					if (!panels || !panelId) return null
 
 					const panelDef = panels[panelId]
+					if (!panelDef) return null
 					const componentType = panelDef["uesio.type"]
 
-					if (componentType && panelDef) {
+					if (componentType) {
 						return [
 							<Panel key={panelId} context={context}>
 								<ComponentInternal

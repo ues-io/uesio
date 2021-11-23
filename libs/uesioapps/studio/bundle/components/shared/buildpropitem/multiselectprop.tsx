@@ -8,20 +8,26 @@ interface SelectPropRendererProps extends builder.PropRendererProps {
 const MultiSelectField = component.registry.getUtility("io.multiselectfield")
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
-const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
+const MultiSelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	descriptor,
 	valueAPI,
 	context,
 	path,
 }) => (
-	<FieldWrapper label={descriptor.label} context={context}>
+	<FieldWrapper
+		labelPosition="left"
+		label={descriptor.label}
+		context={context}
+		variant="studio.propfield"
+	>
 		<MultiSelectField
 			value={valueAPI.get(path)}
 			setValue={(value: string) => valueAPI.set(path, value)}
 			options={descriptor.options}
 			context={context}
+			variant="studio.propfield"
 		/>
 	</FieldWrapper>
 )
 
-export default SelectProp
+export default MultiSelectProp

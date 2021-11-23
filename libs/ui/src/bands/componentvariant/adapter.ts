@@ -12,4 +12,10 @@ export const { selectById, selectEntities } =
 		(state: RootState) => state.componentvariant
 	)
 
+const selectors = componentVariantAdapter.getSelectors(
+	(state: RootState) => state.componentvariant
+)
+
+export { selectors }
+
 export default componentVariantAdapter
