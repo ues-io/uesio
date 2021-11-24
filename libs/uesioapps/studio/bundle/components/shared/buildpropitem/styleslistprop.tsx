@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from "react"
 import { component, definition, builder } from "@uesio/ui"
-import { values } from "lodash"
 
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 const ListField = component.registry.getUtility("io.listfield")
@@ -12,7 +11,8 @@ type StyleValue = {
 
 const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 	const { context, path, propsDef, valueAPI } = props
-	const [x, setX] = useState<{ [key: string]: definition.DefinitionList }[]>()
+	const [localStyleData, setX] =
+		useState<{ [key: string]: definition.DefinitionList }[]>()
 
 	const styleData = valueAPI.get(path) as definition.DefinitionMap
 
@@ -24,19 +24,20 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 		)
 	}
 
-	const writeStylesToYaml = (className: string, value: StyleValue[]) => {
-		console.log("Writing to yaml", value)
+	const writeStylesToYaml = (className: string, value: StyleValue[]) =>
 		valueAPI.set(
 			`${path}["${className}"]`,
 			value.reduce(
-				(obj: any, item: any) => ({
+				(
+					obj: Record<string, string>,
+					item: { key: string; value: string }
+				) => ({
 					...obj,
 					[item.key]: item.value,
 				}),
 				{}
 			)
 		)
-	}
 
 	// Sometimes we want to keep track of the styles internally before writing them to the yaml
 	const getUpdateType = (value: StyleValue[]): "viewdef" | "local" => {
@@ -54,7 +55,7 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 		const updateType = getUpdateType(properties)
 		if (updateType === "viewdef")
 			return writeStylesToYaml(className, properties)
-		const newState = x?.map((classData) => {
+		const newState = localStyleData?.map((classData) => {
 			const name = Object.keys(classData)[0]
 
 			if (name !== className) return classData
@@ -80,10 +81,10 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 			{propsDef.classes && (
 				<FieldLabel label={"Inline Styles"} context={context} />
 			)}
-			{x &&
-				x.map((classData, index) => {
+			{localStyleData &&
+				localStyleData.map((classData, index) => {
 					const className = Object.keys(classData)[0] as string
-					const data = classData[className] as any
+					const data = classData[className] as StyleValue[]
 
 					if (!data) return null
 					return (
