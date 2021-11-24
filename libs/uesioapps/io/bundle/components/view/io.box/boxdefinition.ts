@@ -17,7 +17,7 @@ const BoxPropertyDefinition: builder.BuildPropertiesDefinition = {
 	sections: [],
 	actions: [],
 	traits: ["uesio.standalone"],
-	classes: ["root", "dingdong"],
+	classes: ["root"],
 	type: "component",
 }
 export { BoxProps, BoxDefinition }

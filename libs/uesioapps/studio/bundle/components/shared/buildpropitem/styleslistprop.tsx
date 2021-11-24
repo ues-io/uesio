@@ -16,7 +16,7 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 
 	const styleData = valueAPI.get(path) as definition.DefinitionMap
 
-	const createKeyValuesArray = (data: any) => {
+	const createKeyValuesArray = (data: Record<string, string> | undefined) => {
 		if (!data) return []
 		return Object.keys(data).reduce(
 			(arr, key) => [...arr, { key, value: data[key] }],
@@ -69,8 +69,8 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 	useEffect(() => {
 		const styleLists = propsDef.classes?.map((className) => ({
 			[className]: createKeyValuesArray(
-				styleData?.[className]
-			) as definition.DefinitionList,
+				styleData?.[className] as Record<string, string> | undefined
+			),
 		}))
 		if (!styleLists) return
 		setX(styleLists)
