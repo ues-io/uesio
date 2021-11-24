@@ -11,7 +11,7 @@ type StyleValue = {
 
 const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 	const { context, path, propsDef, valueAPI } = props
-	const [localStyleData, setX] =
+	const [localStyleData, setLocalStyleData] =
 		useState<{ [key: string]: definition.DefinitionList }[]>()
 
 	const styleData = valueAPI.get(path) as definition.DefinitionMap
@@ -63,7 +63,7 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 				[className]: properties,
 			}
 		})
-		return setX(newState)
+		return setLocalStyleData(newState)
 	}
 
 	useEffect(() => {
@@ -73,7 +73,7 @@ const StylesListProp: FC<builder.PropRendererProps> = (props) => {
 			),
 		}))
 		if (!styleLists) return
-		setX(styleLists)
+		setLocalStyleData(styleLists)
 	}, [styleData])
 
 	return (
