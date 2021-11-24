@@ -10,16 +10,13 @@ import { getLoadRequestConditions } from "../conditions/conditions"
 import { getDefaultRecord } from "../defaults/defaults"
 import { getWiresFromDefinitonOrContext } from "../adapter"
 import { getFieldsRequest } from "./load"
+import { LoadRequestBatch } from "../../../load/loadrequest"
 
-export default createAsyncThunk<
-	[PlainWire[], Record<string, PlainCollection>],
-	{
-		context: Context
-		wires?: string[]
-	},
-	UesioThunkAPI
->("wire/loadNextBatch", async ({ context, wires }, api) => {
-	// Turn the list of wires into a load request
+// Turn the list of wires into a load request
+function getLoadRequestBatch(
+	wires: string[] | string | undefined,
+	context: Context
+): [LoadRequestBatch, Record<string, PlainWire>] {
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const wiresRequestMap: Record<string, PlainWire> = {}
 	const batch = {
@@ -28,9 +25,7 @@ export default createAsyncThunk<
 			wiresRequestMap[fullWireId] = wire
 			const wiredef = getWireDef(wire)
 			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-
 			const batchnumber = wire.batchnumber ? wire.batchnumber + 1 : 1
-
 			return {
 				wire: fullWireId,
 				type: wiredef.type,
@@ -43,9 +38,20 @@ export default createAsyncThunk<
 			}
 		}),
 	}
+
+	return [batch, wiresRequestMap]
+}
+
+export default createAsyncThunk<
+	[PlainWire[], Record<string, PlainCollection>],
+	{
+		context: Context
+		wires?: string[]
+	},
+	UesioThunkAPI
+>("wire/loadNextBatch", async ({ context, wires }, api) => {
+	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
 	const response = await api.extra.loadData(context, batch)
-	//Batch number and has more ;)
-	//Add the new property to multiply the number of iterations
 
 	// Add the local ids
 	const wiresResponse: Record<string, PlainWire> = {}
@@ -55,8 +61,6 @@ export default createAsyncThunk<
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
 		const changes: Record<string, PlainWireRecord> = {}
-
-		const wireStore = batch.wires.find((obj) => obj.wire === wire.wire)
 
 		if (requestWire.type === "CREATE") {
 			wire.data?.push(
@@ -103,7 +107,7 @@ export default createAsyncThunk<
 			deletes: {},
 			error: undefined,
 			conditions: requestWire.conditions,
-			batchnumber: wireStore?.batchnumber,
+			batchnumber: wire.batchNumber,
 		}
 	}
 

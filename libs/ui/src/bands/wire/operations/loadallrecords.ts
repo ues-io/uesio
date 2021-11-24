@@ -1,8 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context, getWireDef } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import { WireFieldDefinitionMap } from "../../../definition/wire"
-import { LoadRequestBatch, LoadRequestField } from "../../../load/loadrequest"
 import shortid from "shortid"
 import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
@@ -11,22 +9,8 @@ import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
 import { getDefaultRecord } from "../defaults/defaults"
 import { getWiresFromDefinitonOrContext } from "../adapter"
-
-function getFieldsRequest(
-	fields?: WireFieldDefinitionMap
-): LoadRequestField[] | undefined {
-	if (!fields) {
-		return undefined
-	}
-	return Object.keys(fields).map((fieldName) => {
-		const fieldData = fields[fieldName]
-		const subFields = getFieldsRequest(fieldData?.fields)
-		return {
-			fields: subFields,
-			id: fieldName,
-		}
-	})
-}
+import { getFieldsRequest } from "./load"
+import { LoadRequestBatch } from "../../../load/loadrequest"
 
 // Turn the list of wires into a load request
 function getLoadRequestBatch(
@@ -41,6 +25,7 @@ function getLoadRequestBatch(
 			wiresRequestMap[fullWireId] = wire
 			const wiredef = getWireDef(wire)
 			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+			const batchnumber = wire.batchnumber ? wire.batchnumber + 1 : 1
 			return {
 				wire: fullWireId,
 				type: wiredef.type,
@@ -49,14 +34,13 @@ function getLoadRequestBatch(
 				conditions: getLoadRequestConditions(wire.conditions, context),
 				order: wiredef.order,
 				batchsize: wiredef.batchsize,
+				batchnumber,
 			}
 		}),
 	}
 
 	return [batch, wiresRequestMap]
 }
-
-export { getFieldsRequest }
 
 export default createAsyncThunk<
 	[PlainWire[], Record<string, PlainCollection>],
@@ -65,7 +49,7 @@ export default createAsyncThunk<
 		wires?: string[]
 	},
 	UesioThunkAPI
->("wire/load", async ({ context, wires }, api) => {
+>("wire/loadAllRecrods", async ({ context, wires }, api) => {
 	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
 	const response = await api.extra.loadData(context, batch)
 
@@ -90,6 +74,18 @@ export default createAsyncThunk<
 			)
 		}
 
+		for (const key in requestWire.data) {
+			data[key] = requestWire.data[key]
+		}
+
+		for (const key in requestWire.original) {
+			original[key] = requestWire.original[key]
+		}
+
+		for (const key in requestWire.changes) {
+			changes[key] = requestWire.changes[key]
+		}
+
 		wire.data?.forEach((item) => {
 			const localId = shortid.generate()
 			data[localId] = item
@@ -99,6 +95,7 @@ export default createAsyncThunk<
 				changes[localId] = item
 			}
 		})
+
 		wiresResponse[wire.wire] = {
 			name,
 			view,
@@ -110,6 +107,7 @@ export default createAsyncThunk<
 			deletes: {},
 			error: undefined,
 			conditions: requestWire.conditions,
+			batchnumber: wire.batchNumber,
 		}
 	}
 
