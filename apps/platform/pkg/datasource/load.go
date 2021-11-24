@@ -233,6 +233,12 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		// Now do our supplemental reference loads
 		for i := range batch {
 			op := batch[i]
+
+			//Force the update of the ops
+			if op.HasMoreBatches {
+				ops[i] = op
+			}
+
 			for colKey, referencedCol := range op.ReferencedCollections {
 				refMetadata, err := metadataResponse.GetCollection(colKey)
 				if err != nil {

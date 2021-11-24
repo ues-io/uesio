@@ -44,6 +44,8 @@ export default createAsyncThunk<
 		}),
 	}
 	const response = await api.extra.loadData(context, batch)
+	//Batch number and has more ;)
+	//Add the new property to multiply the number of iterations
 
 	// Add the local ids
 	const wiresResponse: Record<string, PlainWire> = {}
