@@ -11,6 +11,8 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const { children, path = "", index = 0 } = props
 	const [canDrag, setCanDrag] = useState(false)
 
+	const wireId = props.definition ? props.definition.wire : ""
+
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
 
@@ -88,7 +90,29 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 						onMouseDown={() => setCanDrag(true)}
 						onMouseUp={() => dragPath && setCanDrag(false)}
 					>
-						{propDef?.title ?? "Unknown"}
+						<span>{propDef?.title ?? "Unknown"}</span>
+
+						{wireId && (
+							<div className={classes.wireIndicator}>
+								<span className="dottie" />
+								<span className="wireDash">&mdash;</span>
+								<span
+									className="wireName"
+									onClick={(e) => {
+										e.stopPropagation()
+										uesio.builder.setSelectedNode(
+											"viewdef",
+											uesio.getViewDefId() || "",
+											`["wires"]["${wireId}"]`
+										)
+									}}
+								>
+									<span title={"Edit wire"} role="button">
+										{wireId}
+									</span>
+								</span>
+							</div>
+						)}
 					</div>
 				}
 				<div className={classes.inner}>{children}</div>

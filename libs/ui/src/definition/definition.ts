@@ -41,6 +41,7 @@ export interface UtilityProps {
 	classes?: Record<string, string>
 	className?: string
 	context: Context
+	definition?: BaseDefinition
 	children?: ReactNode
 }
 
