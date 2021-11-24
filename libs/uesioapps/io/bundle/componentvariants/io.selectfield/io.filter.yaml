@@ -3,6 +3,9 @@ component: io.selectfield
 label: Filter
 definition:
   uesio.styles:
+    root:
+      "&:after":
+        right: 10px
     input:
       fontSize: 9pt
       width: auto

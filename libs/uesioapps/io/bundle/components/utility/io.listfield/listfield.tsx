@@ -20,6 +20,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		props
 	const editMode = mode === "EDIT"
 	const isText = subType === "TEXT"
+
 	const rowStyles = {
 		root: {
 			gridTemplateColumns: `repeat(${subFields.length},1fr)${
@@ -73,8 +74,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 								key={
 									subfield.label ||
 									subfield.name ||
-									subfieldId ||
-									index
+									subfieldId
 								}
 								label={subfield.label || subfield.name}
 								context={context}
@@ -100,23 +100,14 @@ const ListField: FunctionComponent<Props> = (props) => {
 			{value
 				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
 				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
-					<Grid
-						key={
-							`${Object.values(value[index] || {})}.${index}` ||
-							index
-						}
-						styles={rowStyles}
-						context={context}
-					>
+					<Grid key={index} styles={rowStyles} context={context}>
 						{subFields &&
-							Object.keys(subFields).map((subfieldId, index) => {
+							Object.keys(subFields).map((subfieldId, i) => {
 								const subfield = subFields[subfieldId]
 								const subfieldValue = getValue(item, subfield)
 								return (
 									<TextField
-										key={`${
-											subfieldValue || subfieldId || index
-										}`}
+										key={i}
 										value={subfieldValue}
 										mode={mode}
 										context={context}
