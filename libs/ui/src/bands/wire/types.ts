@@ -14,6 +14,7 @@ type PlainWire = {
 	deletes: Record<string, PlainWireRecord>
 	error?: string
 	batchnumber?: number
+	hasmorebatches?: boolean
 }
 
 export { PlainWire }

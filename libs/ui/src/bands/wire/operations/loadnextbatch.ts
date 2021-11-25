@@ -108,6 +108,7 @@ export default createAsyncThunk<
 			error: undefined,
 			conditions: requestWire.conditions,
 			batchnumber: wire.batchNumber,
+			hasmorebatches: wire.hasMoreBatches,
 		}
 	}
 

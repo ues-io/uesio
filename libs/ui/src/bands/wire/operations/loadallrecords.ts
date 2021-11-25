@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context, getWireDef } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import shortid from "shortid"
-import { PlainCollection } from "../../collection/types"
+import { PlainCollection, PlainCollectionMap } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
@@ -50,66 +50,79 @@ export default createAsyncThunk<
 	},
 	UesioThunkAPI
 >("wire/loadAllRecrods", async ({ context, wires }, api) => {
-	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
-	const response = await api.extra.loadData(context, batch)
-
-	// Add the local ids
+	let hasMoreBatches = true
 	const wiresResponse: Record<string, PlainWire> = {}
-	for (const wire of response?.wires || []) {
-		const requestWire = wiresRequestMap[wire.wire]
-		const [view, name] = wire.wire.split("/")
-		const data: Record<string, PlainWireRecord> = {}
-		const original: Record<string, PlainWireRecord> = {}
-		const changes: Record<string, PlainWireRecord> = {}
+	let collections: PlainCollectionMap = {}
 
-		if (requestWire.type === "CREATE") {
-			wire.data?.push(
-				getDefaultRecord(
-					context,
-					wiresResponse,
-					response.collections,
-					view,
-					name
-				)
-			)
-		}
+	while (hasMoreBatches) {
+		const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
+		const response = await api.extra.loadData(context, batch)
 
-		for (const key in requestWire.data) {
-			data[key] = requestWire.data[key]
-		}
-
-		for (const key in requestWire.original) {
-			original[key] = requestWire.original[key]
-		}
-
-		for (const key in requestWire.changes) {
-			changes[key] = requestWire.changes[key]
-		}
-
-		wire.data?.forEach((item) => {
-			const localId = shortid.generate()
-			data[localId] = item
-			original[localId] = item
+		// Add the local ids
+		for (const wire of response?.wires || []) {
+			const requestWire = wiresRequestMap[wire.wire]
+			const [view, name] = wire.wire.split("/")
+			const data: Record<string, PlainWireRecord> = {}
+			const original: Record<string, PlainWireRecord> = {}
+			const changes: Record<string, PlainWireRecord> = {}
 
 			if (requestWire.type === "CREATE") {
-				changes[localId] = item
+				wire.data?.push(
+					getDefaultRecord(
+						context,
+						wiresResponse,
+						response.collections,
+						view,
+						name
+					)
+				)
 			}
-		})
 
-		wiresResponse[wire.wire] = {
-			name,
-			view,
-			type: requestWire.type,
-			batchid: shortid.generate(),
-			data,
-			original,
-			changes,
-			deletes: {},
-			error: undefined,
-			conditions: requestWire.conditions,
-			batchnumber: wire.batchNumber,
+			for (const key in requestWire.data) {
+				data[key] = requestWire.data[key]
+			}
+
+			for (const key in requestWire.original) {
+				original[key] = requestWire.original[key]
+			}
+
+			for (const key in requestWire.changes) {
+				changes[key] = requestWire.changes[key]
+			}
+
+			wire.data?.forEach((item) => {
+				const localId = shortid.generate()
+				data[localId] = item
+				original[localId] = item
+
+				if (requestWire.type === "CREATE") {
+					changes[localId] = item
+				}
+			})
+
+			wiresResponse[wire.wire] = {
+				name,
+				view,
+				type: requestWire.type,
+				batchid: shortid.generate(),
+				data,
+				original,
+				changes,
+				deletes: {},
+				error: undefined,
+				conditions: requestWire.conditions,
+				batchnumber: wire.batchNumber,
+				hasmorebatches: wire.hasMoreBatches,
+			}
+
+			hasMoreBatches = wire.hasMoreBatches
+			console.log("hasMoreBatches", hasMoreBatches)
+			console.log("wire.batchNumber", wire.batchNumber)
 		}
+
+		console.log("RETURN")
+		collections = response.collections
 	}
 
-	return [Object.values(wiresResponse), response.collections]
+	return [Object.values(wiresResponse), collections]
 })
