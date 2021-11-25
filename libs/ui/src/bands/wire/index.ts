@@ -7,6 +7,7 @@ import { PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import loadNextBatch from "./operations/loadnextbatch"
+import loadAllRecrods from "./operations/loadallrecords"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
@@ -172,6 +173,17 @@ const wireSlice = createSlice({
 		)
 		builder.addCase(
 			loadNextBatch.fulfilled,
+			(
+				state,
+				{
+					payload: [wires],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
+			) => {
+				wireAdapter.upsertMany(state, wires)
+			}
+		)
+		builder.addCase(
+			loadAllRecrods.fulfilled,
 			(
 				state,
 				{

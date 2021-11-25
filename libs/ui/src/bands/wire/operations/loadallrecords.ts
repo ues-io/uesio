@@ -53,18 +53,17 @@ export default createAsyncThunk<
 	let hasMoreBatches = true
 	const wiresResponse: Record<string, PlainWire> = {}
 	let collections: PlainCollectionMap = {}
+	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
+	const data: Record<string, PlainWireRecord> = {}
+	const original: Record<string, PlainWireRecord> = {}
+	const changes: Record<string, PlainWireRecord> = {}
 
 	while (hasMoreBatches) {
-		const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
 		const response = await api.extra.loadData(context, batch)
 
-		// Add the local ids
-		for (const wire of response?.wires || []) {
+		for (const [index, wire] of response?.wires.entries() || []) {
 			const requestWire = wiresRequestMap[wire.wire]
 			const [view, name] = wire.wire.split("/")
-			const data: Record<string, PlainWireRecord> = {}
-			const original: Record<string, PlainWireRecord> = {}
-			const changes: Record<string, PlainWireRecord> = {}
 
 			if (requestWire.type === "CREATE") {
 				wire.data?.push(
@@ -115,13 +114,12 @@ export default createAsyncThunk<
 				hasmorebatches: wire.hasMoreBatches,
 			}
 
+			//TO-DO better way of doing this
 			hasMoreBatches = wire.hasMoreBatches
-			console.log("hasMoreBatches", hasMoreBatches)
-			console.log("wire.batchNumber", wire.batchNumber)
+			batch.wires[index].batchnumber = wire.batchNumber + 1
 		}
 
-		console.log("RETURN")
-		collections = response.collections
+		collections = { ...collections, ...response.collections }
 	}
 
 	return [Object.values(wiresResponse), collections]
