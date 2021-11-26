@@ -93,12 +93,6 @@ function oneWire(
 	return [data, original, changes]
 }
 
-type TEST = {
-	data: Record<string, PlainWireRecord>
-	original: Record<string, PlainWireRecord>
-	changes: Record<string, PlainWireRecord>
-}
-
 export default createAsyncThunk<
 	[PlainWire[], Record<string, PlainCollection>],
 	{
@@ -111,50 +105,44 @@ export default createAsyncThunk<
 	const wiresResponse: Record<string, PlainWire> = {}
 	let collections: PlainCollectionMap = {}
 	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
-
-	const epic: Record<string, TEST> = {}
+	const checkHasMoreBatches = (elm: wire.LoadResponse) =>
+		elm.hasMoreBatches === true
 
 	while (hasMoreBatches) {
 		const response = await api.extra.loadData(context, batch)
-
+		hasMoreBatches = response?.wires.some(checkHasMoreBatches)
 		for (const [index, wire] of response?.wires.entries() || []) {
 			const requestWire = wiresRequestMap[wire.wire]
-
-			console.log("Response Data, Wire:", wire.wire, wire.data)
+			const [view, name] = wire.wire.split("/")
 			const [data, original, changes] = oneWire(wire, requestWire)
 
-			epic[wire.wire] = { ...epic[wire.wire], data }
-			epic[wire.wire] = { ...epic[wire.wire], original }
-			epic[wire.wire] = { ...epic[wire.wire], changes }
+			wiresResponse[wire.wire] = {
+				...wiresResponse[wire.wire],
+				name,
+				view,
+				type: requestWire.type,
+				batchid: shortid.generate(),
+				data: { ...wiresResponse[wire.wire]?.data, ...data },
+				original: {
+					...wiresResponse[wire.wire]?.original,
+					...original,
+				},
+				changes: {
+					...wiresResponse[wire.wire]?.changes,
+					...changes,
+				},
+				deletes: {},
+				error: undefined,
+				conditions: requestWire.conditions,
+				batchnumber: wire.batchNumber,
+				hasmorebatches: wire.hasMoreBatches,
+			}
 
-			//TO-DO better way of doing this
-			hasMoreBatches = wire.hasMoreBatches
 			batch.wires[index].batchnumber = wire.batchNumber + 1
 		}
 
 		collections = { ...collections, ...response.collections }
 	}
-
-	console.log({ epic })
-
-	// for (const [key, agg] of Object.entries(epic)) {
-	// 	const [view, name] = key.split("/")
-
-	// 	wiresResponse[key] = {
-	// 		name,
-	// 		view,
-	// 		type: requestWire.type,
-	// 		batchid: shortid.generate(),
-	// 		data: agg.data,
-	// 		original: agg.original,
-	// 		changes: agg.changes,
-	// 		deletes: {},
-	// 		error: undefined,
-	// 		conditions: requestWire.conditions,
-	// 		//batchnumber: wire.batchNumber,
-	// 		hasmorebatches: false,
-	// 	}
-	// }
 
 	return [Object.values(wiresResponse), collections]
 })
