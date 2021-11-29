@@ -12,20 +12,43 @@ import { getWiresFromDefinitonOrContext } from "../adapter"
 import { getFieldsRequest } from "./load"
 import { LoadRequestBatch } from "../../../load/loadrequest"
 
+function getBatchSize(factor: string, batchsize: number) {
+	switch (factor) {
+		case "x2":
+			return batchsize * 2
+		case "x4":
+			return batchsize * 4
+		default:
+			return batchsize
+	}
+}
+
 // Turn the list of wires into a load request
 function getLoadRequestBatch(
 	wires: string[] | string | undefined,
+	factor: string | undefined,
 	context: Context
 ): [LoadRequestBatch, Record<string, PlainWire>] {
+	console.log("wires", wires)
+
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const wiresRequestMap: Record<string, PlainWire> = {}
 	const batch = {
 		wires: wiresToLoad.map((wire) => {
+			console.log("wire", wire)
+
 			const fullWireId = getFullWireId(wire.view, wire.name)
 			wiresRequestMap[fullWireId] = wire
 			const wiredef = getWireDef(wire)
 			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
 			const batchnumber = wire.batchnumber ? wire.batchnumber + 1 : 1
+			const batchsize =
+				wiredef?.batchsize && factor
+					? getBatchSize(factor, wiredef.batchsize)
+					: wiredef?.batchsize
+
+			console.log({ wiredef, batchsize })
+
 			return {
 				wire: fullWireId,
 				type: wiredef.type,
@@ -33,7 +56,7 @@ function getLoadRequestBatch(
 				fields: getFieldsRequest(wiredef.fields) || [],
 				conditions: getLoadRequestConditions(wire.conditions, context),
 				order: wiredef.order,
-				batchsize: wiredef.batchsize,
+				batchsize,
 				batchnumber,
 			}
 		}),
@@ -47,10 +70,11 @@ export default createAsyncThunk<
 	{
 		context: Context
 		wires?: string[]
+		factor?: string
 	},
 	UesioThunkAPI
->("wire/loadNextBatch", async ({ context, wires }, api) => {
-	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, context)
+>("wire/loadNextBatch", async ({ context, wires, factor }, api) => {
+	const [batch, wiresRequestMap] = getLoadRequestBatch(wires, factor, context)
 	const response = await api.extra.loadData(context, batch)
 
 	// Add the local ids

@@ -66,6 +66,7 @@ interface SetConditionSignal extends SignalDefinition {
 
 interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
+	factor?: string
 }
 
 interface SaveWiresSignal extends SignalDefinition {
@@ -254,7 +255,11 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: LoadWiresSignal, context: Context) =>
 			async (dispatch: Dispatcher<AnyAction>) => {
 				await dispatch(
-					loadNextBatchOp({ context, wires: signal.wires })
+					loadNextBatchOp({
+						context,
+						wires: signal.wires,
+						factor: signal.factor,
+					})
 				)
 				return context
 			},
@@ -263,6 +268,25 @@ const signals: Record<string, SignalDescriptor> = {
 				name: "wires",
 				type: "WIRES",
 				label: "Wires",
+			},
+			{
+				name: "factor",
+				type: "SELECT",
+				label: "Batch Factor",
+				options: [
+					{
+						value: "none",
+						label: "none",
+					},
+					{
+						value: "x2",
+						label: "x2",
+					},
+					{
+						value: "x4",
+						label: "x4",
+					},
+				],
 			},
 		],
 	},
