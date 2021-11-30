@@ -138,6 +138,19 @@ const Table: FunctionComponent<TableProps> = (props) => {
 					currentPage={currentPage}
 					maxPages={maxPages}
 					context={context}
+					loadMore={
+						wire.hasMore()
+							? async () => {
+									await uesio.signal.run(
+										{
+											signal: "wire/LOAD_NEXT_BATCH",
+											wires: [wire.getId()],
+										},
+										context
+									)
+							  }
+							: undefined
+					}
 				/>
 			)}
 		</>

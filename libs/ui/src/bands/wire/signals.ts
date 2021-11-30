@@ -12,6 +12,7 @@ import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
 import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
+import loadNextBatchOp from "./operations/loadnextbatch"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
 import { AnyAction } from "redux"
@@ -236,6 +237,27 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: LoadWiresSignal, context: Context) =>
 			async (dispatch: Dispatcher<AnyAction>) => {
 				await dispatch(loadWiresOp({ context, wires: signal.wires }))
+				return context
+			},
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
+	},
+	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
+		label: "Load Next Batch",
+		dispatcher:
+			(signal: LoadWiresSignal, context: Context) =>
+			async (dispatch: Dispatcher<AnyAction>) => {
+				await dispatch(
+					loadNextBatchOp({
+						context,
+						wires: signal.wires,
+					})
+				)
 				return context
 			},
 		properties: (): PropDescriptor[] => [

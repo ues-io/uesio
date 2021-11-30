@@ -7,6 +7,7 @@ interface PaginatorUtilityProps extends definition.UtilityProps {
 	currentPage: number
 	maxPages: number
 	setPage: (page: number) => void
+	loadMore?: () => Promise<void>
 }
 
 const IconButton =
@@ -14,7 +15,7 @@ const IconButton =
 const Group = component.registry.getUtility<GroupUtilityProps>("io.group")
 
 const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
-	const { currentPage, maxPages, setPage, context } = props
+	const { currentPage, maxPages, setPage, loadMore, context } = props
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -59,6 +60,9 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 		)
 	)
 
+	const isLastPage = currentPage >= maxPages - 1
+	const showLoadMore = loadMore && isLastPage
+
 	return (
 		<nav aria-label="pagination" className={classes.root}>
 			<Group alignItems="center" context={context}>
@@ -96,12 +100,26 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 					)
 				})}
 
-				<IconButton
-					icon="navigate_next"
-					onClick={nextPage}
-					context={context}
-					disabled={currentPage >= maxPages - 1}
-				/>
+				{!showLoadMore && (
+					<IconButton
+						icon="navigate_next"
+						onClick={nextPage}
+						context={context}
+						disabled={isLastPage}
+					/>
+				)}
+				{showLoadMore && (
+					<IconButton
+						icon="file_download"
+						onClick={async () => {
+							if (loadMore) {
+								await loadMore()
+								setPage(currentPage + 1)
+							}
+						}}
+						context={context}
+					/>
+				)}
 			</Group>
 		</nav>
 	)

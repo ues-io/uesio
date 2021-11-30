@@ -28,6 +28,35 @@ function getFieldsRequest(
 	})
 }
 
+function getWiresMap(wires: PlainWire[]) {
+	const wiresMap: Record<string, PlainWire> = {}
+	wires.forEach((wire) => {
+		const fullWireId = getFullWireId(wire.view, wire.name)
+		wiresMap[fullWireId] = wire
+	})
+	return wiresMap
+}
+
+function getWireRequest(
+	wire: PlainWire,
+	batchnumber: number,
+	context: Context
+) {
+	const fullWireId = getFullWireId(wire.view, wire.name)
+	const wiredef = getWireDef(wire)
+	if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+	return {
+		wire: fullWireId,
+		type: wiredef.type,
+		collection: wiredef.collection,
+		fields: getFieldsRequest(wiredef.fields) || [],
+		conditions: getLoadRequestConditions(wire.conditions, context),
+		order: wiredef.order,
+		batchsize: wiredef.batchsize,
+		batchnumber,
+	}
+}
+
 export default createAsyncThunk<
 	[PlainWire[], Record<string, PlainCollection>],
 	{
@@ -38,28 +67,12 @@ export default createAsyncThunk<
 >("wire/load", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
-	const wiresRequestMap: Record<string, PlainWire> = {}
-	const batch = {
-		wires: wiresToLoad.map((wire) => {
-			const fullWireId = getFullWireId(wire.view, wire.name)
-			wiresRequestMap[fullWireId] = wire
-			const wiredef = getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-			return {
-				wire: fullWireId,
-				type: wiredef.type,
-				collection: wiredef.collection,
-				fields: getFieldsRequest(wiredef.fields) || [],
-				conditions: getLoadRequestConditions(wire.conditions, context),
-				order: wiredef.order,
-				batchsize: wiredef.batchsize,
-				batchnumber: wire.batchnumber,
-			}
-		}),
-	}
-	const response = await api.extra.loadData(context, batch)
+	const response = await api.extra.loadData(context, {
+		wires: wiresToLoad.map((wire) => getWireRequest(wire, 0, context)),
+	})
 
 	// Add the local ids
+	const wiresRequestMap = getWiresMap(wiresToLoad)
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
 		const requestWire = wiresRequestMap[wire.wire]
@@ -98,6 +111,8 @@ export default createAsyncThunk<
 			original,
 			changes,
 			deletes: {},
+			batchnumber: requestWire.batchnumber,
+			more: wire.more,
 			error: undefined,
 			conditions: requestWire.conditions,
 		}
@@ -105,3 +120,5 @@ export default createAsyncThunk<
 
 	return [Object.values(wiresResponse), response.collections]
 })
+
+export { getWireRequest, getWiresMap }
