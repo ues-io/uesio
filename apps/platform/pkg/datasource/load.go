@@ -149,7 +149,7 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 }
 
 func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
-	collated := map[string][]adapt.LoadOp{}
+	collated := map[string][]*adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
 	// Loop over the ops and batch per data source
 	for i := range ops {
@@ -181,10 +181,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
 		if op.Type == "QUERY" || op.Type == "" {
-			if batch == nil {
-				batch = []adapt.LoadOp{}
-			}
-			batch = append(batch, op)
+			batch = append(batch, &ops[i])
 		}
 		collated[dsKey] = batch
 	}
@@ -293,7 +290,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 					return nil, err
 				}
 
-				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+				err = adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
 					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,

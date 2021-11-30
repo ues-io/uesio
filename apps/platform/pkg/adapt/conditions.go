@@ -9,7 +9,7 @@ func GetConditionValue(
 	condition LoadRequestCondition,
 	op *LoadOp,
 	metadata *MetadataCache,
-	ops []LoadOp,
+	ops []*LoadOp,
 ) (interface{}, error) {
 	if condition.ValueSource == "LOOKUP" && condition.LookupWire != "" && condition.LookupField != "" {
 
@@ -17,7 +17,7 @@ func GetConditionValue(
 		var lookupOp LoadOp
 		for _, op := range ops {
 			if op.WireName == condition.LookupWire {
-				lookupOp = op
+				lookupOp = *op
 			}
 		}
 

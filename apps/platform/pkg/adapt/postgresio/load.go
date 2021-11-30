@@ -119,7 +119,7 @@ func loadOne(
 	db *sql.DB,
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	tenantID string,
 	userTokens []string,
 ) error {
@@ -275,13 +275,13 @@ func loadOne(
 		op.Collection.Slice(0, op.BatchSize)
 	}
 
-	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
 		return loadMany(ctx, db, ops, metadata, tenantID, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
+func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
 
 	if len(ops) == 0 {
 		return nil
@@ -300,13 +300,13 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 func loadMany(
 	ctx context.Context,
 	db *sql.DB,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	tenantID string,
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(ctx, db, &ops[i], metadata, ops, tenantID, userTokens)
+		err := loadOne(ctx, db, ops[i], metadata, ops, tenantID, userTokens)
 		if err != nil {
 			return err
 		}
