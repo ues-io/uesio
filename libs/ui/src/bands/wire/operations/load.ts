@@ -35,13 +35,15 @@ function getLoadRequestBatch(
 ): [LoadRequestBatch, Record<string, PlainWire>] {
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const wiresRequestMap: Record<string, PlainWire> = {}
-	const batch = {
-		wires: wiresToLoad.map((wire) => {
-			const fullWireId = getFullWireId(wire.view, wire.name)
-			wiresRequestMap[fullWireId] = wire
-			const wiredef = getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-			return {
+	const lwires = []
+	for (const wire of wiresToLoad) {
+		const fullWireId = getFullWireId(wire.view, wire.name)
+		wiresRequestMap[fullWireId] = wire
+		const wiredef = getWireDef(wire)
+		if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+
+		if (wiredef.queryonload) {
+			lwires.push({
 				wire: fullWireId,
 				type: wiredef.type,
 				collection: wiredef.collection,
@@ -49,8 +51,11 @@ function getLoadRequestBatch(
 				conditions: getLoadRequestConditions(wire.conditions, context),
 				order: wiredef.order,
 				batchsize: wiredef.batchsize,
-			}
-		}),
+			})
+		}
+	}
+	const batch = {
+		wires: lwires,
 	}
 
 	return [batch, wiresRequestMap]

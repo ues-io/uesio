@@ -93,6 +93,11 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			type: "NUMBER",
 			label: "Batch Size",
 		},
+		{
+			name: "queryonload",
+			type: "BOOLEAN",
+			label: "Query on Load",
+		},
 	],
 	sections: [
 		{

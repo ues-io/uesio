@@ -46,6 +46,7 @@ const WiresActions: FunctionComponent<definition.UtilityProps> = (props) => {
 						{
 							type: "",
 							fields: null,
+							queryonload: true,
 						},
 						"newwire" + (Math.floor(Math.random() * 60) + 1),
 						"wire"
