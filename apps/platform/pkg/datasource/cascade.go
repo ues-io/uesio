@@ -8,7 +8,7 @@ import (
 )
 
 func getCascadeDeletes(
-	wires []adapt.SaveOp,
+	wires []*adapt.SaveOp,
 	metadata *adapt.MetadataCache,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
@@ -79,7 +79,7 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(batch []adapt.SaveOp, metadata *adapt.MetadataCache, session *sess.Session) error {
+func performCascadeDeletes(batch []*adapt.SaveOp, metadata *adapt.MetadataCache, session *sess.Session) error {
 	deletes, err := getCascadeDeletes(batch, metadata)
 	if err != nil {
 		return err

@@ -63,7 +63,7 @@ func (rr *ReferenceRegistry) Get(collectionKey string) *ReferenceRequest {
 	return request
 }
 
-type Loader func([]LoadOp) error
+type Loader func([]*LoadOp) error
 
 func IsReference(fieldType string) bool {
 	return fieldType == "REFERENCE" || fieldType == "FILE" || fieldType == "USER"
@@ -74,7 +74,7 @@ func HandleReferences(
 	collection loadable.Group,
 	referencedCollections ReferenceRegistry,
 ) error {
-	ops := []LoadOp{}
+	ops := []*LoadOp{}
 	for collectionName, ref := range referencedCollections {
 		idCount := len(ref.IDs)
 		if idCount == 0 {
@@ -92,7 +92,7 @@ func HandleReferences(
 				ID: collectionMetadata.IDField,
 			},
 		})
-		ops = append(ops, LoadOp{
+		ops = append(ops, &LoadOp{
 			Fields:         ref.Fields,
 			WireName:       "ReferenceLoad",
 			Collection:     &Collection{},
