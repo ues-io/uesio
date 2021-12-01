@@ -23,6 +23,17 @@ type SiteAdminState = {
 	version?: string
 }
 
+type MergeType =
+	| "Record"
+	| "Param"
+	| "User"
+	| "RecordId"
+	| "Theme"
+	| "Color"
+	| "File"
+	| "Site"
+	| "Label"
+
 type ContextFrame = {
 	wire?: string
 	record?: string
@@ -51,52 +62,73 @@ const getFromContext = (
 	const mergeTypeName = mergeSplit.pop()
 	const mergeAncestors = mergeSplit.length
 
-	if (mergeTypeName === "" || mergeTypeName === "Record") {
-		context = context.removeRecordFrame(mergeAncestors)
-		const value = context.getRecord()?.getFieldValue(expression)
-		return value ? `${value}` : ""
-	} else if (mergeTypeName === "Param") {
-		return context.getView()?.params?.[expression] || ""
-	} else if (mergeTypeName === "User") {
-		const user = context.getUser()
-		if (!user) return ""
-		if (expression === "initials") {
-			return user.firstname.charAt(0) + user.lastname.charAt(0)
-		} else if (expression === "picture") {
-			return user.picture
-		}
-	} else if (mergeTypeName === "RecordId") {
-		context = context.removeRecordFrame(mergeAncestors)
-		return context.getRecord()?.getId() || ""
-	} else if (mergeTypeName === "Theme") {
-		const [scope, value, op] = expression.split(".")
-		const theme = context.getTheme()
-		if (scope === "color") {
-			if (op === "darken") {
-				return chroma(theme.definition.palette[value]).darken(0.5).hex()
+	if (!mergeTypeName) return ""
+
+	const handlers: Record<MergeType, () => string> = {
+		Record: () => {
+			context = context.removeRecordFrame(mergeAncestors)
+			const value = context.getRecord()?.getFieldValue(expression)
+			return value ? `${value}` : ""
+		},
+		Param: () => context.getView()?.params?.[expression] || "",
+		User: () => {
+			const user = context.getUser()
+			if (!user) return ""
+			if (expression === "initials") {
+				return user.firstname.charAt(0) + user.lastname.charAt(0)
+			} else if (expression === "picture") {
+				return user.picture
 			}
-			return theme.definition.palette[value]
-		}
-		return ""
-	} else if (mergeTypeName === "Color") {
-		const [color, op] = expression.split(".")
-		if (chroma.valid(color)) {
-			if (op === "darken") {
-				return chroma(color).darken(0.5).hex()
+			return ""
+		},
+		RecordId: () => {
+			context = context.removeRecordFrame(mergeAncestors)
+			return context.getRecord()?.getId() || ""
+		},
+		Theme: () => {
+			const [scope, value, op] = expression.split(".")
+			const theme = context.getTheme()
+			if (scope === "color") {
+				if (op === "darken") {
+					return chroma(theme.definition.palette[value])
+						.darken(0.5)
+						.hex()
+				}
+				return theme.definition.palette[value]
 			}
-		}
-		return ""
-	} else if (mergeTypeName === "File") {
-		return `url("${getURLFromFullName(context, expression)}")`
-	} else if (mergeTypeName === "Site") {
-		const site = context.getSite()
-		if (!site) return ""
-		if (expression === "domain") {
-			return site.domain
-		}
-		return ""
+			return ""
+		},
+		Color: () => {
+			const [color, op] = expression.split(".")
+			if (chroma.valid(color)) {
+				if (op === "darken") {
+					return chroma(color).darken(0.5).hex()
+				}
+			}
+			return ""
+		},
+		File: () => `url("${getURLFromFullName(context, expression)}")`,
+		Site: () => {
+			const site = context.getSite()
+			if (!site) return ""
+			if (expression === "domain") {
+				return site.domain
+			}
+			return ""
+		},
+		Label: () => {
+			console.log({ stack: context.stack })
+			return "Some translation"
+		},
 	}
-	return ""
+
+	if (!(mergeTypeName in handlers)) {
+		console.warn(
+			`Merge syntax error, unrecognized mergeTypeName: ${mergeTypeName}`
+		)
+	}
+
+	return handlers[mergeTypeName as MergeType]()
 }
 
 const inject = (template: string, context: Context): string =>
