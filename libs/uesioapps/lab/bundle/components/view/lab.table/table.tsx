@@ -185,7 +185,7 @@ const Table: FC<TableProps> = (props) => {
 											/>
 										}
 									>
-										{/* Rows 
+										{/* Rows
 								We're seperating the fields from other components */}
 										{records.map((record) => {
 											if (!columnDef.components)
@@ -198,6 +198,7 @@ const Table: FC<TableProps> = (props) => {
 												}
 											)
 
+											// eslint-disable-next-line @typescript-eslint/no-explicit-any
 											const searchFields = (k: any) =>
 												/(io.field)$/.test(
 													Object.keys(k)[0]
@@ -262,6 +263,7 @@ const Table: FC<TableProps> = (props) => {
 																components: [
 																	...columnDef.components.filter(
 																		(
+																			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 																			k: any
 																		) =>
 																			Object.keys(
