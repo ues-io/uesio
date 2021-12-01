@@ -12,7 +12,7 @@ type OpList struct {
 	CollectionName string
 	WireName       string
 	Options        *adapt.SaveOptions
-	List           []adapt.SaveOp
+	List           []*adapt.SaveOp
 	Counter        int
 	CurrentIndex   int
 }
@@ -23,7 +23,7 @@ func (ol *OpList) getCurrentIndex() int {
 		ol.CurrentIndex++
 	}
 	if ol.Counter == 0 {
-		ol.List = append(ol.List, adapt.SaveOp{
+		ol.List = append(ol.List, &adapt.SaveOp{
 			CollectionName: ol.CollectionName,
 			WireName:       ol.WireName,
 			Inserts:        &adapt.ChangeItems{},
@@ -66,11 +66,11 @@ func NewOpList(request *SaveRequest) *OpList {
 		CollectionName: request.Collection,
 		WireName:       request.Wire,
 		Options:        request.Options,
-		List:           []adapt.SaveOp{},
+		List:           []*adapt.SaveOp{},
 	}
 }
 
-func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]adapt.SaveOp, error) {
+func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) ([]*adapt.SaveOp, error) {
 
 	opList := NewOpList(request)
 

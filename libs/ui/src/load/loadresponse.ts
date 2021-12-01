@@ -5,6 +5,7 @@ type LoadResponse = {
 	wire: string
 	collection: string
 	data?: PlainWireRecord[]
+	more?: boolean
 }
 
 type LoadResponseBatch = {

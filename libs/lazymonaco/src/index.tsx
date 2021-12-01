@@ -52,15 +52,9 @@ const LazyMonaco: FunctionComponent<Props> = ({
 			height={height}
 			value={value}
 			language={language || "yaml"}
-			onChange={(newValue, event): void => {
-				onChange?.(newValue, event)
-			}}
-			editorWillMount={(monaco): void => {
-				editorWillMount?.(monaco)
-			}}
-			editorDidMount={(editor, monaco): void => {
-				editorDidMount?.(editor, monaco)
-			}}
+			onChange={onChange}
+			editorWillMount={editorWillMount}
+			editorDidMount={editorDidMount}
 			{...(options ? { options } : {})}
 		/>
 	</Suspense>

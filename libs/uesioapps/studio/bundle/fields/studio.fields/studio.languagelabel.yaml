@@ -1,0 +1,4 @@
+name: languagelabel
+collection: studio.fields
+type: TEXT
+label: Language label

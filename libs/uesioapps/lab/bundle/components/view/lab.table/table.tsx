@@ -185,7 +185,7 @@ const Table: FC<TableProps> = (props) => {
 											/>
 										}
 									>
-										{/* Rows 
+										{/* Rows
 								We're seperating the fields from other components */}
 										{records.map((record) => {
 											if (!columnDef.components)

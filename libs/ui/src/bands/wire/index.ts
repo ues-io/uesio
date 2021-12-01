@@ -6,6 +6,7 @@ import { createEntityReducer, EntityPayload } from "../utils"
 import { PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
+import loadNextBatch from "./operations/loadnextbatch"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
@@ -65,11 +66,11 @@ const wireSlice = createSlice({
 				const usePath = path ? [recordId].concat(path) : [recordId]
 
 				set(state.data, usePath, {
-					...(get(state.data, usePath) as PlainWireRecord),
+					...get(state.data, usePath),
 					...record,
 				})
 				set(state.changes, usePath, {
-					...(get(state.changes, usePath) as PlainWireRecord),
+					...get(state.changes, usePath),
 					...record,
 				})
 
@@ -82,11 +83,11 @@ const wireSlice = createSlice({
 				const usePath = path ? [recordId].concat(path) : [recordId]
 
 				set(state.data, usePath, {
-					...(get(state.data, usePath) as PlainWireRecord),
+					...get(state.data, usePath),
 					...record,
 				})
 				set(state.original, usePath, {
-					...(get(state.original, usePath) as PlainWireRecord),
+					...get(state.original, usePath),
 					...record,
 				})
 
@@ -160,6 +161,17 @@ const wireSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(
 			loadOp.fulfilled,
+			(
+				state,
+				{
+					payload: [wires],
+				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
+			) => {
+				wireAdapter.upsertMany(state, wires)
+			}
+		)
+		builder.addCase(
+			loadNextBatch.fulfilled,
 			(
 				state,
 				{

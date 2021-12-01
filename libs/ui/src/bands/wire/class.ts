@@ -53,6 +53,8 @@ class Wire {
 	getCondition = (id: string) =>
 		this.getConditions().find((c) => c.id === id) || null
 
+	hasMore = () => this.source.more
+
 	updateRecord = (
 		recordId: string,
 		record: PlainWireRecord,

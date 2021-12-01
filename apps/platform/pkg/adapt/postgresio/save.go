@@ -97,7 +97,7 @@ func (dv DataValuer) Value() (driver.Value, error) {
 }
 
 // Save function
-func (a *Adapter) Save(requests []adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
+func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
 
 	db, err := connect(credentials)
 	if err != nil {

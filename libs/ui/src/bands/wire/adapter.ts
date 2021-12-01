@@ -19,6 +19,7 @@ const initializeWire = (viewId: string, wirename: string): PlainWire => {
 		name: wirename,
 		conditions: getInitializedConditions(wireDef.conditions),
 		batchid: "",
+		batchnumber: 0,
 		data: {},
 		original: {},
 		changes: {},
