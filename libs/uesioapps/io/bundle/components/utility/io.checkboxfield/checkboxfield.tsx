@@ -35,7 +35,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 	)
 
 	return (
-		<>
+		<div className={classes.input}>
 			<input
 				className={classes.native}
 				checked={checked}
@@ -43,13 +43,11 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				disabled={readonly}
 				onChange={(event) => setValue(event.target.checked)}
 			/>
-			<div className={classes.input}>
-				<Icon
-					context={context}
-					icon={checked ? "check_box" : "check_box_outline_blank"}
-				/>
-			</div>
-		</>
+			<Icon
+				context={context}
+				icon={checked ? "check_box" : "check_box_outline_blank"}
+			/>
+		</div>
 	)
 }
 
