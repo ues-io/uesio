@@ -13,18 +13,13 @@ const loadAllOp = createAsyncThunk<
 	UesioThunkAPI
 >("wire/loadAll", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
-	console.log("bleh")
 	const viewId = context.getViewId()
 	if (!viewId) throw new Error("No ViewId in Context")
 
 	// Get the wires that still need to be loaded
-	const loadWires = wires?.flatMap((wireName) => {
-		const wireData = selectWire(api.getState(), viewId, wireName)
-		if (wireData?.more) {
-			return [wireName]
-		}
-		return []
-	})
+	const loadWires = wires?.filter(
+		(wireName) => selectWire(api.getState(), viewId, wireName)?.more
+	)
 
 	if (!loadWires || loadWires.length === 0) return
 
