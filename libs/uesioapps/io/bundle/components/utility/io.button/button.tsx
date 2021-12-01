@@ -30,7 +30,9 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			},
 			label: {},
 			selected: {},
-			disabled: {},
+			disabled: {
+				cursor: "default",
+			},
 		},
 		props
 	)
