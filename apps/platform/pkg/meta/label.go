@@ -8,6 +8,7 @@ import (
 type Label struct {
 	ID        string     `yaml:"-" uesio:"uesio.id"`
 	Name      string     `yaml:"name" uesio:"studio.name"`
+	Value     string     `yaml:"value" uesio:"studio.value"`
 	Namespace string     `yaml:"-" uesio:"-"`
 	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
 	itemMeta  *ItemMeta  `yaml:"-" uesio:"-"`

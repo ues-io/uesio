@@ -22,6 +22,7 @@ definition:
       fields:
         uesio.id:
         studio.name:
+        studio.value:
         studio.workspace:
       conditions:
         - field: studio.workspace
@@ -114,3 +115,5 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
+                                  - io.field:
+                                      fieldId: studio.value

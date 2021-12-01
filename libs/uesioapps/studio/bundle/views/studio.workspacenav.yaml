@@ -148,6 +148,23 @@ definition:
                 - io.text:
                     uesio.variant: io.icon
                     text: view_quilt
+          - io.tile:
+              uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: labels
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/labels
+              content:
+                - io.text:
+                    text: Labels
+              avatar:
+                - io.text:
+                    uesio.variant: io.icon
+                    text: label
           - io.titlebar:
               uesio.variant: io.nav
               title: Admin
@@ -270,20 +287,3 @@ definition:
                 - io.text:
                     uesio.variant: io.icon
                     text: new_releases
-          - io.tile:
-              uesio.variant: io.nav
-              uesio.classes:
-                selected:
-                  - type: paramIsValue
-                    param: selected
-                    value: labels
-              signals:
-                - signal: "route/NAVIGATE"
-                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/labels
-              content:
-                - io.text:
-                    text: Labels
-              avatar:
-                - io.text:
-                    uesio.variant: io.icon
-                    text: label
