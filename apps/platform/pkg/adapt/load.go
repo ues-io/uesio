@@ -16,7 +16,7 @@ type LoadOp struct {
 	Type                  string                 `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
 	BatchSize             int                    `json:"-"`
-	BatchNumber           int                    `json:"-"`
+	BatchNumber           int                    `json:"batchnumber"`
 	HasMoreBatches        bool                   `json:"more"`
 	ReferencedCollections ReferenceRegistry      `json:"-"`
 	UserResponseTokens    []string               `json:"-"`
