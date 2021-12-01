@@ -6,7 +6,8 @@ export default (tableRef: React.MutableRefObject<HTMLDivElement | null>) => {
 
 	useEffect(() => {
 		const handleScroll = (e: Event) => {
-			setHasScrolled((e.target as Element).scrollLeft > 0)
+			const { scrollLeft } = e.target as HTMLDivElement
+			setHasScrolled(scrollLeft > 0)
 		}
 		tableRef.current?.addEventListener("scroll", handleScroll)
 		return () => {

@@ -15,8 +15,7 @@ type TableColumnDefinition = {
 }
 interface TableColumnProps extends definition.BaseProps {
 	definition: TableColumnDefinition
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	style?: any
+	// style?: any
 }
 
 const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
