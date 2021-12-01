@@ -46,6 +46,7 @@ definition:
         studio.autopopulate:
         studio.selectlist:
         studio.validate:
+        studio.languagelabel:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -150,6 +151,10 @@ definition:
                                       fieldId: studio.type
                                   - io.field:
                                       fieldId: studio.label
+                                  - studio.metadatafield:
+                                      fieldId: studio.languagelabel
+                                      metadataType: "LABEL"
+                                      label: "Language Label"
                                   - studio.metadatafield:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
