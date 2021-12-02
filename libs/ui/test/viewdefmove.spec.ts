@@ -63,10 +63,12 @@ test("viewdef move wire", () => {
 					mywire: {
 						collection: "mycollection",
 						fields: {},
+						queryonload: true,
 					},
 					myotherwire: {
 						collection: "myothercollection",
 						fields: {},
+						queryonload: true,
 					},
 				},
 				panels: {},
@@ -85,10 +87,12 @@ test("viewdef move wire", () => {
 					myotherwire: {
 						collection: "myothercollection",
 						fields: {},
+						queryonload: true,
 					},
 					mywire: {
 						collection: "mycollection",
 						fields: {},
+						queryonload: true,
 					},
 				},
 				panels: {},

@@ -57,10 +57,12 @@ test("viewdef delete wire", () => {
 					mywire: {
 						collection: "mycollection",
 						fields: {},
+						queryonload: true,
 					},
 					myotherwire: {
 						collection: "myothercollection",
 						fields: {},
+						queryonload: true,
 					},
 				},
 				panels: {},
@@ -78,6 +80,7 @@ test("viewdef delete wire", () => {
 					myotherwire: {
 						collection: "myothercollection",
 						fields: {},
+						queryonload: true,
 					},
 				},
 				panels: {},

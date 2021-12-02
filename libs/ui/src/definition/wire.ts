@@ -9,6 +9,7 @@ type WireDefinitionMap = {
 type WireDefinition = {
 	collection: string
 	fields: WireFieldDefinitionMap
+	queryonload: boolean
 	conditions?: WireConditionDefinition[]
 	defaults?: WireDefault[]
 	type?: WireType
