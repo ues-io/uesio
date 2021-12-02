@@ -86,7 +86,6 @@ type PropDescriptor =
 	| ConditionProp
 	| NamespaceProp
 	| ComponentTargetProp
-	| StylesListProp
 	| ConditionalDisplayProp
 	| IconProp
 
@@ -130,9 +129,6 @@ interface IconProp extends BasePropDescriptor {
 	type: "ICON"
 }
 
-interface StylesListProp extends BasePropDescriptor {
-	type: "STYLESLIST"
-}
 interface ConditionalDisplayProp extends BasePropDescriptor {
 	type: "CONDITIONALDISPLAY"
 }
@@ -282,7 +278,6 @@ export {
 	ConditionsSection,
 	SignalsSection,
 	PropListSection,
-	StylesListProp,
 	ConditionalDisplayProp,
 	OrderSection,
 }
