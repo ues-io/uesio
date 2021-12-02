@@ -51,79 +51,81 @@ type ContextFrame = {
 	errors?: string[]
 }
 
-const ANCESTOR_INDICATOR = "Parent."
-
-const getFromContext = (
-	mergeType: string,
+type MergeHandler = (
 	expression: string,
-	context: Context
-) => {
-	const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
-	const mergeTypeName = mergeSplit.pop()
-	const mergeAncestors = mergeSplit.length
+	context: Context,
+	ancestors: number
+) => string
 
-	const handlers: Record<MergeType, () => string> = {
-		Record: () => {
-			context = context.removeRecordFrame(mergeAncestors)
-			const value = context.getRecord()?.getFieldValue(expression)
-			return value ? `${value}` : ""
-		},
-		Param: () => context.getView()?.params?.[expression] || "",
-		User: () => {
-			const user = context.getUser()
-			if (!user) return ""
-			if (expression === "initials") {
-				return user.firstname.charAt(0) + user.lastname.charAt(0)
-			} else if (expression === "picture") {
-				return user.picture
+const handlers: Record<MergeType, MergeHandler> = {
+	Record: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
+		const value = context.getRecord()?.getFieldValue(expression)
+		return value ? `${value}` : ""
+	},
+	Param: (expression, context) =>
+		context.getView()?.params?.[expression] || "",
+	User: (expression, context) => {
+		const user = context.getUser()
+		if (!user) return ""
+		if (expression === "initials") {
+			return user.firstname.charAt(0) + user.lastname.charAt(0)
+		} else if (expression === "picture") {
+			return user.picture
+		}
+		return ""
+	},
+	RecordId: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
+		return context.getRecord()?.getId() || ""
+	},
+	Theme: (expression, context) => {
+		const [scope, value, op] = expression.split(".")
+		const theme = context.getTheme()
+		if (scope === "color") {
+			if (op === "darken") {
+				return chroma(theme.definition.palette[value]).darken(0.5).hex()
 			}
-			return ""
-		},
-		RecordId: () => {
-			context = context.removeRecordFrame(mergeAncestors)
-			return context.getRecord()?.getId() || ""
-		},
-		Theme: () => {
-			const [scope, value, op] = expression.split(".")
-			const theme = context.getTheme()
-			if (scope === "color") {
-				if (op === "darken") {
-					return chroma(theme.definition.palette[value])
-						.darken(0.5)
-						.hex()
-				}
-				return theme.definition.palette[value]
+			return theme.definition.palette[value]
+		}
+		return ""
+	},
+	Color: (expression) => {
+		const [color, op] = expression.split(".")
+		if (chroma.valid(color)) {
+			if (op === "darken") {
+				return chroma(color).darken(0.5).hex()
 			}
-			return ""
-		},
-		Color: () => {
-			const [color, op] = expression.split(".")
-			if (chroma.valid(color)) {
-				if (op === "darken") {
-					return chroma(color).darken(0.5).hex()
-				}
-			}
-			return ""
-		},
-		File: () => `url("${getURLFromFullName(context, expression)}")`,
-		Site: () => {
-			const site = context.getSite()
-			if (!site) return ""
-			if (expression === "domain") {
-				return site.domain
-			}
-			return ""
-		},
-		Label: () => "Label translation",
-	}
-
-	return handlers[(mergeTypeName as MergeType) || "Record"]()
+		}
+		return ""
+	},
+	File: (expression, context) =>
+		`url("${getURLFromFullName(context, expression)}")`,
+	Site: (expression, context) => {
+		const site = context.getSite()
+		if (!site) return ""
+		if (expression === "domain") {
+			return site.domain
+		}
+		return ""
+	},
+	Label: () => "Label translation",
 }
 
+const ANCESTOR_INDICATOR = "Parent."
+
 const inject = (template: string, context: Context): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
-		getFromContext(mergeType, mergeExpression, context)
-	)
+	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, expression) => {
+		const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
+		const mergeTypeName = mergeSplit.pop() as MergeType
+		const mergeAncestors = mergeSplit.length
+
+		return handlers[mergeTypeName || "Record"](
+			expression,
+			context,
+			mergeAncestors
+		)
+	})
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
