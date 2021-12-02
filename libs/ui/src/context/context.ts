@@ -62,8 +62,6 @@ const getFromContext = (
 	const mergeTypeName = mergeSplit.pop()
 	const mergeAncestors = mergeSplit.length
 
-	if (!mergeTypeName) return ""
-
 	const handlers: Record<MergeType, () => string> = {
 		Record: () => {
 			context = context.removeRecordFrame(mergeAncestors)
@@ -116,19 +114,10 @@ const getFromContext = (
 			}
 			return ""
 		},
-		Label: () => {
-			console.log({ stack: context.stack })
-			return "Some translation"
-		},
+		Label: () => "Label translation",
 	}
 
-	if (!(mergeTypeName in handlers)) {
-		console.warn(
-			`Merge syntax error, unrecognized mergeTypeName: ${mergeTypeName}`
-		)
-	}
-
-	return handlers[mergeTypeName as MergeType]()
+	return handlers[(mergeTypeName as MergeType) || "Record"]()
 }
 
 const inject = (template: string, context: Context): string =>
