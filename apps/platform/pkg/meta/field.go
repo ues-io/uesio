@@ -78,6 +78,7 @@ type Field struct {
 	CreatedAt          int64               `yaml:"-" uesio:"uesio.createdat"`
 	SubFields          []SubField          `yaml:"subfields,omitempty" uesio:"studio.subfields"`
 	SubType            string              `yaml:"subtype,omitempty" uesio:"studio.subtype"`
+	LanguageLabel      string              `yaml:"languageLabel,omitempty" uesio:"studio.languagelabel"`
 }
 
 // GetFieldTypes function

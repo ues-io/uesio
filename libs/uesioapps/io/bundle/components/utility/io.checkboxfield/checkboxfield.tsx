@@ -27,15 +27,19 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 			native: {
 				opacity: "0",
 				position: "absolute",
+				cursor: readonly ? "inherit" : "pointer",
 			},
-			input: {},
+			input: {
+				opacity: readonly ? 0.5 : 1,
+				cursor: readonly ? "inherit" : "pointer",
+			},
 			readonly: {},
 		},
 		props
 	)
 
 	return (
-		<>
+		<div className={classes.input}>
 			<input
 				className={classes.native}
 				checked={checked}
@@ -43,13 +47,11 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				disabled={readonly}
 				onChange={(event) => setValue(event.target.checked)}
 			/>
-			<div className={classes.input}>
-				<Icon
-					context={context}
-					icon={checked ? "check_box" : "check_box_outline_blank"}
-				/>
-			</div>
-		</>
+			<Icon
+				context={context}
+				icon={checked ? "check_box" : "check_box_outline_blank"}
+			/>
+		</div>
 	)
 }
 

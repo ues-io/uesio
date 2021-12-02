@@ -164,6 +164,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	GetNameKeyPart((&ComponentVariantCollection{}).GetName()):   func() BundleableGroup { return &ComponentVariantCollection{} },
 	GetNameKeyPart((&UserFileCollectionCollection{}).GetName()): func() BundleableGroup { return &UserFileCollectionCollection{} },
 	GetNameKeyPart((&FeatureFlagCollection{}).GetName()):        func() BundleableGroup { return &FeatureFlagCollection{} },
+	GetNameKeyPart((&LabelCollection{}).GetName()):              func() BundleableGroup { return &LabelCollection{} },
 }
 
 // GetBundleableGroupFromType function

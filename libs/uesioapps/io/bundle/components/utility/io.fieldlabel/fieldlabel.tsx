@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TextFieldProps extends definition.UtilityProps {
+interface FieldLabelProps extends definition.UtilityProps {
 	label?: string
 }
 
-const FieldLabel: FunctionComponent<TextFieldProps> = (props) => {
+const FieldLabel: FunctionComponent<FieldLabelProps> = (props) => {
 	const { label } = props
 	const classes = styles.useUtilityStyles(
 		{

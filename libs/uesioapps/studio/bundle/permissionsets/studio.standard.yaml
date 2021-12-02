@@ -53,6 +53,8 @@ views:
   studio.sitecollectiondataimport: true
   studio.featureflags: true
   studio.featureflag: true
+  studio.labels: true
+  studio.label: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
@@ -102,4 +104,6 @@ routes:
   studio.sitecollectiondataimport: true
   studio.featureflags: true
   studio.featureflag: true
+  studio.labels: true
+  studio.label: true
 files:

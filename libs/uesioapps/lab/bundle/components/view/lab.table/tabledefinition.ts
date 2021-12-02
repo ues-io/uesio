@@ -1,4 +1,4 @@
-import { definition, builder, signal, component, wire } from "@uesio/ui"
+import { definition, builder, signal, component } from "@uesio/ui"
 import { TableColumnDefinition } from "../lab.tablecolumn/tablecolumndefinition"
 import actionsBarDefinition, {
 	ActionsBarDefinition,
@@ -38,8 +38,6 @@ type RowAction = {
 	text: string
 	signals: signal.SignalDefinition[]
 }
-
-const rowActions = ["edit", "delete"]
 
 const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	title: "Table",

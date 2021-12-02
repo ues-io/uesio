@@ -15,7 +15,7 @@ type TableColumnDefinition = {
 }
 interface TableColumnProps extends definition.BaseProps {
 	definition: TableColumnDefinition
-	style?: any
+	// style?: any
 }
 
 const TableColumnPropertyDefinition: builder.BuildPropertiesDefinition = {
