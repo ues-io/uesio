@@ -12,7 +12,6 @@ import NumberProp from "../buildpropitem/numberprop"
 import BooleanProp from "../buildpropitem/booleanprop"
 import ConditionProp from "../buildpropitem/conditionprop"
 import NamespaceProp from "../buildpropitem/namespaceprop"
-import StylesListProp from "../buildpropitem/styleslistprop"
 import BotProp from "../buildpropitem/botprop"
 import CustomProp from "../buildpropitem/customprop"
 import IconProp from "../buildpropitem/iconprop"
@@ -47,8 +46,6 @@ function getPropHandler(type?: string) {
 			return NumberProp
 		case "BOOLEAN":
 			return BooleanProp
-		case "STYLESLIST":
-			return StylesListProp
 		case "TEXT":
 			return TextProp
 		case "ICON":

@@ -11,7 +11,7 @@ definition:
     input:
       backgroundColor: white
       fontSize: 9pt
-      padding: 4px 30px 4px 6px
+      padding: 4px 22px 4px 6px
       borderRadius: 4px
       border: "1px solid #00000022"
       color: "#444"

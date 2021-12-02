@@ -1,0 +1,13 @@
+name: propsubsection
+component: io.fieldlabel
+extends: io.default
+label: Property Sub Section
+definition:
+  uesio.styles:
+    root:
+      padding: 8px
+      color: rgb(68, 68, 68)
+      backgroundColor: "#f5f5f5"
+      fontWeight: bold
+      fontSize: 8pt
+      textTransform: uppercase
