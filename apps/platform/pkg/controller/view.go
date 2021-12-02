@@ -28,6 +28,7 @@ type ViewDependencies struct {
 	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
 	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
 	FeatureFlags      map[string]*FeatureFlagResponse   `yaml:"featureflags,omitempty"`
+	Labels            map[string]*meta.Label            `yaml:"labels,omitempty"`
 }
 
 // ViewPreview is also good
@@ -133,11 +134,18 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		return nil, errors.New("Failed to load studio variants: " + err.Error())
 	}
 
+	var labels meta.LabelCollection
+	err = bundle.LoadAllFromAny(&labels, nil, session)
+	if err != nil {
+		return nil, errors.New("Failed to load labels: " + err.Error())
+	}
+
 	deps := ViewDependencies{
 		ComponentPacks:    map[string]bool{},
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
 		FeatureFlags:      map[string]*FeatureFlagResponse{},
+		Labels:            map[string]*meta.Label{},
 	}
 
 	for _, packs := range packsByNamespace {
@@ -161,6 +169,11 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
+	}
+
+	for i := range labels {
+		label := labels[i]
+		deps.Labels[label.GetKey()] = &label
 	}
 
 	return &deps, nil
