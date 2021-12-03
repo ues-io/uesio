@@ -4,7 +4,6 @@ import { getNodeAtPath, newDoc, parse } from "../../yamlutils/yamlutils"
 import componentVariantAdapter from "./adapter"
 import { getFullPathParts, parseVariantKey } from "../../component/path"
 import { ComponentVariant } from "./types"
-import { Scalar, YAMLMap } from "yaml"
 import {
 	addDefinition,
 	AddDefinitionPayload,
@@ -32,35 +31,34 @@ const componentVariantSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(loadOp.fulfilled, (state, { payload }) => {
 			const yamlDoc = parse(payload)
-			const variants = getNodeAtPath(
+
+			const variants: Record<string, ComponentVariant> = getNodeAtPath(
 				["dependencies", "componentvariants"],
 				yamlDoc.contents
-			) as YAMLMap<Scalar<string>, YAMLMap>
+			)?.toJSON()
 
-			if (variants) {
-				const variantsToAdd: Record<string, ComponentVariant> = {}
-				variants.items.forEach((item) => {
-					const key = item.key.value
-					if (state.entities[key]) return
-					const [, , variantNamespace] = parseVariantKey(key)
-					const definition = item.value?.get("definition") as YAMLMap
-					const defDoc = newDoc()
-					defDoc.contents = definition
-					variantsToAdd[key] = {
-						name: item.value?.get("name") as string,
-						label: item.value?.get("label") as string,
-						component: item.value?.get("component") as string,
-						extends: item.value?.get("extends") as string,
+			if (!variants) return
+
+			const variantsToAdd: ComponentVariant[] = Object.keys(variants).map(
+				(variantKey: string) => {
+					const variant = variants[variantKey] as ComponentVariant
+					const { label, name, component, definition } = variant
+					const [, , variantNamespace] = parseVariantKey(variantKey)
+					const defDoc = newDoc(definition)
+					return {
+						name,
+						label,
+						component,
+						extends: variant.extends,
 						namespace: variantNamespace,
-						definition: definition.toJSON() || {},
+						definition,
 						yaml: defDoc,
 						originalYaml: defDoc,
 					}
-				})
+				}
+			)
 
-				if (!Object.keys(variantsToAdd).length) return
-				componentVariantAdapter.upsertMany(state, variantsToAdd)
-			}
+			componentVariantAdapter.upsertMany(state, variantsToAdd)
 		})
 		builder.addCase(
 			setDefinition,
