@@ -5,6 +5,7 @@ import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
 import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectById as selectVariant } from "../bands/componentvariant/adapter"
+import { selectById as selectLabel } from "../bands/label/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
@@ -109,7 +110,11 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		return ""
 	},
-	Label: () => "Label translation",
+	Label: (expression, context) => {
+		const label = context.getLabel(expression)
+		if (!label) return "Label not found" // We might want to do some more error related stuff here
+		return label.value || "missing label value"
+	},
 }
 
 const ANCESTOR_INDICATOR = "Parent."
@@ -220,6 +225,9 @@ class Context {
 
 	getComponentVariant = (componentType: string, variantName: string) =>
 		selectVariant(getStore().getState(), `${componentType}.${variantName}`)
+
+	getLabel = (labelKey: string) =>
+		selectLabel(getStore().getState(), labelKey)
 
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
