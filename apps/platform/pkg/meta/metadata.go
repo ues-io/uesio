@@ -192,6 +192,18 @@ func IsValidMetadataName(name string) bool {
 	return validMetaRegex.MatchString(name)
 }
 
+func validateNodeLanguage(node *yaml.Node, expectedName string) error {
+	node.SkipCustom = true
+	name := getNodeValueAsString(node, "language")
+	if name != expectedName {
+		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
+	}
+	if !IsValidMetadataName(name) {
+		return fmt.Errorf("Failed metadata validation, no capital letters or special characters allowed: %s", name)
+	}
+	return nil
+}
+
 func validateNodeName(node *yaml.Node, expectedName string) error {
 	node.SkipCustom = true
 	name := getNodeValueAsString(node, "name")

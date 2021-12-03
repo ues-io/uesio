@@ -1,0 +1,4 @@
+language: it
+labels:
+  crm.first: Primo
+  crm.second: Secondo

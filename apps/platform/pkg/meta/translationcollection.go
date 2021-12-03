@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
+	language "golang.org/x/text/language"
 )
 
 // FieldCollection slice
@@ -29,13 +30,13 @@ func (tc *TranslationCollection) NewItem() loadable.Item {
 
 // NewBundleableItemWithKey function
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
-	_, language, err := ParseKey(key)
+
+	_, err := language.ParseBase(key)
 	if err != nil {
-		return nil, errors.New("Invalid Variant Key: " + key)
+		return nil, errors.New("Invalid ISO 639 Key: " + key)
 	}
 	*tc = append(*tc, Translation{
-		Language: language,
-		//Namespace: namespace,
+		Language: key,
 	})
 	return &(*tc)[len(*tc)-1], nil
 }

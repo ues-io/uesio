@@ -6,24 +6,19 @@ import (
 	"github.com/humandad/yaml"
 )
 
-type TranslationList struct {
-	Label string `uesio:"studio.label" json:"label"`
-	Value string `uesio:"studio.value" json:"value"`
-}
-
 // Translation struct
 type Translation struct {
-	ID        string     `yaml:"-" uesio:"uesio.id"`
-	Namespace string     `yaml:"-" uesio:"-"`
-	Workspace *Workspace `yaml:"-" uesio:"studio.workspace"`
-	//Labels    []TranslationList `yaml:"labels" uesio:"studio.labels"`
-	Language  string    `yaml:"language" uesio:"studio.language"` //language
-	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
+	ID        string            `yaml:"-" uesio:"uesio.id"`
+	Namespace string            `yaml:"-" uesio:"-"`
+	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
+	LabelRefs map[string]string `yaml:"labels" uesio:"studio.labelrefs"`
+	Language  string            `yaml:"language" uesio:"studio.language"`
+	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 func (t *Translation) GetBundleGroup() BundleableGroup {
@@ -40,14 +35,12 @@ func (t *Translation) GetKey() string {
 }
 
 func (t *Translation) GetPath() string {
-	//TO-DO check this
 	return filepath.Join(t.Language, "file.yaml")
 
 }
 
 func (t *Translation) GetConditions() map[string]string {
 	return map[string]string{
-		//"studio.name":     t.Name,
 		"studio.language": t.Language,
 	}
 }
@@ -108,10 +101,9 @@ func (t *Translation) SetItemMeta(itemMeta *ItemMeta) {
 }
 
 func (t *Translation) UnmarshalYAML(node *yaml.Node) error {
-	//TO-DO validate the node
-	// err := validateNodeName(node, t.Name)
-	// if err != nil {
-	// 	return err
-	// }
+	err := validateNodeLanguage(node, t.Language)
+	if err != nil {
+		return err
+	}
 	return node.Decode(t)
 }
