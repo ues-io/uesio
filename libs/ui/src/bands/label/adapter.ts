@@ -3,7 +3,7 @@ import { RootState } from "../../store/store"
 import { Label } from "./types"
 
 export const labelAdapter = createEntityAdapter<Label>({
-	selectId: ({ name }) => name,
+	selectId: ({ name, workspace }) => `${workspace}.${name}`,
 })
 
 export const { selectById, selectEntities } = labelAdapter.getSelectors(

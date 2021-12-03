@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import labelAdapter from "./adapter"
 import loadOp from "../viewdef/operations/load"
-import { getNodeAtPath, parse, newDoc } from "../../yamlutils/yamlutils"
-import { defaultTheme } from "../../styles/styles"
-import merge from "lodash/merge"
+import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
 
 const labelSlice = createSlice({
 	name: "label",
@@ -14,12 +12,19 @@ const labelSlice = createSlice({
 			loadOp.fulfilled,
 			(state, { payload }: PayloadAction<string>) => {
 				const yamlDoc = parse(payload)
-				const defDoc = newDoc()
-				defDoc.contents = getNodeAtPath("definition", yamlDoc.contents)
-				return labelAdapter.upsertOne(state, {
-					name: yamlDoc.get("name") as string,
-					value: merge({}, defaultTheme.definition, defDoc.toJSON()),
-				})
+				const labels = getNodeAtPath(
+					"dependencies.labels",
+					yamlDoc.contents
+				)?.toJSON()
+
+				return labelAdapter.upsertMany(
+					state,
+					Object.keys(labels).map((key) => ({
+						namespace: key.split(".")[0],
+						name: labels[key].name,
+						value: labels[key].value,
+					}))
+				)
 			}
 		)
 	},
