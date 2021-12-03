@@ -6,7 +6,8 @@ const handleDrop = (
 	dropIndex: number,
 	uesio: hooks.Uesio
 ): void => {
-	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
+	const [propDef] =
+		component.registry.getPropertiesDefinitionFromPath(dragNode)
 
 	uesio.builder.clearDragNode()
 	uesio.builder.clearDropNode()
@@ -21,7 +22,7 @@ const handleDrop = (
 
 	switch (metadataType) {
 		case "field": {
-			const dropPropDef =
+			const [dropPropDef] =
 				component.registry.getPropertiesDefinitionFromPath(dropNode)
 			const handler = dropPropDef?.handleFieldDrop
 			if (handler) {
@@ -89,7 +90,8 @@ const isNextSlot = (
 }
 
 const isDropAllowed = (accepts: string[], dragNode: string): boolean => {
-	const propDef = component.registry.getPropertiesDefinitionFromPath(dragNode)
+	const [propDef] =
+		component.registry.getPropertiesDefinitionFromPath(dragNode)
 	if (propDef) {
 		// The component should always have the trait of its name
 		const traits = (propDef?.traits || []).concat([

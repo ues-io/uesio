@@ -1,9 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, builder } from "@uesio/ui"
+import { definition, hooks, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import ExpandPanel from "../expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import PropertiesPane from "../propertiespane"
+
+const TitleBar = component.registry.getUtility("io.titlebar")
+const Button = component.registry.getUtility("io.button")
+const Icon = component.registry.getUtility("io.icon")
 
 function getOrderTitle(order: OrderDefinition): string {
 	if (order.field) {
@@ -31,7 +34,7 @@ const getOrderProperties = (): builder.PropDescriptor[] => [
 type OrderDefinition = { desc: boolean; field: string }
 
 const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, valueAPI } = props
+	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined
@@ -44,28 +47,37 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const orderDef = wireDef?.order as definition.Definition[] | undefined
 	const primaryColor = theme.definition.palette.primary
 
+	const ordersPath = `${path}["order"]`
+
 	return (
-		<ExpandPanel
-			defaultExpanded={false}
-			title={section.title}
-			action="add_box"
-			actionColor={primaryColor}
-			actionOnClick={() => {
-				valueAPI.add(`${path}["order"]`, {
-					field: null,
-					desc: false,
-				})
-			}}
-			context={context}
-			styles={{
-				innerContent: {
-					display: "grid",
-					rowGap: "8px",
-				},
-			}}
-		>
+		<>
+			<TitleBar
+				variant="studio.propsubsection"
+				title={""}
+				context={context}
+				actions={
+					<Button
+						context={context}
+						variant="studio.actionbutton"
+						icon={
+							<Icon
+								context={context}
+								icon="add"
+								variant="studio.actionicon"
+							/>
+						}
+						label="New Ordering"
+						onClick={() => {
+							valueAPI.add(ordersPath, {
+								field: null,
+								desc: false,
+							})
+						}}
+					/>
+				}
+			/>
 			{orderDef?.map((order: OrderDefinition, index) => {
-				const orderPath = `${path}["order"]["${index}"]`
+				const orderPath = `${ordersPath}["${index}"]`
 				const selected = selectedNode.startsWith(orderPath)
 				return (
 					<PropNodeTag
@@ -102,7 +114,7 @@ const OrderSection: FunctionComponent<SectionRendererProps> = (props) => {
 					</PropNodeTag>
 				)
 			})}
-		</ExpandPanel>
+		</>
 	)
 }
 

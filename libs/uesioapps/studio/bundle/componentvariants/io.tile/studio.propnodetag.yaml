@@ -5,6 +5,7 @@ definition:
   uesio.styles:
     root:
       border: "1px solid #eee"
+      margin: 8px
       fontSize: "9pt"
       color: "#444"
       borderRadius: 4px
