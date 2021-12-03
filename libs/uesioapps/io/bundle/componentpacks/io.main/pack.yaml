@@ -24,6 +24,7 @@ components:
         - io.fieldwrapper.io.default
         - io.tile.io.default
         - io.numberfield.io.default
+        - io.listfield.io.default
     io.filter:
       variants:
         - io.selectfield.io.filter

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"sync"
 
 	_ "github.com/lib/pq" //needed for Postgres
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -15,15 +16,21 @@ type Adapter struct {
 
 // TODO: Figure out a way to clean up and close unused clients
 var clientPool = map[string]*sql.DB{}
+var lock sync.RWMutex
 
 func connect(credentials *adapt.Credentials) (*sql.DB, error) {
 	hash := credentials.GetHash()
 	// Check the pool for a client
+	lock.RLock()
 	client, ok := clientPool[hash]
+	lock.RUnlock()
 	if ok {
 		return client, nil
 	}
+	return getConnection(credentials, hash)
+}
 
+func getConnection(credentials *adapt.Credentials, hash string) (*sql.DB, error) {
 	host, ok := (*credentials)["host"]
 	if !ok {
 		return nil, errors.New("No host provided in credentials")
@@ -59,6 +66,9 @@ func connect(credentials *adapt.Credentials) (*sql.DB, error) {
 	if err != nil {
 		return db, err
 	}
+
+	lock.Lock()
+	defer lock.Unlock()
 
 	clientPool[hash] = db
 

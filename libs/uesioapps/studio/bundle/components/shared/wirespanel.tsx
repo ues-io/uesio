@@ -17,7 +17,7 @@ const WiresPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const def = uesio.builder.useDefinition(path) as definition.DefinitionMap
 	return (
-		<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
+		<div>
 			{Object.keys(def || {}).map((key: string, index) => {
 				const wirePath = `${localPath}["${key}"]`
 				return (

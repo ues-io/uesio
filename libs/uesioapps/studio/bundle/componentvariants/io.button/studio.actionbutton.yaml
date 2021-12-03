@@ -4,7 +4,7 @@ label: Action Button
 definition:
   uesio.styles:
     root:
-      color: "444"
+      color: "#444"
       padding: 4px
       fontSize: 8pt
       whiteSpace: nowrap

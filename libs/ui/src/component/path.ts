@@ -1,28 +1,6 @@
 import toPath from "lodash/toPath"
 import { DefinitionMap } from "../definition/definition"
 
-// Trims any path to the last element that is fully namespaced
-// (meaning the path element contains a dot)
-// TODO: This seems a bit brittle
-const trimPath = (pathArray: string[]): string[] => {
-	const size = pathArray.length
-	if (size === 0) {
-		return pathArray
-	}
-	if (pathArray[0] === "wires") {
-		return pathArray.slice(0, 2)
-	}
-	if (pathArray[0] === "panels" && pathArray.length === 2) {
-		return pathArray
-	}
-	const nextItem = pathArray[size - 1]
-	if (nextItem && nextItem.includes && nextItem.includes(".")) {
-		return pathArray
-	}
-	pathArray.pop()
-	return trimPath(pathArray)
-}
-
 const parseKey = (fullName: string): [string, string] => {
 	if (!fullName) {
 		return ["", ""]
@@ -47,20 +25,6 @@ const parseFieldKey = (fullName: string): [string, string, string, string] => {
 	const [collectionNamespace, collectionName, fieldNamespace, fieldName] =
 		fullName.split(".", 4)
 	return [collectionNamespace, collectionName, fieldNamespace, fieldName]
-}
-
-// Trims a path and then returns the last element of the path.
-const getPathSuffix = (path: string | string[]) => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	const trimmedPath = trimPath(pathArray)
-	return trimmedPath.pop() || null
-}
-
-// Trims a path and returns the string representation of the path.
-const trimPathToComponent = (path: string | string[]) => {
-	const pathArray = Array.isArray(path) ? path : toPath(path)
-	const trimmedPath = trimPath(pathArray)
-	return fromPath(trimmedPath)
 }
 
 // Unwraps a definition from its key
@@ -216,8 +180,6 @@ export {
 	parseKey,
 	parseVariantKey,
 	parseFieldKey,
-	getPathSuffix,
-	trimPathToComponent,
 	unWrapDefinition,
 	fromPath,
 	toPath,

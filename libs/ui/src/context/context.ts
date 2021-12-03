@@ -23,6 +23,17 @@ type SiteAdminState = {
 	version?: string
 }
 
+type MergeType =
+	| "Record"
+	| "Param"
+	| "User"
+	| "RecordId"
+	| "Theme"
+	| "Color"
+	| "File"
+	| "Site"
+	| "Label"
+
 type ContextFrame = {
 	wire?: string
 	record?: string
@@ -40,24 +51,21 @@ type ContextFrame = {
 	errors?: string[]
 }
 
-const ANCESTOR_INDICATOR = "Parent."
-
-const getFromContext = (
-	mergeType: string,
+type MergeHandler = (
 	expression: string,
-	context: Context
-) => {
-	const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
-	const mergeTypeName = mergeSplit.pop()
-	const mergeAncestors = mergeSplit.length
+	context: Context,
+	ancestors: number
+) => string
 
-	if (mergeTypeName === "" || mergeTypeName === "Record") {
-		context = context.removeRecordFrame(mergeAncestors)
+const handlers: Record<MergeType, MergeHandler> = {
+	Record: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
 		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
-	} else if (mergeTypeName === "Param") {
-		return context.getView()?.params?.[expression] || ""
-	} else if (mergeTypeName === "User") {
+	},
+	Param: (expression, context) =>
+		context.getView()?.params?.[expression] || "",
+	User: (expression, context) => {
 		const user = context.getUser()
 		if (!user) return ""
 		if (expression === "initials") {
@@ -65,10 +73,13 @@ const getFromContext = (
 		} else if (expression === "picture") {
 			return user.picture
 		}
-	} else if (mergeTypeName === "RecordId") {
-		context = context.removeRecordFrame(mergeAncestors)
+		return ""
+	},
+	RecordId: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
 		return context.getRecord()?.getId() || ""
-	} else if (mergeTypeName === "Theme") {
+	},
+	Theme: (expression, context) => {
 		const [scope, value, op] = expression.split(".")
 		const theme = context.getTheme()
 		if (scope === "color") {
@@ -78,7 +89,8 @@ const getFromContext = (
 			return theme.definition.palette[value]
 		}
 		return ""
-	} else if (mergeTypeName === "Color") {
+	},
+	Color: (expression) => {
 		const [color, op] = expression.split(".")
 		if (chroma.valid(color)) {
 			if (op === "darken") {
@@ -86,23 +98,34 @@ const getFromContext = (
 			}
 		}
 		return ""
-	} else if (mergeTypeName === "File") {
-		return `url("${getURLFromFullName(context, expression)}")`
-	} else if (mergeTypeName === "Site") {
+	},
+	File: (expression, context) =>
+		`url("${getURLFromFullName(context, expression)}")`,
+	Site: (expression, context) => {
 		const site = context.getSite()
 		if (!site) return ""
 		if (expression === "domain") {
 			return site.domain
 		}
 		return ""
-	}
-	return ""
+	},
+	Label: () => "Label translation",
 }
 
+const ANCESTOR_INDICATOR = "Parent."
+
 const inject = (template: string, context: Context): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
-		getFromContext(mergeType, mergeExpression, context)
-	)
+	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, expression) => {
+		const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
+		const mergeTypeName = mergeSplit.pop() as MergeType
+		const mergeAncestors = mergeSplit.length
+
+		return handlers[mergeTypeName || "Record"](
+			expression,
+			context,
+			mergeAncestors
+		)
+	})
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId

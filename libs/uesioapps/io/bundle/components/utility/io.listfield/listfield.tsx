@@ -21,6 +21,7 @@ interface Props extends definition.UtilityProps {
 	subType: string
 	autoAdd?: boolean
 	fieldVariant?: string
+	labelVariant?: string
 }
 
 const ListField: FunctionComponent<Props> = (props) => {
@@ -33,6 +34,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		setValue,
 		autoAdd,
 		fieldVariant,
+		labelVariant,
 	} = props
 	const editMode = mode === "EDIT"
 	const isText = subType === "TEXT"
@@ -40,13 +42,11 @@ const ListField: FunctionComponent<Props> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
+			root: {},
+			row: {
 				gridTemplateColumns: `repeat(${numFields},1fr)${
 					editMode ? " 0fr" : ""
 				}`,
-				alignItems: "center",
-				columnGap: "10px",
-				rowGap: "10px",
 				".deleteicon": {
 					opacity: "0",
 				},
@@ -83,9 +83,11 @@ const ListField: FunctionComponent<Props> = (props) => {
 		subfield: collection.FieldMetadata
 	) => (isText ? item : (item as wire.PlainWireRecord)[subfield.name] || "")
 
-	return subFields ? (
-		<div>
-			<Grid className={classes.root} context={context}>
+	if (!subFields) return null
+
+	return (
+		<div className={classes.root}>
+			<Grid className={classes.row} context={context}>
 				{subFields &&
 					Object.keys(subFields).map((subfieldId, index) => {
 						const subfield = subFields[subfieldId]
@@ -101,6 +103,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 										? ""
 										: subfield.label || subfield.name
 								}
+								variant={labelVariant}
 								context={context}
 							/>
 						)
@@ -125,11 +128,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 			{value
 				?.concat(autoAdd && editMode ? [getDefaultValue()] : [])
 				.map((item: wire.PlainWireRecord | wire.FieldValue, index) => (
-					<Grid
-						key={index}
-						className={classes.root}
-						context={context}
-					>
+					<Grid key={index} className={classes.row} context={context}>
 						{subFields &&
 							Object.keys(subFields).map((subfieldId, i) => {
 								const subfield = subFields[subfieldId]
@@ -171,7 +170,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 					</Grid>
 				))}
 		</div>
-	) : null
+	)
 }
 
 export default ListField

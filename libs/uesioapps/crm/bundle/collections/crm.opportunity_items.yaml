@@ -1,3 +1,3 @@
 name: opportunity_items
-dataSource: crm.
+dataSource: uesio.platform
 nameField: crm.name

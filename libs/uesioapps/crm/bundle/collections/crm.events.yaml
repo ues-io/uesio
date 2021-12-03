@@ -1,3 +1,3 @@
 name: events
-dataSource: crm.
+dataSource: uesio.platform
 nameField: crm.name

@@ -1,8 +1,15 @@
-import { FunctionComponent, DragEvent, useState } from "react"
+import {
+	FunctionComponent,
+	DragEvent,
+	useState,
+	SyntheticEvent,
+	ChangeEvent,
+} from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import ExpandPanel from "../expandpanel"
-import { hooks, component, definition, styles } from "@uesio/ui"
+import { hooks, component, definition } from "@uesio/ui"
 import PropNodeTag from "../buildpropitem/propnodetag"
+
+const TitleBar = component.registry.getUtility("io.titlebar")
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	const { section, path, context, valueAPI } = props
@@ -12,19 +19,6 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 	if (!collectionKey) {
 		return null
 	}
-
-	const classes = styles.useUtilityStyles(
-		{
-			search: {
-				marginBottom: "2px",
-				width: "100%",
-				height: "30px",
-				outline: 0,
-				borderWidth: "0 0 1px",
-			},
-		},
-		null
-	)
 
 	// Limit the fields to just the same namespace as the collection for now.
 	// In theory, you could have fields from a different namespace attached to
@@ -68,21 +62,34 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		  )
 
 	return (
-		<ExpandPanel
-			defaultExpanded={false}
-			title={section.title}
-			context={context}
-			searchValue={searchTerm}
-			onSearch={handleChange}
-		>
-			<div
-				style={{
-					display: "grid",
-					rowGap: "8px",
-				}}
-				onDragStart={onDragStart}
-				onDragEnd={onDragEnd}
-			>
+		<>
+			<TitleBar
+				variant="studio.propsubsection"
+				title={""}
+				context={context}
+				actions={
+					<input
+						value={searchTerm}
+						style={{
+							outline: "none",
+							padding: "4px",
+							fontSize: "9pt",
+							border: "none",
+							background: "#eee",
+							borderRadius: "4px",
+						}}
+						onChange={(event: ChangeEvent<HTMLInputElement>) => {
+							handleChange(event.target.value)
+						}}
+						onClick={(event: SyntheticEvent): void => {
+							event.stopPropagation()
+						}}
+						type="search"
+						placeholder="Search..."
+					/>
+				}
+			/>
+			<div onDragStart={onDragStart} onDragEnd={onDragEnd}>
 				{collectionKey &&
 					results &&
 					results.map((fieldId, index) => {
@@ -120,7 +127,7 @@ const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
 						)
 					})}
 			</div>
-		</ExpandPanel>
+		</>
 	)
 }
 

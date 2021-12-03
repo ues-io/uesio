@@ -17,7 +17,7 @@ const BuildWrapper: FunctionComponent<BuildWrapperProps> = (props) => {
 	const nodeState = uesio.builder.useNodeState("viewdef", viewDefId, path)
 	const isActive = nodeState === "active"
 	const isSelected = nodeState === "selected"
-	const propDef = component.registry.getPropertiesDefinitionFromPath(
+	const [propDef] = component.registry.getPropertiesDefinitionFromPath(
 		component.path.makeFullPath("viewdef", viewDefId, path)
 	)
 	const accepts = propDef?.accepts

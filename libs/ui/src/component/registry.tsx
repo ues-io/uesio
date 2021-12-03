@@ -8,10 +8,11 @@ import {
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import {
 	parseKey,
-	getPathSuffix,
 	getFullPathParts,
 	parseFieldKey,
 	parseVariantKey,
+	getKeyAtPath,
+	fromPath,
 } from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
@@ -182,46 +183,73 @@ const getPropertiesDefinition = (key: string) => {
 	return propDef
 }
 
+// Trims any path to the last element that is fully namespaced
+// (meaning the path element contains a dot)
+const specialProps = ["uesio.variant", "uesio.display", "uesio.styles"]
+const trimPath = (pathArray: string[]): string[] => {
+	const size = pathArray.length
+	if (size === 0) {
+		return pathArray
+	}
+	const nextItem = pathArray[size - 1]
+	if (nextItem.includes(".") && !specialProps.includes(nextItem)) {
+		return pathArray
+	}
+	pathArray.pop()
+	return trimPath(pathArray)
+}
+
 const getPropertiesDefinitionFromPath = (
 	path: string
-): BuildPropertiesDefinition | undefined => {
+): [BuildPropertiesDefinition | undefined, string] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	if (metadataType === "component")
-		return getPropertiesDefinition(metadataItem)
+		return [getPropertiesDefinition(metadataItem), localPath]
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
 		const propDef = getPropertiesDefinition(`${namespace}.${name}`)
 		propDef.type = "componentvariant"
-		return propDef
+		return [propDef, localPath]
 	}
 	if (metadataType === "componenttype") {
-		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
+		return [
+			getComponentTypePropsDef(getPropertiesDefinition(metadataItem)),
+			localPath,
+		]
 	}
 	if (metadataType === "field") {
 		const [namespace, name, collectionNamespace, collectionName] =
 			parseFieldKey(metadataItem)
-		return getFieldPropsDef(
-			namespace,
-			name,
-			collectionNamespace,
-			collectionName
-		)
+		return [
+			getFieldPropsDef(
+				namespace,
+				name,
+				collectionNamespace,
+				collectionName
+			),
+			localPath,
+		]
 	}
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 		if (pathArray[0] === "wires") {
-			return getWirePropsDef()
+			return [getWirePropsDef(), fromPath(pathArray.slice(0, 2))]
 		}
 		if (pathArray[0] === "panels" && pathArray.length === 2) {
-			return getPanelPropsDef()
+			return [getPanelPropsDef(), fromPath(pathArray.slice(0, 2))]
 		}
-		const componentFullName = getPathSuffix(pathArray)
+
+		const trimmedPath = trimPath(pathArray)
+		const componentFullName = getKeyAtPath(fromPath(trimmedPath))
 		if (componentFullName) {
-			return getPropertiesDefinition(componentFullName)
+			return [
+				getPropertiesDefinition(componentFullName),
+				fromPath(trimmedPath),
+			]
 		}
 	}
 
-	return undefined
+	return [undefined, localPath]
 }
 const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
