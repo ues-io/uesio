@@ -11,8 +11,12 @@ const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
 
+	const uesio = hooks.useUesio(props)
+	const [, , selectedNode] = uesio.builder.useSelectedNode()
+	const selected = selectedNode === path
+
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const [selected, setSelected] = useState(false)
+
 	const [searchTerm, setSearchTerm] = useState("")
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value)
@@ -58,6 +62,9 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 		null
 	)
 
+	const viewDefId = uesio.getViewDefId()
+	if (!viewDefId || !path) return null
+
 	return (
 		<div ref={setAnchorEl}>
 			<FieldWrapper
@@ -78,7 +85,13 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 						className={classes.iconpreview}
 						icon={valueAPI.get(path) || ""}
 						context={context}
-						onClick={(): void => setSelected(true)}
+						onClick={() => {
+							uesio.builder.setSelectedNode(
+								"viewdef",
+								viewDefId,
+								path
+							)
+						}}
 					/>
 				</div>
 			</FieldWrapper>
@@ -99,7 +112,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 									context={context}
 									variant="studio.buildtitle"
 									icon="close"
-									onClick={() => setSelected(false)}
+									onClick={() => uesio.builder.unSelectNode()}
 								/>
 							)
 						}

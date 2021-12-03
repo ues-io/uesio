@@ -75,24 +75,20 @@ const PropertiesPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 	const [metadataType, metadataItem, selectedPath] =
 		uesio.builder.useSelectedNode()
-	// Trim the path to the closest namespaced component
-	// For Example:
-	// Turn: ["components"]["0"]["myns.mycomp"]["items"]["0"] into...
-	// This: ["components"]["0"]["myns.mycomp"]
-	const trimmedPath =
-		(selectedPath && component.path.trimPathToComponent(selectedPath)) || ""
 
 	const definition = uesio.builder.useDefinition(
 		component.path.makeFullPath(metadataType, metadataItem, "")
 	) as definition.DefinitionMap
 
-	const propsDef = augmentPropsDef(
-		component.registry.getPropertiesDefinitionFromPath(
-			component.path.makeFullPath(metadataType, metadataItem, trimmedPath)
-		),
-		definition,
-		trimmedPath
+	const fullPath = component.path.makeFullPath(
+		metadataType,
+		metadataItem,
+		selectedPath
 	)
+
+	const [plainPropsDef, trimmedPath] =
+		component.registry.getPropertiesDefinitionFromPath(fullPath)
+	const propsDef = augmentPropsDef(plainPropsDef, definition, trimmedPath)
 
 	return (
 		<PropertiesPane

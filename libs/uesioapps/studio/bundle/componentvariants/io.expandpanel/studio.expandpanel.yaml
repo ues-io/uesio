@@ -6,6 +6,5 @@ definition:
     root:
       borderBottom: "1px solid #eee"
     innerContent:
-      padding: 8px
       fontSize: "9pt"
       color: "#444"

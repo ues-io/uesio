@@ -55,12 +55,6 @@ const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 						defaultExpanded={true}
 						key={index}
 						context={context}
-						styles={{
-							innerContent: {
-								display: "grid",
-								rowGap: "8px",
-							},
-						}}
 					>
 						{Object.entries(components).map(
 							([componentName, propDef]) => {

@@ -3,7 +3,7 @@ import { SectionRendererProps } from "./sectionrendererdefinition"
 import { builder, component, definition } from "@uesio/ui"
 import PropList from "./proplist"
 
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
+const TitleBar = component.registry.getUtility("io.titlebar")
 const ListField = component.registry.getUtility("io.listfield")
 
 type StyleValue = {
@@ -84,9 +84,9 @@ const StylesSection: FunctionComponent<SectionRendererProps> = (props) => {
 			/>
 			{propsDef.classes?.map((className) => (
 				<>
-					<FieldLabel
+					<TitleBar
 						variant="studio.propsubsection"
-						label={className}
+						title={className}
 						context={context}
 					/>
 					<ListField

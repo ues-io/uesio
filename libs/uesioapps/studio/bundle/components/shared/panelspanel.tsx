@@ -17,7 +17,7 @@ const PanelsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const def = uesio.builder.useDefinition(path) as panel.PanelDefinition
 	return (
-		<div style={{ padding: "6px 4px 4px 4px", background: "#f5f5f5" }}>
+		<div>
 			{Object.keys(def || {}).map((panelId: string) => {
 				const panelPath = `${localPath}["${panelId}"]`
 				return (

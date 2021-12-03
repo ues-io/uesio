@@ -42,9 +42,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 									variant="studio.buildtitle"
 									context={context}
 									icon="close"
-									onClick={() =>
-										uesio.builder.clearSelectedNode()
-									}
+									onClick={() => uesio.builder.unSelectNode()}
 								/>
 							)
 						}

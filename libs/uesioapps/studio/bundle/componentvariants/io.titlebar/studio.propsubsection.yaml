@@ -1,6 +1,5 @@
 name: propsubsection
-component: io.fieldlabel
-extends: io.default
+component: io.titlebar
 label: Property Sub Section
 definition:
   uesio.styles:
