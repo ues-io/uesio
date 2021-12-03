@@ -16,7 +16,7 @@ const labelSlice = createSlice({
 					"dependencies.labels",
 					yamlDoc.contents
 				)?.toJSON()
-
+				if (!labels) return
 				return labelAdapter.upsertMany(
 					state,
 					Object.keys(labels).map((key) => ({
