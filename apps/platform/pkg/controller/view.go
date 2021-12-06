@@ -116,6 +116,12 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	return packs, nil
 }
 
+func addmap(a map[string]string, b map[string]string) {
+	for k, v := range b {
+		a[k] = v
+	}
+}
+
 func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 
 	packsByNamespace, err := getPacksByNamespace(session)
@@ -134,10 +140,32 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		return nil, errors.New("Failed to load studio variants: " + err.Error())
 	}
 
+	//Translation
+
+	userLanguage := "it"
+	oringinalNamespace := "crm" //session.GetWorkspaceID()
+
 	var labels meta.LabelCollection
 	err = bundle.LoadAllFromAny(&labels, nil, session)
 	if err != nil {
 		return nil, errors.New("Failed to load labels: " + err.Error())
+	}
+
+	var translations meta.TranslationCollection
+	err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
+		"studio.language": userLanguage,
+	}, session)
+
+	if err != nil {
+		return nil, errors.New("Failed to load translations: " + err.Error())
+	}
+
+	labelRefs := map[string]string{}
+
+	for i := range translations {
+		//translation := translations[i]
+		println(oringinalNamespace)
+		addmap(labelRefs, translations[i].LabelRefs)
 	}
 
 	deps := ViewDependencies{
@@ -173,6 +201,10 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 
 	for i := range labels {
 		label := labels[i]
+		//check if we have any translation for that label
+		if val, ok := labelRefs[label.GetKey()]; ok {
+			label.Value = val
+		}
 		deps.Labels[label.GetKey()] = &label
 	}
 

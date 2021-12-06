@@ -31,12 +31,11 @@ func (t *Translation) GetPermChecker() *PermissionSet {
 }
 
 func (t *Translation) GetKey() string {
-	return t.Language + "." + t.Namespace
+	return t.Namespace + "." + t.Language
 }
 
 func (t *Translation) GetPath() string {
-	return filepath.Join(t.Language, "file.yaml")
-
+	return filepath.Join(t.GetKey(), "translation.yaml")
 }
 
 func (t *Translation) GetConditions() map[string]string {
@@ -66,8 +65,8 @@ func (t *Translation) GetCollectionName() string {
 
 // GetCollection function
 func (t *Translation) GetCollection() CollectionableGroup {
-	var sc TranslationCollection
-	return &sc
+	var tc TranslationCollection
+	return &tc
 }
 
 // SetField function
