@@ -138,8 +138,6 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		"['namespace']['uesio.id']"
 	)
 
-	console.log({ currentBundleVersions })
-
 	return (
 		<Grid className={classes.root} context={context}>
 			{bundleNamespaces.map((namespace) => {
