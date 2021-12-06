@@ -100,22 +100,23 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		.useWire(installablebundleswire || "")
 		?.getData()
 		.filter((record) => {
-			const source = record.source
-			const namespace = source["studio.app"]
+			const source = record.source as any
+			const namespace = source["studio.app"]["uesio.id"]
 			//We don't want to see ourselves, uesio or studio
 			if (namespace === appName) return false
 			if (namespace === "studio") return false
 			return true
 		})
 		.map((record) => {
-			const source = record.source
-			const namespace = source["studio.app"] as string
+			const source = record.source as any
+			const namespace = source["studio.app"]["uesio.id"]
 			const version = `v${source["studio.major"]}.${source["studio.minor"]}.${source["studio.patch"]}`
 			return {
 				namespace,
 				version,
 			}
 		})
+	console.log({ bundles })
 	const deps = depWire.getData().map((record) => record.source)
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
