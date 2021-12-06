@@ -99,23 +99,20 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	const bundles = uesio.wire
 		.useWire(installablebundleswire || "")
 		?.getData()
-		.filter((record) => {
-			const source = record.source as any
-			const namespace = source["studio.app"]["uesio.id"]
-			//We don't want to see ourselves, uesio or studio
-			if (namespace === appName) return false
-			if (namespace === "studio") return false
-			return true
-		})
 		.map((record) => {
 			const source = record.source as any
+			console.log({ source })
 			const namespace = source["studio.app"]["uesio.id"]
+			// We don't want to see ourselves, uesio or studio
+			if (namespace === appName || namespace === "studio") return null
 			const version = `v${source["studio.major"]}.${source["studio.minor"]}.${source["studio.patch"]}`
 			return {
 				namespace,
 				version,
 			}
 		})
+		.filter((x) => x)
+
 	console.log({ bundles })
 	const deps = depWire.getData().map((record) => record.source)
 	if (!bundles || !deps) return null
