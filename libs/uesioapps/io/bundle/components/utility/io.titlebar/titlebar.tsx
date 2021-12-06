@@ -30,22 +30,15 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 		},
 		props
 	)
-
 	return (
 		<div onClick={() => onClick && onClick()} className={classes.root}>
 			<div className={classes.content}>
 				<div className={classes.title}>{context.merge(title)}</div>
-				{/* Render whitespace if subtitle is empty string */}
-				{subtitle ||
-					(subtitle === "" && (
-						<div className={classes.subtitle}>
-							{subtitle === "" ? (
-								<>&nbsp;</>
-							) : (
-								context.merge(subtitle)
-							)}
-						</div>
-					))}
+				{subtitle && (
+					<div className={classes.subtitle}>
+						{context.merge(subtitle)}
+					</div>
+				)}
 			</div>
 			<div className={classes.actions}>{actions}</div>
 		</div>
