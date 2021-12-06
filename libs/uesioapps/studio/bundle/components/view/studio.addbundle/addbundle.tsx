@@ -135,8 +135,10 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				version: `v${bundleInfo["studio.major"]}.${bundleInfo["studio.minor"]}.${bundleInfo["studio.patch"]}`,
 			}
 		}),
-		"namespace"
+		"['namespace']['uesio.id']"
 	)
+
+	console.log({ currentBundleVersions })
 
 	return (
 		<Grid className={classes.root} context={context}>
@@ -145,6 +147,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 					.map((entry) => entry?.version)
 					.sort()
 					.reverse()
+
 				const installed = !!currentBundleVersions[namespace]
 				const versionSelected = selectedValues[namespace]
 				const installedVersion =
