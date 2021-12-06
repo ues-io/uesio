@@ -8,6 +8,17 @@ type AddBundleDefinition = {
 	currentdependencies: string
 }
 
+// We might want to think of a better name for BundleSource
+type BundleSource = {
+	"studio.app": {
+		"uesio.id": string
+	}
+	"studio.major": string
+	"studio.minor": string
+	"studio.patch": string
+	"uesio.id": string
+}
+
 interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
@@ -35,7 +46,7 @@ async function installBundle(
 ) {
 	depWire.createRecord({
 		"studio.bundle": { "uesio.id": `${namespace}_${version}` },
-		"studio.workspaceid": workspaceId,
+		"studio.workspace": workspaceId,
 	})
 	await depWire.save(context)
 	return depWire.load(context)
@@ -100,8 +111,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		.useWire(installablebundleswire || "")
 		?.getData()
 		.map((record) => {
-			const source = record.source as any
-			console.log({ source })
+			const source = record.source as BundleSource
 			const namespace = source["studio.app"]["uesio.id"]
 			// We don't want to see ourselves, uesio or studio
 			if (namespace === appName || namespace === "studio") return null
@@ -113,7 +123,6 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		})
 		.filter((x) => x)
 
-	console.log({ bundles })
 	const deps = depWire.getData().map((record) => record.source)
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
@@ -133,7 +142,7 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		<Grid className={classes.root} context={context}>
 			{bundleNamespaces.map((namespace) => {
 				const versions = bundleGrouping[namespace]
-					.map((entry) => entry.version)
+					.map((entry) => entry?.version)
 					.sort()
 					.reverse()
 				const installed = !!currentBundleVersions[namespace]
@@ -141,7 +150,9 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 				const installedVersion =
 					installed && currentBundleVersions[namespace].version
 				const selectedVersion =
-					versionSelected || installedVersion || versions[0]
+					versionSelected ||
+					installedVersion ||
+					(versions[0] as string)
 				const installedIsCurrent = installedVersion === selectedVersion
 				let actionButton = (
 					<Button
