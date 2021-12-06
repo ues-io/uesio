@@ -22,8 +22,12 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 				justifyContent: "center",
 				flexDirection: "column",
 			},
-			title: {},
-			subtitle: {},
+			title: {
+				margin: 0,
+			},
+			subtitle: {
+				margin: 0,
+			},
 			actions: {
 				position: "relative",
 			},
@@ -32,19 +36,23 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	)
 
 	return (
-		<div onClick={() => onClick && onClick()} className={classes.root}>
+		<div
+			role={onClick ? "button" : undefined}
+			onClick={() => onClick && onClick()}
+			className={classes.root}
+		>
 			<div className={classes.content}>
-				<div className={classes.title}>{context.merge(title)}</div>
+				<p className={classes.title}>{context.merge(title)}</p>
 				{/* Render whitespace if subtitle is empty string */}
 				{subtitle ||
 					(subtitle === "" && (
-						<div className={classes.subtitle}>
+						<p className={classes.subtitle}>
 							{subtitle === "" ? (
 								<>&nbsp;</>
 							) : (
 								context.merge(subtitle)
 							)}
-						</div>
+						</p>
 					))}
 			</div>
 			<div className={classes.actions}>{actions}</div>
