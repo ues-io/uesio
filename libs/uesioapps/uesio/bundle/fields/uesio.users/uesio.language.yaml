@@ -1,0 +1,5 @@
+name: language
+collection: uesio.users
+type: SELECT
+label: Language
+selectList: uesio.language

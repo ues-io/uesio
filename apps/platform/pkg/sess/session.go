@@ -196,6 +196,7 @@ func (s *Session) GetUserInfo() *meta.User {
 		Picture: &meta.UserFileMetadata{
 			ID: s.getBrowserSessionAttribute("Picture"),
 		},
+		Language: s.getBrowserSessionAttribute("Language"),
 	}
 }
 
