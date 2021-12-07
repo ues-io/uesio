@@ -8,17 +8,6 @@ type AddBundleDefinition = {
 	currentdependencies: string
 }
 
-// We might want to think of a better name for BundleSource
-type BundleSource = {
-	"studio.app": {
-		"uesio.id": string
-	}
-	"studio.major": string
-	"studio.minor": string
-	"studio.patch": string
-	"uesio.id": string
-}
-
 interface Props extends definition.BaseProps {
 	definition: AddBundleDefinition
 }
@@ -111,25 +100,25 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 		.useWire(installablebundleswire || "")
 		?.getData()
 		.map((record) => {
-			const source = record.source as BundleSource
-			const namespace = source["studio.app"]["uesio.id"]
+			const namespace = record.getFieldValue("studio.app->uesio.id")
+			const major = record.getFieldValue("studio.major")
+			const minor = record.getFieldValue("studio.minor")
+			const patch = record.getFieldValue("studio.patch")
 			// We don't want to see ourselves, uesio or studio
 			if (namespace === appName || namespace === "studio") return null
-			const version = `v${source["studio.major"]}.${source["studio.minor"]}.${source["studio.patch"]}`
-			return {
-				namespace,
-				version,
-			}
+			const version = `v${major}.${minor}.${patch}`
+			return { namespace, version }
 		})
 		.filter((x) => x)
 
-	const deps = depWire.getData().map((record) => record.source)
+	const deps = depWire.getData()
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
 	const bundleNamespaces = Object.keys(bundleGrouping)
 	const currentBundleVersions = keyby(
 		deps.map((dep) => {
-			const bundleInfo = dep["studio.bundle"] as wire.PlainWireRecord
+			const bundleInfo =
+				dep.getFieldValue<wire.PlainWireRecord>("studio.bundle")
 			return {
 				namespace: bundleInfo["studio.app"],
 				version: `v${bundleInfo["studio.major"]}.${bundleInfo["studio.minor"]}.${bundleInfo["studio.patch"]}`,
