@@ -2,6 +2,7 @@ package adapt
 
 import (
 	"crypto/md5"
+	"sort"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -16,10 +17,13 @@ type Credentials map[string]string
 
 // GetHash function
 func (c *Credentials) GetHash() string {
-	keys := []string{}
+	keys := make([]string, len(*c))
+	i := 0
 	for k, v := range *c {
-		keys = append(keys, k+":"+v)
+		keys[i] = k + ":" + v
+		i++
 	}
+	sort.Strings(keys)
 	data := []byte(strings.Join(keys, ":"))
 	sum := md5.Sum(data)
 	return string(sum[:])
