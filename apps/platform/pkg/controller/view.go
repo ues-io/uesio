@@ -124,12 +124,12 @@ func addmap(a map[string]string, b map[string]string) {
 
 func getReferenceLabels(translations meta.TranslationCollection, session *sess.Session) map[string]string {
 
-	oringinalNamespace := "crm" // session.GetWorkspaceID() //TO-DO best way of getting the orginal namespace
+	originalNamespace := session.GetContextAppName()
 	labelRefs := map[string]string{}
 	index := -1
 
 	for i := range translations {
-		if translations[i].Namespace == oringinalNamespace {
+		if translations[i].Namespace == originalNamespace {
 			index = i
 		}
 		addmap(labelRefs, translations[i].LabelRefs)
