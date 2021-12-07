@@ -35,7 +35,7 @@ async function installBundle(
 ) {
 	depWire.createRecord({
 		"studio.bundle": { "uesio.id": `${namespace}_${version}` },
-		"studio.workspaceid": workspaceId,
+		"studio.workspace": workspaceId,
 	})
 	await depWire.save(context)
 	return depWire.load(context)
@@ -99,51 +99,50 @@ const AddBundle: FunctionComponent<Props> = (props) => {
 	const bundles = uesio.wire
 		.useWire(installablebundleswire || "")
 		?.getData()
-		.filter((record) => {
-			const source = record.source
-			const namespace = source["studio.app"]
-			//We don't want to see ourselves, uesio or studio
-			if (namespace === appName) return false
-			if (namespace === "studio") return false
-			return true
-		})
 		.map((record) => {
-			const source = record.source
-			const namespace = source["studio.app"] as string
-			const version = `v${source["studio.major"]}.${source["studio.minor"]}.${source["studio.patch"]}`
-			return {
-				namespace,
-				version,
-			}
+			const namespace = record.getFieldValue("studio.app->uesio.id")
+			const major = record.getFieldValue("studio.major")
+			const minor = record.getFieldValue("studio.minor")
+			const patch = record.getFieldValue("studio.patch")
+			// We don't want to see ourselves, uesio or studio
+			if (namespace === appName || namespace === "studio") return null
+			const version = `v${major}.${minor}.${patch}`
+			return { namespace, version }
 		})
-	const deps = depWire.getData().map((record) => record.source)
+		.filter((x) => x)
+
+	const deps = depWire.getData()
 	if (!bundles || !deps) return null
 	const bundleGrouping = groupby(bundles, "namespace")
 	const bundleNamespaces = Object.keys(bundleGrouping)
 	const currentBundleVersions = keyby(
 		deps.map((dep) => {
-			const bundleInfo = dep["studio.bundle"] as wire.PlainWireRecord
+			const bundleInfo =
+				dep.getFieldValue<wire.PlainWireRecord>("studio.bundle")
 			return {
 				namespace: bundleInfo["studio.app"],
 				version: `v${bundleInfo["studio.major"]}.${bundleInfo["studio.minor"]}.${bundleInfo["studio.patch"]}`,
 			}
 		}),
-		"namespace"
+		"['namespace']['uesio.id']"
 	)
 
 	return (
 		<Grid className={classes.root} context={context}>
 			{bundleNamespaces.map((namespace) => {
 				const versions = bundleGrouping[namespace]
-					.map((entry) => entry.version)
+					.map((entry) => entry?.version)
 					.sort()
 					.reverse()
+
 				const installed = !!currentBundleVersions[namespace]
 				const versionSelected = selectedValues[namespace]
 				const installedVersion =
 					installed && currentBundleVersions[namespace].version
 				const selectedVersion =
-					versionSelected || installedVersion || versions[0]
+					versionSelected ||
+					installedVersion ||
+					(versions[0] as string)
 				const installedIsCurrent = installedVersion === selectedVersion
 				let actionButton = (
 					<Button
