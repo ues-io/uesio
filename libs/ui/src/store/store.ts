@@ -12,6 +12,7 @@ import user from "../bands/user"
 import builder from "../bands/builder"
 import viewdef from "../bands/viewdef"
 import theme from "../bands/theme"
+import label from "../bands/label"
 import component from "../bands/component"
 import componentvariant from "../bands/componentvariant"
 import wire from "../bands/wire"
@@ -62,6 +63,7 @@ const create = (plat: Platform, initialState: InitialState) => {
 			viewdef,
 			view,
 			theme,
+			label,
 			panel,
 			notification,
 			wire,
