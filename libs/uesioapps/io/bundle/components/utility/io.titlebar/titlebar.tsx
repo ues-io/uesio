@@ -43,17 +43,17 @@ const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 		>
 			<div className={classes.content}>
 				<p className={classes.title}>{context.merge(title)}</p>
+
 				{/* Render whitespace if subtitle is empty string */}
-				{subtitle ||
-					(subtitle === "" && (
-						<p className={classes.subtitle}>
-							{subtitle === "" ? (
-								<>&nbsp;</>
-							) : (
-								context.merge(subtitle)
-							)}
-						</p>
-					))}
+				{(subtitle || subtitle === "") && (
+					<p className={classes.subtitle}>
+						{subtitle === "" ? (
+							<>&nbsp;</>
+						) : (
+							context.merge(subtitle)
+						)}
+					</p>
+				)}
 			</div>
 			<div className={classes.actions}>{actions}</div>
 		</div>
