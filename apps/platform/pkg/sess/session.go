@@ -32,6 +32,7 @@ func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
 			"LastName":  user.LastName,
 			"UserID":    user.ID,
 			"Picture":   user.GetPictureID(),
+			"Language":  user.Language,
 		},
 	})
 	return &sess
@@ -45,6 +46,7 @@ func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
 			"LastName":  user.LastName,
 			"UserID":    user.ID,
 			"Site":      "studio",
+			"Language":  user.Language,
 		},
 	})
 	return &Session{
