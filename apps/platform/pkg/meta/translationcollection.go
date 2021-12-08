@@ -56,9 +56,6 @@ func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (Bundleabl
 
 // GetKeyFromPath function
 func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	// if len(conditions) > 0 {
-	// 	return "", errors.New("Conditions not allowed for translations")
-	// }
 
 	languageKey, hasCondition := conditions["studio.language"]
 	parts := strings.Split(path, string(os.PathSeparator))
@@ -78,7 +75,6 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleCo
 		}
 	}
 
-	//return parts[0], nil
 	return filepath.Join(parts[0], parts[1]), nil
 }
 

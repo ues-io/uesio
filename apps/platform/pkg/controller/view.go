@@ -125,7 +125,6 @@ func addmap(a map[string]string, b map[string]string) {
 func getReferenceLabels(translations meta.TranslationCollection, session *sess.Session) map[string]string {
 
 	originalNamespace := session.GetContextAppName()
-	println(originalNamespace)
 	labelRefs := map[string]string{}
 	index := -1
 
@@ -145,7 +144,6 @@ func getReferenceLabels(translations meta.TranslationCollection, session *sess.S
 func getTranslatedLabels(session *sess.Session) (meta.LabelCollection, error) {
 
 	userLanguage := session.GetUserInfo().Language
-	println(userLanguage)
 
 	var labels meta.LabelCollection
 	err := bundle.LoadAllFromAny(&labels, nil, session)
