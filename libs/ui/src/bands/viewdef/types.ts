@@ -1,6 +1,7 @@
 import { DefinitionList, YamlDoc } from "../../definition/definition"
 import { WireDefinitionMap } from "../../definition/wire"
 import { PanelDefinitionMap } from "../../definition/panel"
+import { SignalDefinition } from "../../signalexports"
 
 type ConfigValueDependencies = {
 	[key: string]: string
@@ -44,10 +45,15 @@ type PlainViewDefMap = {
 	[key: string]: PlainViewDef
 }
 
+type ViewEventsDef = {
+	onload: SignalDefinition[]
+}
+
 type ViewDefinition = {
 	components: DefinitionList
-	wires: WireDefinitionMap
-	panels: PanelDefinitionMap
+	wires?: WireDefinitionMap
+	panels?: PanelDefinitionMap
+	events?: ViewEventsDef
 }
 
 export { PlainViewDef, PlainViewDefMap, Dependencies }

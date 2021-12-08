@@ -104,7 +104,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 						wires: [
 							{
 								wire: "search",
-								type: "QUERY",
+								query: true,
 								collection: referencedCollection.getFullName(),
 								fields: [
 									{

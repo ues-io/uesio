@@ -14,7 +14,7 @@ import (
 type LoadRequest struct {
 	Collection  string                       `json:"collection"`
 	Wire        string                       `json:"wire"`
-	Type        string                       `json:"type"`
+	Query       bool                         `json:"query"`
 	Fields      []adapt.LoadRequestField     `json:"fields"`
 	Conditions  []adapt.LoadRequestCondition `json:"conditions"`
 	Order       []adapt.LoadRequestOrder     `json:"order"`
@@ -59,7 +59,7 @@ func Load(w http.ResponseWriter, r *http.Request) {
 			Conditions:     wire.Conditions,
 			Fields:         wire.Fields,
 			Order:          wire.Order,
-			Type:           wire.Type,
+			Query:          wire.Query,
 			BatchSize:      wire.BatchSize,
 			BatchNumber:    wire.BatchNumber,
 		}

@@ -43,7 +43,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.workspace
           valueSource: LOOKUP

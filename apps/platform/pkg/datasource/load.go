@@ -180,7 +180,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		if op.Type == "QUERY" || op.Type == "" {
+		if op.Query {
 			batch = append(batch, &ops[i])
 		}
 		collated[dsKey] = batch

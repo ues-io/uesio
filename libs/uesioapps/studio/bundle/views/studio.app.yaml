@@ -59,7 +59,8 @@ definition:
         uesio.id:
         studio.name:
         studio.app:
-      type: CREATE
+      init:
+        create: true
       defaults:
         - field: studio.app
           valueSource: LOOKUP
@@ -71,7 +72,8 @@ definition:
         uesio.id:
         studio.name:
         studio.bundle:
-      type: CREATE
+      init:
+        create: true
       defaults:
         - field: studio.app
           valueSource: LOOKUP
@@ -87,7 +89,9 @@ definition:
         uesio.id:
         studio.name:
         studio.app:
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.app
           valueSource: LOOKUP

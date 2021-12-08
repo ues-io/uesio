@@ -72,7 +72,9 @@ definition:
         studio.type:
         studio.label:
         studio.languagelabel:
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
