@@ -1,6 +1,5 @@
 import { WireConditionDefinition } from "../bands/wire/conditions/conditions"
 import { WireDefault } from "../bands/wire/defaults/defaults"
-type WireType = "CREATE" | "QUERY" | "EMPTY"
 
 type WireDefinitionMap = {
 	[key: string]: WireDefinition
@@ -11,9 +10,12 @@ type WireDefinition = {
 	fields: WireFieldDefinitionMap
 	conditions?: WireConditionDefinition[]
 	defaults?: WireDefault[]
-	type?: WireType
 	order?: WireOrderDescription[]
 	batchsize?: number
+	init?: {
+		query?: boolean
+		create?: boolean
+	}
 }
 
 type WireFieldDefinitionMap = {
@@ -34,7 +36,6 @@ type WireOrderDescription = {
 }
 
 export {
-	WireType,
 	WireDefinition,
 	WireDefinitionMap,
 	WireFieldDefinition,

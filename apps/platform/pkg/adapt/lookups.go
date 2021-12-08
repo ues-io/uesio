@@ -75,6 +75,7 @@ func HandleLookups(
 					Value:    ids,
 				},
 			},
+			Query: true,
 		}
 
 		err = loader([]*LoadOp{oldValuesOp})
@@ -264,6 +265,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 				Value:    ids,
 			},
 		},
+		Query: true,
 	}, nil
 }
 
@@ -324,6 +326,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]*LoadOp, error) {
 						Value:    ids,
 					},
 				},
+				Query: true,
 			})
 		}
 	}

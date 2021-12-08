@@ -38,7 +38,17 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.federation_id:
-  # Components are how we describe the layout of our view
+      init:
+        query: false
+  events:
+    onload:
+      - signal: "wire/LOAD"
+        uesio.context:
+          siteadmin:
+            name: $Param{sitename}
+            app: $Param{appname}
+        wires:
+          - users
   components:
     - io.grid:
         uesio.variant: studio.mainlayout

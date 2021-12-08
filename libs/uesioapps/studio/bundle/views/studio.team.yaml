@@ -49,7 +49,9 @@ definition:
         uesio.id:
         studio.member:
         studio.team:
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.app
           valueSource: LOOKUP

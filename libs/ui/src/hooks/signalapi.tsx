@@ -5,12 +5,6 @@ import { Context } from "../context/context"
 
 import { PanelDefinitionMap } from "../definition/panel"
 
-import botSignals from "../bands/bot/signals"
-import routeSignals from "../bands/route/signals"
-import userSignals from "../bands/user/signals"
-import wireSignals from "../bands/wire/signals"
-import panelSignals from "../bands/panel/signals"
-import notificationSignals from "../bands/notification/signals"
 import componentSignal from "../bands/component/signals"
 import { AnyAction } from "@reduxjs/toolkit"
 import { PropDescriptor } from "../buildmode/buildpropdefinition"
@@ -18,23 +12,13 @@ import { usePanel } from "../bands/panel/selectors"
 import { ReactNode } from "react"
 import { ComponentInternal } from "../component/component"
 import Panel from "../components/panel"
-
-const registry: Record<string, SignalDescriptor> = {
-	...botSignals,
-	...routeSignals,
-	...userSignals,
-	...wireSignals,
-	...panelSignals,
-	...notificationSignals,
-}
-
-const isPanelSignal = (signal: SignalDefinition) =>
-	signal.signal.startsWith("panel/")
-
-const getPanelKey = (path: string, context: Context) => {
-	const recordContext = context.getRecordId()
-	return recordContext ? `${path}:${recordContext}` : path
-}
+import {
+	getPanelKey,
+	isPanelSignal,
+	registry,
+	run,
+	runMany,
+} from "../signals/signals"
 
 class SignalAPI {
 	constructor(uesio: Uesio) {
@@ -95,31 +79,11 @@ class SignalAPI {
 		return async () => this.runMany(signals, context)
 	}
 
-	runMany = async (signals: SignalDefinition[], context: Context) => {
-		for (const signal of signals) {
-			// Special handling for panel signals
-			let useSignal = signal
-			if (isPanelSignal(signal)) {
-				useSignal = {
-					...signal,
-					path: getPanelKey(this.uesio.getPath(), context),
-				}
-			}
-			// Keep adding to context as each signal is run
-			context = await this.run(useSignal, context)
-			// STOP running the rest of signals if there is an error
-			const errors = context.getErrors()
-			if (errors && errors.length) {
-				break
-			}
-		}
-		return context
-	}
+	runMany = async (signals: SignalDefinition[], context: Context) =>
+		runMany(this.dispatcher, this.uesio.getPath(), signals, context)
 
-	run = (signal: SignalDefinition, context: Context) => {
-		const descriptor = registry[signal.signal] || componentSignal
-		return this.dispatcher(descriptor.dispatcher(signal, context))
-	}
+	run = (signal: SignalDefinition, context: Context) =>
+		run(this.dispatcher, signal, context)
 
 	getProperties = (signal: SignalDefinition) => {
 		const descriptor = registry[signal.signal] || componentSignal

@@ -12,7 +12,7 @@ const load = async (
 		wires: [
 			{
 				wire: "CLI_LOAD",
-				type: "QUERY",
+				query: true,
 				collection: metadata.getCollectionName(),
 				fields: metadata.getFields(),
 				conditions: conditions || [],

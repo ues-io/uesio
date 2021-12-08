@@ -41,11 +41,22 @@ definition:
         uesio.federation_type:
         uesio.profile:
         uesio.picture:
+        uesio.language:
       conditions:
         - field: uesio.federation_id
           valueSource: VALUE
           value: $Param{userid}
-  # Components are how we describe the layout of our view
+      init:
+        query: false
+  events:
+    onload:
+      - signal: "wire/LOAD"
+        uesio.context:
+          siteadmin:
+            name: $Param{sitename}
+            app: $Param{appname}
+        wires:
+          - users
   components:
     - io.grid:
         uesio.variant: studio.mainlayout
@@ -77,6 +88,32 @@ definition:
                       - io.titlebar:
                           uesio.variant: io.main
                           title: User - ${uesio.firstname} ${uesio.lastname}
+                          actions:
+                            - io.group:
+                                components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Edit"
+                                      signals:
+                                        - signal: component/io.list/TOGGLE_MODE
+                                          target: "userDeck"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          uesio.context:
+                                            siteadmin:
+                                              name: $Param{sitename}
+                                              app: $Param{appname}
+                                          wires:
+                                            - "users"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Cancel"
+                                      signals:
+                                        - signal: wire/CANCEL
+                                          wire: "users"
                       - io.box:
                           uesio.variant: io.section
                           uesio.styles:
@@ -106,6 +143,8 @@ definition:
                                             fieldId: uesio.federation_type
                                         - io.field:
                                             fieldId: uesio.profile
+                                        - io.field:
+                                            fieldId: uesio.language
                       - io.box:
                           uesio.variant: io.section
                           components:

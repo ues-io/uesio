@@ -125,6 +125,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 				Collection:     lookupResults,
 				Conditions:     loadConditions,
 				Fields:         fields,
+				Query:          true,
 			}}
 			loadMetadata, err := LoadWithOptions(loadOps, session, false)
 			if err != nil {
