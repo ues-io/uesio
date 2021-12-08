@@ -159,8 +159,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		return nil, errors.New("Failed to load studio variants: " + err.Error())
 	}
 
-	//TO-DO
-	userLanguage := "it"
+	userLanguage := session.GetUserInfo().Language
 
 	var labels meta.LabelCollection
 	err = bundle.LoadAllFromAny(&labels, nil, session)
@@ -169,12 +168,14 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	}
 
 	var translations meta.TranslationCollection
-	err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
-		"studio.language": userLanguage,
-	}, session)
+	if userLanguage != "" {
+		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
+			"studio.language": userLanguage,
+		}, session)
 
-	if err != nil {
-		return nil, errors.New("Failed to load translations: " + err.Error())
+		if err != nil {
+			return nil, errors.New("Failed to load translations: " + err.Error())
+		}
 	}
 
 	labelRefs := getReferenceLabels(translations, session)
