@@ -23,15 +23,10 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		{
 			root: {
 				position: "relative",
-				"&:hover": {
-					"&:after": {
-						opacity: 1,
-					},
-				},
+
 				"&:after": {
 					content: '"expand_more"',
 					fontFamily: "Material Icons",
-					opacity: 0,
 					position: "absolute",
 					top: "50%",
 					transform: "translateY(-50%)",
