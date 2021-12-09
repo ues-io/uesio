@@ -23,6 +23,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 		{
 			root: {
 				position: "relative",
+
 				"&:after": {
 					content: '"expand_more"',
 					fontFamily: "Material Icons",
@@ -31,6 +32,7 @@ const SelectField: FunctionComponent<SelectFieldProps> = (props) => {
 					transform: "translateY(-50%)",
 					pointerEvents: "none",
 					fontSize: "initial",
+					right: "5px",
 				},
 			},
 			input: {
