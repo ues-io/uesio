@@ -107,6 +107,7 @@ const wireSlice = createSlice({
 			state.changes = {}
 			state.deletes = {}
 		}),
+		init: wireAdapter.upsertMany,
 		empty: createEntityReducer<EntityPayload, PlainWire>((state) => {
 			state.data = {}
 			state.changes = {}
@@ -278,6 +279,7 @@ export const {
 	createRecord,
 	cancel,
 	empty,
+	init,
 	toggleCondition,
 	addCondition,
 	removeCondition,

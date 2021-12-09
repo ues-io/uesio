@@ -72,18 +72,24 @@ function mergeDeep(
 	return dest
 }
 
-function additionalContext(context: Context, definition?: DefinitionMap) {
-	const additionalContext = definition?.["uesio.context"] as ContextFrame
-	if (additionalContext) {
+function additionalContext(context: Context, additional: ContextFrame) {
+	if (additional) {
 		const frame: ContextFrame = {}
-		const workspace = additionalContext.workspace
+		const workspace = additional.workspace
+		const siteadmin = additional.siteadmin
 		if (workspace) {
 			frame.workspace = {
 				name: context.merge(workspace.name),
 				app: context.merge(workspace.app),
 			}
 		}
-		const wire = additionalContext.wire
+		if (siteadmin) {
+			frame.siteadmin = {
+				name: context.merge(siteadmin.name),
+				app: context.merge(siteadmin.app),
+			}
+		}
+		const wire = additional.wire
 		if (wire) {
 			frame.wire = wire
 		}
@@ -170,7 +176,10 @@ function render(
 	return renderUtility(loader, {
 		...props,
 		definition: mergedDefinition,
-		context: additionalContext(context, mergedDefinition),
+		context: additionalContext(
+			context,
+			mergedDefinition?.["uesio.context"] as ContextFrame
+		),
 	})
 }
 
@@ -197,4 +206,5 @@ export {
 	renderUtility,
 	mergeDefinitionMaps,
 	getDefinitionFromVariant,
+	additionalContext,
 }

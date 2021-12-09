@@ -19,7 +19,9 @@ definition:
         studio.name:
         studio.description:
         studio.color:
-      type: CREATE
+      init:
+        query: false
+        create: true
   # Components are how we describe the layout of our view
   components:
     - io.grid:

@@ -47,7 +47,9 @@ definition:
         uesio.id:
         studio.type:
         studio.domain:
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.site
           valueSource: VALUE

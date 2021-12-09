@@ -41,7 +41,7 @@ export default createAsyncThunk<
 		wiresResponse[wire.wire] = {
 			name,
 			view,
-			type: requestWire.type,
+			query: true,
 			batchid: requestWire.batchid,
 			data: {
 				...requestWire.data,

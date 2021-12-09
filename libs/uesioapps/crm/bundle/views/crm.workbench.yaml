@@ -3,7 +3,6 @@ definition:
   # Wires connect to data in collections
   wires:
     newwire17:
-      type: CREATE
       fields:
         crm.account: null
         crm.firstname: null
@@ -11,6 +10,8 @@ definition:
         crm.lastname: null
         crm.email: null
       collection: crm.contacts
+      init:
+        create: true
   # Components determine the layout and composition of your view
   components:
     - lab.layout:
