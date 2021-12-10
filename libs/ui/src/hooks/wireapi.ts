@@ -3,6 +3,7 @@ import { useCollection } from "../bands/collection/selectors"
 import { useWire } from "../bands/wire/selectors"
 import Wire from "../bands/wire/class"
 import loadWiresOp from "../bands/wire/operations/load"
+import initializeWiresOp from "../bands/wire/operations/initialize"
 import { Context, getWireDef } from "../context/context"
 
 // This is the wire api exposed on the uesio object returned
@@ -36,6 +37,10 @@ class WireAPI {
 				wires: wireNames,
 			})
 		)
+	}
+
+	initWires(context: Context, wireNames: string[]) {
+		return this.uesio.getDispatcher()(initializeWiresOp(context, wireNames))
 	}
 }
 
