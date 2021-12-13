@@ -13,7 +13,7 @@ type LoadOp struct {
 	Collection            loadable.Group         `json:"data"`
 	Conditions            []LoadRequestCondition `json:"-"`
 	Fields                []LoadRequestField     `json:"-"`
-	Type                  string                 `json:"-"`
+	Query                 bool                   `json:"-"`
 	Order                 []LoadRequestOrder     `json:"-"`
 	BatchSize             int                    `json:"-"`
 	BatchNumber           int                    `json:"-"`

@@ -104,6 +104,7 @@ func HandleReferences(
 					Value:    ids,
 				},
 			},
+			Query: true,
 		})
 	}
 	err := loader(ops)

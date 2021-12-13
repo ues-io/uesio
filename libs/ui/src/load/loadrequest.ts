@@ -1,9 +1,8 @@
 import { WireConditionState } from "../bands/wire/conditions/conditions"
-import { WireType } from "../definition/wire"
 
 type LoadRequest = {
 	wire: string
-	type?: WireType
+	query?: boolean
 	collection: string
 	fields: LoadRequestField[]
 	conditions?: WireConditionState[]

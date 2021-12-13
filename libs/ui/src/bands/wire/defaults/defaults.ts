@@ -58,7 +58,7 @@ const getDefaultRecord = (
 ): PlainWireRecord => {
 	const viewDef = context.getViewDef()
 	if (!viewDef) return {}
-	const wire = viewDef.definition?.wires[wireName]
+	const wire = viewDef.definition?.wires?.[wireName]
 	if (!wire) return {}
 	const defaults = wire.defaults
 	const collection = collections[wire.collection]

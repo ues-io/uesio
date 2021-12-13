@@ -1,5 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Context, getWireDef } from "../../../context/context"
+import {
+	Context,
+	getWireDef,
+	getWireDefFromWireName,
+} from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
@@ -9,8 +13,8 @@ import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
 import { getLoadRequestConditions } from "../conditions/conditions"
-import { getDefaultRecord } from "../defaults/defaults"
 import { getWiresFromDefinitonOrContext } from "../adapter"
+import { getDefaultRecord } from "../defaults/defaults"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -47,7 +51,7 @@ function getWireRequest(
 	if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
 	return {
 		wire: fullWireId,
-		type: wiredef.type,
+		query: wire.query,
 		collection: wiredef.collection,
 		fields: getFieldsRequest(wiredef.fields) || [],
 		conditions: getLoadRequestConditions(wire.conditions, context),
@@ -81,7 +85,10 @@ export default createAsyncThunk<
 		const original: Record<string, PlainWireRecord> = {}
 		const changes: Record<string, PlainWireRecord> = {}
 
-		if (requestWire.type === "CREATE") {
+		const wireDef = getWireDefFromWireName(view, name)
+		const autoCreateRecord = !!wireDef?.init?.create
+
+		if (autoCreateRecord) {
 			wire.data?.push(
 				getDefaultRecord(
 					context,
@@ -98,14 +105,14 @@ export default createAsyncThunk<
 			data[localId] = item
 			original[localId] = item
 
-			if (requestWire.type === "CREATE") {
+			if (autoCreateRecord) {
 				changes[localId] = item
 			}
 		})
 		wiresResponse[wire.wire] = {
 			name,
 			view,
-			type: requestWire.type,
+			query: true,
 			batchid: shortid.generate(),
 			data,
 			original,

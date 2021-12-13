@@ -1,11 +1,10 @@
-import { WireType } from "../../wireexports"
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
 
 type PlainWire = {
 	name: string
-	type: WireType
 	conditions: WireConditionState[]
+	query: boolean
 	data: Record<string, PlainWireRecord>
 	batchid: string
 	view: string

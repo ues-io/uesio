@@ -63,6 +63,7 @@ func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadR
 			Collection:     group,
 			Conditions:     conditions,
 			Fields:         fields,
+			Query:          true,
 		},
 	}, session)
 }
@@ -77,6 +78,7 @@ func PlatformLoadWithOrder(group meta.CollectionableGroup, orders []adapt.LoadRe
 			Conditions:     conditions,
 			Order:          orders,
 			Fields:         GetLoadRequestFields(group.GetFields()),
+			Query:          true,
 		},
 	}, session)
 }
