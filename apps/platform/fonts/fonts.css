@@ -57,3 +57,8 @@
 	font-weight: bold;
 	src: url("/fonts/GoshaSans-Bold.otf") format("opentype");
 }
+
+@font-face {
+	font-family: "PermanentMarker";
+	src: url("/fonts/PermanentMarker-Regular.ttf") format("truetype");
+}
