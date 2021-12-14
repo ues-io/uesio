@@ -1,0 +1,7 @@
+language: es
+labels:
+  io.cancel: Cancelar
+  io.delete: Borrar
+  io.edit: Editar
+  io.preview: Preestrenar
+  io.save: Guardar

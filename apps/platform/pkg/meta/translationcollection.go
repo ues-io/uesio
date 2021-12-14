@@ -3,7 +3,6 @@ package meta
 import (
 	"errors"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -32,50 +31,37 @@ func (tc *TranslationCollection) NewItem() loadable.Item {
 // NewBundleableItemWithKey function
 func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (BundleableItem, error) {
 
-	keyArray := strings.Split(key, string(os.PathSeparator))
-	keySize := len(keyArray)
-	if keySize != 2 {
-		return nil, errors.New("Invalid Translation Key: " + key)
-	}
-
-	namespace, name, err := ParseKey(keyArray[0])
+	_, err := language.ParseBase(key)
 	if err != nil {
-		return nil, err
-	}
-
-	_, err = language.ParseBase(name)
-	if err != nil {
-		return nil, errors.New("Invalid ISO 639 Key: " + name)
+		return nil, errors.New("Invalid ISO 639 Key: " + key)
 	}
 	*tc = append(*tc, Translation{
-		Namespace: namespace,
-		Language:  name,
+		Language: key,
 	})
 	return &(*tc)[len(*tc)-1], nil
 }
 
 // GetKeyFromPath function
 func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+	if len(conditions) != 1 {
+		return "", errors.New("Must specify language")
+	}
 
-	languageKey, hasCondition := conditions["studio.language"]
 	parts := strings.Split(path, string(os.PathSeparator))
-	if len(parts) != 2 || parts[1] != "translation.yaml" {
+	if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
 		// Ignore this file
 		return "", nil
 	}
 
-	_, name, err := ParseKey(parts[0])
-	if err != nil {
-		return "", err
+	requestedLanguage := conditions["studio.language"]
+	language := strings.TrimSuffix(path, ".yaml")
+
+	if requestedLanguage != language {
+		// Igmore this file
+		return "", nil
 	}
 
-	if hasCondition {
-		if name != languageKey {
-			return "", nil
-		}
-	}
-
-	return filepath.Join(parts[0], parts[1]), nil
+	return language, nil
 }
 
 // GetItem function

@@ -74,32 +74,32 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: "io.secondary"
-                                      text: "Preview"
+                                      text: $Label{io.preview}
                                       signals:
                                         - signal: "route/REDIRECT"
                                           path: "/workspace/$Param{appname}/$Param{workspacename}/app/$Param{appname}/${studio.path}"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Edit"
+                                      text: $Label{io.edit}
                                       signals:
                                         - signal: component/io.list/TOGGLE_MODE
                                           target: "routesDeck"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Save"
+                                      text: $Label{io.save}
                                       signals:
                                         - signal: wire/SAVE
                                           wires:
                                             - "routes"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Cancel"
+                                      text: $Label{io.cancel}
                                       signals:
                                         - signal: wire/CANCEL
                                           wire: "routes"
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Delete"
+                                      text: $Label{io.delete}
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE
                                         - signal: wire/SAVE

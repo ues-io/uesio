@@ -1,8 +1,6 @@
 package meta
 
 import (
-	"path/filepath"
-
 	"github.com/humandad/yaml"
 )
 
@@ -31,11 +29,11 @@ func (t *Translation) GetPermChecker() *PermissionSet {
 }
 
 func (t *Translation) GetKey() string {
-	return t.Namespace + "." + t.Language
+	return t.Language
 }
 
 func (t *Translation) GetPath() string {
-	return filepath.Join(t.GetKey(), "translation.yaml")
+	return t.GetKey() + ".yaml"
 }
 
 func (t *Translation) GetConditions() map[string]string {
