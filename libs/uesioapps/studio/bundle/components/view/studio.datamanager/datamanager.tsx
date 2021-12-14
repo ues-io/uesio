@@ -75,6 +75,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 			"collectionData"
 		)
 
+		uesio.wire.initWires(newContext, ["collectionData"])
 		uesio.wire.loadWires(newContext, ["collectionData"])
 
 		return () => {
