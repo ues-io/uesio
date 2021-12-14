@@ -103,6 +103,7 @@ func (b *LocalBundleStore) GetItems(group meta.BundleableGroup, namespace, versi
 		if err != nil {
 			return err
 		}
+		retrievedItem.SetNamespace(namespace)
 		err = b.GetItem(retrievedItem, version, session)
 		if err != nil {
 			if _, ok := err.(*bundlestore.PermissionError); ok {

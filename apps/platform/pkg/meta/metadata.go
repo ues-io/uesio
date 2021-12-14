@@ -165,6 +165,7 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	GetNameKeyPart((&UserFileCollectionCollection{}).GetName()): func() BundleableGroup { return &UserFileCollectionCollection{} },
 	GetNameKeyPart((&FeatureFlagCollection{}).GetName()):        func() BundleableGroup { return &FeatureFlagCollection{} },
 	GetNameKeyPart((&LabelCollection{}).GetName()):              func() BundleableGroup { return &LabelCollection{} },
+	GetNameKeyPart((&TranslationCollection{}).GetName()):        func() BundleableGroup { return &TranslationCollection{} },
 }
 
 // GetBundleableGroupFromType function
@@ -189,6 +190,18 @@ var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")
 
 func IsValidMetadataName(name string) bool {
 	return validMetaRegex.MatchString(name)
+}
+
+func validateNodeLanguage(node *yaml.Node, expectedName string) error {
+	node.SkipCustom = true
+	name := getNodeValueAsString(node, "language")
+	if name != expectedName {
+		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
+	}
+	if !IsValidMetadataName(name) {
+		return fmt.Errorf("Failed metadata validation, no capital letters or special characters allowed: %s", name)
+	}
+	return nil
 }
 
 func validateNodeName(node *yaml.Node, expectedName string) error {

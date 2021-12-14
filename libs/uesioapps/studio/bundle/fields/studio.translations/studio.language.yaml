@@ -1,0 +1,8 @@
+name: language
+collection: studio.translations
+type: TEXT
+label: Language
+required: true
+createOnly: true
+validate:
+  type: METADATA
