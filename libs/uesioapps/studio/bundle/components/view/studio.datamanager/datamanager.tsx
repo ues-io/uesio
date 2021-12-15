@@ -65,6 +65,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		Object.keys(fieldsMeta).forEach((record) => {
 			fields[`${record}`] = null
 		})
+
 		const basePath = `["viewdef"]["${newContext.getViewDefId()}"]["wires"]`
 		uesio.builder.addDefinitionPair(
 			basePath,

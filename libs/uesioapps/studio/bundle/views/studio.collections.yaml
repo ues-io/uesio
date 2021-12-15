@@ -50,6 +50,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+        - field: studio.datasource
+          valueSource: VALUE
+          value: "uesio.platform"
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -125,10 +128,6 @@ definition:
             components:
               - io.field:
                   fieldId: studio.name
-              - studio.metadatafield:
-                  fieldId: studio.datasource
-                  metadataType: "DATASOURCE"
-                  label: "Data Source"
       actions:
         - io.button:
             uesio.variant: "io.primary"
