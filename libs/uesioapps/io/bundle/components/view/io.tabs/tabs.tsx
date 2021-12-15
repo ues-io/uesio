@@ -10,7 +10,10 @@ const Tabs: FunctionComponent<Props> = (props) => {
 	const classes = styles.useStyles(
 		{
 			root: {},
+			content: {},
+			tabLabels: {},
 			tab: {},
+			tabSelected: {},
 		},
 		props
 	)
@@ -18,42 +21,35 @@ const Tabs: FunctionComponent<Props> = (props) => {
 
 	const [selectedTabId, setSelectedTab] = uesio.component.useState<string>(
 		"tabs",
-		definition.tabs[0].id,
-		undefined,
-		"uesio.runtime"
+		definition.id || path
 	)
 
-	const tabsWithIndex = definition.tabs.map((t: any, i: number) => ({
-		...t,
-		i,
-	}))
-	const selectedTab =
-		tabsWithIndex.find(({ id }) => id === selectedTabId) || tabsWithIndex[0]
-	console.log({ tabsWithIndex, selectedTabId, selectedTab })
+	const foundIndex = definition.tabs.findIndex(
+		({ id }) => id === selectedTabId
+	)
+	const selectedIndex = foundIndex === -1 ? 0 : foundIndex
+
+	const selectedTab = definition.tabs[selectedIndex]
 
 	return (
-		<div
-			className={classes.root}
-			onClick={
-				definition?.signals &&
-				uesio.signal.getHandler(definition.signals)
-			}
-		>
-			<div style={{}}>
-				<TabLabels
-					variant={definition["uesio.variant"]}
-					selectedTab={selectedTabId}
-					setSelectedTab={setSelectedTab}
-					tabs={definition.tabs}
-					context={context}
-				/>
-			</div>
+		<div className={classes.root}>
+			<TabLabels
+				classes={{
+					root: classes.tabLabels,
+					tab: classes.tab,
+					tabSelected: classes.tabSelected,
+				}}
+				selectedTab={selectedIndex}
+				setSelectedTab={setSelectedTab}
+				tabs={definition.tabs}
+				context={context}
+			/>
 
-			<div className={classes.tab}>
+			<div className={classes.content}>
 				<component.Slot
 					definition={selectedTab}
 					listName="components"
-					path={`${path}["tabs"]["${selectedTab.i}"]`}
+					path={`${path}["tabs"]["${selectedIndex}"]`}
 					accepts={["uesio.standalone"]}
 					context={context}
 				/>

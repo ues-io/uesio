@@ -1,5 +1,5 @@
 name: mainsection
-component: io.tabs
+component: io.tablabels
 label: mainsection
 definition:
   uesio.styles:

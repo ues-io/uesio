@@ -33,7 +33,6 @@ const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 			tabSelected: {
 				cursor: "default",
 			},
-			bezel: {},
 		},
 		props
 	)

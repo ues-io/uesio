@@ -1,13 +1,12 @@
-import { definition, builder, signal } from "@uesio/ui"
+import { definition, builder } from "@uesio/ui"
 
-type Definition = {
-	signals?: signal.SignalDefinition[]
-	"uesio.variant": string
+interface TabsDefinition extends definition.BaseDefinition {
+	id?: string
 	tabs: { id: string; label: string; components: definition.DefinitionList }[]
 }
 
 interface Props extends definition.BaseProps {
-	definition: Definition
+	definition: TabsDefinition
 }
 
 const PropertyDefinition: builder.BuildPropertiesDefinition = {
@@ -22,6 +21,6 @@ const PropertyDefinition: builder.BuildPropertiesDefinition = {
 	classes: ["root"],
 	type: "component",
 }
-export { Props, Definition }
+export { Props, TabsDefinition }
 
 export default PropertyDefinition
