@@ -6,7 +6,7 @@ import PropList from "./buildproparea/proplist"
 import BuildSection from "./buildproparea/buildsection"
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
-const Tabs = component.registry.getUtility("io.tabs")
+const TabLabels = component.registry.getUtility("io.tablabels")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
@@ -49,7 +49,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 						context={context}
 					/>
 					{propsDef.sections && (
-						<Tabs
+						<TabLabels
 							variant="studio.mainsection"
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}

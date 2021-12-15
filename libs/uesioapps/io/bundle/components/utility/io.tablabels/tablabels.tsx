@@ -18,7 +18,7 @@ interface TabsUtilityProps extends definition.UtilityProps {
 const Button = component.registry.getUtility<ButtonUtilityProps>("io.button")
 const Icon = component.registry.getUtility<IconUtilityProps>("io.icon")
 
-const Tabs: FunctionComponent<TabsUtilityProps> = (props) => {
+const TabLabels: FunctionComponent<TabsUtilityProps> = (props) => {
 	const { tabs, selectedTab, setSelectedTab, context } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -65,4 +65,4 @@ const Tabs: FunctionComponent<TabsUtilityProps> = (props) => {
 
 export { TabsUtilityProps }
 
-export default Tabs
+export default TabLabels
