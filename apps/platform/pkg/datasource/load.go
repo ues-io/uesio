@@ -153,6 +153,9 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 	metadataResponse := adapt.MetadataCache{}
 	// Loop over the ops and batch per data source
 	for i := range ops {
+		ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			ID: "uesio.id",
+		})
 		op := ops[i]
 		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
 		if err != nil {
