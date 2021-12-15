@@ -165,8 +165,8 @@ func getTranslatedLabels(session *sess.Session) (meta.LabelCollection, error) {
 	labelRefs := getReferenceLabels(translations, session)
 
 	for i := range labels {
-		//check if we have any translation for that label
-		if val, ok := labelRefs[labels[i].GetKey()]; ok {
+		//check if we have any translation for that label and it's not empty
+		if val, ok := labelRefs[labels[i].GetKey()]; ok && val != "" {
 			labels[i].Value = val
 		}
 	}
