@@ -6,7 +6,7 @@ import ComponentsPanel from "./componentspanel"
 import WiresActions from "./wiresactions"
 import PanelsActions from "./panelsactions"
 
-const Tabs = component.registry.getUtility("io.tabs")
+const TabLabels = component.registry.getUtility("io.tablabels")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 
 const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
@@ -24,7 +24,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	return (
 		<ScrollPanel
 			header={
-				<Tabs
+				<TabLabels
 					variant="studio.mainsection"
 					selectedTab={selectedTab}
 					setSelectedTab={setSelectedTab}

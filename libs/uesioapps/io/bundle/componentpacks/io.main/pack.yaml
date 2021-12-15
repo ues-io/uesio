@@ -33,6 +33,7 @@ components:
     io.group:
     io.image:
     io.list:
+    io.tabs:
     io.searchbox:
     io.table:
       variants:
@@ -77,7 +78,7 @@ components:
     io.scrollpanel:
     io.selectfield:
     io.table:
-    io.tabs:
+    io.tablabels:
     io.text:
     io.textfield:
     io.tile:
