@@ -22,6 +22,7 @@ const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const addBlankSelectOption = collection.addBlankSelectOption
 
 const getFieldContent = (
+	wire: wire.Wire,
 	record: wire.WireRecord,
 	definition: FieldDefinition,
 	fieldMetadata: collection.Field,
@@ -114,7 +115,7 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 			labelPosition={definition.labelPosition}
 			context={context}
 		>
-			{getFieldContent(record, definition, fieldMetadata, context)}
+			{getFieldContent(wire, record, definition, fieldMetadata, context)}
 		</FieldWrapper>
 	)
 }

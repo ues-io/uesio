@@ -7,58 +7,29 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
-func createBrowserSession(user *meta.User, site *meta.Site) *session.Session {
-
-	// Get the site's default profile
-	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
-
-	if defaultSitePublicProfile == "" {
-		defaultSitePublicProfile = "uesio.public"
-	}
-
-	if user == nil {
-		user = &meta.User{
-			FirstName: "Guest",
-			LastName:  "User",
-			ID:        "-1",
-			Profile:   defaultSitePublicProfile,
-		}
-	}
+func createBrowserSession(userID, sitename string) *session.Session {
 	sess := session.NewSessionOptions(&session.SessOptions{
 		CAttrs: map[string]interface{}{
-			"Profile":   user.Profile,
-			"Site":      site.GetFullName(),
-			"FirstName": user.FirstName,
-			"LastName":  user.LastName,
-			"UserID":    user.ID,
-			"Picture":   user.GetPictureID(),
-			"Language":  user.Language,
+			"Site":   sitename,
+			"UserID": userID,
 		},
 	})
 	return &sess
 }
 
-func GetHeadlessSession(user *meta.User, site *meta.Site) *Session {
-	browserSession := session.NewSessionOptions(&session.SessOptions{
-		CAttrs: map[string]interface{}{
-			"Profile":   user.Profile,
-			"FirstName": user.FirstName,
-			"LastName":  user.LastName,
-			"UserID":    user.ID,
-			"Site":      "studio",
-			"Language":  user.Language,
-		},
-	})
-	return &Session{
-		browserSession: &browserSession,
-		site:           site,
+func GetSessionAttribute(browserSession *session.Session, key string) string {
+	value, ok := (*browserSession).CAttr(key).(string)
+	if !ok {
+		return ""
 	}
+	return value
 }
 
-func create(browserSession *session.Session, site *meta.Site) *Session {
+func NewSession(browserSession *session.Session, user *meta.User, site *meta.Site) *Session {
 	return &Session{
 		browserSession: browserSession,
 		site:           site,
+		user:           user,
 	}
 }
 
@@ -71,42 +42,37 @@ func Login(w http.ResponseWriter, user *meta.User, site *meta.Site) *Session {
 
 // New function
 func New(user *meta.User, site *meta.Site) *Session {
-	browserSession := createBrowserSession(user, site)
-	return create(browserSession, site)
+	browserSession := createBrowserSession(user.ID, site.GetFullName())
+	return NewSession(browserSession, user, site)
+}
+
+func GetPublicUser(site *meta.Site) *meta.User {
+	// Get the site's default profile
+	defaultSitePublicProfile := site.GetAppBundle().PublicProfile
+
+	if defaultSitePublicProfile == "" {
+		defaultSitePublicProfile = "uesio.public"
+	}
+	return &meta.User{
+		FirstName: "Guest",
+		LastName:  "User",
+		ID:        "system_guest",
+		Profile:   defaultSitePublicProfile,
+	}
 }
 
 // NewPublic function
 func NewPublic(site *meta.Site) *Session {
-	return New(nil, site)
+	return New(GetPublicUser(site), site)
 }
 
 // Logout function
 func Logout(w http.ResponseWriter, s *Session) *Session {
 	// Remove the logged out session
 	session.Remove(*s.browserSession, w)
+	site := s.GetSite()
 	// Login as the public user
-	return Login(w, nil, s.GetSite())
-}
-
-// GetSessionFromRequest function
-func GetSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Site) (*Session, error) {
-	browserSession := session.Get(r)
-	if browserSession == nil {
-		newSession := createBrowserSession(nil, site)
-
-		browserSession = *newSession
-		// Don't add the session cookie for the login route
-		if r.URL.Path != "/site/auth/login" {
-			session.Add(browserSession, w)
-		}
-	}
-	// Check to make sure our session site matches the site from our domain.
-	browserSessionSite := browserSession.CAttr("Site")
-	newSession := create(&browserSession, site)
-	if browserSessionSite != site.GetFullName() {
-		return Logout(w, newSession), nil
-	}
-	return newSession, nil
+	return Login(w, GetPublicUser(site), site)
 }
 
 // Session struct
@@ -116,6 +82,7 @@ type Session struct {
 	workspace      *meta.Workspace
 	siteadmin      *meta.Site
 	permissions    *meta.PermissionSet
+	user           *meta.User
 }
 
 // SetSite function
@@ -180,31 +147,25 @@ func (s *Session) GetWorkspaceApp() string {
 }
 
 func (s *Session) getBrowserSessionAttribute(key string) string {
-	browserSession := *s.browserSession
-	value, ok := browserSession.CAttr(key).(string)
-	if !ok {
-		return ""
-	}
-	return value
+	return GetSessionAttribute(s.browserSession, key)
+}
+
+func (s *Session) GetBrowserSession() *session.Session {
+	return s.browserSession
 }
 
 // GetUserInfo function
 func (s *Session) GetUserInfo() *meta.User {
-	return &meta.User{
-		ID:        s.getBrowserSessionAttribute("UserID"),
-		FirstName: s.getBrowserSessionAttribute("FirstName"),
-		LastName:  s.getBrowserSessionAttribute("LastName"),
-		Profile:   s.getBrowserSessionAttribute("Profile"),
-		Picture: &meta.UserFileMetadata{
-			ID: s.getBrowserSessionAttribute("Picture"),
-		},
-		Language: s.getBrowserSessionAttribute("Language"),
-	}
+	return s.user
+}
+
+func (s *Session) GetUserID() string {
+	return s.user.ID
 }
 
 // GetProfile function
 func (s *Session) GetProfile() string {
-	return s.getBrowserSessionAttribute("Profile")
+	return s.user.Profile
 }
 
 // IsPublicProfile function
@@ -232,7 +193,7 @@ func (s *Session) GetLoginRoute() string {
 
 // RemoveWorkspaceContext function
 func (s *Session) RemoveWorkspaceContext() *Session {
-	return create(s.browserSession, s.site)
+	return NewSession(s.browserSession, s.user, s.site)
 }
 
 // AddWorkspaceContext function
