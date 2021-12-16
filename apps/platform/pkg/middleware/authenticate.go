@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/icza/session"
+	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -62,7 +63,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		site.SetAppBundle(bundleDef)
 
-		s, err := sess.GetSessionFromRequest(w, r, site)
+		s, err := getSessionFromRequest(w, r, site)
 		if err != nil {
 			http.Error(w, "Failed to create session", http.StatusInternalServerError)
 			return
@@ -197,4 +198,51 @@ func getProfilePermSet(session *sess.Session) (*meta.PermissionSet, error) {
 	}
 
 	return profile.FlattenPermissions(), nil
+}
+
+func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Site) (*sess.Session, error) {
+	browserSession := session.Get(r)
+	if browserSession == nil {
+		newSession := sess.NewPublic(site)
+
+		// Don't add the session cookie for the login route
+		if r.URL.Path != "/site/auth/login" {
+			session.Add(*newSession.GetBrowserSession(), w)
+		}
+		return newSession, nil
+	}
+	// Check to make sure our session site matches the site from our domain.
+	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
+	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
+
+	headlessSession, err := auth.GetHeadlessSession()
+	if err != nil {
+		return nil, err
+	}
+
+	var user meta.User
+	err = datasource.PlatformLoadOne(
+		&user,
+		[]adapt.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: browserSessionUser,
+			},
+		},
+		headlessSession,
+	)
+	if err != nil {
+		if _, ok := err.(*datasource.RecordNotFoundError); ok {
+			// User not found. No error though.
+			logger.Log("Could not find user: "+browserSessionUser, logger.INFO)
+			return sess.NewPublic(site), nil
+		}
+		return nil, err
+	}
+
+	newSession := sess.NewSession(&browserSession, &user, site)
+	if browserSessionSite != site.GetFullName() {
+		return sess.Logout(w, newSession), nil
+	}
+	return newSession, nil
 }

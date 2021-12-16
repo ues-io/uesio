@@ -98,7 +98,7 @@ func GetUserMergeData(session *sess.Session) *UserMergeData {
 		FirstName: userInfo.FirstName,
 		LastName:  userInfo.LastName,
 		Profile:   userInfo.Profile,
-		PictureID: userInfo.Picture.ID,
+		PictureID: userInfo.GetPictureID(),
 		Site:      session.GetSite().ID,
 		Language:  userInfo.Language,
 	}

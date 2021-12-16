@@ -377,7 +377,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		}
 	}
 
-	ffr, _ := getFeatureFlags(session, session.GetUserInfo().ID)
+	ffr, _ := getFeatureFlags(session, session.GetUserID())
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
