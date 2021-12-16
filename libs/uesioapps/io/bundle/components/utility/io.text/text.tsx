@@ -46,7 +46,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 	const tag =
 		props.element && acceptedElements.includes(props.element)
 			? props.element
-			: "p"
+			: "span"
 
 	const CustomTag = `${tag}` as keyof JSX.IntrinsicElements
 	const mergedText = props.context.merge(text)
