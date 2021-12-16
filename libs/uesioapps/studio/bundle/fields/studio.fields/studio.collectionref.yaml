@@ -1,0 +1,4 @@
+name: collectionref
+collection: studio.fields
+type: TEXT
+label: Collection ABEL

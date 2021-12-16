@@ -3,6 +3,6 @@ collection: studio.fields
 type: MAP
 label: Reference Metadata
 subfields:
-  - name: studio.collection
+  - name: studio.collectionref
     label: Collection
     type: TEXT

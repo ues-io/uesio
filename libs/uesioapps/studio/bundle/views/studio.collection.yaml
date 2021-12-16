@@ -44,7 +44,6 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.reference:
         studio.selectlist:
         studio.autopopulate:
         studio.languagelabel:
@@ -72,6 +71,9 @@ definition:
         studio.type:
         studio.label:
         studio.languagelabel:
+        studio.reference:
+        studio.collectionref:
+        studio.collection:
       init:
         query: false
         create: true
@@ -315,7 +317,7 @@ definition:
                       value: "REFERENCE"
                   components:
                     - studio.metadatafield:
-                        fieldId: studio.reference->studio.collection
+                        fieldId: studio.reference->studio.collectionref
                         metadataType: "COLLECTION"
                         label: "Ref. Collection"
               - io.box:

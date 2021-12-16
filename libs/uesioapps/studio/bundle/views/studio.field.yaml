@@ -41,6 +41,7 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
+        studio.collectionref:
         studio.reference:
         studio.file:
         studio.autopopulate:
@@ -165,7 +166,7 @@ definition:
                                           value: "REFERENCE"
                                       components:
                                         - studio.metadatafield:
-                                            fieldId: studio.reference->studio.collection
+                                            fieldId: studio.reference->studio.collectionref
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
                                   - io.box:
