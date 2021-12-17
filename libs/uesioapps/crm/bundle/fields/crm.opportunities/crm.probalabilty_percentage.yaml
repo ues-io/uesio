@@ -1,0 +1,5 @@
+name: probalabilty_percentage
+collection: crm.opportunities
+type: SELECT
+label: Probability %
+selectList: crm.probability
