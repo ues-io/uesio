@@ -90,7 +90,10 @@ interface Platform {
 		context: Context,
 		collectionName: string
 	): Promise<LoadResponseBatch>
-	getAvailableNamespaces(context: Context): Promise<MetadataListStore>
+	getAvailableNamespaces(
+		context: Context,
+		metadataType?: MetadataType
+	): Promise<MetadataListStore>
 	getConfigValues(context: Context): Promise<ConfigValueResponse[]>
 	setConfigValue(
 		context: Context,

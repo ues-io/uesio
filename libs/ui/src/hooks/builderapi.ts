@@ -274,11 +274,16 @@ class BuilderAPI {
 		return metadata
 	}
 
-	useAvailableNamespaces = (context: Context) => {
+	useAvailableNamespaces = (
+		context: Context,
+		metadataType?: MetadataType
+	) => {
 		const namespaces = useNamespaces()
 		useEffect(() => {
 			if (!namespaces) {
-				this.dispatcher(builderOps.getAvailableNamespaces(context))
+				this.dispatcher(
+					builderOps.getAvailableNamespaces({ context, metadataType })
+				)
 			}
 		})
 		return namespaces

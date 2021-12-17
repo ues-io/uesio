@@ -96,6 +96,14 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	return bundlestore.DecodeYAML(item, stream)
 }
 
+func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
 // GetItems function
 func (b *PlatformBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// TODO: Think about caching this, but remember conditions

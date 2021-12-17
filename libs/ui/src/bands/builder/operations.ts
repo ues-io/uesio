@@ -31,11 +31,15 @@ const getMetadataList = createAsyncThunk<
 
 const getAvailableNamespaces = createAsyncThunk<
 	MetadataListStore,
-	Context,
+	{
+		context: Context
+		metadataType?: MetadataType
+	},
 	UesioThunkAPI
 >(
 	"builder/getAvailableNamespaces",
-	async (context, api) => api.extra.getAvailableNamespaces(context),
+	async ({ context, metadataType }, api) =>
+		api.extra.getAvailableNamespaces(context, metadataType),
 	{
 		condition: (context, { getState }) => {
 			const { builder } = getState()

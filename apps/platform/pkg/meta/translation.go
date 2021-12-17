@@ -9,7 +9,7 @@ type Translation struct {
 	ID        string            `yaml:"-" uesio:"uesio.id"`
 	Namespace string            `yaml:"-" uesio:"-"`
 	Workspace *Workspace        `yaml:"-" uesio:"studio.workspace"`
-	LabelRefs map[string]string `yaml:"labels" uesio:"studio.labelrefs"`
+	Labels    map[string]string `yaml:"labels" uesio:"studio.labels"`
 	Language  string            `yaml:"language" uesio:"studio.language"`
 	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`

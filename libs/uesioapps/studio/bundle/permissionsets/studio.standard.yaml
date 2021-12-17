@@ -55,6 +55,8 @@ views:
   studio.featureflag: true
   studio.labels: true
   studio.label: true
+  studio.translations: true
+  studio.translation: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
@@ -106,4 +108,6 @@ routes:
   studio.featureflag: true
   studio.labels: true
   studio.label: true
+  studio.translations: true
+  studio.translation: true
 files:

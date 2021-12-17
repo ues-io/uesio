@@ -1,7 +1,8 @@
 name: language
 collection: studio.translations
-type: TEXT
+type: SELECT
 label: Language
+selectList: uesio.language
 required: true
 createOnly: true
 validate:

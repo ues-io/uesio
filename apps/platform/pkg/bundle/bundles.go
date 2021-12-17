@@ -119,6 +119,14 @@ func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions
 	return nil
 }
 
+func HasAny(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	version, bs, err := GetBundleStoreWithVersion(namespace, session)
+	if err != nil {
+		return false, err
+	}
+	return bs.HasAny(group, namespace, version, conditions, session)
+}
+
 // LoadAll function
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)

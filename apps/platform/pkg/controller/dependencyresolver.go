@@ -76,5 +76,29 @@ func MetadataList(w http.ResponseWriter, r *http.Request) {
 func NamespaceList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 	namespaces := session.GetContextNamespaces()
+
+	// If a type was specified, filter out namespaces that have no items from that type.
+	vars := mux.Vars(r)
+	metadatatype := vars["type"]
+	if metadatatype != "" {
+		for namespace := range namespaces {
+			collection, err := meta.GetBundleableGroupFromType(metadatatype)
+			if err != nil {
+				logger.LogErrorWithTrace(r, err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			hasSome, err := bundle.HasAny(collection, namespace, nil, session)
+			if err != nil {
+				logger.LogErrorWithTrace(r, err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if !hasSome {
+				delete(namespaces, namespace)
+			}
+		}
+
+	}
 	respondJSON(w, r, &namespaces)
 }

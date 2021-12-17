@@ -287,3 +287,20 @@ definition:
                 - io.text:
                     uesio.variant: io.icon
                     text: new_releases
+          - io.tile:
+              uesio.variant: io.nav
+              uesio.classes:
+                selected:
+                  - type: paramIsValue
+                    param: selected
+                    value: translations
+              signals:
+                - signal: "route/NAVIGATE"
+                  path: app/${["studio.app"]["uesio.id"]}/workspace/${studio.name}/translations
+              content:
+                - io.text:
+                    text: Translations
+              avatar:
+                - io.text:
+                    uesio.variant: io.icon
+                    text: translate
