@@ -32,6 +32,7 @@ components:
         - io.text.io.aside
         - io.link.io.default
         - io.fieldlabel.io.default
+        - io.fieldwrapper.io.default
       configvalues:
         - uesio.cognito_pool_id
         - uesio.cognito_client_id

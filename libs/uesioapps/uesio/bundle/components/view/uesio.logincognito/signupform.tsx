@@ -16,6 +16,7 @@ interface SignupFormProps extends definition.BaseProps {
 	) => void
 }
 
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const TextField = component.registry.getUtility("io.textfield")
 const Button = component.registry.getUtility("io.button")
 const Grid = component.registry.getUtility("io.grid")
@@ -37,27 +38,21 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 
 	return (
 		<>
-			<TextField
-				label="First Name"
-				setValue={setFirstName}
-				context={context}
-			/>
-			<TextField
-				label="Last Name"
-				setValue={setLastName}
-				context={context}
-			/>
-			<TextField
-				label="Username"
-				setValue={setSignupUsername}
-				context={context}
-			/>
-			<TextField label="Email" setValue={setEmail} context={context} />
-			<TextField
-				label="Password"
-				setValue={setSignupPassword}
-				context={context}
-			/>
+			<FieldWrapper context={context} label="First Name">
+				<TextField setValue={setFirstName} context={context} />
+			</FieldWrapper>
+			<FieldWrapper context={context} label="Last Name">
+				<TextField setValue={setLastName} context={context} />
+			</FieldWrapper>
+			<FieldWrapper context={context} label="Username">
+				<TextField setValue={setSignupUsername} context={context} />
+			</FieldWrapper>
+			<FieldWrapper context={context} label="Email">
+				<TextField setValue={setEmail} context={context} />
+			</FieldWrapper>
+			<FieldWrapper context={context} label="Password">
+				<TextField setValue={setSignupPassword} context={context} />
+			</FieldWrapper>
 			<Grid
 				context={context}
 				styles={{
