@@ -31,11 +31,26 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		props
 	)
 
+	// Might be a bit verbose since we're only giving these options in propsdef
+	const acceptedElements = [
+		"p",
+		"span",
+		"div",
+		"h1",
+		"h2",
+		"h3",
+		"h4",
+		"h5",
+		"h6",
+		"pre",
+	]
+	const Tag = (
+		element && acceptedElements.includes(element) ? element : "span"
+	) as keyof JSX.IntrinsicElements
+
 	const mergedText = props.context.merge(text)
-	if (element === "div") {
-		return <div className={classes.root}>{mergedText}</div>
-	}
-	return <span className={classes.root}>{mergedText}</span>
+
+	return <Tag className={classes.root}>{mergedText}</Tag>
 }
 
 export default Text

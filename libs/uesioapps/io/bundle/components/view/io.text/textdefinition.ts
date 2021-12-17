@@ -30,15 +30,17 @@ const TextPropertyDefinition: builder.BuildPropertiesDefinition = {
 			label: "element",
 			type: "SELECT",
 			options: [
-				{
-					value: "div",
-					label: "div",
-				},
-				{
-					value: "span",
-					label: "span",
-				},
-			],
+				"p",
+				"span",
+				"div",
+				"h1",
+				"h2",
+				"h3",
+				"h4",
+				"h5",
+				"h6",
+				"pre",
+			].map((el) => ({ label: el, value: el })),
 		},
 		{
 			name: "color",
