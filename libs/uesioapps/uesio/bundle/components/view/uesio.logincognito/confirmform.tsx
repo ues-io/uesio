@@ -6,6 +6,7 @@ interface ConfirmFormProps extends definition.BaseProps {
 	confirm: (verificationCode: string) => void
 }
 
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const TextField = component.registry.getUtility("io.textfield")
 const Button = component.registry.getUtility("io.button")
 const Grid = component.registry.getUtility("io.grid")
@@ -18,11 +19,9 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 
 	return (
 		<>
-			<TextField
-				context={context}
-				label="Verification Code"
-				setValue={setVerificationCode}
-			/>
+			<FieldWrapper context={context} label="Verification Code">
+				<TextField context={context} setValue={setVerificationCode} />
+			</FieldWrapper>
 			<Grid
 				context={context}
 				styles={{

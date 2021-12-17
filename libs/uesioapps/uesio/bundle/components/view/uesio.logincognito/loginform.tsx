@@ -7,6 +7,7 @@ interface LoginFormProps extends definition.BaseProps {
 }
 
 const TextField = component.registry.getUtility("io.textfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const Button = component.registry.getUtility("io.button")
 const Grid = component.registry.getUtility("io.grid")
 const Text = component.registry.getUtility("io.text")
@@ -19,16 +20,12 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 
 	return (
 		<>
-			<TextField
-				context={context}
-				label="Username"
-				setValue={setUsername}
-			/>
-			<TextField
-				context={context}
-				label="Password"
-				setValue={setPassword}
-			/>
+			<FieldWrapper context={context} label="Username">
+				<TextField context={context} setValue={setUsername} />
+			</FieldWrapper>
+			<FieldWrapper context={context} label="Password">
+				<TextField context={context} setValue={setPassword} />
+			</FieldWrapper>
 			<Grid
 				context={context}
 				styles={{
