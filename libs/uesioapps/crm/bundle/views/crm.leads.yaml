@@ -30,21 +30,11 @@ definition:
                               wires:
                                 - closedleads
                                 - recent
-                      - io.button:
-                          signals:
-                            - signal: component/io.table/TOGGLE_MODE
-                              target: leadsTable
-                          text: List/Detail View
-                          uesio.variant: io.secondary
-                          icon: waves
           - io.box:
               components:
                 - io.group:
                     columnGap: 10px
                     components:
-                      - io.image:
-                          file: crm.growthgraph
-                          height: 280px
                       - io.image:
                           file: crm.leadstatus
                           height: 2°80px
@@ -54,152 +44,100 @@ definition:
                     uesio.styles:
                       root:
                         padding-left: 80px
-          - io.group:
-              columnGap: 10px
-              components:
-                - io.grid:
-                    items:
-                      - io.box:
+                - io.box:
+                    uesio.styles:
+                      root:
+                        padding: 20px
+                    components:
+                      - io.text:
+                          text: Open
+                          element: div
+                          align: left
                           uesio.styles:
                             root: {}
-                          components:
-                            - io.text:
-                                text: Open
-                                element: div
-                                align: left
-                                uesio.styles:
-                                  root:
-                                    padding: 7px
-                            - io.table:
-                                rowactions:
-                                  - text: View
-                                    signals:
-                                      - path: lead/${uesio.id}
-                                        signal: route/NAVIGATE
-                                  - text: Delete
-                                    signals:
-                                      - signal: wire/TOGGLE_DELETE_STATUS
-                                  - text: Convert Lead
-                                    signals:
-                                      - bot: crm.convertlead
-                                        signal: bot/CALL
-                                columns:
-                                  - io.column:
-                                      field: crm.firstname
-                                  - io.column:
-                                      field: crm.lastname
-                                  - io.column:
-                                      field: crm.account
-                                  - io.column:
-                                      field: crm.phone_business
-                                  - io.column:
-                                      field: crm.email
-                                  - io.column:
-                                      field: crm.mailing_city
-                                  - io.column:
-                                      field: crm.mailing_country
-                                  - io.column:
-                                      field: crm.industry
-                                  - io.column:
-                                      field: crm.status
-                                  - io.column:
-                                      field: uesio.updatedat
-                                  - io.column:
-                                      field: uesio.createdat
-                                id: leadsTable
-                                mode: EDIT
-                                wire: leads
-                                uesio.variant: io.default
-                                uesio.styles:
-                                  root:
-                                    padding: 15px
-                          uesio.variant: io.section
-                      - io.box:
-                          uesio.variant: io.section
-                          components:
-                            - io.text:
-                                text: Closed
-                                element: div
-                                uesio.styles:
-                                  root:
-                                    padding: 7px
-                            - io.table:
-                                id: closedleadstable
-                                mode: READ
-                                columns:
-                                  - io.column:
-                                      field: crm.converted_to_contact
-                                  - io.column:
-                                      field: crm.converted_to_account
-                                  - io.column:
-                                      field: crm.converted_opportunity
-                                  - io.column:
-                                      field: crm.converted_date
-                                  - io.column:
-                                      field: crm.firstname
-                                  - io.column:
-                                      field: crm.lastname
-                                  - io.column:
-                                      field: crm.mailing_city
-                                  - io.column:
-                                      field: crm.mailing_country
-                                  - io.column:
-                                      field: crm.industry
-                                  - io.column:
-                                      field: crm.status
-                                wire: closedleads
-                                uesio.variant: io.default
-                                uesio.styles:
-                                  root:
-                                    padding: 15px
-                            - lab.layout:
-                                template: 1,1
-                                columns:
-                                  - io.column:
-                                      components: []
-                                  - io.column:
-                                      components: []
-                - io.grid:
-                    items:
-                      - io.box:
+                          uesio.variant: io.smalltitle
+                      - io.table:
+                          rowactions:
+                            - text: View
+                              signals:
+                                - path: lead/${uesio.id}
+                                  signal: route/NAVIGATE
+                            - text: Delete
+                              signals:
+                                - signal: wire/TOGGLE_DELETE_STATUS
+                            - text: Convert Lead
+                              signals:
+                                - bot: crm.convertlead
+                                  signal: bot/CALL
+                          columns:
+                            - io.column:
+                                field: crm.firstname
+                            - io.column:
+                                field: crm.lastname
+                            - io.column:
+                                field: crm.account
+                            - io.column:
+                                field: crm.phone_business
+                            - io.column:
+                                field: crm.email
+                            - io.column:
+                                field: crm.mailing_city
+                            - io.column:
+                                field: crm.mailing_country
+                            - io.column:
+                                field: crm.industry
+                            - io.column:
+                                field: crm.status
+                            - io.column:
+                                field: uesio.updatedat
+                            - io.column:
+                                field: uesio.createdat
+                          id: leadsTable
+                          mode: EDIT
+                          wire: leads
+                          uesio.variant: io.default
                           uesio.styles:
-                            root:
-                              padding-bottom: 45px
-                              background-color: "#F0F0F0"
-                      - io.box:
-                          components:
-                            - io.text:
-                                text: Recent
-                                element: div
-                                align: center
-                                uesio.styles:
-                                  root:
-                                    padding-top: 8px
-                                    padding-bottom: 15px
-                            - io.table:
-                                rowactions:
-                                  - text: View
-                                    signals:
-                                      - path: lead/${uesio.id}
-                                        signal: route/NAVIGATE
-                                id: recentlymod
-                                mode: READ
-                                wire: recent
-                                columns:
-                                  - io.column:
-                                      field: crm.firstname
-                                  - io.column:
-                                      field: crm.lastname
-                                uesio.styles:
-                                  root:
-                                    padding-left: 15px
-                                    padding-right: 15px
-                          uesio.styles:
-                            root:
-                              max-width: 320px
-                              background-color: white
-                              min-height: 920px
-                    columnGap: null
+                            root: {}
+                    uesio.variant: io.section
+              uesio.variant: null
+          - io.box:
+              uesio.variant: io.section
+              components:
+                - io.text:
+                    text: Closed
+                    element: div
+                    uesio.styles:
+                      root: {}
+                    uesio.variant: io.smalltitle
+                - io.table:
+                    id: closedleadstable
+                    mode: READ
+                    columns:
+                      - io.column:
+                          field: crm.converted_to_contact
+                      - io.column:
+                          field: crm.converted_to_account
+                      - io.column:
+                          field: crm.converted_opportunity
+                      - io.column:
+                          field: crm.converted_date
+                      - io.column:
+                          field: crm.firstname
+                      - io.column:
+                          field: crm.lastname
+                      - io.column:
+                          field: crm.mailing_city
+                      - io.column:
+                          field: crm.mailing_country
+                      - io.column:
+                          field: crm.industry
+                      - io.column:
+                          field: crm.status
+                    wire: closedleads
+                    uesio.variant: io.default
+              uesio.styles:
+                root:
+                  padding: 20px
         uesio.styles:
           root:
             background: "#F0F0F0"
