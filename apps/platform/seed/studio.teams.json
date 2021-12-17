@@ -2,5 +2,9 @@
 	{
 		"studio.app": "crm",
 		"studio.name": "maintainers"
+	},
+	{
+		"studio.app": "studio",
+		"studio.name": "maintainers"
 	}
 ]

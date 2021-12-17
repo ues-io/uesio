@@ -12,8 +12,6 @@ components:
       variants:
         - io.titlebar.io.dialog
     io.dialogplain:
-    io.layout:
-    io.column:
     io.field:
       variants:
         - io.textfield.io.default
@@ -23,13 +21,20 @@ components:
         - io.selectfield.io.default
         - io.autocomplete.io.default
         - io.fieldlabel.io.default
+        - io.fieldwrapper.io.default
         - io.tile.io.default
+        - io.numberfield.io.default
+        - io.listfield.io.default
+    io.filter:
+      variants:
+        - io.selectfield.io.filter
     io.grid:
     io.griditem:
     io.group:
-    io.iconbutton:
     io.image:
     io.list:
+    io.tabs:
+    io.searchbox:
     io.table:
       variants:
         - io.textfield.io.table
@@ -39,6 +44,7 @@ components:
         - io.table.io.default
         - io.button.io.nav
         - io.fileupload.io.table
+        - io.numberfield.io.table
     io.text:
     io.tile:
       variants:
@@ -56,6 +62,7 @@ components:
     io.dialogplain:
     io.expandpanel:
     io.fieldlabel:
+    io.fieldwrapper:
     io.filetext:
     io.fileupload:
     io.filedynamic:
@@ -65,18 +72,23 @@ components:
     io.iconbutton:
     io.link:
     io.multiselectfield:
+    io.paginator:
     io.popper:
     io.referencefield:
-    io.column:
-    io.layout:
     io.scrollpanel:
     io.selectfield:
+    io.table:
+    io.tablabels:
     io.text:
     io.textfield:
     io.tile:
     io.timestampfield:
     io.titlebar:
     io.tooltip:
+    io.uploadarea:
     io.userfield:
     io.listfield:
     io.datefield:
+    io.numberfield:
+    io.emailfield:
+

@@ -1,12 +1,15 @@
 import { FunctionComponent } from "react"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import ExpandPanel from "../expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
-import { hooks, definition, signal } from "@uesio/ui"
+import { hooks, definition, signal, component } from "@uesio/ui"
 import PropertiesPane from "../propertiespane"
 
+const TitleBar = component.registry.getUtility("io.titlebar")
+const Button = component.registry.getUtility("io.button")
+const Icon = component.registry.getUtility("io.icon")
+
 const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, valueAPI } = props
+	const { path, context, valueAPI } = props
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
 	const primaryColor = theme.definition.palette.primary
@@ -21,27 +24,36 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| definition.Definition[]
 		| undefined
 
+	const signalsPath = `${path}["signals"]`
+
 	return (
-		<ExpandPanel
-			context={context}
-			defaultExpanded={true}
-			title={section.title}
-			action="add_box"
-			actionColor={primaryColor}
-			actionOnClick={() =>
-				valueAPI.add(`${path}["signals"]`, {
-					signal: "NEW_SIGNAL",
-				})
-			}
-			styles={{
-				innerContent: {
-					display: "grid",
-					rowGap: "8px",
-				},
-			}}
-		>
+		<>
+			<TitleBar
+				variant="studio.propsubsection"
+				title={""}
+				context={context}
+				actions={
+					<Button
+						context={context}
+						variant="studio.actionbutton"
+						icon={
+							<Icon
+								context={context}
+								icon="add"
+								variant="studio.actionicon"
+							/>
+						}
+						label="New Signal"
+						onClick={() => {
+							valueAPI.add(signalsPath, {
+								signal: "NEW_SIGNAL",
+							})
+						}}
+					/>
+				}
+			/>
 			{signalsDef?.map((signal: signal.SignalDefinition, index) => {
-				const signalPath = `${path}["signals"]["${index}"]`
+				const signalPath = `${signalsPath}["${index}"]`
 				const selected = selectedNode.startsWith(signalPath)
 				return (
 					<PropNodeTag
@@ -65,7 +77,6 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 								path={signalPath}
 								index={0}
 								context={context}
-								definition={signal}
 								propsDef={{
 									title: "Signal",
 									sections: [],
@@ -81,7 +92,7 @@ const SignalsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					</PropNodeTag>
 				)
 			})}
-		</ExpandPanel>
+		</>
 	)
 }
 

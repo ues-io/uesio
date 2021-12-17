@@ -7,14 +7,22 @@ import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
+import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
+import setConditionOp from "./operations/setcondition"
+import removeConditionOp from "./operations/removecondition"
 import loadWiresOp from "./operations/load"
+import loadNextBatchOp from "./operations/loadnextbatch"
+import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
 import { Dispatcher } from "../../store/store"
 import { AnyAction } from "redux"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { WireDefinition } from "../../definition/wire"
-import { WireConditionDefinition } from "./conditions/conditions"
+import {
+	WireConditionDefinition,
+	WireConditionState,
+} from "./conditions/conditions"
 import { Definition } from "../../definition/definition"
 import { unwrapResult } from "@reduxjs/toolkit"
 import { SaveResponse } from "../../load/saveresponse"
@@ -46,12 +54,27 @@ interface ToggleConditionSignal extends SignalDefinition {
 	condition: string
 }
 
+interface RemoveConditionSignal extends SignalDefinition {
+	wire: string
+	condition: string
+}
+
+interface SetConditionSignal extends SignalDefinition {
+	wire: string
+	condition: WireConditionState
+}
+
 interface LoadWiresSignal extends SignalDefinition {
 	wires?: string[]
 }
 
 interface SaveWiresSignal extends SignalDefinition {
 	wires?: string[]
+}
+
+interface SearchWireSignal extends SignalDefinition {
+	wire: string
+	search: string
 }
 
 const getErrorStrings = (response: SaveResponse) =>
@@ -146,6 +169,23 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: EmptyWireSignal, context: Context) =>
 			emptyWireOp(context, signal.wire),
 	},
+	[`${WIRE_BAND}/SEARCH`]: {
+		label: "Search Wire",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+			{
+				name: "search",
+				type: "TEXT",
+				label: "Search",
+			},
+		],
+		dispatcher: (signal: SearchWireSignal, context: Context) =>
+			searchWireOp(context, signal.wire, signal.search),
+	},
 	[`${WIRE_BAND}/TOGGLE_CONDITION`]: {
 		label: "Toggle Wire Condition",
 		dispatcher: (signal: ToggleConditionSignal, context: Context) =>
@@ -168,12 +208,78 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${WIRE_BAND}/SET_CONDITION`]: {
+		label: "Set Wire Condition",
+		dispatcher: (signal: SetConditionSignal, context: Context) =>
+			setConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
+	[`${WIRE_BAND}/REMOVE_CONDITION`]: {
+		label: "Remove Wire Condition",
+		dispatcher: (signal: RemoveConditionSignal, context: Context) =>
+			removeConditionOp(context, signal.wire, signal.condition),
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+	},
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
 		dispatcher:
 			(signal: LoadWiresSignal, context: Context) =>
 			async (dispatch: Dispatcher<AnyAction>) => {
 				await dispatch(loadWiresOp({ context, wires: signal.wires }))
+				return context
+			},
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
+	},
+	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
+		label: "Load Next Batch",
+		dispatcher:
+			(signal: LoadWiresSignal, context: Context) =>
+			async (dispatch: Dispatcher<AnyAction>) => {
+				await dispatch(
+					loadNextBatchOp({
+						context,
+						wires: signal.wires,
+					})
+				)
+				return context
+			},
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wires",
+				type: "WIRES",
+				label: "Wires",
+			},
+		],
+	},
+	[`${WIRE_BAND}/LOAD_ALL`]: {
+		label: "Load All",
+		dispatcher:
+			(signal: LoadWiresSignal, context: Context) =>
+			async (dispatch: Dispatcher<AnyAction>) => {
+				await dispatch(
+					loadAllOp({
+						context,
+						wires: signal.wires,
+					})
+				)
 				return context
 			},
 		properties: (): PropDescriptor[] => [

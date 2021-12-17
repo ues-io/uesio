@@ -3,6 +3,7 @@ import { builder, component } from "@uesio/ui"
 
 const SelectField = component.registry.getUtility("io.selectfield")
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
@@ -11,45 +12,47 @@ const BooleanProp: FunctionComponent<builder.PropRendererProps> = ({
 	path,
 }) => {
 	const selected = !!valueAPI.get(path)
-
-	switch ((descriptor as builder.BooleanProp).displaytype) {
-		case "switch":
-			return <div>Switch not supported yet</div>
-		case "select": {
-			const optionslist: builder.PropertySelectOption[] = [
-				{
-					value: "true",
-					label: "True",
-				},
-				{
-					value: "false",
-					label: "False",
-				},
-			]
-
-			return (
-				<SelectField
-					value={selected}
-					label={descriptor.label}
-					setValue={(value: string) =>
-						valueAPI.set(path, value === "true")
-					}
-					options={optionslist}
-					context={context}
-				/>
-			)
+	const getInput = () => {
+		switch ((descriptor as builder.BooleanProp).displaytype) {
+			case "switch":
+				return <div>Switch not supported yet</div>
+			case "select": {
+				return (
+					<SelectField
+						value={selected}
+						setValue={(value: string) =>
+							valueAPI.set(path, value === "true")
+						}
+						options={[
+							{ value: "true", label: "True" },
+							{ value: "false", label: "False" },
+						]}
+						context={context}
+						variant="studio.propfield"
+					/>
+				)
+			}
+			default:
+				return (
+					<CheckBoxField
+						value={selected}
+						setValue={(value: boolean) => valueAPI.set(path, value)}
+						context={context}
+					/>
+				)
 		}
-		default:
-			//Checkbox as default
-			return (
-				<CheckBoxField
-					value={selected}
-					label={descriptor.label}
-					setValue={(value: boolean) => valueAPI.set(path, value)}
-					context={context}
-				/>
-			)
 	}
+
+	return (
+		<FieldWrapper
+			variant="studio.propfield"
+			labelPosition="left"
+			label={descriptor.label}
+			context={context}
+		>
+			{getInput()}
+		</FieldWrapper>
+	)
 }
 
 export default BooleanProp

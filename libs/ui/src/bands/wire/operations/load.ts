@@ -1,5 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { Context, getWireDef } from "../../../context/context"
+import {
+	Context,
+	getWireDef,
+	getWireDefFromWireName,
+} from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
@@ -8,12 +12,9 @@ import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { PlainWireRecord } from "../../wirerecord/types"
-import {
-	getInitializedConditions,
-	getLoadRequestConditions,
-} from "../conditions/conditions"
-import { getDefaultRecord } from "../defaults/defaults"
+import { getLoadRequestConditions } from "../conditions/conditions"
 import { getWiresFromDefinitonOrContext } from "../adapter"
+import { getDefaultRecord } from "../defaults/defaults"
 
 function getFieldsRequest(
 	fields?: WireFieldDefinitionMap
@@ -31,6 +32,35 @@ function getFieldsRequest(
 	})
 }
 
+function getWiresMap(wires: PlainWire[]) {
+	const wiresMap: Record<string, PlainWire> = {}
+	wires.forEach((wire) => {
+		const fullWireId = getFullWireId(wire.view, wire.name)
+		wiresMap[fullWireId] = wire
+	})
+	return wiresMap
+}
+
+function getWireRequest(
+	wire: PlainWire,
+	batchnumber: number,
+	context: Context
+) {
+	const fullWireId = getFullWireId(wire.view, wire.name)
+	const wiredef = getWireDef(wire)
+	if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
+	return {
+		wire: fullWireId,
+		query: wire.query,
+		collection: wiredef.collection,
+		fields: getFieldsRequest(wiredef.fields) || [],
+		conditions: getLoadRequestConditions(wire.conditions, context),
+		order: wiredef.order,
+		batchsize: wiredef.batchsize,
+		batchnumber,
+	}
+}
+
 export default createAsyncThunk<
 	[PlainWire[], Record<string, PlainCollection>],
 	{
@@ -41,83 +71,61 @@ export default createAsyncThunk<
 >("wire/load", async ({ context, wires }, api) => {
 	// Turn the list of wires into a load request
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
-	const batch = {
-		wires: wiresToLoad.map((wire) => {
-			const wiredef = getWireDef(wire)
-			if (!wiredef) throw new Error("Invalid Wire: " + wire.name)
-			return {
-				wire: getFullWireId(wire.view, wire.name),
-				type: wiredef.type,
-				collection: wiredef.collection,
-				fields: getFieldsRequest(wiredef.fields) || [],
-				conditions: getLoadRequestConditions(
-					getInitializedConditions(wiredef.conditions),
-					context
-				),
-				order: wiredef.order,
-				limit: wiredef.limit,
-				offset: wiredef.offset,
-			}
-		}),
-	}
-	const response = await api.extra.loadData(context, batch)
+	const response = await api.extra.loadData(context, {
+		wires: wiresToLoad.map((wire) => getWireRequest(wire, 0, context)),
+	})
 
 	// Add the local ids
+	const wiresRequestMap = getWiresMap(wiresToLoad)
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
+		const requestWire = wiresRequestMap[wire.wire]
+		const [view, name] = wire.wire.split("/")
 		const data: Record<string, PlainWireRecord> = {}
 		const original: Record<string, PlainWireRecord> = {}
+		const changes: Record<string, PlainWireRecord> = {}
+
+		const wireDef = getWireDefFromWireName(view, name)
+		const autoCreateRecord = !!wireDef?.init?.create
+
+		if (autoCreateRecord) {
+			wire.data?.push(
+				getDefaultRecord(
+					context,
+					wiresResponse,
+					response.collections,
+					view,
+					name
+				)
+			)
+		}
+
 		wire.data?.forEach((item) => {
 			const localId = shortid.generate()
 			data[localId] = item
 			original[localId] = item
+
+			if (autoCreateRecord) {
+				changes[localId] = item
+			}
 		})
-		const [view, name] = wire.wire.split("/")
 		wiresResponse[wire.wire] = {
 			name,
 			view,
+			query: true,
+			batchid: shortid.generate(),
 			data,
 			original,
-			changes: {},
+			changes,
 			deletes: {},
+			batchnumber: requestWire.batchnumber,
+			more: wire.more,
 			error: undefined,
-			conditions: [],
-		}
-	}
-
-	// Add defaults to response
-	for (const wire of batch.wires) {
-		if (wire.type === "CREATE") {
-			const localId = shortid.generate()
-			const [view, name] = wire.wire.split("/")
-			wiresResponse[wire.wire] = {
-				name,
-				view,
-				data: {
-					[localId]: getDefaultRecord(
-						context,
-						wiresResponse,
-						response.collections,
-						view,
-						name
-					),
-				},
-				original: {},
-				changes: {
-					[localId]: getDefaultRecord(
-						context,
-						wiresResponse,
-						response.collections,
-						view,
-						name
-					),
-				},
-				deletes: {},
-				error: undefined,
-				conditions: [],
-			}
+			conditions: requestWire.conditions,
 		}
 	}
 
 	return [Object.values(wiresResponse), response.collections]
 })
+
+export { getWireRequest, getWiresMap }

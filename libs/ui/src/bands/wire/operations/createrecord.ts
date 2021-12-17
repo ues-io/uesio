@@ -16,7 +16,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 				record: getDefaultRecord(
 					context,
 					state.wire.entities,
-					state.collection,
+					state.collection.entities,
 					viewId,
 					wirename
 				),

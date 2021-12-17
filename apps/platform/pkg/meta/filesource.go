@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewFileSource function
@@ -116,4 +118,12 @@ func (fs *FileSource) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (fs *FileSource) SetItemMeta(itemMeta *ItemMeta) {
 	fs.itemMeta = itemMeta
+}
+
+func (fs *FileSource) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, fs.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(fs)
 }

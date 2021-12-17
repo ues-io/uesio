@@ -4,9 +4,8 @@ label: Table
 definition:
   uesio.styles:
     root:
-      color: black
       "&:after":
-        bottom: "16px"
+        right: 5px
     input:
       width: "100%"
       backgroundColor: transparent

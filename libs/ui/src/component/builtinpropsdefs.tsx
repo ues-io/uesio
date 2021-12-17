@@ -1,5 +1,6 @@
 import { css } from "@emotion/css"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
+import { getComponents } from "./registry"
 
 const getComponentTypePropsDef = (
 	compPropsDef: BuildPropertiesDefinition
@@ -27,8 +28,35 @@ const getComponentTypePropsDef = (
 		},
 	],
 	sections: [],
-	readOnly: true,
 })
+
+const getPanelPropsDef = (): BuildPropertiesDefinition => {
+	const componentList = getComponents("uesio.panel")
+	return {
+		title: "Panel",
+		defaultDefinition: () => ({}),
+		properties: [
+			{
+				name: "name",
+				type: "KEY",
+				label: "Panel Id",
+			},
+			{
+				type: "SELECT",
+				name: "uesio.type",
+				label: "Panel Component",
+				options: Object.entries(componentList).flatMap(([ns, nsdata]) =>
+					Object.entries(nsdata).map(([comp]) => ({
+						value: `${ns}.${comp}`,
+						label: `${ns}.${comp}`,
+					}))
+				),
+			},
+		],
+		type: "panel",
+		sections: [],
+	}
+}
 
 const getWirePropsDef = (): BuildPropertiesDefinition => ({
 	title: "Wire",
@@ -60,6 +88,11 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 				},
 			],
 		},
+		{
+			name: "batchsize",
+			type: "NUMBER",
+			label: "Batch Size",
+		},
 	],
 	sections: [
 		{
@@ -70,13 +103,17 @@ const getWirePropsDef = (): BuildPropertiesDefinition => ({
 			title: "Conditions",
 			type: "CONDITIONS",
 		},
+		{
+			title: "Order by",
+			type: "ORDER",
+		},
 	],
 	actions: [
 		{
 			type: "LOAD_WIRE",
-			label: "Refresh Wire",
 		},
 	],
+	type: "wire",
 })
 
 const getFieldPropsDef = (
@@ -96,4 +133,9 @@ const getFieldPropsDef = (
 	name,
 })
 
-export { getComponentTypePropsDef, getWirePropsDef, getFieldPropsDef }
+export {
+	getComponentTypePropsDef,
+	getWirePropsDef,
+	getFieldPropsDef,
+	getPanelPropsDef,
+}

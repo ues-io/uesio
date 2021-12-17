@@ -1,12 +1,14 @@
 import { SelectOption } from "./types"
 
-const getBlankSelectOption = (): SelectOption => ({
-	value: "",
-	label: "",
-})
-
 const addBlankSelectOption = (
-	options: SelectOption[] | undefined
-): SelectOption[] => [getBlankSelectOption()].concat(options || [])
+	options: SelectOption[] | undefined,
+	blankOptionLabel?: string
+): SelectOption[] =>
+	[
+		{
+			value: "",
+			label: blankOptionLabel || "",
+		},
+	].concat(options || [])
 
-export { getBlankSelectOption, addBlankSelectOption }
+export { addBlankSelectOption }

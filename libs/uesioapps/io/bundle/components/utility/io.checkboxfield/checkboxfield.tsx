@@ -1,4 +1,4 @@
-import { ChangeEvent, FunctionComponent } from "react"
+import { FunctionComponent } from "react"
 import {
 	definition,
 	styles,
@@ -9,41 +9,37 @@ import {
 } from "@uesio/ui"
 
 interface CheckboxFieldProps extends definition.UtilityProps {
-	label?: string
 	setValue: (value: boolean) => void
 	value: wire.FieldValue
-	width?: string
 	fieldMetadata: collection.Field
-	hideLabel?: boolean
 	mode?: context.FieldMode
 }
 
 const Icon = component.registry.getUtility("io.icon")
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const { setValue, value, mode, hideLabel, context, label } = props
+	const { setValue, value, mode, context } = props
 	const readonly = mode === "READ"
-	const width = props.definition?.width as string
+
 	const checked = value === true
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
 			native: {
 				opacity: "0",
 				position: "absolute",
+				cursor: readonly ? "inherit" : "pointer",
 			},
-			input: {},
+			input: {
+				opacity: readonly ? 0.5 : 1,
+				cursor: readonly ? "inherit" : "pointer",
+			},
 			readonly: {},
 		},
 		props
 	)
 
 	return (
-		<label className={classes.root}>
-			<FieldLabel label={label} hide={hideLabel} context={context} />
+		<div className={classes.input}>
 			<input
 				className={classes.native}
 				checked={checked}
@@ -51,13 +47,11 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				disabled={readonly}
 				onChange={(event) => setValue(event.target.checked)}
 			/>
-			<div className={classes.input}>
-				<Icon
-					context={context}
-					icon={checked ? "check_box" : "check_box_outline_blank"}
-				/>
-			</div>
-		</label>
+			<Icon
+				context={context}
+				icon={checked ? "check_box" : "check_box_outline_blank"}
+			/>
+		</div>
 	)
 }
 

@@ -1,0 +1,7 @@
+language: it
+labels:
+  io.cancel: Annula
+  io.delete: Elimina
+  io.edit: Modifica
+  io.preview: Vedere
+  io.save: Salva

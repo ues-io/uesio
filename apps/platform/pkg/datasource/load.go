@@ -12,20 +12,23 @@ import (
 )
 
 type SpecialReferences struct {
-	OnDelete       string
-	CollectionName string
-	Fields         []string
+	ReferenceMetadata *meta.ReferenceMetadata
+	Fields            []string
 }
 
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
-		OnDelete:       "CASCADE",
-		CollectionName: "uesio.userfiles",
-		Fields:         []string{"uesio.mimetype", "uesio.name"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			OnDelete:   "CASCADE",
+			Collection: "uesio.userfiles",
+		},
+		Fields: []string{"uesio.mimetype", "uesio.name"},
 	},
 	"USER": {
-		CollectionName: "uesio.users",
-		Fields:         []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
+		ReferenceMetadata: &meta.ReferenceMetadata{
+			Collection: "uesio.users",
+		},
+		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
 }
 
@@ -118,7 +121,7 @@ func getMetadataForLoad(
 			// need to do a whole new approach to reference fields.
 			if collectionMetadata.DataSource != "uesio.platform" {
 				op.ReferencedCollections = adapt.ReferenceRegistry{}
-				refCol := op.ReferencedCollections.Get(specialRef.CollectionName)
+				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
 				refCol.AddReference(fieldMetadata)
 				refCol.AddFields(fields)
 			} else {
@@ -146,10 +149,13 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 }
 
 func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
-	collated := map[string][]adapt.LoadOp{}
+	collated := map[string][]*adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
 	// Loop over the ops and batch per data source
 	for i := range ops {
+		ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+			ID: "uesio.id",
+		})
 		op := ops[i]
 		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
 		if err != nil {
@@ -177,11 +183,8 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		if op.Type == "QUERY" || op.Type == "" {
-			if batch == nil {
-				batch = []adapt.LoadOp{}
-			}
-			batch = append(batch, op)
+		if op.Query {
+			batch = append(batch, &ops[i])
 		}
 		collated[dsKey] = batch
 	}
@@ -290,7 +293,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 					return nil, err
 				}
 
-				err = adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+				err = adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
 					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,

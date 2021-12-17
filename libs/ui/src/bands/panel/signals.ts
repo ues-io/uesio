@@ -24,6 +24,30 @@ const signals: Record<string, SignalDescriptor> = {
 			},
 		],
 	},
+	[`${PANEL_BAND}/OPEN`]: {
+		dispatcher: (signal: ToggleSignal, context: Context) =>
+			operations.open(context, signal.panel, signal.path),
+		label: "Open",
+		properties: () => [
+			{
+				type: "TEXT",
+				name: "panel",
+				label: "Panel",
+			},
+		],
+	},
+	[`${PANEL_BAND}/CLOSE`]: {
+		dispatcher: (signal: ToggleSignal, context: Context) =>
+			operations.close(context, signal.panel),
+		label: "Close",
+		properties: () => [
+			{
+				type: "TEXT",
+				name: "panel",
+				label: "Panel",
+			},
+		],
+	},
 }
 
 export default signals

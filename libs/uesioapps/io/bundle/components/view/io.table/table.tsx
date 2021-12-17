@@ -1,9 +1,19 @@
-import { hooks, styles } from "@uesio/ui"
+import { hooks, styles, component } from "@uesio/ui"
 import { FunctionComponent } from "react"
+import { useMode } from "../../shared/mode"
+import { paginate, usePagination } from "../../shared/pagination"
+import { ButtonUtilityProps } from "../../utility/io.button/button"
+import { GroupUtilityProps } from "../../utility/io.group/group"
+import { PaginatorUtilityProps } from "../../utility/io.paginator/paginator"
+import { TableUtilityProps } from "../../utility/io.table/table"
 
-import { TableProps, TableState } from "./tabledefinition"
-import TableHeader from "./tableheader"
-import TableBody from "./tablebody"
+import { ColumnDefinition, TableProps } from "./tabledefinition"
+
+const Group = component.registry.getUtility<GroupUtilityProps>("io.group")
+const Button = component.registry.getUtility<ButtonUtilityProps>("io.button")
+const IOTable = component.registry.getUtility<TableUtilityProps>("io.table")
+const Paginator =
+	component.registry.getUtility<PaginatorUtilityProps>("io.paginator")
 
 const Table: FunctionComponent<TableProps> = (props) => {
 	const { path, context, definition } = props
@@ -17,66 +27,133 @@ const Table: FunctionComponent<TableProps> = (props) => {
 		  })
 		: context
 
-	const [componentState] = uesio.component.useState<TableState>(
+	const [mode] = useMode(definition.id, definition.mode, props)
+	const [currentPage, setCurrentPage] = usePagination(
 		definition.id,
-		{
-			mode: definition.mode || "READ",
-		}
+		wire?.getBatchId(),
+		props
 	)
+	const pageSize = definition.pagesize ? parseInt(definition.pagesize, 10) : 0
+
+	if (!wire || !mode || !path || currentPage === undefined) return null
 
 	const classes = styles.useStyles(
 		{
 			root: {},
-			table: {
-				width: "100%",
-				overflow: "hidden",
-			},
-			header: {},
-			headerCell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			cell: {
-				"&:last-child": {
-					borderRight: 0,
-				},
-			},
-			row: {
-				"&:last-child>td": {
-					borderBottom: 0,
-				},
-			},
-			rowDeleted: {},
 		},
 		props
 	)
 
-	if (!wire || !componentState || !path) return null
-
 	const collection = wire.getCollection()
 
+	const columns = definition.columns?.map((columnDef) => {
+		const column = columnDef["io.column"] as ColumnDefinition
+		const fieldId = column.field
+		const fieldMetadata = collection.getField(fieldId)
+		return {
+			label: column.label || fieldMetadata?.getLabel() || "",
+		}
+	})
+
+	const data = wire.getData()
+	const maxPages = pageSize ? Math.ceil(data.length / pageSize) : 1
+
+	const paginated = paginate(data, currentPage, pageSize)
+
+	const rows = paginated.map((record, index) => {
+		const recordContext = newContext.addFrame({
+			record: record.getId(),
+			wire: wire.getId(),
+			fieldMode: mode,
+		})
+		return {
+			cells: definition.columns?.map((columnDef) => {
+				const column = columnDef["io.column"] as ColumnDefinition
+				return column.components ? (
+					<component.Slot
+						definition={column}
+						listName="components"
+						path={`${path}["columns"]["${index}"]["io.column"]`}
+						accepts={["uesio.context"]}
+						direction="horizontal"
+						context={recordContext}
+					/>
+				) : (
+					<component.Component
+						componentType="io.field"
+						definition={{
+							fieldId: column.field,
+							labelPosition: "none",
+							"uesio.variant": "io.table",
+						}}
+						index={index}
+						path={`${path}["columns"]["${index}"]`}
+						context={recordContext}
+					/>
+				)
+			}),
+			rowactions: definition.rowactions && (
+				<Group
+					styles={{ root: { padding: "0 16px" } }}
+					columnGap={0}
+					context={recordContext}
+				>
+					{definition.rowactions.map((action, i) => {
+						const [handler, portals] = uesio.signal.useHandler(
+							action.signals,
+							recordContext
+						)
+						return (
+							<Button
+								key={action.text + i}
+								variant="io.nav"
+								className="rowaction"
+								label={action.text}
+								context={recordContext}
+								onClick={handler}
+							/>
+						)
+					})}
+				</Group>
+			),
+			isDeleted: record.isDeleted(),
+		}
+	})
+
 	return (
-		<div className={classes.root}>
-			<table className={classes.table}>
-				<TableHeader
-					classes={classes}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					collection={collection}
+		<>
+			<IOTable
+				variant={definition["uesio.variant"]}
+				rows={rows}
+				columns={columns}
+				context={context}
+				classes={classes}
+				showRowNumbers={definition.rownumbers}
+				rowNumberStart={pageSize * currentPage}
+				showRowActions={!!definition.rowactions}
+			/>
+			{pageSize > 0 && (
+				<Paginator
+					setPage={setCurrentPage}
+					currentPage={currentPage}
+					maxPages={maxPages}
+					context={context}
+					loadMore={
+						wire.hasMore()
+							? async () => {
+									await uesio.signal.run(
+										{
+											signal: "wire/LOAD_NEXT_BATCH",
+											wires: [wire.getId()],
+										},
+										context
+									)
+							  }
+							: undefined
+					}
 				/>
-				<TableBody
-					classes={classes}
-					wire={wire}
-					collection={collection}
-					state={componentState}
-					columns={definition.columns}
-					rowactions={definition.rowactions}
-					path={path}
-					context={newContext}
-				/>
-			</table>
-		</div>
+			)}
+		</>
 	)
 }
 

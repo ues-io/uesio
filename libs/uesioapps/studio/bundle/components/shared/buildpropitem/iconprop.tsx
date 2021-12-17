@@ -6,16 +6,17 @@ const TextField = component.registry.getUtility("io.textfield")
 const Popper = component.registry.getUtility("io.popper")
 const IconButton = component.registry.getUtility("io.iconbutton")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const { descriptor, path, context, valueAPI } = props
-	const uesio = hooks.useUesio(props)
-	const [metadataType, metadataItem, selectedNode] =
-		uesio.builder.useSelectedNode()
 
-	const iconPanePath = `${path}["iconsPane"]["0"]`
+	const uesio = hooks.useUesio(props)
+	const [, , selectedNode] = uesio.builder.useSelectedNode()
+	const selected = selectedNode === path
+
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
-	const selected = selectedNode.startsWith(iconPanePath)
+
 	const [searchTerm, setSearchTerm] = useState("")
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value)
@@ -29,22 +30,13 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				display: "flex",
-				flexWrap: "wrap",
-				alignItems: "center",
-			},
 			icons: {
 				display: "grid",
-				flexWrap: "wrap",
-				overflow: "scroll",
+				overflow: "auto",
 				maxHeight: "350px",
 				gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
 				padding: "16px",
 				rowGap: "14px",
-			},
-			buttons: {
-				marginTop: "20px",
 			},
 			search: {
 				marginBottom: "2px",
@@ -54,39 +46,55 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 				borderWidth: "0 0 1px",
 				padding: "16px 8px",
 			},
+			iconfield: {
+				display: "grid",
+				gridTemplateColumns: "1fr min-content",
+				alignItems: "center",
+				columnGap: "8px",
+			},
+			iconpreview: {
+				backgroundColor: "#f0f0f0",
+				padding: "6px",
+				borderRadius: "20px",
+				fontSize: "8pt",
+			},
 		},
 		null
 	)
 
+	const viewDefId = uesio.getViewDefId()
+	if (!viewDefId || !path) return null
+
 	return (
-		<div ref={setAnchorEl} className={classes.root}>
-			<TextField
-				value={valueAPI.get(path)}
+		<div ref={setAnchorEl}>
+			<FieldWrapper
+				labelPosition="left"
 				label={descriptor.label}
-				setValue={(value: string) => valueAPI.set(path, value)}
 				context={context}
-			/>
-			<div className={classes.buttons}>
-				<IconButton
-					icon={valueAPI.get(path)}
-					context={context}
-					variant="studio.iconbutton"
-				/>
-			</div>
-			<div className={classes.buttons}>
-				<IconButton
-					icon="launch"
-					context={context}
-					variant="studio.iconbutton"
-					onClick={(): void =>
-						uesio.builder.setSelectedNode(
-							metadataType,
-							metadataItem,
-							iconPanePath
-						)
-					}
-				/>
-			</div>
+				variant="studio.propfield"
+			>
+				<div className={classes.iconfield}>
+					<TextField
+						value={valueAPI.get(path)}
+						label={descriptor.label}
+						setValue={(value: string) => valueAPI.set(path, value)}
+						context={context}
+						variant="studio.propfield"
+					/>
+					<IconButton
+						className={classes.iconpreview}
+						icon={valueAPI.get(path) || ""}
+						context={context}
+						onClick={() => {
+							uesio.builder.setSelectedNode(
+								"viewdef",
+								viewDefId,
+								path
+							)
+						}}
+					/>
+				</div>
+			</FieldWrapper>
 
 			{selected && anchorEl && (
 				<Popper
@@ -102,11 +110,9 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 							props.path && (
 								<IconButton
 									context={context}
-									variant="io.small"
+									variant="studio.buildtitle"
 									icon="close"
-									onClick={
-										() => uesio.builder.clearSelectedNode() //TO-DO keep the button (parent path selected)
-									}
+									onClick={() => uesio.builder.unSelectNode()}
 								/>
 							)
 						}
@@ -122,9 +128,9 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 					<div className={classes.icons}>
 						{results.map((iconName) => (
 							<IconButton
+								key={iconName}
 								icon={iconName}
 								context={context}
-								variant="studio.iconbuttongrid"
 								onClick={(): void =>
 									valueAPI.set(path, iconName)
 								}

@@ -3,7 +3,7 @@ package meta
 import (
 	"path/filepath"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // ComponentVariant struct
@@ -13,6 +13,7 @@ type ComponentVariant struct {
 	Workspace  *Workspace `yaml:"-" uesio:"studio.workspace"`
 	Name       string     `yaml:"name" uesio:"studio.name"`
 	Component  string     `yaml:"component" uesio:"studio.component"`
+	Extends    string     `yaml:"extends" uesio:"studio.extends"`
 	Label      string     `yaml:"label" uesio:"studio.label"`
 	Definition yaml.Node  `yaml:"definition" uesio:"studio.definition"`
 	itemMeta   *ItemMeta  `yaml:"-" uesio:"-"`
@@ -116,4 +117,12 @@ func (c *ComponentVariant) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *ComponentVariant) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (cv *ComponentVariant) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, cv.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(cv)
 }

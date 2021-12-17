@@ -6,9 +6,10 @@ type User struct {
 	FirstName      string            `uesio:"uesio.firstname"`
 	LastName       string            `uesio:"uesio.lastname"`
 	Profile        string            `uesio:"uesio.profile"`
-	FederationID   string            `uesio:"uesio.federationId"`
-	FederationType string            `uesio:"uesio.federationType"`
+	FederationID   string            `uesio:"uesio.federation_id"`
+	FederationType string            `uesio:"uesio.federation_type"`
 	Picture        *UserFileMetadata `uesio:"uesio.picture"`
+	Language       string            `uesio:"uesio.language"`
 	itemMeta       *ItemMeta         `yaml:"-" uesio:"-"`
 	CreatedBy      *User             `yaml:"-" uesio:"uesio.createdby"`
 	Owner          *User             `yaml:"-" uesio:"uesio.owner"`

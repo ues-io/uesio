@@ -1,22 +1,13 @@
-import { definition, builder, signal, component } from "@uesio/ui"
+import { definition, builder, signal, component, context } from "@uesio/ui"
 
-type TableMode = "READ" | "EDIT"
-
-type TableClasses = Record<
-	"root" | "table" | "headerCell" | "header" | "cell" | "row" | "rowDeleted",
-	string
->
-
-type TableState = {
-	mode: TableMode
-}
-
-type TableDefinition = {
+interface TableDefinition extends definition.BaseDefinition {
 	id: string
 	wire: string
-	mode: TableMode
+	mode: context.FieldMode
 	columns: definition.DefinitionList
-	rowactions: RowAction[]
+	rowactions?: RowAction[]
+	rownumbers: boolean
+	pagesize: string
 }
 
 interface TableProps extends definition.BaseProps {
@@ -90,13 +81,6 @@ const TablePropertyDefinition: builder.BuildPropertiesDefinition = {
 	type: "component",
 	classes: ["root"],
 }
-export {
-	TableProps,
-	TableState,
-	TableDefinition,
-	ColumnDefinition,
-	TableClasses,
-	RowAction,
-}
+export { TableProps, TableDefinition, ColumnDefinition, RowAction }
 
 export default TablePropertyDefinition

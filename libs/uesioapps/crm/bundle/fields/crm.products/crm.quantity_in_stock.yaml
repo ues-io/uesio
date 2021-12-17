@@ -2,3 +2,5 @@ name: quantity_in_stock
 collection: crm.products
 type: NUMBER
 label: Quantity in Stock
+number:
+  decimals: 0

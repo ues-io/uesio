@@ -6,12 +6,16 @@ interface MetadataPickerProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	metadataType: metadata.MetadataType
 	label: string
+	labelPosition?: string
 	grouping?: string
 	defaultNamespace?: string
+	selectVariant?: string
+	fieldWrapperVariant?: string
 }
 
 const Grid = component.registry.getUtility("io.grid")
 const SelectField = component.registry.getUtility("io.selectfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
@@ -20,10 +24,13 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		value,
 		setValue,
 		label,
+		labelPosition,
 		metadataType,
 		context,
 		grouping,
 		defaultNamespace,
+		selectVariant,
+		fieldWrapperVariant,
 	} = props
 	const uesio = hooks.useUesio(props)
 
@@ -46,52 +53,60 @@ const MetadataPicker: FunctionComponent<MetadataPickerProps> = (props) => {
 		return name
 	}
 
-	const nbsp = "\u00A0"
-
 	return (
-		<Grid
+		<FieldWrapper
+			labelPosition={labelPosition}
+			variant={fieldWrapperVariant}
+			label={label}
 			context={context}
-			styles={{
-				root: {
-					gridTemplateColumns: defaultNamespace ? "1fr" : "1fr 1fr",
-					columnGap: "10px",
-				},
-			}}
 		>
-			{!defaultNamespace && (
+			<Grid
+				context={context}
+				styles={{
+					root: {
+						gridTemplateColumns: defaultNamespace
+							? "1fr"
+							: "1fr 1fr",
+						columnGap: "10px",
+					},
+				}}
+			>
+				{!defaultNamespace && (
+					<SelectField
+						context={context}
+						value={namespace}
+						options={addBlankSelectOption(
+							Object.keys(namespaces || {}).map((key) => ({
+								value: key,
+								label: key,
+							}))
+						)}
+						setValue={(value: string) => {
+							setValue(value ? `${value}.` : "")
+						}}
+						variant={selectVariant}
+					/>
+				)}
+
 				<SelectField
 					context={context}
-					label={label}
-					value={namespace}
+					value={name}
 					options={addBlankSelectOption(
-						Object.keys(namespaces || {}).map((key) => ({
-							value: key,
-							label: key,
-						}))
+						Object.keys(metadata || {}).map((key) => {
+							const name = getMetadataName(key)
+							return {
+								value: name,
+								label: name,
+							}
+						})
 					)}
 					setValue={(value: string) => {
-						setValue(value ? `${value}.` : "")
+						setValue(`${namespace}.${value}`)
 					}}
+					variant={selectVariant}
 				/>
-			)}
-			<SelectField
-				context={context}
-				label={defaultNamespace ? label : label && nbsp}
-				value={name}
-				options={addBlankSelectOption(
-					Object.keys(metadata || {}).map((key) => {
-						const name = getMetadataName(key)
-						return {
-							value: name,
-							label: name,
-						}
-					})
-				)}
-				setValue={(value: string) => {
-					setValue(`${namespace}.${value}`)
-				}}
-			/>
-		</Grid>
+			</Grid>
+		</FieldWrapper>
 	)
 }
 

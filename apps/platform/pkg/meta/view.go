@@ -1,10 +1,9 @@
 package meta
 
 import (
-	"fmt"
 	"strings"
 
-	"gopkg.in/yaml.v3"
+	"github.com/humandad/yaml"
 )
 
 // View struct
@@ -129,18 +128,12 @@ func (v *View) SetItemMeta(itemMeta *ItemMeta) {
 	v.itemMeta = itemMeta
 }
 
-func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
-	if node.Kind != yaml.MappingNode {
-		return nil, fmt.Errorf("Definition is not a mapping node.")
+func (v *View) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, v.Name)
+	if err != nil {
+		return err
 	}
-
-	for i := range node.Content {
-		if node.Content[i].Value == key {
-			return node.Content[i+1], nil
-		}
-	}
-
-	return nil, fmt.Errorf("Node not found of key: " + key)
+	return node.Decode(v)
 }
 
 func getComponentsAndVariantsUsed(node *yaml.Node, usedComps *map[string]bool, usedVariants *map[string]bool) {
@@ -202,7 +195,27 @@ func (v *View) GetComponentsAndVariants() (map[string]bool, map[string]bool, err
 	usedVariants := map[string]bool{}
 
 	getComponentsAndVariantsUsed(components, &usedComps, &usedVariants)
-	getComponentsAndVariantsUsed(panels, &usedComps, &usedVariants)
+
+	if panels != nil && panels.Kind == yaml.MappingNode {
+		for i := range panels.Content {
+			if i%2 != 0 {
+				panel := panels.Content[i]
+				panelType, err := getMapNode(panel, "uesio.type")
+				if err != nil {
+					return nil, nil, err
+				}
+				if panelType.Kind == yaml.ScalarNode {
+					usedComps[panelType.Value] = true
+				}
+				for i := range panel.Content {
+					if i%2 != 0 {
+						node := panel.Content[i]
+						getComponentsAndVariantsUsed(node, &usedComps, &usedVariants)
+					}
+				}
+			}
+		}
+	}
 
 	return usedComps, usedVariants, nil
 }

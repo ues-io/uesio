@@ -15,6 +15,7 @@ type FieldType =
 	| "TIMESTAMP"
 	| "LIST"
 	| "USER"
+	| "EMAIL"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 
@@ -23,8 +24,23 @@ type SelectOption = {
 	value: string
 }
 
-type SubField = {
+type NumberMetadata = {
+	decimals: number
+}
+
+type SelectListMetadata = {
 	name: string
+	options: SelectOption[]
+	blank_option_label?: string
+}
+
+type FileMetadata = {
+	accept: AcceptTypes
+	filecollection: string
+}
+
+type ReferenceMetadata = {
+	collection: string
 }
 
 type FieldMetadata = {
@@ -35,11 +51,18 @@ type FieldMetadata = {
 	updateable: boolean
 	type: FieldType
 	label: string
-	options?: SelectOption[]
-	referencedCollection?: string
-	subfields?: SubField[]
-	accept?: AcceptTypes
+	selectlist?: SelectListMetadata
+	reference?: ReferenceMetadata
+	subfields?: FieldMetadataMap
+	file?: FileMetadata
 	subtype?: string
+	number?: NumberMetadata
 }
 
-export { FieldMetadata, FieldMetadataMap, SelectOption, FieldType, SubField }
+export {
+	FieldMetadata,
+	FieldMetadataMap,
+	SelectOption,
+	FieldType,
+	NumberMetadata,
+}

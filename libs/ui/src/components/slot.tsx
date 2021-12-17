@@ -1,33 +1,56 @@
-import { FunctionComponent } from "react"
-import { BaseProps } from "../definition/definition"
-import { ComponentInternal } from "../component/component"
+import { FunctionComponent, RefObject } from "react"
+import {
+	BaseDefinition,
+	DefinitionList,
+	UtilityProps,
+} from "../definition/definition"
+import { Component } from "../component/component"
+import { unWrapDefinition } from "../component/path"
+import { getUtility } from "../component/registry"
 
-interface SlotProps extends BaseProps {
+interface SlotUtilityProps extends UtilityProps {
 	listName: string
+	definition?: BaseDefinition
 	accepts: string[]
 	direction?: string
 }
 
-const Slot: FunctionComponent<SlotProps> = (props) => {
-	const { path, context, listName, definition, accepts, direction } = props
-	if (!definition) {
-		return null
-	}
+const SlotBuilder = getUtility("studio.slotbuilder")
 
-	const listDef = definition?.[listName]
+const InnerSlot: FunctionComponent<SlotUtilityProps> = (props) => {
+	const { path, context, listName, definition } = props
+	if (!definition) return null
+
+	const listDef = (definition?.[listName] || []) as DefinitionList
 	const listPath = path ? `${path}["${listName}"]` : `["${listName}"]`
+
 	return (
-		<ComponentInternal
-			componentType="uesio.slot"
-			definition={{
-				items: listDef,
-				accepts,
-				direction,
-			}}
-			path={listPath}
-			context={context}
-		/>
+		<>
+			{listDef.map((itemDef, index) => {
+				const [componentType, unWrappedDef] = unWrapDefinition(itemDef)
+				return (
+					<Component
+						key={index}
+						componentType={componentType}
+						definition={unWrappedDef}
+						index={index}
+						path={`${listPath}["${index}"]`}
+						context={context}
+					/>
+				)
+			})}
+		</>
 	)
 }
 
+const Slot: FunctionComponent<SlotUtilityProps> = (props) =>
+	props.context.getBuildMode() ? (
+		<SlotBuilder {...props}>
+			<InnerSlot {...props} />
+		</SlotBuilder>
+	) : (
+		<InnerSlot {...props} />
+	)
+
+export { SlotUtilityProps }
 export default Slot

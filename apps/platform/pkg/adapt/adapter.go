@@ -7,10 +7,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
+const MAX_BATCH_SIZE = 100
+
 // Adapter interface
 type Adapter interface {
-	Load([]LoadOp, *MetadataCache, *Credentials, []string) error
-	Save([]SaveOp, *MetadataCache, *Credentials, []string) error
+	Load([]*LoadOp, *MetadataCache, *Credentials, []string) error
+	Save([]*SaveOp, *MetadataCache, *Credentials, []string) error
 	Migrate(*Credentials) error
 }
 

@@ -5,12 +5,13 @@ import { Site } from "./site"
 import { SiteDomain } from "./sitedomain"
 import { BundleDependency } from "./bundledependency"
 import { wire } from "@uesio/ui"
+import { User } from "../auth/login"
 
 interface Metadata {
 	getCollectionName(): string
 	getFields(): wire.LoadRequestField[]
-	list(): Promise<void>
-	create(): Promise<void>
+	list(user: User): Promise<void>
+	create(user: User): Promise<void>
 }
 
 type metadataType =

@@ -3,8 +3,6 @@ component: io.autocomplete
 label: Table
 definition:
   uesio.styles:
-    root:
-      color: black
     input:
       width: "100%"
       backgroundColor: transparent

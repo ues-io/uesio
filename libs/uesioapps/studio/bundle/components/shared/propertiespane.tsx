@@ -1,41 +1,69 @@
 import { FunctionComponent } from "react"
-import { component, hooks } from "@uesio/ui"
-import BuildPropArea from "./buildproparea/buildproparea"
+import { component, hooks, builder } from "@uesio/ui"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
-
+import PropList from "./buildproparea/proplist"
+import BuildSection from "./buildproparea/buildsection"
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
 const TitleBar = component.registry.getUtility("io.titlebar")
+const TabLabels = component.registry.getUtility("io.tablabels")
 const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { propsDef, path, context, valueAPI, className } = props
+	const { propsDef, path = "", context, valueAPI, className } = props
 
 	const subtitle = path
 		? component.path.toPath(path).join(" > ")
 		: "No Element Selected"
+
+	const [selectedTab, setSelectedTab] = uesio.component.useState<string>(
+		"propertiespanel:" + path,
+		"",
+		undefined,
+		"uesio.runtime"
+	)
+
+	const selectedSection = propsDef.sections?.find(
+		(section) => section.title === selectedTab
+	)
+
 	return (
 		<ScrollPanel
 			header={
-				<TitleBar
-					title={propsDef?.title || "Properties"}
-					variant="io.primary"
-					subtitle={subtitle}
-					actions={
-						props.path && (
-							<IconButton
-								context={context}
-								variant="io.small"
-								icon="close"
-								onClick={() =>
-									uesio.builder.clearSelectedNode()
-								}
-							/>
-						)
-					}
-					context={context}
-				/>
+				<>
+					<TitleBar
+						title={propsDef.title || "Properties"}
+						variant="io.primary"
+						subtitle={subtitle}
+						actions={
+							props.path && (
+								<IconButton
+									variant="studio.buildtitle"
+									context={context}
+									icon="close"
+									onClick={() => uesio.builder.unSelectNode()}
+								/>
+							)
+						}
+						context={context}
+					/>
+					{propsDef.sections && (
+						<TabLabels
+							variant="studio.mainsection"
+							selectedTab={selectedTab}
+							setSelectedTab={setSelectedTab}
+							tabs={[{ id: "", label: "", icon: "home" }].concat(
+								propsDef.sections.map((section) => ({
+									id: section.title,
+									label: section.title,
+									icon: "",
+								}))
+							)}
+							context={context}
+						/>
+					)}
+				</>
 			}
 			footer={
 				propsDef && (
@@ -51,12 +79,22 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 			className={className}
 			context={context}
 		>
-			{propsDef && (
-				<BuildPropArea
+			{selectedTab === "" && propsDef && propsDef.properties && (
+				<PropList
 					path={path}
-					valueAPI={valueAPI}
-					context={context}
 					propsDef={propsDef}
+					properties={propsDef.properties}
+					context={context}
+					valueAPI={valueAPI}
+				/>
+			)}
+			{selectedSection && propsDef && (
+				<BuildSection
+					path={path}
+					propsDef={propsDef}
+					section={selectedSection}
+					context={context}
+					valueAPI={valueAPI}
 				/>
 			)}
 		</ScrollPanel>

@@ -1,35 +1,35 @@
 [
 	{
-		"federationId": "system",
-		"federationType": "system",
+		"federationid": "system",
+		"federationtype": "system",
 		"firstname": "Super",
 		"lastname": "Admin",
 		"profile": "studio.standard"
 	},
 	{
-		"federationId": "MockBen",
-		"federationType": "mock",
+		"federationid": "MockBen",
+		"federationtype": "mock",
 		"firstname": "Ben",
 		"lastname": "Hubbard",
 		"profile": "studio.standard"
 	},
 	{
-		"federationId": "MockAbel",
-		"federationType": "mock",
+		"federationid": "MockAbel",
+		"federationtype": "mock",
 		"firstname": "Abel",
 		"lastname": "Jimenez Molla",
 		"profile": "studio.standard"
 	},
 	{
-		"federationId": "MockWessel",
-		"federationType": "mock",
+		"federationid": "MockWessel",
+		"federationtype": "mock",
 		"firstname": "Wessel",
 		"lastname": "van der Plas",
 		"profile": "studio.standard"
 	},
 	{
-		"federationId": "MockGregg",
-		"federationType": "mock",
+		"federationid": "MockGregg",
+		"federationtype": "mock",
 		"firstname": "Gregg",
 		"lastname": "Baxter",
 		"profile": "studio.standard"

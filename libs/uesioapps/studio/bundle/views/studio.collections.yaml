@@ -42,12 +42,17 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.workspace
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+        - field: studio.datasource
+          valueSource: VALUE
+          value: "uesio.platform"
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -110,42 +115,38 @@ definition:
                                       color: "#ccc"
                                       text: list
   panels:
-    - io.dialog:
-        id: newCollection
-        title: Create a New Collection
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newcollectionlist
+    newCollection:
+      uesio.type: io.dialog
+      title: Create a New Collection
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newcollectionlist
+            wire: newcollection
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            uesio.context:
               wire: newcollection
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - studio.metadatafield:
-                    fieldId: studio.datasource
-                    metadataType: "DATASOURCE"
-                    label: "Data Source"
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              uesio.context:
-                wire: newcollection
-              text: "Save"
-              signals:
-                - signal: "bot/CALL"
-                  bot: "studio.newcollection"
-                  params:
-                    name: ${studio.name}
-                    datasource: ${studio.datasource}
-                    workspace: $Param{workspacename}
-                    app: $Param{appname}
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newCollection"
+            text: "Save"
+            signals:
+              - signal: "bot/CALL"
+                bot: "studio.newcollection"
+                params:
+                  name: ${studio.name}
+                  datasource: ${studio.datasource}
+                  workspace: $Param{workspacename}
+                  app: $Param{appname}
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/${studio.name}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newCollection"

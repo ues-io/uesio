@@ -15,28 +15,16 @@ const getWiresFromDefinitonOrContext = (
 ): PlainWire[] => {
 	if (wires) {
 		const viewId = context.getViewId()
+		if (!viewId) throw new Error("No ViewId in Context")
 		const wiresArray = Array.isArray(wires) ? wires : [wires]
 		return wiresArray.flatMap((wirename) => {
 			const wire = getWire(viewId, wirename)
+			if (!wire) throw new Error("Bad Wire!")
 			return wire
-				? [wire]
-				: [
-						{
-							view: viewId || "",
-							name: wirename,
-							conditions: [],
-							data: {},
-							original: {},
-							changes: {},
-							deletes: {},
-						},
-				  ]
 		})
 	}
 	const wire = context.getPlainWire()
-	if (!wire) {
-		throw new Error("No Wire in Definition or Context")
-	}
+	if (!wire) throw new Error("No Wire in Definition or Context")
 	return [wire]
 }
 

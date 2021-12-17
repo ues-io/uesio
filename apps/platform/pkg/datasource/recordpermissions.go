@@ -17,7 +17,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 	for i := range *op.Inserts {
 		insert := &(*op.Inserts)[i]
-		insert.AddReadWriteToken("uesio.owner:" + session.GetUserInfo().ID)
+		insert.AddReadWriteToken("uesio.owner:" + session.GetUserID())
 	}
 
 	for i := range *op.Updates {
@@ -75,7 +75,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 
 func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) ([]string, error) {
 
-	tokenStrings := []string{"uesio.owner:" + session.GetUserInfo().ID}
+	tokenStrings := []string{"uesio.owner:" + session.GetUserID()}
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
@@ -114,7 +114,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 				})
 				loadConditions = append(loadConditions, adapt.LoadRequestCondition{
 					Field:    condition.Field,
-					Value:    session.GetUserInfo().ID,
+					Value:    session.GetUserID(),
 					Operator: "=",
 				})
 			}
@@ -125,6 +125,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 				Collection:     lookupResults,
 				Conditions:     loadConditions,
 				Fields:         fields,
+				Query:          true,
 			}}
 			loadMetadata, err := LoadWithOptions(loadOps, session, false)
 			if err != nil {

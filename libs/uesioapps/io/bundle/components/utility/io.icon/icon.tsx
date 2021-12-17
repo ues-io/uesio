@@ -1,11 +1,11 @@
 import { FunctionComponent } from "react"
 import { definition, styles, materialIcons } from "@uesio/ui"
 
-interface IconProps extends definition.UtilityProps {
+interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
 }
 
-const Icon: FunctionComponent<IconProps> = (props) => {
+const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			root: {
@@ -25,11 +25,14 @@ const Icon: FunctionComponent<IconProps> = (props) => {
 		props
 	)
 
-	if (props.icon && materialIcons.includes(props.icon)) {
-		return <span className={classes.root}>{props.icon}</span>
+	if (props.icon === undefined) return null
+
+	if (props.icon === "" || !materialIcons.includes(props.icon)) {
+		return <span className={classes.root}>&nbsp;</span>
 	}
 
-	return null
+	return <span className={classes.root}>{props.icon}</span>
 }
 
+export { IconUtilityProps }
 export default Icon

@@ -18,6 +18,7 @@ definition:
       color: "#555"
       borderBottom: "1px solid #ccc"
       borderRight: "1px solid #ccc"
+      whiteSpace: "nowrap"
     cell:
       borderBottom: "1px solid #ccc"
       borderRight: "1px solid #ccc"
@@ -25,3 +26,7 @@ definition:
     row:
     rowDeleted:
       backgroundColor: "#ffe9e9"
+    rowNumber:
+      padding: 16px
+      color: "#777"
+      fontSize: 10pt

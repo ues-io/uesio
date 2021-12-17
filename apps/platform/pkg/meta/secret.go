@@ -1,6 +1,10 @@
 package meta
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/humandad/yaml"
+)
 
 // Secret struct
 type Secret struct {
@@ -114,4 +118,12 @@ func (s *Secret) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (s *Secret) SetItemMeta(itemMeta *ItemMeta) {
 	s.itemMeta = itemMeta
+}
+
+func (s *Secret) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, s.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(s)
 }

@@ -1,4 +1,4 @@
 name: email
 collection: crm.quotes
-type: TEXT
+type: EMAIL
 label: Email

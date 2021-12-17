@@ -3,7 +3,7 @@ import { Context } from "../../../context/context"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
 import { FieldValue, PlainWireRecord } from "../../wirerecord/types"
-import { PlainCollectionMap } from "../../collection/types"
+import { PlainCollection } from "../../collection/types"
 
 const LOOKUP = "LOOKUP"
 const VALUE = "VALUE"
@@ -52,27 +52,28 @@ const getDefaultValue = (
 const getDefaultRecord = (
 	context: Context,
 	wires: Dictionary<PlainWire>,
-	collections: PlainCollectionMap,
+	collections: Dictionary<PlainCollection>,
 	viewId: string,
 	wireName: string
 ): PlainWireRecord => {
 	const viewDef = context.getViewDef()
 	if (!viewDef) return {}
-	const wire = viewDef.definition?.wires[wireName]
+	const wire = viewDef.definition?.wires?.[wireName]
 	if (!wire) return {}
 	const defaults = wire.defaults
 	const collection = collections[wire.collection]
 	const defaultRecord: PlainWireRecord = {}
 	defaults?.forEach((defaultItem) => {
 		const value = getDefaultValue(context, wires, viewId, defaultItem)
-		const fieldMetadata = collection.fields[defaultItem.field]
+		const fieldMetadata = collection?.fields[defaultItem.field]
 		if (value && fieldMetadata) {
 			if (
 				fieldMetadata.type === "REFERENCE" &&
-				fieldMetadata.referencedCollection
+				fieldMetadata.reference?.collection
 			) {
 				const referenceMeta =
-					collections[fieldMetadata.referencedCollection]
+					collections[fieldMetadata.reference?.collection]
+				if (!referenceMeta) return
 				defaultRecord[defaultItem.field] = {
 					[referenceMeta.idField]: value,
 				}

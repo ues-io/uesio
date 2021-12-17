@@ -1,6 +1,7 @@
 name: primary
 component: io.button
 label: Primary
+extends: io.default
 definition:
   uesio.styles:
     root:
@@ -13,7 +14,6 @@ definition:
       borderRadius: 4px
       padding: 10px
       "&:focus":
-        outline: none
         boxShadow: "0 0 6px #00000093"
     label:
       textTransform: uppercase

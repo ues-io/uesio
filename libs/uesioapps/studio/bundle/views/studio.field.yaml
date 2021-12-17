@@ -41,11 +41,12 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referencedCollection:
-        studio.filecollection:
+        studio.reference:
+        studio.file:
         studio.autopopulate:
         studio.selectlist:
-        studio.accept:
+        studio.validate:
+        studio.languagelabel:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -151,6 +152,10 @@ definition:
                                   - io.field:
                                       fieldId: studio.label
                                   - studio.metadatafield:
+                                      fieldId: studio.languagelabel
+                                      metadataType: "LABEL"
+                                      label: "Language Label"
+                                  - studio.metadatafield:
                                       fieldId: studio.collection
                                       metadataType: "COLLECTION"
                                       label: "Collection"
@@ -160,7 +165,7 @@ definition:
                                           value: "REFERENCE"
                                       components:
                                         - studio.metadatafield:
-                                            fieldId: studio.referencedCollection
+                                            fieldId: studio.reference->studio.collection
                                             metadataType: "COLLECTION"
                                             label: "Ref. Collection"
                                   - io.box:
@@ -185,40 +190,48 @@ definition:
                                           value: "FILE"
                                       components:
                                         - studio.metadatafield:
-                                            fieldId: studio.filecollection
+                                            fieldId: studio.file->studio.filecollection
                                             metadataType: "FILECOLLECTION"
                                             label: "File Collection"
                                         - io.field:
-                                            fieldId: studio.accept
+                                            fieldId: studio.file->studio.accept
+                                  - io.field:
+                                      fieldId: studio.validate->studio.type
+                                  - io.field:
+                                      uesio.display:
+                                        - field: studio.validate->studio.type
+                                          value: "REGEX"
+                                      fieldId: studio.validate->studio.regex
+
   panels:
-    - io.dialog:
-        id: deleteField
-        title: Delete Field
-        width: 400px
-        height: 300px
-        components:
-          - io.text:
-              text: Are you sure you want to delete this field?
-              element: div
-              uesio.variant: io.smalltitle
-          - io.text:
-              text: You will never be able to access the information associated with this field again.
-              element: div
-              uesio.variant: io.smallcontent
-        actions:
-          - io.button:
-              text: Delete
-              uesio.variant: io.primary
-              signals:
-                - signal: wire/MARK_FOR_DELETE
-                - signal: wire/SAVE
-                  wires:
-                    - "fields"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
-          - io.button:
-              text: Cancel
-              uesio.variant: io.secondary
-              signals:
-                - signal: panel/TOGGLE
-                  panel: deleteField
+    deleteField:
+      uesio.type: io.dialog
+      title: Delete Field
+      width: 400px
+      height: 300px
+      components:
+        - io.text:
+            text: Are you sure you want to delete this field?
+            element: div
+            uesio.variant: io.smalltitle
+        - io.text:
+            text: You will never be able to access the information associated with this field again.
+            element: div
+            uesio.variant: io.smallcontent
+      actions:
+        - io.button:
+            text: Delete
+            uesio.variant: io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "fields"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+        - io.button:
+            text: Cancel
+            uesio.variant: io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteField

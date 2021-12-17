@@ -1,9 +1,12 @@
 import { FunctionComponent } from "react"
-import { definition, wire, hooks, builder } from "@uesio/ui"
+import { definition, wire, hooks, builder, component } from "@uesio/ui"
 import { SectionRendererProps } from "./sectionrendererdefinition"
-import ExpandPanel from "../expandpanel"
 import PropNodeTag from "../buildpropitem/propnodetag"
 import PropertiesPane from "../propertiespane"
+
+const TitleBar = component.registry.getUtility("io.titlebar")
+const Button = component.registry.getUtility("io.button")
+const Icon = component.registry.getUtility("io.icon")
 
 function getConditionTitle(condition: wire.WireConditionDefinition): string {
 	if (condition.valueSource === "VALUE" || !condition.valueSource) {
@@ -61,8 +64,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| undefined
 	const uesio = hooks.useUesio(props)
 	const theme = uesio.getTheme()
-	const [metadataType, metadataItem, selectedNode] =
-		uesio.builder.useSelectedNode()
+	const [, , selectedNode] = uesio.builder.useSelectedNode()
 	const viewDefId = uesio.getViewDefId()
 	if (!viewDefId) return null
 
@@ -71,30 +73,41 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 		| undefined
 
 	const primaryColor = theme.definition.palette.primary
+
+	const conditionsPath = `${path}["conditions"]`
+
 	return (
-		<ExpandPanel
-			defaultExpanded={false}
-			title={section.title}
-			action="add_box"
-			actionColor={primaryColor}
-			actionOnClick={() => {
-				valueAPI.add(`${path}["conditions"]`, {
-					field: null,
-					value: "NEW_VALUE",
-				})
-			}}
-			context={context}
-			styles={{
-				innerContent: {
-					display: "grid",
-					rowGap: "8px",
-				},
-			}}
-		>
+		<>
+			<TitleBar
+				variant="studio.propsubsection"
+				title={""}
+				context={context}
+				actions={
+					<Button
+						context={context}
+						variant="studio.actionbutton"
+						icon={
+							<Icon
+								context={context}
+								icon="add"
+								variant="studio.actionicon"
+							/>
+						}
+						label="New Condition"
+						onClick={() => {
+							valueAPI.add(conditionsPath, {
+								field: null,
+								value: "NEW_VALUE",
+							})
+						}}
+					/>
+				}
+			/>
 			{conditionsDef?.map(
 				(condition: wire.WireConditionDefinition, index) => {
-					const conditionPath = `${path}["conditions"]["${index}"]`
+					const conditionPath = `${conditionsPath}["${index}"]`
 					const selected = selectedNode.startsWith(conditionPath)
+
 					return (
 						<PropNodeTag
 							title={getConditionTitle(condition)}
@@ -137,7 +150,7 @@ const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
 					)
 				}
 			)}
-		</ExpandPanel>
+		</>
 	)
 }
 

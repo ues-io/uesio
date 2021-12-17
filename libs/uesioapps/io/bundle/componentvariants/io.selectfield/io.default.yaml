@@ -4,12 +4,12 @@ label: Default
 definition:
   uesio.styles:
     root:
-      color: black
-      padding: 10px 0
+      "&:after":
+        right: "10px"
     input:
       width: "100%"
       backgroundColor: white
-      padding: 10px
+      padding: 10px 30px 10px 10px
       border: "1px solid #00000044"
       "&:focus":
         outline: none

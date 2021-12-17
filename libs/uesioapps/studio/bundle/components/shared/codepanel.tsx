@@ -1,6 +1,5 @@
 import { FunctionComponent, useRef, useEffect } from "react"
 import { definition, component, hooks, util, styles } from "@uesio/ui"
-import type yaml from "yaml"
 import { monaco } from "react-monaco-editor"
 import LazyMonaco from "@uesio/lazymonaco"
 
@@ -24,6 +23,10 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	)
 	const metadataType = uesio.builder.useSelectedType()
 	const metadataItem = uesio.builder.useSelectedItem()
+	const metadataTypeRef = useRef<string>(metadataType)
+	const metadataItemRef = useRef<string>(metadataItem)
+	metadataTypeRef.current = metadataType
+	metadataItemRef.current = metadataItem
 	const yamlDoc = uesio.builder.useSelectedYAML()
 	const currentYaml = yamlDoc?.toString() || ""
 	const lastModifiedNode = uesio.builder.useLastModifiedNode()
@@ -49,7 +52,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 			currentAST.current &&
 			lastModifiedNode &&
 			lastModifiedType === metadataType &&
-			lastModifiedItem === metadataItem
+			lastModifiedItem === metadataItem &&
+			currentAST.current.contents
 		) {
 			const node = util.yaml.getNodeAtPath(
 				lastModifiedLocalPath,
@@ -103,7 +107,7 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					actions={
 						<IconButton
 							context={context}
-							variant="io.small"
+							variant="studio.buildtitle"
 							icon="close"
 							onClick={uesio.signal.getHandler([
 								{
@@ -186,8 +190,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								yamlDoc.contents = newNode
 								uesio.builder.setYaml(
 									component.path.makeFullPath(
-										metadataType,
-										metadataItem,
+										metadataTypeRef.current,
+										metadataItemRef.current,
 										util.yaml.getPathFromPathArray(
 											commonPath
 										)
@@ -241,8 +245,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 
 							if (relevantNode && nodePath)
 								uesio.builder.setSelectedNode(
-									metadataType,
-									metadataItem,
+									metadataTypeRef.current,
+									metadataItemRef.current,
 									nodePath
 								)
 						}
@@ -262,8 +266,8 @@ const CodePanel: FunctionComponent<definition.UtilityProps> = (props) => {
 								)
 							if (relevantNode && nodePath) {
 								uesio.builder.setActiveNode(
-									metadataType,
-									metadataItem,
+									metadataTypeRef.current,
+									metadataItemRef.current,
 									nodePath
 								)
 							}

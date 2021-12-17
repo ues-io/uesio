@@ -2,3 +2,6 @@ name: page_logo
 collection: crm.stationary
 type: FILE
 label: page_logo
+file:
+  filecollection: uesio.platform
+  accept: IMAGE

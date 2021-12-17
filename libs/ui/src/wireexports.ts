@@ -1,7 +1,6 @@
 import {
 	WireDefinitionMap,
 	WireDefinition,
-	WireType,
 	WireFieldDefinitionMap,
 } from "./definition/wire"
 
@@ -27,7 +26,6 @@ export {
 	WireRecord,
 	Wire,
 	FieldValue,
-	WireType,
 	WireDefinition,
 	WireDefinitionMap,
 	WireConditionState,

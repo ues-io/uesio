@@ -4,7 +4,9 @@ import { UesioThunkAPI } from "../../utils"
 import { selectors as viewDefSelectors } from "../../viewdef/adapter"
 import loadWiresOp from "../../wire/operations/load"
 import loadViewDefOp from "../../viewdef/operations/load"
+import initializeWiresOp from "../../wire/operations/initialize"
 import { PlainView, ViewParams } from "../types"
+import { runMany } from "../../../signals/signals"
 
 export default createAsyncThunk<
 	PlainView,
@@ -31,6 +33,9 @@ export default createAsyncThunk<
 	const wires = viewDef.definition?.wires
 	const wireNames = wires ? Object.keys(wires) : []
 
+	// Initialize Wires
+	api.dispatch(initializeWiresOp(context, wireNames))
+
 	if (wireNames?.length) {
 		await api.dispatch(
 			loadWiresOp({
@@ -38,6 +43,12 @@ export default createAsyncThunk<
 				wires: wireNames,
 			})
 		)
+	}
+
+	// Handle Events
+	const onloadEvents = viewDef.definition.events?.onload
+	if (onloadEvents) {
+		await runMany(api.dispatch, "", onloadEvents, context)
 	}
 
 	return {

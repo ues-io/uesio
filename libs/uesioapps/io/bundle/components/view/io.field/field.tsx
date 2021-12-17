@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 
-import { FieldProps } from "./fielddefinition"
-import { component, collection, wire } from "@uesio/ui"
+import { FieldDefinition, FieldProps } from "./fielddefinition"
+import { component, collection, wire, context } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
@@ -14,37 +14,31 @@ const UserField = component.registry.getUtility("io.userfield")
 const TimestampField = component.registry.getUtility("io.timestampfield")
 const ListField = component.registry.getUtility("io.listfield")
 const DateField = component.registry.getUtility("io.datefield")
+const NumberField = component.registry.getUtility("io.numberfield")
+const EmailField = component.registry.getUtility("io.emailfield")
+
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const addBlankSelectOption = collection.addBlankSelectOption
 
-const Field: FunctionComponent<FieldProps> = (props) => {
-	const { context, definition } = props
-	const { fieldId, hideLabel, id, displayAs } = definition
-
-	const record = context.getRecord()
-	const wire = context.getWire()
-	if (!wire || !record) return null
-
-	const collection = wire.getCollection()
-
-	const fieldMetadata = collection.getField(fieldId)
-
-	if (!fieldMetadata) return null
-
-	const label = definition.label || fieldMetadata.getLabel()
+const getFieldContent = (
+	wire: wire.Wire,
+	record: wire.WireRecord,
+	definition: FieldDefinition,
+	fieldMetadata: collection.Field,
+	context: context.Context
+) => {
+	const { fieldId, id, displayAs } = definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
 
 	const mode = (canEdit && context.getFieldMode()) || "READ"
 	const type = fieldMetadata.getType()
-
 	const common = {
 		context,
 		mode,
 		fieldMetadata,
-		label,
-		hideLabel,
 		id,
 		value: record.getFieldValue(fieldId),
 		setValue: (value: wire.FieldValue) => record.update(fieldId, value),
@@ -56,14 +50,19 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 	switch (true) {
 		case type === "DATE":
 			return <DateField {...common} />
-		case type === "NUMBER" || type === "LONGTEXT" || type === "TEXT":
+		case type === "LONGTEXT" || type === "TEXT":
 			return <TextField {...common} />
+		case type === "NUMBER":
+			return <NumberField {...common} />
+		case type === "EMAIL":
+			return <EmailField {...common} />
 		case type === "SELECT":
 			return (
 				<SelectField
 					{...common}
 					options={addBlankSelectOption(
-						fieldMetadata.getOptions() || []
+						fieldMetadata.getSelectMetadata()?.options || [],
+						fieldMetadata.getSelectMetadata()?.blank_option_label
 					)}
 				/>
 			)
@@ -92,6 +91,33 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 		default:
 			return null
 	}
+}
+
+const Field: FunctionComponent<FieldProps> = (props) => {
+	const { context, definition } = props
+	const { fieldId } = definition
+
+	const record = context.getRecord()
+	const wire = context.getWire()
+	if (!wire || !record) return null
+
+	const collection = wire.getCollection()
+
+	const fieldMetadata = collection.getField(fieldId)
+
+	if (!fieldMetadata) return null
+
+	const label = definition.label || fieldMetadata.getLabel()
+
+	return (
+		<FieldWrapper
+			label={label}
+			labelPosition={definition.labelPosition}
+			context={context}
+		>
+			{getFieldContent(wire, record, definition, fieldMetadata, context)}
+		</FieldWrapper>
+	)
 }
 
 export default Field

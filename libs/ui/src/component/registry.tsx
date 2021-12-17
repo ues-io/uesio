@@ -3,20 +3,22 @@ import {
 	BaseProps,
 	DefinitionMap,
 	UtilityProps,
+	UtilityPropsPlus,
 } from "../definition/definition"
 import { BuildPropertiesDefinition } from "../buildmode/buildpropdefinition"
 import {
 	parseKey,
-	getPathSuffix,
 	getFullPathParts,
 	parseFieldKey,
 	parseVariantKey,
+	getKeyAtPath,
+	fromPath,
 } from "./path"
 import toPath from "lodash/toPath"
 import NotFound from "../components/notfound"
 import { ComponentSignalDescriptor } from "../definition/signal"
 import {
-	getVariantStylesDef,
+	getDefinitionFromVariant,
 	mergeDefinitionMaps,
 	renderUtility,
 } from "./component"
@@ -24,11 +26,13 @@ import {
 	getComponentTypePropsDef,
 	getFieldPropsDef,
 	getWirePropsDef,
+	getPanelPropsDef,
 } from "./builtinpropsdefs"
+import { Context } from "../context/context"
 
 type Registry<T> = Record<string, T>
 const registry: Registry<FC<BaseProps>> = {}
-const utilityRegistry: Registry<FC<UtilityProps>> = {}
+const utilityRegistry: Registry<FC<UtilityPropsPlus>> = {}
 const builderRegistry: Registry<FC<BaseProps>> = {}
 const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
@@ -99,6 +103,17 @@ const getVariantInfo = (
 	return [key, `${keyNamespace}.default`]
 }
 
+function getVariantStylesDef(
+	componentType: string,
+	variantName: string,
+	context: Context
+) {
+	const variant = context.getComponentVariant(componentType, variantName)
+	if (!variant) return {}
+	const variantDefinition = getDefinitionFromVariant(variant, context)
+	return variantDefinition?.["uesio.styles"] as DefinitionMap
+}
+
 const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	const { variant, context, styles } = props
 	const [componentType, variantName] = getVariantInfo(variant, key)
@@ -125,16 +140,27 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 	)
 }
 
-const getUtility = (key: string) => (props: UtilityProps) => {
-	const loader = getUtilityLoader(key) || NotFound
-	const styles = getVariantStyleInfo(props, key)
-	return renderUtility(loader, { ...props, styles, componentType: key })
-}
+const getUtility =
+	<T extends UtilityProps = UtilityPropsPlus>(key: string) =>
+	(props: T) => {
+		const loader = getUtilityLoader(key) || NotFound
+		const styles = getVariantStyleInfo(props, key)
+		return renderUtility(loader, {
+			...(props as unknown as UtilityPropsPlus),
+			styles,
+			componentType: key,
+		})
+	}
 
 const BuildWrapper = getUtility("studio.buildwrapper")
 
 const getDefaultBuildtimeLoader = (key: string) => (props: BaseProps) => {
 	const Loader = getRuntimeLoader(key)
+
+	// Don't use the buildwrapper for a panel component
+	if (props.definition && "uesio.type" in props.definition)
+		return <Loader {...props} />
+
 	return Loader ? (
 		<BuildWrapper {...props}>
 			<Loader {...props} />
@@ -157,55 +183,88 @@ const getPropertiesDefinition = (key: string) => {
 	return propDef
 }
 
+// Trims any path to the last element that is fully namespaced
+// (meaning the path element contains a dot)
+const specialProps = ["uesio.variant", "uesio.display", "uesio.styles"]
+const trimPath = (pathArray: string[]): string[] => {
+	const size = pathArray.length
+	if (size === 0) {
+		return pathArray
+	}
+	const nextItem = pathArray[size - 1]
+	if (nextItem.includes(".") && !specialProps.includes(nextItem)) {
+		return pathArray
+	}
+	pathArray.pop()
+	return trimPath(pathArray)
+}
+
 const getPropertiesDefinitionFromPath = (
 	path: string
-): BuildPropertiesDefinition | undefined => {
+): [BuildPropertiesDefinition | undefined, string] => {
 	const [metadataType, metadataItem, localPath] = getFullPathParts(path)
 	if (metadataType === "component")
-		return getPropertiesDefinition(metadataItem)
+		return [getPropertiesDefinition(metadataItem), localPath]
 	if (metadataType === "componentvariant") {
 		const [namespace, name] = parseVariantKey(metadataItem)
-		return getPropertiesDefinition(`${namespace}.${name}`)
+		const propDef = getPropertiesDefinition(`${namespace}.${name}`)
+		propDef.type = "componentvariant"
+		return [propDef, localPath]
 	}
 	if (metadataType === "componenttype") {
-		return getComponentTypePropsDef(getPropertiesDefinition(metadataItem))
+		return [
+			getComponentTypePropsDef(getPropertiesDefinition(metadataItem)),
+			localPath,
+		]
 	}
 	if (metadataType === "field") {
 		const [namespace, name, collectionNamespace, collectionName] =
 			parseFieldKey(metadataItem)
-		return getFieldPropsDef(
-			namespace,
-			name,
-			collectionNamespace,
-			collectionName
-		)
+		return [
+			getFieldPropsDef(
+				namespace,
+				name,
+				collectionNamespace,
+				collectionName
+			),
+			localPath,
+		]
 	}
 	if (metadataType === "viewdef") {
 		const pathArray = toPath(localPath)
 		if (pathArray[0] === "wires") {
-			return getWirePropsDef()
+			return [getWirePropsDef(), fromPath(pathArray.slice(0, 2))]
 		}
-		const componentFullName = getPathSuffix(pathArray)
+		if (pathArray[0] === "panels" && pathArray.length === 2) {
+			return [getPanelPropsDef(), fromPath(pathArray.slice(0, 2))]
+		}
+
+		const trimmedPath = trimPath(pathArray)
+		const componentFullName = getKeyAtPath(fromPath(trimmedPath))
 		if (componentFullName) {
-			return getPropertiesDefinition(componentFullName)
+			return [
+				getPropertiesDefinition(componentFullName),
+				fromPath(trimmedPath),
+			]
 		}
 	}
 
-	return undefined
+	return [undefined, localPath]
 }
-
-const getBuilderComponents = () =>
+const getComponents = (trait: string) =>
 	Object.keys(definitionRegistry).reduce((acc, fullName) => {
 		const [namespace, name] = parseKey(fullName)
-		if (!acc[namespace]) {
-			acc[namespace] = {}
-		}
 		const definition = getPropertiesDefinition(`${namespace}.${name}`)
-		if (definition?.traits?.includes("uesio.standalone")) {
+		if (definition?.traits?.includes(trait)) {
+			if (!acc[namespace]) {
+				acc[namespace] = {}
+			}
 			acc[namespace][name] = definition
 		}
 		return acc
 	}, {} as Registry<Registry<BuildPropertiesDefinition>>)
+
+const getBuilderComponents = () => getComponents("uesio.standalone")
 
 export {
 	register,
@@ -214,6 +273,7 @@ export {
 	registerSignals,
 	getUtility,
 	getLoader,
+	getComponents,
 	getRuntimeLoader,
 	getUtilityLoader,
 	getSignal,

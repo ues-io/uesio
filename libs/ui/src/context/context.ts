@@ -3,7 +3,9 @@ import Collection from "../bands/collection/class"
 import { RouteState, WorkspaceState } from "../bands/route/types"
 import { selectors as viewDefSelectors } from "../bands/viewdef/adapter"
 import { selectors as themeSelectors } from "../bands/theme/adapter"
+import { selectors as collectionSelectors } from "../bands/collection/adapter"
 import { selectById as selectVariant } from "../bands/componentvariant/adapter"
+import { selectById as selectLabel } from "../bands/label/adapter"
 import { selectWire } from "../bands/wire/selectors"
 import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
@@ -22,6 +24,17 @@ type SiteAdminState = {
 	version?: string
 }
 
+type MergeType =
+	| "Record"
+	| "Param"
+	| "User"
+	| "RecordId"
+	| "Theme"
+	| "Color"
+	| "File"
+	| "Site"
+	| "Label"
+
 type ContextFrame = {
 	wire?: string
 	record?: string
@@ -39,24 +52,21 @@ type ContextFrame = {
 	errors?: string[]
 }
 
-const ANCESTOR_INDICATOR = "Parent."
-
-const getFromContext = (
-	mergeType: string,
+type MergeHandler = (
 	expression: string,
-	context: Context
-) => {
-	const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
-	const mergeTypeName = mergeSplit.pop()
-	const mergeAncestors = mergeSplit.length
+	context: Context,
+	ancestors: number
+) => string
 
-	if (mergeTypeName === "" || mergeTypeName === "Record") {
-		context = context.removeRecordFrame(mergeAncestors)
+const handlers: Record<MergeType, MergeHandler> = {
+	Record: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
 		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
-	} else if (mergeTypeName === "Param") {
-		return context.getView()?.params?.[expression] || ""
-	} else if (mergeTypeName === "User") {
+	},
+	Param: (expression, context) =>
+		context.getView()?.params?.[expression] || "",
+	User: (expression, context) => {
 		const user = context.getUser()
 		if (!user) return ""
 		if (expression === "initials") {
@@ -64,10 +74,13 @@ const getFromContext = (
 		} else if (expression === "picture") {
 			return user.picture
 		}
-	} else if (mergeTypeName === "RecordId") {
-		context = context.removeRecordFrame(mergeAncestors)
+		return ""
+	},
+	RecordId: (expression, context, ancestors) => {
+		context = context.removeRecordFrame(ancestors)
 		return context.getRecord()?.getId() || ""
-	} else if (mergeTypeName === "Theme") {
+	},
+	Theme: (expression, context) => {
 		const [scope, value, op] = expression.split(".")
 		const theme = context.getTheme()
 		if (scope === "color") {
@@ -77,7 +90,8 @@ const getFromContext = (
 			return theme.definition.palette[value]
 		}
 		return ""
-	} else if (mergeTypeName === "Color") {
+	},
+	Color: (expression) => {
 		const [color, op] = expression.split(".")
 		if (chroma.valid(color)) {
 			if (op === "darken") {
@@ -85,23 +99,38 @@ const getFromContext = (
 			}
 		}
 		return ""
-	} else if (mergeTypeName === "File") {
-		return `url("${getURLFromFullName(context, expression)}")`
-	} else if (mergeTypeName === "Site") {
+	},
+	File: (expression, context) =>
+		`url("${getURLFromFullName(context, expression)}")`,
+	Site: (expression, context) => {
 		const site = context.getSite()
 		if (!site) return ""
 		if (expression === "domain") {
 			return site.domain
 		}
 		return ""
-	}
-	return ""
+	},
+	Label: (expression, context) => {
+		const label = context.getLabel(expression)
+		if (!label) return "Label not found" // We might want to do some more error related stuff here
+		return label.value || "missing label value"
+	},
 }
 
+const ANCESTOR_INDICATOR = "Parent."
+
 const inject = (template: string, context: Context): string =>
-	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, mergeExpression) =>
-		getFromContext(mergeType, mergeExpression, context)
-	)
+	template.replace(/\$([.\w]*){(.*?)}/g, (x, mergeType, expression) => {
+		const mergeSplit = mergeType.split(ANCESTOR_INDICATOR)
+		const mergeTypeName = mergeSplit.pop() as MergeType
+		const mergeAncestors = mergeSplit.length
+
+		return handlers[mergeTypeName || "Record"](
+			expression,
+			context,
+			mergeAncestors
+		)
+	})
 
 const getViewDef = (viewDefId: string | undefined) =>
 	viewDefId
@@ -111,11 +140,13 @@ const getViewDef = (viewDefId: string | undefined) =>
 const getWire = (viewId: string | undefined, wireId: string | undefined) =>
 	selectWire(getStore().getState(), viewId, wireId)
 
-const getWireDef = (wire: PlainWire | undefined) => {
-	if (!wire) return undefined
-	const viewDefId = wire.view.split("(")[0]
+const getWireDef = (wire: PlainWire | undefined) =>
+	wire ? getWireDefFromWireName(wire.view, wire.name) : undefined
+
+const getWireDefFromWireName = (viewId: string, wirename: string) => {
+	const viewDefId = viewId.split("(")[0]
 	const viewDef = getViewDef(viewDefId)
-	return viewDef?.definition?.wires?.[wire.name]
+	return viewDef?.definition?.wires?.[wirename]
 }
 
 class Context {
@@ -195,6 +226,9 @@ class Context {
 	getComponentVariant = (componentType: string, variantName: string) =>
 		selectVariant(getStore().getState(), `${componentType}.${variantName}`)
 
+	getLabel = (labelKey: string) =>
+		selectLabel(getStore().getState(), labelKey)
+
 	getViewDefId = () => this.stack.find((frame) => frame?.viewDef)?.viewDef
 
 	getRoute = () => this.stack.find((frame) => frame?.route)?.route
@@ -232,9 +266,12 @@ class Context {
 		const wireDef = getWireDef(plainWire)
 		if (!wireDef) return undefined
 		const wire = new Wire(plainWire)
-		const collection = new Collection(
-			state?.collection?.[wireDef.collection] || null
+		const plainCollection = collectionSelectors.selectById(
+			state,
+			wireDef.collection
 		)
+		if (!plainCollection) return undefined
+		const collection = new Collection(plainCollection)
 		wire.attachCollection(collection.source)
 		return wire
 	}
@@ -296,5 +333,6 @@ export {
 	WorkspaceState,
 	SiteState,
 	getWireDef,
+	getWireDefFromWireName,
 	getWire,
 }

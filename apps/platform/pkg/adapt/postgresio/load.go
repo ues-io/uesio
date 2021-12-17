@@ -19,9 +19,16 @@ type DataScanner struct {
 	Field      *adapt.FieldMetadata
 	References *adapt.ReferenceRegistry
 	Index      *int
+	BatchSize  int
 }
 
 func (ds *DataScanner) Scan(src interface{}) error {
+
+	// Skip the last one
+	if ds.BatchSize == *ds.Index {
+		return nil
+	}
+
 	fieldMetadata := ds.Field
 	if src == nil {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
@@ -47,7 +54,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 	if adapt.IsReference(fieldMetadata.Type) {
 
 		// Handle foreign key value
-		reference, ok := (*ds.References)[fieldMetadata.ReferencedCollection]
+		reference, ok := (*ds.References)[fieldMetadata.ReferenceMetadata.Collection]
 		if !ok {
 			return nil
 		}
@@ -96,6 +103,8 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 		return "(fields->>'" + fieldName + "')::boolean"
 	case "TIMESTAMP":
 		return "(fields->>'" + fieldName + "')::bigint"
+	case "NUMBER":
+		return "(fields->>'" + fieldName + "')::numeric"
 	case "MAP", "LIST":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"
@@ -110,7 +119,7 @@ func loadOne(
 	db *sql.DB,
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	tenantID string,
 	userTokens []string,
 ) error {
@@ -146,7 +155,7 @@ func loadOne(
 		"collection = $1",
 	}
 
-	paramCounter := 2
+	paramCounter := NewParamCounter(2)
 	values := []interface{}{
 		collectionName,
 	}
@@ -155,11 +164,13 @@ func loadOne(
 
 		if condition.Type == "SEARCH" {
 			searchToken := condition.Value.(string)
+			if searchToken == "" {
+				continue
+			}
 			colValeStr := ""
 			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE $"+strconv.Itoa(paramCounter))
+			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE "+paramCounter.get())
 			values = append(values, colValeStr)
-			paramCounter++
 			continue
 		}
 
@@ -175,53 +186,50 @@ func loadOne(
 		}
 
 		if condition.Operator == "IN" {
-			conditionStrings = append(conditionStrings, fieldName+" = ANY($"+strconv.Itoa(paramCounter)+")")
+			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
 			values = append(values, pq.Array(conditionValue))
-			paramCounter++
 		} else {
-			conditionStrings = append(conditionStrings, fieldName+" = $"+strconv.Itoa(paramCounter))
-			paramCounter++
+			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
 			values = append(values, conditionValue)
 		}
 	}
 
 	// UserTokens query
 	if collectionMetadata.Access == "protected" {
-		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY($"+strconv.Itoa(paramCounter)+"))")
-		paramCounter++
+		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
 		values = append(values, pq.Array(userTokens))
 	}
-	/*
-		for _, order := range op.Order {
 
-			fieldMetadata, err := collectionMetadata.GetField(order.Field)
-			if err != nil {
-				return err
-			}
-			fieldName, err := getFieldName(fieldMetadata)
-			if err != nil {
-				return err
-			}
-
-			if order.Desc {
-
-				loadQuery = loadQuery.OrderBy(fieldName + " desc")
-				continue
-			}
-
-			loadQuery = loadQuery.OrderBy(fieldName + " asc")
-
-		}
-
-		if op.Limit != 0 {
-			loadQuery = loadQuery.Limit(uint64(op.Limit))
-		}
-
-		if op.Offset != 0 {
-			loadQuery = loadQuery.Offset(uint64(op.Offset))
-		}
-	*/
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")
+
+	orders := make([]string, len(op.Order))
+	for i, order := range op.Order {
+		fieldMetadata, err := collectionMetadata.GetField(order.Field)
+		if err != nil {
+			return err
+		}
+		fieldName := getFieldName(fieldMetadata)
+		if err != nil {
+			return err
+		}
+		if order.Desc {
+			orders[i] = fieldName + " desc"
+			continue
+		}
+		orders[i] = fieldName + " asc"
+	}
+
+	if len(op.Order) > 0 {
+		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
+	}
+	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_BATCH_SIZE {
+		op.BatchSize = adapt.MAX_BATCH_SIZE
+	}
+	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
+	if op.BatchNumber != 0 {
+		loadQuery = loadQuery + " offset " + strconv.Itoa(op.BatchSize*op.BatchNumber)
+	}
+
 	rows, err := db.Query(loadQuery, values...)
 	if err != nil {
 		return errors.New("Failed to load rows in PostgreSQL:" + err.Error() + " : " + loadQuery)
@@ -243,6 +251,7 @@ func loadOne(
 			Field:      fieldMap[name],
 			References: &referencedCollections,
 			Index:      &index,
+			BatchSize:  op.BatchSize,
 		}
 	}
 
@@ -259,13 +268,20 @@ func loadOne(
 		return err
 	}
 
-	return adapt.HandleReferences(func(ops []adapt.LoadOp) error {
+	// Check to see if we loaded in a full amount
+	if op.Collection.Len() == op.BatchSize+1 {
+		op.HasMoreBatches = true
+		// Remove the last item
+		op.Collection.Slice(0, op.BatchSize)
+	}
+
+	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
 		return loadMany(ctx, db, ops, metadata, tenantID, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
 // Load function
-func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
+func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
 
 	if len(ops) == 0 {
 		return nil
@@ -284,13 +300,13 @@ func (a *Adapter) Load(ops []adapt.LoadOp, metadata *adapt.MetadataCache, creden
 func loadMany(
 	ctx context.Context,
 	db *sql.DB,
-	ops []adapt.LoadOp,
+	ops []*adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	tenantID string,
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(ctx, db, &ops[i], metadata, ops, tenantID, userTokens)
+		err := loadOne(ctx, db, ops[i], metadata, ops, tenantID, userTokens)
 		if err != nil {
 			return err
 		}

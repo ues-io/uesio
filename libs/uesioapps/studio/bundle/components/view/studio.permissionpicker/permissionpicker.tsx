@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component } from "@uesio/ui"
-import { values } from "lodash"
+import { definition, hooks, component, wire } from "@uesio/ui"
 
 type PermissionPickerDefinition = {
 	fieldId: string
@@ -37,7 +36,8 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
-	const value = record.getFieldReference(fieldId) || {}
+	const value =
+		record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId) || {}
 	const disabled = mode === "READ"
 	const data = wire.getData()
 
@@ -59,11 +59,12 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 
 	return (
 		<>
-			{data.map((record) => {
+			{data.map((record, i) => {
 				const itemName =
 					appName + "." + record.getFieldValue(nameNameField)
 				return (
 					<TitleBar
+						key={`${itemName}.${i}`}
 						context={context}
 						title={itemName}
 						actions={

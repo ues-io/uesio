@@ -9,18 +9,18 @@ import (
 
 func HandleLookups(
 	loader Loader,
-	batch []SaveOp,
+	batch []*SaveOp,
 	metadata *MetadataCache,
 ) error {
 	for index, op := range batch {
 		// Go through the op and see if we have any info that could help us
 		// match reference lookups in other ops before this one
-		err := mergeBatchInfo(&op, index, batch, metadata)
+		err := mergeBatchInfo(op, index, batch, metadata)
 		if err != nil {
 			return err
 		}
 
-		lookupOps, err := getLookupOps(&op, metadata)
+		lookupOps, err := getLookupOps(op, metadata)
 		if err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func HandleLookups(
 				return err
 			}
 
-			err = mergeLookupResponses(&op, lookupOps, metadata)
+			err = mergeLookupResponses(op, lookupOps, metadata)
 			if err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func HandleLookups(
 			continue
 		}
 
-		oldValuesOp := LoadOp{
+		oldValuesOp := &LoadOp{
 			CollectionName: op.CollectionName,
 			WireName:       op.WireName,
 			Fields:         allFields,
@@ -75,14 +75,15 @@ func HandleLookups(
 					Value:    ids,
 				},
 			},
+			Query: true,
 		}
 
-		err = loader([]LoadOp{oldValuesOp})
+		err = loader([]*LoadOp{oldValuesOp})
 		if err != nil {
 			return err
 		}
 
-		oldValuesLookup, err := getLookupResultMap(&oldValuesOp, collectionMetadata.IDField)
+		oldValuesLookup, err := getLookupResultMap(oldValuesOp, collectionMetadata.IDField)
 		if err != nil {
 			return err
 		}
@@ -107,7 +108,7 @@ func HandleLookups(
 
 }
 
-func mergeBatchInfo(op *SaveOp, index int, batch []SaveOp, metadata *MetadataCache) error {
+func mergeBatchInfo(op *SaveOp, index int, batch []*SaveOp, metadata *MetadataCache) error {
 
 	if op.Options == nil {
 		return nil
@@ -128,7 +129,7 @@ func mergeBatchInfo(op *SaveOp, index int, batch []SaveOp, metadata *MetadataCac
 			return errors.New("Can only lookup on reference field: " + lookup.RefField)
 		}
 
-		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+		refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 		if err != nil {
 			return err
 		}
@@ -195,7 +196,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		return nil, errors.New("Can only lookup on reference field: " + lookup.RefField)
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +247,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 	}
 
 	return &LoadOp{
-		CollectionName: fieldMetadata.ReferencedCollection,
+		CollectionName: fieldMetadata.ReferenceMetadata.Collection,
 		WireName:       request.WireName,
 		Fields: []LoadRequestField{
 			{
@@ -264,15 +265,16 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 				Value:    ids,
 			},
 		},
+		Query: true,
 	}, nil
 }
 
-func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
+func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]*LoadOp, error) {
 	options := request.Options
 	if options == nil {
 		return nil, nil
 	}
-	lookupRequests := []LoadOp{}
+	lookupRequests := []*LoadOp{}
 	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
 		return nil, err
@@ -305,7 +307,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 
 		if len(ids) > 0 {
 
-			lookupRequests = append(lookupRequests, LoadOp{
+			lookupRequests = append(lookupRequests, &LoadOp{
 				CollectionName: request.CollectionName,
 				WireName:       request.WireName,
 				Fields: []LoadRequestField{
@@ -324,6 +326,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 						Value:    ids,
 					},
 				},
+				Query: true,
 			})
 		}
 	}
@@ -335,7 +338,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]LoadOp, error) {
 		if referenceLookup == nil {
 			continue
 		}
-		lookupRequests = append(lookupRequests, *referenceLookup)
+		lookupRequests = append(lookupRequests, referenceLookup)
 	}
 
 	return lookupRequests, nil
@@ -421,7 +424,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		return errors.New("Can only lookup on reference field: " + lookupField)
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferencedCollection)
+	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 	if err != nil {
 		return err
 	}
@@ -465,7 +468,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 	return nil
 }
 
-func mergeLookupResponses(request *SaveOp, responses []LoadOp, metadata *MetadataCache) error {
+func mergeLookupResponses(request *SaveOp, responses []*LoadOp, metadata *MetadataCache) error {
 
 	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
 	if err != nil {
@@ -481,17 +484,17 @@ func mergeLookupResponses(request *SaveOp, responses []LoadOp, metadata *Metadat
 	// If we're doing an upsert, then the first response is going to be the upsert response,
 	// while all the other responses will be "lookup responses" for matching foreign keys.
 	if request.Options.Upsert != nil {
-		upsertResponse = &responses[0]
+		upsertResponse = responses[0]
 		responses = responses[1:]
 	}
 
 	for index, lookupResponse := range responses {
 		lookup := request.Options.Lookups[index]
-		err := mergeReferenceLookupResponse(&lookupResponse, lookup, request.Inserts, collectionMetadata, metadata)
+		err := mergeReferenceLookupResponse(lookupResponse, lookup, request.Inserts, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}
-		err = mergeReferenceLookupResponse(&lookupResponse, lookup, request.Updates, collectionMetadata, metadata)
+		err = mergeReferenceLookupResponse(lookupResponse, lookup, request.Updates, collectionMetadata, metadata)
 		if err != nil {
 			return err
 		}

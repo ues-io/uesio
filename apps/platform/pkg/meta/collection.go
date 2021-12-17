@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+
+	"github.com/humandad/yaml"
 )
 
 // NewCollection function
@@ -134,4 +136,12 @@ func (c *Collection) GetItemMeta() *ItemMeta {
 // SetItemMeta function
 func (c *Collection) SetItemMeta(itemMeta *ItemMeta) {
 	c.itemMeta = itemMeta
+}
+
+func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
+	err := validateNodeName(node, c.Name)
+	if err != nil {
+		return err
+	}
+	return node.Decode(c)
 }

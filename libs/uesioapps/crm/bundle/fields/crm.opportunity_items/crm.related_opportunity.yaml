@@ -2,4 +2,5 @@ name: related_opportunity
 collection: crm.opportunity_items
 type: REFERENCE
 label: Related Opportunity
-referencedCollection: crm.opportunities
+reference:
+  collection: crm.opportunities

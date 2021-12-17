@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useState, Children } from "react"
+import { FunctionComponent, useRef, ReactNode, useState, Children } from "react"
 
 import { CSSTransition } from "react-transition-group"
 
@@ -25,6 +25,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 	} = props
 	const [expanded, setExpanded] =
 		expandState || useState<boolean>(defaultExpanded)
+	const nodeRef = useRef<HTMLDivElement>(null)
 
 	const hasChildren = Children.count(children) > 0
 
@@ -68,10 +69,18 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 		props
 	)
 
-	const setMaxHeight = (node: HTMLElement) =>
-		(node.style.maxHeight = node.scrollHeight + 20 + "px")
+	const setMaxHeight = () => {
+		const node = nodeRef.current
+		if (!node) return
+		node.style.maxHeight = node.scrollHeight + 20 + "px"
+	}
 
-	const unsetMaxHeight = (node: HTMLElement) => (node.style.maxHeight = "0")
+	const unsetMaxHeight = () => {
+		const node = nodeRef.current
+		if (!node) return
+
+		node.style.maxHeight = "0"
+	}
 
 	return (
 		<div className={classes.root}>
@@ -94,6 +103,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 			{hasChildren && (
 				<CSSTransition
 					unmountOnExit={true}
+					nodeRef={nodeRef}
 					mountOnEnter={true}
 					in={expanded}
 					timeout={300}
@@ -103,7 +113,7 @@ const ExpandPanel: FunctionComponent<ExpandPanelProps> = (props) => {
 					onExit={setMaxHeight}
 					onExiting={unsetMaxHeight}
 				>
-					<div className={classes.content}>
+					<div ref={nodeRef} className={classes.content}>
 						<div className={classes.innerContent}>{children}</div>
 					</div>
 				</CSSTransition>

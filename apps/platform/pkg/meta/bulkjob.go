@@ -22,8 +22,10 @@ type JobSpec struct {
 
 // FieldMapping struct
 type FieldMapping struct {
-	FieldName  string `json:"fieldname" uesio:"FieldName"`
+	Type       string `json:"type" uesio:"Type"`
+	ColumnName string `json:"columnname" uesio:"ColumnName"`
 	MatchField string `json:"matchfield" uesio:"MatchField"`
+	Value      string `json:"value" uesio:"Value"`
 }
 
 // GetCollectionName function

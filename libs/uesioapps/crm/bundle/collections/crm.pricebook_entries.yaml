@@ -1,3 +1,3 @@
 name: pricebook_entries
-dataSource: crm.
+dataSource: uesio.platform
 nameField: crm.name

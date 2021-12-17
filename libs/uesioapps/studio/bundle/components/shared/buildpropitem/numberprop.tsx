@@ -2,7 +2,8 @@ import { FunctionComponent } from "react"
 
 import { component, builder } from "@uesio/ui"
 
-const TextField = component.registry.getUtility("io.textfield")
+const NumberField = component.registry.getUtility("io.numberfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const NumberProp: FunctionComponent<builder.PropRendererProps> = ({
 	descriptor,
@@ -10,14 +11,19 @@ const NumberProp: FunctionComponent<builder.PropRendererProps> = ({
 	context,
 	path,
 }) => (
-	<TextField
-		value={valueAPI.get(path)}
+	<FieldWrapper
+		labelPosition="left"
 		label={descriptor.label}
-		setValue={(value: string): void =>
-			valueAPI.set(path, parseInt(value, 10))
-		}
 		context={context}
-	/>
+		variant="studio.propfield"
+	>
+		<NumberField
+			value={valueAPI.get(path)}
+			setValue={(value: number | null): void => valueAPI.set(path, value)}
+			context={context}
+			variant="io.textfield.studio.propfield"
+		/>
+	</FieldWrapper>
 )
 
 export default NumberProp

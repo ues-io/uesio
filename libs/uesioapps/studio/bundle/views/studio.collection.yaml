@@ -44,9 +44,10 @@ definition:
         studio.type:
         studio.label:
         studio.collection:
-        studio.referencedCollection:
+        studio.reference:
         studio.selectlist:
         studio.autopopulate:
+        studio.languagelabel:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -70,7 +71,10 @@ definition:
         studio.name:
         studio.type:
         studio.label:
-      type: CREATE
+        studio.languagelabel:
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.collection
           valueSource: LOOKUP
@@ -119,6 +123,12 @@ definition:
                           actions:
                             - io.group:
                                 components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Import Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/import/$Param{collectionname}"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Manage Data"
@@ -210,141 +220,148 @@ definition:
                             - io.column:
                                 field: studio.label
                             - io.column:
-                                field: studio.collection
+                                field: studio.languagelabel
   panels:
-    - io.dialog:
-        id: deleteCollection
-        title: Delete Collection
-        width: 400px
-        height: 300px
-        components:
-          - io.text:
-              text: Are you sure you want to delete this collection?
-        actions:
-          - io.button:
-              text: Delete
-              uesio.variant: io.primary
-              signals:
-                - signal: wire/MARK_FOR_DELETE
-                - signal: wire/SAVE
-                  wires:
-                    - "collections"
-                - signal: "route/NAVIGATE"
-                  path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
-          - io.button:
-              text: Cancel
-              uesio.variant: io.secondary
-              signals:
-                - signal: panel/TOGGLE
-                  panel: deleteCollection
-    - io.dialog:
-        id: editCollection
-        title: Edit Collection
-        width: 400px
-        height: 560px
-        components:
-          - io.list:
-              id: editCollectionList
-              wire: collections
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - studio.metadatafield:
-                    fieldId: studio.namefield
-                    metadataType: "FIELD"
-                    label: "Name Field"
-                    grouping: $Param{appname}.$Param{collectionname}
-                    namespace: $Param{appname}
-                - studio.metadatafield:
-                    fieldId: studio.datasource
-                    metadataType: "DATASOURCE"
-                    label: "Data Source"
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - collections
-                - signal: "panel/TOGGLE"
-                  panel: "editCollection"
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: wire/CANCEL
-                  wire: collections
-                - signal: "panel/TOGGLE"
-                  panel: "editCollection"
-    - io.dialog:
-        id: newField
-        title: Create a New Field
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newfieldlist
-              wire: newfield
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.name
-                - io.field:
-                    fieldId: studio.type
-                - io.field:
-                    fieldId: studio.label
-                - io.box:
-                    uesio.display:
-                      - field: studio.type
-                        value: "REFERENCE"
-                    components:
-                      - studio.metadatafield:
-                          fieldId: studio.referencedCollection
-                          metadataType: "COLLECTION"
-                          label: "Ref. Collection"
-                - io.box:
-                    uesio.display:
-                      - field: studio.type
-                        value: "TIMESTAMP"
-                    components:
-                      - io.field:
-                          fieldId: studio.autopopulate
-                - io.box:
-                    uesio.display:
-                      - field: studio.type
-                        value: "SELECT"
-                    components:
-                      - studio.metadatafield:
-                          fieldId: studio.selectlist
-                          metadataType: "SELECTLIST"
-                          label: "Select List"
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - "newfield"
-                - signal: wire/LOAD
-                  wires:
-                    - "workspaces"
-                    - "fields"
-                    - "newfield"
-                - signal: "panel/TOGGLE"
-                  panel: "newField"
-                - signal: notification/ADD
-                  text: Field created!
-                  severity: success
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: wire/EMPTY
-                  wire: newfield
-                - signal: wire/CREATE_RECORD
-                  wire: newfield
-                - signal: "panel/TOGGLE"
-                  panel: "newField"
+    deleteCollection:
+      uesio.type: io.dialog
+      title: Delete Collection
+      width: 400px
+      height: 300px
+      components:
+        - io.text:
+            text: Are you sure you want to delete this collection?
+      actions:
+        - io.button:
+            text: Delete
+            uesio.variant: io.primary
+            signals:
+              - signal: wire/MARK_FOR_DELETE
+              - signal: wire/SAVE
+                wires:
+                  - "collections"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/collections"
+        - io.button:
+            text: Cancel
+            uesio.variant: io.secondary
+            signals:
+              - signal: panel/TOGGLE
+                panel: deleteCollection
+    editCollection:
+      uesio.type: io.dialog
+      title: Edit Collection
+      width: 400px
+      height: 560px
+      components:
+        - io.list:
+            id: editCollectionList
+            wire: collections
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - studio.metadatafield:
+                  fieldId: studio.namefield
+                  metadataType: "FIELD"
+                  label: "Name Field"
+                  grouping: $Param{appname}.$Param{collectionname}
+                  namespace: $Param{appname}
+              - studio.metadatafield:
+                  fieldId: studio.datasource
+                  metadataType: "DATASOURCE"
+                  label: "Data Source"
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - collections
+              - signal: "panel/TOGGLE"
+                panel: "editCollection"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: wire/CANCEL
+                wire: collections
+              - signal: "panel/TOGGLE"
+                panel: "editCollection"
+    newField:
+      uesio.type: io.dialog
+      title: Create a New Field
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newfieldlist
+            wire: newfield
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.name
+              - io.field:
+                  fieldId: studio.type
+              - io.field:
+                  fieldId: studio.label
+              - studio.metadatafield:
+                  fieldId: studio.languagelabel
+                  metadataType: "LABEL"
+                  label: "Language Label"
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "REFERENCE"
+                  components:
+                    - studio.metadatafield:
+                        fieldId: studio.reference->studio.collection
+                        metadataType: "COLLECTION"
+                        label: "Ref. Collection"
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "TIMESTAMP"
+                  components:
+                    - io.field:
+                        fieldId: studio.autopopulate
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "SELECT"
+                  components:
+                    - studio.metadatafield:
+                        fieldId: studio.selectlist
+                        metadataType: "SELECTLIST"
+                        label: "Select List"
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newfield"
+              - signal: wire/LOAD
+                wires:
+                  - "workspaces"
+                  - "fields"
+              - signal: wire/EMPTY
+                wire: newfield
+              - signal: wire/CREATE_RECORD
+                wire: newfield
+              - signal: "panel/TOGGLE"
+                panel: "newField"
+              - signal: notification/ADD
+                text: Field created!
+                severity: success
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: wire/EMPTY
+                wire: newfield
+              - signal: wire/CREATE_RECORD
+                wire: newfield
+              - signal: "panel/TOGGLE"
+                panel: "newField"

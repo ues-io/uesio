@@ -117,7 +117,7 @@ func GetHeadlessSession() (*sess.Session, error) {
 	}
 	site.SetAppBundle(bundleDef)
 
-	return sess.GetHeadlessSession(&meta.User{
+	return sess.NewSession(nil, &meta.User{
 		ID:        "system_system",
 		FirstName: "Super",
 		LastName:  "Admin",

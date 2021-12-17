@@ -1,6 +1,7 @@
 name: secondary
 component: io.button
 label: Secondary
+extends: io.default
 definition:
   uesio.styles:
     root:
@@ -13,7 +14,6 @@ definition:
       minWidth: 100px
       borderRadius: 4px
       "&:focus":
-        outline: none
         boxShadow: "0 0 6px #00000093"
     label:
       textTransform: uppercase

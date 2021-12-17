@@ -2,8 +2,9 @@ import { FunctionComponent } from "react"
 
 import { component, styles, hooks } from "@uesio/ui"
 import { TileProps } from "./tiledefinition"
+import { TileUtilityProps } from "../../utility/io.tile/tile"
 
-const IOTile = component.registry.getUtility("io.tile")
+const IOTile = component.registry.getUtility<TileUtilityProps>("io.tile")
 
 const Tile: FunctionComponent<TileProps> = (props) => {
 	const classes = styles.useStyles(
@@ -27,10 +28,10 @@ const Tile: FunctionComponent<TileProps> = (props) => {
 	return (
 		<IOTile
 			classes={classes}
+			variant={definition["uesio.variant"]}
 			context={context}
 			onClick={handler}
 			isSelected={isSelected}
-			portals={portals}
 			avatar={
 				definition.avatar && (
 					<component.Slot

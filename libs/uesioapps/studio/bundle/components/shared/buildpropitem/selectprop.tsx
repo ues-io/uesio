@@ -6,6 +6,7 @@ interface SelectPropRendererProps extends builder.PropRendererProps {
 }
 
 const SelectField = component.registry.getUtility("io.selectfield")
+const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
 const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	descriptor,
@@ -13,13 +14,20 @@ const SelectProp: FunctionComponent<SelectPropRendererProps> = ({
 	context,
 	path,
 }) => (
-	<SelectField
-		value={valueAPI.get(path)}
+	<FieldWrapper
+		labelPosition="left"
 		label={descriptor.label}
-		setValue={(value: string) => valueAPI.set(path, value)}
-		options={descriptor.options}
 		context={context}
-	/>
+		variant="studio.propfield"
+	>
+		<SelectField
+			value={valueAPI.get(path)}
+			setValue={(value: string) => valueAPI.set(path, value)}
+			options={descriptor.options}
+			context={context}
+			variant="studio.propfield"
+		/>
+	</FieldWrapper>
 )
 
 export default SelectProp

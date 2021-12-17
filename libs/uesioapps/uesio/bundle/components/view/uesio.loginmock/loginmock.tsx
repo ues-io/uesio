@@ -22,7 +22,7 @@ const Button = component.registry.getUtility("io.button")
 const LoginMock: FunctionComponent<LoginProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { context, definition } = props
-	const useMock = uesio.view.useConfigValue("uesio.mockAuth")
+	const useMock = uesio.view.useConfigValue("uesio.mock_auth")
 
 	if (useMock !== "true") {
 		return null
@@ -50,7 +50,10 @@ const LoginMock: FunctionComponent<LoginProps> = (props) => {
 						user.firstname.toLowerCase() + "@thecloudmasters.com",
 				})
 				return (
-					<LoginWrapper align={definition.align}>
+					<LoginWrapper
+						key={user.lastname + user.firstname}
+						align={definition.align}
+					>
 						<Button
 							context={context}
 							onClick={(): void => {

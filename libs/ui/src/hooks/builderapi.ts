@@ -39,9 +39,14 @@ import {
 
 import { PlainComponentState } from "../bands/component/types"
 import { MetadataType } from "../bands/builder/types"
-import { getFullPathParts, makeFullPath } from "../component/path"
+import {
+	getFullPathParts,
+	getParentPath,
+	makeFullPath,
+} from "../component/path"
 import { Definition, YamlDoc } from "../definition/definition"
 import { useSelector } from "react-redux"
+import { getComponentVariant } from "../bands/componentvariant/selectors"
 
 class BuilderAPI {
 	constructor(uesio: Uesio) {
@@ -104,6 +109,15 @@ class BuilderAPI {
 		this.dispatcher(
 			setSelectedNode(makeFullPath(metadataType, metadataItem, path))
 		)
+	}
+
+	unSelectNode = () => {
+		this.dispatcher((dispatch, getState) => {
+			const selectedNode = getState().builder.selectedNode
+			if (!selectedNode) return
+			const newPath = getParentPath(selectedNode)
+			dispatch(setSelectedNode(newPath))
+		})
 	}
 
 	clearSelectedNode = () => {
@@ -231,6 +245,9 @@ class BuilderAPI {
 		return useSelector((state: RootState) => {
 			if (metadataType === "viewdef" && metadataItem) {
 				return getViewDefinition(state, metadataItem, localPath)
+			}
+			if (metadataType === "componentvariant" && metadataItem) {
+				return getComponentVariant(state, metadataItem, localPath)
 			}
 		})
 	}

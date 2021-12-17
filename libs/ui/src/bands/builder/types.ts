@@ -13,6 +13,7 @@ const METADATA = {
 	PROFILE: "profiles",
 	COMPONENTVARIANT: "componentvariants",
 	FILE: "files",
+	LABEL: "labels",
 }
 
 type MetadataType = keyof typeof METADATA

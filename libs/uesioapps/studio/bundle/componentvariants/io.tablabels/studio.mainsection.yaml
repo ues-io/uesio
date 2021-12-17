@@ -1,0 +1,19 @@
+name: mainsection
+component: io.tablabels
+label: mainsection
+definition:
+  uesio.styles:
+    root:
+      backgroundColor: "$Theme{color.primary}"
+      padding: 8px
+      columnGap: 4px
+    tab:
+      textTransform: uppercase
+      padding: 4px 8px
+      fontSize: 8pt
+      borderRadius: 4px
+      color: white
+      whiteSpace: nowrap
+    tabSelected:
+      color: "#444"
+      backgroundColor: white

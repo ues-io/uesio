@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -17,8 +18,12 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
-	"gopkg.in/yaml.v3"
 )
+
+type FileRecord struct {
+	RecordID  string
+	FieldName string
+}
 
 // Deploy func
 func Deploy(body []byte, session *sess.Session) error {
@@ -38,7 +43,7 @@ func Deploy(body []byte, session *sess.Session) error {
 
 	fileStreams := []bundlestore.ReadItemStream{}
 	// Maps a filename to a recordID
-	fileNameMap := map[string]string{}
+	fileNameMap := map[string]FileRecord{}
 
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
@@ -97,13 +102,32 @@ func Deploy(body []byte, session *sess.Session) error {
 			// Special handling for files
 			if metadataType == "files" {
 				file := collectionItem.(*meta.File)
-				fileNameMap[metadataType+":"+file.GetFilePath()] = file.Name
+				fileNameMap[metadataType+":"+file.GetFilePath()] = FileRecord{
+					RecordID:  file.Name,
+					FieldName: "studio.content",
+				}
 			}
 
 			// Special handling for bots
 			if metadataType == "bots" {
 				bot := collectionItem.(*meta.Bot)
-				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = bot.CollectionRef + "_" + bot.Type + "_" + bot.Name
+				fileNameMap[metadataType+":"+bot.GetBotFilePath()] = FileRecord{
+					RecordID:  bot.CollectionRef + "_" + bot.Type + "_" + bot.Name,
+					FieldName: "studio.content",
+				}
+			}
+
+			// Special handling for componentpacks
+			if metadataType == "componentpacks" {
+				cpack := collectionItem.(*meta.ComponentPack)
+				fileNameMap[metadataType+":"+cpack.GetComponentPackFilePath()] = FileRecord{
+					RecordID:  cpack.Name,
+					FieldName: "studio.runtimebundle",
+				}
+				fileNameMap[metadataType+":"+cpack.GetBuilderComponentPackFilePath()] = FileRecord{
+					RecordID:  cpack.Name,
+					FieldName: "studio.buildtimebundle",
+				}
 			}
 
 			collectionItem.SetWorkspace(workspace)
@@ -145,7 +169,7 @@ func Deploy(body []byte, session *sess.Session) error {
 	// Read the filestreams
 	for _, fileStream := range fileStreams {
 
-		recordID, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
+		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
 		if !ok {
 			continue
 		}
@@ -153,8 +177,8 @@ func Deploy(body []byte, session *sess.Session) error {
 		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
 			Name:         fileStream.FileName,
 			CollectionID: "studio." + fileStream.Type,
-			RecordID:     session.GetWorkspaceID() + "_" + recordID,
-			FieldID:      "studio.content",
+			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
+			FieldID:      fileRecord.FieldName,
 		}, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err

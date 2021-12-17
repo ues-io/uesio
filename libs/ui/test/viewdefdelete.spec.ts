@@ -1,7 +1,7 @@
-import { removeDef } from "../src/bands/viewdef/reducers"
 import { createNextState } from "@reduxjs/toolkit"
 import { RemoveDefinitionPayload } from "../src/bands/builder"
 import { PlainViewDef } from "../src/bands/viewdef/types"
+import { removeDef } from "../src/store/reducers"
 
 test("viewdef delete component", () => {
 	testDelete(
@@ -22,7 +22,7 @@ test("viewdef delete component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -40,7 +40,7 @@ test("viewdef delete component", () => {
 					},
 				],
 				wires: {},
-				panels: [],
+				panels: {},
 			},
 		}
 	)
@@ -63,7 +63,7 @@ test("viewdef delete wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		},
 		{
@@ -80,7 +80,7 @@ test("viewdef delete wire", () => {
 						fields: {},
 					},
 				},
-				panels: [],
+				panels: {},
 			},
 		}
 	)

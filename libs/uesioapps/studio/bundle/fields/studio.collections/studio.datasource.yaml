@@ -3,3 +3,4 @@ collection: studio.collections
 type: TEXT
 label: Data Source
 required: true
+readOnly: true

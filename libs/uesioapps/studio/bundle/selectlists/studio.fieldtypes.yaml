@@ -22,3 +22,5 @@ options:
     value: "TIMESTAMP"
   - label: "User"
     value: "USER"
+  - label: "Email"
+    value: "EMAIL"

@@ -1,14 +1,14 @@
 import { FunctionComponent, ReactNode } from "react"
 import { definition, styles } from "@uesio/ui"
 
-interface TitleBarProps extends definition.UtilityProps {
+interface TitleBarUtilityProps extends definition.UtilityProps {
 	title?: string
 	subtitle?: string
 	actions?: ReactNode
 	onClick?: () => void
 }
 
-const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
+const TitleBar: FunctionComponent<TitleBarUtilityProps> = (props) => {
 	const { context, title, subtitle, actions, onClick } = props
 	const classes = styles.useUtilityStyles(
 		{
@@ -22,27 +22,44 @@ const TitleBar: FunctionComponent<TitleBarProps> = (props) => {
 				justifyContent: "center",
 				flexDirection: "column",
 			},
-			title: {},
-			subtitle: {},
+			title: {
+				margin: 0,
+			},
+			subtitle: {
+				margin: 0,
+			},
 			actions: {
 				position: "relative",
 			},
 		},
 		props
 	)
+
 	return (
-		<div onClick={() => onClick && onClick()} className={classes.root}>
+		<div
+			role={onClick ? "button" : undefined}
+			onClick={() => onClick && onClick()}
+			className={classes.root}
+		>
 			<div className={classes.content}>
-				<div className={classes.title}>{context.merge(title)}</div>
-				{subtitle && (
-					<div className={classes.subtitle}>
-						{context.merge(subtitle)}
-					</div>
+				<p className={classes.title}>{context.merge(title)}</p>
+
+				{/* Render whitespace if subtitle is empty string */}
+				{(subtitle || subtitle === "") && (
+					<p className={classes.subtitle}>
+						{subtitle === "" ? (
+							<>&nbsp;</>
+						) : (
+							context.merge(subtitle)
+						)}
+					</p>
 				)}
 			</div>
 			<div className={classes.actions}>{actions}</div>
 		</div>
 	)
 }
+
+export { TitleBarUtilityProps }
 
 export default TitleBar

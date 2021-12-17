@@ -2,9 +2,12 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
+	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/reflecttool"
 )
@@ -160,6 +163,9 @@ var bundleableGroupMap = map[string]BundleableFactory{
 	GetNameKeyPart((&ComponentPackCollection{}).GetName()):      func() BundleableGroup { return &ComponentPackCollection{} },
 	GetNameKeyPart((&ComponentVariantCollection{}).GetName()):   func() BundleableGroup { return &ComponentVariantCollection{} },
 	GetNameKeyPart((&UserFileCollectionCollection{}).GetName()): func() BundleableGroup { return &UserFileCollectionCollection{} },
+	GetNameKeyPart((&FeatureFlagCollection{}).GetName()):        func() BundleableGroup { return &FeatureFlagCollection{} },
+	GetNameKeyPart((&LabelCollection{}).GetName()):              func() BundleableGroup { return &LabelCollection{} },
+	GetNameKeyPart((&TranslationCollection{}).GetName()):        func() BundleableGroup { return &TranslationCollection{} },
 }
 
 // GetBundleableGroupFromType function
@@ -178,4 +184,60 @@ func GetMetadataTypes() []string {
 		types = append(types, key)
 	}
 	return types
+}
+
+var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")
+
+func IsValidMetadataName(name string) bool {
+	return validMetaRegex.MatchString(name)
+}
+
+func validateNodeLanguage(node *yaml.Node, expectedName string) error {
+	node.SkipCustom = true
+	name := getNodeValueAsString(node, "language")
+	if name != expectedName {
+		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
+	}
+	if !IsValidMetadataName(name) {
+		return fmt.Errorf("Failed metadata validation, no capital letters or special characters allowed: %s", name)
+	}
+	return nil
+}
+
+func validateNodeName(node *yaml.Node, expectedName string) error {
+	node.SkipCustom = true
+	name := getNodeValueAsString(node, "name")
+	if name != expectedName {
+		return fmt.Errorf("Metadata name does not match filename: %s, %s", name, expectedName)
+	}
+	if !IsValidMetadataName(name) {
+		return fmt.Errorf("Failed metadata validation, no capital letters or special characters allowed: %s", name)
+	}
+	return nil
+}
+
+func getNodeValueAsString(node *yaml.Node, key string) string {
+	keyNode, err := getMapNode(node, key)
+	if err != nil {
+		return ""
+	}
+	if keyNode.Kind != yaml.ScalarNode {
+		return ""
+	}
+	return keyNode.Value
+}
+
+func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
+	if node.Kind != yaml.MappingNode {
+		return nil, fmt.Errorf("Definition is not a mapping node.")
+	}
+
+	for i := range node.Content {
+		// Skip every other node to only get keys
+		if i%2 == 0 && node.Content[i].Value == key {
+			return node.Content[i+1], nil
+		}
+	}
+
+	return nil, fmt.Errorf("Node not found of key: " + key)
 }

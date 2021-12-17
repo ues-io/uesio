@@ -1,0 +1,10 @@
+name: default
+component: io.button
+label: Default
+definition:
+  uesio.styles:
+    root:
+      whiteSpace: nowrap
+      backgroundColor: inherit
+      "&:focus":
+        outline: none

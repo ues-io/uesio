@@ -47,7 +47,9 @@ definition:
         uesio.id:
         studio.type:
         studio.domain:
-      type: CREATE
+      init:
+        query: false
+        create: true
       defaults:
         - field: studio.site
           valueSource: VALUE
@@ -115,41 +117,41 @@ definition:
                                     path: "https://${studio.domain}.$Site{domain}"
                                     newtab: true
   panels:
-    - io.dialog:
-        id: newDomain
-        title: Add a Domain
-        width: 400px
-        height: 500px
-        components:
-          - io.list:
-              id: newdomainlist
-              wire: newdomain
-              mode: EDIT
-              components:
-                - io.field:
-                    fieldId: studio.domain
-        actions:
-          - io.button:
-              uesio.variant: "io.primary"
-              text: "Save"
-              signals:
-                - signal: wire/SAVE
-                  wires:
-                    - newdomain
-                - signal: "panel/TOGGLE"
-                  panel: "newDomain"
-                - signal: wire/EMPTY
-                  wire: newdomain
-                - signal: wire/CREATE_RECORD
-                  wire: newdomain
-                - signal: wire/LOAD
-                  wires:
-                    - domains
-          - io.button:
-              uesio.variant: "io.secondary"
-              text: "Cancel"
-              signals:
-                - signal: "panel/TOGGLE"
-                  panel: "newDomain"
-                - signal: wire/CANCEL
-                  wire: newdomain
+    newDomain:
+      uesio.type: io.dialog
+      title: Add a Domain
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newdomainlist
+            wire: newdomain
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.domain
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - newdomain
+              - signal: "panel/TOGGLE"
+                panel: "newDomain"
+              - signal: wire/EMPTY
+                wire: newdomain
+              - signal: wire/CREATE_RECORD
+                wire: newdomain
+              - signal: wire/LOAD
+                wires:
+                  - domains
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newDomain"
+              - signal: wire/CANCEL
+                wire: newdomain

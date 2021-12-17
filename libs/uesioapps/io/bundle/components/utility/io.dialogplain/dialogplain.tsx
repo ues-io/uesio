@@ -3,17 +3,17 @@ import { definition, styles } from "@uesio/ui"
 
 const minPagePadding = "40px"
 
-interface DialogProps extends definition.UtilityProps {
+interface DialogPlainUtilityProps extends definition.UtilityProps {
 	onClose?: () => void
 	width?: string
 	height?: string
 }
 
-const DialogPlain: FunctionComponent<DialogProps> = (props) => {
+const DialogPlain: FunctionComponent<DialogPlainUtilityProps> = (props) => {
 	const classes = styles.useUtilityStyles(
 		{
 			blocker: {
-				position: "fixed",
+				position: "absolute",
 				top: 0,
 				bottom: 0,
 				height: "100%",
@@ -46,6 +46,7 @@ const DialogPlain: FunctionComponent<DialogProps> = (props) => {
 		},
 		props
 	)
+
 	return (
 		<>
 			<div className={classes.blocker} onClick={props.onClose} />
@@ -55,5 +56,7 @@ const DialogPlain: FunctionComponent<DialogProps> = (props) => {
 		</>
 	)
 }
+
+export { DialogPlainUtilityProps }
 
 export default DialogPlain

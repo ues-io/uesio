@@ -2,4 +2,5 @@ name: related_service
 collection: crm.pricebook_entries
 type: REFERENCE
 label: Related Service
-referencedCollection: crm.services
+reference:
+  collection: crm.services

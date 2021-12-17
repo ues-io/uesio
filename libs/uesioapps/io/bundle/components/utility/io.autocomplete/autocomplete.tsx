@@ -1,6 +1,6 @@
 import { useState, useRef, FunctionComponent } from "react"
 import { useCombobox } from "downshift"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 import debounce from "lodash/debounce"
 
 type DropDownProps = {
@@ -10,9 +10,6 @@ type DropDownProps = {
 		search: string,
 		callback: (items: SelectedItem[]) => void
 	) => void
-	label?: string
-	width?: string
-	hideLabel: boolean
 } & definition.BaseProps
 
 type SelectedItem = {
@@ -20,16 +17,12 @@ type SelectedItem = {
 	value: string
 }
 
-const FieldLabel = component.registry.getUtility("io.fieldlabel")
-
 const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
-	const { getItems, value, setValue, label, hideLabel, context } = props
-	const width = props.definition?.width as string
+	const { getItems, value, setValue } = props
+
 	const classes = styles.useUtilityStyles(
 		{
-			root: {
-				...(width && { width }),
-			},
+			root: {},
 			input: {},
 			readonly: {},
 		},
@@ -40,7 +33,7 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	const lastInputChange = useRef<number>(0)
 
 	const options = loading ? [{ value: "loading..." }] : inputItems
-	const debouncedRequest = debounce(getItems, 200)
+	const debouncedRequest = debounce(getItems, 250)
 
 	const {
 		isOpen,
@@ -91,7 +84,6 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 	return (
 		<div style={{ position: "relative" }}>
 			<div className={classes.root} {...getComboboxProps()}>
-				<FieldLabel label={label} hide={hideLabel} context={context} />
 				<input className={classes.input} {...getInputProps()} />
 			</div>
 			<div

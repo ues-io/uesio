@@ -14,7 +14,7 @@ const ViewPropertyDefinition: builder.BuildPropertiesDefinition = {
 			name: "view",
 			type: "METADATA",
 			metadataType: "VIEW",
-			label: "",
+			label: "View",
 		},
 	],
 	sections: [],

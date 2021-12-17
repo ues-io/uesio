@@ -91,7 +91,7 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 // Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
 
-	collated := map[string][]adapt.SaveOp{}
+	collated := map[string][]*adapt.SaveOp{}
 	metadataResponse := adapt.MetadataCache{}
 
 	// Loop over the requests and batch per data source
@@ -139,21 +139,14 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		}
 
 		// Split changes into inserts, updates, and deletes
-		inserts, updates, deletes, err := SplitSave(request, collectionMetadata, session)
+		ops, err := SplitSave(request, collectionMetadata, session)
 		if err != nil {
 			return err
 		}
 
 		dsKey := collectionMetadata.DataSource
 		batch := collated[dsKey]
-		batch = append(batch, adapt.SaveOp{
-			CollectionName: request.Collection,
-			WireName:       request.Wire,
-			Inserts:        inserts,
-			Updates:        updates,
-			Deletes:        deletes,
-			Options:        request.Options,
-		})
+		batch = append(batch, ops...)
 		collated[dsKey] = batch
 	}
 
@@ -206,7 +199,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []adapt.LoadOp) error {
+		err = adapt.HandleLookups(func(ops []*adapt.LoadOp) error {
 			return adapter.Load(ops, &metadataResponse, credentials, userTokens)
 		}, batch, &metadataResponse)
 		if err != nil {
@@ -220,22 +213,22 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = Populate(&op, collectionMetadata, session)
+			err = Populate(op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
 
-			err = runBeforeSaveBots(&op, collectionMetadata, session)
+			err = runBeforeSaveBots(op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
 
-			err = Validate(&op, collectionMetadata, session)
+			err = Validate(op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
 
-			err = GenerateRecordChallengeTokens(&op, collectionMetadata, session)
+			err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}
@@ -258,7 +251,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = runAfterSaveBots(&op, collectionMetadata, session)
+			err = runAfterSaveBots(op, collectionMetadata, session)
 			if err != nil {
 				return err
 			}

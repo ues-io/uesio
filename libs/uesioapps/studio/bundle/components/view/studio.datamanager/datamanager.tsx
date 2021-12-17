@@ -65,6 +65,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 		Object.keys(fieldsMeta).forEach((record) => {
 			fields[`${record}`] = null
 		})
+
 		const basePath = `["viewdef"]["${newContext.getViewDefId()}"]["wires"]`
 		uesio.builder.addDefinitionPair(
 			basePath,
@@ -75,6 +76,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 			"collectionData"
 		)
 
+		uesio.wire.initWires(newContext, ["collectionData"])
 		uesio.wire.loadWires(newContext, ["collectionData"])
 
 		return () => {
@@ -91,6 +93,17 @@ const DataManager: FunctionComponent<Props> = (props) => {
 				id: "collectionDataTable",
 				wire: "collectionData",
 				mode: "EDIT",
+				rownumbers: true,
+				rowactions: [
+					{
+						text: "Delete",
+						signals: [
+							{
+								signal: "wire/TOGGLE_DELETE_STATUS",
+							},
+						],
+					},
+				],
 				columns: Object.keys(fieldsMeta).map((record) => ({
 					["io.column"]: {
 						field: `${record}`,
