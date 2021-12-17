@@ -35,6 +35,7 @@ const Text: FunctionComponent<TextProps> = (props) => {
 	const acceptedElements = [
 		"p",
 		"span",
+		"div",
 		"h1",
 		"h2",
 		"h3",
@@ -43,15 +44,13 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		"h6",
 		"pre",
 	]
-	const tag =
-		props.element && acceptedElements.includes(props.element)
-			? props.element
-			: "span"
+	const Tag = (
+		element && acceptedElements.includes(element) ? element : "span"
+	) as keyof JSX.IntrinsicElements
 
-	const CustomTag = `${tag}` as keyof JSX.IntrinsicElements
 	const mergedText = props.context.merge(text)
 
-	return <CustomTag className={classes.root}>{mergedText}</CustomTag>
+	return <Tag className={classes.root}>{mergedText}</Tag>
 }
 
 export default Text
