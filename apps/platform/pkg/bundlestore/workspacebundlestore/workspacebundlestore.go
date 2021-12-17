@@ -36,6 +36,14 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 	return datasource.PlatformLoadOne(item, conditions, session.RemoveWorkspaceContext())
 }
 
+func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
 // GetItems function
 func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// Add the workspace id as a condition

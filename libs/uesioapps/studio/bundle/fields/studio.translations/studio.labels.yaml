@@ -1,4 +1,4 @@
-name: labelrefs
+name: labels
 collection: studio.translations
 type: MAP
-label: Label refs
+label: Labels

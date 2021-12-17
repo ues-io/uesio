@@ -68,6 +68,7 @@ components:
       variants:
         - io.button.io.secondary
         - io.titlebar.io.default
+    studio.translations:
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.view:

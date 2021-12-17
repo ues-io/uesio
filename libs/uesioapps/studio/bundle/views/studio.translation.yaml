@@ -1,0 +1,119 @@
+name: translation
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        uesio.id:
+        studio.name:
+        studio.app:
+          fields:
+            studio.color:
+      conditions:
+        - field: studio.app
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    translations:
+      collection: studio.translations
+      fields:
+        uesio.id:
+        studio.language:
+        studio.workspace:
+        studio.labels:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: studio.language
+          valueSource: PARAM
+          param: translationname
+    labels:
+      collection: studio.labels
+      fields:
+        uesio.id:
+        studio.name:
+      # conditions:
+      #   - field: studio.workspace
+      #     valueSource: LOOKUP
+      #     lookupWire: workspaces
+      #     lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: translations
+                      itemIcon: translate
+                      itemName: $Param{translationname}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: translations
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
+                    id: translationsDeck
+                    wire: translations
+                    mode: READ
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: Translation - ${studio.language}
+                          actions:
+                            - io.group:
+                                components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Save"
+                                      signals:
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "translations"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Delete"
+                                      signals:
+                                        - signal: wire/MARK_FOR_DELETE
+                                        - signal: wire/SAVE
+                                          wires:
+                                            - "translations"
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/translations"
+                      - io.box:
+                          uesio.variant: io.section
+                          uesio.styles:
+                            root:
+                              padding: 40px
+                          components:
+                            - io.grid:
+                                templateColumns:
+                                  xs: 1fr
+                                  md: 1fr 1fr
+                                  lg: 1fr 1fr 1fr 1fr
+                                columnGap: 10px
+                                items:
+                                  - io.field:
+                                      fieldId: studio.language
+                            - io.grid:
+                                items:
+                                  - studio.translations:
+                                      fieldId: studio.labels

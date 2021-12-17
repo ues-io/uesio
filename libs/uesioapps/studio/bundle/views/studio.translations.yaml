@@ -1,0 +1,138 @@
+name: translations
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        uesio.id:
+        studio.name:
+        studio.app:
+          fields:
+            studio.color:
+      conditions:
+        - field: studio.app
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    translations:
+      collection: studio.translations
+      fields:
+        uesio.id:
+        studio.language:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    newtranslation:
+      collection: studio.translations
+      fields:
+        uesio.id:
+        studio.language:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+      init:
+        query: false
+        create: true
+      defaults:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: translations
+                      itemIcon: translate
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: translations
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.titlebar:
+                    uesio.variant: io.main
+                    title: Translations
+                    subtitle: Something Clever
+                    actions:
+                      - io.group:
+                          components:
+                            - io.button:
+                                text: Add New Language
+                                uesio.variant: io.secondary
+                                signals:
+                                  - signal: panel/TOGGLE
+                                    panel: newtranslation
+                - io.box:
+                    uesio.variant: io.section
+                    components:
+                      - io.deck:
+                          id: translationsDeck
+                          wire: translations
+                          uesio.variant: io.section
+                          components:
+                            - io.tile:
+                                uesio.variant: io.item
+                                signals:
+                                  - signal: "route/NAVIGATE"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/translations/${studio.language}"
+                                content:
+                                  - io.text:
+                                      text: ${studio.language}
+                                avatar:
+                                  - io.text:
+                                      uesio.variant: io.icon
+                                      color: "#ccc"
+                                      text: tune
+  panels:
+    newtranslation:
+      uesio.type: io.dialog
+      title: Add New Language
+      width: 400px
+      height: 500px
+      components:
+        - io.list:
+            id: newtranslationlist
+            wire: newtranslation
+            mode: EDIT
+            components:
+              - io.field:
+                  fieldId: studio.language
+      actions:
+        - io.button:
+            uesio.variant: "io.primary"
+            text: "Save"
+            signals:
+              - signal: wire/SAVE
+                wires:
+                  - "newtranslation"
+              - signal: "route/NAVIGATE"
+                path: "app/$Param{appname}/workspace/$Param{workspacename}/translations/${studio.language}"
+        - io.button:
+            uesio.variant: "io.secondary"
+            text: "Cancel"
+            signals:
+              - signal: "panel/TOGGLE"
+                panel: "newtranslation"

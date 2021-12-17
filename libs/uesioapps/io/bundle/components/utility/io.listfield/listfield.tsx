@@ -13,18 +13,19 @@ const IconButton = component.registry.getUtility("io.iconbutton")
 const Grid = component.registry.getUtility("io.grid")
 const FieldLabel = component.registry.getUtility("io.fieldlabel")
 
-interface Props extends definition.UtilityProps {
+interface ListFieldUtilityProps extends definition.UtilityProps {
 	mode: context.FieldMode
 	value: (wire.PlainWireRecord | wire.FieldValue)[]
 	setValue: (value: (wire.PlainWireRecord | wire.FieldValue)[]) => void
 	subFields: collection.FieldMetadataMap
 	subType: string
 	autoAdd?: boolean
+	noAdd?: boolean
 	fieldVariant?: string
 	labelVariant?: string
 }
 
-const ListField: FunctionComponent<Props> = (props) => {
+const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 	const {
 		subFields,
 		subType,
@@ -33,6 +34,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 		value,
 		setValue,
 		autoAdd,
+		noAdd,
 		fieldVariant,
 		labelVariant,
 	} = props
@@ -111,7 +113,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 				{editMode && (
 					<IconButton
 						label="add"
-						icon={autoAdd ? "" : "add_circle"}
+						icon={autoAdd || noAdd ? "" : "add_circle"}
 						context={context}
 						className="editicon"
 						onClick={() => {
@@ -121,7 +123,7 @@ const ListField: FunctionComponent<Props> = (props) => {
 							newValue.push(getDefaultValue())
 							setValue(newValue)
 						}}
-						disabled={autoAdd}
+						disabled={autoAdd || noAdd}
 					/>
 				)}
 			</Grid>
@@ -173,4 +175,5 @@ const ListField: FunctionComponent<Props> = (props) => {
 	)
 }
 
+export { ListFieldUtilityProps }
 export default ListField

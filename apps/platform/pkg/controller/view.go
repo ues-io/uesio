@@ -132,10 +132,10 @@ func getReferenceLabels(translations meta.TranslationCollection, session *sess.S
 		if translations[i].Namespace == originalNamespace {
 			index = i
 		}
-		addmap(labelRefs, translations[i].LabelRefs)
+		addmap(labelRefs, translations[i].Labels)
 	}
 	if index != -1 {
-		addmap(labelRefs, translations[index].LabelRefs)
+		addmap(labelRefs, translations[index].Labels)
 	}
 
 	return labelRefs

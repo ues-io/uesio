@@ -68,6 +68,14 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 
 }
 
+func (b *SystemBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
+	err := b.GetItems(group, namespace, version, conditions, session)
+	if err != nil {
+		return false, err
+	}
+	return group.Len() > 0, nil
+}
+
 // GetItems function
 func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 

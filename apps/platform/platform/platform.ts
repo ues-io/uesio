@@ -176,9 +176,13 @@ window.uesioLoader = (mergeData) => {
 			return response.json()
 		},
 
-		getAvailableNamespaces: async (context) => {
+		getAvailableNamespaces: async (context, metadataType) => {
 			const prefix = getPrefix(context)
-			const response = await fetch(`${prefix}/metadata/namespaces`)
+			const mdType = metadataType && metadata.METADATA[metadataType]
+			const mdTypeUrl = mdType ? `/${mdType}` : ""
+			const response = await fetch(
+				`${prefix}/metadata/namespaces${mdTypeUrl}`
+			)
 			return response.json()
 		},
 
