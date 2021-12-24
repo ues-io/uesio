@@ -2,9 +2,11 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
+import { cognito, mock } from "../../../../libs/loginhelpers/src"
 
 const MOCK_LOGIN = "mock"
 const GOOGLE_LOGIN = "google"
+const EMAIL_LOGIN = "cognito"
 
 type AuthHandlerResponse = {
 	type: string
@@ -29,18 +31,66 @@ const SESSION_KEY = "sessid"
 
 const authHandlers = {
 	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
-		type: "mock",
+		type: MOCK_LOGIN,
 		// TODO: actually read from seeds and allow mock login as all users
-		token: JSON.stringify({
-			subject: "MockBen",
-			authType: "mock",
+		token: mock.getMockToken({
 			firstname: "Ben",
 			lastname: "Hubbard",
-			email: "ben@thecloudmasters.com",
 		}),
 	}),
 	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
 		throw new Error("Google Auth is not yet supported.")
+	},
+	[EMAIL_LOGIN]: async (): Promise<AuthHandlerResponse> => {
+		const responses = await inquirer.prompt([
+			{
+				name: "username",
+				message: "Username",
+				type: "input",
+			},
+			{
+				name: "password",
+				message: "Password",
+				type: "input",
+			},
+		])
+
+		const poolIdResponse = await get(
+			"/site/configvalues/uesio.cognito_pool_id"
+		)
+		const poolData = await poolIdResponse.json()
+		const poolId = poolData.value
+		const clientIdResponse = await get(
+			"/site/configvalues/uesio.cognito_client_id"
+		)
+		const clientIdData = await clientIdResponse.json()
+		const clientId = clientIdData.value
+		const pool = cognito.getPool(poolId, clientId)
+		const authDetails = cognito.getAuthDetails(
+			responses.username,
+			responses.password
+		)
+		const cognitoUser = cognito.getUser(responses.username, pool)
+
+		const accessToken = await new Promise((resolve, reject) => {
+			cognitoUser.authenticateUser(authDetails, {
+				onSuccess: (result) => {
+					const accessToken = result.getIdToken().getJwtToken()
+					resolve(accessToken)
+				},
+				onFailure: (err) => {
+					const message = err.message || JSON.stringify(err)
+					reject(message)
+				},
+			})
+		}).catch((err) => {
+			throw new Error("Bad Login: " + err)
+		})
+
+		return {
+			type: EMAIL_LOGIN,
+			token: accessToken as string,
+		}
 	},
 } as AuthHandlers
 
@@ -118,6 +168,7 @@ const authorize = async (): Promise<User> => {
 				choices: [
 					{ name: "Sign in with Google", value: GOOGLE_LOGIN },
 					{ name: "Mock Login", value: MOCK_LOGIN },
+					{ name: "Sign in with Email", value: EMAIL_LOGIN },
 				],
 			},
 		])

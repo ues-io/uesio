@@ -20,6 +20,29 @@ type ConfigValueResponse struct {
 	ManagedBy string `json:"managedby"`
 }
 
+func getValue(session *sess.Session, key string) (*ConfigValueResponse, error) {
+	configValue, err := meta.NewConfigValue(key)
+	if err != nil {
+		return nil, err
+	}
+	err = bundle.Load(configValue, session)
+	if err != nil {
+		return nil, err
+	}
+
+	value, err := configstore.GetValue(configValue, session)
+	if err != nil {
+		return nil, err
+	}
+	return &ConfigValueResponse{
+		Name:      configValue.Name,
+		Namespace: configValue.Namespace,
+		ManagedBy: configValue.ManagedBy,
+		Value:     value,
+	}, nil
+
+}
+
 func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 	var configValues meta.ConfigValueCollection
 	err := bundle.LoadAllFromAny(&configValues, nil, session)
@@ -44,12 +67,27 @@ func getValues(session *sess.Session) ([]ConfigValueResponse, error) {
 	return response, nil
 }
 
-//ConfigValue function
-func ConfigValue(w http.ResponseWriter, r *http.Request) {
+func ConfigValues(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
 	response, err := getValues(session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	respondJSON(w, r, response)
+}
+
+func ConfigValue(w http.ResponseWriter, r *http.Request) {
+
+	session := middleware.GetSession(r)
+	vars := mux.Vars(r)
+	key := vars["key"]
+
+	response, err := getValue(session, key)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -4,13 +4,7 @@ import LoginWrapper from "../../shared/loginwrapper"
 import LoginForm from "./loginform"
 import SignupForm from "./signupform"
 import ConfirmForm from "./confirmform"
-
-import {
-	AuthenticationDetails,
-	CognitoUserPool,
-	CognitoUser,
-	CognitoUserAttribute,
-} from "amazon-cognito-identity-js"
+import { cognito } from "../../../../../../loginhelpers/src"
 
 type LoginDefinition = {
 	text: string
@@ -29,27 +23,6 @@ interface LoginButtonProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
 	text: string
 }
-
-const getAuthDetails = (
-	username: string,
-	password: string
-): AuthenticationDetails =>
-	new AuthenticationDetails({
-		Username: username,
-		Password: password,
-	})
-
-const getUser = (username: string, pool: CognitoUserPool): CognitoUser =>
-	new CognitoUser({
-		Username: username,
-		Pool: pool,
-	})
-
-const getPool = (userPoolId: string, clientId: string): CognitoUserPool =>
-	new CognitoUserPool({
-		UserPoolId: userPoolId, // Your user pool id here
-		ClientId: clientId, // Your client id here
-	})
 
 const LoginButton: FunctionComponent<LoginButtonProps> = (props) => {
 	const { text, setMode, context } = props
@@ -96,7 +69,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const [signupPassword, setSignupPassword] = useState("")
 
 	if (!poolId || !clientId) return null
-	const pool = getPool(poolId, clientId)
+	const pool = cognito.getPool(poolId, clientId)
 
 	function signUp(
 		firstname: string,
@@ -105,20 +78,11 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 		email: string,
 		password: string
 	): void {
-		const attributeList = [
-			new CognitoUserAttribute({
-				Name: "email",
-				Value: email,
-			}),
-			new CognitoUserAttribute({
-				Name: "family_name",
-				Value: lastname,
-			}),
-			new CognitoUserAttribute({
-				Name: "given_name",
-				Value: firstname,
-			}),
-		]
+		const attributeList = cognito.getAttributeList(
+			email,
+			lastname,
+			firstname
+		)
 
 		pool.signUp(
 			username,
@@ -141,8 +105,8 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	function logIn(username: string, password: string): void {
-		const authenticationDetails = getAuthDetails(username, password)
-		const cognitoUser = getUser(username, pool)
+		const authenticationDetails = cognito.getAuthDetails(username, password)
+		const cognitoUser = cognito.getUser(username, pool)
 		cognitoUser.authenticateUser(authenticationDetails, {
 			onSuccess: (result) => {
 				const accessToken = result.getIdToken().getJwtToken()
@@ -164,7 +128,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	function confirm(verificationCode: string): void {
-		const cognitoUser = getUser(signupUsername, pool)
+		const cognitoUser = cognito.getUser(signupUsername, pool)
 		cognitoUser.confirmRegistration(
 			verificationCode,
 			true,

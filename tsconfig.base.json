@@ -23,7 +23,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"]
+			"@uesio/lazymonaco": ["libs/lazymonaco/src/index.tsx"],
+			"@uesio/loginhelpers": ["libs/loginhelpers/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
