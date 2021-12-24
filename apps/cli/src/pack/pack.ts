@@ -198,6 +198,9 @@ const getWebpackConfig = (
 		resolve: {
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
+			alias: {
+				"@uesio/loginhelpers": path.resolve("../../loginhelpers/src"),
+			},
 		},
 		module: {
 			rules: [

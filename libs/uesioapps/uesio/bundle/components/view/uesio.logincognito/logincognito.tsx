@@ -4,7 +4,7 @@ import LoginWrapper from "../../shared/loginwrapper"
 import LoginForm from "./loginform"
 import SignupForm from "./signupform"
 import ConfirmForm from "./confirmform"
-import { cognito } from "../../../../../../loginhelpers/src"
+import { cognito } from "@uesio/loginhelpers"
 
 type LoginDefinition = {
 	text: string

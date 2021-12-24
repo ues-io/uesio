@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, hooks, component } from "@uesio/ui"
-import { mock } from "../../../../../../loginhelpers/src"
+import { mock } from "@uesio/loginhelpers"
 import LoginWrapper from "../../shared/loginwrapper"
 type LoginDefinition = {
 	clientId: string
