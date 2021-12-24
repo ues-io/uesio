@@ -198,6 +198,9 @@ const getWebpackConfig = (
 		resolve: {
 			// Add '.ts' and '.tsx' as resolvable extensions.
 			extensions: [".ts", ".tsx", ".js"],
+			alias: {
+				"@uesio/loginhelpers": path.resolve("../../loginhelpers/src"),
+			},
 		},
 		module: {
 			rules: [
@@ -251,9 +254,17 @@ const handleErrors = (errors: webpack.StatsError[]) => {
 		// Group errors by file
 		const perFile = errors.reduce(
 			(acc: Record<string, webpack.StatsError[]>, error) => {
-				if (!error || !error.file) return acc
-				const pathArray = error.file.split("/")
-				const path = pathArray.splice(-4).join("/")
+				if (!error) return acc
+				if (error.file) {
+					const pathArray = error.file.split("/")
+					const path = pathArray.splice(-4).join("/")
+					return {
+						...acc,
+						[path]: [...(path in acc ? acc[path] : []), error],
+					}
+				}
+
+				const path = "NOFILE"
 				return {
 					...acc,
 					[path]: [...(path in acc ? acc[path] : []), error],
@@ -266,7 +277,8 @@ const handleErrors = (errors: webpack.StatsError[]) => {
 			// File
 			const pathArray = perFile[file][0].file?.split("/") || []
 			const path = pathArray.splice(-4).join("/")
-			const namespace = pathArray[pathArray.indexOf("uesioapps") + 1]
+			const namespace =
+				pathArray[pathArray.indexOf("uesioapps") + 1] || "none"
 			console.log(
 				chalk`{bold.bgRed  E R R O R } {bold.bgBlue  ${namespace.toUpperCase()} } ${path} `
 			)

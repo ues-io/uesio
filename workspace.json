@@ -159,6 +159,24 @@
         }
       }
     },
+    "loginhelpers": {
+      "root": "libs/loginhelpers",
+      "sourceRoot": "libs/loginhelpers/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/loginhelpers"
+          ],
+          "options": {
+            "command": "echo \"-\"",
+            "cwd": "libs/loginhelpers"
+          }
+        }
+      }
+    },
     "uesioapps-sample": {
       "root": "libs/uesioapps/sample",
       "sourceRoot": "libs/uesioapps/sample/bundle",

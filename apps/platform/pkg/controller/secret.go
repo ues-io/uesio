@@ -39,7 +39,7 @@ func getSecrets(session *sess.Session) ([]SecretResponse, error) {
 }
 
 //Secret function
-func Secret(w http.ResponseWriter, r *http.Request) {
+func Secrets(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 

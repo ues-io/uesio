@@ -95,16 +95,16 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/views/{namespace}/{name}/preview", controller.ViewPreview(false)).Methods("GET")
 	workspaceAPI(wr, "/views/{namespace}/{name}/edit", controller.ViewPreview(true)).Methods("GET")
 
-	workspaceAPI(wr, "/configvalues", controller.ConfigValue).Methods("GET")
+	workspaceAPI(wr, "/configvalues", controller.ConfigValues).Methods("GET")
 	workspaceAPI(wr, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
-	workspaceAPI(wr, "/secrets", controller.Secret).Methods("GET")
+	workspaceAPI(wr, "/secrets", controller.Secrets).Methods("GET")
 	workspaceAPI(wr, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	workspaceAPI(wr, "/featureflags", controller.FeatureFlag).Methods("GET")
 	workspaceAPI(wr, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
 
-	siteAdminAPI(sar, "/configvalues", controller.ConfigValue).Methods("GET")
+	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
-	siteAdminAPI(sar, "/secrets", controller.Secret).Methods("GET")
+	siteAdminAPI(sar, "/secrets", controller.Secrets).Methods("GET")
 	siteAdminAPI(sar, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	siteAdminAPI(sar, "/featureflags/{user}", controller.FeatureFlag).Methods("GET")
 	siteAdminAPI(sar, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
@@ -117,6 +117,7 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAdminAPI(sar, "/bulk/job", controller.BulkJob).Methods("POST")
 	siteAdminAPI(sar, "/bulk/job/{job}/batch", controller.BulkBatch).Methods("POST")
 
+	siteAPI(sr, "/configvalues/{key}", controller.ConfigValue).Methods("GET")
 	siteAPI(sr, "/auth/login", controller.Login).Methods("POST")
 	siteAPI(sr, "/auth/logout", controller.Logout).Methods("POST")
 	siteAPI(sr, "/auth/check", controller.AuthCheck).Methods("GET")

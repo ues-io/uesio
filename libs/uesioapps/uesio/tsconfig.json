@@ -12,6 +12,12 @@
 	],
 	"compilerOptions": {
 		"sourceMap": true,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"baseUrl": "./",
+		"paths": {
+			"@uesio/ui": ["../../ui/src/index.ts"],
+			"@uesio/lazymonaco": ["../../lazymonaco/src/index.tsx"],
+			"@uesio/loginhelpers": ["../../loginhelpers/src/index.ts"]
+		}
 	}
 }
