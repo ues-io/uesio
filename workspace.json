@@ -165,6 +165,16 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "outputs": [
+            "dist/loginhelpers"
+          ],
+          "options": {
+            "command": "echo \"-\"",
+            "cwd": "libs/loginhelpers"
+          }
+        }
       }
     },
     "uesioapps-sample": {

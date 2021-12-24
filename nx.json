@@ -57,7 +57,7 @@
     },
     "uesioapps-uesio": {
       "tags": [],
-      "implicitDependencies": ["cli"]
+      "implicitDependencies": ["cli", "loginhelpers"]
     },
     "uesioapps-crm": {
       "tags": [],
@@ -67,7 +67,8 @@
       "tags": []
     },
     "cli": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["loginhelpers"]
     }
   }
 }

@@ -2,6 +2,9 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
+
+// I can't figure out a way around this. Sadly. :(
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { cognito, mock } from "../../../../libs/loginhelpers/src"
 
 const MOCK_LOGIN = "mock"
