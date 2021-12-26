@@ -7,16 +7,19 @@ type Config = {
 	sessionId?: string
 	workspaceId?: string
 	appId?: string
+	hostUrl?: string
 }
 
 const SESSION_ID_KEY = "sessionId"
 const WORKSPACE_ID_KEY = "workspaceId"
 const APP_ID_KEY = "appId"
+const HOST_URL_KEY = "hostUrl"
 
 type ConfigKey =
 	| typeof SESSION_ID_KEY
 	| typeof WORKSPACE_ID_KEY
 	| typeof APP_ID_KEY
+	| typeof HOST_URL_KEY
 
 type BundleInfo = {
 	name: string
@@ -24,6 +27,14 @@ type BundleInfo = {
 
 const homedir = os.homedir()
 const saveFile = path.join(homedir, ".uesio")
+
+const validHosts = [
+	"https://studio.uesio-dev.com:3000",
+	"https://studio.ues.io",
+	"https://studio.ues-dev.io",
+]
+
+const DEFAULT_HOST = "https://studio.uesio-dev.com:3000"
 
 const fileExists = async (file: string): Promise<boolean> =>
 	fs
@@ -64,6 +75,14 @@ const getWorkspaceId = async (): Promise<string | null> =>
 
 const setWorkspaceId = async (value: string): Promise<void> =>
 	setConfigValue(WORKSPACE_ID_KEY, value)
+
+const getHostUrl = async (): Promise<string> => {
+	const url = await getConfigValue(HOST_URL_KEY)
+	return url || DEFAULT_HOST
+}
+
+const setHostUrl = async (value: string): Promise<void> =>
+	setConfigValue(HOST_URL_KEY, value)
 
 const getAppId = async (): Promise<string | null> => getConfigValue(APP_ID_KEY)
 
@@ -111,4 +130,7 @@ export {
 	getApp,
 	getWorkspace,
 	setWorkspace,
+	getHostUrl,
+	setHostUrl,
+	validHosts,
 }
