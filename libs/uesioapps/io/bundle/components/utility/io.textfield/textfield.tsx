@@ -22,7 +22,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 
 	return (
 		<input
-			value={value}
+			value={value || ""}
 			className={styles.cx(classes.input, readonly && classes.readonly)}
 			type="text"
 			disabled={readonly}
