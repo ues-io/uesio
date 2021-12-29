@@ -15,9 +15,9 @@ const Tile: FunctionComponent<TileUtilityProps> = (props) => {
 				display: "flex",
 				...(onClick && {
 					cursor: "pointer",
-					"&:hover": {
-						backdropFilter: "brightness(97%)",
-					},
+					// "&:hover": {
+					// 	backdropFilter: "brightness(97%)",
+					// },
 				}),
 			},
 			content: {
