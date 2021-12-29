@@ -35,7 +35,11 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				isSelected={isSelected}
 				icon={
 					definition.icon ? (
-						<Icon context={context} icon={definition.icon} />
+						<Icon
+							styles={definition["uesio.styles"]?.icon || {}}
+							context={context}
+							icon={definition.icon}
+						/>
 					) : undefined
 				}
 			/>

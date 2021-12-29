@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react"
 import { definition, styles, materialIcons } from "@uesio/ui"
+import { CSSInterpolation } from "@emotion/serialize"
 
 interface IconUtilityProps extends definition.UtilityProps {
 	icon?: string
@@ -20,6 +21,7 @@ const Icon: FunctionComponent<IconUtilityProps> = (props) => {
 				wordWrap: "normal",
 				whiteSpace: "nowrap",
 				direction: "ltr",
+				...props.styles,
 			},
 		},
 		props
