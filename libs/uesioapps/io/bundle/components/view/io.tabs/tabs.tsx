@@ -39,7 +39,7 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					tab: classes.tab,
 					tabSelected: classes.tabSelected,
 				}}
-				selectedTab={selectedIndex}
+				selectedTab={selectedTab.id}
 				setSelectedTab={setSelectedTab}
 				tabs={definition.tabs}
 				context={context}
