@@ -24,7 +24,7 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 
 	if (!metadata) return null
 
-	const namespaceValues = Object.keys(value)
+	const namespaceValues = Object.keys(value || {})
 		.filter((key) => key.startsWith(namespace + "."))
 		.reduce(
 			(obj, key) => ({
@@ -33,7 +33,7 @@ const TranslationItem: FunctionComponent<Props> = (props) => {
 			}),
 			{}
 		)
-	const nonNamespaceValues = Object.keys(value)
+	const nonNamespaceValues = Object.keys(value || {})
 		.filter((key) => !key.startsWith(namespace + "."))
 		.reduce(
 			(obj, key) => ({

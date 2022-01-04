@@ -43,6 +43,11 @@ func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (Bundleabl
 
 // GetKeyFromPath function
 func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
+
+	if conditions == nil {
+		return StandardKeyFromPath(path, conditions)
+	}
+
 	if len(conditions) != 1 {
 		return "", errors.New("Must specify language")
 	}
@@ -57,7 +62,7 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleCo
 	language := strings.TrimSuffix(path, ".yaml")
 
 	if requestedLanguage != language {
-		// Igmore this file
+		// Ignore this file
 		return "", nil
 	}
 
