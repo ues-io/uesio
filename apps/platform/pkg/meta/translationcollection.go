@@ -67,7 +67,6 @@ func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleCo
 	}
 
 	return language, nil
-
 }
 
 // GetItem function
