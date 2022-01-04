@@ -19,9 +19,21 @@ const collectionSlice = createSlice({
 					payload: { collections },
 				}: PayloadAction<wire.LoadResponseBatch>
 			) => {
-				console.log("Metadata")
-				console.log({ state, collections })
-				collectionAdapter.upsertMany(state, collections)
+				const collectionsToAdd: Record<string, PlainCollection> = {}
+				for (const [key, collection] of Object.entries(collections)) {
+					collectionsToAdd[key] = collection
+
+					if (state.entities[key]) {
+						const exitingFields = state.entities[key]?.fields
+						const newFields = collection.fields
+						collectionsToAdd[key].fields = {
+							...exitingFields,
+							...newFields,
+						}
+					}
+				}
+
+				collectionAdapter.upsertMany(state, collectionsToAdd)
 			}
 		)
 
@@ -33,37 +45,23 @@ const collectionSlice = createSlice({
 					payload: [, collections],
 				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
 			) => {
-				console.log("Wire")
-				console.log({ state, collections })
-				collectionAdapter.upsertMany(state, collections)
+				const collectionsToAdd: Record<string, PlainCollection> = {}
+				for (const [key, collection] of Object.entries(collections)) {
+					collectionsToAdd[key] = collection
+
+					if (state.entities[key]) {
+						const exitingFields = state.entities[key]?.fields
+						const newFields = collection.fields
+						collectionsToAdd[key].fields = {
+							...exitingFields,
+							...newFields,
+						}
+					}
+				}
+
+				collectionAdapter.upsertMany(state, collectionsToAdd)
 			}
 		)
-
-		// builder.addCase(
-		// 	wireLoadOp.fulfilled,
-		// 	(state, { payload: [, collections], meta }) => {
-		// 		for (const [key, value] of Object.entries(collections)) {
-		// 			state[key] = {
-		// 				status: "FULFILLED",
-		// 				data: value,
-		// 			}
-		// 		}
-		// 	}
-		// )
-
-		// builder.addCase(
-		// 	get.collectionMetadata.fulfilled,
-		// 	(state, { payload, meta }) => {
-		// 		for (const [key, value] of Object.entries(
-		// 			payload.collections
-		// 		)) {
-		// 			state[key] = {
-		// 				status: "FULFILLED",
-		// 				data: value,
-		// 			}
-		// 		}
-		// 	}
-		// )
 	},
 })
 
