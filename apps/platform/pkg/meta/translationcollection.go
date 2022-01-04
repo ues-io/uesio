@@ -2,6 +2,8 @@ package meta
 
 import (
 	"errors"
+	"os"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	language "golang.org/x/text/language"
@@ -41,7 +43,31 @@ func (tc *TranslationCollection) NewBundleableItemWithKey(key string) (Bundleabl
 
 // GetKeyFromPath function
 func (tc *TranslationCollection) GetKeyFromPath(path string, conditions BundleConditions) (string, error) {
-	return StandardKeyFromPath(path, conditions)
+
+	if conditions != nil {
+		if len(conditions) != 1 {
+			return "", errors.New("Must specify language")
+		}
+
+		parts := strings.Split(path, string(os.PathSeparator))
+		if len(parts) != 1 || !strings.HasSuffix(parts[0], ".yaml") {
+			// Ignore this file
+			return "", nil
+		}
+
+		requestedLanguage := conditions["studio.language"]
+		language := strings.TrimSuffix(path, ".yaml")
+
+		if requestedLanguage != language {
+			// Igmore this file
+			return "", nil
+		}
+
+		return language, nil
+	} else {
+		return StandardKeyFromPath(path, conditions)
+	}
+
 }
 
 // GetItem function
