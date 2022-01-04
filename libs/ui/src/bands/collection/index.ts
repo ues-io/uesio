@@ -18,7 +18,11 @@ const collectionSlice = createSlice({
 				{
 					payload: { collections },
 				}: PayloadAction<wire.LoadResponseBatch>
-			) => collectionAdapter.upsertMany(state, collections)
+			) => {
+				console.log("Metadata")
+				console.log({ state, collections })
+				collectionAdapter.upsertMany(state, collections)
+			}
 		)
 
 		builder.addCase(
@@ -28,7 +32,11 @@ const collectionSlice = createSlice({
 				{
 					payload: [, collections],
 				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => collectionAdapter.upsertMany(state, collections)
+			) => {
+				console.log("Wire")
+				console.log({ state, collections })
+				collectionAdapter.upsertMany(state, collections)
+			}
 		)
 
 		// builder.addCase(
