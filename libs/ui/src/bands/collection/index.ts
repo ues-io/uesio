@@ -1,10 +1,31 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { PlainCollection } from "./types"
+import { createSlice, EntityState, PayloadAction } from "@reduxjs/toolkit"
+import { PlainCollection, PlainCollectionMap } from "./types"
 import wireLoadOp from "../wire/operations/load"
 import get from "./operations/get"
 import { PlainWire } from "../wire/types"
 import { wire } from "@uesio/ui"
 import collectionAdapter from "./adapter"
+
+const mergeCollection = (
+	state: EntityState<PlainCollection>,
+	collections: PlainCollectionMap
+) => {
+	const collectionsToAdd: Record<string, PlainCollection> = {}
+	for (const [key, collection] of Object.entries(collections)) {
+		collectionsToAdd[key] = collection
+
+		if (state.entities[key]) {
+			const exitingFields = state.entities[key]?.fields
+			const newFields = collection.fields
+			collectionsToAdd[key].fields = {
+				...exitingFields,
+				...newFields,
+			}
+		}
+	}
+
+	collectionAdapter.upsertMany(state, collectionsToAdd)
+}
 
 const collectionSlice = createSlice({
 	name: "collection",
@@ -18,7 +39,9 @@ const collectionSlice = createSlice({
 				{
 					payload: { collections },
 				}: PayloadAction<wire.LoadResponseBatch>
-			) => collectionAdapter.upsertMany(state, collections)
+			) => {
+				mergeCollection(state, collections)
+			}
 		)
 
 		builder.addCase(
@@ -28,34 +51,10 @@ const collectionSlice = createSlice({
 				{
 					payload: [, collections],
 				}: PayloadAction<[PlainWire[], Record<string, PlainCollection>]>
-			) => collectionAdapter.upsertMany(state, collections)
+			) => {
+				mergeCollection(state, collections)
+			}
 		)
-
-		// builder.addCase(
-		// 	wireLoadOp.fulfilled,
-		// 	(state, { payload: [, collections], meta }) => {
-		// 		for (const [key, value] of Object.entries(collections)) {
-		// 			state[key] = {
-		// 				status: "FULFILLED",
-		// 				data: value,
-		// 			}
-		// 		}
-		// 	}
-		// )
-
-		// builder.addCase(
-		// 	get.collectionMetadata.fulfilled,
-		// 	(state, { payload, meta }) => {
-		// 		for (const [key, value] of Object.entries(
-		// 			payload.collections
-		// 		)) {
-		// 			state[key] = {
-		// 				status: "FULFILLED",
-		// 				data: value,
-		// 			}
-		// 		}
-		// 	}
-		// )
 	},
 })
 
