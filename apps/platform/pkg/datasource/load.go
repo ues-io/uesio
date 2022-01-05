@@ -130,15 +130,15 @@ func getMetadataForLoad(
 		}
 
 		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.Collection != "" && fieldMetadata.Namespace != "studio" {
-
 			refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
 			if err != nil {
 				return err
 			}
 
-			fields := []adapt.LoadRequestField{{
+			fields := []adapt.LoadRequestField{}
+			fields = append(fields, adapt.LoadRequestField{
 				ID: refCollectionMetadata.NameField,
-			}}
+			})
 			op.Fields[i].Fields = fields
 
 		}
