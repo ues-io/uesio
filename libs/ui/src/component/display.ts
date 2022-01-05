@@ -52,7 +52,9 @@ function should(condition: DisplayCondition, context: Context) {
 		return !!context.getView()?.params?.[condition.param]
 	}
 	if (condition.type === "paramIsValue") {
-		return context.getView()?.params?.[condition.param] === condition.value
+		const mergedValue = context.merge(condition.value)
+
+		return context.getView()?.params?.[condition.param] === mergedValue
 	}
 	if (condition.type === "featureFlag") {
 		const featureflags = context.getViewDef()?.dependencies?.featureflags
@@ -68,9 +70,12 @@ function should(condition: DisplayCondition, context: Context) {
 	const value = record?.getFieldValue(condition.field)
 
 	if (condition.type === "fieldNotEquals") {
-		return value !== condition.value
+		const mergedValue = context.merge(condition.value)
+		return value !== mergedValue
 	}
-	return value === condition.value
+	const mergedValue = context.merge(condition.value)
+
+	return value === mergedValue
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
