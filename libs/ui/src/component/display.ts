@@ -60,22 +60,17 @@ function should(condition: DisplayCondition, context: Context) {
 		const featureflags = context.getViewDef()?.dependencies?.featureflags
 		const featureFlag = featureflags && featureflags[condition.name]
 
-		if (!featureFlag) {
-			return false
-		}
+		if (!featureFlag) return false
 
 		return featureFlag && featureFlag?.value
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
 
-	if (condition.type === "fieldNotEquals") {
-		const mergedValue = context.merge(condition.value)
-		return value !== mergedValue
-	}
-	const mergedValue = context.merge(condition.value)
+	if (condition.type === "fieldNotEquals")
+		return value !== context.merge(condition.value)
 
-	return value === mergedValue
+	return value === context.merge(condition.value)
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
