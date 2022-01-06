@@ -52,25 +52,25 @@ function should(condition: DisplayCondition, context: Context) {
 		return !!context.getView()?.params?.[condition.param]
 	}
 	if (condition.type === "paramIsValue") {
-		return context.getView()?.params?.[condition.param] === condition.value
+		const mergedValue = context.merge(condition.value)
+
+		return context.getView()?.params?.[condition.param] === mergedValue
 	}
 	if (condition.type === "featureFlag") {
 		const featureflags = context.getViewDef()?.dependencies?.featureflags
 		const featureFlag = featureflags && featureflags[condition.name]
 
-		if (!featureFlag) {
-			return false
-		}
+		if (!featureFlag) return false
 
 		return featureFlag && featureFlag?.value
 	}
 	const record = context.getRecord()
 	const value = record?.getFieldValue(condition.field)
 
-	if (condition.type === "fieldNotEquals") {
-		return value !== condition.value
-	}
-	return value === condition.value
+	if (condition.type === "fieldNotEquals")
+		return value !== context.merge(condition.value)
+
+	return value === context.merge(condition.value)
 }
 
 function shouldDisplay(context: Context, definition?: DefinitionMap) {
