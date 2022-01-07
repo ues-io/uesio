@@ -41,18 +41,24 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 
 	if (!user) return null
 
+	const initials =
+		firstName && lastName ? firstName.charAt(0) + lastName.charAt(0) : "?"
+
+	const fullName =
+		firstName && lastName ? `${firstName} ${lastName}` : user?.["uesio.id"]
+
 	return (
 		<Tile
 			avatar={
 				<Avatar
 					image={picture?.["uesio.id"]}
-					text={firstName.charAt(0) + lastName.charAt(0)}
+					text={initials}
 					context={context}
 				/>
 			}
 			context={context}
 		>
-			{`${firstName} ${lastName}`}
+			{fullName}
 		</Tile>
 	)
 }

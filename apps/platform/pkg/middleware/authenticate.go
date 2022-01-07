@@ -221,8 +221,36 @@ func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 	}
 
 	var user meta.User
-	err = datasource.PlatformLoadOne(
+	err = datasource.PlatformLoadOneWithFields(
 		&user,
+		[]adapt.LoadRequestField{
+			{
+				ID: "uesio.firstname",
+			},
+			{
+				ID: "uesio.lastname",
+			},
+			{
+				ID: "uesio.profile",
+			},
+			{
+				ID: "uesio.federation_id",
+			},
+			{
+				ID: "uesio.federation_type",
+			},
+			{
+				ID: "uesio.picture",
+				Fields: []adapt.LoadRequestField{
+					{
+						ID: "uesio.id",
+					},
+				},
+			},
+			{
+				ID: "uesio.language",
+			},
+		},
 		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",

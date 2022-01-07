@@ -23,12 +23,22 @@ func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 			},
 			{
 				ID: "studio.app",
+				Fields: []adapt.LoadRequestField{
+					{
+						ID: "uesio.id",
+					},
+				},
 			},
 			{
 				ID: "studio.bundle",
 				Fields: []adapt.LoadRequestField{
 					{
 						ID: "studio.app",
+						Fields: []adapt.LoadRequestField{
+							{
+								ID: "uesio.id",
+							},
+						},
 					},
 					{
 						ID: "studio.major",
@@ -59,8 +69,13 @@ func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 // GetDomain key
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
-	err := datasource.PlatformLoadOne(
+	err := datasource.PlatformLoadOneWithFields(
 		&sd,
+		[]adapt.LoadRequestField{
+			{
+				ID: "studio.site",
+			},
+		},
 		[]adapt.LoadRequestCondition{
 			{
 				Field: "studio.domain",
