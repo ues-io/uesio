@@ -73,9 +73,11 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 	return nil
 }
 
-func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) ([]string, error) {
+func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) error {
 
-	tokenStrings := []string{"uesio.owner:" + session.GetUserID()}
+	if !session.HasToken("uesio.owner") {
+		session.AddToken("uesio.owner", []string{session.GetUserID()})
+	}
 
 	userAccessTokenNames := map[string]bool{}
 	for _, collectionMetadata := range metadata.Collections {
@@ -84,7 +86,9 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 		}
 		for _, challengeToken := range collectionMetadata.RecordChallengeTokens {
 			if challengeToken.UserAccessToken != "" {
-				userAccessTokenNames[challengeToken.UserAccessToken] = true
+				if !session.HasToken(challengeToken.UserAccessToken) {
+					userAccessTokenNames[challengeToken.UserAccessToken] = true
+				}
 			}
 		}
 	}
@@ -92,11 +96,11 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 	for key := range userAccessTokenNames {
 		uat, err := meta.NewUserAccessToken(key)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		err = bundle.Load(uat, session)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		if uat.Type == "lookup" {
 			fieldKeys := templating.ExtractKeys(uat.Token)
@@ -129,31 +133,33 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 			}}
 			loadMetadata, err := LoadWithOptions(loadOps, session, false)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			loadCollectionMetadata, err := loadMetadata.GetCollection(uat.Collection)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			template, err := adapt.NewFieldChanges(uat.Token, loadCollectionMetadata)
 			if err != nil {
-				return nil, err
+				return err
 			}
+			tokenStrings := []string{}
 			err = lookupResults.Loop(func(record loadable.Item, _ interface{}) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {
 					return err
 				}
-				tokenStrings = append(tokenStrings, uat.GetKey()+":"+tokenValue)
+				tokenStrings = append(tokenStrings, tokenValue)
 				return nil
 			})
 			if err != nil {
-				return nil, err
+				return err
 			}
+			session.AddToken(uat.GetKey(), tokenStrings)
 		}
 	}
 
-	return tokenStrings, nil
+	return nil
 }

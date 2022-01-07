@@ -153,7 +153,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	userTokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+	err := GenerateUserAccessTokens(&metadataResponse, session)
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
 		err = adapt.HandleLookups(func(ops []*adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials, userTokens)
+			return adapter.Load(ops, &metadataResponse, credentials, session.GetTokens())
 		}, batch, &metadataResponse)
 		if err != nil {
 			return err
@@ -234,7 +234,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials, userTokens)
+		err = adapter.Save(batch, &metadataResponse, credentials, session.GetTokens())
 		if err != nil {
 			return err
 		}

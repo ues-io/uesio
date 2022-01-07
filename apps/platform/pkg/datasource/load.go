@@ -32,6 +32,14 @@ var specialRefs = map[string]SpecialReferences{
 	},
 }
 
+func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
+	subFields := FieldsMap{}
+	for _, subField := range loadFields {
+		subFields[subField.ID] = *getSubFields(subField.Fields)
+	}
+	return &subFields
+}
+
 func getMetadataForLoad(
 	op *adapt.LoadOp,
 	metadataResponse *adapt.MetadataCache,
@@ -48,12 +56,8 @@ func getMetadataForLoad(
 	}
 
 	for _, requestField := range op.Fields {
-		subFields := FieldsMap{}
-		for _, subField := range requestField.Fields {
-			// TODO: This should be recursive
-			subFields[subField.ID] = FieldsMap{}
-		}
-		err := collections.AddField(collectionKey, requestField.ID, &subFields)
+		subFields := getSubFields(requestField.Fields)
+		err := collections.AddField(collectionKey, requestField.ID, subFields)
 		if err != nil {
 			return err
 		}
@@ -109,12 +113,12 @@ func getMetadataForLoad(
 		}
 		specialRef, ok := specialRefs[fieldMetadata.Type]
 		if ok {
-
-			fields := []adapt.LoadRequestField{}
-			for _, fieldID := range specialRef.Fields {
-				fields = append(fields, adapt.LoadRequestField{
-					ID: fieldID,
-				})
+			if len(op.Fields[i].Fields) == 0 {
+				for _, fieldID := range specialRef.Fields {
+					op.Fields[i].Fields = append(op.Fields[i].Fields, adapt.LoadRequestField{
+						ID: fieldID,
+					})
+				}
 			}
 
 			// If the reference to a different data source, we'll
@@ -123,11 +127,31 @@ func getMetadataForLoad(
 				op.ReferencedCollections = adapt.ReferenceRegistry{}
 				refCol := op.ReferencedCollections.Get(specialRef.ReferenceMetadata.Collection)
 				refCol.AddReference(fieldMetadata)
-				refCol.AddFields(fields)
-			} else {
-				op.Fields[i].Fields = fields
+				refCol.AddFields(op.Fields[i].Fields)
 			}
 		}
+
+		if fieldMetadata.Type == "REFERENCE" && fieldMetadata.ReferenceMetadata.Collection != "" {
+			if len(op.Fields[i].Fields) == 0 {
+				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
+				if err != nil {
+					return err
+				}
+
+				fields := []adapt.LoadRequestField{}
+				fields = append(fields, adapt.LoadRequestField{
+					ID: refCollectionMetadata.NameField,
+				})
+				fields = append(fields, adapt.LoadRequestField{
+					ID: "uesio.id",
+				})
+
+				op.Fields[i].Fields = fields
+
+			}
+
+		}
+
 	}
 
 	return nil
@@ -189,13 +213,11 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		collated[dsKey] = batch
 	}
 
-	var userTokens []string = nil
 	if checkPermissions {
-		tokens, err := GenerateUserAccessTokens(&metadataResponse, session)
+		err := GenerateUserAccessTokens(&metadataResponse, session)
 		if err != nil {
 			return nil, err
 		}
-		userTokens = tokens
 	}
 
 	// 3. Get metadata for each datasource and collection
@@ -225,7 +247,12 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 			return nil, err
 		}
 
-		err = adapter.Load(batch, &metadataResponse, credentials, userTokens)
+		var tokens []string
+		if checkPermissions {
+			tokens = session.GetTokens()
+		}
+
+		err = adapter.Load(batch, &metadataResponse, credentials, tokens)
 		if err != nil {
 			return nil, err
 		}
@@ -294,7 +321,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 				}
 
 				err = adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-					return adapter.Load(ops, &metadataResponse, credentials, userTokens)
+					return adapter.Load(ops, &metadataResponse, credentials, tokens)
 				}, op.Collection, adapt.ReferenceRegistry{
 					colKey: referencedCol,
 				})
