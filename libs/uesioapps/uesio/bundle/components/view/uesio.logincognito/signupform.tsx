@@ -39,19 +39,39 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 	return (
 		<>
 			<FieldWrapper context={context} label="First Name">
-				<TextField setValue={setFirstName} context={context} />
+				<TextField
+					value={firstname}
+					setValue={setFirstName}
+					context={context}
+				/>
 			</FieldWrapper>
 			<FieldWrapper context={context} label="Last Name">
-				<TextField setValue={setLastName} context={context} />
+				<TextField
+					value={lastname}
+					setValue={setLastName}
+					context={context}
+				/>
 			</FieldWrapper>
 			<FieldWrapper context={context} label="Username">
-				<TextField setValue={setSignupUsername} context={context} />
+				<TextField
+					value={signupUsername}
+					setValue={setSignupUsername}
+					context={context}
+				/>
 			</FieldWrapper>
 			<FieldWrapper context={context} label="Email">
-				<TextField setValue={setEmail} context={context} />
+				<TextField
+					value={email}
+					setValue={setEmail}
+					context={context}
+				/>
 			</FieldWrapper>
 			<FieldWrapper context={context} label="Password">
-				<TextField setValue={setSignupPassword} context={context} />
+				<TextField
+					value={signupPassword}
+					setValue={setSignupPassword}
+					context={context}
+				/>
 			</FieldWrapper>
 			<Grid
 				context={context}

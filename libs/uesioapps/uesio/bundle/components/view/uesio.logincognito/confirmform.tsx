@@ -20,7 +20,11 @@ const ConfirmForm: FunctionComponent<ConfirmFormProps> = (props) => {
 	return (
 		<>
 			<FieldWrapper context={context} label="Verification Code">
-				<TextField context={context} setValue={setVerificationCode} />
+				<TextField
+					context={context}
+					value={verificationCode}
+					setValue={setVerificationCode}
+				/>
 			</FieldWrapper>
 			<Grid
 				context={context}

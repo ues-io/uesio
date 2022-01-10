@@ -215,13 +215,15 @@ func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
 	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
 
-	headlessSession, err := auth.GetHeadlessSession()
-	if err != nil {
-		return nil, err
-	}
+	fakeSession := sess.NewSession(nil, &meta.User{
+		ID:        "system_system",
+		FirstName: "Super",
+		LastName:  "Admin",
+		Profile:   "uesio.public",
+	}, site)
 
 	var user meta.User
-	err = datasource.PlatformLoadOneWithFields(
+	err := datasource.PlatformLoadOneWithFields(
 		&user,
 		[]adapt.LoadRequestField{
 			{
@@ -257,7 +259,7 @@ func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 				Value: browserSessionUser,
 			},
 		},
-		headlessSession,
+		fakeSession,
 	)
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
