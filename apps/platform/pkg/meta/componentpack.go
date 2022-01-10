@@ -8,19 +8,19 @@ import (
 
 // ComponentPack struct
 type ComponentPack struct {
-	ID              string             `yaml:"-" uesio:"uesio.id"`
-	Name            string             `yaml:"name" uesio:"studio.name"`
-	Namespace       string             `yaml:"-" uesio:"-"`
-	Workspace       *Workspace         `yaml:"-" uesio:"studio.workspace"`
-	Components      ComponentsRegistry `yaml:"components" uesio:"-"`
-	RuntimeBundle   *UserFileMetadata  `yaml:"-" uesio:"studio.runtimebundle"`
-	BuildTimeBundle *UserFileMetadata  `yaml:"-" uesio:"studio.buildtimebundle"`
-	itemMeta        *ItemMeta          `yaml:"-" uesio:"-"`
-	CreatedBy       *User              `yaml:"-" uesio:"uesio.createdby"`
-	Owner           *User              `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy       *User              `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt       int64              `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt       int64              `yaml:"-" uesio:"uesio.createdat"`
+	ID              string              `yaml:"-" uesio:"uesio.id"`
+	Name            string              `yaml:"name" uesio:"studio.name"`
+	Namespace       string              `yaml:"-" uesio:"-"`
+	Workspace       *Workspace          `yaml:"-" uesio:"studio.workspace"`
+	Components      *ComponentsRegistry `yaml:"components" uesio:"studio.components"`
+	RuntimeBundle   *UserFileMetadata   `yaml:"-" uesio:"studio.runtimebundle"`
+	BuildTimeBundle *UserFileMetadata   `yaml:"-" uesio:"studio.buildtimebundle"`
+	itemMeta        *ItemMeta           `yaml:"-" uesio:"-"`
+	CreatedBy       *User               `yaml:"-" uesio:"uesio.createdby"`
+	Owner           *User               `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy       *User               `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt       int64               `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt       int64               `yaml:"-" uesio:"uesio.createdat"`
 }
 
 type ComponentsRegistry struct {
@@ -83,11 +83,30 @@ func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 
 // SetField function
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
+	if fieldName == "studio.components" {
+		var components ComponentsRegistry
+		err := yaml.Unmarshal([]byte(value.(string)), &components)
+		if err != nil {
+			return err
+		}
+		cp.Components = &components
+
+		return nil
+	}
 	return StandardFieldSet(cp, fieldName, value)
 }
 
 // GetField function
 func (cp *ComponentPack) GetField(fieldName string) (interface{}, error) {
+	if fieldName == "studio.components" {
+
+		bytes, err := yaml.Marshal(&cp.Components)
+		if err != nil {
+			return nil, err
+		}
+		return string(bytes), nil
+
+	}
 	return StandardFieldGet(cp, fieldName)
 }
 
