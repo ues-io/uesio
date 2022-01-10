@@ -84,6 +84,10 @@ func (cp *ComponentPack) GetPermChecker() *PermissionSet {
 // SetField function
 func (cp *ComponentPack) SetField(fieldName string, value interface{}) error {
 	if fieldName == "studio.components" {
+		if value == nil {
+			cp.Components = &ComponentsRegistry{}
+			return nil
+		}
 		var components ComponentsRegistry
 		err := yaml.Unmarshal([]byte(value.(string)), &components)
 		if err != nil {
