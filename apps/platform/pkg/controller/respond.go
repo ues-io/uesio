@@ -32,14 +32,16 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 }
 
 func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream io.ReadCloser) {
-	defer stream.Close()
+	if stream != nil {
+		defer stream.Close()
 
-	w.Header().Set("content-type", mimeType)
+		w.Header().Set("content-type", mimeType)
 
-	_, err := io.Copy(w, stream)
-	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
-		return
+		_, err := io.Copy(w, stream)
+		if err != nil {
+			logger.LogErrorWithTrace(r, err)
+			http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
+			return
+		}
 	}
 }
