@@ -32,7 +32,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 }
 
 // GetFieldMetadata function
-func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
+func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
 		Name:               f.Name,
 		Namespace:          f.Namespace,
@@ -40,7 +40,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Accessible:         true,
 		Updateable:         !f.ReadOnly && !f.CreateOnly,
 		Type:               f.Type,
-		Label:              f.Label,
+		Label:              GetLabelTranslation(f, session),
 		ReferenceMetadata:  f.ReferenceMetadata,
 		FileMetadata:       f.FileMetadata,
 		NumberMetadata:     f.NumberMetadata,
@@ -51,6 +51,58 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		SubFields:          GetSubFieldMetadata(f),
 		SubType:            f.SubType,
 	}
+}
+
+func addmap(a map[string]string, b map[string]string) {
+	for k, v := range b {
+		a[k] = v
+	}
+}
+
+func getReferenceLabels(translations meta.TranslationCollection, session *sess.Session) map[string]string {
+
+	originalNamespace := session.GetContextAppName()
+	labelRefs := map[string]string{}
+	index := -1
+
+	for i := range translations {
+		if translations[i].Namespace == originalNamespace {
+			index = i
+		}
+		addmap(labelRefs, translations[i].Labels)
+	}
+	if index != -1 {
+		addmap(labelRefs, translations[index].Labels)
+	}
+
+	return labelRefs
+}
+
+func GetLabelTranslation(f *meta.Field, session *sess.Session) string {
+
+	if f.LanguageLabel != "" {
+		userLanguage := session.GetUserInfo().Language
+
+		if userLanguage != "" {
+			var translations meta.TranslationCollection
+			err := bundle.LoadAllFromAny(&translations, meta.BundleConditions{
+				"studio.language": userLanguage,
+			}, session)
+
+			if err != nil {
+				return f.Label //TO-DO
+			}
+
+			labelRefs := getReferenceLabels(translations, session)
+			if val, ok := labelRefs[f.LanguageLabel]; ok && val != "" {
+				return val
+			}
+
+		}
+
+	}
+
+	return f.Label
 }
 
 func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
@@ -177,7 +229,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	}
 
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field))
+		collectionMetadata.SetField(GetFieldMetadata(&field, session))
 	}
 	return nil
 }
@@ -207,7 +259,7 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 		if err != nil {
 			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
 		}
-		fieldMetadata = GetFieldMetadata(field)
+		fieldMetadata = GetFieldMetadata(field, session)
 		collectionMetadata.SetField(fieldMetadata)
 	}
 	return fieldMetadata, nil
