@@ -53,6 +53,13 @@ const Tabs: FunctionComponent<Props> = (props) => {
 					accepts={["uesio.standalone"]}
 					context={context}
 				/>
+				<component.Slot
+					definition={definition}
+					listName="footer"
+					path={path}
+					accepts={["uesio.standalone"]}
+					context={context}
+				/>
 			</div>
 		</div>
 	)
