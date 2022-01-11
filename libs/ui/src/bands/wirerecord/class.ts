@@ -16,6 +16,10 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
+		if (!(fieldName in this.source)) {
+			console.log(`failed getting field value for ${fieldName}`)
+		}
+
 		const fieldNameParts = fieldName?.split("->")
 		if (fieldNameParts.length === 1) {
 			return get(this.source, fieldName) as T
