@@ -32,7 +32,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 }
 
 // GetFieldMetadata function
-func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
+func GetFieldMetadata(f *meta.Field, originalNamespace string, userLanguage string, translations meta.TranslationCollection) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
 		Name:               f.Name,
 		Namespace:          f.Namespace,
@@ -40,7 +40,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		Accessible:         true,
 		Updateable:         !f.ReadOnly && !f.CreateOnly,
 		Type:               f.Type,
-		Label:              GetLabelTranslation(f, session),
+		Label:              GetLabelTranslation(f, originalNamespace, userLanguage, translations),
 		ReferenceMetadata:  f.ReferenceMetadata,
 		FileMetadata:       f.FileMetadata,
 		NumberMetadata:     f.NumberMetadata,
@@ -59,9 +59,8 @@ func addmap(a map[string]string, b map[string]string) {
 	}
 }
 
-func getReferenceLabels(translations meta.TranslationCollection, session *sess.Session) map[string]string {
+func getReferenceLabels(translations meta.TranslationCollection, originalNamespace string) map[string]string {
 
-	originalNamespace := session.GetContextAppName()
 	labelRefs := map[string]string{}
 	index := -1
 
@@ -78,31 +77,15 @@ func getReferenceLabels(translations meta.TranslationCollection, session *sess.S
 	return labelRefs
 }
 
-func GetLabelTranslation(f *meta.Field, session *sess.Session) string {
+func GetLabelTranslation(f *meta.Field, originalNamespace string, userLanguage string, translations meta.TranslationCollection) string {
 
-	if f.LanguageLabel != "" {
-		userLanguage := session.GetUserInfo().Language
-
-		if userLanguage != "" {
-			var translations meta.TranslationCollection
-			err := bundle.LoadAllFromAny(&translations, meta.BundleConditions{
-				"studio.language": userLanguage,
-			}, session)
-
-			if err != nil {
-				return f.Label //TO-DO
-			}
-
-			labelRefs := getReferenceLabels(translations, session)
-			if val, ok := labelRefs[f.LanguageLabel]; ok && val != "" {
-				return val
-			}
-
-		}
-
+	labelRefs := getReferenceLabels(translations, originalNamespace)
+	if val, ok := labelRefs[f.LanguageLabel]; ok && val != "" {
+		return val
 	}
 
 	return f.Label
+
 }
 
 func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
@@ -228,8 +211,21 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 		return err
 	}
 
+	userLanguage := session.GetUserInfo().Language
+	originalNamespace := session.GetContextAppName()
+
+	var translations meta.TranslationCollection
+	if userLanguage != "" {
+		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
+			"studio.language": userLanguage,
+		}, session)
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field, session))
+		collectionMetadata.SetField(GetFieldMetadata(&field, originalNamespace, userLanguage, translations))
 	}
 	return nil
 }
@@ -259,7 +255,21 @@ func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *ada
 		if err != nil {
 			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
 		}
-		fieldMetadata = GetFieldMetadata(field, session)
+
+		userLanguage := session.GetUserInfo().Language
+		originalNamespace := session.GetContextAppName()
+
+		var translations meta.TranslationCollection
+		if userLanguage != "" {
+			err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
+				"studio.language": userLanguage,
+			}, session)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		fieldMetadata = GetFieldMetadata(field, originalNamespace, userLanguage, translations)
 		collectionMetadata.SetField(fieldMetadata)
 	}
 	return fieldMetadata, nil
