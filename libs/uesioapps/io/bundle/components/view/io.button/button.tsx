@@ -15,6 +15,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 			root: {},
 			label: {},
 			selected: {},
+			icon: {},
 		},
 		props
 	)
@@ -35,7 +36,13 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				isSelected={isSelected}
 				icon={
 					definition.icon ? (
-						<Icon context={context} icon={definition.icon} />
+						<Icon
+							classes={{
+								root: classes.icon,
+							}}
+							context={context}
+							icon={definition.icon}
+						/>
 					) : undefined
 				}
 			/>
