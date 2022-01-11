@@ -9,6 +9,7 @@ type FieldType =
 	| "LONGTEXT"
 	| "SELECT"
 	| "CHECKBOX"
+	| "MULTISELECT"
 	| "DATE"
 	| "FILE"
 	| "MAP"

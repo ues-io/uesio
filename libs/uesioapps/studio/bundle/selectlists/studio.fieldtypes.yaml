@@ -8,6 +8,8 @@ options:
     value: "LONGTEXT"
   - label: "Check Box"
     value: "CHECKBOX"
+  - label: "Multi Select"
+    value: "MULTISELECT"
   - label: "Select List"
     value: "SELECT"
   - label: "Reference"
