@@ -34,7 +34,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
 	}
 
-	if fieldMetadata.Type == "MAP" {
+	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" {
 		var mapdata map[string]interface{}
 		err := json.Unmarshal(src.([]byte), &mapdata)
 		if err != nil {
@@ -111,7 +111,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 		return "(fields->>'" + fieldName + "')::bigint"
 	case "NUMBER":
 		return "(fields->>'" + fieldName + "')::numeric"
-	case "MAP", "LIST":
+	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"
 	default:

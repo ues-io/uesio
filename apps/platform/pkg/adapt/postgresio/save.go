@@ -56,7 +56,7 @@ func NewValueBuilder(start int) *ValueBuilder {
 
 func getPGType(field *adapt.FieldMetadata) string {
 	switch field.Type {
-	case "MAP", "LIST":
+	case "MAP", "LIST", "MULTISELECT":
 		return "jsonb"
 	case "TIMESTAMP":
 		return "bigint"
@@ -76,7 +76,7 @@ type DataValuer struct {
 
 func (dv DataValuer) Value() (driver.Value, error) {
 	fieldMetadata := dv.Field
-	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" {
+	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "LIST" || fieldMetadata.Type == "MULTISELECT" {
 		jsonValue, err := json.Marshal(dv.Data)
 		if err != nil {
 			return nil, errors.New("Error converting from map to json: " + fieldMetadata.GetFullName())

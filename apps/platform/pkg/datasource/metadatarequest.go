@@ -165,7 +165,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if fieldMetadata.Type == "SELECT" {
+		if fieldMetadata.Type == "SELECT" || fieldMetadata.Type == "MULTISELECT" {
 			selectListMetadata := fieldMetadata.SelectListMetadata
 			if selectListMetadata.Options == nil {
 				additionalRequests.AddSelectList(collectionKey, newKey, selectListMetadata.Name)
