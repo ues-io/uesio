@@ -15,6 +15,7 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 			root: {},
 			label: {},
 			selected: {},
+			icon: {},
 		},
 		props
 	)
@@ -36,7 +37,9 @@ const Button: FunctionComponent<ButtonProps> = (props) => {
 				icon={
 					definition.icon ? (
 						<Icon
-							styles={definition["uesio.styles"]?.icon || {}}
+							classes={{
+								root: classes.icon,
+							}}
 							context={context}
 							icon={definition.icon}
 						/>
