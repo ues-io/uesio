@@ -32,8 +32,20 @@ func respondYAML(w http.ResponseWriter, r *http.Request, v interface{}) {
 }
 
 func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream io.ReadCloser) {
-	defer stream.Close()
+	if stream == nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		resp := make(map[string]string)
+		resp["message"] = "Resource Not Found"
+		jsonResp, err := json.Marshal(resp)
+		if err != nil {
+			logger.LogErrorWithTrace(r, err)
+		}
+		w.Write(jsonResp)
+		return
+	}
 
+	defer stream.Close()
 	w.Header().Set("content-type", mimeType)
 
 	_, err := io.Copy(w, stream)
@@ -42,4 +54,5 @@ func respondFile(w http.ResponseWriter, r *http.Request, mimeType string, stream
 		http.Error(w, "Failed to Transfer", http.StatusInternalServerError)
 		return
 	}
+
 }

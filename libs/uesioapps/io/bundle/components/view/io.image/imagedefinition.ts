@@ -18,48 +18,44 @@ const ImagePropertyDefinition: builder.BuildPropertiesDefinition = {
 	description: "Visible impression obtained by a camera",
 	link: "https://docs.ues.io/",
 	defaultDefinition: () => ({}),
-	sections: [
+	properties: [
 		{
-			title: "Display",
-			type: "PROPLIST",
-			properties: [
+			name: "file",
+			type: "METADATA",
+			metadataType: "FILE",
+			label: "File",
+		},
+		{
+			name: "alt",
+			type: "TEXT",
+			label: "Alt text",
+		},
+		{
+			name: "height",
+			type: "TEXT",
+			label: "Height",
+		},
+		{
+			name: "align",
+			type: "SELECT",
+			label: "Alignment",
+			options: [
 				{
-					name: "file",
-					type: "METADATA",
-					metadataType: "FILE",
-					label: "File",
+					value: "left",
+					label: "Left",
 				},
 				{
-					name: "alt",
-					type: "TEXT",
-					label: "Alt text",
+					value: "center",
+					label: "Center",
 				},
 				{
-					name: "height",
-					type: "TEXT",
-					label: "Height",
-				},
-				{
-					name: "align",
-					type: "SELECT",
-					label: "Alignment",
-					options: [
-						{
-							value: "left",
-							label: "Left",
-						},
-						{
-							value: "center",
-							label: "Center",
-						},
-						{
-							value: "right",
-							label: "Right",
-						},
-					],
+					value: "right",
+					label: "Right",
 				},
 			],
 		},
+	],
+	sections: [
 		{
 			title: "Signals",
 			type: "SIGNALS",
