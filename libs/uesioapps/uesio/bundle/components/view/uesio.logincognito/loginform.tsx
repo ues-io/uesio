@@ -21,10 +21,18 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 	return (
 		<>
 			<FieldWrapper context={context} label="Username">
-				<TextField context={context} setValue={setUsername} />
+				<TextField
+					context={context}
+					value={username}
+					setValue={setUsername}
+				/>
 			</FieldWrapper>
 			<FieldWrapper context={context} label="Password">
-				<TextField context={context} setValue={setPassword} />
+				<TextField
+					context={context}
+					value={password}
+					setValue={setPassword}
+				/>
 			</FieldWrapper>
 			<Grid
 				context={context}

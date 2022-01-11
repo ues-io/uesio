@@ -79,9 +79,9 @@ const Table: FunctionComponent<TableUtilityProps> = (props) => {
 								key="rownumbers"
 							/>
 						)}
-						{columns?.map((columnDef) => (
+						{columns?.map((columnDef, index) => (
 							<th
-								key={columnDef.label}
+								key={columnDef.label + index}
 								className={classes.headerCell}
 							>
 								{columnDef.label}

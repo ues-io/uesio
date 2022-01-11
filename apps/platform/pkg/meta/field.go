@@ -84,19 +84,20 @@ type Field struct {
 // GetFieldTypes function
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
-		"TEXT":      true,
-		"NUMBER":    true,
-		"LONGTEXT":  true,
-		"CHECKBOX":  true,
-		"SELECT":    true,
-		"REFERENCE": true,
-		"FILE":      true,
-		"USER":      true,
-		"LIST":      true,
-		"DATE":      true,
-		"MAP":       true,
-		"TIMESTAMP": true,
-		"EMAIL":     true,
+		"TEXT":        true,
+		"NUMBER":      true,
+		"LONGTEXT":    true,
+		"CHECKBOX":    true,
+		"MULTISELECT": true,
+		"SELECT":      true,
+		"REFERENCE":   true,
+		"FILE":        true,
+		"USER":        true,
+		"LIST":        true,
+		"DATE":        true,
+		"MAP":         true,
+		"TIMESTAMP":   true,
+		"EMAIL":       true,
 	}
 }
 

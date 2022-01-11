@@ -73,7 +73,7 @@ func GetSubFieldMetadata(f *meta.Field) map[string]*adapt.FieldMetadata {
 }
 
 func GetSelectListMetadata(f *meta.Field) *adapt.SelectListMetadata {
-	if f.Type == "SELECT" {
+	if f.Type == "SELECT" || f.Type == "MULTISELECT" {
 		return &adapt.SelectListMetadata{
 			Name: f.SelectList,
 		}

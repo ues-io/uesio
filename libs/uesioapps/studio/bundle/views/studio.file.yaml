@@ -72,25 +72,6 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: io.secondary
-                                      text: "Edit"
-                                      signals:
-                                        - signal: component/io.list/TOGGLE_MODE
-                                          target: "filesDeck"
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: "Save"
-                                      signals:
-                                        - signal: wire/SAVE
-                                          wires:
-                                            - "files"
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: "Cancel"
-                                      signals:
-                                        - signal: wire/CANCEL
-                                          wire: "files"
-                                  - io.button:
-                                      uesio.variant: io.secondary
                                       text: "Delete"
                                       signals:
                                         - signal: wire/MARK_FOR_DELETE

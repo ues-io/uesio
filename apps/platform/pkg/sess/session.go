@@ -83,6 +83,32 @@ type Session struct {
 	siteadmin      *meta.Site
 	permissions    *meta.PermissionSet
 	user           *meta.User
+	tokens         map[string][]string
+}
+
+func (s *Session) AddToken(name string, value []string) {
+	if s.tokens == nil {
+		s.tokens = map[string][]string{}
+	}
+	s.tokens[name] = value
+}
+
+func (s *Session) HasToken(name string) bool {
+	if s.tokens == nil {
+		return false
+	}
+	_, ok := s.tokens[name]
+	return ok
+}
+
+func (s *Session) GetTokens() []string {
+	flatTokens := []string{}
+	for name, values := range s.tokens {
+		for _, value := range values {
+			flatTokens = append(flatTokens, name+":"+value)
+		}
+	}
+	return flatTokens
 }
 
 // SetSite function
@@ -193,7 +219,9 @@ func (s *Session) GetLoginRoute() string {
 
 // RemoveWorkspaceContext function
 func (s *Session) RemoveWorkspaceContext() *Session {
-	return NewSession(s.browserSession, s.user, s.site)
+	newSess := NewSession(s.browserSession, s.user, s.site)
+	newSess.tokens = s.tokens
+	return newSess
 }
 
 // AddWorkspaceContext function

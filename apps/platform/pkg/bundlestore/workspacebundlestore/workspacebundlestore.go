@@ -70,6 +70,9 @@ func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, v
 
 // GetFileStream function
 func (b *WorkspaceBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
+	if file.Content == nil {
+		return nil, nil
+	}
 	stream, userFile, err := filesource.Download(file.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err

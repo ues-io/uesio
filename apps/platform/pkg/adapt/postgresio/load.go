@@ -34,7 +34,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
 	}
 
-	if fieldMetadata.Type == "MAP" {
+	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" {
 		var mapdata map[string]interface{}
 		err := json.Unmarshal(src.([]byte), &mapdata)
 		if err != nil {
@@ -56,12 +56,18 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		// Handle foreign key value
 		reference, ok := (*ds.References)[fieldMetadata.ReferenceMetadata.Collection]
 		if !ok {
-			return nil
+			// We couldn't find a reference record here, so just put in the id
+			refItem := adapt.Item{}
+			err := refItem.SetField("uesio.id", src)
+			if err != nil {
+				return err
+			}
+			return (*ds.Item).SetField(fieldMetadata.GetFullName(), refItem)
 		}
 
 		// If we didn't request any additional fields here, then we don't need to
 		// do a query, just set the ID field of our reference object
-		if len(reference.Fields) == 0 {
+		if len(reference.Fields) == 0 || (len(reference.Fields) == 1 && reference.Fields[0].ID == "uesio.id") {
 			refItem := adapt.Item{}
 			err := refItem.SetField(reference.Metadata.IDField, src)
 			if err != nil {
@@ -105,7 +111,7 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 		return "(fields->>'" + fieldName + "')::bigint"
 	case "NUMBER":
 		return "(fields->>'" + fieldName + "')::numeric"
-	case "MAP", "LIST":
+	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"
 	default:
@@ -195,7 +201,7 @@ func loadOne(
 	}
 
 	// UserTokens query
-	if collectionMetadata.Access == "protected" {
+	if collectionMetadata.Access == "protected" && userTokens != nil {
 		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
 		values = append(values, pq.Array(userTokens))
 	}

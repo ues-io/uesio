@@ -24,7 +24,7 @@ func (fm *FieldsMap) merge(newFields *FieldsMap) {
 	for field, subFields := range *newFields {
 		existing := (*fm)[field]
 		if existing == nil {
-			(*fm)[field] = FieldsMap{}
+			(*fm)[field] = subFields
 		} else {
 			existing.merge(&subFields)
 		}
@@ -132,6 +132,15 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 		}
 
 		if adapt.IsReference(fieldMetadata.Type) {
+
+			// If we only have one field and it's the uesio.id field, skip getting metadata
+			if len(collection[fieldKey]) == 1 {
+				_, ok := collection[fieldKey]["uesio.id"]
+				if ok {
+					continue
+				}
+			}
+
 			referenceMetadata := fieldMetadata.ReferenceMetadata
 			// Only add to additional requests if we don't already have that metadata
 			refCollection, err := metadataResponse.GetCollection(referenceMetadata.Collection)
@@ -156,7 +165,7 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
-		if fieldMetadata.Type == "SELECT" {
+		if fieldMetadata.Type == "SELECT" || fieldMetadata.Type == "MULTISELECT" {
 			selectListMetadata := fieldMetadata.SelectListMetadata
 			if selectListMetadata.Options == nil {
 				additionalRequests.AddSelectList(collectionKey, newKey, selectListMetadata.Name)
