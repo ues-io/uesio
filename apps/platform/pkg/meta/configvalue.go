@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/humandad/yaml"
 )
@@ -45,11 +46,8 @@ func (cv *ConfigValue) GetCollection() CollectionableGroup {
 	return &cvc
 }
 
-// GetConditions function
-func (cv *ConfigValue) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": cv.Name,
-	}
+func (cv *ConfigValue) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, cv.Name)
 }
 
 // GetBundleGroup function

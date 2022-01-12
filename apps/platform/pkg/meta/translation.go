@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"fmt"
+
 	"github.com/humandad/yaml"
 )
 
@@ -36,10 +38,8 @@ func (t *Translation) GetPath() string {
 	return t.GetKey() + ".yaml"
 }
 
-func (t *Translation) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.language": t.Language,
-	}
+func (t *Translation) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, t.Language)
 }
 
 func (t *Translation) SetNamespace(namespace string) {

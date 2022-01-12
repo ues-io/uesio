@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -65,11 +66,8 @@ func (ufc *UserFileCollection) GetCollection() CollectionableGroup {
 	return &ufcc
 }
 
-// GetConditions function
-func (ufc *UserFileCollection) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": ufc.Name,
-	}
+func (ufc *UserFileCollection) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, ufc.Name)
 }
 
 // GetBundleGroup function
