@@ -57,7 +57,7 @@ type BundleableItem interface {
 	GetPermChecker() *PermissionSet
 	GetKey() string
 	GetPath() string
-	GetConditions() map[string]string
+	GetDBID(string) string
 	SetNamespace(string)
 	GetNamespace() string
 	SetWorkspace(string)

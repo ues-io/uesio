@@ -4,11 +4,13 @@ import (
 	"errors"
 	"io"
 
+	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -18,34 +20,73 @@ type WorkspaceBundleStore struct {
 
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
-	conditionsMap := item.GetConditions()
-	// Add the workspace id as a condition
-	conditionsMap["studio.workspace"] = session.GetWorkspaceID()
-
-	conditions := []adapt.LoadRequestCondition{}
-
-	for field, value := range conditionsMap {
-		conditions = append(conditions, adapt.LoadRequestCondition{
-			Field: field,
-			Value: value,
-		})
-	}
 
 	item.SetNamespace(session.GetWorkspaceApp())
 
-	return datasource.PlatformLoadOne(item, conditions, session.RemoveWorkspaceContext())
+	return datasource.PlatformLoadOne(item, []adapt.LoadRequestCondition{
+		{
+			Field: "uesio.id",
+			Value: item.GetDBID(session.GetWorkspaceID()),
+		},
+	}, session.RemoveWorkspaceContext())
 }
 
 func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetItems(group, namespace, version, conditions, session)
+	err := b.GetAllItems(group, namespace, version, conditions, session)
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-// GetItems function
-func (b *WorkspaceBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+	collectionIDs := map[string][]string{}
+	itemMap := map[string]meta.BundleableItem{}
+	workspace := session.GetWorkspaceID()
+	namespace := session.GetWorkspaceApp()
+	for _, item := range items {
+		collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+		dbID := item.GetDBID(workspace)
+		item.SetNamespace(namespace)
+		_, ok := collectionIDs[collectionName]
+		if !ok {
+			collectionIDs[collectionName] = []string{}
+		}
+
+		collectionIDs[collectionName] = append(collectionIDs[collectionName], dbID)
+		itemMap[collectionName+":"+dbID] = item
+	}
+	for collectionName, ids := range collectionIDs {
+		group, err := meta.GetBundleableGroupFromType(collectionName)
+		if err != nil {
+			return err
+		}
+
+		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
+			Collection: group,
+			Namespace:  namespace,
+		}, []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio.id",
+				Value:    ids,
+				Operator: "IN",
+			},
+		}, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+
+		return group.Loop(func(item loadable.Item, index interface{}) error {
+			bundleable := item.(meta.BundleableItem)
+			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
+			return copier.Copy(match, item)
+		})
+
+	}
+	return nil
+}
+
+func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{

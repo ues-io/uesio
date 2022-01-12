@@ -184,33 +184,27 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 
 // LoadFieldsMetadata function
 func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
-	// TODO: Batch this
+
+	fields := []meta.BundleableItem{}
 	for _, key := range keys {
-		_, err := LoadFieldMetadata(key, collectionKey, collectionMetadata, session)
+		_, err := collectionMetadata.GetField(key)
 		if err != nil {
-			return err
+			field, err := meta.NewField(collectionKey, key)
+			if err != nil {
+				return err
+			}
+			fields = append(fields, field)
 		}
+	}
+	err := bundle.LoadMany(fields, session)
+	if err != nil {
+		return fmt.Errorf("collection: %s : %v", collectionKey, err)
+	}
+
+	for _, item := range fields {
+		collectionMetadata.SetField(GetFieldMetadata(item.(*meta.Field)))
 	}
 	return nil
-}
-
-// LoadFieldMetadata function
-func LoadFieldMetadata(key string, collectionKey string, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) (*adapt.FieldMetadata, error) {
-	// Check to see if the field is already in our metadata cache
-	fieldMetadata, err := collectionMetadata.GetField(key)
-	if err != nil {
-		field, err := meta.NewField(collectionKey, key)
-		if err != nil {
-			return nil, err
-		}
-		err = bundle.Load(field, session)
-		if err != nil {
-			return nil, fmt.Errorf("field: %s collection: %s : %v", key, collectionKey, err)
-		}
-		fieldMetadata = GetFieldMetadata(field)
-		collectionMetadata.SetField(fieldMetadata)
-	}
-	return fieldMetadata, nil
 }
 
 // LoadSelectListMetadata function

@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
 
 	"github.com/humandad/yaml"
@@ -46,11 +47,8 @@ func (f *File) GetCollection() CollectionableGroup {
 	return &fc
 }
 
-// GetConditions function
-func (f *File) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": f.Name,
-	}
+func (f *File) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, f.Name)
 }
 
 // GetBundleGroup function

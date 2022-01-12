@@ -133,7 +133,33 @@ func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.Bundl
 	if err != nil {
 		return err
 	}
-	return bs.GetItems(group, namespace, version, conditions, session)
+	return bs.GetAllItems(group, namespace, version, conditions, session)
+}
+
+func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
+	// Coalate items into same namespace
+	coalated := map[string][]meta.BundleableItem{}
+	for _, item := range items {
+		namespace := item.GetNamespace()
+		_, ok := coalated[namespace]
+		if !ok {
+			coalated[namespace] = []meta.BundleableItem{}
+		}
+		coalated[namespace] = append(coalated[namespace], item)
+	}
+	for namespace, items := range coalated {
+		version, bs, err := GetBundleStoreWithVersion(namespace, session)
+		if err != nil {
+			return err
+		}
+
+		err = bs.GetManyItems(items, version, session)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
 }
 
 // Load function
