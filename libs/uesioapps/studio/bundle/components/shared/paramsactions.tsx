@@ -44,8 +44,7 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					uesio.builder.addDefinitionPair(
 						path,
 						{
-							type: "merge",
-							collection: "crm.accounts",
+							type: "record",
 						},
 						"newparam" + (Math.floor(Math.random() * 60) + 1),
 						"params"

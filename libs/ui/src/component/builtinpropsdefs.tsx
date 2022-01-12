@@ -143,23 +143,40 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			label: "Name",
 		},
 		{
-			name: "collection",
-			type: "METADATA",
-			metadataType: "COLLECTION",
-			label: "Collection",
-		},
-		{
 			name: "type",
 			type: "SELECT",
 			label: "Parameter Type",
 			options: [
 				{
-					label: "Merge",
-					value: "merge",
+					label: "Record",
+					value: "record",
 				},
 				{
-					label: "Query",
-					value: "query",
+					label: "Text",
+					value: "text",
+				},
+			],
+		},
+		{
+			name: "collection",
+			type: "METADATA",
+			metadataType: "COLLECTION",
+			label: "Collection",
+			display: [
+				{
+					property: "type",
+					values: ["record"],
+				},
+			],
+		},
+		{
+			name: "value",
+			type: "TEXT",
+			label: "Value",
+			display: [
+				{
+					property: "type",
+					values: ["text"],
 				},
 			],
 		},

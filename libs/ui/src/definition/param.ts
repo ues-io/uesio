@@ -3,6 +3,6 @@ export type ParamDefinition = {
 	collection: string
 }
 
-export type ParamTypes = "query" | "merge"
+export type ParamTypes = "record" | "text"
 
 export type ParamDefinitionMap = Record<string, ParamDefinition>
