@@ -27,6 +27,7 @@ import {
 	getFieldPropsDef,
 	getWirePropsDef,
 	getPanelPropsDef,
+	getParamPropsDef,
 } from "./builtinpropsdefs"
 import { Context } from "../context/context"
 
@@ -237,6 +238,9 @@ const getPropertiesDefinitionFromPath = (
 		}
 		if (pathArray[0] === "panels" && pathArray.length === 2) {
 			return [getPanelPropsDef(), fromPath(pathArray.slice(0, 2))]
+		}
+		if (pathArray[0] === "params") {
+			return [getParamPropsDef(), fromPath(pathArray.slice(0, 2))]
 		}
 
 		const trimmedPath = trimPath(pathArray)

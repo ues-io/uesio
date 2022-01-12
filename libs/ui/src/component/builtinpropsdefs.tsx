@@ -133,9 +133,46 @@ const getFieldPropsDef = (
 	name,
 })
 
+const getParamPropsDef = (): BuildPropertiesDefinition => ({
+	title: "Parameter",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "name",
+			type: "KEY",
+			label: "Name",
+		},
+		{
+			name: "collection",
+			type: "METADATA",
+			metadataType: "COLLECTION",
+			label: "Collection",
+		},
+		{
+			name: "type",
+			type: "SELECT",
+			label: "Parameter Type",
+			options: [
+				{
+					label: "Merge",
+					value: "merge",
+				},
+				{
+					label: "Query",
+					value: "query",
+				},
+			],
+		},
+	],
+	sections: [],
+	actions: [],
+	type: "param",
+})
+
 export {
 	getComponentTypePropsDef,
 	getWirePropsDef,
 	getFieldPropsDef,
 	getPanelPropsDef,
+	getParamPropsDef,
 }

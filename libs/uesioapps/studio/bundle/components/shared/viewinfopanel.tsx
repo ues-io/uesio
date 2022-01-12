@@ -2,9 +2,11 @@ import { FunctionComponent } from "react"
 import { definition, component, hooks } from "@uesio/ui"
 import WiresPanel from "./wirespanel"
 import PanelsPanel from "./panelspanel"
+import ParamsPanel from "./paramspanel"
 import ComponentsPanel from "./componentspanel"
 import WiresActions from "./wiresactions"
 import PanelsActions from "./panelsactions"
+import ParamsActions from "./paramsactions"
 
 const TabLabels = component.registry.getUtility("io.tablabels")
 const ScrollPanel = component.registry.getUtility("io.scrollpanel")
@@ -45,6 +47,9 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 					{selectedTab === "panels" && (
 						<PanelsActions context={context} />
 					)}
+					{selectedTab === "params" && (
+						<ParamsActions context={context} />
+					)}
 				</>
 			}
 			context={context}
@@ -55,6 +60,7 @@ const ViewInfoPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 				<ComponentsPanel context={context} />
 			)}
 			{selectedTab === "panels" && <PanelsPanel context={context} />}
+			{selectedTab === "params" && <ParamsPanel context={context} />}
 		</ScrollPanel>
 	)
 }
