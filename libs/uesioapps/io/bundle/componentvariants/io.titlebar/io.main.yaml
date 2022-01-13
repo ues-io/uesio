@@ -4,7 +4,7 @@ label: Main
 definition:
   uesio.styles:
     root:
-      margin: 20px
+      margin: 40px
     title:
       color: "#444"
       fontSize: "16pt"

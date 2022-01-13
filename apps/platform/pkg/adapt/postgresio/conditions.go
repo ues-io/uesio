@@ -2,6 +2,7 @@ package postgresio
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -48,24 +49,42 @@ func getConditions(
 	paramCounter := NewParamCounter(2)
 	values := []interface{}{collectionName}
 
-	nameFieldMetadata, err := collectionMetadata.GetNameField()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	nameFieldDB := getFieldName(nameFieldMetadata)
-
 	for _, condition := range op.Conditions {
 
 		if condition.Type == "SEARCH" {
+			nameFieldMetadata, err := collectionMetadata.GetNameField()
+			if err != nil {
+				return nil, nil, err
+			}
+
+			nameFieldDB := getFieldName(nameFieldMetadata)
+
 			searchToken := condition.Value.(string)
 			if searchToken == "" {
 				continue
 			}
-			colValeStr := ""
-			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE "+paramCounter.get())
-			values = append(values, colValeStr)
+			searchFields := map[string]bool{
+				nameFieldDB: true,
+			}
+			for _, field := range condition.SearchFields {
+				fieldMetadata, err := collectionMetadata.GetField(field)
+				if err != nil {
+					return nil, nil, err
+				}
+				searchFields[getFieldName(fieldMetadata)] = true
+			}
+			// Split the search token on spaces to tokenize the search
+			tokens := strings.Fields(searchToken)
+			for _, token := range tokens {
+				searchConditions := []string{}
+				paramNumber := paramCounter.get()
+				for field := range searchFields {
+					searchConditions = append(searchConditions, field+" ILIKE "+paramNumber)
+				}
+				values = append(values, fmt.Sprintf("%%%v%%", token))
+				conditionStrings = append(conditionStrings, "("+strings.Join(searchConditions, " OR ")+")")
+			}
+
 			continue
 		}
 

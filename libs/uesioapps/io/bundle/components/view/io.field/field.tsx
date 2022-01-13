@@ -28,7 +28,7 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs } = definition
+	const { fieldId, id, displayAs, reference } = definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
@@ -71,7 +71,7 @@ const getFieldContent = (
 		case type === "CHECKBOX":
 			return <CheckboxField {...common} />
 		case type === "REFERENCE":
-			return <ReferenceField {...common} />
+			return <ReferenceField {...common} options={reference} />
 		case type === "TIMESTAMP":
 			return <TimestampField {...common} />
 		case type === "FILE" && displayAs === "TEXT":
@@ -79,7 +79,7 @@ const getFieldContent = (
 		case type === "FILE":
 			return <FileDynamic {...common} />
 		case type === "USER":
-			return <UserField {...common} />
+			return <UserField {...common} options={reference} />
 		case type === "LIST":
 			return (
 				<ListField

@@ -20,6 +20,7 @@ type ConditionBase = {
 type SearchConditionDefinition = ConditionBase & {
 	type: typeof SEARCH
 	value: string
+	fields?: string[]
 }
 
 type SearchConditionState = SearchConditionDefinition & {

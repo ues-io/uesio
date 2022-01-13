@@ -1,11 +1,18 @@
 import { definition, builder } from "@uesio/ui"
 
+type ReferenceFieldOptions = {
+	components?: definition.DefinitionList
+	searchFields?: string[]
+	returnFields?: string[]
+}
+
 type FieldDefinition = {
 	fieldId: string
 	labelPosition?: LabelPosition
 	label?: string
 	id?: string
 	displayAs?: string
+	reference: ReferenceFieldOptions
 } & definition.BaseDefinition
 
 type LabelPosition = "none" | "top" | "left"
@@ -61,6 +68,12 @@ const FieldPropertyDefinition: builder.BuildPropertiesDefinition = {
 	classes: ["root"],
 }
 
-export { FieldProps, FieldDefinition, FieldState, LabelPosition }
+export {
+	FieldProps,
+	FieldDefinition,
+	FieldState,
+	LabelPosition,
+	ReferenceFieldOptions,
+}
 
 export default FieldPropertyDefinition
