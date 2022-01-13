@@ -13,12 +13,13 @@ interface CheckboxFieldProps extends definition.UtilityProps {
 	value: wire.FieldValue
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
+	id: string
 }
 
 const Icon = component.registry.getUtility("io.icon")
 
 const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
-	const { setValue, value, mode, context } = props
+	const { setValue, value, mode, context, id } = props
 	const readonly = mode === "READ"
 
 	const checked = value === true
@@ -44,6 +45,7 @@ const CheckboxField: FunctionComponent<CheckboxFieldProps> = (props) => {
 				className={classes.native}
 				checked={checked}
 				type="checkbox"
+				id={id}
 				disabled={readonly}
 				onChange={(event) => setValue(event.target.checked)}
 			/>
