@@ -7,6 +7,7 @@ const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
 const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
+const MultiCheckField = component.registry.getUtility("io.multicheckfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 const FileDynamic = component.registry.getUtility("io.filedynamic")
@@ -59,6 +60,16 @@ const getFieldContent = (
 		case type === "SELECT":
 			return (
 				<SelectField
+					{...common}
+					options={addBlankSelectOption(
+						fieldMetadata.getSelectMetadata()?.options || [],
+						fieldMetadata.getSelectMetadata()?.blank_option_label
+					)}
+				/>
+			)
+		case type === "MULTISELECT" && displayAs === "CHECKBOX":
+			return (
+				<MultiCheckField
 					{...common}
 					options={addBlankSelectOption(
 						fieldMetadata.getSelectMetadata()?.options || [],
