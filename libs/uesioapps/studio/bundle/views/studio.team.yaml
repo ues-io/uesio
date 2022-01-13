@@ -142,6 +142,16 @@ definition:
             components:
               - io.field:
                   fieldId: studio.member
+                  reference:
+                    searchFields:
+                      - uesio.firstname
+                      - uesio.lastname
+                    returnFields:
+                      - uesio.firstname
+                      - uesio.lastname
+                    components:
+                      - io.text:
+                          text: "${uesio.firstname} ${uesio.lastname}"
       actions:
         - io.button:
             uesio.variant: "io.primary"
