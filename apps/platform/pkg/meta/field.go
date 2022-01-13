@@ -112,12 +112,8 @@ func (f *Field) GetCollection() CollectionableGroup {
 	return &fc
 }
 
-// GetConditions function
-func (f *Field) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name":       f.Name,
-		"studio.collection": f.CollectionRef,
-	}
+func (f *Field) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s_%s", workspace, f.CollectionRef, f.Name)
 }
 
 // GetBundleGroup function

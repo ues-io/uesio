@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/humandad/yaml"
 )
@@ -45,11 +46,8 @@ func (s *Secret) GetCollection() CollectionableGroup {
 	return &sc
 }
 
-// GetConditions function
-func (s *Secret) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": s.Name,
-	}
+func (s *Secret) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, s.Name)
 }
 
 // GetBundleGroup function

@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"fmt"
+
 	"github.com/humandad/yaml"
 )
 
@@ -30,11 +32,8 @@ func (t *Theme) GetCollection() CollectionableGroup {
 	return &tc
 }
 
-// GetConditions function
-func (t *Theme) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": t.Name,
-	}
+func (t *Theme) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, t.Name)
 }
 
 // GetBundleGroup function

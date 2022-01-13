@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/humandad/yaml"
@@ -41,11 +42,8 @@ func (c *ComponentVariant) GetPath() string {
 	return filepath.Join(c.Component, c.Namespace+"."+c.Name) + ".yaml"
 }
 
-func (c *ComponentVariant) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name":      c.Name,
-		"studio.component": c.Component,
-	}
+func (c *ComponentVariant) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s_%s", workspace, c.Component, c.Name)
 }
 
 func (c *ComponentVariant) SetNamespace(namespace string) {

@@ -28,6 +28,7 @@ func (a *Adapter) Migrate(credentials *adapt.Credentials) error {
 			token varchar(255) not null,
 			readonly boolean not null
 		);
+		create index if not exists collection_idx on data (collection);
 	`)
 	if err != nil {
 		return err

@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -115,13 +116,8 @@ func (b *Bot) GetCollection() CollectionableGroup {
 	return &bc
 }
 
-// GetConditions function
-func (b *Bot) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name":       b.Name,
-		"studio.collection": b.CollectionRef,
-		"studio.type":       b.Type,
-	}
+func (b *Bot) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s_%s_%s", workspace, b.CollectionRef, b.Type, b.Name)
 }
 
 // GetBundleGroup function

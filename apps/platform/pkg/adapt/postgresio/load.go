@@ -3,99 +3,13 @@ package postgresio
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/lib/pq"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
-
-type DataScanner struct {
-	Item       *loadable.Item
-	Field      *adapt.FieldMetadata
-	References *adapt.ReferenceRegistry
-	Index      *int
-	BatchSize  int
-}
-
-func (ds *DataScanner) Scan(src interface{}) error {
-
-	// Skip the last one
-	if ds.BatchSize == *ds.Index {
-		return nil
-	}
-
-	fieldMetadata := ds.Field
-	if src == nil {
-		return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
-	}
-
-	if fieldMetadata.Type == "MAP" || fieldMetadata.Type == "MULTISELECT" {
-		var mapdata map[string]interface{}
-		err := json.Unmarshal(src.([]byte), &mapdata)
-		if err != nil {
-			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
-		}
-		return (*ds.Item).SetField(fieldMetadata.GetFullName(), mapdata)
-	}
-	if fieldMetadata.Type == "LIST" {
-		var arraydata []interface{}
-		err := json.Unmarshal(src.([]byte), &arraydata)
-		if err != nil {
-			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
-		}
-		return (*ds.Item).SetField(fieldMetadata.GetFullName(), arraydata)
-	}
-
-	if adapt.IsReference(fieldMetadata.Type) {
-
-		// Handle foreign key value
-		reference, ok := (*ds.References)[fieldMetadata.ReferenceMetadata.Collection]
-		if !ok {
-			// We couldn't find a reference record here, so just put in the id
-			refItem := adapt.Item{}
-			err := refItem.SetField("uesio.id", src)
-			if err != nil {
-				return err
-			}
-			return (*ds.Item).SetField(fieldMetadata.GetFullName(), refItem)
-		}
-
-		// If we didn't request any additional fields here, then we don't need to
-		// do a query, just set the ID field of our reference object
-		if len(reference.Fields) == 0 || (len(reference.Fields) == 1 && reference.Fields[0].ID == "uesio.id") {
-			refItem := adapt.Item{}
-			err := refItem.SetField(reference.Metadata.IDField, src)
-			if err != nil {
-				return err
-			}
-			return (*ds.Item).SetField(fieldMetadata.GetFullName(), refItem)
-		}
-
-		reference.AddID(src, adapt.ReferenceLocator{
-			RecordIndex: *ds.Index,
-			Field:       fieldMetadata,
-		})
-
-		return nil
-	}
-
-	return (*ds.Item).SetField(fieldMetadata.GetFullName(), src)
-}
-
-//GetBytes interface to bytes function
-func GetBytes(key interface{}) ([]byte, error) {
-	buf, ok := key.([]byte)
-	if !ok {
-		return nil, errors.New("GetBytes Error")
-	}
-
-	return buf, nil
-}
 
 func getFieldNameWithAlias(fieldMetadata *adapt.FieldMetadata) string {
 	fieldName := getFieldName(fieldMetadata)
@@ -134,13 +48,6 @@ func loadOne(
 		return err
 	}
 
-	nameFieldMetadata, err := collectionMetadata.GetNameField()
-	if err != nil {
-		return err
-	}
-
-	nameFieldDB := getFieldName(nameFieldMetadata)
-
 	fieldMap, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
@@ -151,59 +58,11 @@ func loadOne(
 		return err
 	}
 
-	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
+	loadQuery := "SELECT " + strings.Join(fieldIDs, ",") + " FROM public.data WHERE "
+
+	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, ops, tenantID, userTokens)
 	if err != nil {
 		return err
-	}
-
-	loadQuery := "SELECT " + strings.Join(fieldIDs, ",") + " FROM public.data WHERE "
-	conditionStrings := []string{
-		"collection = $1",
-	}
-
-	paramCounter := NewParamCounter(2)
-	values := []interface{}{
-		collectionName,
-	}
-
-	for _, condition := range op.Conditions {
-
-		if condition.Type == "SEARCH" {
-			searchToken := condition.Value.(string)
-			if searchToken == "" {
-				continue
-			}
-			colValeStr := ""
-			colValeStr = "%" + fmt.Sprintf("%v", searchToken) + "%"
-			conditionStrings = append(conditionStrings, nameFieldDB+" ILIKE "+paramCounter.get())
-			values = append(values, colValeStr)
-			continue
-		}
-
-		fieldMetadata, err := collectionMetadata.GetField(condition.Field)
-		if err != nil {
-			return err
-		}
-		fieldName := getFieldName(fieldMetadata)
-
-		conditionValue, err := adapt.GetConditionValue(condition, op, metadata, ops)
-		if err != nil {
-			return err
-		}
-
-		if condition.Operator == "IN" {
-			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")
-			values = append(values, pq.Array(conditionValue))
-		} else {
-			conditionStrings = append(conditionStrings, fieldName+" = "+paramCounter.get())
-			values = append(values, conditionValue)
-		}
-	}
-
-	// UserTokens query
-	if collectionMetadata.Access == "protected" && userTokens != nil {
-		conditionStrings = append(conditionStrings, "id IN (SELECT recordid FROM public.tokens WHERE token = ANY("+paramCounter.get()+"))")
-		values = append(values, pq.Array(userTokens))
 	}
 
 	loadQuery = loadQuery + strings.Join(conditionStrings, " AND ")

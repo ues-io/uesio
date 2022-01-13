@@ -69,15 +69,24 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 }
 
 func (b *SystemBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
-	err := b.GetItems(group, namespace, version, conditions, session)
+	err := b.GetAllItems(group, namespace, version, conditions, session)
 	if err != nil {
 		return false, err
 	}
 	return group.Len() > 0, nil
 }
 
-// GetItems function
-func (b *SystemBundleStore) GetItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+func (b *SystemBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+	for _, item := range items {
+		err := b.GetItem(item, version, session)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
 
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)

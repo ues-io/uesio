@@ -1,6 +1,9 @@
 package meta
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 func NewUserAccessToken(key string) (*UserAccessToken, error) {
 	namespace, name, err := ParseKey(key)
@@ -41,11 +44,8 @@ func (uat *UserAccessToken) GetCollection() CollectionableGroup {
 	return &uatc
 }
 
-// GetConditions function
-func (uat *UserAccessToken) GetConditions() map[string]string {
-	return map[string]string{
-		"studio.name": uat.Name,
-	}
+func (uat *UserAccessToken) GetDBID(workspace string) string {
+	return fmt.Sprintf("%s_%s", workspace, uat.Name)
 }
 
 // GetBundleGroup function
