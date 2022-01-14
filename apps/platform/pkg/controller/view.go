@@ -13,6 +13,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
 // ViewResponse struct
@@ -28,7 +29,7 @@ type ViewDependencies struct {
 	ConfigValues      map[string]string                 `yaml:"configvalues,omitempty"`
 	ComponentVariants map[string]*meta.ComponentVariant `yaml:"componentvariants,omitempty"`
 	FeatureFlags      map[string]*FeatureFlagResponse   `yaml:"featureflags,omitempty"`
-	Labels            map[string]*meta.Label            `yaml:"labels,omitempty"`
+	Labels            map[string]string                 `yaml:"labels,omitempty"`
 }
 
 // ViewPreview is also good
@@ -116,65 +117,6 @@ func getPacksByNamespace(session *sess.Session) (map[string]meta.ComponentPackCo
 	return packs, nil
 }
 
-func addmap(a map[string]string, b map[string]string) {
-	for k, v := range b {
-		a[k] = v
-	}
-}
-
-func getReferenceLabels(translations meta.TranslationCollection, session *sess.Session) map[string]string {
-
-	originalNamespace := session.GetContextAppName()
-	labelRefs := map[string]string{}
-	index := -1
-
-	for i := range translations {
-		if translations[i].Namespace == originalNamespace {
-			index = i
-		}
-		addmap(labelRefs, translations[i].Labels)
-	}
-	if index != -1 {
-		addmap(labelRefs, translations[index].Labels)
-	}
-
-	return labelRefs
-}
-
-func getTranslatedLabels(session *sess.Session) (meta.LabelCollection, error) {
-
-	userLanguage := session.GetUserInfo().Language
-
-	var labels meta.LabelCollection
-	err := bundle.LoadAllFromAny(&labels, nil, session)
-	if err != nil {
-		return nil, errors.New("Failed to load labels: " + err.Error())
-	}
-
-	var translations meta.TranslationCollection
-	if userLanguage != "" {
-		err = bundle.LoadAllFromAny(&translations, meta.BundleConditions{
-			"studio.language": userLanguage,
-		}, session)
-
-		if err != nil {
-			return nil, errors.New("Failed to load translations: " + err.Error())
-		}
-	}
-
-	labelRefs := getReferenceLabels(translations, session)
-
-	for i := range labels {
-		//check if we have any translation for that label and it's not empty
-		if val, ok := labelRefs[labels[i].GetKey()]; ok && val != "" {
-			labels[i].Value = val
-		}
-	}
-
-	return labels, nil
-
-}
-
 func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 
 	packsByNamespace, err := getPacksByNamespace(session)
@@ -193,8 +135,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		return nil, errors.New("Failed to load studio variants: " + err.Error())
 	}
 
-	labels, err := getTranslatedLabels(session)
-
+	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
@@ -204,7 +145,7 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
 		FeatureFlags:      map[string]*FeatureFlagResponse{},
-		Labels:            map[string]*meta.Label{},
+		Labels:            labels,
 	}
 
 	for _, packs := range packsByNamespace {
@@ -228,11 +169,6 @@ func getBuilderDependencies(session *sess.Session) (*ViewDependencies, error) {
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	}
-
-	for i := range labels {
-		label := labels[i]
-		deps.Labels[label.GetKey()] = &label
 	}
 
 	return &deps, nil
@@ -347,8 +283,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		return nil, err
 	}
 
-	labels, err := getTranslatedLabels(session)
-
+	labels, err := translate.GetTranslatedLabels(session)
 	if err != nil {
 		return nil, errors.New("Failed to get translated labels: " + err.Error())
 	}
@@ -358,7 +293,7 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 		ComponentVariants: map[string]*meta.ComponentVariant{},
 		ConfigValues:      map[string]string{},
 		FeatureFlags:      map[string]*FeatureFlagResponse{},
-		Labels:            map[string]*meta.Label{},
+		Labels:            labels,
 	}
 
 	packs := map[string]meta.ComponentPackCollection{}
@@ -381,11 +316,6 @@ func getViewDependencies(view *meta.View, session *sess.Session) (*ViewDependenc
 	for i := range ffr {
 		featureFlag := ffr[i]
 		deps.FeatureFlags[featureFlag.Name] = &featureFlag
-	}
-
-	for i := range labels {
-		label := labels[i]
-		deps.Labels[label.GetKey()] = &label
 	}
 
 	return &deps, nil

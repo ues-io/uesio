@@ -31,8 +31,19 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 	}
 }
 
+func GetFieldLabel(f *meta.Field, session *sess.Session) string {
+	if f.LanguageLabel == "" {
+		return f.Label
+	}
+	translation := session.GetLabel(f.LanguageLabel)
+	if translation == "" {
+		return f.Label
+	}
+	return translation
+}
+
 // GetFieldMetadata function
-func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
+func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata {
 	return &adapt.FieldMetadata{
 		Name:               f.Name,
 		Namespace:          f.Namespace,
@@ -40,7 +51,7 @@ func GetFieldMetadata(f *meta.Field) *adapt.FieldMetadata {
 		Accessible:         true,
 		Updateable:         !f.ReadOnly && !f.CreateOnly,
 		Type:               f.Type,
-		Label:              f.Label,
+		Label:              GetFieldLabel(f, session),
 		ReferenceMetadata:  f.ReferenceMetadata,
 		FileMetadata:       f.FileMetadata,
 		NumberMetadata:     f.NumberMetadata,
@@ -177,7 +188,7 @@ func LoadAllFieldsMetadata(collectionKey string, collectionMetadata *adapt.Colle
 	}
 
 	for _, field := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(&field))
+		collectionMetadata.SetField(GetFieldMetadata(&field, session))
 	}
 	return nil
 }
@@ -202,7 +213,7 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 	}
 
 	for _, item := range fields {
-		collectionMetadata.SetField(GetFieldMetadata(item.(*meta.Field)))
+		collectionMetadata.SetField(GetFieldMetadata(item.(*meta.Field), session))
 	}
 	return nil
 }
