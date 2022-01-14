@@ -25,7 +25,7 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 	)
 
 	const selectedSection = propsDef.sections?.find(
-		(section) => section.title === selectedTab
+		(section, index) => section.title + index === selectedTab
 	)
 
 	return (
@@ -54,8 +54,8 @@ const PropertiesPane: FunctionComponent<PropertiesPaneProps> = (props) => {
 							selectedTab={selectedTab}
 							setSelectedTab={setSelectedTab}
 							tabs={[{ id: "", label: "", icon: "home" }].concat(
-								propsDef.sections.map((section) => ({
-									id: section.title,
+								propsDef.sections.map((section, index) => ({
+									id: section.title + index,
 									label: section.title,
 									icon: "",
 								}))

@@ -16,16 +16,11 @@ class WireRecord {
 	getId = () => this.id
 	getWire = () => this.wire
 	getFieldValue = <T extends FieldValue>(fieldName: string): T => {
-		if (!(fieldName in this.source)) {
-			console.log(`failed getting field value for ${fieldName}`)
-		}
-
 		const fieldNameParts = fieldName?.split("->")
-		if (fieldNameParts.length === 1) {
-			return get(this.source, fieldName) as T
-		}
-		// Special handling for maps
-		return get(this.source, fieldNameParts) as T
+		return get(
+			this.source,
+			fieldNameParts.length === 1 ? fieldName : fieldNameParts
+		)
 	}
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)

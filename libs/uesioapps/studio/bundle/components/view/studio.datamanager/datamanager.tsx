@@ -94,6 +94,7 @@ const DataManager: FunctionComponent<Props> = (props) => {
 				wire: "collectionData",
 				mode: "EDIT",
 				rownumbers: true,
+				pagesize: 10,
 				rowactions: [
 					{
 						text: "Delete",

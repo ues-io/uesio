@@ -1,24 +1,32 @@
-import { useState, useRef, FunctionComponent } from "react"
+import { useState, useRef, FunctionComponent, ReactNode } from "react"
 import { useCombobox } from "downshift"
 import { definition, styles } from "@uesio/ui"
 import debounce from "lodash/debounce"
 
-type DropDownProps = {
-	value: string
-	setValue: (value: string | null) => void
-	getItems: (
-		search: string,
-		callback: (items: SelectedItem[]) => void
-	) => void
+type DropDownProps<T> = {
+	value: T
+	setValue: (value: T) => void
+	getItems: (search: string, callback: (items: T[]) => void) => void
+	itemToString: (item: T) => string
+	loadingRenderer: () => ReactNode
+	itemRenderer: (
+		item: T,
+		index: number,
+		highlightedIndex: number
+	) => ReactNode
 } & definition.BaseProps
 
-type SelectedItem = {
-	id: string
-	value: string
-}
-
-const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
-	const { getItems, value, setValue } = props
+const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
+	props
+) => {
+	const {
+		getItems,
+		value,
+		setValue,
+		itemToString,
+		loadingRenderer = () => <div>Loading...</div>,
+		itemRenderer = (item) => <div>{itemToString(item)}</div>,
+	} = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -29,10 +37,9 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 		props
 	)
 	const [loading, setLoading] = useState(false)
-	const [inputItems, setInputItems] = useState<{ value: string }[]>([])
+	const [inputItems, setInputItems] = useState<unknown[]>([])
 	const lastInputChange = useRef<number>(0)
 
-	const options = loading ? [{ value: "loading..." }] : inputItems
 	const debouncedRequest = debounce(getItems, 250)
 
 	const {
@@ -43,12 +50,12 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 		highlightedIndex,
 		getItemProps,
 	} = useCombobox({
-		items: options,
-		itemToString: (item) => (item ? item.value : ""),
-		initialSelectedItem: { value },
+		items: inputItems,
+		itemToString,
+		initialSelectedItem: value,
 		onSelectedItemChange: (changes) => {
-			const selectedItem = changes.selectedItem as SelectedItem
-			selectedItem && setValue(selectedItem.id)
+			const selectedItem = changes.selectedItem
+			selectedItem && setValue(selectedItem)
 		},
 		onInputValueChange: ({ inputValue, type }) => {
 			lastInputChange.current = Date.now()
@@ -91,24 +98,23 @@ const AutoCompleteField: FunctionComponent<DropDownProps> = (props) => {
 				style={{ position: "absolute", zIndex: 1 }}
 			>
 				{isOpen &&
-					options.map((item, index) => (
-						<div
-							style={
-								highlightedIndex === index
-									? { backgroundColor: "#bde4ff" }
-									: { backgroundColor: "white" }
-							}
-							key={`${item.value}${index}`}
-							{...getItemProps({ item, index })}
-						>
-							{item.value}
-						</div>
-					))}
+					(loading
+						? loadingRenderer()
+						: inputItems.map((item, index) => (
+								<div
+									key={itemToString(item) + "_" + index}
+									{...getItemProps({ item, index })}
+								>
+									{itemRenderer(
+										item,
+										index,
+										highlightedIndex
+									)}
+								</div>
+						  )))}
 			</div>
 		</div>
 	)
 }
-
-export { SelectedItem }
 
 export default AutoCompleteField

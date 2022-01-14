@@ -15,6 +15,8 @@ import { getURLFromFullName } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
+import { PlainWireRecord } from "../bands/wirerecord/types"
+import WireRecord from "../bands/wirerecord/class"
 
 type FieldMode = "READ" | "EDIT"
 
@@ -38,6 +40,7 @@ type MergeType =
 type ContextFrame = {
 	wire?: string
 	record?: string
+	recordData?: PlainWireRecord // A way to store arbitrary record data in context
 	view?: string
 	viewDef?: string
 	buildMode?: boolean
@@ -158,6 +161,9 @@ class Context {
 
 	getRecordId = () => this.stack.find((frame) => frame?.record)?.record
 
+	getRecordData = () =>
+		this.stack.find((frame) => frame?.recordData)?.recordData
+
 	removeRecordFrame = (times: number): Context => {
 		if (!times) {
 			return this
@@ -192,6 +198,11 @@ class Context {
 				)
 			}
 			return wire?.getFirstRecord()
+		}
+
+		const recordData = recordFrame.getRecordData()
+		if (recordData) {
+			return new WireRecord(recordData, "", new Wire())
 		}
 
 		const recordId = recordFrame.getRecordId()
@@ -253,6 +264,13 @@ class Context {
 	}
 
 	findRecordFrame = () => {
+		const recordDataIndex = this.stack.findIndex(
+			(frame) => frame?.recordData
+		)
+		if (recordDataIndex >= 0) {
+			return new Context(this.stack.slice(recordDataIndex))
+		}
+
 		const index = this.stack.findIndex((frame) => frame?.record)
 		if (index < 0) {
 			return undefined

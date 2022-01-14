@@ -70,6 +70,9 @@ definition:
                                 uesio.variant: io.secondary
                 - io.box:
                     uesio.variant: io.section
+                    uesio.styles:
+                      root:
+                        padding: 40px
                     components:
                       - studio.datamanager:
                           collectionId: $Param{collectionname}
