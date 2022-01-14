@@ -31,43 +31,54 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 				display: "flex",
 				alignItems: "center",
 			},
+			label: {
+				userSelect: "none",
+			},
 		},
 		props
 	)
 
+	const fieldLabel = props.fieldMetadata.getLabel()
+
 	return (
-		<div>
+		<fieldset>
+			<legend>{fieldLabel}</legend>
 			{options
 				?.filter((el) => el.value)
-				.map((option) => (
-					<div className={classes.option} key={option.value}>
-						<CheckBoxField
-							id={"checkBoxId" + option.label}
-							value={value[option.value]}
-							context={context}
-							setValue={(optionVal: boolean) => {
-								if (mode === "READ") return
-								// Set the false value, then filter out the false values before setting
-								return setValue(
-									Object.entries({
-										...value,
-										[option.value]: optionVal,
-									}).reduce(
-										(prev, [key, val]) =>
-											val
-												? { ...prev, [key]: true }
-												: null,
-										{}
+				.map((option) => {
+					const optionId = `${fieldLabel}_check_${option.value}`
+						.replace(/ /g, "_")
+						.toLowerCase()
+					return (
+						<div className={classes.option} key={option.value}>
+							<CheckBoxField
+								id={optionId}
+								value={value[option.value]}
+								context={context}
+								setValue={(optionVal: boolean) => {
+									if (mode === "READ") return
+									// Set the false value, then filter out the false values before setting
+									return setValue(
+										Object.entries({
+											...value,
+											[option.value]: optionVal,
+										}).reduce(
+											(prev, [key, val]) =>
+												val
+													? { ...prev, [key]: true }
+													: null,
+											{}
+										)
 									)
-								)
-							}}
-						/>
-						<label htmlFor={"checkBoxId" + option.label}>
-							{option.label}
-						</label>
-					</div>
-				))}
-		</div>
+								}}
+							/>
+							<label className={classes.label} htmlFor={optionId}>
+								{option.label}
+							</label>
+						</div>
+					)
+				})}
+		</fieldset>
 	)
 }
 
