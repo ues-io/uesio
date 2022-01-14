@@ -1,6 +1,8 @@
 export type ParamDefinition = {
-	"uesio.type": ParamTypes
+	type: ParamTypes
 	collection: string
+	required: boolean
+	defaultValue: string
 }
 
 export type ParamTypes = "record" | "text"

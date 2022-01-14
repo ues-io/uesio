@@ -69,6 +69,13 @@ components:
         - io.button.io.secondary
         - io.titlebar.io.default
     studio.translations:
+    studio.preview:
+      utilities:
+        - io.textfield
+        - io.fieldwrapper
+        - io.referencefield
+      variants:
+        - io.textfield.io.default
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.view:

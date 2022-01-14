@@ -143,6 +143,11 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			label: "Name",
 		},
 		{
+			name: "required",
+			type: "BOOLEAN",
+			label: "Required",
+		},
+		{
 			name: "type",
 			type: "SELECT",
 			label: "Parameter Type",
@@ -170,9 +175,9 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			],
 		},
 		{
-			name: "value",
+			name: "defaultValue",
 			type: "TEXT",
-			label: "Value",
+			label: "Default Value",
 			display: [
 				{
 					property: "type",
