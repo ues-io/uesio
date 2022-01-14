@@ -67,7 +67,7 @@ const getFieldContent = (
 					)}
 				/>
 			)
-		case type === "MULTISELECT" && displayAs === "CHECKBOX":
+		case type === "MULTISELECT":
 			return (
 				<MultiCheckField
 					{...common}
