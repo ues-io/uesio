@@ -20,7 +20,14 @@ interface SelectFieldProps extends definition.UtilityProps {
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
 
 const MultiCheckField: FC<SelectFieldProps> = (props) => {
-	const { setValue, value = {}, mode, options, context } = props
+	const {
+		setValue,
+		value = {},
+		mode,
+		options,
+		context,
+		fieldMetadata,
+	} = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -38,15 +45,15 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 		props
 	)
 
-	const fieldLabel = props.fieldMetadata.getLabel()
-
+	const fieldLabel = fieldMetadata.getLabel()
+	const fieldId = fieldMetadata.getLabel()
 	return (
 		<fieldset>
 			<legend>{fieldLabel}</legend>
 			{options
 				?.filter((el) => el.value)
 				.map((option) => {
-					const optionId = `${fieldLabel}_check_${option.value}`
+					const optionId = `${fieldId}_check_${option.value}`
 						.replace(/ /g, "_")
 						.toLowerCase()
 					return (
