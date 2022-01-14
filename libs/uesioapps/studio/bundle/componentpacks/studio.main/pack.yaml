@@ -74,8 +74,10 @@ components:
         - io.textfield
         - io.fieldwrapper
         - io.referencefield
+        - io.button
       variants:
         - io.textfield.io.default
+        - io.button.io.primary
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.view:

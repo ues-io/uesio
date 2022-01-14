@@ -21,6 +21,8 @@ const MetadataProp: FunctionComponent<MetadataPropRendererProps> = (props) => {
 			groupingValue,
 		} = descriptor
 
+		console.log({ groupingProperty })
+
 		if (groupingValue) return groupingValue
 
 		const groupingNodePath = component.path.getAncestorPath(

@@ -175,6 +175,20 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			],
 		},
 		{
+			name: "field",
+			type: "METADATA",
+			metadataType: "FIELD",
+			label: "Field",
+			groupingParents: 0,
+			groupingProperty: "collection",
+			display: [
+				{
+					property: "type",
+					values: ["record"],
+				},
+			],
+		},
+		{
 			name: "defaultValue",
 			type: "TEXT",
 			label: "Default Value",
