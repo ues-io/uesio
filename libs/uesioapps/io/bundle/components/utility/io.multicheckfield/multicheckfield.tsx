@@ -10,7 +10,7 @@ import {
 
 interface SelectFieldProps extends definition.UtilityProps {
 	setValue: (value: wire.FieldValue) => void
-	value: Record<string, boolean> | null
+	value?: Record<string, boolean>
 	width?: string
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
@@ -20,7 +20,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
 
 const MultiCheckField: FC<SelectFieldProps> = (props) => {
-	const { setValue, value, mode, options, context } = props
+	const { setValue, value = {}, mode, options, context } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -39,19 +39,28 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 		<div>
 			{options
 				?.filter((el) => el.value)
-				.map((option: { value: string; label: string }) => (
+				.map((option) => (
 					<div className={classes.option} key={option.value}>
 						<CheckBoxField
 							id={"checkBoxId" + option.label}
-							value={value && !!value[option.value]}
+							value={value[option.value]}
 							context={context}
-							setValue={(bool: boolean) =>
-								mode === "EDIT" &&
-								setValue({
-									...value,
-									[option.label]: bool,
-								})
-							}
+							setValue={(optionVal: boolean) => {
+								if (mode === "READ") return
+								// Set the false value, then filter out the false values before setting
+								return setValue(
+									Object.entries({
+										...value,
+										[option.value]: optionVal,
+									}).reduce(
+										(prev, [key, val]) =>
+											val
+												? { ...prev, [key]: true }
+												: null,
+										{}
+									)
+								)
+							}}
 						/>
 						<label htmlFor={"checkBoxId" + option.label}>
 							{option.label}
