@@ -48,7 +48,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 	const fieldLabel = fieldMetadata.getLabel()
 	const fieldId = fieldMetadata.getLabel()
 	return (
-		<fieldset>
+		<fieldset disabled={mode === "READ"}>
 			<legend>{fieldLabel}</legend>
 			{options
 				?.filter((el) => el.value)
