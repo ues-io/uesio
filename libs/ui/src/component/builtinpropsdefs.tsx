@@ -153,8 +153,8 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			label: "Parameter Type",
 			options: [
 				{
-					label: "Record",
-					value: "record",
+					label: "Record ID",
+					value: "recordId",
 				},
 				{
 					label: "Text",
@@ -167,20 +167,6 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			type: "METADATA",
 			metadataType: "COLLECTION",
 			label: "Collection",
-			display: [
-				{
-					property: "type",
-					values: ["record"],
-				},
-			],
-		},
-		{
-			name: "field",
-			type: "METADATA",
-			metadataType: "FIELD",
-			label: "Field",
-			groupingParents: 0,
-			groupingProperty: "collection",
 			display: [
 				{
 					property: "type",

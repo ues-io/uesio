@@ -1,12 +1,11 @@
 import { FunctionComponent, useState } from "react"
 import { hooks, definition, util, component } from "@uesio/ui"
-import { Pair, Scalar, YAMLMap } from "yaml"
+import { Scalar, YAMLMap } from "yaml"
 import PreviewItem from "./previewitem"
 
 export type ParamDefinition = {
 	type: string
 	collectionId: string
-	fieldId: string
 	required: boolean
 	defaultValue: string
 }
@@ -24,13 +23,14 @@ const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const Button = component.registry.getUtility("io.button")
 
 const Preview: FunctionComponent<Props> = (props) => {
-	const { path, context, definition } = props
+	const { context, definition } = props
 	const { fieldId } = definition
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
 	const view = context.getView()
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
+	const viewName = view?.params?.viewname
 	let newContext = props.context
 	if (appName) {
 		if (workspaceName) {
@@ -57,13 +57,32 @@ const Preview: FunctionComponent<Props> = (props) => {
 		paramsToAdd[key] = {
 			type: item.value?.get("type") as string,
 			collectionId: item.value?.get("collection") as string,
-			fieldId: item.value?.get("field") as string,
 			required: item.value?.get("required") as boolean,
 			defaultValue: item.value?.get("defaultValue") as string,
 		}
 	})
 
-	const [lstate, setLstate] = useState<Record<string, string>>()
+	const getInitialMatch = (): Record<string, string> => {
+		let mappings: Record<string, string> = {}
+
+		Object.entries(paramsToAdd).forEach(([key, ParamDefinition]) => {
+			if (
+				ParamDefinition.type === "text" &&
+				ParamDefinition.defaultValue
+			) {
+				mappings = {
+					...mappings,
+					[key]: ParamDefinition.defaultValue,
+				}
+			}
+		})
+
+		return mappings
+	}
+
+	const [lstate, setLstate] = useState<Record<string, string>>(
+		getInitialMatch()
+	)
 
 	return (
 		<>
@@ -76,9 +95,12 @@ const Preview: FunctionComponent<Props> = (props) => {
 					>
 						<TextField
 							variant="io.default"
-							value={ParamDefinition.defaultValue}
+							value={lstate[key]}
 							setValue={(value: string) =>
-								setLstate({ key: value })
+								setLstate({
+									...lstate,
+									[key]: value,
+								})
 							}
 							context={newContext}
 						/>
@@ -88,14 +110,35 @@ const Preview: FunctionComponent<Props> = (props) => {
 						fieldKey={key}
 						item={ParamDefinition}
 						context={newContext}
+						lstate={lstate}
+						setLstate={setLstate}
 					/>
 				)
 			)}
+
 			<Button
-				context={context}
+				context={newContext}
 				variant="io.primary"
 				label="Preview"
-				onClick={() => alert("")}
+				onClick={() => {
+					let getParams = "?"
+
+					Object.entries(lstate).forEach(([key, value], index) => {
+						getParams = getParams + `${key}=${value}&`
+					})
+
+					uesio.signal.run(
+						{
+							signal: "route/REDIRECT",
+							path: `/workspace/${
+								newContext.getWorkspace()?.app
+							}/${
+								newContext.getWorkspace()?.name
+							}/views/${appName}/${viewName}/preview${getParams}`,
+						},
+						newContext
+					)
+				}}
 			/>
 		</>
 	)

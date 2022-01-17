@@ -44,7 +44,7 @@ const ParamsActions: FunctionComponent<definition.UtilityProps> = (props) => {
 					uesio.builder.addDefinitionPair(
 						path,
 						{
-							type: "record",
+							type: "recordId",
 						},
 						"newparam" + (Math.floor(Math.random() * 60) + 1),
 						"params"
