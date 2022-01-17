@@ -18,6 +18,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")
+const Fieldset = component.registry.getUtility("io.fieldset")
 
 const MultiCheckField: FC<SelectFieldProps> = (props) => {
 	const {
@@ -48,24 +49,27 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 	const fieldLabel = fieldMetadata.getLabel()
 	const fieldId = fieldMetadata.getLabel()
 	return (
-		<fieldset disabled={mode === "READ"}>
-			<legend>{fieldLabel}</legend>
+		<Fieldset
+			context={context}
+			fieldLabel={fieldLabel}
+			disabled={mode === "READ"}
+		>
 			{options
-				?.filter((el) => el.value)
+				?.filter(({ value }) => value)
 				.map((option) => {
-					const optionId = `${fieldId}_check_${option.value}`
-						.replace(/ /g, "_")
-						.toLowerCase()
+					const optionId = `${fieldId}_check_${option.value}`.replace(
+						/ /g,
+						"_"
+					)
 					return (
 						<div className={classes.option} key={option.value}>
 							<CheckBoxField
 								id={optionId}
 								value={value[option.value]}
 								context={context}
-								setValue={(optionVal: boolean) => {
-									if (mode === "READ") return
-									// Set the false value, then filter out the false values before setting
-									return setValue(
+								setValue={(optionVal: boolean) =>
+									// Set the false/true value, then filter out the false values before setting
+									setValue(
 										Object.entries({
 											...value,
 											[option.value]: optionVal,
@@ -77,7 +81,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 											{}
 										)
 									)
-								}}
+								}
 							/>
 							<label className={classes.label} htmlFor={optionId}>
 								{option.label}
@@ -85,7 +89,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 						</div>
 					)
 				})}
-		</fieldset>
+		</Fieldset>
 	)
 }
 
