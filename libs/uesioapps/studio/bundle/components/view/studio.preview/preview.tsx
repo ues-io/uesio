@@ -122,9 +122,13 @@ const Preview: FunctionComponent<Props> = (props) => {
 				label="Preview"
 				onClick={() => {
 					let getParams = "?"
-
+					const size = Object.keys(lstate).length - 1
 					Object.entries(lstate).forEach(([key, value], index) => {
-						getParams = getParams + `${key}=${value}&`
+						if (value !== "") {
+							size > index
+								? (getParams = getParams + `${key}=${value}&`)
+								: (getParams = getParams + `${key}=${value}`)
+						}
 					})
 
 					uesio.signal.run(
