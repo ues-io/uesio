@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import labelAdapter from "./adapter"
 import loadOp from "../viewdef/operations/load"
 import { getNodeAtPath, parse } from "../../yamlutils/yamlutils"
+import { parseKey } from "../../component/path"
 
 const labelSlice = createSlice({
 	name: "label",
@@ -19,11 +20,14 @@ const labelSlice = createSlice({
 				if (!labels) return
 				return labelAdapter.upsertMany(
 					state,
-					Object.keys(labels).map((key) => ({
-						namespace: key.split(".")[0],
-						name: labels[key].name,
-						value: labels[key].value,
-					}))
+					Object.keys(labels).map((key) => {
+						const [namespace, name] = parseKey(key)
+						return {
+							namespace,
+							name,
+							value: labels[key],
+						}
+					})
 				)
 			}
 		)

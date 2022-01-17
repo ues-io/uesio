@@ -9,6 +9,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
+	"github.com/thecloudmasters/uesio/pkg/translate"
 )
 
 type SpecialReferences struct {
@@ -175,6 +176,15 @@ func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, erro
 func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
 	collated := map[string][]*adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
+
+	if !session.HasLabels() {
+		labels, err := translate.GetTranslatedLabels(session)
+		if err != nil {
+			return nil, err
+		}
+		session.SetLabels(labels)
+	}
+
 	// Loop over the ops and batch per data source
 	for i := range ops {
 		ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{

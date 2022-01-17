@@ -84,6 +84,19 @@ type Session struct {
 	permissions    *meta.PermissionSet
 	user           *meta.User
 	tokens         map[string][]string
+	labels         map[string]string
+}
+
+func (s *Session) SetLabels(labels map[string]string) {
+	s.labels = labels
+}
+
+func (s *Session) HasLabels() bool {
+	return s.labels != nil
+}
+
+func (s *Session) GetLabel(labelKey string) string {
+	return s.labels[labelKey]
 }
 
 func (s *Session) AddToken(name string, value []string) {
