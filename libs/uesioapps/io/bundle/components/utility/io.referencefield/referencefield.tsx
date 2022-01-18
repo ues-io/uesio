@@ -7,7 +7,7 @@ import {
 	component,
 	context,
 } from "@uesio/ui"
-import { SelectedItem } from "../io.autocomplete/autocomplete"
+import { ReferenceFieldOptions } from "../../view/io.field/fielddefinition"
 
 const TextField = component.registry.getUtility("io.textfield")
 const AutoComplete = component.registry.getUtility("io.autocomplete")
@@ -18,41 +18,13 @@ interface ReferenceFieldProps extends definition.UtilityProps {
 	record: wire.WireRecord
 	wire: wire.Wire
 	variant: string
-}
-
-// TODO:: Modify this to accept an arbitary display template
-const generateReferenceFieldDisplayValue = (
-	fieldId: string,
-	referencedCollection: collection.Collection,
-	record: wire.WireRecord
-): string => {
-	const nameFieldOfReferencedCollection = referencedCollection
-		.getNameField()
-		?.getId()
-	const referenceFieldValue = record.getFieldValue<
-		wire.PlainWireRecord | undefined
-	>(fieldId)
-	if (
-		!referenceFieldValue ||
-		typeof referenceFieldValue !== "object" ||
-		!nameFieldOfReferencedCollection
-	)
-		return ""
-
-	const value = referenceFieldValue[nameFieldOfReferencedCollection]
-	if (typeof value === "number" || typeof value === "boolean")
-		return `${value}`
-
-	if (typeof value === "object") return ""
-
-	if (!value) return ""
-
-	return value
+	options?: ReferenceFieldOptions
 }
 
 const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, mode, record, context, variant } = props
+	const { fieldMetadata, mode, record, context, variant, options, path } =
+		props
 	const fieldId = fieldMetadata.getId()
 
 	const referencedCollection = uesio.collection.useCollection(
@@ -60,19 +32,24 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 		fieldMetadata.source.reference?.collection || ""
 	)
 
-	if (!referencedCollection) {
-		return null
-	}
+	if (!referencedCollection) return null
 
-	const value = generateReferenceFieldDisplayValue(
-		fieldId,
-		referencedCollection,
-		record
+	const idField = referencedCollection.getIdField()?.getId()
+	const nameField = referencedCollection.getNameField()?.getId()
+
+	if (!idField || !nameField) return null
+
+	const itemToString = (item: wire.PlainWireRecord | undefined) =>
+		item ? `${item[nameField]}` : ""
+
+	const value = record.getFieldValue<wire.PlainWireRecord | undefined>(
+		fieldId
 	)
+
 	if (mode === "READ") {
 		return (
 			<TextField
-				value={value}
+				value={itemToString(value)}
 				context={context}
 				variant={variant}
 				mode={mode}
@@ -84,53 +61,62 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				context={context}
 				variant={variant}
 				value={value}
-				setValue={(value: string) => {
-					const idField = referencedCollection.getIdField()?.getId()
-					if (!idField) return
-					record.update(fieldId, {
-						[idField]: value,
-					})
+				setValue={(value: wire.PlainWireRecord) => {
+					const idValue = value?.[idField]
+						? {
+								[idField]: value[idField],
+						  }
+						: null
+					record.update(fieldId, idValue)
+				}}
+				itemToString={itemToString}
+				itemRenderer={(item: wire.PlainWireRecord, index: number) => {
+					if (options?.components) {
+						return (
+							<component.Slot
+								definition={options}
+								listName="components"
+								path={`${path}["reference"]["${index}"]`}
+								accepts={["uesio.context"]}
+								context={context.addFrame({
+									recordData: item,
+								})}
+							/>
+						)
+					}
+					return <div>{itemToString(item)}</div>
 				}}
 				getItems={async (
 					searchText: string,
-					callback: (items: SelectedItem[]) => void
+					callback: (items: wire.PlainWireRecord[]) => void
 				) => {
-					const idField = referencedCollection.getIdField()?.getId()
-					const nameField = referencedCollection
-						.getNameField()
-						?.getId()
-					if (!idField || !nameField) return
+					const searchFields = options?.searchFields || [nameField]
+					const returnFields = options?.returnFields || [
+						idField,
+						nameField,
+					]
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{
 								wire: "search",
 								query: true,
 								collection: referencedCollection.getFullName(),
-								fields: [
-									{
-										id: idField,
-									},
-									{
-										id: nameField,
-									},
-								],
+								fields: returnFields.map((fieldName) => ({
+									id: fieldName,
+								})),
 								conditions: [
 									{
 										type: "SEARCH",
 										value: searchText,
 										valueSource: "VALUE",
 										active: true,
+										fields: searchFields,
 									},
 								],
 							},
 						],
 					})
-					callback(
-						result.wires[0].data?.map((record) => ({
-							value: `${record[nameField]}`,
-							id: `${record[idField]}`,
-						})) || []
-					)
+					callback(result.wires[0].data || [])
 				}}
 			/>
 		)

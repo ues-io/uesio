@@ -63,6 +63,7 @@ components:
     io.expandpanel:
     io.fieldlabel:
     io.fieldwrapper:
+    io.fieldset:
     io.filetext:
     io.fileupload:
     io.filedynamic:
@@ -93,4 +94,3 @@ components:
     io.datefield:
     io.numberfield:
     io.emailfield:
-

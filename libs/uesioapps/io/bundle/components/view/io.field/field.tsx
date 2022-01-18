@@ -5,6 +5,7 @@ import { component, collection, wire, context } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
+const RadioButtonsField = component.registry.getUtility("io.radiobuttonsfield")
 const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const MultiCheckField = component.registry.getUtility("io.multicheckfield")
@@ -29,7 +30,7 @@ const getFieldContent = (
 	fieldMetadata: collection.Field,
 	context: context.Context
 ) => {
-	const { fieldId, id, displayAs } = definition
+	const { fieldId, id, displayAs, reference } = definition
 	const canEdit = record.isNew()
 		? fieldMetadata.getCreateable()
 		: fieldMetadata.getUpdateable()
@@ -57,6 +58,16 @@ const getFieldContent = (
 			return <NumberField {...common} />
 		case type === "EMAIL":
 			return <EmailField {...common} />
+		case type === "SELECT" && displayAs === "RADIO":
+			return (
+				<RadioButtonsField
+					{...common}
+					options={addBlankSelectOption(
+						fieldMetadata.getSelectMetadata()?.options || [],
+						fieldMetadata.getSelectMetadata()?.blank_option_label
+					)}
+				/>
+			)
 		case type === "SELECT":
 			return (
 				<SelectField
@@ -82,7 +93,7 @@ const getFieldContent = (
 		case type === "CHECKBOX":
 			return <CheckboxField {...common} />
 		case type === "REFERENCE":
-			return <ReferenceField {...common} />
+			return <ReferenceField {...common} options={reference} />
 		case type === "TIMESTAMP":
 			return <TimestampField {...common} />
 		case type === "FILE" && displayAs === "TEXT":
@@ -90,7 +101,7 @@ const getFieldContent = (
 		case type === "FILE":
 			return <FileDynamic {...common} />
 		case type === "USER":
-			return <UserField {...common} />
+			return <UserField {...common} options={reference} />
 		case type === "LIST":
 			return (
 				<ListField
