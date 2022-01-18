@@ -63,6 +63,7 @@ components:
     io.expandpanel:
     io.fieldlabel:
     io.fieldwrapper:
+    io.fieldset:
     io.filetext:
     io.fileupload:
     io.filedynamic:
@@ -72,6 +73,8 @@ components:
     io.iconbutton:
     io.link:
     io.multiselectfield:
+    io.multicheckfield:
+    io.radiobuttonsfield:
     io.paginator:
     io.popper:
     io.referencefield:

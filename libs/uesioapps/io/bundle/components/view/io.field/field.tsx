@@ -5,6 +5,7 @@ import { component, collection, wire, context } from "@uesio/ui"
 
 const TextField = component.registry.getUtility("io.textfield")
 const SelectField = component.registry.getUtility("io.selectfield")
+const RadioButtonsField = component.registry.getUtility("io.radiobuttonsfield")
 const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
@@ -56,6 +57,16 @@ const getFieldContent = (
 			return <NumberField {...common} />
 		case type === "EMAIL":
 			return <EmailField {...common} />
+		case type === "SELECT" && displayAs === "RADIO":
+			return (
+				<RadioButtonsField
+					{...common}
+					options={addBlankSelectOption(
+						fieldMetadata.getSelectMetadata()?.options || [],
+						fieldMetadata.getSelectMetadata()?.blank_option_label
+					)}
+				/>
+			)
 		case type === "SELECT":
 			return (
 				<SelectField
