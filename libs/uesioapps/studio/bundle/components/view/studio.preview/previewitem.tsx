@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, hooks, component, wire } from "@uesio/ui"
+import { definition, hooks, component, wire, styles } from "@uesio/ui"
 import { ParamDefinition } from "./preview"
 
 interface Props extends definition.BaseProps {
@@ -11,6 +11,7 @@ interface Props extends definition.BaseProps {
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const AutoComplete = component.registry.getUtility("io.autocomplete")
+const Text = component.registry.getUtility("io.text")
 
 const PreviewItem: FunctionComponent<Props> = (props) => {
 	const { context, fieldKey, item, lstate, setLstate } = props
@@ -26,7 +27,23 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 	if (!fieldName || !fieldId) return null
 
 	const itemToString = (item: wire.PlainWireRecord | undefined) =>
-		item ? `${item[fieldName]} - ${item[fieldId]}` : ""
+		item ? `${item[fieldName]}` : ""
+
+	const classes = styles.useUtilityStyles(
+		{
+			div: {
+				boxShadow: "0 2px 5px #888",
+				background: "#FFF",
+				cursor: "pointer",
+			},
+			title: { fontWeight: "bold" },
+			subtitle: {
+				fontFamily: "monospace",
+				whiteSpace: "pre",
+			},
+		},
+		props
+	)
 
 	return (
 		<FieldWrapper context={context} label={fieldKey} key={fieldKey}>
@@ -45,7 +62,12 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord, index: number) => (
-					<div>{itemToString(item)}</div>
+					<div className={classes.div} style={{}}>
+						<div className={classes.title}>{item[fieldName]}</div>
+						<span className={classes.subtitle}>
+							{item[fieldId]}
+						</span>
+					</div>
 				)}
 				getItems={async (
 					searchText: string,
