@@ -21,8 +21,6 @@ const EmailField = component.registry.getUtility("io.emailfield")
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
-const addBlankSelectOption = collection.addBlankSelectOption
-
 const getFieldContent = (
 	wire: wire.Wire,
 	record: wire.WireRecord,
@@ -62,30 +60,21 @@ const getFieldContent = (
 			return (
 				<RadioButtonsField
 					{...common}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						fieldMetadata.getSelectMetadata()?.blank_option_label
-					)}
+					options={fieldMetadata.getSelectOptions()}
 				/>
 			)
 		case type === "SELECT":
 			return (
 				<SelectField
 					{...common}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						fieldMetadata.getSelectMetadata()?.blank_option_label
-					)}
+					options={fieldMetadata.getSelectOptions()}
 				/>
 			)
 		case type === "MULTISELECT":
 			return (
 				<MultiCheckField
 					{...common}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						fieldMetadata.getSelectMetadata()?.blank_option_label
-					)}
+					options={fieldMetadata.getSelectOptions()}
 				/>
 			)
 		case type === "CHECKBOX" && displayAs === "TOGGLE":
