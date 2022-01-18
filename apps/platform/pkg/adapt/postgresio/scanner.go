@@ -3,6 +3,7 @@ package postgresio
 import (
 	"encoding/json"
 	"errors"
+	"strconv"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -43,6 +44,14 @@ func (ds *DataScanner) Scan(src interface{}) error {
 			return errors.New("Postgresql map Unmarshal error: " + fieldMetadata.GetFullName() + " : " + err.Error())
 		}
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), arraydata)
+	}
+
+	if fieldMetadata.Type == "NUMBER" {
+		f, err := strconv.ParseFloat(string(src.([]byte)), 64)
+		if err != nil {
+			return errors.New("Postgresql number parse error: " + fieldMetadata.GetFullName())
+		}
+		return (*ds.Item).SetField(fieldMetadata.GetFullName(), f)
 	}
 
 	if adapt.IsReference(fieldMetadata.Type) {
