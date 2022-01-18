@@ -74,6 +74,7 @@ components:
     io.link:
     io.multiselectfield:
     io.multicheckfield:
+    io.radiobuttonsfield:
     io.paginator:
     io.popper:
     io.referencefield:
