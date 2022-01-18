@@ -17,12 +17,16 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 	const { collectionId } = item
 	const uesio = hooks.useUesio(props)
 
-	const fieldId = "uesio.id"
+	const collection = uesio.collection.useCollection(context, collectionId)
+	if (!collection) return null
 
-	if (!collectionId) return null
+	const fieldId = collection.getIdField()?.getId()
+	const fieldName = collection.getNameField()?.getId()
+
+	if (!fieldName || !fieldId) return null
 
 	const itemToString = (item: wire.PlainWireRecord | undefined) =>
-		item ? `${item[fieldId]}` : ""
+		item ? `${item[fieldName]} - ${item[fieldId]}` : ""
 
 	return (
 		<FieldWrapper context={context} label={fieldKey} key={fieldKey}>
@@ -31,11 +35,13 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 				variant="io.default"
 				value={lstate[fieldKey]}
 				setValue={(value: wire.PlainWireRecord) => {
-					const idValue = value[fieldId] as string
-					setLstate({
-						...lstate,
-						[fieldKey]: idValue,
-					})
+					const idValue = value && (value[fieldId] as string)
+					if (idValue && idValue !== "") {
+						setLstate({
+							...lstate,
+							[fieldKey]: idValue,
+						})
+					}
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord, index: number) => (
@@ -45,8 +51,8 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 					searchText: string,
 					callback: (items: wire.PlainWireRecord[]) => void
 				) => {
-					const searchFields = [fieldId]
-					const returnFields = [fieldId]
+					const searchFields = [fieldName]
+					const returnFields = [fieldId, fieldName]
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{
