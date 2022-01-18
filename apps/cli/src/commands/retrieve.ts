@@ -2,9 +2,10 @@ import { Command } from "@oclif/command"
 import { get } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
-import { rm } from "fs"
+import { rm, readdir } from "fs"
 import unzipper from "unzipper"
 import chalk from "chalk"
+import path from "path"
 
 export default class Retrieve extends Command {
 	static description = "retrieve metadata items"
@@ -22,8 +23,15 @@ export default class Retrieve extends Command {
 			)}.`
 		)
 
-		rm("bundle", { recursive: true }, () => {
-			console.log("Local bundle deleted!")
+		readdir("bundle", (err, files) => {
+			if (err) throw err
+			for (const file of files) {
+				if (file !== "components") {
+					rm(path.join("bundle", file), { recursive: true }, () => {
+						console.log("deleting: " + file)
+					})
+				}
+			}
 		})
 
 		const response = await get(
