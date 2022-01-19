@@ -7,6 +7,30 @@ import unzipper from "unzipper"
 import chalk from "chalk"
 import path from "path"
 
+const deployableFolders = [
+	"secrets",
+	"profiles",
+	"permissionsets",
+	"configvalues",
+	"datasources",
+	"filesources",
+	"files",
+	"fields",
+	"bots",
+	"collections",
+	"selectlists",
+	"routes",
+	"views",
+	"themes",
+	"credentials",
+	// Leaving out components for now. Need to figure this out at some point.
+	//"components",
+	"componentvariants",
+	"userfilecollections",
+	"labels",
+	"translations",
+]
+
 export default class Retrieve extends Command {
 	static description = "retrieve metadata items"
 	static flags = {}
@@ -26,7 +50,7 @@ export default class Retrieve extends Command {
 		readdir("bundle", (err, files) => {
 			if (err) throw err
 			for (const file of files) {
-				if (file !== "components") {
+				if (deployableFolders.includes(file)) {
 					rm(path.join("bundle", file), { recursive: true }, () => {
 						console.log("deleting: " + file)
 					})
