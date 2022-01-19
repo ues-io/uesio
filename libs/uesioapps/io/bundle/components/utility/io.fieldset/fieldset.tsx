@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { definition, styles, context, collection, wire } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
 	fieldLabel: string
