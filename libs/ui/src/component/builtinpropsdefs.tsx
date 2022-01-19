@@ -133,9 +133,68 @@ const getFieldPropsDef = (
 	name,
 })
 
+const getParamPropsDef = (): BuildPropertiesDefinition => ({
+	title: "Parameter",
+	defaultDefinition: () => ({}),
+	properties: [
+		{
+			name: "name",
+			type: "KEY",
+			label: "Name",
+		},
+		{
+			name: "required",
+			type: "BOOLEAN",
+			label: "Required",
+		},
+		{
+			name: "type",
+			type: "SELECT",
+			label: "Parameter Type",
+			options: [
+				{
+					label: "Record ID",
+					value: "recordId",
+				},
+				{
+					label: "Text",
+					value: "text",
+				},
+			],
+		},
+		{
+			name: "collection",
+			type: "METADATA",
+			metadataType: "COLLECTION",
+			label: "Collection",
+			display: [
+				{
+					property: "type",
+					values: ["record"],
+				},
+			],
+		},
+		{
+			name: "defaultValue",
+			type: "TEXT",
+			label: "Default Value",
+			display: [
+				{
+					property: "type",
+					values: ["text"],
+				},
+			],
+		},
+	],
+	sections: [],
+	actions: [],
+	type: "param",
+})
+
 export {
 	getComponentTypePropsDef,
 	getWirePropsDef,
 	getFieldPropsDef,
 	getPanelPropsDef,
+	getParamPropsDef,
 }
