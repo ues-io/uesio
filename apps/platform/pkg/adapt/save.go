@@ -27,6 +27,7 @@ type ChangeItem struct {
 	OldValues       loadable.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
+	Autonumber      int
 }
 
 func (ci *ChangeItem) AddReadToken(token string) {

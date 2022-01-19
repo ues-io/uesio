@@ -14,6 +14,7 @@ type Adapter interface {
 	Load([]*LoadOp, *MetadataCache, *Credentials, []string) error
 	Save([]*SaveOp, *MetadataCache, *Credentials, []string) error
 	Migrate(*Credentials) error
+	GetAutonumber(*CollectionMetadata, *Credentials) (int, error)
 }
 
 var adapterMap = map[string]Adapter{}
