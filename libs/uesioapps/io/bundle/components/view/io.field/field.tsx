@@ -8,6 +8,7 @@ const SelectField = component.registry.getUtility("io.selectfield")
 const RadioButtonsField = component.registry.getUtility("io.radiobuttonsfield")
 const ToggleField = component.registry.getUtility("io.togglefield")
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
+const MultiCheckField = component.registry.getUtility("io.multicheckfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
 const FileDynamic = component.registry.getUtility("io.filedynamic")
@@ -19,8 +20,6 @@ const NumberField = component.registry.getUtility("io.numberfield")
 const EmailField = component.registry.getUtility("io.emailfield")
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
-
-const addBlankSelectOption = collection.addBlankSelectOption
 
 const getFieldContent = (
 	wire: wire.Wire,
@@ -61,20 +60,21 @@ const getFieldContent = (
 			return (
 				<RadioButtonsField
 					{...common}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						fieldMetadata.getSelectMetadata()?.blank_option_label
-					)}
+					options={fieldMetadata.getSelectOptions()}
 				/>
 			)
 		case type === "SELECT":
 			return (
 				<SelectField
 					{...common}
-					options={addBlankSelectOption(
-						fieldMetadata.getSelectMetadata()?.options || [],
-						fieldMetadata.getSelectMetadata()?.blank_option_label
-					)}
+					options={fieldMetadata.getSelectOptions()}
+				/>
+			)
+		case type === "MULTISELECT":
+			return (
+				<MultiCheckField
+					{...common}
+					options={fieldMetadata.getSelectOptions()}
 				/>
 			)
 		case type === "CHECKBOX" && displayAs === "TOGGLE":
