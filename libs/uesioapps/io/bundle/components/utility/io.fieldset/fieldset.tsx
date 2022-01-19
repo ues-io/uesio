@@ -3,10 +3,11 @@ import { definition, styles, context, collection, wire } from "@uesio/ui"
 
 interface Props extends definition.UtilityProps {
 	fieldLabel: string
+	disabled: boolean
 }
 
 const RadioButtons: FC<Props> = (props) => {
-	const { children, fieldLabel } = props
+	const { children, fieldLabel, disabled } = props
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -24,7 +25,7 @@ const RadioButtons: FC<Props> = (props) => {
 	)
 
 	return (
-		<fieldset className={classes.fieldset} {...props}>
+		<fieldset className={classes.fieldset} disabled={disabled}>
 			<legend className={classes.legend}>{fieldLabel}</legend>
 			{children}
 		</fieldset>
