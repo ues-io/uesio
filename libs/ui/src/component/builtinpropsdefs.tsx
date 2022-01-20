@@ -170,7 +170,7 @@ const getParamPropsDef = (): BuildPropertiesDefinition => ({
 			display: [
 				{
 					property: "type",
-					values: ["record"],
+					values: ["recordId"],
 				},
 			],
 		},
