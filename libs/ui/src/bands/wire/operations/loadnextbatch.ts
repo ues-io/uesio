@@ -20,7 +20,7 @@ export default createAsyncThunk<
 	const wiresToLoad = getWiresFromDefinitonOrContext(wires, context)
 	const response = await api.extra.loadData(context, {
 		wires: wiresToLoad.map((wire) =>
-			getWireRequest(wire, wire.batchnumber + 1, context)
+			getWireRequest(wire, wire.batchnumber, context)
 		),
 	})
 

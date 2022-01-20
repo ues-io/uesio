@@ -102,11 +102,27 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		})
 	}
 
-	return datasource.PlatformLoad(&WorkspaceLoadCollection{
+	ops := datasource.GetPlatformLoadOps(&WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  namespace,
-	}, loadConditions, session.RemoveWorkspaceContext())
+	}, datasource.GetLoadRequestFields(group.GetFields()), loadConditions)
 
+	return loadData(ops, loadConditions, session)
+
+}
+
+func loadData(ops []adapt.LoadOp, loadConditions []adapt.LoadRequestCondition, session *sess.Session) error {
+
+	err := datasource.PlatformLoads(ops, session.RemoveWorkspaceContext())
+	if err != nil {
+		return err
+	}
+
+	if ops[0].HasMoreBatches {
+		return loadData(ops, loadConditions, session)
+	}
+
+	return nil
 }
 
 // GetFileStream function

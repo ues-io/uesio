@@ -38,7 +38,6 @@ func GetLoadRequestFields(fieldStrings []string) []adapt.LoadRequestField {
 	return fields
 }
 
-// PlatformLoads function
 func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 
 	_, err := Load(ops, session)
@@ -49,14 +48,12 @@ func PlatformLoads(ops []adapt.LoadOp, session *sess.Session) error {
 	return nil
 }
 
-// PlatformLoad function
 func PlatformLoad(group meta.CollectionableGroup, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	return PlatformLoadWithFields(group, GetLoadRequestFields(group.GetFields()), conditions, session)
 }
 
-// PlatformLoadWithFields function
-func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
-	return PlatformLoads([]adapt.LoadOp{
+func GetPlatformLoadOps(group meta.CollectionableGroup, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition) []adapt.LoadOp {
+	return []adapt.LoadOp{
 		{
 			WireName:       group.GetName() + "Wire",
 			CollectionName: group.GetName(),
@@ -65,10 +62,13 @@ func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadR
 			Fields:         fields,
 			Query:          true,
 		},
-	}, session)
+	}
 }
 
-// PlatformLoadWithOrder function
+func PlatformLoadWithFields(group meta.CollectionableGroup, fields []adapt.LoadRequestField, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
+	return PlatformLoads(GetPlatformLoadOps(group, fields, conditions), session)
+}
+
 func PlatformLoadWithOrder(group meta.CollectionableGroup, orders []adapt.LoadRequestOrder, conditions []adapt.LoadRequestCondition, session *sess.Session) error {
 	return PlatformLoads([]adapt.LoadOp{
 		{
