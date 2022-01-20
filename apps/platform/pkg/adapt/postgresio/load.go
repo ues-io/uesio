@@ -132,11 +132,15 @@ func loadOne(
 	}
 
 	// Check to see if we loaded in a full amount
-	if op.Collection.Len() == op.BatchSize+1 {
+	if index == op.BatchSize+1 {
 		op.HasMoreBatches = true
 		// Remove the last item
 		op.Collection.Slice(0, op.BatchSize)
+	} else {
+		op.HasMoreBatches = false
 	}
+
+	op.BatchNumber++
 
 	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
 		return loadMany(db, ops, metadata, tenantID, userTokens)

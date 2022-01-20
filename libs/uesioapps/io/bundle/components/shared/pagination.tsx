@@ -47,7 +47,9 @@ const paginate = <T extends unknown>(
 	pageSize: number
 ): T[] => {
 	if (!pageSize) return items
-	const start = currentPage * pageSize
+	const maxPages = pageSize ? Math.ceil(items.length / pageSize) : 1
+	const page = currentPage >= maxPages ? maxPages - 1 : currentPage
+	const start = page * pageSize
 	const end = start + pageSize
 	return items.slice(start, end)
 }

@@ -42,12 +42,14 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 		props
 	)
 
+	const page = currentPage >= maxPages ? maxPages - 1 : currentPage
+
 	const nextPage = () => {
-		if (currentPage < maxPages - 1) setPage(currentPage + 1)
+		if (page < maxPages - 1) setPage(page + 1)
 	}
 
 	const prevPage = () => {
-		if (currentPage > 0) setPage(currentPage - 1)
+		if (page > 0) setPage(page - 1)
 	}
 
 	const pageButtonCount = 5
@@ -55,12 +57,12 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 	const displayStartPage = Math.max(
 		0,
 		Math.min(
-			currentPage - Math.floor(pageButtonCount / 2),
+			page - Math.floor(pageButtonCount / 2),
 			maxPages - pageButtonCount
 		)
 	)
 
-	const isLastPage = currentPage >= maxPages - 1
+	const isLastPage = page >= maxPages - 1
 	const showLoadMore = loadMore && isLastPage
 
 	return (
@@ -70,12 +72,12 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 					icon="navigate_before"
 					onClick={prevPage}
 					context={context}
-					disabled={currentPage <= 0}
+					disabled={page <= 0}
 				/>
 				{[...Array(pageButtonCount).keys()].map((index) => {
 					const pageNum = index + displayStartPage
 					if (pageNum >= maxPages) return null
-					const isCurrent = pageNum === currentPage
+					const isCurrent = pageNum === page
 
 					return (
 						<span
@@ -114,7 +116,7 @@ const Paginator: FunctionComponent<PaginatorUtilityProps> = (props) => {
 						onClick={async () => {
 							if (loadMore) {
 								await loadMore()
-								setPage(currentPage + 1)
+								setPage(page + 1)
 							}
 						}}
 						context={context}
