@@ -136,6 +136,8 @@ func loadOne(
 		op.HasMoreBatches = true
 		// Remove the last item
 		op.Collection.Slice(0, op.BatchSize)
+	} else {
+		op.HasMoreBatches = false
 	}
 
 	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
@@ -166,9 +168,16 @@ func loadMany(
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(db, ops[i], metadata, ops, tenantID, userTokens)
-		if err != nil {
-			return err
+		for {
+			err := loadOne(db, ops[i], metadata, ops, tenantID, userTokens)
+			if err != nil {
+				return err
+			}
+			if ops[i].HasMoreBatches {
+				ops[i].BatchNumber = ops[i].BatchNumber + 1
+			} else {
+				break
+			}
 		}
 	}
 	return nil
