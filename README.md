@@ -394,3 +394,9 @@ Most of commmands you might run related to npm modules.
 ```
 docker run --name some-postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=postgresio -d -p 5432:5432 -v "/$(pwd)/pgdata:/var/lib/postgresql/data" postgres
 ```
+
+# Running redis locally
+
+```
+docker run --name some-redis -d -p 6379:6379 redis
+```

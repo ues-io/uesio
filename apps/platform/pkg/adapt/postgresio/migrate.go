@@ -20,7 +20,8 @@ func (a *Adapter) Migrate(credentials *adapt.Credentials) error {
 		(
 			id         varchar(255) not null constraint data_pk primary key,
 			fields     jsonb,
-			collection varchar(255) not null
+			collection varchar(255) not null,
+			autonumber integer not null
 		);
 		create table if not exists public.tokens
 		(
@@ -29,6 +30,7 @@ func (a *Adapter) Migrate(credentials *adapt.Credentials) error {
 			readonly boolean not null
 		);
 		create index if not exists collection_idx on data (collection);
+		create unique index if not exists autonumber_idx on data (collection, autonumber);
 	`)
 	if err != nil {
 		return err

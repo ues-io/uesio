@@ -1,7 +1,6 @@
 package postgresio
 
 import (
-	"context"
 	"database/sql"
 	"errors"
 	"strconv"
@@ -35,7 +34,6 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 }
 
 func loadOne(
-	ctx context.Context,
 	db *sql.DB,
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
@@ -141,7 +139,7 @@ func loadOne(
 	}
 
 	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-		return loadMany(ctx, db, ops, metadata, tenantID, userTokens)
+		return loadMany(db, ops, metadata, tenantID, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
@@ -152,18 +150,15 @@ func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, crede
 		return nil
 	}
 
-	ctx := context.Background()
-
 	db, err := connect(credentials)
 	if err != nil {
 		return errors.New("Failed to connect PostgreSQL:" + err.Error())
 	}
 
-	return loadMany(ctx, db, ops, metadata, credentials.GetTenantID(), userTokens)
+	return loadMany(db, ops, metadata, credentials.GetTenantID(), userTokens)
 }
 
 func loadMany(
-	ctx context.Context,
 	db *sql.DB,
 	ops []*adapt.LoadOp,
 	metadata *adapt.MetadataCache,
@@ -171,7 +166,7 @@ func loadMany(
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(ctx, db, ops[i], metadata, ops, tenantID, userTokens)
+		err := loadOne(db, ops[i], metadata, ops, tenantID, userTokens)
 		if err != nil {
 			return err
 		}

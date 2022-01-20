@@ -70,12 +70,13 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 	}
 }
 
-func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, autonumberStart int, session *sess.Session) error {
 
 	fieldPopulations := getPopulationFunction(collectionMetadata, session)
 
 	if op.Inserts != nil {
-		for _, insert := range *op.Inserts {
+		for i, insert := range *op.Inserts {
+			(*op.Inserts)[i].Autonumber = autonumberStart + i
 			err := fieldPopulations(insert, true)
 			if err != nil {
 				return err

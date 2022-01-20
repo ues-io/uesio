@@ -144,7 +144,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 				newID = uuid.New().String()
 			}
 
-			builder := NewValueBuilder(3)
+			builder := NewValueBuilder(4)
 
 			err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
 				fieldMetadata, err := collectionMetadata.GetField(fieldID)
@@ -172,12 +172,13 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 			builder.add(idFieldDBName, newID, "text")
 
-			query := fmt.Sprintf("INSERT INTO public.data (id,collection,fields) VALUES ($1,$2,jsonb_build_object(%s))", builder.build())
+			query := fmt.Sprintf("INSERT INTO public.data (id,collection,autonumber,fields) VALUES ($1,$2,$3,jsonb_build_object(%s))", builder.build())
 			fullRecordID := collectionName + ":" + newID
 
 			params := append([]interface{}{
 				fullRecordID,
 				collectionName,
+				change.Autonumber,
 			}, builder.Values...)
 
 			_, err = db.Exec(query, params...)

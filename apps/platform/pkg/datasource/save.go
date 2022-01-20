@@ -213,7 +213,12 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = Populate(op, collectionMetadata, session)
+			autonumber, err := getAutonumber(len(*op.Inserts), adapter, collectionMetadata, credentials)
+			if err != nil {
+				return err
+			}
+
+			err = Populate(op, collectionMetadata, autonumber, session)
 			if err != nil {
 				return err
 			}
