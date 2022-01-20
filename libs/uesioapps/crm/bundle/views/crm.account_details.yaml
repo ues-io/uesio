@@ -73,3 +73,8 @@ definition:
         crm.description:
         uesio.createdat:
         uesio.updatedat:
+  params:
+    accountid:
+      type: recordId
+      required: true
+      collection: crm.accounts

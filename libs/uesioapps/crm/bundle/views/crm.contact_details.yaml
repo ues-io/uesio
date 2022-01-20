@@ -84,3 +84,8 @@ definition:
         crm.lastname:
         uesio.updatedat:
         uesio.createdat:
+  params:
+    contactid:
+      type: recordId
+      required: true
+      collection: crm.contacts
