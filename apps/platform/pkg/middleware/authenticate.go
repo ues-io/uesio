@@ -65,7 +65,7 @@ func Authenticate(next http.Handler) http.Handler {
 
 		s, err := getSessionFromRequest(w, r, site)
 		if err != nil {
-			http.Error(w, "Failed to create session", http.StatusInternalServerError)
+			http.Error(w, "Failed to create session: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -94,7 +94,7 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 		perms := session.GetPermissions()
 
 		// 1. Make sure we're in a site that can read/modify workspaces
-		if site.App.ID != "studio" {
+		if site.GetAppID() != "studio" {
 			err := errors.New("this site does not allow administering other sites")
 			logger.LogError(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -200,29 +200,16 @@ func getProfilePermSet(session *sess.Session) (*meta.PermissionSet, error) {
 	return profile.FlattenPermissions(), nil
 }
 
-func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Site) (*sess.Session, error) {
-	browserSession := session.Get(r)
-	if browserSession == nil {
-		newSession := sess.NewPublic(site)
+func getUserFromSession(userid string, session *sess.Session) (*meta.User, error) {
 
-		// Don't add the session cookie for the login route
-		if r.URL.Path != "/site/auth/login" {
-			session.Add(*newSession.GetBrowserSession(), w)
-		}
-		return newSession, nil
+	// Get Cache site info for the host
+	cachedUser, ok := auth.GetUserCache(userid, session.GetSite().GetAppID())
+	if ok {
+		return cachedUser, nil
 	}
-	// Check to make sure our session site matches the site from our domain.
-	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
-	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
-
-	fakeSession := sess.NewSession(nil, &meta.User{
-		ID:        "system_system",
-		FirstName: "Super",
-		LastName:  "Admin",
-		Profile:   "uesio.public",
-	}, site)
 
 	var user meta.User
+
 	err := datasource.PlatformLoadOneWithFields(
 		&user,
 		[]adapt.LoadRequestField{
@@ -256,11 +243,44 @@ func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 		[]adapt.LoadRequestCondition{
 			{
 				Field: "uesio.id",
-				Value: browserSessionUser,
+				Value: userid,
 			},
 		},
-		fakeSession,
+		session,
 	)
+	if err != nil {
+		return nil, err
+	}
+	err = auth.SetUserCache(userid, session.GetSite().GetAppID(), &user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Site) (*sess.Session, error) {
+	browserSession := session.Get(r)
+	if browserSession == nil {
+		newSession := sess.NewPublic(site)
+
+		// Don't add the session cookie for the login route
+		if r.URL.Path != "/site/auth/login" {
+			session.Add(*newSession.GetBrowserSession(), w)
+		}
+		return newSession, nil
+	}
+	// Check to make sure our session site matches the site from our domain.
+	browserSessionSite := sess.GetSessionAttribute(&browserSession, "Site")
+	browserSessionUser := sess.GetSessionAttribute(&browserSession, "UserID")
+
+	fakeSession := sess.NewSession(nil, &meta.User{
+		ID:        "system_system",
+		FirstName: "Super",
+		LastName:  "Admin",
+		Profile:   "uesio.public",
+	}, site)
+
+	user, err := getUserFromSession(browserSessionUser, fakeSession)
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
@@ -270,7 +290,7 @@ func getSessionFromRequest(w http.ResponseWriter, r *http.Request, site *meta.Si
 		return nil, err
 	}
 
-	newSession := sess.NewSession(&browserSession, &user, site)
+	newSession := sess.NewSession(&browserSession, user, site)
 	if browserSessionSite != site.GetFullName() {
 		return sess.Logout(w, newSession), nil
 	}

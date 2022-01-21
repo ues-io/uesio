@@ -1,4 +1,0 @@
-name: deletefiles
-collection: uesio.userfiles
-dialect: "JAVASCRIPT"
-type: BEFORESAVE

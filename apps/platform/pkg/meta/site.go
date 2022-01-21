@@ -18,7 +18,14 @@ type Site struct {
 }
 
 func (s *Site) GetFullName() string {
-	return s.Name + "_" + s.App.ID
+	return s.Name + "_" + s.GetAppID()
+}
+
+func (s *Site) GetAppID() string {
+	if s.App != nil {
+		return s.App.ID
+	}
+	return ""
 }
 
 // SetAppBundle function

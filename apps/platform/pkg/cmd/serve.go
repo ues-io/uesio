@@ -10,6 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/controller"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	//_ "net/http/pprof"
 )
 
 func init() {
@@ -51,6 +52,9 @@ func serve(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running serv command!", logger.INFO)
 	r := mux.NewRouter()
+
+	// Profiler Info
+	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods("GET")
 	r.HandleFunc("/static/loader", controller.ServeStatic(filepath.Join("platform", "platform.js"))).Methods("GET")

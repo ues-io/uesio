@@ -84,6 +84,14 @@ func runBot(botType string, collectionMetadata *adapt.CollectionMetadata, dialec
 
 func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
 
+	// System bot triggers
+	// These are some actions we want to take for specific types, but don't want
+	// to use regular bots here
+	switch collectionMetadata.GetFullName() {
+	case "uesio.userfiles":
+		cleanUserFiles(request, collectionMetadata, session)
+	}
+
 	botAPI := NewBeforeSaveAPI(request, collectionMetadata, session)
 
 	err := runBot("BEFORESAVE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
@@ -101,6 +109,18 @@ func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 }
 
 func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+
+	// System bot triggers
+	// These are some actions we want to take for specific types, but don't want
+	// to use regular bots here
+	switch collectionMetadata.GetFullName() {
+	case "uesio.users":
+		clearUserCache(request, collectionMetadata, session)
+	case "studio.sites":
+		clearHostCacheForSite(request, collectionMetadata, session)
+	case "studio.sitedomains":
+		clearHostCacheForDomain(request, collectionMetadata, session)
+	}
 
 	botAPI := NewAfterSaveAPI(request, collectionMetadata, session)
 

@@ -34,7 +34,7 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	// we're good with just a fake session.
 	session := &sess.Session{}
 	session.SetSite(site)
-	return getAppBundleInternal(site.App.ID, site.Bundle.GetVersionString(), session)
+	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session)
 }
 
 // ClearAppBundleCache entry

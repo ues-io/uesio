@@ -1,20 +1,25 @@
 package bundle
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/thecloudmasters/uesio/pkg/localcache"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 )
 
+var doCache bool
+
+func init() {
+	doCache = os.Getenv("UESIO_CACHE_SITE_BUNDLES") == "true"
+}
+
 // GetFileListFromCache function
-func GetFileListFromCache(namespace string, version string, objectName string) ([]string, bool) {
-	if os.Getenv("GAE_ENV") == "" {
-		// For Local dev, don't use the cache so we can make lots of changes all the time
+func GetFileListFromCache(basePath string, conditions meta.BundleConditions) ([]string, bool) {
+	if !doCache {
 		return nil, false
 	}
-
-	files, ok := localcache.GetCacheEntry("file-list", namespace+version+objectName)
+	files, ok := localcache.GetCacheEntry("file-list", basePath+fmt.Sprint(conditions))
 	if ok {
 		return files.([]string), ok
 	}
@@ -22,18 +27,19 @@ func GetFileListFromCache(namespace string, version string, objectName string) (
 }
 
 // AddFileListToCache function
-func AddFileListToCache(namespace string, version string, objectName string, files []string) {
-	localcache.SetCacheEntry("file-list", namespace+version+objectName, files)
+func AddFileListToCache(basePath string, conditions meta.BundleConditions, files []string) {
+	if !doCache {
+		return
+	}
+	localcache.SetCacheEntry("file-list", basePath+fmt.Sprint(conditions), files)
 }
 
 // GetItemFromCache function
-func GetItemFromCache(namespace, version, bundleGroupName, name string) (meta.BundleableItem, bool) {
-	// If we're not in app engine, do not use the cache
-	if os.Getenv("GAE_ENV") == "" {
-		// For Local dev, don't use the cache so we can make lots of changes all the time
+func GetItemFromCache(namespace, version, bundleGroupName, key string) (meta.BundleableItem, bool) {
+	if !doCache {
 		return nil, false
 	}
-	entry, ok := localcache.GetCacheEntry("bundle-entry", namespace+version+bundleGroupName+name)
+	entry, ok := localcache.GetCacheEntry("bundle-entry", namespace+version+bundleGroupName+key)
 	if ok {
 		return entry.(meta.BundleableItem), ok
 	}
@@ -42,5 +48,8 @@ func GetItemFromCache(namespace, version, bundleGroupName, name string) (meta.Bu
 
 // AddItemToCache function
 func AddItemToCache(item meta.BundleableItem, namespace, version string) {
+	if !doCache {
+		return
+	}
 	localcache.SetCacheEntry("bundle-entry", namespace+version+item.GetCollectionName()+item.GetKey(), item)
 }
