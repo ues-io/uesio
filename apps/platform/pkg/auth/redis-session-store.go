@@ -13,7 +13,7 @@ import (
 type RedisSessionStore struct{}
 
 func getSessionKey(id string) string {
-	return "session" + id
+	return "session:" + id
 }
 
 // NewRedisSessionStore func
@@ -60,9 +60,7 @@ func (s *RedisSessionStore) Add(sess session.Session) {
 // Will remove it from both the memory store and the FS
 func (s *RedisSessionStore) Remove(sess session.Session) {
 	fmt.Println("Removing Redis Session: " + sess.ID())
-	conn := cache.GetRedisConn()
-	defer conn.Close()
-	_, err := conn.Do("DEL", getSessionKey(sess.ID()))
+	err := cache.DeleteKeys([]string{getSessionKey(sess.ID())})
 	if err != nil {
 		fmt.Println("Error Deleting session: " + err.Error())
 	}

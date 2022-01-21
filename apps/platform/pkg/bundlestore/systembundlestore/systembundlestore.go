@@ -6,9 +6,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -39,11 +39,47 @@ func getStream(namespace string, version string, objectname string, filename str
 	}, nil
 }
 
+func getFileKeys(basePath string, group meta.BundleableGroup, conditions meta.BundleConditions) ([]string, error) {
+
+	cachedKeys, ok := bundle.GetFileListFromCache(basePath, conditions)
+	if ok {
+		return cachedKeys, nil
+	}
+	keys := []string{}
+
+	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			// Ignore walking errors
+			return nil
+		}
+		if path == basePath {
+			return nil
+		}
+		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
+		if err != nil {
+			logger.LogError(err)
+			return nil
+		}
+		if key == "" {
+			return nil
+		}
+		keys = append(keys, key)
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	bundle.AddFileListToCache(basePath, conditions, keys)
+	return keys, err
+}
+
 // GetItem function
 func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 	key := item.GetKey()
 	namespace := item.GetNamespace()
-	collectionName := meta.GetNameKeyPart(item.GetCollectionName())
+	fullCollectionName := item.GetCollectionName()
+	collectionName := meta.GetNameKeyPart(fullCollectionName)
 
 	permSet := session.GetContextPermissions()
 
@@ -52,11 +88,11 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return bundlestore.NewPermissionError("No Permission to metadata item: " + key)
 	}
 
-	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
+	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
 
 	if ok {
-		// We got a cache hit
-		return copier.Copy(item, cachedItem)
+		reflect.Indirect(reflect.ValueOf(item)).Set(reflect.Indirect(reflect.ValueOf(cachedItem)))
+		return nil
 	}
 
 	stream, err := getStream(namespace, version, collectionName, item.GetPath())
@@ -64,7 +100,12 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 		return err
 	}
 	defer stream.Close()
-	return bundlestore.DecodeYAML(item, stream)
+	err = bundlestore.DecodeYAML(item, stream)
+	if err != nil {
+		return err
+	}
+	bundle.AddItemToCache(item, namespace, version)
+	return nil
 
 }
 
@@ -90,27 +131,8 @@ func (b *SystemBundleStore) GetAllItems(group meta.BundleableGroup, namespace, v
 
 	// TODO: Think about caching this, but remember conditions
 	basePath := filepath.Join(getBasePath(namespace, version), meta.GetNameKeyPart(group.GetName()), "") + string(os.PathSeparator)
-	keys := []string{}
-	err := filepath.Walk(basePath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			// Ignore walking errors
-			return nil
-		}
-		if path == basePath {
-			return nil
-		}
-		key, err := group.GetKeyFromPath(strings.TrimPrefix(path, basePath), conditions)
-		if err != nil {
-			logger.LogError(err)
-			return nil
-		}
-		if key == "" {
-			return nil
-		}
-		keys = append(keys, key)
 
-		return nil
-	})
+	keys, err := getFileKeys(basePath, group, conditions)
 	if err != nil {
 		return err
 	}

@@ -41,21 +41,27 @@ type AuthenticationClaims struct {
 	Email     string `json:"email"`
 }
 
-// GetSiteFromHost function
-func GetSiteFromHost(host string) (*meta.Site, error) {
-	var domainType, domainValue, domain, subdomain string
+func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
 	stringParts := strings.Split(host, ".")
 	if len(stringParts) == 3 {
-		domainType = "subdomain"
-		domainValue = stringParts[0]
-		subdomain = domainValue
-		domain = stringParts[1] + "." + stringParts[2]
-	} else {
-		domainType = "domain"
-		hostParts := strings.Split(host, ":")
-		domainValue = hostParts[0] // Strip off the port
-		domain = host
+		return "subdomain", stringParts[0], stringParts[1] + "." + stringParts[2], stringParts[0]
 	}
+	hostParts := strings.Split(host, ":")
+	return "domain", hostParts[0], host, ""
+}
+
+// GetSiteFromHost function
+func GetSiteFromHost(host string) (*meta.Site, error) {
+
+	domainType, domainValue, domain, subdomain := parseHost(host)
+	// Get Cache site info for the host
+	site, ok := getHostCache(domainType, domainValue)
+	if ok {
+		site.Domain = domain
+		site.Subdomain = subdomain
+		return site, nil
+	}
+
 	site, err := GetSiteFromDomain(domainType, domainValue)
 	if err != nil {
 		return nil, err
@@ -65,6 +71,12 @@ func GetSiteFromHost(host string) (*meta.Site, error) {
 	}
 	site.Domain = domain
 	site.Subdomain = subdomain
+
+	err = setHostCache(domainType, domainValue, site)
+	if err != nil {
+		return nil, err
+	}
+
 	return site, nil
 }
 
