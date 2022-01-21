@@ -66,12 +66,6 @@ definition:
                                           path: contact
                                   - io.button:
                                       uesio.variant: web.footerlink
-                                      text: Resources
-                                      signals:
-                                        - signal: "route/REDIRECT"
-                                          path: "https://docs.$Site{domain}"
-                                  - io.button:
-                                      uesio.variant: web.footerlink
                                       text: Privacy policy
                                       signals:
                                         - signal: route/NAVIGATE
