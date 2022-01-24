@@ -73,11 +73,13 @@ components:
       utilities:
         - io.textfield
         - io.fieldwrapper
-        - io.referencefield
+        - io.autocomplete
+        - io.group
         - io.button
       variants:
         - io.textfield.io.default
         - io.button.io.primary
+        - io.autocomplete.io.default
     studio.previewbutton:
       utilities:
         - io.button

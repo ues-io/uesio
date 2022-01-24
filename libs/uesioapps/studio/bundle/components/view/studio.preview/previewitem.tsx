@@ -11,7 +11,6 @@ interface Props extends definition.BaseProps {
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const AutoComplete = component.registry.getUtility("io.autocomplete")
-const Text = component.registry.getUtility("io.text")
 
 const PreviewItem: FunctionComponent<Props> = (props) => {
 	const { context, fieldKey, item, lstate, setLstate } = props
