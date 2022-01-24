@@ -48,28 +48,22 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 		yamlDoc.contents
 	) as YAMLMap<Scalar<string>, YAMLMap>
 
-	const uesiopath = uesio.getPath()
-
-	console.log({ uesiopath, fieldId, viewDef, yamlDoc, params })
-
+	const [handler, portals] = uesio.signal.useHandler([
+		{
+			signal: "panel/TOGGLE",
+			panel: "previewPanel",
+		},
+	])
 	return (
 		<>
 			{params ? (
 				<Button
 					context={newContext}
-					variant="io.primary"
+					variant="io.secondary"
 					label="Preview"
-					signlas={""}
+					path={props.path}
 					onClick={() => {
-						console.log("run")
-						uesio.signal.run(
-							{
-								signal: "panel/TOGGLE",
-								panel: "previewPanel",
-								path: uesiopath,
-							},
-							newContext
-						)
+						handler && handler()
 					}}
 				/>
 			) : (
@@ -92,6 +86,7 @@ const PreviewButton: FunctionComponent<Props> = (props) => {
 					}}
 				/>
 			)}
+			{portals}
 		</>
 	)
 }
