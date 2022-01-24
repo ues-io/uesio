@@ -52,7 +52,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 	) as YAMLMap<Scalar<string>, YAMLMap>
 
 	const paramsToAdd: Record<string, ParamDefinition> = {}
-	params.items.forEach((item) => {
+	params?.items.forEach((item) => {
 		const key = item.key.value
 		paramsToAdd[key] = {
 			type: item.value?.get("type") as string,
