@@ -123,6 +123,10 @@ definition:
                           actions:
                             - io.group:
                                 components:
+                                  - studio.dataexport:
+                                      collectionId: $Param{collectionname}
+                                      namespace: $Param{appname}
+                                      usage: workspace
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Import Data"

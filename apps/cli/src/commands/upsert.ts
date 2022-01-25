@@ -15,6 +15,7 @@ async function getSpec(
 		: {}
 
 	const spec: definition.ImportSpec = {
+		jobtype: "import",
 		filetype: specData["uesio.filetype"] || "csv",
 		collection: specData["uesio.collection"],
 		upsertkey: specData["uesio.upsertkey"],
@@ -33,6 +34,7 @@ async function getSpec(
 
 function getSpecString(spec: definition.ImportSpec) {
 	return JSON.stringify({
+		"uesio.jobtype": spec.jobtype,
 		"uesio.filetype": spec.filetype,
 		"uesio.collection": spec.collection,
 		"uesio.upsertkey": spec.upsertkey,

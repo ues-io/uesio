@@ -59,6 +59,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	}
 
 	const [spec, setSpec] = useState<definition.ImportSpec>({
+		jobtype: "import",
 		collection: collection.getFullName(),
 		upsertkey: "",
 		filetype: "csv",

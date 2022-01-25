@@ -18,6 +18,7 @@ export type ImportMapping = {
 }
 
 export type ImportSpec = {
+	jobtype: string
 	filetype: string
 	collection: string
 	upsertkey: string

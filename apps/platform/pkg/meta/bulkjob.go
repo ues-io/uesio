@@ -14,6 +14,7 @@ type BulkJob struct {
 
 // JobSpec struct
 type JobSpec struct {
+	JobType    string                  `json:"uesio.jobtype" uesio:"uesio.jobtype"`
 	FileType   string                  `json:"uesio.filetype" uesio:"uesio.filetype"`
 	Collection string                  `json:"uesio.collection" uesio:"uesio.collection"`
 	UpsertKey  string                  `json:"uesio.upsertkey" uesio:"uesio.upsertkey"`

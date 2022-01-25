@@ -85,6 +85,11 @@ components:
         - io.button
       variants:
         - io.button.io.secondary
+    studio.dataexport:
+      variants:
+        - io.button.io.secondary
+      utilities:
+        - io.button
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.view:
