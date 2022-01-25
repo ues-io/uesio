@@ -45,6 +45,7 @@ type CollectionMetadata struct {
 	DataSource            string                                 `json:"-"`
 	Access                string                                 `json:"-"`
 	RecordChallengeTokens []*meta.RecordChallengeTokenDefinition `json:"-"`
+	TableName             string                                 `json:"-"`
 }
 
 // GetField function
@@ -113,6 +114,7 @@ type FieldMetadata struct {
 	AutoPopulate       string                    `json:"autopopulate,omitempty"`
 	SubFields          map[string]*FieldMetadata `json:"subfields,omitempty"`
 	SubType            string                    `json:"subtype,omitempty"`
+	ColumnName         string                    `json:"-"`
 }
 
 // GetFullName function

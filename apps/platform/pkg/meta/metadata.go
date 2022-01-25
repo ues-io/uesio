@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -184,6 +185,10 @@ func GetMetadataTypes() []string {
 		types = append(types, key)
 	}
 	return types
+}
+
+func Copy(to, from interface{}) {
+	reflect.Indirect(reflect.ValueOf(to)).Set(reflect.Indirect(reflect.ValueOf(from)))
 }
 
 var validMetaRegex, _ = regexp.Compile("^[a-z0-9_]+$")

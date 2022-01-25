@@ -1,0 +1,4 @@
+name: columnname
+collection: studio.fields
+type: TEXT
+label: Column Name

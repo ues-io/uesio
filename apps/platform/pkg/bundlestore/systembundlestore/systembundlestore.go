@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -91,7 +90,7 @@ func (b *SystemBundleStore) GetItem(item meta.BundleableItem, version string, se
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, fullCollectionName, key)
 
 	if ok {
-		reflect.Indirect(reflect.ValueOf(item)).Set(reflect.Indirect(reflect.ValueOf(cachedItem)))
+		meta.Copy(item, cachedItem)
 		return nil
 	}
 

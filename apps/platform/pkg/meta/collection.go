@@ -51,6 +51,7 @@ type Collection struct {
 	itemMeta              *ItemMeta                         `yaml:"-" uesio:"-"`
 	Access                string                            `yaml:"access,omitempty" uesio:"studio.access"`
 	RecordChallengeTokens []*RecordChallengeTokenDefinition `yaml:"recordChallengeTokens,omitempty" uesio:"-"`
+	TableName             string                            `yaml:"tablename,omitempty" uesio:"studio.tablename"`
 }
 
 // GetCollectionName function
