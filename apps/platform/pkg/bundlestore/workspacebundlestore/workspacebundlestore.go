@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -79,7 +78,8 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		return group.Loop(func(item loadable.Item, index interface{}) error {
 			bundleable := item.(meta.BundleableItem)
 			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
-			return copier.Copy(match, item)
+			meta.Copy(match, item)
+			return nil
 		})
 
 	}

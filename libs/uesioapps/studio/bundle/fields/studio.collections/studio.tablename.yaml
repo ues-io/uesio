@@ -1,0 +1,4 @@
+name: tablename
+collection: studio.collections
+type: TEXT
+label: Table Name

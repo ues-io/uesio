@@ -28,6 +28,7 @@ func GetCollectionMetadata(e *meta.Collection) *adapt.CollectionMetadata {
 		DataSource:            e.DataSourceRef,
 		Access:                e.Access,
 		RecordChallengeTokens: e.RecordChallengeTokens,
+		TableName:             e.TableName,
 	}
 }
 
@@ -61,6 +62,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		AutoPopulate:       f.AutoPopulate,
 		SubFields:          GetSubFieldMetadata(f),
 		SubType:            f.SubType,
+		ColumnName:         f.ColumnName,
 	}
 }
 
@@ -206,6 +208,9 @@ func LoadFieldsMetadata(keys []string, collectionKey string, collectionMetadata 
 			}
 			fields = append(fields, field)
 		}
+	}
+	if len(fields) == 0 {
+		return nil
 	}
 	err := bundle.LoadMany(fields, session)
 	if err != nil {

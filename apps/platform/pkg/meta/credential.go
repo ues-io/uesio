@@ -30,7 +30,6 @@ type Credential struct {
 	Name      string                     `yaml:"name" uesio:"studio.name"`
 	Namespace string                     `yaml:"-" uesio:"-"`
 	Entries   map[string]CredentialEntry `yaml:"entries" uesio:"studio.entries"`
-	TypeRef   string                     `yaml:"type" uesio:"studio.type"`
 	Workspace *Workspace                 `yaml:"-" uesio:"studio.workspace"`
 	itemMeta  *ItemMeta                  `yaml:"-" uesio:"-"`
 	CreatedBy *User                      `yaml:"-" uesio:"uesio.createdby"`

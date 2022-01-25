@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/adapt/postgresio"
+	"github.com/thecloudmasters/uesio/pkg/adapt/salesforce"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/auth/cognito"
 	"github.com/thecloudmasters/uesio/pkg/auth/facebook"
@@ -40,6 +41,7 @@ func init() {
 
 	// Data Adapters
 	adapt.RegisterAdapter("uesio.postgresio", &postgresio.Adapter{})
+	adapt.RegisterAdapter("uesio.salesforce", &salesforce.Adapter{})
 
 	// Authentication Types
 	auth.RegisterAuthType("google", &google.Auth{})
