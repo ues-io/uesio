@@ -1,4 +1,6 @@
-import { get, setWith, toPath } from "lodash"
+import get from "lodash/get"
+import setWith from "lodash/setWith"
+import toPath from "lodash/toPath"
 import {
 	AddDefinitionPayload,
 	MoveDefinitionPayload,

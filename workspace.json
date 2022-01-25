@@ -13,19 +13,8 @@
           ],
           "options": {
             "commands": [
-              "go build -o ../../dist/platform/uesio",
-              "npx webpack --config webpack.config.js"
+              "go build -o ../../dist/platform/uesio"
             ],
-            "cwd": "apps/platform"
-          }
-        },
-        "build-go": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "dist/platform"
-          ],
-          "options": {
-            "command": "go build -o ../../dist/platform/uesio",
             "cwd": "apps/platform"
           }
         },

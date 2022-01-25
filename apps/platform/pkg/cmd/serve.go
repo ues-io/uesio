@@ -57,7 +57,6 @@ func serve(cmd *cobra.Command, args []string) {
 	// r.PathPrefix("/debug/pprof").Handler(http.DefaultServeMux)
 
 	r.HandleFunc("/fonts/{filename}", controller.Fonts).Methods("GET")
-	r.HandleFunc("/static/loader", controller.ServeStatic(filepath.Join("platform", "platform.js"))).Methods("GET")
 	r.HandleFunc("/static/{filename:.*}", controller.Vendor).Methods("GET")
 	r.HandleFunc("/favicon.ico", controller.ServeStatic(filepath.Join("platform", "favicon.ico"))).Methods("GET")
 	r.HandleFunc("/health", controller.Health).Methods("GET")
