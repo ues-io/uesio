@@ -135,7 +135,7 @@ func loadOne(
 	if index == op.BatchSize+1 {
 		op.HasMoreBatches = true
 		// Remove the last item
-		op.Collection.Slice(0, op.BatchSize)
+		op.Collection.Slice(0, op.Collection.Len()-1)
 	} else {
 		op.HasMoreBatches = false
 	}
