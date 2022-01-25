@@ -9,10 +9,6 @@ import (
 
 type UserAccessTokenCollection []UserAccessToken
 
-func (uatc *UserAccessTokenCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (uatc *UserAccessTokenCollection) GetName() string {
 	return "studio.useraccesstokens"
@@ -71,9 +67,4 @@ func (uatc *UserAccessTokenCollection) Len() int {
 // GetItems function
 func (uatc *UserAccessTokenCollection) GetItems() interface{} {
 	return *uatc
-}
-
-// Slice function
-func (uatc *UserAccessTokenCollection) Slice(start int, end int) {
-
 }

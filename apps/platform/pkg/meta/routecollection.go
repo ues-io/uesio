@@ -63,11 +63,3 @@ func (rc *RouteCollection) Len() int {
 func (rc *RouteCollection) GetItems() interface{} {
 	return *rc
 }
-
-// Slice function
-func (rc *RouteCollection) Slice(start int, end int) {
-
-}
-func (bc *RouteCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

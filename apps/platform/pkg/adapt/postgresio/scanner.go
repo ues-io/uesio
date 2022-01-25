@@ -14,15 +14,9 @@ type DataScanner struct {
 	Field      *adapt.FieldMetadata
 	References *adapt.ReferenceRegistry
 	Index      *int
-	BatchSize  int
 }
 
 func (ds *DataScanner) Scan(src interface{}) error {
-
-	// Skip the last one
-	if ds.BatchSize == *ds.Index {
-		return nil
-	}
 
 	fieldMetadata := ds.Field
 	if src == nil {

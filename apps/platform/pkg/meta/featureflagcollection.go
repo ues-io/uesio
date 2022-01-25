@@ -63,11 +63,3 @@ func (ffc *FeatureFlagCollection) Len() int {
 func (ffc *FeatureFlagCollection) GetItems() interface{} {
 	return *ffc
 }
-
-// Slice function
-func (ffc *FeatureFlagCollection) Slice(start int, end int) {
-
-}
-func (bc *FeatureFlagCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

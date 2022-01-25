@@ -79,28 +79,22 @@ func loadOne(
 	*/
 
 	//fmt.Println(loadQuery)
-	result, err := client.Query(loadQuery) // Note: for Tooling API, use client.Tooling().Query(q)
+	result, err := client.Query(loadQuery)
 	if err != nil {
 		return err
 	}
 
-	for _, record := range result.Records {
-		// access the record as SObjects.
-		//fmt.Println(record)
+	op.HasMoreBatches = false
+
+	for i, record := range result.Records {
+		if op.BatchSize == i {
+			op.HasMoreBatches = true
+			break
+		}
 		item := op.Collection.NewItem()
 		for id, fieldmetadata := range fieldMap {
 			item.SetField(id, record[fieldmetadata.ColumnName])
 		}
-	}
-
-	index := 0
-	// Check to see if we loaded in a full amount
-	if index == op.BatchSize+1 {
-		op.HasMoreBatches = true
-		// Remove the last item
-		op.Collection.Slice(0, op.BatchSize)
-	} else {
-		op.HasMoreBatches = false
 	}
 
 	op.BatchNumber++

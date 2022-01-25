@@ -63,11 +63,3 @@ func (dsc *DataSourceCollection) Len() int {
 func (dsc *DataSourceCollection) GetItems() interface{} {
 	return *dsc
 }
-
-// Slice function
-func (dsc *DataSourceCollection) Slice(start int, end int) {
-
-}
-func (bc *DataSourceCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

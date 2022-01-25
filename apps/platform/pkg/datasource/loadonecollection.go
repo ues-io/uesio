@@ -12,10 +12,6 @@ type LoadOneCollection struct {
 	Length     int
 }
 
-func (c *LoadOneCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetItem function
 func (c *LoadOneCollection) GetItem(index int) loadable.Item {
 	return c.Item
@@ -50,9 +46,4 @@ func (c *LoadOneCollection) GetName() string {
 // GetItems function
 func (c *LoadOneCollection) GetItems() interface{} {
 	return []LoadOneCollection{*c}
-}
-
-// Slice function
-func (c *LoadOneCollection) Slice(start int, end int) {
-
 }
