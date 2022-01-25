@@ -73,11 +73,18 @@ components:
       utilities:
         - io.textfield
         - io.fieldwrapper
-        - io.referencefield
+        - io.autocomplete
+        - io.group
         - io.button
       variants:
         - io.textfield.io.default
         - io.button.io.primary
+        - io.autocomplete.io.default
+    studio.previewbutton:
+      utilities:
+        - io.button
+      variants:
+        - io.button.io.secondary
     # Define a builder for the uesio runtime and slot
     uesio.runtime:
     uesio.view:

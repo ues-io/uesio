@@ -71,12 +71,8 @@ definition:
                           actions:
                             - io.group:
                                 components:
-                                  - io.button:
-                                      uesio.variant: io.secondary
-                                      text: "Preview"
-                                      signals:
-                                        - signal: panel/TOGGLE
-                                          panel: previewPanel
+                                  - studio.previewbutton:
+                                      fieldId: studio.definition
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Build"

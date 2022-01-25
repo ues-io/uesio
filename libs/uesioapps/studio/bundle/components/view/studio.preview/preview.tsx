@@ -21,6 +21,7 @@ interface Props extends definition.BaseProps {
 const TextField = component.registry.getUtility("io.textfield")
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 const Button = component.registry.getUtility("io.button")
+const Group = component.registry.getUtility("io.group")
 
 const Preview: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
@@ -52,7 +53,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 	) as YAMLMap<Scalar<string>, YAMLMap>
 
 	const paramsToAdd: Record<string, ParamDefinition> = {}
-	params.items.forEach((item) => {
+	params?.items.forEach((item) => {
 		const key = item.key.value
 		paramsToAdd[key] = {
 			type: item.value?.get("type") as string,
@@ -116,34 +117,48 @@ const Preview: FunctionComponent<Props> = (props) => {
 				)
 			)}
 
-			<Button
-				context={newContext}
-				variant="io.primary"
-				label="Preview"
-				onClick={() => {
-					let getParams = "?"
-					const size = Object.keys(lstate).length - 1
-					Object.entries(lstate).forEach(([key, value], index) => {
-						if (value !== "") {
-							size > index
-								? (getParams = getParams + `${key}=${value}&`)
-								: (getParams = getParams + `${key}=${value}`)
-						}
-					})
-
-					uesio.signal.run(
-						{
-							signal: "route/REDIRECT",
-							path: `/workspace/${
-								newContext.getWorkspace()?.app
-							}/${
-								newContext.getWorkspace()?.name
-							}/views/${appName}/${viewName}/preview${getParams}`,
-						},
-						newContext
-					)
+			<Group
+				styles={{
+					root: {
+						justifyContent: "end",
+						padding: "20px",
+					},
 				}}
-			/>
+				context={newContext}
+			>
+				<Button
+					context={newContext}
+					variant="io.primary"
+					label="Preview"
+					onClick={() => {
+						let getParams = "?"
+						const size = Object.keys(lstate).length - 1
+						Object.entries(lstate).forEach(
+							([key, value], index) => {
+								if (value !== "") {
+									size > index
+										? (getParams =
+												getParams + `${key}=${value}&`)
+										: (getParams =
+												getParams + `${key}=${value}`)
+								}
+							}
+						)
+
+						uesio.signal.run(
+							{
+								signal: "route/REDIRECT",
+								path: `/workspace/${
+									newContext.getWorkspace()?.app
+								}/${
+									newContext.getWorkspace()?.name
+								}/views/${appName}/${viewName}/preview${getParams}`,
+							},
+							newContext
+						)
+					}}
+				/>
+			</Group>
 		</>
 	)
 }
