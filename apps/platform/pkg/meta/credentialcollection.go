@@ -63,11 +63,3 @@ func (cc *CredentialCollection) Len() int {
 func (cc *CredentialCollection) GetItems() interface{} {
 	return *cc
 }
-
-// Slice function
-func (cc *CredentialCollection) Slice(start int, end int) {
-
-}
-func (bc *CredentialCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

@@ -7,10 +7,6 @@ import (
 // UserFileMetadataCollection slice
 type UserFileMetadataCollection []UserFileMetadata
 
-func (ufmc *UserFileMetadataCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (ufmc *UserFileMetadataCollection) GetName() string {
 	return "uesio.userfiles"
@@ -51,9 +47,4 @@ func (ufmc *UserFileMetadataCollection) Len() int {
 // GetItems function
 func (ufmc *UserFileMetadataCollection) GetItems() interface{} {
 	return *ufmc
-}
-
-// Slice function
-func (ufmc *UserFileMetadataCollection) Slice(start int, end int) {
-
 }

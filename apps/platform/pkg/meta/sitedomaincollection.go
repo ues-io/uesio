@@ -7,10 +7,6 @@ import (
 // SiteDomainCollection slice
 type SiteDomainCollection []SiteDomain
 
-func (sdc *SiteDomainCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (sdc *SiteDomainCollection) GetName() string {
 	return "studio.sitedomains"
@@ -51,9 +47,4 @@ func (sdc *SiteDomainCollection) Len() int {
 // GetItems function
 func (sdc *SiteDomainCollection) GetItems() interface{} {
 	return *sdc
-}
-
-// Slice function
-func (sdc *SiteDomainCollection) Slice(start int, end int) {
-
 }

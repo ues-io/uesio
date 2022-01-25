@@ -7,10 +7,6 @@ import (
 // WorkspaceCollection slice
 type WorkspaceCollection []Workspace
 
-func (wc *WorkspaceCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (wc *WorkspaceCollection) GetName() string {
 	return "studio.workspaces"
@@ -51,9 +47,4 @@ func (wc *WorkspaceCollection) Len() int {
 // GetItems function
 func (wc *WorkspaceCollection) GetItems() interface{} {
 	return *wc
-}
-
-// Slice function
-func (wc *WorkspaceCollection) Slice(start int, end int) {
-
 }

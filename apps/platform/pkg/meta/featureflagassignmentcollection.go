@@ -48,13 +48,3 @@ func (ffac *FeatureFlagAssignmentCollection) Len() int {
 func (ffac *FeatureFlagAssignmentCollection) GetItems() interface{} {
 	return *ffac
 }
-
-// Slice function
-func (ffac *FeatureFlagAssignmentCollection) Slice(start int, end int) {
-
-}
-
-// filter function
-func (ffac *FeatureFlagAssignmentCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

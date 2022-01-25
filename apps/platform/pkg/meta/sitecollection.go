@@ -7,10 +7,6 @@ import (
 // SiteCollection slice
 type SiteCollection []Site
 
-func (sc *SiteCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (sc *SiteCollection) GetName() string {
 	return "studio.sites"
@@ -51,9 +47,4 @@ func (sc *SiteCollection) Len() int {
 // GetItems function
 func (sc *SiteCollection) GetItems() interface{} {
 	return *sc
-}
-
-// Slice function
-func (sc *SiteCollection) Slice(start int, end int) {
-
 }

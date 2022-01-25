@@ -94,11 +94,3 @@ func (tc *TranslationCollection) Len() int {
 func (tc *TranslationCollection) GetItems() interface{} {
 	return *tc
 }
-
-// Slice function
-func (tc *TranslationCollection) Slice(start int, end int) {
-
-}
-func (tc *TranslationCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

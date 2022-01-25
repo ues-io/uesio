@@ -10,10 +10,6 @@ import (
 // LabelCollection slice
 type LabelCollection []Label
 
-func (lc *LabelCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (lc *LabelCollection) GetName() string {
 	return "studio.labels"
@@ -72,9 +68,4 @@ func (lc *LabelCollection) Len() int {
 // GetItems function
 func (lc *LabelCollection) GetItems() interface{} {
 	return *lc
-}
-
-// Slice function
-func (lc *LabelCollection) Slice(start int, end int) {
-
 }

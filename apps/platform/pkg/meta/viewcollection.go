@@ -10,10 +10,6 @@ import (
 // ViewCollection slice
 type ViewCollection []View
 
-func (vc *ViewCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (vc *ViewCollection) GetName() string {
 	return "studio.views"
@@ -72,9 +68,4 @@ func (vc *ViewCollection) Len() int {
 // GetItems function
 func (vc *ViewCollection) GetItems() interface{} {
 	return *vc
-}
-
-// Slice function
-func (vc *ViewCollection) Slice(start int, end int) {
-
 }

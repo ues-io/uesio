@@ -9,8 +9,6 @@ type Group interface {
 	Len() int
 	NewItem() Item
 	GetItems() interface{}
-	Slice(start int, end int)
-	Filter(iter func(item Item) (bool, error)) error
 }
 
 // Item interface

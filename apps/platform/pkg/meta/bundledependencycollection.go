@@ -48,11 +48,3 @@ func (bc *BundleDependencyCollection) Len() int {
 func (bc *BundleDependencyCollection) GetItems() interface{} {
 	return *bc
 }
-
-// Slice function
-func (bc *BundleDependencyCollection) Slice(start int, end int) {
-
-}
-func (bc *BundleDependencyCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

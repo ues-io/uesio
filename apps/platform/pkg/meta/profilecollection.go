@@ -63,11 +63,3 @@ func (pc *ProfileCollection) Len() int {
 func (pc *ProfileCollection) GetItems() interface{} {
 	return *pc
 }
-
-// Slice function
-func (pc *ProfileCollection) Slice(start int, end int) {
-
-}
-func (bc *ProfileCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

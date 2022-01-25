@@ -78,12 +78,3 @@ func (cpc *ComponentPackCollection) Len() int {
 func (cpc *ComponentPackCollection) GetItems() interface{} {
 	return *cpc
 }
-
-// Slice function
-func (cpc *ComponentPackCollection) Slice(start int, end int) {
-
-}
-
-func (bc *ComponentPackCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
