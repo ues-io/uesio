@@ -3,11 +3,11 @@ package platformbundlestore
 import (
 	"errors"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/auth"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -23,26 +23,14 @@ type PlatformBundleStore struct {
 }
 
 // System variables
-var (
-	BundleStoreBucketName string
-	SystemSetUp           error
-)
+var BUNDLE_STORE_BUCKET_NAME string
 
 func init() {
-	SystemSetUp = InitSystemEnv()
-}
-
-//InitSystemEnv inits System variables
-func InitSystemEnv() error {
-
 	val, ok := os.LookupEnv("UESIO_BUNDLE_STORE_BUCKET_NAME")
 	if !ok {
-		return errors.New("Could not get environment variable: UESIO_BUNDLE_STORE_BUCKET_NAME")
+		log.Fatal("Could not get environment variable: UESIO_BUNDLE_STORE_BUCKET_NAME")
 	}
-	BundleStoreBucketName = val
-
-	return nil
-
+	BUNDLE_STORE_BUCKET_NAME = val
 }
 
 func getBasePath(namespace, version string) string {
@@ -65,7 +53,7 @@ func getStream(namespace string, version string, objectname string, filename str
 		return nil, err
 	}
 
-	return fileAdapter.Download(BundleStoreBucketName, filePath, credentials)
+	return fileAdapter.Download(BUNDLE_STORE_BUCKET_NAME, filePath, credentials)
 
 }
 
@@ -85,8 +73,8 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
 
 	if ok {
-		// We got a cache hit
-		return copier.Copy(item, cachedItem)
+		meta.Copy(item, cachedItem)
+		return nil
 	}
 	stream, err := getStream(namespace, version, collectionName, item.GetPath(), session)
 	if err != nil {
@@ -125,7 +113,7 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 		return err
 	}
 
-	s3Result, err := fileAdapter.List(BundleStoreBucketName, basePath, credentials)
+	s3Result, err := fileAdapter.List(BUNDLE_STORE_BUCKET_NAME, basePath, credentials)
 	if err != nil {
 		return err
 	}
@@ -202,7 +190,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 		return err
 	}
 
-	err = fileAdapter.Upload(&itemStream.Buffer, BundleStoreBucketName, fullFilePath, credentials)
+	err = fileAdapter.Upload(&itemStream.Buffer, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}
