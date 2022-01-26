@@ -97,8 +97,9 @@ func validateMetadata(field *adapt.FieldMetadata) validationFunc {
 func validateNumber(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
 		val, err := change.FieldChanges.GetField(field.GetFullName())
-		_, ok := val.(float64)
-		if err == nil && !ok {
+		_, isFloat := val.(float64)
+		_, isInt := val.(int64)
+		if err == nil && !isFloat && !isInt {
 			return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not a valid number")
 		}
 		return nil

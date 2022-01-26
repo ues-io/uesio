@@ -56,6 +56,8 @@ definition:
                 - io.column:
                     field: crm.description
                 - io.column:
+                    field: crm.no_of_employees
+                - io.column:
                     field: uesio.createdat
                 - io.column:
                     field: uesio.updatedat
@@ -75,5 +77,6 @@ definition:
         uesio.id: null
         crm.name: null
         crm.externalid: null
+        crm.no_of_employees: null
         uesio.createdat: null
         uesio.updatedat: null
