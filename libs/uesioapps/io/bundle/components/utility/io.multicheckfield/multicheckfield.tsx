@@ -48,6 +48,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 
 	const fieldLabel = fieldMetadata.getLabel()
 	const fieldId = fieldMetadata.getLabel()
+
 	return (
 		<Fieldset
 			context={context}
@@ -65,7 +66,7 @@ const MultiCheckField: FC<SelectFieldProps> = (props) => {
 						<div className={classes.option} key={option.value}>
 							<CheckBoxField
 								id={optionId}
-								value={value[option.value]}
+								value={value && value[option.value]}
 								context={context}
 								setValue={(optionVal: boolean) =>
 									// Set the false/true value, then filter out the false values before setting
