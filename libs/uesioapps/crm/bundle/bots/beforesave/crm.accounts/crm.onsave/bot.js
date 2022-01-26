@@ -23,6 +23,7 @@ function onchange(bot) {
 		if (name.toLowerCase() === "skuidify") {
 			bot.addError("No Skuids Allowed!")
 		}
+		change.set("crm.no_of_employees", 4)
 		change.set("crm.name", name + " ben is cool!!")
 	})
 }
