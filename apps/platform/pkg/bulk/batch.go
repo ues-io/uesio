@@ -1,12 +1,20 @@
 package bulk
 
 import (
+	"encoding/csv"
 	"errors"
 	"io"
+	"log"
+	"os"
+	"strconv"
+	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
+	"github.com/thecloudmasters/uesio/pkg/fileadapt"
+	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
@@ -86,14 +94,35 @@ func loadData(ops []adapt.LoadOp, session *sess.Session) error {
 		return err
 	}
 
-	println(ops[0].BatchNumber)
-	println(ops[0].HasMoreBatches)
-
 	if !ops[0].HasMoreBatches {
 		return nil
 	}
 
 	return loadData(ops, session)
+}
+
+func getHeaderRow(fields []adapt.LoadRequestField) []string {
+	var row []string
+	for _, field := range fields {
+		row = append(row, field.ID)
+	}
+	return row
+}
+
+func getRow(item loadable.Item, fields []adapt.LoadRequestField) []string {
+	var row []string
+	for _, field := range fields {
+		keyVal, err := item.GetField(field.ID)
+		if err == nil {
+			keyString, ok := keyVal.(string)
+			if ok {
+				row = append(row, keyString)
+			}
+			//empty cell
+			row = append(row, "")
+		}
+	}
+	return row
 }
 
 // NewExportBatch func
@@ -150,26 +179,53 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	loadData(ops, session)
 
 	//Create CSV
+	y, m, d := time.Now().Date()
+	hour, min, sec := time.Now().Clock()
+	dateTime := strconv.Itoa(y) + "_" + m.String() + "_" + strconv.Itoa(d) + "_" + strconv.Itoa(hour) + ":" + strconv.Itoa(min) + ":" + strconv.Itoa(sec)
+	f, err := os.Create(spec.Collection + "_" + dateTime + ".csv")
+	defer f.Close()
 
-	//ops[0].Collection.Loop()
+	if err != nil {
+		log.Fatalln("failed to open file", err)
+	}
 
-	// lookupResult := map[string]loadable.Item{}
-	// err := op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
-	// 	keyVal, err := item.GetField(keyField)
-	// 	if err == nil {
-	// 		keyString, ok := keyVal.(string)
-	// 		if ok {
-	// 			lookupResult[keyString] = item
-	// 		}
-	// 	}
-	// 	return nil
-	// })
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return lookupResult, nil
+	w := csv.NewWriter(f)
+	defer w.Flush()
+
+	//TO-DO wire the header from the fields
+	headerRow := getHeaderRow(fields)
+	if err := w.Write(headerRow); err != nil {
+		return nil, err
+	}
+	//header
+
+	err = ops[0].Collection.Loop(func(item loadable.Item, _ interface{}) error {
+		row := getRow(item, fields)
+		if err := w.Write(row); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
 
 	//Store CSV using the file API
+
+	details := fileadapt.FileDetails{
+		Name:         f.Name(),
+		CollectionID: "crm.export",
+		//RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
+		//FieldID:      fileRecord.FieldName,
+	}
+
+	ufm, err := filesource.Upload(f, details, session)
+	if err != nil {
+		return nil, err
+	}
+
+	println(ufm)
 
 	//Change the batch status
 
