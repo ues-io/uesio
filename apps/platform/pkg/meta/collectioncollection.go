@@ -63,11 +63,3 @@ func (cc *CollectionCollection) Len() int {
 func (cc *CollectionCollection) GetItems() interface{} {
 	return *cc
 }
-
-// Slice function
-func (cc *CollectionCollection) Slice(start int, end int) {
-
-}
-func (bc *CollectionCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

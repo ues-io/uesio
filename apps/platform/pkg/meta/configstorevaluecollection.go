@@ -48,11 +48,3 @@ func (cc *ConfigStoreValueCollection) Len() int {
 func (cc *ConfigStoreValueCollection) GetItems() interface{} {
 	return *cc
 }
-
-// Slice function
-func (cc *ConfigStoreValueCollection) Slice(start int, end int) {
-
-}
-func (bc *ConfigStoreValueCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

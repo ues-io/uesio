@@ -2,7 +2,6 @@ package salesforce
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/simpleforce/simpleforce"
@@ -31,7 +30,6 @@ func connect(credentials *adapt.Credentials) (*simpleforce.Client, error) {
 
 func getConnection(credentials *adapt.Credentials, hash string) (*simpleforce.Client, error) {
 
-	fmt.Println(*credentials)
 	url, ok := (*credentials)["url"]
 	if !ok {
 		return nil, errors.New("No host provided in credentials")

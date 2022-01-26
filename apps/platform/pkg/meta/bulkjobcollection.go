@@ -48,12 +48,3 @@ func (bjc *BulkJobCollection) Len() int {
 func (bjc *BulkJobCollection) GetItems() interface{} {
 	return *bjc
 }
-
-// Slice function
-func (bjc *BulkJobCollection) Slice(start int, end int) {
-
-}
-
-func (bjc *BulkJobCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

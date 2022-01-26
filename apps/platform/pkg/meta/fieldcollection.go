@@ -87,11 +87,3 @@ func (fc *FieldCollection) Len() int {
 func (fc *FieldCollection) GetItems() interface{} {
 	return *fc
 }
-
-// Slice function
-func (fc *FieldCollection) Slice(start int, end int) {
-
-}
-func (fc *FieldCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

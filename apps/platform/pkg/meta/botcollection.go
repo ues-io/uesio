@@ -101,11 +101,3 @@ func (bc *BotCollection) Len() int {
 func (bc *BotCollection) GetItems() interface{} {
 	return *bc
 }
-
-// Slice function
-func (bc *BotCollection) Slice(start int, end int) {
-
-}
-func (bc *BotCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}

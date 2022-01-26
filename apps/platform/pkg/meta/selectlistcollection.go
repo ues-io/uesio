@@ -10,10 +10,6 @@ import (
 // SelectListCollection slice
 type SelectListCollection []SelectList
 
-func (slc *SelectListCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (slc *SelectListCollection) GetName() string {
 	return "studio.selectlists"
@@ -72,9 +68,4 @@ func (slc *SelectListCollection) Len() int {
 // GetItems function
 func (slc *SelectListCollection) GetItems() interface{} {
 	return *slc
-}
-
-// Slice function
-func (slc *SelectListCollection) Slice(start int, end int) {
-
 }

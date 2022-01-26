@@ -7,10 +7,6 @@ import (
 // SecretStoreValueCollection slice
 type SecretStoreValueCollection []SecretStoreValue
 
-func (sc *SecretStoreValueCollection) Filter(iter func(item loadable.Item) (bool, error)) error {
-	return nil
-}
-
 // GetName function
 func (sc *SecretStoreValueCollection) GetName() string {
 	return "uesio.secretstorevalues"
@@ -51,9 +47,4 @@ func (sc *SecretStoreValueCollection) Len() int {
 // GetItems function
 func (sc *SecretStoreValueCollection) GetItems() interface{} {
 	return *sc
-}
-
-// Slice function
-func (sc *SecretStoreValueCollection) Slice(start int, end int) {
-
 }

@@ -114,11 +114,16 @@ func loadOne(
 			Field:      fieldMap[name],
 			References: &referencedCollections,
 			Index:      &index,
-			BatchSize:  op.BatchSize,
 		}
 	}
 
+	op.HasMoreBatches = false
+
 	for rows.Next() {
+		if op.BatchSize == index {
+			op.HasMoreBatches = true
+			break
+		}
 		item = op.Collection.NewItem()
 		err := rows.Scan(scanners...)
 		if err != nil {
@@ -129,15 +134,6 @@ func loadOne(
 	err = rows.Err()
 	if err != nil {
 		return err
-	}
-
-	// Check to see if we loaded in a full amount
-	if index == op.BatchSize+1 {
-		op.HasMoreBatches = true
-		// Remove the last item
-		op.Collection.Slice(0, op.Collection.Len()-1)
-	} else {
-		op.HasMoreBatches = false
 	}
 
 	op.BatchNumber++
