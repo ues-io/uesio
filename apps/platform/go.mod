@@ -19,9 +19,10 @@ require (
 	github.com/huandu/facebook/v2 v2.5.3
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9
 	github.com/icza/session v1.2.0
-	github.com/jinzhu/copier v0.3.2
 	github.com/lib/pq v1.10.2
+	github.com/simpleforce/simpleforce v0.0.0-20211207104336-af9d9a281fea
 	github.com/spf13/cobra v1.1.3
+	golang.org/x/text v0.3.6
 	google.golang.org/api v0.50.0
 )
 
@@ -46,7 +47,6 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/simpleforce/simpleforce v0.0.0-20211207104336-af9d9a281fea // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
@@ -54,7 +54,6 @@ require (
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e // indirect
 	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914 // indirect
 	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
-	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/tools v0.1.4 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
