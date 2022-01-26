@@ -1,18 +1,19 @@
 package bulk
 
 import (
+	"bytes"
 	"encoding/csv"
 	"errors"
 	"io"
-	"log"
-	"os"
+	"mime"
+	"path/filepath"
 	"strconv"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
-	"github.com/thecloudmasters/uesio/pkg/filesource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -125,6 +126,28 @@ func getRow(item loadable.Item, fields []adapt.LoadRequestField) []string {
 	return row
 }
 
+func getFileMetadataType(details fileadapt.FileDetails) string {
+	if details.FieldID == "" {
+		return "attachment"
+	}
+	return "field"
+}
+
+func getFileUniqueName(details fileadapt.FileDetails) string {
+	if details.FieldID == "" {
+		return details.Name
+	}
+	return details.FieldID
+}
+
+func generateFileName(collectionName string) string {
+	y, m, d := time.Now().Date()
+	hour, min, sec := time.Now().Clock()
+	dateTime := strconv.Itoa(y) + "_" + m.String() + "_" + strconv.Itoa(d) + "_" + strconv.Itoa(hour) + ":" + strconv.Itoa(min) + ":" + strconv.Itoa(sec)
+
+	return collectionName + "_" + dateTime + ".csv"
+}
+
 // NewExportBatch func
 func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
@@ -179,25 +202,14 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	loadData(ops, session)
 
 	//Create CSV
-	y, m, d := time.Now().Date()
-	hour, min, sec := time.Now().Clock()
-	dateTime := strconv.Itoa(y) + "_" + m.String() + "_" + strconv.Itoa(d) + "_" + strconv.Itoa(hour) + ":" + strconv.Itoa(min) + ":" + strconv.Itoa(sec)
-	f, err := os.Create(spec.Collection + "_" + dateTime + ".csv")
-	defer f.Close()
 
-	if err != nil {
-		log.Fatalln("failed to open file", err)
-	}
+	buffer := new(bytes.Buffer)
+	w := csv.NewWriter(buffer)
 
-	w := csv.NewWriter(f)
-	defer w.Flush()
-
-	//TO-DO wire the header from the fields
 	headerRow := getHeaderRow(fields)
 	if err := w.Write(headerRow); err != nil {
 		return nil, err
 	}
-	//header
 
 	err = ops[0].Collection.Loop(func(item loadable.Item, _ interface{}) error {
 		row := getRow(item, fields)
@@ -212,20 +224,68 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	}
 
 	//Store CSV using the file API
+	fileCollectionID := "uesio.platform"
 
 	details := fileadapt.FileDetails{
-		Name:         f.Name(),
-		CollectionID: "crm.export",
-		//RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-		//FieldID:      fileRecord.FieldName,
+		Name:         generateFileName(spec.Collection),
+		CollectionID: "uesio.bulkjobs",
+		RecordID:     job.ID,
+		FieldID:      "uesio.result",
 	}
 
-	ufm, err := filesource.Upload(f, details, session)
+	ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
 	if err != nil {
 		return nil, err
 	}
 
-	println(ufm)
+	ufm := meta.UserFileMetadata{
+		CollectionID:     details.CollectionID,
+		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
+		FieldID:          details.FieldID,
+		Type:             getFileMetadataType(details),
+		FileCollectionID: fileCollectionID,
+		FileName:         details.Name,
+		Name:             getFileUniqueName(details), // Different for file fields and attachments
+		RecordID:         details.RecordID,
+	}
+
+	path, err := ufc.GetFilePath(&ufm)
+	if err != nil {
+		return nil, errors.New("error generating path for userfile: " + err.Error())
+	}
+
+	ufm.Path = path
+
+	err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
+		Upsert: &adapt.UpsertOptions{},
+	}, session)
+	if err != nil {
+		return nil, err
+	}
+
+	fileAdapter, err := fileadapt.GetFileAdapter(fs.Type, session)
+	if err != nil {
+		return nil, err
+	}
+	credentials, err := adapt.GetCredentials(fs.Credentials, session)
+	if err != nil {
+		return nil, err
+	}
+	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
+	if err != nil {
+		return nil, err
+	}
+
+	w.Flush()
+
+	if err := w.Error(); err != nil {
+		return nil, err
+	}
+
+	err = fileAdapter.Upload(buffer, bucket, path, credentials)
+	if err != nil {
+		return nil, err
+	}
 
 	//Change the batch status
 

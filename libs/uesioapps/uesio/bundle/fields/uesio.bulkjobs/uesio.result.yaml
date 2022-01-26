@@ -1,0 +1,6 @@
+name: result
+collection: uesio.bulkjobs
+type: FILE
+label: Result
+file:
+  filecollection: uesio.platform
