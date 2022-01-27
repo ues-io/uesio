@@ -12,12 +12,14 @@
         <link rel="preload" href="/fonts/MaterialIconsSharp-Regular.otf" as="font" crossorigin>
         <link rel="stylesheet" href="/fonts/fonts.css" />
         <script src="/static/ui/uesio.js"></script>
+        <script>
+            window.monacoPublicPath = "/static/lazymonaco/"
+        </script>
         <script src="/static/lazymonaco/LazyMonaco.js"></script>
     </head>
 <body>
     <div id="root"></div>
     <script>
-        window.monacoPublicPath = "/static/lazymonaco/";
         // aws-sdk requires global to exist
         window.global = window;
         uesio.loader(document.querySelector("#root"), {{.}});
