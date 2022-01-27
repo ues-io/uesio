@@ -2,6 +2,7 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
+import { platform } from "@uesio/ui"
 
 // I can't figure out a way around this. Sadly. :(
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
@@ -17,6 +18,10 @@ type AuthHandlerResponse = {
 }
 
 type AuthHandler = () => Promise<AuthHandlerResponse>
+
+type AuthCheckResponse = {
+	user: User
+}
 
 type User = {
 	firstname: string
@@ -61,12 +66,14 @@ const authHandlers = {
 		const poolIdResponse = await get(
 			"/site/configvalues/uesio.cognito_pool_id"
 		)
-		const poolData = await poolIdResponse.json()
+		const poolData =
+			(await poolIdResponse.json()) as platform.ConfigValueResponse
 		const poolId = poolData.value
 		const clientIdResponse = await get(
 			"/site/configvalues/uesio.cognito_client_id"
 		)
-		const clientIdData = await clientIdResponse.json()
+		const clientIdData =
+			(await clientIdResponse.json()) as platform.ConfigValueResponse
 		const clientId = clientIdData.value
 		const pool = cognito.getPool(poolId, clientId)
 		const authDetails = cognito.getAuthDetails(
@@ -117,8 +124,8 @@ const check = async (): Promise<User | null> => {
 	}
 
 	const response = await get("site/auth/check", cookie)
-	const result = await response.json()
-	const user = result.user as User
+	const result = (await response.json()) as AuthCheckResponse
+	const user = result.user
 	user.cookie = cookie
 	if (user && user.profile === "studio.standard") {
 		return user
@@ -141,7 +148,7 @@ const login = async (authType: string): Promise<User> => {
 	const sessionId = getSessionIdFromResponse(response)
 	await setSessionId(sessionId)
 
-	const result = await response.json()
+	const result = (await response.json()) as AuthCheckResponse
 	const user = result.user
 	user.cookie = `${SESSION_KEY}=${sessionId}`
 
