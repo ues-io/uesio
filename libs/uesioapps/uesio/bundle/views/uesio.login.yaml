@@ -37,10 +37,6 @@ definition:
                 - uesio.loginmock:
                     text: Sign in with Mock
                     align: center
-                - uesio.loginfacebook:
-                    text: Sign in with Facebook
-                    clientId: uesio.facebook_app_id
-                    align: center
                 - uesio.logincognito:
                     text: Sign in with Email
                     clientId: uesio.cognito_client_id

@@ -348,4 +348,5 @@ export {
 	ConfigValueResponse,
 	SecretResponse,
 	FeatureFlagResponse,
+	JobResponse,
 }

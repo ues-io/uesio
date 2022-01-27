@@ -3,7 +3,7 @@ import { post } from "../request/request"
 import * as fs from "fs"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
-import { definition } from "@uesio/ui"
+import { definition, platform } from "@uesio/ui"
 
 async function getSpec(
 	specFile?: string,
@@ -88,7 +88,8 @@ export default class Pack extends Command {
 			getSpecString(spec),
 			user.cookie
 		)
-		const jobResponseObj = await jobResponse.json()
+		const jobResponseObj =
+			(await jobResponse.json()) as platform.JobResponse
 		// Create a batch
 		const jobId = jobResponseObj.id
 		const batchResponse = await post(
@@ -97,7 +98,8 @@ export default class Pack extends Command {
 			user.cookie
 		)
 		if (batchResponse.status === 200) {
-			const batchResponseObj = await batchResponse.json()
+			const batchResponseObj =
+				(await batchResponse.json()) as platform.JobResponse
 			console.log(batchResponseObj.id)
 		} else {
 			const errorMessage = await batchResponse.text()
