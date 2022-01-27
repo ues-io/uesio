@@ -118,7 +118,16 @@ func getRow(item loadable.Item, fields []adapt.LoadRequestField) []string {
 			keyString, ok := keyVal.(string)
 			if ok {
 				row = append(row, keyString)
+			} else {
+				//empty cell
+				row = append(row, "")
 			}
+
+		}
+
+		if err != nil {
+			println("Opps", field.ID, keyVal)
+			println(err.Error())
 			//empty cell
 			row = append(row, "")
 		}
@@ -148,21 +157,49 @@ func generateFileName(collectionName string) string {
 	return collectionName + "_" + dateTime + ".csv"
 }
 
+func createBatch(jobID string, status string, session *sess.Session) (meta.BulkBatch, error) {
+	batch := meta.BulkBatch{
+		Status:    status,
+		BulkJobID: jobID,
+	}
+
+	err := datasource.PlatformSaveOne(&batch, nil, session)
+	if err != nil {
+		return batch, err
+	}
+
+	return batch, nil
+}
+
+func updateBatchStatus(batch meta.BulkBatch, status string, session *sess.Session) error {
+
+	batch.Status = status
+
+	err := datasource.PlatformSaveOne(&batch, nil, session)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NewExportBatch func
 func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
-	//fileFormat := spec.FileType
-	//var saveRequest []datasource.SaveRequest
 
-	//MEta
+	batch, err := createBatch(job.ID, "started", session)
+	if err != nil {
+		return nil, err
+	}
+	//Metadata
 	metadataResponse := adapt.MetadataCache{}
 	collections := datasource.MetadataRequest{
 		Options: &datasource.MetadataRequestOptions{
 			LoadAllFields: true,
 		},
 	}
-	err := collections.AddCollection(spec.Collection)
+	err = collections.AddCollection(spec.Collection)
 	if err != nil {
 		return nil, err
 	}
@@ -172,8 +209,7 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		return nil, err
 	}
 
-	//MEta
-
+	//Load operation
 	ops := make([]adapt.LoadOp, 1)
 	fields := []adapt.LoadRequestField{}
 	collectionMetadata, err := metadataResponse.GetCollection(spec.Collection)
@@ -194,15 +230,14 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		//Conditions:     loadConditions,
 		Fields: fields,
 		//Order:     []adapt.LoadRequestOrder{{Field: "uesio.id", Desc: true}},
-		Query:     true,
-		BatchSize: 2,
+		Query: true,
+		//BatchSize: 2,
 		//BatchNumber: batchNumber,
 	}
 
 	loadData(ops, session)
 
 	//Create CSV
-
 	buffer := new(bytes.Buffer)
 	w := csv.NewWriter(buffer)
 
@@ -223,13 +258,13 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		return nil, err
 	}
 
-	//Store CSV using the file API
+	//Store CSV
 	fileCollectionID := "uesio.platform"
 
 	details := fileadapt.FileDetails{
 		Name:         generateFileName(spec.Collection),
-		CollectionID: "uesio.bulkjobs",
-		RecordID:     job.ID,
+		CollectionID: "uesio.bulkbatches",
+		RecordID:     batch.ID,
 		FieldID:      "uesio.result",
 	}
 
@@ -245,7 +280,7 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		Type:             getFileMetadataType(details),
 		FileCollectionID: fileCollectionID,
 		FileName:         details.Name,
-		Name:             getFileUniqueName(details), // Different for file fields and attachments
+		Name:             getFileUniqueName(details),
 		RecordID:         details.RecordID,
 	}
 
@@ -287,17 +322,11 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		return nil, err
 	}
 
-	//Change the batch status
-
-	batch := meta.BulkBatch{
-		Status:    "started",
-		BulkJobID: job.ID,
+	//completed
+	err = updateBatchStatus(batch, "completed", session)
+	if err != nil {
+		return nil, err
 	}
-
-	// err = datasource.PlatformSaveOne(&batch, nil, session)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return &batch, nil
 }

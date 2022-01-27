@@ -310,6 +310,7 @@ const platform = {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
+				"uesio.jobtype": spec.jobtype,
 				"uesio.filetype": spec.filetype,
 				"uesio.collection": spec.collection,
 				"uesio.upsertkey": spec.upsertkey,
@@ -332,6 +333,16 @@ const platform = {
 				"Content-Type": "application/octet-stream",
 			},
 			body: fileData,
+		})
+
+		return response
+	},
+	exportData: async (context: Context, jobId: string): Promise<Response> => {
+		const prefix = getPrefix(context)
+		const url = `${prefix}/bulk/job/${jobId}/batch`
+
+		const response = await fetch(url, {
+			method: "POST",
 		})
 
 		return response

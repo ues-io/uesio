@@ -2,9 +2,10 @@ package meta
 
 // BulkBatch struct
 type BulkBatch struct {
-	ID        string    `uesio:"uesio.id"`
-	BulkJobID string    `uesio:"uesio.bulkjobid"`
-	Status    string    `uesio:"uesio.status"`
+	ID        string `uesio:"uesio.id"`
+	BulkJobID string `uesio:"uesio.bulkjobid"`
+	Status    string `uesio:"uesio.status"`
+	//Result    string    `uesio:"uesio.result"` TO-MAke sure is not needed
 	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
 	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
 	Owner     *User     `yaml:"-" uesio:"uesio.owner"`

@@ -17,10 +17,11 @@ const init = (
 	namespaceMrg: string,
 	context: context.Context
 ): [string, context.Context] => {
+	const view = context.getView()
+	const appName = view?.params?.appname
+	const siteName = view?.params?.sitename
+	const workspaceName = view?.params?.workspacename
 	if (usage === "site") {
-		const view = context.getView()
-		const appName = view?.params?.appname
-		const siteName = view?.params?.sitename
 		return [
 			collectionMrg,
 			context.addFrame({
@@ -31,7 +32,18 @@ const init = (
 			}),
 		]
 	}
-	return [`${namespaceMrg}.${collectionMrg}`, context]
+
+	return [
+		`${namespaceMrg}.${collectionMrg}`,
+		!appName || !workspaceName
+			? context
+			: context.addFrame({
+					workspace: {
+						name: workspaceName,
+						app: appName,
+					},
+			  }),
+	]
 }
 
 const Button = component.registry.getUtility("io.button")
@@ -39,31 +51,41 @@ const Button = component.registry.getUtility("io.button")
 const DataExport: FunctionComponent<Props> = (props) => {
 	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
-	//const collectionMrg = context.merge(definition.collectionId)
-	//const namespaceMrg = context.merge(definition.namespace)
-	const usage = definition.usage
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
-	const newContext =
-		!appName || !workspaceName
-			? props.context
-			: context.addFrame({
-					workspace: {
-						name: workspaceName,
-						app: appName,
-					},
-			  })
+	const collectionMrg = context.merge(definition?.collectionId)
+	const namespaceMrg = context.merge(definition?.namespace)
+	const usage = definition?.usage
 
-	const changeUploaded = async () => {
-		const file = new File(["foo"], "foo.txt", {
-			type: "text/plain",
-		})
+	const [collectionId, newContext] = init(
+		usage,
+		collectionMrg,
+		namespaceMrg,
+		context
+	)
 
-		const batchResponse = await uesio.collection.importData(
+	const collection = uesio.collection.useCollection(newContext, collectionId)
+	if (!collection) return null
+
+	const spec: definition.ImportSpec = {
+		jobtype: "export",
+		collection: collection.getFullName(),
+		upsertkey: "",
+		filetype: "csv",
+		mappings: {},
+	}
+
+	const triggerExport = async () => {
+		const jobResponse = await uesio.collection.createImportJob(
 			newContext,
-			file,
-			"621e5f0c-14de-4905-b9d0-63ceba17b7b1"
+			spec
+		)
+
+		if (!jobResponse.id) return
+
+		console.log(jobResponse.id)
+
+		const batchResponse = await uesio.collection.exportData(
+			newContext,
+			jobResponse.id
 		)
 
 		if (batchResponse.status !== 200) {
@@ -77,7 +99,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 		<Button
 			context={newContext}
 			variant={"io.secondary"}
-			onClick={changeUploaded}
+			onClick={triggerExport}
 			label={"DATA EXPORT TEST"}
 		/>
 	)
