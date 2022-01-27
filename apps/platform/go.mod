@@ -19,7 +19,6 @@ require (
 	github.com/huandu/facebook/v2 v2.5.3
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9
 	github.com/icza/session v1.2.0
-	github.com/jinzhu/copier v0.3.2
 	github.com/lib/pq v1.10.2
 	github.com/simpleforce/simpleforce v0.0.0-20211207104336-af9d9a281fea
 	github.com/spf13/cobra v1.1.3

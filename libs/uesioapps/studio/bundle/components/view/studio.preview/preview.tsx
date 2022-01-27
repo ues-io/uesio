@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useEffect } from "react"
 import { hooks, definition, util, component } from "@uesio/ui"
 import { Scalar, YAMLMap } from "yaml"
 import PreviewItem from "./previewitem"
@@ -32,17 +32,17 @@ const Preview: FunctionComponent<Props> = (props) => {
 	const workspaceName = view?.params?.workspacename
 	const appName = view?.params?.appname
 	const viewName = view?.params?.viewname
-	let newContext = props.context
-	if (appName) {
-		if (workspaceName) {
-			newContext = context.addFrame({
-				workspace: {
-					name: workspaceName,
-					app: appName,
-				},
-			})
-		}
-	}
+
+	const newContext =
+		!appName || !workspaceName
+			? props.context
+			: context.addFrame({
+					workspace: {
+						name: workspaceName,
+						app: appName,
+					},
+			  })
+
 	if (!record || !fieldId) return null
 
 	const viewDef = record.getFieldValue<string>(fieldId)
@@ -51,6 +51,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 		["params"],
 		yamlDoc.contents
 	) as YAMLMap<Scalar<string>, YAMLMap>
+	const numberOfParams = params ? params.toJSON().length : 0
 
 	const paramsToAdd: Record<string, ParamDefinition> = {}
 	params?.items.forEach((item) => {
@@ -85,7 +86,20 @@ const Preview: FunctionComponent<Props> = (props) => {
 		getInitialMatch()
 	)
 
-	return (
+	useEffect(() => {
+		if (!numberOfParams)
+			uesio.signal.run(
+				{
+					signal: "route/REDIRECT",
+					path: `/workspace/${newContext.getWorkspace()?.app}/${
+						newContext.getWorkspace()?.name
+					}/views/${appName}/${viewName}/preview`,
+				},
+				newContext
+			)
+	}, [params])
+
+	return numberOfParams ? (
 		<>
 			{Object.entries(paramsToAdd).map(([key, ParamDefinition], index) =>
 				ParamDefinition.type === "text" ? (
@@ -108,6 +122,7 @@ const Preview: FunctionComponent<Props> = (props) => {
 					</FieldWrapper>
 				) : (
 					<PreviewItem
+						key={key + index}
 						fieldKey={key}
 						item={ParamDefinition}
 						context={newContext}
@@ -160,6 +175,8 @@ const Preview: FunctionComponent<Props> = (props) => {
 				/>
 			</Group>
 		</>
+	) : (
+		<h3 style={{ textAlign: "center" }}>Building view</h3>
 	)
 }
 

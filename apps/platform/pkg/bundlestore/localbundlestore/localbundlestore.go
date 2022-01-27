@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jinzhu/copier"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/logger"
@@ -55,8 +54,8 @@ func (b *LocalBundleStore) GetItem(item meta.BundleableItem, version string, ses
 	cachedItem, ok := bundle.GetItemFromCache(namespace, version, collectionName, key)
 
 	if ok {
-		// We got a cache hit
-		return copier.Copy(item, cachedItem)
+		meta.Copy(item, cachedItem)
+		return nil
 	}
 
 	stream, err := getStream(namespace, version, collectionName, item.GetPath())

@@ -46,90 +46,6 @@ type JobResponse = {
 	id: string
 }
 
-interface Platform {
-	getView(context: Context, namespace: string, name: string): Promise<string>
-	getTheme(context: Context, namespace: string, name: string): Promise<string>
-	getRoute(
-		context: Context,
-		namespace: string,
-		route: string
-	): Promise<RouteState>
-	loadData(
-		context: Context,
-		batch: LoadRequestBatch
-	): Promise<LoadResponseBatch>
-	saveData(
-		context: Context,
-		batch: SaveRequestBatch
-	): Promise<SaveResponseBatch>
-	callBot(
-		context: Context,
-		namespace: string,
-		name: string,
-		params?: BotParams
-	): Promise<BotResponse>
-	getFileURL(context: Context, namespace: string, name: string): string
-	getUserFileURL(context: Context, userfileid: string): string
-	uploadFile(
-		context: Context,
-		fileData: File,
-		collectionID: string,
-		recordID: string,
-		fieldID: string
-	): Promise<string>
-	deleteFile(context: Context, userfileid: string): Promise<BotResponse>
-	getComponentPackURL(
-		context: Context,
-		namespace: string,
-		name: string,
-		buildMode: boolean
-	): string
-	getMetadataList(
-		context: Context,
-		metadataType: MetadataType,
-		namespace: string,
-		grouping?: string
-	): Promise<MetadataListStore>
-	getCollectionMetadata(
-		context: Context,
-		collectionName: string
-	): Promise<LoadResponseBatch>
-	getAvailableNamespaces(
-		context: Context,
-		metadataType?: MetadataType
-	): Promise<MetadataListStore>
-	getConfigValues(context: Context): Promise<ConfigValueResponse[]>
-	setConfigValue(
-		context: Context,
-		key: string,
-		value: string
-	): Promise<BotResponse>
-	getSecrets(context: Context): Promise<SecretResponse[]>
-	setSecret(
-		context: Context,
-		key: string,
-		value: string
-	): Promise<BotResponse>
-	getFeatureFlags(
-		context: Context,
-		user?: string
-	): Promise<FeatureFlagResponse[]>
-	setFeatureFlag(
-		context: Context,
-		key: string,
-		value: boolean,
-		user?: string
-	): Promise<BotResponse>
-	login(request: LoginRequest): Promise<LoginResponse>
-	logout(): Promise<LoginResponse>
-	createImportJob(context: Context, spec: ImportSpec): Promise<JobResponse>
-	importData(
-		context: Context,
-		fileData: File,
-		jobId: string
-	): Promise<Response>
-}
-
 const getPrefix = (context: Context) => {
 	const workspace = context.getWorkspace()
 	if (workspace) {
@@ -153,8 +69,8 @@ const postJSON = (url: string, body?: Record<string, unknown>) =>
 		}),
 	})
 
-const platform: Platform = {
-	getView: async (context, namespace, name) => {
+const platform = {
+	getView: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/views/${namespace}/${name}`)
 		if (response.status !== 200) {
@@ -162,8 +78,7 @@ const platform: Platform = {
 		}
 		return response.text()
 	},
-
-	getTheme: async (context, namespace, name) => {
+	getTheme: async (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/themes/${namespace}/${name}`)
 		if (response.status !== 200) {
@@ -171,8 +86,11 @@ const platform: Platform = {
 		}
 		return response.text()
 	},
-
-	getRoute: async (context, namespace, route) => {
+	getRoute: async (
+		context: Context,
+		namespace: string,
+		route: string
+	): Promise<RouteState> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/routes/${namespace}/${route}`)
 		if (response.status !== 200) {
@@ -180,8 +98,10 @@ const platform: Platform = {
 		}
 		return response.json()
 	},
-
-	loadData: async (context, requestBody) => {
+	loadData: async (
+		context: Context,
+		requestBody: LoadRequestBatch
+	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/wires/load`, requestBody)
 		if (response.status !== 200) {
@@ -190,8 +110,10 @@ const platform: Platform = {
 		}
 		return response.json()
 	},
-
-	saveData: async (context, requestBody) => {
+	saveData: async (
+		context: Context,
+		requestBody: SaveRequestBatch
+	): Promise<SaveResponseBatch> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/wires/save`, requestBody)
 		if (response.status !== 200) {
@@ -200,8 +122,12 @@ const platform: Platform = {
 		}
 		return response.json()
 	},
-
-	callBot: async (context, namespace, name, params) => {
+	callBot: async (
+		context: Context,
+		namespace: string,
+		name: string,
+		params: BotParams
+	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(
 			`${prefix}/bots/call/${namespace}/${name}`,
@@ -216,20 +142,23 @@ const platform: Platform = {
 		}
 		return response.json()
 	},
-
-	getFileURL: (context, namespace, name) => {
+	getFileURL: (context: Context, namespace: string, name: string) => {
 		const prefix = getPrefix(context)
 		return `${prefix}/files/${namespace}/${name}`
 	},
-
-	getUserFileURL: (context, userfileid) => {
+	getUserFileURL: (context: Context, userfileid: string) => {
 		const prefix = getPrefix(context)
 		return `${prefix}/userfiles/download?userfileid=${encodeURIComponent(
 			userfileid
 		)}`
 	},
-
-	uploadFile: async (context, fileData, collectionID, recordID, fieldID) => {
+	uploadFile: async (
+		context: Context,
+		fileData: File,
+		collectionID: string,
+		recordID: string,
+		fieldID: string
+	): Promise<string> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/upload`
 		const params = new URLSearchParams()
@@ -248,8 +177,10 @@ const platform: Platform = {
 
 		return response.json()
 	},
-
-	deleteFile: async (context, userFileID) => {
+	deleteFile: async (
+		context: Context,
+		userFileID: string
+	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/userfiles/delete/${userFileID}`
 		const response = await fetch(url, {
@@ -257,13 +188,22 @@ const platform: Platform = {
 		})
 		return response.json()
 	},
-
-	getComponentPackURL: (context, namespace, name, buildMode) => {
+	getComponentPackURL: (
+		context: Context,
+		namespace: string,
+		name: string,
+		buildMode: boolean
+	) => {
 		const prefix = getPrefix(context)
 		const buildModeSuffix = buildMode ? "/builder" : ""
 		return `${prefix}/componentpacks/${namespace}/${name}${buildModeSuffix}`
 	},
-	getMetadataList: async (context, metadataType, namespace, grouping) => {
+	getMetadataList: async (
+		context: Context,
+		metadataType: MetadataType,
+		namespace: string,
+		grouping?: string
+	): Promise<MetadataListStore> => {
 		const prefix = getPrefix(context)
 		const mdType = METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
@@ -272,15 +212,20 @@ const platform: Platform = {
 		)
 		return response.json()
 	},
-	getCollectionMetadata: async (context, collectionName) => {
+	getCollectionMetadata: async (
+		context: Context,
+		collectionName: string
+	): Promise<LoadResponseBatch> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(
 			`${prefix}/collections/meta/${collectionName}`
 		)
 		return response.json()
 	},
-
-	getAvailableNamespaces: async (context, metadataType) => {
+	getAvailableNamespaces: async (
+		context: Context,
+		metadataType?: MetadataType
+	): Promise<MetadataListStore> => {
 		const prefix = getPrefix(context)
 		const mdType = metadataType && METADATA[metadataType]
 		const mdTypeUrl = mdType ? `/${mdType}` : ""
@@ -289,43 +234,55 @@ const platform: Platform = {
 		)
 		return response.json()
 	},
-
-	getConfigValues: async (context) => {
+	getConfigValues: async (
+		context: Context
+	): Promise<ConfigValueResponse[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/configvalues`)
 		return response.json()
 	},
-
-	setConfigValue: async (context, key, value) => {
+	setConfigValue: async (
+		context: Context,
+		key: string,
+		value: string
+	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/configvalues/${key}`, {
 			value,
 		})
 		return response.json()
 	},
-
-	getSecrets: async (context) => {
+	getSecrets: async (context: Context): Promise<SecretResponse[]> => {
 		const prefix = getPrefix(context)
 		const response = await fetch(`${prefix}/secrets`)
 		return response.json()
 	},
-
-	setSecret: async (context, key, value) => {
+	setSecret: async (
+		context: Context,
+		key: string,
+		value: string
+	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/secrets/${key}`, {
 			value,
 		})
 		return response.json()
 	},
-
-	getFeatureFlags: async (context, user) => {
+	getFeatureFlags: async (
+		context: Context,
+		user?: string
+	): Promise<FeatureFlagResponse[]> => {
 		const prefix = getPrefix(context)
 		const userUrl = user ? `/${user}` : ""
 		const response = await fetch(`${prefix}/featureflags${userUrl}`)
 		return response.json()
 	},
-
-	setFeatureFlag: async (context, key, value, user) => {
+	setFeatureFlag: async (
+		context: Context,
+		key: string,
+		value: boolean,
+		user?: string
+	): Promise<BotResponse> => {
 		const prefix = getPrefix(context)
 		const response = await postJSON(`${prefix}/featureflags/${key}`, {
 			value,
@@ -333,17 +290,18 @@ const platform: Platform = {
 		})
 		return response.json()
 	},
-
-	login: async (requestBody) => {
+	login: async (requestBody: LoginRequest): Promise<LoginResponse> => {
 		const response = await postJSON("/site/auth/login", requestBody)
 		return response.json()
 	},
-
-	logout: async () => {
+	logout: async (): Promise<LoginResponse> => {
 		const response = await postJSON("/site/auth/logout")
 		return response.json()
 	},
-	createImportJob: async (context, spec) => {
+	createImportJob: async (
+		context: Context,
+		spec: ImportSpec
+	): Promise<JobResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job`
 		const response = await fetch(url, {
@@ -360,8 +318,11 @@ const platform: Platform = {
 		})
 		return response.json()
 	},
-
-	importData: async (context, fileData, jobId) => {
+	importData: async (
+		context: Context,
+		fileData: File,
+		jobId: string
+	): Promise<Response> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job/${jobId}/batch`
 
@@ -376,6 +337,8 @@ const platform: Platform = {
 		return response
 	},
 }
+
+type Platform = typeof platform
 
 export {
 	platform,

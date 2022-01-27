@@ -1,7 +1,7 @@
 package adapt
 
 import (
-	"github.com/jinzhu/copier"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
@@ -144,10 +144,7 @@ func HandleReferences(
 					}
 					referenceValue := Item{}
 
-					err = copier.Copy(&referenceValue, refItem)
-					if err != nil {
-						return err
-					}
+					meta.Copy(&referenceValue, refItem)
 
 					item := collection.GetItem(locator.RecordIndex)
 					err = item.SetField(reference.GetFullName(), referenceValue)
