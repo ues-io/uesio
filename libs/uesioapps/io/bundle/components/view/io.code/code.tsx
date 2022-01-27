@@ -1,8 +1,10 @@
 import { FunctionComponent } from "react"
 import { component, styles, hooks } from "@uesio/ui"
 import { CodeProps } from "./codedefinition"
+import { CodeFieldUtilityProps } from "../../utility/io.codefield/codefield"
 
-const IOCodeField = component.registry.getUtility("io.codefield")
+const IOCodeField =
+	component.registry.getUtility<CodeFieldUtilityProps>("io.codefield")
 
 const CodeField: FunctionComponent<CodeProps> = (props) => {
 	const { definition, context } = props
@@ -19,14 +21,15 @@ const CodeField: FunctionComponent<CodeProps> = (props) => {
 	return (
 		<IOCodeField
 			classes={classes}
-			label={definition?.label || ""}
 			value={fileContent || ""}
 			setValue={(value: string) => {
 				console.log(value)
 			}}
 			language={language}
 			context={context}
-			lineNumbersMinChars={0}
+			options={{
+				lineNumbersMinChars: 0,
+			}}
 		/>
 	)
 }
