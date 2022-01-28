@@ -2,14 +2,40 @@ package auth
 
 import (
 	"errors"
+	"os"
 	"strings"
 
+	"github.com/icza/session"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func init() {
+	session.Global.Close()
+	allowInsecureCookies := os.Getenv("UESIO_ALLOW_INSECURE_COOKIES")
+	storageType := os.Getenv("UESIO_SESSION_STORE")
+
+	var store session.Store
+	if storageType == "filesystem" {
+		store = NewFSSessionStore()
+	} else if storageType == "redis" {
+		store = NewRedisSessionStore()
+	} else if storageType == "" {
+		store = session.NewInMemStore()
+	} else {
+		panic("UESIO_SESSION_STORE is an unrecognized value: " + storageType)
+	}
+
+	options := &session.CookieMngrOptions{
+		AllowHTTP: allowInsecureCookies == "true",
+	}
+
+	session.Global = session.NewCookieManagerOptions(store, options)
+}
 
 // AuthenticationType interface
 type AuthenticationType interface {
@@ -44,33 +70,50 @@ type AuthenticationClaims struct {
 func parseHost(host string) (domainType, domainValue, domain, subdomain string) {
 	stringParts := strings.Split(host, ".")
 	if len(stringParts) == 3 {
+		// Example: ben.ues.io
 		return "subdomain", stringParts[0], stringParts[1] + "." + stringParts[2], stringParts[0]
 	}
+	//
 	hostParts := strings.Split(host, ":")
 	return "domain", hostParts[0], host, ""
 }
 
-// GetSiteFromHost function
 func GetSiteFromHost(host string) (*meta.Site, error) {
-
 	domainType, domainValue, domain, subdomain := parseHost(host)
+	site, err := getSiteFromDomain(domainType, domainValue)
+	if err != nil {
+		return nil, err
+	}
+
+	site.Domain = domain
+	site.Subdomain = subdomain
+
+	bundleDef, err := bundle.GetSiteAppBundle(site)
+	if err != nil {
+		return nil, err
+	}
+
+	site.SetAppBundle(bundleDef)
+
+	return site, nil
+}
+
+func getSiteFromDomain(domainType, domainValue string) (*meta.Site, error) {
+
 	// Get Cache site info for the host
 	site, ok := getHostCache(domainType, domainValue)
 	if ok {
-		site.Domain = domain
-		site.Subdomain = subdomain
+
 		return site, nil
 	}
 
-	site, err := GetSiteFromDomain(domainType, domainValue)
+	site, err := querySiteFromDomain(domainType, domainValue)
 	if err != nil {
 		return nil, err
 	}
 	if site == nil {
-		return nil, errors.New("No Site Found: " + domainType + " : " + domain)
+		return nil, errors.New("No Site Found: " + domainType + " : " + domainValue)
 	}
-	site.Domain = domain
-	site.Subdomain = subdomain
 
 	err = setHostCache(domainType, domainValue, site)
 	if err != nil {
