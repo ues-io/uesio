@@ -63,6 +63,8 @@ export default class Retrieve extends Command {
 			user.cookie
 		)
 
+		if (!response || !response.body) throw new Error("invalid response")
+
 		response.body
 			.pipe(
 				unzipper.Extract({

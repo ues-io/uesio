@@ -1,19 +1,21 @@
 import { FunctionComponent } from "react"
-import { definition, styles, context, component } from "@uesio/ui"
-import LazyMonaco from "@uesio/lazymonaco"
+import { definition, styles, context } from "@uesio/ui"
+import Editor, { EditorProps, loader } from "@monaco-editor/react"
+import type monaco from "monaco-editor"
 
-interface CodeFieldProps extends definition.UtilityProps {
+interface CodeFieldUtilityProps extends definition.UtilityProps {
 	setValue: (value: string) => void
 	value: string
 	language?: string
 	mode?: context.FieldMode
-	lineNumbers?: "on" | "off"
-	lineNumbersMinChars?: number
+	options?: monaco.editor.IStandaloneEditorConstructionOptions
+	onMount?: EditorProps["onMount"]
 }
 
-const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
-	const { setValue, value, language, lineNumbers, lineNumbersMinChars } =
-		props
+loader.config({ paths: { vs: "/static/vendor/monaco-editor/min/vs" } })
+
+const CodeField: FunctionComponent<CodeFieldUtilityProps> = (props) => {
+	const { setValue, value, language, options, onMount } = props
 	const classes = styles.useUtilityStyles(
 		{
 			input: {
@@ -26,7 +28,7 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 
 	return (
 		<div className={classes.input}>
-			<LazyMonaco
+			<Editor
 				value={value}
 				options={{
 					scrollBeyondLastLine: false,
@@ -34,14 +36,16 @@ const CodeField: FunctionComponent<CodeFieldProps> = (props) => {
 					minimap: {
 						enabled: false,
 					},
-					lineNumbers,
-					lineNumbersMinChars,
+					...options,
 				}}
 				language={language || "javascript"}
 				onChange={setValue}
+				onMount={onMount}
 			/>
 		</div>
 	)
 }
+
+export { CodeFieldUtilityProps }
 
 export default CodeField

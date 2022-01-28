@@ -241,7 +241,6 @@ const getWebpackConfig = (
 			react: "React",
 			"react-dom": "ReactDOM",
 			"@uesio/ui": "uesio",
-			"@uesio/lazymonaco": "LazyMonaco",
 			yaml: "yaml",
 			"@emotion/css": "emotion",
 		},

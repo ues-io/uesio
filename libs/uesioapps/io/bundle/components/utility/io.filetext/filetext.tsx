@@ -8,6 +8,7 @@ import {
 	wire,
 } from "@uesio/ui"
 import { FieldState, LabelPosition } from "../../view/io.field/fielddefinition"
+import { CodeFieldUtilityProps } from "../io.codefield/codefield"
 
 interface FileTextProps extends definition.UtilityProps {
 	label?: string
@@ -20,7 +21,8 @@ interface FileTextProps extends definition.UtilityProps {
 	wire: wire.Wire
 }
 
-const CodeField = component.registry.getUtility("io.codefield")
+const CodeField =
+	component.registry.getUtility<CodeFieldUtilityProps>("io.codefield")
 
 const FileText: FunctionComponent<FileTextProps> = (props) => {
 	const uesio = hooks.useUesio(props)

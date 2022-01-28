@@ -14,6 +14,7 @@ import * as state from "./stateexports"
 import * as styles from "./styles/styles"
 import * as util from "./utilexports"
 import * as wire from "./wireexports"
+import * as platform from "./platform/platform"
 import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
 import * as panel from "./panelexports"
@@ -35,6 +36,7 @@ export {
 	metadata,
 	notification,
 	panel,
+	platform,
 	signal,
 	state,
 	styles,
