@@ -1,6 +1,8 @@
+const { getJestProjects } = require("@nrwl/jest")
+
 module.exports = {
 	projects: [
-		"<rootDir>/libs/ui",
+		...getJestProjects(),
 		"<rootDir>/libs/uesioapps/uesio",
 		"<rootDir>/libs/uesioapps/sample",
 		"<rootDir>/libs/uesioapps/crm",
