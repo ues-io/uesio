@@ -62,6 +62,7 @@
         }
       }
     },
+
     "ui": {
       "root": "libs/ui",
       "sourceRoot": "libs/ui/src",
@@ -78,6 +79,14 @@
             "cwd": "libs/ui"
           }
         },
+        "publish": {
+          "executor": "@nrwl/workspace:run-commands",
+          "outputs": [],
+          "options": {
+            "command": "npm publish --tag=latest --access public",
+            "cwd": "dist/ui"
+          }
+        },    
         "watch": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

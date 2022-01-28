@@ -4,8 +4,11 @@ const sourceMaps = { devtool: "source-map" }
 const inDevMode = process.env.NODE_ENV
 	? process.env.NODE_ENV === "development"
 	: true
+
+const package = require("./package.json")
 module.exports = {
-	mode: inDevMode ? "development" : "production",
+	// mode: inDevMode ? "development" : "production",
+	mode: "production",
 	// Enable sourcemaps for debugging webpack's output.
 	...(inDevMode ? sourceMaps : {}),
 
@@ -38,15 +41,17 @@ module.exports = {
 		uesio: "./src/index.ts",
 	},
 
+	target: "web",
+
 	node: false,
 
-	output: {
-		library: "[name]",
-		libraryTarget: "umd",
-		filename: "[name].js",
-		sourceMapFilename: "[name].js.map",
-		path: path.join(__dirname, "../../dist/ui"),
-	},
+	// output: {
+	// 	library: package.name,
+	// 	libraryTarget: "commonjs",
+	// 	filename: package.name + ".js",
+	// 	sourceMapFilename: package.name + ".js.map",
+	// 	path: path.join(__dirname, "../../dist/ui"),
+	// },
 
 	//plugins: [new BundleAnalyzerPlugin()],
 
