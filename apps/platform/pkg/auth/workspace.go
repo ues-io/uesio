@@ -1,29 +1,14 @@
-package datasource
+package auth
 
 import (
 	"errors"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddContextWorkspace(appName, workspaceName string, session *sess.Session) error {
-	var workspace meta.Workspace
-	err := PlatformLoadOne(
-		&workspace,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: appName + "_" + workspaceName,
-			},
-		},
-		session,
-	)
-	if err != nil {
-		return err
-	}
+func AddWorkspaceContext(appName, workspaceName string, session *sess.Session) error {
 
 	site := session.GetSite()
 	perms := session.GetPermissions()
@@ -41,23 +26,30 @@ func AddContextWorkspace(appName, workspaceName string, session *sess.Session) e
 		return errors.New("your profile does not allow you to work with workspaces")
 	}
 
-	// Get the workspace permissions and set them on the session
-	// For now give workspace users access to everything.
-	adminPerms := &meta.PermissionSet{
-		AllowAllViews:  true,
-		AllowAllRoutes: true,
-		AllowAllFiles:  true,
+	workspace := &meta.Workspace{
+		ID:   appName + "_" + workspaceName,
+		Name: workspaceName,
+		App: &meta.App{
+			ID:   appName,
+			Name: appName,
+		},
+		// Get the workspace permissions and set them on the session
+		// For now give workspace users access to everything.
+		Permissions: &meta.PermissionSet{
+			AllowAllViews:  true,
+			AllowAllRoutes: true,
+			AllowAllFiles:  true,
+		},
 	}
 
-	workspace.Permissions = adminPerms
-
-	session.AddWorkspaceContext(&workspace)
+	session.AddWorkspaceContext(workspace)
 
 	bundleDef, err := bundle.GetAppBundle(session)
 	if err != nil {
 		return err
 	}
 
-	session.GetWorkspace().SetAppBundle(bundleDef)
+	workspace.SetAppBundle(bundleDef)
 	return nil
+
 }

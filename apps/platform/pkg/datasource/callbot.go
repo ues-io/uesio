@@ -2,7 +2,7 @@ package datasource
 
 import (
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -37,16 +37,11 @@ type StudioAPI struct {
 
 // CreateBundle function
 func (sa *StudioAPI) CreateBundle(app, workspace string) error {
-	// Add in a workspace context here
-	err := AddContextWorkspace(app, workspace, sa.session)
-	if err != nil {
-		return nil
-	}
 
 	// Load in all bundles for this app and sort by highest version
 	var bundles meta.BundleCollection
 
-	err = PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
+	err := PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
 		{
 			Field: "studio.major",
 			Desc:  true,
@@ -64,7 +59,7 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 			Field: "studio.app",
 			Value: app,
 		},
-	}, sa.session.RemoveWorkspaceContext())
+	}, sa.session)
 	if err != nil {
 		return err
 	}
@@ -80,17 +75,12 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 		}
 	}
 
-	workspace, sourcebs, err := bundle.GetBundleStoreWithVersion(app, sa.session)
+	wsbs, err := bundlestore.GetBundleStoreByType("workspace")
 	if err != nil {
 		return err
 	}
 
-	err = CreateBundle(app, workspace, version, "", sourcebs, sa.session)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return CreateBundle(app, workspace, version, "", wsbs, sa.session)
 }
 
 //GetBundleLastVersion function

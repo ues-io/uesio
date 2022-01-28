@@ -10,7 +10,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
+func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
 	err := datasource.PlatformLoadOneWithFields(
 		&s,
@@ -66,7 +66,6 @@ func GetSite(siteid string, session *sess.Session) (*meta.Site, error) {
 	return &s, nil
 }
 
-// GetDomain key
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
 	err := datasource.PlatformLoadOneWithFields(
@@ -94,8 +93,7 @@ func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDoma
 	return &sd, nil
 }
 
-// GetSiteFromDomain function
-func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
+func querySiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	headlessSession, err := GetHeadlessSession()
 	if err != nil {
 		return nil, err
@@ -107,7 +105,7 @@ func GetSiteFromDomain(domainType, domain string) (*meta.Site, error) {
 	if siteDomain == nil {
 		return nil, errors.New("no site domain record for that host")
 	}
-	return GetSite(siteDomain.Site, headlessSession)
+	return querySite(siteDomain.Site, headlessSession)
 }
 
 func GetHeadlessSession() (*sess.Session, error) {

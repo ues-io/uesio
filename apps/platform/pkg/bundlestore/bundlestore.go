@@ -29,7 +29,7 @@ func RegisterBundleStore(name string, store BundleStore) {
 	bundleStoreMap[name] = store
 }
 
-func getBundleStoreByType(bundleStoreType string) (BundleStore, error) {
+func GetBundleStoreByType(bundleStoreType string) (BundleStore, error) {
 	adapter, ok := bundleStoreMap[bundleStoreType]
 	if !ok {
 		return nil, errors.New("No bundle store found of this type: " + bundleStoreType)
@@ -72,13 +72,13 @@ func GetBundleStore(namespace string, session *sess.Session) (BundleStore, error
 		return nil, errors.New("Could not get bundlestore: No namespace provided")
 	}
 	if session.GetWorkspaceApp() == namespace {
-		return getBundleStoreByType("workspace")
+		return GetBundleStoreByType("workspace")
 	}
 	if namespace == "uesio" || namespace == "studio" || namespace == "io" || namespace == "lab" || namespace == "docs" || namespace == "web" {
-		return getBundleStoreByType("system")
+		return GetBundleStoreByType("system")
 	}
 
-	return getBundleStoreByType(BUNDLE_STORE_TYPE)
+	return GetBundleStoreByType(BUNDLE_STORE_TYPE)
 }
 
 // DecodeYAML function

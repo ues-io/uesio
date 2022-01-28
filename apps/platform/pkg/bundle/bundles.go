@@ -2,6 +2,7 @@ package bundle
 
 import (
 	"errors"
+	"fmt"
 	"io"
 
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -83,12 +84,12 @@ func getVersion(namespace string, session *sess.Session) (string, error) {
 	bundle := session.GetContextAppBundle()
 
 	if bundle == nil {
-		return "", errors.New("That version doesn't exist for that bundle: " + appName + " " + appVersion)
+		return "", fmt.Errorf("%s version %s doesn't exist for %s ", appName, appVersion, namespace)
 	}
 
 	depBundle, hasDep := bundle.Dependencies[namespace]
 	if !hasDep {
-		return "", errors.New("You don't have that dependency installed: " + namespace)
+		return "", fmt.Errorf("%s version %s doesn't have %s installed", appName, appVersion, namespace)
 	}
 
 	return depBundle.Version, nil
