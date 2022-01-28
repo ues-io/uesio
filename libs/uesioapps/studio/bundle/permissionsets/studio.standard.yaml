@@ -57,6 +57,7 @@ views:
   studio.label: true
   studio.translations: true
   studio.translation: true
+  studio.collectionexport: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
@@ -110,4 +111,5 @@ routes:
   studio.label: true
   studio.translations: true
   studio.translation: true
+  studio.collectionexport: true
 files:

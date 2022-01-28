@@ -100,7 +100,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 			context={newContext}
 			variant={"io.secondary"}
 			onClick={triggerExport}
-			label={"DATA EXPORT TEST"}
+			label={"NEW EXPORT"}
 		/>
 	)
 }
