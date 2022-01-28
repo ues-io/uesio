@@ -36,6 +36,7 @@ type MergeType =
 	| "File"
 	| "Site"
 	| "Label"
+	| "SelectList"
 
 type ContextFrame = {
 	wire?: string
@@ -102,6 +103,13 @@ const handlers: Record<MergeType, MergeHandler> = {
 			}
 		}
 		return ""
+	},
+	SelectList: (expression, context) => {
+		const wire = context.getWire()
+		const fieldMetadata = wire?.getCollection().getField(expression)
+		const selectListMetadata = fieldMetadata?.getSelectOptions()
+		const value = context.getRecord()?.getFieldValue(expression)
+		return selectListMetadata?.find((el) => el.value === value)?.label || ""
 	},
 	File: (expression, context) =>
 		`url("${getURLFromFullName(context, expression)}")`,
