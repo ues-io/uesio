@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { PlainWireRecord } from "../../wirerecord/types"
@@ -34,7 +34,7 @@ export default createAsyncThunk<
 		const original: Record<string, PlainWireRecord> = {}
 
 		wire.data?.forEach((item) => {
-			const localId = shortid.generate()
+			const localId = nanoid()
 			data[localId] = item
 			original[localId] = item
 		})

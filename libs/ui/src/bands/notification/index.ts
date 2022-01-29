@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import notificationAdapter from "./adapter"
 import saveOp from "../wire/operations/save"
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 import callBot from "../bot/operations/call"
 import { set as setRoute } from "../route"
 import { NotificationState } from "./types"
@@ -16,7 +16,7 @@ const notificationSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(saveOp.rejected, (state, action) => {
 			notificationAdapter.addOne(state, {
-				id: shortid.generate(),
+				id: nanoid(),
 				severity: "error",
 				text: "ERROR",
 				details: action?.error?.message,
@@ -28,7 +28,7 @@ const notificationSlice = createSlice({
 				if (wire.errors) {
 					for (const error of wire.errors) {
 						notifications.push({
-							id: shortid.generate(),
+							id: nanoid(),
 							severity: "error",
 							text: "ERROR",
 							details: error.message,
@@ -40,7 +40,7 @@ const notificationSlice = createSlice({
 		})
 		builder.addCase(callBot.rejected, (state, action) => {
 			notificationAdapter.addOne(state, {
-				id: shortid.generate(),
+				id: nanoid(),
 				severity: "error",
 				text: "ERROR",
 				details: action?.error?.message,
@@ -50,7 +50,7 @@ const notificationSlice = createSlice({
 			const success = action?.payload?.success
 			if (!success) {
 				notificationAdapter.addOne(state, {
-					id: shortid.generate(),
+					id: nanoid(),
 					severity: "error",
 					text: "ERROR",
 					details: action?.payload?.error,
