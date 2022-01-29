@@ -53,6 +53,7 @@
     "@nrwl/cli": "13.7.1",
     "@nrwl/eslint-plugin-nx": "13.7.1",
     "@nrwl/jest": "13.7.1",
+    "@nrwl/linter": "^13.7.1",
     "@nrwl/node": "13.7.1",
     "@nrwl/tao": "13.7.1",
     "@nrwl/workspace": "13.7.1",
@@ -135,4 +136,3 @@
     "dirname": "/apps/cli"
   }
 }
-
