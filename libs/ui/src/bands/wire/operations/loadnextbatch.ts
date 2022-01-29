@@ -24,7 +24,7 @@ export default createAsyncThunk<
 		),
 	})
 
-	// Add the local ids
+	// Add in the local ids
 	const wiresRequestMap = getWiresMap(wiresToLoad)
 	const wiresResponse: Record<string, PlainWire> = {}
 	for (const wire of response?.wires || []) {
