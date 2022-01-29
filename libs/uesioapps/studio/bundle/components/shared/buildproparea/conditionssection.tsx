@@ -58,7 +58,7 @@ const getConditionProperties = (
 		: []
 
 const ConditionsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, valueAPI } = props
+	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path || "") as
 		| definition.DefinitionMap
 		| undefined

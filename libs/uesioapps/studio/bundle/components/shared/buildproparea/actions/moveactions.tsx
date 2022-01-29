@@ -35,8 +35,7 @@ const getArrayMoveParams = (
 
 const getMapMoveParams = (
 	path: string,
-	valueAPI: builder.ValueAPI,
-	selectKey?: string
+	valueAPI: builder.ValueAPI
 ): [boolean, boolean, () => void, () => void] => {
 	const parentPath = component.path.getParentPath(path)
 	const itemKey = component.path.getKeyAtPath(path)

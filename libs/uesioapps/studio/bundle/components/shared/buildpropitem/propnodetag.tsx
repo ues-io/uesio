@@ -17,10 +17,8 @@ type Props = {
 	popChildren?: boolean
 }
 
-const Icon = component.registry.getUtility("io.icon")
 const Tile = component.registry.getUtility("io.tile")
 const Popper = component.registry.getUtility("io.popper")
-const IconButton = component.registry.getUtility("io.iconbutton")
 
 const PropNodeTag: FunctionComponent<Props> = (props) => {
 	const {
@@ -28,9 +26,6 @@ const PropNodeTag: FunctionComponent<Props> = (props) => {
 		onClick,
 		children,
 		draggable,
-		icon,
-		iconColor,
-		tooltip,
 		selected,
 		context,
 		popChildren,

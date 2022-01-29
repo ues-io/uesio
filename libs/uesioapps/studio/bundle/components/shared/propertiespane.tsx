@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { component, hooks, builder } from "@uesio/ui"
+import { component, hooks } from "@uesio/ui"
 import BuildActionsArea from "./buildproparea/buildactionsarea"
 import { PropertiesPaneProps } from "./propertiespaneldefinition"
 import PropList from "./buildproparea/proplist"

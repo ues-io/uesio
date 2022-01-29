@@ -3,8 +3,8 @@ import { PlainCollection, PlainCollectionMap } from "./types"
 import wireLoadOp from "../wire/operations/load"
 import get from "./operations/get"
 import { PlainWire } from "../wire/types"
-import { wire } from "@uesio/ui"
 import collectionAdapter from "./adapter"
+import { LoadResponseBatch } from "../../load/loadresponse"
 
 const mergeCollection = (
 	state: EntityState<PlainCollection>,
@@ -36,9 +36,7 @@ const collectionSlice = createSlice({
 			get.collectionMetadata.fulfilled,
 			(
 				state,
-				{
-					payload: { collections },
-				}: PayloadAction<wire.LoadResponseBatch>
+				{ payload: { collections } }: PayloadAction<LoadResponseBatch>
 			) => {
 				mergeCollection(state, collections)
 			}

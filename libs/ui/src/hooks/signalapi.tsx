@@ -1,5 +1,5 @@
 import { Dispatcher } from "../store/store"
-import { SignalDefinition, SignalDescriptor } from "../definition/signal"
+import { SignalDefinition } from "../definition/signal"
 import { Uesio } from "./hooks"
 import { Context } from "../context/context"
 

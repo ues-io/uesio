@@ -12,7 +12,7 @@ import PropNodeTag from "../buildpropitem/propnodetag"
 const TitleBar = component.registry.getUtility("io.titlebar")
 
 const FieldsSection: FunctionComponent<SectionRendererProps> = (props) => {
-	const { section, path, context, valueAPI } = props
+	const { path, context, valueAPI } = props
 	const wireDef = valueAPI.get(path) as definition.DefinitionMap | undefined
 	const collectionKey = wireDef?.collection as string | undefined
 

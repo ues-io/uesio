@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { MutableRefObject, useEffect, useState } from "react"
 
 // [ React.MutableRefObject<HTMLDivElement | null>, boolean]
-export default (tableRef: React.MutableRefObject<HTMLDivElement | null>) => {
+export default (tableRef: MutableRefObject<HTMLDivElement | null>) => {
 	const [hasScrolled, setHasScrolled] = useState(false)
 
 	useEffect(() => {

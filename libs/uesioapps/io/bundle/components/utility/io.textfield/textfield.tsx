@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection, component } from "@uesio/ui"
+import { definition, styles, context, collection } from "@uesio/ui"
 
 interface TextFieldProps extends definition.UtilityProps {
 	setValue: (value: string) => void

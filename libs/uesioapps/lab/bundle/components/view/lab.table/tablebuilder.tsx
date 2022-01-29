@@ -7,12 +7,12 @@ import WireHelper from "../../utility/lab.wirehelper/wirehelper"
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")
 
 const TableBuilder: FunctionComponent<TableProps> = (props) => {
-	const { context, path = "", definition } = props
+	const { context, definition } = props
 	const uesio = hooks.useUesio(props)
 
 	const wire = uesio.wire.useWire(definition.wire)
 
-	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
+	const [dragType, dragItem] = uesio.builder.useDragNode()
 	const classes = styles.useStyles(
 		{
 			root: {},

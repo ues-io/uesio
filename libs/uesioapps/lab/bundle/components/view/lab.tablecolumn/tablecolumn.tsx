@@ -46,8 +46,7 @@ const TableColumn: FC<T> = (props) => {
 	} = props
 
 	const uesio = hooks.useUesio(props)
-	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+	const [metadataType, metadataItem] = uesio.builder.useSelectedNode()
 
 	const getColumnLabel = (column: TableColumnDefinition): string => {
 		if (!wire) return ""

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { TableColumnDefinition } from "../../lab.tablecolumn/tablecolumndefinition"
 
-import { component, definition, hooks } from "@uesio/ui"
+import { component, hooks } from "@uesio/ui"
 
 type LeftRightBound = {
 	left: number

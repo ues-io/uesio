@@ -32,8 +32,8 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 		fieldId
 	)
 	const userFileId = userFile?.["uesio.id"] as string
-	const fileName = userFile?.["uesio.name"] as string
-	const mimeType = userFile?.["uesio.mimetype"] as string
+	//const fileName = userFile?.["uesio.name"] as string
+	//const mimeType = userFile?.["uesio.mimetype"] as string
 	const accept = fieldMetadata.getAccept()
 	const fileUrl = uesio.file.getUserFileURL(context, userFileId, true)
 
