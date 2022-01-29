@@ -1,10 +1,10 @@
-import { FunctionComponent, DragEvent } from "react"
+import { FunctionComponent, DragEvent, RefObject } from "react"
 import { definition, styles } from "@uesio/ui"
 
 interface UploadAreaProps extends definition.UtilityProps {
 	accept?: string
 	upload: (files: FileList | null) => void
-	inputRef: React.RefObject<HTMLInputElement>
+	inputRef: RefObject<HTMLInputElement>
 }
 
 const UploadArea: FunctionComponent<UploadAreaProps> = (props) => {

@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, CSSProperties } from "react"
 import { definition, component, styles } from "@uesio/ui"
 
 const IOColumn = component.registry.getUtility("lab.column")
@@ -6,7 +6,7 @@ const IOColumn = component.registry.getUtility("lab.column")
 export const getColumnFlexStyles = (
 	template: string,
 	columnIndex: number
-): React.CSSProperties => {
+): CSSProperties => {
 	const templateArray = template.split(",")
 	const flexRatio = parseInt(templateArray[columnIndex], 10)
 	return {

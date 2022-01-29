@@ -4,6 +4,22 @@
 	"plugins": ["@nrwl/nx"],
 	"overrides": [
 		{
+			"files": ["*.ts", "*.tsx"],
+			"extends": ["plugin:@nrwl/nx/typescript"],
+			"rules": {}
+		},
+		{
+			"files": ["*.js", "*.jsx"],
+			"extends": ["plugin:@nrwl/nx/javascript"],
+			"rules": {}
+		},
+		{
+			"files": ["**/*.spec.ts", "**/*.spec.tsx"],
+			"env": {
+				"jest": true
+			}
+		},
+		{
 			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
 			"env": {
 				"browser": true
@@ -57,16 +73,6 @@
 					}
 				]
 			}
-		},
-		{
-			"files": ["*.ts", "*.tsx"],
-			"extends": ["plugin:@nrwl/nx/typescript"],
-			"rules": {}
-		},
-		{
-			"files": ["*.js", "*.jsx"],
-			"extends": ["plugin:@nrwl/nx/javascript"],
-			"rules": {}
 		}
 	]
 }

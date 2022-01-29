@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { definition, styles, component, util } from "@uesio/ui"
+import { definition, styles, component } from "@uesio/ui"
 import Column, { getColumnFlexStyles } from "./column"
 
 const BuildWrapper = component.registry.getUtility("studio.buildwrapper")

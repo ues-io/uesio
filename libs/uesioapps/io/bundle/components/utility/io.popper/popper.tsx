@@ -17,7 +17,7 @@ const Popper: FunctionComponent<TooltipProps> = (props) => {
 	})
 
 	useEffect(() => {
-		const checkIfClickedOutside = (e: globalThis.MouseEvent) => {
+		const checkIfClickedOutside = (e: MouseEvent) => {
 			// If the clicked target is outside the popper element
 			if (popperEl && !popperEl.contains(e.target as Element)) {
 				props.onOutsideClick && props.onOutsideClick()

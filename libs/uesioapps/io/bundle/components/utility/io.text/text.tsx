@@ -16,6 +16,18 @@ interface TextProps extends definition.UtilityProps {
 		| "inherit"
 }
 
+type AcceptedElements =
+	| "p"
+	| "span"
+	| "div"
+	| "h2"
+	| "h1"
+	| "h3"
+	| "h4"
+	| "h5"
+	| "h6"
+	| "pre"
+
 const Text: FunctionComponent<TextProps> = (props) => {
 	const { text, element, color, align } = props
 	const classes = styles.useUtilityStyles(
@@ -30,26 +42,8 @@ const Text: FunctionComponent<TextProps> = (props) => {
 		},
 		props
 	)
-
-	// Might be a bit verbose since we're only giving these options in propsdef
-	const acceptedElements = [
-		"p",
-		"span",
-		"div",
-		"h1",
-		"h2",
-		"h3",
-		"h4",
-		"h5",
-		"h6",
-		"pre",
-	]
-	const Tag = (
-		element && acceptedElements.includes(element) ? element : "span"
-	) as keyof JSX.IntrinsicElements
-
+	const Tag = (element ? element : "span") as AcceptedElements
 	const mergedText = props.context.merge(text)
-
 	return <Tag className={classes.root}>{mergedText}</Tag>
 }
 

@@ -8,7 +8,7 @@ interface T extends definition.BaseProps {
 }
 
 const emptyColumn: FC<T> = (props) => {
-	const { path = "", wire, index, context, isDragging, definition } = props
+	const { path = "", index, context, isDragging } = props
 	const classes = styles.useStyles(
 		{
 			root: {

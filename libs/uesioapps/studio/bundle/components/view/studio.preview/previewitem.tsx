@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react"
+import { Dispatch, FunctionComponent, SetStateAction } from "react"
 import { definition, hooks, component, wire, styles } from "@uesio/ui"
 import { ParamDefinition } from "./preview"
 
@@ -6,7 +6,7 @@ interface Props extends definition.BaseProps {
 	fieldKey: string
 	item: ParamDefinition
 	lstate: Record<string, string>
-	setLstate: React.Dispatch<React.SetStateAction<Record<string, string>>>
+	setLstate: Dispatch<SetStateAction<Record<string, string>>>
 }
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
