@@ -50,12 +50,12 @@
   "devDependencies": {
     "@emotion/css": "^11.7.1",
     "@monaco-editor/react": "^4.3.1",
-    "@nrwl/cli": "12.1.1",
-    "@nrwl/eslint-plugin-nx": "12.1.1",
-    "@nrwl/jest": "12.1.1",
-    "@nrwl/node": "12.1.1",
-    "@nrwl/tao": "12.1.1",
-    "@nrwl/workspace": "12.1.1",
+    "@nrwl/cli": "13.7.1",
+    "@nrwl/eslint-plugin-nx": "13.7.1",
+    "@nrwl/jest": "13.7.1",
+    "@nrwl/node": "13.7.1",
+    "@nrwl/tao": "13.7.1",
+    "@nrwl/workspace": "13.7.1",
     "@nx-go/nx-go": "^2.0.0",
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
@@ -79,8 +79,8 @@
     "@types/react-transition-group": "^4.4.4",
     "@types/shortid": "0.0.29",
     "@types/unzipper": "^0.10.5",
-    "@typescript-eslint/eslint-plugin": "4.22.0",
-    "@typescript-eslint/parser": "4.22.0",
+    "@typescript-eslint/eslint-plugin": "5.10.1",
+    "@typescript-eslint/parser": "5.10.1",
     "amazon-cognito-identity-js": "^5.2.4",
     "archiver": "^5.3.0",
     "chai": "^4.3.6",
@@ -135,3 +135,4 @@
     "dirname": "/apps/cli"
   }
 }
+

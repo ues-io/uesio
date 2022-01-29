@@ -22,8 +22,8 @@
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@uesio/ui": ["libs/ui/src/index.ts"],
-			"@uesio/loginhelpers": ["libs/loginhelpers/src/index.ts"]
+			"@uesio/loginhelpers": ["libs/loginhelpers/src/index.ts"],
+			"@uesio/ui": ["libs/ui/src/index.ts"]
 		}
 	},
 	"exclude": ["node_modules", "tmp"]
