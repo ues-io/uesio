@@ -17,7 +17,7 @@ import { PlainWire } from "./types"
 import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
 import { PlainWireRecord } from "../wirerecord/types"
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 
 class Wire {
 	constructor(source?: PlainWire) {
@@ -92,7 +92,7 @@ class Wire {
 	}
 
 	createRecord = (record: PlainWireRecord) => {
-		const recordId = shortid.generate()
+		const recordId = nanoid()
 		getStore().dispatch(
 			createRecord({
 				entity: this.getFullId(),
