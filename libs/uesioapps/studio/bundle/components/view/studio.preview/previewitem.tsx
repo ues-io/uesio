@@ -60,7 +60,7 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 					}
 				}}
 				itemToString={itemToString}
-				itemRenderer={(item: wire.PlainWireRecord, index: number) => (
+				itemRenderer={(item: wire.PlainWireRecord) => (
 					<div className={classes.div} style={{}}>
 						<div className={classes.title}>{item[fieldName]}</div>
 						<span className={classes.subtitle}>

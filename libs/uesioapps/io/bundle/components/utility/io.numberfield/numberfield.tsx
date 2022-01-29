@@ -1,5 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import { definition, styles, context, collection, component } from "@uesio/ui"
+import { definition, styles, context, collection } from "@uesio/ui"
 
 interface NumberFieldProps extends definition.UtilityProps {
 	setValue: (value: number | null) => void
@@ -17,7 +17,6 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 		setValue,
 		value,
 		mode,
-		context,
 		placeholder,
 		fieldMetadata,
 		min,

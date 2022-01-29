@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react"
+import { FunctionComponent } from "react"
 import { definition, hooks, wire } from "@uesio/ui"
 
 import TranslationItem from "./translationitem"

@@ -16,7 +16,7 @@ const getHeaderFields = async (files: FileList | null): Promise<string[]> => {
 }
 
 const readCSV = async (file: File): Promise<ArrayBuffer | null> =>
-	new Promise<ArrayBuffer | null>((resolve, reject) => {
+	new Promise<ArrayBuffer | null>((resolve) => {
 		const reader = new FileReader()
 		reader.readAsArrayBuffer(file)
 		reader.onload = function (e) {

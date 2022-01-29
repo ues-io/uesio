@@ -1,17 +1,17 @@
 import { FunctionComponent } from "react"
-import { definition, styles } from "@uesio/ui"
 import { useNProgress } from "@tanem/react-nprogress"
+import { UtilityProps } from "../definition/definition"
 
-interface ProgressProps extends definition.UtilityProps {
+interface ProgressProps extends UtilityProps {
 	isAnimating: boolean
 }
 
-interface ContainerProps extends definition.UtilityProps {
+interface ContainerProps extends UtilityProps {
 	animationDuration: number
 	isFinished: boolean
 }
 
-interface BarProps extends definition.UtilityProps {
+interface BarProps extends UtilityProps {
 	animationDuration: number
 	progress: number
 }

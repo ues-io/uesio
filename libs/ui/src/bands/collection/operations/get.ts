@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
+import { LoadResponseBatch } from "../../../load/loadresponse"
 import { Context } from "../../../context/context"
 import { UesioThunkAPI } from "../../utils"
-import { wire } from "@uesio/ui"
 
 const collectionMetadata = createAsyncThunk<
-	wire.LoadResponseBatch,
+	LoadResponseBatch,
 	{
 		collectionName: string
 		context: Context
