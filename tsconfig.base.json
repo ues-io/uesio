@@ -21,6 +21,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@uesio/loginhelpers": ["libs/loginhelpers/src/index.ts"],
+			"#uesio/loginhelpers": ["libs/loginhelpers/src/index.ts"],
 			"@uesio/ui": ["libs/ui/src/index.ts"]
 		}
 	},
