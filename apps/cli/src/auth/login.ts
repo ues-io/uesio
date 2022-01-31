@@ -4,9 +4,8 @@ import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
 import { platform } from "@uesio/ui"
 
-// I can't figure out a way around this. Sadly. :(
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { cognito, mock } from "../../../../libs/loginhelpers/src"
+// Using # here because it's a subpath import
+import { cognito, mock } from "#uesio/loginhelpers"
 
 const MOCK_LOGIN = "mock"
 const GOOGLE_LOGIN = "google"
