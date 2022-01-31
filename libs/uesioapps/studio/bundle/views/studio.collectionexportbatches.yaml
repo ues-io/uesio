@@ -1,4 +1,4 @@
-name: collectionexport
+name: collectionexportbatches
 definition:
   # Wires are how we pull in data
   wires:
@@ -36,18 +36,17 @@ definition:
           lookupField: uesio.id
         - field: studio.name
           value: $Param{collectionname}
-    bulkjobs:
-      collection: uesio.bulkjobs
+    bulkbatches:
+      collection: uesio.bulkbatches
       fields:
         uesio.id:
-        uesio.collection:
+        uesio.bulkjobid:
+        uesio.result:
+        uesio.status:
         uesio.createdat:
-      order:
-        - field: uesio.createdat
-          desc: true
       conditions:
-        - field: uesio.collection
-          value: $Param{appname}.$Param{collectionname}
+        - field: uesio.bulkjobid
+          value: $Param{jobid}
       init:
         query: false
   events:
@@ -58,7 +57,7 @@ definition:
             name: $Param{workspacename}
             app: $Param{appname}
         wires:
-          - bulkjobs
+          - bulkbatches
 
   # Components are how we describe the layout of our view
   components:
@@ -95,14 +94,10 @@ definition:
                     components:
                       - io.titlebar:
                           uesio.variant: io.main
-                          title: ${studio.name} - Jobs
+                          title: ${studio.name} - Batches
                           actions:
                             - io.group:
                                 components:
-                                  - studio.dataexport:
-                                      collectionId: $Param{collectionname}
-                                      namespace: $Param{appname}
-                                      usage: workspace
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Collection Config"
@@ -113,20 +108,16 @@ definition:
                           uesio.variant: io.section
                           components:
                             - io.deck:
-                                id: bulkjobsDeck
-                                wire: bulkjobs
+                                id: bulkbatchesDeck
+                                wire: bulkbatches
                                 uesio.variant: io.section
                                 components:
                                   - io.tile:
                                       uesio.variant: io.item
-                                      signals:
-                                        - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio.id}/batches"
                                       content:
                                         - io.field:
                                             fieldId: uesio.createdat
-                                      avatar:
-                                        - io.text:
-                                            uesio.variant: io.icon
-                                            color: "#ccc"
-                                            text: ads_click
+                                        - io.field:
+                                            fieldId: uesio.status
+                                        - io.field:
+                                            fieldId: uesio.result

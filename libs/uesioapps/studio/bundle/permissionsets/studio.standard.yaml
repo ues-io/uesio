@@ -58,6 +58,7 @@ views:
   studio.translations: true
   studio.translation: true
   studio.collectionexport: true
+  studio.collectionexportbatches: true
 routes:
   studio.addbundle: true
   studio.appdetail: true
@@ -112,4 +113,5 @@ routes:
   studio.translations: true
   studio.translation: true
   studio.collectionexport: true
+  studio.collectionexportbatches: true
 files:

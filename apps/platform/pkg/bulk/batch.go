@@ -171,9 +171,12 @@ func createBatch(jobID string, status string, session *sess.Session) (meta.BulkB
 	return batch, nil
 }
 
-func updateBatchStatus(batch meta.BulkBatch, status string, session *sess.Session) error {
+func updateBatchStatus(batch meta.BulkBatch, status string, result *meta.UserFileMetadata, session *sess.Session) error {
 
 	batch.Status = status
+	if result != nil {
+		batch.Result = result
+	}
 
 	err := datasource.PlatformSaveOne(&batch, nil, session)
 	if err != nil {
@@ -323,7 +326,7 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	}
 
 	//completed
-	err = updateBatchStatus(batch, "completed", session)
+	err = updateBatchStatus(batch, "completed", &ufm, session)
 	if err != nil {
 		return nil, err
 	}

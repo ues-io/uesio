@@ -98,9 +98,9 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	return (
 		<Button
 			context={newContext}
-			variant={"io.secondary"}
+			variant={"io.primary"}
 			onClick={triggerExport}
-			label={"NEW EXPORT"}
+			label={"EXPORT " + definition?.collectionId}
 		/>
 	)
 }

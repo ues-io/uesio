@@ -87,7 +87,7 @@ components:
         - io.button.io.secondary
     studio.dataexport:
       variants:
-        - io.button.io.secondary
+        - io.button.io.primary
       utilities:
         - io.button
     # Define a builder for the uesio runtime and slot
