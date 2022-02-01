@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, CSSProperties } from "react"
+import { FunctionComponent } from "react"
 import {
 	definition,
 	styles,
@@ -23,7 +23,7 @@ const Button = component.registry.getUtility("io.button")
 
 const FileButton: FunctionComponent<FileButtonProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, record, context, wire } = props
+	const { fieldMetadata, record, context } = props
 	const fieldId = fieldMetadata.getId()
 
 	const view = context.getView()
