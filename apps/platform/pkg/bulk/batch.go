@@ -230,12 +230,8 @@ func NewExportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
 		Collection:     &adapt.Collection{},
-		//Conditions:     loadConditions,
-		Fields: fields,
-		//Order:     []adapt.LoadRequestOrder{{Field: "uesio.id", Desc: true}},
-		Query: true,
-		//BatchSize: 2,
-		//BatchNumber: batchNumber,
+		Fields:         fields,
+		Query:          true,
 	}
 
 	loadData(ops, session)

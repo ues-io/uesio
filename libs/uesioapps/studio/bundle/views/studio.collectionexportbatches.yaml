@@ -120,4 +120,7 @@ definition:
                                         - io.field:
                                             fieldId: uesio.status
                                         - io.field:
+                                            uesio.display:
+                                              - field: uesio.status
+                                                value: "completed"
                                             fieldId: uesio.result

@@ -93,7 +93,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 
 		if (batchResponse.status !== 200) {
 			const error = await batchResponse.text()
-			uesio.notification.addError("Import error: " + error, newContext)
+			uesio.notification.addError("Export error: " + error, newContext)
 			return
 		}
 
