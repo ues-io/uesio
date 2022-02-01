@@ -5,6 +5,7 @@ type DataExportDefinition = {
 	collectionId: string
 	namespace: string
 	usage: "site" | "workspace"
+	wireName: string
 }
 
 interface Props extends definition.BaseProps {
@@ -54,6 +55,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	const collectionMrg = context.merge(definition?.collectionId)
 	const namespaceMrg = context.merge(definition?.namespace)
 	const usage = definition?.usage
+	const wireName = definition?.wireName
 
 	const [collectionId, newContext] = init(
 		usage,
@@ -65,7 +67,7 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	const collection = uesio.collection.useCollection(newContext, collectionId)
 	if (!collection) return null
 
-	const spec: definition.ImportSpec = {
+	const spec: definition.Spec = {
 		jobtype: "export",
 		collection: collection.getFullName(),
 		upsertkey: "",
@@ -74,14 +76,15 @@ const DataExport: FunctionComponent<Props> = (props) => {
 	}
 
 	const triggerExport = async () => {
-		const jobResponse = await uesio.collection.createImportJob(
-			newContext,
-			spec
-		)
+		const jobResponse = await uesio.collection.createJob(newContext, spec)
 
-		if (!jobResponse.id) return
-
-		console.log(jobResponse.id)
+		if (!jobResponse.id) {
+			uesio.notification.addError(
+				"Something went wrong unable to create the job",
+				newContext
+			)
+			return
+		}
 
 		const batchResponse = await uesio.collection.exportData(
 			newContext,
@@ -93,6 +96,14 @@ const DataExport: FunctionComponent<Props> = (props) => {
 			uesio.notification.addError("Import error: " + error, newContext)
 			return
 		}
+
+		uesio.signal.run(
+			{
+				signal: "wire/LOAD",
+				wires: [wireName],
+			},
+			newContext
+		)
 	}
 
 	return (

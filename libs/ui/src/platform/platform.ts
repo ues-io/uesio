@@ -10,7 +10,7 @@ import {
 	METADATA,
 } from "../bands/builder/types"
 import { RouteState } from "../bands/route/types"
-import { ImportSpec } from "../definition/definition"
+import { Spec } from "../definition/definition"
 
 type BotParams = {
 	[key: string]: string
@@ -298,10 +298,7 @@ const platform = {
 		const response = await postJSON("/site/auth/logout")
 		return response.json()
 	},
-	createImportJob: async (
-		context: Context,
-		spec: ImportSpec
-	): Promise<JobResponse> => {
+	createJob: async (context: Context, spec: Spec): Promise<JobResponse> => {
 		const prefix = getPrefix(context)
 		const url = `${prefix}/bulk/job`
 		const response = await fetch(url, {

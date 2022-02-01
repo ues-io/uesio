@@ -9,12 +9,12 @@ async function getSpec(
 	specFile?: string,
 	collection?: string,
 	upsertKey?: string
-): Promise<definition.ImportSpec> {
+): Promise<definition.Spec> {
 	const specData = specFile
 		? JSON.parse(await fs.promises.readFile(specFile, "utf8"))
 		: {}
 
-	const spec: definition.ImportSpec = {
+	const spec: definition.Spec = {
 		jobtype: "import",
 		filetype: specData["uesio.filetype"] || "csv",
 		collection: specData["uesio.collection"],
@@ -32,7 +32,7 @@ async function getSpec(
 	return spec
 }
 
-function getSpecString(spec: definition.ImportSpec) {
+function getSpecString(spec: definition.Spec) {
 	return JSON.stringify({
 		"uesio.jobtype": spec.jobtype,
 		"uesio.filetype": spec.filetype,

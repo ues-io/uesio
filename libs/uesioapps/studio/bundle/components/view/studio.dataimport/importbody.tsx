@@ -58,7 +58,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 		return mappings
 	}
 
-	const [spec, setSpec] = useState<definition.ImportSpec>({
+	const [spec, setSpec] = useState<definition.Spec>({
 		jobtype: "import",
 		collection: collection.getFullName(),
 		upsertkey: "",
@@ -69,10 +69,7 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	const upload = async (file: File) => {
 		console.log("spec", spec)
 
-		const jobResponse = await uesio.collection.createImportJob(
-			context,
-			spec
-		)
+		const jobResponse = await uesio.collection.createJob(context, spec)
 
 		if (!jobResponse.id) return
 

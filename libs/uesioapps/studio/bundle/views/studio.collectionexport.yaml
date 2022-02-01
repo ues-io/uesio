@@ -103,6 +103,7 @@ definition:
                                       collectionId: $Param{collectionname}
                                       namespace: $Param{appname}
                                       usage: workspace
+                                      wireName: "bulkjobs"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Collection Config"
