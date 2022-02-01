@@ -3,14 +3,13 @@ import { useState, FunctionComponent, Dispatch, SetStateAction } from "react"
 
 interface SignupFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
-	setSignupUsername: Dispatch<SetStateAction<string>>
-	signupUsername: string
+	setSignupEmail: Dispatch<SetStateAction<string>>
+	signupEmail: string
 	setSignupPassword: Dispatch<SetStateAction<string>>
 	signupPassword: string
 	signUp: (
 		firstname: string,
 		lastname: string,
-		username: string,
 		email: string,
 		password: string
 	) => void
@@ -25,14 +24,13 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 	const {
 		signUp,
 		setMode,
-		setSignupUsername,
+		setSignupEmail,
 		setSignupPassword,
-		signupUsername,
+		signupEmail,
 		signupPassword,
 		context,
 	} = props
 
-	const [email, setEmail] = useState("")
 	const [firstname, setFirstName] = useState("")
 	const [lastname, setLastName] = useState("")
 
@@ -52,17 +50,10 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 					context={context}
 				/>
 			</FieldWrapper>
-			<FieldWrapper context={context} label="Username">
-				<TextField
-					value={signupUsername}
-					setValue={setSignupUsername}
-					context={context}
-				/>
-			</FieldWrapper>
 			<FieldWrapper context={context} label="Email">
 				<TextField
-					value={email}
-					setValue={setEmail}
+					value={signupEmail}
+					setValue={setSignupEmail}
 					context={context}
 				/>
 			</FieldWrapper>
@@ -71,6 +62,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 					value={signupPassword}
 					setValue={setSignupPassword}
 					context={context}
+					password
 				/>
 			</FieldWrapper>
 			<Grid
@@ -85,13 +77,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 			>
 				<Button
 					onClick={() => {
-						signUp(
-							firstname,
-							lastname,
-							signupUsername,
-							email,
-							signupPassword
-						)
+						signUp(firstname, lastname, signupEmail, signupPassword)
 					}}
 					variant="io.primary"
 					context={context}
