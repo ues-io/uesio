@@ -99,6 +99,7 @@ func GetFieldTypes() map[string]bool {
 		"MAP":         true,
 		"TIMESTAMP":   true,
 		"EMAIL":       true,
+		"AUTONUMBER":  true,
 	}
 }
 

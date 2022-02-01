@@ -17,6 +17,7 @@ type FieldType =
 	| "LIST"
 	| "USER"
 	| "EMAIL"
+	| "AUTONUMBER"
 
 type AcceptTypes = "IMAGE" | "AUDIO" | "VIDEO" | "DOCUMENT" | "ANY"
 

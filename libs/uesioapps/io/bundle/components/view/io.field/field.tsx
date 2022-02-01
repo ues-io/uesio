@@ -52,7 +52,7 @@ const getFieldContent = (
 			return <DateField {...common} />
 		case type === "LONGTEXT" || type === "TEXT":
 			return <TextField {...common} />
-		case type === "NUMBER":
+		case type === "NUMBER" || type === "AUTONUMBER":
 			return <NumberField {...common} />
 		case type === "EMAIL":
 			return <EmailField {...common} />
