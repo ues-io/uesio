@@ -7,10 +7,12 @@ interface TextFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	placeholder?: string
+	password?: boolean
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder, fieldMetadata } = props
+	const { setValue, value, mode, placeholder, fieldMetadata, password } =
+		props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -32,10 +34,12 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		) => setValue(event.target.value),
 	}
 
+	const inputType = password ? "password" : "text"
+
 	return fieldMetadata && fieldMetadata.getType() === "LONGTEXT" ? (
 		<textarea {...commonProps} />
 	) : (
-		<input type="text" {...commonProps} />
+		<input type={inputType} {...commonProps} />
 	)
 }
 

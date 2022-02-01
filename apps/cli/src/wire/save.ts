@@ -1,6 +1,6 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { wire } from "@uesio/ui"
+import type { wire } from "@uesio/ui"
 import { nanoid } from "nanoid"
 import { User } from "../auth/login"
 

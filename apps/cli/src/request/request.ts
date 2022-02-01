@@ -32,7 +32,7 @@ const get = async (
 const post = async (
 	url: string,
 	body: BodyInit | undefined,
-	cookie?: string,
+	cookie?: string | null,
 	init?: RequestInit
 ): Promise<Response> => {
 	const fullUrl = await makeFullUrl(url)
