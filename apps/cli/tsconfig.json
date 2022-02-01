@@ -4,8 +4,6 @@
 		"outDir": "../../dist/cli/lib",
 		"module": "commonjs"
 	},
-	"paths": {
-		"@uesio/ui": ["../../libs/ui/src/index.ts"]
-	},
-	"include": ["src/**/*"]
+	"paths": {},
+	"include": ["src/commands/*"]
 }

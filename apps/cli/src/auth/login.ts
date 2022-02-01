@@ -2,11 +2,10 @@ import { Response } from "node-fetch"
 import { get, post } from "../request/request"
 import { getSessionId, setSessionId } from "../config/config"
 import inquirer from "inquirer"
-import { platform } from "@uesio/ui"
+import type { platform } from "@uesio/ui"
 
-// I can't figure out a way around this. Sadly. :(
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { cognito, mock } from "../../../../libs/loginhelpers/src"
+// Using # here because it's a subpath import
+import { cognito, mock } from "#uesio/loginhelpers"
 
 const MOCK_LOGIN = "mock"
 const GOOGLE_LOGIN = "google"
@@ -140,9 +139,12 @@ const login = async (authType: string): Promise<User> => {
 	}
 	const authHandlerResponse = await handler()
 
+	const cookie = await getCookie()
+
 	const response = await post(
 		"site/auth/login",
-		JSON.stringify(authHandlerResponse)
+		JSON.stringify(authHandlerResponse),
+		cookie
 	)
 
 	const sessionId = getSessionIdFromResponse(response)

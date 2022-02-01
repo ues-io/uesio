@@ -8,7 +8,7 @@ const Grid = component.registry.getUtility("io.grid")
 
 const ComponentsPanel: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const { context, className } = props
+	const { context } = props
 	const selectedItem = uesio.builder.useSelectedItem()
 	const selectedType = uesio.builder.useSelectedType()
 	const onDragStart = (e: DragEvent) => {

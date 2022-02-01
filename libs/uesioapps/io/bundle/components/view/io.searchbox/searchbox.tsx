@@ -1,7 +1,7 @@
 import { ChangeEvent, FunctionComponent } from "react"
 
 import { SearchBoxProps } from "./searchboxdefinition"
-import { component, styles, hooks } from "@uesio/ui"
+import { styles, hooks } from "@uesio/ui"
 import debounce from "lodash/debounce"
 
 const SearchBox: FunctionComponent<SearchBoxProps> = (props) => {

@@ -1,6 +1,6 @@
 import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 import { createRecord } from ".."
 import { getDefaultRecord } from "../defaults/defaults"
 
@@ -8,7 +8,7 @@ export default (context: Context, wirename: string): ThunkFunc =>
 	(dispatch, getState) => {
 		const viewId = context.getViewId()
 		if (!viewId) return context
-		const recordId = shortid.generate()
+		const recordId = nanoid()
 		const state = getState()
 		dispatch(
 			createRecord({

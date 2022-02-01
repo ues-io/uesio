@@ -7,7 +7,7 @@ import {
 import { UesioThunkAPI } from "../../utils"
 import { WireFieldDefinitionMap } from "../../../definition/wire"
 import { LoadRequestField } from "../../../load/loadrequest"
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 import { PlainCollection } from "../../collection/types"
 import { PlainWire } from "../types"
 import { getFullWireId } from "../selectors"
@@ -101,7 +101,7 @@ export default createAsyncThunk<
 		}
 
 		wire.data?.forEach((item) => {
-			const localId = shortid.generate()
+			const localId = nanoid()
 			data[localId] = item
 			original[localId] = item
 
@@ -113,7 +113,7 @@ export default createAsyncThunk<
 			name,
 			view,
 			query: true,
-			batchid: shortid.generate(),
+			batchid: nanoid(),
 			data,
 			original,
 			changes,

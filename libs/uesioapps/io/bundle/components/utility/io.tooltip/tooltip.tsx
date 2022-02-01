@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode, useState } from "react"
+import { FunctionComponent, useState } from "react"
 import { definition, styles } from "@uesio/ui"
 import { usePopper } from "react-popper"
 import type { Placement } from "@popperjs/core"

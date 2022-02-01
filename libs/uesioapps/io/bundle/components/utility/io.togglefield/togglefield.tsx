@@ -1,13 +1,5 @@
 import { FC } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	component,
-	wire,
-	hooks,
-} from "@uesio/ui"
+import { definition, styles, context, collection, wire, hooks } from "@uesio/ui"
 import toggleStyles from "./togglestyles"
 
 interface ToggleFieldProps extends definition.UtilityProps {
@@ -18,7 +10,7 @@ interface ToggleFieldProps extends definition.UtilityProps {
 }
 
 const ToggleField: FC<ToggleFieldProps> = (props) => {
-	const { setValue, value, mode, context } = props
+	const { setValue, value, mode } = props
 	const uesio = hooks.useUesio(props)
 
 	const {

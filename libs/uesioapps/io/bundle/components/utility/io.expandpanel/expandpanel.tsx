@@ -1,4 +1,12 @@
-import { FunctionComponent, useRef, ReactNode, useState, Children } from "react"
+import {
+	FunctionComponent,
+	useRef,
+	ReactNode,
+	useState,
+	Children,
+	Dispatch,
+	SetStateAction,
+} from "react"
 
 import { CSSTransition } from "react-transition-group"
 
@@ -8,7 +16,7 @@ interface ExpandPanelProps extends definition.UtilityProps {
 	defaultExpanded?: boolean
 	toggle?: ReactNode
 	showArrow?: boolean
-	expandState?: [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+	expandState?: [boolean, Dispatch<SetStateAction<boolean>>]
 }
 
 const IconButton = component.registry.getUtility("io.iconbutton")

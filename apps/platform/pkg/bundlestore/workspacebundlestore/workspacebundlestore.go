@@ -170,6 +170,7 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	var by meta.BundleDef
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
+	workspaceID := namespace + "_" + version
 	err := datasource.PlatformLoadWithFields(
 		&bdc,
 		[]adapt.LoadRequestField{
@@ -200,11 +201,10 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		[]adapt.LoadRequestCondition{
 			{
 				Field:    "studio.workspace",
-				Value:    namespace + "_" + version,
+				Value:    workspaceID,
 				Operator: "=",
 			},
 		},
-
 		session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
@@ -219,10 +219,21 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 		}
 	}
 
-	workspace := session.GetWorkspace()
-	if workspace == nil {
-		return nil, errors.New("No workspace found")
+	var workspace meta.Workspace
+	err = datasource.PlatformLoadOne(
+		&workspace,
+		[]adapt.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: workspaceID,
+			},
+		},
+		session.RemoveWorkspaceContext(),
+	)
+	if err != nil {
+		return nil, err
 	}
+
 	by.DefaultProfile = workspace.DefaultProfile
 	by.PublicProfile = workspace.PublicProfile
 	by.HomeRoute = workspace.HomeRoute

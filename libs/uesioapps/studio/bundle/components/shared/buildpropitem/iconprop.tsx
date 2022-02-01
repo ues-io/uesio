@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { ChangeEvent, FunctionComponent, useState } from "react"
 
 import { hooks, component, styles, materialIcons, builder } from "@uesio/ui"
 
@@ -18,7 +18,7 @@ const IconProp: FunctionComponent<builder.PropRendererProps> = (props) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
 
 	const [searchTerm, setSearchTerm] = useState("")
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(event.target.value)
 	}
 

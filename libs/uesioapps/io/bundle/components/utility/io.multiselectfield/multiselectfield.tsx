@@ -1,12 +1,5 @@
 import { ChangeEvent, FunctionComponent } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, styles, context, collection, wire } from "@uesio/ui"
 import TextField from "../io.textfield/textfield"
 
 interface SelectFieldProps extends definition.UtilityProps {
@@ -19,7 +12,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 }
 
 const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
-	const { setValue, value, mode, options, context } = props
+	const { setValue, value, mode, options } = props
 	if (mode === "READ") {
 		const optionMatch = options?.find((option) => option.value === value)
 		const valueLabel = optionMatch?.label || ""
@@ -49,7 +42,7 @@ const MultiSelectField: FunctionComponent<SelectFieldProps> = (props) => {
 			}}
 			value={value}
 		>
-			{options?.map((option, index) => (
+			{options?.map((option) => (
 				<option key={option.value} value={option.value}>
 					{option.label}
 				</option>

@@ -2,7 +2,7 @@ import { Context } from "../../context/context"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { NotificationSeverity } from "./types"
 import { add as addNotification } from "."
-import shortid from "shortid"
+import { nanoid } from "nanoid"
 
 // The key for the entire band
 const NOTIFICATION_BAND = "notification"
@@ -21,7 +21,7 @@ const signals: Record<string, SignalDescriptor> = {
 			(signal: AddNotificationSignal, context: Context) => (dispatch) => {
 				dispatch(
 					addNotification({
-						id: shortid.generate(),
+						id: nanoid(),
 						severity: signal.severity,
 						text: context.merge(signal.text),
 						details: context.merge(signal.details),

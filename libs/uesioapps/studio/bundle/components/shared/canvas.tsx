@@ -95,7 +95,7 @@ const Canvas: FunctionComponent<definition.UtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 
 	const [dragType, dragItem, dragPath] = uesio.builder.useDragNode()
-	const [dropType, dropItem, dropPath] = uesio.builder.useDropNode()
+	const [, , dropPath] = uesio.builder.useDropNode()
 	const fullDragPath = component.path.makeFullPath(
 		dragType,
 		dragItem,

@@ -1,5 +1,5 @@
-import { FunctionComponent, useEffect } from "react"
-import { definition, styles, wire, hooks, component } from "@uesio/ui"
+import { FunctionComponent } from "react"
+import { definition, hooks, component } from "@uesio/ui"
 
 type CollectionListDefinition = {
 	collectionId: string

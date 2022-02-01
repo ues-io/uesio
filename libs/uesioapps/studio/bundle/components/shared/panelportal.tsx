@@ -3,8 +3,7 @@ import { definition, hooks, component } from "@uesio/ui"
 
 const PanelPortal: FC<definition.BaseProps> = (props) => {
 	const uesio = hooks.useUesio(props)
-	const [metadataType, metadataItem, selectedPath] =
-		uesio.builder.useSelectedNode()
+	const [metadataType, , selectedPath] = uesio.builder.useSelectedNode()
 
 	const pathArray = component.path.toPath(selectedPath)
 	const isPanel = metadataType === "viewdef" && pathArray[0] === "panels"

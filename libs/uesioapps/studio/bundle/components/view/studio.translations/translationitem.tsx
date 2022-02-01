@@ -1,12 +1,5 @@
-import { FunctionComponent, useState } from "react"
-import {
-	definition,
-	styles,
-	collection,
-	component,
-	hooks,
-	wire,
-} from "@uesio/ui"
+import { FunctionComponent } from "react"
+import { definition, component, hooks, wire } from "@uesio/ui"
 
 interface Props extends definition.BaseProps {
 	namespace: string

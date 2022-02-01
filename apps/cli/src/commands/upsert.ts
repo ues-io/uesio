@@ -3,7 +3,7 @@ import { post } from "../request/request"
 import * as fs from "fs"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
-import { definition, platform } from "@uesio/ui"
+import type { definition, platform } from "@uesio/ui"
 
 async function getSpec(
 	specFile?: string,

@@ -35,9 +35,7 @@ export default (
 	useEffect(() => {
 		if (!dragging) return
 		document.addEventListener("mousemove", throttledMouseHandler)
-		document.addEventListener("mouseup", (e: MouseEvent) =>
-			setDragging(false)
-		)
+		document.addEventListener("mouseup", () => setDragging(false))
 
 		return () => {
 			document.removeEventListener("mousemove", throttledMouseHandler)

@@ -1,12 +1,5 @@
 import { FunctionComponent } from "react"
-import {
-	definition,
-	styles,
-	context,
-	collection,
-	wire,
-	component,
-} from "@uesio/ui"
+import { definition, context, collection, wire, component } from "@uesio/ui"
 
 interface UserFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
@@ -27,13 +20,6 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const firstName = user?.["uesio.firstname"] as string
 	const lastName = user?.["uesio.lastname"] as string
 	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined
-	const classes = styles.useUtilityStyles(
-		{
-			input: {},
-			readonly: {},
-		},
-		props
-	)
 
 	if (!readonly) {
 		return <ReferenceField {...props} />

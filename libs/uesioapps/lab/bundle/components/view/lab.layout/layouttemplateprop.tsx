@@ -155,7 +155,7 @@ const LayoutTemplateProp: FC<builder.CustomPropRendererProps> = (props) => {
 		<div>
 			<FieldLabel label={props.descriptor.label} context={context} />
 			<div style={{ display: "flex", flexFlow: "row wrap", gap: "5px" }}>
-				{layoutPresets.map((el, i) => (
+				{layoutPresets.map((el) => (
 					<LayoutTemplateButton
 						{...el}
 						key={el.value.toString()}

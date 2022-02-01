@@ -91,7 +91,7 @@ const ListField: FunctionComponent<ListFieldUtilityProps> = (props) => {
 		<div className={classes.root}>
 			<Grid className={classes.row} context={context}>
 				{subFields &&
-					Object.keys(subFields).map((subfieldId, index) => {
+					Object.keys(subFields).map((subfieldId) => {
 						const subfield = subFields[subfieldId]
 						return (
 							<FieldLabel
