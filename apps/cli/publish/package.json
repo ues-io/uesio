@@ -1,6 +1,6 @@
 {
 	"name": "@uesio/cli",
-	"version": "0.0.4",
+	"version": "0.0.6",
 	"bin": {
 		"uesio": "/bin/run"
 	},
@@ -37,6 +37,8 @@
 		"lodash": "4.17.21",
 		"nanoid": "^3.2.0",
 		"node-fetch": "^2.6.7",
+		"source-map-loader": "^3.0.1",
+		"ts-loader": "^9.2.6",
 		"unzipper": "^0.10.11",
 		"webpack": "^5.67.0",
 		"yaml": "2.0.0-10"
