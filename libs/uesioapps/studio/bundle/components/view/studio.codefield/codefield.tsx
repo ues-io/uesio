@@ -84,7 +84,7 @@ function getValue(
 const CodeField: FunctionComponent<Props> = (props) => {
 	const record = props.context.getRecord()
 	const wire = props.context.getWire()
-	const [message, setMessage] = useState("")
+	const [, setMessage] = useState("")
 	const [stringValue, setStringValue] = useState("")
 	if (!wire || !record) {
 		return null

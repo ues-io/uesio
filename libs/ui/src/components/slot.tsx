@@ -1,4 +1,4 @@
-import { FunctionComponent, RefObject } from "react"
+import { FunctionComponent } from "react"
 import {
 	BaseDefinition,
 	DefinitionList,

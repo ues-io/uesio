@@ -1,6 +1,6 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { wire } from "@uesio/ui"
+import type { wire } from "@uesio/ui"
 import { User } from "../auth/login"
 
 const load = async (
@@ -26,7 +26,7 @@ const load = async (
 		user.cookie
 	)
 
-	return response.json()
+	return response.json() as Promise<wire.LoadResponseBatch>
 }
 
 export { load }

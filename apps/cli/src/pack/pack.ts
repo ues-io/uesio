@@ -169,20 +169,6 @@ interface Flags {
 	stats: boolean
 }
 
-const getLoaderPath = (loaderName: string): string =>
-	path.resolve(
-		__dirname,
-		"..",
-		"..",
-		"..",
-		"..",
-		"..",
-		"..",
-		"..",
-		"node_modules",
-		loaderName
-	)
-
 const getWebpackConfig = (
 	entries: EntryFileMap,
 	flags: Flags
@@ -191,7 +177,7 @@ const getWebpackConfig = (
 	const devRule: RuleSetRule = {
 		enforce: "pre",
 		test: /\.js$/,
-		loader: getLoaderPath("source-map-loader"),
+		loader: require.resolve("source-map-loader"),
 	}
 	return {
 		// Configuration Object
@@ -209,7 +195,7 @@ const getWebpackConfig = (
 					exclude: /node_modules/,
 					use: [
 						{
-							loader: getLoaderPath("ts-loader"),
+							loader: require.resolve("ts-loader"),
 							options: {
 								silent: true,
 								errorFormatter: (error: StatsError) =>
@@ -241,7 +227,6 @@ const getWebpackConfig = (
 			react: "React",
 			"react-dom": "ReactDOM",
 			"@uesio/ui": "uesio",
-			"@uesio/lazymonaco": "LazyMonaco",
 			yaml: "yaml",
 			"@emotion/css": "emotion",
 		},

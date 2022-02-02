@@ -4,7 +4,6 @@ package meta
 type Workspace struct {
 	ID             string         `uesio:"uesio.id"`
 	Name           string         `uesio:"studio.name"`
-	Namespace      string         `uesio:"-"`
 	LoginRoute     string         `uesio:"studio.loginroute"`
 	HomeRoute      string         `uesio:"studio.homeroute"`
 	DefaultProfile string         `uesio:"studio.defaultprofile"`

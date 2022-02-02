@@ -39,11 +39,7 @@ const definitionRegistry: Registry<BuildPropertiesDefinition> = {}
 const componentSignalsRegistry: Registry<Registry<ComponentSignalDescriptor>> =
 	{}
 
-const addToRegistry = <T extends unknown>(
-	registry: Registry<T>,
-	key: string,
-	item: T
-) => {
+const addToRegistry = <T,>(registry: Registry<T>, key: string, item: T) => {
 	registry[key] = item
 }
 

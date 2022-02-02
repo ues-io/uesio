@@ -4,7 +4,7 @@ import { Bundle } from "./bundle"
 import { Site } from "./site"
 import { SiteDomain } from "./sitedomain"
 import { BundleDependency } from "./bundledependency"
-import { wire } from "@uesio/ui"
+import type { wire } from "@uesio/ui"
 import { User } from "../auth/login"
 
 interface Metadata {

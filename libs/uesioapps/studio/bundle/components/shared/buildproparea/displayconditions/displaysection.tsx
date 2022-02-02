@@ -12,7 +12,7 @@ const Button = component.registry.getUtility("io.button")
 const Icon = component.registry.getUtility("io.icon")
 
 const ConditionalDisplaySection: FC<SectionRendererProps> = (props) => {
-	const { path, context, propsDef, valueAPI } = props
+	const { path, context, valueAPI } = props
 
 	const uesio = hooks.useUesio(props)
 	const displayPath = `${path}["uesio.display"]`

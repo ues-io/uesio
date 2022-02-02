@@ -8,13 +8,6 @@ components:
         - io.button
       variants:
         - io.button.io.secondary
-    uesio.loginfacebook:
-      configvalues:
-        - uesio.facebook_app_id
-      utilities:
-        - io.button
-      variants:
-        - io.button.io.secondary
     uesio.logingoogle:
       configvalues:
         - uesio.google_client_id

@@ -1,7 +1,7 @@
 import { FunctionComponent } from "react"
 
 import { FilterProps } from "./filterdefinition"
-import { component, collection, wire, hooks } from "@uesio/ui"
+import { component, collection, hooks } from "@uesio/ui"
 
 const SelectField = component.registry.getUtility("io.selectfield")
 

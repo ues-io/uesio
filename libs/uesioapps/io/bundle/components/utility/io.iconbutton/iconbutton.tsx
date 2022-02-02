@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, component } from "@uesio/ui"
+import { definition, component } from "@uesio/ui"
 import type { Placement } from "@popperjs/core"
 import { ButtonUtilityProps } from "../io.button/button"
 import { IconUtilityProps } from "../io.icon/icon"

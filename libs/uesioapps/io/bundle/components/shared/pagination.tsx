@@ -41,7 +41,7 @@ const usePagination = (
 	return [currentPage, setPagination]
 }
 
-const paginate = <T extends unknown>(
+const paginate = <T,>(
 	items: T[],
 	currentPage: number,
 	pageSize: number

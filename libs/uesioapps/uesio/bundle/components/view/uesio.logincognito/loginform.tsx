@@ -32,6 +32,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 					context={context}
 					value={password}
 					setValue={setPassword}
+					password
 				/>
 			</FieldWrapper>
 			<Grid

@@ -1,9 +1,10 @@
 {
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
-		"outDir": "../../dist/out-tsc",
-		"types": []
+		"outDir": "../../dist/ui/types",
+		"declaration": true,
+		"emitDeclarationOnly": true
 	},
-	"exclude": ["**/*.spec.ts"],
+	"exclude": ["**/*.spec.ts", "**/*.test.ts"],
 	"include": ["**/*.ts*"]
 }

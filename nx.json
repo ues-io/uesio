@@ -18,57 +18,26 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["lint", "build", "test", "e2e"]
+        "cacheableOperations": [
+          "lint",
+          "build",
+          "test",
+          "e2e"
+        ],
+        "parallel": 1
       }
     }
   },
-  "projects": {
-    "platform": {
-      "tags": []
-    },
-    "ui": {
-      "tags": []
-    },
-    "lazymonaco": {
-      "tags": []
-    },
-    "loginhelpers": {
-      "tags": []
-    },
-    "uesioapps-sample": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-studio": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-io": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-lab": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-docs": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "uesioapps-uesio": {
-      "tags": [],
-      "implicitDependencies": ["cli", "loginhelpers"]
-    },
-    "uesioapps-crm": {
-      "tags": [],
-      "implicitDependencies": ["cli"]
-    },
-    "vendor": {
-      "tags": []
-    },
-    "cli": {
-      "tags": [],
-      "implicitDependencies": ["loginhelpers"]
-    }
-  }
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/node"
+  },
+  "defaultProject": "cli"
 }

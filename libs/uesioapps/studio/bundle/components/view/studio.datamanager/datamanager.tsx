@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from "react"
-import { definition, styles, wire, hooks, component, context } from "@uesio/ui"
+import { definition, wire, hooks, component, context } from "@uesio/ui"
 
 type DataManagerDefinition = {
 	collectionId: string
@@ -21,7 +21,7 @@ const init = (
 		const view = context.getView()
 		const appName = view?.params?.appname
 		const siteName = view?.params?.sitename
-		const [namespace, name] = component.path.parseKey(collectionMrg)
+		const [namespace] = component.path.parseKey(collectionMrg)
 		return [
 			namespace,
 			collectionMrg,

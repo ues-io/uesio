@@ -1,7 +1,7 @@
 import { post } from "../request/request"
 import { Metadata } from "../metadata/metadata"
-import { wire } from "@uesio/ui"
-import shortid from "shortid"
+import type { wire } from "@uesio/ui"
+import { nanoid } from "nanoid"
 import { User } from "../auth/login"
 
 const save = async (
@@ -26,12 +26,12 @@ const save = async (
 		user.cookie
 	)
 
-	return response.json()
+	return response.json() as Promise<wire.SaveResponseBatch>
 }
 
 const createChange = (
 	data: wire.PlainWireRecord[]
 ): Record<string, wire.PlainWireRecord> =>
-	Object.fromEntries(data.map((item) => [shortid.generate(), item]))
+	Object.fromEntries(data.map((item) => [nanoid(), item]))
 
 export { save, createChange }

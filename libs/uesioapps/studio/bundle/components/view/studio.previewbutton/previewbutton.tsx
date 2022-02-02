@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent } from "react"
 import { hooks, definition, util, component } from "@uesio/ui"
 import { Scalar, YAMLMap } from "yaml"
 
