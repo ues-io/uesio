@@ -67,8 +67,6 @@ const ImportBody: FunctionComponent<Props> = (props) => {
 	})
 
 	const upload = async (file: File) => {
-		console.log("spec", spec)
-
 		const jobResponse = await uesio.collection.createJob(context, spec)
 
 		if (!jobResponse.id) return

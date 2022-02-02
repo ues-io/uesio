@@ -9,7 +9,7 @@ import {
 	hooks,
 } from "@uesio/ui"
 
-interface FileButtonProps extends definition.UtilityProps {
+interface FileUtilityProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
 	id?: string
@@ -21,7 +21,7 @@ interface FileButtonProps extends definition.UtilityProps {
 const Icon = component.registry.getUtility("io.icon")
 const Button = component.registry.getUtility("io.button")
 
-const FileButton: FunctionComponent<FileButtonProps> = (props) => {
+const File: FunctionComponent<FileUtilityProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, record, context } = props
 	const fieldId = fieldMetadata.getId()
@@ -66,4 +66,4 @@ const FileButton: FunctionComponent<FileButtonProps> = (props) => {
 	)
 }
 
-export default FileButton
+export default File
