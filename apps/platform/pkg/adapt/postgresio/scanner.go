@@ -40,7 +40,7 @@ func (ds *DataScanner) Scan(src interface{}) error {
 		return (*ds.Item).SetField(fieldMetadata.GetFullName(), arraydata)
 	}
 
-	if fieldMetadata.Type == "NUMBER" || fieldMetadata.Type == "AUTONUMBER" {
+	if fieldMetadata.Type == "NUMBER" {
 		f, err := strconv.ParseFloat(string(src.([]byte)), 64)
 		if err != nil {
 			return errors.New("Postgresql number parse error: " + fieldMetadata.GetFullName())

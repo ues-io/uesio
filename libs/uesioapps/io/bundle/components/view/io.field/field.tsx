@@ -50,9 +50,9 @@ const getFieldContent = (
 	switch (true) {
 		case type === "DATE":
 			return <DateField {...common} />
-		case type === "LONGTEXT" || type === "TEXT":
+		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
-		case type === "NUMBER" || type === "AUTONUMBER":
+		case type === "NUMBER":
 			return <NumberField {...common} />
 		case type === "EMAIL":
 			return <EmailField {...common} />

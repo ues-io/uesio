@@ -1,0 +1,4 @@
+name: autonumber
+collection: studio.fields
+type: MAP
+label: Autonumber Metadata

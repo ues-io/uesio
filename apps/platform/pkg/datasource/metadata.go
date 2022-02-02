@@ -57,6 +57,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		FileMetadata:       f.FileMetadata,
 		NumberMetadata:     f.NumberMetadata,
 		ValidationMetadata: f.ValidationMetadata,
+		AutoNumberMetadata: f.AutoNumberMetadata,
 		SelectListMetadata: GetSelectListMetadata(f),
 		Required:           f.Required,
 		AutoPopulate:       f.AutoPopulate,

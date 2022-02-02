@@ -27,8 +27,6 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	case "MAP", "LIST", "MULTISELECT":
 		// Return just as bytes
 		return "fields->'" + fieldName + "'"
-	case "AUTONUMBER":
-		return "autonumber"
 	default:
 		// Cast to string
 		return "fields->>'" + fieldName + "'"

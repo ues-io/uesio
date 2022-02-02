@@ -52,6 +52,12 @@ type ReferenceMetadata struct {
 	OnDelete   string `json:"ondelete" yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 }
 
+// AutoNumberMetadata struct
+type AutoNumberMetadata struct {
+	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"studio.prefix"`
+	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
+}
+
 // Field struct
 type Field struct {
 	ID                 string              `yaml:"-" uesio:"uesio.id"`
@@ -69,6 +75,7 @@ type Field struct {
 	FileMetadata       *FileMetadata       `yaml:"file,omitempty" uesio:"studio.file"`
 	ReferenceMetadata  *ReferenceMetadata  `yaml:"reference,omitempty" uesio:"studio.reference"`
 	ValidationMetadata *ValidationMetadata `yaml:"validate,omitempty" uesio:"studio.validate"`
+	AutoNumberMetadata *AutoNumberMetadata `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
 	AutoPopulate       string              `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	itemMeta           *ItemMeta           `yaml:"-" uesio:"-"`
 	CreatedBy          *User               `yaml:"-" uesio:"uesio.createdby"`
