@@ -334,16 +334,6 @@ const platform = {
 
 		return response
 	},
-	exportData: async (context: Context, jobId: string): Promise<Response> => {
-		const prefix = getPrefix(context)
-		const url = `${prefix}/bulk/job/${jobId}/batch`
-
-		const response = await fetch(url, {
-			method: "POST",
-		})
-
-		return response
-	},
 }
 
 type Platform = typeof platform

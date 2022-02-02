@@ -86,17 +86,6 @@ const DataExport: FunctionComponent<Props> = (props) => {
 			return
 		}
 
-		const batchResponse = await uesio.collection.exportData(
-			newContext,
-			jobResponse.id
-		)
-
-		if (batchResponse.status !== 200) {
-			const error = await batchResponse.text()
-			uesio.notification.addError("Export error: " + error, newContext)
-			return
-		}
-
 		uesio.signal.run(
 			{
 				signal: "wire/LOAD",

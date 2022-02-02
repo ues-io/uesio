@@ -40,9 +40,6 @@ class CollectionAPI {
 	importData(context: Context, fileData: File, jobId: string) {
 		return getPlatform().importData(context, fileData, jobId)
 	}
-	exportData(context: Context, jobId: string) {
-		return getPlatform().exportData(context, jobId)
-	}
 }
 
 export { CollectionAPI }
