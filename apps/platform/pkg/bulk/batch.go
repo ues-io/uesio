@@ -10,32 +10,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-type valueFunc func(data interface{}, mapping *meta.FieldMapping, index int) string
-type loaderFunc func(change adapt.Item, data interface{})
-
-func getBooleanLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) {
-		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index) == "true"
-	}
-}
-
-func getTextLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	return func(change adapt.Item, data interface{}) {
-		change[fieldMetadata.GetFullName()] = getValue(data, mapping, index)
-	}
-}
-
-func getReferenceLoader(index int, mapping *meta.FieldMapping, fieldMetadata *adapt.FieldMetadata, getValue valueFunc) loaderFunc {
-	if mapping.MatchField == "" {
-		return getTextLoader(index, mapping, fieldMetadata, getValue)
-	}
-	return func(change adapt.Item, data interface{}) {
-		change[fieldMetadata.GetFullName()] = map[string]interface{}{
-			mapping.MatchField: getValue(data, mapping, index),
-		}
-	}
-}
-
 // NewBatch func
 func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.BulkBatch, error) {
 
@@ -56,9 +30,15 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 		return nil, err
 	}
 
-	spec := job.Spec
-	fileFormat := spec.FileType
-	var saveRequest []datasource.SaveRequest
+	if job.Spec.JobType == "export" {
+		return nil, errors.New("Cannot manually create export batches")
+	}
+
+	return NewImportBatch(body, job, session)
+
+}
+
+func getBatchMetadata(collectionName string, session *sess.Session) (*adapt.MetadataCache, error) {
 
 	metadataResponse := adapt.MetadataCache{}
 	collections := datasource.MetadataRequest{
@@ -66,7 +46,7 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 			LoadAllFields: true,
 		},
 	}
-	err = collections.AddCollection(spec.Collection)
+	err := collections.AddCollection(collectionName)
 	if err != nil {
 		return nil, err
 	}
@@ -75,41 +55,5 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	if err != nil {
 		return nil, err
 	}
-
-	if fileFormat == "csv" {
-		saveRequest, err = processCSV(body, &spec, &metadataResponse, session, nil)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if fileFormat == "tab" {
-		saveRequest, err = processCSV(body, &spec, &metadataResponse, session, &CSVOptions{
-			Comma: '\t',
-		})
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if saveRequest == nil {
-		return nil, errors.New("Cannot process that file type: " + fileFormat)
-	}
-
-	err = datasource.Save(saveRequest, session)
-	if err != nil {
-		return nil, err
-	}
-
-	batch := meta.BulkBatch{
-		Status:    "started",
-		BulkJobID: jobID,
-	}
-
-	err = datasource.PlatformSaveOne(&batch, nil, session)
-	if err != nil {
-		return nil, err
-	}
-
-	return &batch, nil
+	return &metadataResponse, nil
 }

@@ -2,15 +2,16 @@ package meta
 
 // BulkBatch struct
 type BulkBatch struct {
-	ID        string    `uesio:"uesio.id"`
-	BulkJobID string    `uesio:"uesio.bulkjobid"`
-	Status    string    `uesio:"uesio.status"`
-	itemMeta  *ItemMeta `yaml:"-" uesio:"-"`
-	CreatedBy *User     `yaml:"-" uesio:"uesio.createdby"`
-	Owner     *User     `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy *User     `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt int64     `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt int64     `yaml:"-" uesio:"uesio.createdat"`
+	ID        string            `uesio:"uesio.id"`
+	BulkJobID string            `uesio:"uesio.bulkjobid"`
+	Status    string            `uesio:"uesio.status"`
+	Result    *UserFileMetadata `yaml:"-" uesio:"uesio.result"`
+	itemMeta  *ItemMeta         `yaml:"-" uesio:"-"`
+	CreatedBy *User             `yaml:"-" uesio:"uesio.createdby"`
+	Owner     *User             `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy *User             `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt int64             `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt int64             `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function

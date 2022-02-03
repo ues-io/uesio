@@ -9,7 +9,7 @@ import {
 	hooks,
 } from "@uesio/ui"
 
-interface FileUploadProps extends definition.UtilityProps {
+interface FileImageProps extends definition.UtilityProps {
 	width?: string
 	fieldMetadata: collection.Field
 	id?: string
@@ -21,7 +21,7 @@ interface FileUploadProps extends definition.UtilityProps {
 const Icon = component.registry.getUtility("io.icon")
 const UploadArea = component.registry.getUtility("io.uploadarea")
 
-const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
+const FileImage: FunctionComponent<FileImageProps> = (props) => {
 	const uesio = hooks.useUesio(props)
 	const { fieldMetadata, record, context, wire } = props
 	const fieldId = fieldMetadata.getId()
@@ -149,4 +149,4 @@ const FileUpload: FunctionComponent<FileUploadProps> = (props) => {
 	)
 }
 
-export default FileUpload
+export default FileImage

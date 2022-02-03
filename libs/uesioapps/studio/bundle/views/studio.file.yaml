@@ -96,4 +96,5 @@ definition:
                                   - io.field:
                                       fieldId: studio.name
                             - io.field:
+                                displayAs: PREVIEW
                                 fieldId: studio.content

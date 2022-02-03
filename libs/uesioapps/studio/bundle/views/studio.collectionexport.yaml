@@ -1,0 +1,133 @@
+name: collectionexport
+definition:
+  # Wires are how we pull in data
+  wires:
+    workspaces:
+      collection: studio.workspaces
+      fields:
+        uesio.id:
+        studio.name:
+        studio.app:
+          fields:
+            studio.color:
+      conditions:
+        - field: studio.app
+          valueSource: PARAM
+          param: appname
+        - field: studio.name
+          valueSource: PARAM
+          param: workspacename
+    collections:
+      collection: studio.collections
+      fields:
+        uesio.id:
+        studio.name:
+        studio.namefield:
+        studio.workspace:
+        studio.datasource:
+        uesio.updatedat:
+        uesio.updatedby:
+        uesio.createdat:
+        uesio.createdby:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+        - field: studio.name
+          value: $Param{collectionname}
+    bulkjobs:
+      collection: uesio.bulkjobs
+      fields:
+        uesio.id:
+        uesio.collection:
+        uesio.createdat:
+      order:
+        - field: uesio.createdat
+          desc: true
+      conditions:
+        - field: uesio.collection
+          value: $Param{appname}.$Param{collectionname}
+      init:
+        query: false
+  events:
+    onload:
+      - signal: "wire/LOAD"
+        uesio.context:
+          workspace:
+            name: $Param{workspacename}
+            app: $Param{appname}
+        wires:
+          - bulkjobs
+
+  # Components are how we describe the layout of our view
+  components:
+    - io.grid:
+        uesio.variant: studio.mainlayout
+        items:
+          - io.griditem:
+              uesio.variant: studio.topbar
+              components:
+                - uesio.view:
+                    view: studio.topbar
+                    uesio.context:
+                      wire: workspaces
+                    params:
+                      itemType: collections
+                      itemIcon: list
+                      itemName: $Param{collectionname}
+          - io.griditem:
+              uesio.variant: studio.leftbar
+              components:
+                - uesio.view:
+                    uesio.context:
+                      wire: workspaces
+                    view: studio.workspacenav
+                    params:
+                      selected: collections
+          - io.griditem:
+              uesio.variant: studio.content
+              components:
+                - io.list:
+                    id: collectionsDeck
+                    wire: collections
+                    mode: READ
+                    components:
+                      - io.titlebar:
+                          uesio.variant: io.main
+                          title: ${studio.name} - Jobs
+                          actions:
+                            - io.group:
+                                components:
+                                  - studio.dataexport:
+                                      collectionId: $Param{collectionname}
+                                      namespace: $Param{appname}
+                                      usage: workspace
+                                      wireName: "bulkjobs"
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Collection Config"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/collections/$Param{collectionname}"
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.deck:
+                                id: bulkjobsDeck
+                                wire: bulkjobs
+                                uesio.variant: io.section
+                                components:
+                                  - io.tile:
+                                      uesio.variant: io.item
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio.id}/batches"
+                                      content:
+                                        - io.field:
+                                            fieldId: uesio.createdat
+                                      avatar:
+                                        - io.text:
+                                            uesio.variant: io.icon
+                                            color: "#ccc"
+                                            text: ads_click

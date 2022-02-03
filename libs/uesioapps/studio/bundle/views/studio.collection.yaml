@@ -125,6 +125,12 @@ definition:
                                 components:
                                   - io.button:
                                       uesio.variant: io.secondary
+                                      text: "Export Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}"
+                                  - io.button:
+                                      uesio.variant: io.secondary
                                       text: "Import Data"
                                       signals:
                                         - signal: "route/NAVIGATE"

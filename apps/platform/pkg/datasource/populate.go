@@ -70,7 +70,7 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 	for _, field := range collectionMetadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
-				timestamp := time.Now().UnixNano() / 1e6
+				timestamp := time.Now().UnixMilli()
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
