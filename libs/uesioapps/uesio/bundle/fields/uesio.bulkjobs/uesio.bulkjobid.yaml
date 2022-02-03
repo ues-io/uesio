@@ -1,0 +1,7 @@
+name: bulkjobid
+collection: uesio.bulkjobs
+type: "AUTONUMBER"
+label: "Bulkjob Id"
+autonumber:
+  prefix: "B"
+  leadingZeros: 8

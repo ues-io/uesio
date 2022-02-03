@@ -102,7 +102,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 
 	batch := meta.BulkBatch{
 		Status:    "started",
-		BulkJobID: job.ID,
+		BulkJobID: job.Bulkjobid,
 	}
 
 	err = datasource.PlatformSaveOne(&batch, nil, session)

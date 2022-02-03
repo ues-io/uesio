@@ -42,6 +42,7 @@ definition:
         uesio.id:
         uesio.collection:
         uesio.createdat:
+        uesio.bulkjobid:
       order:
         - field: uesio.createdat
           desc: true
@@ -122,8 +123,10 @@ definition:
                                       uesio.variant: io.item
                                       signals:
                                         - signal: "route/NAVIGATE"
-                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio.id}/batches"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}/${uesio.bulkjobid}/batches"
                                       content:
+                                        - io.field:
+                                            fieldId: uesio.bulkjobid
                                         - io.field:
                                             fieldId: uesio.createdat
                                       avatar:
