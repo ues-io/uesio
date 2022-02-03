@@ -43,7 +43,7 @@ components:
         - io.autocomplete.io.table
         - io.table.io.default
         - io.button.io.nav
-        - io.fileupload.io.table
+        - io.fileimage.io.table
         - io.numberfield.io.table
     io.text:
     io.tile:
@@ -64,9 +64,10 @@ components:
     io.fieldlabel:
     io.fieldwrapper:
     io.fieldset:
+    io.filepreview:
     io.filetext:
-    io.fileupload:
-    io.filedynamic:
+    io.fileimage:
+    io.file:
     io.grid:
     io.group:
     io.icon:

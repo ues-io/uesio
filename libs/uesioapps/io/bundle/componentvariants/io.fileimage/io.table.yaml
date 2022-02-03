@@ -1,5 +1,5 @@
 name: table
-component: io.fileupload
+component: io.fileimage
 label: Table
 definition:
   uesio.styles:
