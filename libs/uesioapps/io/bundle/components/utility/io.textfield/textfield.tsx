@@ -13,9 +13,7 @@ interface TextFieldProps extends definition.UtilityProps {
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
 	const { setValue, value, mode, placeholder, fieldMetadata, password } =
 		props
-
-	const type = fieldMetadata.getType()
-	const readonly = mode === "READ" || type === "AUTONUMBER"
+	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
 			input: {

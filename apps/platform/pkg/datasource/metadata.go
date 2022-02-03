@@ -50,7 +50,7 @@ func GetFieldMetadata(f *meta.Field, session *sess.Session) *adapt.FieldMetadata
 		Namespace:          f.Namespace,
 		Createable:         !f.ReadOnly,
 		Accessible:         true,
-		Updateable:         !f.ReadOnly && !f.CreateOnly,
+		Updateable:         !f.ReadOnly && !f.CreateOnly && !(f.Type == "AUTONUMBER"),
 		Type:               f.Type,
 		Label:              GetFieldLabel(f, session),
 		ReferenceMetadata:  f.ReferenceMetadata,
