@@ -138,16 +138,14 @@ func getMetadataForLoad(
 				if err != nil {
 					return err
 				}
-
-				fields := []adapt.LoadRequestField{}
-				fields = append(fields, adapt.LoadRequestField{
-					ID: refCollectionMetadata.NameField,
-				})
-				fields = append(fields, adapt.LoadRequestField{
-					ID: "uesio.id",
-				})
-
-				op.Fields[i].Fields = fields
+				op.Fields[i].Fields = []adapt.LoadRequestField{
+					{
+						ID: refCollectionMetadata.NameField,
+					},
+					{
+						ID: "uesio.id",
+					},
+				}
 
 			}
 
@@ -187,9 +185,20 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 
 	// Loop over the ops and batch per data source
 	for i := range ops {
-		ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
-			ID: "uesio.id",
-		})
+		// Verify that the uesio.id field is present
+		hasIDField := false
+		for j := range ops[i].Fields {
+			if ops[i].Fields[j].ID == "uesio.id" {
+				hasIDField = true
+				break
+			}
+		}
+		if !hasIDField {
+			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
+				ID: "uesio.id",
+			})
+		}
+
 		op := ops[i]
 		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
 		if err != nil {

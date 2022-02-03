@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
@@ -17,31 +16,20 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 	fileFormat := spec.FileType
 	var saveRequest []datasource.SaveRequest
 
-	metadataResponse := adapt.MetadataCache{}
-	collections := datasource.MetadataRequest{
-		Options: &datasource.MetadataRequestOptions{
-			LoadAllFields: true,
-		},
-	}
-	err := collections.AddCollection(spec.Collection)
-	if err != nil {
-		return nil, err
-	}
-
-	err = collections.Load(&metadataResponse, session)
+	metadataResponse, err := getBatchMetadata(spec.Collection, session)
 	if err != nil {
 		return nil, err
 	}
 
 	if fileFormat == "csv" {
-		saveRequest, err = processCSV(body, &spec, &metadataResponse, session, nil)
+		saveRequest, err = processCSV(body, &spec, metadataResponse, session, nil)
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	if fileFormat == "tab" {
-		saveRequest, err = processCSV(body, &spec, &metadataResponse, session, &CSVOptions{
+		saveRequest, err = processCSV(body, &spec, metadataResponse, session, &CSVOptions{
 			Comma: '\t',
 		})
 		if err != nil {

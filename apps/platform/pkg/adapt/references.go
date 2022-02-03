@@ -8,6 +8,7 @@ import (
 // ReferenceRequest type
 type ReferenceRequest struct {
 	Fields          []LoadRequestField
+	FieldsMap       map[string]bool
 	Metadata        *CollectionMetadata
 	ReferenceFields FieldsMap
 	IDs             map[string][]ReferenceLocator
@@ -32,7 +33,13 @@ func (rr *ReferenceRequest) AddID(value interface{}, locator ReferenceLocator) {
 
 // AddFields function
 func (rr *ReferenceRequest) AddFields(fields []LoadRequestField) {
-	rr.Fields = append(rr.Fields, fields...)
+	for _, field := range fields {
+		_, ok := rr.FieldsMap[field.ID]
+		if !ok {
+			rr.Fields = append(rr.Fields, field)
+			rr.FieldsMap[field.ID] = true
+		}
+	}
 }
 
 // AddReference function
@@ -49,6 +56,7 @@ func (rr *ReferenceRegistry) Add(collectionKey string) {
 		ReferenceFields: FieldsMap{},
 		IDs:             map[string][]ReferenceLocator{},
 		Fields:          []LoadRequestField{},
+		FieldsMap:       map[string]bool{},
 	}
 }
 

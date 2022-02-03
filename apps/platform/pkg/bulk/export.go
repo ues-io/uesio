@@ -1,16 +1,12 @@
 package bulk
 
 import (
-	"bytes"
-	"encoding/csv"
 	"errors"
-	"mime"
-	"path/filepath"
+	"io"
 	"strconv"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/configstore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/fileadapt"
 	"github.com/thecloudmasters/uesio/pkg/filesource"
@@ -19,80 +15,23 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func updateBatchStatus(batch meta.BulkBatch, status string, result *meta.UserFileMetadata, session *sess.Session) error {
+type Exportable interface {
+	loadable.Group
+	GetData() (io.Reader, error)
+}
 
-	batch.Status = status
-	if result != nil {
-		batch.Result = result
-	}
+func loadData(op *adapt.LoadOp, session *sess.Session) error {
 
-	err := datasource.PlatformSaveOne(&batch, nil, session)
+	_, err := datasource.Load([]adapt.LoadOp{*op}, session)
 	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func createBatch(jobID string, status string, session *sess.Session) (meta.BulkBatch, error) {
-	batch := meta.BulkBatch{
-		Status:    status,
-		BulkJobID: jobID,
-	}
-
-	err := datasource.PlatformSaveOne(&batch, nil, session)
-	if err != nil {
-		return batch, err
-	}
-
-	return batch, nil
-}
-
-func getHeaderRow(fields []adapt.LoadRequestField) []string {
-	var row []string
-	for _, field := range fields {
-		row = append(row, field.ID)
-	}
-	return row
-}
-
-func getRow(item loadable.Item, fields []adapt.LoadRequestField) []string {
-	var row []string
-	for _, field := range fields {
-		keyVal, err := item.GetField(field.ID)
-		if err == nil {
-			keyString, ok := keyVal.(string)
-			if ok {
-				row = append(row, keyString)
-			} else {
-				//empty cell
-				row = append(row, "")
-			}
-
-		}
-
-		if err != nil {
-			println("Opps", field.ID, keyVal)
-			println(err.Error())
-			//empty cell
-			row = append(row, "")
-		}
-	}
-	return row
-}
-
-func loadData(ops []adapt.LoadOp, session *sess.Session) error {
-
-	_, err := datasource.Load(ops, session)
-	if err != nil {
-		return err
-	}
-
-	if !ops[0].HasMoreBatches {
+	if !op.HasMoreBatches {
 		return nil
 	}
 
-	return loadData(ops, session)
+	return loadData(op, session)
 }
 
 func generateFileName(collectionName string) string {
@@ -106,75 +45,70 @@ func generateFileName(collectionName string) string {
 func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, error) {
 
 	spec := job.Spec
+	fileFormat := spec.FileType
 
-	batch, err := createBatch(job.ID, "started", session)
-	if err != nil {
-		return nil, err
-	}
-	//Metadata
-	metadataResponse := adapt.MetadataCache{}
-	collections := datasource.MetadataRequest{
-		Options: &datasource.MetadataRequestOptions{
-			LoadAllFields: true,
-		},
-	}
-	err = collections.AddCollection(spec.Collection)
-	if err != nil {
-		return nil, err
-	}
-
-	err = collections.Load(&metadataResponse, session)
+	metadataResponse, err := getBatchMetadata(spec.Collection, session)
 	if err != nil {
 		return nil, err
 	}
 
 	//Load operation
-	ops := make([]adapt.LoadOp, 1)
 	fields := []adapt.LoadRequestField{}
 	collectionMetadata, err := metadataResponse.GetCollection(spec.Collection)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, fieldKey := range collectionMetadata.Fields {
+	for _, fieldMetadata := range collectionMetadata.Fields {
+		// For reference fields, lets just request the id for now
+		if adapt.IsReference(fieldMetadata.Type) {
+			fields = append(fields, adapt.LoadRequestField{
+				ID: fieldMetadata.GetFullName(),
+				Fields: []adapt.LoadRequestField{
+					{
+						ID: "uesio.id",
+					},
+				},
+			})
+			continue
+		}
 		fields = append(fields, adapt.LoadRequestField{
-			ID: fieldKey.GetFullName(),
+			ID: fieldMetadata.GetFullName(),
 		})
 	}
 
-	ops[0] = adapt.LoadOp{
+	var collection Exportable
+
+	if fileFormat == "csv" {
+		collection = NewCSVExportCollection(collectionMetadata)
+	}
+
+	if collection == nil {
+		return nil, errors.New("Cannot process that file type: " + fileFormat)
+	}
+
+	op := &adapt.LoadOp{
 		WireName:       "uesio_data_export",
 		CollectionName: spec.Collection,
-		Collection:     &adapt.Collection{},
+		Collection:     collection,
 		Fields:         fields,
 		Query:          true,
 	}
 
-	loadData(ops, session)
-
-	//Create CSV
-	buffer := new(bytes.Buffer)
-	w := csv.NewWriter(buffer)
-
-	headerRow := getHeaderRow(fields)
-	if err := w.Write(headerRow); err != nil {
-		return nil, err
-	}
-
-	err = ops[0].Collection.Loop(func(item loadable.Item, _ interface{}) error {
-		row := getRow(item, fields)
-		if err := w.Write(row); err != nil {
-			return err
-		}
-		return nil
-	})
-
+	err = loadData(op, session)
 	if err != nil {
 		return nil, err
 	}
 
-	//Store CSV
-	fileCollectionID := "uesio.platform"
+	batch := meta.BulkBatch{
+		Status:    "started",
+		BulkJobID: job.ID,
+	}
+
+	err = datasource.PlatformSaveOne(&batch, nil, session)
+	if err != nil {
+		return nil, err
+	}
 
 	details := fileadapt.FileDetails{
 		Name:         generateFileName(spec.Collection),
@@ -183,62 +117,26 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		FieldID:      "uesio.result",
 	}
 
-	ufc, fs, err := fileadapt.GetFileSourceAndCollection(fileCollectionID, session)
+	data, err := collection.GetData()
 	if err != nil {
 		return nil, err
 	}
 
-	ufm := meta.UserFileMetadata{
-		CollectionID:     details.CollectionID,
-		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
-		FieldID:          details.FieldID,
-		Type:             filesource.GetFileMetadataType(details),
-		FileCollectionID: fileCollectionID,
-		FileName:         details.Name,
-		Name:             filesource.GetFileUniqueName(details),
-		RecordID:         details.RecordID,
-	}
-
-	path, err := ufc.GetFilePath(&ufm)
-	if err != nil {
-		return nil, errors.New("error generating path for userfile: " + err.Error())
-	}
-
-	ufm.Path = path
-
-	err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
-		Upsert: &adapt.UpsertOptions{},
-	}, session)
+	_, err = filesource.Upload(data, details, session)
 	if err != nil {
 		return nil, err
 	}
 
-	fileAdapter, err := fileadapt.GetFileAdapter(fs.Type, session)
-	if err != nil {
-		return nil, err
-	}
-	credentials, err := adapt.GetCredentials(fs.Credentials, session)
-	if err != nil {
-		return nil, err
-	}
-	bucket, err := configstore.GetValueFromKey(ufc.Bucket, session)
-	if err != nil {
-		return nil, err
-	}
+	// Now update the batch status
+	batch.Status = "completed"
+	batch.SetItemMeta(&meta.ItemMeta{
+		ValidFields: map[string]bool{
+			"uesio.id":     true,
+			"uesio.status": true,
+		},
+	})
 
-	w.Flush()
-
-	if err := w.Error(); err != nil {
-		return nil, err
-	}
-
-	err = fileAdapter.Upload(buffer, bucket, path, credentials)
-	if err != nil {
-		return nil, err
-	}
-
-	//completed
-	err = updateBatchStatus(batch, "completed", &ufm, session)
+	err = datasource.PlatformSaveOne(&batch, nil, session)
 	if err != nil {
 		return nil, err
 	}
