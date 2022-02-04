@@ -4,4 +4,4 @@ type: "AUTONUMBER"
 label: "Bulkjob Id"
 autonumber:
   prefix: "B"
-  leadingZeros: 8
+  leadingZeros: 4
