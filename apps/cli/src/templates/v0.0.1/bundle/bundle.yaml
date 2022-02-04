@@ -1,4 +1,5 @@
-name: { { projectName } }
+# prettier-ignore
+name: {{ projectName }}
 loginRoute:
 homeRoute:
 defaultProfile:

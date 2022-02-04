@@ -18,7 +18,6 @@ export default class Init extends Command {
 				name: "name",
 				message: "What is the folder name?",
 			})
-			console.log(response)
 			flags.name = response.name
 		}
 		const name = flags.name
