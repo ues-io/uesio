@@ -151,13 +151,16 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 	return stream, nil
 }
 
-// GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	stream, _, err := filesource.Download(bot.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
 	return stream, nil
+}
+
+func (b *WorkspaceBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return nil, errors.New("Cant use generate bot templates here yet. :(")
 }
 
 // StoreItems function

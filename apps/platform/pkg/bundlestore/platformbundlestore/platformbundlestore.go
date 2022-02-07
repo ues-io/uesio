@@ -150,12 +150,10 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 }
 
-// GetFileStream function
 func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
 }
 
-// GetComponentPackStream function
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
@@ -164,9 +162,12 @@ func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode b
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
 }
 
-// GetBotStream function
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath(), session)
+}
+
+func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
 }
 
 // StoreItems function

@@ -38,7 +38,6 @@ func GetSiteAppBundle(site *meta.Site) (*meta.BundleDef, error) {
 	return getAppBundleInternal(site.GetAppID(), site.Bundle.GetVersionString(), session)
 }
 
-// ClearAppBundleCache entry
 func ClearAppBundleCache(session *sess.Session) {
 	appName := session.GetContextAppName()
 	appVersion := session.GetContextVersionName()
@@ -107,7 +106,6 @@ func GetBundleStoreWithVersion(namespace string, session *sess.Session) (string,
 	return version, bs, nil
 }
 
-// LoadAllFromAny function
 func LoadAllFromAny(group meta.BundleableGroup, conditions meta.BundleConditions, session *sess.Session) error {
 	// Get all avaliable namespaces
 	namespaces := session.GetContextNamespaces()
@@ -128,7 +126,6 @@ func HasAny(group meta.BundleableGroup, namespace string, conditions meta.Bundle
 	return bs.HasAny(group, namespace, version, conditions, session)
 }
 
-// LoadAll function
 func LoadAll(group meta.BundleableGroup, namespace string, conditions meta.BundleConditions, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(namespace, session)
 	if err != nil {
@@ -163,7 +160,6 @@ func LoadMany(items []meta.BundleableItem, session *sess.Session) error {
 	return nil
 }
 
-// Load function
 func Load(item meta.BundleableItem, session *sess.Session) error {
 	version, bs, err := GetBundleStoreWithVersion(item.GetNamespace(), session)
 	if err != nil {
@@ -172,7 +168,6 @@ func Load(item meta.BundleableItem, session *sess.Session) error {
 	return bs.GetItem(item, version, session)
 }
 
-//GetFileStream function
 func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(file.Namespace, session)
 	if err != nil {
@@ -181,7 +176,6 @@ func GetFileStream(file *meta.File, session *sess.Session) (io.ReadCloser, error
 	return bs.GetFileStream(version, file, session)
 }
 
-//GetComponentPackStream function
 func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(componentPack.Namespace, session)
 	if err != nil {
@@ -190,11 +184,18 @@ func GetComponentPackStream(componentPack *meta.ComponentPack, buildMode bool, s
 	return bs.GetComponentPackStream(version, buildMode, componentPack, session)
 }
 
-//GetBotStream function
 func GetBotStream(bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
 	if err != nil {
 		return nil, err
 	}
 	return bs.GetBotStream(version, bot, session)
+}
+
+func GetGeneratorBotTemplateStream(template string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	version, bs, err := GetBundleStoreWithVersion(bot.Namespace, session)
+	if err != nil {
+		return nil, err
+	}
+	return bs.GetGenerateBotTemplateStream(template, version, bot, session)
 }

@@ -120,6 +120,10 @@ func (b *Bot) GetBotFilePath() string {
 	return filepath.Join(b.GetKey(), "bot.js")
 }
 
+func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
+	return filepath.Join(b.GetKey(), "templates", template)
+}
+
 // GetCollectionName function
 func (b *Bot) GetCollectionName() string {
 	return b.GetBundleGroup().GetName()
