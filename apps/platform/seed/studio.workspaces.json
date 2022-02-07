@@ -10,11 +10,5 @@
 		"app": {
 			"id": "crm"
 		}
-	},
-	{
-		"name": "dev",
-		"app": {
-			"id": "sample"
-		}
 	}
 ]
