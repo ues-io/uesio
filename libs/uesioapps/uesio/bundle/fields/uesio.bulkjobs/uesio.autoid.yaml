@@ -1,7 +1,7 @@
-name: bulkjobid
+name: autoid
 collection: uesio.bulkjobs
 type: "AUTONUMBER"
-label: "Bulkjob Id"
+label: "Auto ID"
 autonumber:
-  prefix: "B"
+  prefix: "JOB"
   leadingZeros: 4

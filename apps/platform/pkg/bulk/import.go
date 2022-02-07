@@ -48,7 +48,7 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 
 	batch := meta.BulkBatch{
 		Status:    "started",
-		BulkJobID: job.Bulkjobid,
+		BulkJobID: job.ID,
 	}
 
 	err = datasource.PlatformSaveOne(&batch, nil, session)

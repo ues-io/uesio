@@ -1,3 +1,4 @@
 name: bulkjobs
 dataSource: uesio.platform
 nameField: uesio.id
+idFormat: ${uesio.autoid}
