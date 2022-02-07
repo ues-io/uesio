@@ -48,6 +48,14 @@ func NewListenerBot(namespace, name string) *Bot {
 	}
 }
 
+func NewGeneratorBot(namespace, name string) *Bot {
+	return &Bot{
+		Type:      "GENERATOR",
+		Namespace: namespace,
+		Name:      name,
+	}
+}
+
 func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 	return &Bot{
 		CollectionRef: collectionKey,
@@ -55,6 +63,11 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 		Namespace:     namespace,
 		Name:          name,
 	}
+}
+
+type BotParam struct {
+	Name   string `yaml:"name" uesio:"studio.name" json:"name"`
+	Prompt string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
 }
 
 // Bot struct
@@ -65,6 +78,7 @@ type Bot struct {
 	Namespace     string            `yaml:"-" uesio:"-"`
 	Type          string            `yaml:"type" uesio:"studio.type"`
 	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
+	Params        []BotParam        `yaml:"params" uesio:"studio.params"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
@@ -82,6 +96,7 @@ func GetBotTypes() map[string]string {
 		"BEFORESAVE": "beforesave",
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
+		"GENERATOR":  "generator",
 	}
 }
 
@@ -129,7 +144,7 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" {
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
 		return filepath.Join(botType, b.Namespace+"."+b.Name)
 	}
 	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)

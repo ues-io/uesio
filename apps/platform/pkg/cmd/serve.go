@@ -73,7 +73,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controller.CallBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controller.CallListenerBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/{namespace}/{name}", controller.GetBotParams, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controller.ServeFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controller.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controller.View, "GET")
@@ -84,6 +85,7 @@ func serve(cmd *cobra.Command, args []string) {
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/generate/{namespace}/{name}", controller.Generate).Methods("POST", "GET")
 
 	workspaceAPI(wr, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")

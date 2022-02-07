@@ -209,17 +209,12 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 }
 
 // Zip function
-func Zip(writer io.Writer, session *sess.Session) error {
+func Zip(writer io.Writer, files []bundlestore.ItemStream, session *sess.Session) error {
 
 	// Create a new zip archive.
 	zipWriter := zip.NewWriter(writer)
 
-	itemStreams, err := Retrieve(session)
-	if err != nil {
-		return err
-	}
-
-	for _, itemStream := range itemStreams {
+	for _, itemStream := range files {
 		f, err := zipWriter.Create(filepath.Join(itemStream.Type, itemStream.FileName))
 		if err != nil {
 			return err

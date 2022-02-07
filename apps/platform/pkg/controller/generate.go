@@ -8,14 +8,11 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/datasource"
 	"github.com/thecloudmasters/uesio/pkg/logger"
 	"github.com/thecloudmasters/uesio/pkg/middleware"
+	"github.com/thecloudmasters/uesio/pkg/retrieve"
 )
 
-type BotResponse struct {
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
+func Generate(w http.ResponseWriter, r *http.Request) {
 
-func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	namespace := vars["namespace"]
 	name := vars["name"]
@@ -31,7 +28,7 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 
 	session := middleware.GetSession(r)
 
-	err = datasource.CallListenerBot(namespace, name, params, session)
+	files, err := datasource.CallGeneratorBot(namespace, name, params, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
 		respondJSON(w, r, &BotResponse{
@@ -41,7 +38,11 @@ func CallListenerBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, r, &BotResponse{
-		Success: true,
-	})
+	err = retrieve.Zip(w, files, session)
+	if err != nil {
+		logger.LogErrorWithTrace(r, err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/middleware"
 )
 
-// MetadataList is good
 func MetadataList(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
