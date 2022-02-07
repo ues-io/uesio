@@ -1,0 +1,6 @@
+name: init
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: App Name
