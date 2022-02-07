@@ -154,6 +154,7 @@ func CallGeneratorBot(namespace, name string, params map[string]string, session 
 			params: params,
 		},
 		itemStreams: []bundlestore.ItemStream{},
+		bot:         robot,
 	}
 
 	err = hydrateBot(robot, session)

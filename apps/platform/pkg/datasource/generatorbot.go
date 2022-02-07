@@ -2,8 +2,11 @@ package datasource
 
 import (
 	"fmt"
+	"io/ioutil"
 
+	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
+	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
@@ -12,12 +15,22 @@ type GeneratorBotAPI struct {
 	session     *sess.Session
 	Params      *ParamsAPI `bot:"params"`
 	itemStreams []bundlestore.ItemStream
+	bot         *meta.Bot
 }
 
 // Save function
-func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateString string) error {
+func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
 	fmt.Println("Generating file: " + filename)
-	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	// Load in the template text from the bot.
+	stream, err := bundle.GetGeneratorBotTemplateStream(templateFile, gba.bot, gba.session)
+	if err != nil {
+		return err
+	}
+	templateBytes, err := ioutil.ReadAll(stream)
+	if err != nil {
+		return err
+	}
+	template, err := templating.NewTemplateWithValidKeysOnly(string(templateBytes))
 	if err != nil {
 		return err
 	}

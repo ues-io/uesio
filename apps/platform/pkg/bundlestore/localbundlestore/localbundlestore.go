@@ -132,17 +132,18 @@ func (b *LocalBundleStore) GetAllItems(group meta.BundleableGroup, namespace, ve
 	return nil
 }
 
-// GetFileStream function
 func (b *LocalBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath())
 }
 
-// GetBotStream function
 func (b *LocalBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath())
 }
 
-// GetComponentPackStream function
+func (b *LocalBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template))
+}
+
 func (b *LocalBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 
 	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
