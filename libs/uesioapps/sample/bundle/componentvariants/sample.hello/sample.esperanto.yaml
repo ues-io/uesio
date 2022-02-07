@@ -1,8 +1,0 @@
-name: esperanto
-component: sample.hello
-label: Esperanta
-definition:
-  greeting: Saluton amiko!
-  uesio.styles:
-    root:
-      backgroundColor: orange

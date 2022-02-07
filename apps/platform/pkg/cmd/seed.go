@@ -135,7 +135,7 @@ func seed(cmd *cobra.Command, args []string) {
 	// Install Default Bundles
 	// This takes code from the /libs/uesioapps code in the repo
 	// and installs it into the localbundlestore.
-	err = installBundles(session, "sample", "crm")
+	err = installBundles(session, "crm")
 	if err != nil {
 		logger.LogError(err)
 		return
