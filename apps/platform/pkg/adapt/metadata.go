@@ -111,6 +111,7 @@ type FieldMetadata struct {
 	ReferenceMetadata  *meta.ReferenceMetadata   `json:"reference,omitempty"`
 	FileMetadata       *meta.FileMetadata        `json:"file,omitempty"`
 	ValidationMetadata *meta.ValidationMetadata  `json:"validate,omitempty"`
+	AutoNumberMetadata *meta.AutoNumberMetadata  `json:"autonumber,omitempty"`
 	AutoPopulate       string                    `json:"autopopulate,omitempty"`
 	SubFields          map[string]*FieldMetadata `json:"subfields,omitempty"`
 	SubType            string                    `json:"subtype,omitempty"`

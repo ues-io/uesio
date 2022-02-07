@@ -26,3 +26,5 @@ options:
     value: "USER"
   - label: "Email"
     value: "EMAIL"
+  - label: "Auto Number"
+    value: "AUTONUMBER"

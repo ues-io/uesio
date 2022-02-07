@@ -3,6 +3,7 @@ package meta
 // BulkJob struct
 type BulkJob struct {
 	ID         string    `uesio:"uesio.id"`
+	AutoID     string    `uesio:"uesio.autoid"`
 	Spec       JobSpec   `uesio:"uesio.spec"`
 	Collection string    `uesio:"uesio.collection"`
 	itemMeta   *ItemMeta `yaml:"-" uesio:"-"`

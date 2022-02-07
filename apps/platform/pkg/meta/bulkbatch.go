@@ -3,6 +3,7 @@ package meta
 // BulkBatch struct
 type BulkBatch struct {
 	ID        string            `uesio:"uesio.id"`
+	AutoID    string            `uesio:"uesio.autoid"`
 	BulkJobID string            `uesio:"uesio.bulkjobid"`
 	Status    string            `uesio:"uesio.status"`
 	Result    *UserFileMetadata `yaml:"-" uesio:"uesio.result"`

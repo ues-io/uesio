@@ -1,0 +1,11 @@
+name: autonumber
+collection: studio.fields
+type: MAP
+label: Autonumber Metadata
+subfields:
+  - name: studio.leadingzeros
+    label: N° Leading Zeros
+    type: NUMBER
+  - name: studio.prefix
+    label: Prefix
+    type: TEXT
