@@ -5,21 +5,9 @@ import * as yaml from "yaml"
 
 type Config = {
 	sessionId?: string
-	workspaceId?: string
-	appId?: string
+	activeWorkspaces?: Record<string, string>
 	hostUrl?: string
 }
-
-const SESSION_ID_KEY = "sessionId"
-const WORKSPACE_ID_KEY = "workspaceId"
-const APP_ID_KEY = "appId"
-const HOST_URL_KEY = "hostUrl"
-
-type ConfigKey =
-	| typeof SESSION_ID_KEY
-	| typeof WORKSPACE_ID_KEY
-	| typeof APP_ID_KEY
-	| typeof HOST_URL_KEY
 
 type BundleInfo = {
 	name: string
@@ -56,38 +44,42 @@ const setConfig = async (configObj: Config): Promise<void> => {
 	await fs.writeFile(saveFile, JSON.stringify(configObj))
 }
 
-const getConfigValue = async (key: ConfigKey): Promise<string | null> => {
+const getSessionId = async (): Promise<string | null> => {
 	const config = await getConfig()
-	return config?.[key] || null
+	return config?.sessionId || null
 }
 
-const setConfigValue = async (key: ConfigKey, value: string): Promise<void> =>
-	setConfig({ ...(await getConfig()), [key]: value })
+const setSessionId = async (value: string): Promise<void> => {
+	const config = await getConfig()
+	setConfig({ ...config, sessionId: value })
+}
 
-const getSessionId = async (): Promise<string | null> =>
-	getConfigValue(SESSION_ID_KEY)
+const getActiveWorkspace = async (app: string): Promise<string | null> => {
+	const config = await getConfig()
+	return config?.activeWorkspaces?.[app] || null
+}
 
-const setSessionId = async (value: string): Promise<void> =>
-	setConfigValue(SESSION_ID_KEY, value)
-
-const getWorkspaceId = async (): Promise<string | null> =>
-	getConfigValue(WORKSPACE_ID_KEY)
-
-const setWorkspaceId = async (value: string): Promise<void> =>
-	setConfigValue(WORKSPACE_ID_KEY, value)
+const setActiveWorkspace = async (
+	app: string,
+	workspace: string
+): Promise<void> => {
+	const config = await getConfig()
+	const activeWorkspaces = config?.activeWorkspaces || {}
+	setConfig({
+		...config,
+		activeWorkspaces: { ...activeWorkspaces, [app]: workspace },
+	})
+}
 
 const getHostUrl = async (): Promise<string> => {
-	const url = await getConfigValue(HOST_URL_KEY)
-	return url || DEFAULT_HOST
+	const config = await getConfig()
+	return config?.hostUrl || DEFAULT_HOST
 }
 
-const setHostUrl = async (value: string): Promise<void> =>
-	setConfigValue(HOST_URL_KEY, value)
-
-const getAppId = async (): Promise<string | null> => getConfigValue(APP_ID_KEY)
-
-const setAppId = async (value: string): Promise<void> =>
-	setConfigValue(APP_ID_KEY, value)
+const setHostUrl = async (value: string): Promise<void> => {
+	const config = await getConfig()
+	setConfig({ ...config, hostUrl: value })
+}
 
 const getBundleInfo = async (): Promise<BundleInfo> => {
 	const bundleInfoText = await fs.readFile(
@@ -104,22 +96,13 @@ const getApp = async (): Promise<string> => {
 }
 
 const getWorkspace = async (): Promise<string | null> => {
-	const workspaceId = await getWorkspaceId()
-	const appIdPref = await getAppId()
-	const appFromBundle = await getApp()
-	// Make sure the configured app id and the workspace app id match
-	if (appIdPref !== appFromBundle) {
-		throw Error(
-			"The app you are attempting to modify is different from your appId in your .uesio file"
-		)
-	}
-	return workspaceId
+	const app = await getApp()
+	return await getActiveWorkspace(app)
 }
 
 const setWorkspace = async (workspace: string): Promise<void> => {
 	const app = await getApp()
-	await setAppId(app)
-	await setWorkspaceId(workspace)
+	await setActiveWorkspace(app, workspace)
 }
 
 export {
