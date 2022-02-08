@@ -10,5 +10,11 @@
 		"app": {
 			"id": "crm"
 		}
+	},
+	{
+		"name": "dev",
+		"app": {
+			"id": "cms"
+		}
 	}
 ]

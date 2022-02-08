@@ -1,4 +1,3 @@
 name: bundledependencies
-dataSource: uesio.platform
 idFormat: "${studio.workspace}_${studio.bundle}"
 nameField: uesio.id

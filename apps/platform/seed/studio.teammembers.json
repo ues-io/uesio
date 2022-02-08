@@ -20,6 +20,26 @@
 		"studio.member": "mock_MockGregg"
 	},
 	{
+		"studio.app": "cms",
+		"studio.team": "cms_maintainers",
+		"studio.member": "mock_MockBen"
+	},
+	{
+		"studio.app": "cms",
+		"studio.team": "cms_maintainers",
+		"studio.member": "mock_MockAbel"
+	},
+	{
+		"studio.app": "cms",
+		"studio.team": "cms_maintainers",
+		"studio.member": "mock_MockWessel"
+	},
+	{
+		"studio.app": "cms",
+		"studio.team": "cms_maintainers",
+		"studio.member": "mock_MockGregg"
+	},
+	{
 		"studio.app": "studio",
 		"studio.team": "studio_maintainers",
 		"studio.member": "mock_MockBen"

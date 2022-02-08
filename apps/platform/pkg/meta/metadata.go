@@ -246,3 +246,34 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 
 	return nil, fmt.Errorf("Node not found of key: " + key)
 }
+
+func setDefaultValue(node *yaml.Node, key, value string) error {
+	existing := getNodeValueAsString(node, key)
+	if existing != "" {
+		return nil
+	}
+	return setMapNode(node, key, value)
+}
+
+func setMapNode(node *yaml.Node, key, value string) error {
+	if node.Kind != yaml.MappingNode {
+		return fmt.Errorf("Definition is not a mapping node.")
+	}
+
+	for i := range node.Content {
+		// Skip every other node to only get keys
+		if i%2 == 0 && node.Content[i].Value == key {
+			node.Content[i+1].SetString(value)
+			return nil
+		}
+	}
+
+	newKeyNode := &yaml.Node{}
+	newKeyNode.SetString(key)
+	newValueNode := &yaml.Node{}
+	newValueNode.SetString(value)
+	// We didn't find that node, so create a new one
+	node.Content = append(node.Content, newKeyNode, newValueNode)
+
+	return nil
+}

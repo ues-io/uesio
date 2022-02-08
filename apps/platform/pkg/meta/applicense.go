@@ -14,6 +14,10 @@ var DefaultAppLicenses = AppLicenseCollection{
 		LicensedAppID: "uesio",
 	},
 	{
+		AppID:         "cms",
+		LicensedAppID: "uesio",
+	},
+	{
 		AppID:         "studio",
 		LicensedAppID: "uesio",
 	},
