@@ -1,3 +1,2 @@
 name: ${name}
-dataSource: uesio.platform
 nameField: uesio.id

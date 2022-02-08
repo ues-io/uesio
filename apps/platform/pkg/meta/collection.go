@@ -142,5 +142,9 @@ func (c *Collection) UnmarshalYAML(node *yaml.Node) error {
 	if err != nil {
 		return err
 	}
+	err = setDefaultValue(node, "dataSource", "uesio.platform")
+	if err != nil {
+		return err
+	}
 	return node.Decode(c)
 }

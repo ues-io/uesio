@@ -22,4 +22,11 @@ var DefaultAppVersions = AppVersionCollection{
 			"uesio": "v0.0.1",
 		},
 	},
+	{
+		AppID:       "cms",
+		VersionName: "v0.0.1",
+		Dependencies: map[string]string{
+			"uesio": "v0.0.1",
+		},
+	},
 }

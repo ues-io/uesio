@@ -1,5 +1,4 @@
 name: apps
-dataSource: uesio.platform
 idFormat: "${studio.name}"
 nameField: studio.name
 access: "protected"

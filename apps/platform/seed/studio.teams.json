@@ -4,6 +4,10 @@
 		"studio.name": "maintainers"
 	},
 	{
+		"studio.app": "cms",
+		"studio.name": "maintainers"
+	},
+	{
 		"studio.app": "studio",
 		"studio.name": "maintainers"
 	}

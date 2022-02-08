@@ -1,4 +1,3 @@
 name: bulkbatches
-dataSource: uesio.platform
 nameField: uesio.id
 idFormat: ${uesio.autoid}
