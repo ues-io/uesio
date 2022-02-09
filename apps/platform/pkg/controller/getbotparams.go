@@ -17,7 +17,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if metadataType != "generator" {
-		respondJSON(w, r, "Wrogn bot type")
+		respondJSON(w, r, "Wrong bot type")
 	}
 
 	robot := meta.NewGeneratorBot(namespace, name)
