@@ -4,6 +4,7 @@ import * as fs from "fs"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
 import type { definition, platform } from "@uesio/ui"
+import { printWorkspace } from "../print/workspace"
 
 async function getSpec(
 	specFile?: string,
@@ -75,6 +76,10 @@ export default class Pack extends Command {
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 
 		const user = await authorize()
 

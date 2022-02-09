@@ -4,6 +4,7 @@ import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
 import inquirer from "inquirer"
 import unzipper from "unzipper"
+import { printWorkspace } from "../print/workspace"
 
 type BotParam = {
 	name: string
@@ -22,6 +23,10 @@ export default class Init extends Command {
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 
 		const user = await authorize()
 
