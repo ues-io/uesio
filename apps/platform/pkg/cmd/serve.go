@@ -26,6 +26,7 @@ func init() {
 func siteAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	return router.Path("").HandlerFunc(f)
 }
 
@@ -37,6 +38,7 @@ func siteAndWorkspaceAPI(wr *mux.Router, sr *mux.Router, path string, f http.Han
 func workspaceAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	router.Use(middleware.AuthenticateWorkspace)
 	return router.Path("").HandlerFunc(f)
 }
@@ -44,6 +46,7 @@ func workspaceAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 func siteAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	router.Use(middleware.AuthenticateSiteAdmin)
 	return router.Path("").HandlerFunc(f)
 }

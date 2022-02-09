@@ -24,7 +24,7 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 
 	err := bundle.Load(robot, session)
 	if err != nil {
-		respondJSON(w, r, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	respondJSON(w, r, robot.Params)

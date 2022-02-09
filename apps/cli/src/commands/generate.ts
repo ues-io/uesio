@@ -1,5 +1,5 @@
 import { Command } from "@oclif/command"
-import { get, post } from "../request/request"
+import { get, parseJSON, post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
 import inquirer from "inquirer"
@@ -40,7 +40,6 @@ export default class Generate extends Command {
 		}
 
 		const user = await authorize()
-
 		const [namespace, name] = getKeyWithDefault(args.generator, "uesio")
 
 		// Get metadata for the bot.
@@ -49,8 +48,7 @@ export default class Generate extends Command {
 			user.cookie
 		)
 
-		const paramInfo: BotParam[] = await paramsResponse.json()
-		console.log(paramInfo)
+		const paramInfo: BotParam[] = await parseJSON(paramsResponse)
 
 		const paramResponses = await inquirer.prompt(
 			paramInfo.map((info) => ({

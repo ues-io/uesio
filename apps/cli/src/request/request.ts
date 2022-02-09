@@ -51,4 +51,12 @@ const post = async (
 	})
 }
 
-export { get, post }
+const parseJSON = async (response: Response) => {
+	if (response.status === 200) {
+		return await response.json()
+	}
+	const text = await response.text()
+	throw new Error(text)
+}
+
+export { get, post, parseJSON }
