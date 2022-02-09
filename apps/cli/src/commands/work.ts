@@ -66,6 +66,6 @@ export default class Work extends Command {
 		}
 
 		await setWorkspace(workspaceName)
-		printWorkspace(workspaceName, app)
+		printWorkspace(app, workspaceName)
 	}
 }
