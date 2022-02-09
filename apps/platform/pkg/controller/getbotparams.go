@@ -17,14 +17,14 @@ func GetBotParams(w http.ResponseWriter, r *http.Request) {
 	session := middleware.GetSession(r)
 
 	if metadataType != "generator" {
-		respondJSON(w, r, "bad")
+		respondJSON(w, r, "Wrong bot type")
 	}
 
 	robot := meta.NewGeneratorBot(namespace, name)
 
 	err := bundle.Load(robot, session)
 	if err != nil {
-		respondJSON(w, r, "bad")
+		respondJSON(w, r, err.Error())
 	}
 
 	respondJSON(w, r, robot.Params)
