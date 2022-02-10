@@ -1,13 +1,17 @@
 import { Command } from "@oclif/command"
 import { get, parseJSON, post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
-import { authorize } from "../auth/login"
+import { authorize, User } from "../auth/login"
 import inquirer from "inquirer"
 import unzipper from "unzipper"
 import { printWorkspace } from "../print/workspace"
+import chalk from "chalk"
+import type { metadata } from "@uesio/ui"
 
 type BotParam = {
 	name: string
+	type: "INPUT" | "METADATA" | "COLOR"
+	metadataType: string
 	prompt: string
 }
 
@@ -20,6 +24,115 @@ const getKeyWithDefault = (
 		return [parts[0], parts[1]]
 	}
 	return [defaultValue, parts[0]]
+}
+
+const getMetadata = async (
+	type: string,
+	app: string,
+	workspace: string,
+	user: User
+) => {
+	const paramsResponse = await get(
+		`workspace/${app}/${workspace}/metadata/types/${type}/namespace/${app}/list`,
+		user.cookie
+	)
+	return paramsResponse
+}
+
+const getQuestion = async (
+	info: BotParam,
+	app: string,
+	workspace: string,
+	namespace: string,
+	user: User
+) => {
+	switch (info.type) {
+		case "METADATA":
+			const metadataResponse = await getMetadata(
+				info.metadataType,
+				app,
+				workspace,
+				user
+			)
+
+			const metadataTypes: Map<string, boolean> = await parseJSON(
+				metadataResponse
+			)
+
+			return {
+				name: info.name,
+				message: info.prompt,
+				type: "list",
+				choices: Object.keys(metadataTypes),
+			}
+
+			break
+		case "COLOR":
+			return {
+				name: info.name,
+				message: info.prompt,
+				type: "list",
+				choices: [
+					{
+						name: chalk.hex("#000000").bold("#000000"),
+						value: '"#000000"',
+						short: chalk.hex("#000000").bold("#000000"),
+					},
+					{
+						name: chalk.hex("#FF0000").bold("#FF0000"),
+						value: '"#FF0000"',
+						short: chalk.hex("#FF0000").bold("#FF0000"),
+					},
+					{
+						name: chalk.hex("#008000").bold("#008000"),
+						value: '"#008000"',
+						short: chalk.hex("#008000").bold("#008000"),
+					},
+					{
+						name: chalk.hex("#FFFF00").bold("#FFFF00"),
+						value: '"#FFFF00"',
+						short: chalk.hex("#FFFF00").bold("#FFFF00"),
+					},
+					{
+						name: chalk.hex("#FF0000").bold("#FF0000"),
+						value: '"#FF0000"',
+						short: chalk.hex("#FF0000").bold("#FF0000"),
+					},
+					{
+						name: chalk.hex("#0000FF").bold("#0000FF"),
+						value: '"#0000FF"',
+						short: chalk.hex("#0000FF").bold("#0000FF"),
+					},
+					{
+						name: chalk.hex("#FFFFFF").bold("#FFFFFF"),
+						value: '"#FFFFFF"',
+						short: chalk.hex("#FFFFFF").bold("#FFFFFF"),
+					},
+					{
+						name: chalk.hex("#800080").bold("#800080"),
+						value: '"#800080"',
+						short: chalk.hex("#800080").bold("#800080"),
+					},
+					{
+						name: chalk.hex("#00FF00").bold("#00FF00"),
+						value: '"#00FF00"',
+						short: chalk.hex("#00FF00").bold("#00FF00"),
+					},
+					{
+						name: chalk.hex("#808080").bold("#808080"),
+						value: '"#808080"',
+						short: chalk.hex("#808080").bold("#808080"),
+					},
+				],
+			}
+			break
+		default:
+			return {
+				name: info.name,
+				message: info.prompt,
+				type: "input",
+			}
+	}
 }
 
 export default class Generate extends Command {
@@ -50,13 +163,13 @@ export default class Generate extends Command {
 
 		const paramInfo: BotParam[] = await parseJSON(paramsResponse)
 
-		const paramResponses = await inquirer.prompt(
-			paramInfo.map((info) => ({
-				name: info.name,
-				message: info.prompt,
-				type: "input",
-			}))
+		const questions = await Promise.all(
+			paramInfo.map(async (info) =>
+				getQuestion(info, app, workspace, namespace, user)
+			)
 		)
+
+		const paramResponses = await inquirer.prompt(questions)
 
 		const response = await post(
 			`workspace/${app}/${workspace}/metadata/generate/${namespace}/${name}`,

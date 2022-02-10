@@ -1,6 +1,6 @@
-name: collection
+name: view
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
   - name: name
-    prompt: Collection name
+    prompt: View name

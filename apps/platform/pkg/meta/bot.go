@@ -66,8 +66,10 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 }
 
 type BotParam struct {
-	Name   string `yaml:"name" uesio:"studio.name" json:"name"`
-	Prompt string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
+	Name         string `yaml:"name" uesio:"studio.name" json:"name"`
+	Prompt       string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
+	Type         string `yaml:"type" uesio:"studio.type" json:"type"`
+	MetadataType string `yaml:"metadataType" uesio:"studio.metadatatype" json:"metadataType"`
 }
 
 // Bot struct
