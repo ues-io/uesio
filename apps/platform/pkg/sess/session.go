@@ -76,8 +76,9 @@ func Logout(w http.ResponseWriter, s *Session) *Session {
 }
 
 type VersionInfo struct {
-	App     string
-	Version string
+	App       string
+	Namespace string
+	Version   string
 }
 
 // Session struct

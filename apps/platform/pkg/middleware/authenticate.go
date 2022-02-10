@@ -80,9 +80,10 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 func AuthenticateVersion(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		appName := vars["app"]
-		versionName := vars["version"]
-		err := auth.AddVersionContext(appName, versionName, GetSession(r))
+		namespace := vars["namespace"]
+		version := vars["version"]
+		app := vars["app"]
+		err := auth.AddVersionContext(app, namespace, version, GetSession(r))
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)

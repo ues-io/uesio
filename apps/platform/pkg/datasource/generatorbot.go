@@ -52,5 +52,5 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 
 // GetNamespace function
 func (gba *GeneratorBotAPI) GetNamespace() string {
-	return gba.session.GetWorkspaceApp()
+	return gba.session.GetContextAppName()
 }

@@ -1,5 +1,5 @@
 import { get, parseJSON, post } from "../request/request"
-import { getVersion } from "../config/config"
+import { getApp, getVersion } from "../config/config"
 import { User } from "../auth/login"
 import inquirer from "inquirer"
 import unzipper from "unzipper"
@@ -11,10 +11,11 @@ type BotParam = {
 
 const runGenerator = async (namespace: string, name: string, user: User) => {
 	const version = await getVersion(namespace)
+	const app = await getApp()
 
 	// Get metadata for the bot.
 	const paramsResponse = await get(
-		`version/${namespace}/${version}/bots/params/generator/${name}`,
+		`version/${app}/${namespace}/${version}/bots/params/generator/${name}`,
 		user.cookie
 	)
 
@@ -29,7 +30,7 @@ const runGenerator = async (namespace: string, name: string, user: User) => {
 	)
 
 	const response = await post(
-		`version/${namespace}/${version}/metadata/generate/${name}`,
+		`version/${app}/${namespace}/${version}/metadata/generate/${name}`,
 		JSON.stringify(paramResponses),
 		user.cookie
 	)
