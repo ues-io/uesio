@@ -11,12 +11,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.12.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/dop251/goja v0.0.0-20210810150349-acd0507c3d6f
+	github.com/fatih/color v1.13.0
+	github.com/felixge/httpsnoop v1.0.2
 	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/gomodule/redigo v1.8.5
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/go-multierror v1.1.1
-	github.com/huandu/facebook/v2 v2.5.3
 	github.com/humandad/yaml v0.0.0-20210930180049-b9b4c5ddd3c9
 	github.com/icza/session v1.2.0
 	github.com/lib/pq v1.10.2
@@ -37,8 +38,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.6.1 // indirect
 	github.com/aws/smithy-go v1.7.0 // indirect
 	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
-	github.com/fatih/color v1.13.0 // indirect
-	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
