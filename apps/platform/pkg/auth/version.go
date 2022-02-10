@@ -7,7 +7,7 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func AddVersionContext(appName, versionName string, session *sess.Session) error {
+func AddVersionContext(app, namespace, version string, session *sess.Session) error {
 
 	site := session.GetSite()
 	perms := session.GetPermissions()
@@ -26,8 +26,9 @@ func AddVersionContext(appName, versionName string, session *sess.Session) error
 	}
 
 	session.AddVersionContext(&sess.VersionInfo{
-		App:     appName,
-		Version: versionName,
+		App:       app,
+		Namespace: namespace,
+		Version:   version,
 	})
 	return nil
 

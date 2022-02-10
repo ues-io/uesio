@@ -75,7 +75,7 @@ func serve(cmd *cobra.Command, args []string) {
 	// The workspace router
 	wr := r.PathPrefix("/workspace/{app}/{workspace}").Subrouter()
 	// The version router
-	vr := r.PathPrefix("/version/{namespace}/{version}").Subrouter()
+	vr := r.PathPrefix("/version/{app}/{namespace}/{version}").Subrouter()
 	// The site admin router
 	sar := r.PathPrefix("/siteadmin/{app}/{site}").Subrouter()
 	// The site router
