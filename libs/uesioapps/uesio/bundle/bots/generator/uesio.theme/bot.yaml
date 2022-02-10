@@ -1,0 +1,24 @@
+name: theme
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Theme name
+  - name: primary
+    prompt: primary color
+    type: COLOR
+  - name: secondary
+    prompt: secondary color
+    type: COLOR
+  - name: error
+    prompt: error color
+    type: COLOR
+  - name: warning
+    prompt: warning color
+    type: COLOR
+  - name: info
+    prompt: info color
+    type: COLOR
+  - name: success
+    prompt: success color
+    type: COLOR

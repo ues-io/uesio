@@ -1,0 +1,6 @@
+name: view
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: View name

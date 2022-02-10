@@ -18,7 +18,7 @@ type GeneratorBotAPI struct {
 	bot         *meta.Bot
 }
 
-// Save function
+// GenerateFile function
 func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
 	fmt.Println("Generating file: " + filename)
 	// Load in the template text from the bot.
@@ -48,4 +48,9 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 	gba.itemStreams = append(gba.itemStreams, fileStream)
 
 	return nil
+}
+
+// GetNamespace function
+func (gba *GeneratorBotAPI) GetNamespace() string {
+	return gba.session.GetWorkspaceApp()
 }
