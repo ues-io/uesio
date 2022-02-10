@@ -79,7 +79,9 @@ func (v *ComponentVariant) SetField(fieldName string, value interface{}) error {
 		if err != nil {
 			return err
 		}
-		v.Definition = *definition.Content[0]
+		if len(definition.Content) > 0 {
+			v.Definition = *definition.Content[0]
+		}
 		return nil
 	}
 	return StandardFieldSet(v, fieldName, value)
