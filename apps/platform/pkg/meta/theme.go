@@ -65,7 +65,9 @@ func (t *Theme) SetField(fieldName string, value interface{}) error {
 		if err != nil {
 			return err
 		}
-		t.Definition = *definition.Content[0]
+		if len(definition.Content) > 0 {
+			t.Definition = *definition.Content[0]
+		}
 		return nil
 	}
 	return StandardFieldSet(t, fieldName, value)
