@@ -1,11 +1,11 @@
-function collection(bot) {
+function view(bot) {
 	var name = bot.params.get("name")
 	var namespace = bot.getNamespace()
 	bot.generateFile(
-		"collections/" + namespace + "." + name + ".yaml",
+		"views/" + namespace + "." + name + ".yaml",
 		{
 			name: name,
 		},
-		"collection.yaml"
+		"view.yaml"
 	)
 }
