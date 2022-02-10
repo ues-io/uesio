@@ -75,12 +75,18 @@ func Logout(w http.ResponseWriter, s *Session) *Session {
 	return Login(w, GetPublicUser(site), site)
 }
 
+type VersionInfo struct {
+	App     string
+	Version string
+}
+
 // Session struct
 type Session struct {
 	browserSession *session.Session
 	site           *meta.Site
 	workspace      *meta.Workspace
 	siteadmin      *meta.Site
+	version        *VersionInfo
 	permissions    *meta.PermissionSet
 	user           *meta.User
 	tokens         map[string][]string
@@ -242,6 +248,10 @@ func (s *Session) AddWorkspaceContext(workspace *meta.Workspace) {
 	s.workspace = workspace
 }
 
+func (s *Session) AddVersionContext(versionInfo *VersionInfo) {
+	s.version = versionInfo
+}
+
 // GetContextNamespaces function
 func (s *Session) GetContextNamespaces() map[string]bool {
 	bundleDef := s.GetContextAppBundle()
@@ -281,6 +291,9 @@ func (s *Session) GetContextAppName() string {
 	if s.siteadmin != nil {
 		return s.siteadmin.GetAppID()
 	}
+	if s.version != nil {
+		return s.version.App
+	}
 	return s.site.GetAppID()
 }
 
@@ -291,6 +304,9 @@ func (s *Session) GetContextVersionName() string {
 	}
 	if s.siteadmin != nil {
 		return s.siteadmin.Bundle.GetVersionString()
+	}
+	if s.version != nil {
+		return s.version.Version
 	}
 	return s.site.Bundle.GetVersionString()
 }
