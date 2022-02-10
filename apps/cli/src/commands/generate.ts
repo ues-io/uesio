@@ -6,7 +6,6 @@ import inquirer from "inquirer"
 import unzipper from "unzipper"
 import { printWorkspace } from "../print/workspace"
 import chalk from "chalk"
-import type { metadata } from "@uesio/ui"
 
 type BotParam = {
 	name: string
