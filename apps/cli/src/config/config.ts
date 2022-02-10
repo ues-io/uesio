@@ -9,8 +9,13 @@ type Config = {
 	hostUrl?: string
 }
 
+type VersionInfo = {
+	version: string
+}
+
 type BundleInfo = {
 	name: string
+	dependencies?: Record<string, VersionInfo>
 }
 
 const homedir = os.homedir()
@@ -95,6 +100,15 @@ const getApp = async (): Promise<string> => {
 	return bundleInfo.name
 }
 
+const getVersion = async (app: string): Promise<string> => {
+	const bundleInfo = await getBundleInfo()
+	const versionInfo = bundleInfo.dependencies?.[app]
+	if (!versionInfo || !versionInfo.version) {
+		throw new Error("No version found for that namespace")
+	}
+	return versionInfo.version
+}
+
 const getWorkspace = async (): Promise<string | null> => {
 	const app = await getApp()
 	return await getActiveWorkspace(app)
@@ -111,6 +125,7 @@ export {
 	fileExists,
 	Config,
 	getApp,
+	getVersion,
 	getWorkspace,
 	setWorkspace,
 	getHostUrl,
