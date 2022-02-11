@@ -3,5 +3,4 @@ collection: crm.stationary
 type: FILE
 label: Background Image
 file:
-  filecollection: uesio.platform
   accept: IMAGE

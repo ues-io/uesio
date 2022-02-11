@@ -1,0 +1,12 @@
+name: field
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Field Name
+  - name: collection
+    prompt: Collection
+  - name: type
+    prompt: Field Type
+  - name: label
+    prompt: Label
