@@ -26,7 +26,8 @@ func CreateBundle(namespace, sourceversion, destversion, description string, sou
 		return err
 	}
 
-	err = PlatformSaveOne(bundle, nil, session.RemoveWorkspaceContext())
+	sessionNoWorkspace := session.RemoveWorkspaceContext()
+	err = PlatformSaveOne(bundle, nil, sessionNoWorkspace)
 	if err != nil {
 		return err
 	}

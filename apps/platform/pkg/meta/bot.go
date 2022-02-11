@@ -37,6 +37,14 @@ func NewBot(key string) (*Bot, error) {
 		return NewListenerBot(namespace, name), nil
 	}
 
+	if keySize == 2 && botType == "GENERATOR" {
+		namespace, name, err := ParseKey(keyArray[1])
+		if err != nil {
+			return nil, err
+		}
+		return NewGeneratorBot(namespace, name), nil
+	}
+
 	return nil, errors.New("Invalid Bot Key: " + key)
 }
 
