@@ -80,27 +80,6 @@ func (sa *StudioAPI) CreateBundle(app, workspace string) error {
 		return err
 	}
 
-	var workspaceContext meta.Workspace
-	err = PlatformLoadOne(
-		&workspaceContext,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "studio.app",
-				Value: app,
-			},
-			{
-				Field: "studio.name",
-				Value: workspace,
-			},
-		},
-		sa.session,
-	)
-	if err != nil {
-		return err
-	}
-
-	sa.session.AddWorkspaceContext(&workspaceContext)
-
 	return CreateBundle(app, workspace, version, "", wsbs, sa.session)
 }
 
