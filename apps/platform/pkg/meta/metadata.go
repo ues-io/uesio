@@ -232,6 +232,24 @@ func getNodeValueAsString(node *yaml.Node, key string) string {
 	return keyNode.Value
 }
 
+func addNodeToMap(mapNode *yaml.Node, key string, valueNode *yaml.Node) {
+	newKeyNode := &yaml.Node{}
+	newKeyNode.SetString(key)
+	mapNode.Content = append(mapNode.Content, newKeyNode, valueNode)
+}
+
+func getOrCreateMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
+	subNode, err := getMapNode(node, key)
+	if err != nil {
+		newValueNode := &yaml.Node{}
+		_ = newValueNode.Encode(&map[string]interface{}{})
+		addNodeToMap(node, key, newValueNode)
+		// Now try again...
+		return newValueNode, nil
+	}
+	return subNode, nil
+}
+
 func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
@@ -268,12 +286,9 @@ func setMapNode(node *yaml.Node, key, value string) error {
 		}
 	}
 
-	newKeyNode := &yaml.Node{}
-	newKeyNode.SetString(key)
 	newValueNode := &yaml.Node{}
 	newValueNode.SetString(value)
-	// We didn't find that node, so create a new one
-	node.Content = append(node.Content, newKeyNode, newValueNode)
+	addNodeToMap(node, key, newValueNode)
 
 	return nil
 }

@@ -31,10 +31,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	files, err := datasource.CallGeneratorBot(namespace, name, params, session)
 	if err != nil {
 		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 

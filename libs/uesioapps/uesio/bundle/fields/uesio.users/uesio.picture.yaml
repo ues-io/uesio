@@ -3,5 +3,4 @@ collection: uesio.users
 type: FILE
 label: Profile picture
 file:
-  filecollection: uesio.platform
   accept: IMAGE
