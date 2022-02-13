@@ -178,7 +178,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 		return errors.New("Error Creating File: " + err.Error())
 	}
 	defer outFile.Close()
-	_, err = io.Copy(outFile, itemStream.Buffer)
+	_, err = io.Copy(outFile, itemStream.File)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}
