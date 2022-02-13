@@ -91,10 +91,6 @@ func StandardKeyFromPath(path string, conditions BundleConditions) (string, erro
 	return strings.TrimSuffix(path, ".yaml"), nil
 }
 
-func StandardPathFromKey(key string) string {
-	return key + ".yaml"
-}
-
 // StandardGetFields function
 func StandardGetFields(item CollectionableItem) []string {
 	names, err := reflecttool.GetFieldNames(item)

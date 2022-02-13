@@ -1,37 +1,18 @@
-import { get, parseJSON, post } from "../request/request"
+import { post } from "../request/request"
 import { getApp, getVersion } from "../config/config"
 import { User } from "../auth/login"
-import inquirer from "inquirer"
 import unzipper from "unzipper"
-
-type BotParam = {
-	name: string
-	prompt: string
-}
+import { getAnswers } from "./prompts"
 
 const runGenerator = async (namespace: string, name: string, user: User) => {
 	const version = await getVersion(namespace)
 	const app = await getApp()
 
-	// Get metadata for the bot.
-	const paramsResponse = await get(
-		`version/${app}/${namespace}/${version}/bots/params/generator/${name}`,
-		user.cookie
-	)
-
-	const paramInfo: BotParam[] = await parseJSON(paramsResponse)
-
-	const paramResponses = await inquirer.prompt(
-		paramInfo.map((info) => ({
-			name: info.name,
-			message: info.prompt,
-			type: "input",
-		}))
-	)
+	const answers = await getAnswers(app, version, namespace, name, user)
 
 	const response = await post(
 		`version/${app}/${namespace}/${version}/metadata/generate/${name}`,
-		JSON.stringify(paramResponses),
+		JSON.stringify(answers),
 		user.cookie
 	)
 

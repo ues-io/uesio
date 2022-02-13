@@ -122,6 +122,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	versionAPI(vr, "/metadata/generate/{name}", controller.Generate).Methods("POST")
 	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
+	versionAPI(vr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
+	versionAPI(vr, "/metadata/types/{type}/list/{grouping}", controller.MetadataList).Methods("GET")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
