@@ -63,8 +63,11 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 	if err != nil {
 		return err
 	}
-	file := gba.itemStreams.AddFile(filename, "")
-	return mergeTemplate(file, params, templateString)
+	r := bundlestore.GetFileReader(func(data io.Writer) error {
+		return mergeTemplate(data, params, templateString)
+	})
+	gba.itemStreams.AddFile(filename, "", r)
+	return nil
 }
 
 // GetNamespace function

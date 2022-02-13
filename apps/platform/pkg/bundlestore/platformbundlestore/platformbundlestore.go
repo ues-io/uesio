@@ -191,7 +191,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 		return err
 	}
 
-	err = fileAdapter.Upload(itemStream.Buffer, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
+	err = fileAdapter.Upload(itemStream.File, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}
