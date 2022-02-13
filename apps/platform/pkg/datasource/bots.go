@@ -153,7 +153,7 @@ func CallGeneratorBot(namespace, name string, params map[string]string, session 
 		Params: &ParamsAPI{
 			params: params,
 		},
-		itemStreams: []bundlestore.ItemStream{},
+		itemStreams: bundlestore.ItemStreams{},
 		bot:         robot,
 	}
 

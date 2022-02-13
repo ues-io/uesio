@@ -1,7 +1,8 @@
 package datasource
 
 import (
-	"fmt"
+	"bytes"
+	"io"
 	"io/ioutil"
 
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -11,43 +12,59 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
+func mergeTemplate(file io.Writer, params map[string]interface{}, templateString string) error {
+	template, err := templating.NewTemplateWithValidKeysOnly(templateString)
+	if err != nil {
+		return err
+	}
+	return template.Execute(file, params)
+}
+
 type GeneratorBotAPI struct {
 	session     *sess.Session
 	Params      *ParamsAPI `bot:"params"`
-	itemStreams []bundlestore.ItemStream
+	itemStreams bundlestore.ItemStreams
 	bot         *meta.Bot
 }
 
-// GenerateFile function
-func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
-	fmt.Println("Generating file: " + filename)
+func (gba *GeneratorBotAPI) GetTemplate(templateFile string) (string, error) {
 	// Load in the template text from the bot.
 	stream, err := bundle.GetGeneratorBotTemplateStream(templateFile, gba.bot, gba.session)
 	if err != nil {
-		return err
+		return "", err
 	}
 	templateBytes, err := ioutil.ReadAll(stream)
 	if err != nil {
-		return err
+		return "", err
 	}
-	template, err := templating.NewTemplateWithValidKeysOnly(string(templateBytes))
+
+	return string(templateBytes), nil
+}
+
+func (gba *GeneratorBotAPI) MergeString(params map[string]interface{}, templateString string) (string, error) {
+	buffer := &bytes.Buffer{}
+	err := mergeTemplate(buffer, params, templateString)
+	if err != nil {
+		return "", err
+	}
+	return buffer.String(), nil
+}
+
+func (gba *GeneratorBotAPI) MergeTemplate(params map[string]interface{}, templateFile string) (string, error) {
+	templateString, err := gba.GetTemplate(templateFile)
+	if err != nil {
+		return "", err
+	}
+	return gba.MergeString(params, templateString)
+}
+
+func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
+	templateString, err := gba.GetTemplate(templateFile)
 	if err != nil {
 		return err
 	}
-
-	fileStream := bundlestore.ItemStream{
-		FileName: filename,
-		Type:     "",
-	}
-
-	err = template.Execute(&fileStream.Buffer, params)
-	if err != nil {
-		return err
-	}
-
-	gba.itemStreams = append(gba.itemStreams, fileStream)
-
-	return nil
+	file := gba.itemStreams.AddFile(filename, "")
+	return mergeTemplate(file, params, templateString)
 }
 
 // GetNamespace function
