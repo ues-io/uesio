@@ -5,11 +5,23 @@ import (
 	"io"
 )
 
+type ItemStreams []ItemStream
+
+func (is *ItemStreams) AddFile(fileName, fileType string) *bytes.Buffer {
+	file := ItemStream{
+		FileName: fileName,
+		Type:     fileType,
+		Buffer:   &bytes.Buffer{},
+	}
+	*is = append(*is, file)
+	return file.Buffer
+}
+
 // ItemStream struct
 type ItemStream struct {
 	Type     string
 	FileName string
-	Buffer   bytes.Buffer
+	Buffer   *bytes.Buffer
 }
 
 // ReadItemStream struct
