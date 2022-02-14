@@ -24,7 +24,7 @@ func Retrieve(session *sess.Session) ([]bundlestore.ItemStream, error) {
 }
 
 func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, session *sess.Session) ([]bundlestore.ItemStream, error) {
-	itemStreams := []bundlestore.ItemStream{}
+	itemStreams := bundlestore.ItemStreams{}
 
 	for _, metadataType := range meta.GetMetadataTypes() {
 		group, err := meta.GetBundleableGroupFromType(metadataType)
@@ -46,30 +46,13 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 				if err != nil {
 					return err
 				}
-				builderItem := bundlestore.ItemStream{
-					FileName: cp.GetBuilderComponentPackFilePath(),
-					Type:     metadataType,
-				}
-				_, err = io.Copy(&builderItem.Buffer, builderStream)
-				if err != nil {
-					return err
-				}
+				itemStreams.AddFile(cp.GetBuilderComponentPackFilePath(), metadataType, builderStream)
 
 				runtimeStream, err := bs.GetComponentPackStream(version, false, cp, session)
 				if err != nil {
 					return err
 				}
-				runtimeItem := bundlestore.ItemStream{
-					FileName: cp.GetComponentPackFilePath(),
-					Type:     metadataType,
-				}
-				_, err = io.Copy(&runtimeItem.Buffer, runtimeStream)
-				if err != nil {
-					return err
-				}
-
-				itemStreams = append(itemStreams, builderItem)
-				itemStreams = append(itemStreams, runtimeItem)
+				itemStreams.AddFile(cp.GetComponentPackFilePath(), metadataType, runtimeStream)
 
 			}
 			// Special handling for bots
@@ -81,17 +64,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 					return err
 				}
 
-				itemStream := bundlestore.ItemStream{
-					FileName: bot.GetBotFilePath(),
-					Type:     metadataType,
-				}
-
-				_, err = io.Copy(&itemStream.Buffer, stream)
-				if err != nil {
-					return err
-				}
-
-				itemStreams = append(itemStreams, itemStream)
+				itemStreams.AddFile(bot.GetBotFilePath(), metadataType, stream)
 
 			}
 
@@ -105,78 +78,20 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 						return err
 					}
 
-					itemStream := bundlestore.ItemStream{
-						FileName: file.GetFilePath(),
-						Type:     metadataType,
-					}
+					itemStreams.AddFile(file.GetFilePath(), metadataType, stream)
 
-					_, err = io.Copy(&itemStream.Buffer, stream)
-					if err != nil {
-						return err
-					}
-
-					itemStreams = append(itemStreams, itemStream)
 				}
 
 			}
 
-			// Special handling for componentpacks
-			if metadataType == "componentpacks" {
-				cpack := item.(*meta.ComponentPack)
+			r := bundlestore.GetFileReader(func(data io.Writer) error {
+				encoder := yaml.NewEncoder(data)
+				encoder.SetIndent(2)
+				return encoder.Encode(item)
+			})
 
-				if cpack.RuntimeBundle != nil {
-					stream, err := bs.GetComponentPackStream(version, false, cpack, session)
-					if err != nil {
-						return err
-					}
+			itemStreams.AddFile(path, metadataType, r)
 
-					itemStream := bundlestore.ItemStream{
-						FileName: cpack.GetComponentPackFilePath(),
-						Type:     metadataType,
-					}
-
-					_, err = io.Copy(&itemStream.Buffer, stream)
-					if err != nil {
-						return err
-					}
-
-					itemStreams = append(itemStreams, itemStream)
-				}
-				if cpack.BuildTimeBundle != nil {
-					stream, err := bs.GetComponentPackStream(version, true, cpack, session)
-					if err != nil {
-						return err
-					}
-
-					itemStream := bundlestore.ItemStream{
-						FileName: cpack.GetBuilderComponentPackFilePath(),
-						Type:     metadataType,
-					}
-
-					_, err = io.Copy(&itemStream.Buffer, stream)
-					if err != nil {
-						return err
-					}
-
-					itemStreams = append(itemStreams, itemStream)
-				}
-
-			}
-
-			itemStream := bundlestore.ItemStream{
-				FileName: path,
-				Type:     metadataType,
-			}
-
-			encoder := yaml.NewEncoder(&itemStream.Buffer)
-			encoder.SetIndent(2)
-
-			err = encoder.Encode(item)
-			if err != nil {
-				return err
-			}
-
-			itemStreams = append(itemStreams, itemStream)
 			return nil
 		})
 		if err != nil {
@@ -184,25 +99,19 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 		}
 
 	}
-	bundleDefStream := bundlestore.ItemStream{
-		FileName: "bundle.yaml",
-		Type:     "",
-	}
 
 	by, err := bs.GetBundleDef(namespace, version, session)
 	if err != nil {
 		return nil, err
 	}
 
-	encoder := yaml.NewEncoder(&bundleDefStream.Buffer)
-	encoder.SetIndent(2)
+	r := bundlestore.GetFileReader(func(data io.Writer) error {
+		encoder := yaml.NewEncoder(data)
+		encoder.SetIndent(2)
+		return encoder.Encode(by)
+	})
 
-	err = encoder.Encode(by)
-	if err != nil {
-		return nil, err
-	}
-
-	itemStreams = append(itemStreams, bundleDefStream)
+	itemStreams.AddFile("bundle.yaml", "", r)
 
 	return itemStreams, nil
 
@@ -220,7 +129,7 @@ func Zip(writer io.Writer, files []bundlestore.ItemStream, session *sess.Session
 			return err
 		}
 
-		_, err = io.Copy(f, &itemStream.Buffer)
+		_, err = io.Copy(f, itemStream.File)
 		if err != nil {
 			return err
 		}

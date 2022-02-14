@@ -232,27 +232,17 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func validateFileField(node *yaml.Node, fieldKey string) error {
-	fileNode, err := getMapNode(node, "file")
+	fileNode, err := getOrCreateMapNode(node, "file")
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	if fileNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey)
-	}
-	fileCollection := getNodeValueAsString(fileNode, "filecollection")
-	if fileCollection == "" {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : No file collection provided")
-	}
-	return nil
+	return setDefaultValue(fileNode, "filecollection", "uesio.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {
 	numberNode, err := getMapNode(node, "number")
 	if err != nil {
 		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	if numberNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey)
 	}
 	decimals := getNodeValueAsString(numberNode, "decimals")
 	if decimals == "" {
@@ -273,9 +263,6 @@ func validateReferenceField(node *yaml.Node, fieldKey string) error {
 	referenceNode, err := getMapNode(node, "reference")
 	if err != nil {
 		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	if referenceNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey)
 	}
 	referencedCollection := getNodeValueAsString(referenceNode, "collection")
 	if referencedCollection == "" {

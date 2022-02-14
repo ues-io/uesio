@@ -3,5 +3,4 @@ collection: crm.contacts
 type: FILE
 label: Image
 file:
-  filecollection: uesio.platform
   accept: IMAGE

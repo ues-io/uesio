@@ -1,4 +1,4 @@
 name: content
-collection: studio.bots
+collection: cms.articles
 type: FILE
 label: Content

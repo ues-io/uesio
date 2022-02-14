@@ -2,5 +2,3 @@ name: result
 collection: uesio.bulkbatches
 type: FILE
 label: Result
-file:
-  filecollection: uesio.platform

@@ -1,0 +1,4 @@
+name: name
+collection: cms.articles
+type: TEXT
+label: Name

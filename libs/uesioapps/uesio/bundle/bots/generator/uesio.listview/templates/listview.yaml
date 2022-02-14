@@ -1,0 +1,10 @@
+# Wires connect to data in collections
+wires:
+  wire1:
+    collection: ${collection}
+    fields:
+      uesio.id:
+# Components determine the layout and composition of your view
+components:
+  - io.text:
+      text: Hello Generator World

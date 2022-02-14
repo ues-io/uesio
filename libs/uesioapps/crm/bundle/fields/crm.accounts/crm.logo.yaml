@@ -3,5 +3,4 @@ collection: crm.accounts
 type: FILE
 label: Logo
 file:
-  filecollection: uesio.platform
   accept: IMAGE
