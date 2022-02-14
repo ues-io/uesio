@@ -84,15 +84,6 @@ const handlers: Record<MergeType, MergeHandler> = {
 		context = context.removeRecordFrame(ancestors)
 		return context.getRecord()?.getId() || ""
 	},
-	SelectList: (expression, context) => {
-		const value = context.getRecord()?.getFieldValue(expression)
-		// const wire = context.getWire()
-		// const collection = wire?.getCollection()
-		// const field = collection?.getField(expression)
-		// const sle = field?.getSelectOptions()
-		// const options =
-		return `${value}`
-	},
 	Theme: (expression, context) => {
 		const [scope, value, op] = expression.split(".")
 		const theme = context.getTheme()
