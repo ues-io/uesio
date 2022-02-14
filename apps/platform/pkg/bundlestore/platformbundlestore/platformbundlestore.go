@@ -150,12 +150,10 @@ func (b *PlatformBundleStore) GetAllItems(group meta.BundleableGroup, namespace,
 
 }
 
-// GetFileStream function
 func (b *PlatformBundleStore) GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(file.Namespace, version, "files", file.GetFilePath(), session)
 }
 
-// GetComponentPackStream function
 func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error) {
 	fileName := filepath.Join(componentPack.GetKey(), "runtime.bundle.js")
 	if buildMode {
@@ -164,9 +162,12 @@ func (b *PlatformBundleStore) GetComponentPackStream(version string, buildMode b
 	return getStream(componentPack.Namespace, version, "componentpacks", fileName, session)
 }
 
-// GetBotStream function
 func (b *PlatformBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	return getStream(bot.Namespace, version, "bots", bot.GetBotFilePath(), session)
+}
+
+func (b *PlatformBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return getStream(bot.Namespace, version, "bots", bot.GetGenerateBotTemplateFilePath(template), session)
 }
 
 // StoreItems function
@@ -190,7 +191,7 @@ func storeItem(namespace string, version string, itemStream bundlestore.ItemStre
 		return err
 	}
 
-	err = fileAdapter.Upload(&itemStream.Buffer, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
+	err = fileAdapter.Upload(itemStream.File, BUNDLE_STORE_BUCKET_NAME, fullFilePath, credentials)
 	if err != nil {
 		return errors.New("Error Writing File: " + err.Error())
 	}

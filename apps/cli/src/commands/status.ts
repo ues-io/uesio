@@ -17,13 +17,8 @@ export default class Status extends Command {
 		printHost(hostUrl)
 		const app = await getApp()
 		const workspace = await getWorkspace()
-
 		const user = await authorize()
 		printUser(user)
-		if (workspace) {
-			printWorkspace(workspace, app)
-		} else {
-			console.log("No default workspace set.")
-		}
+		printWorkspace(app, workspace)
 	}
 }

@@ -52,7 +52,7 @@ func (bc *BotCollection) GetKeyFromPath(path string, conditions BundleConditions
 		return "", nil
 	}
 
-	if botType == "listener" {
+	if botType == "listener" || botType == "generator" {
 		if partLength != 3 || parts[2] != "bot.yaml" {
 			return "", nil
 		}

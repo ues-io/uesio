@@ -187,6 +187,46 @@
         "cli"
       ]
     },
+    "uesioapps-cms": {
+      "root": "libs/uesioapps/cms",
+      "sourceRoot": "libs/uesioapps/cms",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack",
+            "cwd": "libs/uesioapps/cms"
+          }
+        },
+        "watch": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run pack --develop",
+            "cwd": "libs/uesioapps/cms"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "./../../../apps/cli/bin/run deploy",
+            "cwd": "libs/uesioapps/cms"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "echo TODO: set up test for uesioapps-cms.",
+            "cwd": "libs/uesioapps/cms"
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": [
+        "cli"
+      ]
+    },
     "uesioapps-docs": {
       "root": "libs/uesioapps/docs",
       "sourceRoot": "libs/uesioapps/studio/bundle",
@@ -280,44 +320,6 @@
           "options": {
             "lintFilePatterns": [
               "libs/uesioapps/lab/**/*.ts*"
-            ]
-          }
-        }
-      },
-      "tags": [],
-      "implicitDependencies": [
-        "cli"
-      ]
-    },
-    "uesioapps-sample": {
-      "root": "libs/uesioapps/sample",
-      "sourceRoot": "libs/uesioapps/sample/bundle",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/workspace:run-commands",
-          "outputs": [
-            "libs/uesioapps/sample/bundle/componentpacks/sample.main/builder.bundle.js",
-            "libs/uesioapps/sample/bundle/componentpacks/sample.main/runtime.bundle.js"
-          ],
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack",
-            "cwd": "libs/uesioapps/sample"
-          }
-        },
-        "watch": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "command": "./../../../apps/cli/bin/run pack --develop",
-            "cwd": "libs/uesioapps/sample"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/uesioapps/sample/**/*.ts*"
             ]
           }
         }

@@ -6,6 +6,7 @@ import { rm, readdir } from "fs"
 import unzipper from "unzipper"
 import chalk from "chalk"
 import path from "path"
+import { printWorkspace } from "../print/workspace"
 
 const deployableFolders = [
 	"secrets",
@@ -39,6 +40,10 @@ export default class Retrieve extends Command {
 	async run(): Promise<void> {
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 		const user = await authorize()
 
 		console.log(

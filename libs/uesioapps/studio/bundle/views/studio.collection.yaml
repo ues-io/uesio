@@ -72,6 +72,7 @@ definition:
         studio.type:
         studio.label:
         studio.languagelabel:
+        studio.autonumber:
       init:
         query: false
         create: true
@@ -123,6 +124,12 @@ definition:
                           actions:
                             - io.group:
                                 components:
+                                  - io.button:
+                                      uesio.variant: io.secondary
+                                      text: "Export Data"
+                                      signals:
+                                        - signal: "route/NAVIGATE"
+                                          path: "app/$Param{appname}/workspace/$Param{workspacename}/export/$Param{collectionname}"
                                   - io.button:
                                       uesio.variant: io.secondary
                                       text: "Import Data"
@@ -334,6 +341,15 @@ definition:
                         fieldId: studio.selectlist
                         metadataType: "SELECTLIST"
                         label: "Select List"
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "AUTONUMBER"
+                  components:
+                    - io.field:
+                        fieldId: studio.autonumber->studio.prefix
+                    - io.field:
+                        fieldId: studio.autonumber->studio.leadingzeros
       actions:
         - io.button:
             uesio.variant: "io.primary"

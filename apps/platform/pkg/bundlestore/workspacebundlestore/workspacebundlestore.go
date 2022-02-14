@@ -20,6 +20,10 @@ type WorkspaceBundleStore struct {
 // GetItem function
 func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string, session *sess.Session) error {
 
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
 	item.SetNamespace(session.GetWorkspaceApp())
 
 	return datasource.PlatformLoadOne(item, []adapt.LoadRequestCondition{
@@ -39,6 +43,11 @@ func (b *WorkspaceBundleStore) HasAny(group meta.BundleableGroup, namespace, ver
 }
 
 func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version string, session *sess.Session) error {
+
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
 	collectionIDs := map[string][]string{}
 	itemMap := map[string]meta.BundleableItem{}
 	workspace := session.GetWorkspaceID()
@@ -87,6 +96,11 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 }
 
 func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) error {
+
+	if session.GetWorkspace() == nil {
+		return errors.New("Workspace bundle store, needs a workspace in context")
+	}
+
 	// Add the workspace id as a condition
 	loadConditions := []adapt.LoadRequestCondition{
 		{
@@ -151,13 +165,16 @@ func (b *WorkspaceBundleStore) GetComponentPackStream(version string, buildMode 
 	return stream, nil
 }
 
-// GetBotStream function
 func (b *WorkspaceBundleStore) GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
 	stream, _, err := filesource.Download(bot.Content.ID, session.RemoveWorkspaceContext())
 	if err != nil {
 		return nil, err
 	}
 	return stream, nil
+}
+
+func (b *WorkspaceBundleStore) GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error) {
+	return nil, errors.New("Cant use generate bot templates here yet. :(")
 }
 
 // StoreItems function

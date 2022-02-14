@@ -59,6 +59,7 @@ type BundleStore interface {
 	HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error)
 	GetFileStream(version string, file *meta.File, session *sess.Session) (io.ReadCloser, error)
 	GetBotStream(version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
+	GetGenerateBotTemplateStream(template, version string, bot *meta.Bot, session *sess.Session) (io.ReadCloser, error)
 	GetComponentPackStream(version string, buildMode bool, componentPack *meta.ComponentPack, session *sess.Session) (io.ReadCloser, error)
 	StoreItems(namespace, version string, itemStreams []ItemStream, session *sess.Session) error
 	GetBundleDef(namespace, version string, session *sess.Session) (*meta.BundleDef, error)

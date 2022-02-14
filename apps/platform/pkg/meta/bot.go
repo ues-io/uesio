@@ -37,12 +37,28 @@ func NewBot(key string) (*Bot, error) {
 		return NewListenerBot(namespace, name), nil
 	}
 
+	if keySize == 2 && botType == "GENERATOR" {
+		namespace, name, err := ParseKey(keyArray[1])
+		if err != nil {
+			return nil, err
+		}
+		return NewGeneratorBot(namespace, name), nil
+	}
+
 	return nil, errors.New("Invalid Bot Key: " + key)
 }
 
 func NewListenerBot(namespace, name string) *Bot {
 	return &Bot{
 		Type:      "LISTENER",
+		Namespace: namespace,
+		Name:      name,
+	}
+}
+
+func NewGeneratorBot(namespace, name string) *Bot {
+	return &Bot{
+		Type:      "GENERATOR",
 		Namespace: namespace,
 		Name:      name,
 	}
@@ -57,6 +73,14 @@ func NewTriggerBot(botType, collectionKey, namespace, name string) *Bot {
 	}
 }
 
+type BotParam struct {
+	Name         string `yaml:"name" uesio:"studio.name" json:"name"`
+	Prompt       string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
+	Type         string `yaml:"type" uesio:"studio.type" json:"type"`
+	MetadataType string `yaml:"metadataType" uesio:"studio.metadatatype" json:"metadataType"`
+	Grouping     string `yaml:"grouping" uesio:"studio.grouping" json:"grouping"`
+}
+
 // Bot struct
 type Bot struct {
 	ID            string            `yaml:"-" uesio:"uesio.id"`
@@ -65,6 +89,7 @@ type Bot struct {
 	Namespace     string            `yaml:"-" uesio:"-"`
 	Type          string            `yaml:"type" uesio:"studio.type"`
 	Dialect       string            `yaml:"dialect" uesio:"studio.dialect"`
+	Params        []BotParam        `yaml:"params" uesio:"studio.params"`
 	Content       *UserFileMetadata `yaml:"-" uesio:"studio.content"`
 	FileContents  string            `yaml:"-" uesio:"-"`
 	Workspace     *Workspace        `yaml:"-" uesio:"studio.workspace"`
@@ -82,6 +107,7 @@ func GetBotTypes() map[string]string {
 		"BEFORESAVE": "beforesave",
 		"AFTERSAVE":  "aftersave",
 		"LISTENER":   "listener",
+		"GENERATOR":  "generator",
 	}
 }
 
@@ -103,6 +129,10 @@ func getBotTypeTypeKeyPart(typeKey string) (string, error) {
 
 func (b *Bot) GetBotFilePath() string {
 	return filepath.Join(b.GetKey(), "bot.js")
+}
+
+func (b *Bot) GetGenerateBotTemplateFilePath(template string) string {
+	return filepath.Join(b.GetKey(), "templates", template)
 }
 
 // GetCollectionName function
@@ -129,7 +159,7 @@ func (b *Bot) GetBundleGroup() BundleableGroup {
 // GetKey function
 func (b *Bot) GetKey() string {
 	botType := GetBotTypes()[b.Type]
-	if b.Type == "LISTENER" {
+	if b.Type == "LISTENER" || b.Type == "GENERATOR" {
 		return filepath.Join(botType, b.Namespace+"."+b.Name)
 	}
 	return filepath.Join(botType, b.CollectionRef, b.Namespace+"."+b.Name)

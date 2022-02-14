@@ -1,7 +1,0 @@
-name: main
-components:
-  view:
-    sample.hello:
-    sample.error:
-    sample.progressgauge:
-    sample.datePicker:

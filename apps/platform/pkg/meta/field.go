@@ -52,6 +52,12 @@ type ReferenceMetadata struct {
 	OnDelete   string `json:"ondelete" yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 }
 
+// AutoNumberMetadata struct
+type AutoNumberMetadata struct {
+	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"studio.prefix"`
+	LeadingZeros int    `json:"leadingZeros" yaml:"leadingZeros,omitempty" uesio:"studio.leadingzeros"`
+}
+
 // Field struct
 type Field struct {
 	ID                 string              `yaml:"-" uesio:"uesio.id"`
@@ -69,6 +75,7 @@ type Field struct {
 	FileMetadata       *FileMetadata       `yaml:"file,omitempty" uesio:"studio.file"`
 	ReferenceMetadata  *ReferenceMetadata  `yaml:"reference,omitempty" uesio:"studio.reference"`
 	ValidationMetadata *ValidationMetadata `yaml:"validate,omitempty" uesio:"studio.validate"`
+	AutoNumberMetadata *AutoNumberMetadata `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
 	AutoPopulate       string              `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
 	itemMeta           *ItemMeta           `yaml:"-" uesio:"-"`
 	CreatedBy          *User               `yaml:"-" uesio:"uesio.createdby"`
@@ -99,6 +106,7 @@ func GetFieldTypes() map[string]bool {
 		"MAP":         true,
 		"TIMESTAMP":   true,
 		"EMAIL":       true,
+		"AUTONUMBER":  true,
 	}
 }
 
@@ -224,27 +232,17 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 }
 
 func validateFileField(node *yaml.Node, fieldKey string) error {
-	fileNode, err := getMapNode(node, "file")
+	fileNode, err := getOrCreateMapNode(node, "file")
 	if err != nil {
 		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : " + err.Error())
 	}
-	if fileNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey)
-	}
-	fileCollection := getNodeValueAsString(fileNode, "filecollection")
-	if fileCollection == "" {
-		return fmt.Errorf("Invalid File metadata provided for field: " + fieldKey + " : No file collection provided")
-	}
-	return nil
+	return setDefaultValue(fileNode, "filecollection", "uesio.platform")
 }
 
 func validateNumberField(node *yaml.Node, fieldKey string) error {
 	numberNode, err := getMapNode(node, "number")
 	if err != nil {
 		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	if numberNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid Number metadata provided for field: " + fieldKey)
 	}
 	decimals := getNodeValueAsString(numberNode, "decimals")
 	if decimals == "" {
@@ -265,9 +263,6 @@ func validateReferenceField(node *yaml.Node, fieldKey string) error {
 	referenceNode, err := getMapNode(node, "reference")
 	if err != nil {
 		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey + " : " + err.Error())
-	}
-	if referenceNode.Kind != yaml.MappingNode {
-		return fmt.Errorf("Invalid Reference metadata provided for field: " + fieldKey)
 	}
 	referencedCollection := getNodeValueAsString(referenceNode, "collection")
 	if referencedCollection == "" {

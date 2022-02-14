@@ -1,0 +1,7 @@
+name: autoid
+collection: uesio.bulkbatches
+type: "AUTONUMBER"
+label: "Auto ID"
+autonumber:
+  prefix: "BATCH"
+  leadingZeros: 4

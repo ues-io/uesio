@@ -14,7 +14,7 @@
 	{
 		"name": "dev",
 		"app": {
-			"id": "sample"
+			"id": "cms"
 		}
 	}
 ]

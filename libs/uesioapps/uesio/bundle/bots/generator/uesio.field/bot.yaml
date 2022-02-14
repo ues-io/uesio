@@ -1,0 +1,16 @@
+name: field
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Field Name
+    type: METADATANAME
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  - name: type
+    prompt: Field Type
+    type: FIELDTYPE
+  - name: label
+    prompt: Label

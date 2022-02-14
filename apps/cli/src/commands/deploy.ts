@@ -3,6 +3,7 @@ import archiver from "archiver"
 import { post } from "../request/request"
 import { getApp, getWorkspace } from "../config/config"
 import { authorize } from "../auth/login"
+import { printWorkspace } from "../print/workspace"
 
 export default class Deploy extends Command {
 	static description = "deploy metadata items"
@@ -16,6 +17,10 @@ export default class Deploy extends Command {
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 
 		const user = await authorize()
 

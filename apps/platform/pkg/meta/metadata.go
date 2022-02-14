@@ -91,10 +91,6 @@ func StandardKeyFromPath(path string, conditions BundleConditions) (string, erro
 	return strings.TrimSuffix(path, ".yaml"), nil
 }
 
-func StandardPathFromKey(key string) string {
-	return key + ".yaml"
-}
-
 // StandardGetFields function
 func StandardGetFields(item CollectionableItem) []string {
 	names, err := reflecttool.GetFieldNames(item)
@@ -232,6 +228,24 @@ func getNodeValueAsString(node *yaml.Node, key string) string {
 	return keyNode.Value
 }
 
+func addNodeToMap(mapNode *yaml.Node, key string, valueNode *yaml.Node) {
+	newKeyNode := &yaml.Node{}
+	newKeyNode.SetString(key)
+	mapNode.Content = append(mapNode.Content, newKeyNode, valueNode)
+}
+
+func getOrCreateMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
+	subNode, err := getMapNode(node, key)
+	if err != nil {
+		newValueNode := &yaml.Node{}
+		_ = newValueNode.Encode(&map[string]interface{}{})
+		addNodeToMap(node, key, newValueNode)
+		// Now try again...
+		return newValueNode, nil
+	}
+	return subNode, nil
+}
+
 func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	if node.Kind != yaml.MappingNode {
 		return nil, fmt.Errorf("Definition is not a mapping node.")
@@ -245,4 +259,32 @@ func getMapNode(node *yaml.Node, key string) (*yaml.Node, error) {
 	}
 
 	return nil, fmt.Errorf("Node not found of key: " + key)
+}
+
+func setDefaultValue(node *yaml.Node, key, value string) error {
+	existing := getNodeValueAsString(node, key)
+	if existing != "" {
+		return nil
+	}
+	return setMapNode(node, key, value)
+}
+
+func setMapNode(node *yaml.Node, key, value string) error {
+	if node.Kind != yaml.MappingNode {
+		return fmt.Errorf("Definition is not a mapping node.")
+	}
+
+	for i := range node.Content {
+		// Skip every other node to only get keys
+		if i%2 == 0 && node.Content[i].Value == key {
+			node.Content[i+1].SetString(value)
+			return nil
+		}
+	}
+
+	newValueNode := &yaml.Node{}
+	newValueNode.SetString(value)
+	addNodeToMap(node, key, newValueNode)
+
+	return nil
 }

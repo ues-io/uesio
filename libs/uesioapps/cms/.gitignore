@@ -1,0 +1,4 @@
+node_modules/
+bundle/componentpacks/*.bundle.js
+bundle/componentpacks/*.entry.ts
+.DS_Store

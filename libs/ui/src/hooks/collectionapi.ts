@@ -6,7 +6,7 @@ import { AnyAction } from "redux"
 import { useEffect } from "react"
 import get from "../bands/collection/operations/get"
 import { Collection } from "../collectionexports"
-import { ImportSpec } from "../definition/definition"
+import { Spec } from "../definition/definition"
 
 class CollectionAPI {
 	constructor(uesio: Uesio) {
@@ -34,8 +34,8 @@ class CollectionAPI {
 		return plainCollection && new Collection(plainCollection)
 	}
 
-	createImportJob(context: Context, spec: ImportSpec) {
-		return getPlatform().createImportJob(context, spec)
+	createJob(context: Context, spec: Spec) {
+		return getPlatform().createJob(context, spec)
 	}
 	importData(context: Context, fileData: File, jobId: string) {
 		return getPlatform().importData(context, fileData, jobId)

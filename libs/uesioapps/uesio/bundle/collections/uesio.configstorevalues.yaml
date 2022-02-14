@@ -1,4 +1,3 @@
 name: configstorevalues
-dataSource: uesio.platform
 idFormat: "${uesio.key}"
 nameField: uesio.key

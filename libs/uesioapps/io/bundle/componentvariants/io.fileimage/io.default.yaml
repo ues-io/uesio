@@ -1,0 +1,6 @@
+name: default
+component: io.fileimage
+label: Default
+definition:
+  uesio.styles:
+    root:

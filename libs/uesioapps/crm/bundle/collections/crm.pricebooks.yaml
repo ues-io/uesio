@@ -1,3 +1,2 @@
 name: pricebooks
-dataSource: uesio.platform
 nameField: crm.name

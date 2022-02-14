@@ -4,17 +4,19 @@ import * as fs from "fs"
 import { authorize } from "../auth/login"
 import { getWorkspace, getApp } from "../config/config"
 import type { definition, platform } from "@uesio/ui"
+import { printWorkspace } from "../print/workspace"
 
 async function getSpec(
 	specFile?: string,
 	collection?: string,
 	upsertKey?: string
-): Promise<definition.ImportSpec> {
+): Promise<definition.Spec> {
 	const specData = specFile
 		? JSON.parse(await fs.promises.readFile(specFile, "utf8"))
 		: {}
 
-	const spec: definition.ImportSpec = {
+	const spec: definition.Spec = {
+		jobtype: "import",
 		filetype: specData["uesio.filetype"] || "csv",
 		collection: specData["uesio.collection"],
 		upsertkey: specData["uesio.upsertkey"],
@@ -31,8 +33,9 @@ async function getSpec(
 	return spec
 }
 
-function getSpecString(spec: definition.ImportSpec) {
+function getSpecString(spec: definition.Spec) {
 	return JSON.stringify({
+		"uesio.jobtype": spec.jobtype,
 		"uesio.filetype": spec.filetype,
 		"uesio.collection": spec.collection,
 		"uesio.upsertkey": spec.upsertkey,
@@ -73,6 +76,10 @@ export default class Pack extends Command {
 
 		const app = await getApp()
 		const workspace = await getWorkspace()
+		if (!workspace) {
+			printWorkspace(app, workspace)
+			return
+		}
 
 		const user = await authorize()
 

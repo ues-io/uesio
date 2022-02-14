@@ -62,7 +62,6 @@ func AuthenticateSiteAdmin(next http.Handler) http.Handler {
 	})
 }
 
-// AuthenticateWorkspace checks to see if the current user is logged in
 func AuthenticateWorkspace(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
@@ -72,6 +71,22 @@ func AuthenticateWorkspace(next http.Handler) http.Handler {
 		if err != nil {
 			logger.LogError(err)
 			http.Error(w, "Failed querying workspace: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func AuthenticateVersion(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		namespace := vars["namespace"]
+		version := vars["version"]
+		app := vars["app"]
+		err := auth.AddVersionContext(app, namespace, version, GetSession(r))
+		if err != nil {
+			logger.LogError(err)
+			http.Error(w, "Failed querying version: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 		next.ServeHTTP(w, r)

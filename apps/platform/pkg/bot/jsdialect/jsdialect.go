@@ -64,3 +64,7 @@ func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI, se
 func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI, session *sess.Session) error {
 	return runBot(bot.FileContents, botAPI, nil)
 }
+
+func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI, session *sess.Session) error {
+	return runBot(bot.FileContents, botAPI, nil)
+}

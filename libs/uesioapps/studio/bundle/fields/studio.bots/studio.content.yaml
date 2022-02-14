@@ -2,5 +2,3 @@ name: content
 collection: studio.bots
 type: FILE
 label: Content
-file:
-  filecollection: uesio.platform

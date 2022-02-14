@@ -6,6 +6,7 @@ import (
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
+	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -15,6 +16,7 @@ type BotDialect interface {
 	BeforeSave(bot *meta.Bot, botAPI *BeforeSaveAPI, session *sess.Session) error
 	AfterSave(bot *meta.Bot, botAPI *AfterSaveAPI, session *sess.Session) error
 	CallBot(bot *meta.Bot, botAPI *CallBotAPI, session *sess.Session) error
+	CallGeneratorBot(bot *meta.Bot, botAPI *GeneratorBotAPI, session *sess.Session) error
 }
 
 var botDialectMap = map[string]BotDialect{}
@@ -138,7 +140,41 @@ func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collectio
 	return nil
 }
 
-func CallBot(namespace, name string, params map[string]string, session *sess.Session) error {
+func CallGeneratorBot(namespace, name string, params map[string]interface{}, session *sess.Session) ([]bundlestore.ItemStream, error) {
+	robot := meta.NewGeneratorBot(namespace, name)
+
+	err := bundle.Load(robot, session)
+	if err != nil {
+		return nil, err
+	}
+
+	botAPI := &GeneratorBotAPI{
+		session: session,
+		Params: &ParamsAPI{
+			params: params,
+		},
+		itemStreams: bundlestore.ItemStreams{},
+		bot:         robot,
+	}
+
+	err = hydrateBot(robot, session)
+	if err != nil {
+		return nil, err
+	}
+
+	dialect, err := getBotDialect(robot.Dialect)
+	if err != nil {
+		return nil, err
+	}
+
+	err = dialect.CallGeneratorBot(robot, botAPI, session)
+	if err != nil {
+		return nil, err
+	}
+	return botAPI.itemStreams, nil
+}
+
+func CallListenerBot(namespace, name string, params map[string]interface{}, session *sess.Session) error {
 	robot := meta.NewListenerBot(namespace, name)
 
 	err := bundle.Load(robot, session)
@@ -166,10 +202,5 @@ func CallBot(namespace, name string, params map[string]string, session *sess.Ses
 		return err
 	}
 
-	err = dialect.CallBot(robot, botAPI, session)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return dialect.CallBot(robot, botAPI, session)
 }

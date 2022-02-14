@@ -14,14 +14,14 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-func getFileMetadataType(details fileadapt.FileDetails) string {
+func GetFileMetadataType(details fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return "attachment"
 	}
 	return "field"
 }
 
-func getFileUniqueName(details fileadapt.FileDetails) string {
+func GetFileUniqueName(details fileadapt.FileDetails) string {
 	if details.FieldID == "" {
 		return details.Name
 	}
@@ -97,10 +97,10 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 		CollectionID:     details.CollectionID,
 		MimeType:         mime.TypeByExtension(filepath.Ext(details.Name)),
 		FieldID:          details.FieldID,
-		Type:             getFileMetadataType(details),
+		Type:             GetFileMetadataType(details),
 		FileCollectionID: fileCollectionID,
 		FileName:         details.Name,
-		Name:             getFileUniqueName(details), // Different for file fields and attachments
+		Name:             GetFileUniqueName(details), // Different for file fields and attachments
 		RecordID:         details.RecordID,
 	}
 

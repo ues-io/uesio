@@ -1,0 +1,6 @@
+name: ${name}
+dependencies:
+  io:
+    version: v0.0.1
+  uesio:
+    version: v0.0.1

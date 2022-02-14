@@ -1,0 +1,6 @@
+name: collection
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: Collection Name

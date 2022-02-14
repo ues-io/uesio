@@ -1,12 +1,33 @@
 package datasource
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
+
+func populateAutoNumbers(field *adapt.FieldMetadata) validationFunc {
+	return func(change adapt.ChangeItem, isNew bool) error {
+		if isNew {
+			autoNumberMeta := field.AutoNumberMetadata
+			if autoNumberMeta == nil {
+				return NewSaveError(change.RecordKey, field.GetFullName(), "Missing autonumber metadata")
+			}
+			format := "%0" + strconv.Itoa(autoNumberMeta.LeadingZeros) + "d"
+			sufix := fmt.Sprintf(format, change.Autonumber)
+			an := autoNumberMeta.Prefix + "-" + sufix
+			err := change.FieldChanges.SetField(field.GetFullName(), an)
+			if err != nil {
+				return NewSaveError(change.RecordKey, field.GetFullName(), err.Error())
+			}
+		}
+		return nil
+	}
+}
 
 func populateTimestamps(field *adapt.FieldMetadata, timestamp int64) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
@@ -49,13 +70,16 @@ func getPopulationFunction(collectionMetadata *adapt.CollectionMetadata, session
 	for _, field := range collectionMetadata.Fields {
 		if field.AutoPopulate == "UPDATE" || field.AutoPopulate == "CREATE" {
 			if field.Type == "TIMESTAMP" {
-				timestamp := time.Now().UnixNano() / 1e6
+				timestamp := time.Now().UnixMilli()
 				populations = append(populations, populateTimestamps(field, timestamp))
 			}
 			if field.Type == "USER" {
 				user := session.GetUserInfo()
 				populations = append(populations, populateUser(field, user))
 			}
+		}
+		if field.Type == "AUTONUMBER" {
+			populations = append(populations, populateAutoNumbers(field))
 		}
 	}
 
@@ -75,9 +99,9 @@ func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, au
 	fieldPopulations := getPopulationFunction(collectionMetadata, session)
 
 	if op.Inserts != nil {
-		for i, insert := range *op.Inserts {
+		for i := range *op.Inserts {
 			(*op.Inserts)[i].Autonumber = autonumberStart + i
-			err := fieldPopulations(insert, true)
+			err := fieldPopulations((*op.Inserts)[i], true)
 			if err != nil {
 				return err
 			}
@@ -85,8 +109,8 @@ func Populate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, au
 	}
 
 	if op.Updates != nil {
-		for _, update := range *op.Updates {
-			err := fieldPopulations(update, false)
+		for i := range *op.Updates {
+			err := fieldPopulations((*op.Updates)[i], false)
 			if err != nil {
 				return err
 			}

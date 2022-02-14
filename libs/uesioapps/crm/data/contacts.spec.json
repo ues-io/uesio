@@ -1,4 +1,5 @@
 {
+	"uesio.jobtype": "import",
 	"uesio.collection": "crm.contacts",
 	"uesio.filetype": "csv",
 	"uesio.upsertkey": "crm.externalid",

@@ -11,7 +11,9 @@ const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const MultiCheckField = component.registry.getUtility("io.multicheckfield")
 const ReferenceField = component.registry.getUtility("io.referencefield")
 const FileText = component.registry.getUtility("io.filetext")
-const FileDynamic = component.registry.getUtility("io.filedynamic")
+const FileImage = component.registry.getUtility("io.fileimage")
+const FilePreview = component.registry.getUtility("io.filepreview")
+const File = component.registry.getUtility("io.file")
 const UserField = component.registry.getUtility("io.userfield")
 const TimestampField = component.registry.getUtility("io.timestampfield")
 const ListField = component.registry.getUtility("io.listfield")
@@ -50,7 +52,7 @@ const getFieldContent = (
 	switch (true) {
 		case type === "DATE":
 			return <DateField {...common} />
-		case type === "LONGTEXT" || type === "TEXT":
+		case type === "LONGTEXT" || type === "TEXT" || type === "AUTONUMBER":
 			return <TextField {...common} />
 		case type === "NUMBER":
 			return <NumberField {...common} />
@@ -87,8 +89,12 @@ const getFieldContent = (
 			return <TimestampField {...common} />
 		case type === "FILE" && displayAs === "TEXT":
 			return <FileText {...common} />
+		case type === "FILE" && displayAs === "IMAGE":
+			return <FileImage {...common} />
+		case type === "FILE" && displayAs === "PREVIEW":
+			return <FilePreview {...common} />
 		case type === "FILE":
-			return <FileDynamic {...common} />
+			return <File {...common} />
 		case type === "USER":
 			return <UserField {...common} options={reference} />
 		case type === "LIST":

@@ -26,6 +26,7 @@ func init() {
 func siteAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	return router.Path("").HandlerFunc(f)
 }
 
@@ -37,13 +38,23 @@ func siteAndWorkspaceAPI(wr *mux.Router, sr *mux.Router, path string, f http.Han
 func workspaceAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	router.Use(middleware.AuthenticateWorkspace)
+	return router.Path("").HandlerFunc(f)
+}
+
+func versionAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
+	router := r.PathPrefix(path).Subrouter()
+	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
+	router.Use(middleware.AuthenticateVersion)
 	return router.Path("").HandlerFunc(f)
 }
 
 func siteAdminAPI(r *mux.Router, path string, f http.HandlerFunc) *mux.Route {
 	router := r.PathPrefix(path).Subrouter()
 	router.Use(middleware.Authenticate)
+	router.Use(middleware.LogRequestHandler)
 	router.Use(middleware.AuthenticateSiteAdmin)
 	return router.Path("").HandlerFunc(f)
 }
@@ -63,6 +74,8 @@ func serve(cmd *cobra.Command, args []string) {
 
 	// The workspace router
 	wr := r.PathPrefix("/workspace/{app}/{workspace}").Subrouter()
+	// The version router
+	vr := r.PathPrefix("/version/{app}/{namespace}/{version}").Subrouter()
 	// The site admin router
 	sar := r.PathPrefix("/siteadmin/{app}/{site}").Subrouter()
 	// The site router
@@ -73,7 +86,8 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/userfiles/download", controller.DownloadUserFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/wires/load", controller.Load, "POST")
 	siteAndWorkspaceAPI(wr, sr, "/wires/save", controller.Save, "POST")
-	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controller.CallBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/call/{namespace}/{name}", controller.CallListenerBot, "POST")
+	siteAndWorkspaceAPI(wr, sr, "/bots/params/{type}/{namespace}/{name}", controller.GetBotParams, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/files/{namespace}/{name}", controller.ServeFile, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/app/{namespace}/{route:.*}", controller.ServeRoute, "GET")
 	siteAndWorkspaceAPI(wr, sr, "/views/{namespace}/{name}", controller.View, "GET")
@@ -84,6 +98,7 @@ func serve(cmd *cobra.Command, args []string) {
 
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
+	workspaceAPI(wr, "/metadata/generate/{namespace}/{name}", controller.Generate).Methods("POST")
 
 	workspaceAPI(wr, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")
 	workspaceAPI(wr, "/metadata/types/{type}/namespace/{namespace}/list", controller.MetadataList).Methods("GET")
@@ -104,6 +119,11 @@ func serve(cmd *cobra.Command, args []string) {
 	workspaceAPI(wr, "/secrets/{key}", controller.SetSecret).Methods("POST")
 	workspaceAPI(wr, "/featureflags", controller.FeatureFlag).Methods("GET")
 	workspaceAPI(wr, "/featureflags/{key}", controller.SetFeatureFlag).Methods("POST")
+
+	versionAPI(vr, "/metadata/generate/{name}", controller.Generate).Methods("POST")
+	versionAPI(vr, "/bots/params/{type}/{name}", controller.GetBotParams).Methods("GET")
+	versionAPI(vr, "/metadata/types/{type}/list", controller.MetadataList).Methods("GET")
+	versionAPI(vr, "/metadata/types/{type}/list/{grouping}", controller.MetadataList).Methods("GET")
 
 	siteAdminAPI(sar, "/configvalues", controller.ConfigValues).Methods("GET")
 	siteAdminAPI(sar, "/configvalues/{key}", controller.SetConfigValue).Methods("POST")
