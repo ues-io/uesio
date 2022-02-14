@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"regexp"
+	"strings"
 
 	"github.com/humandad/yaml"
 	"github.com/thecloudmasters/uesio/pkg/bundle"
@@ -62,12 +63,28 @@ func (gba *GeneratorBotAPI) MergeString(params map[string]interface{}, templateS
 	return buffer.String(), nil
 }
 
+func (gba *GeneratorBotAPI) MergeYamlString(params map[string]interface{}, templateString string) (string, error) {
+	data, err := performYamlMerge(templateString, params)
+	if err != nil {
+		return "", err
+	}
+	return data.String(), nil
+}
+
 func (gba *GeneratorBotAPI) MergeTemplate(params map[string]interface{}, templateFile string) (string, error) {
 	templateString, err := gba.GetTemplate(templateFile)
 	if err != nil {
 		return "", err
 	}
 	return gba.MergeString(params, templateString)
+}
+
+func (gba *GeneratorBotAPI) MergeYamlTemplate(params map[string]interface{}, templateFile string) (string, error) {
+	templateString, err := gba.GetTemplate(templateFile)
+	if err != nil {
+		return "", err
+	}
+	return gba.MergeYamlString(params, templateString)
 }
 
 func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]interface{}, templateFile string) error {
@@ -82,23 +99,28 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 	return nil
 }
 
-func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]string, templateFile string) error {
-	templateString, err := gba.GetTemplate(templateFile)
-	if err != nil {
-		return err
-	}
-	node, err := mergeYamlString(templateString, params)
+func (gba *GeneratorBotAPI) GenerateYamlFile(filename string, params map[string]interface{}, templateFile string) error {
+	merged, err := gba.MergeYamlTemplate(params, templateFile)
 	if err != nil {
 		return err
 	}
 
-	data, err := yaml.Marshal(node)
-	if err != nil {
-		return err
-	}
-
-	gba.itemStreams.AddFile(filename, "", bytes.NewReader(data))
+	gba.itemStreams.AddFile(filename, "", strings.NewReader(merged))
 	return nil
+}
+
+func (gba *GeneratorBotAPI) RepeatString(repeater []string, templateString string) (string, error) {
+	mergedStrings := []string{}
+	for _, key := range repeater {
+		result, err := gba.MergeString(map[string]interface{}{
+			"key": key,
+		}, templateString)
+		if err != nil {
+			return "", err
+		}
+		mergedStrings = append(mergedStrings, result)
+	}
+	return strings.Join(mergedStrings, ""), nil
 }
 
 // GetNamespace function
@@ -106,7 +128,24 @@ func (gba *GeneratorBotAPI) GetNamespace() string {
 	return gba.session.GetContextAppName()
 }
 
-func mergeYamlString(templateString string, params map[string]string) (*yaml.Node, error) {
+func performYamlMerge(templateString string, params map[string]interface{}) (*bytes.Buffer, error) {
+	node, err := mergeYamlString(templateString, params)
+	if err != nil {
+		return nil, err
+	}
+
+	data := &bytes.Buffer{}
+	encoder := yaml.NewEncoder(data)
+	encoder.SetIndent(2)
+	err = encoder.Encode(node)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func mergeYamlString(templateString string, params map[string]interface{}) (*yaml.Node, error) {
 	node := &yaml.Node{}
 	// First parse the yaml file
 	err := yaml.Unmarshal([]byte(templateString), node)
@@ -124,8 +163,8 @@ func mergeYamlString(templateString string, params map[string]string) (*yaml.Nod
 
 }
 
-func mergeNodes(node *yaml.Node, params map[string]string) error {
-	if node == nil {
+func mergeNodes(node *yaml.Node, params map[string]interface{}) error {
+	if node == nil || params == nil {
 		return nil
 	}
 
@@ -137,8 +176,9 @@ func mergeNodes(node *yaml.Node, params map[string]string) error {
 					match := re.FindStringSubmatch(node.Content[i].Value)
 					for _, merge := range match {
 						mergeValue := params[merge]
-						if mergeValue != "" {
-							newNode, err := mergeYamlString(mergeValue, map[string]string{})
+						mergeString, ok := mergeValue.(string)
+						if ok && mergeString != "" {
+							newNode, err := mergeYamlString(mergeString, nil)
 							if err != nil {
 								return err
 							}
