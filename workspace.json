@@ -19,6 +19,7 @@
               "mkdir -p ../../dist/cli",
               "cp ./publish/package.json ../../dist/cli/package.json"
             ],
+            "parallel": false,
             "cwd": "apps/cli"
           }
         },
