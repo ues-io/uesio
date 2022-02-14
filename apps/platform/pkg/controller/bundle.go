@@ -52,7 +52,7 @@ func Bundle(w http.ResponseWriter, r *http.Request) {
 			Field: "studio.app",
 			Value: app,
 		},
-	}, session)
+	}, session.RemoveWorkspaceContext())
 	if err != nil {
 		msg := "Error creating a new bundle, " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)
