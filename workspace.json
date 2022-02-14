@@ -14,7 +14,12 @@
             "dist/cli"
           ],
           "options": {
-            "command": "npx tsc",
+            "commands": [
+              "npx tsc",
+              "mkdir -p ../../dist/cli",
+              "cp ./publish/package.json ../../dist/cli/package.json"
+            ],
+            "parallel": false,
             "cwd": "apps/cli"
           }
         },
@@ -36,8 +41,8 @@
           "options": {
             "commands": [
               "cd publish && npm version --no-git-tag-version patch",
-              "cp ./publish/package.json ../../dist/cli/package.json",
               "mkdir -p ../../dist/cli/bin",
+              "cp ./publish/package.json ../../dist/cli/package.json",
               "cp ./bin/run ../../dist/cli/bin/run",
               "cp ./bin/run.cmd ../../dist/cli/bin/run.cmd"
             ],
