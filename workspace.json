@@ -16,6 +16,7 @@
           "options": {
             "commands": [
               "npx tsc",
+              "mkdir -p ../../dist/cli",
               "cp ./publish/package.json ../../dist/cli/package.json"
             ],
             "cwd": "apps/cli"
