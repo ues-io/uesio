@@ -2,9 +2,49 @@
 wires:
   wire1:
     collection: ${collection}
-    fields:
-      uesio.id:
+    fields: ${fields}
 # Components determine the layout and composition of your view
 components:
-  - io.text:
-      text: Hello Generator World
+  - io.titlebar:
+      title: ${collection}
+      uesio.variant: io.main
+      actions:
+        - io.group:
+            components:
+              - io.button:
+                  signals:
+                    - signal: wire/CREATE_RECORD
+                      wire: wire1
+                  text: Create
+                  uesio.variant: io.secondary
+              - io.button:
+                  signals:
+                    - signal: wire/SAVE
+                      wires:
+                        - wire1
+                  text: Save
+                  uesio.variant: io.secondary
+              - io.button:
+                  signals:
+                    - signal: wire/CANCEL
+                      wire: wire1
+                  text: Cancel
+                  uesio.variant: io.secondary
+              - io.button:
+                  signals:
+                    - signal: component/io.table/TOGGLE_MODE
+                      target: table1
+                  text: Mode
+                  uesio.variant: io.secondary
+  - io.box:
+      uesio.variant: io.section
+      components:
+        - io.table:
+            rowactions:
+              - text: Delete
+                signals:
+                  - signal: wire/TOGGLE_DELETE_STATUS
+            columns: ${tableColumns}
+            id: table1
+            mode: EDIT
+            wire: wire1
