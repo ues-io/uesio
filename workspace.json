@@ -41,6 +41,7 @@
             "commands": [
               "cd publish && npm version --no-git-tag-version patch",
               "mkdir -p ../../dist/cli/bin",
+              "cp ./publish/package.json ../../dist/cli/package.json",
               "cp ./bin/run ../../dist/cli/bin/run",
               "cp ./bin/run.cmd ../../dist/cli/bin/run.cmd"
             ],
