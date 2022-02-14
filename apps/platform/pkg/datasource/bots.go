@@ -140,7 +140,7 @@ func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collectio
 	return nil
 }
 
-func CallGeneratorBot(namespace, name string, params map[string]string, session *sess.Session) ([]bundlestore.ItemStream, error) {
+func CallGeneratorBot(namespace, name string, params map[string]interface{}, session *sess.Session) ([]bundlestore.ItemStream, error) {
 	robot := meta.NewGeneratorBot(namespace, name)
 
 	err := bundle.Load(robot, session)
@@ -174,7 +174,7 @@ func CallGeneratorBot(namespace, name string, params map[string]string, session 
 	return botAPI.itemStreams, nil
 }
 
-func CallListenerBot(namespace, name string, params map[string]string, session *sess.Session) error {
+func CallListenerBot(namespace, name string, params map[string]interface{}, session *sess.Session) error {
 	robot := meta.NewListenerBot(namespace, name)
 
 	err := bundle.Load(robot, session)

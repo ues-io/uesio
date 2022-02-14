@@ -1,9 +1,9 @@
 name: cms
 loginRoute: uesio.login
 homeRoute: cms.home
-defaultProfile: cms.standard
-defaultTheme: cms.default
-publicProfile: cms.public
+defaultProfile: uesio.standard
+defaultTheme: uesio.default
+publicProfile: uesio.public
 dependencies:
   io:
     version: v0.0.1

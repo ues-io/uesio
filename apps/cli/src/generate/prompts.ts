@@ -9,6 +9,7 @@ type BotParam = {
 	prompt: string
 	type?: string
 	metadataType?: metadata.MetadataType
+	grouping?: string
 }
 
 type PromptAnswers = Record<string, string>
@@ -20,6 +21,18 @@ type PromptRenderer = (
 	version: string,
 	user: User
 ) => Promise<PromptAnswers>
+
+const getGrouping = (param: BotParam, answers: PromptAnswers): string => {
+	const grouping = param.grouping
+	if (!grouping) {
+		return ""
+	}
+	const groupingAnswer = answers[grouping]
+	if (!groupingAnswer) {
+		return ""
+	}
+	return groupingAnswer
+}
 
 const promptRenderers: Record<string, PromptRenderer> = {
 	TEXT: async (param) =>
@@ -49,6 +62,26 @@ const promptRenderers: Record<string, PromptRenderer> = {
 			name: param.name,
 			message: param.prompt,
 			type: "list",
+			choices: items,
+		})
+	},
+	METADATAMULTI: async (param, answers, app, version, user) => {
+		const metadataType = param.metadataType
+		if (!metadataType) throw new Error("Bad Metadata Type: " + metadataType)
+		const grouping = getGrouping(param, answers)
+		console.log("meh")
+		console.log(grouping)
+		const items = await getMetadataList(
+			metadataType,
+			app,
+			version,
+			user,
+			grouping
+		)
+		return inquirer.prompt({
+			name: param.name,
+			message: param.prompt,
+			type: "checkbox",
 			choices: items,
 		})
 	},
