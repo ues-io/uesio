@@ -132,13 +132,18 @@ definition:
                                                   uesio.variant: io.secondary
                                                   text: Package New Version
                                                   signals:
-                                                    - signal: "bot/CALL"
-                                                      bot: "studio.newbundle"
-                                                      params:
-                                                        workspace: $Param{workspacename}
-                                                        app: $Param{appname}
+                                                    - signal: "metadata/BUNDLE"
+                                                      uesio.context:
+                                                        workspace:
+                                                          name: $Param{workspacename}
+                                                          app: $Param{appname}
                                                     - signal: "route/NAVIGATE"
                                                       path: "app/$Param{appname}"
+                                                      uesio.context:
+                                                        #This removes the workspace
+                                                        workspace:
+                                                          name:
+                                                          app:
                             - io.box:
                                 uesio.variant: io.section
                                 components:

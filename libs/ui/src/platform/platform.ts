@@ -48,7 +48,7 @@ type JobResponse = {
 
 const getPrefix = (context: Context) => {
 	const workspace = context.getWorkspace()
-	if (workspace) {
+	if (workspace && workspace.app && workspace.name) {
 		return `/workspace/${workspace.app}/${workspace.name}`
 	}
 	const siteadmin = context.getSiteAdmin()
@@ -333,6 +333,11 @@ const platform = {
 		})
 
 		return response
+	},
+	bundle: async (context: Context): Promise<BotResponse> => {
+		const prefix = getPrefix(context)
+		const response = await fetch(`${prefix}/metadata/bundle`)
+		return response.json()
 	},
 }
 
