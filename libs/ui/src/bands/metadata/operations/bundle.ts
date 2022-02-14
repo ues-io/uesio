@@ -9,6 +9,4 @@ export default createAsyncThunk<
 		context: Context
 	},
 	UesioThunkAPI
->("metadata/bundle", async ({ context }, api) => {
-	return api.extra.bundle(context)
-})
+>("metadata/bundle", async ({ context }, api) => api.extra.bundle(context))
