@@ -10,6 +10,7 @@ import userSignals from "../bands/user/signals"
 import wireSignals from "../bands/wire/signals"
 import panelSignals from "../bands/panel/signals"
 import notificationSignals from "../bands/notification/signals"
+import metadataSignals from "../bands/metadata/signals"
 import { additionalContext } from "../component/component"
 
 const registry: Record<string, SignalDescriptor> = {
@@ -19,6 +20,7 @@ const registry: Record<string, SignalDescriptor> = {
 	...wireSignals,
 	...panelSignals,
 	...notificationSignals,
+	...metadataSignals,
 }
 
 const isPanelSignal = (signal: SignalDefinition) =>

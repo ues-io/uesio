@@ -96,9 +96,9 @@ func serve(cmd *cobra.Command, args []string) {
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}/builder", controller.ServeComponentPack(true), "GET")
 	siteAndWorkspaceAPI(wr, sr, "/componentpacks/{namespace}/{name}", controller.ServeComponentPack(false), "GET")
 
+	workspaceAPI(wr, "/metadata/bundle", controller.Bundle).Methods("GET")
 	workspaceAPI(wr, "/metadata/deploy", controller.Deploy).Methods("POST")
 	workspaceAPI(wr, "/metadata/retrieve", controller.Retrieve).Methods("POST", "GET")
-	workspaceAPI(wr, "/metadata/bundle/{app}/{workspace}", controller.Bundle).Methods("GET") //don't need app and WS we can get it from another place for sure!
 	workspaceAPI(wr, "/metadata/generate/{namespace}/{name}", controller.Generate).Methods("POST")
 
 	workspaceAPI(wr, "/collections/meta/{collectionname}", controller.GetCollectionMetadata).Methods("GET")

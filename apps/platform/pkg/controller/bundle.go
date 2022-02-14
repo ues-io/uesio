@@ -3,7 +3,6 @@ package controller
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -14,10 +13,24 @@ import (
 
 func Bundle(w http.ResponseWriter, r *http.Request) {
 
-	vars := mux.Vars(r)
-	app := vars["app"] //don't need app and WS we can get it from another place for sure!
-	workspace := vars["workspace"]
 	session := middleware.GetSession(r)
+	app := session.GetContextAppName()
+
+	if app == "" {
+		msg := "Error creating a new bundle, missing app"
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	workspace := session.GetWorkspace()
+
+	if workspace == nil {
+		msg := "Error creating a new bundle, missing workspace"
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
 
 	var bundles meta.BundleCollection
 
@@ -41,11 +54,9 @@ func Bundle(w http.ResponseWriter, r *http.Request) {
 		},
 	}, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		msg := "Error creating a new bundle, " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
@@ -56,34 +67,31 @@ func Bundle(w http.ResponseWriter, r *http.Request) {
 	} else {
 		version, err = bundles.GetItem(0).(*meta.Bundle).GetNextPatchVersionString()
 		if err != nil {
-			logger.LogErrorWithTrace(r, err)
-			respondJSON(w, r, &BotResponse{
-				Success: false,
-				Error:   err.Error(),
-			})
+			msg := "Error creating a new bundle, " + err.Error()
+			logger.LogWithTrace(r, msg, logger.ERROR)
+			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
 	}
 
 	wsbs, err := bundlestore.GetBundleStoreByType("workspace")
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		msg := "Error creating a new bundle, " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
 
-	err = datasource.CreateBundle(app, workspace, version, "", wsbs, session)
-
+	err = datasource.CreateBundle(app, workspace.Name, version, "", wsbs, session)
 	if err != nil {
-		logger.LogErrorWithTrace(r, err)
-		respondJSON(w, r, &BotResponse{
-			Success: false,
-			Error:   err.Error(),
-		})
+		msg := "Error creating a new bundle, " + err.Error()
+		logger.LogWithTrace(r, msg, logger.ERROR)
+		http.Error(w, msg, http.StatusBadRequest)
 		return
 	}
+
+	respondJSON(w, r, &BotResponse{
+		Success: true,
+	})
 
 }
