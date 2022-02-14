@@ -1,0 +1,15 @@
+name: listview
+dialect: "JAVASCRIPT"
+type: "GENERATOR"
+params:
+  - name: name
+    prompt: View name
+  - name: collection
+    prompt: Collection
+    type: METADATA
+    metadataType: COLLECTION
+  - name: fields
+    prompt: fields
+    type: METADATAMULTI
+    metadataType: FIELD
+    grouping: collection

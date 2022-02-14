@@ -78,6 +78,7 @@ type BotParam struct {
 	Prompt       string `yaml:"prompt" uesio:"studio.prompt" json:"prompt"`
 	Type         string `yaml:"type" uesio:"studio.type" json:"type"`
 	MetadataType string `yaml:"metadataType" uesio:"studio.metadatatype" json:"metadataType"`
+	Grouping     string `yaml:"grouping" uesio:"studio.grouping" json:"grouping"`
 }
 
 // Bot struct

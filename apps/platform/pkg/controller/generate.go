@@ -17,7 +17,7 @@ func Generate(w http.ResponseWriter, r *http.Request) {
 	namespace := vars["namespace"]
 	name := vars["name"]
 
-	var params map[string]string
+	var params map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
 		msg := "Invalid request format: " + err.Error()
