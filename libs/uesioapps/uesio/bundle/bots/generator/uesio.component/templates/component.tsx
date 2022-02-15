@@ -1,6 +1,11 @@
 import { FunctionComponent } from "react"
-import { styles } from "@uesio/ui"
-import { NewComponentProps } from "./componentdefinition"
+import { styles, definition } from "@uesio/ui"
+
+type NewComponentDefinition = {}
+
+interface NewComponentProps extends definition.BaseProps {
+	definition: NewComponentDefinition
+}
 
 const NewComponentTag: FunctionComponent<NewComponentProps> = (props) => {
 	const classes = styles.useStyles(
