@@ -238,6 +238,7 @@ export {
 	getVersion,
 	getWorkspace,
 	setWorkspace,
+	setActiveWorkspace,
 	getMetadataList,
 	getHostUrl,
 	setHostUrl,
