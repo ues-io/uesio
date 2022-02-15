@@ -12,6 +12,8 @@ const METADATA = {
 	ROUTE: "routes",
 	PROFILE: "profiles",
 	COMPONENTVARIANT: "componentvariants",
+	COMPONENTPACK: "componentpacks",
+	COMPONENT: "components",
 	FILE: "files",
 	LABEL: "labels",
 }

@@ -103,7 +103,11 @@ const getKeyFromPath = (
 	path: string,
 	grouping?: string
 ) => {
-	if (metadataType === "COLLECTION") {
+	if (
+		metadataType === "COLLECTION" ||
+		metadataType === "VIEW" ||
+		metadataType === "THEME"
+	) {
 		if (grouping) {
 			throw new Error("Conditions not allowed for this type")
 		}
@@ -131,6 +135,18 @@ const getKeyFromPath = (
 		}
 		return parts[1].substring(0, parts[1].length - 5)
 	}
+	if (metadataType === "COMPONENT") {
+		if (grouping) {
+			throw new Error("Conditions not allowed for this type")
+		}
+		// TODO: Should be os path separator
+		const parts = path.split("/")
+		if (parts.length !== 3 || !parts[2].endsWith(".tsx")) {
+			// Ignore this file
+			return ""
+		}
+		return parts[1]
+	}
 	return ""
 }
 
@@ -152,9 +168,14 @@ const getLocalMetadataItemsList = async (
 	const metadataDir = metadata.METADATA[metadataType]
 	const dirPath = "./bundle/" + metadataDir + "/"
 	const files = await getFiles(dirPath)
-	return files.map((fileName) =>
-		getKeyFromPath(metadataType, fileName.slice(dirPath.length), grouping)
-	)
+	return files.flatMap((fileName) => {
+		const fileKey = getKeyFromPath(
+			metadataType,
+			fileName.slice(dirPath.length),
+			grouping
+		)
+		return fileKey ? [fileKey] : []
+	})
 }
 
 const getApp = async (): Promise<string> => {
@@ -181,6 +202,10 @@ const getMetadataList = async (
 	const bundleInfo = await getBundleInfo()
 	// First get items installed here.
 	const localItems = await getLocalMetadataItemsList(metadataType, grouping)
+	// For components, only return local ones
+	if (metadataType === "COMPONENT") {
+		return localItems
+	}
 	for (const dep in bundleInfo.dependencies) {
 		const metadataDir = metadata.METADATA[metadataType]
 		const groupingUrl = grouping ? `/${grouping}` : ""
@@ -213,6 +238,7 @@ export {
 	getVersion,
 	getWorkspace,
 	setWorkspace,
+	setActiveWorkspace,
 	getMetadataList,
 	getHostUrl,
 	setHostUrl,

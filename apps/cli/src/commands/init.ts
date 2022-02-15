@@ -1,6 +1,13 @@
 import { Command } from "@oclif/command"
+import inquirer from "inquirer"
 import { authorize } from "../auth/login"
-import { runGenerator } from "../generate/generate"
+import unzipper from "unzipper"
+import { metadataNameValidator } from "../generate/prompts"
+import { post } from "../request/request"
+import { getMetadataByTypePlural } from "../metadata/metadata"
+import { load } from "../wire/load"
+import { createChange, save } from "../wire/save"
+import { setActiveWorkspace } from "../config/config"
 
 export default class Init extends Command {
 	static description = "run a generator bot"
@@ -12,6 +19,65 @@ export default class Init extends Command {
 	async run(): Promise<void> {
 		//const { args /*, flags */ } = this.parse(Init)
 		const user = await authorize()
-		return runGenerator("uesio", "init", user)
+
+		const { name } = await inquirer.prompt({
+			name: "name",
+			message: "App Name",
+			type: "input",
+			validate: metadataNameValidator,
+		})
+
+		const appMetadata = getMetadataByTypePlural("apps")
+		const workspaceMetadata = getMetadataByTypePlural("workspaces")
+		const appresponse = await load(appMetadata, user)
+		const appNames = appresponse.wires[0].data?.map(
+			(app) => app["uesio.id"]
+		)
+
+		if (!appNames) {
+			throw new Error("Could not query for apps")
+		}
+		if (!appNames.includes(name)) {
+			await save(
+				appMetadata,
+				user,
+				createChange([
+					{
+						"studio.name": name,
+						"studio.description": "A new app",
+						"studio.color": "#00FF00",
+					},
+				])
+			)
+			await save(
+				workspaceMetadata,
+				user,
+				createChange([
+					{
+						"studio.name": "dev",
+						"studio.app": name,
+					},
+				])
+			)
+			await setActiveWorkspace(name, "dev")
+		}
+
+		const response = await post(
+			`version/uesio/uesio/v0.0.1/metadata/generate/init`,
+			JSON.stringify({ name }),
+			user.cookie
+		)
+
+		if (!response || !response.body) throw new Error("invalid response")
+
+		response.body
+			.pipe(
+				unzipper.Extract({
+					path: "",
+				})
+			)
+			.on("close", () => {
+				console.log("New bundle extracted!")
+			})
 	}
 }

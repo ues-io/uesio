@@ -5,6 +5,11 @@
 		"color": "#2f4b7c"
 	},
 	{
+		"name": "io",
+		"description": "A Component library for uesio",
+		"color": "#2f4b7c"
+	},
+	{
 		"name": "studio",
 		"description": "The Uesio Configuration App",
 		"color": "#ff7c43"

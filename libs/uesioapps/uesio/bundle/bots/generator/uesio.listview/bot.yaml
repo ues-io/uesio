@@ -4,6 +4,7 @@ type: "GENERATOR"
 params:
   - name: name
     prompt: View name
+    type: METADATANAME
   - name: collection
     prompt: Collection
     type: METADATA

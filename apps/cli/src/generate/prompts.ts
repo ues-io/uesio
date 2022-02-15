@@ -34,6 +34,14 @@ const getGrouping = (param: BotParam, answers: PromptAnswers): string => {
 	return groupingAnswer
 }
 
+const metadataNameValidator = (input: string) => {
+	const errorMessage =
+		"Failed metadata validation, no capital letters or special characters allowed: " +
+		input
+	const regex = new RegExp("^[a-z0-9_]+$")
+	return regex.test(input) || errorMessage
+}
+
 const promptRenderers: Record<string, PromptRenderer> = {
 	TEXT: async (param) =>
 		inquirer.prompt({
@@ -46,13 +54,7 @@ const promptRenderers: Record<string, PromptRenderer> = {
 			name: param.name,
 			message: param.prompt,
 			type: "input",
-			validate: (input) => {
-				const errorMessage =
-					"Failed metadata validation, no capital letters or special characters allowed: " +
-					input
-				const regex = new RegExp("^[a-z0-9_]+$")
-				return regex.test(input) || errorMessage
-			},
+			validate: metadataNameValidator,
 		}),
 	METADATA: async (param, answers, app, version, user) => {
 		const metadataType = param.metadataType
@@ -69,8 +71,6 @@ const promptRenderers: Record<string, PromptRenderer> = {
 		const metadataType = param.metadataType
 		if (!metadataType) throw new Error("Bad Metadata Type: " + metadataType)
 		const grouping = getGrouping(param, answers)
-		console.log("meh")
-		console.log(grouping)
 		const items = await getMetadataList(
 			metadataType,
 			app,
@@ -142,4 +142,4 @@ const getAnswers = async (
 	return getPrompts(await parseJSON(paramsResponse), app, version, user)
 }
 
-export { getAnswers }
+export { getAnswers, PromptAnswers, metadataNameValidator }

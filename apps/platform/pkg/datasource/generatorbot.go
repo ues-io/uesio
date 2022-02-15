@@ -92,6 +92,11 @@ func (gba *GeneratorBotAPI) GenerateFile(filename string, params map[string]inte
 	if err != nil {
 		return err
 	}
+	// Don't do the merge if we don't have params
+	if params == nil || len(params) == 0 {
+		gba.itemStreams.AddFile(filename, "", strings.NewReader(templateString))
+		return nil
+	}
 	r := bundlestore.GetFileReader(func(data io.Writer) error {
 		return mergeTemplate(data, params, templateString)
 	})
