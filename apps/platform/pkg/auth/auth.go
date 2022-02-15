@@ -163,6 +163,7 @@ func CheckProvisionWhitelist(claims *AuthenticationClaims, site *meta.Site) erro
 	}
 
 	domainWhitelist := map[string]bool{
+		"thegreenlink.co":     true,
 		"thecloudmasters.com": true,
 		"uesio.com":           true,
 		"tfbnw.net":           true,

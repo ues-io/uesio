@@ -103,7 +103,11 @@ const getKeyFromPath = (
 	path: string,
 	grouping?: string
 ) => {
-	if (metadataType === "COLLECTION") {
+	if (
+		metadataType === "COLLECTION" ||
+		metadataType === "VIEW" ||
+		metadataType === "THEME"
+	) {
 		if (grouping) {
 			throw new Error("Conditions not allowed for this type")
 		}

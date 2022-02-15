@@ -4,3 +4,4 @@ type: "GENERATOR"
 params:
   - name: name
     prompt: App Name
+    type: METADATANAME

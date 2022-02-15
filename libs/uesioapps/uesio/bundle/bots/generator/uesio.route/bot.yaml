@@ -4,13 +4,14 @@ type: "GENERATOR"
 params:
   - name: name
     prompt: Route name
+    type: METADATANAME
   - name: path
     prompt: Path
   - name: view
     prompt: select a view
     type: METADATA
-    metadataType: views
+    metadataType: VIEW
   - name: theme
     prompt: select a theme
     type: METADATA
-    metadataType: themes
+    metadataType: THEME

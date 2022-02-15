@@ -4,3 +4,4 @@ type: "GENERATOR"
 params:
   - name: name
     prompt: Collection Name
+    type: METADATANAME
