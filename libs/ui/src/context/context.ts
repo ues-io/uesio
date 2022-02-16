@@ -36,6 +36,7 @@ type MergeType =
 	| "File"
 	| "Site"
 	| "Label"
+	| "SelectList"
 
 type ContextFrame = {
 	wire?: string
@@ -60,6 +61,44 @@ type MergeHandler = (
 	context: Context,
 	ancestors: number
 ) => string
+
+const handleMergeError = ({
+	mergeType,
+	expression,
+	error,
+	viewDefId,
+}: {
+	mergeType: MergeType
+	expression: string
+	error: Error
+	viewDefId: string
+}) => {
+	const title = "Error in Template merge"
+	const getErrorFeedback = () => {
+		const missingMergeType = {
+			msg: "mergeType is undefined",
+		}
+		const invalidMergeType = {
+			msg: `${mergeType} is not a valid mergeType.`,
+			validMergeTypes: Object.keys(handlers),
+		}
+		const noValue = {
+			msg: "No value found",
+			mergeType,
+		}
+		if (!mergeType) return missingMergeType
+		if (!(mergeType in handlers)) return invalidMergeType
+		if (error.message === "noValue") return noValue
+
+		return {
+			mergeType,
+			expression,
+			viewDefId,
+		}
+	}
+
+	return console.log(title, { ...getErrorFeedback(), viewDefId, expression })
+}
 
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
@@ -103,6 +142,13 @@ const handlers: Record<MergeType, MergeHandler> = {
 		}
 		return ""
 	},
+	SelectList: (expression, context) => {
+		const wire = context.getWire()
+		const fieldMetadata = wire?.getCollection().getField(expression)
+		const selectListMetadata = fieldMetadata?.getSelectOptions()
+		const value = context.getRecord()?.getFieldValue(expression)
+		return selectListMetadata?.find((el) => el.value === value)?.label || ""
+	},
 	File: (expression, context) =>
 		`url("${getURLFromFullName(context, expression)}")`,
 	Site: (expression, context) => {
@@ -128,11 +174,23 @@ const inject = (template: string, context: Context): string =>
 		const mergeTypeName = mergeSplit.pop() as MergeType
 		const mergeAncestors = mergeSplit.length
 
-		return handlers[mergeTypeName || "Record"](
-			expression,
-			context,
-			mergeAncestors
-		)
+		try {
+			const value = handlers[mergeTypeName || "Record"](
+				expression,
+				context,
+				mergeAncestors
+			)
+			if (!value) throw new Error("noValue")
+			return value
+		} catch (error) {
+			handleMergeError({
+				mergeType,
+				expression,
+				error,
+				viewDefId: context.getViewDefId() || "",
+			})
+			return ""
+		}
 	})
 
 const getViewDef = (viewDefId: string | undefined) =>
