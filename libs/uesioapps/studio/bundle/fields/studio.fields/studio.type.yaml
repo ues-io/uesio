@@ -1,5 +1,5 @@
 name: type
-collection: stuio.fields
+collection: studio.fields
 type: SELECT
 selectList: studio.fieldtypes
 label: Type
