@@ -203,6 +203,10 @@ func (f *Field) UnmarshalYAML(node *yaml.Node) error {
 	if !ok {
 		return errors.New("Invalid Field Type for Field: " + f.GetKey() + " : " + fieldType)
 	}
+	collection := getNodeValueAsString(node, "collection")
+	if f.CollectionRef != collection {
+		return errors.New("Invalid Collection Value for Field: " + f.GetKey() + " : " + collection)
+	}
 	if fieldType == "REFERENCE" {
 		err := validateReferenceField(node, f.GetKey())
 		if err != nil {
