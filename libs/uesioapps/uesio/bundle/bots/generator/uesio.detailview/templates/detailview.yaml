@@ -3,6 +3,9 @@ wires:
   ${wirename}:
     collection: ${collection}
     fields: ${fields}
+    conditions:
+      - field: uesio.id
+        value: $Param{id}
 # Components determine the layout and composition of your view
 components:
   - io.titlebar:
@@ -11,12 +14,6 @@ components:
       actions:
         - io.group:
             components:
-              - io.button:
-                  signals:
-                    - signal: wire/CREATE_RECORD
-                      wire: ${wirename}
-                  text: Create
-                  uesio.variant: io.secondary
               - io.button:
                   signals:
                     - signal: wire/SAVE
@@ -38,13 +35,4 @@ components:
                   uesio.variant: io.secondary
   - io.box:
       uesio.variant: io.section
-      components:
-        - io.table:
-            rowactions:
-              - text: Delete
-                signals:
-                  - signal: wire/TOGGLE_DELETE_STATUS
-            columns: ${tableColumns}
-            id: table1
-            mode: EDIT
-            wire: ${wirename}
+      components: ${formFields}

@@ -1,4 +1,4 @@
-name: listview
+name: detailview
 dialect: "JAVASCRIPT"
 type: "GENERATOR"
 params:
