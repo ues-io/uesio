@@ -1,0 +1,4 @@
+name: onsave2
+collection: crm.contacts
+type: BEFORESAVE
+dialect: TYPESCRIPT

@@ -18,6 +18,7 @@ import * as platform from "./platform/platform"
 import * as metadata from "./metadataexports"
 import * as notification from "./notificationexports"
 import * as panel from "./panelexports"
+import * as bot from "./botexports"
 import { materialIcons } from "./materialiconsexports"
 import { register } from "./component/registry"
 
@@ -42,5 +43,6 @@ export {
 	styles,
 	util,
 	wire,
+	bot,
 	materialIcons,
 }
