@@ -159,7 +159,7 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 	}
 
 	// Traverse the node to find merges
-	err = mergeNodes(node.Content[0], params)
+	err = mergeNodes(node.Content[0], params, true)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func mergeYamlString(templateString string, params map[string]interface{}) (*yam
 
 }
 
-func mergeNodes(node *yaml.Node, params map[string]interface{}) error {
+func mergeNodes(node *yaml.Node, params map[string]interface{}, allowYaml bool) error {
 	if node == nil || params == nil {
 		return nil
 	}
@@ -176,23 +176,14 @@ func mergeNodes(node *yaml.Node, params map[string]interface{}) error {
 	if node.Kind == yaml.MappingNode {
 		for i := range node.Content {
 			if i%2 != 0 {
-				if node.Content[i].Kind == yaml.ScalarNode {
-					re := regexp.MustCompile("\\$\\{(.*?)\\}")
-					match := re.FindStringSubmatch(node.Content[i].Value)
-					for _, merge := range match {
-						mergeValue := params[merge]
-						mergeString, ok := mergeValue.(string)
-						if ok && mergeString != "" {
-							newNode, err := mergeYamlString(mergeString, nil)
-							if err != nil {
-								return err
-							}
-							// Replace that crap
-							node.Content[i] = newNode.Content[0]
-						}
-					}
-				} else {
-					mergeNodes(node.Content[i], params)
+				err := mergeNodes(node.Content[i], params, true)
+				if err != nil {
+					return err
+				}
+			} else {
+				err := mergeNodes(node.Content[i], params, false)
+				if err != nil {
+					return err
 				}
 			}
 		}
@@ -200,7 +191,31 @@ func mergeNodes(node *yaml.Node, params map[string]interface{}) error {
 
 	if node.Kind == yaml.SequenceNode {
 		for i := range node.Content {
-			mergeNodes(node.Content[i], params)
+			err := mergeNodes(node.Content[i], params, false)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	if node.Kind == yaml.ScalarNode {
+		re := regexp.MustCompile("\\$\\{(.*?)\\}")
+		match := re.FindStringSubmatch(node.Value)
+		for _, merge := range match {
+			mergeValue := params[merge]
+			mergeString, ok := mergeValue.(string)
+			if ok && mergeString != "" {
+				if allowYaml {
+					newNode, err := mergeYamlString(mergeString, nil)
+					if err != nil {
+						return err
+					}
+					// Replace that crap
+					*node = *newNode.Content[0]
+				} else {
+					node.SetString(mergeString)
+				}
+			}
 		}
 	}
 

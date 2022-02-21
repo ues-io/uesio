@@ -1,11 +1,15 @@
-name: articles
+name: article
 definition:
   # Wires connect to data in collections
   wires:
-    ${wirename}:
+    articleWire:
       collection: cms.articles
       fields:
+        cms.content:
         cms.name:
+      conditions:
+        - field: uesio.id
+          value: $Param{id}
   # Components determine the layout and composition of your view
   components:
     - io.titlebar:
@@ -16,21 +20,15 @@ definition:
               components:
                 - io.button:
                     signals:
-                      - signal: wire/CREATE_RECORD
-                        wire: ${wirename}
-                    text: Create
-                    uesio.variant: io.secondary
-                - io.button:
-                    signals:
                       - signal: wire/SAVE
                         wires:
-                          - ${wirename}
+                          - articleWire
                     text: Save
                     uesio.variant: io.secondary
                 - io.button:
                     signals:
                       - signal: wire/CANCEL
-                        wire: ${wirename}
+                        wire: articleWire
                     text: Cancel
                     uesio.variant: io.secondary
                 - io.button:
@@ -42,14 +40,5 @@ definition:
     - io.box:
         uesio.variant: io.section
         components:
-          - io.table:
-              rowactions:
-                - text: Delete
-                  signals:
-                    - signal: wire/TOGGLE_DELETE_STATUS
-              columns:
-                - io.column:
-                    field: cms.name
-              id: table1
-              mode: EDIT
-              wire: ${wirename}
+          - io.field: cms.content
+          - io.field: cms.name

@@ -10,6 +10,7 @@ type BotParam = {
 	type?: string
 	metadataType?: metadata.MetadataType
 	grouping?: string
+	default?: string
 }
 
 type PromptAnswers = Record<string, string>
@@ -22,16 +23,20 @@ type PromptRenderer = (
 	user: User
 ) => Promise<PromptAnswers>
 
-const getGrouping = (param: BotParam, answers: PromptAnswers): string => {
-	const grouping = param.grouping
-	if (!grouping) {
-		return ""
-	}
-	const groupingAnswer = answers[grouping]
-	if (!groupingAnswer) {
-		return ""
-	}
-	return groupingAnswer
+const mergeParam = (
+	template: string | undefined,
+	answers: PromptAnswers
+): string => {
+	if (!template) return ""
+	return template.replace(
+		/\$([.\w]*){(.*?)}/g,
+		(x, mergeType, expression) => {
+			if (mergeType === "Answer") {
+				return answers[expression] || ""
+			}
+			return ""
+		}
+	)
 }
 
 const metadataNameValidator = (input: string) => {
@@ -43,11 +48,12 @@ const metadataNameValidator = (input: string) => {
 }
 
 const promptRenderers: Record<string, PromptRenderer> = {
-	TEXT: async (param) =>
+	TEXT: async (param, answers) =>
 		inquirer.prompt({
 			name: param.name,
 			message: param.prompt,
 			type: "input",
+			default: mergeParam(param.default, answers),
 		}),
 	METADATANAME: async (param) =>
 		inquirer.prompt({
@@ -70,13 +76,12 @@ const promptRenderers: Record<string, PromptRenderer> = {
 	METADATAMULTI: async (param, answers, app, version, user) => {
 		const metadataType = param.metadataType
 		if (!metadataType) throw new Error("Bad Metadata Type: " + metadataType)
-		const grouping = getGrouping(param, answers)
 		const items = await getMetadataList(
 			metadataType,
 			app,
 			version,
 			user,
-			grouping
+			mergeParam(param.grouping, answers)
 		)
 		return inquirer.prompt({
 			name: param.name,

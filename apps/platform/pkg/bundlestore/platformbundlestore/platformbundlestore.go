@@ -81,7 +81,12 @@ func (b *PlatformBundleStore) GetItem(item meta.BundleableItem, version string, 
 		return err
 	}
 	defer stream.Close()
-	return bundlestore.DecodeYAML(item, stream)
+	err = bundlestore.DecodeYAML(item, stream)
+	if err != nil {
+		return err
+	}
+	bundle.AddItemToCache(item, namespace, version)
+	return nil
 }
 
 func (b *PlatformBundleStore) HasAny(group meta.BundleableGroup, namespace, version string, conditions meta.BundleConditions, session *sess.Session) (bool, error) {
