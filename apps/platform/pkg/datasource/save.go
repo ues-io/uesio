@@ -213,6 +213,11 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
+			err = CheckReferentialIntegrity(op, collectionMetadata, &metadataResponse, adapter, credentials, session)
+			if err != nil {
+				return err
+			}
+
 			autonumber, err := getAutonumber(len(*op.Inserts), adapter, collectionMetadata, credentials)
 			if err != nil {
 				return err
