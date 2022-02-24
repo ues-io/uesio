@@ -35,6 +35,12 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+        - field: studio.collection
+          valueSource: PARAM
+          param: collectionname
+        - field: studio.type
+          valueSource: PARAM
+          param: bottype
         - field: studio.name
           valueSource: PARAM
           param: botname

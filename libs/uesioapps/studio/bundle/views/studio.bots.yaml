@@ -23,6 +23,7 @@ definition:
         uesio.id:
         studio.name:
         studio.type:
+        studio.collection:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -102,10 +103,10 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${studio.collection}/${studio.type}/${studio.name}"
                                 content:
                                   - io.text:
-                                      text: ${studio.type} - ${studio.name}
+                                      text: ${studio.collection} - ${studio.type} - ${studio.name}
                                 avatar:
                                   - io.text:
                                       uesio.variant: io.icon
