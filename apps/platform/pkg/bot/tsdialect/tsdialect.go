@@ -1,6 +1,7 @@
 package tsdialect
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dop251/goja"
@@ -22,7 +23,36 @@ func (c *Console) Log(message string) {
 type TSDialect struct {
 }
 
-func runBot(contents string, api interface{}, errorFunc func(string)) error {
+func getBotProgram(bot *meta.Bot) (*goja.Program, error) {
+
+	program, ok := GetBotFromCache(bot.ID, bot.UpdatedAt)
+	if ok {
+		return program, nil
+	}
+
+	result := esbuild.Transform(bot.FileContents, esbuild.TransformOptions{
+		Loader: esbuild.LoaderTS,
+	})
+
+	if len(result.Errors) != 0 {
+		return nil, errors.New("Transpile Code Error")
+	}
+
+	js := string(result.Code)
+
+	program, err := goja.Compile("BotTestName", "("+js+")", true)
+
+	if err != nil {
+		return nil, errors.New("Compile Code Error: " + err.Error())
+	}
+
+	AddBotToCache(program, bot.ID, bot.UpdatedAt)
+
+	return program, nil
+
+}
+
+func runBot(program *goja.Program, api interface{}, errorFunc func(string)) error {
 	// TODO: We could possibly not start a new VM for every bot we run.
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
@@ -31,20 +61,11 @@ func runBot(contents string, api interface{}, errorFunc func(string)) error {
 		return err
 	}
 
-	result := esbuild.Transform(contents, esbuild.TransformOptions{
-		Loader: esbuild.LoaderTS,
-	})
-
-	if len(result.Errors) != 0 {
-		return err
-	}
-
-	js := string(result.Code)
-
-	runner, err := vm.RunString("(" + js + ")")
+	runner, err := vm.RunProgram(program)
 	if err != nil {
 		return err
 	}
+
 	change, ok := goja.AssertFunction(runner)
 	if !ok {
 		return err
@@ -68,17 +89,37 @@ func runBot(contents string, api interface{}, errorFunc func(string)) error {
 }
 
 func (b *TSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
+	program, err := getBotProgram(bot)
+	if err != nil {
+		return err
+	}
+
+	return runBot(program, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
+	program, err := getBotProgram(bot)
+	if err != nil {
+		return err
+	}
+
+	return runBot(program, botAPI, botAPI.AddError)
 }
 
 func (b *TSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, nil)
+	program, err := getBotProgram(bot)
+	if err != nil {
+		return err
+	}
+
+	return runBot(program, botAPI, nil)
 }
 
 func (b *TSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, nil)
+	program, err := getBotProgram(bot)
+	if err != nil {
+		return err
+	}
+
+	return runBot(program, botAPI, nil)
 }
