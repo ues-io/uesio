@@ -47,6 +47,8 @@ definition:
         studio.selectlist:
         studio.validate:
         studio.languagelabel:
+        studio.number:
+        studio.subfields:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -193,8 +195,36 @@ definition:
                                             fieldId: studio.file->studio.filecollection
                                             metadataType: "FILECOLLECTION"
                                             label: "File Collection"
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "MAP"
+                                      components:
+                                        - io.field:
+                                            fieldId: studio.subfields
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "FILE"
+                                      components:
                                         - io.field:
                                             fieldId: studio.file->studio.accept
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "NUMBER"
+                                      components:
+                                        - io.field:
+                                            fieldId: studio.number->studio.decimals
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "MULTISELECT"
+                                      components:
+                                        - studio.metadatafield:
+                                            fieldId: studio.selectlist
+                                            metadataType: "SELECTLIST"
+                                            label: "Select List"
                                   - io.field:
                                       fieldId: studio.validate->studio.type
                                   - io.field:

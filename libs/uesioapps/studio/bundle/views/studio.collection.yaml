@@ -73,6 +73,7 @@ definition:
         studio.label:
         studio.languagelabel:
         studio.autonumber:
+        studio.number:
       init:
         query: false
         create: true
@@ -350,6 +351,22 @@ definition:
                         fieldId: studio.autonumber->studio.prefix
                     - io.field:
                         fieldId: studio.autonumber->studio.leadingzeros
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "NUMBER"
+                  components:
+                    - io.field:
+                        fieldId: studio.number->studio.decimals
+              - io.box:
+                  uesio.display:
+                    - field: studio.type
+                      value: "MULTISELECT"
+                  components:
+                    - studio.metadatafield:
+                        fieldId: studio.selectlist
+                        metadataType: "SELECTLIST"
+                        label: "Select List"
       actions:
         - io.button:
             uesio.variant: "io.primary"
