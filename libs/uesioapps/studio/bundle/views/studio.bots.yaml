@@ -103,7 +103,7 @@ definition:
                                 uesio.variant: io.item
                                 signals:
                                   - signal: "route/NAVIGATE"
-                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${studio.collection}/${studio.type}/${studio.name}"
+                                    path: "app/$Param{appname}/workspace/$Param{workspacename}/bots/${uesio.id}"
                                 content:
                                   - io.text:
                                       text: ${studio.collection} - ${studio.type} - ${studio.name}

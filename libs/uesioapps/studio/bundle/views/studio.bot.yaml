@@ -35,15 +35,9 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
-        - field: studio.collection
+        - field: uesio.id
           valueSource: PARAM
-          param: collectionname
-        - field: studio.type
-          valueSource: PARAM
-          param: bottype
-        - field: studio.name
-          valueSource: PARAM
-          param: botname
+          param: botid
   # Components are how we describe the layout of our view
   components:
     - io.grid:
@@ -59,7 +53,7 @@ definition:
                     params:
                       itemType: bots
                       itemIcon: smart_toy
-                      itemName: $Param{botname}
+                      itemName: $Param{botid}
           - io.griditem:
               uesio.variant: studio.leftbar
               components:

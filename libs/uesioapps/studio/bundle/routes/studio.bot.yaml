@@ -1,4 +1,4 @@
 name: bot
-path: app/{appname}/workspace/{workspacename}/bots/{collectionname}/{bottype}/{botname}
+path: app/{appname}/workspace/{workspacename}/bots/{botid}
 view: studio.bot
 theme: studio.default
