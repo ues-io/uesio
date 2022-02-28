@@ -2,3 +2,18 @@ name: subfields
 collection: studio.fields
 type: LIST
 label: Sub Fields
+subtype: MAP
+subfields:
+  - name: studio.name
+    label: Name
+    type: TEXT
+  - name: studio.label
+    label: Label
+    type: TEXT
+  - name: studio.type
+    label: Type
+    type: SELECT
+    selectList: studio.fieldtypes
+  - name: studio.selectlist
+    label: Select List
+    type: TEXT
