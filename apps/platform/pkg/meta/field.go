@@ -52,6 +52,12 @@ type ReferenceMetadata struct {
 	OnDelete   string `json:"ondelete" yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 }
 
+// ReferenceMetadata type
+type ReferenceGroupMetadata struct {
+	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
+	Field      string `json:"field" yaml:"field,omitempty" uesio:"studio.field"`
+}
+
 // AutoNumberMetadata struct
 type AutoNumberMetadata struct {
 	Prefix       string `json:"prefix" yaml:"prefix,omitempty" uesio:"studio.prefix"`
@@ -60,53 +66,55 @@ type AutoNumberMetadata struct {
 
 // Field struct
 type Field struct {
-	ID                 string              `yaml:"-" uesio:"uesio.id"`
-	Name               string              `yaml:"name" uesio:"studio.name"`
-	CollectionRef      string              `yaml:"collection" uesio:"studio.collection"`
-	Namespace          string              `yaml:"-" uesio:"-"`
-	Type               string              `yaml:"type" uesio:"studio.type"`
-	Label              string              `yaml:"label" uesio:"studio.label"`
-	ReadOnly           bool                `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
-	CreateOnly         bool                `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
-	SelectList         string              `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
-	Workspace          *Workspace          `yaml:"-" uesio:"studio.workspace"`
-	Required           bool                `yaml:"required,omitempty" uesio:"studio.required"`
-	NumberMetadata     *NumberMetadata     `yaml:"number,omitempty" uesio:"studio.number"`
-	FileMetadata       *FileMetadata       `yaml:"file,omitempty" uesio:"studio.file"`
-	ReferenceMetadata  *ReferenceMetadata  `yaml:"reference,omitempty" uesio:"studio.reference"`
-	ValidationMetadata *ValidationMetadata `yaml:"validate,omitempty" uesio:"studio.validate"`
-	AutoNumberMetadata *AutoNumberMetadata `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
-	AutoPopulate       string              `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
-	itemMeta           *ItemMeta           `yaml:"-" uesio:"-"`
-	CreatedBy          *User               `yaml:"-" uesio:"uesio.createdby"`
-	Owner              *User               `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy          *User               `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt          int64               `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt          int64               `yaml:"-" uesio:"uesio.createdat"`
-	SubFields          []SubField          `yaml:"subfields,omitempty" uesio:"studio.subfields"`
-	SubType            string              `yaml:"subtype,omitempty" uesio:"studio.subtype"`
-	LanguageLabel      string              `yaml:"languageLabel,omitempty" uesio:"studio.languagelabel"`
-	ColumnName         string              `yaml:"columnname,omitempty" uesio:"studio.columnname"`
+	ID                     string                  `yaml:"-" uesio:"uesio.id"`
+	Name                   string                  `yaml:"name" uesio:"studio.name"`
+	CollectionRef          string                  `yaml:"collection" uesio:"studio.collection"`
+	Namespace              string                  `yaml:"-" uesio:"-"`
+	Type                   string                  `yaml:"type" uesio:"studio.type"`
+	Label                  string                  `yaml:"label" uesio:"studio.label"`
+	ReadOnly               bool                    `yaml:"readOnly,omitempty" uesio:"studio.readonly"`
+	CreateOnly             bool                    `yaml:"createOnly,omitempty" uesio:"studio.createonly"`
+	SelectList             string                  `yaml:"selectList,omitempty" uesio:"studio.selectlist"`
+	Workspace              *Workspace              `yaml:"-" uesio:"studio.workspace"`
+	Required               bool                    `yaml:"required,omitempty" uesio:"studio.required"`
+	NumberMetadata         *NumberMetadata         `yaml:"number,omitempty" uesio:"studio.number"`
+	FileMetadata           *FileMetadata           `yaml:"file,omitempty" uesio:"studio.file"`
+	ReferenceMetadata      *ReferenceMetadata      `yaml:"reference,omitempty" uesio:"studio.reference"`
+	ReferenceGroupMetadata *ReferenceGroupMetadata `yaml:"referenceGroup,omitempty" uesio:"studio.referencegroup"`
+	ValidationMetadata     *ValidationMetadata     `yaml:"validate,omitempty" uesio:"studio.validate"`
+	AutoNumberMetadata     *AutoNumberMetadata     `yaml:"autonumber,omitempty" uesio:"studio.autonumber"`
+	AutoPopulate           string                  `yaml:"autopopulate,omitempty" uesio:"studio.autopopulate"`
+	itemMeta               *ItemMeta               `yaml:"-" uesio:"-"`
+	CreatedBy              *User                   `yaml:"-" uesio:"uesio.createdby"`
+	Owner                  *User                   `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy              *User                   `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt              int64                   `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt              int64                   `yaml:"-" uesio:"uesio.createdat"`
+	SubFields              []SubField              `yaml:"subfields,omitempty" uesio:"studio.subfields"`
+	SubType                string                  `yaml:"subtype,omitempty" uesio:"studio.subtype"`
+	LanguageLabel          string                  `yaml:"languageLabel,omitempty" uesio:"studio.languagelabel"`
+	ColumnName             string                  `yaml:"columnname,omitempty" uesio:"studio.columnname"`
 }
 
 // GetFieldTypes function
 func GetFieldTypes() map[string]bool {
 	return map[string]bool{
-		"TEXT":        true,
-		"NUMBER":      true,
-		"LONGTEXT":    true,
-		"CHECKBOX":    true,
-		"MULTISELECT": true,
-		"SELECT":      true,
-		"REFERENCE":   true,
-		"FILE":        true,
-		"USER":        true,
-		"LIST":        true,
-		"DATE":        true,
-		"MAP":         true,
-		"TIMESTAMP":   true,
-		"EMAIL":       true,
-		"AUTONUMBER":  true,
+		"TEXT":           true,
+		"NUMBER":         true,
+		"LONGTEXT":       true,
+		"CHECKBOX":       true,
+		"MULTISELECT":    true,
+		"SELECT":         true,
+		"REFERENCE":      true,
+		"FILE":           true,
+		"USER":           true,
+		"LIST":           true,
+		"DATE":           true,
+		"MAP":            true,
+		"TIMESTAMP":      true,
+		"EMAIL":          true,
+		"AUTONUMBER":     true,
+		"REFERENCEGROUP": true,
 	}
 }
 
