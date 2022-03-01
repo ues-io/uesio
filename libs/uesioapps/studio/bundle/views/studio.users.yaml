@@ -38,6 +38,7 @@ definition:
         uesio.firstname:
         uesio.lastname:
         uesio.federation_id:
+        uesio.picture:
       init:
         query: false
   events:
@@ -88,12 +89,19 @@ definition:
                                 content:
                                   - io.text:
                                       text: ${uesio.firstname} ${uesio.lastname}
+                                      element: div
+                                  - io.text:
+                                      text: ${uesio.id}
+                                      uesio.styles:
+                                        root:
+                                          fontSize: 9pt
+                                          color: "#666"
+                                      element: div
                                 signals:
                                   - signal: "route/NAVIGATE"
                                     path: "app/$Param{appname}/site/$Param{sitename}/users/${uesio.federation_id}"
                                 avatar:
-                                  - io.text:
-                                      uesio.variant: io.icon
-                                      color: "#ccc"
-                                      text: person
+                                  - io.avatar:
+                                      image: $UserFile{uesio.picture}
+                                      text: RR
   panels:

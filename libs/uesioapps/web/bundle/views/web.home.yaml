@@ -32,7 +32,7 @@ definition:
         uesio.styles:
           root:
             backgroundSize: cover
-            backgroundImage: $File{uesio.splash}
+            backgroundImage: url($File{uesio.splash})
         items:
           - io.griditem:
               area: main

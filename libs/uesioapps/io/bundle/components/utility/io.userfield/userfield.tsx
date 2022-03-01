@@ -37,7 +37,7 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 		<Tile
 			avatar={
 				<Avatar
-					image={picture?.["uesio.id"]}
+					image={`$UserFile{${picture?.["uesio.id"]}}`}
 					text={initials}
 					context={context}
 				/>
