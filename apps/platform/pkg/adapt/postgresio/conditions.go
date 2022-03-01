@@ -30,9 +30,11 @@ func getConditions(
 	metadata *adapt.MetadataCache,
 	collectionMetadata *adapt.CollectionMetadata,
 	ops []*adapt.LoadOp,
-	tenantID string,
+	credentials *adapt.Credentials,
 	userTokens []string,
 ) ([]string, []interface{}, error) {
+
+	tenantID := credentials.GetTenantIDForCollection(collectionMetadata.GetFullName())
 
 	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
 	if err != nil {

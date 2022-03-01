@@ -38,7 +38,7 @@ func loadOne(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
-	tenantID string,
+	credentials *adapt.Credentials,
 	userTokens []string,
 ) error {
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -58,7 +58,7 @@ func loadOne(
 
 	loadQuery := "SELECT " + strings.Join(fieldIDs, ",") + " FROM public.data WHERE "
 
-	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, ops, tenantID, userTokens)
+	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, ops, credentials, userTokens)
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func loadOne(
 	op.BatchNumber++
 
 	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-		return loadMany(db, ops, metadata, tenantID, userTokens)
+		return loadMany(db, ops, metadata, credentials, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
@@ -155,18 +155,18 @@ func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, crede
 		return errors.New("Failed to connect PostgreSQL:" + err.Error())
 	}
 
-	return loadMany(db, ops, metadata, credentials.GetTenantID(), userTokens)
+	return loadMany(db, ops, metadata, credentials, userTokens)
 }
 
 func loadMany(
 	db *sql.DB,
 	ops []*adapt.LoadOp,
 	metadata *adapt.MetadataCache,
-	tenantID string,
+	credentials *adapt.Credentials,
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(db, ops[i], metadata, ops, tenantID, userTokens)
+		err := loadOne(db, ops[i], metadata, ops, credentials, userTokens)
 		if err != nil {
 			return err
 		}

@@ -11,7 +11,7 @@ import { selectors } from "../bands/view/adapter"
 import Wire from "../bands/wire/class"
 import { defaultTheme } from "../styles/styles"
 import chroma from "chroma-js"
-import { getURLFromFullName } from "../hooks/fileapi"
+import { getURLFromFullName, getUserFileURL } from "../hooks/fileapi"
 import { PlainWire } from "../bands/wire/types"
 import get from "lodash/get"
 import { getAncestorPath } from "../component/path"
@@ -114,7 +114,8 @@ const handlers: Record<MergeType, MergeHandler> = {
 		if (expression === "initials") {
 			return user.firstname.charAt(0) + user.lastname.charAt(0)
 		} else if (expression === "picture") {
-			return user.picture
+			// Remove the workspace context here
+			return getUserFileURL(new Context(), user.picture)
 		}
 		return ""
 	},

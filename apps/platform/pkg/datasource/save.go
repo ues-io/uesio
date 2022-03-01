@@ -199,9 +199,11 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 
 		// Sometimes we only have the name of something instead of its real id
 		// We can use this lookup functionality to get the real id before the save.
-		err = adapt.HandleLookups(func(ops []*adapt.LoadOp) error {
+		loader := func(ops []*adapt.LoadOp) error {
 			return adapter.Load(ops, &metadataResponse, credentials, session.GetTokens())
-		}, batch, &metadataResponse)
+		}
+
+		err = adapt.HandleLookups(loader, batch, &metadataResponse)
 		if err != nil {
 			return err
 		}
@@ -228,7 +230,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = Validate(op, collectionMetadata, session)
+			err = Validate(op, collectionMetadata, loader, session)
 			if err != nil {
 				return err
 			}

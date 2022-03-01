@@ -73,6 +73,8 @@ definition:
                           fieldId: crm.lastname
                       - io.field:
                           fieldId: crm.email
+                      - io.field:
+                          fieldId: crm.account
                       - io.button:
                           text: View
                           icon: arrow_forward

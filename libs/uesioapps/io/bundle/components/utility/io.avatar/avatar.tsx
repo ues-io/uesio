@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { definition, styles, hooks } from "@uesio/ui"
+import { definition, styles } from "@uesio/ui"
 
 interface AvatarProps extends definition.UtilityProps {
 	image?: string
@@ -10,7 +10,6 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
 	const { image, context, text } = props
 	const mergedImage = context.merge(image)
 	const mergedText = context.merge(text)
-	const uesio = hooks.useUesio(props)
 
 	const classes = styles.useUtilityStyles(
 		{
@@ -26,10 +25,7 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
 				display: "grid",
 				fontWeight: "bold",
 				backgroundImage: mergedImage
-					? `url('${uesio.file.getUserFileURL(
-							context,
-							mergedImage
-					  )}')`
+					? `url('${mergedImage}')`
 					: "initial",
 				backgroundSize: "cover",
 				backgroundPosition: "center",

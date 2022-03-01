@@ -131,6 +131,7 @@ definition:
                                       components:
                                         - io.field:
                                             fieldId: uesio.picture
+                                            displayAs: IMAGE
                                   - io.griditem:
                                       components:
                                         - io.field:
