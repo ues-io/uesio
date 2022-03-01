@@ -103,5 +103,5 @@ definition:
                                 avatar:
                                   - io.avatar:
                                       image: $UserFile{uesio.picture}
-                                      text: RR
+                                      text: "-"
   panels:
