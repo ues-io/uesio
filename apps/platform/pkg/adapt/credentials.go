@@ -30,6 +30,7 @@ func (c *Credentials) GetHash() string {
 }
 
 var tenantIDKey = "uesio.tenantid"
+var siteTenantIDKey = "uesio.sitetenantid"
 
 func (c *Credentials) SetTenantID(session *sess.Session) {
 	(*c)[tenantIDKey] = session.GetTenantID()
@@ -39,12 +40,30 @@ func (c *Credentials) GetTenantID() string {
 	return (*c)[tenantIDKey]
 }
 
+func (c *Credentials) GetTenantIDForCollection(collectionKey string) string {
+	// If we're loading uesio.users from a workspace, always use the site
+	// tenant id, not the workspace tenant id. Since workspaces don't have users.
+	if collectionKey == "uesio.users" {
+		return c.GetSiteTenantID()
+	}
+	return c.GetTenantID()
+}
+
+func (c *Credentials) SetSiteTenantID(session *sess.Session) {
+	(*c)[siteTenantIDKey] = session.GetSiteTenantID()
+}
+
+func (c *Credentials) GetSiteTenantID() string {
+	return (*c)[siteTenantIDKey]
+}
+
 // GetCredentials function
 func GetCredentials(key string, session *sess.Session) (*Credentials, error) {
 	credmap := Credentials{}
 
 	// Always add the tenant id to credentials
 	credmap.SetTenantID(session)
+	credmap.SetSiteTenantID(session)
 
 	mergedKey, err := configstore.Merge(key, session)
 	if err != nil {

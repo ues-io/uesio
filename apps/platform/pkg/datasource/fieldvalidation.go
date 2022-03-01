@@ -1,18 +1,23 @@
 package datasource
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/hashicorp/go-multierror"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/meta"
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type validationFunc func(change adapt.ChangeItem, isNew bool) error
+
+type referenceValidationFunc func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry)
 
 func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 	return func(change adapt.ChangeItem, isNew bool) error {
@@ -160,9 +165,45 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 	}
 }
 
-func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadata) referenceValidationFunc {
+
+	validations := []referenceValidationFunc{}
+	for i := range collectionMetadata.Fields {
+		field := collectionMetadata.Fields[i]
+		if adapt.IsReference(field.Type) {
+			validations = append(validations, func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
+				referencedCollection := field.ReferenceMetadata.Collection
+				request := registry.Get(referencedCollection)
+				foreignKey, err := change.FieldChanges.GetField(field.GetFullName())
+				if err != nil {
+					return
+				}
+				foreignKeyString, err := adapt.GetReferenceKey(foreignKey)
+				if err != nil {
+					return
+				}
+				if foreignKeyString == "" {
+					return
+				}
+				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
+			})
+		}
+	}
+
+	return func(change adapt.ChangeItem, registry *adapt.ReferenceRegistry) {
+		for _, validation := range validations {
+			validation(change, registry)
+		}
+	}
+}
+
+func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, loader adapt.Loader, session *sess.Session) error {
 
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
+
+	referenceValidations := getReferenceValidationsFunction(collectionMetadata)
+
+	referenceRegistry := &adapt.ReferenceRegistry{}
 
 	if op.Inserts != nil {
 		for _, insert := range *op.Inserts {
@@ -170,6 +211,7 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, se
 			if err != nil {
 				return err
 			}
+			referenceValidations(insert, referenceRegistry)
 		}
 	}
 
@@ -179,6 +221,61 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, se
 			if err != nil {
 				return err
 			}
+			referenceValidations(update, referenceRegistry)
+		}
+	}
+
+	for collection, request := range *referenceRegistry {
+		idCount := len(request.IDs)
+		if idCount == 0 {
+			continue
+		}
+		ids := make([]string, idCount)
+		fieldIDIndex := 0
+		for k := range request.IDs {
+			ids[fieldIDIndex] = k
+			fieldIDIndex++
+		}
+		results := &adapt.Collection{}
+		ops := []*adapt.LoadOp{{
+			CollectionName: collection,
+			WireName:       "referentialIntegrity",
+			Collection:     results,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "uesio.id",
+					Operator: "IN",
+					Value:    ids,
+				},
+			},
+			Fields: []adapt.LoadRequestField{{ID: "uesio.id"}},
+			Query:  true,
+		}}
+		err := loader(ops)
+		if err != nil {
+			return err
+		}
+		if idCount != results.Len() {
+			returnedValues := map[string]bool{}
+			badValues := []string{}
+			err := results.Loop(func(item loadable.Item, index interface{}) error {
+				value, err := item.GetField("uesio.id")
+				if err != nil {
+					return err
+				}
+				returnedValues[value.(string)] = true
+				return nil
+			})
+			if err != nil {
+				return err
+			}
+			for _, value := range ids {
+				_, ok := returnedValues[value]
+				if !ok {
+					badValues = append(badValues, value)
+				}
+			}
+			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : "))
 		}
 	}
 

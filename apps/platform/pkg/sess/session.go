@@ -176,6 +176,13 @@ func (s *Session) GetTenantID() string {
 	return "site:" + s.site.ID
 }
 
+func (s *Session) GetSiteTenantID() string {
+	if s.siteadmin != nil {
+		return "site:" + s.siteadmin.ID
+	}
+	return "site:" + s.site.ID
+}
+
 // GetWorkspaceID function
 func (s *Session) GetWorkspaceID() string {
 	if s.workspace != nil {

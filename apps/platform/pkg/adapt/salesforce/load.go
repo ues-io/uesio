@@ -17,7 +17,7 @@ func loadOne(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	ops []*adapt.LoadOp,
-	tenantID string,
+	credentials *adapt.Credentials,
 	userTokens []string,
 ) error {
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
@@ -100,7 +100,7 @@ func loadOne(
 	op.BatchNumber++
 
 	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-		return loadMany(client, ops, metadata, tenantID, userTokens)
+		return loadMany(client, ops, metadata, credentials, userTokens)
 	}, op.Collection, referencedCollections)
 }
 
@@ -116,18 +116,18 @@ func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, crede
 		return errors.New("Failed to connect Salesforce:" + err.Error())
 	}
 
-	return loadMany(client, ops, metadata, credentials.GetTenantID(), userTokens)
+	return loadMany(client, ops, metadata, credentials, userTokens)
 }
 
 func loadMany(
 	client *simpleforce.Client,
 	ops []*adapt.LoadOp,
 	metadata *adapt.MetadataCache,
-	tenantID string,
+	credentials *adapt.Credentials,
 	userTokens []string,
 ) error {
 	for i := range ops {
-		err := loadOne(client, ops[i], metadata, ops, tenantID, userTokens)
+		err := loadOne(client, ops[i], metadata, ops, credentials, userTokens)
 		if err != nil {
 			return err
 		}
