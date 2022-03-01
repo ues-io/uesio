@@ -256,24 +256,15 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, lo
 			return err
 		}
 		if idCount != results.Len() {
-			returnedValues := map[string]bool{}
-			badValues := []string{}
-			err := results.Loop(func(item loadable.Item, index interface{}) error {
+			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {
 				value, err := item.GetField("uesio.id")
 				if err != nil {
-					return err
+					return ""
 				}
-				returnedValues[value.(string)] = true
-				return nil
-			})
+				return value.(string)
+			}, ids)
 			if err != nil {
 				return err
-			}
-			for _, value := range ids {
-				_, ok := returnedValues[value]
-				if !ok {
-					badValues = append(badValues, value)
-				}
 			}
 			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : "))
 		}
