@@ -97,25 +97,26 @@ type SelectListMetadata struct {
 
 // FieldMetadata struct
 type FieldMetadata struct {
-	Name               string                    `json:"name"`
-	Namespace          string                    `json:"namespace"`
-	Createable         bool                      `json:"createable"`
-	Accessible         bool                      `json:"accessible"`
-	Updateable         bool                      `json:"updateable"`
-	Required           bool                      `json:"required"`
-	Length             int                       `json:"length"`
-	Type               string                    `json:"type"`
-	Label              string                    `json:"label"`
-	SelectListMetadata *SelectListMetadata       `json:"selectlist,omitempty"`
-	NumberMetadata     *meta.NumberMetadata      `json:"number,omitempty"`
-	ReferenceMetadata  *meta.ReferenceMetadata   `json:"reference,omitempty"`
-	FileMetadata       *meta.FileMetadata        `json:"file,omitempty"`
-	ValidationMetadata *meta.ValidationMetadata  `json:"validate,omitempty"`
-	AutoNumberMetadata *meta.AutoNumberMetadata  `json:"autonumber,omitempty"`
-	AutoPopulate       string                    `json:"autopopulate,omitempty"`
-	SubFields          map[string]*FieldMetadata `json:"subfields,omitempty"`
-	SubType            string                    `json:"subtype,omitempty"`
-	ColumnName         string                    `json:"-"`
+	Name                   string                       `json:"name"`
+	Namespace              string                       `json:"namespace"`
+	Createable             bool                         `json:"createable"`
+	Accessible             bool                         `json:"accessible"`
+	Updateable             bool                         `json:"updateable"`
+	Required               bool                         `json:"required"`
+	Length                 int                          `json:"length"`
+	Type                   string                       `json:"type"`
+	Label                  string                       `json:"label"`
+	SelectListMetadata     *SelectListMetadata          `json:"selectlist,omitempty"`
+	NumberMetadata         *meta.NumberMetadata         `json:"number,omitempty"`
+	ReferenceMetadata      *meta.ReferenceMetadata      `json:"reference,omitempty"`
+	ReferenceGroupMetadata *meta.ReferenceGroupMetadata `json:"referencegroup,omitempty"`
+	FileMetadata           *meta.FileMetadata           `json:"file,omitempty"`
+	ValidationMetadata     *meta.ValidationMetadata     `json:"validate,omitempty"`
+	AutoNumberMetadata     *meta.AutoNumberMetadata     `json:"autonumber,omitempty"`
+	AutoPopulate           string                       `json:"autopopulate,omitempty"`
+	SubFields              map[string]*FieldMetadata    `json:"subfields,omitempty"`
+	SubType                string                       `json:"subtype,omitempty"`
+	ColumnName             string                       `json:"-"`
 }
 
 // GetFullName function
