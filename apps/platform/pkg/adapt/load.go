@@ -99,25 +99,42 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			return nil, nil, err
 		}
 
-		if !IsReference(fieldMetadata.Type) {
-			continue
+		if IsReference(fieldMetadata.Type) {
+			referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+
+			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
+			if err != nil {
+				continue
+			}
+
+			refReq := referencedCollections.Get(referencedCollection)
+			refReq.Metadata = referencedCollectionMetadata
+
+			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+				continue
+			}
+			refReq.AddFields(field.Fields)
+			refReq.AddReference(fieldMetadata)
 		}
 
-		referencedCollection := fieldMetadata.ReferenceMetadata.Collection
+		if fieldMetadata.Type == "REFERENCEGROUP" {
+			referencedCollection := fieldMetadata.ReferenceGroupMetadata.Collection
 
-		referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
-		if err != nil {
-			continue
+			referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
+			if err != nil {
+				continue
+			}
+
+			refReq := referencedCollections.Get(referencedCollection)
+			refReq.Metadata = referencedCollectionMetadata
+
+			if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
+				continue
+			}
+			refReq.AddFields(field.Fields)
+			refReq.AddReference(fieldMetadata)
 		}
 
-		refReq := referencedCollections.Get(referencedCollection)
-		refReq.Metadata = referencedCollectionMetadata
-
-		if referencedCollectionMetadata.DataSource != collectionMetadata.DataSource {
-			continue
-		}
-		refReq.AddFields(field.Fields)
-		refReq.AddReference(fieldMetadata)
 	}
 	return fieldIDMap, referencedCollections, nil
 }
