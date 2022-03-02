@@ -1,4 +1,4 @@
-import { hooks, styles, component } from "@uesio/ui"
+import { hooks, styles, component, definition } from "@uesio/ui"
 import { FunctionComponent } from "react"
 import { useMode } from "../../shared/mode"
 import { paginate, usePagination } from "../../shared/pagination"
@@ -46,7 +46,14 @@ const Table: FunctionComponent<TableProps> = (props) => {
 
 	const collection = wire.getCollection()
 
-	const columns = definition.columns?.map((columnDef) => {
+	const columnsToDisplay = definition.columns?.filter((columnDef) =>
+		component.shouldDisplay(
+			context,
+			columnDef["io.column"] as definition.DefinitionMap
+		)
+	)
+
+	const columns = columnsToDisplay.map((columnDef) => {
 		const column = columnDef["io.column"] as ColumnDefinition
 		const fieldId = column.field
 		const fieldMetadata = collection.getField(fieldId)
@@ -67,7 +74,7 @@ const Table: FunctionComponent<TableProps> = (props) => {
 			fieldMode: mode,
 		})
 		return {
-			cells: definition.columns?.map((columnDef) => {
+			cells: columnsToDisplay?.map((columnDef) => {
 				const column = columnDef["io.column"] as ColumnDefinition
 				return column.components ? (
 					<component.Slot
