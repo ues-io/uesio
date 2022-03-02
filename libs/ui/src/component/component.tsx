@@ -40,6 +40,7 @@ function mergeDeep(
 	src: DefinitionMap,
 	context: Context | undefined
 ): DefinitionMap {
+	if (!src) return dest
 	const srcKeys = Object.keys(src)
 	for (const key of srcKeys) {
 		if (typeof src[key] === "object" && src[key] !== null) {
@@ -131,15 +132,15 @@ function getDefinitionFromVariant(
 					context
 				),
 				variant.definition,
-				context
+				undefined
 		  )
 		: variant.definition
 
 	const override = getThemeOverride(variant, context)
 	return mergeDefinitionMaps(
-		mergeDefinitionMaps({}, def, context),
+		def,
 		override ? { "uesio.styles": override } : {},
-		context
+		undefined
 	)
 }
 
@@ -158,7 +159,7 @@ function mergeContextVariants(
 		variantName || `${namespace}.default`
 	)
 	const variantDefinition = getDefinitionFromVariant(variant, context)
-	return mergeDefinitionMaps(variantDefinition, definition, context)
+	return mergeDefinitionMaps(variantDefinition, definition, undefined)
 }
 
 function render(
