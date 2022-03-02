@@ -39,8 +39,19 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 
 	if (!idField || !nameField) return null
 
-	const itemToString = (item: wire.PlainWireRecord | undefined) =>
-		item ? `${item[nameField]}` : ""
+	const template = options?.template
+
+	const itemToString = (item: wire.PlainWireRecord | undefined) => {
+		if (!item) return ""
+
+		if (template) {
+			const itemContext = context.addFrame({
+				recordData: item,
+			})
+			return itemContext.merge(template)
+		}
+		return item[nameField] || ""
+	}
 
 	const value = record.getFieldValue<wire.PlainWireRecord | undefined>(
 		fieldId

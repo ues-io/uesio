@@ -80,8 +80,16 @@ definition:
                     uesio.styles:
                       root:
                         backgroundSize: cover
-                        backgroundImage: $File{uesio.splash}
+                        backgroundImage: url($File{uesio.splash})
                         padding: 100px
+                        height: 60px
+                        color: "#FFFFFFC0"
+                - io.box:
+                    uesio.styles:
+                      root:
+                        backgroundSize: cover
+                        backgroundColor: rgb(22,22,22)
+                        padding: 40px 100px
                         color: "#FFFFFFC0"
                     components:
                       - io.box:
@@ -95,15 +103,6 @@ definition:
                             - io.text:
                                 color: white
                                 text: ues.io
-                            - io.text:
-                                uesio.styles:
-                                  root:
-                                    fontSize: 25pt
-                                    padding-bottom: 5px
-                                color: white
-                                text: (u)ser (e)xperience (s)tud(.io)
-                                element: div
-
                       - io.box:
                           uesio.styles:
                             root:

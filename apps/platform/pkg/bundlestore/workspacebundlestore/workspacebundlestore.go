@@ -3,6 +3,7 @@ package workspacebundlestore
 import (
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 	"github.com/thecloudmasters/uesio/pkg/bundlestore"
@@ -82,6 +83,22 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		}, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err
+		}
+
+		if group.Len() != len(items) {
+			badValues, err := loadable.FindMissing(group, func(item loadable.Item) string {
+				value, err := item.GetField("uesio.id")
+				if err != nil {
+					return ""
+				}
+				return value.(string)
+			}, ids)
+			if err != nil {
+				return err
+			}
+			if len(badValues) > 0 {
+				return errors.New("Could not load workspace metadata item: " + collectionName + ":" + strings.Join(badValues, " : "))
+			}
 		}
 
 		return group.Loop(func(item loadable.Item, index interface{}) error {

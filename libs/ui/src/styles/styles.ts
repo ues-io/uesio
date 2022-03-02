@@ -2,8 +2,13 @@ import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
 import { ThemeState } from "../bands/theme/types"
-import { BaseProps, UtilityProps } from "../definition/definition"
+import {
+	BaseProps,
+	DefinitionMap,
+	UtilityProps,
+} from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
+import { mergeDefinitionMaps } from "../component/component"
 
 type ResponsiveDefinition =
 	| string
@@ -176,7 +181,14 @@ function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
 ) {
-	return mergeStyles(defaults, props?.definition?.["uesio.styles"])
+	return mergeStyles(
+		defaults,
+		mergeDefinitionMaps(
+			{},
+			props?.definition?.["uesio.styles"] as DefinitionMap,
+			props?.context
+		)
+	)
 }
 
 function useStyle<K extends string>(
@@ -196,10 +208,15 @@ function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps | null
 ) {
+	const styles = mergeDefinitionMaps(
+		{},
+		props?.styles as DefinitionMap,
+		props?.context
+	)
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			classNames[className] = cx(
-				css([defaults[className], props?.styles?.[className]]),
+				css([defaults[className], styles?.[className]]),
 				props?.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.

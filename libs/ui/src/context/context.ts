@@ -34,6 +34,7 @@ type MergeType =
 	| "Theme"
 	| "Color"
 	| "File"
+	| "UserFile"
 	| "Site"
 	| "Label"
 	| "SelectList"
@@ -150,8 +151,16 @@ const handlers: Record<MergeType, MergeHandler> = {
 		const value = context.getRecord()?.getFieldValue(expression)
 		return selectListMetadata?.find((el) => el.value === value)?.label || ""
 	},
-	File: (expression, context) =>
-		`url("${getURLFromFullName(context, expression)}")`,
+	File: (expression, context) => getURLFromFullName(context, expression),
+	UserFile: (expression, context) => {
+		const file = context
+			.getRecord()
+			?.getFieldValue<PlainWireRecord>(expression)
+		if (!file) return ""
+		const fileId = file["uesio.id"] as string
+		if (!fileId) return ""
+		return getUserFileURL(context, fileId)
+	},
 	Site: (expression, context) => {
 		const site = context.getSite()
 		if (!site) return ""

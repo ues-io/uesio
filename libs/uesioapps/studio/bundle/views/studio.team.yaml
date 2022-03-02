@@ -36,6 +36,10 @@ definition:
         uesio.id:
         studio.app:
         studio.member:
+          fields:
+            uesio.firstname:
+            uesio.lastname:
+            uesio.picture:
         studio.team:
       conditions:
         - field: studio.app
@@ -143,15 +147,32 @@ definition:
               - io.field:
                   fieldId: studio.member
                   reference:
+                    template: "${uesio.firstname} ${uesio.lastname}"
                     searchFields:
                       - uesio.firstname
                       - uesio.lastname
+                      - uesio.picture
                     returnFields:
                       - uesio.firstname
                       - uesio.lastname
+                      - uesio.picture
                     components:
-                      - io.text:
-                          text: "${uesio.firstname} ${uesio.lastname}"
+                      - io.tile:
+                          content:
+                            - io.text:
+                                text: ${uesio.firstname} ${uesio.lastname}
+                                element: div
+                            - io.text:
+                                text: ${uesio.id}
+                                uesio.styles:
+                                  root:
+                                    fontSize: 9pt
+                                    color: "#666"
+                                element: div
+                          avatar:
+                            - io.avatar:
+                                image: $UserFile{uesio.picture}
+                                text: "-"
       actions:
         - io.button:
             uesio.variant: "io.primary"
