@@ -4,6 +4,7 @@ type ReferenceFieldOptions = {
 	components?: definition.DefinitionList
 	searchFields?: string[]
 	returnFields?: string[]
+	template?: string
 }
 
 type FieldDefinition = {
