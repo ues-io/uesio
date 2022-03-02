@@ -50,8 +50,6 @@ definition:
                     - signal: wire/TOGGLE_DELETE_STATUS
               columns:
                 - io.column:
-                    field: crm.contacts2
-                - io.column:
                     field: crm.contacts
                 - io.column:
                     field: crm.externalid
@@ -87,6 +85,3 @@ definition:
         crm.contacts:
           fields:
             crm.lastname: null
-        crm.contacts2:
-          fields:
-            crm.email: null

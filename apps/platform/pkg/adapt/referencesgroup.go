@@ -144,7 +144,6 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		//Original QUERY
 		err = collection.Loop(func(item loadable.Item, index interface{}) error {
 
 			id, err := item.GetField("uesio.id")
