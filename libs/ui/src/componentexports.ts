@@ -5,7 +5,7 @@ import NotificationArea from "./components/notificationarea"
 import * as path from "./component/path"
 import * as registry from "./component/registry"
 import { Component } from "./component/component"
-import { shouldHaveClass } from "./component/display"
+import { shouldHaveClass, shouldDisplay } from "./component/display"
 import { ComponentVariant } from "./bands/componentvariant/types"
 
 export {
@@ -19,4 +19,5 @@ export {
 	Panel,
 	NotificationArea,
 	shouldHaveClass,
+	shouldDisplay,
 }

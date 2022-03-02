@@ -208,10 +208,15 @@ function useUtilityStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: UtilityProps | null
 ) {
+	const styles = mergeDefinitionMaps(
+		{},
+		props?.styles as DefinitionMap,
+		props?.context
+	)
 	return Object.keys(defaults).reduce(
 		(classNames: Record<string, string>, className: K) => {
 			classNames[className] = cx(
-				css([defaults[className], props?.styles?.[className]]),
+				css([defaults[className], styles?.[className]]),
 				props?.classes?.[className],
 				// A bit weird here... Only apply the passed-in className prop to root styles.
 				// Otherwise, it would be applied to every class sent in as defaults.
