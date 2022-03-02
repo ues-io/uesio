@@ -150,26 +150,6 @@ func getMetadataForLoad(
 			}
 
 		}
-
-		if fieldMetadata.Type == "REFERENCEGROUP" && fieldMetadata.ReferenceGroupMetadata.Collection != "" {
-			if len(op.Fields[i].Fields) == 0 {
-				refCollectionMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceGroupMetadata.Collection)
-				if err != nil {
-					return err
-				}
-				op.Fields[i].Fields = []adapt.LoadRequestField{
-					{
-						ID: refCollectionMetadata.NameField,
-					},
-					{
-						ID: "uesio.id",
-					},
-				}
-
-			}
-
-		}
-
 	}
 
 	return nil
