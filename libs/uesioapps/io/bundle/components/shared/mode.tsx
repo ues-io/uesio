@@ -11,7 +11,7 @@ const toggleMode: signal.ComponentSignalDescriptor = {
 	properties: () => [],
 	slice: MODE_SLICE,
 }
-const setRead: signal.ComponentSignalDescriptor = {
+const setReadMode: signal.ComponentSignalDescriptor = {
 	dispatcher: (signal, context, getState, setState) => {
 		setState("READ")
 	},
@@ -19,7 +19,7 @@ const setRead: signal.ComponentSignalDescriptor = {
 	properties: () => [],
 	slice: MODE_SLICE,
 }
-const setEdit: signal.ComponentSignalDescriptor = {
+const setEditMode: signal.ComponentSignalDescriptor = {
 	dispatcher: (signal, context, getState, setState) => {
 		setState("EDIT")
 	},
@@ -41,4 +41,4 @@ const useMode = (
 	)
 }
 
-export { toggleMode, useMode, setEdit, setRead }
+export { toggleMode, useMode, setEditMode, setReadMode }
