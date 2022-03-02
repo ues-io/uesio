@@ -115,3 +115,35 @@ routes:
   studio.collectionexport: true
   studio.collectionexportbatches: true
 files:
+collections:
+  studio.apps: true
+  studio.bots: true
+  studio.bundledependencies: true
+  studio.bundles: true
+  studio.collections: true
+  studio.componentpacks: true
+  studio.componentvariants: true
+  studio.configvalues: true
+  studio.credentials: true
+  studio.datasources: true
+  studio.featureflags: true
+  studio.fields: true
+  studio.filecollections: true
+  studio.files: true
+  studio.filesources: true
+  studio.labels: true
+  studio.permissionsets: true
+  studio.profiles: true
+  studio.routes: true
+  studio.secrets: true
+  studio.selectlists: true
+  studio.sitedomains: true
+  studio.sites: true
+  studio.teammembers: true
+  studio.teams: true
+  studio.themes: true
+  studio.translations: true
+  studio.views: true
+  studio.workspaces: true
+  uesio.userfiles: true
+  uesio.users: true

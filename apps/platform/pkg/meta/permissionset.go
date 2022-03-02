@@ -21,25 +21,25 @@ func NewPermissionSet(key string) (*PermissionSet, error) {
 
 // PermissionSet struct
 type PermissionSet struct {
-	ID             string          `yaml:"-" uesio:"uesio.id"`
-	Name           string          `yaml:"name" uesio:"studio.name"`
-	Namespace      string          `yaml:"-" uesio:"-"`
-	NamedRefs      map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
-	ViewRefs       map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
-	CollectionRefs map[string]bool `yaml:"collections" uesio:"studio.collectionrefs"`
-	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
-	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
-	Workspace      *Workspace      `yaml:"-" uesio:"studio.workspace"`
-	AllowAllCollections  bool      `yaml:"allowallcollections" uesio:"studio.allowallcollections"`
-	AllowAllViews  bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
-	AllowAllRoutes bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
-	AllowAllFiles  bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
-	itemMeta       *ItemMeta       `yaml:"-" uesio:"-"`
-	CreatedBy      *User           `yaml:"-" uesio:"uesio.createdby"`
-	Owner          *User           `yaml:"-" uesio:"uesio.owner"`
-	UpdatedBy      *User           `yaml:"-" uesio:"uesio.updatedby"`
-	UpdatedAt      int64           `yaml:"-" uesio:"uesio.updatedat"`
-	CreatedAt      int64           `yaml:"-" uesio:"uesio.createdat"`
+	ID                  string          `yaml:"-" uesio:"uesio.id"`
+	Name                string          `yaml:"name" uesio:"studio.name"`
+	Namespace           string          `yaml:"-" uesio:"-"`
+	NamedRefs           map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
+	ViewRefs            map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
+	CollectionRefs      map[string]bool `yaml:"collections" uesio:"studio.collectionrefs"`
+	RouteRefs           map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
+	FileRefs            map[string]bool `yaml:"files" uesio:"studio.filerefs"`
+	Workspace           *Workspace      `yaml:"-" uesio:"studio.workspace"`
+	AllowAllCollections bool            `yaml:"allowallcollections" uesio:"studio.allowallcollections"`
+	AllowAllViews       bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
+	AllowAllRoutes      bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
+	AllowAllFiles       bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
+	itemMeta            *ItemMeta       `yaml:"-" uesio:"-"`
+	CreatedBy           *User           `yaml:"-" uesio:"uesio.createdby"`
+	Owner               *User           `yaml:"-" uesio:"uesio.owner"`
+	UpdatedBy           *User           `yaml:"-" uesio:"uesio.updatedby"`
+	UpdatedAt           int64           `yaml:"-" uesio:"uesio.updatedat"`
+	CreatedAt           int64           `yaml:"-" uesio:"uesio.createdat"`
 }
 
 // GetCollectionName function
@@ -175,10 +175,9 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 		}
 	}
 
-
 	if !ps.AllowAllCollections {
 		for key, value := range check.CollectionRefs {
-			
+
 			if value {
 				if !ps.CollectionRefs[key] {
 					return false
@@ -243,14 +242,14 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	}
 
 	return &PermissionSet{
-		NamedRefs:      namedPerms,
-		ViewRefs:       viewPerms,
-		RouteRefs:      routePerms,
-		FileRefs:       filePerms,
-		CollectionRefs: collectionPerms,
-		AllowAllViews:  allowAllViews,
-		AllowAllRoutes: allowAllRoutes,
-		AllowAllFiles:  allowAllFiles,
-		AllowAllCollections:  allowAllCollections,
+		NamedRefs:           namedPerms,
+		ViewRefs:            viewPerms,
+		RouteRefs:           routePerms,
+		FileRefs:            filePerms,
+		CollectionRefs:      collectionPerms,
+		AllowAllViews:       allowAllViews,
+		AllowAllRoutes:      allowAllRoutes,
+		AllowAllFiles:       allowAllFiles,
+		AllowAllCollections: allowAllCollections,
 	}
 }

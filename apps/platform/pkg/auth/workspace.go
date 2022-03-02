@@ -36,9 +36,10 @@ func AddWorkspaceContext(appName, workspaceName string, session *sess.Session) e
 		// Get the workspace permissions and set them on the session
 		// For now give workspace users access to everything.
 		Permissions: &meta.PermissionSet{
-			AllowAllViews:  true,
-			AllowAllRoutes: true,
-			AllowAllFiles:  true,
+			AllowAllViews:       true,
+			AllowAllRoutes:      true,
+			AllowAllFiles:       true,
+			AllowAllCollections: true,
 		},
 	}
 
