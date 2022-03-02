@@ -24,12 +24,12 @@ type ParamIsValueCondition = {
 	value: string
 }
 
-type IsNullCondition = {
-	type: "isNull"
+type HasNoValueCondition = {
+	type: "hasNoValue"
 	value: unknown
 }
-type IsNotNullCondition = {
-	type: "isNotNull"
+type HasValueCondition = {
+	type: "hasValue"
 	value: unknown
 }
 
@@ -49,8 +49,8 @@ type FieldModeCondition = {
 }
 
 type DisplayCondition =
-	| IsNullCondition
-	| IsNotNullCondition
+	| HasNoValueCondition
+	| HasValueCondition
 	| FieldEqualsValueCondition
 	| FieldNotEqualsValueCondition
 	| ParamIsSetCondition
@@ -85,8 +85,8 @@ function should(condition: DisplayCondition, context: Context) {
 			? context.merge(condition.value as string)
 			: condition.value
 
-	if (condition.type === "isNull") return !compareToValue
-	if (condition.type === "isNotNull") return !!compareToValue
+	if (condition.type === "hasNoValue") return !compareToValue
+	if (condition.type === "hasValue") return !!compareToValue
 	if (condition.type === "paramIsValue")
 		return context.getView()?.params?.[condition.param] === compareToValue
 
@@ -101,7 +101,6 @@ function shouldDisplay(context: Context, definition?: DefinitionMap) {
 		| DisplayCondition[]
 		| undefined
 
-	displayLogic
 	if (displayLogic?.length) {
 		for (const condition of displayLogic) {
 			if (!should(condition, context)) {
