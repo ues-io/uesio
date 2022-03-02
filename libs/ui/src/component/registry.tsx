@@ -124,16 +124,14 @@ const getVariantStyleInfo = (props: UtilityProps, key: string) => {
 		context
 	)
 
-	const mergedVariantStyles = mergeDefinitionMaps({}, variantStyles, context)
-
 	if (!styles) {
-		return mergedVariantStyles
+		return variantStyles
 	}
 
 	return mergeDefinitionMaps(
-		mergedVariantStyles,
+		variantStyles,
 		styles as DefinitionMap,
-		context
+		undefined
 	)
 }
 

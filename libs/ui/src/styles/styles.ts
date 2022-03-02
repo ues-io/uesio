@@ -2,8 +2,13 @@ import { getURLFromFullName } from "../hooks/fileapi"
 import { Context } from "../context/context"
 import { CSSProperties } from "react"
 import { ThemeState } from "../bands/theme/types"
-import { BaseProps, UtilityProps } from "../definition/definition"
+import {
+	BaseProps,
+	DefinitionMap,
+	UtilityProps,
+} from "../definition/definition"
 import { css, cx, CSSInterpolation } from "@emotion/css"
+import { mergeDefinitionMaps } from "../component/component"
 
 type ResponsiveDefinition =
 	| string
@@ -176,7 +181,14 @@ function useStyles<K extends string>(
 	defaults: Record<K, CSSInterpolation>,
 	props: BaseProps | null
 ) {
-	return mergeStyles(defaults, props?.definition?.["uesio.styles"])
+	return mergeStyles(
+		defaults,
+		mergeDefinitionMaps(
+			{},
+			props?.definition?.["uesio.styles"] as DefinitionMap,
+			props?.context
+		)
+	)
 }
 
 function useStyle<K extends string>(

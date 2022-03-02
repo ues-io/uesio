@@ -24,7 +24,9 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 		value,
 		setValue,
 		itemToString,
-		loadingRenderer = () => <div>Loading...</div>,
+		loadingRenderer = () => (
+			<div className={classes.menuitem}>Loading...</div>
+		),
 		itemRenderer = (item) => <div>{itemToString(item)}</div>,
 	} = props
 
@@ -33,6 +35,21 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 			root: {},
 			input: {},
 			readonly: {},
+			menu: {
+				backgroundColor: "white",
+				fontSize: "10pt",
+				border: "1px solid #ccc",
+				borderTop: "0",
+				width: "100%",
+			},
+			menuitem: {
+				padding: "10px",
+				borderBottom: "1px solid #ccc",
+				cursor: "pointer",
+				"&:last-child": {
+					borderBottom: 0,
+				},
+			},
 		},
 		props
 	)
@@ -93,15 +110,17 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 			<div className={classes.root} {...getComboboxProps()}>
 				<input className={classes.input} {...getInputProps()} />
 			</div>
-			<div
-				{...getMenuProps()}
-				style={{ position: "absolute", zIndex: 1 }}
-			>
-				{isOpen &&
-					(loading
+			{isOpen && (
+				<div
+					className={classes.menu}
+					{...getMenuProps()}
+					style={{ position: "absolute", zIndex: 1 }}
+				>
+					{loading
 						? loadingRenderer()
 						: inputItems.map((item, index) => (
 								<div
+									className={classes.menuitem}
 									key={itemToString(item) + "_" + index}
 									{...getItemProps({ item, index })}
 								>
@@ -111,8 +130,9 @@ const AutoCompleteField: FunctionComponent<DropDownProps<unknown>> = (
 										highlightedIndex
 									)}
 								</div>
-						  )))}
-			</div>
+						  ))}
+				</div>
+			)}
 		</div>
 	)
 }

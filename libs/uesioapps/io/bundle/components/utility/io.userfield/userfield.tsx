@@ -19,7 +19,6 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 	const user = record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId)
 	const firstName = user?.["uesio.firstname"] as string
 	const lastName = user?.["uesio.lastname"] as string
-	const picture = user?.["uesio.picture"] as wire.PlainWireRecord | undefined
 
 	if (!readonly) {
 		return <ReferenceField {...props} />
@@ -37,9 +36,11 @@ const UserField: FunctionComponent<UserFieldProps> = (props) => {
 		<Tile
 			avatar={
 				<Avatar
-					image={`$UserFile{${picture?.["uesio.id"]}}`}
+					image={`$UserFile{uesio.picture}`}
 					text={initials}
-					context={context}
+					context={context.addFrame({
+						recordData: user,
+					})}
 				/>
 			}
 			context={context}
