@@ -26,9 +26,11 @@ type PermissionSet struct {
 	Namespace      string          `yaml:"-" uesio:"-"`
 	NamedRefs      map[string]bool `yaml:"named" uesio:"studio.namedrefs"`
 	ViewRefs       map[string]bool `yaml:"views" uesio:"studio.viewrefs"`
+	CollectionRefs map[string]bool `yaml:"collections" uesio:"studio.collectionrefs"`
 	RouteRefs      map[string]bool `yaml:"routes" uesio:"studio.routerefs"`
 	FileRefs       map[string]bool `yaml:"files" uesio:"studio.filerefs"`
 	Workspace      *Workspace      `yaml:"-" uesio:"studio.workspace"`
+	AllowAllCollections  bool      `yaml:"allowallcollections" uesio:"studio.allowallcollections"`
 	AllowAllViews  bool            `yaml:"allowallviews" uesio:"studio.allowallviews"`
 	AllowAllRoutes bool            `yaml:"allowallroutes" uesio:"studio.allowallroutes"`
 	AllowAllFiles  bool            `yaml:"allowallfiles" uesio:"studio.allowallfiles"`
@@ -173,6 +175,18 @@ func (ps *PermissionSet) HasPermission(check *PermissionSet) bool {
 		}
 	}
 
+
+	if !ps.AllowAllCollections {
+		for key, value := range check.CollectionRefs {
+			
+			if value {
+				if !ps.CollectionRefs[key] {
+					return false
+				}
+			}
+		}
+	}
+
 	return true
 }
 
@@ -182,9 +196,11 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 	viewPerms := map[string]bool{}
 	routePerms := map[string]bool{}
 	filePerms := map[string]bool{}
+	collectionPerms := map[string]bool{}
 	allowAllViews := false
 	allowAllRoutes := false
 	allowAllFiles := false
+	allowAllCollections := false
 
 	for _, permissionSet := range permissionSets {
 		for key, value := range permissionSet.NamedRefs {
@@ -207,6 +223,11 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 				filePerms[key] = true
 			}
 		}
+		for key, value := range permissionSet.CollectionRefs {
+			if value {
+				collectionPerms[key] = true
+			}
+		}
 		if permissionSet.AllowAllViews {
 			allowAllViews = true
 		}
@@ -216,6 +237,9 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		if permissionSet.AllowAllFiles {
 			allowAllFiles = true
 		}
+		if permissionSet.AllowAllCollections {
+			allowAllCollections = true
+		}
 	}
 
 	return &PermissionSet{
@@ -223,8 +247,10 @@ func FlattenPermissions(permissionSets []PermissionSet) *PermissionSet {
 		ViewRefs:       viewPerms,
 		RouteRefs:      routePerms,
 		FileRefs:       filePerms,
+		CollectionRefs: collectionPerms,
 		AllowAllViews:  allowAllViews,
 		AllowAllRoutes: allowAllRoutes,
 		AllowAllFiles:  allowAllFiles,
+		AllowAllCollections:  allowAllCollections,
 	}
 }

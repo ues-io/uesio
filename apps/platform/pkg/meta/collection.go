@@ -87,7 +87,12 @@ func (c *Collection) GetPath() string {
 
 // GetPermChecker function
 func (c *Collection) GetPermChecker() *PermissionSet {
-	return nil
+	key := c.GetKey()
+	return &PermissionSet{
+		CollectionRefs: map[string]bool{
+			key: true,
+		},
+	}
 }
 
 // SetField function
