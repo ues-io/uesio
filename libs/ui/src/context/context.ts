@@ -104,14 +104,7 @@ const handleMergeError = ({
 const handlers: Record<MergeType, MergeHandler> = {
 	Record: (expression, context, ancestors) => {
 		context = context.removeRecordFrame(ancestors)
-
-		const record = context.getRecord()
-		const value = record?.getFieldValue(expression)
-
-		// Special handling for images
-		if (value && typeof value === "object" && "uesio.mimetype" in value)
-			return getUserFileURL(context, value["uesio.id"] as string)
-
+		const value = context.getRecord()?.getFieldValue(expression)
 		return value ? `${value}` : ""
 	},
 	Param: (expression, context) =>
@@ -159,15 +152,15 @@ const handlers: Record<MergeType, MergeHandler> = {
 		return selectListMetadata?.find((el) => el.value === value)?.label || ""
 	},
 	File: (expression, context) => getURLFromFullName(context, expression),
-	// UserFile: (expression, context) => {
-	// 	const file = context
-	// 		.getRecord()
-	// 		?.getFieldValue<PlainWireRecord>(expression)
-	// 	if (!file) return ""
-	// 	const fileId = file["uesio.id"] as string
-	// 	if (!fileId) return ""
-	// 	return getUserFileURL(context, fileId)
-	// },
+	UserFile: (expression, context) => {
+		const file = context
+			.getRecord()
+			?.getFieldValue<PlainWireRecord>(expression)
+		if (!file) return ""
+		const fileId = file["uesio.id"] as string
+		if (!fileId) return ""
+		return getUserFileURL(context, fileId)
+	},
 	Site: (expression, context) => {
 		const site = context.getSite()
 		if (!site) return ""
