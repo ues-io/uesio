@@ -26,10 +26,12 @@ definition:
         studio.allowallfiles:
         studio.allowallroutes:
         studio.allowallviews:
+        studio.allowallcollections:
         studio.filerefs:
         studio.namedrefs:
         studio.routerefs:
         studio.viewrefs:
+        studio.collectionrefs:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -46,6 +48,16 @@ definition:
         studio.path:
         studio.view:
         studio.theme:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
+    collections:
+      collection: studio.collections
+      fields:
+        uesio.id:
+        studio.name:
       conditions:
         - field: studio.workspace
           valueSource: LOOKUP
@@ -166,6 +178,9 @@ definition:
                                   - io.field:
                                       fieldId: studio.allowallviews
                                       displayAs: "TOGGLE"
+                                  - io.field:
+                                      fieldId: studio.allowallcollections
+                                      displayAs: "TOGGLE"
                       - io.box:
                           uesio.variant: io.section
                           components:
@@ -208,3 +223,17 @@ definition:
                                   - studio.permissionpicker:
                                       fieldId: studio.viewrefs
                                       wireName: views
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Collections
+                                uesio.variant: io.section
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.collectionrefs
+                                      wireName: collections
