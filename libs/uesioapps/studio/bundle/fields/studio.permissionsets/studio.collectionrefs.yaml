@@ -1,0 +1,4 @@
+name: collectionrefs
+collection: studio.permissionsets
+type: MAP
+label: View refs

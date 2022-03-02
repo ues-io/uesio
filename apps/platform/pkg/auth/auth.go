@@ -129,6 +129,11 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
+	session.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio.users": true,
+		},
+	})
 
 	defaultSiteProfile := site.GetAppBundle().DefaultProfile
 
@@ -211,6 +216,12 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 	// For now, just use a public session to do this.
 	// We'll need to rethink this later when we add security to collections/wires
 	session := sess.NewPublic(site)
+	session.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio.users":     true,
+			"uesio.userfiles": true,
+		},
+	})
 
 	var user meta.User
 	err := datasource.PlatformLoadOne(

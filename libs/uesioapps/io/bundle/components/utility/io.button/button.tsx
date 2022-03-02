@@ -58,7 +58,9 @@ const Button: FunctionComponent<ButtonUtilityProps> = (props) => {
 			)}
 		>
 			{icon}
-			{label && <span className={classes.label}>{label}</span>}
+			{label && (
+				<span className={classes.label}>{context.merge(label)}</span>
+			)}
 		</button>
 	)
 

@@ -107,12 +107,6 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	session.SetPermissions(&meta.PermissionSet{
-		AllowAllViews:  true,
-		AllowAllRoutes: true,
-		AllowAllFiles:  true,
-	})
-
 	// Get the adapter for the platform DS Type
 	adapter, err := adapt.GetAdapter(platformDSType, session)
 	if err != nil {

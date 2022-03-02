@@ -248,6 +248,7 @@ func (s *Session) GetLoginRoute() string {
 func (s *Session) RemoveWorkspaceContext() *Session {
 	newSess := NewSession(s.browserSession, s.user, s.site)
 	newSess.tokens = s.tokens
+	newSess.permissions = s.permissions
 	return newSess
 }
 

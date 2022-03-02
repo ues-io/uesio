@@ -130,10 +130,19 @@ func GetHeadlessSession() (*sess.Session, error) {
 	}
 	site.SetAppBundle(bundleDef)
 
-	return sess.NewSession(nil, &meta.User{
+	session := sess.NewSession(nil, &meta.User{
 		ID:        "system_system",
 		FirstName: "Super",
 		LastName:  "Admin",
 		Profile:   "uesio.public",
-	}, site), nil
+	}, site)
+
+	session.SetPermissions(&meta.PermissionSet{
+		AllowAllViews:       true,
+		AllowAllRoutes:      true,
+		AllowAllFiles:       true,
+		AllowAllCollections: true,
+	})
+
+	return session, nil
 }
