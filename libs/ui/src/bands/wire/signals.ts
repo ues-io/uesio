@@ -7,6 +7,7 @@ import createRecordOp from "./operations/createrecord"
 import updateRecordOp from "./operations/updaterecord"
 import cancelWireOp from "./operations/cancel"
 import emptyWireOp from "./operations/empty"
+import resetWireOp from "./operations/reset"
 import searchWireOp from "./operations/search"
 import toggleConditionOp from "./operations/togglecondition"
 import setConditionOp from "./operations/setcondition"
@@ -15,8 +16,7 @@ import loadWiresOp from "./operations/load"
 import loadNextBatchOp from "./operations/loadnextbatch"
 import loadAllOp from "./operations/loadall"
 import saveWiresOp from "./operations/save"
-import { Dispatcher } from "../../store/store"
-import { AnyAction } from "redux"
+import { ThunkFunc } from "../../store/store"
 import { SignalDefinition, SignalDescriptor } from "../../definition/signal"
 import { WireDefinition } from "../../definition/wire"
 import {
@@ -46,6 +46,10 @@ interface CancelWireSignal extends SignalDefinition {
 }
 
 interface EmptyWireSignal extends SignalDefinition {
+	wire: string
+}
+
+interface ResetWireSignal extends SignalDefinition {
 	wire: string
 }
 
@@ -169,6 +173,18 @@ const signals: Record<string, SignalDescriptor> = {
 		dispatcher: (signal: EmptyWireSignal, context: Context) =>
 			emptyWireOp(context, signal.wire),
 	},
+	[`${WIRE_BAND}/RESET`]: {
+		label: "Reset Wire",
+		properties: (): PropDescriptor[] => [
+			{
+				name: "wire",
+				type: "WIRE",
+				label: "Wire",
+			},
+		],
+		dispatcher: (signal: ResetWireSignal, context: Context) =>
+			resetWireOp(context, signal.wire),
+	},
 	[`${WIRE_BAND}/SEARCH`]: {
 		label: "Search Wire",
 		properties: (): PropDescriptor[] => [
@@ -235,8 +251,8 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/LOAD`]: {
 		label: "Load Wire(s)",
 		dispatcher:
-			(signal: LoadWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
+			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
+			async (dispatch) => {
 				await dispatch(loadWiresOp({ context, wires: signal.wires }))
 				return context
 			},
@@ -251,8 +267,8 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/LOAD_NEXT_BATCH`]: {
 		label: "Load Next Batch",
 		dispatcher:
-			(signal: LoadWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
+			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
+			async (dispatch) => {
 				await dispatch(
 					loadNextBatchOp({
 						context,
@@ -272,8 +288,8 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/LOAD_ALL`]: {
 		label: "Load All",
 		dispatcher:
-			(signal: LoadWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
+			(signal: LoadWiresSignal, context: Context): ThunkFunc =>
+			async (dispatch) => {
 				await dispatch(
 					loadAllOp({
 						context,
@@ -293,8 +309,8 @@ const signals: Record<string, SignalDescriptor> = {
 	[`${WIRE_BAND}/SAVE`]: {
 		label: "Save Wire(s)",
 		dispatcher:
-			(signal: SaveWiresSignal, context: Context) =>
-			async (dispatch: Dispatcher<AnyAction>) => {
+			(signal: SaveWiresSignal, context: Context): ThunkFunc =>
+			async (dispatch) => {
 				const batch = await dispatch(
 					saveWiresOp({ context, wires: signal.wires })
 				).then(unwrapResult)

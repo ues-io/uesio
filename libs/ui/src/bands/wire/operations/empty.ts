@@ -1,10 +1,9 @@
-import { Dispatcher } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context } from "../../../context/context"
-import { AnyAction } from "redux"
 import { empty } from ".."
 
-export default (context: Context, wirename: string) =>
-	(dispatch: Dispatcher<AnyAction>) => {
+export default (context: Context, wirename: string): ThunkFunc =>
+	(dispatch) => {
 		const viewId = context.getViewId()
 		if (viewId) dispatch(empty({ entity: `${viewId}/${wirename}` }))
 		return context

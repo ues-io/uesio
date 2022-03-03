@@ -1,11 +1,10 @@
-import { Dispatcher } from "../../../store/store"
+import { ThunkFunc } from "../../../store/store"
 import { Context, getWireDefFromWireName } from "../../../context/context"
-import { AnyAction } from "redux"
 import { init } from ".."
 import { getInitializedConditions } from "../conditions/conditions"
 
-export default (context: Context, wireNames: string[]) =>
-	(dispatch: Dispatcher<AnyAction>) => {
+export default (context: Context, wireNames: string[]): ThunkFunc =>
+	(dispatch) => {
 		const initializedWires = wireNames.map((wirename: string) => {
 			const viewId = context.getViewId()
 			if (!viewId) throw new Error("Could not get View Def Id")

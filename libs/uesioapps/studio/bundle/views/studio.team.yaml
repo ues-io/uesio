@@ -181,6 +181,8 @@ definition:
               - signal: wire/SAVE
                 wires:
                   - "newteammember"
+              - signal: wire/RESET
+                wire: newteammember
               - signal: wire/LOAD
                 wires:
                   - "teammembers"

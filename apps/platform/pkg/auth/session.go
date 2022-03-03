@@ -46,6 +46,12 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 		LastName:  "Admin",
 		Profile:   "uesio.public",
 	}, site)
+	fakeSession.SetPermissions(&meta.PermissionSet{
+		CollectionRefs: map[string]bool{
+			"uesio.users":     true,
+			"uesio.userfiles": true,
+		},
+	})
 
 	user, err := getUserFromSession(browserSessionUser, fakeSession)
 	if err != nil {
