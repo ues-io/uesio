@@ -46,7 +46,7 @@ func loadOne(
 		return err
 	}
 
-	fieldMap, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, referencedGroupCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -138,9 +138,16 @@ func loadOne(
 
 	op.BatchNumber++
 
-	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
+	loader := func(ops []*adapt.LoadOp) error {
 		return loadMany(db, ops, metadata, credentials, userTokens)
-	}, op.Collection, referencedCollections)
+	}
+
+	err = adapt.HandleReferencesGroup(loader, op.Collection, referencedGroupCollections)
+	if err != nil {
+		return err
+	}
+
+	return adapt.HandleReferences(loader, op.Collection, referencedCollections)
 }
 
 // Load function

@@ -24,8 +24,8 @@ func loadOne(
 	if err != nil {
 		return err
 	}
-
-	fieldMap, referencedCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	//TO-DO referencedGroupCollections do something with it
+	fieldMap, referencedCollections, _, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}

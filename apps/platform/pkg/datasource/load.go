@@ -150,7 +150,6 @@ func getMetadataForLoad(
 			}
 
 		}
-
 	}
 
 	return nil

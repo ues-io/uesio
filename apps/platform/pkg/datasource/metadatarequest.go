@@ -165,6 +165,44 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 			}
 		}
 
+		if fieldMetadata.Type == "REFERENCEGROUP" {
+
+			referenceGroupMetadata := fieldMetadata.ReferenceGroupMetadata
+			// Only add to additional requests if we don't already have that metadata
+			refCollection, err := metadataResponse.GetCollection(referenceGroupMetadata.Collection)
+			if err != nil {
+				err := additionalRequests.AddCollection(referenceGroupMetadata.Collection)
+				if err != nil {
+					return err
+				}
+			}
+
+			if refCollection != nil {
+				_, err := refCollection.GetField(referenceGroupMetadata.Field)
+				if err == nil {
+					continue
+				}
+			}
+			//Foreign key field
+			err = additionalRequests.AddField(referenceGroupMetadata.Collection, referenceGroupMetadata.Field, nil)
+			if err != nil {
+				return err
+			}
+
+			for fieldKey, subsubFields := range collection[fieldKey] {
+				if refCollection != nil {
+					_, err := refCollection.GetField(fieldKey)
+					if err == nil {
+						continue
+					}
+				}
+				err := additionalRequests.AddField(referenceGroupMetadata.Collection, fieldKey, &subsubFields)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
 		if fieldMetadata.Type == "SELECT" || fieldMetadata.Type == "MULTISELECT" {
 			selectListMetadata := fieldMetadata.SelectListMetadata
 			if selectListMetadata.Options == nil {
