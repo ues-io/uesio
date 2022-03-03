@@ -7,6 +7,7 @@ import {
 import Wire from "./bands/wire/class"
 import WireRecord from "./bands/wirerecord/class"
 import { FieldValue, PlainWireRecord } from "./bands/wirerecord/types"
+import { WireError } from "./bands/wire/types"
 import {
 	ValueConditionDefinition,
 	WireConditionDefinition,
@@ -26,6 +27,7 @@ export {
 	WireRecord,
 	Wire,
 	FieldValue,
+	WireError,
 	WireDefinition,
 	WireDefinitionMap,
 	WireConditionState,

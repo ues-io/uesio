@@ -1,6 +1,9 @@
 import { PlainWireRecord } from "../wirerecord/types"
 import { WireConditionState } from "./conditions/conditions"
-
+type WireError = {
+	message?: string
+	fieldId?: string
+}
 type PlainWire = {
 	name: string
 	conditions: WireConditionState[]
@@ -11,9 +14,9 @@ type PlainWire = {
 	original: Record<string, PlainWireRecord>
 	changes: Record<string, PlainWireRecord>
 	deletes: Record<string, PlainWireRecord>
-	error?: string
+	errors?: WireError[]
 	batchnumber: number
 	more?: boolean
 }
 
-export { PlainWire }
+export { PlainWire, WireError }

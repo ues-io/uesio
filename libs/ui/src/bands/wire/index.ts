@@ -249,7 +249,7 @@ const wireSlice = createSlice({
 								{},
 								state.entities[wireId],
 								{
-									error: null,
+									errors: null,
 								}
 							),
 						})
@@ -264,7 +264,7 @@ const wireSlice = createSlice({
 			action.meta.arg.wires?.forEach((entityName) => {
 				const entity = state.entities[`${viewId}/${entityName}`]
 				if (entity) {
-					entity.error = action.error.message
+					entity.errors = [action.error] // TODO, update when GO backend changes to support multiple errors
 				}
 			})
 		})

@@ -55,7 +55,7 @@ export default createAsyncThunk<
 			deletes: requestWire.deletes,
 			batchnumber: requestWire.batchnumber + 1,
 			more: wire.more,
-			error: undefined,
+			errors: undefined,
 			conditions: requestWire.conditions,
 		}
 	}

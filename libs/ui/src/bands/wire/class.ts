@@ -39,6 +39,7 @@ class Wire {
 			: []
 
 	getViewId = () => this.source?.view
+	getErrors = () => this.source?.errors || []
 	getRecord = (id: string) => new WireRecord(this.source.data[id], id, this)
 
 	getFirstRecord = () => {
