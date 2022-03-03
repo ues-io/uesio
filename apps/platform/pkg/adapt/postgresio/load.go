@@ -138,7 +138,11 @@ func loadOne(
 
 	op.BatchNumber++
 
-	loader := func(ops []*adapt.LoadOp) error {
+	loader := func(op *adapt.LoadOp) error {
+		return loadOne(db, op, metadata, ops, credentials, userTokens)
+	}
+
+	loaderMany := func(ops []*adapt.LoadOp) error {
 		return loadMany(db, ops, metadata, credentials, userTokens)
 	}
 
@@ -147,7 +151,7 @@ func loadOne(
 		return err
 	}
 
-	return adapt.HandleReferences(loader, op.Collection, referencedCollections)
+	return adapt.HandleReferences(loaderMany, op.Collection, referencedCollections)
 }
 
 // Load function
