@@ -49,6 +49,11 @@ type ReferenceMetadata = {
 	collection: string
 }
 
+type ReferenceGroupMetadata = {
+	collection: string
+	field: string
+}
+
 type FieldMetadata = {
 	name: string
 	namespace: string
@@ -59,6 +64,7 @@ type FieldMetadata = {
 	label: string
 	selectlist?: SelectListMetadata
 	reference?: ReferenceMetadata
+	referencegroup?: ReferenceGroupMetadata
 	subfields?: FieldMetadataMap
 	file?: FileMetadata
 	subtype?: string

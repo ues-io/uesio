@@ -59,6 +59,26 @@ definition:
                           fieldId: uesio.createdat
                       - io.field:
                           fieldId: uesio.updatedat
+                      - io.field:
+                          fieldId: crm.contacts
+                          reference:
+                            template: "${crm.firstname} ${crm.lastname}"
+                            components:
+                              - io.tile:
+                                  content:
+                                    - io.text:
+                                        text: ${crm.firstname}, ${crm.lastname}
+                                        element: div
+                                    - io.text:
+                                        text: ${uesio.id}
+                                        uesio.styles:
+                                          root:
+                                            fontSize: 9pt
+                                            color: "#666"
+                                        element: div
+                                  avatar:
+                                    - io.avatar:
+                                        text: "-"
   wires:
     accounts:
       collection: crm.accounts
@@ -73,6 +93,10 @@ definition:
         crm.description:
         uesio.createdat:
         uesio.updatedat:
+        crm.contacts:
+          fields:
+            crm.lastname: null
+            crm.firstname: null
   params:
     accountid:
       type: recordId

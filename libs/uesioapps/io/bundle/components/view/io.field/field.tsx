@@ -20,6 +20,9 @@ const ListField = component.registry.getUtility("io.listfield")
 const DateField = component.registry.getUtility("io.datefield")
 const NumberField = component.registry.getUtility("io.numberfield")
 const EmailField = component.registry.getUtility("io.emailfield")
+const ReferenceGroupField = component.registry.getUtility(
+	"io.referencegroupfield"
+)
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
 
@@ -105,6 +108,8 @@ const getFieldContent = (
 					subType={fieldMetadata.source.subtype}
 				/>
 			)
+		case type === "REFERENCEGROUP":
+			return <ReferenceGroupField {...common} options={reference} />
 		default:
 			return null
 	}
