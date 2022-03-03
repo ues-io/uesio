@@ -1,9 +1,14 @@
 import { definition, builder } from "@uesio/ui"
 
-type ReferenceFieldOptions = {
+type ReferenceGroupFieldOptions = {
 	components?: definition.DefinitionList
+	template?: string
+}
+
+type ReferenceFieldOptions = {
 	searchFields?: string[]
 	returnFields?: string[]
+	components?: definition.DefinitionList
 	template?: string
 }
 
@@ -75,6 +80,7 @@ export {
 	FieldState,
 	LabelPosition,
 	ReferenceFieldOptions,
+	ReferenceGroupFieldOptions,
 }
 
 export default FieldPropertyDefinition
