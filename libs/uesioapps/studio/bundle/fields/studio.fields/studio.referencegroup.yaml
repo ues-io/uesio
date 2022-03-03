@@ -9,3 +9,6 @@ subfields:
   - name: studio.field
     label: Collection
     type: TEXT
+  - name: studio.ondelete
+    label: On Delete
+    type: TEXT

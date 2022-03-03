@@ -20,7 +20,6 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			OnDelete:   "CASCADE",
 			Collection: "uesio.userfiles",
 		},
 		Fields: []string{"uesio.mimetype", "uesio.name"},
