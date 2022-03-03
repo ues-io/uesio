@@ -75,8 +75,6 @@ func getCascadeDeletes(
 				}
 			}
 
-			//GET all the contact id's related with my Account and do a new save
-
 			if field.Type == "REFERENCEGROUP" {
 				referenceGroupMetadata := field.ReferenceGroupMetadata
 				if referenceGroupMetadata.OnDelete != "CASCADE" {
@@ -89,7 +87,6 @@ func getCascadeDeletes(
 					return nil, err
 				}
 
-				// Get the ids that we need to delete
 				for _, wire := range wires {
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
 						continue
