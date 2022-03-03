@@ -117,7 +117,6 @@ func HandleReferencesGroup(
 			WireName:       refKey,
 			Collection:     &Collection{},
 			CollectionName: ref.Field.ReferenceGroupMetadata.Collection,
-			BatchSize:      2,
 			Conditions: []LoadRequestCondition{
 				{
 					Field:    ref.Field.ReferenceGroupMetadata.Field,
