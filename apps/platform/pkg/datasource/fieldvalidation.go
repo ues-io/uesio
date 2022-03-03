@@ -186,6 +186,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 					return
 				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
+				request.AddReference(field)
 			})
 		}
 	}
@@ -266,7 +267,11 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, lo
 			if err != nil {
 				return err
 			}
-			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : "))
+			fieldNames := []string{}
+			for fieldKey := range request.ReferenceFields {
+				fieldNames = append(fieldNames, fieldKey)
+			}
+			return errors.New("Invalid reference Value: " + strings.Join(badValues, " : ") + " for collection " + collectionMetadata.GetFullName() + " on field " + strings.Join(fieldNames, ","))
 		}
 	}
 

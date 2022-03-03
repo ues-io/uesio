@@ -73,12 +73,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				variant={variant}
 				value={value}
 				setValue={(value: wire.PlainWireRecord) => {
-					const idValue = value?.[idField]
-						? {
-								[idField]: value[idField],
-						  }
-						: null
-					record.update(fieldId, idValue)
+					record.update(fieldId, value?.[idField] ? value : null)
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord, index: number) => {
