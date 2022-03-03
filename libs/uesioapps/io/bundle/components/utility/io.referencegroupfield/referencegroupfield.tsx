@@ -24,8 +24,7 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 	props
 ) => {
 	const uesio = hooks.useUesio(props)
-	const { fieldMetadata, mode, record, context, variant, options, path } =
-		props
+	const { fieldMetadata, record, context, variant, options, path } = props
 	const fieldId = fieldMetadata.getId()
 	const referencedCollection = uesio.collection.useCollection(
 		context,
@@ -63,19 +62,18 @@ const ReferenceGroupField: FunctionComponent<ReferenceGroupFieldProps> = (
 	if (components) {
 		return (
 			<>
-				{value?.map((item, index) => {
-					return (
-						<component.Slot
-							definition={options}
-							listName="components"
-							path={`${path}["referencegroup"]["${index}"]`}
-							accepts={["uesio.context"]}
-							context={context.addFrame({
-								recordData: item,
-							})}
-						/>
-					)
-				})}
+				{value?.map((item, index) => (
+					<component.Slot
+						key={index}
+						definition={options}
+						listName="components"
+						path={`${path}["referencegroup"]["${index}"]`}
+						accepts={["uesio.context"]}
+						context={context.addFrame({
+							recordData: item,
+						})}
+					/>
+				))}
 			</>
 		)
 	}
