@@ -167,14 +167,6 @@ func ProcessFieldsMetadata(fields map[string]*adapt.FieldMetadata, collectionKey
 
 		if fieldMetadata.Type == "REFERENCEGROUP" {
 
-			// If we only have one field and it's the uesio.id field, skip getting metadata
-			if len(collection[fieldKey]) == 1 {
-				_, ok := collection[fieldKey]["uesio.id"]
-				if ok {
-					continue
-				}
-			}
-
 			referenceGroupMetadata := fieldMetadata.ReferenceGroupMetadata
 			// Only add to additional requests if we don't already have that metadata
 			refCollection, err := metadataResponse.GetCollection(referenceGroupMetadata.Collection)
