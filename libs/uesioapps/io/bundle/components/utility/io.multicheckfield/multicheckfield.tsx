@@ -15,6 +15,7 @@ interface SelectFieldProps extends definition.UtilityProps {
 	fieldMetadata: collection.Field
 	mode?: context.FieldMode
 	options: collection.SelectOption[] | null
+	error?: boolean
 }
 
 const CheckBoxField = component.registry.getUtility("io.checkboxfield")

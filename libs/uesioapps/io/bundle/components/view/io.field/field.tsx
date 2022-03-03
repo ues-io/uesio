@@ -28,7 +28,8 @@ const getFieldContent = (
 	record: wire.WireRecord,
 	definition: FieldDefinition,
 	fieldMetadata: collection.Field,
-	context: context.Context
+	context: context.Context,
+	error?: boolean
 ) => {
 	const { fieldId, id, displayAs, reference } = definition
 	const canEdit = record.isNew()
@@ -47,6 +48,7 @@ const getFieldContent = (
 		record,
 		wire,
 		variant: definition["uesio.variant"],
+		error,
 	}
 
 	switch (true) {
@@ -126,13 +128,23 @@ const Field: FunctionComponent<FieldProps> = (props) => {
 
 	const label = definition.label || fieldMetadata.getLabel()
 
+	const error = wire.getErrors().find(({ fieldId: id }) => fieldId === id)
+
 	return (
 		<FieldWrapper
 			label={label}
 			labelPosition={definition.labelPosition}
 			context={context}
+			error={error}
 		>
-			{getFieldContent(wire, record, definition, fieldMetadata, context)}
+			{getFieldContent(
+				wire,
+				record,
+				definition,
+				fieldMetadata,
+				context,
+				!!error
+			)}
 		</FieldWrapper>
 	)
 }

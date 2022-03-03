@@ -8,11 +8,19 @@ interface TextFieldProps extends definition.UtilityProps {
 	mode?: context.FieldMode
 	placeholder?: string
 	password?: boolean
+	error?: boolean
 }
 
 const TextField: FunctionComponent<TextFieldProps> = (props) => {
-	const { setValue, value, mode, placeholder, fieldMetadata, password } =
-		props
+	const {
+		setValue,
+		value,
+		mode,
+		placeholder,
+		fieldMetadata,
+		password,
+		error,
+	} = props
 	const readonly = mode === "READ"
 	const classes = styles.useUtilityStyles(
 		{
@@ -29,6 +37,7 @@ const TextField: FunctionComponent<TextFieldProps> = (props) => {
 		placeholder,
 		className: styles.cx(classes.input, readonly && classes.readonly),
 		disabled: readonly,
+		...(error && { ariaInvalid: true }),
 		onChange: (
 			event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
 		) => setValue(event.target.value),
