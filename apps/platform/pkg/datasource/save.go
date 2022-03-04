@@ -23,7 +23,7 @@ func (se *SaveError) Error() string {
 func NewSaveError(recordID interface{}, fieldID, message string) *SaveError {
 
 	type Data struct {
-		Field string   `json:"fieldid"`
+		Field string   `json:"fieldId"`
 		Message string `json:"message"`
 	}
 	data := &Data{Field: fieldID, Message: message}
