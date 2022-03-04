@@ -21,10 +21,25 @@ func (se *SaveError) Error() string {
 }
 
 func NewSaveError(recordID interface{}, fieldID, message string) *SaveError {
+
+	type Data struct {
+		Field string   `json:"fieldid"`
+		Message string `json:"message"`
+	}
+	data := &Data{Field: fieldID, Message: message}
+
+	Message, err := json.Marshal(data)
+	msg := string(Message)
+
+	if err != nil {
+		msg = ""
+	}
+
+
 	return &SaveError{
 		RecordID: recordID,
 		FieldID:  fieldID,
-		Message:  message,
+		Message: msg,
 	}
 }
 
