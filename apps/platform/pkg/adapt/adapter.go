@@ -8,6 +8,7 @@ import (
 )
 
 const MAX_BATCH_SIZE = 100
+const MAX_ITER_REF_GROUP = 10
 
 // Adapter interface
 type Adapter interface {

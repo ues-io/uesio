@@ -1,6 +1,8 @@
 package adapt
 
 import (
+	"errors"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
@@ -44,6 +46,24 @@ func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *Field
 	(*rr)[collectionKey+":"+fieldMetadata.GetFullName()] = rgr
 
 	return rgr
+}
+
+func loadData(ops []*LoadOp, loader Loader, index int) error {
+
+	if index == MAX_ITER_REF_GROUP {
+		return errors.New("You have reached the maximum limit of Reference Group")
+	}
+
+	err := loader(ops)
+	if err != nil {
+		return err
+	}
+
+	if !ops[0].HasMoreBatches {
+		return nil
+	}
+
+	return loadData(ops, loader, index+1)
 }
 
 func HandleReferencesGroup(
@@ -107,7 +127,12 @@ func HandleReferencesGroup(
 			Query: true,
 		})
 	}
-	err := loader(ops)
+
+	if len(ops) == 0 {
+		return nil
+	}
+
+	err := loadData(ops, loader, 0)
 	if err != nil {
 		return err
 	}
