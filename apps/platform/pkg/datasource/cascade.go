@@ -91,6 +91,8 @@ func getCascadeDeletes(
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
 						continue
 					}
+
+					ids := []string{}
 					for _, deletion := range *wire.Deletes {
 
 						item := deletion.OldValues
@@ -108,58 +110,63 @@ func getCascadeDeletes(
 							return nil, errors.New("Delete id must be a string")
 						}
 
-						fields := []adapt.LoadRequestField{{ID: referencedCollectionMetadata.IDField}}
+						ids = append(ids, fkString)
+					}
+					if len(ids) == 0 {
+						continue
+					}
 
-						op := &adapt.LoadOp{
-							CollectionName: referenceGroupMetadata.Collection,
-							WireName:       "CascadeDelete",
-							Fields:         fields,
-							Collection:     &adapt.Collection{},
-							Conditions: []adapt.LoadRequestCondition{
-								{
-									Field:    referenceGroupMetadata.Field,
-									Value:    fkString,
-									Operator: "=",
-								},
+					fields := []adapt.LoadRequestField{{ID: referencedCollectionMetadata.IDField}}
+					op := &adapt.LoadOp{
+						CollectionName: referenceGroupMetadata.Collection,
+						WireName:       "CascadeDelete",
+						Fields:         fields,
+						Collection:     &adapt.Collection{},
+						Conditions: []adapt.LoadRequestCondition{
+							{
+								Field:    referenceGroupMetadata.Field,
+								Value:    ids,
+								Operator: "IN",
 							},
-							Query: true,
-						}
+						},
+						Query: true,
+					}
 
-						err = loader([]*adapt.LoadOp{op})
+					err = loader([]*adapt.LoadOp{op})
+					if err != nil {
+						return nil, errors.New("Cascade delete error")
+					}
+
+					currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
+					if !ok {
+						currentCollectionIds = adapt.Collection{}
+					}
+
+					err = op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+
+						refRK, err := refItem.GetField(referencedCollectionMetadata.IDField)
 						if err != nil {
-							return nil, errors.New("Cascade delete error")
+							return err
 						}
 
-						currentCollectionIds, ok := cascadeDeleteFKs[referencedCollection]
+						refRKAsString, ok := refRK.(string)
 						if !ok {
-							currentCollectionIds = adapt.Collection{}
+							return errors.New("Delete id must be a string")
 						}
 
-						err = op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
-
-							refRK, err := refItem.GetField(referencedCollectionMetadata.IDField)
-							if err != nil {
-								return err
-							}
-
-							refRKAsString, ok := refRK.(string)
-							if !ok {
-								return errors.New("Delete id must be a string")
-							}
-
-							currentCollectionIds = append(currentCollectionIds, adapt.Item{
-								referencedCollectionMetadata.IDField: refRKAsString,
-							})
-
-							return nil
+						currentCollectionIds = append(currentCollectionIds, adapt.Item{
+							referencedCollectionMetadata.IDField: refRKAsString,
 						})
 
-						if err != nil {
-							return nil, err
-						}
+						return nil
+					})
 
-						cascadeDeleteFKs[referencedCollection] = currentCollectionIds
+					if err != nil {
+						return nil, err
 					}
+
+					cascadeDeleteFKs[referencedCollection] = currentCollectionIds
+
 				}
 
 			}
