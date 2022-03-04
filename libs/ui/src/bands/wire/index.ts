@@ -45,6 +45,12 @@ type RemoveConditionPayload = {
 	conditionId: string
 } & EntityPayload
 
+type ResetWirePayload = {
+	data: Record<string, PlainWireRecord>
+	original: Record<string, PlainWireRecord>
+	changes: Record<string, PlainWireRecord>
+} & EntityPayload
+
 const wireSlice = createSlice({
 	name: "wire",
 	initialState: wireAdapter.getInitialState(),
@@ -113,6 +119,14 @@ const wireSlice = createSlice({
 			state.changes = {}
 			state.deletes = {}
 		}),
+		reset: createEntityReducer<ResetWirePayload, PlainWire>(
+			(state, { data, changes, original }) => {
+				state.data = data
+				state.changes = changes
+				state.original = original
+				state.deletes = {}
+			}
+		),
 		addCondition: createEntityReducer<AddConditionPayload, PlainWire>(
 			(state, { condition }) => {
 				const conditionIndex = state.conditions.findIndex(
@@ -249,7 +263,7 @@ const wireSlice = createSlice({
 								{},
 								state.entities[wireId],
 								{
-									errors: null,
+									error: null,
 								}
 							),
 						})
@@ -263,8 +277,15 @@ const wireSlice = createSlice({
 			// instead of the definition
 			action.meta.arg.wires?.forEach((entityName) => {
 				const entity = state.entities[`${viewId}/${entityName}`]
+
+				// Extract errors from backend response, this will be changed
+				const responseErrors = action.error.message
+					?.split("*")
+					.splice(1)
+					.map((el) => JSON.parse(el))
+
 				if (entity) {
-					entity.errors = [action.error] // TODO, update when GO backend changes to support multiple errors
+					entity.errors = responseErrors || []
 				}
 			})
 		})
@@ -279,6 +300,7 @@ export const {
 	createRecord,
 	cancel,
 	empty,
+	reset,
 	init,
 	toggleCondition,
 	addCondition,
