@@ -85,19 +85,20 @@ func (fm *FieldsMap) AddField(fieldMetadata *FieldMetadata) error {
 }
 
 // GetFieldsMap function returns a map of field DB names to field UI names to be used in a load request
-func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, error) {
+func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetadata, metadata *MetadataCache) (FieldsMap, ReferenceRegistry, ReferenceGroupRegistry, ReferencedFormulaFieldRegistry, error) {
 	fieldIDMap := FieldsMap{}
 	referencedCollections := ReferenceRegistry{}
 	referencedGroupCollections := ReferenceGroupRegistry{}
+	referencedFormulaFields := ReferencedFormulaFieldRegistry{}
 	for _, field := range fields {
 		fieldMetadata, err := collectionMetadata.GetField(field.ID)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
 		err = fieldIDMap.AddField(fieldMetadata)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, nil, nil, nil, err
 		}
 
 		if IsReference(fieldMetadata.Type) {
@@ -131,6 +132,13 @@ func GetFieldsMap(fields []LoadRequestField, collectionMetadata *CollectionMetad
 			refReq.AddFields(field.Fields)
 		}
 
+		if fieldMetadata.Type == "FORMULA" {
+
+			//Collect all formula field
+			referencedFormulaFields.Add(fieldMetadata)
+
+		}
+
 	}
-	return fieldIDMap, referencedCollections, referencedGroupCollections, nil
+	return fieldIDMap, referencedCollections, referencedGroupCollections, referencedFormulaFields, nil
 }

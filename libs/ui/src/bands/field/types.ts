@@ -19,6 +19,7 @@ const FIELD_TYPES = [
 	"USER",
 	"EMAIL",
 	"AUTONUMBER",
+	"FORMULA",
 ] as const
 
 type FieldType = typeof FIELD_TYPES[number]
@@ -54,6 +55,11 @@ type ReferenceGroupMetadata = {
 	field: string
 }
 
+type FormulaOptionsMetadata = {
+	formula: string
+	return: string
+}
+
 type FieldMetadata = {
 	name: string
 	namespace: string
@@ -69,6 +75,7 @@ type FieldMetadata = {
 	file?: FileMetadata
 	subtype?: string
 	number?: NumberMetadata
+	formulaoptions?: FormulaOptionsMetadata
 }
 
 export {

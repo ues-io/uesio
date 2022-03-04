@@ -1,0 +1,7 @@
+name: formula
+collection: crm.accounts
+type: FORMULA
+label: My formula
+formulaOptions:
+  formula: $User{picture} + $User{initials}
+  return: "TEXT"

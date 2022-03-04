@@ -12,11 +12,6 @@ type ReferenceGroupRequest struct {
 	Field     *FieldMetadata
 }
 
-type ReferenceGroupLocator struct {
-	RecordIndex int
-	Field       *FieldMetadata
-}
-
 // ReferenceGroupRegistry type
 type ReferenceGroupRegistry map[string]*ReferenceGroupRequest
 

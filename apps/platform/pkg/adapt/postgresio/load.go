@@ -46,7 +46,7 @@ func loadOne(
 		return err
 	}
 
-	fieldMap, referencedCollections, referencedGroupCollections, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
+	fieldMap, referencedCollections, referencedGroupCollections, formulaFields, err := adapt.GetFieldsMap(op.Fields, collectionMetadata, metadata)
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,16 @@ func loadOne(
 		if err != nil {
 			return err
 		}
+
+		//use formula fields adapt.HandleFormulaFields
+		err = adapt.HandleFormulaFields(formulaFields)
+		if err != nil {
+			return err
+		}
+		//use formula fields adapt.HandleFormulaFields
+
 		index++
+
 	}
 	err = rows.Err()
 	if err != nil {

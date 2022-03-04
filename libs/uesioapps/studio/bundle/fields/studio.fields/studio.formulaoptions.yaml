@@ -1,0 +1,12 @@
+name: formulaoptions
+collection: studio.fields
+type: MAP
+label: Reference Group Metadata
+subfields:
+  - name: studio.formula
+    label: Formula
+    type: TEXT
+  - name: studio.return
+    label: Return
+    type: SELECT
+    selectList: studio.fieldtypes

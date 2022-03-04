@@ -49,6 +49,7 @@ definition:
         studio.languagelabel:
         studio.number:
         studio.subfields:
+        studio.formulaoptions:
       conditions:
         - field: studio.collection
           value: $Param{appname}.$Param{collectionname}
@@ -232,7 +233,15 @@ definition:
                                         - field: studio.validate->studio.type
                                           value: "REGEX"
                                       fieldId: studio.validate->studio.regex
-
+                                  - io.box:
+                                      uesio.display:
+                                        - field: studio.type
+                                          value: "FORMULA"
+                                      components:
+                                        - io.field:
+                                            fieldId: studio.formulaoptions->studio.formula
+                                        - io.field:
+                                            fieldId: studio.formulaoptions->studio.return
   panels:
     deleteField:
       uesio.type: io.dialog
