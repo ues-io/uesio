@@ -36,11 +36,21 @@ func HandleFormulaFields(
 
 	for _, ref := range referencedFormulaFields {
 
-		template, err := templating.NewWithFuncs(ref.Field.FormulaOptions.Formula.(string))
+		formula := ref.Field.FormulaOptions.Formula
+
+		// template, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
+		// 	return GetValueFromKey(key, session)
+		// })
+		// if err != nil {
+		// 	return "", err
+		// }
+
+		template, err := templating.NewWithFuncs(formula, nil, nil)
 		if err != nil {
 			return err
 		}
-		err = template.Execute(os.Stdout, nil)
+
+		err = template.Execute(os.Stdout, formula)
 		if err != nil {
 			return err
 		}
