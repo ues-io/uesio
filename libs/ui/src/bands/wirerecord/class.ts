@@ -39,15 +39,18 @@ class WireRecord {
 			})
 		}
 		// Special handling for maps
+		const mapFieldId = fieldNameParts.shift()
 		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.updateRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+
+		if (!topField || !mapFieldId) return
+
+		const mapUpdatedValue = {
+			...this.getFieldValue<PlainWireRecord>(mapFieldId),
+			[topField]: value,
+		}
+		return this.wire.updateRecord(this.id, {
+			[mapFieldId]: mapUpdatedValue,
+		})
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
@@ -58,15 +61,17 @@ class WireRecord {
 			})
 		}
 		// Special handling for maps
+		const mapFieldId = fieldNameParts.shift()
 		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.setRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+
+		if (!topField || !mapFieldId) return
+
+		const mapNewValue = {
+			[topField]: value,
+		}
+		return this.wire.setRecord(this.id, {
+			[mapFieldId]: mapNewValue,
+		})
 	}
 }
 
