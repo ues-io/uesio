@@ -246,7 +246,7 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return err
 		}
 
-		err = performCascadeDeletes(batch, &metadataResponse, session)
+		err = performCascadeDeletes(batch, &metadataResponse, loader, session)
 		if err != nil {
 			return err
 		}

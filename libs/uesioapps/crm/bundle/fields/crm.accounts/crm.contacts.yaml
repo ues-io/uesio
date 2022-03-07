@@ -5,3 +5,4 @@ label: Contacts
 referenceGroup:
   collection: crm.contacts
   field: crm.account
+  onDelete: CASCADE

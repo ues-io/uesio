@@ -49,13 +49,13 @@ type FileMetadata struct {
 // ReferenceMetadata type
 type ReferenceMetadata struct {
 	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
-	OnDelete   string `json:"ondelete" yaml:"ondelete,omitempty" uesio:"studio.ondelete"`
 }
 
 // ReferenceMetadata type
 type ReferenceGroupMetadata struct {
 	Collection string `json:"collection" yaml:"collection,omitempty" uesio:"studio.collection"`
 	Field      string `json:"field" yaml:"field,omitempty" uesio:"studio.field"`
+	OnDelete   string `json:"onDelete" yaml:"onDelete,omitempty" uesio:"studio.ondelete"`
 }
 
 // AutoNumberMetadata struct
