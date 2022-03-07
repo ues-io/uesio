@@ -7,6 +7,6 @@ subfields:
     label: Formula
     type: TEXT
   - name: studio.return
-    label: Return
+    label: Return Type
     type: SELECT
     selectList: studio.fieldtypes
