@@ -1,7 +1,7 @@
 name: formula
 collection: crm.accounts
 type: FORMULA
-label: My formula
+label: My formula for Testing the formual Fields
 formulaOptions:
-  formula: $User{picture} + $User{initials}
+  formula: ${crm.name}
   return: "TEXT"
