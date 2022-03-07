@@ -1,8 +1,10 @@
 package adapt
 
 import (
-	"os"
+	"errors"
+	"text/template"
 
+	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
@@ -29,31 +31,57 @@ func (rr *ReferencedFormulaFieldRegistry) Add(fieldMetadata *FieldMetadata) *For
 	return rgr
 }
 
+// NewFieldChanges function returns a template that can merge field changes
+func getTemplate(templateString string, collectionMetadata *CollectionMetadata) (*template.Template, error) {
+	return templating.NewWithFunc(templateString, func(item loadable.Item, key string) (interface{}, error) {
+		fieldMetadata, err := collectionMetadata.GetField(key)
+		if err != nil {
+			return nil, err
+		}
+		val, err := item.GetField(key)
+		if err != nil {
+			return nil, errors.New("missing key " + key + " : " + collectionMetadata.GetFullName() + " : " + templateString)
+		}
+		if IsReference(fieldMetadata.Type) {
+			key, err := GetReferenceKey(val)
+			if err != nil {
+				return nil, err
+			}
+			if key == "" {
+				return nil, errors.New("Bad Reference Key in template: " + templateString)
+			}
+			return key, nil
+		}
+		return val, nil
+	})
+}
+
 func HandleFormulaFields(
 	//collection loadable.Group,
 	referencedFormulaFields ReferencedFormulaFieldRegistry,
+	collectionMetadata *CollectionMetadata,
+	item loadable.Item,
 ) error {
 
 	for _, ref := range referencedFormulaFields {
 
-		formula := ref.Field.FormulaOptions.Formula
+		field := ref.Field
 
-		// template, err := templating.NewWithFunc(template, func(m map[string]interface{}, key string) (interface{}, error) {
-		// 	return GetValueFromKey(key, session)
-		// })
-		// if err != nil {
-		// 	return "", err
-		// }
+		if field.FormulaOptions != nil {
+			formula := field.FormulaOptions.Formula
+			idTemplate, err := getTemplate(formula, collectionMetadata)
+			if err != nil {
+				return err
+			}
+			value, err := templating.Execute(idTemplate, item) //change.FieldChanges
+			if err != nil {
+				return err
+			}
 
-		template, err := templating.NewWithFuncs(formula, nil, nil)
-		if err != nil {
-			return err
+			item.SetField(field.GetFullName(), value)
+
 		}
 
-		err = template.Execute(os.Stdout, formula)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

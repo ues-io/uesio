@@ -124,6 +124,11 @@ func loadOne(
 			op.HasMoreBatches = true
 			break
 		}
+
+		if collectionMetadata.Name == "accounts" {
+			println("E")
+		}
+
 		item = op.Collection.NewItem()
 		err := rows.Scan(scanners...)
 		if err != nil {
@@ -131,7 +136,7 @@ func loadOne(
 		}
 
 		//use formula fields adapt.HandleFormulaFields
-		err = adapt.HandleFormulaFields(formulaFields)
+		err = adapt.HandleFormulaFields(formulaFields, collectionMetadata, item)
 		if err != nil {
 			return err
 		}
