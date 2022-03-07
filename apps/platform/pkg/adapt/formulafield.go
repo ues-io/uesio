@@ -57,31 +57,25 @@ func getTemplate(templateString string, collectionMetadata *CollectionMetadata) 
 }
 
 func HandleFormulaFields(
-	//collection loadable.Group,
 	referencedFormulaFields ReferencedFormulaFieldRegistry,
 	collectionMetadata *CollectionMetadata,
 	item loadable.Item,
 ) error {
 
 	for _, ref := range referencedFormulaFields {
-
-		field := ref.Field
-
-		if field.FormulaOptions != nil {
-			formula := field.FormulaOptions.Formula
+		formulaField := ref.Field
+		if formulaField.FormulaOptions != nil {
+			formula := formulaField.FormulaOptions.Formula
 			idTemplate, err := getTemplate(formula, collectionMetadata)
 			if err != nil {
 				return err
 			}
-			value, err := templating.Execute(idTemplate, item) //change.FieldChanges
+			value, err := templating.Execute(idTemplate, item)
 			if err != nil {
 				return err
 			}
-
-			item.SetField(field.GetFullName(), value)
-
+			item.SetField(formulaField.GetFullName(), value)
 		}
-
 	}
 
 	return nil

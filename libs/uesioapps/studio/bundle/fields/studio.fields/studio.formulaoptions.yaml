@@ -9,4 +9,4 @@ subfields:
   - name: studio.return
     label: Return Type
     type: SELECT
-    selectList: studio.fieldtypes
+    selectList: studio.formulafieldreturntypes

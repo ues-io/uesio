@@ -125,22 +125,16 @@ func loadOne(
 			break
 		}
 
-		if collectionMetadata.Name == "accounts" {
-			println("E")
-		}
-
 		item = op.Collection.NewItem()
 		err := rows.Scan(scanners...)
 		if err != nil {
 			return err
 		}
 
-		//use formula fields adapt.HandleFormulaFields
 		err = adapt.HandleFormulaFields(formulaFields, collectionMetadata, item)
 		if err != nil {
 			return err
 		}
-		//use formula fields adapt.HandleFormulaFields
 
 		index++
 
