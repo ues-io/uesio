@@ -1,5 +1,5 @@
 import { definition, component } from "@uesio/ui"
-import { useState, FunctionComponent, Dispatch, SetStateAction } from "react"
+import { FunctionComponent, Dispatch, SetStateAction } from "react"
 
 interface SignupFormProps extends definition.BaseProps {
 	setMode: Dispatch<SetStateAction<string>>
