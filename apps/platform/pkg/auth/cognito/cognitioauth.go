@@ -25,10 +25,8 @@ func (a *Auth) Decode(token string, session *sess.Session) (*auth.Authentication
 	}
 	claims := tokenObj.Claims.(jwt.MapClaims)
 	return &auth.AuthenticationClaims{
-		Subject:   claims["sub"].(string),
-		FirstName: claims["given_name"].(string),
-		LastName:  claims["family_name"].(string),
-		AuthType:  "cognito",
-		Email:     claims["email"].(string),
+		Subject:  claims["sub"].(string),
+		AuthType: "cognito",
+		Email:    claims["email"].(string),
 	}, nil
 }

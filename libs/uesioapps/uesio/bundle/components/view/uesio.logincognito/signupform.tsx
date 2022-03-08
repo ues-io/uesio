@@ -7,12 +7,9 @@ interface SignupFormProps extends definition.BaseProps {
 	signupEmail: string
 	setSignupPassword: Dispatch<SetStateAction<string>>
 	signupPassword: string
-	signUp: (
-		firstname: string,
-		lastname: string,
-		email: string,
-		password: string
-	) => void
+	setUsername: Dispatch<SetStateAction<string>>
+	signupUsername: string
+	signUp: (username: string, email: string, password: string) => void
 }
 
 const FieldWrapper = component.registry.getUtility("io.fieldwrapper")
@@ -26,27 +23,19 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 		setMode,
 		setSignupEmail,
 		setSignupPassword,
+		setUsername,
+		signupUsername,
 		signupEmail,
 		signupPassword,
 		context,
 	} = props
 
-	const [firstname, setFirstName] = useState("")
-	const [lastname, setLastName] = useState("")
-
 	return (
 		<>
-			<FieldWrapper context={context} label="First Name">
+			<FieldWrapper context={context} label="Username">
 				<TextField
-					value={firstname}
-					setValue={setFirstName}
-					context={context}
-				/>
-			</FieldWrapper>
-			<FieldWrapper context={context} label="Last Name">
-				<TextField
-					value={lastname}
-					setValue={setLastName}
+					value={signupUsername}
+					setValue={setUsername}
 					context={context}
 				/>
 			</FieldWrapper>
@@ -77,7 +66,7 @@ const SignupForm: FunctionComponent<SignupFormProps> = (props) => {
 			>
 				<Button
 					onClick={() => {
-						signUp(firstname, lastname, signupEmail, signupPassword)
+						signUp(signupUsername, signupEmail, signupPassword)
 					}}
 					variant="io.primary"
 					context={context}

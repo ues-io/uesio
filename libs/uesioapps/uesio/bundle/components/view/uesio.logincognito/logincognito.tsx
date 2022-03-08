@@ -67,24 +67,16 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	const [mode, setMode] = uesio.component.useState<string>("mode", "")
 	const [signupEmail, setSignupEmail] = useState("")
 	const [signupPassword, setSignupPassword] = useState("")
+	const [signupusername, setSignupUsername] = useState("")
 
 	if (!poolId || !clientId) return null
 	const pool = cognito.getPool(poolId, clientId)
 
-	function signUp(
-		firstname: string,
-		lastname: string,
-		email: string,
-		password: string
-	): void {
-		const attributeList = cognito.getAttributeList(
-			email,
-			lastname,
-			firstname
-		)
+	function signUp(username: string, email: string, password: string): void {
+		const attributeList = cognito.getAttributeList(email)
 
 		pool.signUp(
-			email,
+			username,
 			password,
 			attributeList,
 			[],
@@ -127,7 +119,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 	}
 
 	function confirm(verificationCode: string): void {
-		const cognitoUser = cognito.getUser(signupEmail, pool)
+		const cognitoUser = cognito.getUser(signupusername, pool)
 		cognitoUser.confirmRegistration(
 			verificationCode,
 			true,
@@ -138,7 +130,7 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					return
 				}
 				if (result === "SUCCESS") {
-					logIn(signupEmail, signupPassword)
+					logIn(signupusername, signupPassword)
 				}
 			}
 		)
@@ -166,6 +158,8 @@ const LoginCognito: FunctionComponent<LoginProps> = (props) => {
 					setSignupEmail={setSignupEmail}
 					signupPassword={signupPassword}
 					setSignupPassword={setSignupPassword}
+					setUsername={setSignupUsername}
+					signupUsername={signupusername}
 					signUp={signUp}
 					context={context}
 				/>

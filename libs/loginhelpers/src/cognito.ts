@@ -26,22 +26,10 @@ const getAuthDetails = (
 		Password: password,
 	})
 
-const getAttributeList = (
-	email: string,
-	lastname: string,
-	firstname: string
-) => [
+const getAttributeList = (email: string) => [
 	new CognitoUserAttribute({
 		Name: "email",
 		Value: email,
-	}),
-	new CognitoUserAttribute({
-		Name: "family_name",
-		Value: lastname,
-	}),
-	new CognitoUserAttribute({
-		Name: "given_name",
-		Value: firstname,
 	}),
 ]
 
