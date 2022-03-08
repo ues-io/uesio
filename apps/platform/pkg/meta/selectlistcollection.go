@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -52,7 +53,7 @@ func (slc *SelectListCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (slc *SelectListCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *slc {
-		err := iter(slc.GetItem(index), index)
+		err := iter(slc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

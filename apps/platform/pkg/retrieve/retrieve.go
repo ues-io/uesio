@@ -36,7 +36,7 @@ func RetrieveBundle(namespace, version string, bs bundlestore.BundleStore, sessi
 			return nil, err
 		}
 
-		err = group.Loop(func(item loadable.Item, _ interface{}) error {
+		err = group.Loop(func(item loadable.Item, _ string) error {
 
 			path := item.(meta.BundleableItem).GetPath()
 			// Grabs the componentpack javascript files

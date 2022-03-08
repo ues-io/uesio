@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
@@ -46,7 +48,7 @@ func (cc *CollectionCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (cc *CollectionCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cc {
-		err := iter(cc.GetItem(index), index)
+		err := iter(cc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

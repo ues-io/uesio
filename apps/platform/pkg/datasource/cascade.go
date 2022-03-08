@@ -133,7 +133,7 @@ func getCascadeDeletes(
 						currentCollectionIds = adapt.Collection{}
 					}
 
-					err = op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+					err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 
 						refRK, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {

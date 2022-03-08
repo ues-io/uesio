@@ -81,7 +81,7 @@ func HandleReferencesGroup(
 		ids := make([]string, idCount)
 		fieldIDIndex := 0
 
-		err := collection.Loop(func(item loadable.Item, index interface{}) error {
+		err := collection.Loop(func(item loadable.Item, index string) error {
 			idValue, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
@@ -141,7 +141,7 @@ func HandleReferencesGroup(
 		referencedCollection := referencedGroupCollections[op.WireName]
 		collatedMap := map[string][]loadable.Item{}
 
-		err := op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+		err := op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 
 			refRK, err := refItem.GetField(referencedCollection.Field.ReferenceGroupMetadata.Field)
 			if err != nil {
@@ -167,7 +167,7 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		err = collection.Loop(func(item loadable.Item, index interface{}) error {
+		err = collection.Loop(func(item loadable.Item, index string) error {
 
 			id, err := item.GetField(ID_FIELD)
 			if err != nil {

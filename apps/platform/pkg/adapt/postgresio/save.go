@@ -187,7 +187,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 		for _, change := range *request.Updates {
 
-			if change.IDValue == nil {
+			if change.IDValue == "" {
 				continue
 			}
 
@@ -215,7 +215,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 				return err
 			}
 
-			fullRecordID := collectionName + ":" + change.IDValue.(string)
+			fullRecordID := collectionName + ":" + change.IDValue
 
 			params := append([]interface{}{
 				fullRecordID,
@@ -235,13 +235,13 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 		for _, delete := range *request.Deletes {
 
-			if delete.IDValue == nil {
+			if delete.IDValue == "" {
 				continue
 			}
 
 			query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
 			_, err = db.Exec(query, []interface{}{
-				collectionName + ":" + delete.IDValue.(string),
+				collectionName + ":" + delete.IDValue,
 				collectionName,
 			}...)
 			if err != nil {

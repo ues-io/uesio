@@ -21,9 +21,9 @@ type ChangeItems []ChangeItem
 
 type ChangeItem struct {
 	FieldChanges    loadable.Item
-	IDValue         interface{}
+	IDValue         string
 	Error           error
-	RecordKey       interface{}
+	RecordKey       string
 	OldValues       loadable.Item
 	ReadTokens      []string
 	ReadWriteTokens []string

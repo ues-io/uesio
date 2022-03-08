@@ -146,7 +146,7 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 				return err
 			}
 			tokenStrings := []string{}
-			err = lookupResults.Loop(func(record loadable.Item, _ interface{}) error {
+			err = lookupResults.Loop(func(record loadable.Item, _ string) error {
 				tokenValue, err := templating.Execute(template, record)
 				if err != nil {
 					return err
