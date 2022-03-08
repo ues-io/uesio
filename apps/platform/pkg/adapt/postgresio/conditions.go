@@ -42,7 +42,7 @@ func getConditions(
 	}
 
 	// Shortcut optimization when we only ask for the id field
-	if len(op.Conditions) == 1 && op.Conditions[0].Field == "uesio.id" {
+	if len(op.Conditions) == 1 && op.Conditions[0].Field == adapt.ID_FIELD {
 		return idConditionOptimization(&op.Conditions[0], collectionName)
 	}
 

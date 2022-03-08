@@ -186,14 +186,14 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		// Verify that the uesio.id field is present
 		hasIDField := false
 		for j := range ops[i].Fields {
-			if ops[i].Fields[j].ID == "uesio.id" {
+			if ops[i].Fields[j].ID == adapt.ID_FIELD {
 				hasIDField = true
 				break
 			}
 		}
 		if !hasIDField {
 			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
-				ID: "uesio.id",
+				ID: adapt.ID_FIELD,
 			})
 		}
 
@@ -321,7 +321,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 							continue
 						}
 
-						value, err := refItem.GetField(referencedCol.Metadata.IDField)
+						value, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {
 							return err
 						}

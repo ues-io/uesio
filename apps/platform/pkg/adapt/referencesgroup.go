@@ -82,7 +82,7 @@ func HandleReferencesGroup(
 		fieldIDIndex := 0
 
 		err := collection.Loop(func(item loadable.Item, index interface{}) error {
-			idValue, err := item.GetField("uesio.id")
+			idValue, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}
@@ -101,11 +101,9 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		collectionMetadata := ref.Metadata
-
 		ref.AddFields([]LoadRequestField{
 			{
-				ID: collectionMetadata.IDField,
+				ID: ID_FIELD,
 			},
 			{
 				ID: ref.Field.ReferenceGroupMetadata.Field,
@@ -171,7 +169,7 @@ func HandleReferencesGroup(
 
 		err = collection.Loop(func(item loadable.Item, index interface{}) error {
 
-			id, err := item.GetField("uesio.id")
+			id, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}

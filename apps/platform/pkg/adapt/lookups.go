@@ -7,6 +7,27 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
+/*
+
+The goal of lookups
+
+
+Upsert Lookups
+These look for an already existing key and change and insert to
+an update if the key is already in the database
+
+Reference Lookups
+These allow you to put non-id data into a reference field and still
+have the correct reference field found and inserted
+
+Temporary Id Lookups
+These allow you to reference a record being inserted with a temporary
+UI id and have the system replace the id once the real one is known
+
+Reference Integrity Lookups
+Make sure that any references we find are valid
+*/
+
 func HandleLookups(
 	loader Loader,
 	batch []*SaveOp,
@@ -70,7 +91,7 @@ func HandleLookups(
 			Collection:     &Collection{},
 			Conditions: []LoadRequestCondition{
 				{
-					Field:    collectionMetadata.IDField,
+					Field:    ID_FIELD,
 					Operator: "IN",
 					Value:    ids,
 				},
@@ -83,7 +104,7 @@ func HandleLookups(
 			return err
 		}
 
-		oldValuesLookup, err := getLookupResultMap(oldValuesOp, collectionMetadata.IDField)
+		oldValuesLookup, err := getLookupResultMap(oldValuesOp, ID_FIELD)
 		if err != nil {
 			return err
 		}
@@ -136,7 +157,7 @@ func mergeBatchInfo(op *SaveOp, index int, batch []*SaveOp, metadata *MetadataCa
 
 		refCollectionName := refCollectionMetadata.GetFullName()
 
-		matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
+		matchField := getStringWithDefault(lookup.MatchField, ID_FIELD)
 
 		// Check to see if any of the ops in front of me have my ref's collection Name
 		for i := 0; i < index; i++ {
@@ -172,7 +193,7 @@ func mergeBatchInfo(op *SaveOp, index int, batch []*SaveOp, metadata *MetadataCa
 					match, ok := lookupResult[keyVal]
 					if ok && match {
 						err = change.FieldChanges.SetField(fieldMetadata.GetFullName(), map[string]interface{}{
-							refCollectionMetadata.IDField: keyVal,
+							ID_FIELD: keyVal,
 						})
 						if err != nil {
 							return err
@@ -201,7 +222,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		return nil, err
 	}
 
-	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
+	matchField := getStringWithDefault(lookup.MatchField, ID_FIELD)
 	matchTemplate := getStringWithDefault(lookup.MatchTemplate, refCollectionMetadata.IDFormat)
 
 	template, err := NewFieldChanges(matchTemplate, refCollectionMetadata)
@@ -225,7 +246,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 
 		// check to see if this item already has its id field set.
 		// if so, we can just skip checking for it.
-		idFieldValue, err := matchKeyValueItem.GetField(refCollectionMetadata.IDField)
+		idFieldValue, err := matchKeyValueItem.GetField(ID_FIELD)
 		if err == nil && idFieldValue != "" {
 			continue
 		}
@@ -251,7 +272,7 @@ func getReferenceLookupOp(request *SaveOp, lookup Lookup, collectionMetadata *Co
 		WireName:       request.WireName,
 		Fields: []LoadRequestField{
 			{
-				ID: refCollectionMetadata.IDField,
+				ID: ID_FIELD,
 			},
 			{
 				ID: matchField,
@@ -282,7 +303,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]*LoadOp, error) {
 
 	if options.Upsert != nil {
 		// If we have a match field option, use that, otherwise, use the name field
-		upsertKey := getStringWithDefault(options.Upsert.MatchField, collectionMetadata.IDField)
+		upsertKey := getStringWithDefault(options.Upsert.MatchField, ID_FIELD)
 		matchTemplate := getStringWithDefault(options.Upsert.MatchTemplate, collectionMetadata.IDFormat)
 
 		template, err := NewFieldChanges(matchTemplate, collectionMetadata)
@@ -312,7 +333,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]*LoadOp, error) {
 				WireName:       request.WireName,
 				Fields: []LoadRequestField{
 					{
-						ID: collectionMetadata.IDField,
+						ID: ID_FIELD,
 					},
 					{
 						ID: upsertKey,
@@ -364,7 +385,7 @@ func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, 
 
 func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *ChangeItems, options *UpsertOptions, collectionMetadata *CollectionMetadata, metadata *MetadataCache) error {
 
-	upsertKey := getStringWithDefault(options.MatchField, collectionMetadata.IDField)
+	upsertKey := getStringWithDefault(options.MatchField, ID_FIELD)
 	matchTemplate := getStringWithDefault(options.MatchTemplate, collectionMetadata.IDFormat)
 
 	lookupResult, err := getLookupResultMap(op, upsertKey)
@@ -392,11 +413,11 @@ func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *Change
 
 		// If we find a match, populate the id field so that it's an update instead of an insert
 		if ok {
-			idValue, err := match.GetField(collectionMetadata.IDField)
+			idValue, err := match.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}
-			err = change.FieldChanges.SetField(collectionMetadata.IDField, idValue)
+			err = change.FieldChanges.SetField(ID_FIELD, idValue)
 			if err != nil {
 				return err
 			}
@@ -424,12 +445,7 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		return errors.New("Can only lookup on reference field: " + lookupField)
 	}
 
-	refCollectionMetadata, err := metadata.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
-	if err != nil {
-		return err
-	}
-
-	matchField := getStringWithDefault(lookup.MatchField, refCollectionMetadata.IDField)
+	matchField := getStringWithDefault(lookup.MatchField, ID_FIELD)
 
 	lookupResult, err := getLookupResultMap(op, matchField)
 	if err != nil {
@@ -446,12 +462,12 @@ func mergeReferenceLookupResponse(op *LoadOp, lookup Lookup, changes *ChangeItem
 		keyVal := keyRef[matchField].(string)
 		match, ok := lookupResult[keyVal]
 		if ok {
-			idValue, err := match.GetField(refCollectionMetadata.IDField)
+			idValue, err := match.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}
 			err = change.FieldChanges.SetField(fieldMetadata.GetFullName(), map[string]interface{}{
-				refCollectionMetadata.IDField: idValue,
+				ID_FIELD: idValue,
 			})
 			if err != nil {
 				return err
