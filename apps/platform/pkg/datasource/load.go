@@ -309,7 +309,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 				}
 
 				index := 0
-				err = op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
+				err = op.Collection.Loop(func(item loadable.Item, _ string) error {
 					for _, reference := range referencedCol.ReferenceFields {
 						refInterface, err := item.GetField(reference.GetFullName())
 						if err != nil {

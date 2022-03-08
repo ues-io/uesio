@@ -47,7 +47,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		}
 
 		// Fail we have an attempted change on an unupdateable field
-		return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue.(string))
+		return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue)
 	}
 }
 

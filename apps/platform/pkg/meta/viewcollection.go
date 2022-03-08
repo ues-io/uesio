@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -52,7 +53,7 @@ func (vc *ViewCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (vc *ViewCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *vc {
-		err := iter(vc.GetItem(index), index)
+		err := iter(vc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

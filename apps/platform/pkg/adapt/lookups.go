@@ -74,10 +74,10 @@ func HandleLookups(
 		// Go through all the changes and get a list of the upsert keys
 		ids := []string{}
 		for _, change := range *op.Updates {
-			ids = append(ids, change.IDValue.(string))
+			ids = append(ids, change.IDValue)
 		}
 		for _, change := range *op.Deletes {
-			ids = append(ids, change.IDValue.(string))
+			ids = append(ids, change.IDValue)
 		}
 
 		if len(ids) == 0 {
@@ -110,14 +110,14 @@ func HandleLookups(
 		}
 
 		for index, change := range *op.Updates {
-			oldValues, ok := oldValuesLookup[change.IDValue.(string)]
+			oldValues, ok := oldValuesLookup[change.IDValue]
 			if !ok {
 				return err
 			}
 			(*op.Updates)[index].OldValues = oldValues
 		}
 		for index, change := range *op.Deletes {
-			oldValues, ok := oldValuesLookup[change.IDValue.(string)]
+			oldValues, ok := oldValuesLookup[change.IDValue]
 			if !ok {
 				return err
 			}
@@ -367,7 +367,7 @@ func getLookupOps(request *SaveOp, metadata *MetadataCache) ([]*LoadOp, error) {
 
 func getLookupResultMap(op *LoadOp, keyField string) (map[string]loadable.Item, error) {
 	lookupResult := map[string]loadable.Item{}
-	err := op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
+	err := op.Collection.Loop(func(item loadable.Item, _ string) error {
 		keyVal, err := item.GetField(keyField)
 		if err == nil {
 			keyString, ok := keyVal.(string)
@@ -421,7 +421,7 @@ func mergeUpsertLookupResponse(op *LoadOp, inserts *ChangeItems, updates *Change
 			if err != nil {
 				return err
 			}
-			change.IDValue = idValue
+			change.IDValue = idValue.(string)
 			*updates = append(*updates, change)
 		} else {
 			newInserts = append(newInserts, change)

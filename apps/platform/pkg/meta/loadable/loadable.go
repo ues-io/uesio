@@ -1,6 +1,6 @@
 package loadable
 
-type GroupIterator func(item Item, index interface{}) error
+type GroupIterator func(item Item, index string) error
 
 // Group interface
 type Group interface {
@@ -22,7 +22,7 @@ type Item interface {
 func FindMissing(group Group, keyFunc func(item Item) string, needed []string) ([]string, error) {
 	returnedValues := map[string]bool{}
 	missing := []string{}
-	err := group.Loop(func(item Item, index interface{}) error {
+	err := group.Loop(func(item Item, index string) error {
 		value := keyFunc(item)
 		returnedValues[value] = true
 		return nil

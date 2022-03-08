@@ -65,7 +65,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 		for _, change := range *request.Updates {
 
-			if change.IDValue == nil {
+			if change.IDValue == "" {
 				continue
 			}
 
@@ -87,7 +87,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 				return err
 			}
 
-			fullRecordID := collectionName + ":" + change.IDValue.(string)
+			fullRecordID := collectionName + ":" + change.IDValue
 
 			if collectionMetadata.Access == "protected" {
 				recordsIDsList[fullRecordID] = change.ReadWriteTokens
@@ -96,7 +96,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 		for _, delete := range *request.Deletes {
 
-			if delete.IDValue == nil {
+			if delete.IDValue == "" {
 				continue
 			}
 

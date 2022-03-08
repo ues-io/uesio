@@ -122,7 +122,7 @@ func HandleReferences(
 	for i := range ops {
 		op := ops[i]
 		referencedCollection := referencedCollections[op.CollectionName]
-		err := op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+		err := op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 			refFK, err := refItem.GetField(ID_FIELD)
 			if err != nil {
 				return err

@@ -2,6 +2,7 @@ package meta
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -51,7 +52,7 @@ func (uatc *UserAccessTokenCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (uatc *UserAccessTokenCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *uatc {
-		err := iter(uatc.GetItem(index), index)
+		err := iter(uatc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}
