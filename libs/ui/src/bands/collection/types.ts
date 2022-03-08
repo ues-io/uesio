@@ -3,7 +3,6 @@ import { FieldMetadataMap } from "../field/types"
 type PlainCollection = {
 	name: string
 	namespace: string
-	idField: string
 	nameField: string
 	createable: boolean
 	accessible: boolean

@@ -76,7 +76,7 @@ func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 
 	if request.Changes != nil {
 		err := request.Changes.Loop(func(item loadable.Item, recordKey interface{}) error {
-			idValue, err := item.GetField(collectionMetadata.IDField)
+			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				opList.addInsert(item, recordKey)
 			} else {
@@ -91,7 +91,7 @@ func SplitSave(request *SaveRequest, collectionMetadata *adapt.CollectionMetadat
 
 	if request.Deletes != nil {
 		err := request.Deletes.Loop(func(item loadable.Item, _ interface{}) error {
-			idValue, err := item.GetField(collectionMetadata.IDField)
+			idValue, err := item.GetField(adapt.ID_FIELD)
 			if err != nil || idValue == nil || idValue.(string) == "" {
 				return errors.New("bad id value for delete item")
 			}

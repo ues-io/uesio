@@ -94,10 +94,9 @@ func HandleReferences(
 			ids[fieldIDIndex] = k
 			fieldIDIndex++
 		}
-		collectionMetadata := ref.Metadata
 		ref.AddFields([]LoadRequestField{
 			{
-				ID: collectionMetadata.IDField,
+				ID: ID_FIELD,
 			},
 		})
 		ops = append(ops, &LoadOp{
@@ -107,7 +106,7 @@ func HandleReferences(
 			CollectionName: collectionName,
 			Conditions: []LoadRequestCondition{
 				{
-					Field:    collectionMetadata.IDField,
+					Field:    ID_FIELD,
 					Operator: "IN",
 					Value:    ids,
 				},
@@ -124,7 +123,7 @@ func HandleReferences(
 		op := ops[i]
 		referencedCollection := referencedCollections[op.CollectionName]
 		err := op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
-			refFK, err := refItem.GetField(referencedCollection.Metadata.IDField)
+			refFK, err := refItem.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}

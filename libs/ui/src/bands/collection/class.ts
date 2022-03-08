@@ -50,7 +50,7 @@ class Collection {
 		return new Field(fieldMetadata)
 	}
 
-	getIdField = () => this.getField(this.source.idField)
+	getIdField = () => this.getField("uesio.id")
 	getNameField = () => this.getField(this.source.nameField)
 }
 

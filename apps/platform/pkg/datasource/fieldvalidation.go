@@ -145,7 +145,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
 			validations = append(validations, validateMetadata(field))
 		}
-		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
+		if !field.Updateable && field.GetFullName() != adapt.ID_FIELD {
 			validations = append(validations, preventUpdate(field))
 		}
 		if field.Type == "NUMBER" {

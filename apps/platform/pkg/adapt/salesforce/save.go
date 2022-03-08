@@ -32,13 +32,6 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 			return err
 		}
 
-		idFieldMetadata, err := collectionMetadata.GetIDField()
-		if err != nil {
-			return err
-		}
-
-		idFieldDBName := idFieldMetadata.GetFullName()
-
 		// Process Inserts
 		idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
 		if err != nil {
@@ -63,7 +56,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 				return err
 			}
 
-			err = change.FieldChanges.SetField(idFieldDBName, newID)
+			err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
 			if err != nil {
 				return err
 			}
@@ -81,7 +74,7 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 				if err != nil {
 					return err
 				}
-				if fieldID == idFieldDBName {
+				if fieldID == adapt.ID_FIELD {
 					// Don't set the id field here
 					return nil
 				}

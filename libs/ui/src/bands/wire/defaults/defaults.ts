@@ -71,11 +71,8 @@ const getDefaultRecord = (
 				fieldMetadata.type === "REFERENCE" &&
 				fieldMetadata.reference?.collection
 			) {
-				const referenceMeta =
-					collections[fieldMetadata.reference?.collection]
-				if (!referenceMeta) return
 				defaultRecord[defaultItem.field] = {
-					[referenceMeta.idField]: value,
+					["uesio.id"]: value,
 				}
 				return
 			}

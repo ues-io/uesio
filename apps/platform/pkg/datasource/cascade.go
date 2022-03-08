@@ -27,11 +27,6 @@ func getCascadeDeletes(
 				// need it ourselves for userfiles.
 				referencedCollection := referenceMetadata.Collection
 
-				referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
-				if err != nil {
-					return nil, err
-				}
-
 				// Get the ids that we need to delete
 				for _, wire := range wires {
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
@@ -53,7 +48,7 @@ func getCascadeDeletes(
 							continue
 						}
 
-						refKey, err := refItem.GetField(referencedCollectionMetadata.IDField)
+						refKey, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {
 							continue
 						}
@@ -68,7 +63,7 @@ func getCascadeDeletes(
 						}
 
 						currentCollectionIds = append(currentCollectionIds, adapt.Item{
-							referencedCollectionMetadata.IDField: fkString,
+							adapt.ID_FIELD: fkString,
 						})
 						cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 					}
@@ -82,10 +77,6 @@ func getCascadeDeletes(
 				}
 
 				referencedCollection := referenceGroupMetadata.Collection
-				referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
-				if err != nil {
-					return nil, err
-				}
 
 				for _, wire := range wires {
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
@@ -96,7 +87,7 @@ func getCascadeDeletes(
 					for _, deletion := range *wire.Deletes {
 
 						item := deletion.OldValues
-						refInterface, err := item.GetField(collectionMetadata.IDField)
+						refInterface, err := item.GetField(adapt.ID_FIELD)
 						if err != nil {
 							continue
 						}
@@ -116,7 +107,7 @@ func getCascadeDeletes(
 						continue
 					}
 
-					fields := []adapt.LoadRequestField{{ID: referencedCollectionMetadata.IDField}}
+					fields := []adapt.LoadRequestField{{ID: adapt.ID_FIELD}}
 					op := &adapt.LoadOp{
 						CollectionName: referenceGroupMetadata.Collection,
 						WireName:       "CascadeDelete",
@@ -132,7 +123,7 @@ func getCascadeDeletes(
 						Query: true,
 					}
 
-					err = loader([]*adapt.LoadOp{op})
+					err := loader([]*adapt.LoadOp{op})
 					if err != nil {
 						return nil, errors.New("Cascade delete error")
 					}
@@ -144,7 +135,7 @@ func getCascadeDeletes(
 
 					err = op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
 
-						refRK, err := refItem.GetField(referencedCollectionMetadata.IDField)
+						refRK, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {
 							return err
 						}
@@ -155,7 +146,7 @@ func getCascadeDeletes(
 						}
 
 						currentCollectionIds = append(currentCollectionIds, adapt.Item{
-							referencedCollectionMetadata.IDField: refRKAsString,
+							adapt.ID_FIELD: refRKAsString,
 						})
 
 						return nil
