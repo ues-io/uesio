@@ -13,10 +13,16 @@ const MAX_ITER_REF_GROUP = 10
 
 // Adapter interface
 type Adapter interface {
-	Load([]*LoadOp, *MetadataCache, *Credentials, []string) error
-	Save([]*SaveOp, *MetadataCache, *Credentials, []string) error
-	Migrate(*Credentials) error
-	GetAutonumber(*CollectionMetadata, *Credentials) (int, error)
+	GetConnection(*Credentials, *MetadataCache, []string) (Connection, error)
+}
+
+type Connection interface {
+	Load(*LoadOp) error
+	Save(*SaveOp) error
+	Migrate() error
+	GetAutonumber(*CollectionMetadata) (int, error)
+	GetMetadata() *MetadataCache
+	GetCredentials() *Credentials
 }
 
 var adapterMap = map[string]Adapter{}

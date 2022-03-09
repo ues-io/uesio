@@ -77,6 +77,7 @@ func installBundles(session *sess.Session, bundleNames ...string) error {
 		err := datasource.CreateBundle(bundleName, "v0.0.1", "v0.0.1", "Seed Install: "+bundleName, sysbs, session)
 		if err != nil {
 			logger.LogError(errors.New("Bundle already installed: " + bundleName))
+			logger.LogError(err)
 			// Don't return error here because we're ok with this error
 		}
 		err = datasource.StoreBundleAssets(bundleName, "v0.0.1", "v0.0.1", sysbs, session)
@@ -120,16 +121,13 @@ func seed(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	err = adapter.Migrate(credentials)
+	connection, err := adapter.GetConnection(credentials, nil, nil)
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
 
-	// Install Default Bundles
-	// This takes code from the /libs/uesioapps code in the repo
-	// and installs it into the localbundlestore.
-	err = installBundles(session, "crm", "cms")
+	err = connection.Migrate()
 	if err != nil {
 		logger.LogError(err)
 		return

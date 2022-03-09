@@ -7,15 +7,16 @@ import (
 )
 
 func HandleUpsertLookup(
-	loader Loader,
+	connection Connection,
 	op *SaveOp,
-	metadata *MetadataCache,
 ) error {
 
 	options := op.Options
 	if options == nil || options.Upsert == nil {
 		return nil
 	}
+
+	metadata := connection.GetMetadata()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
@@ -71,7 +72,7 @@ func HandleUpsertLookup(
 		Query: true,
 	}
 
-	err = loader([]*LoadOp{loadOp})
+	err = connection.Load(loadOp)
 	if err != nil {
 		return err
 	}

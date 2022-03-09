@@ -1,10 +1,10 @@
 package adapt
 
 func HandleOldValuesLookup(
-	loader Loader,
+	connection Connection,
 	op *SaveOp,
-	metadata *MetadataCache,
 ) error {
+	metadata := connection.GetMetadata()
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func HandleOldValuesLookup(
 		Query: true,
 	}
 
-	err = loader([]*LoadOp{oldValuesOp})
+	err = connection.Load(oldValuesOp)
 	if err != nil {
 		return err
 	}

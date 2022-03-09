@@ -48,26 +48,26 @@ func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *Field
 	return rgr
 }
 
-func loadData(ops []*LoadOp, loader Loader, index int) error {
+func loadData(op *LoadOp, connection Connection, index int) error {
 
 	if index == MAX_ITER_REF_GROUP {
 		return errors.New("You have reached the maximum limit of Reference Group")
 	}
 
-	err := loader(ops)
+	err := connection.Load(op)
 	if err != nil {
 		return err
 	}
 
-	if !ops[0].HasMoreBatches {
+	if !op.HasMoreBatches {
 		return nil
 	}
 
-	return loadData(ops, loader, index+1)
+	return loadData(op, connection, index+1)
 }
 
 func HandleReferencesGroup(
-	loader Loader,
+	connection Connection,
 	collection loadable.Group,
 	referencedGroupCollections ReferenceGroupRegistry,
 ) error {
@@ -130,9 +130,11 @@ func HandleReferencesGroup(
 		return nil
 	}
 
-	err := loadData(ops, loader, 0)
-	if err != nil {
-		return err
+	for _, op := range ops {
+		err := loadData(op, connection, 0)
+		if err != nil {
+			return err
+		}
 	}
 
 	for i := range ops {

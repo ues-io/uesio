@@ -10,10 +10,11 @@ import (
 
 func getCascadeDeletes(
 	wires []*adapt.SaveOp,
-	metadata *adapt.MetadataCache,
-	loader adapt.Loader,
+	connection adapt.Connection,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
+
+	metadata := connection.GetMetadata()
 
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -123,7 +124,7 @@ func getCascadeDeletes(
 						Query: true,
 					}
 
-					err := loader([]*adapt.LoadOp{op})
+					err := connection.Load(op)
 					if err != nil {
 						return nil, errors.New("Cascade delete error")
 					}
@@ -167,8 +168,8 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(batch []*adapt.SaveOp, metadata *adapt.MetadataCache, loader adapt.Loader, session *sess.Session) error {
-	deletes, err := getCascadeDeletes(batch, metadata, loader)
+func performCascadeDeletes(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	deletes, err := getCascadeDeletes(batch, connection)
 	if err != nil {
 		return err
 	}

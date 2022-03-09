@@ -203,7 +203,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 	}
 }
 
-func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, loader adapt.Loader, session *sess.Session) error {
+func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
@@ -257,9 +257,11 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, lo
 			Fields: []adapt.LoadRequestField{{ID: "uesio.id"}},
 			Query:  true,
 		}}
-		err := loader(ops)
-		if err != nil {
-			return err
+		for _, op := range ops {
+			err := connection.Load(op)
+			if err != nil {
+				return err
+			}
 		}
 		if idCount != results.Len() {
 			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {

@@ -38,15 +38,5 @@
 		"site": "prod_docs",
 		"type": "subdomain",
 		"domain": "docs"
-	},
-	{
-		"site": "prod_crm",
-		"type": "subdomain",
-		"domain": "crm"
-	},
-	{
-		"site": "uat_crm",
-		"type": "subdomain",
-		"domain": "crmtest"
 	}
 ]
