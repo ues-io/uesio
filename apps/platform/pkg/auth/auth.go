@@ -131,7 +131,8 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	session := sess.NewPublic(site)
 	session.SetPermissions(&meta.PermissionSet{
 		CollectionRefs: map[string]bool{
-			"uesio.users": true,
+			"uesio.users":     true,
+			"uesio.userfiles": true,
 		},
 	})
 
