@@ -1,9 +1,10 @@
-import { FunctionComponent } from "react"
+import { FC } from "react"
 import { definition, hooks, component, wire } from "@uesio/ui"
-
+import FieldsPermissionPicker from "./fieldspermissionpicker"
 type PermissionPickerDefinition = {
 	fieldId: string
 	wireName: string
+	fieldsWireName: string
 }
 
 interface Props extends definition.BaseProps {
@@ -13,47 +14,35 @@ interface Props extends definition.BaseProps {
 const CheckboxField = component.registry.getUtility("io.checkboxfield")
 const TitleBar = component.registry.getUtility("io.titlebar")
 
-const PermissionPicker: FunctionComponent<Props> = (props) => {
+const PermissionPicker: FC<Props> = (props) => {
 	const {
 		context,
-		definition: { fieldId, wireName },
+		definition: { fieldsWireName, fieldId, wireName },
 	} = props
 
 	const uesio = hooks.useUesio(props)
 	const record = context.getRecord()
-	const view = context.getView()
-	const workspaceName = view?.params?.workspacename
-	const appName = view?.params?.appname
+	const { workspacename: workspaceName, appname: appName } =
+		context.getView()?.params || {}
 	const wire = uesio.wire.useWire(wireName || "")
+	if (!wire || !record || !workspaceName || !appName) return null
 
-	if (!wire || !record || !workspaceName || !appName) {
-		return null
-	}
-
-	const collection = wire.getCollection()
-	const nameField = collection.getNameField()
-	const nameNameField = nameField?.getId()
+	const nameNameField = wire.getCollection().getNameField()?.getId()
 	if (!nameNameField) return null
 
 	const mode = context.getFieldMode() || "READ"
+	const disabled = mode === "READ"
 	const value =
 		record.getFieldValue<wire.PlainWireRecord | undefined>(fieldId) || {}
-	const disabled = mode === "READ"
 	const data = wire.getData()
 
 	if (!value) return null
 
-	const handleToggle = (listRecord: string) => {
-		const hasProperty = getValue(listRecord)
-		if (!hasProperty) {
-			const updValue = { ...value, [listRecord]: true }
-			record.update(fieldId, updValue)
-		} else {
-			const currentValue = value[listRecord]
-			const updValue = { ...value, [listRecord]: !currentValue }
-			record.update(fieldId, updValue)
-		}
-	}
+	const handleToggle = (listRecord: string) =>
+		record.update(fieldId, {
+			...value,
+			[listRecord]: getValue(listRecord) ? !value[listRecord] : true,
+		})
 
 	const getValue = (itemName: string) => (value[itemName] as boolean) || false
 
@@ -62,21 +51,42 @@ const PermissionPicker: FunctionComponent<Props> = (props) => {
 			{data.map((record, i) => {
 				const itemName =
 					appName + "." + record.getFieldValue(nameNameField)
+				const hasAccess = !!getValue(itemName)
+
 				return (
-					<TitleBar
-						key={`${itemName}.${i}`}
-						context={context}
-						title={itemName}
-						actions={
-							<CheckboxField
-								context={context}
-								disabled={disabled}
-								setValue={() => handleToggle(itemName)}
-								value={getValue(itemName)}
-								mode={mode}
-							/>
-						}
-					/>
+					<>
+						<TitleBar
+							key={`${itemName}.${i}`}
+							context={context}
+							title={itemName}
+							onClick={() => handleToggle(itemName)}
+							actions={
+								<CheckboxField
+									context={context}
+									disabled={disabled}
+									setValue={() => handleToggle(itemName)}
+									value={hasAccess}
+									mode={mode}
+								/>
+							}
+						/>
+						{fieldsWireName && hasAccess && (
+							<div
+								style={{
+									marginBottom: "1em",
+									paddingBottom: "1em",
+									borderBottom: "1px solid #eee",
+									paddingLeft: "1em",
+								}}
+							>
+								<FieldsPermissionPicker
+									context={context}
+									collectionName={itemName}
+									wireName={fieldsWireName}
+								/>
+							</div>
+						)}
+					</>
 				)
 			})}
 		</>
