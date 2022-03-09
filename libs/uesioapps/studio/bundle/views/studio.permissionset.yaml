@@ -75,6 +75,17 @@ definition:
           valueSource: LOOKUP
           lookupWire: workspaces
           lookupField: uesio.id
+    fields:
+      collection: studio.fields
+      fields:
+        uesio.id:
+        studio.name:
+        studio.collection:
+      conditions:
+        - field: studio.workspace
+          valueSource: LOOKUP
+          lookupWire: workspaces
+          lookupField: uesio.id
     files:
       collection: studio.files
       fields:
@@ -169,24 +180,40 @@ definition:
                                 items:
                                   - io.field:
                                       fieldId: studio.name
-                                  - io.field:
-                                      fieldId: studio.allowallfiles
-                                      displayAs: "TOGGLE"
-                                  - io.field:
-                                      fieldId: studio.allowallroutes
-                                      displayAs: "TOGGLE"
-                                  - io.field:
-                                      fieldId: studio.allowallviews
-                                      displayAs: "TOGGLE"
+
+                      - io.box:
+                          uesio.variant: io.section
+                          components:
+                            - io.titlebar:
+                                title: Collections
+                                uesio.variant: io.section
+                                actions:
                                   - io.field:
                                       fieldId: studio.allowallcollections
                                       displayAs: "TOGGLE"
+                            - io.box:
+                                uesio.styles:
+                                  root:
+                                    padding: 40px
+                                uesio.display:
+                                  - type: fieldEquals
+                                    field: studio.allowallcollections
+                                    value: false
+                                components:
+                                  - studio.permissionpicker:
+                                      fieldId: studio.collectionrefs
+                                      wireName: collections
+                                      fieldsWireName: fields
                       - io.box:
                           uesio.variant: io.section
                           components:
                             - io.titlebar:
                                 title: Files
                                 uesio.variant: io.section
+                                actions:
+                                  - io.field:
+                                      fieldId: studio.allowallfiles
+                                      displayAs: "TOGGLE"
                             - io.box:
                                 uesio.styles:
                                   root:
@@ -201,6 +228,10 @@ definition:
                             - io.titlebar:
                                 title: Routes
                                 uesio.variant: io.section
+                                actions:
+                                  - io.field:
+                                      fieldId: studio.allowallroutes
+                                      displayAs: "TOGGLE"
                             - io.box:
                                 uesio.styles:
                                   root:
@@ -215,6 +246,10 @@ definition:
                             - io.titlebar:
                                 title: Views
                                 uesio.variant: io.section
+                                actions:
+                                  - io.field:
+                                      fieldId: studio.allowallviews
+                                      displayAs: "TOGGLE"
                             - io.box:
                                 uesio.styles:
                                   root:
@@ -223,17 +258,18 @@ definition:
                                   - studio.permissionpicker:
                                       fieldId: studio.viewrefs
                                       wireName: views
-                      - io.box:
-                          uesio.variant: io.section
-                          components:
-                            - io.titlebar:
-                                title: Collections
-                                uesio.variant: io.section
-                            - io.box:
-                                uesio.styles:
-                                  root:
-                                    padding: 40px
-                                components:
-                                  - studio.permissionpicker:
-                                      fieldId: studio.collectionrefs
-                                      wireName: collections
+
+                      # - io.box:
+                      #     uesio.variant: io.section
+                      #     components:
+                      #       - io.titlebar:
+                      #           title: Fields
+                      #           uesio.variant: io.section
+                      #       - io.box:
+                      #           uesio.styles:
+                      #             root:
+                      #               padding: 40px
+                      #           components:
+                      #             - studio.permissionpicker:
+                      #                 fieldId: studio.fieldrefs
+                      #                 wireName: fields
