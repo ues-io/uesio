@@ -19,7 +19,7 @@ func Logger(message string) {
 type JSDialect struct {
 }
 
-const MAX_MINUTES time.Duration = 1
+const MAX_SECONDS time.Duration = 5
 
 func runBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
 	// TODO: We could possibly not start a new VM for every bot we run.
@@ -30,7 +30,7 @@ func runBot(botName string, contents string, api interface{}, errorFunc func(str
 		return err
 	}
 
-	time.AfterFunc(MAX_MINUTES*time.Minute, func() {
+	time.AfterFunc(MAX_SECONDS*time.Second, func() {
 		vm.Interrupt("Bot: " + botName + " is running too long, please check your code and run the operation again.")
 		return //Interrupt native Go functions
 	})
