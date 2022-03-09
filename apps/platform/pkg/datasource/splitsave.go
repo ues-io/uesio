@@ -18,7 +18,7 @@ type OpList struct {
 }
 
 func (ol *OpList) getCurrentIndex() int {
-	if ol.Counter == adapt.MAX_BATCH_SIZE {
+	if ol.Counter == adapt.MAX_SAVE_BATCH_SIZE {
 		ol.Counter = 0
 		ol.CurrentIndex++
 	}

@@ -33,5 +33,10 @@
 		"name": "web",
 		"description": "Uesio Website",
 		"color": "#003f5c"
+	},
+	{
+		"name": "lab",
+		"description": "Experimental Components",
+		"color": "#003f5c"
 	}
 ]

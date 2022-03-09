@@ -68,8 +68,8 @@ func loadOne(
 			loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
 		}
 	*/
-	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_BATCH_SIZE {
-		op.BatchSize = adapt.MAX_BATCH_SIZE
+	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
+		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
 	/*
 		loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)

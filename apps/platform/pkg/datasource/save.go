@@ -203,14 +203,20 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			return adapter.Load(ops, &metadataResponse, credentials, session.GetTokens())
 		}
 
-		err = adapt.HandleLookups(loader, batch, &metadataResponse)
-		if err != nil {
-			return err
-		}
-
 		for _, op := range batch {
 
 			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
+			if err != nil {
+				return err
+			}
+
+			// Do Upsert Lookups Here First
+			err = adapt.HandleUpsertLookup(loader, op, &metadataResponse)
+			if err != nil {
+				return err
+			}
+
+			err = adapt.HandleOldValuesLookup(loader, op, &metadataResponse)
 			if err != nil {
 				return err
 			}
@@ -230,6 +236,12 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
+			// Now do Reference Lookups and Reference Integrity Lookups
+			err = adapt.HandleReferenceLookups(loader, op, &metadataResponse)
+			if err != nil {
+				return err
+			}
+
 			err = Validate(op, collectionMetadata, loader, session)
 			if err != nil {
 				return err
@@ -239,11 +251,11 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
-		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials, session.GetTokens())
-		if err != nil {
-			return err
+			err = adapter.Save([]*adapt.SaveOp{op}, &metadataResponse, credentials, session.GetTokens())
+			if err != nil {
+				return err
+			}
 		}
 
 		err = performCascadeDeletes(batch, &metadataResponse, loader, session)
