@@ -7,7 +7,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-const MAX_BATCH_SIZE = 100
+const MAX_LOAD_BATCH_SIZE = 100
+const MAX_SAVE_BATCH_SIZE = 100
 const MAX_ITER_REF_GROUP = 10
 
 // Adapter interface

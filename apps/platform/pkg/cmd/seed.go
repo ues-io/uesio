@@ -165,12 +165,12 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	err = datasource.Save([]datasource.SaveRequest{
+		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&apps),
 		getPlatformSeedSR(&bundles),
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
-		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&configstorevalues),
 		getSeedSR("studio.teams", &teams),
 		getSeedSR("studio.teammembers", &teammembers),
