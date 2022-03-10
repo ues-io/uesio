@@ -84,7 +84,7 @@ func runBot(botType string, collectionMetadata *adapt.CollectionMetadata, dialec
 
 }
 
-func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
@@ -94,7 +94,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 		cleanUserFiles(request, collectionMetadata, session)
 	}
 
-	botAPI := NewBeforeSaveAPI(request, collectionMetadata, session)
+	botAPI := NewBeforeSaveAPI(request, collectionMetadata, connection, session)
 
 	err := runBot("BEFORESAVE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI, session)
@@ -110,7 +110,7 @@ func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 	return nil
 }
 
-func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
@@ -124,7 +124,7 @@ func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collectio
 		clearHostCacheForDomain(request, collectionMetadata, session)
 	}
 
-	botAPI := NewAfterSaveAPI(request, collectionMetadata, session)
+	botAPI := NewAfterSaveAPI(request, collectionMetadata, connection, session)
 
 	err := runBot("AFTERSAVE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI, session)

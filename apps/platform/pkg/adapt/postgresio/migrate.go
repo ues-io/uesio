@@ -1,19 +1,15 @@
 package postgresio
 
 import (
-	"errors"
 	"fmt"
 )
 
 // Migrate function
 func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
-	db, err := connect(c.credentials)
-	if err != nil {
-		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
-	}
+	db := c.GetClient()
 
-	_, err = db.Exec(`
+	_, err := db.Exec(`
 		create table if not exists public.data
 		(
 			id         varchar(255) not null constraint data_pk primary key,

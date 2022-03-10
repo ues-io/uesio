@@ -9,14 +9,15 @@ import (
 
 // AfterSaveAPI type
 type AfterSaveAPI struct {
-	Inserts *InsertsAPI `bot:"inserts"`
-	Updates *UpdatesAPI `bot:"updates"`
-	Deletes *DeletesAPI `bot:"deletes"`
-	errors  []string
-	session *sess.Session
+	Inserts    *InsertsAPI `bot:"inserts"`
+	Updates    *UpdatesAPI `bot:"updates"`
+	Deletes    *DeletesAPI `bot:"deletes"`
+	errors     []string
+	session    *sess.Session
+	connection adapt.Connection
 }
 
-func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Inserts: &InsertsAPI{
 			inserts:  request.Inserts,
@@ -58,7 +59,11 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 			Changes:    &changes,
 		},
 	}
-	err := Save(requests, as.session)
+	err := SaveWithOptions(requests, as.session, &SaveOptions{
+		Connections: map[string]adapt.Connection{
+			as.connection.GetDataSource(): as.connection,
+		},
+	})
 	if err != nil {
 		return err
 	}

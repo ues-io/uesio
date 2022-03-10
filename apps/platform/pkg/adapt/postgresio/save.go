@@ -100,7 +100,7 @@ func (dv DataValuer) Value() (driver.Value, error) {
 func (c *Connection) Save(request *adapt.SaveOp) error {
 
 	credentials := c.credentials
-	db := c.client
+	db := c.GetClient()
 	metadata := c.metadata
 
 	tenantID := credentials.GetTenantID()

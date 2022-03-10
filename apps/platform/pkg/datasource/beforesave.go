@@ -9,14 +9,15 @@ import (
 
 // BeforeSaveAPI type
 type BeforeSaveAPI struct {
-	Inserts *InsertsAPI `bot:"inserts"`
-	Updates *UpdatesAPI `bot:"updates"`
-	Deletes *DeletesAPI `bot:"deletes"`
-	errors  []string
-	session *sess.Session
+	Inserts    *InsertsAPI `bot:"inserts"`
+	Updates    *UpdatesAPI `bot:"updates"`
+	Deletes    *DeletesAPI `bot:"deletes"`
+	errors     []string
+	session    *sess.Session
+	connection adapt.Connection
 }
 
-func NewBeforeSaveAPI(op *adapt.SaveOp, metadata *adapt.CollectionMetadata, session *sess.Session) *BeforeSaveAPI {
+func NewBeforeSaveAPI(op *adapt.SaveOp, metadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Inserts: &InsertsAPI{
 			inserts:  op.Inserts,
