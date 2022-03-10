@@ -32,16 +32,6 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	}
 }
 
-/*
-func loadOne(
-	db *sql.DB,
-	op *adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	ops []*adapt.LoadOp,
-	credentials *adapt.Credentials,
-	userTokens []string,
-) error {
-*/
 func (c *Connection) Load(op *adapt.LoadOp) error {
 
 	metadata := c.metadata
