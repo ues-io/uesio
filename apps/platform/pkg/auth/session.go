@@ -42,6 +42,7 @@ func loadSession(browserSession session.Session, site *meta.Site) (*sess.Session
 
 	fakeSession := sess.NewSession(nil, &meta.User{
 		ID:        "system_system",
+		Username:  "admin",
 		FirstName: "Super",
 		LastName:  "Admin",
 		Profile:   "uesio.public",
