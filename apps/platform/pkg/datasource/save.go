@@ -197,10 +197,9 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// 8. Run After bots
 		// 9. Return results
 
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		loader := func(ops []*adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials, session.GetTokens())
+		connection, err := adapter.GetConnection(credentials, &metadataResponse, session.GetTokens())
+		if err != nil {
+			return err
 		}
 
 		for _, op := range batch {
@@ -211,17 +210,17 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 
 			// Do Upsert Lookups Here First
-			err = adapt.HandleUpsertLookup(loader, op, &metadataResponse)
+			err = adapt.HandleUpsertLookup(connection, op)
 			if err != nil {
 				return err
 			}
 
-			err = adapt.HandleOldValuesLookup(loader, op, &metadataResponse)
+			err = adapt.HandleOldValuesLookup(connection, op)
 			if err != nil {
 				return err
 			}
 
-			autonumber, err := getAutonumber(len(*op.Inserts), adapter, collectionMetadata, credentials)
+			autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
 			if err != nil {
 				return err
 			}
@@ -237,12 +236,12 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			}
 
 			// Now do Reference Lookups and Reference Integrity Lookups
-			err = adapt.HandleReferenceLookups(loader, op, &metadataResponse)
+			err = adapt.HandleReferenceLookups(connection, op)
 			if err != nil {
 				return err
 			}
 
-			err = Validate(op, collectionMetadata, loader, session)
+			err = Validate(op, collectionMetadata, connection, session)
 			if err != nil {
 				return err
 			}
@@ -252,13 +251,13 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = adapter.Save([]*adapt.SaveOp{op}, &metadataResponse, credentials, session.GetTokens())
+			err = connection.Save(op)
 			if err != nil {
 				return err
 			}
 		}
 
-		err = performCascadeDeletes(batch, &metadataResponse, loader, session)
+		err = performCascadeDeletes(batch, connection, session)
 		if err != nil {
 			return err
 		}

@@ -78,7 +78,7 @@ func IsReference(fieldType string) bool {
 }
 
 func HandleReferences(
-	loader Loader,
+	connection Connection,
 	collection loadable.Group,
 	referencedCollections ReferenceRegistry,
 ) error {
@@ -114,9 +114,11 @@ func HandleReferences(
 			Query: true,
 		})
 	}
-	err := loader(ops)
-	if err != nil {
-		return err
+	for _, op := range ops {
+		err := connection.Load(op)
+		if err != nil {
+			return err
+		}
 	}
 
 	for i := range ops {

@@ -7,11 +7,11 @@ import (
 )
 
 func HandleReferenceLookups(
-	loader Loader,
+	connection Connection,
 	op *SaveOp,
-	metadata *MetadataCache,
 ) error {
 
+	metadata := connection.GetMetadata()
 	options := op.Options
 	if options == nil {
 		return nil
@@ -33,9 +33,11 @@ func HandleReferenceLookups(
 		lookupRequests = append(lookupRequests, referenceLookup)
 	}
 
-	err = loader(lookupRequests)
-	if err != nil {
-		return err
+	for _, req := range lookupRequests {
+		err = connection.Load(req)
+		if err != nil {
+			return err
+		}
 	}
 
 	for index, lookupResponse := range lookupRequests {

@@ -3,14 +3,12 @@ package postgresio
 import (
 	"errors"
 	"fmt"
-
-	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
 // Migrate function
-func (a *Adapter) Migrate(credentials *adapt.Credentials) error {
+func (c *Connection) Migrate() error {
 	fmt.Println("Migrating Postgresio")
-	db, err := connect(credentials)
+	db, err := connect(c.credentials)
 	if err != nil {
 		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
 	}

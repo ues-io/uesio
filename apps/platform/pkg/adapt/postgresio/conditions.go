@@ -29,7 +29,6 @@ func getConditions(
 	op *adapt.LoadOp,
 	metadata *adapt.MetadataCache,
 	collectionMetadata *adapt.CollectionMetadata,
-	ops []*adapt.LoadOp,
 	credentials *adapt.Credentials,
 	userTokens []string,
 ) ([]string, []interface{}, error) {
@@ -96,10 +95,13 @@ func getConditions(
 		}
 		fieldName := getFieldName(fieldMetadata)
 
-		conditionValue, err := adapt.GetConditionValue(condition, op, metadata, ops)
-		if err != nil {
-			return nil, nil, err
-		}
+		/*
+			conditionValue, err := adapt.GetConditionValue(condition, op, metadata, ops)
+			if err != nil {
+				return nil, nil, err
+			}
+		*/
+		conditionValue := condition.Value
 
 		if condition.Operator == "IN" {
 			conditionStrings = append(conditionStrings, fieldName+" = ANY("+paramCounter.get()+")")

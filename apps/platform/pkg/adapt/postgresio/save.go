@@ -97,156 +97,152 @@ func (dv DataValuer) Value() (driver.Value, error) {
 }
 
 // Save function
-func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
+func (c *Connection) Save(request *adapt.SaveOp) error {
 
-	db, err := connect(credentials)
-	if err != nil {
-		return errors.New("Failed to connect to PostgreSQL:" + err.Error())
-	}
+	credentials := c.credentials
+	db := c.client
+	metadata := c.metadata
 
 	tenantID := credentials.GetTenantID()
 
 	recordsIDsList := map[string][]string{}
 
-	for _, request := range requests {
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
+	if err != nil {
+		return err
+	}
 
-		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
+	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
+	if err != nil {
+		return err
+	}
+
+	// Process Inserts
+	idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
+	if err != nil {
+		return err
+	}
+
+	for _, change := range *request.Inserts {
+
+		newID, err := templating.Execute(idTemplate, change.FieldChanges)
 		if err != nil {
 			return err
 		}
 
-		collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
-		if err != nil {
-			return err
+		if newID == "" {
+			newID = uuid.New().String()
 		}
 
-		// Process Inserts
-		idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
-		if err != nil {
-			return err
-		}
+		builder := NewValueBuilder(4)
 
-		for _, change := range *request.Inserts {
-
-			newID, err := templating.Execute(idTemplate, change.FieldChanges)
+		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			fieldMetadata, err := collectionMetadata.GetField(fieldID)
 			if err != nil {
 				return err
 			}
-
-			if newID == "" {
-				newID = uuid.New().String()
-			}
-
-			builder := NewValueBuilder(4)
-
-			err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-				fieldMetadata, err := collectionMetadata.GetField(fieldID)
-				if err != nil {
-					return err
-				}
-				if fieldID == adapt.ID_FIELD {
-					// Don't set the id field here
-					return nil
-				}
-				builder.add(fieldID, DataValuer{
-					Data:  value,
-					Field: fieldMetadata,
-				}, getPGType(fieldMetadata))
+			if fieldID == adapt.ID_FIELD {
+				// Don't set the id field here
 				return nil
-			})
-			if err != nil {
-				return err
 			}
-
-			err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
-			if err != nil {
-				return err
-			}
-
-			builder.add(adapt.ID_FIELD, newID, "text")
-
-			query := fmt.Sprintf("INSERT INTO public.data (id,collection,autonumber,fields) VALUES ($1,$2,$3,jsonb_build_object(%s))", builder.build())
-			fullRecordID := collectionName + ":" + newID
-
-			params := append([]interface{}{
-				fullRecordID,
-				collectionName,
-				change.Autonumber,
-			}, builder.Values...)
-
-			_, err = db.Exec(query, params...)
-			if err != nil {
-				return err
-			}
-
-			if collectionMetadata.Access == "protected" {
-				recordsIDsList[fullRecordID] = change.ReadWriteTokens
-			}
-
+			builder.add(fieldID, DataValuer{
+				Data:  value,
+				Field: fieldMetadata,
+			}, getPGType(fieldMetadata))
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 
-		for _, change := range *request.Updates {
+		err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
+		if err != nil {
+			return err
+		}
 
-			if change.IDValue == "" {
-				continue
+		builder.add(adapt.ID_FIELD, newID, "text")
+
+		query := fmt.Sprintf("INSERT INTO public.data (id,collection,autonumber,fields) VALUES ($1,$2,$3,jsonb_build_object(%s))", builder.build())
+		fullRecordID := collectionName + ":" + newID
+
+		params := append([]interface{}{
+			fullRecordID,
+			collectionName,
+			change.Autonumber,
+		}, builder.Values...)
+
+		_, err = db.Exec(query, params...)
+		if err != nil {
+			return err
+		}
+
+		if collectionMetadata.Access == "protected" {
+			recordsIDsList[fullRecordID] = change.ReadWriteTokens
+		}
+
+	}
+
+	for _, change := range *request.Updates {
+
+		if change.IDValue == "" {
+			continue
+		}
+
+		builder := NewValueBuilder(3)
+
+		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			fieldMetadata, err := collectionMetadata.GetField(fieldID)
+			if err != nil {
+				return err
 			}
-
-			builder := NewValueBuilder(3)
-
-			err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-				fieldMetadata, err := collectionMetadata.GetField(fieldID)
-				if err != nil {
-					return err
-				}
-				if fieldID == adapt.ID_FIELD {
-					// Don't set the id field here
-					return nil
-				}
-				if fieldMetadata.AutoPopulate == "CREATE" {
-					return nil
-				}
-				builder.add(fieldID, DataValuer{
-					Data:  value,
-					Field: fieldMetadata,
-				}, getPGType(fieldMetadata))
+			if fieldID == adapt.ID_FIELD {
+				// Don't set the id field here
 				return nil
-			})
-			if err != nil {
-				return err
 			}
-
-			fullRecordID := collectionName + ":" + change.IDValue
-
-			params := append([]interface{}{
-				fullRecordID,
-				collectionName,
-			}, builder.Values...)
-
-			query := fmt.Sprintf("UPDATE public.data SET fields = fields || jsonb_build_object(%s) WHERE id = $1 and collection = $2", builder.build())
-			_, err = db.Exec(query, params...)
-			if err != nil {
-				return err
+			if fieldMetadata.AutoPopulate == "CREATE" {
+				return nil
 			}
-
-			if collectionMetadata.Access == "protected" {
-				recordsIDsList[fullRecordID] = change.ReadWriteTokens
-			}
+			builder.add(fieldID, DataValuer{
+				Data:  value,
+				Field: fieldMetadata,
+			}, getPGType(fieldMetadata))
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 
-		for _, delete := range *request.Deletes {
+		fullRecordID := collectionName + ":" + change.IDValue
 
-			if delete.IDValue == "" {
-				continue
-			}
+		params := append([]interface{}{
+			fullRecordID,
+			collectionName,
+		}, builder.Values...)
 
-			query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
-			_, err = db.Exec(query, []interface{}{
-				collectionName + ":" + delete.IDValue,
-				collectionName,
-			}...)
-			if err != nil {
-				return err
-			}
+		query := fmt.Sprintf("UPDATE public.data SET fields = fields || jsonb_build_object(%s) WHERE id = $1 and collection = $2", builder.build())
+		_, err = db.Exec(query, params...)
+		if err != nil {
+			return err
+		}
+
+		if collectionMetadata.Access == "protected" {
+			recordsIDsList[fullRecordID] = change.ReadWriteTokens
+		}
+	}
+
+	for _, delete := range *request.Deletes {
+
+		if delete.IDValue == "" {
+			continue
+		}
+
+		query := "DELETE FROM public.data WHERE id = $1 and collection = $2"
+		_, err = db.Exec(query, []interface{}{
+			collectionName + ":" + delete.IDValue,
+			collectionName,
+		}...)
+		if err != nil {
+			return err
 		}
 	}
 

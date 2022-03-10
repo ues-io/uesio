@@ -8,7 +8,8 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/cache"
 )
 
-func getAutonumber(insertCount int, adapter adapt.Adapter, collectionMetadata *adapt.CollectionMetadata, credentials *adapt.Credentials) (int, error) {
+func getAutonumber(insertCount int, connection adapt.Connection, collectionMetadata *adapt.CollectionMetadata) (int, error) {
+	credentials := connection.GetCredentials()
 	// Connect to redis and increment the counter
 	conn := cache.GetRedisConn()
 	defer conn.Close()
@@ -20,7 +21,7 @@ func getAutonumber(insertCount int, adapter adapt.Adapter, collectionMetadata *a
 
 	if keys == 0 {
 		// no key present in cache, we'll have to check the db
-		autonumber, err := adapter.GetAutonumber(collectionMetadata, credentials)
+		autonumber, err := connection.GetAutonumber(collectionMetadata)
 		if err != nil {
 			return 0, fmt.Errorf("Error Getting Autonumber from DB: " + err.Error())
 		}
