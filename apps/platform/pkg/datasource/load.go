@@ -5,9 +5,7 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
-	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/translate"
 )
@@ -20,7 +18,6 @@ type SpecialReferences struct {
 var specialRefs = map[string]SpecialReferences{
 	"FILE": {
 		ReferenceMetadata: &meta.ReferenceMetadata{
-			OnDelete:   "CASCADE",
 			Collection: "uesio.userfiles",
 		},
 		Fields: []string{"uesio.mimetype", "uesio.name"},
@@ -31,6 +28,11 @@ var specialRefs = map[string]SpecialReferences{
 		},
 		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
+}
+
+type LoadOptions struct {
+	CheckPermissions bool
+	Connections      map[string]adapt.Connection
 }
 
 func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
@@ -167,12 +169,18 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 }
 
 func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	return LoadWithOptions(ops, session, true)
+	return LoadWithOptions(ops, session, &LoadOptions{
+		CheckPermissions: true,
+	})
 }
 
-func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
+func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+	if options == nil {
+		options = &LoadOptions{}
+	}
 	collated := map[string][]*adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
+	checkPermissions := options.CheckPermissions
 
 	if !session.HasLabels() {
 		labels, err := translate.GetTranslatedLabels(session)
@@ -187,14 +195,14 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 		// Verify that the uesio.id field is present
 		hasIDField := false
 		for j := range ops[i].Fields {
-			if ops[i].Fields[j].ID == "uesio.id" {
+			if ops[i].Fields[j].ID == adapt.ID_FIELD {
 				hasIDField = true
 				break
 			}
 		}
 		if !hasIDField {
 			ops[i].Fields = append(ops[i].Fields, adapt.LoadRequestField{
-				ID: "uesio.id",
+				ID: adapt.ID_FIELD,
 			})
 		}
 
@@ -241,113 +249,31 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return nil, err
-		}
-
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return nil, err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return nil, err
-		}
-
 		var tokens []string
 		if checkPermissions {
 			tokens = session.GetTokens()
 		}
 
-		err = adapter.Load(batch, &metadataResponse, credentials, tokens)
+		connection, err := GetConnection(dsKey, tokens, &metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
 
-		// Now do our supplemental reference loads
-		for i := range batch {
-			op := batch[i]
-			for colKey, referencedCol := range op.ReferencedCollections {
-				refMetadata, err := metadataResponse.GetCollection(colKey)
+		for _, op := range batch {
+
+			for i := range op.Conditions {
+				value, err := adapt.GetConditionValue(op.Conditions[i], op, &metadataResponse, batch)
 				if err != nil {
 					return nil, err
 				}
-				referencedCol.Metadata = refMetadata
-
-				datasource, err := meta.NewDataSource(referencedCol.Metadata.DataSource)
-				if err != nil {
-					return nil, err
-				}
-
-				err = bundle.Load(datasource, session)
-				if err != nil {
-					return nil, err
-				}
-
-				// Now figure out which data source adapter to use
-				// and make the requests
-				// It would be better to make this requests in parallel
-				// instead of in series
-				adapterType := datasource.Type
-				adapter, err := adapt.GetAdapter(adapterType, session)
-				if err != nil {
-					return nil, err
-				}
-				credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-				if err != nil {
-					return nil, err
-				}
-
-				index := 0
-				err = op.Collection.Loop(func(item loadable.Item, _ interface{}) error {
-					for _, reference := range referencedCol.ReferenceFields {
-						refInterface, err := item.GetField(reference.GetFullName())
-						if err != nil {
-							return err
-						}
-
-						refItem, ok := refInterface.(adapt.Item)
-						if !ok {
-							continue
-						}
-
-						value, err := refItem.GetField(referencedCol.Metadata.IDField)
-						if err != nil {
-							return err
-						}
-						referencedCol.AddID(value, adapt.ReferenceLocator{
-							RecordIndex: index,
-							Field:       reference,
-						})
-					}
-					index++
-					return nil
-				})
-				if err != nil {
-					return nil, err
-				}
-
-				err = adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-					return adapter.Load(ops, &metadataResponse, credentials, tokens)
-				}, op.Collection, adapt.ReferenceRegistry{
-					colKey: referencedCol,
-				})
-				if err != nil {
-					return nil, err
-				}
+				op.Conditions[i].Value = value
+				op.Conditions[i].ValueSource = ""
 			}
 
+			err := connection.Load(op)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 	}

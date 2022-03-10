@@ -101,7 +101,7 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 			}
 		}
 
-		return group.Loop(func(item loadable.Item, index interface{}) error {
+		return group.Loop(func(item loadable.Item, _ string) error {
 			bundleable := item.(meta.BundleableItem)
 			match := itemMap[collectionName+":"+bundleable.GetDBID(workspace)]
 			meta.Copy(match, item)

@@ -7,8 +7,10 @@ import (
 )
 
 // Save function
-func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
+func (c *Connection) Save(request *adapt.SaveOp) error {
 
+	credentials := c.credentials
+	metadata := c.metadata
 	/*
 		client, err := connect(credentials)
 		if err != nil {
@@ -20,94 +22,84 @@ func (a *Adapter) Save(requests []*adapt.SaveOp, metadata *adapt.MetadataCache, 
 
 	recordsIDsList := map[string][]string{}
 
-	for _, request := range requests {
+	collectionMetadata, err := metadata.GetCollection(request.CollectionName)
+	if err != nil {
+		return err
+	}
 
-		collectionMetadata, err := metadata.GetCollection(request.CollectionName)
+	collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
+	if err != nil {
+		return err
+	}
+
+	// Process Inserts
+	idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
+	if err != nil {
+		return err
+	}
+
+	for _, change := range *request.Inserts {
+
+		newID, err := templating.Execute(idTemplate, change.FieldChanges)
 		if err != nil {
 			return err
 		}
 
-		collectionName, err := getDBCollectionName(collectionMetadata, tenantID)
+		if newID == "" {
+			newID = uuid.New().String()
+		}
+
+		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			return nil
+		})
 		if err != nil {
 			return err
 		}
 
-		idFieldMetadata, err := collectionMetadata.GetIDField()
+		err = change.FieldChanges.SetField(adapt.ID_FIELD, newID)
 		if err != nil {
 			return err
 		}
 
-		idFieldDBName := idFieldMetadata.GetFullName()
+	}
 
-		// Process Inserts
-		idTemplate, err := adapt.NewFieldChanges(collectionMetadata.IDFormat, collectionMetadata)
-		if err != nil {
-			return err
+	for _, change := range *request.Updates {
+
+		if change.IDValue == "" {
+			continue
 		}
 
-		for _, change := range *request.Inserts {
-
-			newID, err := templating.Execute(idTemplate, change.FieldChanges)
+		err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			fieldMetadata, err := collectionMetadata.GetField(fieldID)
 			if err != nil {
 				return err
 			}
-
-			if newID == "" {
-				newID = uuid.New().String()
-			}
-
-			err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
+			if fieldID == adapt.ID_FIELD {
+				// Don't set the id field here
 				return nil
-			})
-			if err != nil {
-				return err
 			}
-
-			err = change.FieldChanges.SetField(idFieldDBName, newID)
-			if err != nil {
-				return err
-			}
-
-		}
-
-		for _, change := range *request.Updates {
-
-			if change.IDValue == nil {
-				continue
-			}
-
-			err = change.FieldChanges.Loop(func(fieldID string, value interface{}) error {
-				fieldMetadata, err := collectionMetadata.GetField(fieldID)
-				if err != nil {
-					return err
-				}
-				if fieldID == idFieldDBName {
-					// Don't set the id field here
-					return nil
-				}
-				if fieldMetadata.AutoPopulate == "CREATE" {
-					return nil
-				}
+			if fieldMetadata.AutoPopulate == "CREATE" {
 				return nil
-			})
-			if err != nil {
-				return err
 			}
-
-			fullRecordID := collectionName + ":" + change.IDValue.(string)
-
-			if collectionMetadata.Access == "protected" {
-				recordsIDsList[fullRecordID] = change.ReadWriteTokens
-			}
+			return nil
+		})
+		if err != nil {
+			return err
 		}
 
-		for _, delete := range *request.Deletes {
+		fullRecordID := collectionName + ":" + change.IDValue
 
-			if delete.IDValue == nil {
-				continue
-			}
-
+		if collectionMetadata.Access == "protected" {
+			recordsIDsList[fullRecordID] = change.ReadWriteTokens
 		}
+	}
+
+	for _, delete := range *request.Deletes {
+
+		if delete.IDValue == "" {
+			continue
+		}
+
 	}
 
 	return nil

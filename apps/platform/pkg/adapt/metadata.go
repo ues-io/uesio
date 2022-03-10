@@ -34,7 +34,6 @@ func (mc *MetadataCache) GetCollection(key string) (*CollectionMetadata, error) 
 type CollectionMetadata struct {
 	Name                  string                                 `json:"name"`
 	Namespace             string                                 `json:"namespace"`
-	IDField               string                                 `json:"idField"`
 	IDFormat              string                                 `json:"-"`
 	NameField             string                                 `json:"nameField"`
 	Createable            bool                                   `json:"createable"`
@@ -80,7 +79,7 @@ func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {
 
 // GetIDField function
 func (cm *CollectionMetadata) GetIDField() (*FieldMetadata, error) {
-	return cm.GetField(cm.IDField)
+	return cm.GetField(ID_FIELD)
 }
 
 // GetFullName function

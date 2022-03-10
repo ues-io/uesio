@@ -2,6 +2,7 @@ package jsdialect
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/dop251/goja"
 	"github.com/thecloudmasters/uesio/pkg/datasource"
@@ -18,7 +19,9 @@ func Logger(message string) {
 type JSDialect struct {
 }
 
-func runBot(contents string, api interface{}, errorFunc func(string)) error {
+const MAX_SECONDS time.Duration = 5
+
+func runBot(botName string, contents string, api interface{}, errorFunc func(string)) error {
 	// TODO: We could possibly not start a new VM for every bot we run.
 	vm := goja.New()
 	vm.SetFieldNameMapper(goja.TagFieldNameMapper("bot", true))
@@ -26,6 +29,11 @@ func runBot(contents string, api interface{}, errorFunc func(string)) error {
 	if err != nil {
 		return err
 	}
+
+	time.AfterFunc(MAX_SECONDS*time.Second, func() {
+		vm.Interrupt("Bot: " + botName + " is running too long, please check your code and run the operation again.")
+		return //Interrupt native Go functions
+	})
 
 	runner, err := vm.RunString("(" + contents + ")")
 	if err != nil {
@@ -54,17 +62,17 @@ func runBot(contents string, api interface{}, errorFunc func(string)) error {
 }
 
 func (b *JSDialect) BeforeSave(bot *meta.Bot, botAPI *datasource.BeforeSaveAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
+	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) AfterSave(bot *meta.Bot, botAPI *datasource.AfterSaveAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, botAPI.AddError)
+	return runBot(bot.Name, bot.FileContents, botAPI, botAPI.AddError)
 }
 
 func (b *JSDialect) CallBot(bot *meta.Bot, botAPI *datasource.CallBotAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, nil)
+	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }
 
 func (b *JSDialect) CallGeneratorBot(bot *meta.Bot, botAPI *datasource.GeneratorBotAPI, session *sess.Session) error {
-	return runBot(bot.FileContents, botAPI, nil)
+	return runBot(bot.Name, bot.FileContents, botAPI, nil)
 }

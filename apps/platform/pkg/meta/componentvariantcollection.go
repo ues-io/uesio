@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -70,7 +71,7 @@ func (cvc *ComponentVariantCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (cvc *ComponentVariantCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *cvc {
-		err := iter(cvc.GetItem(index), index)
+		err := iter(cvc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

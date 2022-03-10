@@ -61,6 +61,7 @@ definition:
                     components:
                       - io.field:
                           fieldId: crm.image
+                          displayAs: IMAGE
                           uesio.styles:
                             root:
                               max-height: 200px

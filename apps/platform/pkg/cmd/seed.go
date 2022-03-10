@@ -77,6 +77,7 @@ func installBundles(session *sess.Session, bundleNames ...string) error {
 		err := datasource.CreateBundle(bundleName, "v0.0.1", "v0.0.1", "Seed Install: "+bundleName, sysbs, session)
 		if err != nil {
 			logger.LogError(errors.New("Bundle already installed: " + bundleName))
+			logger.LogError(err)
 			// Don't return error here because we're ok with this error
 		}
 		err = datasource.StoreBundleAssets(bundleName, "v0.0.1", "v0.0.1", sysbs, session)
@@ -91,45 +92,19 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Running seed command!", logger.INFO)
 
-	platformDSType := os.Getenv("UESIO_PLATFORM_DATASOURCE_TYPE")
-	if platformDSType == "" {
-		logger.Log("No Platform Data Source Type Specified", logger.ERROR)
-	}
-
-	platformDSCredentials := os.Getenv("UESIO_PLATFORM_DATASOURCE_CREDENTIALS")
-	if platformDSCredentials == "" {
-		logger.Log("No Platform Data Source Credentials Specified", logger.ERROR)
-	}
-
 	session, err := auth.GetHeadlessSession()
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
 
-	// Get the adapter for the platform DS Type
-	adapter, err := adapt.GetAdapter(platformDSType, session)
+	connection, err := datasource.GetConnection("uesio.platform", nil, nil, session, nil)
 	if err != nil {
 		logger.LogError(err)
 		return
 	}
 
-	credentials, err := adapt.GetCredentials(platformDSCredentials, session)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = adapter.Migrate(credentials)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	// Install Default Bundles
-	// This takes code from the /libs/uesioapps code in the repo
-	// and installs it into the localbundlestore.
-	err = installBundles(session, "crm", "cms")
+	err = connection.Migrate()
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -165,12 +140,12 @@ func seed(cmd *cobra.Command, args []string) {
 	}
 
 	err = datasource.Save([]datasource.SaveRequest{
+		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&apps),
 		getPlatformSeedSR(&bundles),
 		getPlatformSeedSR(&workspaces),
 		getPlatformSeedSR(&sites),
 		getPlatformSeedSR(&sitedomains),
-		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&configstorevalues),
 		getSeedSR("studio.teams", &teams),
 		getSeedSR("studio.teammembers", &teammembers),

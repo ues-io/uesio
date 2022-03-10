@@ -31,7 +31,7 @@ func Delete(userFileID string, session *sess.Session) error {
 		return err
 	}
 
-	collectionMetadata, fieldMetadata, err := getUploadMetadata(metadataResponse, collectionID, fieldID)
+	_, fieldMetadata, err := getUploadMetadata(metadataResponse, collectionID, fieldID)
 	if err != nil {
 		return err
 	}
@@ -53,8 +53,8 @@ func Delete(userFileID string, session *sess.Session) error {
 				Wire:       "filefieldupdate",
 				Changes: &adapt.Collection{
 					{
-						fieldID:                    nil,
-						collectionMetadata.IDField: userFile.RecordID,
+						fieldID:        nil,
+						adapt.ID_FIELD: userFile.RecordID,
 					},
 				},
 			},
