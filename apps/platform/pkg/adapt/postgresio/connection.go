@@ -49,6 +49,13 @@ func (c *Connection) CommitTransaction() error {
 	return nil
 }
 
+func (c *Connection) RollbackTransaction() error {
+	if c.transaction != nil {
+		return c.transaction.Rollback()
+	}
+	return nil
+}
+
 func (c *Connection) GetClient() QueryAble {
 	if c.transaction != nil {
 		return c.transaction

@@ -175,81 +175,20 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		}
 
 		if !HasExistingConnection(dsKey, options.Connections) {
-			err = connection.BeginTransaction()
+			err := connection.BeginTransaction()
 			if err != nil {
 				return err
 			}
 		}
 
-		// TODO:
-		// 0. Split change items into updates/inserts/deletes
-		// 1. Perform Lookups
-		// 2. Hydrate update values with full info
-		// 3. AutoPopulate data like dates and users
-		// 4. Run Before bots
-		// 5. Run validations
-		// 6. Check permissions
-		// 7. Actually do the save
-		// 8. Run After bots
-		// 9. Return results
-
-		for _, op := range batch {
-
-			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-			if err != nil {
-				return err
-			}
-
-			// Do Upsert Lookups Here First
-			err = adapt.HandleUpsertLookup(connection, op)
-			if err != nil {
-				return err
-			}
-
-			err = adapt.HandleOldValuesLookup(connection, op)
-			if err != nil {
-				return err
-			}
-
-			autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
-			if err != nil {
-				return err
-			}
-
-			err = Populate(op, collectionMetadata, autonumber, session)
-			if err != nil {
-				return err
-			}
-
-			err = runBeforeSaveBots(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			// Now do Reference Lookups and Reference Integrity Lookups
-			err = adapt.HandleReferenceLookups(connection, op)
-			if err != nil {
-				return err
-			}
-
-			err = Validate(op, collectionMetadata, connection, session)
-			if err != nil {
-				return err
-			}
-
-			err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			err = connection.Save(op)
-			if err != nil {
-				return err
-			}
-		}
-
-		err = performCascadeDeletes(batch, connection, session)
+		err = applyBatches(batch, connection, session)
 		if err != nil {
+			if !HasExistingConnection(dsKey, options.Connections) {
+				err := connection.RollbackTransaction()
+				if err != nil {
+					return err
+				}
+			}
 			return err
 		}
 
@@ -260,19 +199,76 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			}
 		}
 
-		for _, op := range batch {
-			collectionKey := op.CollectionName
-			collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
-			if err != nil {
-				return err
-			}
+	}
 
-			err = runAfterSaveBots(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
+	return nil
+}
+
+func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	metadata := connection.GetMetadata()
+	for _, op := range batch {
+
+		collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+		if err != nil {
+			return err
 		}
 
+		// Do Upsert Lookups Here First
+		err = adapt.HandleUpsertLookup(connection, op)
+		if err != nil {
+			return err
+		}
+
+		err = adapt.HandleOldValuesLookup(connection, op)
+		if err != nil {
+			return err
+		}
+
+		autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
+		if err != nil {
+			return err
+		}
+
+		err = Populate(op, collectionMetadata, autonumber, session)
+		if err != nil {
+			return err
+		}
+
+		err = runBeforeSaveBots(op, collectionMetadata, connection, session)
+		if err != nil {
+			return err
+		}
+
+		// Now do Reference Lookups and Reference Integrity Lookups
+		err = adapt.HandleReferenceLookups(connection, op)
+		if err != nil {
+			return err
+		}
+
+		err = Validate(op, collectionMetadata, connection, session)
+		if err != nil {
+			return err
+		}
+
+		err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
+		if err != nil {
+			return err
+		}
+
+		err = connection.Save(op)
+		if err != nil {
+			return err
+		}
+
+		err = performCascadeDeletes(op, connection, session)
+		if err != nil {
+			return err
+		}
+
+		err = runAfterSaveBots(op, collectionMetadata, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

@@ -26,6 +26,7 @@ type Connection interface {
 	GetDataSource() string
 	BeginTransaction() error
 	CommitTransaction() error
+	RollbackTransaction() error
 }
 
 var adapterMap = map[string]Adapter{}

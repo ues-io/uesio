@@ -40,6 +40,10 @@ func (c *Connection) CommitTransaction() error {
 	return nil
 }
 
+func (c *Connection) RollbackTransaction() error {
+	return nil
+}
+
 func (c *Connection) GetDataSource() string {
 	return c.datasource
 }
