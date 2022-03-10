@@ -17,19 +17,16 @@ type BeforeSaveAPI struct {
 	connection adapt.Connection
 }
 
-func NewBeforeSaveAPI(op *adapt.SaveOp, metadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
+func NewBeforeSaveAPI(op *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *BeforeSaveAPI {
 	return &BeforeSaveAPI{
 		Inserts: &InsertsAPI{
-			inserts:  op.Inserts,
-			metadata: metadata,
+			inserts: op.Inserts,
 		},
 		Updates: &UpdatesAPI{
-			updates:  op.Updates,
-			metadata: metadata,
+			updates: op.Updates,
 		},
 		Deletes: &DeletesAPI{
-			deletes:  op.Deletes,
-			metadata: metadata,
+			deletes: op.Deletes,
 		},
 		session: session,
 	}

@@ -88,6 +88,7 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 
 type SaveOptions struct {
 	Connections map[string]adapt.Connection
+	Metadata    *adapt.MetadataCache
 }
 
 // Save function
@@ -100,7 +101,11 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		options = &SaveOptions{}
 	}
 	collated := map[string][]*adapt.SaveOp{}
-	metadataResponse := adapt.MetadataCache{}
+	metadataResponse := &adapt.MetadataCache{}
+	// Use existing metadata if it was passed in
+	if options.Metadata != nil {
+		metadataResponse = options.Metadata
+	}
 
 	// Loop over the requests and batch per data source
 	for index := range requests {
@@ -135,7 +140,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			}
 		}
 
-		err = collections.Load(&metadataResponse, session)
+		err = collections.Load(metadataResponse, session)
 		if err != nil {
 			return err
 		}
@@ -161,7 +166,10 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(&metadataResponse, session)
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:    metadataResponse,
+		Connections: options.Connections,
+	}, session)
 	if err != nil {
 		return err
 	}
@@ -169,7 +177,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, session.GetTokens(), &metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, session.GetTokens(), metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
@@ -234,7 +242,7 @@ func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *s
 			return err
 		}
 
-		err = runBeforeSaveBots(op, collectionMetadata, connection, session)
+		err = runBeforeSaveBots(op, connection, session)
 		if err != nil {
 			return err
 		}
@@ -265,7 +273,7 @@ func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *s
 			return err
 		}
 
-		err = runAfterSaveBots(op, collectionMetadata, connection, session)
+		err = runAfterSaveBots(op, connection, session)
 		if err != nil {
 			return err
 		}

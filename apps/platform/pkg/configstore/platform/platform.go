@@ -18,12 +18,17 @@ func (cs *ConfigStore) Get(key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = datasource.PlatformLoadOne(&cv, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: key,
+	err = datasource.PlatformLoadOne(
+		&cv,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: key,
+				},
+			},
 		},
-	}, headlessSession)
+		headlessSession)
 	if err != nil {
 		return "", nil
 	}
@@ -42,5 +47,5 @@ func (cs *ConfigStore) Set(key, value string) error {
 	}
 	return datasource.PlatformSaveOne(&cv, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, headlessSession)
+	}, nil, headlessSession)
 }

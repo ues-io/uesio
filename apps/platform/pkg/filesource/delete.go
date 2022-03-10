@@ -12,12 +12,18 @@ import (
 // Delete function
 func Delete(userFileID string, session *sess.Session) error {
 	userFile := meta.UserFileMetadata{}
-	err := datasource.PlatformLoadOne(&userFile, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: userFileID,
+	err := datasource.PlatformLoadOne(
+		&userFile,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: userFileID,
+				},
+			},
 		},
-	}, session)
+		session,
+	)
 
 	if err != nil {
 		return err
@@ -36,7 +42,7 @@ func Delete(userFileID string, session *sess.Session) error {
 		return err
 	}
 
-	err = datasource.PlatformDeleteOne(&userFile, session)
+	err = datasource.PlatformDeleteOne(&userFile, nil, session)
 	if err != nil {
 		return err
 	}

@@ -17,19 +17,16 @@ type AfterSaveAPI struct {
 	connection adapt.Connection
 }
 
-func NewAfterSaveAPI(request *adapt.SaveOp, metadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
+func NewAfterSaveAPI(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) *AfterSaveAPI {
 	return &AfterSaveAPI{
 		Inserts: &InsertsAPI{
-			inserts:  request.Inserts,
-			metadata: metadata,
+			inserts: request.Inserts,
 		},
 		Updates: &UpdatesAPI{
-			updates:  request.Updates,
-			metadata: metadata,
+			updates: request.Updates,
 		},
 		Deletes: &DeletesAPI{
-			deletes:  request.Deletes,
-			metadata: metadata,
+			deletes: request.Deletes,
 		},
 		session: session,
 	}
@@ -59,11 +56,7 @@ func (as *AfterSaveAPI) Save(collection string, changes adapt.Collection) error 
 			Changes:    &changes,
 		},
 	}
-	err := SaveWithOptions(requests, as.session, &SaveOptions{
-		Connections: map[string]adapt.Connection{
-			as.connection.GetDataSource(): as.connection,
-		},
-	})
+	err := SaveWithOptions(requests, as.session, GetConnectionSaveOptions(as.connection))
 	if err != nil {
 		return err
 	}

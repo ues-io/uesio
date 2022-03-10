@@ -51,7 +51,7 @@ func NewImportBatch(body io.ReadCloser, job meta.BulkJob, session *sess.Session)
 		BulkJobID: job.ID,
 	}
 
-	err = datasource.PlatformSaveOne(&batch, nil, session)
+	err = datasource.PlatformSaveOne(&batch, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

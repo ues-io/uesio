@@ -34,25 +34,32 @@ func Bundle(w http.ResponseWriter, r *http.Request) {
 
 	var bundles meta.BundleCollection
 
-	err := datasource.PlatformLoadWithOrder(&bundles, []adapt.LoadRequestOrder{
-		{
-			Field: "studio.major",
-			Desc:  true,
+	err := datasource.PlatformLoad(
+		&bundles,
+		&datasource.PlatformLoadOptions{
+			Orders: []adapt.LoadRequestOrder{
+				{
+					Field: "studio.major",
+					Desc:  true,
+				},
+				{
+					Field: "studio.minor",
+					Desc:  true,
+				},
+				{
+					Field: "studio.patch",
+					Desc:  true,
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "studio.app",
+					Value: app,
+				},
+			},
 		},
-		{
-			Field: "studio.minor",
-			Desc:  true,
-		},
-		{
-			Field: "studio.patch",
-			Desc:  true,
-		},
-	}, []adapt.LoadRequestCondition{
-		{
-			Field: "studio.app",
-			Value: app,
-		},
-	}, session.RemoveWorkspaceContext())
+		session.RemoveWorkspaceContext(),
+	)
 	if err != nil {
 		msg := "Error creating a new bundle, " + err.Error()
 		logger.LogWithTrace(r, msg, logger.ERROR)

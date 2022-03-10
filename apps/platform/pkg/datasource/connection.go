@@ -22,6 +22,7 @@ func GetConnection(dataSourceKey string, tokens []string, metadata *adapt.Metada
 	if connections != nil {
 		connection, ok := connections[dataSourceKey]
 		if ok {
+			connection.SetMetadata(metadata)
 			return connection, nil
 		}
 	}

@@ -6,8 +6,7 @@ import (
 
 // DeletesAPI type
 type DeletesAPI struct {
-	deletes  *adapt.ChangeItems
-	metadata *adapt.CollectionMetadata
+	deletes *adapt.ChangeItems
 }
 
 // Get function
@@ -16,12 +15,7 @@ func (d *DeletesAPI) Get() []string {
 
 	for _, delete := range *d.deletes {
 
-		idField, err := d.metadata.GetIDField()
-		if err != nil {
-			continue
-		}
-
-		idValue, err := delete.FieldChanges.GetField(idField.GetFullName())
+		idValue, err := delete.FieldChanges.GetField(adapt.ID_FIELD)
 		if err != nil {
 			continue
 		}
