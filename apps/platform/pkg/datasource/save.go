@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -88,9 +86,19 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type SaveOptions struct {
+	Connections map[string]adapt.Connection
+}
+
 // Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
+	return SaveWithOptions(requests, session, nil)
+}
 
+func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
+	if options == nil {
+		options = &SaveOptions{}
+	}
 	collated := map[string][]*adapt.SaveOp{}
 	metadataResponse := adapt.MetadataCache{}
 
@@ -161,28 +169,16 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
+		connection, err := GetConnection(dsKey, session.GetTokens(), &metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
 
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return err
-		}
-
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return err
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err = connection.BeginTransaction()
+			if err != nil {
+				return err
+			}
 		}
 
 		// TODO:
@@ -196,11 +192,6 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// 7. Actually do the save
 		// 8. Run After bots
 		// 9. Return results
-
-		connection, err := adapter.GetConnection(credentials, &metadataResponse, session.GetTokens())
-		if err != nil {
-			return err
-		}
 
 		for _, op := range batch {
 
@@ -260,6 +251,13 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		err = performCascadeDeletes(batch, connection, session)
 		if err != nil {
 			return err
+		}
+
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err := connection.CommitTransaction()
+			if err != nil {
+				return err
+			}
 		}
 
 		for _, op := range batch {

@@ -10,6 +10,7 @@ type Connection struct {
 	credentials *adapt.Credentials
 	tokens      []string
 	client      *simpleforce.Client
+	datasource  string
 }
 
 func (c *Connection) GetAutonumber(collectionMetadata *adapt.CollectionMetadata) (int, error) {
@@ -32,8 +33,19 @@ func (c *Connection) Migrate() error {
 	return nil
 }
 
+func (c *Connection) BeginTransaction() error {
+	return nil
+}
+func (c *Connection) CommitTransaction() error {
+	return nil
+}
+
+func (c *Connection) GetDataSource() string {
+	return c.datasource
+}
+
 // Load function
-func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, tokens []string) (adapt.Connection, error) {
+func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.MetadataCache, datasource string, tokens []string) (adapt.Connection, error) {
 	client, err := connect(credentials)
 	if err != nil {
 		return nil, err
@@ -43,5 +55,6 @@ func (a *Adapter) GetConnection(credentials *adapt.Credentials, metadata *adapt.
 		credentials: credentials,
 		tokens:      tokens,
 		client:      client,
+		datasource:  datasource,
 	}, nil
 }

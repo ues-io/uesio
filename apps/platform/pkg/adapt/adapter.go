@@ -13,7 +13,7 @@ const MAX_ITER_REF_GROUP = 10
 
 // Adapter interface
 type Adapter interface {
-	GetConnection(*Credentials, *MetadataCache, []string) (Connection, error)
+	GetConnection(*Credentials, *MetadataCache, string, []string) (Connection, error)
 }
 
 type Connection interface {
@@ -23,6 +23,9 @@ type Connection interface {
 	GetAutonumber(*CollectionMetadata) (int, error)
 	GetMetadata() *MetadataCache
 	GetCredentials() *Credentials
+	GetDataSource() string
+	BeginTransaction() error
+	CommitTransaction() error
 }
 
 var adapterMap = map[string]Adapter{}

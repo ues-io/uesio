@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
 	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 	"github.com/thecloudmasters/uesio/pkg/translate"
@@ -29,6 +28,11 @@ var specialRefs = map[string]SpecialReferences{
 		},
 		Fields: []string{"uesio.firstname", "uesio.lastname", "uesio.picture"},
 	},
+}
+
+type LoadOptions struct {
+	CheckPermissions bool
+	Connections      map[string]adapt.Connection
 }
 
 func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
@@ -165,12 +169,18 @@ func getAdditionalLookupFields(fields []string) FieldsMap {
 }
 
 func Load(ops []adapt.LoadOp, session *sess.Session) (*adapt.MetadataCache, error) {
-	return LoadWithOptions(ops, session, true)
+	return LoadWithOptions(ops, session, &LoadOptions{
+		CheckPermissions: true,
+	})
 }
 
-func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions bool) (*adapt.MetadataCache, error) {
+func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOptions) (*adapt.MetadataCache, error) {
+	if options == nil {
+		options = &LoadOptions{}
+	}
 	collated := map[string][]*adapt.LoadOp{}
 	metadataResponse := adapt.MetadataCache{}
+	checkPermissions := options.CheckPermissions
 
 	if !session.HasLabels() {
 		labels, err := translate.GetTranslatedLabels(session)
@@ -239,36 +249,12 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, checkPermissions
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
-		if err != nil {
-			return nil, err
-		}
-
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return nil, err
-		}
-
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return nil, err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return nil, err
-		}
-
 		var tokens []string
 		if checkPermissions {
 			tokens = session.GetTokens()
 		}
 
-		connection, err := adapter.GetConnection(credentials, &metadataResponse, tokens)
+		connection, err := GetConnection(dsKey, tokens, &metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
