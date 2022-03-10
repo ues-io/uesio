@@ -34,6 +34,10 @@ func (c *Connection) GetMetadata() *adapt.MetadataCache {
 	return c.metadata
 }
 
+func (c *Connection) SetMetadata(metadata *adapt.MetadataCache) {
+	c.metadata = metadata
+}
+
 func (c *Connection) BeginTransaction() error {
 	txn, err := c.client.Begin()
 	if err != nil {

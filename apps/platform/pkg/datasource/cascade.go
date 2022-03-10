@@ -182,9 +182,5 @@ func performCascadeDeletes(op *adapt.SaveOp, connection adapt.Connection, sessio
 		})
 	}
 
-	return SaveWithOptions(saves, session, &SaveOptions{
-		Connections: map[string]adapt.Connection{
-			connection.GetDataSource(): connection,
-		},
-	})
+	return SaveWithOptions(saves, session, GetConnectionSaveOptions(connection))
 }

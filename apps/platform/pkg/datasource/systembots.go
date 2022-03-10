@@ -23,7 +23,7 @@ func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	return keys
 }
 
-func clearUserCache(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func clearUserCache(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	keys := []string{}
 	for _, id := range getIDsFromUpdatesAndDeletes(request) {
 		keys = append(keys, cache.GetUserKey(id, session.GetSite().GetAppID()))
@@ -39,7 +39,7 @@ func getHostKeyFromDomainId(id string) (string, error) {
 	return cache.GetHostKey(idParts[1], idParts[0]), nil
 }
 
-func clearHostCacheForDomain(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func clearHostCacheForDomain(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	return clearHostForDomains(getIDsFromUpdatesAndDeletes(request))
 }
 
@@ -56,17 +56,19 @@ func clearHostForDomains(ids []string) error {
 	return cache.DeleteKeys(keys)
 }
 
-func clearHostCacheForSite(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func clearHostCacheForSite(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 	ids := getIDsFromUpdatesAndDeletes(request)
 	domains := meta.SiteDomainCollection{}
-	err := PlatformLoad(&domains, []adapt.LoadRequestCondition{
-		{
-			Field:    "studio.site",
-			Value:    ids,
-			Operator: "IN",
+	err := PlatformLoad(&domains, &PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "studio.site",
+				Value:    ids,
+				Operator: "IN",
+			},
 		},
-	}, session,
-	)
+		Connection: connection,
+	}, session)
 	if err != nil {
 		return err
 	}
@@ -86,7 +88,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, collectionMetadata *adapt.Coll
 	return clearHostForDomains(domainIds)
 }
 
-func cleanUserFiles(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, session *sess.Session) error {
+func cleanUserFiles(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	ids := []string{}
 	for i := range *request.Deletes {
@@ -98,14 +100,16 @@ func cleanUserFiles(request *adapt.SaveOp, collectionMetadata *adapt.CollectionM
 	}
 	// Load all the userfile records
 	ufmc := meta.UserFileMetadataCollection{}
-	err := PlatformLoad(&ufmc, []adapt.LoadRequestCondition{
-		{
-			Field:    "uesio.id",
-			Value:    ids,
-			Operator: "IN",
+	err := PlatformLoad(&ufmc, &PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field:    "uesio.id",
+				Value:    ids,
+				Operator: "IN",
+			},
 		},
-	}, session,
-	)
+		Connection: connection,
+	}, session)
 	if err != nil {
 		return err
 	}

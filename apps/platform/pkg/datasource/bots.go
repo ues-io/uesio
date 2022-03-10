@@ -52,11 +52,11 @@ func hydrateBot(bot *meta.Bot, session *sess.Session) error {
 	return nil
 }
 
-func runBot(botType string, collectionMetadata *adapt.CollectionMetadata, dialectFunc func(BotDialect, *meta.Bot) error, session *sess.Session) error {
+func runBot(botType string, collectionName string, dialectFunc func(BotDialect, *meta.Bot) error, session *sess.Session) error {
 	var robots meta.BotCollection
 
 	err := bundle.LoadAllFromAny(&robots, meta.BundleConditions{
-		"studio.collection": collectionMetadata.GetFullName(),
+		"studio.collection": collectionName,
 		"studio.type":       botType,
 	}, session)
 	if err != nil {
@@ -84,19 +84,19 @@ func runBot(botType string, collectionMetadata *adapt.CollectionMetadata, dialec
 
 }
 
-func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func runBeforeSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
-	switch collectionMetadata.GetFullName() {
+	switch request.CollectionName {
 	case "uesio.userfiles":
-		cleanUserFiles(request, collectionMetadata, session)
+		cleanUserFiles(request, connection, session)
 	}
 
-	botAPI := NewBeforeSaveAPI(request, collectionMetadata, connection, session)
+	botAPI := NewBeforeSaveAPI(request, connection, session)
 
-	err := runBot("BEFORESAVE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("BEFORESAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.BeforeSave(bot, botAPI, session)
 	}, session)
 	if err != nil {
@@ -110,23 +110,23 @@ func runBeforeSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.Collecti
 	return nil
 }
 
-func runAfterSaveBots(request *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
+func runAfterSaveBots(request *adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
 
 	// System bot triggers
 	// These are some actions we want to take for specific types, but don't want
 	// to use regular bots here
-	switch collectionMetadata.GetFullName() {
+	switch request.CollectionName {
 	case "uesio.users":
-		clearUserCache(request, collectionMetadata, session)
+		clearUserCache(request, connection, session)
 	case "studio.sites":
-		clearHostCacheForSite(request, collectionMetadata, session)
+		clearHostCacheForSite(request, connection, session)
 	case "studio.sitedomains":
-		clearHostCacheForDomain(request, collectionMetadata, session)
+		clearHostCacheForDomain(request, connection, session)
 	}
 
-	botAPI := NewAfterSaveAPI(request, collectionMetadata, connection, session)
+	botAPI := NewAfterSaveAPI(request, connection, session)
 
-	err := runBot("AFTERSAVE", collectionMetadata, func(dialect BotDialect, bot *meta.Bot) error {
+	err := runBot("AFTERSAVE", request.CollectionName, func(dialect BotDialect, bot *meta.Bot) error {
 		return dialect.AfterSave(bot, botAPI, session)
 	}, session)
 	if err != nil {

@@ -33,6 +33,7 @@ var specialRefs = map[string]SpecialReferences{
 type LoadOptions struct {
 	CheckPermissions bool
 	Connections      map[string]adapt.Connection
+	Metadata         *adapt.MetadataCache
 }
 
 func getSubFields(loadFields []adapt.LoadRequestField) *FieldsMap {
@@ -179,7 +180,11 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		options = &LoadOptions{}
 	}
 	collated := map[string][]*adapt.LoadOp{}
-	metadataResponse := adapt.MetadataCache{}
+	metadataResponse := &adapt.MetadataCache{}
+	// Use existing metadata if it was passed in
+	if options.Metadata != nil {
+		metadataResponse = options.Metadata
+	}
 	checkPermissions := options.CheckPermissions
 
 	if !session.HasLabels() {
@@ -207,7 +212,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		}
 
 		op := ops[i]
-		err := getMetadataForLoad(&op, &metadataResponse, ops, session)
+		err := getMetadataForLoad(&op, metadataResponse, ops, session)
 		if err != nil {
 			return nil, fmt.Errorf("metadata: %s: %v", op.CollectionName, err)
 		}
@@ -240,21 +245,24 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 	}
 
 	if checkPermissions {
-		err := GenerateUserAccessTokens(&metadataResponse, session)
+		err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+			Metadata:    metadataResponse,
+			Connections: options.Connections,
+		}, session)
 		if err != nil {
 			return nil, err
 		}
 	}
 
+	var tokens []string
+	if checkPermissions {
+		tokens = session.GetTokens()
+	}
+
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		var tokens []string
-		if checkPermissions {
-			tokens = session.GetTokens()
-		}
-
-		connection, err := GetConnection(dsKey, tokens, &metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, tokens, metadataResponse, session, options.Connections)
 		if err != nil {
 			return nil, err
 		}
@@ -262,7 +270,7 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		for _, op := range batch {
 
 			for i := range op.Conditions {
-				value, err := adapt.GetConditionValue(op.Conditions[i], op, &metadataResponse, batch)
+				value, err := adapt.GetConditionValue(op.Conditions[i], op, metadataResponse, batch)
 				if err != nil {
 					return nil, err
 				}
@@ -277,5 +285,5 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 		}
 
 	}
-	return &metadataResponse, nil
+	return metadataResponse, nil
 }
