@@ -15,10 +15,10 @@ import (
 func getIDsFromUpdatesAndDeletes(request *adapt.SaveOp) []string {
 	keys := []string{}
 	for i := range *request.Updates {
-		keys = append(keys, (*request.Updates)[i].IDValue.(string))
+		keys = append(keys, (*request.Updates)[i].IDValue)
 	}
 	for i := range *request.Deletes {
-		keys = append(keys, (*request.Deletes)[i].IDValue.(string))
+		keys = append(keys, (*request.Deletes)[i].IDValue)
 	}
 	return keys
 }
@@ -71,7 +71,7 @@ func clearHostCacheForSite(request *adapt.SaveOp, collectionMetadata *adapt.Coll
 		return err
 	}
 	domainIds := []string{}
-	err = domains.Loop(func(item loadable.Item, index interface{}) error {
+	err = domains.Loop(func(item loadable.Item, index string) error {
 		id, err := item.GetField("uesio.id")
 		if err != nil {
 			return err
@@ -90,7 +90,7 @@ func cleanUserFiles(request *adapt.SaveOp, collectionMetadata *adapt.CollectionM
 
 	ids := []string{}
 	for i := range *request.Deletes {
-		ids = append(ids, (*request.Deletes)[i].IDValue.(string))
+		ids = append(ids, (*request.Deletes)[i].IDValue)
 	}
 
 	if len(ids) == 0 {

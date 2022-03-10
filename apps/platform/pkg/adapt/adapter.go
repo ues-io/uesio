@@ -7,15 +7,25 @@ import (
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
 
-const MAX_BATCH_SIZE = 100
+const MAX_LOAD_BATCH_SIZE = 100
+const MAX_SAVE_BATCH_SIZE = 100
 const MAX_ITER_REF_GROUP = 10
 
 // Adapter interface
 type Adapter interface {
-	Load([]*LoadOp, *MetadataCache, *Credentials, []string) error
-	Save([]*SaveOp, *MetadataCache, *Credentials, []string) error
-	Migrate(*Credentials) error
-	GetAutonumber(*CollectionMetadata, *Credentials) (int, error)
+	GetConnection(*Credentials, *MetadataCache, string, []string) (Connection, error)
+}
+
+type Connection interface {
+	Load(*LoadOp) error
+	Save(*SaveOp) error
+	Migrate() error
+	GetAutonumber(*CollectionMetadata) (int, error)
+	GetMetadata() *MetadataCache
+	GetCredentials() *Credentials
+	GetDataSource() string
+	BeginTransaction() error
+	CommitTransaction() error
 }
 
 var adapterMap = map[string]Adapter{}

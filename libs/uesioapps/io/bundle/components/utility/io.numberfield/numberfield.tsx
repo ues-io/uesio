@@ -36,7 +36,7 @@ const NumberField: FunctionComponent<NumberFieldProps> = (props) => {
 	const numberOptions = fieldMetadata?.getNumberMetadata()
 
 	const decimals = numberOptions?.decimals ? numberOptions.decimals : 2
-	const lvalue = readonly ? value.toFixed(decimals) : value
+	const lvalue = readonly && value ? value.toFixed(decimals) : value
 
 	return (
 		<input

@@ -1,10 +1,8 @@
 package salesforce
 
 import (
-	"errors"
 	"strings"
 
-	"github.com/simpleforce/simpleforce"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
 )
 
@@ -12,14 +10,10 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	return fieldMetadata.Name
 }
 
-func loadOne(
-	client *simpleforce.Client,
-	op *adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	ops []*adapt.LoadOp,
-	credentials *adapt.Credentials,
-	userTokens []string,
-) error {
+func (c *Connection) Load(op *adapt.LoadOp) error {
+
+	metadata := c.metadata
+	client := c.client
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
@@ -68,8 +62,8 @@ func loadOne(
 			loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
 		}
 	*/
-	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_BATCH_SIZE {
-		op.BatchSize = adapt.MAX_BATCH_SIZE
+	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
+		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
 	/*
 		loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
@@ -99,38 +93,5 @@ func loadOne(
 
 	op.BatchNumber++
 
-	return adapt.HandleReferences(func(ops []*adapt.LoadOp) error {
-		return loadMany(client, ops, metadata, credentials, userTokens)
-	}, op.Collection, referencedCollections)
-}
-
-// Load function
-func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
-
-	if len(ops) == 0 {
-		return nil
-	}
-
-	client, err := connect(credentials)
-	if err != nil {
-		return errors.New("Failed to connect Salesforce:" + err.Error())
-	}
-
-	return loadMany(client, ops, metadata, credentials, userTokens)
-}
-
-func loadMany(
-	client *simpleforce.Client,
-	ops []*adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	credentials *adapt.Credentials,
-	userTokens []string,
-) error {
-	for i := range ops {
-		err := loadOne(client, ops[i], metadata, ops, credentials, userTokens)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return adapt.HandleReferences(c, op.Collection, referencedCollections)
 }

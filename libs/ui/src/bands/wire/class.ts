@@ -16,7 +16,7 @@ import loadWireOp from "./operations/load"
 import { PlainWire } from "./types"
 import { Context } from "../../context/context"
 import WireRecord from "../wirerecord/class"
-import { PlainWireRecord } from "../wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import { nanoid } from "nanoid"
 
 class Wire {
@@ -55,11 +55,7 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	updateRecord = (
-		recordId: string,
-		record: PlainWireRecord,
-		path?: string[]
-	) => {
+	updateRecord = (recordId: string, record: FieldValue, path?: string[]) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(
@@ -73,11 +69,7 @@ class Wire {
 		)
 	}
 
-	setRecord = (
-		recordId: string,
-		record: PlainWireRecord,
-		path?: string[]
-	) => {
+	setRecord = (recordId: string, record: FieldValue, path?: string[]) => {
 		const idField = this.collection.getIdField()?.getId()
 		if (!idField) return
 		getStore().dispatch(

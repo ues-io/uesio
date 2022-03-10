@@ -10,10 +10,11 @@ import (
 
 func getCascadeDeletes(
 	wires []*adapt.SaveOp,
-	metadata *adapt.MetadataCache,
-	loader adapt.Loader,
+	connection adapt.Connection,
 ) (map[string]adapt.Collection, error) {
 	cascadeDeleteFKs := map[string]adapt.Collection{}
+
+	metadata := connection.GetMetadata()
 
 	for _, collectionMetadata := range metadata.Collections {
 		collectionKey := collectionMetadata.GetFullName()
@@ -26,11 +27,6 @@ func getCascadeDeletes(
 				// other way around, but we're offering this feature because we
 				// need it ourselves for userfiles.
 				referencedCollection := referenceMetadata.Collection
-
-				referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
-				if err != nil {
-					return nil, err
-				}
 
 				// Get the ids that we need to delete
 				for _, wire := range wires {
@@ -53,7 +49,7 @@ func getCascadeDeletes(
 							continue
 						}
 
-						refKey, err := refItem.GetField(referencedCollectionMetadata.IDField)
+						refKey, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {
 							continue
 						}
@@ -68,7 +64,7 @@ func getCascadeDeletes(
 						}
 
 						currentCollectionIds = append(currentCollectionIds, adapt.Item{
-							referencedCollectionMetadata.IDField: fkString,
+							adapt.ID_FIELD: fkString,
 						})
 						cascadeDeleteFKs[referencedCollection] = currentCollectionIds
 					}
@@ -82,10 +78,6 @@ func getCascadeDeletes(
 				}
 
 				referencedCollection := referenceGroupMetadata.Collection
-				referencedCollectionMetadata, err := metadata.GetCollection(referencedCollection)
-				if err != nil {
-					return nil, err
-				}
 
 				for _, wire := range wires {
 					if wire.CollectionName != collectionKey || len(*wire.Deletes) == 0 {
@@ -96,7 +88,7 @@ func getCascadeDeletes(
 					for _, deletion := range *wire.Deletes {
 
 						item := deletion.OldValues
-						refInterface, err := item.GetField(collectionMetadata.IDField)
+						refInterface, err := item.GetField(adapt.ID_FIELD)
 						if err != nil {
 							continue
 						}
@@ -116,7 +108,7 @@ func getCascadeDeletes(
 						continue
 					}
 
-					fields := []adapt.LoadRequestField{{ID: referencedCollectionMetadata.IDField}}
+					fields := []adapt.LoadRequestField{{ID: adapt.ID_FIELD}}
 					op := &adapt.LoadOp{
 						CollectionName: referenceGroupMetadata.Collection,
 						WireName:       "CascadeDelete",
@@ -132,7 +124,7 @@ func getCascadeDeletes(
 						Query: true,
 					}
 
-					err = loader([]*adapt.LoadOp{op})
+					err := connection.Load(op)
 					if err != nil {
 						return nil, errors.New("Cascade delete error")
 					}
@@ -142,9 +134,9 @@ func getCascadeDeletes(
 						currentCollectionIds = adapt.Collection{}
 					}
 
-					err = op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+					err = op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 
-						refRK, err := refItem.GetField(referencedCollectionMetadata.IDField)
+						refRK, err := refItem.GetField(adapt.ID_FIELD)
 						if err != nil {
 							return err
 						}
@@ -155,7 +147,7 @@ func getCascadeDeletes(
 						}
 
 						currentCollectionIds = append(currentCollectionIds, adapt.Item{
-							referencedCollectionMetadata.IDField: refRKAsString,
+							adapt.ID_FIELD: refRKAsString,
 						})
 
 						return nil
@@ -176,8 +168,8 @@ func getCascadeDeletes(
 	return cascadeDeleteFKs, nil
 }
 
-func performCascadeDeletes(batch []*adapt.SaveOp, metadata *adapt.MetadataCache, loader adapt.Loader, session *sess.Session) error {
-	deletes, err := getCascadeDeletes(batch, metadata, loader)
+func performCascadeDeletes(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	deletes, err := getCascadeDeletes(batch, connection)
 	if err != nil {
 		return err
 	}
@@ -194,5 +186,9 @@ func performCascadeDeletes(batch []*adapt.SaveOp, metadata *adapt.MetadataCache,
 		})
 	}
 
-	return Save(saves, session)
+	return SaveWithOptions(saves, session, &SaveOptions{
+		Connections: map[string]adapt.Connection{
+			connection.GetDataSource(): connection,
+		},
+	})
 }

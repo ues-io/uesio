@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
@@ -84,7 +85,7 @@ func (bc *BotCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (bc *BotCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bc {
-		err := iter(bc.GetItem(index), index)
+		err := iter(bc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

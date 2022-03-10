@@ -33,40 +33,12 @@ class WireRecord {
 
 	update = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		if (fieldNameParts.length === 1) {
-			return this.wire.updateRecord(this.id, {
-				[fieldId]: value,
-			})
-		}
-		// Special handling for maps
-		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.updateRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+		return this.wire.updateRecord(this.id, value, fieldNameParts)
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		if (fieldNameParts.length === 1) {
-			this.wire.setRecord(this.id, {
-				[fieldId]: value,
-			})
-		}
-		// Special handling for maps
-		const topField = fieldNameParts.pop()
-		if (!topField) return
-		return this.wire.setRecord(
-			this.id,
-			{
-				[topField]: value,
-			},
-			fieldNameParts
-		)
+		return this.wire.setRecord(this.id, value, fieldNameParts)
 	}
 }
 

@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
@@ -31,7 +33,7 @@ func (bjc *BulkJobCollection) NewItem() loadable.Item {
 // Loop function
 func (bjc *BulkJobCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *bjc {
-		err := iter(bjc.GetItem(index), index)
+		err := iter(bjc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

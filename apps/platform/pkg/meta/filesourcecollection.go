@@ -1,6 +1,8 @@
 package meta
 
 import (
+	"strconv"
+
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 )
 
@@ -46,7 +48,7 @@ func (fsc *FileSourceCollection) GetItem(index int) loadable.Item {
 // Loop function
 func (fsc *FileSourceCollection) Loop(iter loadable.GroupIterator) error {
 	for index := range *fsc {
-		err := iter(fsc.GetItem(index), index)
+		err := iter(fsc.GetItem(index), strconv.Itoa(index))
 		if err != nil {
 			return err
 		}

@@ -48,26 +48,26 @@ func (rr *ReferenceGroupRegistry) Add(collectionKey string, fieldMetadata *Field
 	return rgr
 }
 
-func loadData(ops []*LoadOp, loader Loader, index int) error {
+func loadData(op *LoadOp, connection Connection, index int) error {
 
 	if index == MAX_ITER_REF_GROUP {
 		return errors.New("You have reached the maximum limit of Reference Group")
 	}
 
-	err := loader(ops)
+	err := connection.Load(op)
 	if err != nil {
 		return err
 	}
 
-	if !ops[0].HasMoreBatches {
+	if !op.HasMoreBatches {
 		return nil
 	}
 
-	return loadData(ops, loader, index+1)
+	return loadData(op, connection, index+1)
 }
 
 func HandleReferencesGroup(
-	loader Loader,
+	connection Connection,
 	collection loadable.Group,
 	referencedGroupCollections ReferenceGroupRegistry,
 ) error {
@@ -81,8 +81,8 @@ func HandleReferencesGroup(
 		ids := make([]string, idCount)
 		fieldIDIndex := 0
 
-		err := collection.Loop(func(item loadable.Item, index interface{}) error {
-			idValue, err := item.GetField("uesio.id")
+		err := collection.Loop(func(item loadable.Item, index string) error {
+			idValue, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}
@@ -101,11 +101,9 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		collectionMetadata := ref.Metadata
-
 		ref.AddFields([]LoadRequestField{
 			{
-				ID: collectionMetadata.IDField,
+				ID: ID_FIELD,
 			},
 			{
 				ID: ref.Field.ReferenceGroupMetadata.Field,
@@ -132,9 +130,11 @@ func HandleReferencesGroup(
 		return nil
 	}
 
-	err := loadData(ops, loader, 0)
-	if err != nil {
-		return err
+	for _, op := range ops {
+		err := loadData(op, connection, 0)
+		if err != nil {
+			return err
+		}
 	}
 
 	for i := range ops {
@@ -143,7 +143,7 @@ func HandleReferencesGroup(
 		referencedCollection := referencedGroupCollections[op.WireName]
 		collatedMap := map[string][]loadable.Item{}
 
-		err := op.Collection.Loop(func(refItem loadable.Item, _ interface{}) error {
+		err := op.Collection.Loop(func(refItem loadable.Item, _ string) error {
 
 			refRK, err := refItem.GetField(referencedCollection.Field.ReferenceGroupMetadata.Field)
 			if err != nil {
@@ -169,9 +169,9 @@ func HandleReferencesGroup(
 			return err
 		}
 
-		err = collection.Loop(func(item loadable.Item, index interface{}) error {
+		err = collection.Loop(func(item loadable.Item, index string) error {
 
-			id, err := item.GetField("uesio.id")
+			id, err := item.GetField(ID_FIELD)
 			if err != nil {
 				return err
 			}

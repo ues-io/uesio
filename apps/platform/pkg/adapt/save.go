@@ -21,9 +21,9 @@ type ChangeItems []ChangeItem
 
 type ChangeItem struct {
 	FieldChanges    loadable.Item
-	IDValue         interface{}
+	IDValue         string
 	Error           error
-	RecordKey       interface{}
+	RecordKey       string
 	OldValues       loadable.Item
 	ReadTokens      []string
 	ReadWriteTokens []string
@@ -87,7 +87,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 
 	valueMap, ok := value.(map[string]interface{})
 	if ok {
-		fk, ok := valueMap["uesio.id"]
+		fk, ok := valueMap[ID_FIELD]
 		if !ok {
 			return "", errors.New("bad change map for ref field")
 		}
@@ -96,7 +96,7 @@ func GetReferenceKey(value interface{}) (string, error) {
 
 	valueItem, ok := value.(Item)
 	if ok {
-		fk, err := valueItem.GetField("uesio.id")
+		fk, err := valueItem.GetField(ID_FIELD)
 		if err != nil {
 			return "", errors.New("bad change map for ref field")
 		}

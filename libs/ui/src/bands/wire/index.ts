@@ -3,14 +3,13 @@ import { SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
 import { PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
-import { PlainWireRecord } from "../wirerecord/types"
+import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
 import loadOp from "./operations/load"
 import loadNextBatch from "./operations/loadnextbatch"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
-import get from "lodash/get"
 
 type DeletePayload = {
 	recordId: string
@@ -24,7 +23,7 @@ type UndeletePayload = {
 type UpdateRecordPayload = {
 	idField: string
 	recordId: string
-	record: PlainWireRecord
+	record: FieldValue
 	path?: string[]
 } & EntityPayload
 
@@ -71,14 +70,8 @@ const wireSlice = createSlice({
 			(state, { idField, record, recordId, path }) => {
 				const usePath = path ? [recordId].concat(path) : [recordId]
 
-				set(state.data, usePath, {
-					...get(state.data, usePath),
-					...record,
-				})
-				set(state.changes, usePath, {
-					...get(state.changes, usePath),
-					...record,
-				})
+				set(state.data, usePath, record)
+				set(state.changes, usePath, record)
 
 				// Make sure the id field gets set.
 				state.changes[recordId][idField] = state.data[recordId][idField]
@@ -88,14 +81,8 @@ const wireSlice = createSlice({
 			(state, { idField, record, recordId, path }) => {
 				const usePath = path ? [recordId].concat(path) : [recordId]
 
-				set(state.data, usePath, {
-					...get(state.data, usePath),
-					...record,
-				})
-				set(state.original, usePath, {
-					...get(state.original, usePath),
-					...record,
-				})
+				set(state.data, usePath, record)
+				set(state.original, usePath, record)
 
 				// Make sure the id field gets set.
 				state.original[recordId][idField] =

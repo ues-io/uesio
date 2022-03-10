@@ -1,7 +1,6 @@
 package postgresio
 
 import (
-	"database/sql"
 	"errors"
 	"strconv"
 	"strings"
@@ -33,14 +32,13 @@ func getFieldName(fieldMetadata *adapt.FieldMetadata) string {
 	}
 }
 
-func loadOne(
-	db *sql.DB,
-	op *adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	ops []*adapt.LoadOp,
-	credentials *adapt.Credentials,
-	userTokens []string,
-) error {
+func (c *Connection) Load(op *adapt.LoadOp) error {
+
+	metadata := c.metadata
+	credentials := c.credentials
+	userTokens := c.tokens
+	db := c.client
+
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {
 		return err
@@ -58,7 +56,7 @@ func loadOne(
 
 	loadQuery := "SELECT " + strings.Join(fieldIDs, ",") + " FROM public.data WHERE "
 
-	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, ops, credentials, userTokens)
+	conditionStrings, values, err := getConditions(op, metadata, collectionMetadata, credentials, userTokens)
 	if err != nil {
 		return err
 	}
@@ -85,8 +83,8 @@ func loadOne(
 	if len(op.Order) > 0 {
 		loadQuery = loadQuery + " order by " + strings.Join(orders, ",")
 	}
-	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_BATCH_SIZE {
-		op.BatchSize = adapt.MAX_BATCH_SIZE
+	if op.BatchSize == 0 || op.BatchSize > adapt.MAX_LOAD_BATCH_SIZE {
+		op.BatchSize = adapt.MAX_LOAD_BATCH_SIZE
 	}
 	loadQuery = loadQuery + " limit " + strconv.Itoa(op.BatchSize+1)
 	if op.BatchNumber != 0 {
@@ -138,45 +136,10 @@ func loadOne(
 
 	op.BatchNumber++
 
-	loader := func(ops []*adapt.LoadOp) error {
-		return loadMany(db, ops, metadata, credentials, userTokens)
-	}
-
-	err = adapt.HandleReferencesGroup(loader, op.Collection, referencedGroupCollections)
+	err = adapt.HandleReferencesGroup(c, op.Collection, referencedGroupCollections)
 	if err != nil {
 		return err
 	}
 
-	return adapt.HandleReferences(loader, op.Collection, referencedCollections)
-}
-
-// Load function
-func (a *Adapter) Load(ops []*adapt.LoadOp, metadata *adapt.MetadataCache, credentials *adapt.Credentials, userTokens []string) error {
-
-	if len(ops) == 0 {
-		return nil
-	}
-
-	db, err := connect(credentials)
-	if err != nil {
-		return errors.New("Failed to connect PostgreSQL:" + err.Error())
-	}
-
-	return loadMany(db, ops, metadata, credentials, userTokens)
-}
-
-func loadMany(
-	db *sql.DB,
-	ops []*adapt.LoadOp,
-	metadata *adapt.MetadataCache,
-	credentials *adapt.Credentials,
-	userTokens []string,
-) error {
-	for i := range ops {
-		err := loadOne(db, ops[i], metadata, ops, credentials, userTokens)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+	return adapt.HandleReferences(c, op.Collection, referencedCollections)
 }

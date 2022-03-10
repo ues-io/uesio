@@ -25,7 +25,7 @@ func (c *LoadOneCollection) NewItem() loadable.Item {
 
 // Loop function
 func (c *LoadOneCollection) Loop(iter loadable.GroupIterator) error {
-	return iter(c.GetItem(0), 0)
+	return iter(c.GetItem(0), "0")
 }
 
 // Len function

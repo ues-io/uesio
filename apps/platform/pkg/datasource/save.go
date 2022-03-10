@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/thecloudmasters/uesio/pkg/adapt"
-	"github.com/thecloudmasters/uesio/pkg/bundle"
-	"github.com/thecloudmasters/uesio/pkg/meta"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/sess"
 )
@@ -88,9 +86,19 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+type SaveOptions struct {
+	Connections map[string]adapt.Connection
+}
+
 // Save function
 func Save(requests []SaveRequest, session *sess.Session) error {
+	return SaveWithOptions(requests, session, nil)
+}
 
+func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *SaveOptions) error {
+	if options == nil {
+		options = &SaveOptions{}
+	}
 	collated := map[string][]*adapt.SaveOp{}
 	metadataResponse := adapt.MetadataCache{}
 
@@ -161,28 +169,16 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		datasource, err := meta.NewDataSource(dsKey)
+		connection, err := GetConnection(dsKey, session.GetTokens(), &metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
 
-		err = bundle.Load(datasource, session)
-		if err != nil {
-			return err
-		}
-
-		// Now figure out which data source adapter to use
-		// and make the requests
-		// It would be better to make this requests in parallel
-		// instead of in series
-		adapterType := datasource.Type
-		adapter, err := adapt.GetAdapter(adapterType, session)
-		if err != nil {
-			return err
-		}
-		credentials, err := adapt.GetCredentials(datasource.Credentials, session)
-		if err != nil {
-			return err
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err = connection.BeginTransaction()
+			if err != nil {
+				return err
+			}
 		}
 
 		// TODO:
@@ -197,17 +193,6 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 		// 8. Run After bots
 		// 9. Return results
 
-		// Sometimes we only have the name of something instead of its real id
-		// We can use this lookup functionality to get the real id before the save.
-		loader := func(ops []*adapt.LoadOp) error {
-			return adapter.Load(ops, &metadataResponse, credentials, session.GetTokens())
-		}
-
-		err = adapt.HandleLookups(loader, batch, &metadataResponse)
-		if err != nil {
-			return err
-		}
-
 		for _, op := range batch {
 
 			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
@@ -215,7 +200,18 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			autonumber, err := getAutonumber(len(*op.Inserts), adapter, collectionMetadata, credentials)
+			// Do Upsert Lookups Here First
+			err = adapt.HandleUpsertLookup(connection, op)
+			if err != nil {
+				return err
+			}
+
+			err = adapt.HandleOldValuesLookup(connection, op)
+			if err != nil {
+				return err
+			}
+
+			autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
 			if err != nil {
 				return err
 			}
@@ -230,7 +226,13 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 				return err
 			}
 
-			err = Validate(op, collectionMetadata, loader, session)
+			// Now do Reference Lookups and Reference Integrity Lookups
+			err = adapt.HandleReferenceLookups(connection, op)
+			if err != nil {
+				return err
+			}
+
+			err = Validate(op, collectionMetadata, connection, session)
 			if err != nil {
 				return err
 			}
@@ -239,16 +241,23 @@ func Save(requests []SaveRequest, session *sess.Session) error {
 			if err != nil {
 				return err
 			}
+
+			err = connection.Save(op)
+			if err != nil {
+				return err
+			}
 		}
 
-		err = adapter.Save(batch, &metadataResponse, credentials, session.GetTokens())
+		err = performCascadeDeletes(batch, connection, session)
 		if err != nil {
 			return err
 		}
 
-		err = performCascadeDeletes(batch, &metadataResponse, loader, session)
-		if err != nil {
-			return err
+		if !HasExistingConnection(dsKey, options.Connections) {
+			err := connection.CommitTransaction()
+			if err != nil {
+				return err
+			}
 		}
 
 		for _, op := range batch {

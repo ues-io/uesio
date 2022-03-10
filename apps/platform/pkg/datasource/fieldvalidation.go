@@ -47,7 +47,7 @@ func preventUpdate(field *adapt.FieldMetadata) validationFunc {
 		}
 
 		// Fail we have an attempted change on an unupdateable field
-		return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue.(string))
+		return NewSaveError(change.RecordKey, field.GetFullName(), "Field: "+field.Label+" is not updateable: "+change.IDValue)
 	}
 }
 
@@ -145,7 +145,7 @@ func getFieldValidationsFunction(collectionMetadata *adapt.CollectionMetadata, s
 		if validationMetadata != nil && validationMetadata.Type == "METADATA" {
 			validations = append(validations, validateMetadata(field))
 		}
-		if !field.Updateable && field.GetFullName() != collectionMetadata.IDField {
+		if !field.Updateable && field.GetFullName() != adapt.ID_FIELD {
 			validations = append(validations, preventUpdate(field))
 		}
 		if field.Type == "NUMBER" {
@@ -185,6 +185,11 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 				if foreignKeyString == "" {
 					return
 				}
+
+				// Special exception for the system_system user
+				if collectionMetadata.GetFullName() == "uesio.users" && foreignKeyString == "system_system" {
+					return
+				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})
 				request.AddReference(field)
 			})
@@ -198,7 +203,7 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 	}
 }
 
-func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, loader adapt.Loader, session *sess.Session) error {
+func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, connection adapt.Connection, session *sess.Session) error {
 
 	fieldValidations := getFieldValidationsFunction(collectionMetadata, session)
 
@@ -252,9 +257,11 @@ func Validate(op *adapt.SaveOp, collectionMetadata *adapt.CollectionMetadata, lo
 			Fields: []adapt.LoadRequestField{{ID: "uesio.id"}},
 			Query:  true,
 		}}
-		err := loader(ops)
-		if err != nil {
-			return err
+		for _, op := range ops {
+			err := connection.Load(op)
+			if err != nil {
+				return err
+			}
 		}
 		if idCount != results.Len() {
 			badValues, err := loadable.FindMissing(results, func(item loadable.Item) string {

@@ -140,11 +140,6 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 			return nil, errors.New("Can only attach files to FILE fields")
 		}
 
-		refMetadata, err := metadataResponse.GetCollection(fieldMetadata.ReferenceMetadata.Collection)
-		if err != nil {
-			return nil, err
-		}
-
 		err = datasource.Save([]datasource.SaveRequest{
 			{
 				Collection: details.CollectionID,
@@ -152,9 +147,9 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 				Changes: &adapt.Collection{
 					{
 						details.FieldID: map[string]interface{}{
-							refMetadata.IDField: ufm.ID,
+							adapt.ID_FIELD: ufm.ID,
 						},
-						collectionMetadata.IDField: details.RecordID,
+						adapt.ID_FIELD: details.RecordID,
 					},
 				},
 			},
