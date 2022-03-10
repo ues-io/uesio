@@ -20,7 +20,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = (props) => {
 
 	return (
 		<>
-			<FieldWrapper context={context} label="Username/Email">
+			<FieldWrapper context={context} label="Username">
 				<TextField
 					context={context}
 					value={username}

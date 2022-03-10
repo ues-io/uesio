@@ -11,27 +11,31 @@
 		"federationtype": "mock",
 		"firstname": "Ben",
 		"lastname": "Hubbard",
-		"profile": "studio.standard"
+		"profile": "studio.standard",
+		"username": "ben"
 	},
 	{
 		"federationid": "MockAbel",
 		"federationtype": "mock",
 		"firstname": "Abel",
 		"lastname": "Jimenez Molla",
-		"profile": "studio.standard"
+		"profile": "studio.standard",
+		"username": "abel"
 	},
 	{
 		"federationid": "MockWessel",
 		"federationtype": "mock",
 		"firstname": "Wessel",
 		"lastname": "van der Plas",
-		"profile": "studio.standard"
+		"profile": "studio.standard",
+		"username": "wessel"
 	},
 	{
 		"federationid": "MockGregg",
 		"federationtype": "mock",
 		"firstname": "Gregg",
 		"lastname": "Baxter",
-		"profile": "studio.standard"
+		"profile": "studio.standard",
+		"username": "gregg"
 	}
 ]

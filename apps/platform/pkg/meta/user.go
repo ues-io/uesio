@@ -3,6 +3,7 @@ package meta
 // User struct
 type User struct {
 	ID             string            `uesio:"uesio.id"`
+	Username       string            `uesio:"uesio.username"`
 	FirstName      string            `uesio:"uesio.firstname"`
 	LastName       string            `uesio:"uesio.lastname"`
 	Profile        string            `uesio:"uesio.profile"`

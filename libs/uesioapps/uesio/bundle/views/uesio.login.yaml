@@ -38,7 +38,7 @@ definition:
                     text: Sign in with Mock
                     align: center
                 - uesio.logincognito:
-                    text: Sign in with Username/Email
+                    text: Sign in with Username
                     clientId: uesio.cognito_client_id
                     poolId: uesio.cognito_pool_id
                     align: center

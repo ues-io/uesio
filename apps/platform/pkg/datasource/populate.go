@@ -50,6 +50,7 @@ func populateUser(field *adapt.FieldMetadata, user *meta.User) validationFunc {
 		if ((field.AutoPopulate == "CREATE") && isNew) || field.AutoPopulate == "UPDATE" {
 			err := change.FieldChanges.SetField(field.GetFullName(), map[string]interface{}{
 				"uesio.id":        user.ID,
+				"uesio.username":  user.Username,
 				"uesio.firstname": user.FirstName,
 				"uesio.lastname":  user.LastName,
 				"uesio.picture": map[string]interface{}{

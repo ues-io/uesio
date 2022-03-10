@@ -13,6 +13,7 @@ const mockUsers = [
 const getMockToken = (user: MockUser) =>
 	JSON.stringify({
 		authType: "mock",
+		username: user.firstname.toLowerCase(),
 		lastname: user.lastname,
 		firstname: user.firstname,
 		subject: "Mock" + user.firstname,

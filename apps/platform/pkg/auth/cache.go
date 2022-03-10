@@ -7,6 +7,7 @@ import (
 
 func SetUserCache(userid, siteid string, user *meta.User) error {
 	return cache.SetHash(cache.GetUserKey(userid, siteid), map[string]string{
+		"username":        user.Username,
 		"firstname":       user.FirstName,
 		"lastname":        user.LastName,
 		"profile":         user.Profile,
@@ -26,6 +27,7 @@ func GetUserCache(userid, siteid string) (*meta.User, bool) {
 
 	return &meta.User{
 		ID:             userid,
+		Username:       result["username"],
 		FirstName:      result["firstname"],
 		LastName:       result["lastname"],
 		Profile:        result["profile"],

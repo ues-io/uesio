@@ -85,6 +85,9 @@ func getUserFromSession(userid string, session *sess.Session) (*meta.User, error
 		&user,
 		[]adapt.LoadRequestField{
 			{
+				ID: "uesio.username",
+			},
+			{
 				ID: "uesio.firstname",
 			},
 			{

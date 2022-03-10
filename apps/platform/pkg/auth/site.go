@@ -132,6 +132,7 @@ func GetHeadlessSession() (*sess.Session, error) {
 
 	session := sess.NewSession(nil, &meta.User{
 		ID:        "system_system",
+		Username:  "admin",
 		FirstName: "Super",
 		LastName:  "Admin",
 		Profile:   "uesio.public",

@@ -1,0 +1,4 @@
+name: username
+collection: uesio.users
+type: "TEXT"
+label: "Username"

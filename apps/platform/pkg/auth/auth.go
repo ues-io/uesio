@@ -61,6 +61,7 @@ func RegisterAuthType(name string, authType AuthenticationType) {
 // AuthenticationClaims struct
 type AuthenticationClaims struct {
 	Subject   string `json:"subject"`
+	Username  string `json:"username"`
 	FirstName string `json:"firstname"`
 	LastName  string `json:"lastname"`
 	AuthType  string `json:"authType"`
@@ -143,6 +144,7 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{
+		Username:       claims.Username,
 		FirstName:      claims.FirstName,
 		LastName:       claims.LastName,
 		FederationType: claims.AuthType,

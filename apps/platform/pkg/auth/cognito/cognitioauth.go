@@ -28,5 +28,6 @@ func (a *Auth) Decode(token string, session *sess.Session) (*auth.Authentication
 		Subject:  claims["sub"].(string),
 		AuthType: "cognito",
 		Email:    claims["email"].(string),
+		Username: claims["cognito:username"].(string),
 	}, nil
 }
