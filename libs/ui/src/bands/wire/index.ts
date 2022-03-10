@@ -68,6 +68,8 @@ const wireSlice = createSlice({
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
 			(state, { idField, record, recordId, path }) => {
+				console.log({ record, path })
+
 				const usePath = path ? [recordId].concat(path) : [recordId]
 
 				set(state.data, usePath, record)

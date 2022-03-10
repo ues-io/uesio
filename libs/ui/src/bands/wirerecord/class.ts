@@ -33,12 +33,40 @@ class WireRecord {
 
 	update = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		return this.wire.updateRecord(this.id, value, fieldNameParts)
+		if (fieldNameParts.length === 1) {
+			return this.wire.updateRecord(this.id, value, fieldNameParts)
+		}
+
+		// Special handling for maps
+		const mapFieldId = fieldNameParts.shift()
+		const chosenField = fieldNameParts.pop()
+
+		if (!chosenField || !mapFieldId) return
+
+		const mapUpdatedValue = {
+			...this.getFieldValue<PlainWireRecord>(mapFieldId),
+			[chosenField]: value,
+		}
+		return this.wire.updateRecord(this.id, mapUpdatedValue, [mapFieldId])
 	}
 
 	set = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")
-		return this.wire.setRecord(this.id, value, fieldNameParts)
+		if (fieldNameParts.length === 1) {
+			return this.wire.setRecord(this.id, value, fieldNameParts)
+		}
+
+		// Special handling for maps
+		const mapFieldId = fieldNameParts.shift()
+		const chosenField = fieldNameParts.pop()
+
+		if (!chosenField || !mapFieldId) return
+
+		const mapUpdatedValue = {
+			...this.getFieldValue<PlainWireRecord>(mapFieldId),
+			[chosenField]: value,
+		}
+		return this.wire.setRecord(this.id, mapUpdatedValue, [mapFieldId])
 	}
 }
 
