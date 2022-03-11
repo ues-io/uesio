@@ -37,13 +37,12 @@ definition:
         uesio.id:
         uesio.firstname:
         uesio.lastname:
-        uesio.federation_id:
-        uesio.federation_type:
+        uesio.username:
         uesio.profile:
         uesio.picture:
         uesio.language:
       conditions:
-        - field: uesio.federation_id
+        - field: uesio.username
           valueSource: VALUE
           value: $Param{userid}
       init:
@@ -139,9 +138,7 @@ definition:
                                         - io.field:
                                             fieldId: uesio.lastname
                                         - io.field:
-                                            fieldId: uesio.federation_id
-                                        - io.field:
-                                            fieldId: uesio.federation_type
+                                            fieldId: uesio.username
                                         - io.field:
                                             fieldId: uesio.profile
                                         - io.field:
