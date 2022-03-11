@@ -1,23 +1,52 @@
 package adapt
 
 import (
+	"context"
 	"errors"
+	"strings"
 	"text/template"
 
+	"github.com/PaesslerAG/gval"
 	"github.com/thecloudmasters/uesio/pkg/meta/loadable"
 	"github.com/thecloudmasters/uesio/pkg/templating"
 )
 
 // FormulaFieldRequest type
 type FormulaFieldRequest struct {
-	//Fields    []LoadRequestField
-	//FieldsMap map[string]bool
-	//Metadata  *CollectionMetadata
 	Field *FieldMetadata
 }
 
 // ReferencedFormulaFieldRegistry type
 type ReferencedFormulaFieldRegistry map[string]*FormulaFieldRequest
+
+var (
+	uesioLanguage = gval.NewLanguage(
+		gval.Full(),
+		gval.VariableSelector(func(path gval.Evaluables) gval.Evaluable {
+			return func(c context.Context, v interface{}) (interface{}, error) {
+				keys, err := path.EvalStrings(c, v)
+				if err != nil {
+					return nil, err
+				}
+				fullId := strings.Join(keys, ".")
+				item, ok := v.(*Item)
+				if !ok {
+					return nil, errors.New("Casting error in formula field: " + fullId)
+				}
+				id, err := item.GetField(fullId)
+				if err != nil {
+					return nil, err
+				}
+				return id, nil
+
+			}
+		}),
+		gval.Function("strlen", func(args ...interface{}) (interface{}, error) {
+			length := len(args[0].(string))
+			return (float64)(length), nil
+		}),
+	)
+)
 
 // Add function
 func (rr *ReferencedFormulaFieldRegistry) Add(fieldMetadata *FieldMetadata) *FormulaFieldRequest {
@@ -64,18 +93,19 @@ func HandleFormulaFields(
 
 	for _, ref := range referencedFormulaFields {
 		formulaField := ref.Field
-		if formulaField.FormulaOptions != nil {
-			formula := formulaField.FormulaOptions.Formula
-			idTemplate, err := getTemplate(formula, collectionMetadata)
-			if err != nil {
-				return err
-			}
-			value, err := templating.Execute(idTemplate, item)
-			if err != nil {
-				return err
-			}
-			item.SetField(formulaField.GetFullName(), value)
+		formulaOptions := formulaField.FormulaOptions
+		if formulaOptions == nil {
+			return nil
 		}
+		formula := formulaOptions.Formula
+		if formula == "" {
+			return nil
+		}
+		value, err := uesioLanguage.Evaluate(formula, item)
+		if err != nil {
+			return err
+		}
+		item.SetField(formulaField.GetFullName(), value)
 	}
 
 	return nil
