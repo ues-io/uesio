@@ -55,29 +55,23 @@ class Wire {
 
 	hasMore = () => this.source.more
 
-	updateRecord = (recordId: string, record: FieldValue, path?: string[]) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
+	updateRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		getStore().dispatch(
 			updateRecord({
 				entity: this.getFullId(),
 				recordId,
 				record,
-				idField,
 				path,
 			})
 		)
 	}
 
-	setRecord = (recordId: string, record: FieldValue, path?: string[]) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
+	setRecord = (recordId: string, record: FieldValue, path: string[]) => {
 		getStore().dispatch(
 			setRecord({
 				entity: this.getFullId(),
 				recordId,
 				record,
-				idField,
 				path,
 			})
 		)
@@ -96,12 +90,9 @@ class Wire {
 	}
 
 	markRecordForDeletion = (recordId: string) => {
-		const idField = this.collection.getIdField()?.getId()
-		if (!idField) return
 		getStore().dispatch(
 			markForDelete({
 				entity: this.getFullId(),
-				idField,
 				recordId,
 			})
 		)

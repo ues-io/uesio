@@ -19,22 +19,13 @@ export default (
 		}
 
 		if (!recordId) return context
-		const idField = context
-			.getRecord()
-			?.getWire()
-			.getCollection()
-			.getIdField()
-			?.getId()
-		if (!idField) return context
 
 		dispatch(
 			updateRecord({
 				recordId,
-				record: {
-					[field]: context.merge(value),
-				},
-				idField,
+				record: context.merge(value),
 				entity: `${viewId}/${wirename}`,
+				path: [field],
 			})
 		)
 		return context

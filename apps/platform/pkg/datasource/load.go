@@ -225,13 +225,8 @@ func LoadWithOptions(ops []adapt.LoadOp, session *sess.Session, options *LoadOpt
 
 		//Set default order by: id - asc
 		if op.Order == nil {
-			idField, err := collectionMetadata.GetIDField()
-			if err != nil {
-				return nil, err
-			}
-			idFieldName := idField.GetFullName()
 			op.Order = append(op.Order, adapt.LoadRequestOrder{
-				Field: idFieldName,
+				Field: adapt.ID_FIELD,
 				Desc:  false,
 			})
 		}
