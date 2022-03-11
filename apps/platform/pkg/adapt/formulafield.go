@@ -3,6 +3,7 @@ package adapt
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"text/template"
 
@@ -41,9 +42,13 @@ var (
 
 			}
 		}),
-		gval.Function("strlen", func(args ...interface{}) (interface{}, error) {
+		gval.Function("STR_LEN", func(args ...interface{}) (interface{}, error) {
 			length := len(args[0].(string))
 			return (float64)(length), nil
+		}),
+		gval.Function("TO_STRING", func(args ...interface{}) (interface{}, error) {
+			valStr := fmt.Sprint(args[0])
+			return valStr, nil
 		}),
 	)
 )
