@@ -45,6 +45,8 @@ func Deploy(body []byte, session *sess.Session) error {
 	// Maps a filename to a recordID
 	fileNameMap := map[string]FileRecord{}
 
+	by := meta.BundleDef{}
+
 	// Read all the files from zip archive
 	for _, zipFile := range zipReader.File {
 		// Don't forget to fix the windows filenames here
@@ -59,7 +61,12 @@ func Deploy(body []byte, session *sess.Session) error {
 		metadataType := dirParts[1]
 
 		if partsLength == 2 && metadataType == "" && fileName == "bundle.yaml" {
-			err := addDependencies(workspace, zipFile, session)
+			readCloser, err := zipFile.Open()
+			if err != nil {
+				return err
+			}
+			err = bundlestore.DecodeYAML(&by, readCloser)
+			readCloser.Close()
 			if err != nil {
 				return err
 			}
@@ -148,62 +155,6 @@ func Deploy(body []byte, session *sess.Session) error {
 		defer f.Close()
 	}
 
-	saves := []datasource.PlatformSaveRequest{}
-	for _, collection := range dep {
-		length := collection.Len()
-		if length > 0 {
-			saves = append(saves, datasource.PlatformSaveRequest{
-				Collection: collection,
-				Options: &adapt.SaveOptions{
-					Upsert: &adapt.UpsertOptions{},
-				},
-			})
-		}
-	}
-
-	err = datasource.PlatformSaves(saves, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	// Read the filestreams
-	for _, fileStream := range fileStreams {
-
-		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
-		if !ok {
-			continue
-		}
-
-		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
-			Name:         fileStream.FileName,
-			CollectionID: "studio." + fileStream.Type,
-			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
-			FieldID:      fileRecord.FieldName,
-		}, session.RemoveWorkspaceContext())
-		if err != nil {
-			return err
-		}
-	}
-
-	// Clear out the bundle definition cache
-	bundle.ClearAppBundleCache(session)
-
-	return nil
-
-}
-
-func addDependencies(workspace string, zipFile *zip.File, session *sess.Session) error {
-	//Break down bundle.yaml into dependency records
-	by := meta.BundleDef{}
-	readCloser, err := zipFile.Open()
-	if err != nil {
-		return err
-	}
-	err = bundlestore.DecodeYAML(&by, readCloser)
-	readCloser.Close()
-	if err != nil {
-		return err
-	}
 	deps := meta.BundleDependencyCollection{}
 	for key := range by.Dependencies {
 		dep := by.Dependencies[key]
@@ -240,17 +191,89 @@ func addDependencies(workspace string, zipFile *zip.File, session *sess.Session)
 		},
 	})
 
-	err = datasource.PlatformSaveOne(workspaceItem, nil, session.RemoveWorkspaceContext())
+	saves := []datasource.PlatformSaveRequest{
+		*datasource.GetPlatformSaveOneRequest(workspaceItem, nil),
+		{
+			Collection: &deps,
+			Options: &adapt.SaveOptions{
+				Upsert: &adapt.UpsertOptions{},
+			},
+		},
+	}
+	for _, collection := range dep {
+		length := collection.Len()
+		if length > 0 {
+			saves = append(saves, datasource.PlatformSaveRequest{
+				Collection: collection,
+				Options: &adapt.SaveOptions{
+					Upsert: &adapt.UpsertOptions{},
+				},
+			})
+		}
+	}
+
+	connection, err := datasource.GetPlatformConnection(session.RemoveWorkspaceContext())
 	if err != nil {
 		return err
 	}
 
-	return datasource.PlatformSave(datasource.PlatformSaveRequest{
-		Collection: &deps,
-		Options: &adapt.SaveOptions{
-			Upsert: &adapt.UpsertOptions{},
-		},
-	}, session.RemoveWorkspaceContext())
+	err = connection.BeginTransaction()
+	if err != nil {
+		return err
+	}
+
+	err = applyDeploy(saves, fileStreams, fileNameMap, connection, session)
+	if err != nil {
+		rollbackError := connection.RollbackTransaction()
+		if rollbackError != nil {
+			return rollbackError
+		}
+		return err
+	}
+
+	err = connection.CommitTransaction()
+	if err != nil {
+		return err
+	}
+
+	// Clear out the bundle definition cache
+	bundle.ClearAppBundleCache(session)
+
+	return nil
+
+}
+
+func applyDeploy(
+	saves []datasource.PlatformSaveRequest,
+	fileStreams []bundlestore.ReadItemStream,
+	fileNameMap map[string]FileRecord,
+	connection adapt.Connection,
+	session *sess.Session,
+) error {
+	err := datasource.PlatformSaves(saves, connection, session.RemoveWorkspaceContext())
+	if err != nil {
+		return err
+	}
+
+	// Read the filestreams
+	for _, fileStream := range fileStreams {
+
+		fileRecord, ok := fileNameMap[fileStream.Type+":"+fileStream.Path]
+		if !ok {
+			continue
+		}
+
+		_, err := filesource.Upload(fileStream.Data, fileadapt.FileDetails{
+			Name:         fileStream.FileName,
+			CollectionID: "studio." + fileStream.Type,
+			RecordID:     session.GetWorkspaceID() + "_" + fileRecord.RecordID,
+			FieldID:      fileRecord.FieldName,
+		}, connection, session.RemoveWorkspaceContext())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func readZipFile(zf *zip.File, item meta.BundleableItem) error {

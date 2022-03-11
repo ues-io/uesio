@@ -14,12 +14,18 @@ type FeatureFlagStore struct {
 // Get function
 func (ffs *FeatureFlagStore) Get(key string, session *sess.Session) (*meta.FeatureFlagAssignment, error) {
 	var ffa meta.FeatureFlagAssignment
-	err := datasource.PlatformLoadOne(&ffa, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: key,
+	err := datasource.PlatformLoadOne(
+		&ffa,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: key,
+				},
+			},
 		},
-	}, session)
+		session,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -36,5 +42,5 @@ func (ffs *FeatureFlagStore) Set(key string, value bool, user string, session *s
 
 	return datasource.PlatformSaveOne(&ffa, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, session)
+	}, nil, session)
 }

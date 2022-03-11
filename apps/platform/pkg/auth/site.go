@@ -12,50 +12,52 @@ import (
 
 func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 	var s meta.Site
-	err := datasource.PlatformLoadOneWithFields(
+	err := datasource.PlatformLoadOne(
 		&s,
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio.id",
-			},
-			{
-				ID: "studio.name",
-			},
-			{
-				ID: "studio.app",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "uesio.id",
-					},
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio.id",
 				},
-			},
-			{
-				ID: "studio.bundle",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "studio.app",
-						Fields: []adapt.LoadRequestField{
-							{
-								ID: "uesio.id",
-							},
+				{
+					ID: "studio.name",
+				},
+				{
+					ID: "studio.app",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio.id",
 						},
 					},
-					{
-						ID: "studio.major",
-					},
-					{
-						ID: "studio.minor",
-					},
-					{
-						ID: "studio.patch",
+				},
+				{
+					ID: "studio.bundle",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "studio.app",
+							Fields: []adapt.LoadRequestField{
+								{
+									ID: "uesio.id",
+								},
+							},
+						},
+						{
+							ID: "studio.major",
+						},
+						{
+							ID: "studio.minor",
+						},
+						{
+							ID: "studio.patch",
+						},
 					},
 				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: siteid,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: siteid,
+				},
 			},
 		},
 		session,
@@ -68,21 +70,23 @@ func querySite(siteid string, session *sess.Session) (*meta.Site, error) {
 
 func getDomain(domainType, domain string, session *sess.Session) (*meta.SiteDomain, error) {
 	var sd meta.SiteDomain
-	err := datasource.PlatformLoadOneWithFields(
+	err := datasource.PlatformLoadOne(
 		&sd,
-		[]adapt.LoadRequestField{
-			{
-				ID: "studio.site",
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "studio.site",
+				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "studio.domain",
-				Value: domain,
-			},
-			{
-				Field: "studio.type",
-				Value: domainType,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "studio.domain",
+					Value: domain,
+				},
+				{
+					Field: "studio.type",
+					Value: domainType,
+				},
 			},
 		},
 		session,

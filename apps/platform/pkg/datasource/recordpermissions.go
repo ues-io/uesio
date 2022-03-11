@@ -73,7 +73,7 @@ func GenerateRecordChallengeTokens(op *adapt.SaveOp, collectionMetadata *adapt.C
 	return nil
 }
 
-func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Session) error {
+func GenerateUserAccessTokens(metadata *adapt.MetadataCache, loadOptions *LoadOptions, session *sess.Session) error {
 
 	if !session.HasToken("uesio.owner") {
 		session.AddToken("uesio.owner", []string{session.GetUserID()})
@@ -133,6 +133,8 @@ func GenerateUserAccessTokens(metadata *adapt.MetadataCache, session *sess.Sessi
 			}}
 			loadMetadata, err := LoadWithOptions(loadOps, session, &LoadOptions{
 				CheckPermissions: false,
+				Metadata:         loadOptions.Metadata,
+				Connections:      loadOptions.Connections,
 			})
 			if err != nil {
 				return err

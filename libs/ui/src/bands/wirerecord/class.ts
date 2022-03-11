@@ -1,4 +1,5 @@
 import get from "lodash/get"
+import { ID_FIELD } from "../collection/types"
 import Wire from "../wire/class"
 import { FieldValue, PlainWireRecord } from "./types"
 
@@ -25,11 +26,7 @@ class WireRecord {
 	isNew = () => !this.getIdFieldValue()
 	isDeleted = () => this.wire.isMarkedForDeletion(this.id)
 
-	getIdFieldValue = () => {
-		const metadata = this.wire.collection
-		const idField = metadata.getIdField()
-		return idField && this.getFieldValue(idField.getId())
-	}
+	getIdFieldValue = () => this.getFieldValue(ID_FIELD)
 
 	update = (fieldId: string, value: FieldValue) => {
 		const fieldNameParts = fieldId?.split("->")

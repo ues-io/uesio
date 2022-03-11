@@ -77,11 +77,6 @@ func (cm *CollectionMetadata) GetNameField() (*FieldMetadata, error) {
 	return cm.GetField(cm.NameField)
 }
 
-// GetIDField function
-func (cm *CollectionMetadata) GetIDField() (*FieldMetadata, error) {
-	return cm.GetField(ID_FIELD)
-}
-
 // GetFullName function
 func (cm *CollectionMetadata) GetFullName() string {
 	return cm.Namespace + "." + cm.Name

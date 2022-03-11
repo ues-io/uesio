@@ -147,7 +147,7 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 		FederationType: claims.AuthType,
 		FederationID:   claims.Subject,
 		Profile:        defaultSiteProfile,
-	}, nil, session)
+	}, nil, nil, session)
 }
 
 // CheckProvisionWhitelist function
@@ -226,14 +226,16 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 	var user meta.User
 	err := datasource.PlatformLoadOne(
 		&user,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.federation_type",
-				Value: claims.AuthType,
-			},
-			{
-				Field: "uesio.federation_id",
-				Value: claims.Subject,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.federation_type",
+					Value: claims.AuthType,
+				},
+				{
+					Field: "uesio.federation_id",
+					Value: claims.Subject,
+				},
 			},
 		},
 		session,

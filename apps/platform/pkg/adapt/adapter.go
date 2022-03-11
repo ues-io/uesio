@@ -22,10 +22,12 @@ type Connection interface {
 	Migrate() error
 	GetAutonumber(*CollectionMetadata) (int, error)
 	GetMetadata() *MetadataCache
+	SetMetadata(*MetadataCache)
 	GetCredentials() *Credentials
 	GetDataSource() string
 	BeginTransaction() error
 	CommitTransaction() error
+	RollbackTransaction() error
 }
 
 var adapterMap = map[string]Adapter{}

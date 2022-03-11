@@ -81,40 +81,42 @@ func getUserFromSession(userid string, session *sess.Session) (*meta.User, error
 
 	var user meta.User
 
-	err := datasource.PlatformLoadOneWithFields(
+	err := datasource.PlatformLoadOne(
 		&user,
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio.firstname",
-			},
-			{
-				ID: "uesio.lastname",
-			},
-			{
-				ID: "uesio.profile",
-			},
-			{
-				ID: "uesio.federation_id",
-			},
-			{
-				ID: "uesio.federation_type",
-			},
-			{
-				ID: "uesio.picture",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "uesio.id",
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio.firstname",
+				},
+				{
+					ID: "uesio.lastname",
+				},
+				{
+					ID: "uesio.profile",
+				},
+				{
+					ID: "uesio.federation_id",
+				},
+				{
+					ID: "uesio.federation_type",
+				},
+				{
+					ID: "uesio.picture",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio.id",
+						},
 					},
 				},
+				{
+					ID: "uesio.language",
+				},
 			},
-			{
-				ID: "uesio.language",
-			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: userid,
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: userid,
+				},
 			},
 		},
 		session,

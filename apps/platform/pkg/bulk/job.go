@@ -14,7 +14,7 @@ func NewJob(spec *meta.JobSpec, session *sess.Session) (string, error) {
 		Collection: *&spec.Collection,
 	}
 
-	err := datasource.PlatformSaveOne(&job, nil, session)
+	err := datasource.PlatformSaveOne(&job, nil, nil, session)
 	if err != nil {
 		return "", err
 	}

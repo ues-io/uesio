@@ -18,10 +18,12 @@ func NewBatch(body io.ReadCloser, jobID string, session *sess.Session) (*meta.Bu
 	// Get the job from the jobID
 	err := datasource.PlatformLoadOne(
 		&job,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: jobID,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: jobID,
+				},
 			},
 		},
 		session,

@@ -6,14 +6,12 @@ export default (context: Context): ThunkFunc =>
 	(dispatch) => {
 		const recordId = context.getRecord()?.getId()
 		const wire = context.getWire()
-		const idField = wire?.collection.getIdField()?.getId()
 
-		if (!recordId || !idField || !wire) return context
+		if (!recordId || !wire) return context
 
 		dispatch(
 			markForDelete({
 				entity: wire.getFullId(),
-				idField,
 				recordId,
 			})
 		)

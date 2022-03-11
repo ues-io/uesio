@@ -1,5 +1,12 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react"
-import { definition, hooks, component, wire, styles } from "@uesio/ui"
+import {
+	definition,
+	hooks,
+	component,
+	collection as col,
+	wire,
+	styles,
+} from "@uesio/ui"
 import { ParamDefinition } from "./preview"
 
 interface Props extends definition.BaseProps {
@@ -20,10 +27,9 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 	const collection = uesio.collection.useCollection(context, collectionId)
 	if (!collection) return null
 
-	const fieldId = collection.getIdField()?.getId()
 	const fieldName = collection.getNameField()?.getId()
 
-	if (!fieldName || !fieldId) return null
+	if (!fieldName) return null
 
 	const itemToString = (item: wire.PlainWireRecord | undefined) =>
 		item ? `${item[fieldName]}` : ""
@@ -51,7 +57,7 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 				variant="io.default"
 				value={lstate[fieldKey]}
 				setValue={(value: wire.PlainWireRecord) => {
-					const idValue = value && (value[fieldId] as string)
+					const idValue = value && (value[col.ID_FIELD] as string)
 					if (idValue && idValue !== "") {
 						setLstate({
 							...lstate,
@@ -64,7 +70,7 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 					<div className={classes.div} style={{}}>
 						<div className={classes.title}>{item[fieldName]}</div>
 						<span className={classes.subtitle}>
-							{item[fieldId]}
+							{item[col.ID_FIELD]}
 						</span>
 					</div>
 				)}
@@ -73,7 +79,7 @@ const PreviewItem: FunctionComponent<Props> = (props) => {
 					callback: (items: wire.PlainWireRecord[]) => void
 				) => {
 					const searchFields = [fieldName]
-					const returnFields = [fieldId, fieldName]
+					const returnFields = [fieldName]
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{

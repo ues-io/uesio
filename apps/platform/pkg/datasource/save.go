@@ -88,6 +88,7 @@ func (sr *SaveRequest) UnmarshalJSON(b []byte) error {
 
 type SaveOptions struct {
 	Connections map[string]adapt.Connection
+	Metadata    *adapt.MetadataCache
 }
 
 // Save function
@@ -100,7 +101,11 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 		options = &SaveOptions{}
 	}
 	collated := map[string][]*adapt.SaveOp{}
-	metadataResponse := adapt.MetadataCache{}
+	metadataResponse := &adapt.MetadataCache{}
+	// Use existing metadata if it was passed in
+	if options.Metadata != nil {
+		metadataResponse = options.Metadata
+	}
 
 	// Loop over the requests and batch per data source
 	for index := range requests {
@@ -135,7 +140,7 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			}
 		}
 
-		err = collections.Load(&metadataResponse, session)
+		err = collections.Load(metadataResponse, session)
 		if err != nil {
 			return err
 		}
@@ -161,7 +166,10 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// Get all the user access tokens that we'll need for this request
 	// TODO:
 	// Finally check for record level permissions and ability to do the save.
-	err := GenerateUserAccessTokens(&metadataResponse, session)
+	err := GenerateUserAccessTokens(metadataResponse, &LoadOptions{
+		Metadata:    metadataResponse,
+		Connections: options.Connections,
+	}, session)
 	if err != nil {
 		return err
 	}
@@ -169,87 +177,26 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 	// 3. Get metadata for each datasource and collection
 	for dsKey, batch := range collated {
 
-		connection, err := GetConnection(dsKey, session.GetTokens(), &metadataResponse, session, options.Connections)
+		connection, err := GetConnection(dsKey, session.GetTokens(), metadataResponse, session, options.Connections)
 		if err != nil {
 			return err
 		}
 
 		if !HasExistingConnection(dsKey, options.Connections) {
-			err = connection.BeginTransaction()
+			err := connection.BeginTransaction()
 			if err != nil {
 				return err
 			}
 		}
 
-		// TODO:
-		// 0. Split change items into updates/inserts/deletes
-		// 1. Perform Lookups
-		// 2. Hydrate update values with full info
-		// 3. AutoPopulate data like dates and users
-		// 4. Run Before bots
-		// 5. Run validations
-		// 6. Check permissions
-		// 7. Actually do the save
-		// 8. Run After bots
-		// 9. Return results
-
-		for _, op := range batch {
-
-			collectionMetadata, err := metadataResponse.GetCollection(op.CollectionName)
-			if err != nil {
-				return err
-			}
-
-			// Do Upsert Lookups Here First
-			err = adapt.HandleUpsertLookup(connection, op)
-			if err != nil {
-				return err
-			}
-
-			err = adapt.HandleOldValuesLookup(connection, op)
-			if err != nil {
-				return err
-			}
-
-			autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
-			if err != nil {
-				return err
-			}
-
-			err = Populate(op, collectionMetadata, autonumber, session)
-			if err != nil {
-				return err
-			}
-
-			err = runBeforeSaveBots(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			// Now do Reference Lookups and Reference Integrity Lookups
-			err = adapt.HandleReferenceLookups(connection, op)
-			if err != nil {
-				return err
-			}
-
-			err = Validate(op, collectionMetadata, connection, session)
-			if err != nil {
-				return err
-			}
-
-			err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
-
-			err = connection.Save(op)
-			if err != nil {
-				return err
-			}
-		}
-
-		err = performCascadeDeletes(batch, connection, session)
+		err = applyBatches(batch, connection, session)
 		if err != nil {
+			if !HasExistingConnection(dsKey, options.Connections) {
+				err := connection.RollbackTransaction()
+				if err != nil {
+					return err
+				}
+			}
 			return err
 		}
 
@@ -260,19 +207,76 @@ func SaveWithOptions(requests []SaveRequest, session *sess.Session, options *Sav
 			}
 		}
 
-		for _, op := range batch {
-			collectionKey := op.CollectionName
-			collectionMetadata, err := metadataResponse.GetCollection(collectionKey)
-			if err != nil {
-				return err
-			}
+	}
 
-			err = runAfterSaveBots(op, collectionMetadata, session)
-			if err != nil {
-				return err
-			}
+	return nil
+}
+
+func applyBatches(batch []*adapt.SaveOp, connection adapt.Connection, session *sess.Session) error {
+	metadata := connection.GetMetadata()
+	for _, op := range batch {
+
+		collectionMetadata, err := metadata.GetCollection(op.CollectionName)
+		if err != nil {
+			return err
 		}
 
+		// Do Upsert Lookups Here First
+		err = adapt.HandleUpsertLookup(connection, op)
+		if err != nil {
+			return err
+		}
+
+		err = adapt.HandleOldValuesLookup(connection, op)
+		if err != nil {
+			return err
+		}
+
+		autonumber, err := getAutonumber(len(*op.Inserts), connection, collectionMetadata)
+		if err != nil {
+			return err
+		}
+
+		err = Populate(op, collectionMetadata, autonumber, session)
+		if err != nil {
+			return err
+		}
+
+		err = runBeforeSaveBots(op, connection, session)
+		if err != nil {
+			return err
+		}
+
+		// Now do Reference Lookups and Reference Integrity Lookups
+		err = adapt.HandleReferenceLookups(connection, op)
+		if err != nil {
+			return err
+		}
+
+		err = Validate(op, collectionMetadata, connection, session)
+		if err != nil {
+			return err
+		}
+
+		err = GenerateRecordChallengeTokens(op, collectionMetadata, session)
+		if err != nil {
+			return err
+		}
+
+		err = connection.Save(op)
+		if err != nil {
+			return err
+		}
+
+		err = performCascadeDeletes(op, connection, session)
+		if err != nil {
+			return err
+		}
+
+		err = runAfterSaveBots(op, connection, session)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

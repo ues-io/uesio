@@ -6,7 +6,6 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/thecloudmasters/uesio/pkg/adapt"
@@ -88,26 +87,10 @@ func installBundles(session *sess.Session, bundleNames ...string) error {
 	return nil
 }
 
-func seed(cmd *cobra.Command, args []string) {
-
-	logger.Log("Running seed command!", logger.INFO)
-
-	session, err := auth.GetHeadlessSession()
+func runSeeds(connection adapt.Connection, session *sess.Session) error {
+	err := connection.Migrate()
 	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	connection, err := datasource.GetConnection("uesio.platform", nil, nil, session, nil)
-	if err != nil {
-		logger.LogError(err)
-		return
-	}
-
-	err = connection.Migrate()
-	if err != nil {
-		logger.LogError(err)
-		return
+		return err
 	}
 
 	var apps meta.AppCollection
@@ -120,8 +103,7 @@ func seed(cmd *cobra.Command, args []string) {
 
 	err = populateSeedData(&apps, &bundles, &workspaces, &sites, &sitedomains, &users, &configstorevalues)
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
 	}
 
 	var teams adapt.Collection
@@ -129,17 +111,15 @@ func seed(cmd *cobra.Command, args []string) {
 
 	err = getSeedDataFile(&teams, "studio.teams.json")
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
 	}
 
 	err = getSeedDataFile(&teammembers, "studio.teammembers.json")
 	if err != nil {
-		logger.Log(err.Error(), logger.INFO)
-		return
+		return err
 	}
 
-	err = datasource.Save([]datasource.SaveRequest{
+	return datasource.SaveWithOptions([]datasource.SaveRequest{
 		getPlatformSeedSR(&users),
 		getPlatformSeedSR(&apps),
 		getPlatformSeedSR(&bundles),
@@ -149,7 +129,44 @@ func seed(cmd *cobra.Command, args []string) {
 		getPlatformSeedSR(&configstorevalues),
 		getSeedSR("studio.teams", &teams),
 		getSeedSR("studio.teammembers", &teammembers),
-	}, session)
+	}, session, datasource.GetConnectionSaveOptions(connection))
+}
+
+func seed(cmd *cobra.Command, args []string) {
+
+	logger.Log("Running seed command!", logger.INFO)
+
+	session, err := auth.GetHeadlessSession()
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	connection, err := datasource.GetPlatformConnection(session)
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	err = connection.BeginTransaction()
+	if err != nil {
+		logger.LogError(err)
+		return
+	}
+
+	err = runSeeds(connection, session)
+	if err != nil {
+		logger.Log("Seeds Failed", logger.ERROR)
+		logger.LogError(err)
+		err := connection.RollbackTransaction()
+		if err != nil {
+			logger.LogError(err)
+			return
+		}
+		return
+	}
+
+	err = connection.CommitTransaction()
 	if err != nil {
 		logger.LogError(err)
 		return
@@ -157,5 +174,4 @@ func seed(cmd *cobra.Command, args []string) {
 
 	logger.Log("Success", logger.INFO)
 
-	time.Sleep(100 * time.Millisecond)
 }
