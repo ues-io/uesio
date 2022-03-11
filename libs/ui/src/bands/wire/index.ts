@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { SaveResponseBatch } from "../../load/saveresponse"
 import { WireConditionState } from "../../wireexports"
-import { PlainCollection } from "../collection/types"
+import { ID_FIELD, PlainCollection } from "../collection/types"
 import { createEntityReducer, EntityPayload } from "../utils"
 import { FieldValue, PlainWireRecord } from "../wirerecord/types"
 import wireAdapter from "./adapter"
@@ -10,10 +10,10 @@ import loadNextBatch from "./operations/loadnextbatch"
 import saveOp from "./operations/save"
 import { PlainWire } from "./types"
 import set from "lodash/set"
+import get from "lodash/get"
 
 type DeletePayload = {
 	recordId: string
-	idField: string
 } & EntityPayload
 
 type UndeletePayload = {
@@ -21,10 +21,9 @@ type UndeletePayload = {
 } & EntityPayload
 
 type UpdateRecordPayload = {
-	idField: string
 	recordId: string
 	record: FieldValue
-	path?: string[]
+	path: string[]
 } & EntityPayload
 
 type CreateRecordPayload = {
@@ -55,9 +54,9 @@ const wireSlice = createSlice({
 	initialState: wireAdapter.getInitialState(),
 	reducers: {
 		markForDelete: createEntityReducer<DeletePayload, PlainWire>(
-			(state, { recordId, idField }) => {
+			(state, { recordId }) => {
 				state.deletes[recordId] = {
-					[idField]: state.data[recordId][idField],
+					[ID_FIELD]: state.data[recordId][ID_FIELD],
 				}
 			}
 		),
@@ -67,26 +66,22 @@ const wireSlice = createSlice({
 			}
 		),
 		updateRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId, path }) => {
-				const usePath = path ? [recordId].concat(path) : [recordId]
-
+			(state, { record, recordId, path }) => {
+				const usePath = [recordId].concat(path)
+				const basePath = [recordId].concat([path[0]])
 				set(state.data, usePath, record)
-				set(state.changes, usePath, record)
+				set(state.changes, basePath, get(state.data, basePath))
 
 				// Make sure the id field gets set.
-				state.changes[recordId][idField] = state.data[recordId][idField]
+				state.changes[recordId][ID_FIELD] =
+					state.data[recordId][ID_FIELD]
 			}
 		),
 		setRecord: createEntityReducer<UpdateRecordPayload, PlainWire>(
-			(state, { idField, record, recordId, path }) => {
-				const usePath = path ? [recordId].concat(path) : [recordId]
-
+			(state, { record, recordId, path }) => {
+				const usePath = [recordId].concat(path)
 				set(state.data, usePath, record)
 				set(state.original, usePath, record)
-
-				// Make sure the id field gets set.
-				state.original[recordId][idField] =
-					state.data[recordId][idField]
 			}
 		),
 		createRecord: createEntityReducer<CreateRecordPayload, PlainWire>(

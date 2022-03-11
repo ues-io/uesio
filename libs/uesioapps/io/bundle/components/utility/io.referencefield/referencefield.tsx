@@ -34,10 +34,9 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 
 	if (!referencedCollection) return null
 
-	const idField = referencedCollection.getIdField()?.getId()
 	const nameField = referencedCollection.getNameField()?.getId()
 
-	if (!idField || !nameField) return null
+	if (!nameField) return null
 
 	const template = options?.template
 
@@ -73,7 +72,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 				variant={variant}
 				value={value}
 				setValue={(value: wire.PlainWireRecord) => {
-					record.update(fieldId, value?.[idField] ? value : null)
+					record.update(fieldId, value)
 				}}
 				itemToString={itemToString}
 				itemRenderer={(item: wire.PlainWireRecord, index: number) => {
@@ -97,10 +96,7 @@ const ReferenceField: FunctionComponent<ReferenceFieldProps> = (props) => {
 					callback: (items: wire.PlainWireRecord[]) => void
 				) => {
 					const searchFields = options?.searchFields || [nameField]
-					const returnFields = options?.returnFields || [
-						idField,
-						nameField,
-					]
+					const returnFields = options?.returnFields || [nameField]
 					const result = await uesio.platform.loadData(context, {
 						wires: [
 							{

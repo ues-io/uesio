@@ -8,7 +8,7 @@ import {
 } from "./bands/field/types"
 import Collection from "./bands/collection/class"
 import Field from "./bands/field/class"
-import { PlainCollection } from "./bands/collection/types"
+import { PlainCollection, ID_FIELD } from "./bands/collection/types"
 import { addBlankSelectOption } from "./bands/field/utils"
 
 export {
@@ -22,4 +22,5 @@ export {
 	FieldMetadata,
 	addBlankSelectOption,
 	FIELD_TYPES,
+	ID_FIELD,
 }
