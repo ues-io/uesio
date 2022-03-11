@@ -7,13 +7,12 @@ import (
 
 func SetUserCache(userid, siteid string, user *meta.User) error {
 	return cache.SetHash(cache.GetUserKey(userid, siteid), map[string]string{
-		"firstname":       user.FirstName,
-		"lastname":        user.LastName,
-		"profile":         user.Profile,
-		"federation_id":   user.FederationID,
-		"federation_type": user.FederationType,
-		"picture":         user.GetPictureID(),
-		"language":        user.Language,
+		"firstname": user.FirstName,
+		"lastname":  user.LastName,
+		"profile":   user.Profile,
+		"picture":   user.GetPictureID(),
+		"language":  user.Language,
+		"username":  user.Username,
 	})
 }
 
@@ -25,12 +24,11 @@ func GetUserCache(userid, siteid string) (*meta.User, bool) {
 	}
 
 	return &meta.User{
-		ID:             userid,
-		FirstName:      result["firstname"],
-		LastName:       result["lastname"],
-		Profile:        result["profile"],
-		FederationID:   result["federation_id"],
-		FederationType: result["federation_type"],
+		ID:        userid,
+		FirstName: result["firstname"],
+		LastName:  result["lastname"],
+		Profile:   result["profile"],
+		Username:  result["username"],
 		Picture: (func(picture string) *meta.UserFileMetadata {
 			if picture == "" {
 				return nil

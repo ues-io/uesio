@@ -142,58 +142,20 @@ func CreateUser(claims *AuthenticationClaims, site *meta.Site) error {
 	}
 
 	return datasource.PlatformSaveOne(&meta.User{
-		FirstName:      claims.FirstName,
-		LastName:       claims.LastName,
-		FederationType: claims.AuthType,
-		FederationID:   claims.Subject,
-		Profile:        defaultSiteProfile,
+		/*
+			FederationType: claims.AuthType,
+			FederationID:   claims.Subject,
+		*/
+		//Username: claims.Username,
+		Profile: defaultSiteProfile,
 	}, nil, nil, session)
 }
 
-// CheckProvisionWhitelist function
-func CheckProvisionWhitelist(claims *AuthenticationClaims, site *meta.Site) error {
-
-	email := claims.Email
-	emailSplit := strings.Split(email, "@")
-
-	if len(emailSplit) != 2 {
-		return errors.New("Invalid Email Address")
-	}
-
-	domain := emailSplit[1]
-
-	emailWhitelist := map[string]bool{
-		"humanbenh@gmail.com":   true,
-		"plusplusben@gmail.com": true,
-	}
-
-	domainWhitelist := map[string]bool{
-		"thegreenlink.co":     true,
-		"thecloudmasters.com": true,
-		"uesio.com":           true,
-		"tfbnw.net":           true,
-		"ues.io":              true,
-	}
-
-	_, emailOk := emailWhitelist[email]
-
-	_, domainOk := domainWhitelist[domain]
-
-	if emailOk || domainOk {
-		return nil
-	}
-	return errors.New("You're not on the list, sorry. :(")
-}
-
+/*
 // ProvisionUser function
 func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
 
-	err := CheckProvisionWhitelist(claims, site)
-	if err != nil {
-		return nil, err
-	}
-
-	err = CreateUser(claims, site)
+	err := CreateUser(claims, site)
 	if err != nil {
 		return nil, err
 	}
@@ -209,23 +171,59 @@ func ProvisionUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, e
 
 	return user, nil
 }
+*/
 
-// GetUser function
-func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) {
-
-	// For now, just use a public session to do this.
-	// We'll need to rethink this later when we add security to collections/wires
-	session := sess.NewPublic(site)
-	session.SetPermissions(&meta.PermissionSet{
-		CollectionRefs: map[string]bool{
-			"uesio.users":     true,
-			"uesio.userfiles": true,
-		},
-	})
-
+func GetUserByID(username string, session *sess.Session) (*meta.User, error) {
 	var user meta.User
+
 	err := datasource.PlatformLoadOne(
 		&user,
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio.firstname",
+				},
+				{
+					ID: "uesio.lastname",
+				},
+				{
+					ID: "uesio.username",
+				},
+				{
+					ID: "uesio.profile",
+				},
+				{
+					ID: "uesio.picture",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "uesio.id",
+						},
+					},
+				},
+				{
+					ID: "uesio.language",
+				},
+			},
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: username,
+				},
+			},
+		},
+		session,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func GetLoginMethod(claims *AuthenticationClaims, session *sess.Session) (*meta.LoginMethod, error) {
+
+	var loginmethod meta.LoginMethod
+	err := datasource.PlatformLoadOne(
+		&loginmethod,
 		&datasource.PlatformLoadOptions{
 			Conditions: []adapt.LoadRequestCondition{
 				{
@@ -243,11 +241,11 @@ func GetUser(claims *AuthenticationClaims, site *meta.Site) (*meta.User, error) 
 	if err != nil {
 		if _, ok := err.(*datasource.RecordNotFoundError); ok {
 			// User not found. No error though.
-			logger.Log("Could not find user: "+claims.Subject, logger.INFO)
+			logger.Log("Could not find login method for claims: "+claims.Subject, logger.INFO)
 			return nil, nil
 		}
 		return nil, err
 	}
 
-	return &user, nil
+	return &loginmethod, nil
 }
