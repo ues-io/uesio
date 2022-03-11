@@ -18,12 +18,18 @@ func (ss *SecretStore) Get(key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = datasource.PlatformLoadOne(&s, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: key,
+	err = datasource.PlatformLoadOne(
+		&s,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: key,
+				},
+			},
 		},
-	}, session)
+		session,
+	)
 	if err != nil {
 		return "", nil
 	}
@@ -42,5 +48,5 @@ func (ss *SecretStore) Set(key, value string) error {
 	}
 	return datasource.PlatformSaveOne(&s, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, session)
+	}, nil, session)
 }

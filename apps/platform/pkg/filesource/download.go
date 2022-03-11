@@ -16,10 +16,12 @@ func Download(userFileID string, session *sess.Session) (io.ReadCloser, *meta.Us
 	userFile := meta.UserFileMetadata{}
 	err := datasource.PlatformLoadOne(
 		&userFile,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: userFileID,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: userFileID,
+				},
 			},
 		},
 		session,

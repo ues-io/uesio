@@ -26,4 +26,12 @@ type PlainCollectionMap = {
 	[key: string]: PlainCollection
 }
 
-export { PlainCollectionMap, PlainCollection, CollectionState, CollectionStore }
+const ID_FIELD = "uesio.id"
+
+export {
+	PlainCollectionMap,
+	PlainCollection,
+	CollectionState,
+	CollectionStore,
+	ID_FIELD,
+}

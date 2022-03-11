@@ -33,7 +33,7 @@ func UploadUserFile(w http.ResponseWriter, r *http.Request) {
 	}
 	details.ContentLength = contentLen
 
-	ufm, err := filesource.Upload(r.Body, *details, session)
+	ufm, err := filesource.Upload(r.Body, *details, nil, session)
 	if err != nil {
 		logger.LogError(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

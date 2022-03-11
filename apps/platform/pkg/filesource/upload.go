@@ -71,7 +71,7 @@ func getUploadMetadata(metadataResponse *adapt.MetadataCache, collectionID, fiel
 }
 
 // Upload function
-func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Session) (*meta.UserFileMetadata, error) {
+func Upload(fileBody io.Reader, details fileadapt.FileDetails, connection adapt.Connection, session *sess.Session) (*meta.UserFileMetadata, error) {
 
 	metadataResponse, err := getUploadMetadataResponse(details.CollectionID, details.FieldID, session)
 	if err != nil {
@@ -113,7 +113,7 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 
 	err = datasource.PlatformSaveOne(&ufm, &adapt.SaveOptions{
 		Upsert: &adapt.UpsertOptions{},
-	}, session)
+	}, connection, session)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 			return nil, errors.New("Can only attach files to FILE fields")
 		}
 
-		err = datasource.Save([]datasource.SaveRequest{
+		err = datasource.SaveWithOptions([]datasource.SaveRequest{
 			{
 				Collection: details.CollectionID,
 				Wire:       "filefieldupdate",
@@ -153,7 +153,7 @@ func Upload(fileBody io.Reader, details fileadapt.FileDetails, session *sess.Ses
 					},
 				},
 			},
-		}, session)
+		}, session, datasource.GetConnectionSaveOptions(connection))
 		if err != nil {
 			return nil, errors.New("Failed to update field for the given file: " + err.Error())
 		}

@@ -105,7 +105,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		BulkJobID: job.ID,
 	}
 
-	err = datasource.PlatformSaveOne(&batch, nil, session)
+	err = datasource.PlatformSaveOne(&batch, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		return nil, err
 	}
 
-	_, err = filesource.Upload(data, details, session)
+	_, err = filesource.Upload(data, details, nil, session)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func NewExportBatch(job meta.BulkJob, session *sess.Session) (*meta.BulkBatch, e
 		},
 	})
 
-	err = datasource.PlatformSaveOne(&batch, nil, session)
+	err = datasource.PlatformSaveOne(&batch, nil, nil, session)
 	if err != nil {
 		return nil, err
 	}

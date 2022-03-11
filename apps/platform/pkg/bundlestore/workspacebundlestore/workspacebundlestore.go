@@ -27,10 +27,12 @@ func (b *WorkspaceBundleStore) GetItem(item meta.BundleableItem, version string,
 
 	item.SetNamespace(session.GetWorkspaceApp())
 
-	return datasource.PlatformLoadOne(item, []adapt.LoadRequestCondition{
-		{
-			Field: "uesio.id",
-			Value: item.GetDBID(session.GetWorkspaceID()),
+	return datasource.PlatformLoadOne(item, &datasource.PlatformLoadOptions{
+		Conditions: []adapt.LoadRequestCondition{
+			{
+				Field: "uesio.id",
+				Value: item.GetDBID(session.GetWorkspaceID()),
+			},
 		},
 	}, session.RemoveWorkspaceContext())
 }
@@ -74,13 +76,14 @@ func (b *WorkspaceBundleStore) GetManyItems(items []meta.BundleableItem, version
 		err = datasource.PlatformLoad(&WorkspaceLoadCollection{
 			Collection: group,
 			Namespace:  namespace,
-		}, []adapt.LoadRequestCondition{
-			{
-				Field:    "uesio.id",
-				Value:    ids,
-				Operator: "IN",
-			},
-		}, session.RemoveWorkspaceContext())
+		}, &datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "uesio.id",
+					Value:    ids,
+					Operator: "IN",
+				},
+			}}, session.RemoveWorkspaceContext())
 		if err != nil {
 			return err
 		}
@@ -133,27 +136,13 @@ func (b *WorkspaceBundleStore) GetAllItems(group meta.BundleableGroup, namespace
 		})
 	}
 
-	ops := datasource.GetPlatformLoadOps(&WorkspaceLoadCollection{
+	return datasource.PlatformLoad(&WorkspaceLoadCollection{
 		Collection: group,
 		Namespace:  namespace,
-	}, datasource.GetLoadRequestFields(group.GetFields()), loadConditions)
+	}, &datasource.PlatformLoadOptions{
+		Conditions: loadConditions,
+	}, session.RemoveWorkspaceContext())
 
-	return loadData(ops, loadConditions, session)
-
-}
-
-func loadData(ops []adapt.LoadOp, loadConditions []adapt.LoadRequestCondition, session *sess.Session) error {
-
-	err := datasource.PlatformLoads(ops, session.RemoveWorkspaceContext())
-	if err != nil {
-		return err
-	}
-
-	if ops[0].HasMoreBatches {
-		return loadData(ops, loadConditions, session)
-	}
-
-	return nil
 }
 
 // GetFileStream function
@@ -205,41 +194,44 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	by.Name = namespace
 	bdc := meta.BundleDependencyCollection{}
 	workspaceID := namespace + "_" + version
-	err := datasource.PlatformLoadWithFields(
+	err := datasource.PlatformLoad(
 		&bdc,
-		[]adapt.LoadRequestField{
-			{
-				ID: "uesio.id",
-			},
-			{
-				ID: "studio.workspace",
-			},
-			{
-				ID: "studio.bundle",
-				Fields: []adapt.LoadRequestField{
-					{
-						ID: "studio.app",
-					},
-					{
-						ID: "studio.major",
-					},
-					{
-						ID: "studio.minor",
-					},
-					{
-						ID: "studio.patch",
+		&datasource.PlatformLoadOptions{
+			Fields: []adapt.LoadRequestField{
+				{
+					ID: "uesio.id",
+				},
+				{
+					ID: "studio.workspace",
+				},
+				{
+					ID: "studio.bundle",
+					Fields: []adapt.LoadRequestField{
+						{
+							ID: "studio.app",
+						},
+						{
+							ID: "studio.major",
+						},
+						{
+							ID: "studio.minor",
+						},
+						{
+							ID: "studio.patch",
+						},
 					},
 				},
 			},
-		},
-		[]adapt.LoadRequestCondition{
-			{
-				Field:    "studio.workspace",
-				Value:    workspaceID,
-				Operator: "=",
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field:    "studio.workspace",
+					Value:    workspaceID,
+					Operator: "=",
+				},
 			},
 		},
-		session.RemoveWorkspaceContext())
+		session.RemoveWorkspaceContext(),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -256,10 +248,12 @@ func (b *WorkspaceBundleStore) GetBundleDef(namespace, version string, session *
 	var workspace meta.Workspace
 	err = datasource.PlatformLoadOne(
 		&workspace,
-		[]adapt.LoadRequestCondition{
-			{
-				Field: "uesio.id",
-				Value: workspaceID,
+		&datasource.PlatformLoadOptions{
+			Conditions: []adapt.LoadRequestCondition{
+				{
+					Field: "uesio.id",
+					Value: workspaceID,
+				},
 			},
 		},
 		session.RemoveWorkspaceContext(),

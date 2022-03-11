@@ -37,7 +37,7 @@ func (c *Connection) Load(op *adapt.LoadOp) error {
 	metadata := c.metadata
 	credentials := c.credentials
 	userTokens := c.tokens
-	db := c.client
+	db := c.GetClient()
 
 	collectionMetadata, err := metadata.GetCollection(op.CollectionName)
 	if err != nil {

@@ -25,6 +25,10 @@ func (c *Connection) GetMetadata() *adapt.MetadataCache {
 	return c.metadata
 }
 
+func (c *Connection) SetMetadata(metadata *adapt.MetadataCache) {
+	c.metadata = metadata
+}
+
 func (c *Connection) GetClient() *simpleforce.Client {
 	return c.client
 }
@@ -37,6 +41,10 @@ func (c *Connection) BeginTransaction() error {
 	return nil
 }
 func (c *Connection) CommitTransaction() error {
+	return nil
+}
+
+func (c *Connection) RollbackTransaction() error {
 	return nil
 }
 

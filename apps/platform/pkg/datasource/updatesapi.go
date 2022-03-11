@@ -4,8 +4,7 @@ import "github.com/thecloudmasters/uesio/pkg/adapt"
 
 // UpdatesAPI type
 type UpdatesAPI struct {
-	updates  *adapt.ChangeItems
-	metadata *adapt.CollectionMetadata
+	updates *adapt.ChangeItems
 }
 
 // Get function
@@ -14,8 +13,7 @@ func (c *UpdatesAPI) Get() []*ChangeAPI {
 
 	for _, update := range *c.updates {
 		changeAPIs = append(changeAPIs, &ChangeAPI{
-			change:   update,
-			metadata: c.metadata,
+			change: update,
 		})
 	}
 	return changeAPIs
