@@ -186,8 +186,8 @@ func getReferenceValidationsFunction(collectionMetadata *adapt.CollectionMetadat
 					return
 				}
 
-				// Special exception for the system_system user
-				if collectionMetadata.GetFullName() == "uesio.users" && foreignKeyString == "system_system" {
+				// Special exception for the system user
+				if collectionMetadata.GetFullName() == "uesio.users" && foreignKeyString == "system" {
 					return
 				}
 				request.AddID(foreignKeyString, adapt.ReferenceLocator{})

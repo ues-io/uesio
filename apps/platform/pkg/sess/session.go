@@ -56,7 +56,7 @@ func GetPublicUser(site *meta.Site) *meta.User {
 	return &meta.User{
 		FirstName: "Guest",
 		LastName:  "User",
-		ID:        "system_guest",
+		ID:        "guest",
 		Profile:   defaultSitePublicProfile,
 	}
 }

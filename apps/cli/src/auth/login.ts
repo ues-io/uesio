@@ -40,10 +40,7 @@ const authHandlers = {
 	[MOCK_LOGIN]: async (): Promise<AuthHandlerResponse> => ({
 		type: MOCK_LOGIN,
 		// TODO: actually read from seeds and allow mock login as all users
-		token: mock.getMockToken({
-			firstname: "Ben",
-			lastname: "Hubbard",
-		}),
+		token: mock.getMockToken("ben"),
 	}),
 	[GOOGLE_LOGIN]: async (): Promise<AuthHandlerResponse> => {
 		throw new Error("Google Auth is not yet supported.")

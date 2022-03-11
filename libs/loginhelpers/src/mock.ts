@@ -1,22 +1,9 @@
-type MockUser = {
-	firstname: string
-	lastname: string
-}
+const mockUsers = ["ben", "abel", "wessel", "gregg"]
 
-const mockUsers = [
-	{ firstname: "Ben", lastname: "Hubbard" },
-	{ firstname: "Abel", lastname: "Jimenez Molla" },
-	{ firstname: "Wessel", lastname: "van der Plas" },
-	{ firstname: "Gregg", lastname: "Baxter" },
-]
-
-const getMockToken = (user: MockUser) =>
+const getMockToken = (user: string) =>
 	JSON.stringify({
 		authType: "mock",
-		lastname: user.lastname,
-		firstname: user.firstname,
-		subject: "Mock" + user.firstname,
-		email: user.firstname.toLowerCase() + "@thecloudmasters.com",
+		subject: user,
 	})
 
 export { mockUsers, getMockToken }
